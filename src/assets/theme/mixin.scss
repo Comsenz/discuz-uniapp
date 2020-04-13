@@ -1,0 +1,15 @@
+// 引入主题变量
+@import './themes.scss';
+
+@mixin themeify {
+  @each $theme-name, $theme-map in $themes {
+    $theme-map: $theme-map !global;
+    .theme-#{$theme-name} & {
+      @content;
+    }
+  }
+}
+
+@function themed($key) {
+  @return map-get($theme-map, $key);
+}

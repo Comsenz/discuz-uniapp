@@ -1,0 +1,80 @@
+<template>
+  <dz-page>
+    <view class="content">
+      <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
+      <view>
+        <text class="title">{{ i18n.t('discuzq.hello') }} {{ title }}</text>
+      </view>
+      <view @tap.stop="switchLang">切换语言</view>
+      <view @tap.stop="switchTheme">切换主题</view>
+    </view>
+  </dz-page>
+</template>
+
+<script>
+import dzPage from '@/components/dz-page';
+import { mapState, mapMutations, mapActions } from 'vuex';
+import { SET_THEME } from '@/store/types/theme';
+import { THEME_DEFAULT, THEME_DARK, LANG_ZH, LANG_EN, DISCUZ_TITLE } from '@/common/const';
+
+export default {
+  components: {
+    dzPage,
+  },
+  data() {
+    return {
+      curLang: LANG_ZH,
+      title: DISCUZ_TITLE,
+    };
+  },
+  computed: {
+    ...mapState({
+      curTheme: state => state.theme.currentTheme,
+    }),
+  },
+  onLoad() {
+    this.getForum();
+
+    const options = {
+      'page[size]': 20,
+      'page[number]': 2,
+    };
+    this.getThreads({ options });
+  },
+  methods: {
+    ...mapMutations({
+      setTheme: `theme/${SET_THEME}`,
+    }),
+    ...mapActions({
+      getForum: `forum/loadAll`,
+      getThreads: 'threads/loadAll',
+    }),
+    switchLang() {
+      this.curLang = this.curLang === LANG_ZH ? LANG_EN : LANG_ZH;
+      this.$localeUse(this.curLang);
+    },
+    switchTheme() {
+      const theme = this.curTheme === THEME_DEFAULT ? THEME_DARK : THEME_DEFAULT;
+      this.setTheme(theme);
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+.content {
+  height: 400rpx;
+  text-align: center;
+}
+
+.logo {
+  width: 324rpx;
+  height: 72rpx;
+  margin-top: 200rpx;
+}
+
+.title {
+  color: #8f8f94;
+  font-size: 60rpx;
+}
+</style>
