@@ -29,7 +29,7 @@ http.interceptor.response(
     //   // 演示自定义参数的作用
     //   return response.data;
     // }
-    return response.data;
+    return response;
   },
   response => {
     // 对响应错误做点什么 （statusCode !== 200），必须return response
