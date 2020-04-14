@@ -15,17 +15,22 @@ module.exports = {
     'at-rule-no-vendor-prefix': true,
     'selector-no-vendor-prefix': true,
     'property-no-vendor-prefix': true,
-    'value-no-vendor-prefix': true,
     'comment-empty-line-before': null,
-    'function-name-case': ['lower', {
-      ignoreFunctions: ['/colorPalette/']
-    }],
+    'function-name-case': [
+      'lower',
+      {
+        ignoreFunctions: ['/colorPalette/'],
+      },
+    ],
     'no-invalid-double-slash-comments': null,
     'no-descending-specificity': null,
     'declaration-empty-line-before': null,
-    'unit-no-unknown': [true, {
-      ignoreUnits: ['upx', 'rpx']
-    }],
+    'unit-no-unknown': [
+      true,
+      {
+        ignoreUnits: ['upx', 'rpx'],
+      },
+    ],
     // SASS
     // All @includes after properties
     // Nested selectors after properties
@@ -87,11 +92,6 @@ module.exports = {
     // Disallows margin: 1px 1px 1px 1px;
     'shorthand-property-no-redundant-values': true,
 
-    // Comments
-    'comment-whitespace-inside': 'always',
-
-    // Functions
-    'function-comma-space-after': 'always-single-line',
     'function-comma-space-before': 'never',
 
     // Numbers

@@ -11,7 +11,6 @@ module.exports = {
   // 通过 Babel 显式转译一个依赖
   transpileDependencies: [],
   configureWebpack: config => {
-    // eslint-disable-next-line no-param-reassign
     config.optimization = {
       minimizer: [
         new TerserPlugin({
