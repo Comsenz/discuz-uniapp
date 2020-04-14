@@ -129,6 +129,9 @@ module.exports = {
         // tab 使用 2 个空格
         tabWidth: 2,
         htmlWhitespaceSensitivity: 'ignore',
+        // https://stackoverflow.com/questions/53516594/why-do-i-keep-getting-delete-cr-prettier-prettier
+        endOfLine: 'auto',
+        ignorePath: '.prettierignore',
       },
     ],
   },

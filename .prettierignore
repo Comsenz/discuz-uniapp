@@ -30,3 +30,4 @@ src/**/*.json
 src/sfc.d.ts
 package.json
 package-lock.json
+babel.config.js

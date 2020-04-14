@@ -10,4 +10,6 @@ module.exports = {
   // tab 使用 2 个空格
   tabWidth: 2,
   htmlWhitespaceSensitivity: 'ignore',
+  endOfLine: 'auto',
+  ignorePath: '.prettierignore',
 };

@@ -2,8 +2,9 @@
 .vscode
 dist
 node_modules
-./*.js
-./*.json
-./*.md
+*.js
+*.json
+*.md
 src/**/*.json
 src/sfc.d.ts.es
+.npmrc
