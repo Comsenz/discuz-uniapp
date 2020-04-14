@@ -25,7 +25,7 @@
     "dev:quickapp": "cross-env NODE_ENV=development UNI_PLATFORM=quickapp vue-cli-service uni-build --watch --mode development",
     "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js",
     "serve:quickapp": "node node_modules/@dcloudio/uni-quickapp/bin/serve.js",
-    "lintcss:fix": "stylelint src/**/*.{scss,vue} --debug",
+    "lintcss:fix": "stylelint src/**/*.{scss,vue}",
     "lint:fix": "eslint -c .eslintrc.js src --ext .js,.vue --fix",
     "release:major": "standard-version -r major -n",
     "release:minor": "standard-version -r minor -n",
@@ -40,7 +40,7 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{ts,vue}": [
+    "src/**/*.{js,vue}": [
       "npm run lint:fix",
       "git add"
     ],
@@ -72,7 +72,7 @@
     "@dcloudio/uni-mp-toutiao": "^2.0.0-26920200409002",
     "@dcloudio/uni-mp-weixin": "^2.0.0-26920200409002",
     "@dcloudio/uni-stat": "^2.0.0-v3-24020191018001",
-    "@reststate/vuex": "^0.2.0",
+    "@reststate/client": "0.0.8",
     "core-js": "^3.6.4",
     "flyio": "^0.6.2",
     "js-cookie": "^2.2.1",
