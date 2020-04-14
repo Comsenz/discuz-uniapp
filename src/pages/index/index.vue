@@ -7,6 +7,9 @@
       </view>
       <view @tap.stop="switchLang">切换语言</view>
       <view @tap.stop="switchTheme">切换主题</view>
+      <view v-for="(item, index) in threadsUsers" :key="index">
+        <view>{{ item.attributes.username }}</view>
+      </view>
     </view>
   </dz-page>
 </template>
@@ -31,23 +34,50 @@ export default {
     ...mapState({
       curTheme: state => state.theme.currentTheme,
     }),
+    relatedUser() {
+      const threads = this.$store.getters['threads/all'];
+      const firstThreadId = threads.length > 0 && threads[0].id;
+      if (!firstThreadId) return null;
+      const data = this.$store.getters['threads/related']({
+        parent: {
+          type: 'threads',
+          id: firstThreadId,
+        },
+        relationship: 'user',
+      });
+      console.log('relatedUser', data);
+      return data;
+    },
+    threadsUsers() {
+      const data = this.$store.getters['threads/included']({
+        parent: 'threads',
+        relationship: 'users',
+      });
+      console.log('threadsUsers', data);
+      return data;
+    },
+    threadsPosts() {
+      const data = this.$store.getters['threads/included']({
+        parent: 'threads',
+        relationship: 'posts',
+      });
+      console.log('threadsPosts', data);
+      return data;
+    },
   },
   onLoad() {
-    this.getForum();
-
     const options = {
       'page[size]': 20,
       'page[number]': 2,
     };
-    this.getThreads({ options });
+    this.threadAll(options);
   },
   methods: {
     ...mapMutations({
       setTheme: `theme/${SET_THEME}`,
     }),
     ...mapActions({
-      getForum: `forum/loadAll`,
-      getThreads: 'threads/loadAll',
+      threadAll: 'threads/loadAll',
     }),
     switchLang() {
       this.curLang = this.curLang === LANG_ZH ? LANG_EN : LANG_ZH;

@@ -25,9 +25,10 @@ export default {
 
 .dz-page {
   min-height: 100vh;
+
   @include themeify {
-    background-color: themed('bg-color-primary');
     color: themed('txt-color-primary');
+    background-color: themed('bg-color-primary');
   }
 }
 </style>
