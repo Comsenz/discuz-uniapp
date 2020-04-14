@@ -2,9 +2,14 @@
 .vscode
 dist
 node_modules
-*.js
-*.json
-*.md
+./*.js
+./*.json
+./*.md
 src/**/*.json
 src/sfc.d.ts.es
 .npmrc
+babel.config.js
+postcss.config.js
+vue.config.js
+commitlint.congig.js
+stylelint.config.js
