@@ -66,19 +66,13 @@ module.exports = {
     // Blocks
     'block-no-empty': true,
     // 每个样式规则前后都有空行，除了第一条规则与规则前有注释
-    'at-rule-empty-line-before': [
-      'always',
-      {
-        // Allow mixins to have an empty line before
-        ignoreAtRules: ['import', 'first-nested'],
-      },
-    ],
+    'at-rule-empty-line-before': null,
     // More styling rules for more consistency
     'at-rule-name-case': 'lower',
 
     // Colors
     'color-hex-case': 'lower',
-    'color-hex-length': 'long',
+    'color-hex-length': 'short',
     'color-no-invalid-hex': true,
 
     // strings
@@ -119,5 +113,7 @@ module.exports = {
     'declaration-block-semicolon-space-before': 'never',
     // 属性值中的 "," 后必须有空格
     'function-comma-space-after': 'always',
+    'at-rule-no-unknown': null,
+    'scss/at-rule-no-unknown': true,
   },
 };
