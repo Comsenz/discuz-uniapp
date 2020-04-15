@@ -1,5 +1,5 @@
 <template>
-  <dz-page>
+  <qui-page>
     <view class="content">
       <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
       <view>
@@ -11,18 +11,18 @@
         <view>{{ item.attributes.username }}</view>
       </view>
     </view>
-  </dz-page>
+  </qui-page>
 </template>
 
 <script>
-import dzPage from '@/components/dz-page';
+import quiPage from '@/components/qui-page';
 import { mapState, mapMutations, mapActions } from 'vuex';
 import { SET_THEME } from '@/store/types/theme';
 import { THEME_DEFAULT, THEME_DARK, LANG_ZH, LANG_EN, DISCUZ_TITLE } from '@/common/const';
 
 export default {
   components: {
-    dzPage,
+    quiPage,
   },
   data() {
     return {
