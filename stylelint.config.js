@@ -77,6 +77,7 @@ module.exports = {
 
     // strings
     'string-quotes': 'single',
+    'selector-pseudo-element-colon-notation': 'single',
 
     // Values
     // Disallow vendor prefix, they are added by autoprefixer
