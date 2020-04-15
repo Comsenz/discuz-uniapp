@@ -15,7 +15,7 @@ export const COOKIE_CURRENT_LANGUAGE = '__discuzq_lang';
 /**
  * 主题
  */
-export const THEME_DEFAULT = 'default';
+export const THEME_DEFAULT = 'light';
 export const THEME_DARK = 'dark';
 
 /**
