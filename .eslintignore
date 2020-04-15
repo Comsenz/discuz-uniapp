@@ -13,4 +13,4 @@ postcss.config.js
 vue.config.js
 commitlint.congig.js
 stylelint.config.js
-src/lib
+src/library

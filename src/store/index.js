@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 // https://vuex.reststate.codingitwrong.com/
-import { mapResourceModules } from '@/lib/reststate-vuex';
+import { mapResourceModules } from '@/library/reststate-vuex';
 import theme from '@/store/modules/theme';
 import { http } from './api-request';
 
