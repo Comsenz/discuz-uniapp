@@ -47,9 +47,7 @@
     "src/**/*.{vue,scss}": [
       "npm run lintcss:fix",
       "git add"
-    ],
-    "*.js": "eslint --cache --fix",
-    "*.css": "stylelint --fix"
+    ]
   },
   "repository": {
     "type": "git",
@@ -119,7 +117,6 @@
     "miniprogram-api-typings": "^2.8.0-2",
     "node-sass": "^4.13.1",
     "postcss-comment": "^2.0.0",
-    "pre-commit": "^1.2.2",
     "prettier-eslint": "^9.0.1",
     "prettier-stylelint": "^0.4.2",
     "sass-loader": "^8.0.2",
