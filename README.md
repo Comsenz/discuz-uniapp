@@ -69,6 +69,10 @@
 |-- .github                    规范说明 | github action 工作流（待完成）
 |-- public                    H5 模板文件
 |-- src                       项目的开发目录
+| |-- api                     api 存放目录以及对于请求数据的处理存放目录
+| | |-- api-request.js          api: 请求之前或者之后处理函数
+| | |-- data-format.js          api: 数据处理文件
+| | |-- index.js                api: 要请求的api定义
 | |-- assets                  资源存放目录
 | |-- common                  页面公用的部分存放的目录
 | |-- components              页面公用的组件存放的目录
@@ -76,6 +80,9 @@
 | |-- library                 存放一些第三方依赖库等
 | |-- pages                   页面目录
 | |-- store                   数据状态管理目录
+| | |-- modules
+| | |-- types
+| | |-- index.js
 | |-- styles                  公共样式存放目录
 | | |-- base                    styles: 基础样式
 | | | |-- mixin                 styles: mixin函数
