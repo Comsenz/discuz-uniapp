@@ -1,0 +1,8 @@
+// variable
+@import './variable/global.scss';
+@import './variable/color.scss'; // 里面包含主题样式
+
+page,
+body {
+  font: $fg-f14/1.6 $font-family;
+}

@@ -60,12 +60,19 @@
 |-- public                    H5 模板文件
 |-- src                       项目的开发目录
 | |-- assets                  资源存放目录
-| | |-- theme                 主题样式目录
 | |-- common                  页面公用的部分存放的目录
 | |-- components              页面公用的组件存放的目录
 | |-- locale                  国际化设置目录（语言设置）
+| |-- library                 存放一些第三方依赖库等
 | |-- pages                   页面目录
 | |-- store                   数据状态管理目录
+| |-- styles                  公共样式存放目录
+| | |-- base                    styles: 基础样式
+| | | |-- mixin                 styles: mixin函数
+| | | |-- theme                 styles: 主题皮肤配置
+| | | |-- variable              styles: 变量
+| | | |-- reset.scss            styles: 重置页面样式
+| | |-- icon                    styles: font icon
 | |-- utils                   常用函数存放目录
 | |-- App.vue                 应用配置，用来配置App全局样式以及监听
 | |-- main.js                 Vue 初始化入口文件

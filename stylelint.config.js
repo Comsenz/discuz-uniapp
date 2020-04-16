@@ -77,6 +77,7 @@ module.exports = {
 
     // strings
     'string-quotes': 'single',
+    'selector-pseudo-element-colon-notation': 'single',
 
     // Values
     // Disallow vendor prefix, they are added by autoprefixer
@@ -115,5 +116,17 @@ module.exports = {
     'function-comma-space-after': 'always',
     'at-rule-no-unknown': null,
     'scss/at-rule-no-unknown': true,
+    'selector-type-no-unknown': [
+      true,
+      {
+        ignoreTypes: ['page'],
+      },
+    ],
+    'value-keyword-case': [
+      'lower',
+      {
+        ignoreKeywords: ['/--qui-/'],
+      },
+    ],
   },
 };
