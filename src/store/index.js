@@ -2,8 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 // https://vuex.reststate.codingitwrong.com/
-import { mapResourceModules } from '@/library/reststate-vuex';
+import { mapResourceModules } from '@reststate/vuex';
 import theme from '@/store/modules/theme';
+import dzThreads from '@/store/modules/threads';
 import { http } from './api-request';
 
 Vue.use(Vuex);
@@ -14,11 +15,13 @@ const store = new Vuex.Store({
   getters: {},
   modules: {
     ...mapResourceModules({
-      // 请求的模块
-      names: ['threads'],
+      // 请求的模块，如果控制台报 action not found 错误的话，需要将 action 作为模块
+      // 写入到 names 中。如 users/related not found，则将 users 填写在下面👇
+      names: ['threads', 'users', 'posts', 'categories', 'thread-video'],
       httpClient: http,
     }),
     theme,
+    dzThreads,
   },
   state: {},
   mutations: {},
