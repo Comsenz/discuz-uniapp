@@ -38,6 +38,16 @@
 
   然后打开微信开发者工具，导入 `dist/build/mp-weixin` 目录
 
+4. 开发工具推荐
+
+    推荐使用 [VSCode](https://code.visualstudio.com/) 进行开发，针对此项目VSCode插件推荐安装：
+   - Vetur
+   - ESLint
+   - Stylelint
+   - Prettie
+   - Vue VSCode Snippets
+   - JavaScript(ES6) Snippets ESDoc
+
 ## 编码规范
 
 1. [JavaScript 代码规范](./.github/JAVASCRIPT_STYLE.md)
