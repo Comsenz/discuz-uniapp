@@ -3,9 +3,9 @@ import Vuex from 'vuex';
 
 // https://vuex.reststate.codingitwrong.com/
 import { mapResourceModules } from '@reststate/vuex';
+import { http } from '@/api/api-request';
 import theme from '@/store/modules/theme';
 import dzThreads from '@/store/modules/threads';
-import { http } from './api-request';
 
 Vue.use(Vuex);
 
