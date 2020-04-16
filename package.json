@@ -95,6 +95,7 @@
     "@types/html5plus": "*",
     "@types/uni-app": "^1.4.2",
     "@vue/cli-plugin-babel": "~4.3.0",
+    "@vue/cli-plugin-eslint": "^4.3.1",
     "@vue/cli-service": "~4.3.0",
     "@vue/eslint-config-airbnb": "^5.0.2",
     "@vue/eslint-config-prettier": "^6.0.0",
@@ -126,6 +127,7 @@
     "stylelint-declaration-block-no-ignored-properties": "^2.3.0",
     "stylelint-order": "^4.0.0",
     "stylelint-scss": "^3.16.1",
+    "stylelint-webpack-plugin": "^1.2.3",
     "terser-webpack-plugin": "^2.3.5",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.42.1"
