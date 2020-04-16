@@ -47,7 +47,9 @@
     "src/**/*.{vue,scss}": [
       "npm run lintcss:fix",
       "git add"
-    ]
+    ],
+    "*.js": "eslint --cache --fix",
+    "*.css": "stylelint --fix"
   },
   "repository": {
     "type": "git",
@@ -95,6 +97,7 @@
     "@types/html5plus": "*",
     "@types/uni-app": "^1.4.2",
     "@vue/cli-plugin-babel": "~4.3.0",
+    "@vue/cli-plugin-eslint": "^4.3.1",
     "@vue/cli-service": "~4.3.0",
     "@vue/eslint-config-airbnb": "^5.0.2",
     "@vue/eslint-config-prettier": "^6.0.0",
@@ -115,6 +118,7 @@
     "miniprogram-api-typings": "^2.8.0-2",
     "node-sass": "^4.13.1",
     "postcss-comment": "^2.0.0",
+    "pre-commit": "^1.2.2",
     "prettier-eslint": "^9.0.1",
     "prettier-stylelint": "^0.4.2",
     "sass-loader": "^8.0.2",
@@ -126,6 +130,7 @@
     "stylelint-declaration-block-no-ignored-properties": "^2.3.0",
     "stylelint-order": "^4.0.0",
     "stylelint-scss": "^3.16.1",
+    "stylelint-webpack-plugin": "^1.2.3",
     "terser-webpack-plugin": "^2.3.5",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.42.1"
