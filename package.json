@@ -47,9 +47,7 @@
     "src/**/*.{vue,scss}": [
       "npm run lintcss:fix",
       "git add"
-    ],
-    "*.js": "eslint --cache --fix",
-    "*.css": "stylelint --fix"
+    ]
   },
   "repository": {
     "type": "git",
