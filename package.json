@@ -75,6 +75,7 @@
     "@dcloudio/uni-mp-weixin": "^2.0.0-26920200409002",
     "@dcloudio/uni-stat": "^2.0.0-v3-24020191018001",
     "@reststate/client": "0.0.8",
+    "@reststate/vuex": "^0.2.0",
     "core-js": "^3.6.4",
     "flyio": "^0.6.2",
     "js-cookie": "^2.2.1",

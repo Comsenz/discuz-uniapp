@@ -1,11 +1,14 @@
 <template>
   <qui-page>
-    <view class="content">empty</view>
+    <view class="content" v-for="item in allThreads" :key="item.id">
+      <view>{{ item.user.attributes.username }}: {{ item.attributes.title }}</view>
+    </view>
   </qui-page>
 </template>
 
 <script>
 import quiPage from '@/components/qui-page';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   components: {
@@ -14,9 +17,22 @@ export default {
   data() {
     return {};
   },
-  computed: {},
-  onLoad() {},
-  methods: {},
+  computed: {
+    ...mapState({
+      allThreads: state => state.dzThreads.all,
+    }),
+  },
+  onLoad() {
+    this.loadAllThreads({
+      'page[size]': 10,
+      'page[number]': 1,
+    });
+  },
+  methods: {
+    ...mapActions({
+      loadAllThreads: 'dzThreads/loadAll',
+    }),
+  },
 };
 </script>
 
