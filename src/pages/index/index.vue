@@ -11,7 +11,9 @@ export default {
   components: {
     quiPage,
   },
-  data() {},
+  data() {
+    return {};
+  },
   computed: {},
   onLoad() {},
   methods: {},
