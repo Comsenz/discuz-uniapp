@@ -18,10 +18,10 @@
 | 参数 | 说明 | 类型 | 默认值 |
 | ---- | ---- | ---- | ---- |
 | name | 图标名称，具体需要查看 font-icon.scss 文件中的图标样式名称 | string | - |
-| size | 图标大小 | string|number | 16px |
+| size | 图标大小 | string\|number | 16px |
 | color | 图标颜色 | string | - |
 | dot | 是否在图标右上角显示小红点 | boolean | false |
-| badge | 图标右上角小红点里面的内容 | string|number | - |
+| badge | 图标右上角小红点里面的内容 | string\|number | - |
 
 ### 事件说明
 
