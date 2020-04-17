@@ -45,5 +45,6 @@
     "source.fixAll.eslint": false,
     "source.fixAll.stylelint": false,
   },
-  "stylelint.enable": true
+  "stylelint.enable": true,
+  "stylelint.configOverrides": null
 }
