@@ -10,10 +10,11 @@
         </text>
         <view class="avatar-box__r__tit-box">
           <text class="avatar-box__r__tit">{{ item.title }}</text>
-          <checkbox class="avatar-box__checkbox" :value="item.name"></checkbox>
+          <checkbox class="avatar-box__checkbox" v-model="checkData" :value="item.name"></checkbox>
         </view>
       </view>
     </view>
+    <button @click="btnClick">获取选中</button>
   </view>
 </template>
 
@@ -23,6 +24,7 @@ export default {
   data() {
     return {
       avatarCheck: '',
+      checkData: [],
     };
   },
   props: {
@@ -30,7 +32,11 @@ export default {
       type: Array,
     },
   },
-  methods: {},
+  methods: {
+    btnClick() {
+      console.log(this.checkData);
+    },
+  },
 };
 </script>
 
@@ -49,11 +55,11 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 20rpx;
     width: 70rpx;
     height: 70rpx;
-    border-radius: 50rpx;
+    margin-right: 20rpx;
     background-color: --color(--qui-BG-2);
+    border-radius: 50rpx;
     image {
       width: 70rpx;
       height: 70rpx;
@@ -65,9 +71,9 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-right: 40rpx;
     flex: 1;
     height: 100%;
+    padding-right: 40rpx;
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
 
     .avatar-box__r__name {
@@ -96,6 +102,6 @@ export default {
   background: --color(--qui-BG-HIGH-LIGHT);
 }
 /deep/ uni-checkbox .uni-checkbox-input.uni-checkbox-input-checked:before {
-  color: #fff;
+  color: --color(--qui-FC-FFF);
 }
 </style>
