@@ -6,3 +6,18 @@ page,
 body {
   font: $fg-f14 $font-family 1.6;
 }
+
+//小程序原生组件--修改
+//多选框
+checkbox .wx-checkbox-input {
+  width: 44rpx;
+  height: 44rpx;
+  margin: 0;
+  border-radius: 50rpx;
+}
+checkbox .wx-checkbox-input.wx-checkbox-input-checked {
+  background: #007aff;
+}
+checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
+  color: #fff;
+}
