@@ -4,7 +4,6 @@ module.exports = {
   defaultSeverity: 'error',
   extends: [
     'stylelint-config-standard',
-    'stylelint-config-rational-order',
     'stylelint-config-prettier',
   ],
   plugins: ['stylelint-scss', 'stylelint-order'],
