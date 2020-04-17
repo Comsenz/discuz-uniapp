@@ -2,10 +2,7 @@
 // http://stylelint.cn/user-guide/rules/
 module.exports = {
   defaultSeverity: 'error',
-  extends: [
-    'stylelint-config-standard',
-    'stylelint-config-prettier',
-  ],
+  extends: ['stylelint-config-standard', 'stylelint-config-prettier'],
   plugins: ['stylelint-scss', 'stylelint-order'],
   rules: {
     indentation: 2,
@@ -118,7 +115,7 @@ module.exports = {
     'selector-type-no-unknown': [
       true,
       {
-        ignoreTypes: ['page'],
+        ignoreTypes: ['page', 'checkbox', 'uni-checkbox'],
       },
     ],
     'value-keyword-case': [
@@ -127,7 +124,8 @@ module.exports = {
         ignoreKeywords: ['/--qui-/'],
       },
     ],
-    'order/properties-order': [ // 指定声明块内属性的字母顺序
+    'order/properties-order': [
+      // 指定声明块内属性的字母顺序
       'position',
       'top',
       'right',
@@ -274,6 +272,6 @@ module.exports = {
       'set-link-source',
       'unicode-bidi',
       'speak',
-    ]
+    ],
   },
 };
