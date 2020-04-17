@@ -1,20 +1,31 @@
 <template>
   <view>
-    <view class="avatar-box" v-for="(item, index) in data" :key="index">
+    <view class="avatar-box" v-for="item in data" :key="item.id" @click="getNameId(item.id)">
       <view class="avatar-box__img">
-        <image :src="item.img"></image>
+        <image :src="item.icon"></image>
       </view>
       <view class="avatar-box__r">
-        <text class="avatar-box__r__name">
-          {{ item.name }}
-        </text>
-        <view class="avatar-box__r__tit-box">
-          <text class="avatar-box__r__tit">{{ item.title }}</text>
-          <checkbox class="avatar-box__checkbox" v-model="checkData" :value="item.name"></checkbox>
+        <view class="avatar-box__r__tit">
+          <text>
+            {{ item.title }}
+          </text>
+          <text class="avatar-box__r__tit-label" v-if="center">{{ item.label }}</text>
+        </view>
+        <view class="avatar-box__r__val-box">
+          <text class="avatar-box__r__val" :style="`color:${rightColor}`">{{ item.value }}</text>
+          <slot name="rightIcon" />
+          <view
+            class="icon quiicons icon-folding-r"
+            v-if="type === 'default' && !$slots.rightIcon"
+          ></view>
+          <checkbox
+            v-if="type === 'check'"
+            class="avatar-box__checkbox"
+            :value="String(item.id)"
+          ></checkbox>
         </view>
       </view>
     </view>
-    <button @click="btnClick">获取选中</button>
   </view>
 </template>
 
@@ -22,19 +33,27 @@
 export default {
   name: 'QuiAvatarCell',
   data() {
-    return {
-      avatarCheck: '',
-      checkData: [],
-    };
+    return {};
   },
   props: {
     data: {
       type: Array,
     },
+    type: {
+      default: 'default',
+      type: String,
+    },
+    center: {
+      default: false,
+      type: Boolean,
+    },
+    rightColor: {
+      type: String,
+    },
   },
   methods: {
-    btnClick() {
-      console.log(this.checkData);
+    getNameId(id) {
+      this.$emit('click', id);
     },
   },
 };
@@ -76,19 +95,30 @@ export default {
     padding-right: 40rpx;
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
 
-    .avatar-box__r__name {
+    .avatar-box__r__tit {
+      display: flex;
+      flex-direction: column;
       font-size: 28rpx;
+      &-label {
+        color: --color(--qui-FC-DDD);
+      }
     }
 
-    .avatar-box__r__tit-box {
+    .avatar-box__r__val-box {
       display: flex;
       align-items: center;
-      .avatar-box__r__tit {
+      .avatar-box__r__val {
         margin-right: 20rpx;
         font-size: 24rpx;
+        color: --color(--qui-FC-AAA);
       }
     }
   }
+}
+
+.icon-folding-r {
+  color: --color(--qui-FC-DDD);
+  opacity: 1;
 }
 
 //头像单元格--多选框--H5
