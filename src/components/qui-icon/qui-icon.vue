@@ -30,13 +30,6 @@ export default {
     },
   },
   computed: {
-    cssStyle() {
-      const { color, size } = this;
-      const base = {};
-      if (color) base.color = color;
-      if (size) base.fontSize = `${size}px`;
-      return base;
-    },
     cssClass() {
       const { name } = this;
       return `qui-icon ${name}`;
