@@ -11,6 +11,7 @@
       <view class="det-hd-opera">
         <view class="det-hd-operaCli">
           <view class="icon quiicons icon-management"></view>
+          <quiIcon name="icon-loading" color="red"></quiIcon>
           <view>管理</view>
         </view>
         <image src="@/assets/essence.png" class="essence"></image>
@@ -139,8 +140,12 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import quiIcon from '@/components/qui-icon';
 
 export default {
+  components: {
+    quiIcon,
+  },
   data() {
     return {
       username: 'admin',
