@@ -1,31 +1,34 @@
 <template>
   <view>
-    <view class="avatar-box" v-for="item in data" :key="item.id" @click="getNameId(item.id)">
+    <label class="avatar-box" @click="getNameId(mark)">
       <view class="avatar-box__img">
-        <image :src="item.icon"></image>
+        <image :src="icon"></image>
       </view>
       <view class="avatar-box__r">
         <view class="avatar-box__r__tit">
           <text>
-            {{ item.title }}
+            {{ title }}
           </text>
-          <text class="avatar-box__r__tit-label" v-if="center">{{ item.label }}</text>
+          <text class="avatar-box__r__tit-label" v-if="center">{{ label }}</text>
         </view>
         <view class="avatar-box__r__val-box">
-          <text class="avatar-box__r__val" :style="{color:rightColor}">{{ item.value }}</text>
+          <text
+            class="avatar-box__r__val"
+            :class="center ? 'avatar-box__r__val--777' : ''"
+            :style="{ color: rightColor }"
+          >
+            {{ value }}
+          </text>
           <slot name="rightIcon" />
-          <view
-            class="icon quiicons icon-folding-r"
-            v-if="type === 'default' && !$slots.rightIcon"
-          ></view>
-          <checkbox
-            v-if="type === 'check'"
-            class="avatar-box__checkbox"
-            :value="String(item.id)"
-          ></checkbox>
+          <qui-icon
+            name="icon-folding-r"
+            v-if="!$slots.rightIcon"
+            color="#ddd"
+            size="14"
+          ></qui-icon>
         </view>
       </view>
-    </view>
+    </label>
   </view>
 </template>
 
@@ -36,11 +39,19 @@ export default {
     return {};
   },
   props: {
-    data: {
-      type: Array,
+    title: {
+      type: String,
     },
-    type: {
-      default: 'default',
+    label: {
+      type: String,
+    },
+    mark: {
+      type: Number,
+    },
+    value: {
+      type: String,
+    },
+    icon: {
       type: String,
     },
     center: {
@@ -69,6 +80,9 @@ export default {
   height: 100rpx;
   padding-left: 40rpx;
   box-sizing: border-box;
+  &:active {
+    background-color: --color(--qui-BOR-ED);
+  }
 
   &__img {
     display: flex;
@@ -112,11 +126,14 @@ export default {
         font-size: 24rpx;
         color: --color(--qui-FC-AAA);
       }
+      .avatar-box__r__val--777 {
+        color: --color(--qui-FC-777);
+      }
     }
   }
 }
 
-.icon-folding-r {
+/deep/ .icon-folding-r {
   color: --color(--qui-FC-DDD);
   opacity: 1;
 }
