@@ -35,9 +35,6 @@
 <script>
 export default {
   name: 'QuiAvatarCell',
-  data() {
-    return {};
-  },
   props: {
     title: {
       type: String,
@@ -61,6 +58,9 @@ export default {
     rightColor: {
       type: String,
     },
+  },
+  data() {
+    return {};
   },
   methods: {
     getNameId(id) {
