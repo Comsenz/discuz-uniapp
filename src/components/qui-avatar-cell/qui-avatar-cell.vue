@@ -21,16 +21,16 @@
 <script>
 export default {
   name: 'QuiAvatarCell',
+  props: {
+    data: {
+      type: Array,
+    },
+  },
   data() {
     return {
       avatarCheck: '',
       checkData: [],
     };
-  },
-  props: {
-    data: {
-      type: Array,
-    },
   },
   methods: {
     btnClick() {
