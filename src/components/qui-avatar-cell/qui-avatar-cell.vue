@@ -12,7 +12,7 @@
           <text class="avatar-box__r__tit-label" v-if="center">{{ item.label }}</text>
         </view>
         <view class="avatar-box__r__val-box">
-          <text class="avatar-box__r__val" :style="`color:${rightColor}`">{{ item.value }}</text>
+          <text class="avatar-box__r__val" :style="{color:rightColor}">{{ item.value }}</text>
           <slot name="rightIcon" />
           <view
             class="icon quiicons icon-folding-r"
