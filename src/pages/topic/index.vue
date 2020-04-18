@@ -1,5 +1,6 @@
 <template>
   <view class="content bg">
+    <view class="detail-tip">{{ tip }}</view>
     <view class="detail-hd">
       <view class="det-hd-per-head-box">
         <image src="@/assets/essence.png" class="det-hd-per-head"></image>
@@ -10,8 +11,7 @@
       </view>
       <view class="det-hd-opera">
         <view class="det-hd-operaCli">
-          <view class="icon quiicons icon-management"></view>
-          <quiIcon name="icon-loading" color="red"></quiIcon>
+          <qui-icon name="icon-management"></qui-icon>
           <view>管理</view>
         </view>
         <image src="@/assets/essence.png" class="essence"></image>
@@ -51,9 +51,9 @@
           <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
         </view>
       </view>
-      <view class="icon quiicons icon-unfold"></view>
+      <qui-icon name="icon-unfold"></qui-icon>
       <button class="det-rew-btn">
-        <view class="icon quiicons icon-reward"></view>
+        <qui-icon name="icon-reward"></qui-icon>
         <view>打赏</view>
       </button>
     </view>
@@ -71,16 +71,16 @@
           <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
         </view>
       </view>
-      <view class="icon quiicons icon-unfold"></view>
+      <qui-icon name="icon-unfold"></qui-icon>
     </view>
     <view class="det-con-ft">
       <view class="det-con-ft-child">阅读2345</view>
       <view class="det-con-ft-child">
-        <view class="icon quiicons icon-like"></view>
+        <qui-icon name="icon-like"></qui-icon>
         <view>赞44343</view>
       </view>
       <view class="det-con-ft-child">
-        <view class="icon quiicons icon-collection"></view>
+        <qui-icon name="icon-collection"></qui-icon>
         <view>收藏</view>
       </view>
     </view>
@@ -123,15 +123,15 @@
     </view>
     <view class="det-ft flex">
       <view class="det-ft-child flex">
-        <view class="icon quiicons icon-like"></view>
+        <qui-icon name="icon-like"></qui-icon>
         <view>点赞</view>
       </view>
       <view class="det-ft-child flex">
-        <view class="icon quiicons icon-comments"></view>
+        <qui-icon name="icon-comments"></qui-icon>
         <view>写评论</view>
       </view>
       <view class="det-ft-child flex">
-        <view class="icon quiicons icon-share"></view>
+        <qui-icon name="icon-share"></qui-icon>
         <view>分享</view>
       </view>
     </view>
@@ -140,12 +140,8 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import quiIcon from '@/components/qui-icon';
 
 export default {
-  components: {
-    quiIcon,
-  },
   data() {
     return {
       username: 'admin',
@@ -160,6 +156,7 @@ export default {
         { tag: '女神视频333' },
         { tag: '女神视频4444' },
       ],
+      tip: '内容正在审核中，审核通过后才能正常显示！',
     };
   },
   computed: {
@@ -205,6 +202,15 @@ export default {
   align-items: center;
   justify-content: center;
   background-color: --color(--qui-BG-2);
+}
+.detail-tip {
+  display: block;
+  width: 100%;
+  font-size: $fg-f28;
+  line-height: 60rpx;
+  color: #fff;
+  text-align: center;
+  background: --color(--qui-RED);
 }
 .detail-hd {
   display: flex;
@@ -336,7 +342,7 @@ export default {
     * {
       color: #fff;
     }
-    .icon {
+    .qui-icon {
       margin-right: 13rpx;
       font-size: 36rpx;
       line-height: 90rpx;
@@ -357,7 +363,7 @@ export default {
     font-size: $fg-f28;
     color: --color(--qui-FC-777);
     align-items: center;
-    .icon {
+    .qui-icon {
       margin-right: 17rpx;
       font-size: 30rpx;
     }
@@ -486,7 +492,7 @@ export default {
   align-items: center;
   line-height: 80rpx;
   color: --color(--qui-FC-777);
-  .quiicons {
+  .qui-icon {
     margin-right: 18rpx;
     font-size: 30rpx;
     line-height: 80rpx;
