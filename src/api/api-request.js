@@ -17,6 +17,8 @@ http.setConfig(config => {
       baseUrl: DISCUZ_REQUEST_HOST,
       header: {
         'Content-Type': 'application/vnd.api+json',
+        authorization:
+          'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiIxMDc3ODEzZDIwOWVlOTk2YjQyODlkYjQzZTNjMWYyYzA5OWNhZGRkYjQxMWY0YjU0ODU2MTI1NjY1Mzc1MzRhOGJkYzcxMWMyNThjNTA0ZSIsImlhdCI6MTU4NzI3NTI3OSwibmJmIjoxNTg3Mjc1Mjc5LCJleHAiOjE1ODk4NjcyNzksInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.qLB4FHb0fmCSYnUwWHXDO_lQ2zQzgTiRErNLKMUbHYsAMAc3WdyyUs3SKSMYfMgqHS9xF8m9CiqCY0PcExnrMXPuCU2sPiaOUPd2cCRCRLLnQNQK2uc3bHacn_v097LKxHvGslKrkQ2AI646HQhRjs1JtTiI8AU3efQCnct0GrvyyV2ArY7DF_kK_waLVZx7qjCJ1wRHpX1Pt0Pg2K0xi3ax3L-bMIVbb9HD5Da5yQsvgSqntcKBrLsK5EQDcxCZTXpF3FNEwF4eHw_cHuumYiK5IAm8-eExoPeWW8APnIECvAYk21MsIkr3XGHxrrd5vtbDf9Ao_P7yptPAOXeh8w',
       },
     },
   };

@@ -13,6 +13,12 @@
       "style": {
           "navigationBarTitleText": "Discuz Q"
       }
+    },
+    {
+      "path": "pages/message/index",
+      "style": {
+          "navigationBarTitleText": "消息"
+      }
     }
   ],
   "globalStyle": {
