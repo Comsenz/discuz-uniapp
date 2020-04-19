@@ -3,6 +3,7 @@
     <view class="content" v-for="item in allThreads" :key="item.id">
       <view>{{ item.user.attributes.username }}: {{ item.attributes.title }}</view>
     </view>
+    <text @click="pageClick">跳转@成员页面</text>
   </qui-page>
 </template>
 
@@ -32,6 +33,11 @@ export default {
     ...mapActions({
       loadAllThreads: 'dzThreads/loadAll',
     }),
+    pageClick() {
+      uni.navigateTo({
+        url: '/components/qui-at-member-page/qui-at-member-page',
+      });
+    },
   },
 };
 </script>

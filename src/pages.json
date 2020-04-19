@@ -13,6 +13,12 @@
       "style": {
           "navigationBarTitleText": "Discuz Q"
       }
+    },
+    {
+      "path": "components/qui-at-member-page/qui-at-member-page",
+      "style": {
+        "navigationBarTitleText": "选择@人员"
+      }
     }
   ],
   "globalStyle": {
