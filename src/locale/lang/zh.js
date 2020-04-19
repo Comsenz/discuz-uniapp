@@ -75,5 +75,11 @@ export default {
     pageHeader: {
       title: '返回',
     },
+    atMember:{
+      atTitle:'选择@人员',
+      selectedMember:'搜索成员',
+      notSelected:'尚未选',
+      selected:'@ 已选'
+    }
   },
 };

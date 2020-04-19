@@ -74,5 +74,11 @@ export default {
     pageHeader: {
       title: 'Back',
     },
+    atMember:{
+      atTitle:'Select @ member',
+      selectedMember:'Selected member',
+      notSelected:'Not selected',
+      selected:'@ Selected'
+    }
   },
 };
