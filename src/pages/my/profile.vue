@@ -1,8 +1,8 @@
 <template>
-  <view class="my-profile-page">
+  <view class="my-profile">
     <cell-item title="用户名" arrow addon="猛子"></cell-item>
     <cell-item title="头像" slot-right arrow>
-      <text class="avatar"></text>
+      <text class="my-profile__avatar"></text>
     </cell-item>
     <cell-item title="手机号码" arrow addon="186****7553"></cell-item>
     <cell-item title="密码" arrow addon="修改"></cell-item>
@@ -38,27 +38,28 @@ export default {
 page {
   background-color: #f9fafc;
 }
-.my-profile-page {
+.my-profile {
   padding-top: 40rpx;
   padding-left: 40rpx;
   background: #fff;
   border-bottom: 2rpx solid #ededed;
-  .qui-cell-item {
+  .cell-item {
     padding-right: 40rpx;
   }
-  .qui-cell-item:last-child {
+  .cell-item:last-child {
     border: 0;
   }
-  /deep/ .qui-cell-item-title {
+  /deep/ .cell-item__body__content-title {
     color: #777;
   }
-  .qui-cell-item-right {
+  .cell-item__body__right {
     color: #333;
   }
-  .avatar {
-    width: 75rpx;
-    height: 75rpx;
-    border-radius: 50%;
-  }
+}
+
+.my-profile__avatar {
+  width: 75rpx;
+  height: 75rpx;
+  border-radius: 50%;
 }
 </style>

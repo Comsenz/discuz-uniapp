@@ -1,29 +1,29 @@
 <template>
-  <view :class="['qui-cell-item', 'cell-wrap', { border: border }]" @tap="$_click">
-    <view class="qui-cell-item-body">
-      <view class="qui-cell-item-left" v-if="slotLeft">
+  <view :class="['cell-item', 'cell-item--wrap', { border: border }]" @tap="$_click">
+    <view class="cell-item__body">
+      <view class="cell-item__body__left" v-if="slotLeft">
         <slot></slot>
       </view>
-      <view class="qui-cell-item-content">
-        <view class="qui-cell-item-title" v-if="title" v-text="title"></view>
-        <view class="qui-cell-item-brief" v-if="brief" v-text="brief"></view>
+      <view class="cell-item__body__content">
+        <view class="cell-item__body__content-title" v-if="title" v-text="title"></view>
+        <view class="cell-item__body__content-brief" v-if="brief" v-text="brief"></view>
       </view>
-      <view class="qui-cell-item-right" v-if="slotRight">
+      <view class="cell-item__body__right" v-if="slotRight">
         <slot></slot>
         <text class="quiicons icon-folding-r" v-if="arrow"></text>
       </view>
-      <view class="qui-cell-item-right" v-if="!slotRight">
-        <text class="qui-cell-addon-text">
+      <view class="cell-item__body__right" v-if="!slotRight">
+        <text class="cell-item__body__right-text">
           {{ addon }}
         </text>
         <text class="quiicons icon-folding-r" v-if="arrow"></text>
-        <view class="qui-brief-right" v-if="briefRight">{{ briefRight }}</view>
+        <view class="cell-item__body__right-brief" v-if="briefRight">{{ briefRight }}</view>
       </view>
     </view>
     <view
       v-if="addon2"
       v-text="addon2"
-      class="qui-cell-item-children"
+      class="cell-item_children"
       style="font-size: 24upx;color: #858b9c;"
     ></view>
   </view>
@@ -43,7 +43,7 @@
  * @property {Boolean} slot-left 插槽左 - 不可同时打开两个插槽，默认：false
  * @property {Boolean} slot-right 插槽右 - 不可再使用addon，默认：false
  * @event {Function} click 列表单元项 点击事件
- * @example <qui-cell-item title="普通条目" addon="附加文案" arrow></qui-cell-item>
+ * @example <cell-item title="普通条目" addon="附加文案" arrow></cell-item>
  */
 export default {
   name: 'QuiCellItem',
@@ -105,14 +105,14 @@ export default {
 </script>
 
 <style lang="scss">
-.cell-wrap {
+.cell-item--wrap {
   position: relative;
 }
-.qui-cell-item.border {
+.cell-item.border {
   border-bottom: 2rpx solid #ededed;
 }
 
-.qui-cell-item-body {
+.cell-item__body {
   position: relative;
   display: flex;
   height: 100rpx;
@@ -121,44 +121,44 @@ export default {
   box-sizing: border-box;
 }
 
-.qui-cell-item-title {
+.cell-item__body__content-title {
   font-size: 28rpx;
 }
 
-.qui-cell-item-brief,
-.qui-brief-right {
+.cell-item__body__content-brief,
+.cell-item__body__right-brief {
   margin-top: 6rpx;
   font-size: 24rpx;
   color: #aaa;
 }
 
-.qui-cell-item-content {
+.cell-item__body__content {
   flex: 1 1 0%;
 }
 
-.qui-cell-item-right {
+.cell-item__body__right {
   align-items: center;
   justify-content: flex-end;
   font-size: 28rpx;
   text-align: right;
 }
 
-.qui-cell-item-right .qui-cell-addon-text {
+.cell-item__body__right .cell-item__body__right-text {
   font-size: 28rpx;
 }
 
-.qui-cell-item-children {
+.cell-item__children {
   padding: 20upx 0;
   margin: 0 20upx;
 }
 
-.qui-cell-item.is-disabled .qui-cell-item-content,
-.qui-cell-item.is-disabled .qui-cell-item-title,
-.qui-cell-item.is-disabled .qui-cell-item-brief,
-.qui-cell-item.is-disabled .qui-cell-item-left,
-.qui-cell-item.is-disabled .qui-cell-item-right,
-.qui-cell-item.is-disabled .qui-brief-right,
-.qui-cell-item.is-disabled .qui-cell-item-children {
+.cell-item.is-disabled .cell-item__body__content,
+.cell-item.is-disabled .cell-item__body__content-title,
+.cell-item.is-disabled .cell-item__body__content-brief,
+.cell-item.is-disabled .cell-item__body__left,
+.cell-item.is-disabled .cell-item__body__right,
+.cell-item.is-disabled .cell-item__body__right-brief,
+.cell-item.is-disabled .cell-item__children {
   color: #c5cad5;
 }
 .icon-folding-r {

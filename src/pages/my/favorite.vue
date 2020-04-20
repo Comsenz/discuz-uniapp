@@ -1,6 +1,6 @@
 <template>
-  <view class="favorite-page">
-    <cell-item class="head-wrap" title="147条收藏"></cell-item>
+  <view class="favorite">
+    <cell-item class="favorite-head" title="147条收藏"></cell-item>
   </view>
 </template>
 
@@ -15,15 +15,13 @@ export default {
 </script>
 
 <style lang="scss">
-.favorite-page {
-  .head-wrap {
-    padding-top: 40rpx;
-    padding-left: 40rpx;
-    margin-bottom: 30rpx;
-    border-bottom: 2rpx solid #ededed;
-  }
-  .head-wrap /deep/ .qui-cell-item-body {
-    height: 78rpx;
-  }
+.favorite-head {
+  padding-top: 40rpx;
+  padding-left: 40rpx;
+  margin-bottom: 30rpx;
+  border-bottom: 2rpx solid #ededed;
+}
+.favorite-head /deep/ .cell-item__body {
+  height: 78rpx;
 }
 </style>

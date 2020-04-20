@@ -4,7 +4,7 @@
     <view class="themeItem">
       <view class="themeItem__header">
         <view class="themeItem__header__img">
-          <image src="@/assets/avatar.jpeg" alt></image>
+          <!-- <image src="@/assets/avatar.jpeg" alt></image> -->
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -26,10 +26,10 @@
           {{ themeContent }}
         </view>
 
-        <view class="themeItem__content__img">
+        <!-- <view class="themeItem__content__img">
           <image class="themeItem__content__img__item" src="@/assets/my.jpeg" alt></image>
           <image class="themeItem__content__img__item" src="@/assets/me.jpeg" alt></image>
-        </view>
+        </view> -->
 
         <view class="themeItem__content__tags">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">

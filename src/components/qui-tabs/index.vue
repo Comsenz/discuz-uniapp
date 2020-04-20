@@ -1,18 +1,18 @@
 <template>
-  <view class="tabs">
+  <view class="qui-tabs">
     <view
       v-for="(item, index) in values"
-      :class="index === currentIndex ? 'active tabs-item' : 'tabs-item'"
+      :class="index === currentIndex ? 'qui-tabs__item--active qui-tabs__item' : 'qui-tabs__item'"
       :key="index"
       :style="{
         borderColor: index === currentIndex ? activeColor : 'transparent',
       }"
       @tap="onClick(index)"
     >
-      <text v-if="brief" class="brief">
+      <text v-if="brief" class="qui-tabs__item__brief">
         {{ item.brief }}
       </text>
-      <text class="title">
+      <text class="qui-tabs__item__title">
         {{ item.title }}
       </text>
     </view>
@@ -78,13 +78,13 @@ export default {
 </script>
 
 <style lang="scss">
-.tabs {
+.qui-tabs {
   display: flex;
   flex-direction: row;
   border-bottom: 2rpx solid #ededed;
   box-sizing: border-box;
 }
-.tabs-item {
+.qui-tabs__item {
   position: relative;
   display: inline-flex;
   flex: 1;
@@ -94,19 +94,19 @@ export default {
   padding-top: 20rpx;
   padding-bottom: 40rpx;
   box-sizing: border-box;
-  &.active {
-    border-bottom: 4rpx solid;
-  }
-  &.active .title {
-    color: #333;
-  }
-  .brief {
-    font-size: 28rpx;
-    color: #333;
-  }
-  .title {
-    font-size: 24rpx;
-    color: #aaa;
-  }
+}
+.qui-tabs__item__brief {
+  font-size: 28rpx;
+  color: #333;
+}
+.qui-tabs__item__title {
+  font-size: 24rpx;
+  color: #aaa;
+}
+.qui-tabs__item--active {
+  border-bottom: 4rpx solid;
+}
+.qui-tabs__item--active .qui-tabs__item__title {
+  color: #333;
 }
 </style>

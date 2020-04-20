@@ -1,6 +1,6 @@
 <template>
-  <scroll-view class="like-page" scroll-y scroll-x="false">
-    <view class="items" v-for="(item, index) in newsList" :key="index">
+  <scroll-view class="like" scroll-y scroll-x="false">
+    <view class="like-items" v-for="(item, index) in newsList" :key="index">
       <text>{{ item }}</text>
     </view>
     <load-more :status="loadingType"></load-more>
@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import loadMore from '@/components/uni-load-more';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
@@ -60,13 +60,13 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.like-page {
+.like {
   height: calc(100vh - 400rpx);
-  .items {
-    height: 454rpx;
-    margin-bottom: 20rpx;
-    background: #fff;
-    box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
-  }
+}
+.like-items {
+  height: 454rpx;
+  margin-bottom: 20rpx;
+  background: #fff;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
 }
 </style>

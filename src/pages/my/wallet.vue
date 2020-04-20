@@ -1,6 +1,6 @@
 <template>
-  <view class="wallet-page">
-    <cell-item title="可用余额" arrow addon="¥2346.0" class="available"></cell-item>
+  <view class="wallet">
+    <cell-item title="可用余额" arrow addon="¥2346.0" class="wallet-available"></cell-item>
     <navigator url="./freeze" open-type="navigate">
       <cell-item title="冻结金额" arrow addon="¥23.0"></cell-item>
     </navigator>
@@ -37,18 +37,18 @@ export default {
 page {
   background-color: #f9fafc;
 }
-.wallet-page {
+.wallet {
   padding-top: 40rpx;
   padding-left: 40rpx;
   background: #fff;
   border-bottom: 2rpx solid #ededed;
-  .qui-cell-item {
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .qui-cell-item-title {
+  /deep/ .cell-item__body__content-title {
     color: #777;
   }
-  .qui-cell-item-right {
+  .cell-item__body__right {
     color: #333;
   }
 }

@@ -1,16 +1,16 @@
 <template>
-  <view class="profile-page">
-    <view class="person-info">
-      <view class="info-wrap">
-        <view class="info">
-          <text class="avatar"></text>
+  <view class="profile">
+    <view class="profile-info">
+      <view class="profile-info__box">
+        <view class="profile-info__box__detail">
+          <text class="profile-info__box__detail-avatar"></text>
           <cell-item title="佟掌柜" slot-right brief="管理员" :border="false">
             <view v-if="current !== null">
-              <view class="operate-item">
+              <view class="profile-info__box__detail-operate">
                 <text class="quiicons icon-message"></text>
                 <text>私信</text>
               </view>
-              <view class="operate-item">
+              <view class="profile-info__box__detail-operate">
                 <text class="quiicons icon-follow"></text>
                 <text>关注</text>
               </view>
@@ -18,7 +18,7 @@
           </cell-item>
         </view>
       </view>
-      <view class="introduction">
+      <view class="profile-info__introduction">
         在崔健的所有歌曲中花房姑娘称得上是最抒情的一首花房姑娘中多了一点柔情的东西。
       </view>
     </view>
@@ -29,7 +29,7 @@
         @clickItem="onClickItem"
         :brief="true"
       ></qui-tabs>
-      <view class="tab-content">
+      <view class="profile-tabs__content">
         <view v-show="current === 0" class="items">
           <topic></topic>
         </view>
@@ -96,54 +96,51 @@ export default {
 page {
   background-color: #f9fafc;
 }
-.profile-page {
-  .person-info {
-    padding: 40rpx;
-    font-size: 28rpx;
-    background: #fff;
-  }
-  .info-wrap {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 35rpx;
-  }
-  .info {
-    position: relative;
-    width: 100%;
-    padding-left: 100rpx;
-    font-size: 28rpx;
-    box-sizing: border-box;
-  }
-  .info /deep/ .qui-cell-item-body {
-    height: 80rpx;
-    align-items: flex-start;
-  }
-  .operate-item {
-    display: inline-block;
-    margin-left: 42rpx;
-    color: #333;
-  }
+.profile {
   .quiicons {
     margin-right: 14rpx;
     font-size: 22rpx;
   }
-  .avatar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 80rpx;
-    height: 80rpx;
-    background: #a8a8a8;
-    border-radius: 50%;
-  }
-  .content {
-    background: #fafafc;
-  }
-  .tab-content {
-    padding: 30rpx 20rpx 0;
-  }
-  .tabs {
-    background: #fff;
-  }
+}
+.profile-info {
+  padding: 40rpx;
+  font-size: 28rpx;
+  background: #fff;
+}
+.profile-info__box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 35rpx;
+}
+.profile-info__box__detail {
+  position: relative;
+  width: 100%;
+  padding-left: 100rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.profile-info__box__detail /deep/ .cell-item__body {
+  height: 80rpx;
+  align-items: flex-start;
+}
+.profile-info__box__detail-operate {
+  display: inline-block;
+  margin-left: 42rpx;
+  color: #333;
+}
+.profile-info__box__detail-avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80rpx;
+  height: 80rpx;
+  background: #a8a8a8;
+  border-radius: 50%;
+}
+.profile-tabs__content {
+  padding: 30rpx 20rpx 0;
+}
+.qui-tabs {
+  background: #fff;
 }
 </style>
