@@ -11,8 +11,19 @@
       </view>
       <view class="det-hd-opera">
         <view class="det-hd-operaCli">
-          <qui-icon name="icon-management"></qui-icon>
-          <view>管理</view>
+          <view class="det-hd-management" @click="selectClick">
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>管理</view>
+          </view>
+          <quiDropDown
+            posival="absolute"
+            :show="seleShow"
+            :list="selectList"
+            :top="60"
+            :right="0"
+            :width="180"
+            @click="selectChoice(selectList.type)"
+          ></quiDropDown>
         </view>
         <image src="@/assets/essence.png" class="essence"></image>
       </view>
@@ -51,9 +62,9 @@
           <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
         </view>
       </view>
-      <qui-icon name="icon-unfold"></qui-icon>
+      <qui-icon name="icon-unfold" class="icon-unfold"></qui-icon>
       <button class="det-rew-btn">
-        <qui-icon name="icon-reward"></qui-icon>
+        <qui-icon name="icon-reward" class="qui-icon"></qui-icon>
         <view>打赏</view>
       </button>
     </view>
@@ -71,16 +82,16 @@
           <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
         </view>
       </view>
-      <qui-icon name="icon-unfold"></qui-icon>
+      <qui-icon name="icon-unfold" class="icon-unfold"></qui-icon>
     </view>
     <view class="det-con-ft">
       <view class="det-con-ft-child">阅读2345</view>
       <view class="det-con-ft-child">
-        <qui-icon name="icon-like"></qui-icon>
+        <qui-icon name="icon-like" class="qui-icon"></qui-icon>
         <view>赞44343</view>
       </view>
       <view class="det-con-ft-child">
-        <qui-icon name="icon-collection"></qui-icon>
+        <qui-icon name="icon-collection" class="qui-icon"></qui-icon>
         <view>收藏</view>
       </view>
     </view>
@@ -123,15 +134,15 @@
     </view>
     <view class="det-ft flex">
       <view class="det-ft-child flex">
-        <qui-icon name="icon-like"></qui-icon>
+        <qui-icon name="icon-like" class="qui-icon"></qui-icon>
         <view>点赞</view>
       </view>
       <view class="det-ft-child flex">
-        <qui-icon name="icon-comments"></qui-icon>
+        <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
         <view>写评论</view>
       </view>
       <view class="det-ft-child flex">
-        <qui-icon name="icon-share"></qui-icon>
+        <qui-icon name="icon-share" class="qui-icon"></qui-icon>
         <view>分享</view>
       </view>
     </view>
@@ -140,8 +151,12 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import quiDropDown from '@/components/qui-drop-down';
 
 export default {
+  components: {
+    quiDropDown,
+  },
   data() {
     return {
       username: 'admin',
@@ -157,6 +172,11 @@ export default {
         { tag: '女神视频4444' },
       ],
       tip: '内容正在审核中，审核通过后才能正常显示！',
+      seleShow: false, // 默认收起管理菜单
+      selectList: [
+        { text: '点赞', type: '1' },
+        { text: '收藏', type: '2' },
+      ],
     };
   },
   computed: {
@@ -171,6 +191,14 @@ export default {
     });
   },
   methods: {
+    // 管理菜单点击事件
+    selectClick() {
+      this.seleShow = !this.seleShow;
+    },
+    selectChoice(type) {
+      this.seleShow = false;
+      console.log(type, '类型');
+    },
     // 跳转到评论详情页
     commentJump() {
       console.log('跳转');
@@ -187,6 +215,12 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
+page {
+  padding: 0;
+  margin: 0;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-333);
+}
 * {
   padding: 0;
   margin: 0;
@@ -249,21 +283,25 @@ export default {
   align-self: flex-end;
   text-align: right;
   flex-shrink: 0;
-  .det-hd-operaCli {
+  .essence {
+    display: inline-block;
+    width: 49rpx;
+    height: 60rpx;
+  }
+}
+.det-hd-operaCli {
+  position: relative;
+  z-index: 10;
+  .det-hd-management {
     display: flex;
     flex-direction: row;
     .icon-management {
       margin-right: 7rpx;
       font-size: 26rpx;
     }
-    font-size: $fg-f28;
-    line-height: 40rpx;
   }
-  .essence {
-    display: inline-block;
-    width: 49rpx;
-    height: 60rpx;
-  }
+  font-size: $fg-f28;
+  line-height: 40rpx;
 }
 //详情页帖子内容
 .detail-post-content {
@@ -438,6 +476,7 @@ export default {
 }
 .comment-child-con {
   padding: 20rpx 0 40rpx;
+  font-size: $fg-f28;
   line-height: 45rpx;
   text-align: left;
   .comment-child-con-all {
