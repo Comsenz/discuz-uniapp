@@ -2,6 +2,7 @@
   <qui-page>
     <view class="content" v-for="item in allThreads" :key="item.id">
       <view>{{ item.user.attributes.username }}: {{ item.attributes.title }}</view>
+      <button @click="click">跳转消息页</button>
     </view>
   </qui-page>
 </template>
@@ -32,6 +33,11 @@ export default {
     ...mapActions({
       loadAllThreads: 'dzThreads/loadAll',
     }),
+    click() {
+      uni.navigateTo({
+        url: '../message/index',
+      });
+    },
   },
 };
 </script>
