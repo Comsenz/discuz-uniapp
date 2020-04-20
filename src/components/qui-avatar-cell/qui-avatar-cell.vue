@@ -38,18 +38,23 @@ export default {
   props: {
     title: {
       type: String,
+      default: '',
     },
     label: {
       type: String,
+      default: '',
     },
     mark: {
       type: Number,
+      default: 0,
     },
     value: {
       type: String,
+      default: '',
     },
     icon: {
       type: String,
+      default: '',
     },
     center: {
       default: false,
@@ -57,6 +62,7 @@ export default {
     },
     rightColor: {
       type: String,
+      default: '',
     },
   },
   data() {

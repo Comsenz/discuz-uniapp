@@ -12,20 +12,30 @@
       </view>
     </view>
     <view class="qui-at-member-page-box__lst">
-      <checkbox-group @change="changeCheck">
-        <label v-for="item in avatarData">
-          <qui-avatar-cell
-            :mark="item.id"
-            :key="item.id"
-            :title="item.title"
-            :value="item.value"
-            :label="item.label"
-            :icon="item.icon"
-          >
-            <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
-          </qui-avatar-cell>
-        </label>
-      </checkbox-group>
+      <scroll-view
+        class="scroll-Y"
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="lower"
+      >
+        <checkbox-group @change="changeCheck">
+          <label v-for="item in avatarData" :key="item.id">
+            <qui-avatar-cell
+              :mark="item.id"
+              :key="item.id"
+              :title="item.title"
+              :value="item.value"
+              :label="item.label"
+              :icon="item.icon"
+            >
+              <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
+            </qui-avatar-cell>
+          </label>
+        </checkbox-group>
+        <view class="loading-text">
+          <text>{{ i18n.t(loadingText) }}</text>
+        </view>
+      </scroll-view>
     </view>
     <view class="qui-at-member-page-box__ft">
       <button
@@ -34,7 +44,7 @@
         @click="getCheckMember"
       >
         {{
-          checkAvatar.length < 1
+          checkAvatar.length &lt; 1
             ? i18n.t('discuzq.atMember.notSelected')
             : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
         }}
@@ -48,21 +58,9 @@ export default {
   name: 'QuiAtMemberPage',
   data() {
     return {
-      avatarData: [
-        {
-          id: 1,
-          icon: 'https://profile.csdnimg.cn/B/1/5/3_weixin_39703839',
-          title: '叶良辰',
-          value: '圈主',
-        },
-        {
-          id: 2,
-          icon: 'https://profile.csdnimg.cn/B/1/5/3_weixin_39703839',
-          title: '赵日天',
-          value: '管理员',
-        },
-      ],
+      avatarData: [],
       checkAvatar: [], // 已选成员列表
+      loadingText: 'discuzq.list.loading',
     };
   },
   methods: {
@@ -76,6 +74,21 @@ export default {
       // 需要考虑，从哪个页面跳回来，带上参数或者存起来，再跳回去
       console.log(this.checkAvatar);
     },
+    lower() {
+      // 模拟接口数据请求
+      const setAdd = setTimeout(() => {
+        this.avatarData.push({
+          id: this.avatarData.length + 1,
+          icon: 'https://profile.csdnimg.cn/B/1/5/3_weixin_39703839',
+          title: '叶良辰',
+          value: '圈主',
+        });
+      }, 500);
+      if (this.avatarData.length > 30) {
+        clearTimeout(setAdd);
+        this.loadingText = 'discuzq.list.noMoreData';
+      }
+    },
   },
   onLoad() {
     uni.setNavigationBarColor({
@@ -85,6 +98,18 @@ export default {
     uni.setNavigationBarTitle({
       title: this.i18n.t('discuzq.atMember.atTitle'),
     });
+
+    // 模拟数据初始化
+    this.avatarData = [];
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 25; i++) {
+      this.avatarData.push({
+        id: i,
+        icon: 'https://profile.csdnimg.cn/B/1/5/3_weixin_39703839',
+        title: '叶良辰',
+        value: '圈主',
+      });
+    }
   },
 };
 </script>
@@ -93,6 +118,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
+$otherHeight: 292rpx;
 .qui-at-member-page-box {
   width: 100%;
   &__hd {
@@ -121,6 +147,17 @@ export default {
       /deep/ input .input-placeholder {
         font-size: $fg-f28;
         color: --color(--qui-FC-C6);
+      }
+    }
+  }
+  &__lst {
+    .scroll-Y {
+      height: calc(100vh - #{$otherHeight});
+      .loading-text {
+        height: 100rpx;
+        font-size: 28rpx;
+        line-height: 100rpx;
+        text-align: center;
       }
     }
   }
