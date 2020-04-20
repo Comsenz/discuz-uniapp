@@ -56,8 +56,6 @@
 
 | 参数 | 说明 | 类型 | 默认值 |
 | ---- | ---- | ---- | ---- |
-| type | 提示类型（'text'\|'icon'\|'loading'） | string | 'loading' |
 | icon | 图标名称，具体需要查看 qui-icon 中 font-icon.scss 文件中的图标样式名称 | string | 'icon-loading' |
-| message | 提示的信息 | string | - |
+| message | 提示的信息 | string | 正在加载 |
 | position | 提示位置（'top'\|'middle'\|'bottom'） | string | 'middle' |
-| duration | 展示时长(ms)，值为 0 时，toast 不会消失 | number | 0 |

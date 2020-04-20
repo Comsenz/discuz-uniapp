@@ -80,6 +80,7 @@ export default {
     showLoading(options = {}) {
       this.operatorData({
         icon: 'icon-loading',
+        message: '正在加载',
         ...options,
         type: 'loading',
         duration: 0,
