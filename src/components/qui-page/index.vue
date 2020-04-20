@@ -22,6 +22,6 @@ export default {
 .qui-page {
   min-height: 100vh;
   color: --color(--qui-FC-333);
-  background-color: --color(--qui-BG-1);
+  background-color: #f9fafc;
 }
 </style>
