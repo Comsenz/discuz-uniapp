@@ -1,10 +1,12 @@
 // variable
 @import './variable/global.scss';
 @import './variable/color.scss'; // 里面包含主题样式
+@import '@/styles/base/theme/fn.scss';
 
 page,
 body {
-  font: $fg-f14 $font-family 1.6;
+  font: $fg-f28 $font-family 1.6;
+  background-color: --color(--qui-BG-2);
 }
 
 //小程序原生组件--修改
@@ -16,8 +18,8 @@ checkbox .wx-checkbox-input {
   border-radius: 50rpx;
 }
 checkbox .wx-checkbox-input.wx-checkbox-input-checked {
-  background: #007aff;
+  background: --color(--qui-BG-HIGH-LIGHT);
 }
 checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
-  color: #fff;
+  color: --color(--qui-FC-FFF);
 }

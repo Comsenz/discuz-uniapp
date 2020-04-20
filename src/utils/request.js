@@ -132,11 +132,17 @@ export default class Request {
     options.params = options.params || {};
     options.header = options.header || this.config.header;
     options.method = options.method || this.config.method;
+    // 小程序不支持，所以改了一下
+    if (options.method === 'patch') {
+      options.method = 'POST';
+      options.header = { ...options.header, 'x-http-method-override': 'patch' };
+    }
     options.custom = { ...this.config.custom, ...(options.custom || {}) };
     // #ifdef APP-PLUS
     options.sslVerify = options.sslVerify === undefined ? this.config.sslVerify : options.sslVerify;
     // #endif
     options.getTask = options.getTask || this.config.getTask;
+
     return new Promise((resolve, reject) => {
       let next = true;
       const cancel = (t = 'handle cancel', config = options) => {
@@ -198,6 +204,19 @@ export default class Request {
       data,
       method: 'POST',
       ...options,
+    });
+  }
+
+  // 小程序不支持，所以改了一下
+  patch(url, data, options = {}) {
+    return this.request({
+      url,
+      data,
+      method: 'POST',
+      ...options,
+      header: {
+        'x-http-method-override': 'patch',
+      },
     });
   }
 
