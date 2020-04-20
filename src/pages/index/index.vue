@@ -2,14 +2,13 @@
   <qui-page>
     <view class="content" v-for="item in allThreads" :key="item.id">
       <view>{{ item.user.attributes.username }}: {{ item.attributes.title }}</view>
-      <button @click="click">跳转消息页</button>
     </view>
+    <button @click="click">跳转消息页</button>
   </qui-page>
 </template>
 
 <script>
 import quiPage from '@/components/qui-page';
-import { mapActions, mapState } from 'vuex';
 
 export default {
   components: {
@@ -19,20 +18,14 @@ export default {
     return {};
   },
   computed: {
-    ...mapState({
-      allThreads: state => state.dzThreads.all,
-    }),
+    allThreads() {
+      return this.$store.getters['jv/get']({ _jv: { type: 'threads' } });
+    },
   },
   onLoad() {
-    this.loadAllThreads({
-      'page[size]': 10,
-      'page[number]': 1,
-    });
+    this.getThreads();
   },
   methods: {
-    ...mapActions({
-      loadAllThreads: 'dzThreads/loadAll',
-    }),
     click() {
       uni.navigateTo({
         url: '../message/index',

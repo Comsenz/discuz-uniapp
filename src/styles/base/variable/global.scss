@@ -1,23 +1,8 @@
 // 字体
-$font-family:
-  -apple-system,
-  blinkmacsystemfont,
-  'Helvetica Neue',
-  arial,
-  'PingFang SC',
-  'Hiragino Sans GB',
-  stheiti,
-  'Microsoft YaHei',
-  'Microsoft JhengHei',
-  'Source Han Sans SC',
-  'Noto Sans CJK SC',
-  'Source Han Sans CN',
-  'Noto Sans SC',
-  'Source Han Sans TC',
-  'Noto Sans CJK TC',
-  'WenQuanYi Micro Hei',
-  simsun,
-  sans-serif;
+$font-family: -apple-system, blinkmacsystemfont, 'Helvetica Neue', arial, 'PingFang SC',
+  'Hiragino Sans GB', stheiti, 'Microsoft YaHei', 'Microsoft JhengHei', 'Source Han Sans SC',
+  'Noto Sans CJK SC', 'Source Han Sans CN', 'Noto Sans SC', 'Source Han Sans TC', 'Noto Sans CJK TC',
+  'WenQuanYi Micro Hei', simsun, sans-serif;
 
 // 字体大小
 $fg-f50: 50rpx;
