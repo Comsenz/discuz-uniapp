@@ -3,22 +3,29 @@
   // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
   "pages": [
     {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    },
+
+    {
       "path": "pages/topic/index",
       "style": {
-          "navigationBarTitleText": "Discuz Q"
+        "navigationBarTitleText": "Discuz Q"
       }
     },
     {
       "path": "pages/index/index",
       "style": {
-          "navigationBarTitleText": "Discuz Q"
+        "navigationBarTitleText": "Discuz Q"
       }
     }
   ],
   "globalStyle": {
-      "navigationBarTextStyle": "black",
-      "navigationBarTitleText": "Discuz Q",
-      "navigationBarBackgroundColor": "#F8F8F8",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "",
+    "navigationBarBackgroundColor": "#1878F3",
     "backgroundColor": "#F8F8F8",
     "h5": {
       // h5 不显示顶部导航栏

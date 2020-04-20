@@ -1,0 +1,320 @@
+<template>
+  <view class="themeCount">
+    <image class="addFine" src="@/assets/essence.png" alt></image>
+    <view class="themeItem">
+      <view class="themeItem__header">
+        <view class="themeItem__header__img">
+          <image src="@/assets/avatar.jpeg" alt></image>
+        </view>
+        <view class="themeItem__header__title">
+          <view class="themeItem__header__title__top">
+            <span class="themeItem__header__title__username">{{ userName }}</span>
+            <span v-if="isAdmin && themeType !== '1'" class="themeItem__header__title__isAdmin">
+              {{ themeTypes }}
+            </span>
+            <span v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
+              {{ themeType === '2' ? '回复了我' : '@了我' }}
+            </span>
+            <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn">></view>
+          </view>
+          <view class="themeItem__header__title__time">{{ themeTime }}</view>
+        </view>
+      </view>
+
+      <view class="themeItem__content">
+        <view class="themeItem__content__text">
+          {{ themeContent }}
+        </view>
+
+        <view class="themeItem__content__img">
+          <image class="themeItem__content__img__item" src="@/assets/my.jpeg" alt></image>
+          <image class="themeItem__content__img__item" src="@/assets/me.jpeg" alt></image>
+        </view>
+
+        <view class="themeItem__content__tags">
+          <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
+            {{ item.tagName }}
+          </view>
+        </view>
+      </view>
+
+      <view class="themeItem__comment"></view>
+
+      <view class="themeItem__footer">
+        <view v-if="themeType === '1'" class="themeItem__footer__themeType1">
+          <view
+            :class="[
+              'themeItem__footer__themeType1__item',
+              'themeItem__footer__themeType1__great',
+              isGreat && 'themeItem__footer__themeType1__greated',
+            ]"
+          >
+            <qui-icon
+              class="text"
+              name="icon-like"
+              size="16"
+              color="#AAA"
+              @click="handleClick"
+            ></qui-icon>
+            {{ isGreat ? '已赞' : '赞' }}
+            {{ themeLike }}
+          </view>
+
+          <view class="themeItem__footer__themeType1__item themeItem__footer__themeType1__comment">
+            评论
+            {{ themeComment }}
+          </view>
+
+          <view
+            class="themeItem__footer__themeType1__item themeItem__footer__themeType1__share"
+            @click="handleClick"
+          >
+            <qui-icon class="text" name="icon-share" size="16" color="#AAA"></qui-icon>
+            分享
+          </view>
+        </view>
+
+        <view v-if="themeType === '2'" class="themeItem__footer__themeType2">
+          <view class="themeItem__footer__themeType2__item">
+            <qui-icon
+              class="text"
+              name="icon-delete"
+              size="18"
+              color="#AAA"
+              @click="handleClick"
+            ></qui-icon>
+            删除
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  props: {
+    themeType: {
+      validator: value => {
+        // 1 首页  2 回复  3 @
+        return ['1', '2', '3'].indexOf(value) !== -1;
+      },
+      default: '1',
+    },
+    userName: {
+      type: String,
+      default: '',
+    },
+    themeTypes: {
+      type: String,
+      default: '',
+    },
+    themeContent: {
+      type: String,
+      default: '',
+    },
+    themeTime: {
+      type: String,
+      default: '',
+    },
+    themeLike: {
+      type: Number,
+      default: 0,
+    },
+    themeComment: {
+      type: Number,
+      default: 0,
+    },
+    tagName: {
+      type: String,
+      default: '',
+    },
+
+    tags: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+  },
+  data: () => {
+    return {
+      isAdmin: true,
+      isGreat: false,
+    };
+  },
+  methods: {
+    handleClick() {
+      console.log('是分享哦');
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+.themeCount {
+  position: relative;
+  .addFine {
+    position: absolute;
+    top: -10rpx;
+    left: 679rpx;
+    width: 31rpx;
+    height: 41rpx;
+  }
+}
+.themeItem {
+  // width: 100%;
+  padding: 30rpx;
+  margin: 0 20rpx 30rpx;
+  background: --color(--qui-BG-2);
+  border-radius: 6rpx;
+  box-sizing: border-box;
+
+  // background: #c33;
+
+  &__header {
+    display: flex;
+    width: 100%;
+    height: 80rpx;
+    margin-bottom: 12rpx;
+
+    &__img {
+      width: 80rpx;
+      height: 80rpx;
+      margin-right: 18rpx;
+      background: #ccc;
+      border-radius: 100%;
+
+      image {
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+      }
+    }
+
+    &__title {
+      flex: 1;
+
+      &__top {
+        height: 37rpx;
+        margin-left: 2rpx;
+        font-family: $font-family;
+        font-size: 28rpx;
+        line-height: 37rpx;
+      }
+
+      &__username {
+        font-weight: bold;
+        color: rgba(51, 51, 51, 1);
+      }
+
+      &__isAdmin {
+        font-weight: 400;
+        color: rgba(170, 170, 170, 1);
+      }
+
+      &__time {
+        font-size: 24rpx;
+        font-weight: 400;
+        line-height: 31rpx;
+        color: rgba(170, 170, 170, 1);
+      }
+
+      &__jumpBtn {
+        float: right;
+        width: 10rpx;
+        height: 37rpx;
+        font-size: 10rpx;
+        line-height: 37rpx;
+        color: #ddd;
+      }
+    }
+  }
+
+  &__content {
+    &__text {
+      margin-bottom: 12rpx;
+      font-family: $font-family;
+      font-size: 28rpx;
+      font-weight: 400;
+      line-height: 45rpx;
+      color: rgba(51, 51, 51, 1);
+    }
+
+    &__img {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 22rpx;
+      line-height: 0;
+
+      &__item {
+        display: block;
+        width: 48%;
+        height: 211rpx;
+        margin-bottom: 20rpx;
+        background: #fff;
+      }
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+
+      &__item {
+        height: 50rpx;
+        padding: 0 20rpx;
+        margin-right: 10rpx;
+        margin-bottom: 8rpx;
+        font-family: $font-family;
+        font-size: 24rpx;
+        font-weight: 400;
+        line-height: 50rpx;
+        color: rgba(119, 119, 119, 1);
+        text-align: center;
+        background: rgba(247, 247, 247, 1);
+        border-radius: 6rpx;
+      }
+    }
+  }
+
+  &__footer {
+    &__themeType1 {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 60rpx;
+
+      &__item {
+        font-family: $font-family;
+        font-size: 28rpx;
+        font-weight: 400;
+        line-height: 37rpx;
+        color: rgba(170, 170, 170, 1);
+      }
+
+      text {
+        margin-right: 15rpx;
+      }
+
+      &__greated {
+        color: rgba(221, 221, 221, 1);
+      }
+    }
+
+    &__themeType2 {
+      &__item {
+        font-family: $font-family;
+        font-size: 28rpx;
+        font-weight: 400;
+        line-height: 37rpx;
+        color: rgba(170, 170, 170, 1);
+        text-align: right;
+      }
+      text {
+        margin-right: 15rpx;
+      }
+    }
+  }
+}
+</style>
