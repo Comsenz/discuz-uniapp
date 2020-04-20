@@ -14,21 +14,20 @@
       </uni-list-item>
     </uni-list>
     <view class="line"></view>
-    <view class="content">
-      <view class="info">
+    <view class="msg-con" v-for="user in userList" :key="user.id">
+      <view>
         <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
       </view>
       <view class="text">
-        <text class="black-text">我是唯希</text>
-        <text class="gray-text">（管理员）</text>
+        <text class="black-text">{{ user.userName }}</text>
+        <text class="gray-text" v-if="user.role === '管理员'">（{{ user.role }}）</text>
+        <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
         <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
-        <view class="">
-          <text class="time">2020-12-13 上午 07:22</text>
+        <view>
+          <text class="time">{{ user.time }}</text>
         </view>
       </view>
-    </view>
-    <view class="">
-      世界各地的友好城市，为湖北打气！
+      <view class="word">{{ user.word }}</view>
     </view>
   </view>
 </template>
@@ -50,6 +49,23 @@ export default {
         { id: 3, title: '点赞我的' },
         { id: 4, title: '支付我的' },
         { id: 5, title: '系统通知' },
+      ],
+      userList: [
+        {
+          id: 1,
+          userName: '新佑卫门',
+          role: '管理员',
+          time: '2020-12-13 上午 07:22',
+          word: '世界各地的友好城市，为湖北打气！',
+        },
+        {
+          id: 2,
+          userName: '一休哥',
+          role: '访问者',
+          time: '2020-12-13 上午 07:22',
+          word:
+            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）美国知名商业杂志福布斯》发布2019美国最具创',
+        },
       ],
     };
   },
@@ -80,11 +96,11 @@ export default {
   opacity: 1;
 }
 
-.content {
+.msg-con {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  margin: 30rpx 0 20rpx;
+  margin: 30rpx 0 0;
   background-color: #fff;
 }
 .logo {
@@ -94,6 +110,7 @@ export default {
   background-color: blue;
 }
 .text {
+  width: 100%;
   align-items: center;
   margin: 20rpx 0;
 }
@@ -121,10 +138,10 @@ export default {
 }
 
 .red-circle {
-  display: table;
+  display: flex;
 }
 .uni-icons {
-  display: table-cell;
-  vertical-align: middle;
+  flex-direction: row;
+  align-items: center;
 }
 </style>
