@@ -89,7 +89,6 @@
 | | | |-- theme                 styles: 主题皮肤配置
 | | | |-- variable              styles: 变量
 | | | |-- reset.scss            styles: 重置页面样式
-| | |-- icon                    styles: font icon
 | |-- utils                   常用函数存放目录
 | |-- App.vue                 应用配置，用来配置App全局样式以及监听
 | |-- main.js                 Vue 初始化入口文件
@@ -118,7 +117,7 @@
 2. [vue](https://cn.vuejs.org/index.html)：JavaScript 渐进式框架
 3. [vuex](https://vuex.vuejs.org/zh/)：状态管理
 4. [vue-i18n](https://kazupon.github.io/vue-i18n/zh/)：国际化
-5. [@reststate/vuex](https://vuex.reststate.codingitwrong.com/#synopsis)：允许通过 vuex store 访问 [JSON:API](https://jsonapi.org/) web 服务中的数据。Discuz Q 接口使用的是 JSON:API 规范，所以使用这个库更加方便处理该请求和数据。
+5. [jsonapi-vuex](https://github.com/mrichar1/jsonapi-vuex)：允许通过 vuex store 访问 [JSON:API](https://jsonapi.org/) web 服务中的数据。Discuz Q 接口使用的是 JSON:API 规范，所以使用这个库更加方便处理该请求和数据。
 
 ## TODO
 

@@ -15,5 +15,7 @@ export default {
 <style lang="scss">
 /* 每个页面公共css */
 @import '@/styles/base/reset.scss';
-@import '@/styles/icon/font-icon.scss';
+page {
+  font-size: 28rpx;
+}
 </style>
