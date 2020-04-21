@@ -74,6 +74,9 @@ export default {
     // 导航
     pageHeader: {
       title: '返回',
-    },
+    }
   },
+  core: {
+    not_install: '该站点未安装'
+  }
 };

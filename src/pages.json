@@ -5,10 +5,9 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": ""
+        "navigationStyle": "custom"
       }
     },
-
     {
       "path": "pages/topic/index",
       "style": {
