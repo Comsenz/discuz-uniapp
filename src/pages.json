@@ -19,6 +19,14 @@
       "style": {
         "navigationBarTitleText": "Discuz Q"
       }
+    },
+    {
+      "path": "pages/common/message",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "信息提示",
+        "disableScroll": true
+      }
     }
   ],
   "globalStyle": {
