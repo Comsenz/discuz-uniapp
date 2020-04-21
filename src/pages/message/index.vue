@@ -15,10 +15,8 @@
     </uni-list>
     <view class="line"></view>
     <view class="msg-con" v-for="user in userList" :key="user.id">
-      <view>
-        <view>
-          <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
-        </view>
+      <view class="msg-user">
+        <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
         <view class="text">
           <text class="black-text">{{ user.userName }}</text>
           <text class="gray-text" v-if="user.role === '管理员'">（{{ user.role }}）</text>
@@ -26,12 +24,12 @@
             <text class="time">{{ user.time }}</text>
           </view>
         </view>
-        <view class="word">{{ user.word }}</view>
+        <view class="msg-r">
+          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
+          <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
+        </view>
       </view>
-      <view>
-        <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
-        <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
-      </view>
+      <view class="word">{{ user.word }}</view>
     </view>
   </view>
 </template>
@@ -102,22 +100,31 @@ export default {
 
 .msg-con {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
   margin: 30rpx 0 0;
   background-color: #fff;
 }
+
+.msg-user {
+  justify-content: space-between;
+}
+
+.msg-r {
+  align-items: center;
+}
+
 .logo {
   width: 80rpx;
   height: 80rpx;
   margin: 20rpx 20rpx 20rpx 40rpx;
   background-color: blue;
 }
+
 .text {
   width: 100%;
   align-items: center;
   margin: 20rpx 0;
 }
+
 .black-text {
   font-size: 28rpx;
   font-weight: bold;

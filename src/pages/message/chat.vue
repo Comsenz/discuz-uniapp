@@ -1,6 +1,9 @@
 <template>
   <view class="chat-box">
-    <view class="chat-box__con"></view>
+    <view class="chat-box__con">
+      <!-- <image class="logo" src="https://discuz.chat/static/images/logo.png"></image> -->
+      <view class="dialog-box">你好~</view>
+    </view>
     <view class="chat-box__footer">
       <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
       <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" />
@@ -29,6 +32,46 @@ export default {
 
 .chat-box {
   background-color: #ededed;
+}
+
+.chat-box__con {
+  display: flex;
+}
+
+.dialog-box {
+  position: relative;
+  width: 540rpx;
+  height: 80rpx;
+  padding: 20rpx;
+  margin: 20rpx;
+  background: rgba(255, 255, 255, 1);
+  border: 1rpx solid rgba(229, 229, 229, 1);
+  opacity: 1;
+}
+
+// .dialog-box:before {
+//   position: absolute;
+//   top: 34rpx;
+//   left: -10rpx;
+//   border-top: 6px solid transparent;
+//   border-right: 10px solid #ccc;
+//   border-bottom: 6px solid transparent;
+//   content: '';
+// }
+
+.dialog-box:after {
+  position: absolute;
+  top: 10px;
+  left: -8px;
+  border-top: 6px solid transparent;
+  border-right: 10px solid #fff;
+  border-bottom: 6px solid transparent;
+  content: '';
+}
+
+.logo {
+  width: 75rpx;
+  height: 80rpx;
 }
 
 .chat-box__footer {
