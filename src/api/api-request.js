@@ -2,7 +2,7 @@
 // https://ext.dcloud.net.cn/plugin?id=392
 import Request from '@/utils/request';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
-import {i18n} from '@/locale';
+import { i18n } from '@/locale';
 
 const http = new Request();
 
@@ -18,7 +18,7 @@ http.setConfig(config => {
       baseUrl: DISCUZ_REQUEST_HOST,
       header: {
         'Content-Type': 'application/vnd.api+json',
-        'Accept': 'application/vnd.api+json'
+        Accept: 'application/vnd.api+json',
       },
     },
   };
@@ -31,23 +31,25 @@ http.setConfig(config => {
  * @cancel {Object} config - catch((err) => {}) err.config === config; 非必传，默认为request拦截器修改之前的config
  * function cancel(text, config) {}
  */
-http.interceptor.request((config, cancel) => { /* cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config */
+http.interceptor.request(config => {
+  // cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config
   try {
     const accessToken = uni.getStorageSync('access_token');
     if (accessToken) {
-      config.header['Authorization'] = 'Bearer '+accessToken;
+      // eslint-disable-next-line no-param-reassign
+      config.header.Authorization = `Bearer ${accessToken}`;
     }
   } catch (e) {
-      // error
+    // error
   }
 
-  return config
+  return config;
 });
 
 // 在请求之后拦截
 http.interceptor.response(
   response => {
-    //状态码 >= 200 < 300 会走这里
+    // 状态码 >= 200 < 300 会走这里
     // if (response.config.custom.verification) {
     //   // 演示自定义参数的作用
     //   return response.data;
@@ -55,25 +57,29 @@ http.interceptor.response(
     return response;
   },
   response => {
-    
     // 对响应错误做点什么 （statusCode !== 200），必须return response
-    response.data.errors.map(error => {
-      switch(error.code) {
-        case 'access_denied':
-          //token 无效 重新请求
-          uni.removeStorage({
-            key: 'access_token',
-              success: function (res) {
+    if (response && response.data && response.errors) {
+      response.data.errors.map(error => {
+        switch (error.code) {
+          case 'access_denied':
+            // token 无效 重新请求
+            uni.removeStorage({
+              key: 'access_token',
+              success() {
                 delete response.config.header.Authorization;
-                http.request(response.config); 
-              }
-          });
-          break;
-        default:
-          uni.showToast({ title: error.detail ? error.detail : i18n.t('core.'+error.code) });
-      }
-    });
-    
+                http.request(response.config);
+              },
+            });
+            break;
+          default:
+            uni.showToast({ title: error.detail ? error.detail : i18n.t(`core.${error.code}`) });
+        }
+        return error;
+      });
+    } else {
+      uni.showToast({ title: response.errMsg });
+    }
+
     return response;
   },
 );

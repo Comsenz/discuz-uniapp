@@ -1,14 +1,17 @@
 <script>
 export default {
   onLaunch() {
-    this.$store.dispatch('jv/get', ['forum', {params: {
-      include: 'users'
-    }}]);
+    this.$store.dispatch('jv/get', [
+      'forum',
+      {
+        params: {
+          include: 'users',
+        },
+      },
+    ]);
   },
-  onShow() {
-  },
-  onHide() {
-  },
+  onShow() {},
+  onHide() {},
 };
 </script>
 
