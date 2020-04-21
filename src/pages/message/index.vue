@@ -15,8 +15,8 @@
     </uni-list>
     <view class="line"></view>
     <!-- 会话列表 -->
-    <view class="msg-con" v-for="user in userList" :key="user.id">
-      <view class="msg-user">
+    <view class="dialog-list-box" v-for="user in userList" :key="user.id">
+      <view class="dialog-header">
         <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
         <view class="text">
           <text class="black-text">{{ user.userName }}</text>
@@ -25,12 +25,12 @@
             <text class="time">{{ user.time }}</text>
           </view>
         </view>
-        <view class="msg-r">
+        <view class="dialog-right">
           <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
           <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
         </view>
       </view>
-      <view class="word">{{ user.word }}</view>
+      <view class="dialog-content">{{ user.word }}</view>
     </view>
   </view>
 </template>
@@ -69,6 +69,13 @@ export default {
           word:
             '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）美国知名商业杂志福布斯》发布2019美国最具创',
         },
+        {
+          id: 3,
+          userName: '刘辉开',
+          role: '访问者',
+          time: '2020-12-13 上午 07:22',
+          word: '回家吃饭啦',
+        },
       ],
     };
   },
@@ -89,35 +96,31 @@ export default {
 
 .msg-box {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   background-color: #fafafa;
 }
 
 .line {
   height: 0rpx;
+  margin: 0 0 10rpx;
   border: 1px solid rgba(237, 237, 237, 1);
   opacity: 1;
 }
 
-.msg-con {
-  display: flex;
-  margin: 30rpx 0 0;
+.dialog-list-box {
+  margin: 20rpx 0;
   background-color: #fff;
 }
 
-.msg-user {
+.dialog-header {
+  display: flex;
   justify-content: space-between;
-}
-
-.msg-r {
-  align-items: center;
 }
 
 .logo {
   width: 80rpx;
   height: 80rpx;
   margin: 20rpx 20rpx 20rpx 40rpx;
-  background-color: blue;
 }
 
 .text {
@@ -152,8 +155,18 @@ export default {
 .red-circle {
   display: flex;
 }
-.uni-icons {
+
+.dialog-right {
+  display: flex;
   flex-direction: row;
   align-items: center;
+  margin-right: 30rpx;
+}
+
+.dialog-content {
+  padding: 10rpx 40rpx 30rpx;
+  font-weight: 400;
+  color: rgba(51, 51, 51, 1);
+  opacity: 1;
 }
 </style>

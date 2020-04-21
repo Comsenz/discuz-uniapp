@@ -2,7 +2,8 @@
   <view class="chat-box">
     <view class="chat-box__con">
       <!-- <image class="logo" src="https://discuz.chat/static/images/logo.png"></image> -->
-      <view class="dialog-box">你好~</view>
+      <view class="dialog-box-other">你好，我是新佑卫门~</view>
+      <view class="dialog-box-me">你好，我是一休哥~</view>
     </view>
     <view class="chat-box__footer">
       <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
@@ -38,7 +39,7 @@ export default {
   display: flex;
 }
 
-.dialog-box {
+.dialog-box-other {
   position: relative;
   width: 540rpx;
   height: 80rpx;
@@ -49,7 +50,7 @@ export default {
   opacity: 1;
 }
 
-// .dialog-box:before {
+// .dialog-box-other:before {
 //   position: absolute;
 //   top: 34rpx;
 //   left: -10rpx;
@@ -59,7 +60,7 @@ export default {
 //   content: '';
 // }
 
-.dialog-box:after {
+.dialog-box-other:after {
   position: absolute;
   top: 10px;
   left: -8px;
