@@ -51,9 +51,3 @@ export const localeUse = lang => {
   });
   return currentLocale();
 };
-
-export default {
-  i18n,
-  localeUse,
-  currentLocale,
-};
