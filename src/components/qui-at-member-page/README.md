@@ -1,27 +1,37 @@
 # AtMemberPage @人员页面
 
 ## 使用
-单独页面，按照路径跳转即可。
- 
-**基础功能**
-```html
 
+单独页面，按照路径跳转即可。
+`components/qui-at-member-page/qui-at-member-page`
+
+### 页面说明
+
+```text
+ 第一次进入页面，是加载用户关注的人。在搜索框内搜索的话，是从站点成员里面搜索并加载。
 ```
 
-### Props 属性说明
+### 选中按钮
 
-| 参数 | 说明 | 类型 | 默认值 |
-| ---- | ---- | ---- | ---- |
-|title|左侧名称|String|-
+```text
+ 选择成员后，点击按钮后，会把用户信息存到vuex里，然后返回上一页。返回后直接去vuex里获取值即可。
+ 选中成员列表存的值是:atMemberData，所在模型为：atMember
+```
 
-### Event 事件说明
+### 获取多选成员示例
 
-| 事件名 | 说明 | 参数 |
-| ---- | ---- | ---- |
-|@click|点击头像单元格时触发|返回参数`mark`传的值
+```javascript
+import { mapState } from 'vuex';
 
-### Slots
+computed: {
+  ...mapState({
+    getAtMemberData: state => state.atMember.atMemberData,
+  })
+}
 
-| 名称 | 说明 |
-| ---- | ---- |
-| rightIcon | 右侧内容图标 |
+methods:{
+  getAtMember() {
+    return this.getAtMemberData;
+  }
+}
+```

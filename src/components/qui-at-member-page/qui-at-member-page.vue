@@ -58,7 +58,6 @@
         </view>
       </scroll-view>
     </view>
-    <view>{{ getMeta.total }}</view>
     <view class="qui-at-member-page-box__ft">
       <button
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
@@ -76,15 +75,14 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'QuiAtMemberPage',
   data() {
     return {
-      avatarData: [],
       followStatus: true, // 第一次进来显示follow列表
-      checkAvatar: [], // 已选成员列表
+      checkAvatar: [],
       loadingText: 'discuzq.list.loading',
       searchValue: '',
       pageNum: 1,
@@ -108,9 +106,6 @@ export default {
         }
       };
     },
-    ...mapState({
-      getFollowMemberData: state => state.atMember.atMemberData,
-    }),
   },
   methods: {
     ...mapMutations({
@@ -124,16 +119,10 @@ export default {
       });
     },
     getCheckMember() {
-      // 需要考虑，从哪个页面跳回来，带上参数或者存起来，再跳回去
-      // console.log(this.checkAvatar);
-      console.log(this.getFollowData);
-
       this.setAtMember(this.checkAvatar);
-
-      console.log(this.getFollowMemberData);
-      // uni.navigateBack({
-      //   delta: 1,
-      // });
+      uni.navigateBack({
+        delta: 1,
+      });
     },
     searchInput(e) {
       this.followStatus = false;
@@ -168,23 +157,24 @@ export default {
     getFollowMember(number) {
       const params = {
         include: ['toUser', 'toUser.groups'],
-        'page[size]': 10,
+        'page[size]': 20,
         'page[number]': number,
       };
       this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
-        console.log(res, res._jv);
         this.meta = res._jv.json.meta;
         if (Object.keys(res) === 0) {
           this.loadingText = 'discuzq.list.noData';
         }
-        if (res._jv.json.meta.total <= 10) {
+        if (res._jv.json.meta.total <= 20) {
           this.loadingText = 'discuzq.list.noData';
         }
       });
     },
     getSiteMember(number) {
       const params = {
-        'page[size]': 10,
+        'filter[username]':'*' + this.searchValue + '*',
+        'filter[status]':'normal',
+        'page[size]': 20,
         'page[number]': number,
       };
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
@@ -192,7 +182,7 @@ export default {
         if (Object.keys(res) === 0) {
           this.loadingText = 'discuzq.list.noData';
         }
-        if (res._jv.json.meta.total <= 10) {
+        if (res._jv.json.meta.total <= 20) {
           this.loadingText = 'discuzq.list.noData';
         }
       });
@@ -215,7 +205,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
-$otherHeight: 800rpx;
+$otherHeight: 292rpx;
 .qui-at-member-page-box {
   width: 100%;
   &__hd {
