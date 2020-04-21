@@ -70,6 +70,9 @@ export default {
     select(item) {
       this.sel = item.id;
       console.log('2222');
+      uni.navigateTo({
+        url: '../message/index',
+      });
     },
   },
 };

@@ -16,18 +16,22 @@
     <view class="line"></view>
     <view class="msg-con" v-for="user in userList" :key="user.id">
       <view>
-        <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
+        <view>
+          <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
+        </view>
+        <view class="text">
+          <text class="black-text">{{ user.userName }}</text>
+          <text class="gray-text" v-if="user.role === '管理员'">（{{ user.role }}）</text>
+          <view>
+            <text class="time">{{ user.time }}</text>
+          </view>
+        </view>
+        <view class="word">{{ user.word }}</view>
       </view>
-      <view class="text">
-        <text class="black-text">{{ user.userName }}</text>
-        <text class="gray-text" v-if="user.role === '管理员'">（{{ user.role }}）</text>
+      <view>
         <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
         <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
-        <view>
-          <text class="time">{{ user.time }}</text>
-        </view>
       </view>
-      <view class="word">{{ user.word }}</view>
     </view>
   </view>
 </template>
