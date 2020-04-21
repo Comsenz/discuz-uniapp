@@ -16,7 +16,7 @@
             <qui-icon name="icon-management" class="icon-management"></qui-icon>
             <view>管理</view>
           </view>
-          <quiDropDown
+          <qui-drop-down
             posival="absolute"
             :show="seleShow"
             :list="selectList"
@@ -24,7 +24,7 @@
             :right="0"
             :width="180"
             @click="selectChoice(selectList.type)"
-          ></quiDropDown>
+          ></qui-drop-down>
         </view>
         <image src="@/assets/essence.png" class="essence"></image>
       </view>
@@ -33,7 +33,7 @@
     <view class="themeItem__content">
       <view class="theme__content_title" v-if="themeType == 1 && themeTitle">{{ themeTitle }}</view>
       <view class="themeItem__content__text" v-if="themeContent">
-        {{ themeContent }}
+        <rich-text :nodes="themeContent"></rich-text>
       </view>
       <view class="theme__content__videocover" v-if="!payStatus && coverImage">
         <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
@@ -77,33 +77,16 @@
         </view>
       </view>
       <view class="themeItem__content__tags">
-        <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
-          {{ item.tagName }}
+        <view class="themeItem__content__tags__item" v-for="(tag, index) in tags" :key="index">
+          {{ tag.name }}
         </view>
       </view>
     </view>
-    <!-- 已支付用户列表 -->
-    <quiPersonList
-      :show-status="true"
-      :person-num="20"
-      :person-list="payList"
-      :btn-show="true"
-      :brn-icon-show="true"
-      btn-icon-name="rmb"
-      btn-text="支付查看图片"
-    ></quiPersonList>
   </view>
 </template>
 
 <script>
-import quiDropDown from '@/components/qui-drop-down/qui-drop-down';
-import quiPersonList from '@/components/qui-person-list/qui-person-list';
-
 export default {
-  components: {
-    quiDropDown,
-    quiPersonList,
-  },
   props: {
     // 类型
     themeParts: {
@@ -148,20 +131,13 @@ export default {
     },
     // 主题图片
     imagesList: {
-      type: Array,
+      type: Object,
       default: () => {
-        return [];
+        return {};
       },
     },
     // 主题相关标签
     tags: {
-      type: Array,
-      default: () => {
-        return [];
-      },
-    },
-    // 支付列表
-    payList: {
       type: Array,
       default: () => {
         return [];
@@ -178,7 +154,7 @@ export default {
     };
   },
   onLoad() {
-    console.log(this.imagesList.length);
+    console.log(this.tags);
   },
   methods: {
     // 管理菜单点击事件
