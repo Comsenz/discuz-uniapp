@@ -37,12 +37,19 @@ const localeUse = lang => {
   // 设置语言
   i18n.locale = lang;
   // 设置语言存储超时时间 30 天
+  // 小程序是不支持 cookie 的，所以这一块还需要改改，改成本地存储
   Cookies.set(COOKIE_CURRENT_LANGUAGE, lang, {
     expires: 30,
   });
 };
 
+// 当前使用的语言包
+const currentLocale = (() => {
+  return i18n.messages[i18n.locale];
+})();
+
 export default {
   i18n,
   localeUse,
+  currentLocale,
 };
