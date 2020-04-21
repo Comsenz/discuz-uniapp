@@ -3,7 +3,7 @@
     <cell-item class="orderlist-wrap" title="时间：本月" slot-right>
       <view>
         <text>状态：所有状态</text>
-        <text class="quiicons icon-screen"></text>
+        <qui-icon class="text" name="icon-screen" size="16" color="#ddd"></qui-icon>
       </view>
     </cell-item>
     <view class="orderlist-items">

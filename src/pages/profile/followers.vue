@@ -6,7 +6,7 @@
         <cell-item title="白展堂" slot-right brief="圈主">
           <view class="follow-content__items__operate">
             <text>互相关注</text>
-            <text class="quiicons icon-each-follow"></text>
+            <qui-icon class="text" name="icon-each-follow" size="16" color="#ff8888"></qui-icon>
           </view>
         </cell-item>
       </view>
@@ -15,7 +15,7 @@
         <cell-item title="白展堂" slot-right brief="圈主">
           <view class="follow-content__items__operate">
             <text>关注</text>
-            <text class="quiicons icon-follow"></text>
+            <qui-icon class="text" name="icon-follow" size="16" color="#777"></qui-icon>
           </view>
         </cell-item>
       </view>
@@ -24,7 +24,7 @@
         <cell-item title="白展堂" slot-right brief="圈主">
           <view class="follow-content__items__operate">
             <text>取消关注</text>
-            <text class="quiicons icon-cancel-follow"></text>
+            <qui-icon class="text" name="icon-cancel-follow" size="16" color="#ddd"></qui-icon>
           </view>
         </cell-item>
       </view>
@@ -52,7 +52,7 @@ export default {
     font-size: 28rpx;
     color: #333;
   }
-  .quiicons {
+  .qui-icon {
     margin-right: 0;
     margin-left: 14rpx;
   }

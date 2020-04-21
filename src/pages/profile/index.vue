@@ -7,11 +7,11 @@
           <cell-item title="佟掌柜" slot-right brief="管理员" :border="false">
             <view v-if="current !== null">
               <view class="profile-info__box__detail-operate">
-                <text class="quiicons icon-message"></text>
+                <qui-icon class="text" name="icon-message" size="16" color="#333"></qui-icon>
                 <text>私信</text>
               </view>
               <view class="profile-info__box__detail-operate">
-                <text class="quiicons icon-follow"></text>
+                <qui-icon class="text" name="icon-follow" size="16" color="#333"></qui-icon>
                 <text>关注</text>
               </view>
             </view>
@@ -97,9 +97,8 @@ page {
   background-color: #f9fafc;
 }
 .profile {
-  .quiicons {
+  .qui-icon {
     margin-right: 14rpx;
-    font-size: 22rpx;
   }
 }
 .profile-info {

@@ -3,7 +3,7 @@
     <cell-item class="withdrawalslist-head" :title="`时间：`" slot-right>
       <view>
         <text>状态：所有状态</text>
-        <text class="quiicons icon-screen"></text>
+        <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
       </view>
     </cell-item>
     <view class="withdrawalslist-items">

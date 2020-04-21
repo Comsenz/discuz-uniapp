@@ -10,13 +10,13 @@
       </view>
       <view class="cell-item__body__right" v-if="slotRight">
         <slot></slot>
-        <text class="quiicons icon-folding-r" v-if="arrow"></text>
+        <qui-icon class="text" name="icon-folding-r" size="16" color="#ddd" v-if="arrow"></qui-icon>
       </view>
       <view class="cell-item__body__right" v-if="!slotRight">
         <text class="cell-item__body__right-text">
           {{ addon }}
         </text>
-        <text class="quiicons icon-folding-r" v-if="arrow"></text>
+        <qui-icon class="text" name="icon-folding-r" size="16" color="#ddd" v-if="arrow"></qui-icon>
         <view class="cell-item__body__right-brief" v-if="briefRight">{{ briefRight }}</view>
       </view>
     </view>
@@ -161,7 +161,7 @@ export default {
 .cell-item.is-disabled .cell-item__children {
   color: #c5cad5;
 }
-.icon-folding-r {
+.qui-icon {
   margin-left: 20rpx;
   font-size: 18rpx;
   color: #ddd;
