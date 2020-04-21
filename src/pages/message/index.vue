@@ -14,6 +14,7 @@
       </uni-list-item>
     </uni-list>
     <view class="line"></view>
+    <!-- 会话列表 -->
     <view class="msg-con" v-for="user in userList" :key="user.id">
       <view class="msg-user">
         <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
