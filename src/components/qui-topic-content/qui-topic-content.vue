@@ -31,9 +31,14 @@
     </view>
 
     <view class="themeItem__content">
-      <view class="themeItem__content__text">
+      <view class="theme__content_title" v-if="themeType == 1 && themeTitle">{{ themeTitle }}</view>
+      <view class="themeItem__content__text" v-if="themeContent">
         {{ themeContent }}
       </view>
+      <view class="theme__content__videocover" v-if="!payStatus && coverImage">
+        <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
+      </view>
+
       <view v-if="imagesList.length == 1">
         <view class="themeItem__content__imgone">
           <image
@@ -111,7 +116,7 @@ export default {
     // 主题类型
     themeType: {
       validator: value => {
-        // 0 文字  1 图片  2 视频 3 帖子
+        // 0 文字  1 帖子  2 视频 3 图片
         return ['0', '1', '2', '3'].indexOf(value) !== -1;
       },
       default: '1',
@@ -126,10 +131,11 @@ export default {
       type: String,
       default: '',
     },
-    // themeTypes: {
-    //   type: String,
-    //   default: '',
-    // },
+    // 主题标题（当类型是帖子（1）时）
+    themeTitle: {
+      type: String,
+      default: '',
+    },
     // 发布内容
     themeContent: {
       type: String,
@@ -147,11 +153,6 @@ export default {
         return [];
       },
     },
-    // // 主题标签 名称
-    // tagName: {
-    //   type: String,
-    //   default: '',
-    // },
     // 主题相关标签
     tags: {
       type: Array,
@@ -159,6 +160,7 @@ export default {
         return [];
       },
     },
+    // 支付列表
     payList: {
       type: Array,
       default: () => {

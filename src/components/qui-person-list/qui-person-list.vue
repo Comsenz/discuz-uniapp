@@ -40,26 +40,32 @@ export default {
       },
       type: Array,
     },
+    // 是否显示按钮
     btnShow: {
       default: true,
       type: Boolean,
     },
+    // 按钮背景色
     btnBg: {
       default: '#fa5151',
       type: String,
     },
+    // 按时是否显示icon
     brnIconShow: {
       default: true,
       type: Boolean,
     },
+    // icon的name值
     btnIconName: {
       default: '',
       type: String,
     },
+    // 按钮text
     btnText: {
       default: '按钮',
       type: String,
     },
+    // 按钮text颜色
     btnTextColor: {
       default: '#ffffff',
       type: String,
