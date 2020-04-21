@@ -1,9 +1,15 @@
 <template>
   <view class="walletlist">
     <cell-item class="walletlist-head" title="时间：本月" slot-right>
-      <view>
+      <view @tap="showFilter">
         <text>状态：所有状态</text>
-        <text class="quiicons icon-screen"></text>
+        <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
+        <filter-modal
+          v-model="show"
+          @confirm="confirm"
+          :filter-list="filterList"
+          :if-need-confirm="true"
+        ></filter-modal>
       </view>
     </cell-item>
     <view class="walletlist-detail">
@@ -35,10 +41,36 @@
 
 <script>
 import cellItem from '@/components/qui-cell-item';
+import filterModal from '@/components/qui-filter-modal';
 
 export default {
   components: {
     cellItem,
+    filterModal,
+  },
+  data: () => {
+    return {
+      show: false,
+      filterList: [
+        {
+          title: '类型',
+          data: [
+            { label: '所有', value: '1' },
+            { label: '支出', value: '2' },
+            { label: '收入', value: '3' },
+            { label: '其他类型', value: '4' },
+          ],
+        },
+      ],
+    };
+  },
+  methods: {
+    confirm(e) {
+      console.log(e);
+    },
+    showFilter() {
+      this.show = true;
+    },
   },
 };
 </script>
