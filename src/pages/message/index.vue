@@ -15,26 +15,32 @@
     </uni-list>
     <view class="line"></view>
     <!-- 会话列表 -->
-    <view class="dialog-list-box" v-for="user in userList" :key="user.id">
+    <view class="dialog-list-box" v-for="dialog in allDialogList" :key="dialog.id">
       <view class="dialog-header">
         <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
         <view class="text">
-          <text class="black-text">{{ user.userName }}</text>
-          <text class="gray-text" v-if="user.role === '管理员'">（{{ user.role }}）</text>
+          <text class="black-text">{{ dialog.userName }}</text>
+          <text class="gray-text" v-if="dialog.role === '管理员'">（{{ dialog.role }}）</text>
           <text class="gray-text">@了我</text>
           <!-- <text class="gray-text">回复了我</text>
           <text class="gray-text">点赞了我</text>
           <text class="gray-text">打赏了我</text> -->
           <view>
-            <text class="time">{{ user.time }}</text>
+            <text class="time">{{ dialog.time }}</text>
           </view>
         </view>
         <view class="dialog-right">
-          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
+          <uni-icons
+            v-if="dialog.recipient_read_at === null"
+            class="red-circle"
+            type="smallcircle-filled"
+            color="red"
+            size="7"
+          ></uni-icons>
           <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
         </view>
       </view>
-      <view class="dialog-content">{{ user.word }}</view>
+      <view class="dialog-content">{{ dialog.word }}</view>
     </view>
   </view>
 </template>
@@ -57,31 +63,15 @@ export default {
         { id: 4, title: '支付我的', type: 'rewarded' },
         { id: 5, title: '系统通知', type: 'system' },
       ],
-      userList: [
-        {
-          id: 1,
-          userName: '新佑卫门',
-          role: '管理员',
-          time: '2020-12-13 上午 07:22',
-          word: '世界各地的友好城市，为湖北打气！',
-        },
-        {
-          id: 2,
-          userName: '一休哥',
-          role: '访问者',
-          time: '2020-12-13 上午 07:22',
-          word:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）美国知名商业杂志福布斯》发布2019美国最具创',
-        },
-        {
-          id: 3,
-          userName: '刘辉开',
-          role: '访问者',
-          time: '2020-12-13 上午 07:22',
-          word: '回家吃饭啦',
-        },
-      ],
     };
+  },
+  onLoad() {
+    this.getDialogList();
+  },
+  computed: {
+    allDialogList() {
+      return this.$store.getters['jv/get']('dialog');
+    },
   },
   methods: {
     clickItem(item) {
@@ -89,6 +79,9 @@ export default {
         url: `../message/${item.type}`,
       });
       console.log('消息首页点击跳转', item.title);
+    },
+    getDialogList() {
+      this.$store.dispatch('jv/get', ['dialog']);
     },
   },
 };
