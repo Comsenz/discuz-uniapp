@@ -24,11 +24,7 @@
             <qui-avatar-cell
               :mark="item.toUser.id"
               :title="item.toUser.username"
-              :icon="
-                item.toUser.avatarUrl
-                  ? item.toUser.avatarUrl
-                  : 'https://dq.comsenz-service.com/static/images/noavatar.gif'
-              "
+              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '@/assets/noavatar.png'"
               :value="getGroups(item.toUser.groups)"
               :label="item.toUser.label"
             >
@@ -41,11 +37,7 @@
             <qui-avatar-cell
               :mark="item.id"
               :title="item.username"
-              :icon="
-                item.avatarUrl
-                  ? item.avatarUrl
-                  : 'https://dq.comsenz-service.com/static/images/noavatar.gif'
-              "
+              :icon="item.avatarUrl ? item.avatarUrl : '@/assets/noavatar.png'"
               :value="getGroups(item.groups)"
               :label="item.label"
             >
@@ -81,6 +73,7 @@ export default {
   name: 'QuiAtMemberPage',
   data() {
     return {
+      allSiteUser: [],
       followStatus: true, // 第一次进来显示follow列表
       checkAvatar: [],
       loadingText: 'discuzq.list.loading',
@@ -92,9 +85,6 @@ export default {
   computed: {
     allFollow() {
       return this.$store.getters['jv/get']('follow');
-    },
-    allSiteUser() {
-      return this.$store.getters['jv/get']('users');
     },
     getGroups() {
       return data => {
@@ -172,13 +162,18 @@ export default {
     },
     getSiteMember(number) {
       const params = {
-        'filter[username]':'*' + this.searchValue + '*',
-        'filter[status]':'normal',
+        'filter[username]': '*' + this.searchValue + '*',
+        'filter[status]': 'normal',
         'page[size]': 20,
         'page[number]': number,
       };
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         this.meta = res._jv.json.meta;
+
+        let data = JSON.parse(JSON.stringify(res));
+        delete data._jv;
+        this.allSiteUser = data;
+
         if (Object.keys(res) === 0) {
           this.loadingText = 'discuzq.list.noData';
         }
