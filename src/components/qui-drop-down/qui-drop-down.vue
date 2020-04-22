@@ -27,38 +27,47 @@
 export default {
   name: 'QuiDropDown',
   props: {
+    // 是否显示组件
     show: {
       default: false,
       type: Boolean,
     },
+    // 组件内数据list
     list: {
       default: () => [],
       type: Array,
     },
+    // 定位属性值
     posival: {
       default: 'absolute',
       type: String,
     },
+    // top值
     top: {
       default: '',
       type: [Number, String],
     },
+    // right值
     right: {
       default: '',
       type: [Number, String],
     },
+    // left值
     left: {
       default: '',
       type: [Number, String],
     },
+    // 下拉框宽度
     width: {
       default: '180',
       type: [Number, String],
     },
+    // 下拉框背景色
     bgColor: {
       default: '#ffffff',
       type: String,
     },
+    // 气泡背景箭头位置
     jtRight: {
       default: '25',
       type: [Number, String],

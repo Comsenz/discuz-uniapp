@@ -1,35 +1,30 @@
 <template>
-  <view class="content bg">
+  <view class="content bg" v-if="status">
+    <view>{{ thread.firstPost.content }}</view>
     <view class="detail-tip" v-if="topicStatus == 0">{{ tip }}</view>
-    <quiContent
-      v-model="topic"
+    <qui-topic-content
+      v-model="thread"
       :pay-status="true"
-      :user-name="topic.username"
-      :theme-types="topic.themeTypes"
-      :theme-time="topic.time"
-      :theme-content="topic.themeContent"
-      :images-list="topic.images"
-      :tags="topic.tags"
-      :pay-list="topic.payList"
-    ></quiContent>
-    <!-- 打赏 -->
-    <quiPersonList
+      :user-name="thread.user.username"
+      :theme-types="thread.type"
+      :theme-time="thread.createdAt"
+      :theme-content="thread.firstPost.contentHtml"
+      :images-list="thread.firstPost.images"
+      :tags="[thread.category]"
+    ></qui-topic-content>
+    <!-- 已支付用户列表 -->
+    <qui-person-list
       :show-status="true"
-      :person-num="20"
-      :person-list="topic.payList"
+      :person-num="thread.paidCount"
+      :limit-count="limitShowNum"
+      :person-list="thread.paidUsers"
       :btn-show="true"
       :brn-icon-show="true"
-      btn-icon-name="reward"
-      btn-text="打赏"
-    ></quiPersonList>
+      btn-icon-name="rmb"
+      btn-text="支付查看图片"
+      @btnClick="foldClick"
+    ></qui-person-list>
 
-    <!-- 点赞 -->
-    <quiPersonList
-      :show-status="true"
-      :person-num="18"
-      :person-list="topic.payList"
-      :btn-show="false"
-    ></quiPersonList>
     <view class="det-con-ft">
       <view class="det-con-ft-child">阅读2345</view>
       <view class="det-con-ft-child">
@@ -96,17 +91,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
-import quiContent from '@/components/qui-topic-content/qui-topic-content';
-import quiPersonList from '@/components/qui-person-list/qui-person-list';
+import { status } from 'jsonapi-vuex';
 
 export default {
-  components: {
-    quiContent,
-    quiPersonList,
-  },
   data() {
     return {
+      loadStatus: {},
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       username: 'admin',
       time: '16分钟前',
@@ -157,31 +147,71 @@ export default {
           'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
           'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
           'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
         ],
       },
+      status: false,
+      limitShowNum: 1,
     };
   },
   computed: {
-    ...mapState({
-      allThreads: state => state.dzThreads.all,
-    }),
+    thread() {
+      return this.$store.getters['jv/get']('threads/13');
+    },
   },
   onLoad() {
-    console.log(this.topic.images);
-    this.loadAllThreads({
-      'page[size]': 10,
-      'page[number]': 1,
-    });
+    this.loadThreads();
   },
   methods: {
+    // 加载当前主题数据
+    loadThreads() {
+      const params = {
+        'filter[isDeleted]': 'no',
+        include: [
+          'posts.replyUser',
+          'user.groups',
+          'user',
+          'posts',
+          'posts.user',
+          'posts.likedUsers',
+          'posts.images',
+          'firstPost',
+          'firstPost.likedUsers',
+          'firstPost.images',
+          'firstPost.attachments',
+          'rewardedUsers',
+          'category',
+          'threadVideo',
+          'paidUsers',
+        ],
+      };
+      this.loadStatus = status.run(() =>
+        this.$store.dispatch('jv/get', ['threads/13', { params }]).then(data => {
+          this.status = true;
+          console.log(data);
+          // console.log(typeof data.paidUsers);
+          // console.log('over', this.limitArray(data.paidUsers, 1));
+        }),
+      );
+    },
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
     },
+    // 管理菜单内标签点击事件
     selectChoice(type) {
       this.seleShow = false;
       console.log(type, '类型');
     },
+    // foldClick() {
+    //   console.log(this.thread.paidUsers.length, '数组长度');
+    //   this.limitShowNum = this.thread.paidUsers.length;
+    // },
     // 跳转到评论详情页
     commentJump() {
       console.log('跳转');
@@ -189,9 +219,6 @@ export default {
       //   url: '',
       // });
     },
-    ...mapActions({
-      loadAllThreads: 'dzThreads/loadAll',
-    }),
   },
 };
 </script>
