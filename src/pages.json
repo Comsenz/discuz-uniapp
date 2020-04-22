@@ -5,10 +5,9 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": ""
+        "navigationStyle": "custom"
       }
     },
-
     {
       "path": "pages/topic/index",
       "style": {
@@ -76,6 +75,14 @@
       "style": {
         "navigationBarTitleText": "个人主页",
         "enablePullDownRefresh":true
+      }
+    },
+    {
+      "path": "pages/common/message",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "信息提示",
+        "disableScroll": true
       }
     }
   ],

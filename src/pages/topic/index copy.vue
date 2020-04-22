@@ -1,35 +1,89 @@
 <template>
   <view class="content bg">
-    <view class="detail-tip" v-if="topicStatus == 0">{{ tip }}</view>
-    <quiContent
-      v-model="topic"
-      :pay-status="true"
-      :user-name="topic.username"
-      :theme-types="topic.themeTypes"
-      :theme-time="topic.time"
-      :theme-content="topic.themeContent"
-      :images-list="topic.images"
-      :tags="topic.tags"
-      :pay-list="topic.payList"
-    ></quiContent>
+    <view class="detail-tip">{{ tip }}</view>
+    <view class="detail-hd">
+      <view class="det-hd-per-head-box">
+        <image src="@/assets/essence.png" class="det-hd-per-head"></image>
+      </view>
+      <view class="det-hd-per-info">
+        <text class="det-hd-per-name">{{ username }}</text>
+        <view class="det-hd-post-time">{{ time }}</view>
+      </view>
+      <view class="det-hd-opera">
+        <view class="det-hd-operaCli">
+          <view class="det-hd-management" @click="selectClick">
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>管理</view>
+          </view>
+          <quiDropDown
+            posival="absolute"
+            :show="seleShow"
+            :list="selectList"
+            :top="60"
+            :right="0"
+            :width="180"
+            @click="selectChoice(selectList.type)"
+          ></quiDropDown>
+        </view>
+        <image src="@/assets/essence.png" class="essence"></image>
+      </view>
+    </view>
+    <view class="detail-post-content">
+      <text class="det-post-con" @click="commentJump()">
+        亚马逊上线了一个海外直邮防护用户页面，来自美国英
+        国、日本、德国亚马逊的防护用品，包括一些奇形怪状
+        的口罩、温度计、洗手液、消毒湿巾、护目镜、手套维
+        生素、空气净化器等产品，买不到防护产品的同学试试 亚马逊吧，有奇效。海外购速度也挺快。
+        新型冠狀病毒
+      </text>
+      <view class="det-post-img-list">
+        <view class="det-post-img-box">
+          <image class="det-post-img" mode="widthFix" src="@/assets/essence.png"></image>
+        </view>
+        <view class="det-post-img-box">
+          <image class="det-post-img" mode="widthFix" src="@/assets/essence.png"></image>
+        </view>
+      </view>
+      <view class="det-post-tag-list">
+        <view class="det-post-tag" v-for="(tag, index) in tagList" :key="index">{{ tag.tag }}</view>
+      </view>
+    </view>
     <!-- 打赏 -->
-    <quiPersonList
-      :show-status="true"
-      :person-num="20"
-      :person-list="topic.payList"
-      :btn-show="true"
-      :brn-icon-show="true"
-      btn-icon-name="reward"
-      btn-text="打赏"
-    ></quiPersonList>
-
+    <view class="det-reward-box">
+      <view class="det-rew-number">7人打赏</view>
+      <view class="det-rew-per-list">
+        <view class="det-rew-person">
+          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
+        </view>
+        <view class="det-rew-person">
+          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
+        </view>
+        <view class="det-rew-person">
+          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
+        </view>
+      </view>
+      <qui-icon name="icon-unfold" class="icon-unfold"></qui-icon>
+      <button class="det-rew-btn">
+        <qui-icon name="icon-reward" class="qui-icon"></qui-icon>
+        <view>打赏</view>
+      </button>
+    </view>
     <!-- 点赞 -->
-    <quiPersonList
-      :show-status="true"
-      :person-num="18"
-      :person-list="topic.payList"
-      :btn-show="false"
-    ></quiPersonList>
+    <view class="det-reward-box pad-top">
+      <view class="det-rew-number">54人点赞</view>
+      <view class="det-rew-per-list">
+        <view class="det-rew-person">
+          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
+        </view>
+        <view class="det-rew-person">
+          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
+        </view>
+        <view class="det-rew-person">
+          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
+        </view>
+      </view>
+      <qui-icon name="icon-unfold" class="icon-unfold"></qui-icon>
+    </view>
     <view class="det-con-ft">
       <view class="det-con-ft-child">阅读2345</view>
       <view class="det-con-ft-child">
@@ -60,7 +114,7 @@
             </view>
             <view class="comment-child-time">{{ time }}</view>
           </view>
-          <view class="comment-child-status">{{ replyStatus }}</view>
+          <view class="comment-child-status">{{ status }}</view>
         </view>
         <view class="comment-child-con">
           {{ content }}
@@ -97,21 +151,18 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import quiContent from '@/components/qui-topic-content/qui-topic-content';
-import quiPersonList from '@/components/qui-person-list/qui-person-list';
+import quiDropDown from '@/components/qui-drop-down';
 
 export default {
   components: {
-    quiContent,
-    quiPersonList,
+    quiDropDown,
   },
   data() {
     return {
-      topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       username: 'admin',
       time: '16分钟前',
       role: '管理员',
-      replyStatus: '审核中',
+      status: '审核中',
       content: '内容内容内容,内容内容内容内容内容内容内容内容内容,内容内容内容内容内容...',
       isActive: true,
       tagList: [
@@ -123,42 +174,9 @@ export default {
       tip: '内容正在审核中，审核通过后才能正常显示！',
       seleShow: false, // 默认收起管理菜单
       selectList: [
-        { text: '编辑', type: '1' },
-        { text: '精华', type: '2' },
-        { text: '删除', type: '3' },
-        { text: '置顶', type: '4' },
-      ], // 管理菜单
-      topic: {
-        username: 'admin',
-        time: '15分钟前',
-        themeTypes: '0',
-        themeContent: '内容内容',
-        images: [
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-        ],
-        tags: [
-          {
-            tagName: '女神',
-          },
-          {
-            tagName: '女神经',
-          },
-          {
-            tagName: '女神经病',
-          },
-        ],
-        payList: [
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-        ],
-      },
+        { text: '点赞', type: '1' },
+        { text: '收藏', type: '2' },
+      ],
     };
   },
   computed: {
@@ -167,7 +185,6 @@ export default {
     }),
   },
   onLoad() {
-    console.log(this.topic.images);
     this.loadAllThreads({
       'page[size]': 10,
       'page[number]': 1,
@@ -247,7 +264,7 @@ page {
     }
   }
   .det-hd-per-info {
-    width: 400rpx;
+    width: 400px;
     padding-left: 20rpx;
     .det-hd-per-name {
       margin-bottom: 10px;
@@ -268,8 +285,8 @@ page {
   flex-shrink: 0;
   .essence {
     display: inline-block;
-    width: 39rpx;
-    height: 44rpx;
+    width: 49rpx;
+    height: 60rpx;
   }
 }
 .det-hd-operaCli {
