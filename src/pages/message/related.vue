@@ -1,5 +1,12 @@
 <template>
-  <view class="box">
+  <view class="related-box">
+    <view v-for="item in allRelatedNotifications" :key="item.user_id">
+      <view>用户名：{{ item.user_name }}</view>
+      <view>用户头像：{{ item.user_avatar }}</view>
+      <view>帖子内容：{{ item.post_content }}</view>
+      <view>created_at：{{ item.post_content }}</view>
+      <view>read_at：{{ item.post_content }}</view>
+    </view>
     <view class="info">
       <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
     </view>
@@ -24,7 +31,23 @@ export default {
       time: '2020/12/15 - 14:20:12',
     };
   },
-  methods: {},
+  onLoad() {
+    this.getRelatedNotifications();
+  },
+  computed: {
+    allRelatedNotifications() {
+      console.log('allRelatedNotifications', this.$store.getters['jv/get']('notification'));
+      return this.$store.getters['jv/get']('notification');
+    },
+  },
+  methods: {
+    getRelatedNotifications() {
+      const params = {
+        'filter[type]': 'related',
+      };
+      this.$store.dispatch('jv/get', ['notification', { params }]);
+    },
+  },
 };
 </script>
 
@@ -32,7 +55,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
 
-.box {
+.related-box {
   background-color: #f9fafc;
 }
 .user-word-box {
