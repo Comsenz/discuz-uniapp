@@ -18,7 +18,7 @@
               class="icon-management"
               :style="{ color: selectActive }"
             ></qui-icon>
-            <view :style="{ color: selectActive }">管理</view>
+            <view :style="{ color: selectActive }">{{ t.management }}</view>
           </view>
           <qui-drop-down
             posival="absolute"
@@ -160,6 +160,11 @@ export default {
   },
   onLoad() {
     console.log(this.tags);
+  },
+  computed: {
+    t() {
+      return this.i18n.t('topic');
+    },
   },
   methods: {
     // 管理菜单点击事件

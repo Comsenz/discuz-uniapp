@@ -1,7 +1,9 @@
 <template>
   <!-- 列表 -->
   <view class="det-person-box" v-if="showStatus">
-    <view class="det-per-number">{{ personNum }}人{{ type }}</view>
+    <view class="det-per-number" v-if="personNum != 0">
+      {{ personNum }}{{ t.persenUnit }}{{ type }}
+    </view>
     <view class="det-per-list">
       <view class="det-person" v-for="(person, index) in personRes" :key="index">
         <image
@@ -100,6 +102,11 @@ export default {
     };
   },
   onLoad() {},
+  computed: {
+    t() {
+      return this.i18n.t('topic');
+    },
+  },
   watch: {
     // 监听得到的数据
     personList: {

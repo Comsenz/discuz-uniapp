@@ -12,7 +12,7 @@
       :tags="[thread.category]"
     ></qui-topic-content>
     <!-- 已支付用户列表 -->
-    <view v-if="Object.keys(thread.paidUsers).length != 0">
+    <view v-if="paidStatus">
       <qui-person-list
         :show-status="true"
         type="支付"
@@ -29,7 +29,7 @@
     </view>
 
     <!-- 打赏用户列表 -->
-    <view v-if="Object.keys(thread.rewardedUsers).length != 0">
+    <view v-if="rewardStatus">
       <qui-person-list
         :show-status="true"
         type="打赏"
@@ -44,7 +44,7 @@
         @btnClick="rewardClick"
       ></qui-person-list>
     </view>
-    <view v-if="Object.keys(thread.firstPost.likedUsers).length != 0">
+    <view v-if="likedStatus">
       <!-- 点赞用户列表 -->
       <qui-person-list
         :show-status="true"
@@ -69,7 +69,7 @@
     </view>
     <!-- 评论 -->
     <view class="comment">
-      <view class="comment-num">217条评论</view>
+      <view class="comment-num">{{ thread.postCount }}条评论</view>
       <view class="comment-child">
         <view class="comment-child-hd">
           <view class="comment-child-per-head-box">
@@ -123,6 +123,7 @@
 
 <script>
 import { status } from 'jsonapi-vuex';
+import lodash from 'lodash';
 
 export default {
   data() {
@@ -201,6 +202,9 @@ export default {
       },
       status: false,
       limitShowNum: 2,
+      paidStatus: false, // 是否有已支付数据
+      rewardStatus: false, // 是否已有打赏数据
+      likedStatus: false, // 是否已有点赞数据
     };
   },
   computed: {
@@ -238,7 +242,22 @@ export default {
         this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
           this.status = true;
           console.log(data);
-          // console.log(typeof data.paidUsers);
+          // console.log(lodash.isEmpty(data.paidUsers));
+          if (lodash.isEmpty(data.paidUsers)) {
+            this.paidStatus = false;
+          } else {
+            this.paidStatus = true;
+          }
+          if (lodash.isEmpty(data.rewardedUsers)) {
+            this.rewardStatus = false;
+          } else {
+            this.rewardStatus = true;
+          }
+          if (lodash.isEmpty(data.firstPost.likedUsers)) {
+            this.likedStatus = false;
+          } else {
+            this.likedStatus = true;
+          }
           // console.log('over', this.limitArray(data.paidUsers, 1));
         }),
       );
