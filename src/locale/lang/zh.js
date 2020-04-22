@@ -83,4 +83,7 @@ export default {
       selected: '@ 已选',
     },
   },
+  core: {
+    not_install: '该站点未安装',
+  },
 };
