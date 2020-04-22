@@ -1,5 +1,5 @@
 <template>
-  <view class="pay-me-box"></view>
+  <view class="liked-box">点赞我的</view>
 </template>
 
 <script>
@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pay-me-box {
+.liked-box {
   background-color: #f9fafc;
 }
 </style>

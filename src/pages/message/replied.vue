@@ -1,5 +1,5 @@
 <template>
-  <view class="reply-me-box"></view>
+  <view class="reply-me-box">回复我的</view>
 </template>
 
 <script>

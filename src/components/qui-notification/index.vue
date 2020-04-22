@@ -1,30 +1,11 @@
 <template>
-  <view class="msg-box">
-    <uni-list>
-      <uni-list-item
-        v-for="item in list"
-        :key="item.id"
-        :title="item.title"
-        :show-arrow="true"
-        @click="clickItem(item)"
-      >
-        <template v-slot:right="">
-          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
-        </template>
-      </uni-list-item>
-    </uni-list>
-    <view class="line"></view>
-    <!-- 会话列表 -->
+  <view>
     <view class="dialog-list-box" v-for="user in userList" :key="user.id">
       <view class="dialog-header">
         <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
         <view class="text">
           <text class="black-text">{{ user.userName }}</text>
           <text class="gray-text" v-if="user.role === '管理员'">（{{ user.role }}）</text>
-          <text class="gray-text">@了我</text>
-          <!-- <text class="gray-text">回复了我</text>
-          <text class="gray-text">点赞了我</text>
-          <text class="gray-text">打赏了我</text> -->
           <view>
             <text class="time">{{ user.time }}</text>
           </view>
@@ -40,23 +21,9 @@
 </template>
 
 <script>
-import { uniList, uniListItem, uniIcons } from '@dcloudio/uni-ui';
-
 export default {
-  components: {
-    uniList,
-    uniListItem,
-    uniIcons,
-  },
   data() {
     return {
-      list: [
-        { id: 1, title: '@我的', type: 'related' },
-        { id: 2, title: '回复我的', type: 'replied' },
-        { id: 3, title: '点赞我的', type: 'liked' },
-        { id: 4, title: '支付我的', type: 'rewarded' },
-        { id: 5, title: '系统通知', type: 'system' },
-      ],
       userList: [
         {
           id: 1,
@@ -83,34 +50,11 @@ export default {
       ],
     };
   },
-  methods: {
-    clickItem(item) {
-      uni.navigateTo({
-        url: `../message/${item.type}`,
-      });
-      console.log('消息首页点击跳转', item.title);
-    },
-  },
+  methods: {},
 };
 </script>
 
-<style lang="scss">
-@import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
-
-.msg-box {
-  width: 100%;
-  min-height: 100%;
-  background-color: #fafafa;
-}
-
-.line {
-  height: 0rpx;
-  margin: 0 0 10rpx;
-  border: 1px solid rgba(237, 237, 237, 1);
-  opacity: 1;
-}
-
+<style lang="scss" scoped>
 .dialog-list-box {
   margin: 20rpx 0;
   background-color: #fff;
@@ -134,7 +78,6 @@ export default {
 }
 
 .black-text {
-  margin-right: 6rpx;
   font-size: 28rpx;
   font-weight: bold;
   line-height: 37rpx;

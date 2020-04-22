@@ -1,5 +1,5 @@
 <template>
-  <view class="system-info-box"></view>
+  <view class="system-info-box">系统通知</view>
 </template>
 
 <script>
