@@ -20,7 +20,7 @@
             <qui-icon
               class="themeItem__header__title__deleteBtn"
               :name="themeBtn"
-              size="18"
+              size="28"
               color="#AAA"
               @click="handleClick"
             ></qui-icon>
@@ -61,7 +61,7 @@
             <qui-icon
               class="text"
               name="icon-like"
-              size="16"
+              size="28"
               color="#AAA"
               @click="handleClick"
             ></qui-icon>
@@ -78,7 +78,7 @@
             class="themeItem__footer__themeType1__item themeItem__footer__themeType1__share"
             @click="handleClickShare"
           >
-            <qui-icon class="text" name="icon-share" size="16" color="#AAA"></qui-icon>
+            <qui-icon class="text" name="icon-share" size="28" color="#AAA"></qui-icon>
             分享
           </view>
         </view>
@@ -88,7 +88,7 @@
             <qui-icon
               class="text"
               :name="themeReplyBtn"
-              size="16"
+              size="28"
               color="#AAA"
               @click="handleClick"
             ></qui-icon>

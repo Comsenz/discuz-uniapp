@@ -13,7 +13,7 @@
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
       <text class="circleDet-share" @click="open">
-        <qui-icon :name="iconShare" size="16" color="#fff"></qui-icon>
+        <qui-icon :name="iconShare" size="28" color="#fff"></qui-icon>
         {{ share }}
       </text>
     </view>

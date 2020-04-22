@@ -20,7 +20,7 @@
         <qui-icon
           class="nav__box__icon"
           name="icon-screen"
-          size="18"
+          size="28"
           color="#1878F3"
           @click="handleClick"
         ></qui-icon>
@@ -79,7 +79,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="18"
+                  size="36"
                   color="#777777"
                   @click="handleClick"
                 ></qui-icon>
@@ -459,7 +459,6 @@ export default {
   padding-right: 97rpx;
   padding-left: 98rpx;
   background: --color(--qui-BG-BTN-GRAY-1);
-
   // padding: 15px;
 }
 .popup-share-box {

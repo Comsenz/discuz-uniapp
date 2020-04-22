@@ -7,7 +7,7 @@
             <qui-icon
               class="content-image"
               :name="item.icon"
-              size="18"
+              size="36"
               color="#777777"
               @click="handleClick"
             ></qui-icon>

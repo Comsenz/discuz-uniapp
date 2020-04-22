@@ -10,7 +10,7 @@
       <qui-icon
         class="ft-box-icon"
         :name="item.tabsIcon"
-        size="24"
+        size="36"
         :class="{ select: true, active: item.id === sel }"
         @click="select(item)"
       ></qui-icon>
