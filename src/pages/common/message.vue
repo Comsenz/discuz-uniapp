@@ -1,71 +1,88 @@
 <template>
   <view class="page-message">
     <view class="page-message--inner">
-      <qui-icon class="page-message--icon" :name="iconName" size="70" color="#39bb13"></qui-icon>
-      <view class="page-message--title" v-if="title">{{ title }}</view>
-      <view class="page-message--subtitle" v-if="subTitle">{{ subTitle }}</view>
-      <qui-button :type="iconType" size="medium" @click="handleClick">
-        完成，日常按钮状态
+      <!-- 如果不是本地的图片，这里可以改一下，只用一个 image 标签即可，更换 src 的值即可-->
+      <image
+        class="page-message--icon"
+        src="@/static/msg-404.svg"
+        mode="aspectFit"
+        lazy-load
+        v-if="status === '404'"
+      ></image>
+      <image
+        class="page-message--icon"
+        src="@/static/msg-warning.svg"
+        mode="aspectFit"
+        lazy-load
+        v-if="status === 'closed'"
+      ></image>
+      <view class="page-message--title" v-if="message.title">{{ message.title }}</view>
+      <view class="page-message--subtitle" v-if="message.subtitle || status === 'closed'">
+        {{ message.subtitle | closedError(forumError) }}
+      </view>
+      <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
+      <navigator
+        class="page-message--exit"
+        open-type="exit"
+        target="miniProgram"
+        v-if="status === 'closed'"
+      >
+        {{ message.btnTxt }}
+      </navigator>
+      <qui-button size="medium" @click="handleClick">
+        {{ message.btnTxt }}
       </qui-button>
     </view>
   </view>
 </template>
 
 <script>
-/**
- * 需要根据需求进行细化
- *
- * 1. 明确状态 - 页面消息提示状态：成功，失败，404（页面或者啥）
- * 2. 明确文案 - 根据不同的状态显示不同的文案
- * 3. 按钮交互逻辑 - 根据不同的传参进行不同的交互逻辑
- * 4. 提示的 icon 待和设计要
- */
-// 这个提示文案暂时这么处理，也是根据需求进行调整的
+import { mapState } from 'vuex';
+
+const TYPE_404 = '404';
+const TYPE_CLOSED = 'closed';
 const message = {
-  '404': {
-    title: '该页面不存在',
+  [TYPE_404]: {
+    title: '页面没有找到',
+    subtitle: '您要访问的页面可能已被删除，已更改名称或者暂时不可用',
+    btnTxt: '返回首页',
+    icon: '@/static/msg-404.svg',
   },
-  fail: {
-    title: '不好意思，审核失败',
-  },
-  success: {
-    title: '提现申请已提交，等待审核',
-    subtitle: '审核成功后将于24小时到账',
+  [TYPE_CLOSED]: {
+    title: '站点已关闭',
+    subtitle: '', // 从接口读取站点关闭后的提示语
+    btnTxt: '点击关闭',
+    icon: '@/static/msg-warning.svg',
   },
 };
 export default {
+  filters: {
+    closedError(subtitle, err) {
+      if (err && err.detail) return err.detail[0];
+      return subtitle;
+    },
+  },
   data() {
     return {
       status: '', // success, fail, 404
-      title: '', // 提示标题
-      subTitle: '', // 提示副标题
-      iconType: 'primary', // button 显示样式类型
-      from: '', // 从哪个页面进入的
+      message: {},
     };
   },
   computed: {
-    iconName() {
-      if (this.status === 'success') return 'icon-success';
-      if (this.status === 'fail') return 'icon-fail';
-      return 'icon-waring';
-    },
+    ...mapState({
+      forumError: state => state.forum.error,
+    }),
   },
   onLoad(params) {
-    // 这里只是例子，待完善
-    // 比如在小程序中设置启动参数：s=success&f=home
-    // s: 状态；f：来自哪个页面，由该页面的性质进行相应的 button 的交互
-    // 参数长度在小程序里是有限制的，所以这里最好是需要定义好
-    const { s, f } = params;
-    if (!s) this.status = '404';
-    else this.status = s;
-    this.title = message[this.status].title || '';
-    this.subTitle = message[this.status].subtitle || '';
-    this.from = f;
-    if (f === 'home') this.iconType = 'default';
+    const { status } = params;
+    if (!status) this.status = TYPE_404;
+    else this.status = status;
+    this.message = message[this.status];
   },
   methods: {
     handleClick() {
-      if (this.from === 'home') {
+      // 404
+      if (this.status === TYPE_404) {
         uni.redirectTo({
           url: '/pages/home/index',
         });
@@ -77,31 +94,46 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-// css
+
 .page-message {
   display: flex;
   align-items: center;
   justify-content: center;
   &--icon {
-    margin-bottom: 40rpx;
+    height: 140rpx;
+    margin: 140rpx 0 40rpx;
   }
   &--inner {
+    position: relative;
     margin-top: 140rpx;
     text-align: center;
   }
   &--title {
-    margin-bottom: 20rpx;
+    max-width: 510rpx;
+    margin: 0 auto 20rpx;
     font-size: $fg-f34;
     font-weight: bold;
     line-height: 45rpx;
     color: rgba(51, 51, 51, 1);
   }
   &--subtitle {
-    margin-bottom: 50rpx;
+    max-width: 510rpx;
+    margin: 0 auto 50rpx;
     font-size: $fg-f28;
     font-weight: 400;
     line-height: 37rpx;
     color: rgba(170, 170, 170, 1);
+  }
+  &--exit {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    z-index: 1;
+    width: 510rpx;
+    height: 90rpx;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateX(-50%);
   }
 }
 </style>
