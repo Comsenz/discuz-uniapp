@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'quiicons';  /* project id 1741858 */
+  font-family: 'quiicons'; /* project id 1741858 */
   src: url('//at.alicdn.com/t/font_1741858_9l9gp781hem.eot');
   src: url('//at.alicdn.com/t/font_1741858_9l9gp781hem.eot?#iefix') format('embedded-opentype'),
     url('//at.alicdn.com/t/font_1741858_9l9gp781hem.woff2') format('woff2'),
@@ -11,7 +11,7 @@
 .qui-icon {
   position: relative;
   /* stylelint-disable-next-line */
-  font: 16px 'quiicons';
+  font: 28rpx 'quiicons';
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -200,4 +200,3 @@
 .icon-home:before {
   content: '\e647';
 }
-

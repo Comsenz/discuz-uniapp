@@ -5,10 +5,9 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": ""
+        "navigationStyle": "custom"
       }
     },
-
     {
       "path": "pages/topic/index",
       "style": {
@@ -61,6 +60,22 @@
       "path": "pages/message/chat",
       "style": {
           "navigationBarTitleText": "聊天室"
+      }
+    },
+    {
+      "path": "components/qui-at-member-page/qui-at-member-page",
+      "style": {
+          "navigationBarBackgroundColor": "#fff",
+          "navigationBarTextStyle": "black",
+          "navigationBarTitleText": "选择@人员"
+      }
+    },
+    {
+      "path": "pages/common/message",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "信息提示",
+        "disableScroll": true
       }
     }
   ],

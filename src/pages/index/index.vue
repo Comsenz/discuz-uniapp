@@ -8,12 +8,7 @@
 </template>
 
 <script>
-import quiPage from '@/components/qui-page';
-
 export default {
-  components: {
-    quiPage,
-  },
   data() {
     return {};
   },
