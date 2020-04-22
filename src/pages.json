@@ -15,6 +15,14 @@
       }
     },
     {
+      "path": "pages/topic/post",
+      "style": {
+        "navigationBarTitleText": "发布",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "Discuz Q"
@@ -40,8 +48,7 @@
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",
-    "navigationBarBackgroundColor": "#1878F3",
-    "backgroundColor": "#F8F8F8",
+    "navigationBarBackgroundColor": "#fff",
     "h5": {
       // h5 不显示顶部导航栏
       "titleNView": false
