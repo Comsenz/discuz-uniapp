@@ -1,5 +1,5 @@
 /* eslint-disable-next-line no-param-reassign */
-import { SET_ATMEMBER, GET_ATMEMBER } from '@/store/types/atMember';
+import { SET_ATMEMBER } from '@/store/types/atMember';
 
 const state = {
   atMemberData: [],

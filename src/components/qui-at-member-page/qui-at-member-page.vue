@@ -88,12 +88,12 @@ export default {
     },
     getGroups() {
       return data => {
-        for (const key in data) {
-          if (Object.prototype.hasOwnProperty.call(data, key)) {
-            return data[key].name;
+        Object.keys(data).forEach((item, index) => {
+          if (item[index]) {
+            return item[index].name;
           }
           return '暂无角色';
-        }
+        });
       };
     },
   },
@@ -135,13 +135,11 @@ export default {
         } else {
           this.loadingText = 'discuzq.list.noMoreData';
         }
+      } else if (this.meta.total > Object.keys(this.allSiteUser).nv_length) {
+        this.pageNum += 1;
+        this.getSiteMember(this.pageNum);
       } else {
-        if (this.meta.total > Object.keys(this.allSiteUser).nv_length) {
-          this.pageNum += 1;
-          this.getSiteMember(this.pageNum);
-        } else {
-          this.loadingText = 'discuzq.list.noMoreData';
-        }
+        this.loadingText = 'discuzq.list.noMoreData';
       }
     },
     getFollowMember(number) {
@@ -151,6 +149,7 @@ export default {
         'page[number]': number,
       };
       this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
+        /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
         if (Object.keys(res) === 0) {
           this.loadingText = 'discuzq.list.noData';
@@ -162,7 +161,7 @@ export default {
     },
     getSiteMember(number) {
       const params = {
-        'filter[username]': '*' + this.searchValue + '*',
+        'filter[username]': `*${this.searchValue}*`,
         'filter[status]': 'normal',
         'page[size]': 20,
         'page[number]': number,
@@ -170,7 +169,7 @@ export default {
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         this.meta = res._jv.json.meta;
 
-        let data = JSON.parse(JSON.stringify(res));
+        const data = JSON.parse(JSON.stringify(res));
         delete data._jv;
         this.allSiteUser = data;
 
