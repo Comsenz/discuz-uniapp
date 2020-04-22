@@ -27,23 +27,25 @@
  * @property {Boolean} value 显示隐藏 - 默认： 否
  * @property {Array} selectedData 选中的items 
  * @property {Boolean} ifNeedConfirm 是否需要确定按钮
- * @property {Array} filterList 筛选条件 - 数据格式 selected默认为false
+ * @property {Array} filterList 筛选条件 - 数据格式 
         [{
           title: '板块1',
           data: [
-            { label: '细类1', value: '1',selected:'true },
-            { label: '细类2', value: '2' },
+            { label: '细类1', value: '1',selected:true },
+            { label: '细类2', value: '2' ,selected:'false},
           ],
         },
         {
           title: '板块2',
           data: [
-            { label: '细类1', value: '1' },
-            { label: '细类2', value: '1' },
+            { label: '细类1', value: '1' ,selected:'false},
+            { label: '细类2', value: '1' ,selected:'false},
           ],
         },],
- * @event {Function} onClick  点击事件
- * @example <qui-tabs :current="current" :values="items"></qui-tabs>
+ * @event {Function} confirm  点击确定
+ * @event {Function} cancel  取消事件
+ * @event {Function} changeSelected  切换选中
+ * @example <filter-modal v-model="show" @confirm="confirm" :filter-list="filterList"></filter-modal>
  */
 export default {
   name: 'FilterModal',
@@ -66,16 +68,11 @@ export default {
         return [];
       },
     },
-    selectedData: {
-      type: Array,
-      default: () => {
-        return [];
-      },
-    },
   },
   data() {
     return {
       showValue: this.value,
+      selectedData: [],
     };
   },
   watch: {
@@ -105,7 +102,7 @@ export default {
       const current = this.filterList[dataIndex].data[filterIndex];
       if (current.selected) {
         current.selected = false;
-        this.selectedData.filter(obj => obj.value !== item.value);
+        this.selectedData = this.selectedData.filter(obj => obj.value !== item.value);
       } else {
         current.selected = true;
         this.selectedData.push(item);

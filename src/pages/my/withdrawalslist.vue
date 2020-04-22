@@ -1,6 +1,11 @@
 <template>
   <view class="withdrawalslist">
-    <cell-item class="withdrawalslist-head" :title="`时间：`" slot-right>
+    <cell-item
+      class="withdrawalslist-head"
+      :title="`时间：`"
+      slot-right
+      @contentClick="contentClick"
+    >
       <view @tap="showFilter">
         <text>状态：所有状态</text>
         <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
@@ -10,6 +15,9 @@
           :filter-list="filterList"
           :if-need-confirm="true"
         ></filter-modal>
+        <date-pop size="height" :show="showDate" @close="closeDate">
+          <date-picker @cancel="cancelDate" @sure="sureDate"></date-picker>
+        </date-pop>
       </view>
     </cell-item>
     <view class="withdrawalslist-items">
@@ -32,23 +40,28 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
+import datePicker from '@/components/qui-date-picker/picker';
+import datePop from '@/components/qui-date-picker/pop';
 
 export default {
   components: {
     cellItem,
     filterModal,
+    datePicker,
+    datePop,
   },
   data: () => {
     return {
       show: false,
+      showDate: false,
       filterList: [
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1' },
-            { label: '支出', value: '2' },
-            { label: '收入', value: '3' },
-            { label: '其他类型', value: '4' },
+            { label: '所有', value: '1', selected: true },
+            { label: '支出', value: '2', selected: false },
+            { label: '收入', value: '3', selected: false },
+            { label: '其他类型', value: '4', selected: false },
           ],
         },
       ],
@@ -60,6 +73,19 @@ export default {
     },
     showFilter() {
       this.show = true;
+    },
+    contentClick() {
+      console.log(111);
+      this.showDate = true;
+    },
+    cancelDate() {
+      this.close();
+    },
+    sureDate(e) {
+      console.log(e);
+    },
+    closeDate() {
+      this.showDate = false;
     },
   },
 };

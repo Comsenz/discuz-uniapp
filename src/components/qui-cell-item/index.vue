@@ -4,7 +4,7 @@
       <view class="cell-item__body__left" v-if="slotLeft">
         <slot></slot>
       </view>
-      <view class="cell-item__body__content">
+      <view class="cell-item__body__content" @tap="contentClick">
         <view class="cell-item__body__content-title" v-if="title" v-text="title"></view>
         <view class="cell-item__body__content-brief" v-if="brief" v-text="brief"></view>
       </view>
@@ -98,6 +98,11 @@ export default {
     $_click(e) {
       if (!this.disabled) {
         this.$emit('click', e);
+      }
+    },
+    contentClick(e) {
+      if (!this.disabled) {
+        this.$emit('contentClick', e);
       }
     },
   },
