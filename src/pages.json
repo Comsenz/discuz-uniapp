@@ -5,10 +5,9 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": ""
+        "navigationStyle": "custom"
       }
     },
-
     {
       "path": "pages/topic/index",
       "style": {
@@ -19,6 +18,14 @@
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "Discuz Q"
+      }
+    },
+    {
+      "path": "pages/common/message",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "信息提示",
+        "disableScroll": true
       }
     }
   ],
