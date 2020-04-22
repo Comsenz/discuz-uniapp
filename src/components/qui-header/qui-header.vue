@@ -1,20 +1,20 @@
 <template>
-  <view class="header">
+  <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
     <view class="logoBox">
       <image class="logo" :src="headImg"></image>
     </view>
     <view class="circleDet">
       <text>
-        主题
-        <text class="circleDet-num">123</text>
+        {{ theme }}
+        <text class="circleDet-num">{{ themeNum }}</text>
       </text>
       <text>
-        帖子
-        <text class="circleDet-num">32.2k+</text>
+        {{ post }}
+        <text class="circleDet-num">{{ postNum }}</text>
       </text>
-      <text class="circleDet-share" @click="btnShare">
-        <qui-icon name="icon-share1" size="18" color="#fff" @click="handleClick"></qui-icon>
-        分享
+      <text class="circleDet-share" @click="open">
+        <qui-icon :name="iconShare" size="16" color="#fff"></qui-icon>
+        {{ share }}
       </text>
     </view>
   </view>
@@ -31,14 +31,38 @@ export default {
       type: String,
       default: '',
     },
+    theme: {
+      type: String,
+      default: '',
+    },
+    themeNum: {
+      type: Number,
+      default: 0,
+    },
+    post: {
+      type: String,
+      default: '',
+    },
+    postNum: {
+      type: Number,
+      default: 0,
+    },
+    share: {
+      type: String,
+      default: '',
+    },
+    iconShare: {
+      type: String,
+      default: '',
+    },
   },
   data: () => {
     return {};
   },
   onLond() {},
   methods: {
-    btnShare() {
-      console.log('是分享哦');
+    open(evt) {
+      this.$emit('click', evt);
     },
   },
 };
@@ -48,19 +72,23 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .header {
   width: 100%;
-  height: 271rpx;
+  height: 400rpx;
+  background-image: url('https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg');
   // background: #1878f3;
   .logo {
     display: block;
     width: 400rpx;
     max-height: 88rpx;
-    padding-top: 74rpx;
+    padding-top: 159rpx;
     margin: 0 auto;
   }
   .circleDet {
     display: flex;
     justify-content: space-between;
-    padding: 34rpx;
+    padding-top: 69rpx;
+    padding-right: 20rpx;
+    padding-bottom: 47rpx;
+    padding-left: 20rpx;
     line-height: 37rpx;
     color: --color(--qui-FC-AAA);
     text-align: center;
