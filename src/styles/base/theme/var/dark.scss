@@ -11,6 +11,9 @@ $dark: (
   --qui-BG-HIGH-LIGHT: #1878f3,
   --qui-BG-BTN: #1878f3,
   --qui-BG-BTN-GRAY: #1878f3,
+  //需要对应暗黑模式修改的颜色 --start
+  --qui-BG-IT:#f6f6f6,
+  // --end
 
   --qui-FC-333: rgba(255, 255, 255, 0.8),
   --qui-FC-777: rgba(255, 255, 255, 0.86),
@@ -18,6 +21,7 @@ $dark: (
   --qui-FC-DDD: rgba(255, 255, 255, 0.3),
   //需要对应暗黑模式修改的颜色 --start
   --qui-FC-FFF: #fff,
+  --qui-FC-C6:#c6c6c6,
   // --end
 
   //需要对应调整

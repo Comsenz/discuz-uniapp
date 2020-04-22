@@ -13,10 +13,14 @@
       <view class="themeItem__header__opera">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>管理</view>
+            <qui-icon
+              name="icon-management"
+              class="icon-management"
+              :style="{ color: selectActive }"
+            ></qui-icon>
+            <view :style="{ color: selectActive }">{{ t.management }}</view>
           </view>
-          <quiDropDown
+          <qui-drop-down
             posival="absolute"
             :show="seleShow"
             :list="selectList"
@@ -24,16 +28,21 @@
             :right="0"
             :width="180"
             @click="selectChoice(selectList.type)"
-          ></quiDropDown>
+          ></qui-drop-down>
         </view>
         <image src="@/assets/essence.png" class="essence"></image>
       </view>
     </view>
 
     <view class="themeItem__content">
-      <view class="themeItem__content__text">
-        {{ themeContent }}
+      <view class="theme__content_title" v-if="themeType == 1 && themeTitle">{{ themeTitle }}</view>
+      <view class="themeItem__content__text" v-if="themeContent">
+        <rich-text :nodes="themeContent"></rich-text>
       </view>
+      <view class="theme__content__videocover" v-if="!payStatus && coverImage">
+        <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
+      </view>
+
       <view v-if="imagesList.length == 1">
         <view class="themeItem__content__imgone">
           <image
@@ -72,33 +81,16 @@
         </view>
       </view>
       <view class="themeItem__content__tags">
-        <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
-          {{ item.tagName }}
+        <view class="themeItem__content__tags__item" v-for="(tag, index) in tags" :key="index">
+          {{ tag.name }}
         </view>
       </view>
     </view>
-    <!-- 已支付用户列表 -->
-    <quiPersonList
-      :show-status="true"
-      :person-num="20"
-      :person-list="payList"
-      :btn-show="true"
-      :brn-icon-show="true"
-      btn-icon-name="rmb"
-      btn-text="支付查看图片"
-    ></quiPersonList>
   </view>
 </template>
 
 <script>
-import quiDropDown from '@/components/qui-drop-down/qui-drop-down';
-import quiPersonList from '@/components/qui-person-list/qui-person-list';
-
 export default {
-  components: {
-    quiDropDown,
-    quiPersonList,
-  },
   props: {
     // 类型
     themeParts: {
@@ -111,7 +103,7 @@ export default {
     // 主题类型
     themeType: {
       validator: value => {
-        // 0 文字  1 图片  2 视频 3 帖子
+        // 0 文字  1 帖子  2 视频 3 图片
         return ['0', '1', '2', '3'].indexOf(value) !== -1;
       },
       default: '1',
@@ -126,10 +118,11 @@ export default {
       type: String,
       default: '',
     },
-    // themeTypes: {
-    //   type: String,
-    //   default: '',
-    // },
+    // 主题标题（当类型是帖子（1）时）
+    themeTitle: {
+      type: String,
+      default: '',
+    },
     // 发布内容
     themeContent: {
       type: String,
@@ -142,24 +135,13 @@ export default {
     },
     // 主题图片
     imagesList: {
-      type: Array,
+      type: Object,
       default: () => {
-        return [];
+        return {};
       },
     },
-    // // 主题标签 名称
-    // tagName: {
-    //   type: String,
-    //   default: '',
-    // },
     // 主题相关标签
     tags: {
-      type: Array,
-      default: () => {
-        return [];
-      },
-    },
-    payList: {
       type: Array,
       default: () => {
         return [];
@@ -173,15 +155,22 @@ export default {
         { text: '点赞', type: '1' },
         { text: '收藏', type: '2' },
       ], // 管理菜单
+      selectActive: '',
     };
   },
   onLoad() {
-    console.log(this.imagesList.length);
+    console.log(this.tags);
+  },
+  computed: {
+    t() {
+      return this.i18n.t('topic');
+    },
   },
   methods: {
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
+      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     selectChoice(type) {
       this.seleShow = false;
