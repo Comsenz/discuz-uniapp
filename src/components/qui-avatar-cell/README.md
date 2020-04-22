@@ -61,7 +61,7 @@
 |mark|名称id(一般传用户ID)|Number|-
 |icon|左侧图标|String|-
 |center|开启左侧下面名称,开启时右侧内容字体颜色更改为777|Boolean|false
-|rightColor|右侧内容颜色，支持格式：`color_name`、`hex_number`、`rgb_number`、`rgba_number`|String|-
+|rightColor|右侧内容颜色，支持格式：`color_name`、`hex_number`、`rgb_number`、`rgba_number`|String|#AAA
 
 ### Event 事件说明
 

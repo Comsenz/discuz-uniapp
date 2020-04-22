@@ -21,6 +21,14 @@
       }
     },
     {
+      "path": "components/qui-at-member-page/qui-at-member-page",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "选择@人员"
+      }
+    },
+    {
       "path": "pages/common/message",
       "style": {
         "navigationBarBackgroundColor": "#fff",

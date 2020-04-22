@@ -53,6 +53,7 @@ export default {
       loading: '加载中',
       noMatch: '无匹配数据',
       noData: '暂无数据',
+      noMoreData: '没有更多数据了！',
     },
     // 提示框
     msgbox: {
@@ -74,6 +75,12 @@ export default {
     // 导航
     pageHeader: {
       title: '返回',
+    },
+    atMember: {
+      atTitle: '选择@人员',
+      selectedMember: '搜索成员',
+      notSelected: '尚未选',
+      selected: '@ 已选',
     },
   },
   core: {
