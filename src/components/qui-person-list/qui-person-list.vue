@@ -1,16 +1,16 @@
 <template>
   <!-- 列表 -->
-  <view class="det-reward-box" v-if="showStatus">
-    <view class="det-rew-number">{{ personNum }}人{{ type }}</view>
-    <view class="det-rew-per-list">
-      <view class="det-rew-person" v-for="(person, index) in personRes" :key="index">
+  <view class="det-person-box" v-if="showStatus">
+    <view class="det-per-number">{{ personNum }}人{{ type }}</view>
+    <view class="det-per-list">
+      <view class="det-person" v-for="(person, index) in personRes" :key="index">
         <image
           :src="
             person.avatarUrl != '' && person.avatarUrl != null
               ? person.avatarUrl
               : 'https://discuz.chat/static/images/noavatar.gif'
           "
-          class="det-rew-per-head"
+          class="det-per-head"
           @click="personJump(person.id)"
         ></image>
       </view>
@@ -19,7 +19,7 @@
       <qui-icon name="icon-unfold" class="unfold" @click="foldClick"></qui-icon>
     </view>
 
-    <button class="det-rew-btn" v-if="btnShow" :style="{ background: btnBg }" @click="btnClick">
+    <button class="det-per-btn" v-if="btnShow" :style="{ background: btnBg }" @click="btnClick">
       <qui-icon
         :name="'icon-' + btnIconName"
         :color="btnTextColor"
@@ -154,29 +154,29 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.det-reward-box {
+.det-person-box {
   display: flex;
   flex-direction: column;
-  padding: 80rpx 0;
+  padding: 0 0 40px;
   text-align: center;
-  .det-rew-number {
+  .det-per-number {
     font-size: $fg-f28;
     color: --color(--qui-FC-AAA);
     text-align: center;
   }
-  .det-rew-per-list {
+  .det-per-list {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     padding: 30rpx 0;
   }
-  .det-rew-person {
+  .det-person {
     width: 50rpx;
     height: 50rpx;
     margin: 0 3rpx 10rpx 4rpx;
     border-radius: 50%;
-    .det-rew-per-head {
+    .det-per-head {
       display: block;
       width: 100%;
       height: 100%;
@@ -184,7 +184,7 @@ export default {
     }
   }
 
-  .det-rew-btn {
+  .det-per-btn {
     display: flex;
     flex-direction: row;
     justify-content: center;

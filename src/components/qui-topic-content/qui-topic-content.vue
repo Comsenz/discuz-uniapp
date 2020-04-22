@@ -13,8 +13,12 @@
       <view class="themeItem__header__opera">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>管理</view>
+            <qui-icon
+              name="icon-management"
+              class="icon-management"
+              :style="{ color: selectActive }"
+            ></qui-icon>
+            <view :style="{ color: selectActive }">管理</view>
           </view>
           <qui-drop-down
             posival="absolute"
@@ -151,6 +155,7 @@ export default {
         { text: '点赞', type: '1' },
         { text: '收藏', type: '2' },
       ], // 管理菜单
+      selectActive: '',
     };
   },
   onLoad() {
@@ -160,6 +165,7 @@ export default {
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
+      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     selectChoice(type) {
       this.seleShow = false;

@@ -398,60 +398,7 @@ page {
     }
   }
 }
-.det-reward-box {
-  display: flex;
-  flex-direction: column;
-  padding: 80rpx 0;
-  text-align: center;
-  .det-rew-number {
-    font-size: $fg-f28;
-    color: --color(--qui-FC-AAA);
-    text-align: center;
-  }
-  .det-rew-per-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 30rpx 0;
-  }
-  .det-rew-person {
-    width: 50rpx;
-    height: 50rpx;
-    margin: 0 3rpx 10rpx 4rpx;
-    border-radius: 50%;
-    .det-rew-per-head {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
-  }
-  .icon-unfold {
-    padding: 0 0 30rpx;
-    font-size: 34rpx;
-    color: --color(--qui-FC-B5);
-  }
-  .det-rew-btn {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 465rpx;
-    height: 90rpx;
-    font-size: $fg-f28;
-    line-height: 90rpx;
-    color: #fff;
-    background: #fa5151;
-    * {
-      color: #fff;
-    }
-    .qui-icon {
-      margin-right: 13rpx;
-      font-size: 36rpx;
-      line-height: 90rpx;
-    }
-  }
-}
+
 .det-con-ft {
   display: flex;
   flex-direction: row;
