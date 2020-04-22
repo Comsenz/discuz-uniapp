@@ -1,6 +1,5 @@
 <template>
   <view class="content bg" v-if="status">
-    <view>{{ thread.firstPost.content }}</view>
     <view class="detail-tip" v-if="topicStatus == 0">{{ tip }}</view>
     <qui-topic-content
       v-model="thread"
@@ -13,18 +12,50 @@
       :tags="[thread.category]"
     ></qui-topic-content>
     <!-- 已支付用户列表 -->
-    <qui-person-list
-      :show-status="true"
-      :person-num="thread.paidCount"
-      :limit-count="limitShowNum"
-      :person-list="thread.paidUsers"
-      :btn-show="true"
-      :brn-icon-show="true"
-      btn-icon-name="rmb"
-      btn-text="支付查看图片"
-      @btnClick="foldClick"
-    ></qui-person-list>
+    <view v-if="Object.keys(thread.paidUsers).length != 0">
+      <qui-person-list
+        :show-status="true"
+        type="支付"
+        :person-num="thread.paidCount"
+        :limit-count="limitShowNum"
+        :person-list="thread.paidUsers"
+        :btn-show="true"
+        :btn-icon-show="true"
+        btn-icon-name="rmb"
+        btn-text="支付查看图片"
+        @personJump="personJump"
+        @btnClick="payClick"
+      ></qui-person-list>
+    </view>
 
+    <!-- 打赏用户列表 -->
+    <view v-if="Object.keys(thread.rewardedUsers).length != 0">
+      <qui-person-list
+        :show-status="true"
+        type="打赏"
+        :person-num="thread.rewardedCount"
+        :limit-count="limitShowNum"
+        :person-list="thread.rewardedUsers"
+        :btn-show="true"
+        :btn-icon-show="true"
+        btn-icon-name="rmb"
+        btn-text="打赏"
+        @personJump="personJume"
+        @btnClick="rewardClick"
+      ></qui-person-list>
+    </view>
+    <view v-if="Object.keys(thread.firstPost.likedUsers).length != 0">
+      <!-- 点赞用户列表 -->
+      <qui-person-list
+        :show-status="true"
+        type="点赞"
+        :person-num="thread.firstPost.likeCount"
+        :limit-count="limitShowNum"
+        :person-list="thread.firstPost.likedUsers"
+        :btn-show="false"
+        @personJump="personJume"
+      ></qui-person-list>
+    </view>
     <view class="det-con-ft">
       <view class="det-con-ft-child">阅读2345</view>
       <view class="det-con-ft-child">
@@ -154,14 +185,27 @@ export default {
           'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
           'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
         ],
+        likes: [
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+        ],
       },
       status: false,
-      limitShowNum: 1,
+      limitShowNum: 2,
     };
   },
   computed: {
     thread() {
-      return this.$store.getters['jv/get']('threads/13');
+      return this.$store.getters['jv/get']('threads/11');
     },
   },
   onLoad() {
@@ -191,7 +235,7 @@ export default {
         ],
       };
       this.loadStatus = status.run(() =>
-        this.$store.dispatch('jv/get', ['threads/13', { params }]).then(data => {
+        this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
           this.status = true;
           console.log(data);
           // console.log(typeof data.paidUsers);
@@ -208,10 +252,21 @@ export default {
       this.seleShow = false;
       console.log(type, '类型');
     },
-    // foldClick() {
-    //   console.log(this.thread.paidUsers.length, '数组长度');
-    //   this.limitShowNum = this.thread.paidUsers.length;
-    // },
+    // 跳转到用户主页
+    personJume(id) {
+      console.log(id, 'id');
+      // uni.navigateTo({
+      //   url: '/pages/home/index',
+      // });
+    },
+    // 支付
+    payClick() {
+      console.log('支付');
+    },
+    // 打赏
+    rewardClick() {
+      console.log('打赏');
+    },
     // 跳转到评论详情页
     commentJump() {
       console.log('跳转');

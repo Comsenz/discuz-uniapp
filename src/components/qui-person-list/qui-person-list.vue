@@ -1,7 +1,7 @@
 <template>
   <!-- 列表 -->
   <view class="det-reward-box" v-if="showStatus">
-    <view class="det-rew-number">{{ personNum }}人打赏</view>
+    <view class="det-rew-number">{{ personNum }}人{{ type }}</view>
     <view class="det-rew-per-list">
       <view class="det-rew-person" v-for="(person, index) in personRes" :key="index">
         <image
@@ -11,22 +11,20 @@
               : 'https://discuz.chat/static/images/noavatar.gif'
           "
           class="det-rew-per-head"
-          @click="personJump"
+          @click="personJump(person.id)"
         ></image>
       </view>
     </view>
-    <qui-icon
-      name="icon-unfold"
-      class="icon-unfold"
-      @click="foldClick"
-      v-if="personNum > limitCount"
-    ></qui-icon>
+    <view class="fold-box" :style="{ transform: transform }" v-if="personNum > limitCount">
+      <qui-icon name="icon-unfold" class="unfold" @click="foldClick"></qui-icon>
+    </view>
+
     <button class="det-rew-btn" v-if="btnShow" :style="{ background: btnBg }" @click="btnClick">
       <qui-icon
         :name="'icon-' + btnIconName"
         :color="btnTextColor"
         class="qui-icon"
-        v-if="brnIconShow"
+        v-if="btnIconShow"
       ></qui-icon>
       <view :style="{ color: btnTextColor }">{{ btnText }}</view>
     </button>
@@ -40,6 +38,11 @@ export default {
     showStatus: {
       default: true,
       type: Boolean,
+    },
+    // 类型
+    type: {
+      default: '类型',
+      type: String,
     },
     // list总数
     personNum: {
@@ -69,7 +72,7 @@ export default {
       type: String,
     },
     // 按时是否显示icon
-    brnIconShow: {
+    btnIconShow: {
       default: true,
       type: Boolean,
     },
@@ -93,6 +96,7 @@ export default {
     return {
       personRes: [],
       foldStatus: false,
+      transform: '',
     };
   },
   onLoad() {},
@@ -102,20 +106,12 @@ export default {
       handler(newVal) {
         this.personList = newVal;
         this.personRes = this.limitArray(newVal, this.limitCount);
-        console.log(this.personRes, '0000');
+        // console.log(this.personRes, '0000');
       },
       deep: true,
       immediate: true,
     },
-    // limitCount: {
-    //   handler(newVal) {
-    //     this.limitCount = newVal;
-    //     this.personRes = this.limitArray(newVal, this.limitCount);
-    //     console.log(this.personRes, '11111');
-    //   },
-    //   deep: true,
-    //   immediate: true,
-    // },
+
     deep: true,
     immediate: true,
   },
@@ -123,14 +119,12 @@ export default {
     // 数组取前几条数据
     limitArray(obj, limit) {
       const arr = [];
-
       Object.values(obj).forEach((item, index) => {
         if (index >= limit) {
           return;
         }
         arr.push(item);
       });
-
       return arr;
     },
     // 展开 折叠
@@ -139,12 +133,15 @@ export default {
       // this.$emit('btnClick', param);
       console.log(this.personRes);
       if (this.foldStatus) {
+        this.transform = 'rotate(180deg)';
         this.personRes = this.limitArray(this.personList, this.personNum);
       } else {
+        this.transform = '';
         this.personRes = this.limitArray(this.personList, this.limitCount);
       }
     },
     personJump(param) {
+      console.log(param, '参数');
       this.$emit('personJump', param);
     },
     btnClick(param) {
@@ -186,11 +183,7 @@ export default {
       border-radius: 50%;
     }
   }
-  .icon-unfold {
-    padding: 0 0 30rpx;
-    font-size: 34rpx;
-    color: --color(--qui-FC-B5);
-  }
+
   .det-rew-btn {
     display: flex;
     flex-direction: row;
@@ -204,6 +197,15 @@ export default {
       font-size: 36rpx;
       line-height: 90rpx;
     }
+  }
+}
+.fold-box {
+  padding: 0 0 30rpx;
+  transition: transform 200ms;
+  transform-origin: 50% 50%;
+  .unfold {
+    font-size: 34rpx;
+    color: --color(--qui-FC-B5);
   }
 }
 </style>
