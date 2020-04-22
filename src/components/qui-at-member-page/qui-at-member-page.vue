@@ -2,7 +2,7 @@
   <view class="qui-at-member-page-box">
     <view class="qui-at-member-page-box__hd">
       <view class="qui-at-member-page-box__hd__sc">
-        <qui-icon class="icon-search" name="icon-search" size="15"></qui-icon>
+        <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
         <input
           type="text"
           placeholder-class="input-placeholder"
@@ -184,10 +184,6 @@ export default {
     },
   },
   onLoad() {
-    uni.setNavigationBarColor({
-      frontColor: '#000000',
-      backgroundColor: '#ffffff',
-    });
     uni.setNavigationBarTitle({
       title: this.i18n.t('discuzq.atMember.atTitle'),
     });
