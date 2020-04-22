@@ -5,10 +5,15 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationBarTitleText": ""
+        "navigationStyle": "custom"
       }
     },
-
+    {
+      "path": "pages/topic/index",
+      "style": {
+        "navigationBarTitleText": "Discuz Q"
+      }
+    },
     {
       "path": "pages/index/index",
       "style": {
@@ -16,9 +21,19 @@
       }
     },
     {
-      "path": "pages/topic/index",
+      "path": "components/qui-at-member-page/qui-at-member-page",
       "style": {
-        "navigationBarTitleText": "Discuz Q"
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "选择@人员"
+      }
+    },
+    {
+      "path": "pages/common/message",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "信息提示",
+        "disableScroll": true
       }
     }
   ],

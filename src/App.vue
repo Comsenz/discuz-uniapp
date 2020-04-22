@@ -1,18 +1,24 @@
 <script>
 export default {
   onLaunch() {
-    console.log('App Launch');
+    this.$store.dispatch('jv/get', [
+      'forum',
+      {
+        params: {
+          include: 'users',
+        },
+      },
+    ]);
   },
-  onShow() {
-    console.log('App Show');
-  },
-  onHide() {
-    console.log('App Hide');
-  },
+  onShow() {},
+  onHide() {},
 };
 </script>
 
 <style lang="scss">
 /* 每个页面公共css */
 @import '@/styles/base/reset.scss';
+page {
+  font-size: 28rpx;
+}
 </style>

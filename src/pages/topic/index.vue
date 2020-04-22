@@ -1,92 +1,75 @@
 <template>
-  <view class="content bg">
-    <view class="detail-tip">{{ tip }}</view>
-    <view class="detail-hd">
-      <view class="det-hd-per-head-box">
-        <image src="@/assets/essence.png" class="det-hd-per-head"></image>
-      </view>
-      <view class="det-hd-per-info">
-        <text class="det-hd-per-name">{{ username }}</text>
-        <view class="det-hd-post-time">{{ time }}</view>
-      </view>
-      <view class="det-hd-opera">
-        <view class="det-hd-operaCli">
-          <qui-icon name="icon-management"></qui-icon>
-          <view>管理</view>
-        </view>
-        <image src="@/assets/essence.png" class="essence"></image>
-      </view>
+  <view class="content bg" v-if="status">
+    <view class="detail-tip" v-if="topicStatus == 0">{{ tip }}</view>
+    <qui-topic-content
+      v-model="thread"
+      :pay-status="true"
+      :user-name="thread.user.username"
+      :theme-types="thread.type"
+      :theme-time="thread.createdAt"
+      :theme-content="thread.firstPost.contentHtml"
+      :images-list="thread.firstPost.images"
+      :tags="[thread.category]"
+    ></qui-topic-content>
+    <!-- 已支付用户列表 -->
+    <view v-if="paidStatus">
+      <qui-person-list
+        :show-status="true"
+        type="支付"
+        :person-num="thread.paidCount"
+        :limit-count="limitShowNum"
+        :person-list="thread.paidUsers"
+        :btn-show="true"
+        :btn-icon-show="true"
+        btn-icon-name="rmb"
+        btn-text="支付查看图片"
+        @personJump="personJump"
+        @btnClick="payClick"
+      ></qui-person-list>
     </view>
-    <view class="detail-post-content">
-      <text class="det-post-con" @click="commentJump()">
-        亚马逊上线了一个海外直邮防护用户页面，来自美国英
-        国、日本、德国亚马逊的防护用品，包括一些奇形怪状
-        的口罩、温度计、洗手液、消毒湿巾、护目镜、手套维
-        生素、空气净化器等产品，买不到防护产品的同学试试 亚马逊吧，有奇效。海外购速度也挺快。
-        新型冠狀病毒
-      </text>
-      <view class="det-post-img-list">
-        <view class="det-post-img-box">
-          <image class="det-post-img" mode="widthFix" src="@/assets/essence.png"></image>
-        </view>
-        <view class="det-post-img-box">
-          <image class="det-post-img" mode="widthFix" src="@/assets/essence.png"></image>
-        </view>
-      </view>
-      <view class="det-post-tag-list">
-        <view class="det-post-tag" v-for="(tag, index) in tagList" :key="index">{{ tag.tag }}</view>
-      </view>
+
+    <!-- 打赏用户列表 -->
+    <view v-if="rewardStatus">
+      <qui-person-list
+        :show-status="true"
+        type="打赏"
+        :person-num="thread.rewardedCount"
+        :limit-count="limitShowNum"
+        :person-list="thread.rewardedUsers"
+        :btn-show="true"
+        :btn-icon-show="true"
+        btn-icon-name="rmb"
+        btn-text="打赏"
+        @personJump="personJume"
+        @btnClick="rewardClick"
+      ></qui-person-list>
     </view>
-    <!-- 打赏 -->
-    <view class="det-reward-box">
-      <view class="det-rew-number">7人打赏</view>
-      <view class="det-rew-per-list">
-        <view class="det-rew-person">
-          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
-        </view>
-        <view class="det-rew-person">
-          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
-        </view>
-        <view class="det-rew-person">
-          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
-        </view>
-      </view>
-      <qui-icon name="icon-unfold"></qui-icon>
-      <button class="det-rew-btn">
-        <qui-icon name="icon-reward"></qui-icon>
-        <view>打赏</view>
-      </button>
-    </view>
-    <!-- 点赞 -->
-    <view class="det-reward-box pad-top">
-      <view class="det-rew-number">54人点赞</view>
-      <view class="det-rew-per-list">
-        <view class="det-rew-person">
-          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
-        </view>
-        <view class="det-rew-person">
-          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
-        </view>
-        <view class="det-rew-person">
-          <image src="@/assets/essence.png" mode="widthFix" class="det-rew-per-head"></image>
-        </view>
-      </view>
-      <qui-icon name="icon-unfold"></qui-icon>
+    <view v-if="likedStatus">
+      <!-- 点赞用户列表 -->
+      <qui-person-list
+        :show-status="true"
+        type="点赞"
+        :person-num="thread.firstPost.likeCount"
+        :limit-count="limitShowNum"
+        :person-list="thread.firstPost.likedUsers"
+        :btn-show="false"
+        @personJump="personJume"
+      ></qui-person-list>
     </view>
     <view class="det-con-ft">
       <view class="det-con-ft-child">阅读2345</view>
       <view class="det-con-ft-child">
-        <qui-icon name="icon-like"></qui-icon>
+        <qui-icon name="icon-like" class="qui-icon"></qui-icon>
         <view>赞44343</view>
       </view>
       <view class="det-con-ft-child">
-        <qui-icon name="icon-collection"></qui-icon>
+        <qui-icon name="icon-collection" class="qui-icon"></qui-icon>
         <view>收藏</view>
       </view>
     </view>
     <!-- 评论 -->
     <view class="comment">
-      <view class="comment-num">217条评论</view>
+      <view class="comment-num">{{ thread.postCount }}条评论</view>
       <view class="comment-child">
         <view class="comment-child-hd">
           <view class="comment-child-per-head-box">
@@ -103,7 +86,7 @@
             </view>
             <view class="comment-child-time">{{ time }}</view>
           </view>
-          <view class="comment-child-status">{{ status }}</view>
+          <view class="comment-child-status">{{ replyStatus }}</view>
         </view>
         <view class="comment-child-con">
           {{ content }}
@@ -123,15 +106,15 @@
     </view>
     <view class="det-ft flex">
       <view class="det-ft-child flex">
-        <qui-icon name="icon-like"></qui-icon>
+        <qui-icon name="icon-like" class="qui-icon"></qui-icon>
         <view>点赞</view>
       </view>
       <view class="det-ft-child flex">
-        <qui-icon name="icon-comments"></qui-icon>
+        <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
         <view>写评论</view>
       </view>
       <view class="det-ft-child flex">
-        <qui-icon name="icon-share"></qui-icon>
+        <qui-icon name="icon-share" class="qui-icon"></qui-icon>
         <view>分享</view>
       </view>
     </view>
@@ -139,15 +122,18 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { status } from 'jsonapi-vuex';
+import lodash from 'lodash';
 
 export default {
   data() {
     return {
+      loadStatus: {},
+      topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       username: 'admin',
       time: '16分钟前',
       role: '管理员',
-      status: '审核中',
+      replyStatus: '审核中',
       content: '内容内容内容,内容内容内容内容内容内容内容内容内容,内容内容内容内容内容...',
       isActive: true,
       tagList: [
@@ -157,20 +143,149 @@ export default {
         { tag: '女神视频4444' },
       ],
       tip: '内容正在审核中，审核通过后才能正常显示！',
+      seleShow: false, // 默认收起管理菜单
+      selectList: [
+        { text: '编辑', type: '1' },
+        { text: '精华', type: '2' },
+        { text: '删除', type: '3' },
+        { text: '置顶', type: '4' },
+      ], // 管理菜单
+      topic: {
+        username: 'admin',
+        time: '15分钟前',
+        themeTypes: '0',
+        themeContent: '内容内容',
+        images: [
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+        ],
+        tags: [
+          {
+            tagName: '女神',
+          },
+          {
+            tagName: '女神经',
+          },
+          {
+            tagName: '女神经病',
+          },
+        ],
+        payList: [
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+        ],
+        likes: [
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
+        ],
+      },
+      status: false,
+      limitShowNum: 2,
+      paidStatus: false, // 是否有已支付数据
+      rewardStatus: false, // 是否已有打赏数据
+      likedStatus: false, // 是否已有点赞数据
     };
   },
   computed: {
-    ...mapState({
-      allThreads: state => state.dzThreads.all,
-    }),
+    thread() {
+      return this.$store.getters['jv/get']('threads/11');
+    },
   },
   onLoad() {
-    this.loadAllThreads({
-      'page[size]': 10,
-      'page[number]': 1,
-    });
+    this.loadThreads();
   },
   methods: {
+    // 加载当前主题数据
+    loadThreads() {
+      const params = {
+        'filter[isDeleted]': 'no',
+        include: [
+          'posts.replyUser',
+          'user.groups',
+          'user',
+          'posts',
+          'posts.user',
+          'posts.likedUsers',
+          'posts.images',
+          'firstPost',
+          'firstPost.likedUsers',
+          'firstPost.images',
+          'firstPost.attachments',
+          'rewardedUsers',
+          'category',
+          'threadVideo',
+          'paidUsers',
+        ],
+      };
+      this.loadStatus = status.run(() =>
+        this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
+          this.status = true;
+          console.log(data);
+          // console.log(lodash.isEmpty(data.paidUsers));
+          if (lodash.isEmpty(data.paidUsers)) {
+            this.paidStatus = false;
+          } else {
+            this.paidStatus = true;
+          }
+          if (lodash.isEmpty(data.rewardedUsers)) {
+            this.rewardStatus = false;
+          } else {
+            this.rewardStatus = true;
+          }
+          if (lodash.isEmpty(data.firstPost.likedUsers)) {
+            this.likedStatus = false;
+          } else {
+            this.likedStatus = true;
+          }
+          // console.log('over', this.limitArray(data.paidUsers, 1));
+        }),
+      );
+    },
+    // 管理菜单点击事件
+    selectClick() {
+      this.seleShow = !this.seleShow;
+    },
+    // 管理菜单内标签点击事件
+    selectChoice(type) {
+      this.seleShow = false;
+      console.log(type, '类型');
+    },
+    // 跳转到用户主页
+    personJume(id) {
+      console.log(id, 'id');
+      // uni.navigateTo({
+      //   url: '/pages/home/index',
+      // });
+    },
+    // 支付
+    payClick() {
+      console.log('支付');
+    },
+    // 打赏
+    rewardClick() {
+      console.log('打赏');
+    },
     // 跳转到评论详情页
     commentJump() {
       console.log('跳转');
@@ -178,15 +293,18 @@ export default {
       //   url: '',
       // });
     },
-    ...mapActions({
-      loadAllThreads: 'dzThreads/loadAll',
-    }),
   },
 };
 </script>
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
+page {
+  padding: 0;
+  margin: 0;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-333);
+}
 * {
   padding: 0;
   margin: 0;
@@ -230,7 +348,7 @@ export default {
     }
   }
   .det-hd-per-info {
-    width: 400px;
+    width: 400rpx;
     padding-left: 20rpx;
     .det-hd-per-name {
       margin-bottom: 10px;
@@ -249,21 +367,25 @@ export default {
   align-self: flex-end;
   text-align: right;
   flex-shrink: 0;
-  .det-hd-operaCli {
+  .essence {
+    display: inline-block;
+    width: 39rpx;
+    height: 44rpx;
+  }
+}
+.det-hd-operaCli {
+  position: relative;
+  z-index: 10;
+  .det-hd-management {
     display: flex;
     flex-direction: row;
     .icon-management {
       margin-right: 7rpx;
       font-size: 26rpx;
     }
-    font-size: $fg-f28;
-    line-height: 40rpx;
   }
-  .essence {
-    display: inline-block;
-    width: 49rpx;
-    height: 60rpx;
-  }
+  font-size: $fg-f28;
+  line-height: 40rpx;
 }
 //详情页帖子内容
 .detail-post-content {
@@ -295,60 +417,7 @@ export default {
     }
   }
 }
-.det-reward-box {
-  display: flex;
-  flex-direction: column;
-  padding: 80rpx 0;
-  text-align: center;
-  .det-rew-number {
-    font-size: $fg-f28;
-    color: --color(--qui-FC-AAA);
-    text-align: center;
-  }
-  .det-rew-per-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 30rpx 0;
-  }
-  .det-rew-person {
-    width: 50rpx;
-    height: 50rpx;
-    margin: 0 3rpx 10rpx 4rpx;
-    border-radius: 50%;
-    .det-rew-per-head {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
-  }
-  .icon-unfold {
-    padding: 0 0 30rpx;
-    font-size: 34rpx;
-    color: --color(--qui-FC-B5);
-  }
-  .det-rew-btn {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 465rpx;
-    height: 90rpx;
-    font-size: $fg-f28;
-    line-height: 90rpx;
-    color: #fff;
-    background: #fa5151;
-    * {
-      color: #fff;
-    }
-    .qui-icon {
-      margin-right: 13rpx;
-      font-size: 36rpx;
-      line-height: 90rpx;
-    }
-  }
-}
+
 .det-con-ft {
   display: flex;
   flex-direction: row;
@@ -438,6 +507,7 @@ export default {
 }
 .comment-child-con {
   padding: 20rpx 0 40rpx;
+  font-size: $fg-f28;
   line-height: 45rpx;
   text-align: left;
   .comment-child-con-all {

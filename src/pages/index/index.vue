@@ -1,37 +1,32 @@
 <template>
   <qui-page>
     <view class="content" v-for="item in allThreads" :key="item.id">
-      <view>{{ item.user.attributes.username }}: {{ item.attributes.title }}</view>
+      <view>{{ item.user.username }}: {{ item.title }}</view>
     </view>
   </qui-page>
 </template>
 
 <script>
-import quiPage from '@/components/qui-page';
-import { mapActions, mapState } from 'vuex';
-
 export default {
-  components: {
-    quiPage,
-  },
   data() {
     return {};
   },
   computed: {
-    ...mapState({
-      allThreads: state => state.dzThreads.all,
-    }),
+    allThreads() {
+      return this.$store.getters['jv/get']({ _jv: { type: 'threads' } });
+    },
   },
   onLoad() {
-    this.loadAllThreads({
-      'page[size]': 10,
-      'page[number]': 1,
-    });
+    this.getThreads();
   },
   methods: {
-    ...mapActions({
-      loadAllThreads: 'dzThreads/loadAll',
-    }),
+    getThreads() {
+      const params = {
+        'page[size]': 10,
+        'page[number]': 1,
+      };
+      this.$store.dispatch('jv/get', ['threads', { params }]);
+    },
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <text :style="{ color: color, 'font-size': size + 'px' }" :class="cssClass" @click="handleClick">
+  <text :style="{ color: color, 'font-size': size + 'rpx' }" :class="cssClass" @click="handleClick">
     <text v-if="dot" :class="dotClass">{{ badge }}</text>
   </text>
 </template>
@@ -14,7 +14,7 @@ export default {
     },
     size: {
       type: [Number, String],
-      default: 16,
+      default: 28,
     },
     color: {
       type: String,
