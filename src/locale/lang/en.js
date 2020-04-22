@@ -53,6 +53,7 @@ export default {
       loading: 'Loading',
       noMatch: 'No matching data',
       noData: 'No data',
+      noMoreData: 'No more data！',
     },
     // 提示框
     msgbox: {
@@ -73,6 +74,12 @@ export default {
     // 导航
     pageHeader: {
       title: 'Back',
+    },
+    atMember: {
+      atTitle: 'Select @ member',
+      selectedMember: 'Selected member',
+      notSelected: 'Not selected',
+      selected: '@ Selected',
     },
   },
 };

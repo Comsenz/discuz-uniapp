@@ -5,6 +5,7 @@ import Vuex from 'vuex';
 import { jsonapiModule } from 'jsonapi-vuex';
 import { http } from '@/api/api-request';
 import theme from '@/store/modules/theme';
+import atMember from '@/store/modules/atMember';
 
 Vue.use(Vuex);
 
@@ -13,8 +14,9 @@ const store = new Vuex.Store({
   actions: {},
   getters: {},
   modules: {
-    jv: jsonapiModule(http.request.bind(http)),
+    jv: jsonapiModule(http.request.bind(http), { preserveJson: true }),
     theme,
+    atMember,
   },
   state: {},
   mutations: {},
