@@ -82,6 +82,9 @@ export default {
       notSelected: '尚未选',
       selected: '@ 已选',
     },
+    role: {
+      noRole: '暂无角色',
+    },
   },
   core: {
     not_install: '该站点未安装',

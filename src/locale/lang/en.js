@@ -81,5 +81,8 @@ export default {
       notSelected: 'Not selected',
       selected: '@ Selected',
     },
+    role: {
+      noRole: 'No role',
+    },
   },
 };
