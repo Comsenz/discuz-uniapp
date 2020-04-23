@@ -84,5 +84,8 @@ export default {
     role: {
       noRole: 'No role',
     },
+    post: {
+      post: 'Post',
+    },
   },
 };

@@ -85,6 +85,9 @@ export default {
     role: {
       noRole: '暂无角色',
     },
+    post: {
+      post: '发布',
+    },
   },
   core: {
     not_install: '该站点未安装',
