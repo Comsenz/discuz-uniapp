@@ -17,7 +17,7 @@
     <view v-if="paidStatus">
       <qui-person-list
         :show-status="true"
-        type="支付"
+        :type="t.pay"
         :person-num="thread.paidCount"
         :limit-count="limitShowNum"
         :person-list="thread.paidUsers"
@@ -34,14 +34,14 @@
     <view v-if="rewardStatus">
       <qui-person-list
         :show-status="true"
-        type="打赏"
+        :type="t.reward"
         :person-num="thread.rewardedCount"
         :limit-count="limitShowNum"
         :person-list="thread.rewardedUsers"
         :btn-show="true"
         :btn-icon-show="true"
         btn-icon-name="rmb"
-        btn-text="打赏"
+        :btn-text="t.reward"
         @personJump="personJump"
         @btnClick="rewardClick"
       ></qui-person-list>
@@ -50,7 +50,7 @@
       <!-- 点赞用户列表 -->
       <qui-person-list
         :show-status="true"
-        type="点赞"
+        :type="t.giveLike"
         :person-num="thread.firstPost.likeCount"
         :limit-count="limitShowNum"
         :person-list="thread.firstPost.likedUsers"
@@ -59,53 +59,49 @@
       ></qui-person-list>
     </view>
     <view class="det-con-ft">
-      <view class="det-con-ft-child">阅读{{ thread.viewCount }}</view>
+      <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
       <view class="det-con-ft-child">
         <qui-icon name="icon-like" class="qui-icon"></qui-icon>
-        <view>赞{{ thread.firstPost.likeCount }}</view>
+        <view>{{ t.like }}{{ thread.firstPost.likeCount }}</view>
       </view>
       <view class="det-con-ft-child">
         <qui-icon name="icon-collection" class="qui-icon"></qui-icon>
-        <view>收藏</view>
+        <view>{{ t.collection }}</view>
       </view>
     </view>
     <!-- 评论 -->
     <view class="comment">
-      <view class="comment-num">{{ thread.postCount }}条评论</view>
+      <view class="comment-num">{{ thread.postCount }}{{ t.item }}{{ t.comment }}</view>
       <qui-topic-comment
         v-for="(post, index) in thread.posts"
         :key="index"
+        :post-id="post._jv.id"
         :comment-avatar-url="post.user.avatarUrl"
         :user-name="post.user.username"
         user-role="管理员"
-        :comment-time="post.user.createdAt"
+        :comment-time="post.createdAt"
         :comment-content="post.contentHtml"
         :comment-like-count="post.likedCount"
         :images-list="post.images"
+        @personJump="personJump(post.user.id)"
+        @commentJump="commentJump(post._jv.id)"
+        @imageClick="imageClick"
+        @delete-comment="deleteComment(post._jv.id)"
       ></qui-topic-comment>
-      <view class="comment-child-comment-box">
-        <view class="comment-child-reply">
-          <view class="reply-user">{{ username }}</view>
-          <view class="reply-connector">回复</view>
-          <view class="reply-user">{{ username }}：</view>
-          <text class="reply-content">
-            回复的内容内容内容回复的内容内容内容回复的内容内容内容回复的内容内容内容回复的内容内容内容
-          </text>
-        </view>
-      </view>
+      <qui-reply :reply-list="replyList"></qui-reply>
     </view>
     <view class="det-ft flex">
       <view class="det-ft-child flex">
         <qui-icon name="icon-like" class="qui-icon"></qui-icon>
-        <view>点赞</view>
+        <view>{{ t.giveLike }}</view>
       </view>
       <view class="det-ft-child flex">
         <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-        <view>写评论</view>
+        <view>{{ t.writeComment }}</view>
       </view>
       <view class="det-ft-child flex">
         <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-        <view>分享</view>
+        <view>{{ t.share }}</view>
       </view>
     </view>
   </view>
@@ -190,6 +186,26 @@ export default {
           'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
         ],
       },
+      replyList: [
+        {
+          postId: '10',
+          username: 'admin',
+          replUsername: 'reply',
+          content: '内容内容内容内容1111111111111111111111111111111111111',
+        },
+        {
+          postId: '10',
+          username: 'text',
+          replUsername: '',
+          content: '内容内容内容内容222222',
+        },
+        {
+          postId: '10',
+          username: 'aaaa',
+          replUsername: 'cvbgbd',
+          content: '内容内容内容内容3333333333333内容内容内容地，方健康的双方就看电视封口机',
+        },
+      ],
       status: false,
       limitShowNum: 2,
       paidStatus: false, // 是否有已支付数据
@@ -277,15 +293,22 @@ export default {
           ],
         },
       ],
+      forums: '', // forum接口数据
     };
   },
   computed: {
     thread() {
       return this.$store.getters['jv/get']('threads/11');
     },
+    // 语言包
+    t() {
+      return this.i18n.t('topic');
+    },
   },
   onLoad() {
     this.loadThreads();
+    const forums = this.$store.getters['jv/get']('forums/1');
+    console.log(forums);
   },
   methods: {
     // 加载当前主题数据
@@ -313,7 +336,7 @@ export default {
       this.loadStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
           this.status = true;
-          console.log(data.posts, '~~~~~~~~~~~~~~~~~~~');
+          console.log(data, '~~~~~~~~~~~~~~~~~~~');
           // console.log(lodash.isEmpty(data.paidUsers));
           if (lodash.isEmpty(data.paidUsers)) {
             this.paidStatus = false;
@@ -345,7 +368,7 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
-      console.log(id, 'id');
+      console.log(id, '用户id');
       // uni.navigateTo({
       //   url: '/pages/home/index',
       // });
@@ -365,12 +388,38 @@ export default {
       //   url: '',
       // });
     },
+    // 删除主题
+    deleteComment(postId) {
+      console.log(postId, 'postid');
+    },
+    // 点击图片
+    imageClick(imageId) {
+      console.log(imageId, '图片id');
+      this.previewImg();
+    },
+    // 图片预览
+    previewImg() {
+      console.log('图片预览');
+      // uni.previewImage({
+      //   urls: '',
+      //   longPressActions: {
+      //     itemList: ['发送给朋友', '保存图片', '收藏'],
+      //     success: function(data) {
+      //       // console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+      //     },
+      //     fail: function(err) {
+      //       // console.log(err.errMsg);
+      //     }
+      //   }
+      // });
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
+@import '@/styles/base/theme/fn.scss';
+
 page {
   padding: 0;
   margin: 0;
@@ -519,8 +568,10 @@ page {
 }
 //评论
 .comment {
+  width: 100%;
   padding: 40rpx;
   margin-top: 30rpx;
+  box-sizing: border-box;
 }
 .comment-num {
   font-weight: bold;
@@ -589,35 +640,7 @@ page {
     }
   }
 }
-.comment-child-comment-box {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  width: 100%;
-  padding: 20rpx;
-  background: --color(--qui-BG-ED);
-  border-radius: 10rpx;
-  box-sizing: border-box;
-}
-.comment-child-reply {
-  display: block;
-  font-size: $fg-f26;
-  line-height: 35rpx;
-  .reply-user {
-    display: inline;
-    color: --color(--qui-LINK);
-  }
-  .reply-connector {
-    display: inline;
-    padding: 0 5px;
-    color: --color(--qui-FC-777);
-    flex-shrink: 0;
-  }
-  .reply-content {
-    display: inline;
-    color: --color(--qui-FC-777);
-  }
-}
+
 .det-ft {
   align-content: center;
   align-items: center;
