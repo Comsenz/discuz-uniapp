@@ -98,7 +98,7 @@
 
 <script>
 import quiPage from '@/components/qui-page';
-// import { status } from 'jsonapi-vuex';
+import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
@@ -284,12 +284,18 @@ export default {
     };
   },
   computed: {
-    // thread() {
-    //   return this.$store.getters['jv/get']('threads/13');
-    // },
+    thread() {
+      return this.$store.getters['jv/get']('threads/13');
+    },
+    // forum() {
+    //   return this.$store.getters['jv/get']('forum');
+    // }
   },
   onLoad() {
-    this.loadForum();
+    this.loadThreads();
+    // const forums = this.$store.getters['jv/get']('forums/1');
+    // const { site_name } = forums.set_site;
+    // console.log(forums, 'namename');
   },
 
   methods: {
@@ -361,7 +367,32 @@ export default {
         },
       ];
     },
-    loadForum() {},
+    loadThreads() {
+      const params = {
+        'filter[isDeleted]': 'no',
+        include: [
+          'posts.replyUser',
+          'user.groups',
+          'user',
+          'posts',
+          'posts.user',
+          'posts.likedUsers',
+          'posts.images',
+          'firstPost',
+          'firstPost.likedUsers',
+          'firstPost.images',
+          'firstPost.attachments',
+          'rewardedUsers',
+          'category',
+          'threadVideo',
+        ],
+      };
+      this.loadStatus = status.run(() => {
+        this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
+          console.log(data, 99999);
+        });
+      });
+    },
   },
 };
 </script>

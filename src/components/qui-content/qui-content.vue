@@ -59,7 +59,7 @@
             ]"
           >
             <qui-icon
-              class="text"
+              class="qui-icon"
               name="icon-like"
               size="28"
               color="#AAA"
@@ -78,7 +78,7 @@
             class="themeItem__footer__themeType1__item themeItem__footer__themeType1__share"
             @click="handleClickShare"
           >
-            <qui-icon class="text" name="icon-share" size="28" color="#AAA"></qui-icon>
+            <qui-icon class="qui-icon" name="icon-share" size="28" color="#AAA"></qui-icon>
             分享
           </view>
         </view>
@@ -86,7 +86,7 @@
         <view v-if="themeType === '2'" class="themeItem__footer__themeType2">
           <view class="themeItem__footer__themeType2__item">
             <qui-icon
-              class="text"
+              class="qui-icon"
               :name="themeReplyBtn"
               size="28"
               color="#AAA"
@@ -343,7 +343,7 @@ export default {
         color: rgba(170, 170, 170, 1);
       }
 
-      text {
+      .qui-icon {
         margin-right: 15rpx;
       }
 
@@ -361,7 +361,7 @@ export default {
         color: rgba(170, 170, 170, 1);
         text-align: right;
       }
-      text {
+      .qui-icon {
         margin-right: 15rpx;
       }
     }
