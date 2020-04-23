@@ -15,12 +15,17 @@
     </uni-list>
     <view class="line"></view>
     <!-- 会话列表 -->
-    <view class="dialog-list-box" v-for="dialog in allDialogList" :key="dialog.id">
+    <view
+      class="dialog-list-box"
+      v-for="dialog in allDialogList"
+      :key="dialog.id"
+      @click="clickDialog(dialog.id)"
+    >
       <view class="dialog-header">
         <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
         <view class="text">
           <text class="black-text">{{ dialog.userName }}</text>
-          <text class="gray-text" v-if="dialog.role === '管理员'">（{{ dialog.role }}）</text>
+          <text class="gray-text" v-if="dialog.role">（{{ dialog.role }}）</text>
           <text class="gray-text">@了我</text>
           <!-- <text class="gray-text">回复了我</text>
           <text class="gray-text">点赞了我</text>
@@ -70,6 +75,7 @@ export default {
   },
   computed: {
     allDialogList() {
+      console.log('allDialogList', this.$store.getters['jv/get']('dialog'));
       return this.$store.getters['jv/get']('dialog');
     },
   },
@@ -80,8 +86,14 @@ export default {
       });
       console.log('消息首页点击跳转', item.title);
     },
+    clickDialog(id) {
+      console.log('id', id);
+      uni.navigateTo({
+        url: '../message/chat',
+      });
+    },
     getDialogList() {
-      this.$store.dispatch('jv/get', ['dialog']);
+      this.$store.dispatch('jv/get', ['dialog', {}]);
     },
   },
 };
