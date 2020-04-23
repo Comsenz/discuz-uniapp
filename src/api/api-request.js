@@ -5,6 +5,8 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
 
 const http = new Request();
+const token =
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI0ZDY0ODg0ZmI3YmI2ZDdlNTQ3OWI1NzdmZDYyMjQyMmM1MTg4YjI2NTYzZmE0NzFlNmM4ZWI2ZjQ5Zjk3MjVjZDczMjcyNDU0NGFkZDY0NyIsImlhdCI6MTU4NzYxMDE3OSwibmJmIjoxNTg3NjEwMTc5LCJleHAiOjE1OTAyMDIxNzksInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.e9hEqDkZYBWpwwdagQfp5d65FgvCgAVJyooyIT8AJMj9_e1SE_xS7rFblqkl8nDhoGbXH6HdGmmFThj7BTbrcjOYxSv8WcvfyW-dx-SwDTJIQMX4LmlNeZ5c5LxXWwyZmgKv9Ts3ncBgbXvnTkkZ1yOy5bvXs9OL4DL63sRh4opWtWSsfr5gAj2a6btHWDnQhEGxG4dMcFzRgCQ_xSE0hyQMK4Du_mVr5c_--boY4HO2cw9eZtwBGlubfPZUGvgRUXcPv8Vlbpe98LUhcqmqyatn7Ap3Yt7ShtQVAkvti1CbZFAgvvRhf4rOZNkQ-6dCQVpKqWchhi-evQV9TEFjHA';
 
 /**
  * @description 修改全局默认配置
@@ -19,6 +21,7 @@ http.setConfig(config => {
       header: {
         'Content-Type': 'application/vnd.api+json',
         Accept: 'application/vnd.api+json',
+        authorization: `Bearer  ${token}`,
       },
     },
   };
