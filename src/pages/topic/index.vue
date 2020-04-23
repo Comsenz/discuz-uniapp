@@ -4,12 +4,14 @@
     <qui-topic-content
       v-model="thread"
       :pay-status="true"
+      :avatar-url="thread.user.avatarUrl"
       :user-name="thread.user.username"
       :theme-types="thread.type"
       :theme-time="thread.createdAt"
       :theme-content="thread.firstPost.contentHtml"
       :images-list="thread.firstPost.images"
       :tags="[thread.category]"
+      :person-jump="personJump"
     ></qui-topic-content>
     <!-- 已支付用户列表 -->
     <view v-if="paidStatus">
@@ -40,7 +42,7 @@
         :btn-icon-show="true"
         btn-icon-name="rmb"
         btn-text="打赏"
-        @personJump="personJume"
+        @personJump="personJump"
         @btnClick="rewardClick"
       ></qui-person-list>
     </view>
@@ -53,14 +55,14 @@
         :limit-count="limitShowNum"
         :person-list="thread.firstPost.likedUsers"
         :btn-show="false"
-        @personJump="personJume"
+        @personJump="personJump"
       ></qui-person-list>
     </view>
     <view class="det-con-ft">
-      <view class="det-con-ft-child">阅读2345</view>
+      <view class="det-con-ft-child">阅读{{ thread.viewCount }}</view>
       <view class="det-con-ft-child">
         <qui-icon name="icon-like" class="qui-icon"></qui-icon>
-        <view>赞44343</view>
+        <view>赞{{ thread.firstPost.likeCount }}</view>
       </view>
       <view class="det-con-ft-child">
         <qui-icon name="icon-collection" class="qui-icon"></qui-icon>
@@ -70,37 +72,25 @@
     <!-- 评论 -->
     <view class="comment">
       <view class="comment-num">{{ thread.postCount }}条评论</view>
-      <view class="comment-child">
-        <view class="comment-child-hd">
-          <view class="comment-child-per-head-box">
-            <image
-              src="@/assets/essence.png"
-              mode="widthFix"
-              class="comment-child-per-head"
-            ></image>
-          </view>
-          <view class="comment-child-per-info">
-            <view class="comment-child-per-det">
-              <view class="comment-child-per-name">{{ username }}</view>
-              <view class="comment-chile-per-role">({{ role }})</view>
-            </view>
-            <view class="comment-child-time">{{ time }}</view>
-          </view>
-          <view class="comment-child-status">{{ replyStatus }}</view>
-        </view>
-        <view class="comment-child-con">
-          {{ content }}
-          <text class="comment-child-con-all">全部</text>
-        </view>
-        <view class="comment-child-comment-box">
-          <view class="comment-child-reply">
-            <view class="reply-user">{{ username }}</view>
-            <view class="reply-connector">回复</view>
-            <view class="reply-user">{{ username }}：</view>
-            <text class="reply-content">
-              回复的内容内容内容回复的内容内容内容回复的内容内容内容回复的内容内容内容回复的内容内容内容
-            </text>
-          </view>
+      <qui-topic-comment
+        v-for="(post, index) in thread.posts"
+        :key="index"
+        :comment-avatar-url="post.user.avatarUrl"
+        :user-name="post.user.username"
+        user-role="管理员"
+        :comment-time="post.user.createdAt"
+        :comment-content="post.contentHtml"
+        :comment-like-count="post.likedCount"
+        :images-list="post.images"
+      ></qui-topic-comment>
+      <view class="comment-child-comment-box">
+        <view class="comment-child-reply">
+          <view class="reply-user">{{ username }}</view>
+          <view class="reply-connector">回复</view>
+          <view class="reply-user">{{ username }}：</view>
+          <text class="reply-content">
+            回复的内容内容内容回复的内容内容内容回复的内容内容内容回复的内容内容内容回复的内容内容内容
+          </text>
         </view>
       </view>
     </view>
@@ -205,6 +195,88 @@ export default {
       paidStatus: false, // 是否有已支付数据
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
+      datas: [
+        {
+          userName: '佟掌柜',
+          themeTypes: '(管理员)',
+          themeTime: '16分钟前 ..',
+          themeContent:
+            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
+          themeLike: 123,
+          themeComment: 317,
+          tags: [
+            {
+              tagName: '女神',
+            },
+            {
+              tagName: '女神经',
+            },
+            {
+              tagName: '女神经病',
+            },
+          ],
+        },
+        {
+          userName: '佟掌柜',
+          themeTypes: '(管理员)',
+          themeTime: '16分钟前 ..',
+          themeContent:
+            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
+          themeLike: 123,
+          themeComment: 317,
+          tags: [
+            {
+              tagName: '女神',
+            },
+            {
+              tagName: '女神经',
+            },
+            {
+              tagName: '女神经病',
+            },
+          ],
+        },
+        {
+          userName: '佟掌柜',
+          themeTypes: '(管理员)',
+          themeTime: '16分钟前 ..',
+          themeContent:
+            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
+          themeLike: 123,
+          themeComment: 317,
+          tags: [
+            {
+              tagName: '女神',
+            },
+            {
+              tagName: '女神经',
+            },
+            {
+              tagName: '女神经病',
+            },
+          ],
+        },
+        {
+          userName: '佟掌柜',
+          themeTypes: '(管理员)',
+          themeTime: '16分钟前 ..',
+          themeContent:
+            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
+          themeLike: 123,
+          themeComment: 317,
+          tags: [
+            {
+              tagName: '女神',
+            },
+            {
+              tagName: '女神经',
+            },
+            {
+              tagName: '女神经病',
+            },
+          ],
+        },
+      ],
     };
   },
   computed: {
@@ -241,7 +313,7 @@ export default {
       this.loadStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
           this.status = true;
-          console.log(data);
+          console.log(data.posts, '~~~~~~~~~~~~~~~~~~~');
           // console.log(lodash.isEmpty(data.paidUsers));
           if (lodash.isEmpty(data.paidUsers)) {
             this.paidStatus = false;
@@ -272,7 +344,7 @@ export default {
       console.log(type, '类型');
     },
     // 跳转到用户主页
-    personJume(id) {
+    personJump(id) {
       console.log(id, 'id');
       // uni.navigateTo({
       //   url: '/pages/home/index',
