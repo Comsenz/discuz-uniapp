@@ -19,12 +19,12 @@
       class="dialog-list-box"
       v-for="dialog in allDialogList"
       :key="dialog.id"
-      @click="clickDialog(dialog.id)"
+      @click="clickDialog(dialog)"
     >
       <view class="dialog-header">
         <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
         <view class="text">
-          <text class="black-text">{{ dialog.userName }}</text>
+          <text class="black-text">{{ dialog.sender.username }}</text>
           <text class="gray-text" v-if="dialog.role">（{{ dialog.role }}）</text>
           <text class="gray-text">@了我</text>
           <!-- <text class="gray-text">回复了我</text>
@@ -93,7 +93,10 @@ export default {
       });
     },
     getDialogList() {
-      this.$store.dispatch('jv/get', ['dialog', {}]);
+      const params = {
+        include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
+      };
+      this.$store.dispatch('jv/get', ['dialog', { params }]);
     },
   },
 };
