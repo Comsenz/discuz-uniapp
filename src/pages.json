@@ -42,6 +42,7 @@
     "navigationBarTitleText": "",
     "navigationBarBackgroundColor": "#1878F3",
     "backgroundColor": "#F8F8F8",
+    "navigationStyle": "custom",
     "h5": {
       // h5 不显示顶部导航栏
       "titleNView": false
