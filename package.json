@@ -77,6 +77,7 @@
     "flyio": "^0.6.2",
     "js-cookie": "^2.2.1",
     "jsonapi-vuex": "^4.3.1",
+    "lodash": "^4.17.15",
     "regenerator-runtime": "^0.12.1",
     "vue": "^2.6.11",
     "vue-i18n": "^8.17.0",

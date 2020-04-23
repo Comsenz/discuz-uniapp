@@ -2,7 +2,15 @@
   <view class="themeItem">
     <view class="themeItem__header">
       <view class="themeItem__header__img">
-        <image src="@/assets/avatar.jpeg" alt></image>
+        <image
+          :src="
+            avatarUrl != '' && avatarUrl != null
+              ? avatarUrl
+              : 'https://discuz.chat/static/images/noavatar.gif'
+          "
+          class="det-per-head"
+          @click="personJump"
+        ></image>
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top">
@@ -13,8 +21,12 @@
       <view class="themeItem__header__opera">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>管理</view>
+            <qui-icon
+              name="icon-management"
+              class="icon-management"
+              :style="{ color: selectActive }"
+            ></qui-icon>
+            <view :style="{ color: selectActive }">{{ t.management }}</view>
           </view>
           <qui-drop-down
             posival="absolute"
@@ -88,14 +100,14 @@
 <script>
 export default {
   props: {
-    // 类型
-    themeParts: {
-      validator: value => {
-        // 0 内容  1 回复
-        return ['0', '1', '2', '3'].indexOf(value) !== -1;
-      },
-      default: '1',
-    },
+    // // 类型
+    // themeParts: {
+    //   validator: value => {
+    //     // 0 内容  1 回复
+    //     return ['0', '1', '2', '3'].indexOf(value) !== -1;
+    //   },
+    //   default: '1',
+    // },
     // 主题类型
     themeType: {
       validator: value => {
@@ -108,6 +120,15 @@ export default {
     payStatus: {
       type: Boolean,
       default: true,
+    },
+    userId: {
+      type: [Number, String],
+      default: '',
+    },
+    // 发布主题的用户头像
+    avatarUrl: {
+      type: String,
+      default: '',
     },
     // 发布主题的用户名
     userName: {
@@ -151,19 +172,29 @@ export default {
         { text: '点赞', type: '1' },
         { text: '收藏', type: '2' },
       ], // 管理菜单
+      selectActive: '',
     };
   },
   onLoad() {
     console.log(this.tags);
   },
+  computed: {
+    t() {
+      return this.i18n.t('topic');
+    },
+  },
   methods: {
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
+      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     selectChoice(type) {
       this.seleShow = false;
       console.log(type, '类型');
+    },
+    personJump() {
+      this.$emit('personJume', this.userId);
     },
   },
 };
