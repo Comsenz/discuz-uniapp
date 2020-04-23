@@ -17,17 +17,25 @@
         ></qui-icon>
       </view>
       <text class="post-box__hd-r">
-        {{ `还能输入${450 - textAreaValue.length}个字` }}
+        {{ i18n.t('discuzq.post.note', { num: 450 - textAreaValue.length }) }}
       </text>
+    </view>
+    <view class="emoji-box">
+      <swiper class="swiper">
+        <swiper-item v-for="index of getSwiperItem" :key="index">
+          <view class="swiper-item uni-bg-red">
+            {{ index }}
+          </view>
+        </swiper-item>
+      </swiper>
     </view>
     <textarea
       class="post-box__con-text"
-      placeholder="您想说的.."
+      :placeholder="i18n.t('discuzq.post.placeholder')"
       placeholder-class="textarea-placeholder"
       v-model="textAreaValue"
       auto-height
       maxlength="450"
-      @input="textInput"
     ></textarea>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">选择分类</text>
@@ -58,7 +66,8 @@ export default {
     return {
       textAreaValue: '',
       checkClassData: {},
-      type: '',
+      type: 0,
+      operating: '',
     };
   },
   computed: {
@@ -68,26 +77,31 @@ export default {
     allCategories() {
       return this.$store.getters['jv/get']('categories');
     },
+    allEmoji() {
+      return this.$store.getters['jv/get']('emoji');
+    },
+    getSwiperItem() {
+      return Math.ceil(Object.keys(this.allEmoji).nv_length / 35);
+    },
   },
   methods: {
-    textInput(e) {
-      console.log(this.textAreaValue.length);
-      console.log(e.detail.value.length);
-      console.log('删除文本触发事件');
-      console.log(e);
-    },
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
     checkClass(e, index) {
-      if (!this.checkClassData[index]) {
+      // 单选功能
+      this.checkClassData = {};
+      this.$set(this.checkClassData, index, e);
+
+      // 多选功能
+      /* if (!this.checkClassData[index]) {
         this.$set(this.checkClassData, index, e);
       } else {
         this.$delete(this.checkClassData, index);
-      }
+      } */
     },
     postClick() {
-      console.log(this.checkClassData);
+      this.postThread();
     },
     getCategories() {
       this.$store.dispatch('jv/get', ['categories', {}]).then(res => {
@@ -95,7 +109,22 @@ export default {
       });
     },
     postThread() {
-      this.$store.dispatch('jv/post', ['threads'], {}).then(res => {
+      const params = {
+        _jv: {
+          type: 'threads',
+          relationships: {
+            category: {
+              data: {
+                type: 'categories',
+                id: Object.keys(this.checkClassData)[0],
+              },
+            },
+          },
+        },
+        content: this.textAreaValue,
+        type: this.type,
+      };
+      this.$store.dispatch('jv/post', params).then(res => {
         console.log(res);
       });
     },
@@ -103,6 +132,11 @@ export default {
   onLoad(option) {
     this.getCategories();
     if (option.type) this.type = option.type;
+    if (option.operating) this.operating = option.operating;
+
+    this.$store.dispatch('jv/get', ['emoji', {}]).then(res => {
+      console.log(res);
+    });
   },
   onShow() {
     this.getAtMemberData.map(item => {
@@ -131,6 +165,12 @@ export default {
     &-r {
       font-size: $fg-f24;
       color: --color(--qui-FC-777);
+    }
+  }
+  .emoji-box {
+    .scroll-view_H {
+      width: 100%;
+      white-space: nowrap;
     }
   }
   &__con-text {

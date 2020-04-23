@@ -85,6 +85,8 @@ export default {
       noRole: 'No role',
     },
     post: {
+      note: 'You can also enter {num} words',
+      placeholder: 'What do you want to say ...',
       post: 'Post',
     },
   },

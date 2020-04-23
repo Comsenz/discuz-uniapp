@@ -86,6 +86,8 @@ export default {
       noRole: '暂无角色',
     },
     post: {
+      note: '还能输入{num}个字',
+      placeholder: '您想说的..',
       post: '发布',
     },
   },
