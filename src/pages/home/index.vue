@@ -97,13 +97,9 @@
 </template>
 
 <script>
-import quiPage from '@/components/qui-page';
 // import { status } from 'jsonapi-vuex';
 
 export default {
-  components: {
-    quiPage,
-  },
   data: () => {
     return {
       defaultHeadImg: 'https://discuz.chat/static/images/logo.png',
@@ -283,15 +279,9 @@ export default {
       postImg: '../assets.publish.svg',
     };
   },
-  computed: {
-    // thread() {
-    //   return this.$store.getters['jv/get']('threads/13');
-    // },
-  },
   onLoad() {
     this.loadForum();
   },
-
   methods: {
     // 切换选项卡
     toggleTab(index) {

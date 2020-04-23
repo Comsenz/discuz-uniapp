@@ -1,24 +1,24 @@
 <script>
 export default {
-  onLaunch() {
-    this.$store
-      .dispatch('jv/get', [
+  async onLaunch() {
+    try {
+      await this.$store.dispatch('jv/get', [
         'forum',
         {
           params: {
             include: 'users',
           },
         },
-      ])
-      .catch(errs => {
-        if (errs.response) {
-          const { status } = errs.response;
-          if (status.toString === '401' && errs.response.data && errs.response.data.errors) {
-            const err = errs.response.data.errors[0];
-            this.$store.dispatch('forum/setError', err);
-          }
+      ]);
+    } catch (errs) {
+      if (errs.response) {
+        const { status } = errs.response;
+        if (status.toString === '401' && errs.response.data && errs.response.data.errors) {
+          const err = errs.response.data.errors[0];
+          this.$store.dispatch('forum/setError', err);
         }
-      });
+      }
+    }
   },
   onShow() {},
   onHide() {},

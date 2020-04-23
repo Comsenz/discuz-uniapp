@@ -32,6 +32,7 @@ http.setConfig(config => {
  * function cancel(text, config) {}
  */
 http.interceptor.request(config => {
+  uni.showLoading();
   // cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config
   try {
     const accessToken = uni.getStorageSync('access_token');
@@ -49,6 +50,7 @@ http.interceptor.request(config => {
 // 在请求之后拦截
 http.interceptor.response(
   response => {
+    uni.hideLoading();
     // 状态码 >= 200 < 300 会走这里
     // if (response.config.custom.verification) {
     //   // 演示自定义参数的作用
@@ -57,8 +59,9 @@ http.interceptor.response(
     return response;
   },
   response => {
+    uni.hideLoading();
     // 对响应错误做点什么 （statusCode !== 200），必须return response
-    if (response && response.data && response.errors) {
+    if (response && response.data && response.data.errors) {
       response.data.errors.map(error => {
         switch (error.code) {
           case 'access_denied':
@@ -79,7 +82,6 @@ http.interceptor.response(
     } else {
       uni.showToast({ title: response.errMsg });
     }
-
     return response;
   },
 );
