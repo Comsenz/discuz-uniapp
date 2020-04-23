@@ -30,10 +30,34 @@
 
 <script>
 import cellItem from '@/components/qui-cell-item';
+import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
     cellItem,
+  },
+  onLoad() {
+    this.getFreezelist();
+  },
+  data() {
+    return {
+      freezelist: [],
+    };
+  },
+  methods: {
+    // 获取冻结金额列表数据
+    getFreezelist() {
+      const params = {
+        'filter[user]': 1,
+        'filter[change_type]': 10,
+      };
+      status
+        .run(() => this.$store.dispatch('jv/get', ['wallet/log', { params }]))
+        .then(res => {
+          this.getFreezelist = res;
+          console.log(res);
+        });
+    },
   },
 };
 </script>

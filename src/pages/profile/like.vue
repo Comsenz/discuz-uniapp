@@ -14,6 +14,12 @@ export default {
   components: {
     loadMore,
   },
+  props: {
+    userId: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
       newsList: [],
@@ -38,23 +44,23 @@ export default {
     this.getList();
   },
   methods: {
-    async getList(type) {
-      await this.$get(`接口地址`, {
-        page: this.page,
-      })
-        .then(r => {
-          if (type === 'refresh') {
-            uni.stopPullDownRefresh();
-          }
-          this.loadingType = r.data.length === 10 ? 'more' : 'nomore';
-          this.newsList = [...this.newsList, ...r.data];
-        })
-        .catch(() => {
-          if (type === 'refresh') {
-            uni.stopPullDownRefresh();
-          }
-        });
-    },
+    // async getList(type) {
+    //   await this.$get(`接口地址`, {
+    //     page: this.page,
+    //   })
+    //     .then(r => {
+    //       if (type === 'refresh') {
+    //         uni.stopPullDownRefresh();
+    //       }
+    //       this.loadingType = r.data.length === 10 ? 'more' : 'nomore';
+    //       this.newsList = [...this.newsList, ...r.data];
+    //     })
+    //     .catch(() => {
+    //       if (type === 'refresh') {
+    //         uni.stopPullDownRefresh();
+    //       }
+    //     });
+    // },
   },
 };
 </script>

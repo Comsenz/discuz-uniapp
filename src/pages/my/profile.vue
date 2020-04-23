@@ -1,16 +1,20 @@
 <template>
   <view class="my-profile">
-    <cell-item title="用户名" arrow addon="猛子"></cell-item>
+    <cell-item title="用户名" arrow :addon="profile.username"></cell-item>
     <cell-item title="头像" slot-right arrow>
-      <text class="my-profile__avatar"></text>
+      <image
+        class="my-profile__avatar"
+        :src="profile.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+        alt="avatarUrl"
+      ></image>
     </cell-item>
-    <cell-item title="手机号码" arrow addon="186****7553"></cell-item>
+    <cell-item title="手机号码" arrow :addon="profile.mobile"></cell-item>
     <cell-item title="密码" arrow addon="修改"></cell-item>
-    <cell-item title="微信" arrow addon="小夕"></cell-item>
-    <cell-item v-if="ifIdentificate" title="实名认证" arrow addon="某某某"></cell-item>
-    <cell-item v-if="ifIdentificate" title="签名" arrow addon="修改" :border="false"></cell-item>
+    <cell-item title="微信" arrow :addon="profile.wechat.nickname"></cell-item>
+    <cell-item v-if="profile.realname" title="实名认证" arrow :addon="profile.realname"></cell-item>
+    <cell-item v-if="profile.realname" title="签名" arrow addon="修改" :border="false"></cell-item>
     <cell-item
-      v-if="!ifIdentificate"
+      v-if="!profile.realname"
       title="实名认证"
       arrow
       addon="去认证"
@@ -28,8 +32,16 @@ export default {
   },
   data() {
     return {
-      ifIdentificate: true,
+      //
     };
+  },
+  computed: {
+    profile() {
+      return this.$store.getters['jv/get']('users/1');
+    },
+  },
+  methods: {
+    //
   },
 };
 </script>
@@ -45,9 +57,6 @@ page {
   border-bottom: 2rpx solid #ededed;
   .cell-item {
     padding-right: 40rpx;
-  }
-  .cell-item:last-child {
-    border: 0;
   }
   /deep/ .cell-item__body__content-title {
     color: #777;

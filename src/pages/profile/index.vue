@@ -3,23 +3,44 @@
     <view class="profile-info">
       <view class="profile-info__box">
         <view class="profile-info__box__detail">
-          <text class="profile-info__box__detail-avatar"></text>
-          <cell-item title="佟掌柜" slot-right brief="管理员" :border="false">
-            <view v-if="current !== null">
+          <image
+            class="profile-info__box__detail-avatar"
+            :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+            alt="avatarUrl"
+          ></image>
+          <cell-item
+            :title="userInfo.username"
+            slot-right
+            :brief="Object.values(userInfo.groups)[0].name"
+            :border="false"
+          >
+            <view v-if="pageType !== 'my'">
               <view class="profile-info__box__detail-operate">
                 <qui-icon class="text" name="icon-message" size="16" color="#333"></qui-icon>
                 <text>私信</text>
               </view>
+              <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
               <view class="profile-info__box__detail-operate">
-                <qui-icon class="text" name="icon-follow" size="16" color="#333"></qui-icon>
-                <text>关注</text>
+                <qui-icon
+                  class="text"
+                  :name="userInfo.follow === 0 ? 'icon-follow' : 'icon-each-follow'"
+                  size="16"
+                  :color="
+                    userInfo.follow === 0 ? '#777' : userInfo.follow == 1 ? '#ddd' : '#ff8888'
+                  "
+                ></qui-icon>
+                <text>
+                  {{
+                    userInfo.follow === 0 ? '关注' : userInfo.follow == 1 ? '已关注' : '互相关注'
+                  }}
+                </text>
               </view>
             </view>
           </cell-item>
         </view>
       </view>
       <view class="profile-info__introduction">
-        在崔健的所有歌曲中花房姑娘称得上是最抒情的一首花房姑娘中多了一点柔情的东西。
+        {{ userInfo.signature || '暂无签名' }}
       </view>
     </view>
     <view class="profile-tabs">
@@ -34,10 +55,10 @@
           <topic></topic>
         </view>
         <view v-show="current === 1" class="items">
-          <following></following>
+          <following :user-id="userId"></following>
         </view>
         <view v-show="current === 2" class="items">
-          <followers></followers>
+          <followers :user-id="userId"></followers>
         </view>
         <view v-show="current === 3" class="items">
           <like></like>
@@ -50,6 +71,7 @@
 <script>
 import quiTabs from '@/components/qui-tabs';
 import cellItem from '@/components/qui-cell-item';
+import { status } from 'jsonapi-vuex';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -78,17 +100,48 @@ export default {
         { title: '粉丝', brief: '31' },
         { title: '点赞', brief: '65' },
       ],
-      // 区分是我的还是别人的个人中心
-      current: this.type === 'my' ? null : 0,
+      userId: '',
+      pageType: '', // 个人主页还是他人主页
+      current: 0,
     };
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters['jv/get'](`users/${this.userId}`);
+    },
+  },
+  onLoad(params) {
+    // 区分是自己的主页还是别人的主页
+    const { userId, current, type } = params;
+    // 我的用户id从缓存拿
+    this.userId = userId || 1;
+    this.pageType = type;
+    this.current = current || 0;
+    this.getUserInfo(userId || 1);
   },
   methods: {
     onClickItem(e) {
-      if (this.current !== e.currentIndex) {
+      if (e.currentIndex !== this.current) {
         this.current = e.currentIndex;
-        this.$emit('clickTab', { currentIndex: this.current });
       }
     },
+    // 获取用户信息
+    getUserInfo(userId) {
+      const params = {
+        include: ['wechat', 'groups'],
+      };
+      status
+        .run(() => this.$store.dispatch('jv/get', [`users/${userId}`, { params }]))
+        .then(res => {
+          this.items[0].brief = res.threadCount;
+          this.items[1].brief = res.followCount;
+          this.items[2].brief = res.fansCount;
+          this.items[3].brief = res.likedCount;
+          console.log(res);
+        });
+    },
+    // 添加关注
+    // 取消关注
   },
 };
 </script>

@@ -70,6 +70,14 @@ export default {
     select(item) {
       this.sel = item.id;
       console.log('2222');
+      if (item.tabsIcon === 'icon-mine') {
+        uni.navigateTo({
+          url: '/pages/my/index',
+        });
+      }
+      // uni.navigateTo({
+      //   url: '',
+      // });
     },
   },
 };

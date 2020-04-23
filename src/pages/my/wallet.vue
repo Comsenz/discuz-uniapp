@@ -1,8 +1,13 @@
 <template>
   <view class="wallet">
-    <cell-item title="可用余额" arrow addon="¥2346.0" class="wallet-available"></cell-item>
+    <cell-item
+      title="可用余额"
+      arrow
+      :addon="`¥ ${dataInfo.available_amount || 0.0}`"
+      class="wallet-available"
+    ></cell-item>
     <navigator url="./freeze" open-type="navigate">
-      <cell-item title="冻结金额" arrow addon="¥23.0"></cell-item>
+      <cell-item title="冻结金额" arrow :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"></cell-item>
     </navigator>
     <navigator url="./withdrawalslist" open-type="navigate">
       <cell-item title="提现记录" arrow></cell-item>
@@ -20,6 +25,7 @@
 
 <script>
 import cellItem from '@/components/qui-cell-item';
+import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
@@ -27,8 +33,23 @@ export default {
   },
   data() {
     return {
-      hasPassword: true,
+      dataInfo: {},
+      hasPassword: false,
     };
+  },
+  onLoad() {
+    this.getInfo();
+  },
+  methods: {
+    // 获取钱包信息
+    getInfo() {
+      status
+        .run(() => this.$store.dispatch('jv/get', 'wallet/user/1'))
+        .then(res => {
+          this.dataInfo = res;
+          this.hasPassword = res.user.canWalletPay;
+        });
+    },
   },
 };
 </script>
@@ -51,5 +72,8 @@ page {
   .cell-item__body__right {
     color: #333;
   }
+}
+.wallet-available {
+  color: #fa5151;
 }
 </style>
