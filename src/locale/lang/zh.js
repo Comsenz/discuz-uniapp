@@ -86,4 +86,9 @@ export default {
   core: {
     not_install: '该站点未安装',
   },
+  topic: {
+    persenUnit: '人',
+    delete: '删除',
+    management: '管理',
+  },
 };

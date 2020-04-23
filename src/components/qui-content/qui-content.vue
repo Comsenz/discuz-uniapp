@@ -1,10 +1,10 @@
 <template>
   <view class="themeCount">
-    <image class="addFine" src="@/assets/essence.png" alt></image>
+    <image class="addFine" src="@/static/essence.png" alt v-if="themeType === '1'"></image>
     <view class="themeItem">
       <view class="themeItem__header">
         <view class="themeItem__header__img">
-          <image src="@/assets/avatar.jpeg" alt></image>
+          <image :src="themeImage" alt></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -13,9 +13,18 @@
               {{ themeTypes }}
             </span>
             <span v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
-              {{ themeType === '2' ? '回复了我' : '@了我' }}
+              <!-- {{ themeType === '2' ? '回复了我' : '@了我' }} -->
+              {{ themeStatus }}
             </span>
-            <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn">></view>
+            <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn"></view>
+            <qui-icon
+              class="themeItem__header__title__deleteBtn"
+              :name="themeBtn"
+              size="28"
+              color="#AAA"
+              @click="handleClick"
+            ></qui-icon>
+            <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
           <view class="themeItem__header__title__time">{{ themeTime }}</view>
         </view>
@@ -25,13 +34,13 @@
         <view class="themeItem__content__text">
           {{ themeContent }}
         </view>
-
+        <!-- <view class="themeItem__content__reply">223344</view> -->
         <view class="themeItem__content__img">
-          <image class="themeItem__content__img__item" src="@/assets/my.jpeg" alt></image>
-          <image class="themeItem__content__img__item" src="@/assets/me.jpeg" alt></image>
+          <image class="themeItem__content__img__item" src="@/static/my.jpeg" alt></image>
+          <image class="themeItem__content__img__item" src="@/static/me.jpeg" alt></image>
         </view>
 
-        <view class="themeItem__content__tags">
+        <view class="themeItem__content__tags" v-if="themeType === '1'">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.tagName }}
           </view>
@@ -52,7 +61,7 @@
             <qui-icon
               class="text"
               name="icon-like"
-              size="16"
+              size="28"
               color="#AAA"
               @click="handleClick"
             ></qui-icon>
@@ -67,9 +76,9 @@
 
           <view
             class="themeItem__footer__themeType1__item themeItem__footer__themeType1__share"
-            @click="handleClick"
+            @click="handleClickShare"
           >
-            <qui-icon class="text" name="icon-share" size="16" color="#AAA"></qui-icon>
+            <qui-icon class="text" name="icon-share" size="28" color="#AAA"></qui-icon>
             分享
           </view>
         </view>
@@ -78,12 +87,12 @@
           <view class="themeItem__footer__themeType2__item">
             <qui-icon
               class="text"
-              name="icon-delete"
-              size="18"
+              :name="themeReplyBtn"
+              size="28"
               color="#AAA"
               @click="handleClick"
             ></qui-icon>
-            删除
+            {{ themeDeleteBtn }}
           </view>
         </view>
       </view>
@@ -96,12 +105,36 @@ export default {
   props: {
     themeType: {
       validator: value => {
-        // 1 首页  2 回复  3 @
+        // 1 首页  2 回复  3 @  4 我的收藏
         return ['1', '2', '3'].indexOf(value) !== -1;
       },
       default: '1',
     },
     userName: {
+      type: String,
+      default: '',
+    },
+    themeImage: {
+      type: String,
+      default: '',
+    },
+    themeStatus: {
+      type: String,
+      default: '',
+    },
+    themeBtn: {
+      type: String,
+      default: '',
+    },
+    themeReplyBtn: {
+      type: String,
+      default: '',
+    },
+    themeDeleteBtn: {
+      type: String,
+      default: '',
+    },
+    themeReward: {
       type: String,
       default: '',
     },
@@ -147,6 +180,9 @@ export default {
     handleClick() {
       console.log('是分享哦');
     },
+    handleClickShare(evt) {
+      this.$emit('click', evt);
+    },
   },
 };
 </script>
@@ -171,8 +207,6 @@ export default {
   background: --color(--qui-BG-2);
   border-radius: 6rpx;
   box-sizing: border-box;
-
-  // background: #c33;
 
   &__header {
     display: flex;
@@ -211,6 +245,7 @@ export default {
       }
 
       &__isAdmin {
+        margin-left: 13rpx;
         font-weight: 400;
         color: rgba(170, 170, 170, 1);
       }
@@ -230,6 +265,15 @@ export default {
         line-height: 37rpx;
         color: #ddd;
       }
+      &__deleteBtn {
+        float: right;
+      }
+      &__reward {
+        float: right;
+        font-size: 28rpx;
+        font-weight: bold;
+        color: --color(--qui-RED);
+      }
     }
   }
 
@@ -241,6 +285,12 @@ export default {
       font-weight: 400;
       line-height: 45rpx;
       color: rgba(51, 51, 51, 1);
+    }
+    &__reply {
+      width: 670rpx;
+      height: 145rpx;
+      background: --color(--qui-BOR-ED);
+      border-radius: 10rpx;
     }
 
     &__img {

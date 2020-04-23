@@ -5,6 +5,8 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
 
 const http = new Request();
+const token =
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI0ZDY0ODg0ZmI3YmI2ZDdlNTQ3OWI1NzdmZDYyMjQyMmM1MTg4YjI2NTYzZmE0NzFlNmM4ZWI2ZjQ5Zjk3MjVjZDczMjcyNDU0NGFkZDY0NyIsImlhdCI6MTU4NzYxMDE3OSwibmJmIjoxNTg3NjEwMTc5LCJleHAiOjE1OTAyMDIxNzksInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.e9hEqDkZYBWpwwdagQfp5d65FgvCgAVJyooyIT8AJMj9_e1SE_xS7rFblqkl8nDhoGbXH6HdGmmFThj7BTbrcjOYxSv8WcvfyW-dx-SwDTJIQMX4LmlNeZ5c5LxXWwyZmgKv9Ts3ncBgbXvnTkkZ1yOy5bvXs9OL4DL63sRh4opWtWSsfr5gAj2a6btHWDnQhEGxG4dMcFzRgCQ_xSE0hyQMK4Du_mVr5c_--boY4HO2cw9eZtwBGlubfPZUGvgRUXcPv8Vlbpe98LUhcqmqyatn7Ap3Yt7ShtQVAkvti1CbZFAgvvRhf4rOZNkQ-6dCQVpKqWchhi-evQV9TEFjHA';
 
 /**
  * @description 修改全局默认配置
@@ -18,8 +20,8 @@ http.setConfig(config => {
       baseUrl: DISCUZ_REQUEST_HOST,
       header: {
         'Content-Type': 'application/vnd.api+json',
-        authorization:
-          'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiIxMDc3ODEzZDIwOWVlOTk2YjQyODlkYjQzZTNjMWYyYzA5OWNhZGRkYjQxMWY0YjU0ODU2MTI1NjY1Mzc1MzRhOGJkYzcxMWMyNThjNTA0ZSIsImlhdCI6MTU4NzI3NTI3OSwibmJmIjoxNTg3Mjc1Mjc5LCJleHAiOjE1ODk4NjcyNzksInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.qLB4FHb0fmCSYnUwWHXDO_lQ2zQzgTiRErNLKMUbHYsAMAc3WdyyUs3SKSMYfMgqHS9xF8m9CiqCY0PcExnrMXPuCU2sPiaOUPd2cCRCRLLnQNQK2uc3bHacn_v097LKxHvGslKrkQ2AI646HQhRjs1JtTiI8AU3efQCnct0GrvyyV2ArY7DF_kK_waLVZx7qjCJ1wRHpX1Pt0Pg2K0xi3ax3L-bMIVbb9HD5Da5yQsvgSqntcKBrLsK5EQDcxCZTXpF3FNEwF4eHw_cHuumYiK5IAm8-eExoPeWW8APnIECvAYk21MsIkr3XGHxrrd5vtbDf9Ao_P7yptPAOXeh8w',
+        Accept: 'application/vnd.api+json',
+        authorization: `Bearer  ${token}`,
       },
     },
   };
@@ -33,6 +35,7 @@ http.setConfig(config => {
  * function cancel(text, config) {}
  */
 http.interceptor.request(config => {
+  uni.showLoading();
   // cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config
   try {
     const accessToken = uni.getStorageSync('access_token');
@@ -50,6 +53,7 @@ http.interceptor.request(config => {
 // 在请求之后拦截
 http.interceptor.response(
   response => {
+    uni.hideLoading();
     // 状态码 >= 200 < 300 会走这里
     // if (response.config.custom.verification) {
     //   // 演示自定义参数的作用
@@ -58,8 +62,9 @@ http.interceptor.response(
     return response;
   },
   response => {
+    uni.hideLoading();
     // 对响应错误做点什么 （statusCode !== 200），必须return response
-    if (response && response.data && response.errors) {
+    if (response && response.data && response.data.errors) {
       response.data.errors.map(error => {
         switch (error.code) {
           case 'access_denied':
@@ -80,7 +85,6 @@ http.interceptor.response(
     } else {
       uni.showToast({ title: response.errMsg });
     }
-
     return response;
   },
 );
