@@ -97,13 +97,9 @@
 </template>
 
 <script>
-import quiPage from '@/components/qui-page';
 import { status } from 'jsonapi-vuex';
 
 export default {
-  components: {
-    quiPage,
-  },
   data: () => {
     return {
       defaultHeadImg: 'https://discuz.chat/static/images/logo.png',
@@ -297,7 +293,6 @@ export default {
     // const { site_name } = forums.set_site;
     // console.log(forums, 'namename');
   },
-
   methods: {
     // 切换选项卡
     toggleTab(index) {
