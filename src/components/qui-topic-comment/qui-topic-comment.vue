@@ -5,8 +5,8 @@
         <view class="themeItem__header__img">
           <image
             :src="
-              avatarUrl != '' && avatarUrl != null
-                ? avatarUrl
+              commentAvatarUrl != '' && commentAvatarUrl != null
+                ? commentAvatarUrl
                 : 'https://discuz.chat/static/images/noavatar.gif'
             "
             class="det-per-head"

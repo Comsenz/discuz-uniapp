@@ -11,7 +11,7 @@
       :theme-content="thread.firstPost.contentHtml"
       :images-list="thread.firstPost.images"
       :tags="[thread.category]"
-      :person-jump="personJump"
+      @personJump="personJump"
     ></qui-topic-content>
     <!-- 已支付用户列表 -->
     <view v-if="paidStatus">
