@@ -25,46 +25,54 @@
           @click="handleClick"
         ></qui-icon>
       </view>
-
-      <scroll-view scroll-x="true" scroll-with-animation class="scroll-tab">
-        <block v-for="(item, index) in tabBars" :key="index">
-          <view
-            class="scroll-tab-item"
-            :class="{ active: tabIndex == index }"
-            @tap="toggleTab(index)"
-          >
-            {{ item.name }}
-            <view class="scroll-tab-line"></view>
+      <view class="uni-tab-bar">
+        <scroll-view
+          scroll-x="true"
+          scroll-with-animation
+          class="scroll-tab"
+          :style="isTop == 1 ? 'position:fixed;z-index:9;top:0' : ''"
+        >
+          <view class="scroll-tab-item" :class="{ active: tabIndex == 0 }" @tap="toggleTab(0)">
+            所有
           </view>
-        </block>
-      </scroll-view>
+          <block v-for="(item, index) in categories" :key="index">
+            <view
+              class="scroll-tab-item"
+              :class="{ active: tabIndex == item._jv.id }"
+              @tap="toggleTab(item._jv.id)"
+            >
+              {{ item.name }}
+              <view class="scroll-tab-line"></view>
+            </view>
+          </block>
+        </scroll-view>
+      </view>
     </view>
     <view class="sticky">
-      <view class="sticky__isSticky">
+      <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
         <view class="sticky__isSticky__box">置顶</view>
-        <view class="sticky__isSticky__count">取消目前的板块，改成标签（话题）形式，每篇 ...</view>
+        <view class="sticky__isSticky__count">
+          {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
+        </view>
       </view>
-
-      <!-- <view class="isSticky">取消目前的板块，改成标签（话题）形式，每篇 ...</view> -->
     </view>
 
     <view class="main">
       <qui-content
-        v-for="(item, index) in data"
+        v-for="(item, index) in threads"
         :key="index"
-        :user-name="item.userName"
-        :theme-image="item.themeImage"
-        :theme-status="item.themeStatus"
-        :theme-btn="item.themeBtn"
-        :theme-reward="item.themeReward"
-        :theme-reply-btn="item.themeReplyBtn"
-        :theme-delete-btn="item.themeDeleteBtn"
-        :theme-types="item.themeTypes"
-        :theme-time="item.themeTime"
-        :theme-content="item.themeContent"
-        :theme-like="item.themeLike"
-        :theme-comment="item.themeComment"
-        :tags="item.tags"
+        :user-name="item.user.username"
+        :theme-image="item.user.avatarUrl"
+        :theme-btn="item.canHide"
+        :theme-reply-btn="item.canReply"
+        :theme-types="item.user.showGroups"
+        :theme-time="item.createdAt"
+        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+        :theme-like="item.firstPost.likeCount"
+        :theme-comment="item.firstPost.replyCount"
+        :tags="item.category.name"
+        :images-list="item.firstPost.images"
+        :theme-essence="item.isEssence"
         @click="handleClickShare"
       ></qui-content>
     </view>
@@ -97,11 +105,15 @@
 </template>
 
 <script>
+/* eslint-disable */
 import { status } from 'jsonapi-vuex';
 
 export default {
   data: () => {
     return {
+      isTop: 0,
+      threads: '',
+      sticky: '',
       defaultHeadImg: 'https://discuz.chat/static/images/logo.png',
       backgroundHeadFullImg: 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg',
       theme: '主题',
@@ -112,40 +124,6 @@ export default {
       iconShare: 'icon-share1',
       color: 'red',
       tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
-      tabBars: [
-        {
-          name: '所有',
-          id: 'guanzhu',
-        },
-        {
-          name: '程序员',
-          id: 'tuijian',
-        },
-        {
-          name: '产品经理',
-          id: 'redian',
-        },
-        {
-          name: '策划文案',
-          id: 'tiyu',
-        },
-        {
-          name: '前端程序',
-          id: 'caijing',
-        },
-        {
-          name: '设计师',
-          id: 'yule',
-        },
-        {
-          name: '测试文字',
-          id: 'yule',
-        },
-        {
-          name: '狗子',
-          id: 'yule',
-        },
-      ],
       data: [
         {
           userName: '佟掌柜',
@@ -280,18 +258,35 @@ export default {
     };
   },
   computed: {
-    thread() {
-      return this.$store.getters['jv/get']('threads/13');
+    categories() {
+      return this.$store.getters['jv/get']('categories');
     },
-    // forum() {
-    //   return this.$store.getters['jv/get']('forum');
-    // }
   },
   onLoad() {
+    // 首页导航栏分类列表
+    this.loadCategories();
+    // 首页主题置顶列表
+    this.loadThreadsSticky();
+    // 首页主题内容列表
     this.loadThreads();
-    // const forums = this.$store.getters['jv/get']('forums/1');
-    // const { site_name } = forums.set_site;
-    // console.log(forums, 'namename');
+  },
+  mounted() {
+    const query = uni.createSelectorQuery().in(this);
+    query
+      .select('#scrollView')
+      .boundingClientRect(data => {
+        console.log(`得到布局位置信息${JSON.stringify(data)}`);
+        console.log(`节点离页面顶部的距离为${data.top}`);
+        this.myScroll = data.top;
+      })
+      .exec();
+  },
+  onPageScroll(e) {
+    if (e.scrollTop > this.myScroll) {
+      this.isTop = 1;
+    } else {
+      this.isTop = 0;
+    }
   },
   methods: {
     // 切换选项卡
@@ -303,6 +298,7 @@ export default {
       console.log(e);
       this.tabIndex = e.detail.current;
     },
+    // 首页头部分享按钮弹窗
     open() {
       this.$refs.popup.open();
       this.bottomData = [
@@ -321,6 +317,7 @@ export default {
     cancel() {
       this.$refs.popup.close();
     },
+    // 首页底部发帖按钮弹窗
     footerOpen() {
       console.log(this.$refs.popup.open);
       this.$refs.popup.open();
@@ -347,6 +344,7 @@ export default {
         },
       ];
     },
+    // 首页内容部分分享按钮弹窗
     handleClickShare() {
       this.$refs.popup.open();
       this.bottomData = [
@@ -362,29 +360,61 @@ export default {
         },
       ];
     },
+    // 首页导航栏分类列表数据
+    loadCategories() {
+      this.loadStatus1 = status.run(() => {
+        this.$store.dispatch('jv/get', ['categories', {}]);
+      });
+    },
+    // 首页置顶列表数据
+    loadThreadsSticky() {
+      const params = {
+        'filter[isSticky]': 'yes',
+        include: ['firstPost'],
+      };
+      this.loadStatus = status.run(() => {
+        this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+          this.sticky = data;
+        });
+      });
+    },
+    // 首页内容部分数据请求
     loadThreads() {
       const params = {
         'filter[isDeleted]': 'no',
         include: [
-          'posts.replyUser',
-          'user.groups',
           'user',
-          'posts',
-          'posts.user',
-          'posts.likedUsers',
-          'posts.images',
+          'user.groups',
           'firstPost',
-          'firstPost.likedUsers',
           'firstPost.images',
-          'firstPost.attachments',
-          'rewardedUsers',
           'category',
           'threadVideo',
         ],
       };
       this.loadStatus = status.run(() => {
-        this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
-          console.log(data, 99999);
+        this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+          // 循环帖子
+          Object.getOwnPropertyNames(data).forEach(key => {
+            // 如果是 _jv 跳过
+            if (key === '_jv') {
+              return true;
+            }
+
+            // 循环每篇帖子作者的用户组
+            Object.getOwnPropertyNames(data[key].user.groups).forEach(k => {
+              // 如果是 _jv 跳过
+              if (key === '_jv') {
+                return true;
+              }
+
+              // 是否显示用户组
+              const group = data[key].user.groups[k];
+              data[key].user.showGroups = group.isDisplay ? `(${group.name})` : '';
+            });
+          });
+
+          delete data._jv;
+          this.threads = data;
         });
       });
     },
@@ -456,12 +486,19 @@ export default {
   display: inline-block;
   margin: 30rpx;
   font-size: $fg-f26;
+  color: --color(--qui-FC-777);
 }
 .active .scroll-tab-line {
-  width: 70rpx;
+  width: 100%;
   // border-top: 2rpx solid #1878f3;
+  color: --color(--qui-BG-HIGH-LIGHT);
   border-bottom: 2rpx solid --color(--qui-BG-HIGH-LIGHT);
   border-radius: 20rpx;
+}
+.uni-tab-bar .active {
+  font-size: $fg-f28;
+  font-weight: bold;
+  color: --color(--qui-BG-HIGH-LIGHT);
 }
 .main {
   margin-bottom: 130rpx;
