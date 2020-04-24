@@ -7,6 +7,7 @@
           name="icon-expression"
           size="40"
           color="#777"
+          @click="emojiShow = !emojiShow"
         ></qui-icon>
         <qui-icon
           class="post-box__hd-l__icon"
@@ -20,22 +21,25 @@
         {{ i18n.t('discuzq.post.note', { num: 450 - textAreaValue.length }) }}
       </text>
     </view>
-    <view class="emoji-box">
-      <swiper class="swiper">
-        <swiper-item v-for="index of getSwiperItem" :key="index">
-          <view class="swiper-item uni-bg-red">
-            {{ index }}
-          </view>
-        </swiper-item>
-      </swiper>
+    <view class="emoji-bd">
+      <qui-emoji
+        :data="allEmoji"
+        position="absolute"
+        top="20rpx"
+        v-if="emojiShow"
+        @click="getEmojiClick"
+      ></qui-emoji>
     </view>
     <textarea
+      id="textarea"
       class="post-box__con-text"
       :placeholder="i18n.t('discuzq.post.placeholder')"
       placeholder-class="textarea-placeholder"
       v-model="textAreaValue"
       auto-height
       maxlength="450"
+      @input="textInput"
+      @focus="textFocus"
     ></textarea>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">选择分类</text>
@@ -68,6 +72,7 @@ export default {
       checkClassData: {},
       type: 0,
       operating: '',
+      emojiShow: false,
     };
   },
   computed: {
@@ -80,11 +85,33 @@ export default {
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
     },
-    getSwiperItem() {
-      return Math.ceil(Object.keys(this.allEmoji).nv_length / 35);
-    },
   },
   methods: {
+    textInput(e) {
+      console.log(e);
+    },
+    textFocus(e) {
+      console.log(e);
+    },
+    getEmojiClick(num) {
+      console.log(num);
+      this.emojiShow = false;
+
+      console.log(document.getElementById('textarea'));
+      const textarea = document.getElementById('textarea');
+
+      const value = this.textAreaValue;
+      const startPos = textarea.selectionStart;
+      const endPos = textarea.selectionEnd;
+      const newValue = value.substring(0, startPos) + num + value.substring(endPos, value.length);
+      this.textAreaValue = newValue;
+      if (textarea.setSelectionRange) {
+        setTimeout(() => {
+          const index = startPos + num.length;
+          textarea.setSelectionRange(index, index);
+        }, 0);
+      }
+    },
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
@@ -167,12 +194,6 @@ export default {
       color: --color(--qui-FC-777);
     }
   }
-  .emoji-box {
-    .scroll-view_H {
-      width: 100%;
-      white-space: nowrap;
-    }
-  }
   &__con-text {
     width: 100%;
     min-height: 400rpx;
@@ -199,6 +220,10 @@ export default {
       }
     }
   }
+}
+.emoji-bd {
+  position: relative;
+  width: 100%;
 }
 /deep/ textarea .textarea-placeholder {
   font-size: $fg-f28;
