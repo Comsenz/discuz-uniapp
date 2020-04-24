@@ -100,42 +100,34 @@ export default {
         // 有标题有图片海报
         console.log(this.contentImg.length);
         if (this.contentImg.length === 1) {
-          console.log('有单张图片并且有内容');
           this.template = new Cardb().palette(obj);
           // 多图片海报
         } else if (this.contentImg.length > 1) {
-          console.log('有标题有内容有多张图片');
           this.template = new Cardf().palette(obj);
           // 只有标题文字的海报
         } else if (this.contentImg.length === 0 && this.content) {
-          console.log('有标题 有文字内容');
           this.template = new Carda().palette(obj);
           // 视频贴
         } else if (this.postyTepy === 2) {
-          console.log('视频贴');
           this.template = new Cardg().palette(obj);
         }
         // 没有标题的海报
       } else if (!this.contentTitle) {
         // 有一张图片的海报
         if (this.content && this.contentImg.length === 1) {
-          console.log('有一张图片的海报');
           this.template = new Cardb().palette(obj);
           // 只有一张图片
         } else if (!this.content && this.contentImg.length === 1) {
-          console.log('纯图片海报');
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {
           this.template = new Cardf().palette(obj);
         } else if (this.postyTepy === 2) {
-          console.log('视频贴');
           this.template = new Cardg().palette(obj);
         } else {
           this.template = new Cardh().palette(obj);
         }
       } else {
-        console.log('另类海报');
         this.template = new Cardh().palette();
       }
     },

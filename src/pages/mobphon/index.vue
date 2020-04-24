@@ -25,7 +25,6 @@
 </template>
 
 <script>
-// import { status } from 'jsonapi-vuex';
 import quiButton from '@/components/qui-button/qui-button';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
