@@ -22,7 +22,7 @@
       @click="clickDialog(dialog)"
     >
       <view class="dialog-header">
-        <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
+        <image class="logo" :src="dialog.sender.avatarUrl"></image>
         <view class="text">
           <text class="black-text">{{ dialog.sender.username }}</text>
           <text class="gray-text" v-if="dialog.role">（{{ dialog.role }}）</text>
@@ -75,8 +75,9 @@ export default {
   },
   computed: {
     allDialogList() {
-      console.log('allDialogList', this.$store.getters['jv/get']('dialog'));
-      return this.$store.getters['jv/get']('dialog');
+      const dialogList = this.$store.getters['jv/get']('dialog');
+      console.log('dialogList', dialogList);
+      return dialogList;
     },
   },
   methods: {
@@ -86,8 +87,8 @@ export default {
       });
       console.log('消息首页点击跳转', item.title);
     },
-    clickDialog(id) {
-      console.log('id', id);
+    clickDialog(key) {
+      console.log('key', key);
       uni.navigateTo({
         url: '../message/chat',
       });

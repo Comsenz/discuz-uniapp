@@ -1,22 +1,18 @@
 <template>
   <view class="related-box">
     <view v-for="item in allRelatedNotifications" :key="item.user_id">
-      <view>用户名：{{ item.user_name }}</view>
-      <view>用户头像：{{ item.user_avatar }}</view>
-      <view>帖子内容：{{ item.post_content }}</view>
-      <view>created_at：{{ item.post_content }}</view>
-      <view>read_at：{{ item.post_content }}</view>
-    </view>
-    <view class="info">
-      <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
-    </view>
-    <view class="user-word-box">
-      <view class="content">
-        <text class="user-name">{{ userName }}：</text>
-        <text class="words">{{ words }}</text>
+      <view class="info">
+        <image class="logo" :src="item.user_avatar"></image>
       </view>
-      <view class="time">
-        {{ time }}
+      <view class="user-word-box">
+        <view class="content">
+          <text class="user-name">{{ item.user_name }}：</text>
+          <text class="gray-text" v-if="item.role">（{{ item.role }}）</text>
+          <text class="words">{{ item.post_content }}</text>
+        </view>
+        <view class="time">
+          {{ item.created_at }}
+        </view>
       </view>
     </view>
   </view>
@@ -25,11 +21,7 @@
 <script>
 export default {
   data() {
-    return {
-      userName: '小虫',
-      words: '2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首全榜单美国知名商业杂志《福布斯》',
-      time: '2020/12/15 - 14:20:12',
-    };
+    return {};
   },
   onLoad() {
     this.getRelatedNotifications();
@@ -43,7 +35,7 @@ export default {
   methods: {
     getRelatedNotifications() {
       const params = {
-        'filter[type]': 'related',
+        'filter[type]': 'liked',
       };
       this.$store.dispatch('jv/get', ['notification', { params }]);
     },
@@ -71,7 +63,6 @@ export default {
   width: 80rpx;
   height: 80rpx;
   margin: 20rpx 20rpx 20rpx 40rpx;
-  background-color: blue;
 }
 .content {
   height: 66rpx;
