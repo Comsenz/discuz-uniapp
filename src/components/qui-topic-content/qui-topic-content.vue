@@ -51,40 +51,46 @@
         <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
       </view>
 
-      <view v-if="imagesList.length == 1">
+      <view v-if="Object.keys(imagesList).length == 1">
         <view class="themeItem__content__imgone">
           <image
             class="themeItem__content__imgone__item"
             v-for="(image, index) in imagesList"
             :key="index"
-            :src="image"
+            :mode="modeVal"
+            :src="image.thumbUrl"
             alt
+            @click="imageClick(image._jv.id)"
           ></image>
         </view>
       </view>
-      <view v-if="imagesList.length == 2">
+      <view v-if="Object.keys(imagesList).length == 2">
         <view class="themeItem__content__imgtwo">
           <image
             class="themeItem__content__imgtwo__item"
             v-for="(image, index) in imagesList"
             :key="index"
-            :src="image"
+            :mode="modeVal"
+            :src="image.thumbUrl"
             alt
+            @click="imageClick(image._jv.id)"
           ></image>
         </view>
       </view>
-      <view v-if="imagesList.length >= 3">
+      <view v-if="Object.keys(imagesList).length >= 3">
         <view class="themeItem__content__imgmore">
           <image
             class="themeItem__content__imgmore__item"
             v-for="(image, index) in imagesList"
             :key="index"
-            :src="image"
+            :mode="modeVal"
+            :src="image.thumbUrl"
             alt
+            @click="imageClick(image._jv.id)"
           ></image>
           <image
             class="themeItem__content__imgmore__item"
-            v-if="imagesList.length % 3 != 0"
+            v-if="Object.keys(imagesList).length % 3 != 0"
           ></image>
         </view>
       </view>
@@ -157,6 +163,11 @@ export default {
         return {};
       },
     },
+    // 图片裁剪、缩放的模式
+    modeVal: {
+      type: String,
+      default: 'center',
+    },
     // 主题相关标签
     tags: {
       type: Array,
@@ -189,12 +200,18 @@ export default {
       this.seleShow = !this.seleShow;
       this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
+    // 管理菜单选中事件
     selectChoice(type) {
       this.seleShow = false;
       console.log(type, '类型');
     },
+    // 点击用户头像以及用户名事件
     personJump() {
       this.$emit('personJume', this.userId);
+    },
+    // 点击图片事件(默认参数图片id)
+    imageClick(imageId) {
+      this.$emit('imageClick', imageId);
     },
   },
 };
