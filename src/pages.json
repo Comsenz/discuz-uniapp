@@ -77,6 +77,18 @@
         "navigationBarTitleText": "信息提示",
         "disableScroll": true
       }
+    },
+    {
+      "path": "pages/postercharacte/index",
+      "style": {
+        "navigationBarTitleText": "分享海报"
+      }
+    },
+    {
+      "path": "pages/mobphon/index",
+      "style": {
+        "navigationBarTitleText": "修改手机号"
+      }
     }
   ],
   "globalStyle": {
@@ -85,6 +97,9 @@
     "navigationBarBackgroundColor": "#1878F3",
     "backgroundColor": "#F8F8F8",
     "navigationStyle": "custom",
+    "usingComponents":{
+      "painter":"/wxcomponents/painter/painter"
+    },
     "h5": {
       // h5 不显示顶部导航栏
       "titleNView": false

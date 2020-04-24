@@ -27,44 +27,50 @@
       </view>
 
       <view class="themeItem__content">
-        <view class="themeItem__content__text">
+        <view class="themeItem__content__text" @click="commentJump">
           <rich-text :nodes="commentContent"></rich-text>
         </view>
 
-        <view v-if="imagesList.length == 1">
+        <view v-if="Object.keys(imagesList).length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
+              @click="imageClick(image._jv.id)"
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length == 2">
+        <view v-if="Object.keys(imagesList).length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
+              @click="imageClick(image._jv.id)"
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length >= 3">
+        <view v-if="Object.keys(imagesList).length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
+              @click="imageClick(image._jv.id)"
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="imagesList.length % 3 != 0"
+              v-if="Object.keys(imagesList).length % 3 != 0"
             ></image>
           </view>
         </view>
@@ -74,7 +80,7 @@
 
       <view class="themeItem__footer">
         <view class="themeItem__footer__themeType2">
-          <view class="themeItem__footer__themeType2__item">
+          <view class="themeItem__footer__themeType2__item" @click="deleteComment">
             <qui-icon
               class="text"
               name="icon-delete"
@@ -82,7 +88,7 @@
               color="#AAA"
               @click="handleClick"
             ></qui-icon>
-            删除
+            {{ t.delete }}
           </view>
         </view>
       </view>
@@ -96,6 +102,11 @@ export default {
     // 回复的用户头像
     commentAvatarUrl: {
       type: String,
+      default: '',
+    },
+    // 回复的id
+    postId: {
+      type: [Number, String],
       default: '',
     },
     // 回复的用户名
@@ -125,6 +136,11 @@ export default {
         return {};
       },
     },
+    // 图片裁剪、缩放的模式
+    modeVal: {
+      type: String,
+      default: 'center',
+    },
     // 回复的点赞数
     commentLikeCount: {
       type: [Number, String],
@@ -137,9 +153,27 @@ export default {
       isGreat: false,
     };
   },
+  computed: {
+    t() {
+      return this.i18n.t('topic');
+    },
+  },
   methods: {
-    handleClick() {
-      console.log('是分享哦');
+    // 点击内容事件
+    commentJump() {
+      this.$emit('commentJump');
+    },
+    // 点击头像以及用户名事件
+    personJump() {
+      this.$emit('personJump');
+    },
+    // 删除事件
+    deleteComment() {
+      this.$emit('deleteComment');
+    },
+    // 点击图片事件(默认参数图片id)
+    imageClick(imageId) {
+      this.$emit('imageClick', imageId);
     },
   },
 };
