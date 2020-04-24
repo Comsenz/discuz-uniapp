@@ -853,3 +853,6 @@ function setStringPrototype(screenK, scale) {
 }
 export default global['__wxComponents']['painter/painter']
 </script>
+<style platform="mp-weixin">
+
+</style>
