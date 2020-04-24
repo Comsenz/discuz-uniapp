@@ -177,7 +177,15 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/reset.scss';
+page {
+  padding: 0;
+  margin: 0;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-333);
+}
 .cent {
   width: 700rpx;
   height: 1082rpx;
