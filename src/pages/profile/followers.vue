@@ -1,48 +1,59 @@
 <template>
   <view class="following">
     <view class="follow-content">
-      <view
-        class="follow-content__items"
-        v-for="(followerItem, index) in followerList"
-        :key="index"
+      <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+        @scrolltoupper="toTop"
+        class="scroll-y"
       >
-        <image
-          class="follow-content__items__avatar"
-          :src="followerItem.fromUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
-          alt="avatarUrl"
-          @tap="toProfile(followerItem.fromUser.id)"
-        ></image>
-        <cell-item
-          :title="followerItem.fromUser.username"
-          slot-right
-          :brief="Object.values(followerItem.fromUser.groups)[0].name"
+        <view
+          class="follow-content__items"
+          v-for="(followerItem, index) in followerList"
+          :key="index"
         >
-          <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-          <view class="follow-content__items__operate">
-            <text>
-              {{
-                followingItem.toUser.follow === 0
-                  ? '关注'
-                  : followingItem.toUser.follow == 1
-                  ? '已关注'
-                  : '互相关注'
-              }}
-            </text>
-            <qui-icon
-              class="text"
-              :name="userInfo.follow === 0 ? 'icon-follow' : 'icon-each-follow'"
-              size="16"
-              :color="
-                followingItem.toUser.follow === 0
-                  ? '#777'
-                  : followingItem.toUser.follow == 1
-                  ? '#ddd'
-                  : '#ff8888'
-              "
-            ></qui-icon>
-          </view>
-        </cell-item>
-      </view>
+          <image
+            class="follow-content__items__avatar"
+            :src="
+              followerItem.fromUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'
+            "
+            alt="avatarUrl"
+            @tap="toProfile(followerItem.fromUser.id)"
+          ></image>
+          <cell-item
+            :title="followerItem.fromUser.username"
+            slot-right
+            :brief="Object.values(followerItem.fromUser.groups)[0].name"
+          >
+            <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
+            <view class="follow-content__items__operate">
+              <text>
+                {{
+                  followingItem.toUser.follow === 0
+                    ? '关注'
+                    : followingItem.toUser.follow == 1
+                    ? '已关注'
+                    : '互相关注'
+                }}
+              </text>
+              <qui-icon
+                class="text"
+                :name="userInfo.follow === 0 ? 'icon-follow' : 'icon-each-follow'"
+                size="16"
+                :color="
+                  followingItem.toUser.follow === 0
+                    ? '#777'
+                    : followingItem.toUser.follow == 1
+                    ? '#ddd'
+                    : '#ff8888'
+                "
+              ></qui-icon>
+            </view>
+          </cell-item>
+        </view>
+      </scroll-view>
+      <load-more :status="loadingType" />
     </view>
   </view>
 </template>
@@ -50,10 +61,12 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
+    loadMore,
   },
   props: {
     userId: {
@@ -63,10 +76,11 @@ export default {
   },
   data() {
     return {
+      loadingType: 'more',
       followerList: [],
       totalData: 0, // 总数
-      totalPage: 1, // 总页数
-      currentPage: 1, // 当前页数
+      pageSize: 10,
+      pageNum: 1, // 当前页数
     };
   },
   mounted() {
@@ -85,10 +99,22 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
+          // eslint-disable-next-line no-underscore-dangle
+          this.totalData = res._jv.json.meta.total;
+          // eslint-disable-next-line no-underscore-dangle
+          if (res._jv.json.meta.total <= this.pageSize) {
+            this.loadingType = 'noMore';
+          } else {
+            this.loadingType = 'more';
+          }
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.followerList = data;
+          if (this.pageNum === 1) {
+            this.followerList = data;
+          } else {
+            this.followerList = Object.assign(data, this.followerList);
+          }
         });
     },
     // 添加关注
@@ -98,6 +124,20 @@ export default {
       uni.navigateTo({
         url: `/pages/profile/index?userId=${userId}`,
       });
+    },
+    // 下拉加载
+    pullDown() {
+      if (this.pageNum * this.pageSize < this.totalData) {
+        this.pageNum += 1;
+        this.getFollowingList(this.pageNum);
+      } else {
+        this.loadingType = 'noMore';
+      }
+    },
+    // 上拉刷新
+    toTop() {
+      this.pageNum = 1;
+      this.getFollowingList(this.pageNum);
     },
   },
 };

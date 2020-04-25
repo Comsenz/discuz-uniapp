@@ -2,7 +2,7 @@
   <view class="orderlist">
     <cell-item class="orderlist-wrap" title="时间：本月" slot-right>
       <view @tap="showFilter">
-        <text>状态：所有状态</text>
+        <text>状态：{{ filterSelected.label }}</text>
         <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
         <filter-modal
           v-model="show"
@@ -39,15 +39,15 @@ export default {
     return {
       show: false,
       dataList: [],
+      filterSelected: { label: '全部', value: '' }, // 筛选类型
       type: ['注册', '打赏', '付费主题'],
       filterList: [
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1', selected: false },
-            { label: '支出', value: '2', selected: false },
-            { label: '收入', value: '3', selected: false },
-            { label: '其他类型', value: '4', selected: false },
+            { label: '所有', value: '', selected: false },
+            { label: '待付款', value: 0, selected: false },
+            { label: '已付款', value: 1, selected: false },
           ],
         },
       ],
@@ -58,21 +58,25 @@ export default {
   },
   methods: {
     confirm(e) {
-      console.log(e);
+      this.filterSelected = { ...e[0] };
+      this.getList({ status: e[0].value });
     },
     showFilter() {
       this.show = true;
     },
-    getList() {
+    getList(obj) {
+      // status 0待付款，1已付款
       const params = {
         include: 'thread.firstPost',
         'filter[user]': 1,
         'page[number]': 1,
         'page[limit]': 10,
-        // 'filter[cash_status]': '', // 1：待审核，2：审核通过，3：审核不通过，4：待打款， 5，已打款， 6：打款失败
         // 'filter[start_time]': '',
         // 'filter[end_time]': '',
       };
+      if (obj && obj.status !== '') {
+        params['filter[status]'] = obj.status;
+      }
       status
         .run(() => this.$store.dispatch('jv/get', ['order', { params }]))
         .then(res => {

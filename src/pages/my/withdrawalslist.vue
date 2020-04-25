@@ -7,7 +7,7 @@
       @contentClick="contentClick"
     >
       <view @tap="showFilter">
-        <text>状态：所有状态</text>
+        <text>状态：{{ filterSelected.label }}</text>
         <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
         <filter-modal
           v-model="show"
@@ -51,6 +51,7 @@ export default {
   data: () => {
     return {
       show: false,
+      filterSelected: { label: '全部', value: '' }, // 筛选类型
       operateStatus: ['待审核', '审核通过', '审核不通过', '待打款', '已打款', '打款失败'],
       showDate: false,
       dataList: [],
@@ -58,10 +59,13 @@ export default {
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1', selected: false },
-            { label: '支出', value: '2', selected: false },
-            { label: '收入', value: '3', selected: false },
-            { label: '其他类型', value: '4', selected: false },
+            { label: '全部', value: '', selected: false },
+            { label: '待审核', value: 1, selected: false },
+            { label: '审核通过', value: 2, selected: false },
+            { label: '审核不通过', value: 3, selected: false },
+            { label: '待打款', value: 4, selected: false },
+            { label: '已打款', value: 5, selected: false },
+            { label: '打款失败', value: 6, selected: false },
           ],
         },
       ],
@@ -72,7 +76,8 @@ export default {
   },
   methods: {
     confirm(e) {
-      console.log(e);
+      this.filterSelected = { ...e[0] };
+      this.getList({ cash_status: e[0].value });
     },
     showFilter() {
       this.show = true;
@@ -90,15 +95,17 @@ export default {
     closeDate() {
       this.showDate = false;
     },
-    getList() {
+    getList(obj) {
       const params = {
         'filter[user]': 1,
         'page[number]': 1,
         'page[limit]': 10,
-        // 'filter[cash_status]': '', // 1：待审核，2：审核通过，3：审核不通过，4：待打款， 5，已打款， 6：打款失败
         // 'filter[start_time]': '',
         // 'filter[end_time]': '',
       };
+      if (obj && obj.cash_status) {
+        params['filter[cash_status]'] = obj.cash_status;
+      }
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/cash', { params }]))
         .then(res => {

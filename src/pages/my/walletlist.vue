@@ -2,7 +2,7 @@
   <view class="walletlist">
     <cell-item class="walletlist-head" title="时间：本月" slot-right>
       <view @tap="showFilter">
-        <text>状态：所有状态</text>
+        <text>状态：{{ filterSelected.label }}</text>
         <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
         <filter-modal
           v-model="show"
@@ -37,15 +37,20 @@ export default {
   data: () => {
     return {
       show: false,
+      filterSelected: { label: '全部', value: '' }, // 筛选类型
       dataList: [],
       filterList: [
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1', selected: false },
-            { label: '支出', value: '2', selected: false },
-            { label: '收入', value: '3', selected: false },
-            { label: '其他类型', value: '4', selected: false },
+            { label: '所有', value: '', selected: false },
+            { label: '提现冻结', value: 10, selected: false },
+            { label: '提现成功', value: 11, selected: false },
+            { label: '提现解冻', value: 12, selected: false },
+            { label: '注册收入', value: 30, selected: false },
+            { label: '打赏收入', value: 31, selected: false },
+            { label: '人工收入', value: 32, selected: false },
+            { label: '人工支出', value: 50, selected: false },
           ],
         },
       ],
@@ -56,21 +61,25 @@ export default {
   },
   methods: {
     confirm(e) {
-      console.log(e);
+      this.filterSelected = { ...e[0] };
+      this.getList({ change_type: e[0].value });
     },
     showFilter() {
       this.show = true;
     },
-    getList() {
+    getList(obj) {
+      // change_type 10提现冻结，11提现成功，12提现解冻，30注册收入，31打赏收入，32人工收入，50人工支出
       const params = {
         include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
         'filter[user]': 1,
         'page[number]': 1,
         'page[limit]': 10,
-        // 'filter[cash_status]': '', // 1：待审核，2：审核通过，3：审核不通过，4：待打款， 5，已打款， 6：打款失败
         // 'filter[start_time]': '',
         // 'filter[end_time]': '',
       };
+      if (obj && obj.change_type) {
+        params['filter[change_type]'] = obj.change_type;
+      }
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/log', { params }]))
         .then(res => {

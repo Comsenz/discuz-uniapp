@@ -115,7 +115,7 @@ export default {
     },
     color: {
       type: String,
-      default: '#777777',
+      default: '#aaa',
     },
     contentText: {
       type: Object,
@@ -181,7 +181,7 @@ export default {
 }
 
 .uni-load-more__text {
-  font-size: 15px;
+  font-size: 22rpx;
 }
 
 .uni-load-more__img {
