@@ -17,7 +17,7 @@
     <!-- 会话列表 -->
     <view
       class="dialog-list-box"
-      v-for="dialog in allDialogList"
+      v-for="dialog of allDialogList"
       :key="dialog.id"
       @click="clickDialog(dialog)"
     >
@@ -75,9 +75,21 @@ export default {
   },
   computed: {
     allDialogList() {
+      const id = 2;
+      const list = [];
       const dialogList = this.$store.getters['jv/get']('dialog');
-      console.log('dialogList', dialogList);
-      return dialogList;
+      console.log('请求会话列表返回的结果', dialogList);
+      const keys = Object.keys(dialogList);
+      if (dialogList && keys.length > 0) {
+        for (let i = 0; i < keys.length; i += 1) {
+          const value = dialogList[keys[i]];
+          if (value && value.recipient && value.recipient.id === id) {
+            list.push(value);
+          }
+        }
+      }
+      console.log('处理之后的数据', list);
+      return list;
     },
   },
   methods: {
@@ -87,8 +99,10 @@ export default {
       });
       console.log('消息首页点击跳转', item.title);
     },
-    clickDialog(key) {
-      console.log('key', key);
+    clickDialog(item) {
+      const time = item.updated_at.replace(/T/, ' ').replace(/Z/, '');
+      console.log('点击某一条会话', time.substring(0, time.indexOf('+')));
+      console.log('time', time.substring(12, 13));
       uni.navigateTo({
         url: '../message/chat',
       });
