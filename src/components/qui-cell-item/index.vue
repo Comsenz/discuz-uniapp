@@ -89,6 +89,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    class: {
+      type: String,
+      default: '',
+    },
   },
 
   methods: {

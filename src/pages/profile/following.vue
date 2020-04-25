@@ -85,8 +85,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
-          this.followingList = res;
-          console.log(res);
+          const data = JSON.parse(JSON.stringify(res));
+          // eslint-disable-next-line no-underscore-dangle
+          delete data._jv;
+          this.followingList = data;
         });
     },
     // 添加关注

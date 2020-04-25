@@ -1,28 +1,25 @@
+/* eslint-disable no-underscore-dangle */
 <template>
   <view class="freeze">
     <view class="freeze-head">
       <view class="freeze-head__num">
         <text>共有</text>
-        <text class="freeze-head__num__detail">2</text>
+        <text class="freeze-head__num__detail">{{ total }}</text>
         <text>条记录</text>
       </view>
       <view class="freeze-head__money">
         <text>涉及金额</text>
-        <text class="freeze-head__money__detail">¥1548.0</text>
+        <text class="freeze-head__money__detail">¥{{ totalamount }}</text>
       </view>
     </view>
     <view class="freeze-items">
       <cell-item
-        title="冻结原因：提现中"
-        brief="ID:148754"
-        addon="¥1120.0"
-        brief-right="今天上午07:22"
-      ></cell-item>
-      <cell-item
-        title="冻结原因：违规调查中"
-        brief="ID:148755"
-        addon="¥210.0"
-        brief-right="今天上午07:22"
+        v-for="(freezeItem, index) in freezelist"
+        :key="index"
+        :title="freezeItem.change_desc"
+        :brief="'ID:' + freezeItem.id"
+        :addon="'¥' + freezeItem.change_freeze_amount"
+        :brief-right="freezeItem.created_at"
       ></cell-item>
     </view>
   </view>
@@ -30,17 +27,20 @@
 
 <script>
 import cellItem from '@/components/qui-cell-item';
-import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
     cellItem,
   },
-  onLoad() {
+  onLoad(params) {
+    this.totalamount = params.totalamount || 0;
     this.getFreezelist();
   },
   data() {
     return {
+      total: 0,
+      totalamount: 0,
+      data: [],
       freezelist: [],
     };
   },
@@ -51,12 +51,15 @@ export default {
         'filter[user]': 1,
         'filter[change_type]': 10,
       };
-      status
-        .run(() => this.$store.dispatch('jv/get', ['wallet/log', { params }]))
-        .then(res => {
-          this.getFreezelist = res;
-          console.log(res);
-        });
+      this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
+        // eslint-disable-next-line no-underscore-dangle
+        this.total = res._jv.json.meta.total;
+        const data = JSON.parse(JSON.stringify(res));
+        // eslint-disable-next-line no-underscore-dangle
+        delete data._jv;
+        this.freezelist = data;
+        console.log(res);
+      });
     },
   },
 };

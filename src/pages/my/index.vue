@@ -10,7 +10,7 @@
           ></image>
           <cell-item
             :title="userInfo.username || ''"
-            :brief="Object.values(userInfo.groups)[0].name || ''"
+            :brief="getGroups(userInfo.groups)"
             :border="false"
           ></cell-item>
         </view>
@@ -61,6 +61,7 @@ export default {
         { title: '粉丝', brief: '31' },
         { title: '点赞', brief: '65' },
       ],
+      current: 0,
     };
   },
   computed: {
@@ -89,8 +90,17 @@ export default {
           this.items[1].brief = res.followCount;
           this.items[2].brief = res.fansCount;
           this.items[3].brief = res.likedCount;
-          console.log(res);
         });
+    },
+    getGroups() {
+      return data => {
+        Object.keys(data).forEach((item, index) => {
+          if (item[index]) {
+            return item[index].name;
+          }
+          return '暂无角色';
+        });
+      };
     },
   },
 };
@@ -144,7 +154,7 @@ export default {
 .qui-tabs {
   background: #fff;
 }
-/deep/ .qui-tabs__item--active {
+.ui-tabs__item /deep/ .qui-tabs__item--active {
   border: 0;
 }
 </style>

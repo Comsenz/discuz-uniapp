@@ -13,7 +13,7 @@
           v-model="show"
           @confirm="confirm"
           :filter-list="filterList"
-          :if-need-confirm="true"
+          :if-need-confirm="false"
         ></filter-modal>
         <date-pop size="height" :show="showDate" @close="closeDate">
           <date-picker @cancel="cancelDate" @sure="sureDate"></date-picker>
@@ -22,16 +22,13 @@
     </cell-item>
     <view class="withdrawalslist-items">
       <cell-item
-        title="审核中"
-        brief="今天上午10:22"
-        addon="¥1120.0"
-        brief-right="待审核"
-      ></cell-item>
-      <cell-item
-        title="您的账号存在异常情况，请联系系统管理员,请稍后关注处理信息"
-        brief="2020-12-13 上午07：22"
-        addon="¥210.0"
-        brief-right="审核不通过"
+        v-for="(item, index) in dataList"
+        :key="index"
+        :title="operateStatus[item.cash_status - 1]"
+        :brief="item.cash_sn"
+        :addon="'¥' + item.cash_apply_amount"
+        :brief-right="item.created_at"
+        :class="item.cash_status === 3 ? '#fa5151' : '#777'"
       ></cell-item>
     </view>
   </view>
@@ -42,6 +39,7 @@ import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
 import datePicker from '@/components/qui-date-picker/picker';
 import datePop from '@/components/qui-date-picker/pop';
+import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
@@ -53,12 +51,14 @@ export default {
   data: () => {
     return {
       show: false,
+      operateStatus: ['待审核', '审核通过', '审核不通过', '待打款', '已打款', '打款失败'],
       showDate: false,
+      dataList: [],
       filterList: [
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1', selected: true },
+            { label: '所有', value: '1', selected: false },
             { label: '支出', value: '2', selected: false },
             { label: '收入', value: '3', selected: false },
             { label: '其他类型', value: '4', selected: false },
@@ -66,6 +66,9 @@ export default {
         },
       ],
     };
+  },
+  onLoad() {
+    this.getList();
   },
   methods: {
     confirm(e) {
@@ -86,6 +89,24 @@ export default {
     },
     closeDate() {
       this.showDate = false;
+    },
+    getList() {
+      const params = {
+        'filter[user]': 1,
+        'page[number]': 1,
+        'page[limit]': 10,
+        // 'filter[cash_status]': '', // 1：待审核，2：审核通过，3：审核不通过，4：待打款， 5，已打款， 6：打款失败
+        // 'filter[start_time]': '',
+        // 'filter[end_time]': '',
+      };
+      status
+        .run(() => this.$store.dispatch('jv/get', ['wallet/cash', { params }]))
+        .then(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          // eslint-disable-next-line no-underscore-dangle
+          delete data._jv;
+          this.dataList = data;
+        });
     },
   },
 };

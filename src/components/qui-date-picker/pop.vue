@@ -15,6 +15,7 @@ export default {
     },
     size: {
       type: String,
+      default: '',
     },
   },
   data() {

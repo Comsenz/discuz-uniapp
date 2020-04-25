@@ -6,7 +6,7 @@
       :addon="`¥ ${dataInfo.available_amount || 0.0}`"
       class="wallet-available"
     ></cell-item>
-    <navigator url="./freeze" open-type="navigate">
+    <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" open-type="navigate">
       <cell-item title="冻结金额" arrow :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"></cell-item>
     </navigator>
     <navigator url="./withdrawalslist" open-type="navigate">

@@ -274,6 +274,7 @@ export default {
           tabsName: '我',
           tabsIcon: 'icon-mine',
           id: 3,
+          url: '/pages/my/index',
         },
       ],
       postImg: '../assets.publish.svg',

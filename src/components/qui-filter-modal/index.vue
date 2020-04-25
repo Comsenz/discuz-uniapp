@@ -87,10 +87,12 @@ export default {
     confirm() {
       this.showValue = false;
       this.$emit('confirm', this.selectedData);
+      this.selectedData = [];
     },
     cancel() {
       this.showValue = false;
       this.$emit('cancel');
+      this.selectedData = [];
     },
     changeSelected(item, dataIndex, filterIndex) {
       if (!this.ifNeedConfirm) {

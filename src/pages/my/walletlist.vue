@@ -8,32 +8,17 @@
           v-model="show"
           @confirm="confirm"
           :filter-list="filterList"
-          :if-need-confirm="true"
+          :if-need-confirm="false"
         ></filter-modal>
       </view>
     </cell-item>
-    <view class="walletlist-detail">
-      <view class="walletlist-detail__time">
-        <view>区间</view>
-        <view>2012-3-01 至 2012-03-30</view>
-      </view>
-      <view class="walletlist-detail__money">
-        <view>支出￥1548.0</view>
-        <view>收入￥5784.0</view>
-      </view>
-    </view>
     <view class="walletlist-items">
       <cell-item
-        title="审核中"
-        brief="今天上午10:22"
-        addon="¥1120.0"
-        brief-right="入账成功"
-      ></cell-item>
-      <cell-item
-        title="您的账号存在异常情况，请联系系统管理员,请稍后关注处理信息"
-        brief="2020-12-13 上午07：22"
-        addon="-¥210.0"
-        brief-right="扣除金额"
+        v-for="(item, index) in dataList"
+        :key="index"
+        :title="item.change_desc"
+        :brief="item.created_at"
+        :addon="item.change_available_amount"
       ></cell-item>
     </view>
   </view>
@@ -42,6 +27,7 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
+import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
@@ -51,18 +37,22 @@ export default {
   data: () => {
     return {
       show: false,
+      dataList: [],
       filterList: [
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1' },
-            { label: '支出', value: '2' },
-            { label: '收入', value: '3' },
-            { label: '其他类型', value: '4' },
+            { label: '所有', value: '1', selected: false },
+            { label: '支出', value: '2', selected: false },
+            { label: '收入', value: '3', selected: false },
+            { label: '其他类型', value: '4', selected: false },
           ],
         },
       ],
     };
+  },
+  onLoad() {
+    this.getList();
   },
   methods: {
     confirm(e) {
@@ -70,6 +60,25 @@ export default {
     },
     showFilter() {
       this.show = true;
+    },
+    getList() {
+      const params = {
+        include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
+        'filter[user]': 1,
+        'page[number]': 1,
+        'page[limit]': 10,
+        // 'filter[cash_status]': '', // 1：待审核，2：审核通过，3：审核不通过，4：待打款， 5，已打款， 6：打款失败
+        // 'filter[start_time]': '',
+        // 'filter[end_time]': '',
+      };
+      status
+        .run(() => this.$store.dispatch('jv/get', ['wallet/log', { params }]))
+        .then(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          // eslint-disable-next-line no-underscore-dangle
+          delete data._jv;
+          this.dataList = data;
+        });
     },
   },
 };
@@ -107,20 +116,5 @@ page {
 }
 .walletlist-head /deep/ .cell-item__body {
   height: 78rpx;
-}
-.walletlist-detail {
-  display: flex;
-  height: 120rpx;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40rpx;
-  font-size: 24rpx;
-  color: #777;
-}
-.walletlist-detail__time {
-  justify-content: flex-start;
-}
-.walletlist-detail__money {
-  justify-content: flex-end;
 }
 </style>

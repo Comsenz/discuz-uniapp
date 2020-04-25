@@ -8,22 +8,18 @@
           v-model="show"
           @confirm="confirm"
           :filter-list="filterList"
-          :if-need-confirm="true"
+          :if-need-confirm="false"
         ></filter-modal>
       </view>
     </cell-item>
     <view class="orderlist-items">
       <cell-item
-        title="审核中"
-        brief="今天上午10:22"
-        addon="-¥1120.0"
-        brief-right="支付成功"
-      ></cell-item>
-      <cell-item
-        title="您的账号存在异常情况，请联系系统管理员,请稍后关注处理信息"
-        brief="2020-12-13 上午07：22"
-        addon="-¥210.0"
-        brief-right="支付成功"
+        v-for="(item, index) in dataList"
+        :key="index"
+        :title="type[item.type - 1]"
+        :brief="item.created_at"
+        :addon="item.amount"
+        :brief-right="item.status == 1 ? '已付款' : '待付款'"
       ></cell-item>
     </view>
   </view>
@@ -32,6 +28,7 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
+import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
@@ -41,18 +38,23 @@ export default {
   data: () => {
     return {
       show: false,
+      dataList: [],
+      type: ['注册', '打赏', '付费主题'],
       filterList: [
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1' },
-            { label: '支出', value: '2' },
-            { label: '收入', value: '3' },
-            { label: '其他类型', value: '4' },
+            { label: '所有', value: '1', selected: false },
+            { label: '支出', value: '2', selected: false },
+            { label: '收入', value: '3', selected: false },
+            { label: '其他类型', value: '4', selected: false },
           ],
         },
       ],
     };
+  },
+  onLoad() {
+    this.getList();
   },
   methods: {
     confirm(e) {
@@ -60,6 +62,25 @@ export default {
     },
     showFilter() {
       this.show = true;
+    },
+    getList() {
+      const params = {
+        include: 'thread.firstPost',
+        'filter[user]': 1,
+        'page[number]': 1,
+        'page[limit]': 10,
+        // 'filter[cash_status]': '', // 1：待审核，2：审核通过，3：审核不通过，4：待打款， 5，已打款， 6：打款失败
+        // 'filter[start_time]': '',
+        // 'filter[end_time]': '',
+      };
+      status
+        .run(() => this.$store.dispatch('jv/get', ['order', { params }]))
+        .then(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          // eslint-disable-next-line no-underscore-dangle
+          delete data._jv;
+          this.dataList = data;
+        });
     },
   },
 };

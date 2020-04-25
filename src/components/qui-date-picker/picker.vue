@@ -24,6 +24,7 @@ export default {
   props: {
     start: {
       type: Number,
+      default: 0,
     },
   },
   data() {
