@@ -5,7 +5,6 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
-        @scrolltoupper="toTop"
         class="scroll-y"
       >
         <view
@@ -21,16 +20,12 @@
             alt="avatarUrl"
             @tap="toProfile(followerItem.fromUser.id)"
           ></image>
-          <cell-item
-            :title="followerItem.fromUser.username"
-            slot-right
-            :brief="Object.values(followerItem.fromUser.groups)[0].name"
-          >
+          <cell-item :title="followerItem.fromUser.username" slot-right>
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
             <view class="follow-content__items__operate">
               <text>
                 {{
-                  followingItem.toUser.follow === 0
+                  followingItem.toUser.follow == 0
                     ? '关注'
                     : followingItem.toUser.follow == 1
                     ? '已关注'
@@ -39,10 +34,10 @@
               </text>
               <qui-icon
                 class="text"
-                :name="userInfo.follow === 0 ? 'icon-follow' : 'icon-each-follow'"
+                :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
                 size="16"
                 :color="
-                  followingItem.toUser.follow === 0
+                  followingItem.toUser.follow == 0
                     ? '#777'
                     : followingItem.toUser.follow == 1
                     ? '#ddd'
@@ -53,7 +48,6 @@
           </cell-item>
         </view>
       </scroll-view>
-      <load-more :status="loadingType" />
     </view>
   </view>
 </template>
@@ -61,12 +55,10 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
-import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
-    loadMore,
   },
   props: {
     userId: {
@@ -101,20 +93,11 @@ export default {
         .then(res => {
           // eslint-disable-next-line no-underscore-dangle
           this.totalData = res._jv.json.meta.total;
-          // eslint-disable-next-line no-underscore-dangle
-          if (res._jv.json.meta.total <= this.pageSize) {
-            this.loadingType = 'noMore';
-          } else {
-            this.loadingType = 'more';
-          }
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          if (this.pageNum === 1) {
-            this.followerList = data;
-          } else {
-            this.followerList = Object.assign(data, this.followerList);
-          }
+          this.followerList = Object.assign(data, this.followerList);
+          console.log(data);
         });
     },
     // 添加关注
@@ -130,14 +113,7 @@ export default {
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
         this.getFollowingList(this.pageNum);
-      } else {
-        this.loadingType = 'noMore';
       }
-    },
-    // 上拉刷新
-    toTop() {
-      this.pageNum = 1;
-      this.getFollowingList(this.pageNum);
     },
   },
 };
@@ -178,5 +154,8 @@ export default {
   height: 70rpx;
   background: #a8a8a8;
   border-radius: 50%;
+}
+.scroll-y {
+  max-height: calc(100vh - 297rpx);
 }
 </style>

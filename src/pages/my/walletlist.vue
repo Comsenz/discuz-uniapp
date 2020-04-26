@@ -1,6 +1,6 @@
 <template>
   <view class="walletlist">
-    <cell-item class="walletlist-head" title="时间：本月" slot-right>
+    <cell-item class="walletlist-head" slot-right>
       <view @tap="showFilter">
         <text>状态：{{ filterSelected.label }}</text>
         <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
@@ -12,14 +12,32 @@
         ></filter-modal>
       </view>
     </cell-item>
+    <picker
+      mode="date"
+      :value="date"
+      :start="startDate"
+      :end="endDate"
+      @change="bindDateChange"
+      fields="month"
+      class="date-picker"
+    >
+      <view class="uni-input">{{ `时间：${date}` }}</view>
+    </picker>
     <view class="walletlist-items">
-      <cell-item
-        v-for="(item, index) in dataList"
-        :key="index"
-        :title="item.change_desc"
-        :brief="item.created_at"
-        :addon="item.change_available_amount"
-      ></cell-item>
+      <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+        class="scroll-y"
+      >
+        <cell-item
+          v-for="(item, index) in dataList"
+          :key="index"
+          :title="item.change_desc"
+          :brief="item.created_at"
+          :addon="item.change_available_amount"
+        ></cell-item>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -35,8 +53,16 @@ export default {
     filterModal,
   },
   data: () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const currentDate = `${year}-${month}`;
     return {
+      totalData: 0, // 总数
+      pageSize: 10,
+      pageNum: 1, // 当前页数
       show: false,
+      date: currentDate,
       filterSelected: { label: '全部', value: '' }, // 筛选类型
       dataList: [],
       filterList: [
@@ -67,27 +93,48 @@ export default {
     showFilter() {
       this.show = true;
     },
+    // 日期选中
+    bindDateChange(e) {
+      this.date = e.target.value;
+      this.pageNum = 1;
+      this.dataList = [];
+      this.getList();
+    },
     getList(obj) {
+      const dateArr = this.date.split('-');
+      const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       // change_type 10提现冻结，11提现成功，12提现解冻，30注册收入，31打赏收入，32人工收入，50人工支出
       const params = {
         include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
         'filter[user]': 1,
         'page[number]': 1,
         'page[limit]': 10,
-        // 'filter[start_time]': '',
-        // 'filter[end_time]': '',
+        'filter[start_time]': `${this.date}-01-00-00-00 `,
+        'filter[end_time]': `${this.date}-${days}-00-00-00 `,
       };
       if (obj && obj.change_type) {
+        params.pageNum = 1;
+        this.dataList = [];
         params['filter[change_type]'] = obj.change_type;
       }
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/log', { params }]))
         .then(res => {
+          // eslint-disable-next-line no-underscore-dangle
+          this.totalData = res._jv.json.meta.total;
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.dataList = data;
+          this.dataList = Object.assign(data, this.dataList);
         });
+    },
+    // 下拉加载
+    pullDown() {
+      console.log(this.pageNum * this.pageSize);
+      if (this.pageNum * this.pageSize < this.totalData) {
+        this.pageNum += 1;
+        this.getList();
+      }
     },
   },
 };
@@ -125,5 +172,22 @@ page {
 }
 .walletlist-head /deep/ .cell-item__body {
   height: 78rpx;
+}
+.date-picker {
+  position: absolute;
+  top: 40rpx;
+  left: 40rpx;
+  z-index: 10;
+  width: 50%;
+  height: 78rpx;
+}
+.date-picker .uni-input {
+  width: 100%;
+  height: 78rpx;
+  font-size: 28rpx;
+  line-height: 78rpx;
+}
+.scroll-y {
+  height: calc(100vh - 148rpx);
 }
 </style>
