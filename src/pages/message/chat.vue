@@ -10,7 +10,7 @@
     <view class="chat-box__footer">
       <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
       <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" />
-      <button class="btn" type="primary">发送</button>
+      <button class="btn" type="primary" @click="send">发送</button>
     </view>
   </view>
 </template>
@@ -24,7 +24,9 @@ export default {
     uniIcons,
   },
   data() {
-    return {};
+    return {
+      msg: '',
+    };
   },
   onLoad() {
     this.getChatRecord();
@@ -53,6 +55,30 @@ export default {
       };
       this.$store.dispatch('jv/get', ['dialog/message', { params }]);
     },
+    onKeyInput(event) {
+      this.msg = event.target.value;
+      console.log('msg', this.msg);
+    },
+    send() {
+      const params = {
+        _jv: {
+          type: 'dialog/message',
+        },
+        dialog_id: 1,
+        message_text: this.msg,
+      };
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          if (res) {
+            console.log('调用发送消息请求的action，结果为:', res);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      this.msg = '';
+    },
   },
 };
 </script>
@@ -68,7 +94,7 @@ export default {
 .dialog-box-other {
   position: relative;
   width: 540rpx;
-  min-height: 80rpx;
+  min-height: 40rpx;
   padding: 20rpx;
   margin: 20rpx;
   background: #fff;
@@ -112,7 +138,7 @@ export default {
 .dialog-box-me {
   position: relative;
   width: 540rpx;
-  min-height: 80rpx;
+  min-height: 40rpx;
   padding: 20rpx;
   margin: 20rpx;
   background: #d1e0ff;

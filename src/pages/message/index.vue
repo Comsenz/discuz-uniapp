@@ -126,6 +126,10 @@ export default {
     },
     deleteBtn() {
       console.log('点击删除');
+      const id = 21;
+      this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
+        console.log('删除成功', res);
+      });
     },
   },
 };
