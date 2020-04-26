@@ -39,6 +39,15 @@
       auto-height
       maxlength="450"
     ></textarea>
+    <view class="post-box__vp-upload">
+      <image
+        v-if="imageList.length > 0"
+        v-for="item in imageList"
+        :src="item.src"
+        :key="item.src"
+      ></image>
+      <view class="post-box__vp-upload__add" @click="uploadClick">+</view>
+    </view>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">选择分类</text>
       <view class="post-box__ft-categories">
@@ -71,6 +80,7 @@ export default {
       type: 0,
       operating: '',
       emojiShow: false,
+      imageList: [],
     };
   },
   computed: {
@@ -85,6 +95,71 @@ export default {
     },
   },
   methods: {
+    uploadClick() {
+      const that = this;
+      uni.chooseImage({
+        count: 9,
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success: function(res) {
+          console.log(res);
+          console.log(JSON.stringify(res.tempFilePaths));
+          if (res.errMsg === 'chooseImage:ok') {
+            that.imageList.push({
+              src: res.tempFilePaths[0],
+            });
+            that.upload(res.tempFilePaths[0]);
+          }
+        },
+      });
+    },
+    upload(path) {
+      const uploadTask = uni.uploadFile({
+        url: 'https://dq.comsenz-service.com/api/attachments',
+        fileType: 'image',
+        filePath: path,
+        name: 'image',
+        formData: {
+          isGallery: 1,
+        },
+        success: function(res) {
+          console.log(res);
+          var data = res.data;
+          console.warn(
+            'sunui-upimg - 如发现没有获取到返回值请到源码191行修改后端返回图片路径以便正常使用插件',
+            JSON.parse(data),
+          );
+          try {
+            //Tip : 切记->主要修改这里图片的返回值为真实返回路径!!! 详情见示例
+            data = JSON.parse(res.data).info;
+          } catch (e) {
+            throw (e, data);
+          }
+          // 根据自己的返回数据做相应判断,服务器返回200即代表成功请求
+          /*if (res.statusCode == 200) {
+            if (success) {
+              success(data);
+            }
+          } else {
+            if (fail) {
+              fail(data);
+            }
+          }*/
+        },
+        fail: function(res) {
+          console.log(res);
+          if (fail) {
+            fail(res);
+          }
+        },
+      });
+
+      uploadTask.onProgressUpdate(async function(res) {
+        const progress = await res.progress;
+        console.log(progress);
+      });
+    },
+
     getEmojiClick(num) {
       /* this.emojiShow = false;
 
@@ -197,6 +272,26 @@ export default {
       color: --color(--qui-FC-777);
     }
   }
+  &__vp-upload {
+    display: flex;
+    flex-wrap: wrap;
+    height: 160rpx;
+    margin-top: 30rpx;
+
+    image {
+      width: 160rpx;
+      height: 160rpx;
+      margin-right: 14rpx;
+    }
+    &__add {
+      width: 160rpx;
+      height: 160rpx;
+      line-height: 160rpx;
+      text-align: center;
+      background-color: #ededed;
+    }
+  }
+
   &__con-text {
     width: 100%;
     min-height: 400rpx;
