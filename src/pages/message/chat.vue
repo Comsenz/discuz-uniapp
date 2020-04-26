@@ -17,7 +17,7 @@
 
 <script>
 import { uniIcons } from '@dcloudio/uni-ui';
-import { time2MorningOrAfternoon } from '@/utils/time2MorningOrAfternoon';
+import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
