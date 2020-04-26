@@ -106,14 +106,9 @@
               'themeItem__footer__themeType1__great',
               isGreat && 'themeItem__footer__themeType1__greated',
             ]"
+            @click="handleIsGreat"
           >
-            <qui-icon
-              class="qui-icon"
-              name="icon-like"
-              size="28"
-              color="#AAA"
-              @click="handleClick"
-            ></qui-icon>
+            <qui-icon class="qui-icon" name="icon-like" size="28"></qui-icon>
             {{ isGreat ? '已赞' : '赞' }}
             {{ themeLike }}
           </view>
@@ -221,26 +216,34 @@ export default {
       type: String,
       default: '',
     },
-
     tags: {
       type: Array,
       default: () => {
         return [];
       },
     },
+    isGreat: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
       isAdmin: true,
-      isGreat: false,
+      // isGreat: false,
     };
   },
   methods: {
     handleClick() {
       console.log('是分享哦');
     },
+    // 分享按钮点击事件
     handleClickShare(evt) {
       this.$emit('click', evt);
+    },
+    // 点赞按钮点击事件
+    handleIsGreat(evt) {
+      this.$emit('handleIsGreat', evt);
     },
   },
 };

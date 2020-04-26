@@ -68,12 +68,16 @@
         :theme-types="item.user.showGroups"
         :theme-time="item.createdAt"
         :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+        :is-great="item.firstPost.isLiked"
         :theme-like="item.firstPost.likeCount"
         :theme-comment="item.firstPost.replyCount"
         :tags="item.category.name"
         :images-list="item.firstPost.images"
         :theme-essence="item.isEssence"
         @click="handleClickShare"
+        @handleIsGreat="
+          handleIsGreat(item.firstPost._jv.id, item.firstPost.canLike, item.firstPost.isLiked)
+        "
       ></qui-content>
     </view>
     <qui-footer @click="footerOpen" :tabs="tabs" :post-img="postImg"></qui-footer>
@@ -111,6 +115,7 @@ import { status } from 'jsonapi-vuex';
 export default {
   data: () => {
     return {
+      loadStatus: {},
       isTop: 0,
       threads: '',
       sticky: '',
@@ -298,6 +303,30 @@ export default {
       console.log(e);
       this.tabIndex = e.detail.current;
     },
+    // 内容部分点赞按钮点击事件
+    handleIsGreat(id, canLike, isLiked) {
+      if (!canLike) {
+        console.log('没有点赞权限');
+      }
+      // console.log(id, canLike, isLiked);
+      const params = {
+        _jv: {
+          type: 'posts',
+          id: id,
+        },
+        isLiked: isLiked === true ? false : true,
+      };
+      const postLike = status.run(() => {
+        this.$store.dispatch('jv/patch', params);
+      });
+      postLike
+        .then(data => {
+          console.log(data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     // 首页头部分享按钮弹窗
     open() {
       this.$refs.popup.open();
@@ -362,7 +391,7 @@ export default {
     },
     // 首页导航栏分类列表数据
     loadCategories() {
-      this.loadStatus1 = status.run(() => {
+      this.loadStatus = status.run(() => {
         this.$store.dispatch('jv/get', ['categories', {}]);
       });
     },
