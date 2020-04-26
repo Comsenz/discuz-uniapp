@@ -2,9 +2,11 @@
   <view class="chat-box">
     <view class="chat-box__con">
       <!-- <image class="logo" src="https://discuz.chat/static/images/logo.png"></image> -->
-      <view class="dialog-box-other">你好，我是新佑卫门~</view>
+      <view class="dialog-box-other">
+        美国最具创新力领袖 :贝佐斯与马斯克并列榜首全榜单美国知名商业杂志《福布斯》...
+      </view>
       <view class="dialog-box-me">
-        你好，我是一休哥~你好，我是一休哥~
+        美国最具创新力领袖 :贝佐斯与马斯克并列榜首全榜单美国知名商业杂志《福布斯》...
       </view>
     </view>
     <view class="chat-box__footer">
@@ -25,7 +27,26 @@ export default {
   data() {
     return {};
   },
-  methods: {},
+  onLoad() {
+    this.getChatRecord();
+  },
+  computed: {
+    allChatRecord() {
+      const recordList = this.$store.getters['jv/get']('dialog/message');
+      console.log('store', this.$store);
+      console.log('recordList', recordList);
+      return recordList;
+    },
+  },
+  methods: {
+    getChatRecord() {
+      const params = {
+        'filter[dialog_id]': 1,
+        include: ['user', 'user.groups'],
+      };
+      this.$store.dispatch('jv/get', ['dialog/message', { params }]);
+    },
+  },
 };
 </script>
 
@@ -40,7 +61,7 @@ export default {
 .dialog-box-other {
   position: relative;
   width: 540rpx;
-  max-height: 80rpx;
+  min-height: 80rpx;
   padding: 20rpx;
   margin: 20rpx;
   background: #fff;
@@ -84,7 +105,7 @@ export default {
 .dialog-box-me {
   position: relative;
   width: 540rpx;
-  max-height: 80rpx;
+  min-height: 80rpx;
   padding: 20rpx;
   margin: 20rpx;
   background: #d1e0ff;

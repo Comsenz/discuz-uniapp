@@ -102,7 +102,7 @@ export default {
     clickDialog(item) {
       const time = item.updated_at.replace(/T/, ' ').replace(/Z/, '');
       console.log('点击某一条会话', time.substring(0, time.indexOf('+')));
-      console.log('time', time.substring(12, 13));
+      console.log('小时', time.substring(11, 13));
       uni.navigateTo({
         url: '../message/chat',
       });
