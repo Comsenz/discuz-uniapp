@@ -52,6 +52,7 @@
 
 <script>
 import { uniList, uniListItem, uniIcons } from '@dcloudio/uni-ui';
+import { time2MorningOrAfternoon } from '@/utils/time2MorningOrAfternoon';
 
 export default {
   components: {
@@ -101,6 +102,7 @@ export default {
     },
     clickDialog(item) {
       const time = item.updated_at.replace(/T/, ' ').replace(/Z/, '');
+      console.log('time', time2MorningOrAfternoon(item.updated_at));
       console.log('点击某一条会话', time.substring(0, time.indexOf('+')));
       console.log('小时', time.substring(11, 13));
       uni.navigateTo({
