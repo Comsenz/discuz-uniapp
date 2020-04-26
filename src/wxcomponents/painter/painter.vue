@@ -1,16 +1,16 @@
 <template>
   <uni-shadow-root class="painter-painter">
-    <view :style="'position: relative;' + customStyle + ';' + painterStyle">
+    <view :style="'position: relative;'+(customStyle)+';'+(painterStyle)">
       <canvas
         canvas-id="photo"
-        :style="photoStyle + ';position: absolute; left: -9999px; top: -9999rpx;'"
+        :style="(photoStyle)+';position: absolute; left: -9999px; top: -9999rpx;'"
       ></canvas>
-      <canvas canvas-id="bottom" :style="painterStyle + ';position: absolute;'"></canvas>
-      <canvas canvas-id="k-canvas" :style="painterStyle + ';position: absolute;'"></canvas>
-      <canvas canvas-id="top" :style="painterStyle + ';position: absolute;'"></canvas>
+      <canvas canvas-id="bottom" :style="(painterStyle)+';position: absolute;'"></canvas>
+      <canvas canvas-id="k-canvas" :style="(painterStyle)+';position: absolute;'"></canvas>
+      <canvas canvas-id="top" :style="(painterStyle)+';position: absolute;'"></canvas>
       <canvas
         canvas-id="front"
-        :style="painterStyle + ';position: absolute;'"
+        :style="(painterStyle)+';position: absolute;'"
         @touchstart="onTouchStart"
         @touchmove="onTouchMove"
         @touchend="onTouchEnd"
@@ -22,12 +22,11 @@
 </template>
 
 <script>
+global['__wxVueOptions'] = { components: {} };
+
+global['__wxRoute'] = 'painter/painter';
 import Pen from './lib/pen';
 import Downloader from './lib/downloader';
-
-global.__wxVueOptions = { components: {} };
-
-global.__wxRoute = 'painter/painter';
 
 const util = require('./lib/util');
 
@@ -59,7 +58,7 @@ Component({
     },
     palette: {
       type: Object,
-      observer(newVal, oldVal) {
+      observer: function(newVal, oldVal) {
         if (this.isNeedRefresh(newVal, oldVal)) {
           this.paintCount = 0;
           this.startPaint();
@@ -68,7 +67,7 @@ Component({
     },
     dancePalette: {
       type: Object,
-      observer(newVal, oldVal) {
+      observer: function(newVal, oldVal) {
         if (!this.isEmpty(newVal)) {
           this.initDancePalette(newVal);
         }
@@ -94,7 +93,7 @@ Component({
     },
     action: {
       type: Object,
-      observer(newVal, oldVal) {
+      observer: function(newVal, oldVal) {
         if (newVal && !this.isEmpty(newVal)) {
           this.doAction(
             newVal,
@@ -109,14 +108,14 @@ Component({
     },
     disableAction: {
       type: Boolean,
-      observer(isDisabled) {
+      observer: function(isDisabled) {
         this.outterDisabled = isDisabled;
         this.isDisabled = isDisabled;
       },
     },
     clearActionBox: {
       type: Boolean,
-      observer(needClear) {
+      observer: function(needClear) {
         if (needClear && !this.needClear) {
           if (this.frontContext) {
             setTimeout(() => {
@@ -171,10 +170,12 @@ Component({
         },
       };
       if (type === 'text') {
-        boxArea.css = { ...boxArea.css, borderStyle: 'dashed' };
+        boxArea.css = Object.assign({}, boxArea.css, {
+          borderStyle: 'dashed',
+        });
       }
       if (this.properties.customActionStyle && this.properties.customActionStyle.border) {
-        boxArea.css = { ...boxArea.css, ...this.properties.customActionStyle.border };
+        boxArea.css = Object.assign({}, boxArea.css, this.properties.customActionStyle.border);
       }
       Object.assign(boxArea, {
         id: 'box',
@@ -207,15 +208,14 @@ Component({
           },
         };
       }
-      scaleArea.css = {
-        ...scaleArea.css,
+      scaleArea.css = Object.assign({}, scaleArea.css, {
         align: 'center',
         left: `${rect.right + ACTION_OFFSET.toPx()}px`,
         top:
           type === 'text'
             ? `${rect.top - ACTION_OFFSET.toPx() - scaleArea.css.height.toPx() / 2}px`
             : `${rect.bottom - ACTION_OFFSET.toPx() - scaleArea.css.height.toPx() / 2}px`,
-      };
+      });
       Object.assign(scaleArea, {
         id: 'scale',
       });
@@ -246,12 +246,11 @@ Component({
           },
         };
       }
-      deleteArea.css = {
-        ...deleteArea.css,
+      deleteArea.css = Object.assign({}, deleteArea.css, {
         align: 'center',
         left: `${rect.left - ACTION_OFFSET.toPx()}px`,
         top: `${rect.top - ACTION_OFFSET.toPx() - deleteArea.css.height.toPx() / 2}px`,
-      };
+      });
       Object.assign(deleteArea, {
         id: 'delete',
       });
@@ -292,7 +291,7 @@ Component({
         } else if (Array.isArray(newVal.css)) {
           doView.css = Object.assign({}, doView.css, ...newVal.css);
         } else {
-          doView.css = { ...doView.css, ...newVal.css };
+          doView.css = Object.assign({}, doView.css, newVal.css);
         }
       }
       if (newVal && newVal.rect) {
@@ -419,7 +418,7 @@ Component({
       const x = this.startX;
       const y = this.startY;
       const totalLayerCount = this.currentPalette.views.length;
-      const canBeTouched = [];
+      let canBeTouched = [];
       let isDelete = false;
       let deleteIndex = -1;
       for (let i = totalLayerCount - 1; i >= 0; i--) {
@@ -788,13 +787,13 @@ Component({
             canvasId: 'photo',
             destWidth: that.canvasWidthInPx,
             destHeight: that.canvasHeightInPx,
-            success(res) {
+            success: function(res) {
               that.getImageInfo(res.tempFilePath);
             },
-            fail(error) {
+            fail: function(error) {
               console.error(`canvasToTempFilePath failed, ${JSON.stringify(error)}`);
               that.triggerEvent('imgErr', {
-                error,
+                error: error,
               });
             },
           },
@@ -812,7 +811,7 @@ Component({
             const error = `The result is always fault, even we tried ${MAX_PAINT_COUNT} times`;
             console.error(error);
             that.triggerEvent('imgErr', {
-              error,
+              error: error,
             });
             return;
           }
@@ -834,7 +833,7 @@ Component({
         fail: error => {
           console.error(`getImageInfo failed, ${JSON.stringify(error)}`);
           that.triggerEvent('imgErr', {
-            error,
+            error: error,
           });
         },
       });
@@ -878,6 +877,6 @@ function setStringPrototype(screenK, scale) {
     return res;
   };
 }
-export default global.__wxComponents['painter/painter'];
+export default global['__wxComponents']['painter/painter'];
 </script>
 <style platform="mp-weixin"></style>
