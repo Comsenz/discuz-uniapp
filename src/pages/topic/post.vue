@@ -38,8 +38,6 @@
       v-model="textAreaValue"
       auto-height
       maxlength="450"
-      @input="textInput"
-      @focus="textFocus"
     ></textarea>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">选择分类</text>
@@ -87,15 +85,8 @@ export default {
     },
   },
   methods: {
-    textInput(e) {
-      console.log(e);
-    },
-    textFocus(e) {
-      console.log(e);
-    },
     getEmojiClick(num) {
-      console.log(num);
-      this.emojiShow = false;
+      /* this.emojiShow = false;
 
       console.log(document.getElementById('textarea'));
       const textarea = document.getElementById('textarea');
@@ -110,7 +101,10 @@ export default {
           const index = startPos + num.length;
           textarea.setSelectionRange(index, index);
         }, 0);
-      }
+      } */
+
+      this.textAreaValue += this.allEmoji[num].code;
+      this.emojiShow = false;
     },
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
@@ -129,11 +123,18 @@ export default {
     },
     postClick() {
       this.postThread();
+
+      /* uni.navigateTo({
+        url: `/pages/topic/index?id=${res.data.data.id}`,
+      }); */
     },
     getCategories() {
       this.$store.dispatch('jv/get', ['categories', {}]).then(res => {
         this.$set(this.checkClassData, 1, res[1]);
       });
+    },
+    getEmoji() {
+      this.$store.dispatch('jv/get', ['emoji', {}]);
     },
     postThread() {
       const params = {
@@ -151,19 +152,21 @@ export default {
         content: this.textAreaValue,
         type: this.type,
       };
-      this.$store.dispatch('jv/post', params).then(res => {
-        console.log(res);
-      });
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
   },
   onLoad(option) {
     this.getCategories();
+    this.getEmoji();
     if (option.type) this.type = option.type;
     if (option.operating) this.operating = option.operating;
-
-    this.$store.dispatch('jv/get', ['emoji', {}]).then(res => {
-      console.log(res);
-    });
   },
   onShow() {
     this.getAtMemberData.map(item => {
