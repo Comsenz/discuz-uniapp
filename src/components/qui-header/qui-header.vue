@@ -1,0 +1,110 @@
+<template>
+  <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
+    <view class="logoBox">
+      <image class="logo" :src="headImg"></image>
+    </view>
+    <view class="circleDet">
+      <text>
+        {{ theme }}
+        <text class="circleDet-num">{{ themeNum }}</text>
+      </text>
+      <text>
+        {{ post }}
+        <text class="circleDet-num">{{ postNum }}</text>
+      </text>
+      <text class="circleDet-share" @click="open">
+        <qui-icon :name="iconShare" size="28" color="#fff"></qui-icon>
+        {{ share }}
+      </text>
+    </view>
+  </view>
+</template>
+<script>
+export default {
+  name: 'QuiHeader',
+  props: {
+    headImg: {
+      type: String,
+      default: '',
+    },
+    backgroundHeadFullImg: {
+      type: String,
+      default: '',
+    },
+    theme: {
+      type: String,
+      default: '',
+    },
+    themeNum: {
+      type: Number,
+      default: 0,
+    },
+    post: {
+      type: String,
+      default: '',
+    },
+    postNum: {
+      type: Number,
+      default: 0,
+    },
+    share: {
+      type: String,
+      default: '',
+    },
+    iconShare: {
+      type: String,
+      default: '',
+    },
+  },
+  data: () => {
+    return {};
+  },
+  onLond() {},
+  methods: {
+    open(evt) {
+      this.$emit('click', evt);
+    },
+  },
+};
+</script>
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+.header {
+  width: 100%;
+  height: 400rpx;
+  background-image: url('https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg');
+  // background: #1878f3;
+  .logo {
+    display: block;
+    width: 400rpx;
+    max-height: 88rpx;
+    padding-top: 159rpx;
+    margin: 0 auto;
+  }
+  .circleDet {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 69rpx;
+    padding-right: 20rpx;
+    padding-bottom: 47rpx;
+    padding-left: 20rpx;
+    line-height: 37rpx;
+    color: --color(--qui-FC-AAA);
+    text-align: center;
+    // border-bottom: 1rpx solid #ccc;
+    text {
+      padding: 0 14rpx;
+      font-size: $fg-f26;
+      line-height: 37rpx;
+      text-align: center;
+    }
+    .circleDet-num {
+      color: --color(--qui-BG-2);
+    }
+    .circleDet-share {
+      color: --color(--qui-BG-2);
+    }
+  }
+}
+</style>
