@@ -1,21 +1,42 @@
 <template>
   <view>
-    <view class="dialog-list-box" v-for="user in userList" :key="user.id">
-      <view class="dialog-header">
-        <image class="logo" src="https://discuz.chat/static/images/logo.png"></image>
-        <view class="text">
-          <text class="black-text">{{ user.userName }}</text>
-          <text class="gray-text" v-if="user.role === '管理员'">（{{ user.role }}）</text>
+    <view class="list-box">
+      <view class="list-box__header">
+        <view class="">
+          <view v-if="x">头像</view>
           <view>
-            <text class="time">{{ user.time }}</text>
+            <view>
+              <text>用户名</text>
+              <text>角色</text>
+              <text class="gray-text" v-if="type === 'related'">@了我</text>
+              <text class="gray-text" v-if="type === 'replied'">回复了我</text>
+              <text class="gray-text" v-if="type === 'liked'">点赞了我</text>
+              <text class="gray-text" v-if="type === 'rewarded'">打赏了我</text>
+            </view>
+            <view>时间</view>
           </view>
         </view>
-        <view class="dialog-right">
-          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
+        <view class="">
+          <uni-icons
+            v-if="dialog.recipient_read_at === null"
+            class="red-circle"
+            type="smallcircle-filled"
+            color="red"
+            size="7"
+          ></uni-icons>
+          <text v-if="d">￥999</text>
           <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
         </view>
       </view>
-      <view class="dialog-content">{{ user.word }}</view>
+      <view class="list-box__content">
+        <view class="" v-if="a">发言</view>
+        <view class="" v-if="b">图片</view>
+        <view class="" v-if="c">文字</view>
+      </view>
+      <view class="list-box__footer">
+        <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="trash" />
+        <text>删除</text>
+      </view>
     </view>
   </view>
 </template>
@@ -23,98 +44,17 @@
 <script>
 export default {
   data() {
-    return {
-      userList: [
-        {
-          id: 1,
-          userName: '新佑卫门',
-          role: '管理员',
-          time: '2020-12-13 上午 07:22',
-          word: '世界各地的友好城市，为湖北打气！',
-        },
-        {
-          id: 2,
-          userName: '一休哥',
-          role: '访问者',
-          time: '2020-12-13 上午 07:22',
-          word:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）美国知名商业杂志福布斯》发布2019美国最具创',
-        },
-        {
-          id: 3,
-          userName: '刘辉开',
-          role: '访问者',
-          time: '2020-12-13 上午 07:22',
-          word: '回家吃饭啦',
-        },
-      ],
-    };
+    return {};
   },
   methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
-.dialog-list-box {
-  margin: 20rpx 0;
-  background-color: #fff;
-}
-
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.logo {
-  width: 80rpx;
-  height: 80rpx;
-  margin: 20rpx 20rpx 20rpx 40rpx;
-}
-
-.text {
+.list-box {
   width: 100%;
-  align-items: center;
-  margin: 20rpx 0;
-}
-
-.black-text {
-  font-size: 28rpx;
-  font-weight: bold;
-  line-height: 37rpx;
-  color: rgba(0, 0, 0, 1);
-  opacity: 1;
-}
-
-.gray-text {
-  font-size: 28rpx;
-  font-weight: 400;
-  line-height: 37rpx;
-  color: rgba(170, 170, 170, 1);
-  opacity: 1;
-}
-
-.time {
-  font-size: 24rpx;
-  line-height: 31rpx;
-  color: rgba(170, 170, 170, 1);
-  opacity: 1;
-}
-
-.red-circle {
-  display: flex;
-}
-
-.dialog-right {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-right: 30rpx;
-}
-
-.dialog-content {
-  padding: 10rpx 40rpx 30rpx;
-  font-weight: 400;
-  color: rgba(51, 51, 51, 1);
-  opacity: 1;
+  min-height: 188rpx;
+  margin: 30rpx 0 10rpx;
+  background: rgba(255, 255, 255, 1);
 }
 </style>

@@ -2,7 +2,7 @@
   <view class="chat-box">
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
       <!-- <image class="logo" src="https://discuz.chat/static/images/logo.png"></image> -->
-      <view>{{ item.created_at }}</view>
+      <view>{{ item.time }}</view>
       <view :class="[item.user_id === 1 ? 'dialog-box-me' : 'dialog-box-other']">
         {{ item.message_text }}
       </view>
@@ -36,7 +36,7 @@ export default {
       const keys = Object.keys(recordList);
       if (recordList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
-          recordList[keys[i]].created_at = time2MorningOrAfternoon(recordList[keys[i]].created_at);
+          recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
           list.push(recordList[keys[i]]);
         }
       }

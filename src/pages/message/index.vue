@@ -25,17 +25,15 @@
         <image class="logo" :src="dialog.sender.avatarUrl"></image>
         <view class="text">
           <text class="black-text">{{ dialog.sender.username }}</text>
-          <text class="gray-text" v-if="dialog.role">（{{ dialog.role }}）</text>
-          <text class="gray-text">@了我</text>
-          <!-- <text class="gray-text">回复了我</text>
-          <text class="gray-text">点赞了我</text>
-          <text class="gray-text">打赏了我</text> -->
+          <text class="gray-text" v-for="item in dialog.sender.groups" :key="item.name">
+            <text v-if="item.name">（{{ item.name }}）</text>
+          </text>
+          <text class="gray-text" v-if="dialog.type === 'related'">@了我</text>
+          <!-- <text class="gray-text" v-if="dialog.type === 'replied'">回复了我</text>
+          <text class="gray-text" v-if="dialog.type === 'liked'">点赞了我</text>
+          <text class="gray-text" v-if="dialog.type === 'rewarded'">打赏了我</text> -->
           <view>
             <text class="time">{{ dialog.time }}</text>
-          </view>
-          <view class="deleteBtn" @click="deleteBtn">
-            <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="trash" />
-            删除
           </view>
         </view>
         <view class="dialog-right">
@@ -49,7 +47,11 @@
           <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
         </view>
       </view>
-      <view class="dialog-content">{{ dialog.word }}</view>
+      <view class="dialog-content">{{ dialog.dialogMessage.message_text }}</view>
+      <view class="deleteBtn" @click="deleteBtn">
+        <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="trash" />
+        删除
+      </view>
     </view>
   </view>
 </template>
