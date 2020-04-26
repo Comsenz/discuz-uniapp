@@ -20,6 +20,63 @@
         "navigationBarTitleText": "Discuz Q"
       }
     },
+
+    //个人主页和我的部分页面
+    {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },	
+    {
+      "path": "pages/my/profile",
+      "style": {
+        "navigationBarTitleText": "我的资料"
+      }
+    },
+    {
+      "path": "pages/my/wallet",
+      "style": {
+        "navigationBarTitleText": "我的钱包"
+      }
+    },
+    {
+      "path": "pages/my/freeze",
+      "style": {
+        "navigationBarTitleText": "冻结金额"
+      }
+    },
+    {
+      "path": "pages/my/withdrawalslist",
+      "style": {
+        "navigationBarTitleText": "提现记录"
+      }
+    },
+    {
+      "path": "pages/my/walletlist",
+      "style": {
+        "navigationBarTitleText": "钱包明细"
+      }
+    },
+    {
+      "path": "pages/my/orderlist",
+      "style": {
+        "navigationBarTitleText": "订单明细"
+      }
+    },
+    {
+      "path": "pages/my/favorite",
+      "style": {
+        "navigationBarTitleText": "我的收藏"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "个人主页",
+        "enablePullDownRefresh":true
+      }
+    },
     {
       "path": "pages/message/index",
       "style": {
@@ -79,9 +136,27 @@
       }
     },
     {
+      "path": "pages/homeposter/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/postercharacte/index",
       "style": {
         "navigationBarTitleText": "分享海报"
+      }
+    },
+    {
+      "path": "pages/channame/index",
+      "style": {
+        "navigationBarTitleText": "修改名字"
+      }
+    },
+    {
+      "path": "pages/setphon/index",
+      "style": {
+        "navigationBarTitleText": "设置新手机"
       }
     },
     {
@@ -106,3 +181,5 @@
     }
   }
 }
+
+
