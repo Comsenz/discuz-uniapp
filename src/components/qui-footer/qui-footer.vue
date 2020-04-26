@@ -45,6 +45,11 @@ export default {
   methods: {
     select(item) {
       this.sel = item.id;
+      if (item.url) {
+        uni.navigateTo({
+          url: item.url,
+        });
+      }
     },
     footerOpen(evt) {
       this.$emit('click', evt);
