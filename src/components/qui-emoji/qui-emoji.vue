@@ -24,7 +24,7 @@
 export default {
   name: 'QuiEmoji',
   props: {
-    data: {
+    list: {
       default: Object,
       type: Object,
     },

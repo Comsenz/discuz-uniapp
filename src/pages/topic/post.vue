@@ -23,7 +23,7 @@
     </view>
     <view class="emoji-bd">
       <qui-emoji
-        :data="allEmoji"
+        :list="allEmoji"
         position="absolute"
         top="20rpx"
         v-if="emojiShow"

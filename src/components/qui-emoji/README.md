@@ -19,7 +19,7 @@
 ### Props属性说明
 | 参数 | 说明 | 类型 | 默认值 |
 | ---- | ---- | ---- | ---- |
-|data|表情数据，数据格式参考表情接口请求|Object|-
+|list|表情数据，数据格式参考表情接口请求|Object|-
 |position|右侧内容|String|absolute
 |top|css属性top|String| -
 |left|css属性left|String| -
