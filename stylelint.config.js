@@ -124,6 +124,7 @@ module.exports = {
         ignoreKeywords: ['/--qui-/'],
       },
     ],
+    'no-empty-source':null,
     'order/properties-order': [
       // 指定声明块内属性的字母顺序
       'position',

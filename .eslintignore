@@ -14,3 +14,4 @@ vue.config.js
 commitlint.congig.js
 stylelint.config.js
 src/library
+src/wxcomponents
