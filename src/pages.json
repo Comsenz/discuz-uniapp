@@ -37,9 +37,27 @@
       }
     },
     {
+      "path": "pages/homeposter/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/postercharacte/index",
       "style": {
         "navigationBarTitleText": "分享海报"
+      }
+    },
+    {
+      "path": "pages/channame/index",
+      "style": {
+        "navigationBarTitleText": "修改名字"
+      }
+    },
+    {
+      "path": "pages/setphon/index",
+      "style": {
+        "navigationBarTitleText": "设置新手机"
       }
     },
     {
