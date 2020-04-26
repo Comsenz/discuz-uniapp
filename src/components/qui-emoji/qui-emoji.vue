@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     getSwiperItem() {
-      return Math.ceil(Object.keys(this.data).nv_length / 35);
+      return Math.ceil(Object.keys(this.list).nv_length / 35);
     },
   },
   methods: {
