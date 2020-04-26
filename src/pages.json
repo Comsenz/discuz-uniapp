@@ -78,6 +78,14 @@
       }
     },
     {
+      "path": "pages/topic/post",
+      "style": {
+        "navigationBarTitleText": "发布",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
       "path": "components/qui-at-member-page/qui-at-member-page",
       "style": {
         "navigationBarBackgroundColor": "#fff",
@@ -127,7 +135,7 @@
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",
-    "navigationBarBackgroundColor": "#1878F3",
+    "navigationBarBackgroundColor": "#fff",
     "backgroundColor": "#F8F8F8",
     "navigationStyle": "custom",
     "usingComponents":{
