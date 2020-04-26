@@ -33,6 +33,10 @@
           <view>
             <text class="time">{{ dialog.time }}</text>
           </view>
+          <view class="deleteBtn" @click="deleteBtn">
+            <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="trash" />
+            删除
+          </view>
         </view>
         <view class="dialog-right">
           <uni-icons
@@ -52,6 +56,7 @@
 
 <script>
 import { uniList, uniListItem, uniIcons } from '@dcloudio/uni-ui';
+import { time2MinuteOrHour } from '@/utils/time2MinuteOrHour';
 import { time2MorningOrAfternoon } from '@/utils/time2MorningOrAfternoon';
 
 export default {
@@ -101,10 +106,13 @@ export default {
       console.log('消息首页点击跳转', item.title);
     },
     clickDialog(item) {
-      const time = item.updated_at.replace(/T/, ' ').replace(/Z/, '');
-      console.log('time', time2MorningOrAfternoon(item.updated_at));
-      console.log('点击某一条会话', time.substring(0, time.indexOf('+')));
-      console.log('小时', time.substring(11, 13));
+      const time = item.updated_at;
+      console.log('time', time);
+      console.log('time2MorningOrAfternoon(time)', time2MorningOrAfternoon(time));
+      console.log('time2MinuteOrHour(time)', time2MinuteOrHour(time));
+      console.log('小时', time2MinuteOrHour('2020-04-26T00:00:24+08:00'));
+      console.log('小时2', time2MinuteOrHour('2020-04-25T15:27:24+08:00'));
+      console.log('小时3', time2MinuteOrHour('2020-04-25T00:27:24+08:00'));
       uni.navigateTo({
         url: '../message/chat',
       });
@@ -114,6 +122,9 @@ export default {
         include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
       };
       this.$store.dispatch('jv/get', ['dialog', { params }]);
+    },
+    deleteBtn() {
+      console.log('点击删除');
     },
   },
 };
@@ -198,5 +209,10 @@ export default {
   font-weight: 400;
   color: rgba(51, 51, 51, 1);
   opacity: 1;
+}
+
+.deleteBtn {
+  float: ritht;
+  margin: 20rpx 40rpx 40rpx;
 }
 </style>
