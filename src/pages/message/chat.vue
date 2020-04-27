@@ -1,10 +1,12 @@
 <template>
   <view class="chat-box">
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
-      <!-- <image class="logo" src="https://discuz.chat/static/images/logo.png"></image> -->
-      <view>{{ item.time }}</view>
-      <view :class="[item.user_id === 1 ? 'dialog-box-me' : 'dialog-box-other']">
-        {{ item.message_text }}
+      <view class="time">{{ item.time }}</view>
+      <view class="info">
+        <image :class="[item.user_id === 1 ? 'me' : 'other']" :src="item.user.avatarUrl"></image>
+        <view :class="[item.user_id === 1 ? 'dialog-box-me' : 'dialog-box-other']">
+          {{ item.message_text }}
+        </view>
       </view>
     </view>
     <view class="chat-box__footer">
@@ -91,9 +93,12 @@ export default {
   background-color: #ededed;
 }
 
+.chat-box__con {
+  margin: 30rpx 0 0;
+}
+
 .dialog-box-other {
   position: relative;
-  width: 540rpx;
   min-height: 40rpx;
   padding: 20rpx;
   margin: 20rpx;
@@ -137,7 +142,6 @@ export default {
 
 .dialog-box-me {
   position: relative;
-  width: 540rpx;
   min-height: 40rpx;
   padding: 20rpx;
   margin: 20rpx;
@@ -177,9 +181,16 @@ export default {
   box-sizing: content-box;
 }
 
-.logo {
-  width: 75rpx;
+.me {
+  width: 80rpx;
   height: 80rpx;
+  margin: 0 10rpx 0 20rpx;
+}
+
+.other {
+  width: 80rpx;
+  height: 80rpx;
+  margin: 0 10rpx 0 20rpx;
 }
 
 .chat-box__footer {
@@ -212,5 +223,19 @@ export default {
   margin: 0 20rpx 0 10rpx;
   font-size: $fg-f28;
   background-color: rgba(24, 120, 243, 1);
+}
+
+.time {
+  font-size: $fg-f20;
+  font-weight: 400;
+  color: rgba(181, 181, 181, 1);
+  text-align: center;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
