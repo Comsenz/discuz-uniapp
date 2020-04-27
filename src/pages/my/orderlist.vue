@@ -58,6 +58,7 @@ export default {
   },
   methods: {
     confirm(e) {
+      console.log(33333);
       this.filterSelected = { ...e[0] };
       this.getList({ status: e[0].value });
     },

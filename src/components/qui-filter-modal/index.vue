@@ -1,5 +1,12 @@
 <template>
-  <view class="filter-modal" :class="{ show: showValue }" @tap.stop="cancel">
+  <view
+    class="filter-modal"
+    :class="{ show: showValue }"
+    @tap.stop="cancel"
+    :style="{
+      top: top + 'rpx',
+    }"
+  >
     <view class="filter-modal__content" v-if="showValue" @tap.stop>
       <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
         <view class="filter-modal__content__item-title">{{ item.title }}</view>
@@ -68,6 +75,10 @@ export default {
         return [];
       },
     },
+    top: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -102,6 +113,7 @@ export default {
       }
       // 设置选中取消
       const current = this.filterList[dataIndex].data[filterIndex];
+      console.log(current);
       if (current.selected) {
         current.selected = false;
         this.selectedData = this.selectedData.filter(obj => obj.value !== item.value);
@@ -109,6 +121,8 @@ export default {
         current.selected = true;
         this.selectedData.push(item);
       }
+
+      this.$emit('changeSelected', { item, dataIndex, filterIndex });
     },
   },
 };
@@ -117,7 +131,6 @@ export default {
 <style lang="scss">
 .filter-modal {
   position: fixed;
-  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
