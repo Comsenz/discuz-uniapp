@@ -412,4 +412,9 @@ export default {
     }
   }
 }
+.qq-emotion {
+  display: inline-block;
+  width: 28rpx;
+  height: 28rpx;
+}
 </style>
