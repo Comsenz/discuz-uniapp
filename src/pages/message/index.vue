@@ -22,36 +22,41 @@
       @click="clickDialog(dialog)"
     >
       <view class="dialog-box__header">
-        <image class="logo" :src="dialog.sender.avatarUrl"></image>
-        <view class="text">
-          <text class="black-text">{{ dialog.sender.username }}</text>
-          <text class="gray-text" v-for="item in dialog.sender.groups" :key="item.name">
-            <text v-if="item.name">（{{ item.name }}）</text>
-          </text>
-          <text class="gray-text" v-if="dialog.type === 'related'">@了我</text>
-          <text class="gray-text" v-if="dialog.type === 'replied'">回复了我</text>
-          <text class="gray-text" v-if="dialog.type === 'liked'">点赞了我</text>
-          <text class="gray-text" v-if="dialog.type === 'rewarded'">打赏了我</text>
+        <view class="dialog-box__header__info">
+          <image
+            class="dialog-box__header__info__user-avatar"
+            :src="
+              dialog.sender.avatarUrl
+                ? dialog.sender.avatarUrl
+                : 'https://discuz.chat/static/images/noavatar.gif'
+            "
+          ></image>
           <view>
-            <text class="time">{{ dialog.time }}</text>
+            <view class="dialog-box__header__info__box">
+              <text class="dialog-box__header__info__username">{{ dialog.sender.username }}</text>
+              <text
+                class="dialog-box__header__info__groupname"
+                v-for="item in dialog.sender.groups"
+                :key="item.name"
+              >
+                <text v-if="item.name">（{{ item.name }}）</text>
+              </text>
+            </view>
+            <view class="dialog-box__header__info__time">{{ dialog.time }}</view>
           </view>
         </view>
-        <view class="dialog-right">
+        <view class="dialog-box__header__r">
           <uni-icons
-            v-if="dialog.recipient_read_at === null"
             class="red-circle"
+            v-if="dialog.recipient_read_at === null"
             type="smallcircle-filled"
-            color="red"
             size="7"
+            color="red"
           ></uni-icons>
-          <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
+          <uni-icons class="uni-icon-wrapper" type="arrowright" :size="20" color="#bbb" />
         </view>
       </view>
       <view class="dialog-box__con">{{ dialog.dialogMessage.message_text }}</view>
-      <view class="deleteBtn" @click="deleteNotification">
-        <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="trash" />
-        删除
-      </view>
     </view>
   </view>
 </template>
@@ -91,6 +96,7 @@ export default {
       if (dialogList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           const value = dialogList[keys[i]];
+          dialogList[keys[i]].time = time2MorningOrAfternoon(dialogList[keys[i]].created_at);
           if (value && value.recipient && value.recipient.id === id) {
             list.push(value);
           }
@@ -98,6 +104,11 @@ export default {
       }
       console.log('处理之后的数据', list);
       return list;
+    },
+    allUnreadNotificationNum() {
+      const num = this.$store.getters['jv/get']('users');
+      console.log('请求未读通知条数返回的结果：', num);
+      return num;
     },
   },
   methods: {
@@ -110,7 +121,13 @@ export default {
     },
 
     // 获取未读通知条数
-    getUnreadNotificationNum() {},
+    getUnreadNotificationNum() {
+      const id = 3;
+      const params = {
+        include: ['groups'],
+      };
+      this.$store.dispatch('jv/get', [`users/${id}`, { params }]);
+    },
 
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面
     clickUniListItem(item) {
@@ -131,15 +148,6 @@ export default {
       console.log('小时3', time2MinuteOrHour('2020-04-25T00:27:24+08:00'));
       uni.navigateTo({
         url: '../message/chat',
-      });
-    },
-
-    // 删除通知
-    deleteNotification() {
-      console.log('点击删除');
-      const id = 21;
-      this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
-        console.log('删除成功', res);
       });
     },
   },
@@ -163,70 +171,68 @@ export default {
   border: 1px solid #ededed;
 }
 
-.dialog-box {
-  margin: 20rpx 0;
-  background-color: #fff;
-}
-
-.dialog-box__header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.logo {
-  width: 80rpx;
-  height: 80rpx;
-  margin: 20rpx 20rpx 20rpx 40rpx;
-}
-
-.text {
-  width: 100%;
-  align-items: center;
-  margin: 20rpx 0;
-}
-
-.black-text {
-  margin-right: 6rpx;
-  font-weight: bold;
-  line-height: 37rpx;
-  color: rgba(0, 0, 0, 1);
-  opacity: 1;
-}
-
-.gray-text {
-  font-weight: 400;
-  line-height: 37rpx;
-  color: rgba(170, 170, 170, 1);
-  opacity: 1;
-}
-
-.time {
-  font-size: 24rpx;
-  line-height: 31rpx;
-  color: rgba(170, 170, 170, 1);
-  opacity: 1;
-}
-
 .red-circle {
   display: flex;
 }
 
-.dialog-right {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-right: 30rpx;
-}
+.dialog-box {
+  margin: 20rpx 0;
+  background-color: #fff;
 
-.dialog-box__con {
-  padding: 10rpx 40rpx 30rpx;
-  font-weight: 400;
-  color: rgba(51, 51, 51, 1);
-  opacity: 1;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
 
-.deleteBtn {
-  float: ritht;
-  margin: 20rpx 40rpx 40rpx;
+    &__info {
+      display: flex;
+      justify-content: space-between;
+
+      &__user-avatar {
+        width: 80rpx;
+        height: 80rpx;
+        margin: 20rpx 20rpx 20rpx 40rpx;
+        border-radius: 100rpx;
+      }
+
+      &__box {
+        width: 100%;
+        align-items: center;
+        margin: 20rpx 0 10rpx;
+      }
+
+      &__username {
+        margin-right: 6rpx;
+        font-weight: bold;
+        line-height: 37rpx;
+        color: #000;
+      }
+
+      &__groupname {
+        font-weight: 400;
+        line-height: 37rpx;
+        color: #aaa;
+      }
+
+      &__time {
+        font-size: 24rpx;
+        line-height: 31rpx;
+        color: #aaa;
+      }
+    }
+
+    &__r {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-right: 30rpx;
+    }
+  }
+
+  &__con {
+    padding: 10rpx 40rpx 30rpx;
+    font-weight: 400;
+    color: rgba(51, 51, 51, 1);
+    opacity: 1;
+  }
 }
 </style>
