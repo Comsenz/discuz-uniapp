@@ -100,6 +100,7 @@ export default {
     management: '管理',
     reply: '回复',
     giveLike: '点赞',
+    giveLikeAlready: '已赞',
     like: '赞',
     writeComment: '写评论',
     writeComments: '写评论...',
@@ -120,5 +121,6 @@ export default {
     note: '450',
     canWrite: '还能输入',
     word: '个字',
+    publish: '发布',
   },
 };

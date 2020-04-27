@@ -57,10 +57,6 @@
       </view>
       <view class="det-con-ft">
         <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
-        <view class="det-con-ft-child">
-          <qui-icon name="icon-like" class="qui-icon"></qui-icon>
-          <view>{{ t.like }}{{ thread.firstPost.likeCount }}</view>
-        </view>
         <view class="det-con-ft-child" @click="threadCollectionClick">
           <qui-icon name="icon-collection" class="qui-icon"></qui-icon>
           <view>{{ t.collection }}</view>
@@ -113,41 +109,70 @@
           <view class="comment-content-box">
             <view class="comment-content">
               <textarea
+                ref="commentText"
                 auto-height
                 focus="true"
                 :maxlength="450"
                 class="comment-textarea"
                 :placeholder="t.writeComments"
                 :placeholder-style="placeholderColor"
-                :value="textAreaValue"
+                v-model="textAreaValue"
               />
             </view>
           </view>
-          <qui-button
-            size="100%"
-            type="primary"
-            class="publishBtn"
-            @handleClick="publishClick(thread._jv.id)"
-          >
-            发布
+          <qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
+            {{ t.publish }}
           </qui-button>
         </view>
       </uni-popup>
     </view>
     <view class="det-ft flex" v-if="footerShow">
-      <view class="det-ft-child flex" @click="threadLikeClick">
+      <view
+        :class="[isLiked ? 'det-ft-child flex is-iked' : 'det-ft-child flex']"
+        @click="
+          threadLikeClick(
+            thread.firstPost._jv.id,
+            thread.firstPost.canLike,
+            thread.firstPost.isLiked,
+          )
+        "
+      >
         <qui-icon name="icon-like" class="qui-icon"></qui-icon>
-        <view>{{ t.giveLike }}</view>
+        <view v-if="isLiked">{{ t.giveLike }}</view>
+        <view v-else>{{ t.giveLikeAlready }}</view>
       </view>
       <view class="det-ft-child flex" @click="threadComment">
         <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
         <view>{{ t.writeComment }}</view>
       </view>
-      <view class="det-ft-child flex">
+      <view class="det-ft-child flex" @click="shareClick">
         <qui-icon name="icon-share" class="qui-icon"></qui-icon>
         <view>{{ t.share }}</view>
       </view>
     </view>
+    <uni-popup ref="sharePopup" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box">
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="36"
+                  color="#777777"
+                  @click="handleClick"
+                ></qui-icon>
+              </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+      </view>
+    </uni-popup>
   </view>
 </template>
 
@@ -170,12 +195,25 @@ export default {
       commentShow: false, // 显示评论
       textAreaValue: '', // 评论输入框
       placeholderColor: 'color:#b5b5b5', // 默认textarea的placeholder颜色
+      isLiked: false, // 主题点赞状态
       username: 'admin',
       time: '16分钟前',
       role: '管理员',
       replyStatus: '审核中',
       content: '内容内容内容,内容内容内容内容内容内容内容内容内容,内容内容内容内容内容...',
       isActive: true,
+      bottomData: [
+        {
+          text: '生成海报',
+          icon: 'icon-word',
+          name: 'wx',
+        },
+        {
+          text: '微信分享',
+          icon: 'icon-img',
+          name: 'wx',
+        },
+      ],
       tagList: [
         { tag: '女神视频1' },
         { tag: '女神视频22' },
@@ -189,162 +227,11 @@ export default {
         { text: '删除', type: '3' },
         { text: '置顶', type: '4' },
       ], // 管理菜单
-      topic: {
-        username: 'admin',
-        time: '15分钟前',
-        themeTypes: '0',
-        themeContent: '内容内容',
-        images: [
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-        ],
-        tags: [
-          {
-            tagName: '女神',
-          },
-          {
-            tagName: '女神经',
-          },
-          {
-            tagName: '女神经病',
-          },
-        ],
-        payList: [
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-        ],
-        likes: [
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-          'https://dq.comsenz-service.com/storage/attachment/2020/04/19/czIWBB13JCi8klmV_thumb.jpg',
-        ],
-      },
-      replyList: [
-        {
-          postId: '10',
-          username: 'admin',
-          replUsername: 'reply',
-          content: '内容内容内容内容1111111111111111111111111111111111111',
-        },
-        {
-          postId: '10',
-          username: 'text',
-          replUsername: '',
-          content: '内容内容内容内容222222',
-        },
-        {
-          postId: '10',
-          username: 'aaaa',
-          replUsername: 'cvbgbd',
-          content: '内容内容内容内容3333333333333内容内容内容地，方健康的双方就看电视封口机',
-        },
-      ],
+
       limitShowNum: 2,
       paidStatus: false, // 是否有已支付数据
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
-      datas: [
-        {
-          userName: '佟掌柜',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-      ],
     };
   },
   computed: {
@@ -363,7 +250,8 @@ export default {
       return this.i18n.t('topic');
     },
   },
-  onLoad() {
+  onLoad(option) {
+    console.log(option.id);
     this.loadThreads();
     this.loadThreadPosts();
     // const forums = this.$store.getters['jv/get']('forums/1');
@@ -396,6 +284,7 @@ export default {
         this.$store.dispatch('jv/get', ['threads/11', { params }]).then(data => {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
           this.thread = data;
+          this.isLiked = data.firstPost.isLiked;
           this.status = true;
           this.topicStatus = data.isApproved;
           // console.log(lodash.isEmpty(data.paidUsers));
@@ -417,6 +306,59 @@ export default {
           // console.log('over', this.limitArray(data.paidUsers, 1));
         }),
       );
+    },
+    // 主题点赞调用接口
+    handleIsGreat(id, canLike, isLiked) {
+      console.log(id, canLike, isLiked);
+      if (!canLike) {
+        console.log('没有点赞权限');
+      }
+      // console.log(id, canLike, isLiked);
+      const params = {
+        _jv: {
+          type: 'posts',
+          id: id,
+        },
+        isLiked: isLiked === true ? false : true,
+      };
+      const postLike = status.run(() => {
+        this.$store.dispatch('jv/patch', params);
+      });
+      postLike
+        .then(data => {
+          console.log(data);
+          console.log('点赞请求接口成功呢');
+        })
+        .catch(err => {
+          console.log('走了catch');
+          console.log(err);
+        });
+    },
+    // 主题回复调用接口
+    postComment() {
+      const params = {
+        _jv: {
+          type: 'posts',
+          relationships: {
+            thread: {
+              data: {
+                type: 'threads',
+                id: 11,
+              },
+            },
+          },
+        },
+        content: this.textAreaValue,
+      };
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.$refs.commentPopup.close();
+          // console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 加载当前主题评论的数据
@@ -483,6 +425,7 @@ export default {
     // 主题评论点击发布事件
     publishClick() {
       console.log('发布主题评论');
+      this.postComment();
     },
     // 跳转到评论详情页
     commentJump(postId) {
@@ -524,12 +467,11 @@ export default {
       //   }
       // });
     },
+
     // 主题点赞
-    threadLikeClick() {
-      console.log('主题点赞');
-      if (!this.thread.canLike) {
-        console.log(this.t.canLike);
-      }
+    threadLikeClick(postId, canLike, isLiked) {
+      console.log(this.thread.firstPost.canLike, '主题点赞');
+      this.handleIsGreat(postId, canLike, isLiked);
     },
     // 主题收藏
     threadCollectionClick() {
@@ -547,6 +489,17 @@ export default {
         this.$refs.commentPopup.open();
       }
     },
+    // 分享
+    shareClick() {
+      this.$refs.sharePopup.open();
+    },
+    // 取消分享
+    cancel() {
+      this.$refs.sharePopup.close();
+    },
+  },
+  mounted() {
+    console.log(this.$refs.commentText, '获取的dom');
   },
 };
 </script>
@@ -804,6 +757,19 @@ page {
     line-height: 80rpx;
   }
 }
+.is-liked {
+  flex: auto;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  line-height: 80rpx;
+  color: --color(--qui-FC-DDD);
+  .qui-icon {
+    margin-right: 18rpx;
+    font-size: 30rpx;
+    line-height: 80rpx;
+  }
+}
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
@@ -847,5 +813,82 @@ page {
 }
 .publishBtn {
   width: 100%;
+}
+
+.popup-share {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  flex-direction: column;
+  /* #endif */
+  background: --color(--qui-BG-2);
+}
+.popup-share-content {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  height: 250rpx;
+  padding-top: 40rpx;
+  padding-right: 97rpx;
+  padding-left: 98rpx;
+  background: --color(--qui-BG-BTN-GRAY-1);
+  // padding: 15px;
+}
+.popup-share-box {
+  width: 120rpx;
+  height: 120rpx;
+  line-height: 120rpx;
+  background: --color(--qui-BG-2);
+  border-radius: 10px;
+}
+.popup-share-content-box {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: column;
+  align-items: center;
+  width: 120rpx;
+  height: 164rpx;
+  // background: --color(--qui-BG-2);
+}
+.popup-share-content-image {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: center;
+  // align-items: center;
+  width: 120rpx;
+  height: 120rpx;
+  overflow: hidden;
+  border-radius: 10rpx;
+}
+.content-image {
+  width: 60rpx;
+  height: 60rpx;
+  margin: 35rpx;
+  line-height: 60rpx;
+}
+.popup-share-content-text {
+  padding-top: 5px;
+  font-size: $fg-f26;
+  color: #333;
+}
+.popup-share-btn {
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 90rpx;
+  color: #666;
+  text-align: center;
+  border-top-color: #f5f5f5;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+.popup-share-content-space {
+  width: 100%;
+  height: 9rpx;
+  background: --color(--qui-FC-DDD);
 }
 </style>
