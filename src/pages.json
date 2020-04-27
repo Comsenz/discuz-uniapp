@@ -116,7 +116,8 @@
     {
       "path": "pages/message/chat",
       "style": {
-          "navigationBarTitleText": "聊天室"
+          "navigationBarTitleText": "聊天室",
+          "enablePullDownRefresh":true
       }
     },
     {
@@ -171,7 +172,7 @@
     "navigationBarTitleText": "",
     "navigationBarBackgroundColor": "#1878F3",
     "backgroundColor": "#F8F8F8",
-    "navigationStyle": "custom",
+    // "navigationStyle": "custom",
     "usingComponents":{
       "painter":"/wxcomponents/painter/painter"
     },
