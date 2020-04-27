@@ -45,6 +45,7 @@
         v-for="item in imageList"
         :src="item.src"
         :key="item.src"
+
       ></image>
       <view class="post-box__vp-upload__add" @click="uploadClick">+</view>
     </view>
