@@ -1,10 +1,23 @@
 <template>
   <view class="chat-box">
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
-      <view class="time">{{ item.time }}</view>
-      <view class="info">
-        <image :class="[item.user_id === 1 ? 'me' : 'other']" :src="item.user.avatarUrl"></image>
-        <view :class="[item.user_id === 1 ? 'dialog-box-me' : 'dialog-box-other']">
+      <view class="chat-box__con__time">{{ item.time }}</view>
+      <view
+        :class="[item.user_id === 1 ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
+      >
+        <image
+          :class="[
+            item.user_id === 1
+              ? 'chat-box__con__msg__image__mine'
+              : 'chat-box__con__msg__image__other',
+          ]"
+          :src="item.user.avatarUrl"
+        ></image>
+        <view
+          :class="[
+            item.user_id === 1 ? 'chat-box__con__msg__box__mine' : 'chat-box__con__msg__box__other',
+          ]"
+        >
           {{ item.message_text }}
         </view>
       </view>
@@ -12,7 +25,7 @@
     <view class="chat-box__footer">
       <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
       <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" />
-      <button class="btn" type="primary" @click="send">发送</button>
+      <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
     </view>
   </view>
 </template>
@@ -91,151 +104,159 @@ export default {
 
 .chat-box {
   background-color: #ededed;
-}
 
-.chat-box__con {
-  margin: 30rpx 0 0;
-}
+  &__con {
+    &__time {
+      padding-top: 20rpx;
+      font-size: $fg-f20;
+      font-weight: 400;
+      color: rgba(181, 181, 181, 1);
+      text-align: center;
+    }
 
-.dialog-box-other {
-  position: relative;
-  min-height: 40rpx;
-  padding: 20rpx;
-  margin: 20rpx;
-  background: #fff;
-  border: 1rpx solid #e5e5e5;
-  border-radius: 10rpx;
-}
+    .chat-box__con__msg__mine {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-start;
+      align-items: center;
 
-.dialog-box-other:before {
-  position: absolute;
-  top: 31%;
-  left: -31rpx;
-  z-index: 12;
-  display: block;
-  width: 0rpx;
-  height: 0rpx;
-  border-top: 8px solid transparent;
-  border-right: 8px solid #fff;
-  border-bottom: 8px solid transparent;
-  border-left: 8px solid transparent;
-  content: '';
-  box-sizing: content-box;
-}
+      .chat-box__con__msg__image__mine {
+        width: 80rpx;
+        height: 80rpx;
+        margin: 0 20rpx 0 10rpx;
+      }
 
-.dialog-box-other:after {
-  position: absolute;
-  top: 29%;
-  left: -35rpx;
-  z-index: 10;
-  display: block;
-  width: 0rpx;
-  height: 0rpx;
-  padding: 0;
-  border-top: 9px solid transparent;
-  border-right: 9px solid #ccc;
-  border-bottom: 9px solid transparent;
-  border-left: 9px solid transparent;
-  content: '';
-  box-sizing: content-box;
-}
+      .chat-box__con__msg__box__mine {
+        position: relative;
+        min-height: 40rpx;
+        padding: 20rpx;
+        margin: 20rpx;
+        background: #d1e0ff;
+        border: 1rpx solid #a3caff;
+        border-radius: 10rpx;
+      }
 
-.dialog-box-me {
-  position: relative;
-  min-height: 40rpx;
-  padding: 20rpx;
-  margin: 20rpx;
-  background: #d1e0ff;
-  border: 1rpx solid #a3caff;
-  border-radius: 10rpx;
-}
-.dialog-box-me:before {
-  position: absolute;
-  top: 31%;
-  right: -30rpx;
-  z-index: 12;
-  display: block;
-  width: 0rpx;
-  height: 0rpx;
-  border-top: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-left: 8px solid #d1e0ff;
-  content: '';
-  box-sizing: content-box;
-}
-.dialog-box-me:after {
-  position: absolute;
-  top: 29%;
-  right: -35rpx;
-  z-index: 10;
-  display: block;
-  width: 0rpx;
-  height: 0rpx;
-  padding: 0;
-  border-top: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-bottom: 9px solid transparent;
-  border-left: 9px solid #a3caff;
-  content: '';
-  box-sizing: content-box;
-}
+      .chat-box__con__msg__box__mine:before {
+        position: absolute;
+        top: 31%;
+        right: -30rpx;
+        z-index: 12;
+        display: block;
+        width: 0rpx;
+        height: 0rpx;
+        border-top: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 8px solid #d1e0ff;
+        content: '';
+        box-sizing: content-box;
+      }
 
-.me {
-  width: 80rpx;
-  height: 80rpx;
-  margin: 0 10rpx 0 20rpx;
-}
+      .chat-box__con__msg__box__mine:after {
+        position: absolute;
+        top: 29%;
+        right: -35rpx;
+        z-index: 10;
+        display: block;
+        width: 0rpx;
+        height: 0rpx;
+        padding: 0;
+        border-top: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-bottom: 9px solid transparent;
+        border-left: 9px solid #a3caff;
+        content: '';
+        box-sizing: content-box;
+      }
+    }
 
-.other {
-  width: 80rpx;
-  height: 80rpx;
-  margin: 0 10rpx 0 20rpx;
-}
+    .chat-box__con__msg__other {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
 
-.chat-box__footer {
-  position: absolute;
-  bottom: 0rpx;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  width: 100%;
-  height: 80rpx;
-  padding: 20rpx 20rpx 40rpx;
-  line-height: 80rpx;
-  background-color: #f8f8f8;
-}
+      .chat-box__con__msg__image__other {
+        width: 80rpx;
+        height: 80rpx;
+        margin: 0 10rpx 0 20rpx;
+      }
 
-.uni-input {
-  width: 65%;
-  height: 80rpx;
-  padding-left: 20rpx;
-  line-height: 80rpx;
-  background: rgba(255, 255, 255, 1);
-  border-radius: 5rpx;
-  opacity: 1;
-}
-.uni-icon {
-  margin: 0 10rpx 0 20rpx;
-}
+      .chat-box__con__msg__box__other {
+        position: relative;
+        min-height: 40rpx;
+        padding: 20rpx;
+        margin: 20rpx;
+        background: #fff;
+        border: 1rpx solid #e5e5e5;
+        border-radius: 10rpx;
+      }
 
-.btn {
-  margin: 0 20rpx 0 10rpx;
-  font-size: $fg-f28;
-  background-color: rgba(24, 120, 243, 1);
-}
+      .chat-box__con__msg__box__other:before {
+        position: absolute;
+        top: 31%;
+        left: -31rpx;
+        z-index: 12;
+        display: block;
+        width: 0rpx;
+        height: 0rpx;
+        border-top: 8px solid transparent;
+        border-right: 8px solid #fff;
+        border-bottom: 8px solid transparent;
+        border-left: 8px solid transparent;
+        content: '';
+        box-sizing: content-box;
+      }
 
-.time {
-  font-size: $fg-f20;
-  font-weight: 400;
-  color: rgba(181, 181, 181, 1);
-  text-align: center;
-}
+      .chat-box__con__msg__box__other:after {
+        position: absolute;
+        top: 29%;
+        left: -35rpx;
+        z-index: 10;
+        display: block;
+        width: 0rpx;
+        height: 0rpx;
+        padding: 0;
+        border-top: 9px solid transparent;
+        border-right: 9px solid #ccc;
+        border-bottom: 9px solid transparent;
+        border-left: 9px solid transparent;
+        content: '';
+        box-sizing: content-box;
+      }
+    }
+  }
 
-.info {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  &__footer {
+    position: absolute;
+    bottom: 0rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    height: 80rpx;
+    padding: 20rpx 20rpx 40rpx;
+    line-height: 80rpx;
+    background-color: #f8f8f8;
+
+    .uni-input {
+      width: 65%;
+      height: 80rpx;
+      padding-left: 20rpx;
+      line-height: 80rpx;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 5rpx;
+      opacity: 1;
+    }
+    .uni-icon {
+      margin: 0 10rpx 0 20rpx;
+    }
+
+    &__btn {
+      margin: 0 20rpx 0 10rpx;
+      font-size: $fg-f28;
+      background-color: rgba(24, 120, 243, 1);
+    }
+  }
 }
 </style>
