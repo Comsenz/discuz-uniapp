@@ -103,7 +103,9 @@ export default {
   },
   computed: {
     userInfo() {
-      return this.$store.getters['jv/get'](`users/${this.userId}`);
+      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
+      console.log(data);
+      return data;
     },
   },
   onLoad(params) {
@@ -130,10 +132,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', [`users/${userId}`, { params }]))
         .then(res => {
-          this.items[0].brief = res.threadCount;
-          this.items[1].brief = res.followCount;
-          this.items[2].brief = res.fansCount;
-          this.items[3].brief = res.likedCount;
+          this.items[0].brief = res.threadCount || 0;
+          this.items[1].brief = res.followCount || 0;
+          this.items[2].brief = res.fansCount || 0;
+          this.items[3].brief = res.likedCount || 0;
         });
     },
     // 添加关注
