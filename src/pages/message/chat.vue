@@ -24,7 +24,8 @@
     </view>
     <view class="chat-box__footer">
       <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
-      <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" />
+      <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" @click="click" />
+      <qui-emoji v-if="isShowEmoji"></qui-emoji>
       <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
     </view>
   </view>
@@ -32,21 +33,25 @@
 
 <script>
 import { uniIcons } from '@dcloudio/uni-ui';
+import quiEmoji from '@/components/qui-emoji/qui-emoji';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
     uniIcons,
+    quiEmoji,
   },
   data() {
     return {
       msg: '',
+      isShowEmoji: false,
     };
   },
   onLoad() {
     this.getChatRecord();
   },
   computed: {
+    // 获取会话消息列表
     allChatRecord() {
       const list = [];
       const recordList = this.$store.getters['jv/get']('dialog_message');
@@ -63,6 +68,7 @@ export default {
     },
   },
   methods: {
+    // 调用 会话消息列表 的接口
     getChatRecord() {
       const params = {
         'filter[dialog_id]': 1,
@@ -70,10 +76,14 @@ export default {
       };
       this.$store.dispatch('jv/get', ['dialog/message', { params }]);
     },
+
+    // 获取输入框内容
     onKeyInput(event) {
       this.msg = event.target.value;
       console.log('msg', this.msg);
     },
+
+    // 发送消息
     send() {
       const params = {
         _jv: {
@@ -93,6 +103,11 @@ export default {
           console.log(err);
         });
       this.msg = '';
+    },
+
+    // 弹出表情组件
+    click() {
+      this.isShowEmoji = true;
     },
   },
 };
