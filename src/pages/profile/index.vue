@@ -11,7 +11,7 @@
           <cell-item
             :title="userInfo.username"
             slot-right
-            :brief="Object.values(userInfo.groups)[0].name"
+            :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
             :border="false"
           >
             <view v-if="pageType !== 'my'">
@@ -23,16 +23,12 @@
               <view class="profile-info__box__detail-operate">
                 <qui-icon
                   class="text"
-                  :name="userInfo.follow === 0 ? 'icon-follow' : 'icon-each-follow'"
+                  :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
                   size="16"
-                  :color="
-                    userInfo.follow === 0 ? '#777' : userInfo.follow == 1 ? '#ddd' : '#ff8888'
-                  "
+                  :color="userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? '#ddd' : '#ff8888'"
                 ></qui-icon>
-                <text @tap="userInfo.follow === 0 ? addFollow(userInfo) : deleteFollow(userInfo)">
-                  {{
-                    userInfo.follow === 0 ? '关注' : userInfo.follow == 1 ? '已关注' : '互相关注'
-                  }}
+                <text @tap="userInfo.follow == 0 ? addFollow(userInfo) : deleteFollow(userInfo)">
+                  {{ userInfo.follow == 0 ? '关注' : userInfo.follow == 1 ? '已关注' : '互相关注' }}
                 </text>
               </view>
             </view>
@@ -51,16 +47,16 @@
         :brief="true"
       ></qui-tabs>
       <view class="profile-tabs__content">
-        <view v-if="current === 0" class="items">
+        <view v-if="current == 0" class="items">
           <topic :user-id="userId"></topic>
         </view>
-        <view v-if="current === 1" class="items">
+        <view v-if="current == 1" class="items">
           <following :user-id="userId"></following>
         </view>
-        <view v-if="current === 2" class="items">
+        <view v-if="current == 2" class="items">
           <followers :user-id="userId"></followers>
         </view>
-        <view v-if="current === 3" class="items">
+        <view v-if="current == 3" class="items">
           <like :user-id="userId"></like>
         </view>
       </view>
@@ -107,7 +103,9 @@ export default {
   },
   computed: {
     userInfo() {
-      return this.$store.getters['jv/get'](`users/${this.userId}`);
+      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
+      console.log(data);
+      return data;
     },
   },
   onLoad(params) {
@@ -134,10 +132,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', [`users/${userId}`, { params }]))
         .then(res => {
-          this.items[0].brief = res.threadCount;
-          this.items[1].brief = res.followCount;
-          this.items[2].brief = res.fansCount;
-          this.items[3].brief = res.likedCount;
+          this.items[0].brief = res.threadCount || 0;
+          this.items[1].brief = res.followCount || 0;
+          this.items[2].brief = res.fansCount || 0;
+          this.items[3].brief = res.likedCount || 0;
         });
     },
     // 添加关注
@@ -160,19 +158,19 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      const params = {
-        data: {
-          type: 'user_follow',
-          attributes: {
-            to_user_id: userInfo.id,
-          },
-        },
-      };
-      this.$store.dispatch('jv/delete', [`follow`, { params }]).then(res => {
-        this.getUserInfo();
-        console.log('操作成功！');
-        console.log(res);
-      });
+      // const params = {
+      //   data: {
+      //     type: 'user_follow',
+      //     attributes: {
+      //       to_user_id: userInfo.id,
+      //     },
+      //   },
+      // };
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}`);
+      // this.$store.dispatch('jv/delete', [`follow`, { params }]).then(res => {
+      //   this.getUserInfo();
+      //   console.log(res);
+      // });
     },
   },
 };

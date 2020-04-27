@@ -26,7 +26,9 @@ http.setConfig(config => {
     },
   };
 });
-
+http.validateStatus = statusCode => {
+  return statusCode >= 200 && statusCode < 300;
+};
 /**
  * @param { Function} cancel - 取消请求,调用cancel 会取消本次请求，但是该函数的catch() 仍会执行; 不会进入响应拦截器
  *

@@ -10,7 +10,7 @@
           ></image>
           <cell-item
             :title="userInfo.username || ''"
-            :brief="getGroups(userInfo.groups)"
+            :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
             :border="false"
           ></cell-item>
         </view>
@@ -86,21 +86,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users/1', { params }]))
         .then(res => {
-          this.items[0].brief = res.threadCount;
-          this.items[1].brief = res.followCount;
-          this.items[2].brief = res.fansCount;
-          this.items[3].brief = res.likedCount;
+          this.items[0].brief = res.threadCount || 0;
+          this.items[1].brief = res.followCount || 0;
+          this.items[2].brief = res.fansCount || 0;
+          this.items[3].brief = res.likedCount || 0;
         });
-    },
-    getGroups() {
-      return data => {
-        Object.keys(data).forEach((item, index) => {
-          if (item[index]) {
-            return item[index].name;
-          }
-          return '暂无角色';
-        });
-      };
     },
   },
 };

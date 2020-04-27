@@ -81,5 +81,13 @@ export default {
       notSelected: 'Not selected',
       selected: '@ Selected',
     },
+    role: {
+      noRole: 'No role',
+    },
+    post: {
+      note: 'You can also enter {num} words',
+      placeholder: 'What do you want to say ...',
+      post: 'Post',
+    },
   },
 };

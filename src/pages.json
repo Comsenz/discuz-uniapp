@@ -121,6 +121,14 @@
       }
     },
     {
+      "path": "pages/topic/post",
+      "style": {
+        "navigationBarTitleText": "发布",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
       "path": "components/qui-at-member-page/qui-at-member-page",
       "style": {
           "navigationBarBackgroundColor": "#fff",
@@ -149,9 +157,33 @@
       }
     },
     {
-      "path": "pages/channame/index",
+      "path": "pages/modify/authen",
       "style": {
-        "navigationBarTitleText": "修改名字"
+        "navigationBarTitleText": "验证神身份"
+      }
+    },
+    {
+      "path": "pages/modify/setlogpas",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/retireve",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/setpassword",
+      "style": {
+        "navigationBarTitleText": "设置支付密码"
+      }
+    },
+    {
+      "path": "pages/modify/tica",
+      "style": {
+        "navigationBarTitleText": "实名认证"
       }
     },
     {
@@ -165,12 +197,24 @@
       "style": {
         "navigationBarTitleText": "修改手机号"
       }
+    },
+    {
+      "path": "pages/modify/auto",
+      "style": {
+        "navigationBarTitleText": "签名"
+      }
+    },
+    {
+      "path": "pages/modify/channame",
+      "style": {
+        "navigationBarTitleText": "修改名字"
+      }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",
-    "navigationBarBackgroundColor": "#1878F3",
+    "navigationBarBackgroundColor": "#fff",
     "backgroundColor": "#F8F8F8",
     // "navigationStyle": "custom",
     "usingComponents":{

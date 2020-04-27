@@ -82,6 +82,14 @@ export default {
       notSelected: '尚未选',
       selected: '@ 已选',
     },
+    role: {
+      noRole: '暂无角色',
+    },
+    post: {
+      note: '还能输入{num}个字',
+      placeholder: '您想说的..',
+      post: '发布',
+    },
   },
   core: {
     not_install: '该站点未安装',
@@ -92,8 +100,10 @@ export default {
     management: '管理',
     reply: '回复',
     giveLike: '点赞',
+    giveLikeAlready: '已赞',
     like: '赞',
     writeComment: '写评论',
+    writeComments: '写评论...',
     share: '分享',
     reward: '打赏',
     pay: '支付',
@@ -105,5 +115,12 @@ export default {
     whole: '全部',
     paymentViewPicture: '支付查看图片',
     paymentViewRemainingContent: '支付查看剩余内容',
+    examineTip: '内容正在审核中，审核通过后才能正常显示！',
+    powerTip: '没有权限，请联系站点管理员',
+    inReview: '审核中',
+    note: '450',
+    canWrite: '还能输入',
+    word: '个字',
+    publish: '发布',
   },
 };

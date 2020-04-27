@@ -16,7 +16,7 @@
       <view class="modify-input-test">
         请输入验证码
       </view>
-      <qui-input-code @getdata="btndata" :sun="true"></qui-input-code>
+      <qui-input-code @getdata="btndata"></qui-input-code>
     </view>
     <button class="modify-button" @click="dingphon">下一步</button>
   </view>
@@ -63,6 +63,10 @@ export default {
         this.showText = true;
       }, 60000);
     },
+    btndata(num) {
+      console.log(num);
+      this.setnum = num;
+    },
     // 点击获取验证码计时开始
     btnButton() {
       this.sun = !this.sun;
@@ -79,13 +83,11 @@ export default {
       this.setphon();
     },
     dingphon() {
-      this.setvercode();
+      this.bindphon();
     },
-    btndata(num) {
-      console.log(num);
-      this.setnum = num;
-    },
+    // 新手机号发送验证码
     setphon() {
+      console.log(this.newphon);
       const params = {
         _jv: {
           type: 'sms/send',
@@ -102,6 +104,7 @@ export default {
           console.log(err);
         });
     },
+    // 验证手机号
     bindphon() {
       const params = {
         _jv: {
@@ -109,39 +112,22 @@ export default {
         },
         mobile: this.newphon,
         code: this.setnum,
-        type: 'bind',
+        type: 'rebind',
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          console.log(res);
+          console.log('verify', res);
         })
         .catch(err => {
-          console.log(err);
-        });
-    },
-    setvercode() {
-      const user = {
-        users: {
-          24: {
-            mobile: this.newphon,
-          },
-        },
-      };
-      const postphon = status.run(() => this.$store.dispatch('jv/patch', user));
-      postphon
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => {
-          console.log(err);
+          console.log('verify', err);
         });
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
 .new {
