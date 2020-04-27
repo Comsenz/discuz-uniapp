@@ -1,31 +1,46 @@
 <template>
   <view class="replied-box">
-    <view>回复我的</view>
-    <view v-for="item in allRepliedNotifications" :key="item.user_id">
-      <view>用户名：{{ item.user_name }}</view>
-      <view>用户头像：{{ item.user_avatar }}</view>
-      <view>帖子内容：{{ item.post_content }}</view>
-      <view>created_at：{{ item.post_content }}</view>
-      <view>read_at：{{ item.post_content }}</view>
-    </view>
+    <!-- 回复我的 -->
+    <qui-notification :list="allRepliedNotifications"></qui-notification>
   </view>
 </template>
 
 <script>
+import quiNotification from '@/components/qui-notification';
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
+  components: {
+    quiNotification,
+  },
+
   data() {
     return {};
   },
+
   onLoad() {
     this.getRepliedNotifications();
   },
+
   computed: {
+    // 获取回复我的列表
     allRepliedNotifications() {
-      console.log('allRepliedNotifications', this.$store.getters['jv/get']('notification'));
-      return this.$store.getters['jv/get']('notification');
+      const list = [];
+      const repliedList = this.$store.getters['jv/get']('notification');
+      const keys = Object.keys(repliedList);
+      if (repliedList && keys.length > 0) {
+        for (let i = 0; i < keys.length; i += 1) {
+          repliedList[keys[i]].time = time2MorningOrAfternoon(repliedList[keys[i]].created_at);
+          list.push(repliedList[keys[i]]);
+        }
+      }
+      console.log('回复我的列表：', list);
+      return list;
     },
   },
+
   methods: {
+    // 调用 回复我的 的接口
     getRepliedNotifications() {
       const params = {
         'filter[type]': 'replied',
@@ -37,7 +52,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/reset.scss';
+
 .replied-box {
+  font-size: $fg-f28;
   background-color: #f9fafc;
 }
 </style>
