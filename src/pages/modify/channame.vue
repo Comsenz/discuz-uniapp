@@ -1,33 +1,53 @@
 <template>
   <view class="chagepas">
     <view class="chagepas-pas">
-      <input type="text" class="chagepas-pas-inpa" v-model="username" />
+      <input type="text" class="chagepas-pas-inpa" v-model="sername" />
       <button class="chagepas-pas-btn" @click="submission">提交</button>
     </view>
   </view>
 </template>
 <script>
-// import { status } from 'jsonapi-vuex'
+import { status } from 'jsonapi-vuex';
+
 export default {
   data() {
     return {
       fun: true,
       valueused: '',
       judge: false,
-      username: '',
+      sername: '',
+      myname: '',
       userid: '',
     };
   },
   onLoad() {
-    console.log(this.username);
     this.$store.dispatch('jv/get', 'users/24?include=groups').then(data => {
       console.log(data);
-      this.username = data.username;
+      this.sername = data.username;
     });
   },
   methods: {
     submission() {
       console.log(1);
+      this.changname();
+    },
+    changname() {
+      console.log(this.sername);
+      const params = {
+        _jv: {
+          type: 'users',
+          id: 24,
+        },
+        username: this.sername,
+      };
+      const patchname = status.run(() => this.$store.dispatch('jv/patch', params));
+      patchname
+        .then(res => {
+          console.log('成功', res);
+        })
+        .catch(err => {
+          console.log('失败', err);
+        });
     },
   },
 };

@@ -3,6 +3,60 @@
   // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
   "pages": [
     {
+      "path": "pages/modify/authen",
+      "style": {
+        "navigationBarTitleText": "验证神身份"
+      }
+    },
+    {
+      "path": "pages/modify/setlogpas",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/retireve",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/setpassword",
+      "style": {
+        "navigationBarTitleText": "设置支付密码"
+      }
+    },
+    {
+      "path": "pages/modify/tica",
+      "style": {
+        "navigationBarTitleText": "实名认证"
+      }
+    },
+    {
+      "path": "pages/setphon/index",
+      "style": {
+        "navigationBarTitleText": "设置新手机"
+      }
+    },
+    {
+      "path": "pages/mobphon/index",
+      "style": {
+        "navigationBarTitleText": "修改手机号"
+      }
+    },
+    {
+      "path": "pages/modify/auto",
+      "style": {
+        "navigationBarTitleText": "签名"
+      }
+    },
+    {
+      "path": "pages/modify/channame",
+      "style": {
+        "navigationBarTitleText": "修改名字"
+      }
+    },
+    {
       "path": "pages/home/index",
       "style": {
         "navigationStyle": "custom"
@@ -103,24 +157,6 @@
       "path": "pages/postercharacte/index",
       "style": {
         "navigationBarTitleText": "分享海报"
-      }
-    },
-    {
-      "path": "pages/channame/index",
-      "style": {
-        "navigationBarTitleText": "修改名字"
-      }
-    },
-    {
-      "path": "pages/setphon/index",
-      "style": {
-        "navigationBarTitleText": "设置新手机"
-      }
-    },
-    {
-      "path": "pages/mobphon/index",
-      "style": {
-        "navigationBarTitleText": "修改手机号"
       }
     }
   ],
