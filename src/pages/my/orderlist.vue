@@ -7,8 +7,10 @@
         <filter-modal
           v-model="show"
           @confirm="confirm"
+          @change="changeType"
           :filter-list="filterList"
-          :if-need-confirm="false"
+          :if-need-confirm="true"
+          ref="filter"
         ></filter-modal>
       </view>
     </cell-item>
@@ -71,9 +73,9 @@ export default {
         {
           title: '类型',
           data: [
-            { label: '所有', value: '', selected: false },
-            { label: '待付款', value: 0, selected: false },
-            { label: '已付款', value: 1, selected: false },
+            { label: '所有', value: '', selected: true },
+            { label: '待付款', value: 0 },
+            { label: '已付款', value: 1 },
           ],
         },
       ],
@@ -84,11 +86,15 @@ export default {
   },
   methods: {
     confirm(e) {
-      this.filterSelected = { ...e[0] };
-      this.getList({ status: e[0].value });
+      this.filterSelected = { ...e[0].data };
+      this.getList({ status: e[0].data.value });
+    },
+    changeType(e) {
+      this.filterList = e;
     },
     showFilter() {
       this.show = true;
+      this.$refs.filter.setData();
     },
     // 日期选中
     bindDateChange(e) {
