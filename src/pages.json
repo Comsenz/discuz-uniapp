@@ -20,6 +20,71 @@
         "navigationBarTitleText": "Discuz Q"
       }
     },
+
+    //个人主页和我的部分页面
+    {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },	
+    {
+      "path": "pages/my/profile",
+      "style": {
+        "navigationBarTitleText": "我的资料"
+      }
+    },
+    {
+      "path": "pages/my/wallet",
+      "style": {
+        "navigationBarTitleText": "我的钱包"
+      }
+    },
+    {
+      "path": "pages/my/freeze",
+      "style": {
+        "navigationBarTitleText": "冻结金额"
+      }
+    },
+    {
+      "path": "pages/my/withdrawalslist",
+      "style": {
+        "navigationBarTitleText": "提现记录"
+      }
+    },
+    {
+      "path": "pages/my/walletlist",
+      "style": {
+        "navigationBarTitleText": "钱包明细"
+      }
+    },
+    {
+      "path": "pages/my/orderlist",
+      "style": {
+        "navigationBarTitleText": "订单明细"
+      }
+    },
+    {
+      "path": "pages/my/favorite",
+      "style": {
+        "navigationBarTitleText": "我的收藏"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "个人主页",
+        "enablePullDownRefresh":true
+      }
+    },
+    {
+      "path": "pages/topic/post",
+      "style": {
+        "navigationBarTitleText": "发布",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black"
+      }
+    },
     {
       "path": "components/qui-at-member-page/qui-at-member-page",
       "style": {
@@ -37,9 +102,51 @@
       }
     },
     {
+      "path": "pages/homeposter/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
       "path": "pages/postercharacte/index",
       "style": {
         "navigationBarTitleText": "分享海报"
+      }
+    },
+    {
+      "path": "pages/modify/authen",
+      "style": {
+        "navigationBarTitleText": "验证神身份"
+      }
+    },
+    {
+      "path": "pages/modify/setlogpas",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/retireve",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/setpassword",
+      "style": {
+        "navigationBarTitleText": "设置支付密码"
+      }
+    },
+    {
+      "path": "pages/modify/tica",
+      "style": {
+        "navigationBarTitleText": "实名认证"
+      }
+    },
+    {
+      "path": "pages/setphon/index",
+      "style": {
+        "navigationBarTitleText": "设置新手机"
       }
     },
     {
@@ -47,12 +154,24 @@
       "style": {
         "navigationBarTitleText": "修改手机号"
       }
+    },
+    {
+      "path": "pages/modify/auto",
+      "style": {
+        "navigationBarTitleText": "签名"
+      }
+    },
+    {
+      "path": "pages/modify/channame",
+      "style": {
+        "navigationBarTitleText": "修改名字"
+      }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",
-    "navigationBarBackgroundColor": "#1878F3",
+    "navigationBarBackgroundColor": "#fff",
     "backgroundColor": "#F8F8F8",
     "navigationStyle": "custom",
     "usingComponents":{
@@ -64,3 +183,5 @@
     }
   }
 }
+
+

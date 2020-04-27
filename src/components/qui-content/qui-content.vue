@@ -1,15 +1,27 @@
 <template>
   <view class="themeCount">
-    <image class="addFine" src="@/static/essence.png" alt v-if="themeType === '1'"></image>
+    <image
+      class="addFine"
+      src="@/static/essence.png"
+      alt
+      v-if="themeEssence && themeType == '1'"
+    ></image>
     <view class="themeItem">
       <view class="themeItem__header">
         <view class="themeItem__header__img">
-          <image :src="themeImage" alt></image>
+          <image
+            :src="
+              themeImage != '' && themeImage != null
+                ? themeImage
+                : 'https://discuz.chat/static/images/noavatar.gif'
+            "
+            alt
+          ></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
             <span class="themeItem__header__title__username">{{ userName }}</span>
-            <span v-if="isAdmin && themeType !== '1'" class="themeItem__header__title__isAdmin">
+            <span v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
               {{ themeTypes }}
             </span>
             <span v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
@@ -32,12 +44,49 @@
 
       <view class="themeItem__content">
         <view class="themeItem__content__text">
-          {{ themeContent }}
+          <rich-text :nodes="themeContent"></rich-text>
         </view>
         <!-- <view class="themeItem__content__reply">223344</view> -->
-        <view class="themeItem__content__img">
+        <!-- <view class="themeItem__content__img">
           <image class="themeItem__content__img__item" src="@/static/my.jpeg" alt></image>
           <image class="themeItem__content__img__item" src="@/static/me.jpeg" alt></image>
+        </view> -->
+        <view v-if="imagesList.length == 1">
+          <view class="themeItem__content__imgone">
+            <image
+              class="themeItem__content__imgone__item"
+              v-for="(image, index) in imagesList"
+              :key="index"
+              :src="image"
+              alt
+            ></image>
+          </view>
+        </view>
+        <view v-if="imagesList.length == 2">
+          <view class="themeItem__content__imgtwo">
+            <image
+              class="themeItem__content__imgtwo__item"
+              v-for="(image, index) in imagesList"
+              :key="index"
+              :src="image"
+              alt
+            ></image>
+          </view>
+        </view>
+        <view v-if="imagesList.length >= 3">
+          <view class="themeItem__content__imgmore">
+            <image
+              class="themeItem__content__imgmore__item"
+              v-for="(image, index) in imagesList"
+              :key="index"
+              :src="image"
+              alt
+            ></image>
+            <image
+              class="themeItem__content__imgmore__item"
+              v-if="imagesList.length % 3 != 0"
+            ></image>
+          </view>
         </view>
 
         <view class="themeItem__content__tags" v-if="themeType === '1'">
@@ -59,7 +108,7 @@
             ]"
           >
             <qui-icon
-              class="text"
+              class="qui-icon"
               name="icon-like"
               size="28"
               color="#AAA"
@@ -78,7 +127,7 @@
             class="themeItem__footer__themeType1__item themeItem__footer__themeType1__share"
             @click="handleClickShare"
           >
-            <qui-icon class="text" name="icon-share" size="28" color="#AAA"></qui-icon>
+            <qui-icon class="qui-icon" name="icon-share" size="28" color="#AAA"></qui-icon>
             分享
           </view>
         </view>
@@ -86,7 +135,7 @@
         <view v-if="themeType === '2'" class="themeItem__footer__themeType2">
           <view class="themeItem__footer__themeType2__item">
             <qui-icon
-              class="text"
+              class="qui-icon"
               :name="themeReplyBtn"
               size="28"
               color="#AAA"
@@ -118,6 +167,10 @@ export default {
       type: String,
       default: '',
     },
+    themeEssence: {
+      type: Boolean,
+      default: true,
+    },
     themeStatus: {
       type: String,
       default: '',
@@ -145,6 +198,12 @@ export default {
     themeContent: {
       type: String,
       default: '',
+    },
+    imagesList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
     },
     themeTime: {
       type: String,
@@ -292,13 +351,22 @@ export default {
       background: --color(--qui-BOR-ED);
       border-radius: 10rpx;
     }
-
-    &__img {
+    &__imgone {
+      display: flex;
+      justify-content: flex-start;
+      margin-top: 30rpx;
+      line-height: 0;
+      &__item {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 100%;
+      }
+    }
+    &__imgtwo {
       display: flex;
       justify-content: space-between;
-      margin-top: 22rpx;
+      margin-top: 30rpx;
       line-height: 0;
-
       &__item {
         display: block;
         width: 48%;
@@ -307,6 +375,38 @@ export default {
         background: #fff;
       }
     }
+    &__imgmore {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-content: flex-start;
+      flex-wrap: wrap;
+      margin-top: 30rpx;
+      line-height: 0;
+      &__item {
+        display: block;
+        width: 30%;
+        height: 211rpx;
+        margin-right: 3.33%;
+        margin-bottom: 20rpx;
+        background: #fff;
+      }
+    }
+
+    // &__img {
+    //   display: flex;
+    //   justify-content: space-between;
+    //   margin-top: 22rpx;
+    //   line-height: 0;
+
+    //   &__item {
+    //     display: block;
+    //     width: 48%;
+    //     height: 211rpx;
+    //     margin-bottom: 20rpx;
+    //     background: #fff;
+    //   }
+    // }
 
     &__tags {
       display: flex;
@@ -343,7 +443,7 @@ export default {
         color: rgba(170, 170, 170, 1);
       }
 
-      text {
+      .qui-icon {
         margin-right: 15rpx;
       }
 
@@ -361,7 +461,7 @@ export default {
         color: rgba(170, 170, 170, 1);
         text-align: right;
       }
-      text {
+      .qui-icon {
         margin-right: 15rpx;
       }
     }

@@ -82,6 +82,14 @@ export default {
       notSelected: '尚未选',
       selected: '@ 已选',
     },
+    role: {
+      noRole: '暂无角色',
+    },
+    post: {
+      note: '还能输入{num}个字',
+      placeholder: '您想说的..',
+      post: '发布',
+    },
   },
   core: {
     not_install: '该站点未安装',

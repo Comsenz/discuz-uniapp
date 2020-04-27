@@ -1,53 +1,58 @@
 <template>
-  <view class="input">
+  <view class="new">
     <!-- 已绑定手机号码验证 -->
-    <view class="modify-phon" v-if="phon">
-      <view class="modify-phon-test">
-        已绑定手机
+    <view class="new-phon" v-if="phon">
+      <view class="new-phon-test">
+        输入新手机号码
       </view>
-      <view class="modify-phon-num">
-        {{ userphon }}
+      <view class="new-phon-number">
+        <input class="new-phon-num" type="text" v-model="newphon" />
+        <button class="new-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
+        <button class="new-phon-send" disabled v-else>{{ second }}秒后重发</button>
       </view>
-      <button class="modify-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
-      <button class="modify-phon-send" disabled v-else>{{ second }}秒后重发</button>
     </view>
     <!-- 验证码 -->
     <view class="modify-input">
       <view class="modify-input-test">
         请输入验证码
       </view>
-      <qui-input-code @getdata="btndata" :title="judge" :text="test"></qui-input-code>
+      <qui-input-code @getdata="btndata"></qui-input-code>
     </view>
-    <view class="modify-button">
-      <qui-button type="primary" size="large" @click="submission">提交</qui-button>
-    </view>
+    <button class="modify-button" @click="dingphon">下一步</button>
   </view>
 </template>
 
 <script>
 import { status } from 'jsonapi-vuex';
-import quiButton from '@/components/qui-button/qui-button';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
-  components: { quiInputCode, quiButton },
+  components: { quiInputCode },
   data() {
     return {
+      iptValue: '',
+      isFocus: false,
       second: 60,
       sun: true,
       phon: true,
-      userphon: '', // 我的手号码加密
-      userphone1: '', // 手机号
-      coum: '',
-      judge: false,
-      test: '',
-      num: 5,
+      newphon: '',
+      setnum: '',
     };
   },
-  onLoad() {
-    this.senduser();
-  },
   methods: {
+    onFocus() {
+      this.isFocus = true;
+    },
+    setValue(event) {
+      // 文本框输入事件
+      const { value } = event.target;
+      setTimeout(() => {
+        this.iptValue = value;
+      }, 1); // 重点
+    },
+    lose() {
+      this.isFocus = false;
+    },
     getCode() {
       this.showText = false;
       const interval = setInterval(() => {
@@ -58,36 +63,37 @@ export default {
         this.showText = true;
       }, 60000);
     },
+    btndata(num) {
+      console.log(num);
+      this.setnum = num;
+    },
     // 点击获取验证码计时开始
     btnButton() {
       this.sun = !this.sun;
+      this.showText = false;
       const interval = setInterval(() => {
         this.second -= 1;
       }, 1000);
       setTimeout(() => {
         clearInterval(interval);
+        this.showText = true;
         this.sun = !this.sun;
         this.second = 60;
       }, 60000);
-      console.log(this.userphone1);
-      this.sendsms();
+      this.setphon();
     },
-    senduser() {
-      const man = status.run(() => this.$store.dispatch('jv/get', 'users/24?include=groups'));
-      man.then(res => {
-        this.userphon = res.mobile;
-        this.userphone1 = res.originalMobile;
-        console.log(this.userphon, this.userphone1);
-      });
+    dingphon() {
+      this.bindphon();
     },
-    // 发送短信接口
-    sendsms() {
+    // 新手机号发送验证码
+    setphon() {
+      console.log(this.newphon);
       const params = {
         _jv: {
           type: 'sms/send',
         },
-        // mobile: '15735327028',
-        type: 'verify',
+        mobile: this.newphon,
+        type: 'rebind',
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
@@ -98,31 +104,23 @@ export default {
           console.log(err);
         });
     },
-    btndata(num) {
-      this.coum = num;
-    },
-    submission() {
-      console.log(this.coum);
+    // 验证手机号
+    bindphon() {
       const params = {
         _jv: {
           type: 'sms/verify',
         },
-        mobile: '15735327028',
-        code: this.coum,
-        type: 'verify',
+        mobile: this.newphon,
+        code: this.setnum,
+        type: 'rebind',
       };
-      this.$store
-        .dispatch('jv/post', params)
+      const postphon = status.run(() => this.$store.dispatch('jv/post', params));
+      postphon
         .then(res => {
-          console.log(res);
-          if (res) {
-            uni.navigateTo({
-              url: '/pages/setphon/index',
-            });
-          }
+          console.log('verify', res);
         })
         .catch(err => {
-          console.log(err);
+          console.log('verify', err);
         });
     },
   },
@@ -131,48 +129,50 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/theme/fn.scss';
-page {
+@import '@/styles/base/reset.scss';
+.new {
   width: 100vw;
   height: 100vh;
 }
-.input {
-  width: 100vw;
-  height: 100vh;
-}
-.modify-phon {
-  display: flex;
+.new-phon {
   width: 710rpx;
-  height: 100rpx;
-  margin: 200rpx 0 0 40rpx;
+  height: 200rpx;
+  margin: 31rpx 0 0 40rpx;
+  font-size: 50rpx;
+  font-weight: bold;
+  line-height: 100rpx;
   border-bottom: 2rpx solid rgba(237, 237, 237, 1);
 }
-.modify-phon-test {
-  font-size: $fg-f28;
+.new-phon-test {
+  font-size: 28rpx;
   font-weight: 400;
   line-height: 100rpx;
   color: rgba(119, 119, 119, 1);
   opacity: 1;
 }
-.modify-phon-num {
-  margin: 0 0 0 109rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
+.new-phon-number {
+  display: flex;
+}
+.new-phon-num {
+  width: 399rpx;
+  height: 100rpx;
+  font-size: 50rpx;
+  font-weight: bold;
   line-height: 100rpx;
-  color: rgba(0, 0, 0, 1);
+  color: rgba(52, 52, 52, 1);
   opacity: 1;
 }
-.modify-phon-send {
+.new-phon-send {
   display: block;
   height: 70rpx;
   min-width: 180rpx;
-  margin: 15rpx 0 0 40rpx;
+  margin: 15rpx 0 0 91rpx;
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 70rpx;
   color: rgba(255, 255, 255, 1);
   text-align: center;
-  background-color: --color(--qui-BG-BTN);
+  background: rgba(24, 120, 243, 1);
   border-radius: 5rpx;
   opacity: 1;
 }
@@ -182,7 +182,7 @@ page {
   margin: 0 0 0 40rpx;
 }
 .modify-input-test {
-  font-size: $fg-f28;
+  font-size: 28rpx;
   font-weight: 400;
   line-height: 100rpx;
   color: rgba(119, 119, 119, 1);
@@ -203,5 +203,12 @@ page {
   width: 670rpx;
   height: 90rpx;
   margin: 52rpx auto 0;
+  font-size: $fg-f28;
+  font-weight: 400;
+  line-height: 90rpx;
+  color: rgba(255, 255, 255, 1);
+  background: rgba(24, 120, 243, 1);
+  border-radius: 5rpx;
+  opacity: 1;
 }
 </style>

@@ -135,7 +135,7 @@ $font-size-lg: 28rpx;
   justify-content: center;
   color: $txt-color-grey;
   background-color: $default-bg-color;
-  border-radius: 5rpx;
+  border-radius: 10rpx;
   &[type='primary'] {
     color: $txt-color-white;
     background-color: $primary-bg-color;

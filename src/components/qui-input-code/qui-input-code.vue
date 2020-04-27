@@ -12,42 +12,42 @@
       />
       <input
         :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
-        type="number"
+        :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 1 ? iptValue[0] : ''"
       />
       <input
         :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
-        type="number"
+        :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 2 ? iptValue[1] : ''"
       />
       <input
         :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
-        type="number"
+        :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[2] : ''"
       />
       <input
         :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
-        type="number"
+        :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 4 ? iptValue[3] : ''"
       />
       <input
         :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
-        type="number"
+        :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[4] : ''"
       />
       <input
         :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
-        type="number"
+        :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 4 ? iptValue[5] : ''"
@@ -68,6 +68,10 @@ export default {
     },
     text: {
       default: '输入错误',
+      type: String,
+    },
+    number: {
+      default: 'number',
       type: String,
     },
   },
