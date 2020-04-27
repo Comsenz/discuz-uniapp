@@ -45,7 +45,7 @@
         v-for="item in imageList"
         :src="item.src"
         :key="item.src"
-
+        @click="previewPicture"
       ></image>
       <view class="post-box__vp-upload__add" @click="uploadClick">+</view>
     </view>
@@ -82,6 +82,7 @@ export default {
       operating: '',
       emojiShow: false,
       imageList: [],
+      imageData: [],
     };
   },
   computed: {
@@ -96,36 +97,65 @@ export default {
     },
   },
   methods: {
+    previewPicture() {
+      console.log(123);
+      uni.previewImage({
+        urls: this.imageData,
+        longPressActions: {
+          itemList: ['发送给朋友', '保存图片', '收藏'],
+          success(data) {
+            console.log(
+              '选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片',
+            );
+          },
+          fail(err) {
+            console.log(err.errMsg);
+          },
+        },
+      });
+    },
     uploadClick() {
       const that = this;
       uni.chooseImage({
         count: 9,
         sizeType: ['original', 'compressed'],
         sourceType: ['album', 'camera'],
-        success: function(res) {
+        success(res) {
           console.log(res);
           console.log(JSON.stringify(res.tempFilePaths));
           if (res.errMsg === 'chooseImage:ok') {
             that.imageList.push({
               src: res.tempFilePaths[0],
             });
-            that.upload(res.tempFilePaths[0]);
+            that.imageData.push(res.tempFilePaths);
+            that.upload(res.tempFiles[0], res.tempFilePaths[0]);
           }
         },
       });
     },
-    upload(path) {
+    upload(path, pathUrl) {
+      console.log(path);
+
+      const token =
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiIwYmM0NzlhMDJmNDdiOWIzYmUxYTNlNmZkYWU2MGYxOGQ4NDY4ZGYxYmQ5MGUyNTllZWRlY2JlNzMxMGQ3Njc2OTYwM2E3M2Q2NWU4YjEzYSIsImlhdCI6MTU4NzY0MDc4MiwibmJmIjoxNTg3NjQwNzgyLCJleHAiOjE1OTAyMzI3ODIsInN1YiI6IjI0Iiwic2NvcGVzIjpbbnVsbF19.lvyX8Rs-sueThXVMxQOvEaiqBWLZwhSfBokK6kk7s1eVYwz-gT5TwfeAvJ4waES4tWi_yww4u1u7w1W2Ao_M7SG8860Vm02yG-M2KxXUI2nWrVApPFtdAnxZ5VtDDE9GqhUc1qwaAkL0ovVjP4-odIlxlpM7zCbmEc-R6yTDNQkcq1wimct8JD3_1ouX-JIZFrqdrUGnGEoBAts2U_eNSc3_5jFC6TyiVdBA2vPBGzFfqiu0Vdmj7xPl40Nbv_AFKy0BVldbQrt7j9lpZPqvp5vwfqj-dEVAjTRMXa17AfefAjYBo4WXf-jFW_7el6yMcZDKoPT_8R7SRVsV1-DO9A';
+
+      const headers = {
+        authorization: `Bearer  ${token}`,
+      };
+
       const uploadTask = uni.uploadFile({
         url: 'https://dq.comsenz-service.com/api/attachments',
         fileType: 'image',
-        filePath: path,
-        name: 'image',
+        files: path,
+        filePath: pathUrl,
+        name: 'file',
+        header: headers,
         formData: {
           isGallery: 1,
         },
-        success: function(res) {
+        success(res) {
           console.log(res);
-          var data = res.data;
+          let data = res.data;
           console.warn(
             'sunui-upimg - 如发现没有获取到返回值请到源码191行修改后端返回图片路径以便正常使用插件',
             JSON.parse(data),
@@ -147,7 +177,7 @@ export default {
             }
           }*/
         },
-        fail: function(res) {
+        fail(res) {
           console.log(res);
           if (fail) {
             fail(res);
