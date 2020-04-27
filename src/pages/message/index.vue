@@ -6,7 +6,7 @@
         :key="item.id"
         :title="item.title"
         :show-arrow="true"
-        @click="clickItem(item)"
+        @click="clickUniListItem(item)"
       >
         <template v-slot:right="">
           <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
@@ -16,12 +16,12 @@
     <view class="line"></view>
     <!-- 会话列表 -->
     <view
-      class="dialog-list-box"
+      class="dialog-box"
       v-for="dialog of allDialogList"
       :key="dialog.id"
       @click="clickDialog(dialog)"
     >
-      <view class="dialog-header">
+      <view class="dialog-box__header">
         <image class="logo" :src="dialog.sender.avatarUrl"></image>
         <view class="text">
           <text class="black-text">{{ dialog.sender.username }}</text>
@@ -29,9 +29,9 @@
             <text v-if="item.name">（{{ item.name }}）</text>
           </text>
           <text class="gray-text" v-if="dialog.type === 'related'">@了我</text>
-          <!-- <text class="gray-text" v-if="dialog.type === 'replied'">回复了我</text>
+          <text class="gray-text" v-if="dialog.type === 'replied'">回复了我</text>
           <text class="gray-text" v-if="dialog.type === 'liked'">点赞了我</text>
-          <text class="gray-text" v-if="dialog.type === 'rewarded'">打赏了我</text> -->
+          <text class="gray-text" v-if="dialog.type === 'rewarded'">打赏了我</text>
           <view>
             <text class="time">{{ dialog.time }}</text>
           </view>
@@ -47,8 +47,8 @@
           <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
         </view>
       </view>
-      <view class="dialog-content">{{ dialog.dialogMessage.message_text }}</view>
-      <view class="deleteBtn" @click="deleteBtn">
+      <view class="dialog-box__con">{{ dialog.dialogMessage.message_text }}</view>
+      <view class="deleteBtn" @click="deleteNotification">
         <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="trash" />
         删除
       </view>
@@ -79,6 +79,7 @@ export default {
   },
   onLoad() {
     this.getDialogList();
+    this.getUnreadNotificationNum();
   },
   computed: {
     allDialogList() {
@@ -100,12 +101,26 @@ export default {
     },
   },
   methods: {
-    clickItem(item) {
+    // 获取会话列表
+    getDialogList() {
+      const params = {
+        include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
+      };
+      this.$store.dispatch('jv/get', ['dialog', { params }]);
+    },
+
+    // 获取未读通知条数
+    getUnreadNotificationNum() {},
+
+    // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面
+    clickUniListItem(item) {
       uni.navigateTo({
         url: `../message/${item.type}`,
       });
-      console.log('消息首页点击跳转', item.title);
+      console.log(`跳转${item.title}页面`);
     },
+
+    // 跳转至 聊天页面
     clickDialog(item) {
       const time = item.updated_at;
       console.log('time', time);
@@ -118,13 +133,9 @@ export default {
         url: '../message/chat',
       });
     },
-    getDialogList() {
-      const params = {
-        include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
-      };
-      this.$store.dispatch('jv/get', ['dialog', { params }]);
-    },
-    deleteBtn() {
+
+    // 删除通知
+    deleteNotification() {
       console.log('点击删除');
       const id = 21;
       this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
@@ -142,22 +153,22 @@ export default {
 .msg-box {
   width: 100%;
   min-height: 100%;
+  font-size: $fg-f28;
   background-color: #fafafa;
 }
 
 .line {
   height: 0rpx;
   margin: 0 0 10rpx;
-  border: 1px solid rgba(237, 237, 237, 1);
-  opacity: 1;
+  border: 1px solid #ededed;
 }
 
-.dialog-list-box {
+.dialog-box {
   margin: 20rpx 0;
   background-color: #fff;
 }
 
-.dialog-header {
+.dialog-box__header {
   display: flex;
   justify-content: space-between;
 }
@@ -176,7 +187,6 @@ export default {
 
 .black-text {
   margin-right: 6rpx;
-  font-size: 28rpx;
   font-weight: bold;
   line-height: 37rpx;
   color: rgba(0, 0, 0, 1);
@@ -184,7 +194,6 @@ export default {
 }
 
 .gray-text {
-  font-size: 28rpx;
   font-weight: 400;
   line-height: 37rpx;
   color: rgba(170, 170, 170, 1);
@@ -209,7 +218,7 @@ export default {
   margin-right: 30rpx;
 }
 
-.dialog-content {
+.dialog-box__con {
   padding: 10rpx 40rpx 30rpx;
   font-weight: 400;
   color: rgba(51, 51, 51, 1);

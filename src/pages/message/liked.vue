@@ -1,43 +1,46 @@
 <template>
   <view class="liked-box">
-    <view class="dialog-list-box" v-for="item in allLikedNotifications" :key="item.user_id">
-      <view class="dialog-header">
-        <image class="logo" :src="item.user_avatar"></image>
-        <view class="text">
-          <text class="black-text">{{ item.user_name }}</text>
-          <text class="gray-text" v-if="item.role">（{{ item.role }}）</text>
-          <text class="gray-text">@了我</text>
-          <!-- <text class="gray-text">回复了我</text>
-          <text class="gray-text">点赞了我</text>
-          <text class="gray-text">打赏了我</text> -->
-          <view>
-            <text class="time">{{ item.post_content }}</text>
-          </view>
-        </view>
-        <view class="dialog-right">
-          <uni-icons :size="20" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
-        </view>
-      </view>
-      <view class="dialog-content">{{ item.word }}</view>
-    </view>
+    <!-- 点赞我的 -->
+    <qui-notification :list="allLikedNotifications"></qui-notification>
   </view>
 </template>
 
 <script>
+import quiNotification from '@/components/qui-notification';
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
+  components: {
+    quiNotification,
+  },
+
   data() {
     return {};
   },
+
   onLoad() {
     this.getLikedNotifications();
   },
+
   computed: {
+    // 获取点赞我的列表
     allLikedNotifications() {
-      console.log('allLikedNotifications', this.$store.getters['jv/get']('notification'));
-      return this.$store.getters['jv/get']('notification');
+      const list = [];
+      const likedList = this.$store.getters['jv/get']('notification');
+      const keys = Object.keys(likedList);
+      if (likedList && keys.length > 0) {
+        for (let i = 0; i < keys.length; i += 1) {
+          likedList[keys[i]].time = time2MorningOrAfternoon(likedList[keys[i]].created_at);
+          list.push(likedList[keys[i]]);
+        }
+      }
+      console.log('点赞我的列表：', list);
+      return list;
     },
   },
+
   methods: {
+    // 调用 点赞我的 的接口
     getLikedNotifications() {
       const params = {
         'filter[type]': 'liked',
@@ -49,7 +52,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/reset.scss';
+
 .liked-box {
+  font-size: $fg-f28;
   background-color: #f9fafc;
 }
 </style>
