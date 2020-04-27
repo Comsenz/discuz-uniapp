@@ -1,10 +1,9 @@
-/* eslint-disable no-underscore-dangle */
 <template>
   <view class="freeze">
     <view class="freeze-head">
       <view class="freeze-head__num">
         <text>共有</text>
-        <text class="freeze-head__num__detail">{{ total }}</text>
+        <text class="freeze-head__num__detail">{{ totalData }}</text>
         <text>条记录</text>
       </view>
       <view class="freeze-head__money">
@@ -13,14 +12,21 @@
       </view>
     </view>
     <view class="freeze-items">
-      <cell-item
-        v-for="(freezeItem, index) in freezelist"
-        :key="index"
-        :title="freezeItem.change_desc"
-        :brief="'ID:' + freezeItem.id"
-        :addon="'¥' + freezeItem.change_freeze_amount"
-        :brief-right="freezeItem.created_at"
-      ></cell-item>
+      <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+        class="scroll-y"
+      >
+        <cell-item
+          v-for="(freezeItem, index) in freezelist"
+          :key="index"
+          :title="freezeItem.change_desc"
+          :brief="'ID:' + freezeItem.id"
+          :addon="'¥' + freezeItem.change_freeze_amount"
+          :brief-right="freezeItem.created_at"
+        ></cell-item>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -38,10 +44,11 @@ export default {
   },
   data() {
     return {
-      total: 0,
-      totalamount: 0,
-      data: [],
+      totalData: 0, // 总数
+      pageSize: 10,
+      pageNum: 1, // 当前页数
       freezelist: [],
+      totalamount: 0,
     };
   },
   methods: {
@@ -53,13 +60,20 @@ export default {
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         // eslint-disable-next-line no-underscore-dangle
-        this.total = res._jv.json.meta.total;
+        this.totalData = res._jv.json.meta.total;
         const data = JSON.parse(JSON.stringify(res));
         // eslint-disable-next-line no-underscore-dangle
         delete data._jv;
-        this.freezelist = data;
+        this.freezelist = Object.assign(data, this.freezelist);
         console.log(res);
       });
+    },
+    // 下拉加载
+    pullDown() {
+      if (this.pageNum * this.pageSize < this.totalData) {
+        this.pageNum += 1;
+        this.getFreezelist();
+      }
     },
   },
 };

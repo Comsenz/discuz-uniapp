@@ -1,11 +1,6 @@
 <template>
   <view class="withdrawalslist">
-    <cell-item
-      class="withdrawalslist-head"
-      :title="`时间：`"
-      slot-right
-      @contentClick="contentClick"
-    >
+    <cell-item class="withdrawalslist-head" slot-right>
       <view @tap="showFilter">
         <text>状态：{{ filterSelected.label }}</text>
         <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
@@ -15,21 +10,36 @@
           :filter-list="filterList"
           :if-need-confirm="false"
         ></filter-modal>
-        <date-pop size="height" :show="showDate" @close="closeDate">
-          <date-picker @cancel="cancelDate" @sure="sureDate"></date-picker>
-        </date-pop>
       </view>
     </cell-item>
+    <picker
+      mode="date"
+      :value="date"
+      :start="startDate"
+      :end="endDate"
+      @change="bindDateChange"
+      fields="month"
+      class="date-picker"
+    >
+      <view class="uni-input">{{ `时间：${date}` }}</view>
+    </picker>
     <view class="withdrawalslist-items">
-      <cell-item
-        v-for="(item, index) in dataList"
-        :key="index"
-        :title="operateStatus[item.cash_status - 1]"
-        :brief="item.cash_sn"
-        :addon="'¥' + item.cash_apply_amount"
-        :brief-right="item.created_at"
-        :class="item.cash_status === 3 ? '#fa5151' : '#777'"
-      ></cell-item>
+      <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+        class="scroll-y"
+      >
+        <cell-item
+          v-for="(item, index) in dataList"
+          :key="index"
+          :title="operateStatus[item.cash_status - 1]"
+          :brief="item.cash_sn"
+          :addon="'¥' + item.cash_apply_amount"
+          :brief-right="item.created_at"
+          :class="item.cash_status === 3 ? '#fa5151' : '#777'"
+        ></cell-item>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -37,20 +47,24 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
-import datePicker from '@/components/qui-date-picker/picker';
-import datePop from '@/components/qui-date-picker/pop';
 import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
     cellItem,
     filterModal,
-    datePicker,
-    datePop,
   },
   data: () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const currentDate = `${year}-${month}`;
     return {
+      totalData: 0, // 总数
+      pageSize: 10,
+      pageNum: 1, // 当前页数
       show: false,
+      date: currentDate,
       filterSelected: { label: '全部', value: '' }, // 筛选类型
       operateStatus: ['待审核', '审核通过', '审核不通过', '待打款', '已打款', '打款失败'],
       showDate: false,
@@ -82,38 +96,46 @@ export default {
     showFilter() {
       this.show = true;
     },
-    contentClick() {
-      console.log(111);
-      this.showDate = true;
-    },
-    cancelDate() {
-      this.close();
-    },
-    sureDate(e) {
-      console.log(e);
-    },
-    closeDate() {
-      this.showDate = false;
+    // 日期选中
+    bindDateChange(e) {
+      this.date = e.target.value;
+      this.pageNum = 1;
+      this.dataList = [];
+      this.getList();
     },
     getList(obj) {
+      const dateArr = this.date.split('-');
+      const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       const params = {
         'filter[user]': 1,
         'page[number]': 1,
         'page[limit]': 10,
-        // 'filter[start_time]': '',
-        // 'filter[end_time]': '',
+        'filter[start_time]': `${this.date}-01-00-00-00 `,
+        'filter[end_time]': `${this.date}-${days}-00-00-00 `,
       };
       if (obj && obj.cash_status) {
+        params.pageNum = 1;
+        this.dataList = [];
         params['filter[cash_status]'] = obj.cash_status;
       }
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/cash', { params }]))
         .then(res => {
+          // eslint-disable-next-line no-underscore-dangle
+          this.totalData = res._jv.json.meta.total;
+          // eslint-disable-next-line no-underscore-dangle
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.dataList = data;
+          this.dataList = Object.assign(data, this.dataList);
         });
+    },
+    // 下拉加载
+    pullDown() {
+      if (this.pageNum * this.pageSize < this.totalData) {
+        this.pageNum += 1;
+        this.getList();
+      }
     },
   },
 };
@@ -155,5 +177,22 @@ page {
 }
 /deep/ .filter-modal {
   top: 118rpx;
+}
+.date-picker {
+  position: absolute;
+  top: 40rpx;
+  left: 40rpx;
+  z-index: 10;
+  width: 50%;
+  height: 78rpx;
+}
+.date-picker .uni-input {
+  width: 100%;
+  height: 78rpx;
+  font-size: 28rpx;
+  line-height: 78rpx;
+}
+.scroll-y {
+  height: calc(100vh - 148rpx);
 }
 </style>

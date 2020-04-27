@@ -24,7 +24,7 @@
             <qui-avatar-cell
               :mark="item.toUser.id"
               :title="item.toUser.username"
-              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '@/assets/noavatar.png'"
+              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '@/assets/noavatar.gif'"
               :value="getGroups(item.toUser.groups)"
               :label="item.toUser.label"
             >
@@ -37,7 +37,7 @@
             <qui-avatar-cell
               :mark="item.id"
               :title="item.username"
-              :icon="item.avatarUrl ? item.avatarUrl : '@/assets/noavatar.png'"
+              :icon="item.avatarUrl ? item.avatarUrl : '@/assets/noavatar.gif'"
               :value="getGroups(item.groups)"
               :label="item.label"
             >
@@ -51,7 +51,8 @@
       </scroll-view>
     </view>
     <view class="qui-at-member-page-box__ft">
-      <button
+      <qui-button
+        size="large"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
         :disabled="Boolean(checkAvatar.length < 1)"
         @click="getCheckMember"
@@ -61,7 +62,7 @@
             ? i18n.t('discuzq.atMember.notSelected')
             : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
         }}
-      </button>
+      </qui-button>
     </view>
   </view>
 </template>
@@ -87,12 +88,13 @@ export default {
       return this.$store.getters['jv/get']('follow');
     },
     getGroups() {
+      const that = this;
       return data => {
         Object.keys(data).forEach((item, index) => {
           if (item[index]) {
             return item[index].name;
           }
-          return '暂无角色';
+          return that.i18n.t('discuzq.role.noRole');
         });
       };
     },
