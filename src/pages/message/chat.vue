@@ -24,7 +24,7 @@
     </view>
     <view class="chat-box__footer">
       <view class="chat-box__footer__msg">
-        <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
+        <input class="uni-input" focus @input="onKeyInput" placeholder="回复..." />
         <qui-icon
           name="icon-expression chat-box__footer__msg__icon"
           size="40"
