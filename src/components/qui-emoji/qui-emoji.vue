@@ -19,7 +19,7 @@
             :key="j"
             @click="getEmojiClick(index * 35 + j + 1)"
           >
-            <image class="emoji" :src="data[index * 35 + j + 1].url"></image>
+            <image class="emoji" :src="list[index * 35 + j + 1].url"></image>
           </view>
         </view>
       </swiper-item>

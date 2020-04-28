@@ -34,7 +34,7 @@
         <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
       </view>
       <qui-emoji
-        :data="allEmoji"
+        :list="allEmoji"
         position="relative"
         top="0rpx"
         v-if="emojiShow"
@@ -60,6 +60,7 @@ export default {
   },
   onLoad() {
     this.getChatRecord();
+    this.getEmoji();
   },
   computed: {
     // 获取会话消息列表
