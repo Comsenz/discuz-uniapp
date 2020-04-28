@@ -25,13 +25,18 @@
     <view class="chat-box__footer">
       <view class="chat-box__footer__msg">
         <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
-        <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" @click="click" />
+        <qui-icon
+          name="icon-expression chat-box__footer__msg__icon"
+          size="40"
+          color="#7D7979"
+          @click="click"
+        ></qui-icon>
         <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
       </view>
       <qui-emoji
         :data="allEmoji"
-        position="absolute"
-        top="20rpx"
+        position="relative"
+        top="0rpx"
         v-if="emojiShow"
         @click="getEmojiClick"
       ></qui-emoji>
@@ -40,13 +45,11 @@
 </template>
 
 <script>
-import { uniIcons } from '@dcloudio/uni-ui';
 import quiEmoji from '@/components/qui-emoji/qui-emoji';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    uniIcons,
     quiEmoji,
   },
   data() {
@@ -76,6 +79,7 @@ export default {
     },
     // 获取所有表情
     allEmoji() {
+      console.log('表情', this.$store.getters['jv/get']('emoji'));
       return this.$store.getters['jv/get']('emoji');
     },
   },
@@ -277,8 +281,13 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: space-around;
+      align-items: center;
       padding: 20rpx 20rpx 40rpx;
       background-color: #f8f8f8;
+
+      &__icon {
+        margin-right: 20rpx;
+      }
     }
 
     .uni-input {
@@ -288,12 +297,7 @@ export default {
       line-height: 80rpx;
       background: rgba(255, 255, 255, 1);
       border-radius: 5rpx;
-      opacity: 1;
     }
-    .uni-icon {
-      margin: 0 10rpx 0 20rpx;
-    }
-
     &__btn {
       margin: 0 20rpx 0 10rpx;
       font-size: $fg-f28;
