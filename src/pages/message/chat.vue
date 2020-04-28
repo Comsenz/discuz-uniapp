@@ -142,7 +142,7 @@ export default {
 @import '@/styles/base/reset.scss';
 
 .chat-box {
-  height: 100%/100vh;
+  height: 100vh;
   background-color: #ededed;
 
   &__con {
