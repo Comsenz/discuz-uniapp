@@ -145,7 +145,7 @@ export default {
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
           this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          this.data = Object.assign(data, this.data);
+          this.data = { ...data, ...this.data };
         });
     },
     // 下拉加载
