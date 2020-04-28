@@ -245,6 +245,10 @@ export default {
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
+    // 语言包
+    t() {
+      return this.i18n.t('topic');
+    },
   },
   onLoad() {
     // 首页导航栏分类列表
@@ -260,7 +264,7 @@ export default {
       .in(this)
       .select('.scroll-tab');
     query
-      // .select('#scroll-tab')
+      // .select('.scroll-tab')
       .boundingClientRect(data => {
         console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
@@ -286,24 +290,9 @@ export default {
     tabChange(e) {
       this.categoryId = e.detail.current;
     },
+    // 点击筛选下拉框里的按钮
     changeSelected(item, dataIndex, filterIndex) {
       // console.log(item, dataIndex, filterIndex);
-    },
-    // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
-      if (!canLike) {
-        console.log('没有点赞权限');
-      }
-      const params = {
-        _jv: {
-          type: 'posts',
-          id: id,
-        },
-        isLiked: isLiked === true ? false : true,
-      };
-      this.$store.dispatch('jv/patch', params).then(data => {
-        console.log(data);
-      });
     },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
@@ -328,9 +317,11 @@ export default {
         },
       ];
     },
+    // 取消按钮
     cancel() {
       this.$refs.popup.close();
     },
+    // 筛选选中确定按钮
     confirm(e) {
       // this.filterSelected = { ...e };
       const filterSelected = { ...e };
@@ -357,6 +348,7 @@ export default {
       }
       this.loadThreads();
     },
+    // 筛选框
     changeType(e) {
       this.filterList = e;
     },
@@ -495,6 +487,22 @@ export default {
           this.threads = Object.assign(data, this.threads);
           // console.log(this.threads);
         }
+      });
+    },
+    // 内容部分点赞按钮点击事件
+    handleIsGreat(id, canLike, isLiked) {
+      if (!canLike) {
+        console.log('没有点赞权限');
+      }
+      const params = {
+        _jv: {
+          type: 'posts',
+          id: id,
+        },
+        isLiked: isLiked === true ? false : true,
+      };
+      this.$store.dispatch('jv/patch', params).then(data => {
+        console.log(data);
       });
     },
     // 下拉加载

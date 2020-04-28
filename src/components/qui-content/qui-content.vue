@@ -108,8 +108,9 @@
             ]"
             @click="handleIsGreat"
           >
-            <qui-icon class="qui-icon" name="icon-like" size="28"></qui-icon>
-            {{ isGreat ? '已赞' : '赞' }}
+            <qui-icon class="qui-icon" name="icon-liked" size="28" v-if="isGreat"></qui-icon>
+            <qui-icon class="qui-icon" name="icon-like" size="28" v-else></qui-icon>
+            {{ isGreat ? t.giveLikeAlready : t.like }}
             {{ themeLike == 0 ? '' : themeLike }}
           </view>
 
@@ -117,7 +118,7 @@
             class="themeItem__footer__themeType1__item themeItem__footer__themeType1__comment"
             @click="commentClick"
           >
-            评论
+            {{ t.comment }}
             {{ themeComment == 0 ? '' : themeComment }}
           </view>
 
@@ -126,7 +127,7 @@
             @click="handleClickShare"
           >
             <qui-icon class="qui-icon" name="icon-share" size="28" color="#AAA"></qui-icon>
-            分享
+            {{ t.share }}
           </view>
         </view>
 
@@ -242,6 +243,12 @@ export default {
       isAdmin: true,
       // isGreat: false,
     };
+  },
+  computed: {
+    // 语言包
+    t() {
+      return this.i18n.t('topic');
+    },
   },
   methods: {
     handleClick() {
@@ -463,9 +470,9 @@ export default {
         margin-right: 15rpx;
       }
 
-      &__greated {
-        color: rgba(221, 221, 221, 1);
-      }
+      // &__greated {
+      //   // color: rgba(221, 221, 221, 1);
+      // }
     }
 
     &__themeType2 {

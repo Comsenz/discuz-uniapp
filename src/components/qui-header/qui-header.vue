@@ -73,8 +73,7 @@ export default {
 .header {
   width: 100%;
   height: 400rpx;
-  background-image: url('https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg');
-  // background: #1878f3;
+  background: #1878f3;
   .logo {
     display: block;
     width: 400rpx;
