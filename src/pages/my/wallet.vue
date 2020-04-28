@@ -47,7 +47,7 @@ export default {
         .run(() => this.$store.dispatch('jv/get', 'wallet/user/1'))
         .then(res => {
           this.dataInfo = res;
-          this.hasPassword = res.user.hasPassword;
+          this.hasPassword = res.user.canWalletPay;
         });
     },
   },

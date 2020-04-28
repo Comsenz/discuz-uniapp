@@ -45,6 +45,7 @@ export default {
       const params = {
         'filter[type]': 'rewarded',
       };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'notification' } });
       this.$store.dispatch('jv/get', ['notification', { params }]);
     },
   },
