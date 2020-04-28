@@ -28,10 +28,12 @@
           v-model="show"
           @confirm="confirm"
           @changeSelected="changeSelected"
+          @change="changeType"
           :confirm-text="confirmText"
           :if-need-confirm="ifNeedConfirm"
           :filter-list="filterList"
           :top="top"
+          ref="filter"
         ></filter-modal>
       </view>
       <view class="uni-tab-bar">
@@ -144,6 +146,8 @@ export default {
       threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
       threadFollow: 0, // 关注的主题
       loadStatus: {},
+      loadThreadsStatus: {},
+      loadContentStatus: {},
       confirmText: '筛选',
       show: false,
       ifNeedConfirm: true,
@@ -301,20 +305,15 @@ export default {
         },
         isLiked: isLiked === true ? false : true,
       };
-      const postLike = status.run(() => {
-        this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(data => {
+        console.log(data);
       });
-      postLike
-        .then(data => {
-          console.log(data);
-        })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    // 内容部分点击评论跳到详情页
     commentClick(id) {
+      console.log(id);
       uni.navigateTo({
-        url: '/pages/topic/index', //还缺拼接ID
+        url: '/pages/topic/index?id=id', //还缺拼接ID
       });
     },
     // 首页头部分享按钮弹窗
@@ -336,15 +335,19 @@ export default {
     cancel() {
       this.$refs.popup.close();
     },
+    confirm(e) {
+      this.filterSelected = { ...e };
+      console.log(e);
+      // console.log(this.filterSelected);
+      // this.getList({ status: e[0].value });
+    },
+    changeType(e) {
+      this.filterList = e;
+    },
     // 首页导航栏筛选按钮
     showFilter() {
       this.show = true;
-    },
-    confirm(e) {
-      this.filterSelected = { ...e };
-
-      // console.log(this.filterSelected);
-      // this.getList({ status: e[0].value });
+      this.$refs.filter.setData();
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {
@@ -396,29 +399,27 @@ export default {
     },
     // 首页导航栏分类列表数据
     loadCategories() {
-      this.loadStatus = status.run(() => {
-        this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
-          delete data._jv;
-          const categoryFilterList = [
-            {
-              label: '所有',
-              value: 0,
-              // selected: 0 === this.categoryId ? true : false,
-              selected: true,
-            },
-          ];
+      this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+        delete data._jv;
+        const categoryFilterList = [
+          {
+            label: '所有',
+            value: 0,
+            // selected: 0 === this.categoryId ? true : false,
+            selected: true,
+          },
+        ];
 
-          Object.getOwnPropertyNames(data).forEach(function(key) {
-            categoryFilterList.push({
-              label: data[key].name,
-              value: data[key]._jv.id,
-              // selected: data[key].id === this.categoryId ? true : false,
-              selected: false,
-            });
+        Object.getOwnPropertyNames(data).forEach(function(key) {
+          categoryFilterList.push({
+            label: data[key].name,
+            value: data[key]._jv.id,
+            // selected: data[key].id === this.categoryId ? true : false,
+            selected: false,
           });
-
-          this.filterList[0].data = categoryFilterList;
         });
+
+        this.filterList[0].data = categoryFilterList;
       });
     },
     // 首页置顶列表数据
@@ -428,11 +429,9 @@ export default {
         'filter[categoryId]': this.categoryId,
         include: ['firstPost'],
       };
-      this.loadStatus = status.run(() => {
-        this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-          delete data._jv;
-          this.sticky = data;
-        });
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+        delete data._jv;
+        this.sticky = data;
       });
     },
     // 首页内容部分数据请求
@@ -458,28 +457,26 @@ export default {
 
       params['filter[fromUserId]'] = this.threadFollow;
 
-      this.loadStatus = status.run(() => {
-        this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-          // console.log(data);
-          // eslint-disable-next-line no-underscore-dangle
-          this.totalData = data._jv.json.meta.total;
-          // console.log(this.totalData);
-          // eslint-disable-next-line no-underscore-dangle
-          if (data._jv.json.meta.total <= this.pageSize) {
-            this.loadMore = 'noMore';
-          } else {
-            this.loadMore = 'more';
-          }
-          delete data._jv;
-          // data = JSON.parse(JSON.stringify(data));
-          // this.threads = data;
-          if (this.pageNum === 1) {
-            this.threads = data;
-          } else {
-            this.threads = Object.assign(data, this.threads);
-            // console.log(this.threads);
-          }
-        });
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+        // console.log(data);
+        // eslint-disable-next-line no-underscore-dangle
+        this.totalData = data._jv.json.meta.total;
+        // console.log(this.totalData);
+        // eslint-disable-next-line no-underscore-dangle
+        if (data._jv.json.meta.total <= this.pageSize) {
+          this.loadMore = 'noMore';
+        } else {
+          this.loadMore = 'more';
+        }
+        delete data._jv;
+        // data = JSON.parse(JSON.stringify(data));
+        // this.threads = data;
+        if (this.pageNum === 1) {
+          this.threads = data;
+        } else {
+          this.threads = Object.assign(data, this.threads);
+          // console.log(this.threads);
+        }
       });
     },
     // 下拉加载
