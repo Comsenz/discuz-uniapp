@@ -35,7 +35,7 @@
             :top="60"
             :right="0"
             :width="180"
-            @click="selectChoice(selectList.type)"
+            @click="selectChoice"
           ></qui-drop-down>
         </view>
         <image src="@/assets/essence.png" class="essence"></image>
@@ -141,6 +141,13 @@ export default {
       type: String,
       default: '',
     },
+    // 管理菜单
+    selectList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
     // 主题标题（当类型是帖子（1）时）
     themeTitle: {
       type: String,
@@ -179,10 +186,6 @@ export default {
   data: () => {
     return {
       seleShow: false, // 默认收起管理菜单
-      selectList: [
-        { text: '点赞', type: '1' },
-        { text: '收藏', type: '2' },
-      ], // 管理菜单
       selectActive: '',
     };
   },
@@ -201,9 +204,10 @@ export default {
       this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 管理菜单选中事件
-    selectChoice(type) {
+    selectChoice(param) {
+      console.log(param, '类型22222');
+      this.$emit('selectChoice', param);
       this.seleShow = false;
-      console.log(type, '类型');
     },
     // 点击用户头像以及用户名事件
     personJump() {
