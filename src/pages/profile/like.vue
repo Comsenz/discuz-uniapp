@@ -117,7 +117,6 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads/likes', { params }]))
         .then(res => {
-          console.log(res);
           // 循环帖子
           Object.getOwnPropertyNames(res).forEach(key => {
             // 如果是 _jv 跳过
@@ -146,7 +145,7 @@ export default {
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
           this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          this.data = Object.assign(data, this.data);
+          this.data = { ...data, ...this.data };
         });
     },
     // 下拉加载

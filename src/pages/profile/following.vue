@@ -24,7 +24,7 @@
           ></image>
           <cell-item :title="followingItem.toUser.username" slot-right>
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-            <view class="follow-content__items__operate">
+            <view class="follow-content__items__operate" @tap="addFollow(followingItem.toUser)">
               <text>
                 {{
                   followingItem.toUser.follow == 0
@@ -36,7 +36,7 @@
               </text>
               <qui-icon
                 class="text"
-                :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
+                :name="followingItem.toUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
                 size="16"
                 :color="
                   followingItem.toUser.follow == 0
@@ -103,8 +103,11 @@ export default {
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
           this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          this.followingList = Object.assign(data, this.followingList);
-          console.log(data);
+          if (this.totalData === 0) {
+            this.followingList = [];
+          } else {
+            this.followingList = { ...this.followingList, ...data };
+          }
         });
     },
     // 添加关注
@@ -128,6 +131,36 @@ export default {
       this.pageNum = 1;
       this.followingList = [];
       this.getFollowingList();
+    },
+    // 添加关注
+    addFollow(userInfo) {
+      if (userInfo.follow !== 0) {
+        this.deleteFollow(userInfo);
+        return;
+      }
+      const params = {
+        _jv: {
+          type: 'follow',
+        },
+        type: 'user_follow',
+        to_user_id: userInfo.id,
+      };
+      status
+        .run(() => this.$store.dispatch('jv/post', params))
+        .then(() => {
+          this.$emit('changeFollow', { userId: this.userId });
+          this.getFollowingList();
+        })
+        .catch(err => {
+          console.log('verify', err);
+        });
+    },
+    // 取消关注
+    deleteFollow(userInfo) {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+        this.$emit('changeFollow', { userId: this.userId });
+        this.getFollowingList();
+      });
     },
   },
 };
