@@ -135,7 +135,7 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.loadingType = data.length === 10 ? 'more' : 'nomore';
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
           this.dataList = Object.assign(data, this.dataList);
         });
     },

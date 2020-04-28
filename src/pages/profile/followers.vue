@@ -89,8 +89,8 @@ export default {
       const params = {
         include: ['fromUser', 'fromUser.groups'],
         'filter[type]': 2,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[user_id]': this.userId,
       };
       status
@@ -101,7 +101,7 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.loadingType = data.length === 10 ? 'more' : 'nomore';
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
           this.followerList = Object.assign(data, this.followerList);
           console.log(data);
         });

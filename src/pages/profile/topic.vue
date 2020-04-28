@@ -110,8 +110,8 @@ export default {
           'category',
           'threadVideo',
         ],
-        'page[number]': 1,
-        'page[limit]': 20,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[userId]': this.userId,
       };
       status
@@ -139,10 +139,12 @@ export default {
               res[key].user.showGroups = group.isDisplay ? `(${group.name})` : '';
             });
           });
+          // eslint-disable-next-line no-underscore-dangle
+          this.totalData = res._jv.json.meta.threadCount;
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.loadingType = data.length === 10 ? 'more' : 'nomore';
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
           this.data = Object.assign(data, this.data);
         });
     },

@@ -116,8 +116,8 @@ export default {
       const params = {
         include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
         'filter[user]': 1,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
         'filter[end_time]': `${this.date}-${days}-00-00-00 `,
       };
@@ -136,7 +136,7 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.loadingType = data.length === 10 ? 'more' : 'nomore';
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
           this.dataList = Object.assign(data, this.dataList);
         });
     },
