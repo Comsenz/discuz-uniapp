@@ -9,7 +9,7 @@
           @confirm="confirm"
           @change="changeType"
           :filter-list="filterList"
-          :if-need-confirm="true"
+          :if-need-confirm="false"
           ref="filter"
         ></filter-modal>
       </view>
@@ -30,6 +30,8 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
+        @scrolltoupper="refresh"
+        show-scrollbar="false"
         class="scroll-y"
       >
         <cell-item
@@ -41,6 +43,7 @@
           :brief-right="item.status == 1 ? '已付款' : '待付款'"
         ></cell-item>
       </scroll-view>
+      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
@@ -49,11 +52,13 @@
 import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
 import { status } from 'jsonapi-vuex';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
     filterModal,
+    loadMore,
   },
   data: () => {
     const date = new Date();
@@ -61,8 +66,10 @@ export default {
     const month = date.getMonth() + 1;
     const currentDate = `${year}-${month}`;
     return {
+      loadingType: 'more',
+      flag: true, // 滚动节流
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,
@@ -87,7 +94,7 @@ export default {
   methods: {
     confirm(e) {
       this.filterSelected = { ...e[0].data };
-      this.getList({ status: e[0].data.value });
+      this.getList('filter');
     },
     changeType(e) {
       this.filterList = e;
@@ -99,35 +106,36 @@ export default {
     // 日期选中
     bindDateChange(e) {
       this.date = e.target.value;
-      this.pageNum = 1;
-      this.dataList = [];
-      this.getList();
+      this.getList('filter');
     },
-    getList(obj) {
+    getList(type) {
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       // status 0待付款，1已付款
       const params = {
-        include: 'thread.firstPost',
+        include: ['user', 'thread', 'thread.firstPost'],
         'filter[user]': 1,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
         'filter[end_time]': `${this.date}-${days}-00-00-00 `,
       };
-      if (obj && obj.status !== '') {
+      if (type && type === 'filter') {
         params.pageNum = 1;
         this.dataList = [];
-        params['filter[status]'] = obj.status;
+      }
+      if (this.filterSelected.value) {
+        params['filter[status]'] = this.filterSelected.value;
       }
       status
-        .run(() => this.$store.dispatch('jv/get', ['order', { params }]))
+        .run(() => this.$store.dispatch('jv/get', ['orders', { params }]))
         .then(res => {
           // eslint-disable-next-line no-underscore-dangle
           this.totalData = res._jv.json.meta.total;
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
+          this.loadingType = data.length === 10 ? 'more' : 'nomore';
           this.dataList = Object.assign(data, this.dataList);
         });
     },
@@ -136,7 +144,14 @@ export default {
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
         this.getList();
+      } else {
+        this.loadingType = 'nomore';
       }
+    },
+    refresh() {
+      this.pageNum = 1;
+      this.data = [];
+      this.getList();
     },
   },
 };
@@ -191,6 +206,6 @@ page {
   line-height: 78rpx;
 }
 .scroll-y {
-  height: calc(100vh - 148rpx);
+  max-height: calc(100vh - 148rpx);
 }
 </style>
