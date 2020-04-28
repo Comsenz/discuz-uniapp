@@ -26,17 +26,11 @@
         </view>
         <view class="themeItem__header__r">
           <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
-          <view
-            v-else
-            :class="['comment-like', isLiked && 'comment-likeAlready']"
-            @click="commentLikeClick"
-          >
-            <qui-icon class="like" name="icon-like" size="30"></qui-icon>
-            <view v-if="commentLikeCount > 0" class="comment-like-count">
-              {{ commentLikeCount }}
-            </view>
-            <view v-if="commentLikeCount <= 0" class="comment-like-count">
-              {{ t.like }}
+          <view v-else @click="commentLikeClick" class="comment-like">
+            <qui-icon v-if="isLiked" name="icon-liked" class="like"></qui-icon>
+            <qui-icon v-else name="icon-like" class="like" size="30"></qui-icon>
+            <view class="comment-like-count">
+              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}{{ isLiked }}
             </view>
           </view>
         </view>
@@ -110,25 +104,13 @@
             @click="handleClick"
           ></qui-icon>
         </view>
-        <view class="themeItem__footer__r" @click="deleteComment">
-          <view class="footer__r__child">
-            <qui-icon
-              class="icon"
-              name="icon-delete"
-              size="26"
-              color="#AAA"
-              @click="handleClick"
-            ></qui-icon>
+        <view class="themeItem__footer__r">
+          <view class="footer__r__child" v-if="canDelete" @click="deleteComment">
+            <qui-icon class="icon" name="icon-delete" size="26" color="#AAA"></qui-icon>
             <view class="themeItem__footer__con">{{ t.delete }}</view>
           </view>
-          <view class="footer__r__child">
-            <qui-icon
-              class="icon"
-              name="icon-comments"
-              size="26"
-              color="#AAA"
-              @click="handleClick"
-            ></qui-icon>
+          <view class="footer__r__child" @click="replyComment">
+            <qui-icon class="icon" name="icon-comments" size="26" color="#AAA"></qui-icon>
             <view class="themeItem__footer__con">{{ t.reply }}</view>
           </view>
         </view>
@@ -167,7 +149,7 @@ export default {
     },
     isLiked: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     // 回复的内容
     commentContent: {
@@ -208,6 +190,11 @@ export default {
       type: Number,
       default: 0,
     },
+    // 是否显示删除
+    canDelete: {
+      type: Boolean,
+      default: true,
+    },
   },
   data: () => {
     return {
@@ -237,6 +224,11 @@ export default {
     deleteComment() {
       this.$emit('deleteComment');
     },
+    // 回复事件
+    replyComment() {
+      console.log('评论回复');
+      this.$emit('replyComment');
+    },
     // 点击图片事件(默认参数图片id)
     imageClick(imageId) {
       this.$emit('imageClick', imageId);
@@ -264,6 +256,7 @@ export default {
 
   &__header {
     display: flex;
+    justify-content: space-between;
     width: 100%;
     height: 80rpx;
     margin-bottom: 12rpx;
@@ -320,6 +313,7 @@ export default {
       }
     }
     &__r {
+      width: 100rpx;
       .comment-status {
         font-size: 26rpx;
         color: --color(--qui-RED);
@@ -448,6 +442,7 @@ export default {
 .comment-like {
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   .like {
     margin-right: 15rpx;
     font-size: 30rpx;
@@ -458,21 +453,6 @@ export default {
     font-size: $fg-f28;
     line-height: 37rpx;
     color: --color(--qui-FC-777);
-  }
-}
-.comment-likeAlready {
-  display: flex;
-  flex-direction: row;
-  .like {
-    margin-right: 15rpx;
-    font-size: 30rpx;
-    line-height: 37rpx;
-    color: --color(--qui-FC-CCC);
-  }
-  .comment-like-count {
-    font-size: $fg-f28;
-    line-height: 37rpx;
-    color: --color(--qui-FC-CCC);
   }
 }
 </style>
