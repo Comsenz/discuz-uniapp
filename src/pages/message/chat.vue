@@ -23,10 +23,18 @@
       </view>
     </view>
     <view class="chat-box__footer">
-      <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
-      <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" @click="click" />
-      <qui-emoji v-if="isShowEmoji"></qui-emoji>
-      <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
+      <view class="chat-box__footer__msg">
+        <input class="uni-input" @input="onKeyInput" placeholder="回复..." />
+        <uni-icons :size="20" class="uni-icon" color="#7D7979" type="circle" @click="click" />
+        <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
+      </view>
+      <qui-emoji
+        :data="allEmoji"
+        position="absolute"
+        top="20rpx"
+        v-if="emojiShow"
+        @click="getEmojiClick"
+      ></qui-emoji>
     </view>
   </view>
 </template>
@@ -44,7 +52,7 @@ export default {
   data() {
     return {
       msg: '',
-      isShowEmoji: false,
+      emojiShow: false,
     };
   },
   onLoad() {
@@ -66,6 +74,10 @@ export default {
       console.log('recordList', recordList);
       return list;
     },
+    // 获取所有表情
+    allEmoji() {
+      return this.$store.getters['jv/get']('emoji');
+    },
   },
   methods: {
     // 调用 会话消息列表 的接口
@@ -74,7 +86,13 @@ export default {
         'filter[dialog_id]': 1,
         include: ['user', 'user.groups'],
       };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
       this.$store.dispatch('jv/get', ['dialog/message', { params }]);
+    },
+
+    // 调用 表情 的接口
+    getEmoji() {
+      this.$store.dispatch('jv/get', ['emoji', {}]);
     },
 
     // 获取输入框内容
@@ -96,6 +114,7 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           if (res) {
+            this.getChatRecord();
             console.log('调用发送消息请求的action，结果为:', res);
           }
         })
@@ -107,7 +126,12 @@ export default {
 
     // 弹出表情组件
     click() {
-      this.isShowEmoji = true;
+      this.emojiShow = true;
+    },
+
+    // 获取表情
+    getEmojiClick(a) {
+      console.log('表情', a);
     },
   },
 };
@@ -118,6 +142,7 @@ export default {
 @import '@/styles/base/reset.scss';
 
 .chat-box {
+  height: 100%/100vh;
   background-color: #ededed;
 
   &__con {
@@ -245,14 +270,16 @@ export default {
   &__footer {
     position: absolute;
     bottom: 0rpx;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
     width: 100%;
-    height: 80rpx;
-    padding: 20rpx 20rpx 40rpx;
-    line-height: 80rpx;
-    background-color: #f8f8f8;
+    min-height: 80rpx;
+
+    &__msg {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      padding: 20rpx 20rpx 40rpx;
+      background-color: #f8f8f8;
+    }
 
     .uni-input {
       width: 65%;
