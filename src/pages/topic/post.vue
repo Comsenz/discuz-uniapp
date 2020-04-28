@@ -39,16 +39,18 @@
       auto-height
       maxlength="450"
     ></textarea>
-    <view class="post-box__vp-upload">
-      <image
-        v-if="imageList.length > 0"
-        v-for="item in imageList"
-        :src="item.src"
-        :key="item.src"
-        @click="previewPicture"
-      ></image>
-      <view class="post-box__vp-upload__add" @click="uploadClick">+</view>
+    <view @click="childClick">
+      子组件
     </view>
+    <qui-uploader
+      url="https://dq.comsenz-service.com/api/attachments"
+      :header="header"
+      :form-data="formData"
+      async-clear="true"
+      ref="upload"
+      @change="uploadChange"
+      @clear="uploadClear"
+    ></qui-uploader>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">选择分类</text>
       <view class="post-box__ft-categories">
@@ -81,8 +83,8 @@ export default {
       type: 0,
       operating: '',
       emojiShow: false,
-      imageList: [],
-      imageData: [],
+      header: {},
+      formData: {},
     };
   },
   computed: {
@@ -97,100 +99,22 @@ export default {
     },
   },
   methods: {
-    previewPicture() {
-      console.log(123);
-      uni.previewImage({
-        urls: this.imageData,
-        longPressActions: {
-          itemList: ['发送给朋友', '保存图片', '收藏'],
-          success(data) {
-            console.log(
-              '选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片',
-            );
-          },
-          fail(err) {
-            console.log(err.errMsg);
-          },
-        },
-      });
+    childClick() {
+      // 图标式唤起上传
+      this.$refs.upload.uploadClick();
     },
-    uploadClick() {
-      const that = this;
-      uni.chooseImage({
-        count: 9,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
-        success(res) {
-          console.log(res);
-          console.log(JSON.stringify(res.tempFilePaths));
-          if (res.errMsg === 'chooseImage:ok') {
-            that.imageList.push({
-              src: res.tempFilePaths[0],
-            });
-            that.imageData.push(res.tempFilePaths);
-            that.upload(res.tempFiles[0], res.tempFilePaths[0]);
-          }
-        },
-      });
+    uploadChange(e) {
+      console.log(e);
     },
-    upload(path, pathUrl) {
-      console.log(path);
+    uploadClear(list, dele) {
+      console.log(list);
+      console.log(dele);
+      console.log('删除图片中');
 
-      const token =
-        'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiIwYmM0NzlhMDJmNDdiOWIzYmUxYTNlNmZkYWU2MGYxOGQ4NDY4ZGYxYmQ5MGUyNTllZWRlY2JlNzMxMGQ3Njc2OTYwM2E3M2Q2NWU4YjEzYSIsImlhdCI6MTU4NzY0MDc4MiwibmJmIjoxNTg3NjQwNzgyLCJleHAiOjE1OTAyMzI3ODIsInN1YiI6IjI0Iiwic2NvcGVzIjpbbnVsbF19.lvyX8Rs-sueThXVMxQOvEaiqBWLZwhSfBokK6kk7s1eVYwz-gT5TwfeAvJ4waES4tWi_yww4u1u7w1W2Ao_M7SG8860Vm02yG-M2KxXUI2nWrVApPFtdAnxZ5VtDDE9GqhUc1qwaAkL0ovVjP4-odIlxlpM7zCbmEc-R6yTDNQkcq1wimct8JD3_1ouX-JIZFrqdrUGnGEoBAts2U_eNSc3_5jFC6TyiVdBA2vPBGzFfqiu0Vdmj7xPl40Nbv_AFKy0BVldbQrt7j9lpZPqvp5vwfqj-dEVAjTRMXa17AfefAjYBo4WXf-jFW_7el6yMcZDKoPT_8R7SRVsV1-DO9A';
-
-      const headers = {
-        authorization: `Bearer  ${token}`,
-      };
-
-      const uploadTask = uni.uploadFile({
-        url: 'https://dq.comsenz-service.com/api/attachments',
-        fileType: 'image',
-        files: path,
-        filePath: pathUrl,
-        name: 'file',
-        header: headers,
-        formData: {
-          isGallery: 1,
-        },
-        success(res) {
-          console.log(res);
-          let data = res.data;
-          console.warn(
-            'sunui-upimg - 如发现没有获取到返回值请到源码191行修改后端返回图片路径以便正常使用插件',
-            JSON.parse(data),
-          );
-          try {
-            //Tip : 切记->主要修改这里图片的返回值为真实返回路径!!! 详情见示例
-            data = JSON.parse(res.data).info;
-          } catch (e) {
-            throw (e, data);
-          }
-          // 根据自己的返回数据做相应判断,服务器返回200即代表成功请求
-          /*if (res.statusCode == 200) {
-            if (success) {
-              success(data);
-            }
-          } else {
-            if (fail) {
-              fail(data);
-            }
-          }*/
-        },
-        fail(res) {
-          console.log(res);
-          if (fail) {
-            fail(res);
-          }
-        },
-      });
-
-      uploadTask.onProgressUpdate(async function(res) {
-        const progress = await res.progress;
-        console.log(progress);
-      });
+      setTimeout(() => {
+        this.$refs.upload.clear(list);
+      }, 1500);
     },
-
     getEmojiClick(num) {
       /* this.emojiShow = false;
 
@@ -269,6 +193,15 @@ export default {
     },
   },
   onLoad(option) {
+    const token =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiIwYmM0NzlhMDJmNDdiOWIzYmUxYTNlNmZkYWU2MGYxOGQ4NDY4ZGYxYmQ5MGUyNTllZWRlY2JlNzMxMGQ3Njc2OTYwM2E3M2Q2NWU4YjEzYSIsImlhdCI6MTU4NzY0MDc4MiwibmJmIjoxNTg3NjQwNzgyLCJleHAiOjE1OTAyMzI3ODIsInN1YiI6IjI0Iiwic2NvcGVzIjpbbnVsbF19.lvyX8Rs-sueThXVMxQOvEaiqBWLZwhSfBokK6kk7s1eVYwz-gT5TwfeAvJ4waES4tWi_yww4u1u7w1W2Ao_M7SG8860Vm02yG-M2KxXUI2nWrVApPFtdAnxZ5VtDDE9GqhUc1qwaAkL0ovVjP4-odIlxlpM7zCbmEc-R6yTDNQkcq1wimct8JD3_1ouX-JIZFrqdrUGnGEoBAts2U_eNSc3_5jFC6TyiVdBA2vPBGzFfqiu0Vdmj7xPl40Nbv_AFKy0BVldbQrt7j9lpZPqvp5vwfqj-dEVAjTRMXa17AfefAjYBo4WXf-jFW_7el6yMcZDKoPT_8R7SRVsV1-DO9A';
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
+
+    this.formData = {
+      isGallery: 1,
+    };
     this.getCategories();
     this.getEmoji();
     if (option.type) this.type = option.type;
@@ -303,26 +236,6 @@ export default {
       color: --color(--qui-FC-777);
     }
   }
-  &__vp-upload {
-    display: flex;
-    flex-wrap: wrap;
-    height: 160rpx;
-    margin-top: 30rpx;
-
-    image {
-      width: 160rpx;
-      height: 160rpx;
-      margin-right: 14rpx;
-    }
-    &__add {
-      width: 160rpx;
-      height: 160rpx;
-      line-height: 160rpx;
-      text-align: center;
-      background-color: #ededed;
-    }
-  }
-
   &__con-text {
     width: 100%;
     min-height: 400rpx;

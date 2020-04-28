@@ -45,6 +45,7 @@ module.exports = {
    * 'error' 或 2 - 开启规则，使用错误级别的错误：error (当被触发的时候，程序会退出)
    */
   rules: {
+    'no-underscore-dangle': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     'no-console': process.env.NODE_ENV === 'production' ? 2 : 0,
@@ -59,25 +60,25 @@ module.exports = {
       },
     ],
     // vuex
-    "no-param-reassign": [
-      "error",
+    'no-param-reassign': [
+      'error',
       {
-        "props": true,
-        "ignorePropertyModificationsFor": [
-          "state",
-          "acc",
-          "e",
-          "ctx",
-          "req",
-          "request",
-          "res",
-          "response",
-          "$scope"
-        ]
-      }
+        props: true,
+        ignorePropertyModificationsFor: [
+          'state',
+          'acc',
+          'e',
+          'ctx',
+          'req',
+          'request',
+          'res',
+          'response',
+          '$scope',
+        ],
+      },
     ],
     // vuex
-    "no-shadow": ["error", { "allow": ["state"] }],
+    'no-shadow': ['error', { allow: ['state'] }],
     // 禁止使用 var
     'no-var': 2,
     'vue/attribute-hyphenation': 2,
