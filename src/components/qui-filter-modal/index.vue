@@ -1,5 +1,12 @@
 <template>
-  <view class="filter-modal" :class="{ show: showValue }" @tap.stop="cancel">
+  <view
+    class="filter-modal"
+    :class="{ show: showValue }"
+    @tap.stop="cancel"
+    :style="{
+      top: top + 'rpx',
+    }"
+  >
     <view class="filter-modal__content" v-if="showValue" @tap.stop>
       <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
         <view class="filter-modal__content__item-title">{{ item.title }}</view>
@@ -71,6 +78,10 @@ export default {
       default: () => {
         return [];
       },
+    },
+    top: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
@@ -157,7 +168,6 @@ export default {
 <style lang="scss">
 .filter-modal {
   position: fixed;
-  top: 0;
   right: 0;
   bottom: 0;
   left: 0;

@@ -13,7 +13,7 @@
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
       <text class="circleDet-share" @click="open">
-        <qui-icon :name="iconShare" size="28" color="#fff"></qui-icon>
+        <qui-icon class="qui-icon" name="shareBtn" size="28" color="#c33"></qui-icon>
         {{ share }}
       </text>
     </view>
@@ -51,7 +51,7 @@ export default {
       type: String,
       default: '',
     },
-    iconShare: {
+    shareBtn: {
       type: String,
       default: '',
     },
@@ -107,6 +107,11 @@ export default {
     }
     .circleDet-share {
       color: --color(--qui-BG-2);
+    }
+    .qui-icon {
+      width: 30rpx;
+      height: 30rpx;
+      background: chartreuse;
     }
   }
 }

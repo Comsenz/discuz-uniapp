@@ -27,7 +27,7 @@
       "style": {
         "navigationBarTitleText": "我的"
       }
-    },	
+    },
     {
       "path": "pages/my/profile",
       "style": {
@@ -74,7 +74,7 @@
       "path": "pages/profile/index",
       "style": {
         "navigationBarTitleText": "个人主页",
-        "enablePullDownRefresh":true
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -226,5 +226,3 @@
     }
   }
 }
-
-

@@ -57,9 +57,22 @@
       </view>
       <view class="det-con-ft">
         <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
-        <view class="det-con-ft-child" @click="threadCollectionClick">
-          <qui-icon name="icon-collection" class="qui-icon"></qui-icon>
-          <view>{{ t.collection }}</view>
+        <view
+          class="det-con-ft-child"
+          @click="
+            threadCollectionClick(
+              thread.firstPost._jv.id,
+              thread.canFavorite,
+              thread.isFavorite,
+              '1',
+            )
+          "
+        >
+          <qui-icon v-if="thread.isFavorite" name="icon-collectioned" class="qui-icon"></qui-icon>
+
+          <qui-icon v-else name="icon-collection" class="qui-icon"></qui-icon>
+          <view v-if="thread.isFavorite">{{ t.collectionAlready }}</view>
+          <view v-else>{{ t.collection }}</view>
         </view>
       </view>
       <!-- 评论 -->
@@ -128,7 +141,7 @@
     </view>
     <view class="det-ft flex" v-if="footerShow">
       <view
-        :class="[isLiked ? 'det-ft-child flex is-iked' : 'det-ft-child flex']"
+        class="det-ft-child flex"
         @click="
           threadLikeClick(
             thread.firstPost._jv.id,
@@ -137,17 +150,18 @@
           )
         "
       >
-        <qui-icon name="icon-like" class="qui-icon"></qui-icon>
-        <view v-if="isLiked">{{ t.giveLike }}</view>
-        <view v-else>{{ t.giveLikeAlready }}</view>
+        <qui-icon v-if="isLiked" name="icon-liked" class="qui-icon"></qui-icon>
+        <qui-icon v-else name="icon-like" class="qui-icon"></qui-icon>
+        <view class="ft-child-word" v-if="isLiked">{{ t.giveLikeAlready }}</view>
+        <view class="ft-child-word" v-else>{{ t.giveLike }}</view>
       </view>
       <view class="det-ft-child flex" @click="threadComment">
         <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-        <view>{{ t.writeComment }}</view>
+        <view class="ft-child-word">{{ t.writeComment }}</view>
       </view>
       <view class="det-ft-child flex" @click="shareClick">
         <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-        <view>{{ t.share }}</view>
+        <view class="ft-child-word">{{ t.share }}</view>
       </view>
     </view>
     <uni-popup ref="sharePopup" type="bottom">
@@ -232,6 +246,7 @@ export default {
       paidStatus: false, // 是否有已支付数据
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
+      commentStatus: {},
     };
   },
   computed: {
@@ -321,17 +336,58 @@ export default {
         },
         isLiked: isLiked === true ? false : true,
       };
-      const postLike = status.run(() => {
-        this.$store.dispatch('jv/patch', params);
-      });
-      postLike
+
+      this.$store
+        .dispatch('jv/patch', params)
         .then(data => {
           console.log(data);
           console.log('点赞请求接口成功呢');
+          if (data.isLiked) {
+            // 未点赞时，点击点赞'
+            // this.thread.firstPost.likedUsers.unshift({
+            //   _data: { username: this.currentUserName, id: this.userId }
+            // });
+            this.thread.firstPost.likeCount = this.thread.firstPost.likeCount + 1;
+          } else {
+            // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
+            //   value._data.id === this.userId && likedUsers.splice(key, 1);
+            // });
+            this.thread.firstPost.likeCount = this.thread.firstPost.likeCount - 1;
+          }
+          this.isLiked = data.isLiked;
         })
         .catch(err => {
-          console.log('走了catch');
-          console.log(err);
+          console.log('1111');
+        });
+    },
+    // 主题其他操作调用接口（包括收藏）
+    threadOpera(id, canStatus, isStatus, type) {
+      console.log(id, canStatus, isStatus);
+      if (!canStatus) {
+        if (type == '1') {
+          console.log('没有收藏权限');
+        }
+      }
+      const params = {
+        _jv: {
+          type: 'threads',
+          id: id,
+        },
+        isFavorite: isStatus === true ? false : true,
+      };
+
+      this.$store
+        .dispatch('jv/patch', params)
+        .then(data => {
+          console.log(data);
+          console.log('请求操作接口成功呢');
+          // 当type为1时，表示类型是收藏
+          if (type == '1') {
+            this.isFavorite = data.isFavorite;
+          }
+        })
+        .catch(err => {
+          console.log('1111');
         });
     },
     // 主题回复调用接口
@@ -350,15 +406,17 @@ export default {
         },
         content: this.textAreaValue,
       };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          this.$refs.commentPopup.close();
-          // console.log(res);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.commentStatus = status.run(() => {
+        this.$store
+          .dispatch('jv/post', params)
+          .then(res => {
+            this.$refs.commentPopup.close();
+            // console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      });
     },
 
     // 加载当前主题评论的数据
@@ -474,11 +532,9 @@ export default {
       this.handleIsGreat(postId, canLike, isLiked);
     },
     // 主题收藏
-    threadCollectionClick() {
+    threadCollectionClick(id, canStatus, isStatus, type) {
       console.log('主题收藏');
-      if (!this.thread.canLike) {
-        console.log(this.t.canLike);
-      }
+      this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment() {
@@ -756,18 +812,9 @@ page {
     font-size: 30rpx;
     line-height: 80rpx;
   }
-}
-.is-liked {
-  flex: auto;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  line-height: 80rpx;
-  color: --color(--qui-FC-DDD);
-  .qui-icon {
-    margin-right: 18rpx;
-    font-size: 30rpx;
-    line-height: 80rpx;
+  .ft-child-word {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-777);
   }
 }
 .comment-popup-box {

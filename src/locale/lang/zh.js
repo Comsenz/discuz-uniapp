@@ -109,6 +109,7 @@ export default {
     pay: '支付',
     read: '阅读',
     collection: '收藏',
+    collectionAlready: '已收藏',
     item: '条',
     comment: '评论',
     noComment: '暂无评论',

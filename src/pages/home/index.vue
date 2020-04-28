@@ -1,14 +1,14 @@
 <template>
-  <qui-page>
+  <view class="home">
     <qui-header
-      :head-img="defaultHeadImg"
-      :background-head-full-img="backgroundHeadFullImg"
+      :head-img="forums.set_site.site_logo"
+      :background-head-full-img="forums.set_site.site_background_image"
       :theme="theme"
-      :theme-num="themeNum"
+      :theme-num="forums.other.count_users"
       :post="post"
-      :post-num="postNum"
+      :post-num="forums.other.count_threads"
       :share="share"
-      :icon-share="iconShare"
+      :share-btn="shareBtn"
       :color="color"
       @click="open"
     ></qui-header>
@@ -22,23 +22,35 @@
           name="icon-screen"
           size="28"
           color="#1878F3"
-          @click="handleClick"
+          @tap="showFilter"
         ></qui-icon>
+        <filter-modal
+          v-model="show"
+          @confirm="confirm"
+          @changeSelected="changeSelected"
+          @change="changeType"
+          :confirm-text="confirmText"
+          :if-need-confirm="ifNeedConfirm"
+          :filter-list="filterList"
+          :top="top"
+          ref="filter"
+        ></filter-modal>
       </view>
       <view class="uni-tab-bar">
         <scroll-view
           scroll-x="true"
           scroll-with-animation
+          id="scroll-tab-id"
           class="scroll-tab"
           :style="isTop == 1 ? 'position:fixed;z-index:9;top:0' : ''"
         >
-          <view class="scroll-tab-item" :class="{ active: tabIndex == 0 }" @tap="toggleTab(0)">
+          <view class="scroll-tab-item" :class="{ active: categoryId === 0 }" @tap="toggleTab(0)">
             所有
           </view>
           <block v-for="(item, index) in categories" :key="index">
             <view
               class="scroll-tab-item"
-              :class="{ active: tabIndex == item._jv.id }"
+              :class="{ active: categoryId === item._jv.id }"
               @tap="toggleTab(item._jv.id)"
             >
               {{ item.name }}
@@ -58,23 +70,37 @@
     </view>
 
     <view class="main">
-      <qui-content
-        v-for="(item, index) in threads"
-        :key="index"
-        :user-name="item.user.username"
-        :theme-image="item.user.avatarUrl"
-        :theme-btn="item.canHide"
-        :theme-reply-btn="item.canReply"
-        :theme-types="item.user.showGroups"
-        :theme-time="item.createdAt"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
-        :theme-like="item.firstPost.likeCount"
-        :theme-comment="item.firstPost.replyCount"
-        :tags="item.category.name"
-        :images-list="item.firstPost.images"
-        :theme-essence="item.isEssence"
-        @click="handleClickShare"
-      ></qui-content>
+      <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+        @scrolltoupper="toTop"
+        class="scroll-y"
+      >
+        <qui-content
+          v-for="(item, index) in threads"
+          :key="index"
+          :user-name="item.user.username"
+          :theme-image="item.user.avatarUrl"
+          :theme-btn="item.canHide"
+          :theme-reply-btn="item.canReply"
+          :user-groups="item.user.groups"
+          :theme-time="item.createdAt"
+          :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :is-great="item.firstPost.isLiked"
+          :theme-like="item.firstPost.likeCount"
+          :theme-comment="item.firstPost.replyCount"
+          :tags="item.category.name"
+          :images-list="item.firstPost.images"
+          :theme-essence="item.isEssence"
+          @click="handleClickShare"
+          @handleIsGreat="
+            handleIsGreat(item.firstPost._jv.id, item.firstPost.canLike, item.firstPost.isLiked)
+          "
+          @commentClick="commentClick(item.firstPost._jv.id)"
+        ></qui-content>
+        <qui-load-more :status="loadMore"></qui-load-more>
+      </scroll-view>
     </view>
     <qui-footer @click="footerOpen" :tabs="tabs" :post-img="postImg"></qui-footer>
 
@@ -83,13 +109,12 @@
         <view class="popup-share-content">
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box">
+              <view class="popup-share-box" @click="handleClick">
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
                   size="36"
                   color="#777777"
-                  @click="handleClick"
                 ></qui-icon>
               </view>
               <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
@@ -101,140 +126,95 @@
         <text class="popup-share-btn" @click="cancel('share')">取消</text>
       </view>
     </uni-popup>
-  </qui-page>
+  </view>
 </template>
 
 <script>
 /* eslint-disable */
 import { status } from 'jsonapi-vuex';
+import filterModal from '@/components/qui-filter-modal';
+import quiLoadMore from '@/components/qui-load-more';
 
 export default {
+  components: {
+    filterModal,
+    quiLoadMore,
+  },
   data: () => {
     return {
-      isTop: 0,
-      threads: '',
-      sticky: '',
-      defaultHeadImg: 'https://discuz.chat/static/images/logo.png',
-      backgroundHeadFullImg: 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg',
-      theme: '主题',
-      themeNum: 234,
-      post: '帖子',
-      postNum: 3498,
-      share: '分享',
-      iconShare: 'icon-share1',
-      color: 'red',
-      tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
-      data: [
+      categoryId: 0, // 主题分类 ID
+      threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
+      threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
+      threadFollow: 0, // 关注的主题 传当前用户 ID
+      loadStatus: {},
+      loadThreadsStatus: {},
+      loadContentStatus: {},
+      confirmText: '筛选',
+      show: false,
+      ifNeedConfirm: true,
+      top: 500,
+      filterSelected: { label: '全部', value: '' }, // 筛选类型
+      loadMore: 'more', //上拉加载状态
+      totalData: 0, // 总数
+      pageSize: 10,
+      pageNum: 1, // 当前页数
+      filterList: [
         {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeStatus: '打赏了我',
-          // themeBtn: 'icon-delete',
-          // themeReward: '1150.50',
-          themeDeleteBtn: '删除',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          themeReplyBtn: 'icon-delete',
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
+          title: '板块',
+          data: [{ label: '所有', value: '0', selected: true }],
+        },
+        {
+          title: '类型',
+          data: [
+            { label: '所有', value: '', selected: true },
+            { label: '文本', value: '0', selected: false },
+            { label: '帖子', value: '1', selected: false },
+            { label: '视频', value: '2', selected: false },
+            { label: '图片', value: '3', selected: false },
           ],
         },
         {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
+          title: '筛选',
+          data: [
+            { label: '所有', value: '', selected: true },
+            { label: '精华', value: '1', selected: false },
+            { label: '已关注', value: '2', selected: false },
           ],
         },
       ],
+      isTop: 0,
+      threads: '',
+      sticky: '',
+      theme: '成员',
+      post: '内容',
+      share: '分享',
+      shareBtn: 'icon-share1',
+      color: 'red',
+      tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
       bottomData: [
         {
           text: '文字',
           icon: 'icon-word',
           name: 'wx',
+          type: 0,
         },
         {
           text: '图片',
           icon: 'icon-img',
           name: 'wx',
+          type: 3,
         },
         {
           text: '视频',
           icon: 'icon-video',
           name: 'qq',
+          type: 2,
         },
         {
           text: '帖子',
           icon: 'icon-post',
           name: 'sina',
+          type: 1,
         },
       ],
       tabs: [
@@ -262,6 +242,9 @@ export default {
     categories() {
       return this.$store.getters['jv/get']('categories');
     },
+    forums() {
+      return this.$store.getters['jv/get']('forums/1');
+    },
   },
   onLoad() {
     // 首页导航栏分类列表
@@ -272,9 +255,12 @@ export default {
     this.loadThreads();
   },
   mounted() {
-    const query = uni.createSelectorQuery().in(this);
+    const query = uni
+      .createSelectorQuery()
+      .in(this)
+      .select('.scroll-tab');
     query
-      .select('#scrollView')
+      // .select('#scroll-tab')
       .boundingClientRect(data => {
         console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
@@ -292,12 +278,39 @@ export default {
   methods: {
     // 切换选项卡
     toggleTab(index) {
-      this.tabIndex = index;
+      this.categoryId = index;
+      this.loadThreadsSticky();
+      this.loadThreads();
     },
     // 滑动切换swiper
     tabChange(e) {
-      console.log(e);
-      this.tabIndex = e.detail.current;
+      this.categoryId = e.detail.current;
+    },
+    changeSelected(item, dataIndex, filterIndex) {
+      // console.log(item, dataIndex, filterIndex);
+    },
+    // 内容部分点赞按钮点击事件
+    handleIsGreat(id, canLike, isLiked) {
+      if (!canLike) {
+        console.log('没有点赞权限');
+      }
+      const params = {
+        _jv: {
+          type: 'posts',
+          id: id,
+        },
+        isLiked: isLiked === true ? false : true,
+      };
+      this.$store.dispatch('jv/patch', params).then(data => {
+        console.log(data);
+      });
+    },
+    // 内容部分点击评论跳到详情页
+    commentClick(id) {
+      console.log(id);
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${id}`,
+      });
     },
     // 首页头部分享按钮弹窗
     open() {
@@ -318,9 +331,42 @@ export default {
     cancel() {
       this.$refs.popup.close();
     },
+    confirm(e) {
+      // this.filterSelected = { ...e };
+      const filterSelected = { ...e };
+
+      this.categoryId = filterSelected[0].data.value;
+      this.threadType = filterSelected[1].data.value;
+
+      switch (filterSelected[2].data.value) {
+        // 筛选精华帖
+        case '1':
+          this.threadEssence = 'yes';
+          this.threadFollow = 0;
+          break;
+        // 筛选关注帖
+        case '2':
+          this.threadEssence = '';
+          this.threadFollow = 1; // TODO 当前用户 ID
+          break;
+        // 不筛选
+        default:
+          this.threadEssence = '';
+          this.threadFollow = 0;
+          break;
+      }
+      this.loadThreads();
+    },
+    changeType(e) {
+      this.filterList = e;
+    },
+    // 首页导航栏筛选按钮
+    showFilter() {
+      this.show = true;
+      this.$refs.filter.setData();
+    },
     // 首页底部发帖按钮弹窗
     footerOpen() {
-      console.log(this.$refs.popup.open);
       this.$refs.popup.open();
       this.bottomData = [
         {
@@ -345,6 +391,12 @@ export default {
         },
       ];
     },
+    // 首页底部发帖点击事件跳转
+    handleClick() {
+      uni.navigateTo({
+        url: '/pages/topic/post',
+      });
+    },
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
       this.$refs.popup.open();
@@ -363,26 +415,50 @@ export default {
     },
     // 首页导航栏分类列表数据
     loadCategories() {
-      this.loadStatus1 = status.run(() => {
-        this.$store.dispatch('jv/get', ['categories', {}]);
+      this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+        delete data._jv;
+        const categoryFilterList = [
+          {
+            label: '所有',
+            value: 0,
+            // selected: 0 === this.categoryId ? true : false,
+            selected: true,
+          },
+        ];
+
+        Object.getOwnPropertyNames(data).forEach(function(key) {
+          categoryFilterList.push({
+            label: data[key].name,
+            value: data[key]._jv.id,
+            // selected: data[key].id === this.categoryId ? true : false,
+            selected: false,
+          });
+        });
+
+        this.filterList[0].data = categoryFilterList;
       });
     },
     // 首页置顶列表数据
     loadThreadsSticky() {
       const params = {
         'filter[isSticky]': 'yes',
+        'filter[categoryId]': this.categoryId,
         include: ['firstPost'],
       };
-      this.loadStatus = status.run(() => {
-        this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-          this.sticky = data;
-        });
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+        delete data._jv;
+        this.sticky = data;
       });
     },
     // 首页内容部分数据请求
     loadThreads() {
       const params = {
         'filter[isDeleted]': 'no',
+        'filter[categoryId]': this.categoryId,
+        'filter[type]': this.threadType,
+        'filter[isEssence]': this.threadEssence,
+        'page[number]': 1,
+        'page[limit]': 34,
         include: [
           'user',
           'user.groups',
@@ -392,32 +468,48 @@ export default {
           'threadVideo',
         ],
       };
-      this.loadStatus = status.run(() => {
-        this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-          // 循环帖子
-          Object.getOwnPropertyNames(data).forEach(key => {
-            // 如果是 _jv 跳过
-            if (key === '_jv') {
-              return true;
-            }
 
-            // 循环每篇帖子作者的用户组
-            Object.getOwnPropertyNames(data[key].user.groups).forEach(k => {
-              // 如果是 _jv 跳过
-              if (key === '_jv') {
-                return true;
-              }
+      if (this.threadType !== null) {
+        params['filter[type]'] = this.threadType;
+      }
 
-              // 是否显示用户组
-              const group = data[key].user.groups[k];
-              data[key].user.showGroups = group.isDisplay ? `(${group.name})` : '';
-            });
-          });
+      params['filter[fromUserId]'] = this.threadFollow;
 
-          delete data._jv;
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+        // console.log(data);
+        // eslint-disable-next-line no-underscore-dangle
+        this.totalData = data._jv.json.meta.total;
+        // console.log(this.totalData);
+        // eslint-disable-next-line no-underscore-dangle
+        if (data._jv.json.meta.total <= this.pageSize) {
+          this.loadMore = 'noMore';
+        } else {
+          this.loadMore = 'more';
+        }
+        delete data._jv;
+        // data = JSON.parse(JSON.stringify(data));
+        // this.threads = data;
+        if (this.pageNum === 1) {
           this.threads = data;
-        });
+        } else {
+          this.threads = Object.assign(data, this.threads);
+          // console.log(this.threads);
+        }
       });
+    },
+    // 下拉加载
+    pullDown() {
+      if (this.pageNum * this.pageSize < this.totalData) {
+        this.pageNum += 1;
+        this.loadThreads(this.pageNum);
+      } else {
+        this.loadMore = 'noMore';
+      }
+    },
+    // 上拉刷新
+    toTop() {
+      this.pageNum = 1;
+      this.loadThreads(this.pageNum);
     },
   },
 };
@@ -425,6 +517,11 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+.home {
+  min-height: 100vh;
+  color: --color(--qui-FC-333);
+  background-color: #f9fafc;
+}
 .nav {
   position: relative;
   margin-bottom: 30rpx;
@@ -432,7 +529,7 @@ export default {
 
   &__box {
     position: absolute;
-    right: 10rpx;
+    right: 2rpx;
     z-index: 2;
     display: block;
     float: right;
