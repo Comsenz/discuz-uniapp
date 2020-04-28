@@ -144,7 +144,8 @@ export default {
     return {
       categoryId: 0, // 主题分类 ID
       threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
-      threadFollow: 0, // 关注的主题
+      threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
+      threadFollow: 0, // 关注的主题 传当前用户 ID
       loadStatus: {},
       loadThreadsStatus: {},
       loadContentStatus: {},
@@ -160,28 +161,23 @@ export default {
       filterList: [
         {
           title: '板块',
-          data: [
-            { label: '细类1', value: '1', selected: true },
-            { label: '细类2', value: '2', selected: false },
-            { label: '细类2', value: '2', selected: true },
-            { label: '细类2', value: '2', selected: false },
-          ],
+          data: [{ label: '所有', value: '0', selected: true }],
         },
         {
           title: '类型',
           data: [
-            { label: '所有', value: '1', selected: true },
-            { label: '文本', value: '2', selected: false },
-            { label: '图片', value: '2', selected: false },
+            { label: '所有', value: '', selected: true },
+            { label: '文本', value: '0', selected: false },
+            { label: '帖子', value: '1', selected: false },
             { label: '视频', value: '2', selected: false },
-            { label: '帖子', value: '2', selected: false },
+            { label: '图片', value: '3', selected: false },
           ],
         },
         {
           title: '筛选',
           data: [
-            { label: '所有', value: '1', selected: true },
-            { label: '精华', value: '2', selected: false },
+            { label: '所有', value: '', selected: true },
+            { label: '精华', value: '1', selected: false },
             { label: '已关注', value: '2', selected: false },
           ],
         },
@@ -313,7 +309,7 @@ export default {
     commentClick(id) {
       console.log(id);
       uni.navigateTo({
-        url: '/pages/topic/index?id=id', //还缺拼接ID
+        url: `/pages/topic/index?id=${id}`,
       });
     },
     // 首页头部分享按钮弹窗
@@ -336,10 +332,30 @@ export default {
       this.$refs.popup.close();
     },
     confirm(e) {
-      this.filterSelected = { ...e };
-      console.log(e);
-      // console.log(this.filterSelected);
-      // this.getList({ status: e[0].value });
+      // this.filterSelected = { ...e };
+      const filterSelected = { ...e };
+
+      this.categoryId = filterSelected[0].data.value;
+      this.threadType = filterSelected[1].data.value;
+
+      switch (filterSelected[2].data.value) {
+        // 筛选精华帖
+        case '1':
+          this.threadEssence = 'yes';
+          this.threadFollow = 0;
+          break;
+        // 筛选关注帖
+        case '2':
+          this.threadEssence = '';
+          this.threadFollow = 1; // TODO 当前用户 ID
+          break;
+        // 不筛选
+        default:
+          this.threadEssence = '';
+          this.threadFollow = 0;
+          break;
+      }
+      this.loadThreads();
     },
     changeType(e) {
       this.filterList = e;
@@ -439,6 +455,8 @@ export default {
       const params = {
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
+        'filter[type]': this.threadType,
+        'filter[isEssence]': this.threadEssence,
         'page[number]': 1,
         'page[limit]': 34,
         include: [
