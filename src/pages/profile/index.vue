@@ -141,36 +141,27 @@ export default {
     // 添加关注
     addFollow(userInfo) {
       const params = {
-        data: {
-          type: 'user_follow',
-          attributes: {
-            to_user_id: userInfo.id,
-          },
+        _jv: {
+          type: 'follow',
         },
+        type: 'user_follow',
+        to_user_id: userInfo.id,
       };
       status
-        .run(() => this.$store.dispatch('jv/post', [`follow`, { params }]))
+        .run(() => this.$store.dispatch('jv/post', params))
         .then(res => {
-          this.getUserInfo();
-          console.log('操作成功！');
-          console.log(res);
+          console.log('成功', res);
+        })
+        .catch(err => {
+          console.log('verify', err);
         });
     },
     // 取消关注
     deleteFollow(userInfo) {
-      // const params = {
-      //   data: {
-      //     type: 'user_follow',
-      //     attributes: {
-      //       to_user_id: userInfo.id,
-      //     },
-      //   },
-      // };
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}`);
-      // this.$store.dispatch('jv/delete', [`follow`, { params }]).then(res => {
-      //   this.getUserInfo();
-      //   console.log(res);
-      // });
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(res => {
+        this.getUserInfo();
+        console.log(res);
+      });
     },
   },
 };

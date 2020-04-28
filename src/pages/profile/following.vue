@@ -5,6 +5,8 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
+        @scrolltoupper="refresh"
+        show-scrollbar="false"
         class="scroll-y"
       >
         <view
@@ -48,6 +50,7 @@
           </cell-item>
         </view>
       </scroll-view>
+      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
@@ -55,10 +58,12 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
+    loadMore,
   },
   props: {
     userId: {
@@ -68,9 +73,11 @@ export default {
   },
   data() {
     return {
+      loadingType: 'more',
+      flag: true, // 滚动节流
       followingList: [],
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
     };
   },
@@ -95,6 +102,7 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
+          this.loadingType = data.length === 10 ? 'more' : 'nomore';
           this.followingList = Object.assign(data, this.followingList);
           console.log(data);
         });
@@ -112,7 +120,14 @@ export default {
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
         this.getFollowingList();
+      } else {
+        this.loadingType = 'nomore';
       }
+    },
+    refresh() {
+      this.pageNum = 1;
+      this.followingList = [];
+      this.getFollowingList();
     },
   },
 };
@@ -155,6 +170,6 @@ export default {
   border-radius: 50%;
 }
 .scroll-y {
-  height: calc(100vh - 297rpx);
+  max-height: calc(100vh - 297rpx);
 }
 </style>
