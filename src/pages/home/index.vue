@@ -494,14 +494,12 @@ export default {
 
       this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
         this.totalData = res._jv.json.meta.threadCount;
-        console.log(this.totalData);
-        const data = JSON.parse(JSON.stringify(res));
-        delete data._jv;
-        this.loadingType = data.length === 10 ? 'more' : 'nomore';
-        console.log(this.threads, 'this.threads第一次');
-        this.threads = Object.assign(this.threads, data);
-        console.log(this.threads, 'this.threads第二次');
-        // this.threads = res;
+        // console.log(this.totalData);
+        // const data = JSON.parse(JSON.stringify(res));
+        delete res._jv;
+        // this.loadingType = data.length === 10 ? 'more' : 'nomore';
+        // this.threads = Object.assign(this.threads, data);
+        this.threads = res;
       });
     },
     // 内容部分点赞按钮点击事件
