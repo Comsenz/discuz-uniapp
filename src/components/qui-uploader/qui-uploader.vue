@@ -64,6 +64,16 @@ export default {
       default: false,
       type: Boolean,
     },
+    filePreview: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+    delayTime: {
+      default: 500,
+      type: Number,
+    },
   },
   data() {
     return {
@@ -71,6 +81,12 @@ export default {
       uploadList: [],
       uploadIndex: '',
     };
+  },
+  async created() {
+    setTimeout(() => {
+      this.uploadBeforeList = this.uploadBeforeList.concat(this.filePreview);
+      this.uploadList = this.uploadList.concat(this.filePreview);
+    }, this.delayTime);
   },
   methods: {
     uploadDelete(index) {
@@ -112,18 +128,6 @@ export default {
         sizeType: ['original', 'compressed'],
         sourceType: ['album', 'camera'],
         success(res) {
-          /* for (let i = 0, len = res.tempFiles.length; i < len; i += 1) {
-            res.tempFiles[i].uploadPercent = 0;
-            res.tempFiles[i].uploadStatus = false;
-            _this.uploadBeforeList.push(res.tempFiles[i]);
-            _this.upload(
-              res.tempFiles[i],
-              res.tempFilePaths[i],
-              _this.uploadBeforeList.length - 1,
-              beforeUploadFile,
-            );
-          } */
-
           const promise = res.tempFiles.map((item, index) => {
             return new Promise((resolve, reject) => {
               res.tempFiles[index].uploadPercent = 0;
@@ -135,20 +139,14 @@ export default {
                 _this.uploadBeforeList.length - 1,
                 beforeUploadFile,
                 resolve,
+                reject,
               );
             });
           });
 
-          console.log(promise);
-
-          Promise.all(promise).then(res => {
-            console.log(res);
+          Promise.all(promise).then(() => {
             _this.$emit('change', _this.uploadList);
           });
-
-          // const results = await Promise.all(promise);
-          // await
-          // console.log(results);
         },
       });
     },
@@ -171,14 +169,13 @@ export default {
             _this.uploadBeforeList.splice(index, 1);
             _this.uploadList.splice(index, 1);
           }
-          console.log(resolve);
-          return resolve;
+          return resolve(_this.uploadList);
         },
         fail(res) {
           console.log(res);
           _this.uploadBeforeList.splice(index, 1);
           _this.uploadList.splice(index, 1);
-          return reject;
+          return reject(res);
         },
       });
 

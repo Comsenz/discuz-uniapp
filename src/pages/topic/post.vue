@@ -39,9 +39,6 @@
       auto-height
       maxlength="450"
     ></textarea>
-    <view @click="childClick">
-      子组件
-    </view>
     <qui-uploader
       url="https://dq.comsenz-service.com/api/attachments"
       :header="header"
@@ -99,16 +96,12 @@ export default {
     },
   },
   methods: {
-    childClick() {
-      // 图标式唤起上传
-      this.$refs.upload.uploadClick();
-    },
     uploadChange(e) {
       console.log(e);
     },
-    uploadClear(list, dele) {
+    uploadClear(list, del) {
       console.log(list);
-      console.log(dele);
+      console.log(del);
       console.log('删除图片中');
 
       setTimeout(() => {
