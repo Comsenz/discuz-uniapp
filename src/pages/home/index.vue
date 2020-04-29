@@ -74,7 +74,8 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
-        @scrolltoupper="toTop"
+        @scrolltoupper="refresh"
+        show-scrollbar="false"
         class="scroll-y"
       >
         <qui-content
@@ -95,11 +96,16 @@
           :theme-essence="item.isEssence"
           @click="handleClickShare"
           @handleIsGreat="
-            handleIsGreat(item.firstPost._jv.id, item.firstPost.canLike, item.firstPost.isLiked)
+            handleIsGreat(
+              item.firstPost._jv.id,
+              item.firstPost.canLike,
+              item.firstPost.isLiked,
+              item.firstPost.likeCount,
+            )
           "
           @commentClick="commentClick(item.firstPost._jv.id)"
         ></qui-content>
-        <qui-load-more :status="loadMore"></qui-load-more>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
     <qui-footer @click="footerOpen" :tabs="tabs" :post-img="postImg"></qui-footer>
@@ -154,10 +160,11 @@ export default {
       ifNeedConfirm: true,
       top: 500,
       filterSelected: { label: '全部', value: '' }, // 筛选类型
-      loadMore: 'more', //上拉加载状态
+      loadingType: 'more', //上拉加载状态
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
+      isLiked: false, // 主题点赞状态
       filterList: [
         {
           title: '板块',
@@ -183,7 +190,7 @@ export default {
         },
       ],
       isTop: 0,
-      threads: '',
+      threads: {},
       sticky: '',
       theme: '成员',
       post: '内容',
@@ -227,12 +234,13 @@ export default {
           tabsName: '消息',
           tabsIcon: 'icon-message',
           id: 2,
+          url: '../message/index',
         },
         {
           tabsName: '我',
           tabsIcon: 'icon-mine',
           id: 3,
-          url: '/pages/my/index',
+          url: '../my/index',
         },
       ],
       postImg: '../assets.publish.svg',
@@ -296,7 +304,6 @@ export default {
     },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
-      console.log(id);
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -359,29 +366,46 @@ export default {
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {
-      this.$refs.popup.open();
-      this.bottomData = [
-        {
+      console.log(this.forums, '9999');
+      if (
+        !this.forums.other.can_create_thread &&
+        !this.forums.other.can_create_thread_long &&
+        !this.forums.other.can_create_thread_video &&
+        !this.forums.other.can_create_thread_image
+      ) {
+        console.log('此处弹出提示无权限发帖');
+        return;
+      }
+      this.bottomData = [];
+      if (this.forums.other.can_create_thread) {
+        this.bottomData.push({
           text: '文字',
           icon: 'icon-word',
-          name: 'wx',
-        },
-        {
-          text: '图片',
-          icon: 'icon-img',
-          name: 'wx',
-        },
-        {
-          text: '视频',
-          icon: 'icon-video',
-          name: 'qq',
-        },
-        {
+          name: 'text',
+        });
+      }
+      if (this.forums.other.can_create_thread_long) {
+        this.bottomData.push({
           text: '帖子',
           icon: 'icon-post',
-          name: 'sina',
-        },
-      ];
+          name: 'post',
+        });
+      }
+      if (this.forums.other.can_create_thread_video) {
+        this.bottomData.push({
+          text: '视频',
+          icon: 'icon-video',
+          name: 'video',
+        });
+      }
+      if (this.forums.other.can_create_thread_image) {
+        this.bottomData.push({
+          text: '图片',
+          icon: 'icon-img',
+          name: 'image',
+        });
+      }
+      this.$refs.popup.open();
     },
     // 首页底部发帖点击事件跳转
     handleClick() {
@@ -437,6 +461,7 @@ export default {
         'filter[categoryId]': this.categoryId,
         include: ['firstPost'],
       };
+      console.log(params, '置顶');
       this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
         delete data._jv;
         this.sticky = data;
@@ -450,7 +475,7 @@ export default {
         'filter[type]': this.threadType,
         'filter[isEssence]': this.threadEssence,
         'page[number]': 1,
-        'page[limit]': 34,
+        'page[limit]': 10,
         include: [
           'user',
           'user.groups',
@@ -460,37 +485,27 @@ export default {
           'threadVideo',
         ],
       };
-
+      console.log(params, '列表');
       if (this.threadType !== null) {
         params['filter[type]'] = this.threadType;
       }
 
       params['filter[fromUserId]'] = this.threadFollow;
 
-      this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-        // console.log(data);
-        // eslint-disable-next-line no-underscore-dangle
-        this.totalData = data._jv.json.meta.total;
-        // console.log(this.totalData);
-        // eslint-disable-next-line no-underscore-dangle
-        if (data._jv.json.meta.total <= this.pageSize) {
-          this.loadMore = 'noMore';
-        } else {
-          this.loadMore = 'more';
-        }
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
+        this.totalData = res._jv.json.meta.threadCount;
+        console.log(this.totalData);
+        const data = JSON.parse(JSON.stringify(res));
         delete data._jv;
-        // data = JSON.parse(JSON.stringify(data));
-        // this.threads = data;
-        if (this.pageNum === 1) {
-          this.threads = data;
-        } else {
-          this.threads = Object.assign(data, this.threads);
-          // console.log(this.threads);
-        }
+        this.loadingType = data.length === 10 ? 'more' : 'nomore';
+        console.log(this.threads, 'this.threads第一次');
+        this.threads = Object.assign(this.threads, data);
+        console.log(this.threads, 'this.threads第二次');
+        // this.threads = res;
       });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
+    handleIsGreat(id, canLike, isLiked, likeCount) {
       if (!canLike) {
         console.log('没有点赞权限');
       }
@@ -502,22 +517,27 @@ export default {
         isLiked: isLiked === true ? false : true,
       };
       this.$store.dispatch('jv/patch', params).then(data => {
-        console.log(data);
+        if (isLiked) {
+          data.likeCount = data.likeCount - 1;
+        } else {
+          data.likeCount = data.likeCount + 1;
+        }
       });
     },
     // 下拉加载
     pullDown() {
+      console.log('下拉加载呢');
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
-        this.loadThreads(this.pageNum);
+        this.loadThreads();
       } else {
         this.loadMore = 'noMore';
       }
     },
-    // 上拉刷新
-    toTop() {
+    refresh() {
       this.pageNum = 1;
-      this.loadThreads(this.pageNum);
+      this.data = [];
+      this.loadThreads();
     },
   },
 };

@@ -81,44 +81,44 @@
     {
       "path": "pages/message/index",
       "style": {
-          "navigationBarTitleText": "消息"
+        "navigationBarTitleText": "消息"
       }
     },
     {
       "path": "pages/message/related",
       "style": {
-          "navigationBarTitleText": "@我的"
+        "navigationBarTitleText": "@我的"
       }
     },
     {
       "path": "pages/message/replied",
       "style": {
-          "navigationBarTitleText": "回复我的"
+        "navigationBarTitleText": "回复我的"
       }
     },
     {
       "path": "pages/message/liked",
       "style": {
-          "navigationBarTitleText": "点赞我的"
+        "navigationBarTitleText": "点赞我的"
       }
     },
     {
       "path": "pages/message/rewarded",
       "style": {
-          "navigationBarTitleText": "支付我的"
+        "navigationBarTitleText": "支付我的"
       }
     },
     {
       "path": "pages/message/system",
       "style": {
-          "navigationBarTitleText": "系统通知"
+        "navigationBarTitleText": "系统通知"
       }
     },
     {
       "path": "pages/message/chat",
       "style": {
-          "navigationBarTitleText": "聊天室",
-          "enablePullDownRefresh":true
+        "navigationBarTitleText": "聊天室",
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -132,9 +132,9 @@
     {
       "path": "components/qui-at-member-page/qui-at-member-page",
       "style": {
-          "navigationBarBackgroundColor": "#fff",
-          "navigationBarTextStyle": "black",
-          "navigationBarTitleText": "选择@人员"
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "选择@人员"
       }
     },
     {
@@ -218,8 +218,8 @@
     "navigationBarBackgroundColor": "#fff",
     "backgroundColor": "#F8F8F8",
     // "navigationStyle": "custom",
-    "usingComponents":{
-      "painter":"/wxcomponents/painter/painter"
+    "usingComponents": {
+      "painter": "/wxcomponents/painter/painter"
     },
     "h5": {
       // h5 不显示顶部导航栏

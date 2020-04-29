@@ -68,7 +68,7 @@ export default {
     return {
       loadingType: 'more',
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,
@@ -117,8 +117,8 @@ export default {
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       const params = {
         'filter[user]': 1,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
         'filter[end_time]': `${this.date}-${days}-00-00-00 `,
       };
@@ -138,8 +138,8 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.loadingType = data.length === 10 ? 'more' : 'nomore';
-          this.dataList = Object.assign(data, this.dataList);
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = { ...data, ...this.dataList };
         });
     },
     // 下拉加载

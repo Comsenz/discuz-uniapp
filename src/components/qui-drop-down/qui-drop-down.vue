@@ -15,7 +15,12 @@
       <view class="select-content">
         <view class="jt-bg" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
         <view class="jt-con" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
-        <view class="select-child" v-for="(child, index) in list" :key="index" @click="handleClick">
+        <view
+          class="select-child"
+          v-for="(child, index) in list"
+          :key="index"
+          @click="handleClick(child.canOpera, child.isStatus, child.type)"
+        >
           {{ child.text }}
         </view>
       </view>
@@ -77,8 +82,8 @@ export default {
     return {};
   },
   methods: {
-    handleClick(param) {
-      this.$emit('click', param);
+    handleClick(canOpera, status, type) {
+      this.$emit('click', { canOpera, status, type });
     },
   },
 };
