@@ -63,6 +63,8 @@ export default {
       const params = {
         'filter[user]': 1,
         'filter[change_type]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         // eslint-disable-next-line no-underscore-dangle
@@ -70,9 +72,8 @@ export default {
         const data = JSON.parse(JSON.stringify(res));
         // eslint-disable-next-line no-underscore-dangle
         delete data._jv;
-        this.loadingType = data.length === 10 ? 'more' : 'nomore';
-        this.freezelist = Object.assign(data, this.freezelist);
-        console.log(res);
+        this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+        this.freezelist = { ...data, ...this.freezelist };
       });
     },
     // 下拉加载

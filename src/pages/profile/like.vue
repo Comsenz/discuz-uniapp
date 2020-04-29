@@ -110,14 +110,13 @@ export default {
           'threadVideo',
           'firstPost.likedUsers',
         ],
-        'page[number]': 1,
-        'page[limit]': 20,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[user_id]': this.userId,
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads/likes', { params }]))
         .then(res => {
-          console.log(res);
           // 循环帖子
           Object.getOwnPropertyNames(res).forEach(key => {
             // 如果是 _jv 跳过
@@ -140,18 +139,20 @@ export default {
               res[key].user.showGroups = group.isDisplay ? `(${group.name})` : '';
             });
           });
+          // eslint-disable-next-line no-underscore-dangle
+          this.totalData = res._jv.json.meta.threadCount;
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.loadingType = data.length === 10 ? 'more' : 'nomore';
-          this.data = Object.assign(data, this.data);
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          this.data = { ...data, ...this.data };
         });
     },
     // 下拉加载
     pullDown() {
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
-        this.loadThreads();
+        this.loadlikes();
       } else {
         this.loadingType = 'nomore';
       }
@@ -159,7 +160,7 @@ export default {
     refresh() {
       this.pageNum = 1;
       this.data = [];
-      this.loadThreads();
+      this.loadlikes();
     },
   },
 };
