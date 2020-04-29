@@ -17,14 +17,13 @@
           :class="[
             item.user_id === 1 ? 'chat-box__con__msg__box__mine' : 'chat-box__con__msg__box__other',
           ]"
-        >
-          {{ item.message_text }}
-        </view>
+          v-html="item.message_text_html"
+        ></view>
       </view>
     </view>
     <view class="chat-box__footer">
       <view class="chat-box__footer__msg">
-        <input class="uni-input" focus @input="onKeyInput" placeholder="回复..." />
+        <input class="uni-input" focus v-model="msg" placeholder="回复..." />
         <qui-icon
           name="icon-expression chat-box__footer__msg__icon"
           size="40"
@@ -100,12 +99,6 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
 
-    // 获取输入框内容
-    onKeyInput(event) {
-      this.msg = event.target.value;
-      console.log('msg', this.msg);
-    },
-
     // 发送消息
     send() {
       const params = {
@@ -135,8 +128,10 @@ export default {
     },
 
     // 获取表情
-    getEmojiClick(a) {
-      console.log('表情', a);
+    getEmojiClick(key) {
+      this.msg += this.allEmoji[key].code;
+      console.log('表情', this.allEmoji[key]);
+      console.log('msg', this.msg);
     },
   },
 };
