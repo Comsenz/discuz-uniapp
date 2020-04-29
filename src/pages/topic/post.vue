@@ -39,6 +39,15 @@
       auto-height
       maxlength="450"
     ></textarea>
+    <qui-uploader
+      url="https://dq.comsenz-service.com/api/attachments"
+      :header="header"
+      :form-data="formData"
+      async-clear="true"
+      ref="upload"
+      @change="uploadChange"
+      @clear="uploadClear"
+    ></qui-uploader>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">选择分类</text>
       <view class="post-box__ft-categories">
@@ -71,6 +80,8 @@ export default {
       type: 0,
       operating: '',
       emojiShow: false,
+      header: {},
+      formData: {},
     };
   },
   computed: {
@@ -85,6 +96,18 @@ export default {
     },
   },
   methods: {
+    uploadChange(e) {
+      console.log(e);
+    },
+    uploadClear(list, del) {
+      console.log(list);
+      console.log(del);
+      console.log('删除图片中');
+
+      setTimeout(() => {
+        this.$refs.upload.clear(list);
+      }, 1500);
+    },
     getEmojiClick(num) {
       /* this.emojiShow = false;
 
@@ -163,6 +186,15 @@ export default {
     },
   },
   onLoad(option) {
+    const token =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiIwYmM0NzlhMDJmNDdiOWIzYmUxYTNlNmZkYWU2MGYxOGQ4NDY4ZGYxYmQ5MGUyNTllZWRlY2JlNzMxMGQ3Njc2OTYwM2E3M2Q2NWU4YjEzYSIsImlhdCI6MTU4NzY0MDc4MiwibmJmIjoxNTg3NjQwNzgyLCJleHAiOjE1OTAyMzI3ODIsInN1YiI6IjI0Iiwic2NvcGVzIjpbbnVsbF19.lvyX8Rs-sueThXVMxQOvEaiqBWLZwhSfBokK6kk7s1eVYwz-gT5TwfeAvJ4waES4tWi_yww4u1u7w1W2Ao_M7SG8860Vm02yG-M2KxXUI2nWrVApPFtdAnxZ5VtDDE9GqhUc1qwaAkL0ovVjP4-odIlxlpM7zCbmEc-R6yTDNQkcq1wimct8JD3_1ouX-JIZFrqdrUGnGEoBAts2U_eNSc3_5jFC6TyiVdBA2vPBGzFfqiu0Vdmj7xPl40Nbv_AFKy0BVldbQrt7j9lpZPqvp5vwfqj-dEVAjTRMXa17AfefAjYBo4WXf-jFW_7el6yMcZDKoPT_8R7SRVsV1-DO9A';
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
+
+    this.formData = {
+      isGallery: 1,
+    };
     this.getCategories();
     this.getEmoji();
     if (option.type) this.type = option.type;
