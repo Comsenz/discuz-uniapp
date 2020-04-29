@@ -27,6 +27,7 @@
         position="absolute"
         top="20rpx"
         v-if="emojiShow"
+        border-radius="10rpx"
         @click="getEmojiClick"
       ></qui-emoji>
     </view>
