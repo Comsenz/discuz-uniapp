@@ -37,7 +37,7 @@
               <qui-icon
                 class="text"
                 :name="followingItem.toUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                size="16"
+                size="22"
                 :color="
                   followingItem.toUser.follow == 0
                     ? '#777'
@@ -159,7 +159,20 @@ export default {
     deleteFollow(userInfo) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
-        this.getFollowingList();
+        // 如果是个人主页直接删除这条数据
+        // eslint-disable-next-line eqeqeq
+        if (this.userId === '1') {
+          const dataList = this.followingList;
+          Object.getOwnPropertyNames(dataList).forEach(key => {
+            if (dataList[key].toUser && dataList[key].toUser.id === userInfo.id) {
+              const data = JSON.parse(JSON.stringify(dataList));
+              delete data[key];
+              this.followingList = data;
+            }
+          });
+        } else {
+          this.getFollowingList();
+        }
       });
     },
   },
@@ -168,6 +181,7 @@ export default {
 
 <style lang="scss">
 .following {
+  padding: 0 20rpx;
   font-size: 28rpx;
   .cell-item {
     padding-right: 20rpx;
@@ -204,5 +218,8 @@ export default {
 }
 .scroll-y {
   max-height: calc(100vh - 297rpx);
+}
+.text {
+  margin-left: 12rpx;
 }
 </style>

@@ -1,19 +1,21 @@
 <template>
   <view class="orderlist">
-    <cell-item class="orderlist-wrap" slot-right>
-      <view @tap="showFilter">
-        <text>状态：{{ filterSelected.label }}</text>
-        <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
-        <filter-modal
-          v-model="show"
-          @confirm="confirm"
-          @change="changeType"
-          :filter-list="filterList"
-          :if-need-confirm="false"
-          ref="filter"
-        ></filter-modal>
-      </view>
-    </cell-item>
+    <view class="orderlist-wrap">
+      <cell-item slot-right :border="false">
+        <view @tap="showFilter">
+          <text>状态：{{ filterSelected.label }}</text>
+          <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
+          <filter-modal
+            v-model="show"
+            @confirm="confirm"
+            @change="changeType"
+            :filter-list="filterList"
+            :if-need-confirm="false"
+            ref="filter"
+          ></filter-modal>
+        </view>
+      </cell-item>
+    </view>
     <picker
       mode="date"
       :value="date"

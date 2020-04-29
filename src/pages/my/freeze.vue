@@ -140,4 +140,7 @@ page {
 .freeze-head__money {
   justify-content: flex-end;
 }
+.scroll-y {
+  max-height: calc(100vh - 148rpx);
+}
 </style>
