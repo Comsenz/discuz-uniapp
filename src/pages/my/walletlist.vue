@@ -9,6 +9,7 @@
           @confirm="confirm"
           :filter-list="filterList"
           :if-need-confirm="false"
+          ref="filter"
         ></filter-modal>
       </view>
     </cell-item>
@@ -28,6 +29,8 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
+        @scrolltoupper="refresh"
+        show-scrollbar="false"
         class="scroll-y"
       >
         <cell-item
@@ -38,6 +41,7 @@
           :addon="item.change_available_amount"
         ></cell-item>
       </scroll-view>
+      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
@@ -46,11 +50,13 @@
 import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
 import { status } from 'jsonapi-vuex';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
     filterModal,
+    loadMore,
   },
   data: () => {
     const date = new Date();
@@ -58,8 +64,9 @@ export default {
     const month = date.getMonth() + 1;
     const currentDate = `${year}-${month}`;
     return {
+      loadingType: 'more',
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,
@@ -69,14 +76,14 @@ export default {
         {
           title: '类型',
           data: [
-            { label: '所有', value: '', selected: false },
-            { label: '提现冻结', value: 10, selected: false },
-            { label: '提现成功', value: 11, selected: false },
-            { label: '提现解冻', value: 12, selected: false },
-            { label: '注册收入', value: 30, selected: false },
-            { label: '打赏收入', value: 31, selected: false },
-            { label: '人工收入', value: 32, selected: false },
-            { label: '人工支出', value: 50, selected: false },
+            { label: '所有', value: '' },
+            { label: '提现冻结', value: 10 },
+            { label: '提现成功', value: 11 },
+            { label: '提现解冻', value: 12 },
+            { label: '注册收入', value: 30 },
+            { label: '打赏收入', value: 31 },
+            { label: '人工收入', value: 32 },
+            { label: '人工支出', value: 50 },
           ],
         },
       ],
@@ -87,35 +94,39 @@ export default {
   },
   methods: {
     confirm(e) {
-      this.filterSelected = { ...e[0] };
-      this.getList({ change_type: e[0].value });
+      this.filterSelected = { ...e[0].data };
+      this.getList('filter');
+    },
+    changeType(e) {
+      this.filterList = e;
     },
     showFilter() {
       this.show = true;
+      this.$refs.filter.setData();
     },
     // 日期选中
     bindDateChange(e) {
       this.date = e.target.value;
-      this.pageNum = 1;
-      this.dataList = [];
-      this.getList();
+      this.getList('filter');
     },
-    getList(obj) {
+    getList(type) {
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       // change_type 10提现冻结，11提现成功，12提现解冻，30注册收入，31打赏收入，32人工收入，50人工支出
       const params = {
         include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
         'filter[user]': 1,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
         'filter[end_time]': `${this.date}-${days}-00-00-00 `,
       };
-      if (obj && obj.change_type) {
+      if (type && type === 'filter') {
         params.pageNum = 1;
         this.dataList = [];
-        params['filter[change_type]'] = obj.change_type;
+      }
+      if (this.filterSelected.value) {
+        params['filter[change_type]'] = this.filterSelected.value;
       }
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/log', { params }]))
@@ -125,16 +136,23 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.dataList = Object.assign(data, this.dataList);
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = { ...data, ...this.dataList };
         });
     },
     // 下拉加载
     pullDown() {
-      console.log(this.pageNum * this.pageSize);
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
         this.getList();
+      } else {
+        this.loadingType = 'nomore';
       }
+    },
+    refresh() {
+      this.pageNum = 1;
+      this.data = [];
+      this.getList();
     },
   },
 };
@@ -188,6 +206,6 @@ page {
   line-height: 78rpx;
 }
 .scroll-y {
-  height: calc(100vh - 148rpx);
+  max-height: calc(100vh - 148rpx);
 }
 </style>

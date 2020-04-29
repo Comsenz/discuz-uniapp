@@ -1,8 +1,9 @@
 <template>
   <qui-page>
     <view class="content" v-for="item in allThreads" :key="item.id">
-      <view>{{ item.user.username }}: {{ item.title }}</view>
+      <view>{{ item.user.attributes.username }}: {{ item.attributes.title }}</view>
     </view>
+    <button @click="click">跳转消息页</button>
   </qui-page>
 </template>
 
@@ -20,12 +21,10 @@ export default {
     this.getThreads();
   },
   methods: {
-    getThreads() {
-      const params = {
-        'page[size]': 10,
-        'page[number]': 1,
-      };
-      this.$store.dispatch('jv/get', ['threads', { params }]);
+    click() {
+      uni.navigateTo({
+        url: '../message/index',
+      });
     },
   },
 };

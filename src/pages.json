@@ -27,7 +27,7 @@
       "style": {
         "navigationBarTitleText": "我的"
       }
-    },	
+    },
     {
       "path": "pages/my/profile",
       "style": {
@@ -74,7 +74,51 @@
       "path": "pages/profile/index",
       "style": {
         "navigationBarTitleText": "个人主页",
-        "enablePullDownRefresh":true
+        "enablePullDownRefresh": true
+      }
+    },
+    // 消息页面
+    {
+      "path": "pages/message/index",
+      "style": {
+        "navigationBarTitleText": "消息"
+      }
+    },
+    {
+      "path": "pages/message/related",
+      "style": {
+        "navigationBarTitleText": "@我的"
+      }
+    },
+    {
+      "path": "pages/message/replied",
+      "style": {
+        "navigationBarTitleText": "回复我的"
+      }
+    },
+    {
+      "path": "pages/message/liked",
+      "style": {
+        "navigationBarTitleText": "点赞我的"
+      }
+    },
+    {
+      "path": "pages/message/rewarded",
+      "style": {
+        "navigationBarTitleText": "支付我的"
+      }
+    },
+    {
+      "path": "pages/message/system",
+      "style": {
+        "navigationBarTitleText": "系统通知"
+      }
+    },
+    {
+      "path": "pages/message/chat",
+      "style": {
+        "navigationBarTitleText": "聊天室",
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -108,28 +152,78 @@
         "navigationStyle": "custom"
       }
     },
+    // 海报分享
     {
       "path": "pages/postercharacte/index",
       "style": {
         "navigationBarTitleText": "分享海报"
       }
     },
+    // 修改用户信息
     {
-      "path": "pages/channame/index",
+      "path": "pages/modify/editusername",
       "style": {
-        "navigationBarTitleText": "修改名字"
+        "navigationBarTitleText": "修改用户名"
       }
     },
     {
-      "path": "pages/setphon/index",
+      "path": "pages/modify/mobile",
+      "style": {
+        "navigationBarTitleText": "修改手机号"
+      }
+    },
+    {
+      "path": "pages/modify/setphon",
       "style": {
         "navigationBarTitleText": "设置新手机"
       }
     },
     {
-      "path": "pages/mobphon/index",
+      "path": "pages/modify/paypwd",
       "style": {
-        "navigationBarTitleText": "修改手机号"
+        "navigationBarTitleText": "设置支付密码"
+      }
+    },
+    {
+      "path": "pages/modify/withdrawals",
+      "style": {
+        "navigationBarTitleText": "提现"
+      }
+    },
+    {
+      "path": "pages/modify/editpwd",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/realname",
+      "style": {
+        "navigationBarTitleText": "实名认证"
+      }
+    },
+    {
+      "path": "pages/modify/signature",
+      "style": {
+        "navigationBarTitleText": "签名"
+      }
+    },
+    {
+      "path": "pages/modify/newpwd",
+      "style": {
+        "navigationBarTitleText": "设置新密码"
+      }
+    },
+    {
+      "path": "pages/modify/findpwd",
+      "style": {
+        "navigationBarTitleText": "找回密码"
+      }
+    },
+    {
+      "path": "pages/modify/authen",
+      "style": {
+        "navigationBarTitleText": "验证身份"
       }
     }
   ],
@@ -138,15 +232,16 @@
     "navigationBarTitleText": "",
     "navigationBarBackgroundColor": "#fff",
     "backgroundColor": "#F8F8F8",
-    "navigationStyle": "custom",
-    "usingComponents":{
-      "painter":"/wxcomponents/painter/painter"
+    // "navigationStyle": "custom",
+    "usingComponents": {
+      "painter": "/wxcomponents/painter/painter"
     },
     "h5": {
       // h5 不显示顶部导航栏
       "titleNView": false
+    },
+    "app-plus": {
+      "softinputMode": "adjustResize"
     }
   }
 }
-
-

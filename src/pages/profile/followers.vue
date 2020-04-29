@@ -5,6 +5,8 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
+        @scrolltoupper="refresh"
+        show-scrollbar="false"
         class="scroll-y"
       >
         <view
@@ -22,24 +24,24 @@
           ></image>
           <cell-item :title="followerItem.fromUser.username" slot-right>
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-            <view class="follow-content__items__operate">
+            <view class="follow-content__items__operate" @tap="addFollow(followerItem.fromUser)">
               <text>
                 {{
-                  followingItem.toUser.follow == 0
+                  followerItem.fromUser.follow == 0
                     ? '关注'
-                    : followingItem.toUser.follow == 1
+                    : followerItem.fromUser.follow == 1
                     ? '已关注'
                     : '互相关注'
                 }}
               </text>
               <qui-icon
                 class="text"
-                :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
+                :name="followerItem.fromUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
                 size="16"
                 :color="
-                  followingItem.toUser.follow == 0
+                  followerItem.fromUser.follow == 0
                     ? '#777'
-                    : followingItem.toUser.follow == 1
+                    : followerItem.fromUser.follow == 1
                     ? '#ddd'
                     : '#ff8888'
                 "
@@ -48,6 +50,7 @@
           </cell-item>
         </view>
       </scroll-view>
+      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
@@ -55,10 +58,12 @@
 <script>
 import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
+    loadMore,
   },
   props: {
     userId: {
@@ -71,7 +76,7 @@ export default {
       loadingType: 'more',
       followerList: [],
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
     };
   },
@@ -84,8 +89,8 @@ export default {
       const params = {
         include: ['fromUser', 'fromUser.groups'],
         'filter[type]': 2,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[user_id]': this.userId,
       };
       status
@@ -96,8 +101,12 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.followerList = Object.assign(data, this.followerList);
-          console.log(data);
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          if (this.totalData === 0) {
+            this.followerList = [];
+          } else {
+            this.followerList = { ...this.followerList, ...data };
+          }
         });
     },
     // 添加关注
@@ -112,8 +121,45 @@ export default {
     pullDown() {
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
-        this.getFollowingList(this.pageNum);
+        this.getFollowerList(this.pageNum);
+      } else {
+        this.loadingType = 'nomore';
       }
+    },
+    refresh() {
+      this.pageNum = 1;
+      this.followerList = [];
+      this.getFollowerList();
+    },
+    // 添加关注
+    addFollow(userInfo) {
+      if (userInfo.follow !== 0) {
+        this.deleteFollow(userInfo);
+        return;
+      }
+      const params = {
+        _jv: {
+          type: 'follow',
+        },
+        type: 'user_follow',
+        to_user_id: userInfo.id,
+      };
+      status
+        .run(() => this.$store.dispatch('jv/post', params))
+        .then(() => {
+          this.$emit('changeFollow', { userId: this.userId });
+          this.getFollowerList();
+        })
+        .catch(err => {
+          console.log('verify', err);
+        });
+    },
+    // 取消关注
+    deleteFollow(userInfo) {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+        this.$emit('changeFollow', { userId: this.userId });
+        this.getFollowerList();
+      });
     },
   },
 };

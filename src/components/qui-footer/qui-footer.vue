@@ -50,6 +50,10 @@ export default {
           url: item.url,
         });
       }
+      // 跳转到消息页面
+      // uni.navigateTo({
+      //   url: '../message/index',
+      // });
     },
     footerOpen(evt) {
       this.$emit('click', evt);

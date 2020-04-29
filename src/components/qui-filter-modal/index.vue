@@ -1,5 +1,12 @@
 <template>
-  <view class="filter-modal" :class="{ show: showValue }" @tap.stop="cancel">
+  <view
+    class="filter-modal"
+    :class="{ show: showValue }"
+    @tap.stop="cancel"
+    :style="{
+      top: top + 'rpx',
+    }"
+  >
     <view class="filter-modal__content" v-if="showValue" @tap.stop>
       <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
         <view class="filter-modal__content__item-title">{{ item.title }}</view>
@@ -27,21 +34,21 @@
  * @property {Boolean} value 显示隐藏 - 默认： 否
  * @property {Array} selectedData 选中的items 
  * @property {Boolean} ifNeedConfirm 是否需要确定按钮
- * @property {Array} filterList 筛选条件 - 数据格式 
+ * @property {Array} filterList 筛选条件 - 数据格式  默认是false
         [{
           title: '板块1',
           data: [
             { label: '细类1', value: '1',selected:true },
-            { label: '细类2', value: '2' ,selected:'false},
+            { label: '细类2', value: '2' ,selected:false},
           ],
         },
         {
           title: '板块2',
           data: [
-            { label: '细类1', value: '1' ,selected:'false},
-            { label: '细类2', value: '1' ,selected:'false},
+            { label: '细类1', value: '1' ,selected:false},
+            { label: '细类2', value: '1' ,selected:false},
           ],
-        },],
+        }],
  * @event {Function} confirm  点击确定
  * @event {Function} cancel  取消事件
  * @event {Function} changeSelected  切换选中
@@ -62,11 +69,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    multiSelect: {
+      type: Boolean,
+      default: false,
+    },
     filterList: {
       type: Array,
       default: () => {
         return [];
       },
+    },
+    top: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
@@ -86,7 +101,16 @@ export default {
   methods: {
     confirm() {
       this.showValue = false;
+      // 如果没有选中默认给每项的第一项
+      // const data = [];
+      this.selectedData.forEach((v, i) => {
+        if (v.data.length === 0) {
+          this.filterList[i].data[0].selected = true;
+          this.selectedData[i].data.push(this.filterList[i].data[0]);
+        }
+      });
       this.$emit('confirm', this.selectedData);
+      this.$emit('change', this.filterList);
       this.selectedData = [];
     },
     cancel() {
@@ -94,21 +118,48 @@ export default {
       this.$emit('cancel');
       this.selectedData = [];
     },
+    // dataIndex : 板块index  filterIndex : 细类index
     changeSelected(item, dataIndex, filterIndex) {
-      if (!this.ifNeedConfirm) {
-        this.selectedData.push(item);
-        this.confirm();
-        return;
-      }
-      // 设置选中取消
-      const current = this.filterList[dataIndex].data[filterIndex];
-      if (current.selected) {
-        current.selected = false;
-        this.selectedData = this.selectedData.filter(obj => obj.value !== item.value);
+      // 区分单选多选
+      if (!this.multiSelect) {
+        const moduleData = this.filterList[dataIndex].data;
+        moduleData.forEach((v, index) => {
+          moduleData[index].selected = index === filterIndex;
+        });
+        this.selectedData[dataIndex].data = item;
+        // 不需要确定按钮
+        if (!this.ifNeedConfirm) {
+          this.confirm();
+        }
       } else {
-        current.selected = true;
-        this.selectedData.push(item);
+        // const moduleData = this.filterList[dataIndex].data;
+        // if (moduleData.selected) {
+        //   this.filterList[dataIndex].data.selected = false;
+        //   this.filterList[dataIndex].data.splice(filterIndex, 1);
+        // } else {
+        //   this.filterList[dataIndex].data.selected = true;
+        //   this.filterList[dataIndex].data.push(item);
+        // }
       }
+      // 动态改变数据
+      this.$emit('change', this.filterList);
+    },
+    // 传入的值放入选中里面,保证按照分类顺序展示
+    setData() {
+      const selectedData = [];
+      this.filterList.forEach((v, i) => {
+        let flag = false;
+        v.data.forEach(item => {
+          if (item.selected) {
+            flag = true;
+            selectedData[i] = { title: v.title, data: item };
+          }
+        });
+        if (!flag) {
+          selectedData[i] = { title: v.title, data: [] };
+        }
+      });
+      this.selectedData = selectedData;
     },
   },
 };
@@ -117,7 +168,6 @@ export default {
 <style lang="scss">
 .filter-modal {
   position: fixed;
-  top: 0;
   right: 0;
   bottom: 0;
   left: 0;

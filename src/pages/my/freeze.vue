@@ -16,6 +16,8 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
+        @scrolltoupper="refresh"
+        show-scrollbar="false"
         class="scroll-y"
       >
         <cell-item
@@ -27,16 +29,19 @@
           :brief-right="freezeItem.created_at"
         ></cell-item>
       </scroll-view>
+      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
 
 <script>
 import cellItem from '@/components/qui-cell-item';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
+    loadMore,
   },
   onLoad(params) {
     this.totalamount = params.totalamount || 0;
@@ -44,8 +49,9 @@ export default {
   },
   data() {
     return {
+      loadingType: 'more',
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       freezelist: [],
       totalamount: 0,
@@ -57,6 +63,8 @@ export default {
       const params = {
         'filter[user]': 1,
         'filter[change_type]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         // eslint-disable-next-line no-underscore-dangle
@@ -64,16 +72,23 @@ export default {
         const data = JSON.parse(JSON.stringify(res));
         // eslint-disable-next-line no-underscore-dangle
         delete data._jv;
-        this.freezelist = Object.assign(data, this.freezelist);
-        console.log(res);
+        this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+        this.freezelist = { ...data, ...this.freezelist };
       });
     },
     // 下拉加载
     pullDown() {
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
-        this.getFreezelist();
+        this.freezelist();
+      } else {
+        this.loadingType = 'nomore';
       }
+    },
+    refresh() {
+      this.pageNum = 1;
+      this.freezelist = [];
+      this.getFreezelist();
     },
   },
 };

@@ -9,6 +9,7 @@
 @getdata="btndata" 
 :title="Boolean"
 :text="text"
+:number="password"
 ></qui-input-code>
 ```
 ### Props 属性说明
@@ -16,4 +17,5 @@
 | 参数 | 说明 | 类型 | 默认值 |
 | ---- | ---- | ---- | ---- |
 | title | 判断输入码是否正确，不正确传入false正确返回true | Boolean | false |
-| text | 输入错后提示信息 | string | 输入错误 |
+| text | 输入错误后提示信息 | string | 输入错误 |
+| number | input的type类型 | string | number |
