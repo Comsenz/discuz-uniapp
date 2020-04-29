@@ -9,7 +9,13 @@
         @click="clickUniListItem(item)"
       >
         <template v-slot:right="">
-          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
+          <uni-icons
+            class="red-circle"
+            v-if="item.unReadNum > 0"
+            type="smallcircle-filled"
+            color="red"
+            size="7"
+          ></uni-icons>
         </template>
       </uni-list-item>
     </uni-list>
@@ -20,7 +26,7 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       show-icon="true"
-      class="scroll-Y"
+      class="scroll-y"
     >
       <view
         class="dialog-box"
@@ -65,8 +71,9 @@
         </view>
         <view class="dialog-box__con">{{ dialog.dialogMessage.message_text }}</view>
       </view>
+      <uni-load-more :status="loadingType"></uni-load-more>
     </scroll-view>
-    <uni-load-more :status="loadingType"></uni-load-more>
+    <qui-footer @click="footerOpen" :tabs="tabs" :post-img="postImg"></qui-footer>
   </view>
 </template>
 
@@ -84,13 +91,33 @@ export default {
   data() {
     return {
       list: [
-        { id: 1, title: '@我的', type: 'related' },
-        { id: 2, title: '回复我的', type: 'replied' },
-        { id: 3, title: '点赞我的', type: 'liked' },
-        { id: 4, title: '支付我的', type: 'rewarded' },
-        { id: 5, title: '系统通知', type: 'system' },
+        { id: 1, title: '@我的', type: 'related', unReadNum: 0 },
+        { id: 2, title: '回复我的', type: 'replied', unReadNum: 0 },
+        { id: 3, title: '点赞我的', type: 'liked', unReadNum: 0 },
+        { id: 4, title: '支付我的', type: 'rewarded', unReadNum: 0 },
+        { id: 5, title: '系统通知', type: 'system', unReadNum: 0 },
       ],
       loadingType: 'more',
+      tabs: [
+        {
+          tabsName: '圈子',
+          tabsIcon: 'icon-home',
+          id: 1,
+        },
+        {
+          tabsName: '消息',
+          tabsIcon: 'icon-message',
+          id: 2,
+          url: '../message/index',
+        },
+        {
+          tabsName: '我',
+          tabsIcon: 'icon-mine',
+          id: 3,
+          url: '../my/index',
+        },
+      ],
+      postImg: '../assets.publish.svg',
     };
   },
   onLoad() {
@@ -117,12 +144,6 @@ export default {
       console.log('处理之后的数据', list);
       return list;
     },
-    // 获取未读通知
-    allUnreadNotificationNum() {
-      const num = this.$store.getters['jv/get']('users');
-      console.log('请求未读通知条数返回的结果：', num);
-      return num;
-    },
   },
   methods: {
     // 调用 会话列表 的接口
@@ -135,11 +156,19 @@ export default {
 
     // 调用 未读通知数 的接口
     getUnreadNotificationNum() {
-      const id = 3;
+      const id = 1;
       const params = {
         include: ['groups'],
       };
-      this.$store.dispatch('jv/get', [`users/${id}`, { params }]);
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
+        this.list[0].unReadNum = res.typeUnreadNotifications.related;
+        this.list[1].unReadNum = res.typeUnreadNotifications.replied;
+        this.list[2].unReadNum = res.typeUnreadNotifications.liked;
+        this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
+        this.list[4].unReadNum = res.typeUnreadNotifications.system;
+        console.log(res);
+      });
     },
 
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面
@@ -157,6 +186,8 @@ export default {
         url: '../message/chat',
       });
     },
+
+    // 滚动加载更多
     pullDown(e) {
       console.log(e);
       this.loadingType = 'loading';
@@ -185,6 +216,10 @@ export default {
 
 .red-circle {
   display: flex;
+}
+
+.scroll-y {
+  height: calc(100vh - 300rpx);
 }
 
 .dialog-box {
