@@ -126,7 +126,8 @@
       "style": {
         "navigationBarTitleText": "发布",
         "navigationBarBackgroundColor": "#fff",
-        "navigationBarTextStyle": "black"
+        "navigationBarTextStyle": "black",
+        "navigationStyle": "default"
       }
     },
     {
@@ -151,64 +152,78 @@
         "navigationStyle": "custom"
       }
     },
+    // 海报分享
     {
       "path": "pages/postercharacte/index",
       "style": {
         "navigationBarTitleText": "分享海报"
       }
     },
+    // 修改用户信息
     {
-      "path": "pages/modify/authen",
+      "path": "pages/modify/editusername",
       "style": {
-        "navigationBarTitleText": "验证神身份"
+        "navigationBarTitleText": "修改用户名"
       }
     },
     {
-      "path": "pages/modify/setlogpas",
-      "style": {
-        "navigationBarTitleText": "修改密码"
-      }
-    },
-    {
-      "path": "pages/modify/retireve",
-      "style": {
-        "navigationBarTitleText": "修改密码"
-      }
-    },
-    {
-      "path": "pages/modify/setpassword",
-      "style": {
-        "navigationBarTitleText": "设置支付密码"
-      }
-    },
-    {
-      "path": "pages/modify/tica",
-      "style": {
-        "navigationBarTitleText": "实名认证"
-      }
-    },
-    {
-      "path": "pages/setphon/index",
-      "style": {
-        "navigationBarTitleText": "设置新手机"
-      }
-    },
-    {
-      "path": "pages/mobphon/index",
+      "path": "pages/modify/mobile",
       "style": {
         "navigationBarTitleText": "修改手机号"
       }
     },
     {
-      "path": "pages/modify/auto",
+      "path": "pages/modify/setphon",
+      "style": {
+        "navigationBarTitleText": "设置新手机"
+      }
+    },
+    {
+      "path": "pages/modify/paypwd",
+      "style": {
+        "navigationBarTitleText": "设置支付密码"
+      }
+    },
+    {
+      "path": "pages/modify/withdrawals",
+      "style": {
+        "navigationBarTitleText": "提现"
+      }
+    },
+    {
+      "path": "pages/modify/editpwd",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/modify/realname",
+      "style": {
+        "navigationBarTitleText": "实名认证"
+      }
+    },
+    {
+      "path": "pages/modify/signature",
       "style": {
         "navigationBarTitleText": "签名"
       }
     },
     {
-      "path": "pages/modify/channame",
+      "path": "pages/modify/newpwd",
       "style": {
-        "navigationBarTitleText": "修改名字"
+        "navigationBarTitleText": "设置新密码"
+      }
+    },
+    {
+      "path": "pages/modify/findpwd",
+      "style": {
+        "navigationBarTitleText": "找回密码"
+      }
+    },
+    {
+      "path": "pages/modify/authen",
+      "style": {
+        "navigationBarTitleText": "验证身份"
       }
     }
   ],

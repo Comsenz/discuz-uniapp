@@ -57,6 +57,7 @@ export default {
   components: { quiButton },
   data() {
     return {
+      userid: 24,
       fun: true,
       valueused: '',
       valuenew: '',
@@ -69,6 +70,9 @@ export default {
       disab: false,
     };
   },
+  // onLoad(arr) {
+  //   this.userid = arr.id;
+  // },
   methods: {
     submission() {
       if (this.valuetone !== this.valuenew) {
@@ -86,7 +90,7 @@ export default {
       const params = {
         _jv: {
           type: 'users',
-          id: 24,
+          id: this.userid,
         },
         password: this.valueused,
         newPassword: this.valuenew,
@@ -99,18 +103,19 @@ export default {
         })
         .catch(err => {
           console.log('users', err);
+          /* eslint-disable */
           if (err.statusCode === 422) {
             this.judge2 = true;
-            [this.text1.data.errors[0].detail[0]] = err;
+            this.text1 = err.data.errors[0].detail[0];
           } else if (err.statusCode === 500) {
             this.judge = true;
-            [this.text.data.errors[0].detail[0]] = err;
+            this.text = err.data.errors[0].detail[0];
           }
         });
     },
     runretire() {
       uni.navigateTo({
-        url: '/pages/modify/retireve',
+        url: '/pages/modify/findpwd?user=24&pas=reset_pwd',
       });
     },
   },
