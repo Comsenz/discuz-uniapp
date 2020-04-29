@@ -304,6 +304,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .themeCount {
   position: relative;
+  box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
   .addFine {
     position: absolute;
     top: -10rpx;

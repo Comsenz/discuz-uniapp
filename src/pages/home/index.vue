@@ -54,9 +54,9 @@
               @tap="toggleTab(item._jv.id)"
             >
               {{ item.name }}
+              <view class="scroll-tab-line"></view>
             </view>
           </block>
-          <view class="scroll-tab-line"></view>
         </scroll-view>
       </view>
     </view>
@@ -667,7 +667,7 @@ export default {
   // padding: 15px;
 }
 .popup-share-box {
-  // width: 120rpx;
+  width: 120rpx;
   height: 120rpx;
   line-height: 120rpx;
   background: --color(--qui-BG-2);
@@ -680,7 +680,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 120rpx;
-  height: 157rpx;
+  height: 164rpx;
   // background: --color(--qui-BG-2);
 }
 .popup-share-content-image {
@@ -689,7 +689,7 @@ export default {
   /* #endif */
   flex-direction: row;
   justify-content: center;
-  align-items: center;
+  // align-items: center;
   width: 120rpx;
   height: 120rpx;
   overflow: hidden;
@@ -703,7 +703,6 @@ export default {
 }
 .popup-share-content-text {
   padding-top: 5px;
-  padding-bottom: 10px;
   font-size: $fg-f26;
   color: #333;
 }
