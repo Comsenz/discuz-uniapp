@@ -1,6 +1,6 @@
 <template>
   <!-- 列表 -->
-  <view class="det-person-box" v-if="showStatus">
+  <view class="det-person-box">
     <view class="det-per-number" v-if="personNum != 0">
       {{ personNum }}{{ t.persenUnit }}{{ type }}
     </view>
@@ -36,11 +36,6 @@
 <script>
 export default {
   props: {
-    // 是否显示
-    showStatus: {
-      default: true,
-      type: Boolean,
-    },
     // 类型
     type: {
       default: '类型',

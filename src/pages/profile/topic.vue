@@ -3,33 +3,43 @@
     <uni-popup ref="popup" type="bottom">
       <qui-drawer :bottom-data="bottomData"></qui-drawer>
     </uni-popup>
-    <qui-content
-      v-for="(item, index) in data"
-      :key="index"
-      :user-name="item.userName"
-      :theme-image="item.themeImage"
-      :theme-status="item.themeStatus"
-      :theme-btn="item.themeBtn"
-      :theme-reward="item.themeReward"
-      :theme-reply-btn="item.themeReplyBtn"
-      :theme-delete-btn="item.themeDeleteBtn"
-      :theme-types="item.themeTypes"
-      :theme-time="item.themeTime"
-      :theme-content="item.themeContent"
-      :theme-like="item.themeLike"
-      :theme-comment="item.themeComment"
-      :tags="item.tags"
-      @click="handleClickShare"
-    ></qui-content>
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      @scrolltolower="pullDown"
+      @scrolltoupper="refresh"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <qui-content
+        v-for="(item, index) in data"
+        :key="index"
+        :user-name="item.user.username"
+        :theme-image="item.user.avatarUrl"
+        :theme-btn="item.canHide"
+        :theme-reply-btn="item.canReply"
+        :theme-types="item.user.showGroups"
+        :theme-time="item.createdAt"
+        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+        :theme-like="item.firstPost.likeCount"
+        :theme-comment="item.firstPost.replyCount"
+        :tags="item.category.name"
+        :images-list="item.firstPost.images"
+        :theme-essence="item.isEssence"
+        @click="handleClickShare"
+      ></qui-content>
+    </scroll-view>
+    <load-more :status="loadingType"></load-more>
   </view>
 </template>
 
 <script>
 import { status } from 'jsonapi-vuex';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    //
+    loadMore,
   },
   props: {
     userId: {
@@ -39,6 +49,12 @@ export default {
   },
   data() {
     return {
+      loadingType: 'more',
+      data: [],
+      flag: true, // 滚动节流
+      totalData: 0, // 总数
+      pageSize: 20,
+      pageNum: 1, // 当前页数
       bottomData: [
         {
           text: '文字',
@@ -59,97 +75,6 @@ export default {
           text: '帖子',
           icon: 'icon-post',
           name: 'sina',
-        },
-      ],
-      data: [
-        {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeStatus: '打赏了我',
-          // themeBtn: 'icon-delete',
-          // themeReward: '1150.50',
-          themeDeleteBtn: '删除',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          themeReplyBtn: 'icon-delete',
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
-        },
-        {
-          userName: '佟掌柜',
-          themeImage: 'https://discuz.chat/static/images/noavatar.gif',
-          themeTypes: '(管理员)',
-          themeTime: '16分钟前 ..',
-          themeContent:
-            '福布斯 2019美国最具创新力领袖 :贝佐斯与马斯克并列榜首（全榜单）】美国知名商业杂志《福布斯》发 布2019美国最具创...',
-          themeLike: 123,
-          themeComment: 317,
-          tags: [
-            {
-              tagName: '女神',
-            },
-            {
-              tagName: '女神经',
-            },
-            {
-              tagName: '女神经病',
-            },
-          ],
         },
       ],
     };
@@ -179,29 +104,63 @@ export default {
         'filter[isDeleted]': 'no',
         include: [
           'user',
-          'firstPost',
           'user.groups',
+          'firstPost',
           'firstPost.images',
-          'lastThreePosts',
-          'lastThreePosts.user',
-          'lastThreePosts.replyUser',
-          'firstPost.likedUsers',
-          'rewardedUsers',
+          'category',
           'threadVideo',
         ],
-        'page[number]': 1,
-        'page[limit]': 20,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[userId]': this.userId,
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          console.log(res);
+          Object.getOwnPropertyNames(res).forEach(key => {
+            // 如果是 _jv 跳过
+            if (key === '_jv') {
+              return;
+            }
+            // groups不存在返回
+            if (!res[key].user.groups) {
+              return;
+            }
+
+            // 循环每个的用户组
+            Object.getOwnPropertyNames(res[key].user.groups).forEach(k => {
+              // 如果是 _jv 跳过
+              if (key === '_jv') {
+                return;
+              }
+
+              // 是否显示用户组
+              const group = res[key].user.groups[k];
+              res[key].user.showGroups = group.isDisplay ? `(${group.name})` : '';
+            });
+          });
+          // eslint-disable-next-line no-underscore-dangle
+          this.totalData = res._jv.json.meta.threadCount;
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.data = data;
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          this.data = { ...data, ...this.data };
         });
+    },
+    // 下拉加载
+    pullDown() {
+      if (this.pageNum * this.pageSize < this.totalData) {
+        this.pageNum += 1;
+        this.loadThreads();
+      } else {
+        this.loadingType = 'nomore';
+      }
+    },
+    refresh() {
+      this.pageNum = 1;
+      this.data = [];
+      this.loadThreads();
     },
   },
 };
@@ -210,5 +169,8 @@ export default {
 /deep/ .themeItem {
   margin-right: 0;
   margin-left: 0;
+}
+.scroll-y {
+  max-height: calc(100vh - 297rpx);
 }
 </style>

@@ -20,14 +20,17 @@
                 <text>私信</text>
               </view>
               <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-              <view class="profile-info__box__detail-operate">
+              <view
+                class="profile-info__box__detail-operate"
+                @tap="userInfo.follow == 0 ? addFollow(userInfo) : deleteFollow(userInfo)"
+              >
                 <qui-icon
                   class="text"
                   :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
                   size="16"
                   :color="userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? '#ddd' : '#ff8888'"
                 ></qui-icon>
-                <text @tap="userInfo.follow == 0 ? addFollow(userInfo) : deleteFollow(userInfo)">
+                <text>
                   {{ userInfo.follow == 0 ? '关注' : userInfo.follow == 1 ? '已关注' : '互相关注' }}
                 </text>
               </view>
@@ -51,10 +54,10 @@
           <topic :user-id="userId"></topic>
         </view>
         <view v-if="current == 1" class="items">
-          <following :user-id="userId"></following>
+          <following :user-id="userId" @changeFollow="changeFollow"></following>
         </view>
         <view v-if="current == 2" class="items">
-          <followers :user-id="userId"></followers>
+          <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
         </view>
         <view v-if="current == 3" class="items">
           <like :user-id="userId"></like>
@@ -114,7 +117,6 @@ export default {
     this.pageType = type;
     this.current = current || 0;
     this.getUserInfo(userId || 1);
-    console.log(params);
   },
   methods: {
     onClickItem(e) {
@@ -130,45 +132,40 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', [`users/${userId}`, { params }]))
         .then(res => {
-          this.items[0].brief = res.threadCount;
-          this.items[1].brief = res.followCount;
-          this.items[2].brief = res.fansCount;
-          this.items[3].brief = res.likedCount;
+          this.items[0].brief = res.threadCount || 0;
+          this.items[1].brief = res.followCount || 0;
+          this.items[2].brief = res.fansCount || 0;
+          this.items[3].brief = res.likedCount || 0;
         });
     },
     // 添加关注
     addFollow(userInfo) {
       const params = {
-        data: {
-          type: 'user_follow',
-          attributes: {
-            to_user_id: userInfo.id,
-          },
+        _jv: {
+          type: 'follow',
         },
+        type: 'user_follow',
+        to_user_id: userInfo.id,
       };
       status
-        .run(() => this.$store.dispatch('jv/post', [`follow`, { params }]))
-        .then(res => {
-          this.getUserInfo();
-          console.log('操作成功！');
-          console.log(res);
+        .run(() => this.$store.dispatch('jv/post', params))
+        .then(() => {
+          this.getUserInfo(this.userId);
+          if (this.$refs.followers) this.$refs.followers.getFollowerList();
+        })
+        .catch(err => {
+          console.log('verify', err);
         });
     },
     // 取消关注
     deleteFollow(userInfo) {
-      // const params = {
-      //   data: {
-      //     type: 'user_follow',
-      //     attributes: {
-      //       to_user_id: userInfo.id,
-      //     },
-      //   },
-      // };
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}`);
-      // this.$store.dispatch('jv/delete', [`follow`, { params }]).then(res => {
-      //   this.getUserInfo();
-      //   console.log(res);
-      // });
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+        this.getUserInfo(this.userId);
+        if (this.$refs.followers) this.$refs.followers.getFollowerList();
+      });
+    },
+    changeFollow(e) {
+      this.getUserInfo(e.userId);
     },
   },
 };

@@ -13,7 +13,7 @@
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
       <text class="circleDet-share" @click="open">
-        <qui-icon :name="iconShare" size="28" color="#fff"></qui-icon>
+        <qui-icon class="qui-icon" name="shareBtn" size="28" color="#c33"></qui-icon>
         {{ share }}
       </text>
     </view>
@@ -51,7 +51,7 @@ export default {
       type: String,
       default: '',
     },
-    iconShare: {
+    shareBtn: {
       type: String,
       default: '',
     },
@@ -73,14 +73,15 @@ export default {
 .header {
   width: 100%;
   height: 400rpx;
-  background-image: url('https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg');
-  // background: #1878f3;
+  background: #1878f3;
   .logo {
     display: block;
     width: 400rpx;
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
+    filter: grayscale(100%);
+    // filter: drop-shadow(18px #fff);
     // background-image: url('https://discuz.chat/static/images/logo.png'), linear-gradient(#f00, #f00);
     // background-blend-mode: lighten;
     // background-size: cover;
@@ -107,6 +108,11 @@ export default {
     }
     .circleDet-share {
       color: --color(--qui-BG-2);
+    }
+    .qui-icon {
+      width: 30rpx;
+      height: 30rpx;
+      background: chartreuse;
     }
   }
 }

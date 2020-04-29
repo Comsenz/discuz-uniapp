@@ -15,14 +15,24 @@
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
-            <span class="themeItem__header__title__username">{{ userName }}</span>
-
-            <span class="themeItem__header__title__isAdmin">
-              {{ userRole }}
+            <span class="themeItem__header__title__username" @click="personJump">
+              {{ userName }}
             </span>
+
+            <span class="themeItem__header__title__isAdmin">（{{ userRole }}）</span>
             <view class="themeItem__header__title__jumpBtn">></view>
           </view>
           <view class="themeItem__header__title__time">{{ commentTime }}</view>
+        </view>
+        <view class="themeItem__header__r">
+          <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
+          <view v-else @click="commentLikeClick" class="comment-like">
+            <qui-icon v-if="isLiked" name="icon-liked" class="like"></qui-icon>
+            <qui-icon v-else name="icon-like" class="like" size="30"></qui-icon>
+            <view class="comment-like-count">
+              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}{{ isLiked }}
+            </view>
+          </view>
         </view>
       </view>
 
@@ -30,8 +40,7 @@
         <view class="themeItem__content__text" @click="commentJump">
           <rich-text :nodes="commentContent"></rich-text>
         </view>
-
-        <view v-if="Object.keys(imagesList).length == 1">
+        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -44,7 +53,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length == 2">
+        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -57,7 +66,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length >= 3">
+        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -74,21 +83,35 @@
             ></image>
           </view>
         </view>
+        <qui-reply
+          v-if="Object.keys(replyList).length > 0"
+          :reply-list="replyList"
+          @commentJump="commentJump"
+        ></qui-reply>
       </view>
 
       <view class="themeItem__comment"></view>
-
-      <view class="themeItem__footer">
-        <view class="themeItem__footer__themeType2">
-          <view class="themeItem__footer__themeType2__item" @click="deleteComment">
-            <qui-icon
-              class="text"
-              name="icon-delete"
-              size="18"
-              color="#AAA"
-              @click="handleClick"
-            ></qui-icon>
-            {{ t.delete }}
+      <view
+        class="themeItem__footer"
+        :style="{ justifyContent: replyCount > 0 ? 'space-between' : 'flex-end' }"
+      >
+        <view class="themeItem__footer__l" v-if="replyCount > 0" @click="commentJump">
+          <view class="themeItem__footer__con">{{ replyCount }}{{ t.item }}{{ t.reply }}</view>
+          <qui-icon
+            class="count-jt"
+            name="icon-folding-r"
+            size="28"
+            @click="handleClick"
+          ></qui-icon>
+        </view>
+        <view class="themeItem__footer__r">
+          <view class="footer__r__child" v-if="canDelete" @click="deleteComment">
+            <qui-icon class="icon" name="icon-delete" size="26" color="#AAA"></qui-icon>
+            <view class="themeItem__footer__con">{{ t.delete }}</view>
+          </view>
+          <view class="footer__r__child" @click="replyComment">
+            <qui-icon class="icon" name="icon-comments" size="26" color="#AAA"></qui-icon>
+            <view class="themeItem__footer__con">{{ t.reply }}</view>
           </view>
         </view>
       </view>
@@ -119,10 +142,31 @@ export default {
       type: String,
       default: '',
     },
+    // 回复的审核状态
+    commentStatus: {
+      type: [String, Number],
+      default: '1',
+    },
+    isLiked: {
+      type: Boolean,
+      default: false,
+    },
     // 回复的内容
     commentContent: {
       type: String,
       default: '',
+    },
+    // 回复的评论
+    replyList: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    // 评论的回复数
+    replyCount: {
+      type: Number,
+      default: 0,
     },
     // 回复的时间
     commentTime: {
@@ -143,8 +187,13 @@ export default {
     },
     // 回复的点赞数
     commentLikeCount: {
-      type: [Number, String],
-      default: '0',
+      type: Number,
+      default: 0,
+    },
+    // 是否显示删除
+    canDelete: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => {
@@ -167,9 +216,18 @@ export default {
     personJump() {
       this.$emit('personJump');
     },
+    // 评论点赞
+    commentLikeClick() {
+      this.$emit('commentLikeClick');
+    },
     // 删除事件
     deleteComment() {
       this.$emit('deleteComment');
+    },
+    // 回复事件
+    replyComment() {
+      console.log('评论回复');
+      this.$emit('replyComment');
     },
     // 点击图片事件(默认参数图片id)
     imageClick(imageId) {
@@ -198,6 +256,7 @@ export default {
 
   &__header {
     display: flex;
+    justify-content: space-between;
     width: 100%;
     height: 80rpx;
     margin-bottom: 12rpx;
@@ -253,11 +312,18 @@ export default {
         color: #ddd;
       }
     }
+    &__r {
+      width: 100rpx;
+      .comment-status {
+        font-size: 26rpx;
+        color: --color(--qui-RED);
+        text-align: right;
+      }
+    }
   }
 
   &__content {
     &__text {
-      margin-bottom: 12rpx;
       font-family: $font-family;
       font-size: 28rpx;
       font-weight: 400;
@@ -327,43 +393,66 @@ export default {
       }
     }
   }
-
-  &__footer {
-    &__themeType1 {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 60rpx;
-
-      &__item {
-        font-family: $font-family;
-        font-size: 28rpx;
-        font-weight: 400;
-        line-height: 37rpx;
-        color: rgba(170, 170, 170, 1);
-      }
-
-      text {
-        margin-right: 15rpx;
-      }
-
-      &__greated {
-        color: rgba(221, 221, 221, 1);
-      }
+}
+.themeItem__footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 20rpx;
+  .themeItem__footer__con {
+    font-size: $fg-f28;
+    line-height: 37rpx;
+  }
+  &__l {
+    display: flex;
+    flex-direction: row;
+    line-height: 37rpx;
+    color: --color(--qui-MAIN);
+    text-align: left;
+    align-items: center;
+    .count-jt {
+      padding-left: 10rpx;
+      line-height: 37rpx;
+      color: --color(--qui-MAIN);
     }
-
-    &__themeType2 {
-      &__item {
-        font-family: $font-family;
-        font-size: 28rpx;
-        font-weight: 400;
-        line-height: 37rpx;
-        color: rgba(170, 170, 170, 1);
-        text-align: right;
-      }
-      text {
-        margin-right: 15rpx;
-      }
-    }
+  }
+  &__r {
+    display: flex;
+    flex-direction: row;
+    line-height: 37rpx;
+    color: rgba(170, 170, 170, 1);
+    text-align: right;
+    align-items: center;
+  }
+}
+.footer__r__child {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 120rpx;
+  text-align: right;
+  .icon {
+    padding-right: 10rpx;
+    font-size: $fg-f28;
+    line-height: 37rpx;
+    color: rgba(170, 170, 170, 1);
+  }
+}
+.comment-like {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  .like {
+    margin-right: 15rpx;
+    font-size: 30rpx;
+    line-height: 37rpx;
+    color: --color(--qui-FC-777);
+  }
+  .comment-like-count {
+    font-size: $fg-f28;
+    line-height: 37rpx;
+    color: --color(--qui-FC-777);
   }
 }
 </style>

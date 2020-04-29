@@ -15,7 +15,7 @@ const store = new Vuex.Store({
   actions: {},
   getters: {},
   modules: {
-    jv: jsonapiModule(http.request.bind(http), { preserveJson: true }),
+    jv: jsonapiModule(http.request.bind(http), { preserveJson: true, mergeRecords: true }),
     theme,
     atMember,
     forum,

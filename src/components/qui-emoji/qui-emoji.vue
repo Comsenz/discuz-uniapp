@@ -1,7 +1,14 @@
 <template>
   <view
     class="emoji-box"
-    :style="{ position: position, top: top, left: left, right: right, bottom: bottom }"
+    :style="{
+      position: position,
+      top: top,
+      left: left,
+      right: right,
+      bottom: bottom,
+      'border-radius': borderRadius,
+    }"
   >
     <swiper indicator-dots="true">
       <swiper-item v-for="index of getSwiperItem" :key="index">
@@ -12,7 +19,7 @@
             :key="j"
             @click="getEmojiClick(index * 35 + j + 1)"
           >
-            <image class="emoji" :src="data[index * 35 + j + 1].url"></image>
+            <image class="emoji" :src="list[index * 35 + j + 1].url"></image>
           </view>
         </view>
       </swiper-item>
@@ -48,6 +55,10 @@ export default {
       default: '',
       type: String,
     },
+    borderRadius: {
+      default: '0rpx',
+      type: String,
+    },
   },
   computed: {
     getSwiperItem() {
@@ -69,7 +80,6 @@ export default {
   padding: 10rpx 0;
   background-color: #fff;
   border: 1rpx solid #ddd;
-  border-radius: 10rpx;
 
   &__item {
     display: flex;

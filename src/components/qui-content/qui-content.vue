@@ -22,7 +22,9 @@
           <view class="themeItem__header__title__top">
             <span class="themeItem__header__title__username">{{ userName }}</span>
             <span v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
-              {{ themeTypes }}
+              <span v-for="(item, index) in userGroups" :key="index">
+                {{ item.isDisplay ? `(${item.name})` : '' }}
+              </span>
             </span>
             <span v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
               <!-- {{ themeType === '2' ? '回复了我' : '@了我' }} -->
@@ -46,45 +48,43 @@
         <view class="themeItem__content__text">
           <rich-text :nodes="themeContent"></rich-text>
         </view>
-        <!-- <view class="themeItem__content__reply">223344</view> -->
-        <!-- <view class="themeItem__content__img">
-          <image class="themeItem__content__img__item" src="@/static/my.jpeg" alt></image>
-          <image class="themeItem__content__img__item" src="@/static/me.jpeg" alt></image>
-        </view> -->
-        <view v-if="imagesList.length == 1">
+        <view v-if="Object.keys(imagesList).length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length == 2">
+        <view v-if="Object.keys(imagesList).length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length >= 3">
+        <view v-if="Object.keys(imagesList).length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="imagesList.length % 3 != 0"
+              v-if="Object.keys(imagesList).length % 3 != 0"
             ></image>
           </view>
         </view>
@@ -106,21 +106,20 @@
               'themeItem__footer__themeType1__great',
               isGreat && 'themeItem__footer__themeType1__greated',
             ]"
+            @click="handleIsGreat"
           >
-            <qui-icon
-              class="qui-icon"
-              name="icon-like"
-              size="28"
-              color="#AAA"
-              @click="handleClick"
-            ></qui-icon>
-            {{ isGreat ? '已赞' : '赞' }}
-            {{ themeLike }}
+            <qui-icon class="qui-icon" name="icon-liked" size="28" v-if="isGreat"></qui-icon>
+            <qui-icon class="qui-icon" name="icon-like" size="28" v-else></qui-icon>
+            {{ isGreat ? t.giveLikeAlready : t.like }}
+            {{ themeLike === 0 ? '' : themeLike }}
           </view>
 
-          <view class="themeItem__footer__themeType1__item themeItem__footer__themeType1__comment">
-            评论
-            {{ themeComment }}
+          <view
+            class="themeItem__footer__themeType1__item themeItem__footer__themeType1__comment"
+            @click="commentClick"
+          >
+            {{ t.comment }}
+            {{ themeComment == 0 ? '' : themeComment }}
           </view>
 
           <view
@@ -128,7 +127,7 @@
             @click="handleClickShare"
           >
             <qui-icon class="qui-icon" name="icon-share" size="28" color="#AAA"></qui-icon>
-            分享
+            {{ t.share }}
           </view>
         </view>
 
@@ -191,18 +190,20 @@ export default {
       type: String,
       default: '',
     },
-    themeTypes: {
-      type: String,
-      default: '',
+    userGroups: {
+      type: Object,
+      default: () => {
+        return [];
+      },
     },
     themeContent: {
       type: String,
       default: '',
     },
     imagesList: {
-      type: Array,
+      type: Object,
       default: () => {
-        return [];
+        return {};
       },
     },
     themeTime: {
@@ -221,26 +222,48 @@ export default {
       type: String,
       default: '',
     },
-
     tags: {
       type: Array,
       default: () => {
         return [];
       },
     },
+    isGreat: {
+      type: Boolean,
+      default: false,
+    },
+    // 图片裁剪、缩放的模式
+    modeVal: {
+      type: String,
+      default: 'center',
+    },
   },
   data: () => {
     return {
       isAdmin: true,
-      isGreat: false,
+      // isGreat: false,
     };
+  },
+  computed: {
+    // 语言包
+    t() {
+      return this.i18n.t('topic');
+    },
   },
   methods: {
     handleClick() {
       console.log('是分享哦');
     },
+    // 分享按钮点击事件
     handleClickShare(evt) {
       this.$emit('click', evt);
+    },
+    // 点赞按钮点击事件
+    handleIsGreat(evt) {
+      this.$emit('handleIsGreat', evt);
+    },
+    commentClick(evt) {
+      this.$emit('commentClick', evt);
     },
   },
 };
@@ -447,9 +470,9 @@ export default {
         margin-right: 15rpx;
       }
 
-      &__greated {
-        color: rgba(221, 221, 221, 1);
-      }
+      // &__greated {
+      //   // color: rgba(221, 221, 221, 1);
+      // }
     }
 
     &__themeType2 {

@@ -9,6 +9,7 @@
           @confirm="confirm"
           :filter-list="filterList"
           :if-need-confirm="false"
+          ref="filter"
         ></filter-modal>
       </view>
     </cell-item>
@@ -28,6 +29,8 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
+        @scrolltoupper="refresh"
+        show-scrollbar="false"
         class="scroll-y"
       >
         <cell-item
@@ -40,6 +43,7 @@
           :class="item.cash_status === 3 ? '#fa5151' : '#777'"
         ></cell-item>
       </scroll-view>
+      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
@@ -48,11 +52,13 @@
 import cellItem from '@/components/qui-cell-item';
 import filterModal from '@/components/qui-filter-modal';
 import { status } from 'jsonapi-vuex';
+import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
     cellItem,
     filterModal,
+    loadMore,
   },
   data: () => {
     const date = new Date();
@@ -60,8 +66,9 @@ export default {
     const month = date.getMonth() + 1;
     const currentDate = `${year}-${month}`;
     return {
+      loadingType: 'more',
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,
@@ -73,13 +80,13 @@ export default {
         {
           title: '类型',
           data: [
-            { label: '全部', value: '', selected: false },
-            { label: '待审核', value: 1, selected: false },
-            { label: '审核通过', value: 2, selected: false },
-            { label: '审核不通过', value: 3, selected: false },
-            { label: '待打款', value: 4, selected: false },
-            { label: '已打款', value: 5, selected: false },
-            { label: '打款失败', value: 6, selected: false },
+            { label: '全部', value: '' },
+            { label: '待审核', value: 1 },
+            { label: '审核通过', value: 2 },
+            { label: '审核不通过', value: 3 },
+            { label: '待打款', value: 4 },
+            { label: '已打款', value: 5 },
+            { label: '打款失败', value: 6 },
           ],
         },
       ],
@@ -90,33 +97,37 @@ export default {
   },
   methods: {
     confirm(e) {
-      this.filterSelected = { ...e[0] };
-      this.getList({ cash_status: e[0].value });
+      this.filterSelected = { ...e[0].data };
+      this.getList('filter');
+    },
+    changeType(e) {
+      this.filterList = e;
     },
     showFilter() {
       this.show = true;
+      this.$refs.filter.setData();
     },
     // 日期选中
     bindDateChange(e) {
       this.date = e.target.value;
-      this.pageNum = 1;
-      this.dataList = [];
-      this.getList();
+      this.getList('filter');
     },
-    getList(obj) {
+    getList(type) {
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       const params = {
         'filter[user]': 1,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
         'filter[end_time]': `${this.date}-${days}-00-00-00 `,
       };
-      if (obj && obj.cash_status) {
+      if (type && type === 'filter') {
         params.pageNum = 1;
         this.dataList = [];
-        params['filter[cash_status]'] = obj.cash_status;
+      }
+      if (this.filterSelected.value) {
+        params['filter[cash_status]'] = this.filterSelected.value;
       }
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/cash', { params }]))
@@ -127,7 +138,8 @@ export default {
           const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
           delete data._jv;
-          this.dataList = Object.assign(data, this.dataList);
+          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = { ...data, ...this.dataList };
         });
     },
     // 下拉加载
@@ -135,7 +147,14 @@ export default {
       if (this.pageNum * this.pageSize < this.totalData) {
         this.pageNum += 1;
         this.getList();
+      } else {
+        this.loadingType = 'nomore';
       }
+    },
+    refresh() {
+      this.pageNum = 1;
+      this.data = [];
+      this.getList();
     },
   },
 };
@@ -193,6 +212,6 @@ page {
   line-height: 78rpx;
 }
 .scroll-y {
-  height: calc(100vh - 148rpx);
+  max-height: calc(100vh - 148rpx);
 }
 </style>

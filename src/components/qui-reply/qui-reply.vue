@@ -7,10 +7,15 @@
       borderRadius: radiusVal + 'rpx',
     }"
   >
-    <view class="comment-child-reply" v-for="(reply, index) in replyList" :key="index">
-      <view class="reply-user">{{ reply.username }}</view>
-      <view class="reply-connector" v-if="reply.replUsername">{{ t.reply }}</view>
-      <view class="reply-user" v-if="reply.replUsername">{{ reply.replUsername }}</view>
+    <view
+      class="comment-child-reply"
+      v-for="(reply, index) in replyList"
+      :key="index"
+      @click="commentJump"
+    >
+      <view class="reply-user">{{ reply.user.username }}</view>
+      <view class="reply-connector" v-if="reply.replyUser.username">{{ t.reply }}</view>
+      <view class="reply-user" v-if="reply.replyUser.username">{{ reply.replyUser.username }}</view>
       <view class="reply-user">：</view>
       <text class="reply-content">
         {{ reply.content }}
@@ -27,19 +32,21 @@ export default {
       type: String,
       default: '20rpx',
     },
+    // 盒子的背景色
     bgColor: {
       type: String,
       default: '#ededed',
     },
+    // 盒子的圆角
     radiusVal: {
       type: Number,
       default: 10,
     },
     // 评论的回复列表
     replyList: {
-      type: Array,
+      type: Object,
       default: () => {
-        return [];
+        return {};
       },
     },
     // 回复的id
@@ -101,6 +108,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   width: 100%;
+  margin-top: 40rpx;
   border-radius: 10rpx;
   box-sizing: border-box;
 }
