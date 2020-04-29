@@ -28,6 +28,7 @@ export default {
   components: { quiInputCode },
   data() {
     return {
+      userid: 24,
       pas: true,
       sun: false,
       types: 'password',
@@ -39,6 +40,7 @@ export default {
   },
   onLoad() {
     this.senduser();
+    // this.userid = sun.id
   },
   methods: {
     btndata(num) {
@@ -53,7 +55,14 @@ export default {
       this.mobelypas(sum);
     },
     senduser() {
-      const man = status.run(() => this.$store.dispatch('jv/get', 'users/24?include=groups'));
+      const params = {
+        _jv: {
+          type: 'users',
+          id: this.userid,
+        },
+        include: 'groups',
+      };
+      const man = status.run(() => this.$store.dispatch('jv/get', params));
       man.then(res => {
         this.status = res.status;
       });
@@ -63,7 +72,7 @@ export default {
       const params = {
         _jv: {
           type: 'users',
-          id: 24,
+          id: this.userid,
         },
         payPassword: this.inputpas,
         pay_password_confirmation: sum,
@@ -81,7 +90,9 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .setpw-input {
   width: 710rpx;
   height: 200rpx;
@@ -90,7 +101,7 @@ export default {
   opacity: 1;
 }
 .setpw-tit {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
   color: rgba(119, 119, 119, 1);

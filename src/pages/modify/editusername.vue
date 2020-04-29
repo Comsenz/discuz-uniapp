@@ -2,7 +2,11 @@
   <view class="chagepas">
     <view class="chagepas-pas">
       <input type="text" class="chagepas-pas-inpa" v-model="sername" />
-      <button class="chagepas-pas-btn" @click="submission">提交</button>
+      <view class="chagepas-pas-btn">
+        <qui-button type="primary" size="large" :disabled="disab" @click="submission">
+          提交
+        </qui-button>
+      </view>
     </view>
   </view>
 </template>
@@ -17,14 +21,12 @@ export default {
       judge: false,
       sername: '',
       myname: '',
-      userid: '',
+      userid: 24,
     };
   },
   onLoad() {
-    this.$store.dispatch('jv/get', 'users/24?include=groups').then(data => {
-      console.log(data);
-      this.sername = data.username;
-    });
+    this.mytitle();
+    // this.userid = sun.id
   },
   methods: {
     submission() {
@@ -36,7 +38,7 @@ export default {
       const params = {
         _jv: {
           type: 'users',
-          id: 24,
+          id: this.userid,
         },
         username: this.sername,
       };
@@ -49,24 +51,38 @@ export default {
           console.log('失败', err);
         });
     },
+    mytitle() {
+      const params = {
+        _jv: {
+          type: 'users',
+          id: this.userid,
+        },
+        include: 'groups',
+      };
+      this.$store.dispatch('jv/get', params).then(data => {
+        console.log(data);
+        this.sername = data.username;
+      });
+    },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .chagepas {
   width: 100vw;
   height: 100vh;
 }
 .chagepas-pas {
   width: 100%;
-  padding: 31px 0 0 40rpx;
-  opacity: 1;
+  padding: 31rpx 0 0 40rpx;
 }
 .chagepas-pas-inpa {
   width: 100%;
   height: 100rpx;
-  font-size: 34rpx;
+  font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
   text-align: left;
@@ -74,19 +90,7 @@ export default {
   opacity: 1;
 }
 .chagepas-pas-btn {
-  width: 670rpx;
-  height: 90rpx;
   margin: 50rpx 0 0;
-  color: #fff;
-  background: rgba(24, 120, 243, 1);
   border-radius: 5rpx;
-  opacity: 1;
-}
-.chagepas-erro-messag1 {
-  font-size: 24rpx;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: rgba(250, 81, 81, 1);
-  opacity: 1;
 }
 </style>
