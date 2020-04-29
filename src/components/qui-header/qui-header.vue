@@ -80,6 +80,8 @@ export default {
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
+    filter: grayscale(100%);
+    // filter: drop-shadow(18px #fff);
     // background-image: url('https://discuz.chat/static/images/logo.png'), linear-gradient(#f00, #f00);
     // background-blend-mode: lighten;
     // background-size: cover;
