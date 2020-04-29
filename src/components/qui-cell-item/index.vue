@@ -1,5 +1,5 @@
 <template>
-  <view :class="['cell-item', 'cell-item--wrap', { border: border }]" @tap="$_click">
+  <view :class="['cell-item', 'cell-item--wrap', { border: border }, classItem]" @tap="$_click">
     <view class="cell-item__body">
       <view class="cell-item__body__left" v-if="slotLeft">
         <slot></slot>
@@ -10,13 +10,25 @@
       </view>
       <view class="cell-item__body__right" v-if="slotRight">
         <slot></slot>
-        <qui-icon class="text" name="icon-folding-r" size="16" color="#ddd" v-if="arrow"></qui-icon>
+        <qui-icon
+          class="arrow"
+          name="icon-folding-r"
+          size="22"
+          color="#ddd"
+          v-if="arrow"
+        ></qui-icon>
       </view>
       <view class="cell-item__body__right" v-if="!slotRight">
         <text class="cell-item__body__right-text">
           {{ addon }}
         </text>
-        <qui-icon class="text" name="icon-folding-r" size="16" color="#ddd" v-if="arrow"></qui-icon>
+        <qui-icon
+          class="arrow"
+          name="icon-folding-r"
+          size="22"
+          color="#ddd"
+          v-if="arrow"
+        ></qui-icon>
         <view class="cell-item__body__right-brief" v-if="briefRight">{{ briefRight }}</view>
       </view>
     </view>
@@ -89,7 +101,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    class: {
+    classItem: {
       type: String,
       default: '',
     },
@@ -170,9 +182,7 @@ export default {
 .cell-item.is-disabled .cell-item__children {
   color: #c5cad5;
 }
-.qui-icon {
+.arrow {
   margin-left: 20rpx;
-  font-size: 18rpx;
-  color: #ddd;
 }
 </style>

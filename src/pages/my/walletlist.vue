@@ -1,18 +1,20 @@
 <template>
   <view class="walletlist">
-    <cell-item class="walletlist-head" slot-right>
-      <view @tap="showFilter">
-        <text>状态：{{ filterSelected.label }}</text>
-        <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
-        <filter-modal
-          v-model="show"
-          @confirm="confirm"
-          :filter-list="filterList"
-          :if-need-confirm="false"
-          ref="filter"
-        ></filter-modal>
-      </view>
-    </cell-item>
+    <view class="walletlist-head">
+      <cell-item slot-right :border="false">
+        <view @tap="showFilter">
+          <text>状态：{{ filterSelected.label }}</text>
+          <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
+          <filter-modal
+            v-model="show"
+            @confirm="confirm"
+            :filter-list="filterList"
+            :if-need-confirm="false"
+            ref="filter"
+          ></filter-modal>
+        </view>
+      </cell-item>
+    </view>
     <picker
       mode="date"
       :value="date"
@@ -39,6 +41,7 @@
           :title="item.change_desc"
           :brief="item.created_at"
           :addon="item.change_available_amount"
+          :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
         ></cell-item>
       </scroll-view>
       <load-more :status="loadingType"></load-more>
@@ -76,7 +79,7 @@ export default {
         {
           title: '类型',
           data: [
-            { label: '所有', value: '' },
+            { label: '所有', value: '', selected: true },
             { label: '提现冻结', value: 10 },
             { label: '提现成功', value: 11 },
             { label: '提现解冻', value: 12 },
@@ -177,8 +180,15 @@ page {
     margin-left: 20rpx;
   }
 }
+.cell-item--wrap.fail .cell-item__body__right-text {
+  color: #fa5151;
+}
+.cell-item--wrap.success .cell-item__body__right-text {
+  color: #189a00;
+}
 .walletlist-items {
   padding-left: 40rpx;
+  margin-top: 30rpx;
   background: #fff;
 }
 

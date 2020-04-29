@@ -49,6 +49,7 @@
       @change="uploadChange"
       @clear="uploadClear"
     ></qui-uploader>
+    <cell-item title="普通条目" addon="附加文案" arrow></cell-item>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">选择分类</text>
       <view class="post-box__ft-categories">
@@ -71,9 +72,11 @@
 
 <script>
 import { mapState } from 'vuex';
+import cellItem from '@/components/qui-cell-item';
 
 export default {
   name: 'Post',
+  components: { cellItem },
   data() {
     return {
       textAreaValue: '',

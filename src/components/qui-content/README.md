@@ -14,7 +14,7 @@
   :theme-reward="item.themeReward"
   :theme-reply-btn="item.themeReplyBtn"
   :theme-delete-btn="item.themeDeleteBtn"
-  :theme-types="item.themeTypes"
+  :theme-types="item.userGroups"
   :theme-time="item.themeTime"
   :theme-content="item.themeContent"
   :theme-like="item.themeLike"
@@ -34,7 +34,7 @@
 | themeReward | 打赏金额 | number | 0 |
 | themeReplyBtn | 回复icon图标 | string | - |
 | themeDeleteBtn | 删除icon图标 | string | - |
-| themeTypes | 用户组 | string | - |
+| userGroups | 用户组 | string | - |
 | themeTime | 主题时间 | string | - |
 | themeContent | 主题内容 | string | - |
 | themeLike | 点赞数量 | number | 0 |

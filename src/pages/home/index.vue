@@ -54,9 +54,9 @@
               @tap="toggleTab(item._jv.id)"
             >
               {{ item.name }}
-              <view class="scroll-tab-line"></view>
             </view>
           </block>
+          <view class="scroll-tab-line"></view>
         </scroll-view>
       </view>
     </view>
@@ -103,7 +103,9 @@
               item.firstPost.likeCount,
             )
           "
-          @commentClick="commentClick(item.firstPost._jv.id)"
+          @commentClick="commentClick(item._jv.id)"
+          @contentClick="contentClick(item._jv.id)"
+          @headClick="headClick(item._jv.id)"
         ></qui-content>
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
@@ -308,6 +310,19 @@ export default {
         url: `/pages/topic/index?id=${id}`,
       });
     },
+    // 内容部分点击跳转到详情页
+    contentClick(id) {
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${id}`,
+      });
+    },
+    // 点击头像调转到个人主页
+    headClick(id) {
+      console.log(id,77777)
+      uni.navigateTo({
+        url: `/pages/profile/index?id=${id}`,
+      });
+    },
     // 首页头部分享按钮弹窗
     open() {
       this.$refs.popup.open();
@@ -413,6 +428,7 @@ export default {
         url: '/pages/topic/post',
       });
     },
+
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
       this.$refs.popup.open();
@@ -614,8 +630,10 @@ export default {
 }
 .active .scroll-tab-line {
   width: 100%;
+  height: 100%;
   // border-top: 2rpx solid #1878f3;
   color: --color(--qui-BG-HIGH-LIGHT);
+  background: crimson;
   border-bottom: 2rpx solid --color(--qui-BG-HIGH-LIGHT);
   border-radius: 20rpx;
 }
