@@ -16,11 +16,14 @@
                 : 'https://discuz.chat/static/images/noavatar.gif'
             "
             alt
+            @click="headClick"
           ></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
-            <span class="themeItem__header__title__username">{{ userName }}</span>
+            <span class="themeItem__header__title__username" @click="headClick">
+              {{ userName }}
+            </span>
             <span v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
               <span v-for="(item, index) in userGroups" :key="index">
                 {{ item.isDisplay ? `(${item.name})` : '' }}
@@ -36,7 +39,7 @@
               :name="themeBtn"
               size="28"
               color="#AAA"
-              @click="handleClick"
+              @click="deleteClick"
             ></qui-icon>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
@@ -44,7 +47,7 @@
         </view>
       </view>
 
-      <view class="themeItem__content">
+      <view class="themeItem__content" @click="contentClick">
         <view class="themeItem__content__text">
           <rich-text :nodes="themeContent"></rich-text>
         </view>
@@ -119,7 +122,7 @@
             @click="commentClick"
           >
             {{ t.comment }}
-            {{ themeComment == 0 ? '' : themeComment }}
+            {{ themeComment === 0 ? '' : themeComment }}
           </view>
 
           <view
@@ -158,76 +161,93 @@ export default {
       },
       default: '1',
     },
+    // 用户名
     userName: {
       type: String,
       default: '',
     },
+    // 用户头像
     themeImage: {
       type: String,
       default: '',
     },
+    // 是否加精
     themeEssence: {
       type: Boolean,
       default: true,
     },
+    // 帖子状态（回复了我，@了我）
     themeStatus: {
       type: String,
       default: '',
     },
+    // icon图标
     themeBtn: {
       type: String,
       default: '',
     },
+    // 回复的图标
     themeReplyBtn: {
       type: String,
       default: '',
     },
+    // 删除的图标
     themeDeleteBtn: {
       type: String,
       default: '',
     },
+    // 大赏的图标
     themeReward: {
       type: String,
       default: '',
     },
+    // 用户组
     userGroups: {
       type: Object,
       default: () => {
         return [];
       },
     },
+    // 内容
     themeContent: {
       type: String,
       default: '',
     },
+    // 内容区域图片
     imagesList: {
       type: Object,
       default: () => {
         return {};
       },
     },
+    // 时间
     themeTime: {
       type: String,
       default: '',
     },
+    // 点赞数量
     themeLike: {
       type: Number,
       default: 0,
     },
+    // 评论数量
     themeComment: {
       type: Number,
       default: 0,
     },
+    // 标签
     tagName: {
       type: String,
       default: '',
     },
+    // 标签组
     tags: {
       type: Array,
       default: () => {
         return [];
       },
     },
+    // 是否点赞 (赞，已赞)
     isGreat: {
       type: Boolean,
       default: false,
@@ -251,8 +271,9 @@ export default {
     },
   },
   methods: {
-    handleClick() {
-      console.log('是分享哦');
+    // 点击删除按钮
+    deleteClick(evt) {
+      this.$emit('deleteClick', evt);
     },
     // 分享按钮点击事件
     handleClickShare(evt) {
@@ -262,8 +283,17 @@ export default {
     handleIsGreat(evt) {
       this.$emit('handleIsGreat', evt);
     },
+    // 点击评论跳转到详情页
     commentClick(evt) {
       this.$emit('commentClick', evt);
+    },
+    // 点击内容区域跳转到详情页
+    contentClick(evt) {
+      this.$emit('contentClick', evt);
+    },
+    // 点击头像跳转到个人主页
+    headClick(evt) {
+      this.$emit('headClick', evt);
     },
   },
 };
