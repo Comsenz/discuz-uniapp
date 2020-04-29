@@ -37,7 +37,7 @@
               <qui-icon
                 class="text"
                 :name="followerItem.fromUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                size="16"
+                size="22"
                 :color="
                   followerItem.fromUser.follow == 0
                     ? '#777'
@@ -167,6 +167,7 @@ export default {
 
 <style lang="scss">
 .following {
+  padding: 0 20rpx;
   font-size: 28rpx;
   .cell-item {
     padding-right: 20rpx;
@@ -203,5 +204,8 @@ export default {
 }
 .scroll-y {
   max-height: calc(100vh - 297rpx);
+}
+.text {
+  margin-left: 12rpx;
 }
 </style>

@@ -73,7 +73,7 @@ page {
     color: #333;
   }
 }
-.wallet-available {
+.wallet-available .cell-item__body__right-text {
   color: #fa5151;
 }
 </style>
