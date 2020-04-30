@@ -178,7 +178,7 @@ export default {
         .then(res => {
           console.log('创建会话', res);
           this.dialogId = res._jv.json.data.id;
-          this.JumpChatPage();
+          this.jumpChatPage();
         })
         .catch(err => {
           console.log(err);
@@ -186,7 +186,7 @@ export default {
       console.log('dialog', this.dialog);
     },
     // 跳转到聊天页面（传入用户名，用户id和会话id）
-    JumpChatPage() {
+    jumpChatPage() {
       uni.navigateTo({
         url: `../message/chat?username=${this.userInfo.username}&userId=${this.userId}&dialogId=${this.dialogId}`,
       });
