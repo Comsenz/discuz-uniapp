@@ -3,21 +3,21 @@
     <view class="cash-content">
       <!-- 收款人 -->
       <view class="cash-content-tab">
-        <cell-item title="收款人" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="收款人" slot-right :arrow="false" :border="false">
           <test class="cash-content-name">
             {{ name }}
           </test>
-        </cell-item>
+        </qui-cell-item>
       </view>
       <!-- 可提现金额 -->
       <view class="cash-content-tab">
-        <cell-item title="可提现余额" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="可提现余额" slot-right :arrow="false" :border="false">
           <test class="cash-content-name">￥{{ balance }}</test>
-        </cell-item>
+        </qui-cell-item>
       </view>
       <!-- 提现金额 -->
       <view class="cash-content-tab">
-        <cell-item title="提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="提现金额" slot-right :arrow="false" :border="false">
           <input
             class="cash-content-input"
             type="number"
@@ -26,14 +26,14 @@
             v-model="cashmany"
             @input="settlement"
           />
-        </cell-item>
+        </qui-cell-item>
       </view>
       <view class="cash-erro-messag1" v-if="judge2">
         {{ test2 }}
       </view>
       <!-- 实际提现金额 -->
       <view class="cash-content-tab">
-        <cell-item title="实际提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="实际提现金额" slot-right :arrow="false" :border="false">
           <view class="cash-content-name cash-content-actual">
             <view
               :class="length ? 'cash-content-ellipsis2' : 'cash-content-ellipsis'"
@@ -41,7 +41,7 @@
             ></view>
             <view class="cash-content-proced">手续费：{{ procedures }}元 (30%)</view>
           </view>
-        </cell-item>
+        </qui-cell-item>
       </view>
       <!-- 验证码 -->
       <view class="input">
@@ -76,10 +76,9 @@
 <script>
 import { status } from 'jsonapi-vuex';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
-import cellItem from '@/components/qui-cell-item';
 
 export default {
-  components: { quiInputCode, cellItem },
+  components: { quiInputCode },
   data() {
     return {
       userid: 24,

@@ -1,7 +1,6 @@
 <template>
   <view class="content bg" v-if="status">
     <view class="ft-gap">
-      <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
       <qui-topic-content
         v-model="thread"
         :pay-status="true"
@@ -9,7 +8,6 @@
         :user-name="thread.user.username"
         :theme-types="thread.type"
         :theme-time="thread.createdAt"
-        :management-show="true"
         :theme-content="thread.firstPost.contentHtml"
         :images-list="thread.firstPost.images"
         :select-list="selectList"
@@ -100,7 +98,7 @@
             :can-delete="post.canDelete"
             @personJump="personJump(post.user.id)"
             @commentLikeClick="commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked)"
-            @commentJump="commentJump(threadId, post._jv.id)"
+            @commentJump="commentJump(post._jv.id)"
             @imageClick="imageClick"
             @deleteComment="deleteComment(post._jv.id)"
             @replyComment="replyComment(post._jv.id)"
@@ -204,6 +202,7 @@ export default {
   data() {
     return {
       threadId: '',
+      commentId: '',
       thread: {},
       loadDetailStatus: {},
       status: false,
@@ -264,10 +263,12 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option.id, '这是详情页接收的id');
-    // this.threadId = option.id;
-    this.threadId = 11;
+    console.log(option.threadId, '这是回复页接收的主题id');
+    console.log(option.threadId, '这是回复页接收的回复id');
+    this.threadId = option.threadId;
+    this.commentId = option.commentId;
     this.loadThreads();
+    this.loadPost();
     this.loadThreadPosts();
     // const forums = this.$store.getters['jv/get']('forums/1');
     // console.log(forums);
@@ -277,67 +278,40 @@ export default {
     loadThreads() {
       const params = {
         'filter[isDeleted]': 'no',
-        include: [
-          'posts.replyUser',
-          'user.groups',
-          'user',
-          'posts',
-          'posts.user',
-          'posts.likedUsers',
-          'posts.images',
-          'firstPost',
-          'firstPost.likedUsers',
-          'firstPost.images',
-          'firstPost.attachments',
-          'rewardedUsers',
-          'category',
-          'threadVideo',
-          'paidUsers',
-        ],
+        include: ['user.groups', 'user', 'firstPost'],
       };
       this.loadDetailStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
           console.log(this.thread.isDeleted);
           this.thread = data;
-          // 追加管理菜单权限字段
-          this.selectList[0].canOpera = this.thread.firstPost.canEdit;
-          this.selectList[1].canOpera = this.thread.canEssence;
-          this.selectList[2].canOpera = this.thread.canSticky;
-          this.selectList[3].canOpera = this.thread.canDelete;
-          this.selectList[0].canOpera = true;
-          this.selectList[1].isStatus = this.thread.isEssence;
-          this.selectList[2].isStatus = this.thread.isSticky;
-          this.selectList[3].isStatus = false;
-          console.log(this.selectList, '管理菜单数据');
-          if (this.thread.isEssence) {
-            //如果初始化状态为true
-            this.selectList[1].text = '取消精华';
-          }
-          if (this.thread.isSticky) {
-            //如果初始化状态为true
-            this.selectList[2].text = '取消置顶';
-          }
-          this.isLiked = data.firstPost.isLiked;
           this.status = true;
-          this.topicStatus = data.isApproved;
-          // console.log(lodash.isEmpty(data.paidUsers));
-          if (lodash.isEmpty(data.paidUsers)) {
-            this.paidStatus = false;
-          } else {
-            this.paidStatus = true;
-          }
-          if (lodash.isEmpty(data.rewardedUsers)) {
-            this.rewardStatus = false;
-          } else {
-            this.rewardStatus = true;
-          }
-          if (lodash.isEmpty(data.firstPost.likedUsers)) {
-            this.likedStatus = false;
-          } else {
-            this.likedStatus = true;
-          }
-          // console.log('over', this.limitArray(data.paidUsers, 1));
+        }),
+      );
+    },
+    // 加载当前回复数据
+    loadPost() {
+      const params = {
+        'filter[isDeleted]': 'no',
+        include: [
+          'user',
+          'commentPosts',
+          'commentPosts.user',
+          'commentPosts.user.groups',
+          'commentPosts.replyUser',
+          'commentPosts.replyUser.groups',
+          'commentPosts.mentionUsers',
+          'commentPosts.images',
+          'images',
+          'attachments',
+        ],
+      };
+      this.loadDetailStatus = status.run(() =>
+        this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
+          console.log(data, '~~~~~~~~~~~~~~~~~~~');
+          console.log(this.thread.isDeleted);
+          this.thread = data;
+          this.status = true;
         }),
       );
     },
@@ -399,9 +373,6 @@ export default {
           } else if (type == '2') {
             if (data.isDeleted) {
               console.log('跳转到首页');
-              uni.navigateTo({
-                url: `/pages/home/index`,
-              });
             } else {
               console.log('主题删除失败');
             }
@@ -428,80 +399,77 @@ export default {
         });
     },
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
-    threadOpera(id, canStatus, isStatus, type) {
-      console.log(id, canStatus, isStatus, type);
-      if (!canStatus) {
-        if (type == '1') {
-          console.log('没有收藏权限');
-        }
-      }
-      const jvObj = {
-        type: 'threads',
-        id: id,
-      };
-      let params = {};
-      if (type == '1') {
-        // 主题收藏
-        params = {
-          _jv: jvObj,
-          isFavorite: isStatus === true ? false : true,
-        };
-      } else if (type == '2') {
-        // 主题加精
-        params = {
-          _jv: jvObj,
-          isEssence: isStatus === true ? false : true,
-        };
-      } else if (type == '3') {
-        // 主题置顶
-        params = {
-          _jv: jvObj,
-          isSticky: isStatus === true ? false : true,
-        };
-      } else {
-        // 主题删除
-        params = {
-          _jv: jvObj,
-          isDeleted: isStatus === true ? false : true,
-        };
-      }
-      console.log(params, '接口接收的参数');
-      this.$store
-        .dispatch('jv/patch', params)
-        .then(data => {
-          console.log(data);
-          console.log('请求主题操作接口成功');
-          if (type == '1') {
-            this.thread.isFavorite = data.isFavorite;
-          } else if (type == '2') {
-            this.selectList[1].isStatus = data.isEssence;
-            if (data.isEssence) {
-              this.selectList[1].text = '取消精华';
-            } else {
-              this.selectList[1].text = '精华';
-            }
-          } else if (type == '3') {
-            this.selectList[2].isStatus = data.isSticky;
-            if (data.isSticky) {
-              this.selectList[2].text = '取消置顶';
-            } else {
-              this.selectList[2].text = '置顶';
-            }
-          } else if (type == '4') {
-            if (data.isDeleted) {
-              console.log('删除成功，跳转到首页');
-              uni.navigateTo({
-                url: `/pages/home/index`,
-              });
-            } else {
-              console.log('删除失败，跳转到首页');
-            }
-          }
-        })
-        .catch(err => {
-          console.log('1111');
-        });
-    },
+    // threadOpera(id, canStatus, isStatus, type) {
+    //   console.log(id, canStatus, isStatus, type);
+    //   if (!canStatus) {
+    //     if (type == '1') {
+    //       console.log('没有收藏权限');
+    //     }
+    //   }
+    //   const jvObj = {
+    //     type: 'threads',
+    //     id: id,
+    //   };
+    //   let params = {};
+    //   if (type == '1') {
+    //     // 主题收藏
+    //     params = {
+    //       _jv: jvObj,
+    //       isFavorite: isStatus === true ? false : true,
+    //     };
+    //   } else if (type == '2') {
+    //     // 主题加精
+    //     params = {
+    //       _jv: jvObj,
+    //       isEssence: isStatus === true ? false : true,
+    //     };
+    //   } else if (type == '3') {
+    //     // 主题置顶
+    //     params = {
+    //       _jv: jvObj,
+    //       isSticky: isStatus === true ? false : true,
+    //     };
+    //   } else {
+    //     // 主题删除
+    //     params = {
+    //       _jv: jvObj,
+    //       isDeleted: isStatus === true ? false : true,
+    //     };
+    //   }
+    //   console.log(params, '接口接收的参数');
+    //   this.$store
+    //     .dispatch('jv/patch', params)
+    //     .then(data => {
+    //       console.log(data);
+    //       console.log('请求主题操作接口成功');
+    //       if (type == '1') {
+    //         this.thread.isFavorite = data.isFavorite;
+    //       } else if (type == '2') {
+    //         this.selectList[1].isStatus = data.isEssence;
+    //         if (data.isEssence) {
+    //           this.selectList[1].text = '取消精华';
+    //         } else {
+    //           this.selectList[1].text = '精华';
+    //         }
+    //       } else if (type == '3') {
+    //         this.selectList[2].isStatus = data.isSticky;
+    //         if (data.isSticky) {
+    //           this.selectList[2].text = '取消置顶';
+    //         } else {
+    //           this.selectList[2].text = '置顶';
+    //         }
+    //       } else if (type == '4') {
+    //         if (data.isDeleted) {
+    //           console.log('删除成功，跳转到首页');
+    //         } else {
+    //           console.log('删除失败，跳转到首页');
+    //         }
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.log('1111');
+    //     });
+    // },
     // 主题回复调用接口
     postComment() {
       const params = {
@@ -580,7 +548,7 @@ export default {
       } else if (param.type == '4') {
         this.postOpera(this.threadId, '2');
       } else {
-        this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
+        // this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
       }
     },
     // 跳转到用户主页
@@ -604,11 +572,11 @@ export default {
       this.postComment(this.commentId);
     },
     // 跳转到评论详情页
-    commentJump(threadId, postId) {
+    commentJump(postId) {
       console.log(postId, 'postId跳转到评论详情页');
-      uni.navigateTo({
-        url: `/pages/topic/comment?id=${threadId}?commentId=${postId}`,
-      });
+      // uni.navigateTo({
+      //   url: '',
+      // });
     },
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus) {
@@ -660,7 +628,7 @@ export default {
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
       console.log('主题收藏');
-      this.threadOpera(id, canStatus, isStatus, type);
+      // this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment(threadId) {

@@ -18,7 +18,7 @@
         </view>
         <view class="themeItem__header__title__time">{{ themeTime }}</view>
       </view>
-      <view class="themeItem__header__opera">
+      <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
             <qui-icon
@@ -94,7 +94,7 @@
           ></image>
         </view>
       </view>
-      <view class="themeItem__content__tags">
+      <view class="themeItem__content__tags" v-if="tags.length > 0">
         <view class="themeItem__content__tags__item" v-for="(tag, index) in tags" :key="index">
           {{ tag.name }}
         </view>
@@ -106,14 +106,14 @@
 <script>
 export default {
   props: {
-    // // 类型
-    // themeParts: {
-    //   validator: value => {
-    //     // 0 内容  1 回复
-    //     return ['0', '1', '2', '3'].indexOf(value) !== -1;
-    //   },
-    //   default: '1',
-    // },
+    // 类型
+    themeParts: {
+      validator: value => {
+        // 0 主题  1 回复
+        return ['0', '1'].indexOf(value) !== -1;
+      },
+      default: '0',
+    },
     // 主题类型
     themeType: {
       validator: value => {
@@ -162,6 +162,10 @@ export default {
     themeTime: {
       type: String,
       default: '',
+    },
+    managementShow: {
+      type: Boolean,
+      default: false,
     },
     // 主题图片
     imagesList: {

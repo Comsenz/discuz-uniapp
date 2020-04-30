@@ -8,7 +8,7 @@
             :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
             alt="avatarUrl"
           ></image>
-          <cell-item
+          <qui-cell-item
             :title="userInfo.username"
             slot-right
             :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
@@ -16,7 +16,7 @@
           >
             <view v-if="pageType !== 'my'">
               <view class="profile-info__box__detail-operate">
-                <qui-icon class="text" name="icon-message" size="16" color="#333"></qui-icon>
+                <qui-icon class="text" name="icon-message" size="22" color="#333"></qui-icon>
                 <text>私信</text>
               </view>
               <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
@@ -27,7 +27,7 @@
                 <qui-icon
                   class="text"
                   :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                  size="16"
+                  size="22"
                   :color="userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? '#ddd' : '#ff8888'"
                 ></qui-icon>
                 <text>
@@ -35,7 +35,7 @@
                 </text>
               </view>
             </view>
-          </cell-item>
+          </qui-cell-item>
         </view>
       </view>
       <view class="profile-info__introduction">
@@ -68,8 +68,6 @@
 </template>
 
 <script>
-import quiTabs from '@/components/qui-tabs';
-import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
 import topic from './topic';
 import following from './following';
@@ -78,8 +76,6 @@ import like from './like';
 
 export default {
   components: {
-    quiTabs,
-    cellItem,
     topic,
     following,
     followers,
@@ -170,7 +166,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }
@@ -187,7 +183,7 @@ page {
 .profile-info__box {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 35rpx;
+  margin-bottom: 40rpx;
 }
 .profile-info__box__detail {
   position: relative;
@@ -215,7 +211,7 @@ page {
   border-radius: 50%;
 }
 .profile-tabs__content {
-  padding: 30rpx 20rpx 0;
+  padding-top: 30rpx;
 }
 .qui-tabs {
   background: #fff;
