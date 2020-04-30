@@ -8,7 +8,7 @@
             :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
             alt="avatarUrl"
           ></image>
-          <cell-item
+          <qui-cell-item
             :title="userInfo.username"
             slot-right
             :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
@@ -35,7 +35,7 @@
                 </text>
               </view>
             </view>
-          </cell-item>
+          </qui-cell-item>
         </view>
       </view>
       <view class="profile-info__introduction">
@@ -68,8 +68,6 @@
 </template>
 
 <script>
-import quiTabs from '@/components/qui-tabs';
-import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
 import topic from './topic';
 import following from './following';
@@ -78,8 +76,6 @@ import like from './like';
 
 export default {
   components: {
-    quiTabs,
-    cellItem,
     topic,
     following,
     followers,
@@ -170,7 +166,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }

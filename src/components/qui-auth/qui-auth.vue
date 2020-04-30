@@ -32,6 +32,7 @@ export default {
   methods: {
     handleGetUserInfo(res) {
       if (res.detail.errMsg === 'getUserInfo:ok') {
+        // eslint-disable-next-line no-unused-vars
         this.$store.dispatch('session/login').then(data => {
           this.$emit('login', res);
         });

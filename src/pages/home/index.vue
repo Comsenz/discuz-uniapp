@@ -24,7 +24,7 @@
           color="#1878F3"
           @tap="showFilter"
         ></qui-icon>
-        <filter-modal
+        <qui-filter-modal
           v-model="show"
           @confirm="confirm"
           @changeSelected="changeSelected"
@@ -34,7 +34,7 @@
           :filter-list="filterList"
           :top="top"
           ref="filter"
-        ></filter-modal>
+        ></qui-filter-modal>
       </view>
       <view class="uni-tab-bar">
         <scroll-view
@@ -140,13 +140,10 @@
 <script>
 /* eslint-disable */
 import { status } from 'jsonapi-vuex';
-import filterModal from '@/components/qui-filter-modal';
-import quiLoadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    filterModal,
-    quiLoadMore,
+    // 
   },
   data: () => {
     return {
@@ -320,7 +317,7 @@ export default {
     headClick(id) {
       console.log(id, 77777);
       uni.navigateTo({
-        url: `/pages/profile/index?id=${id}`,
+        url: `/pages/profile/index?userId=${id}`,
       });
     },
     // 首页头部分享按钮弹窗
