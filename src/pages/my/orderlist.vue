@@ -1,20 +1,20 @@
 <template>
   <view class="orderlist">
     <view class="orderlist-wrap">
-      <cell-item slot-right :border="false">
+      <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
           <text>状态：{{ filterSelected.label }}</text>
           <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
-          <filter-modal
+          <qui-filter-modal
             v-model="show"
             @confirm="confirm"
             @change="changeType"
             :filter-list="filterList"
             :if-need-confirm="false"
             ref="filter"
-          ></filter-modal>
+          ></qui-filter-modal>
         </view>
-      </cell-item>
+      </qui-cell-item>
     </view>
     <picker
       mode="date"
@@ -36,31 +36,26 @@
         show-scrollbar="false"
         class="scroll-y"
       >
-        <cell-item
+        <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
           :title="type[item.type - 1]"
           :brief="item.created_at"
           :addon="item.amount"
           :brief-right="item.status == 1 ? '已付款' : '待付款'"
-        ></cell-item>
+        ></qui-cell-item>
       </scroll-view>
-      <load-more :status="loadingType"></load-more>
+      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
-import filterModal from '@/components/qui-filter-modal';
 import { status } from 'jsonapi-vuex';
-import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    cellItem,
-    filterModal,
-    loadMore,
+    //
   },
   data: () => {
     const date = new Date();
@@ -159,7 +154,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }

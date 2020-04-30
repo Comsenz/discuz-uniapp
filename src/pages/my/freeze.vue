@@ -20,28 +20,24 @@
         show-scrollbar="false"
         class="scroll-y"
       >
-        <cell-item
+        <qui-cell-item
           v-for="(freezeItem, index) in freezelist"
           :key="index"
           :title="freezeItem.change_desc"
           :brief="'ID:' + freezeItem.id"
           :addon="'¥' + freezeItem.change_freeze_amount"
           :brief-right="freezeItem.created_at"
-        ></cell-item>
+        ></qui-cell-item>
       </scroll-view>
-      <load-more :status="loadingType"></load-more>
+      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
-import loadMore from '@/components/qui-load-more';
-
 export default {
   components: {
-    cellItem,
-    loadMore,
+    //
   },
   onLoad(params) {
     this.totalamount = params.totalamount || 0;
@@ -94,7 +90,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }

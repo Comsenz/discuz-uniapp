@@ -8,11 +8,11 @@
             :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
             alt="avatarUrl"
           ></image>
-          <cell-item
+          <qui-cell-item
             :title="userInfo.username || ''"
             :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
             :border="false"
-          ></cell-item>
+          ></qui-cell-item>
         </view>
       </view>
       <view class="my-info__introduction">
@@ -25,33 +25,30 @@
     <view>
       <view class="my-items">
         <navigator url="./profile" open-type="navigate">
-          <cell-item title="我的资料" arrow></cell-item>
+          <qui-cell-item title="我的资料" arrow></qui-cell-item>
         </navigator>
         <navigator url="./wallet" open-type="navigate">
-          <cell-item title="我的钱包" arrow></cell-item>
+          <qui-cell-item title="我的钱包" arrow></qui-cell-item>
         </navigator>
         <navigator url="./favorite" open-type="navigate">
-          <cell-item title="我的收藏" arrow :border="false"></cell-item>
+          <qui-cell-item title="我的收藏" arrow :border="false"></qui-cell-item>
         </navigator>
       </view>
       <view class="my-items">
-        <cell-item title="圈子信息" arrow></cell-item>
-        <cell-item title="搜索" arrow></cell-item>
-        <cell-item title="管理圈子" arrow :border="false"></cell-item>
+        <qui-cell-item title="圈子信息" arrow></qui-cell-item>
+        <qui-cell-item title="搜索" arrow></qui-cell-item>
+        <qui-cell-item title="管理圈子" arrow :border="false"></qui-cell-item>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
-import quiTabs from '@/components/qui-tabs';
 import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
-    quiTabs,
-    cellItem,
+    //
   },
   data() {
     return {
@@ -96,7 +93,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }

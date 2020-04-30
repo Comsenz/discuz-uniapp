@@ -29,17 +29,16 @@
         @click="handleClickShare"
       ></qui-content>
     </scroll-view>
-    <load-more :status="loadingType"></load-more>
+    <qui-load-more :status="loadingType"></qui-load-more>
   </view>
 </template>
 
 <script>
 import { status } from 'jsonapi-vuex';
-import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    loadMore,
+    //
   },
   props: {
     userId: {
@@ -165,7 +164,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 /deep/ .themeItem {
   margin-right: 0;
   margin-left: 0;
