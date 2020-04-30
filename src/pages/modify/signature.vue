@@ -19,17 +19,24 @@
         />
         <view class="aogph-tab-input-text"></view>
       </view>
-      <button class="aogph-tab-button" @click="btnbutton">提交</button>
+      <view class="aogph-tab-button">
+        <qui-button type="primary" size="large" @click="btnbutton">
+          提交
+        </qui-button>
+      </view>
     </view>
   </view>
 </template>
 
 <script>
 import { status } from 'jsonapi-vuex';
+import quiButton from '@/components/qui-button/qui-button';
 
 export default {
+  components: { quiButton },
   data() {
     return {
+      userid: 24,
       sun: true,
       content: '',
       num: 450,
@@ -38,6 +45,7 @@ export default {
   },
   onLoad() {
     this.mydata();
+    // this.userid = sun.id
   },
   methods: {
     fun(e) {
@@ -46,16 +54,25 @@ export default {
     btnbutton() {
       this.signature();
     },
+    // 获取用户数据
     mydata() {
-      this.$store.dispatch('jv/get', 'users/24?include=groups').then(data => {
+      const params = {
+        _jv: {
+          type: 'users',
+          id: this.userid,
+        },
+        include: 'groups',
+      };
+      this.$store.dispatch('jv/get', params).then(data => {
         this.content = data.signature;
       });
     },
+    // 修改签名数据
     signature() {
       const params = {
         _jv: {
           type: 'users',
-          id: 24,
+          id: this.userid,
         },
         signature: this.content,
       };
@@ -73,6 +90,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/reset.scss';
 .aogph {
   width: 100vw;
   height: 100vh;
@@ -86,10 +105,10 @@ export default {
 }
 .aogph-tab-ao-my,
 .aogph-tab-ao-test {
-  font-size: 24rpx;
+  font-size: $fg-f24;
   font-weight: 400;
   line-height: 45rpx;
-  color: rgba(119, 119, 119, 1);
+  color: --color(--qui-FC-777);
   opacity: 1;
 }
 .aogph-tab-input-in {
@@ -102,12 +121,6 @@ export default {
   box-sizing: border-box;
 }
 .aogph-tab-button {
-  width: 670rpx;
-  height: 90rpx;
   margin: 50rpx 0 0;
-  color: #fff;
-  background: rgba(24, 120, 243, 1);
-  border-radius: 5rpx;
-  opacity: 1;
 }
 </style>

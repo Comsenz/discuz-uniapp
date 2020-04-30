@@ -104,6 +104,8 @@
             )
           "
           @commentClick="commentClick(item._jv.id)"
+          @contentClick="contentClick(item._jv.id)"
+          @headClick="headClick(item._jv.id)"
         ></qui-content>
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
@@ -308,6 +310,19 @@ export default {
         url: `/pages/topic/index?id=${id}`,
       });
     },
+    // 内容部分点击跳转到详情页
+    contentClick(id) {
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${id}`,
+      });
+    },
+    // 点击头像调转到个人主页
+    headClick(id) {
+      console.log(id, 77777);
+      uni.navigateTo({
+        url: `/pages/profile/index?id=${id}`,
+      });
+    },
     // 首页头部分享按钮弹窗
     open() {
       this.$refs.popup.open();
@@ -413,6 +428,7 @@ export default {
         url: '/pages/topic/post',
       });
     },
+
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
       this.$refs.popup.open();
@@ -494,14 +510,12 @@ export default {
 
       this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
         this.totalData = res._jv.json.meta.threadCount;
-        console.log(this.totalData);
-        const data = JSON.parse(JSON.stringify(res));
-        delete data._jv;
-        this.loadingType = data.length === 10 ? 'more' : 'nomore';
-        console.log(this.threads, 'this.threads第一次');
-        this.threads = Object.assign(this.threads, data);
-        console.log(this.threads, 'this.threads第二次');
-        // this.threads = res;
+        // console.log(this.totalData);
+        // const data = JSON.parse(JSON.stringify(res));
+        delete res._jv;
+        // this.loadingType = data.length === 10 ? 'more' : 'nomore';
+        // this.threads = Object.assign(this.threads, data);
+        this.threads = res;
       });
     },
     // 内容部分点赞按钮点击事件
@@ -616,8 +630,10 @@ export default {
 }
 .active .scroll-tab-line {
   width: 100%;
+  height: 100%;
   // border-top: 2rpx solid #1878f3;
   color: --color(--qui-BG-HIGH-LIGHT);
+  background: crimson;
   border-bottom: 2rpx solid --color(--qui-BG-HIGH-LIGHT);
   border-radius: 20rpx;
 }
@@ -651,7 +667,7 @@ export default {
   // padding: 15px;
 }
 .popup-share-box {
-  // width: 120rpx;
+  width: 120rpx;
   height: 120rpx;
   line-height: 120rpx;
   background: --color(--qui-BG-2);
@@ -664,7 +680,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 120rpx;
-  height: 157rpx;
+  height: 164rpx;
   // background: --color(--qui-BG-2);
 }
 .popup-share-content-image {
@@ -673,7 +689,7 @@ export default {
   /* #endif */
   flex-direction: row;
   justify-content: center;
-  align-items: center;
+  // align-items: center;
   width: 120rpx;
   height: 120rpx;
   overflow: hidden;
@@ -687,7 +703,6 @@ export default {
 }
 .popup-share-content-text {
   padding-top: 5px;
-  padding-bottom: 10px;
   font-size: $fg-f26;
   color: #333;
 }

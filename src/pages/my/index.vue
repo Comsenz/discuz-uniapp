@@ -97,18 +97,16 @@ export default {
 </script>
 
 <style lang="scss">
+page {
+  background-color: #f9fafc;
+}
 .my-items {
   padding-left: 40rpx;
-  margin-bottom: 30rpx;
+  margin-top: 30rpx;
   background: #fff;
   border-bottom: 2rpx solid #ededed;
   .cell-item {
     padding-right: 40rpx;
-  }
-}
-.my {
-  .qui-icon {
-    margin-right: 14rpx;
   }
 }
 .my-info {
@@ -119,7 +117,7 @@ export default {
 .my-info__box {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 35rpx;
+  margin-bottom: 40rpx;
 }
 .my-info__box__detail {
   position: relative;
@@ -144,7 +142,10 @@ export default {
 .qui-tabs {
   background: #fff;
 }
-.ui-tabs__item /deep/ .qui-tabs__item--active {
+.my-tabs .qui-tabs__item--active {
   border: 0;
+}
+.my-tabs .qui-tabs__item--active .qui-tabs__item__title {
+  color: #aaa;
 }
 </style>
