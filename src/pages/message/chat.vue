@@ -3,11 +3,11 @@
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
       <view class="chat-box__con__time">{{ item.time }}</view>
       <view
-        :class="[item.user_id === 1 ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
+        :class="[item.user_id === myId ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
       >
         <image
           :class="[
-            item.user_id === 1
+            item.user_id === myId
               ? 'chat-box__con__msg__image__mine'
               : 'chat-box__con__msg__image__other',
           ]"
@@ -15,7 +15,9 @@
         ></image>
         <view
           :class="[
-            item.user_id === 1 ? 'chat-box__con__msg__box__mine' : 'chat-box__con__msg__box__other',
+            item.user_id === myId
+              ? 'chat-box__con__msg__box__mine'
+              : 'chat-box__con__msg__box__other',
           ]"
           v-html="item.message_text_html"
         ></view>
@@ -55,9 +57,17 @@ export default {
     return {
       msg: '',
       emojiShow: false,
+      myId: 0,
+      username: '',
+      dialogId: 0,
     };
   },
-  onLoad() {
+  onLoad(params) {
+    console.log('params', params);
+    const { myId, username, dialogId } = params;
+    this.myId = myId;
+    this.username = username;
+    this.dialogId = dialogId;
     this.getChatRecord();
     this.getEmoji();
   },
@@ -73,13 +83,12 @@ export default {
           list.push(recordList[keys[i]]);
         }
       }
-      console.log('list', list);
-      console.log('recordList', recordList);
+      console.log('聊天记录：', list);
       return list;
     },
     // 获取所有表情
     allEmoji() {
-      console.log('表情', this.$store.getters['jv/get']('emoji'));
+      console.log('所有表情：', this.$store.getters['jv/get']('emoji'));
       return this.$store.getters['jv/get']('emoji');
     },
   },
@@ -87,7 +96,7 @@ export default {
     // 调用 会话消息列表 的接口
     getChatRecord() {
       const params = {
-        'filter[dialog_id]': 1,
+        'filter[dialog_id]': this.dialogId,
         include: ['user', 'user.groups'],
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
@@ -113,7 +122,6 @@ export default {
         .then(res => {
           if (res) {
             this.getChatRecord();
-            console.log('调用发送消息请求的action，结果为:', res);
           }
         })
         .catch(err => {

@@ -15,7 +15,7 @@
             :border="false"
           >
             <view v-if="pageType !== 'my'">
-              <view class="profile-info__box__detail-operate">
+              <view class="profile-info__box__detail-operate" @click="chat">
                 <qui-icon class="text" name="icon-message" size="22" color="#333"></qui-icon>
                 <text>私信</text>
               </view>
@@ -98,6 +98,7 @@ export default {
       userId: '',
       pageType: '', // 个人主页还是他人主页
       current: 0,
+      dialogId: 0, // 会话id
     };
   },
   computed: {
@@ -162,6 +163,33 @@ export default {
     },
     changeFollow(e) {
       this.getUserInfo(e.userId);
+    },
+    // 私信
+    chat() {
+      const params = {
+        _jv: {
+          type: 'dialog',
+        },
+        recipient_username: this.userInfo.username,
+      };
+      // 调用创建会话接口
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          console.log('创建会话', res);
+          this.dialogId = res._jv.json.data.id;
+          this.JumpChatPage();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      console.log('dialog', this.dialog);
+    },
+    // 跳转到聊天页面（传入用户名，用户id和会话id）
+    JumpChatPage() {
+      uni.navigateTo({
+        url: `../message/chat?username=${this.userInfo.username}&userId=${this.userId}&dialogId=${this.dialogId}`,
+      });
     },
   },
 };
