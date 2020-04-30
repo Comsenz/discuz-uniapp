@@ -44,6 +44,7 @@ export default {
         this.mobelypas(num);
       }
     },
+    // 验证信息获取token
     mobelypas(sum) {
       console.log(sum);
       const params = {
@@ -55,14 +56,12 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          console.log('users', res);
           /* eslint-disable */
           if (res._jv.json.data.id) {
             console.log('验证成功');
           }
         })
         .catch(err => {
-          console.log(err);
           if (err.statusCode === 422) {
             this.judge = true;
             const {data:{errors}} = err;
@@ -82,7 +81,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .authen-input {
   width: 710rpx;
   height: 200rpx;

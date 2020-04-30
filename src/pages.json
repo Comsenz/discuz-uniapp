@@ -145,17 +145,18 @@
         "disableScroll": true
       }
     },
-    {
-      "path": "pages/homeposter/index",
-      "style": {
-        "navigationStyle": "custom"
-      }
-    },
     // 海报分享
     {
-      "path": "pages/postercharacte/index",
+      "path": "pages/share/topic",
       "style": {
         "navigationBarTitleText": "分享海报"
+      }
+    },
+    // 首页海报分享
+    {
+      "path": "pages/share/site",
+      "style": {
+        "navigationBarTitleText": "分享海报"  
       }
     },
     // 修改用户信息

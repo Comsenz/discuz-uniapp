@@ -92,20 +92,16 @@ export default {
       setTimeout(() => {
         this.iptValue = value;
       }, 1); // 重点
-      if (value.length >= 6) {
-        this.$emit('getdata', this.inpcont);
-      }
     },
     lose() {
       this.isFocus = false;
       this.$emit('getdata', this.inpcont);
-      console.log(this.title);
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .modify-vftion {
   width: 710rpx;
 }

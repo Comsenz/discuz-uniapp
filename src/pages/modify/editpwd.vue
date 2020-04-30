@@ -7,6 +7,7 @@
         placeholder="请输入旧密码"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valueused"
+        @input="changeinput"
       />
       <view class="chagepas-erro-messag1" v-if="judge">
         {{ text }}
@@ -17,6 +18,7 @@
         placeholder="请输入新密码"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuenew"
+        @input="changeinput2"
       />
       <view class="chagepas-erro-messag1" v-if="judge2">
         {{ text1 }}
@@ -27,7 +29,7 @@
         placeholder="请重复输入新密码"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuetone"
-        @input="changtype"
+        @input="changeinput3"
       />
       <view class="chagepas-erro-messag1" v-if="judge3">
         两次输入的密码不一致，请重新输入
@@ -67,7 +69,7 @@ export default {
       judge3: false,
       text: '',
       text1: '',
-      disab: false,
+      disab: true,
     };
   },
   // onLoad(arr) {
@@ -84,6 +86,29 @@ export default {
     changtype() {
       console.log(1);
       this.disab = false;
+    },
+    changeinput() {
+      if (this.valueused.length <= 0) {
+        this.judge = false;
+      }
+      this.chanagedisab();
+    },
+    changeinput2() {
+      if (this.valuenew <= 0) {
+        this.judge2 = false;
+      }
+      this.chanagedisab();
+    },
+    changeinput3() {
+      if (this.valuetone <= 0) {
+        this.judge3 = false;
+      }
+      this.chanagedisab();
+    },
+    chanagedisab() {
+      if (this.valueused && this.valuenew && this.valuetone) {
+        this.disab = false;
+      }
     },
     // 修改密码请求
     changpasword() {
@@ -122,7 +147,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .chagepas {
   width: 100vw;
   height: 100vh;
