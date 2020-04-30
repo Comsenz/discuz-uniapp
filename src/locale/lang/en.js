@@ -88,6 +88,10 @@ export default {
       note: 'You can also enter {num} words',
       placeholder: 'What do you want to say ...',
       post: 'Post',
+      paymentAmount: 'Payment amount',
+      chooseCategory: 'Choose category',
+      selectToViewPaymentAmount: 'Select to view payment amount',
+      cancel: 'Cancel',
     },
   },
 };

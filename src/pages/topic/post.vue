@@ -44,14 +44,20 @@
       url="https://dq.comsenz-service.com/api/attachments"
       :header="header"
       :form-data="formData"
-      async-clear="true"
+      async-clear
       ref="upload"
       @change="uploadChange"
       @clear="uploadClear"
     ></qui-uploader>
-    <cell-item title="普通条目" addon="附加文案" arrow></cell-item>
+    <cell-item
+      :class="price > 0 ? 'cell-item-right-text' : ''"
+      :title="i18n.t('discuzq.post.paymentAmount')"
+      :addon="showPrice"
+      arrow
+      @click="cellClick"
+    ></cell-item>
     <view class="post-box__ft">
-      <text class="post-box__ft-tit">选择分类</text>
+      <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
       <view class="post-box__ft-categories">
         <qui-button
           v-for="(item, index) in allCategories"
@@ -67,26 +73,107 @@
         {{ i18n.t('discuzq.post.post') }}
       </qui-button>
     </view>
+    <uni-popup ref="popupBtm" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <text class="popup-title">{{ i18n.t('discuzq.post.selectToViewPaymentAmount') }}</text>
+          <view class="popup-content-btn">
+            <qui-button
+              v-for="(item, index) in payNum"
+              :key="index"
+              :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
+              plain
+              @click="moneyClick(index)"
+            >
+              {{ item.name }}
+            </qui-button>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
+      </view>
+    </uni-popup>
+    <uni-popup ref="popup" type="dialog">
+      <uni-popup-dialog
+        type="input"
+        mode="input"
+        message="成功消息"
+        :duration="2000"
+        :before-close="true"
+        @close="close"
+        @confirm="confirm"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import cellItem from '@/components/qui-cell-item';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
   name: 'Post',
-  components: { cellItem },
+  components: { cellItem, uniPopupDialog },
   data() {
     return {
       textAreaValue: '',
       checkClassData: {},
       type: 0,
+      title: '',
+      price: 0,
       operating: '',
       emojiShow: false,
       header: {},
       formData: {},
+      payNum: [
+        {
+          name: '免费',
+          pay: 0,
+        },
+        {
+          name: '￥2',
+          pay: 2,
+        },
+        {
+          name: '￥5',
+          pay: 5,
+        },
+        {
+          name: '￥10',
+          pay: 10,
+        },
+        {
+          name: '￥20',
+          pay: 20,
+        },
+        {
+          name: '￥50',
+          pay: 50,
+        },
+        {
+          name: '￥88',
+          pay: 88,
+        },
+        {
+          name: '￥128',
+          pay: 128,
+        },
+        {
+          name: '自定义',
+          pay: 0,
+        },
+      ],
+      payNumCheck: [
+        {
+          name: '免费',
+          pay: 0,
+        },
+      ],
     };
+  },
+  provide: {
+    popup: 'popup',
   },
   computed: {
     ...mapState({
@@ -98,8 +185,51 @@ export default {
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
     },
+    showPrice() {
+      let pay = '免费';
+
+      if (this.price <= 0) {
+        pay = '免费';
+      } else {
+        pay = `￥${this.price}元`;
+      }
+      return pay;
+    },
   },
   methods: {
+    close(done) {
+      console.log('关闭');
+      // done();
+      this.$refs.popup.close();
+    },
+    confirm(done, value) {
+      this.$refs.popup.close();
+      // done();
+    },
+
+    moneyClick(index) {
+      this.payNumCheck = [];
+      this.payNumCheck.push(this.payNum[index]);
+
+      if (this.payNumCheck[0].name === '自定义') {
+        console.log('自定义');
+        // this.popupType = 'dialog';
+        this.$refs.popupBtm.close();
+
+        this.$nextTick(() => {
+          this.$refs.popup.open();
+        });
+      } else {
+        this.price = this.payNumCheck[0].pay;
+        this.$refs.popupBtm.close();
+      }
+    },
+    cellClick() {
+      this.$refs.popupBtm.open();
+    },
+    cancel() {
+      this.$refs.popupBtm.close();
+    },
     uploadChange(e) {
       console.log(e);
     },
@@ -199,8 +329,8 @@ export default {
     this.formData = {
       isGallery: 1,
     };
-    this.getCategories();
-    this.getEmoji();
+    // this.getCategories();
+    // this.getEmoji();
     if (option.type) this.type = option.type;
     if (option.operating) this.operating = option.operating;
   },
@@ -259,7 +389,56 @@ export default {
       }
     }
   }
+  .popup-content-btn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: -120rpx;
+  }
 }
+.popup-share {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  flex-direction: column;
+  /* #endif */
+  background: --color(--qui-BG-2);
+}
+.popup-share-content {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  height: 477rpx;
+  padding: 40rpx 45rpx;
+  background: --color(--qui-BG-BTN-GRAY-1);
+  .popup-title {
+    height: 37rpx;
+  }
+}
+.popup-share-content-space {
+  width: 100%;
+  height: 9rpx;
+  background: --color(--qui-FC-DDD);
+}
+.popup-share-btn {
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 90rpx;
+  color: #666;
+  text-align: center;
+  border-top-color: #f5f5f5;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+/deep/ .qui-button--button {
+  width: 200rpx;
+  height: 100rpx;
+  font-size: 40rpx;
+}
+
 .emoji-bd {
   position: relative;
   width: 100%;
@@ -267,5 +446,10 @@ export default {
 /deep/ textarea .textarea-placeholder {
   font-size: $fg-f28;
   color: --color(--qui-FC-B5);
+}
+.cell-item-right-text {
+  /deep/ .cell-item__body__right-text {
+    color: --color(--qui-RED);
+  }
 }
 </style>

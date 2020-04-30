@@ -89,6 +89,10 @@ export default {
       note: '还能输入{num}个字',
       placeholder: '您想说的..',
       post: '发布',
+      paymentAmount: '付费金额',
+      chooseCategory: '选择分类',
+      selectToViewPaymentAmount: '选择查看付费金额',
+      cancel: '取消',
     },
   },
   core: {
