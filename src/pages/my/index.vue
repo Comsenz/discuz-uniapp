@@ -20,7 +20,7 @@
       </view>
     </view>
     <view class="my-tabs">
-      <qui-tabs :values="items" @clickItem="onClickItem" :brief="true"></qui-tabs>
+      <qui-tabs :values="items" @clickItem="onClickItem" :brief="true" :current="-1"></qui-tabs>
     </view>
     <view>
       <view class="my-items">
