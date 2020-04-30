@@ -11,7 +11,7 @@
               ? 'chat-box__con__msg__image__mine'
               : 'chat-box__con__msg__image__other',
           ]"
-          :src="item.user.avatarUrl"
+          :src="avatar"
         ></image>
         <view
           :class="[
@@ -60,6 +60,7 @@ export default {
       myId: 0,
       username: '',
       dialogId: 0,
+      avatar: '',
     };
   },
   onLoad(params) {
@@ -88,7 +89,6 @@ export default {
     },
     // 获取所有表情
     allEmoji() {
-      console.log('所有表情：', this.$store.getters['jv/get']('emoji'));
       return this.$store.getters['jv/get']('emoji');
     },
   },
@@ -96,11 +96,19 @@ export default {
     // 调用 会话消息列表 的接口
     getChatRecord() {
       const params = {
-        'filter[dialog_id]': this.dialogId,
+        'filter[dialog_id]': this.dialogId || 1, // message页面传不过来，暂时为1
         include: ['user', 'user.groups'],
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
-      this.$store.dispatch('jv/get', ['dialog/message', { params }]);
+      this.$store
+        .dispatch('jv/get', ['dialog/message', { params }])
+        .then(res => {
+          console.log('会话消息列表res：', res);
+          this.avatar = res[1].user.avatarUrl;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 调用 表情 的接口
@@ -121,7 +129,9 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           if (res) {
+            console.log('发送消息res：', res);
             this.getChatRecord();
+            this.emojiShow = false;
           }
         })
         .catch(err => {
