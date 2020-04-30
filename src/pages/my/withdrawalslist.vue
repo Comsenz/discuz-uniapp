@@ -1,18 +1,21 @@
 <template>
   <view class="withdrawalslist">
-    <cell-item class="withdrawalslist-head" slot-right>
-      <view @tap="showFilter">
-        <text>状态：{{ filterSelected.label }}</text>
-        <qui-icon class="text" name="icon-screen" size="16" color="#333"></qui-icon>
-        <filter-modal
-          v-model="show"
-          @confirm="confirm"
-          :filter-list="filterList"
-          :if-need-confirm="false"
-          ref="filter"
-        ></filter-modal>
-      </view>
-    </cell-item>
+    <view class="withdrawalslist-head">
+      <qui-cell-item slot-right :border="false">
+        <view @tap="showFilter">
+          <text>状态：{{ filterSelected.label }}</text>
+          <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
+          <qui-filter-modal
+            v-model="show"
+            @confirm="confirm"
+            :filter-list="filterList"
+            @change="changeType"
+            :if-need-confirm="false"
+            ref="filter"
+          ></qui-filter-modal>
+        </view>
+      </qui-cell-item>
+    </view>
     <picker
       mode="date"
       :value="date"
@@ -33,32 +36,29 @@
         show-scrollbar="false"
         class="scroll-y"
       >
-        <cell-item
+        <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
           :title="operateStatus[item.cash_status - 1]"
           :brief="item.cash_sn"
           :addon="'¥' + item.cash_apply_amount"
           :brief-right="item.created_at"
-          :class="item.cash_status === 3 ? '#fa5151' : '#777'"
-        ></cell-item>
+          :class-item="
+            item.cash_status == 3 ? 'fail' : item.cash_status == 4 ? 'success' : 'normal'
+          "
+        ></qui-cell-item>
       </scroll-view>
-      <load-more :status="loadingType"></load-more>
+      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
-import filterModal from '@/components/qui-filter-modal';
 import { status } from 'jsonapi-vuex';
-import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    cellItem,
-    filterModal,
-    loadMore,
+    //
   },
   data: () => {
     const date = new Date();
@@ -80,7 +80,7 @@ export default {
         {
           title: '类型',
           data: [
-            { label: '全部', value: '' },
+            { label: '全部', value: '', selected: true },
             { label: '待审核', value: 1 },
             { label: '审核通过', value: 2 },
             { label: '审核不通过', value: 3 },
@@ -178,6 +178,12 @@ page {
   .icon-screen {
     margin-left: 20rpx;
   }
+}
+.cell-item--wrap.fail .cell-item__body__content-title {
+  color: #fa5151;
+}
+.cell-item--wrap.success .cell-item__body__content-title {
+  color: #189a00;
 }
 
 .withdrawalslist-items {

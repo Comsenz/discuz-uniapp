@@ -22,7 +22,7 @@
             alt="avatarUrl"
             @tap="toProfile(followingItem.toUser.id)"
           ></image>
-          <cell-item :title="followingItem.toUser.username" slot-right>
+          <qui-cell-item :title="followingItem.toUser.username" slot-right>
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
             <view class="follow-content__items__operate" @tap="addFollow(followingItem.toUser)">
               <text>
@@ -37,7 +37,7 @@
               <qui-icon
                 class="text"
                 :name="followingItem.toUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                size="16"
+                size="22"
                 :color="
                   followingItem.toUser.follow == 0
                     ? '#777'
@@ -47,23 +47,20 @@
                 "
               ></qui-icon>
             </view>
-          </cell-item>
+          </qui-cell-item>
         </view>
       </scroll-view>
-      <load-more :status="loadingType"></load-more>
+      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
-import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    cellItem,
-    loadMore,
+    //
   },
   props: {
     userId: {
@@ -159,15 +156,29 @@ export default {
     deleteFollow(userInfo) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
-        this.getFollowingList();
+        // 如果是个人主页直接删除这条数据
+        // eslint-disable-next-line eqeqeq
+        if (this.userId === '1') {
+          const dataList = this.followingList;
+          Object.getOwnPropertyNames(dataList).forEach(key => {
+            if (dataList[key].toUser && dataList[key].toUser.id === userInfo.id) {
+              const data = JSON.parse(JSON.stringify(dataList));
+              delete data[key];
+              this.followingList = data;
+            }
+          });
+        } else {
+          this.getFollowingList();
+        }
       });
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .following {
+  padding: 0 20rpx;
   font-size: 28rpx;
   .cell-item {
     padding-right: 20rpx;
@@ -204,5 +215,8 @@ export default {
 }
 .scroll-y {
   max-height: calc(100vh - 297rpx);
+}
+.text {
+  margin-left: 12rpx;
 }
 </style>
