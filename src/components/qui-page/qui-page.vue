@@ -6,10 +6,6 @@
     -->
     <qui-page-message v-if="forumError.status === '401'"></qui-page-message>
     <slot v-else />
-
-    <uni-popup ref="auth" type="bottom">
-      <qui-auth @login="login"></qui-auth>
-    </uni-popup>
   </view>
 </template>
 
@@ -22,26 +18,6 @@ export default {
       currentTheme: state => state.theme.currentTheme,
       forumError: state => state.forum.error,
     }),
-
-    isLogin() {
-      return this.$store.getters['session/get']('isLogin');
-    },
-  },
-  watch: {
-    // 监听得到的数据
-    isLogin: {
-      handler(newVal) {
-        console.log(this.$refs.auth, this);
-        // this.$refs.auth.open();
-      },
-      deep: true,
-      immediate: true,
-    },
-  },
-  methods: {
-    login() {
-      this.$refs.auth.close();
-    },
   },
 };
 </script>
