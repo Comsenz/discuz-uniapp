@@ -27,10 +27,10 @@
         <view class="themeItem__header__r">
           <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
           <view v-else @click="commentLikeClick" class="comment-like">
-            <qui-icon v-if="isLiked" name="icon-liked" class="like"></qui-icon>
+            <qui-icon v-if="!!isLiked" name="icon-liked" class="like"></qui-icon>
             <qui-icon v-else name="icon-like" class="like" size="30"></qui-icon>
             <view class="comment-like-count">
-              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}{{ isLiked }}
+              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}{{ !!isLiked }}
             </view>
           </view>
         </view>
@@ -217,8 +217,8 @@ export default {
       this.$emit('personJump');
     },
     // 评论点赞
-    commentLikeClick() {
-      this.$emit('commentLikeClick');
+    commentLikeClick(evt) {
+      this.$emit('commentLikeClick', evt);
     },
     // 删除事件
     deleteComment() {

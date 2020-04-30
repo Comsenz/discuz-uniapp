@@ -103,7 +103,7 @@
               item.firstPost.likeCount,
             )
           "
-          @commentClick="commentClick(item.firstPost._jv.id)"
+          @commentClick="commentClick(item._jv.id)"
         ></qui-content>
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>

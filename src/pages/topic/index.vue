@@ -9,6 +9,7 @@
         :user-name="thread.user.username"
         :theme-types="thread.type"
         :theme-time="thread.createdAt"
+        :management-show="true"
         :theme-content="thread.firstPost.contentHtml"
         :images-list="thread.firstPost.images"
         :select-list="selectList"
@@ -99,7 +100,7 @@
             :can-delete="post.canDelete"
             @personJump="personJump(post.user.id)"
             @commentLikeClick="commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked)"
-            @commentJump="commentJump(post._jv.id)"
+            @commentJump="commentJump(threadId, post._jv.id)"
             @imageClick="imageClick"
             @deleteComment="deleteComment(post._jv.id)"
             @replyComment="replyComment(post._jv.id)"
@@ -202,7 +203,7 @@ import lodash from 'lodash';
 export default {
   data() {
     return {
-      threadId: 11,
+      threadId: '',
       thread: {},
       loadDetailStatus: {},
       status: false,
@@ -263,7 +264,8 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option.id);
+    console.log(option.id, '这是详情页接收的id');
+    // this.threadId = option.id;
     this.threadId = 11;
     this.loadThreads();
     this.loadThreadPosts();
@@ -397,6 +399,9 @@ export default {
           } else if (type == '2') {
             if (data.isDeleted) {
               console.log('跳转到首页');
+              uni.navigateTo({
+                url: `/pages/home/index`,
+              });
             } else {
               console.log('主题删除失败');
             }
@@ -485,6 +490,9 @@ export default {
           } else if (type == '4') {
             if (data.isDeleted) {
               console.log('删除成功，跳转到首页');
+              uni.navigateTo({
+                url: `/pages/home/index`,
+              });
             } else {
               console.log('删除失败，跳转到首页');
             }
@@ -596,11 +604,11 @@ export default {
       this.postComment(this.commentId);
     },
     // 跳转到评论详情页
-    commentJump(postId) {
+    commentJump(threadId, postId) {
       console.log(postId, 'postId跳转到评论详情页');
-      // uni.navigateTo({
-      //   url: '',
-      // });
+      uni.navigateTo({
+        url: `/pages/topic/comment?id=${threadId}?commentId=${postId}`,
+      });
     },
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus) {
