@@ -124,4 +124,7 @@ export default {
     word: '个字',
     publish: '发布',
   },
+  auth: {
+    userinfo: '获取头像和昵称',
+  },
 };
