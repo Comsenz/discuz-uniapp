@@ -69,7 +69,7 @@ export default {
     this.myId = myId;
     this.username = username;
     this.dialogId = dialogId;
-    this.getChatRecord();
+    this.getChatRecord(dialogId);
     this.getEmoji();
   },
   computed: {
@@ -84,6 +84,7 @@ export default {
           list.push(recordList[keys[i]]);
         }
       }
+      console.log('recordList', recordList);
       console.log('聊天记录：', list);
       return list;
     },
@@ -94,10 +95,12 @@ export default {
   },
   methods: {
     // 调用 会话消息列表 的接口
-    getChatRecord() {
+    getChatRecord(dialogId) {
       const params = {
-        'filter[dialog_id]': this.dialogId || 1, // message页面传不过来，暂时为1
+        'filter[dialog_id]': dialogId || this.dialogId,
         include: ['user', 'user.groups'],
+        'page[number]': 1,
+        'page[limit]': 100,
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
       this.$store
@@ -122,7 +125,7 @@ export default {
         _jv: {
           type: 'dialog/message',
         },
-        dialog_id: 1,
+        dialog_id: this.dialogId,
         message_text: this.msg,
       };
       this.$store

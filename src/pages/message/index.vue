@@ -1,5 +1,11 @@
 <template>
   <view class="msg-box">
+    <uni-nav-bar
+      left-icon="back"
+      :left-text="title"
+      status-bar
+      @clickLeft="clickNavBarLeft"
+    ></uni-nav-bar>
     <uni-list>
       <uni-list-item
         v-for="item in list"
@@ -32,8 +38,8 @@
         <view
           class="dialog-box"
           v-for="dialog of allDialogList"
-          :key="dialog.id"
-          @click="clickDialog(dialog)"
+          :key="dialog._jv.id"
+          @click="clickDialog(dialog._jv.id, dialog.recipient.id)"
         >
           <view class="dialog-box__header">
             <view class="dialog-box__header__info">
@@ -82,11 +88,12 @@
 </template>
 
 <script>
-import { uniList, uniListItem, uniIcons, uniLoadMore } from '@dcloudio/uni-ui';
+import { uniNavBar, uniList, uniListItem, uniIcons, uniLoadMore } from '@dcloudio/uni-ui';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
+    uniNavBar,
     uniList,
     uniListItem,
     uniIcons,
@@ -94,6 +101,7 @@ export default {
   },
   data() {
     return {
+      title: '消息',
       list: [
         { id: 1, title: '@我的', type: 'related', unReadNum: 0 },
         { id: 2, title: '回复我的', type: 'replied', unReadNum: 0 },
@@ -142,10 +150,6 @@ export default {
           dialogList[keys[i]].time = time2MorningOrAfternoon(dialogList[keys[i]].created_at);
           // if (value && value.recipient && value.recipient.id === id) {
           list.push(value);
-          list.push(value);
-          list.push(value);
-          list.push(value);
-          list.push(value);
           // }
         }
       }
@@ -154,6 +158,12 @@ export default {
     },
   },
   methods: {
+    // 回到上一个页面
+    clickNavBarLeft() {
+      uni.navigateBack({
+        delta: 1,
+      });
+    },
     // 调用 会话列表 的接口
     getDialogList() {
       const params = {
@@ -188,10 +198,10 @@ export default {
     },
 
     // 跳转至 聊天页面
-    clickDialog(item) {
-      console.log('聊天信息', item);
+    clickDialog(dialogId, myId) {
+      console.log('会话id', dialogId);
       uni.navigateTo({
-        url: '../message/chat',
+        url: `../message/chat?myId=${myId}&dialogId=${dialogId}`,
       });
     },
 
