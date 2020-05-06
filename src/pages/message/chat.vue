@@ -3,11 +3,13 @@
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
       <view class="chat-box__con__time">{{ item.time }}</view>
       <view
-        :class="[item.user_id === myId ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
+        :class="[
+          item.user_id !== userId ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other',
+        ]"
       >
         <image
           :class="[
-            item.user_id === myId
+            item.user_id !== userId
               ? 'chat-box__con__msg__image__mine'
               : 'chat-box__con__msg__image__other',
           ]"
@@ -15,7 +17,7 @@
         ></image>
         <view
           :class="[
-            item.user_id === myId
+            item.user_id !== userId
               ? 'chat-box__con__msg__box__mine'
               : 'chat-box__con__msg__box__other',
           ]"
@@ -57,7 +59,7 @@ export default {
     return {
       msg: '',
       emojiShow: false,
-      myId: 0,
+      userId: 0,
       username: '',
       dialogId: 0,
       avatar: '',
@@ -65,8 +67,8 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    const { myId, username, dialogId } = params;
-    this.myId = myId;
+    const { userId, username, dialogId } = params;
+    this.userId = userId;
     this.username = username;
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
@@ -107,7 +109,7 @@ export default {
         .dispatch('jv/get', ['dialog/message', { params }])
         .then(res => {
           console.log('会话消息列表res：', res);
-          this.avatar = res[1].user.avatarUrl;
+          this.avatar = res[0].user.avatarUrl;
         })
         .catch(err => {
           console.log(err);
