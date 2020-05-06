@@ -44,8 +44,8 @@
           :addon="item.change_available_amount"
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
         ></qui-cell-item>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>

@@ -47,8 +47,8 @@
             item.cash_status == 3 ? 'fail' : item.cash_status == 4 ? 'success' : 'normal'
           "
         ></qui-cell-item>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>

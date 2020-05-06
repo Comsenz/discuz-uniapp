@@ -28,8 +28,8 @@
           :addon="'¥' + freezeItem.change_freeze_amount"
           :brief-right="freezeItem.created_at"
         ></qui-cell-item>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>

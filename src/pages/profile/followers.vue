@@ -61,8 +61,8 @@
             </view>
           </qui-cell-item>
         </view>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>
