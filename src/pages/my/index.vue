@@ -24,13 +24,13 @@
     </view>
     <view>
       <view class="my-items">
-        <navigator url="./profile" open-type="navigate">
+        <navigator url="./profile" hover-class="none">
           <qui-cell-item title="我的资料" arrow></qui-cell-item>
         </navigator>
-        <navigator url="./wallet" open-type="navigate">
+        <navigator url="./wallet" hover-class="none">
           <qui-cell-item title="我的钱包" arrow></qui-cell-item>
         </navigator>
-        <navigator url="./favorite" open-type="navigate">
+        <navigator url="./favorite" hover-class="none">
           <qui-cell-item title="我的收藏" arrow :border="false"></qui-cell-item>
         </navigator>
       </view>

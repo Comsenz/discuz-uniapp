@@ -4,7 +4,7 @@
       <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
       <qui-topic-content
         v-model="thread"
-        :pay-status="true"
+        :pay-status="false"
         :avatar-url="thread.user.avatarUrl"
         :user-name="thread.user.username"
         :theme-types="thread.type"
@@ -17,6 +17,9 @@
         @personJump="personJump"
         @selectChoice="selectChoice"
       ></qui-topic-content>
+      <qui-button size="100%" type="primary" class="publishBtn" @tap="payClickShow()">
+        {{ p.pay }}
+      </qui-button>
       <!-- 已支付用户列表 -->
       <view v-if="paidStatus">
         <qui-person-list
@@ -98,6 +101,7 @@
             :images-list="post.images"
             :reply-count="post.replyCount"
             :can-delete="post.canDelete"
+            :comment-show="true"
             @personJump="personJump(post.user.id)"
             @commentLikeClick="commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked)"
             @commentJump="commentJump(threadId, post._jv.id)"
@@ -192,12 +196,13 @@
         <text class="popup-share-btn" @click="cancel('share')">取消</text>
       </view>
     </uni-popup>
+    <qui-pay ref="payShow" pay-type="图片查看"></qui-pay>
   </view>
 </template>
 
 <script>
 /* eslint-disable */
-import { status } from 'jsonapi-vuex';
+import { status, utils } from 'jsonapi-vuex';
 import lodash from 'lodash';
 
 export default {
@@ -208,7 +213,7 @@ export default {
       loadDetailStatus: {},
       status: false,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
-      posts: {},
+      // posts: {},
       loadDetailCommnetStatus: {},
       postsStatus: false,
       footerShow: true, // 默认显示底部
@@ -244,7 +249,9 @@ export default {
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, //回复状态
+      commentReply: false, //发布的是否是回复的回复
       commentId: '',
+      payShow: false, //是否显示支付
     };
   },
   computed: {
@@ -254,13 +261,17 @@ export default {
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
-    // postList() {
-    //   // console.log(this.$store.getters['jv/get']('posts'));
-    //   return this.$store.getters['jv/get']('posts');
-    // },
+    posts() {
+      // console.log(this.$store.getters['jv/get']('posts'));
+      const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
+      return posts;
+    },
     // 语言包
     t() {
       return this.i18n.t('topic');
+    },
+    p() {
+      return this.i18n.t('pay');
     },
   },
   onLoad(option) {
@@ -502,40 +513,61 @@ export default {
           console.log('1111');
         });
     },
-    // 主题回复调用接口
+    // 主题回复，评论的回复调用接口
     postComment() {
-      const params = {
-        _jv: {
-          type: 'posts',
-          relationships: {
-            thread: {
-              data: {
-                type: 'threads',
-                id: this.threadId,
+      let params = {};
+      if (this.commentReply) {
+        params = {
+          _jv: {
+            type: 'posts',
+            relationships: {
+              thread: {
+                data: {
+                  type: 'threads',
+                  id: this.threadId,
+                },
               },
             },
           },
-        },
-        content: this.textAreaValue,
-      };
-      this.commentStatus = status.run(() => {
-        this.$store
-          .dispatch('jv/post', params)
-          .then(res => {
-            this.$refs.commentPopup.close();
-            // console.log(res);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      });
+          content: this.textAreaValue,
+          isComment: true,
+          replyId: this.commentId,
+        };
+      } else {
+        params = {
+          _jv: {
+            type: 'posts',
+            relationships: {
+              thread: {
+                data: {
+                  type: 'threads',
+                  id: this.threadId,
+                },
+              },
+            },
+          },
+          content: this.textAreaValue,
+        };
+      }
+
+      console.log(params, '传给接口的参数');
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.$refs.commentPopup.close();
+          // console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 加载当前主题评论的数据
     loadThreadPosts() {
       const params = {
         'filter[isDeleted]': 'no',
-        'filter[thread]': 11,
+        'filter[isComment]': 'no',
+        'filter[thread]': this.threadId,
         include: [
           'replyUser',
           'user.groups',
@@ -549,9 +581,9 @@ export default {
       this.loadDetailCommnetStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
-          this.posts = data;
+          // this.posts = data;
           console.log('&&&&&&~~~~~~~~~!', this.posts);
-          console.log(123, this.posts[12].user.groups[10].name);
+          // console.log(123, this.posts[12].user.groups[10].name);
           // Object.getOwnPropertyNames(data).forEach(function(key) {
           //   console.log({ key }, data[key].user.username);
           // });
@@ -597,6 +629,7 @@ export default {
     // 打赏
     rewardClick() {
       console.log('打赏');
+      this.payShow = true;
     },
     // 主题评论点击发布事件
     publishClick() {
@@ -605,9 +638,14 @@ export default {
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
+      console.log(threadId, 'threadId跳转到评论详情页');
       console.log(postId, 'postId跳转到评论详情页');
+
+      // uni.navigateTo({
+      //   url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
+      // });
       uni.navigateTo({
-        url: `/pages/topic/comment?id=${threadId}?commentId=${postId}`,
+        url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
       });
     },
     // 评论点赞
@@ -625,6 +663,7 @@ export default {
       if (!this.thread.canReply) {
         console.log('没有回复权限');
       } else {
+        this.commentReply = true;
         this.commentId = postId;
         console.log(postId, '评论回复id');
         this.$refs.commentPopup.open();
@@ -680,9 +719,13 @@ export default {
     cancel() {
       this.$refs.sharePopup.close();
     },
-  },
-  mounted() {
-    console.log(this.$refs.commentText, '获取的dom');
+    // 支付触发子组件弹出框事件
+    payClickShow() {
+      this.$refs.payShow.payClickShow();
+      console.log(this.$refs.payShow);
+      // this.$refs.payShow.childMethod();
+      // console.log(this.$refs.payShow);
+    },
   },
 };
 </script>
