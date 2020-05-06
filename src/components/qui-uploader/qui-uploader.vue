@@ -14,7 +14,9 @@
         ></image>
         <view class="qui-uploader-box__uploader-file--load" v-if="item.uploadPercent < 100">
           <view class="qui-uploader-box__uploader-file--load__mask"></view>
-          <text class="qui-uploader-box__uploader-file--load__text">图片上传中...</text>
+          <text class="qui-uploader-box__uploader-file--load__text">
+            {{ i18n.t('discuzq.image.imageUploading') }}
+          </text>
           <progress
             :percent="item.uploadPercent"
             active
@@ -144,7 +146,7 @@ export default {
             });
           });
 
-          Promise.all(promise).then(() => {
+          Promise.allSettled(promise).then(() => {
             _this.$emit('change', _this.uploadList);
           });
         },
