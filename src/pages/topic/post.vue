@@ -39,6 +39,7 @@
       v-model="textAreaValue"
       auto-height
       maxlength="450"
+      @blur="contBlur"
     ></textarea>
     <qui-uploader
       url="https://dq.comsenz-service.com/api/attachments"
@@ -183,6 +184,7 @@ export default {
         },
       ],
       uploadFile: [],
+      cursor: 0,
     };
   },
   provide: {
@@ -210,6 +212,10 @@ export default {
     },
   },
   methods: {
+    contBlur(e) {
+      console.log(e.detail.cursor);
+      this.cursor = e.detail.cursor;
+    },
     diaLogClose() {
       this.$refs.popup.close();
     },
@@ -250,24 +256,12 @@ export default {
       });
     },
     getEmojiClick(num) {
-      /* this.emojiShow = false;
+      let text = '';
+      text = `${this.textAreaValue.slice(0, this.cursor) +
+        this.allEmoji[num].code +
+        this.textAreaValue.slice(this.cursor)}`;
 
-      console.log(document.getElementById('textarea'));
-      const textarea = document.getElementById('textarea');
-
-      const value = this.textAreaValue;
-      const startPos = textarea.selectionStart;
-      const endPos = textarea.selectionEnd;
-      const newValue = value.substring(0, startPos) + num + value.substring(endPos, value.length);
-      this.textAreaValue = newValue;
-      if (textarea.setSelectionRange) {
-        setTimeout(() => {
-          const index = startPos + num.length;
-          textarea.setSelectionRange(index, index);
-        }, 0);
-      } */
-
-      this.textAreaValue += this.allEmoji[num].code;
+      this.textAreaValue = text;
       this.emojiShow = false;
     },
     callClick() {
@@ -368,10 +362,15 @@ export default {
     if (option.operating) this.operating = option.operating;
   },
   onShow() {
+    let atMemberList = '';
     this.getAtMemberData.map(item => {
-      this.textAreaValue = `${this.textAreaValue}@${item.toUser.username} `;
-      return this.textAreaValue;
+      atMemberList += `@${item.toUser.username} `;
+      return atMemberList;
     });
+
+    this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
+      atMemberList +
+      this.textAreaValue.slice(this.cursor)}`;
   },
 };
 </script>
