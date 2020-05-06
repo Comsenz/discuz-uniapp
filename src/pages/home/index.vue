@@ -584,7 +584,7 @@ export default {
 
 .sticky__isSticky {
   display: flex;
-  // justify-content: space-between;
+  // justify-content: flex-start;
   width: 710rpx;
   height: 80rpx;
   margin-bottom: 30rpx;
@@ -596,9 +596,9 @@ export default {
   border-radius: 6rpx;
   box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
   &__box {
-    display: block;
-    width: 62rpx;
+    // display: block;
     height: 35rpx;
+    min-width: 62rpx;
     margin-top: 27rpx;
     margin-left: 20rpx;
     line-height: 35rpx;
@@ -608,6 +608,9 @@ export default {
   }
   &__count {
     margin-left: 21rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 .horizonal-tab .active {
