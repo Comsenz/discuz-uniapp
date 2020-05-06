@@ -1,38 +1,58 @@
 <template>
   <view class="my-profile">
-    <cell-item title="用户名" arrow :addon="profile.username"></cell-item>
-    <cell-item title="头像" slot-right arrow>
+    <navigator :url="'../modify/editusername?id=' + userId" hover-class="none">
+      <qui-cell-item title="用户名" arrow :addon="profile.username"></qui-cell-item>
+    </navigator>
+    <qui-cell-item title="头像" slot-right arrow>
       <image
         class="my-profile__avatar"
         :src="profile.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
         alt="avatarUrl"
       ></image>
-    </cell-item>
-    <cell-item title="手机号码" arrow :addon="profile.mobile"></cell-item>
-    <cell-item title="密码" arrow addon="修改"></cell-item>
-    <cell-item title="微信" arrow :addon="profile.wechat.nickname"></cell-item>
-    <cell-item v-if="profile.realname" title="实名认证" arrow :addon="profile.realname"></cell-item>
-    <cell-item v-if="profile.realname" title="签名" arrow addon="修改" :border="false"></cell-item>
-    <cell-item
-      v-if="!profile.realname"
+    </qui-cell-item>
+    <navigator :url="'../modify/mobile?id=' + userId" hover-class="none">
+      <qui-cell-item title="手机号码" arrow :addon="profile.mobile"></qui-cell-item>
+    </navigator>
+    <navigator :url="'../modify/editpwd?id=' + userId" hover-class="none">
+      <qui-cell-item title="密码" arrow addon="修改"></qui-cell-item>
+    </navigator>
+    <qui-cell-item title="微信" arrow :addon="profile.wechat.nickname"></qui-cell-item>
+    <qui-cell-item
+      v-if="profile.realname"
       title="实名认证"
       arrow
-      addon="去认证"
-      :border="false"
-    ></cell-item>
+      :addon="profile.realname"
+    ></qui-cell-item>
+    <navigator :url="'../modify/signature?id=' + userId" hover-class="none">
+      <qui-cell-item
+        v-if="profile.realname"
+        title="签名"
+        arrow
+        addon="修改"
+        :border="false"
+      ></qui-cell-item>
+    </navigator>
+    <navigator :url="'../modify/realname?id=' + userId" hover-class="none">
+      <qui-cell-item
+        v-if="!profile.realname"
+        title="实名认证"
+        arrow
+        addon="去认证"
+        :border="false"
+      ></qui-cell-item>
+    </navigator>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
-
 export default {
   components: {
-    cellItem,
+    //
   },
   data() {
     return {
       hasPassword: false,
+      userId: 1, // 获取当前登陆用户的ID
     };
   },
   computed: {
@@ -41,12 +61,12 @@ export default {
     },
   },
   methods: {
-    //
+    // 获取当前登陆用户的ID
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }
@@ -67,6 +87,9 @@ page {
 }
 
 .my-profile__avatar {
+  position: absolute;
+  top: 13rpx;
+  right: 44rpx;
   width: 75rpx;
   height: 75rpx;
   border-radius: 50%;

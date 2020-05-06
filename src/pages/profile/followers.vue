@@ -22,9 +22,21 @@
             alt="avatarUrl"
             @tap="toProfile(followerItem.fromUser.id)"
           ></image>
-          <cell-item :title="followerItem.fromUser.username" slot-right>
+          <qui-cell-item
+            :title="followerItem.fromUser.username"
+            slot-right
+            :brief="
+              followerItem.fromUser.groups
+                ? Object.values(followerItem.fromUser.groups)[0].name
+                : ''
+            "
+          >
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-            <view class="follow-content__items__operate" @tap="addFollow(followerItem.fromUser)">
+            <view
+              class="follow-content__items__operate"
+              @tap="addFollow(followerItem.fromUser)"
+              v-if="followerItem.fromUser.id != '1'"
+            >
               <text>
                 {{
                   followerItem.fromUser.follow == 0
@@ -47,23 +59,20 @@
                 "
               ></qui-icon>
             </view>
-          </cell-item>
+          </qui-cell-item>
         </view>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
-import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    cellItem,
-    loadMore,
+    //
   },
   props: {
     userId: {
@@ -165,7 +174,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .following {
   padding: 0 20rpx;
   font-size: 28rpx;

@@ -18,7 +18,7 @@
         </view>
         <view class="themeItem__header__title__time">{{ themeTime }}</view>
       </view>
-      <view class="themeItem__header__opera">
+      <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
             <qui-icon
@@ -43,58 +43,73 @@
     </view>
 
     <view class="themeItem__content">
-      <view class="theme__content_title" v-if="themeType == 1 && themeTitle">{{ themeTitle }}</view>
-      <view class="themeItem__content__text" v-if="themeContent">
-        <rich-text :nodes="themeContent"></rich-text>
-      </view>
-      <view class="theme__content__videocover" v-if="!payStatus && coverImage">
-        <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
+      <view
+        class="themeItem__content__con"
+        :style="{ position: payStatus ? 'static' : 'relative' }"
+      >
+        <view class="theme__content_title" v-if="themeType == 1 && themeTitle">
+          {{ themeTitle }}
+        </view>
+        <view class="themeItem__content__text" v-if="themeContent">
+          <rich-text :nodes="themeContent"></rich-text>
+        </view>
+        <view
+          class="theme__content__videocover"
+          v-if="themeType == 2 && !payStatus && coverImage != null"
+        >
+          <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
+        </view>
+
+        <view v-if="Object.keys(imagesList).length == 1">
+          <view class="themeItem__content__imgone">
+            <image
+              class="themeItem__content__imgone__item"
+              v-for="(image, index) in imagesList"
+              :key="index"
+              :mode="modeVal"
+              :src="image.thumbUrl"
+              alt
+              @click="imageClick(image._jv.id)"
+            ></image>
+          </view>
+        </view>
+        <view v-if="Object.keys(imagesList).length == 2">
+          <view class="themeItem__content__imgtwo">
+            <image
+              class="themeItem__content__imgtwo__item"
+              v-for="(image, index) in imagesList"
+              :key="index"
+              :mode="modeVal"
+              :src="image.thumbUrl"
+              alt
+              @click="imageClick(image._jv.id)"
+            ></image>
+          </view>
+        </view>
+        <view v-if="Object.keys(imagesList).length >= 3">
+          <view class="themeItem__content__imgmore">
+            <image
+              class="themeItem__content__imgmore__item"
+              v-for="(image, index) in imagesList"
+              :key="index"
+              :mode="modeVal"
+              :src="image.thumbUrl"
+              alt
+              @click="imageClick(image._jv.id)"
+            ></image>
+            <image
+              class="themeItem__content__imgmore__item"
+              v-if="Object.keys(imagesList).length % 3 != 0"
+            ></image>
+          </view>
+        </view>
+        <view v-if="!payStatus" class="themeItem__content__con__cover"></view>
+        <view v-if="!payStatus" class="themeItem__content__con__surtip">
+          {{ p.surplus }}{{ partVal }}%{{ p.contentHide }}
+        </view>
       </view>
 
-      <view v-if="Object.keys(imagesList).length == 1">
-        <view class="themeItem__content__imgone">
-          <image
-            class="themeItem__content__imgone__item"
-            v-for="(image, index) in imagesList"
-            :key="index"
-            :mode="modeVal"
-            :src="image.thumbUrl"
-            alt
-            @click="imageClick(image._jv.id)"
-          ></image>
-        </view>
-      </view>
-      <view v-if="Object.keys(imagesList).length == 2">
-        <view class="themeItem__content__imgtwo">
-          <image
-            class="themeItem__content__imgtwo__item"
-            v-for="(image, index) in imagesList"
-            :key="index"
-            :mode="modeVal"
-            :src="image.thumbUrl"
-            alt
-            @click="imageClick(image._jv.id)"
-          ></image>
-        </view>
-      </view>
-      <view v-if="Object.keys(imagesList).length >= 3">
-        <view class="themeItem__content__imgmore">
-          <image
-            class="themeItem__content__imgmore__item"
-            v-for="(image, index) in imagesList"
-            :key="index"
-            :mode="modeVal"
-            :src="image.thumbUrl"
-            alt
-            @click="imageClick(image._jv.id)"
-          ></image>
-          <image
-            class="themeItem__content__imgmore__item"
-            v-if="Object.keys(imagesList).length % 3 != 0"
-          ></image>
-        </view>
-      </view>
-      <view class="themeItem__content__tags">
+      <view class="themeItem__content__tags" v-if="tags.length > 0">
         <view class="themeItem__content__tags__item" v-for="(tag, index) in tags" :key="index">
           {{ tag.name }}
         </view>
@@ -106,14 +121,14 @@
 <script>
 export default {
   props: {
-    // // 类型
-    // themeParts: {
-    //   validator: value => {
-    //     // 0 内容  1 回复
-    //     return ['0', '1', '2', '3'].indexOf(value) !== -1;
-    //   },
-    //   default: '1',
-    // },
+    // 类型
+    themeParts: {
+      validator: value => {
+        // 0 主题  1 回复
+        return ['0', '1'].indexOf(value) !== -1;
+      },
+      default: '0',
+    },
     // 主题类型
     themeType: {
       validator: value => {
@@ -126,6 +141,10 @@ export default {
     payStatus: {
       type: Boolean,
       default: true,
+    },
+    partVal: {
+      type: [Number, String],
+      default: 0,
     },
     userId: {
       type: [Number, String],
@@ -163,6 +182,10 @@ export default {
       type: String,
       default: '',
     },
+    managementShow: {
+      type: Boolean,
+      default: false,
+    },
     // 主题图片
     imagesList: {
       type: Object,
@@ -182,6 +205,10 @@ export default {
         return [];
       },
     },
+    coverImage: {
+      type: String,
+      default: 'https://discuz.chat/static/images/noavatar.gif',
+    },
   },
   data: () => {
     return {
@@ -195,6 +222,9 @@ export default {
   computed: {
     t() {
       return this.i18n.t('topic');
+    },
+    p() {
+      return this.i18n.t('pay');
     },
   },
   methods: {
@@ -249,7 +279,7 @@ export default {
 
     &__title {
       width: 400rpx;
-      padding-left: 20rpx;
+      // padding-left: 20rpx;
 
       &__top {
         height: 37rpx;
@@ -291,11 +321,31 @@ export default {
   }
 
   &__content {
+    &__con {
+      &__cover {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 240rpx;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+      }
+      &__surtip {
+        position: relative;
+        z-index: 8;
+        padding-top: 37rpx;
+        padding-bottom: 20rpx;
+        font-size: $fg-f28;
+        line-height: 37rpx;
+        text-align: center;
+      }
+    }
+
     padding: 0 40rpx;
     &__text {
       margin-bottom: 12rpx;
       font-family: $font-family;
-      font-size: 28rpx;
+      font-size: $fg-f28;
       font-weight: 400;
       line-height: 45rpx;
       color: rgba(51, 51, 51, 1);

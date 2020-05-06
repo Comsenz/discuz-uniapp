@@ -18,7 +18,7 @@
           请输新密码
         </view>
         <view class="retireve-pas-input">
-          <input class="retireve-pas-input-i" type="password" v-model="newpassword" maxlength="6" />
+          <input class="retireve-pas-input-i" type="password" v-model="newpassword" />
         </view>
       </view>
       <view class="retireve-pass" v-if="passt">

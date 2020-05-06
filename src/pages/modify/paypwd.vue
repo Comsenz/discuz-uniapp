@@ -44,14 +44,15 @@ export default {
   },
   methods: {
     btndata(num) {
-      console.log(num);
       if (num.length >= 6) {
         this.inputpas = num;
         this.pas = false;
       }
     },
     btndata2(sum) {
-      console.log(sum);
+      if (this.inputpas !== sum) {
+        this.sun = true;
+      }
       this.mobelypas(sum);
     },
     senduser() {

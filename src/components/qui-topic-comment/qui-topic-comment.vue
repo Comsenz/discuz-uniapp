@@ -27,10 +27,10 @@
         <view class="themeItem__header__r">
           <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
           <view v-else @click="commentLikeClick" class="comment-like">
-            <qui-icon v-if="isLiked" name="icon-liked" class="like"></qui-icon>
+            <qui-icon v-if="!!isLiked" name="icon-liked" class="like"></qui-icon>
             <qui-icon v-else name="icon-like" class="like" size="30"></qui-icon>
             <view class="comment-like-count">
-              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}{{ isLiked }}
+              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}{{ !!isLiked }}
             </view>
           </view>
         </view>
@@ -109,7 +109,7 @@
             <qui-icon class="icon" name="icon-delete" size="26" color="#AAA"></qui-icon>
             <view class="themeItem__footer__con">{{ t.delete }}</view>
           </view>
-          <view class="footer__r__child" @click="replyComment">
+          <view class="footer__r__child" @click="replyComment" v-if="commentShow">
             <qui-icon class="icon" name="icon-comments" size="26" color="#AAA"></qui-icon>
             <view class="themeItem__footer__con">{{ t.reply }}</view>
           </view>
@@ -185,6 +185,11 @@ export default {
       type: String,
       default: 'center',
     },
+    // 是否显示评论的回复按钮
+    commentShow: {
+      type: Boolean,
+      default: false,
+    },
     // 回复的点赞数
     commentLikeCount: {
       type: Number,
@@ -217,8 +222,8 @@ export default {
       this.$emit('personJump');
     },
     // 评论点赞
-    commentLikeClick() {
-      this.$emit('commentLikeClick');
+    commentLikeClick(evt) {
+      this.$emit('commentLikeClick', evt);
     },
     // 删除事件
     deleteComment() {

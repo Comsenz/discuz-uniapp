@@ -1,19 +1,20 @@
 <template>
   <view class="walletlist">
     <view class="walletlist-head">
-      <cell-item slot-right :border="false">
+      <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
           <text>状态：{{ filterSelected.label }}</text>
           <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
-          <filter-modal
+          <qui-filter-modal
             v-model="show"
             @confirm="confirm"
+            @change="changeType"
             :filter-list="filterList"
             :if-need-confirm="false"
             ref="filter"
-          ></filter-modal>
+          ></qui-filter-modal>
         </view>
-      </cell-item>
+      </qui-cell-item>
     </view>
     <picker
       mode="date"
@@ -35,31 +36,26 @@
         show-scrollbar="false"
         class="scroll-y"
       >
-        <cell-item
+        <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
           :title="item.change_desc"
           :brief="item.created_at"
           :addon="item.change_available_amount"
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
-        ></cell-item>
+        ></qui-cell-item>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <load-more :status="loadingType"></load-more>
     </view>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
-import filterModal from '@/components/qui-filter-modal';
 import { status } from 'jsonapi-vuex';
-import loadMore from '@/components/qui-load-more';
 
 export default {
   components: {
-    cellItem,
-    filterModal,
-    loadMore,
+    //
   },
   data: () => {
     const date = new Date();
@@ -161,7 +157,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }

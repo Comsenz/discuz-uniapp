@@ -101,6 +101,9 @@ export default {
       postphon
         .then(res => {
           console.log(res);
+          this.num -= 1;
+          /* eslint-disable */
+          this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
           console.log(err);
@@ -131,6 +134,17 @@ export default {
         })
         .catch(err => {
           console.log(err);
+          if (err.statusCode === 422) {
+            this.judge = true;
+            /* eslint-disable */
+            this.test = err.data.errors[0].detail[0];
+          } else if (err.statusCode === 500) {
+            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.judge = true;
+            if(this.num < 0){
+              this.test = '请过5分钟重试'
+            }
+          }
         });
     },
   },
@@ -186,7 +200,6 @@ page {
 }
 .modify-input {
   width: 710rpx;
-  height: 200rpx;
   margin: 0 0 0 40rpx;
 }
 .modify-input-test {
@@ -207,9 +220,11 @@ page {
   margin: 0;
   border: 0;
 }
+.modify-title {
+  width: 100%;
+}
 .modify-button {
   width: 670rpx;
-  height: 90rpx;
   margin: 52rpx auto 0;
 }
 </style>

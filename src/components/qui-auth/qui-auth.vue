@@ -1,0 +1,75 @@
+<template>
+  <view class="auth">
+    <view class="auth__header">
+      <qui-icon @tap="close" class="auth__header__close" name="icon-close" size="20"></qui-icon>
+    </view>
+    <view class="auth__content">
+      <image class="auth__content__image" mode="widthFix" :src="forums.set_site.site_logo"></image>
+
+      <qui-button
+        type="primary"
+        open-type="getUserInfo"
+        @getuserinfo="handleGetUserInfo"
+        lang="zh_CN"
+        size="medium"
+      >
+        {{ t.userinfo }}
+      </qui-button>
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  computed: {
+    t() {
+      return this.i18n.t('auth');
+    },
+    forums() {
+      return this.$store.getters['jv/get']('forums/1');
+    },
+  },
+  methods: {
+    handleGetUserInfo(res) {
+      if (res.detail.errMsg === 'getUserInfo:ok') {
+        // eslint-disable-next-line no-unused-vars
+        this.$store.dispatch('session/login').then(data => {
+          this.$emit('login', res);
+        });
+      } else {
+        this.$emit('login', res);
+      }
+    },
+    close() {
+      this.$emit('close');
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+.auth {
+  height: 400rpx;
+  background: --color(--qui-BG-2);
+  &__header {
+    padding: 30rpx 32rpx;
+    text-align: right;
+    &__close {
+      justify-content: flex-end;
+      color: --color(--qui-FC-AAA);
+    }
+  }
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    &__image {
+      width: 276rpx;
+      margin: 10rpx 0 67rpx;
+    }
+  }
+}
+</style>

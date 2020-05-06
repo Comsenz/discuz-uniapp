@@ -138,4 +138,19 @@ export default {
     word: '个字',
     publish: '发布',
   },
+  pay: {
+    passwordTip: '请输入支付密码',
+    balance: '余额',
+    sumOfMoney: '金额',
+    inputComplete: '输入完成',
+    surplus: '剩余',
+    contentHide: '内容已隐藏',
+    payHave: '支付作者，获得',
+    pay: '支付',
+    rmb: '元',
+    showMyHead: '支付记录显示我的头像',
+  },
+  auth: {
+    userinfo: '获取头像和昵称',
+  },
 };

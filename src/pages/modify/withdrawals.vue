@@ -3,21 +3,21 @@
     <view class="cash-content">
       <!-- 收款人 -->
       <view class="cash-content-tab">
-        <cell-item title="收款人" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="收款人" slot-right :arrow="false" :border="false">
           <test class="cash-content-name">
             {{ name }}
           </test>
-        </cell-item>
+        </qui-cell-item>
       </view>
       <!-- 可提现金额 -->
       <view class="cash-content-tab">
-        <cell-item title="可提现余额" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="可提现余额" slot-right :arrow="false" :border="false">
           <test class="cash-content-name">￥{{ balance }}</test>
-        </cell-item>
+        </qui-cell-item>
       </view>
       <!-- 提现金额 -->
       <view class="cash-content-tab">
-        <cell-item title="提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="提现金额" slot-right :arrow="false" :border="false">
           <input
             class="cash-content-input"
             type="number"
@@ -26,24 +26,22 @@
             v-model="cashmany"
             @input="settlement"
           />
-        </cell-item>
+        </qui-cell-item>
       </view>
       <view class="cash-erro-messag1" v-if="judge2">
         {{ test2 }}
       </view>
       <!-- 实际提现金额 -->
       <view class="cash-content-tab">
-        <cell-item title="实际提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item title="实际提现金额" slot-right :arrow="false" :border="false">
           <view class="cash-content-name cash-content-actual">
             <view
               :class="length ? 'cash-content-ellipsis2' : 'cash-content-ellipsis'"
               v-text="contint"
             ></view>
-            <view class="cash-content-proced">
-              手续费：{{ cashmany * (0.3).toFixed(2) }}元 (30%)
-            </view>
+            <view class="cash-content-proced">手续费：{{ procedures }}元 (30%)</view>
           </view>
-        </cell-item>
+        </qui-cell-item>
       </view>
       <!-- 验证码 -->
       <view class="input">
@@ -78,14 +76,14 @@
 <script>
 import { status } from 'jsonapi-vuex';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
-import cellItem from '@/components/qui-cell-item';
 
 export default {
-  components: { quiInputCode, cellItem },
+  components: { quiInputCode },
   data() {
     return {
       userid: 24,
       second: 60,
+      num: 5,
       cashmany: '',
       name: '',
       balance: '',
@@ -100,6 +98,7 @@ export default {
       phon: true,
       length: false,
       contint: '-.-',
+      procedures: 0,
     };
   },
   onLoad() {
@@ -128,6 +127,9 @@ export default {
         this.length = true;
         const number = this.cashmany - this.cashmany * 0.3;
         this.contint = `¥${number.toFixed(2)}`;
+        const casnumber = this.cashmany * 0.3;
+        this.procedures = casnumber.toFixed(2);
+        console.log(this.procedures);
       } else {
         this.length = false;
         this.contint = '-.-';
@@ -177,6 +179,9 @@ export default {
       postphon
         .then(res => {
           console.log(res);
+          this.num -= 1;
+          /* eslint-disable */
+          this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
           console.log(err);
@@ -200,7 +205,13 @@ export default {
           }
         })
         .catch(err => {
-          console.log('失败', err);
+          if (err.statusCode === 500) {
+            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.judge = true;
+            if (this.num < 0) {
+              this.test = '请过5分钟重试';
+            }
+          }
         });
     },
     // 提现申请
@@ -325,7 +336,6 @@ export default {
 }
 .modify-input {
   width: 710rpx;
-  height: 200rpx;
 }
 .modify-input-test {
   font-size: 28rpx;

@@ -1,40 +1,46 @@
 <template>
   <view class="wallet">
-    <cell-item
+    <qui-cell-item
       title="可用余额"
       arrow
       :addon="`¥ ${dataInfo.available_amount || 0.0}`"
       class="wallet-available"
-    ></cell-item>
-    <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" open-type="navigate">
-      <cell-item title="冻结金额" arrow :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"></cell-item>
+    ></qui-cell-item>
+    <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" hover-class="none">
+      <qui-cell-item
+        title="冻结金额"
+        arrow
+        :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"
+      ></qui-cell-item>
     </navigator>
-    <navigator url="./withdrawalslist" open-type="navigate">
-      <cell-item title="提现记录" arrow></cell-item>
+    <navigator url="./withdrawalslist" hover-class="none">
+      <qui-cell-item title="提现记录" arrow></qui-cell-item>
     </navigator>
-    <navigator url="./walletlist" open-type="navigate">
-      <cell-item title="钱包明细" arrow></cell-item>
+    <navigator url="./walletlist" hover-class="none">
+      <qui-cell-item title="钱包明细" arrow></qui-cell-item>
     </navigator>
-    <navigator url="./orderlist" open-type="navigate">
-      <cell-item title="订单明细" arrow></cell-item>
+    <navigator url="./orderlist" hover-class="none">
+      <qui-cell-item title="订单明细" arrow></qui-cell-item>
     </navigator>
-    <cell-item v-if="hasPassword" title="钱包密码" arrow :border="false"></cell-item>
-    <cell-item v-if="!hasPassword" title="设置支付密码" arrow :border="false"></cell-item>
+    <qui-cell-item v-if="hasPassword" title="钱包密码" arrow :border="false"></qui-cell-item>
+    <navigator :url="'../modify/paypwd?id=' + userId" hover-class="none">
+      <qui-cell-item v-if="!hasPassword" title="设置支付密码" arrow :border="false"></qui-cell-item>
+    </navigator>
   </view>
 </template>
 
 <script>
-import cellItem from '@/components/qui-cell-item';
 import { status } from 'jsonapi-vuex';
 
 export default {
   components: {
-    cellItem,
+    //
   },
   data() {
     return {
       dataInfo: {},
       hasPassword: false,
+      userId: 1, // 获取当前登陆用户的ID
     };
   },
   onLoad() {
@@ -54,7 +60,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 page {
   background-color: #f9fafc;
 }
