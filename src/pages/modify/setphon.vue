@@ -11,13 +11,13 @@
       </view>
     </view>
     <!-- 验证码 -->
-    <view class="modify-input">
-      <view class="modify-input-test">
+    <view class="new-input">
+      <view class="new-input-test">
         请输入验证码
       </view>
-      <qui-input-code @getdata="btndata"></qui-input-code>
+      <qui-input-code @getdata="btndata" :title="tit" :text="test"></qui-input-code>
     </view>
-    <view class="modify-button">
+    <view class="new-button">
       <qui-button type="primary" size="large" @click="dingphon">
         下一步
       </qui-button>
@@ -36,6 +36,9 @@ export default {
       iptValue: '',
       isFocus: false,
       second: 60,
+      num: 5,
+      tit: false,
+      test: '',
       sun: true,
       phon: true,
       newphon: '',
@@ -101,7 +104,9 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          console.log(res);
+          this.num -= 1;
+          /* eslint-disable */
+          this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
           console.log(err);
@@ -124,6 +129,17 @@ export default {
         })
         .catch(err => {
           console.log('verify', err);
+          if (err.statusCode === 422) {
+            this.tit = true;
+            /* eslint-disable */
+            this.test = err.data.errors[0].detail[0];
+          } else if (err.statusCode === 500) {
+            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.tit = true;
+            if(this.num < 0){
+              this.test = '请过5分钟重试'
+            }
+          }
         });
     },
   },
@@ -176,24 +192,23 @@ export default {
   background: --color(--qui-BG-HIGH-LIGHT);
   border-radius: 5rpx;
 }
-.modify-input {
+.new-input {
   width: 710rpx;
-  height: 200rpx;
   margin: 0 0 0 40rpx;
 }
-.modify-input-test {
+.new-input-test {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
   color: rgba(119, 119, 119, 1);
   opacity: 1;
 }
-.modify-vftion-input {
+.new-vftion-input {
   display: flex;
   width: 100%;
   height: 100rpx;
 }
-.modify-button {
+.new-button {
   margin: 52rpx 40rpx 0;
 }
 </style>

@@ -10,7 +10,7 @@ export default class LastMayday {
             "views": [
               {
                 "type": "image",
-                "url": `${obj.userheader}`,
+                "url": `${obj.recoimg}`,
                 "css": {
                   "width": "80px",
                   "height": "80px",
@@ -26,11 +26,11 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.username}`,
+                "text": `${obj.reconame}`,
                 "css": {
                   "color": "#000000",
                   "background": "rgba(0,0,0,0)",
-                  "width": "85px",
+                  "width": `${obj.namewidth}px`,
                   "height": "40.04px",
                   "top": "41px",
                   "left": "140px",
@@ -59,7 +59,7 @@ export default class LastMayday {
                   "width": "57px",
                   "height": "40.04px",
                   "top": "41px",
-                  "left": "244px",
+                  "left": `${obj.namewidth+160}px`,
                   "rotate": "0",
                   "borderRadius": "",
                   "borderWidth": "",

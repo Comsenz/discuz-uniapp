@@ -10,7 +10,7 @@ export default class LastMayday {
             "views": [
               {
                 "type": "image",
-                "url": `${obj.userheader}`,
+                "url": `${obj.recoimg}`,
                 "css": {
                   "width": "80px",
                   "height": "80px",
@@ -26,11 +26,11 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.username}`,
+                "text": `${obj.reconame}`,
                 "css": {
                   "color": "#000000",
                   "background": "rgba(0,0,0,0)",
-                  "width": "85px",
+                  "width": `${obj.namewidth}px`,
                   "height": "40.04px",
                   "top": "41px",
                   "left": "140px",
@@ -59,7 +59,7 @@ export default class LastMayday {
                   "width": "57px",
                   "height": "40.04px",
                   "top": "41px",
-                  "left": "244px",
+                  "left": `${obj.namewidth+160}px`,
                   "rotate": "0",
                   "borderRadius": "",
                   "borderWidth": "",
@@ -308,7 +308,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": `${obj.uservideo}`,
+                "url": "http://img0.imgtn.bdimg.com/it/u=1714427989,423307097&fm=26&gp=0.jpg",
                 "css": {
                   "width": "30px",
                   "height": "30px",
@@ -330,7 +330,7 @@ export default class LastMayday {
                   "background": "rgba(0,0,0,0)",
                   "width": "80px",
                   "height": "27.119999999999997px",
-                  "top": "606px",
+                  "top": "601px",
                   "left": "85px",
                   "rotate": "0",
                   "borderRadius": "",
@@ -356,7 +356,7 @@ export default class LastMayday {
                   "background": "rgba(0,0,0,0)",
                   "width": "122.75px",
                   "height": "27.119999999999997px",
-                  "top": "605px",
+                  "top": "601px",
                   "left": "527.25px",
                   "rotate": "0",
                   "borderRadius": "",

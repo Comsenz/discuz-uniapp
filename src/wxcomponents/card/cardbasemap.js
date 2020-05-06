@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 
 export default class LastMayday {
-  palette() {
+  palette(obj) {
     return (
           {
             "width": "700px",
@@ -51,7 +51,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "在崔健的所有歌曲中《花房姑娘》称在崔健的所有得上是最抒情的一首花房姑娘中多了一点在崔健的所有柔情的东西。",
+                "text": `${obj.introd}`,
                 "css": {
                   "color": "#6D6D6D",
                   "background": "rgba(0,0,0,0)",
@@ -159,7 +159,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": "https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/0F/08/ChMkJlauzXWIDrXBAAdCg2xP7oYAAH9FQOpVAIAB0Kb342.jpg",
+                "url": `${obj.sliteback}`,
                 "css": {
                   "width": "700px",
                   "height": "450px",
@@ -175,7 +175,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": "https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/0F/08/ChMkJlauzXWIDrXBAAdCg2xP7oYAAH9FQOpVAIAB0Kb342.jpg",
+                "url": `${obj.userheader}`,
                 "css": {
                   "width": "80px",
                   "height": "80px",
@@ -191,7 +191,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "佟掌柜",
+                "text": `${obj.username}`,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
@@ -243,7 +243,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "DISCUZ!Q 圈子",
+                "text": `${obj.slitename}`,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
@@ -269,28 +269,12 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": "https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/0F/08/ChMkJlauzXWIDrXBAAdCg2xP7oYAAH9FQOpVAIAB0Kb342.jpg",
+                "url": `${obj.slitelogo}`,
                 "css": {
-                  "width": "235.44px",
+                  "width": "285.71px",
                   "height": "44.92px",
                   "top": "252.99999999999997px",
                   "left": "204.00000000000003px",
-                  "rotate": "0",
-                  "borderRadius": "",
-                  "borderWidth": "",
-                  "borderColor": "#000000",
-                  "shadow": "",
-                  "mode": "scaleToFill"
-                }
-              },
-              {
-                "type": "image",
-                "url": "https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/0F/08/ChMkJlauzXWIDrXBAAdCg2xP7oYAAH9FQOpVAIAB0Kb342.jpg",
-                "css": {
-                  "width": "50.27px",
-                  "height": "55.35px",
-                  "top": "250px",
-                  "left": "446px",
                   "rotate": "0",
                   "borderRadius": "",
                   "borderWidth": "",
@@ -327,7 +311,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "21,470",
+                "text": `${obj.themnumber}`,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
@@ -379,7 +363,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "32.2k+",
+                "text": `${obj.contdata}`,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",

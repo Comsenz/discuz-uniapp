@@ -36,11 +36,10 @@ export default {
       imagePath: '',
       width: 700,
       template: {},
-      themeid: '11', // 数据id
-      headerImg: '' || 'https://discuz.chat/static/images/noavatar.gif', // 头像
+      themeid: '14', // 数据id
+      headerImg: '', // 头像
       headerName: '', // 名字
       postyTepy: '', // 帖子类型
-      tepyRecon: '' || '推荐', // 帖子（推荐）
       subHeading: '', // 小标题
       contentTitle: '', // 内容标题
       content: '', // 内容
@@ -50,6 +49,9 @@ export default {
       videotime: '', // 视频时间
       weixincode: '', // 微信二维码
       attachmentsType: '', // 话题分类
+      themwidth: '',
+      reconame: '',
+      recoimg: '',
     };
   },
   onLoad() {
@@ -57,32 +59,48 @@ export default {
       title: '拼命生成中...',
       mask: true,
     });
-    this.$store
-      .dispatch(
-        'jv/get',
-        `threads/${this.themeid}?include=user,firstPost,firstPost.images,category,threadVideo`,
-      )
-      .then(data => {
-        console.log(data);
-        this.headerName = data.user.username;
-        this.headerImg = data.user.avatarUrl;
-        this.postyTepy = data.type;
-        this.contentTitle = data.title;
-        this.content = data.firstPost.content;
-        const arr = Object.values(data.firstPost.images);
-        arr.forEach(value => {
-          this.contentImg.push(value.url);
-        });
-        this.attachmentsType = data.category.name;
-        if (this.postyTepy === 2) {
-          this.video = data.threadVideo.cover_url;
-          this.videoduc = data.threadVideo.file_name;
-        }
-        console.log(this.video, this.videoduc);
-        this.initData();
-      });
+    this.getusertitle();
+    this.getthemdata();
   },
   methods: {
+    getusertitle() {
+      const params = {
+        _jv: {
+          type: 'users',
+          id: 2,
+        },
+        include: 'groups',
+      };
+      this.$store.dispatch('jv/get', params).then(data => {
+        this.reconame = data.username;
+        this.themwidth = this.reconame.length * 28 + 3;
+        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+      });
+    },
+    getthemdata() {
+      this.$store
+        .dispatch(
+          'jv/get',
+          `threads/${this.themeid}?include=user,firstPost,firstPost.images,category,threadVideo`,
+        )
+        .then(data => {
+          this.headerName = data.user.username;
+          this.headerImg = data.user.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+          this.postyTepy = data.type;
+          this.contentTitle = data.title;
+          this.content = data.firstPost.content;
+          const arr = Object.values(data.firstPost.images);
+          arr.forEach(value => {
+            this.contentImg.push(value.url);
+          });
+          this.attachmentsType = data.category.name;
+          if (this.postyTepy === 2) {
+            this.video = data.threadVideo.cover_url;
+            this.videoduc = data.threadVideo.file_name;
+          }
+          this.initData();
+        });
+    },
     initData() {
       const obj = {
         username: this.headerName, // 名字
@@ -95,10 +113,12 @@ export default {
         userweixincode: this.weixincode, // 微信二维码
         uservideo: this.video,
         uservideoduc: this.videoduc,
+        namewidth: this.themwidth,
+        reconame: this.reconame,
+        recoimg: this.recoimg,
       };
       if (this.contentTitle) {
         // 有标题有图片海报
-        console.log(this.contentImg.length);
         if (this.contentImg.length === 1) {
           this.template = new Cardb().palette(obj);
           // 多图片海报
@@ -135,8 +155,7 @@ export default {
       this.imagePath = e.detail.path;
       uni.hideLoading();
     },
-    imgErr(e) {
-      console.log(e);
+    imgErr() {
       uni.hideLoading();
       uni.showModal({
         title: '提示',
@@ -146,7 +165,6 @@ export default {
     },
     fun() {
       const imgSrc = this.imagePath;
-      console.log('this', this);
       uni.saveImageToPhotosAlbum({
         filePath: imgSrc,
         success(data) {
@@ -158,7 +176,6 @@ export default {
       });
     },
     previewImage() {
-      console.log(1);
       const currimg = this.imagePath; // 这里获取到的是一张本地的图片
       uni.previewImage({
         current: currimg, // 需要预览的图片链接列表
