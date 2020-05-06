@@ -44,8 +44,8 @@
           :addon="item.amount"
           :brief-right="item.status == 1 ? '已付款' : '待付款'"
         ></qui-cell-item>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>
