@@ -3,23 +3,23 @@
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
       <view class="chat-box__con__time">{{ item.time }}</view>
       <view
-        :class="[
-          item.user_id !== userId ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other',
-        ]"
+        :class="[item.user_id === 1 ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
       >
         <image
           :class="[
-            item.user_id !== userId
+            item.user_id === 1
               ? 'chat-box__con__msg__image__mine'
               : 'chat-box__con__msg__image__other',
           ]"
-          :src="avatar"
+          :src="
+            item.user.avatarUrl === ''
+              ? 'https://discuz.chat/static/images/noavatar.gif'
+              : item.user.avatarUrl
+          "
         ></image>
         <view
           :class="[
-            item.user_id !== userId
-              ? 'chat-box__con__msg__box__mine'
-              : 'chat-box__con__msg__box__other',
+            item.user_id === 1 ? 'chat-box__con__msg__box__mine' : 'chat-box__con__msg__box__other',
           ]"
           v-html="item.message_text_html"
         ></view>
@@ -59,7 +59,6 @@ export default {
     return {
       msg: '',
       emojiShow: false,
-      userId: 0,
       username: '',
       dialogId: 0,
       avatar: '',
@@ -67,8 +66,7 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    const { userId, username, dialogId } = params;
-    this.userId = userId;
+    const { username, dialogId } = params;
     this.username = username;
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
@@ -80,12 +78,21 @@ export default {
       const list = [];
       const recordList = this.$store.getters['jv/get']('dialog_message');
       const keys = Object.keys(recordList);
+      debugger;
       if (recordList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
-          recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
-          list.push(recordList[keys[i]]);
+          if (recordList[keys[i]].dialog_id.toString() === this.dialogId) {
+            recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
+            list.push(recordList[keys[i]]);
+          }
         }
       }
+      // if (recordList && keys.length > 0) {
+      //   for (let i = 0; i < keys.length; i += 1) {
+      //     recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
+      //     list.push(recordList[keys[i]]);
+      //   }
+      // }
       console.log('recordList', recordList);
       console.log('聊天记录：', list);
       return list;
@@ -109,7 +116,6 @@ export default {
         .dispatch('jv/get', ['dialog/message', { params }])
         .then(res => {
           console.log('会话消息列表res：', res);
-          this.avatar = res[0].user.avatarUrl;
         })
         .catch(err => {
           console.log(err);
@@ -291,8 +297,9 @@ export default {
   }
 
   &__footer {
-    position: absolute;
+    position: fixed;
     bottom: 0rpx;
+    z-index: 99;
     width: 100%;
     min-height: 80rpx;
 

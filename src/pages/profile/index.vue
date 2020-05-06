@@ -176,19 +176,19 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log('创建会话', res);
+          console.log('创建会话接口的响应：', res);
           this.dialogId = res._jv.json.data.id;
           this.jumpChatPage();
         })
         .catch(err => {
           console.log(err);
         });
-      console.log('dialog', this.dialog);
     },
-    // 跳转到聊天页面（传入用户名，用户id和会话id）
+    // 跳转到聊天页面（传入用户名和会话id）
     jumpChatPage() {
+      console.log(`跳转到聊天页面并传入用户名：${this.userInfo.username}和会话：idthis.dialogId`);
       uni.navigateTo({
-        url: `../message/chat?username=${this.userInfo.username}&userId=${this.userId}&dialogId=${this.dialogId}`,
+        url: `../message/chat?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
       });
     },
   },

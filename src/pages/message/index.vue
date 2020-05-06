@@ -142,7 +142,7 @@ export default {
       // const id = 2;
       const list = [];
       const dialogList = this.$store.getters['jv/get']('dialog');
-      console.log('请求会话列表返回的结果：', dialogList);
+      console.log('会话列表接口的响应：', dialogList);
       const keys = Object.keys(dialogList);
       if (dialogList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
@@ -198,10 +198,10 @@ export default {
     },
 
     // 跳转至 聊天页面
-    clickDialog(dialogId, myId) {
+    clickDialog(dialogId) {
       console.log('会话id', dialogId);
       uni.navigateTo({
-        url: `../message/chat?myId=${myId}&dialogId=${dialogId}`,
+        url: `../message/chat?dialogId=${dialogId}`,
       });
     },
 
