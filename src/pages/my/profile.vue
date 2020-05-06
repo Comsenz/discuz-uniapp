@@ -76,6 +76,9 @@ page {
 }
 
 .my-profile__avatar {
+  position: absolute;
+  top: 13rpx;
+  right: 44rpx;
   width: 75rpx;
   height: 75rpx;
   border-radius: 50%;

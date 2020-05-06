@@ -22,9 +22,21 @@
             alt="avatarUrl"
             @tap="toProfile(followerItem.fromUser.id)"
           ></image>
-          <qui-cell-item :title="followerItem.fromUser.username" slot-right>
+          <qui-cell-item
+            :title="followerItem.fromUser.username"
+            slot-right
+            :brief="
+              followerItem.fromUser.groups
+                ? Object.values(followerItem.fromUser.groups)[0].name
+                : ''
+            "
+          >
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-            <view class="follow-content__items__operate" @tap="addFollow(followerItem.fromUser)">
+            <view
+              class="follow-content__items__operate"
+              @tap="addFollow(followerItem.fromUser)"
+              v-if="followerItem.fromUser.id != '1'"
+            >
               <text>
                 {{
                   followerItem.fromUser.follow == 0
@@ -49,8 +61,8 @@
             </view>
           </qui-cell-item>
         </view>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </view>
   </view>
 </template>
