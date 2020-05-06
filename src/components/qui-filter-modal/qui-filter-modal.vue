@@ -8,6 +8,10 @@
     }"
   >
     <view class="filter-modal__content" v-if="showValue" @tap.stop>
+      <view class="filter-modal__content__search" v-if="showSearch">
+        <qui-icon class="icon-search" name="icon-search" size="26" color="#777777"></qui-icon>
+        搜索
+      </view>
       <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
         <view class="filter-modal__content__item-title">{{ item.title }}</view>
         <view
@@ -82,6 +86,10 @@ export default {
     top: {
       type: Number,
       default: 0,
+    },
+    showSearch: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -166,6 +174,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .filter-modal {
   position: fixed;
   right: 0;
@@ -204,6 +214,15 @@ export default {
   box-sizing: border-box;
   animation: fadeZoom 0.15s linear;
 }
+.icon-search {
+  margin-right: 19rpx;
+}
+.filter-modal__content__search {
+  position: absolute;
+  right: 30rpx;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-777);
+}
 .filter-modal.show {
   opacity: 1;
   visibility: visible;
@@ -223,7 +242,7 @@ export default {
 .filter-modal__content__item-title {
   padding-top: 10rpx;
   padding-bottom: 40rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: bold;
 }
 .filter-modal__content__item-detail {
