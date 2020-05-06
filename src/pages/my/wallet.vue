@@ -6,24 +6,26 @@
       :addon="`¥ ${dataInfo.available_amount || 0.0}`"
       class="wallet-available"
     ></qui-cell-item>
-    <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" open-type="navigate">
+    <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" hover-class="none">
       <qui-cell-item
         title="冻结金额"
         arrow
         :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"
       ></qui-cell-item>
     </navigator>
-    <navigator url="./withdrawalslist" open-type="navigate">
+    <navigator url="./withdrawalslist" hover-class="none">
       <qui-cell-item title="提现记录" arrow></qui-cell-item>
     </navigator>
-    <navigator url="./walletlist" open-type="navigate">
+    <navigator url="./walletlist" hover-class="none">
       <qui-cell-item title="钱包明细" arrow></qui-cell-item>
     </navigator>
-    <navigator url="./orderlist" open-type="navigate">
+    <navigator url="./orderlist" hover-class="none">
       <qui-cell-item title="订单明细" arrow></qui-cell-item>
     </navigator>
     <qui-cell-item v-if="hasPassword" title="钱包密码" arrow :border="false"></qui-cell-item>
-    <qui-cell-item v-if="!hasPassword" title="设置支付密码" arrow :border="false"></qui-cell-item>
+    <navigator :url="'../modify/paypwd?id=' + userId" hover-class="none">
+      <qui-cell-item v-if="!hasPassword" title="设置支付密码" arrow :border="false"></qui-cell-item>
+    </navigator>
   </view>
 </template>
 
@@ -38,6 +40,7 @@ export default {
     return {
       dataInfo: {},
       hasPassword: false,
+      userId: 1, // 获取当前登陆用户的ID
     };
   },
   onLoad() {
