@@ -109,6 +109,7 @@ export default {
     not_install: '该站点未安装',
   },
   topic: {
+    all: '所有',
     persenUnit: '人',
     delete: '删除',
     management: '管理',

@@ -37,31 +37,7 @@
           ref="filter"
         ></qui-filter-modal>
       </view>
-      <view class="uni-tab-bar">
-        <scroll-view
-          scroll-x="true"
-          scroll-with-animation
-          id="scroll-tab-id"
-          class="scroll-tab"
-          :style="isTop == 1 ? 'position:fixed;z-index:9;top:0' : ''"
-        >
-          <view class="scroll-tab-item" :class="{ active: categoryId === 0 }" @tap="toggleTab(0)">
-            所有
-            <view class="scroll-tab-line"></view>
-          </view>
-
-          <block v-for="(item, index) in categories" :key="index">
-            <view
-              class="scroll-tab-item"
-              :class="{ active: categoryId === item._jv.id }"
-              @tap="toggleTab(item._jv.id)"
-            >
-              {{ item.name }}
-              <view class="scroll-tab-line"></view>
-            </view>
-          </block>
-        </scroll-view>
-      </view>
+      <u-tabs :list="categories" :current="categoryId" @change="toggleTab"></u-tabs>
     </view>
     <view class="sticky">
       <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
@@ -147,7 +123,7 @@ import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    // 
+    //
   },
   data: () => {
     return {
@@ -249,7 +225,17 @@ export default {
   },
   computed: {
     categories() {
-      return this.$store.getters['jv/get']('categories');
+      return Object.assign(
+        {
+          0: {
+            _jv: {
+              id: 0,
+            },
+            name: this.i18n.t('topic.all'),
+          },
+        },
+        this.$store.getters['jv/get']('categories'),
+      );
     },
     forums() {
       return this.$store.getters['jv/get']('forums/1');
@@ -506,7 +492,7 @@ export default {
       params['filter[fromUserId]'] = this.threadFollow;
       this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
         this.totalData = res._jv.json.meta.threadCount;
-        console.log(this.totalData)
+        console.log(this.totalData);
         this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
         this.threads = { ...res, ...this.threads };
         delete res._jv;
