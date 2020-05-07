@@ -94,17 +94,17 @@ export default {
       type: String,
       default: '',
     },
-    payTypeData: {
-      type: Array,
-      default: () => {
-        return [
-          {
-            name: this.p.wxPay,
-            icon: 'icon-wxPay',
-          },
-        ];
-      },
-    },
+    // payTypeData: {
+    //   type: Array,
+    //   default: () => {
+    //     return [
+    //       {
+    //         name: this.p.wxPay,
+    //         icon: 'icon-wxPay',
+    //       },
+    //     ];
+    //   },
+    // },
     payPassword: {
       type: String,
       default: '',

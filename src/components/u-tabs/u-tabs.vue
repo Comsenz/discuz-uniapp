@@ -162,7 +162,7 @@ export default {
     tabBarStyle() {
       const style = {
         width: `${this.barWidth}px`,
-        transform: `translate(${this.scrollBarLeft}px, -100%)`,
+        transform: `translate(${this.scrollBarLeft}px)`,
         'transition-duration': `${this.duration}s`,
         'background-color': this.activeColor,
         height: `${this.barHeight}rpx`,
@@ -311,9 +311,9 @@ scroll-view /deep/ ::-webkit-scrollbar {
 }
 
 /* #endif */
-
+$screen: 80rpx;
 .u-scroll-view {
-  width: 100%;
+  width: calc(100vw - #{$screen});
   height: 100rpx;
   white-space: nowrap;
   position: relative;

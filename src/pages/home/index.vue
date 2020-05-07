@@ -181,7 +181,7 @@ export default {
       ],
       isTop: 0,
       threads: {},
-      sticky: '',
+      sticky: {},
       theme: '成员',
       post: '内容',
       share: '分享',
@@ -454,6 +454,7 @@ export default {
     },
     // 首页置顶列表数据
     loadThreadsSticky() {
+      this.sticky = {};
       const params = {
         'filter[isSticky]': 'yes',
         'filter[categoryId]': this.categoryId,
@@ -467,6 +468,7 @@ export default {
     },
     // 首页内容部分数据请求
     loadThreads() {
+      this.threads = {};
       const params = {
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
@@ -521,7 +523,7 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      console.log('下拉加载呢');
+      // console.log('下拉加载呢');
       if (this.hasMore) {
         this.pageNum += 1;
         this.loadThreads();
