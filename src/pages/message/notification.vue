@@ -30,10 +30,10 @@ export default {
   onLoad(params) {
     console.log('通知列表的params：', params);
     const { title, type, unReadNum } = params;
-    if (unReadNum.toString() === '0') {
-      this.title = title;
-    } else {
+    if (unReadNum.toString() !== 'undefined' && unReadNum.toString() !== '0') {
       this.title = `${title}(${unReadNum}条)`;
+    } else {
+      this.title = title;
     }
     this.type = type;
     this.getNotifications(type);
