@@ -1,6 +1,8 @@
 <template>
   <view class="my-profile">
-    <qui-cell-item title="用户名" arrow :addon="profile.username"></qui-cell-item>
+    <navigator :url="'../modify/editusername?id=' + userId" hover-class="none">
+      <qui-cell-item title="用户名" arrow :addon="profile.username"></qui-cell-item>
+    </navigator>
     <qui-cell-item title="头像" slot-right arrow>
       <image
         class="my-profile__avatar"
@@ -8,8 +10,12 @@
         alt="avatarUrl"
       ></image>
     </qui-cell-item>
-    <qui-cell-item title="手机号码" arrow :addon="profile.mobile"></qui-cell-item>
-    <qui-cell-item title="密码" arrow addon="修改"></qui-cell-item>
+    <navigator :url="'../modify/mobile?id=' + userId" hover-class="none">
+      <qui-cell-item title="手机号码" arrow :addon="profile.mobile"></qui-cell-item>
+    </navigator>
+    <navigator :url="'../modify/editpwd?id=' + userId" hover-class="none">
+      <qui-cell-item title="密码" arrow addon="修改"></qui-cell-item>
+    </navigator>
     <qui-cell-item title="微信" arrow :addon="profile.wechat.nickname"></qui-cell-item>
     <qui-cell-item
       v-if="profile.realname"
@@ -17,20 +23,24 @@
       arrow
       :addon="profile.realname"
     ></qui-cell-item>
-    <qui-cell-item
-      v-if="profile.realname"
-      title="签名"
-      arrow
-      addon="修改"
-      :border="false"
-    ></qui-cell-item>
-    <qui-cell-item
-      v-if="!profile.realname"
-      title="实名认证"
-      arrow
-      addon="去认证"
-      :border="false"
-    ></qui-cell-item>
+    <navigator :url="'../modify/signature?id=' + userId" hover-class="none">
+      <qui-cell-item
+        v-if="profile.realname"
+        title="签名"
+        arrow
+        addon="修改"
+        :border="false"
+      ></qui-cell-item>
+    </navigator>
+    <navigator :url="'../modify/realname?id=' + userId" hover-class="none">
+      <qui-cell-item
+        v-if="!profile.realname"
+        title="实名认证"
+        arrow
+        addon="去认证"
+        :border="false"
+      ></qui-cell-item>
+    </navigator>
   </view>
 </template>
 
@@ -42,6 +52,7 @@ export default {
   data() {
     return {
       hasPassword: false,
+      userId: 1, // 获取当前登陆用户的ID
     };
   },
   computed: {
@@ -50,7 +61,7 @@ export default {
     },
   },
   methods: {
-    //
+    // 获取当前登陆用户的ID
   },
 };
 </script>

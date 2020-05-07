@@ -43,7 +43,7 @@
             ></qui-icon>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
-          <view class="themeItem__header__title__time">{{ themeTime }}</view>
+          <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
       </view>
 
@@ -152,6 +152,8 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     themeType: {
@@ -269,6 +271,10 @@ export default {
     t() {
       return this.i18n.t('topic');
     },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.themeTime);
+    },
   },
   methods: {
     // 点击删除按钮
@@ -348,7 +354,7 @@ export default {
         height: 37rpx;
         margin-left: 2rpx;
         font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         line-height: 37rpx;
       }
 
@@ -383,7 +389,7 @@ export default {
       }
       &__reward {
         float: right;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         font-weight: bold;
         color: --color(--qui-RED);
       }
@@ -394,7 +400,7 @@ export default {
     &__text {
       margin-bottom: 12rpx;
       font-family: $font-family;
-      font-size: 28rpx;
+      font-size: $fg-f28;
       font-weight: 400;
       line-height: 45rpx;
       color: rgba(51, 51, 51, 1);
@@ -472,7 +478,7 @@ export default {
         margin-right: 10rpx;
         margin-bottom: 8rpx;
         font-family: $font-family;
-        font-size: 24rpx;
+        font-size: $fg-f24;
         font-weight: 400;
         line-height: 50rpx;
         color: rgba(119, 119, 119, 1);
@@ -491,7 +497,7 @@ export default {
 
       &__item {
         font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
@@ -509,7 +515,7 @@ export default {
     &__themeType2 {
       &__item {
         font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);

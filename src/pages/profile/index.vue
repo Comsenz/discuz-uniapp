@@ -38,8 +38,8 @@
           </qui-cell-item>
         </view>
       </view>
-      <view class="profile-info__introduction">
-        {{ userInfo.signature || '暂无签名' }}
+      <view class="profile-info__introduction" v-if="userInfo.signature">
+        {{ userInfo.signature }}
       </view>
     </view>
     <view class="profile-tabs">
@@ -183,7 +183,9 @@ page {
 .profile-info__box {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 40rpx;
+}
+.profile-info__introduction {
+  margin-top: 40rpx;
 }
 .profile-info__box__detail {
   position: relative;

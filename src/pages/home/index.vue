@@ -33,32 +33,11 @@
           :if-need-confirm="ifNeedConfirm"
           :filter-list="filterList"
           :top="top"
+          :show-search="showSearch"
           ref="filter"
         ></qui-filter-modal>
       </view>
-      <view class="uni-tab-bar">
-        <scroll-view
-          scroll-x="true"
-          scroll-with-animation
-          id="scroll-tab-id"
-          class="scroll-tab"
-          :style="isTop == 1 ? 'position:fixed;z-index:9;top:0' : ''"
-        >
-          <view class="scroll-tab-item" :class="{ active: categoryId === 0 }" @tap="toggleTab(0)">
-            所有
-          </view>
-          <block v-for="(item, index) in categories" :key="index">
-            <view
-              class="scroll-tab-item"
-              :class="{ active: categoryId === item._jv.id }"
-              @tap="toggleTab(item._jv.id)"
-            >
-              {{ item.name }}
-              <view class="scroll-tab-line"></view>
-            </view>
-          </block>
-        </scroll-view>
-      </view>
+      <u-tabs :list="categories" :current="categoryId" @change="toggleTab"></u-tabs>
     </view>
     <view class="sticky">
       <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
@@ -140,10 +119,11 @@
 <script>
 /* eslint-disable */
 import { status } from 'jsonapi-vuex';
+import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    // 
+    //
   },
   data: () => {
     return {
@@ -151,9 +131,6 @@ export default {
       threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
-      loadStatus: {},
-      loadThreadsStatus: {},
-      loadContentStatus: {},
       confirmText: '筛选',
       show: false,
       ifNeedConfirm: true,
@@ -164,6 +141,7 @@ export default {
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
+      showSearch: true, // 筛选显示搜索
       filterList: [
         {
           title: '板块',
@@ -247,7 +225,17 @@ export default {
   },
   computed: {
     categories() {
-      return this.$store.getters['jv/get']('categories');
+      return Object.assign(
+        {
+          0: {
+            _jv: {
+              id: 0,
+            },
+            name: this.i18n.t('topic.all'),
+          },
+        },
+        this.$store.getters['jv/get']('categories'),
+      );
     },
     forums() {
       return this.$store.getters['jv/get']('forums/1');
@@ -487,8 +475,8 @@ export default {
         'filter[categoryId]': this.categoryId,
         'filter[type]': this.threadType,
         'filter[isEssence]': this.threadEssence,
-        'page[number]': 1,
-        'page[limit]': 10,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         include: [
           'user',
           'user.groups',
@@ -498,21 +486,17 @@ export default {
           'threadVideo',
         ],
       };
-      console.log(params, '列表');
       if (this.threadType !== null) {
         params['filter[type]'] = this.threadType;
       }
-
       params['filter[fromUserId]'] = this.threadFollow;
-
       this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
         this.totalData = res._jv.json.meta.threadCount;
-        // console.log(this.totalData);
-        // const data = JSON.parse(JSON.stringify(res));
+        console.log(this.totalData);
+        this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
+        this.threads = { ...res, ...this.threads };
         delete res._jv;
-        // this.loadingType = data.length === 10 ? 'more' : 'nomore';
-        // this.threads = Object.assign(this.threads, data);
-        this.threads = res;
+        // this.threads = res;
       });
     },
     // 内容部分点赞按钮点击事件
@@ -542,12 +526,12 @@ export default {
         this.pageNum += 1;
         this.loadThreads();
       } else {
-        this.loadMore = 'noMore';
+        this.loadingType = 'nomore';
       }
     },
     refresh() {
       this.pageNum = 1;
-      this.data = [];
+      this.threads = [];
       this.loadThreads();
     },
   },
@@ -584,7 +568,6 @@ export default {
 
 .sticky__isSticky {
   display: flex;
-  // justify-content: flex-start;
   width: 710rpx;
   height: 80rpx;
   margin-bottom: 30rpx;
@@ -617,6 +600,7 @@ export default {
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .scroll-tab {
+  height: 100rpx;
   text-align: center;
   white-space: nowrap;
   border-bottom: 1rpx solid #eee;
@@ -624,18 +608,15 @@ export default {
 .scroll-tab-item {
   z-index: 1;
   display: inline-block;
-  margin: 30rpx;
+  margin: 20rpx 30rpx;
   font-size: $fg-f26;
+  line-height: 77rpx;
   color: --color(--qui-FC-777);
 }
 .active .scroll-tab-line {
-  width: 100%;
-  height: 100%;
-  // border-top: 2rpx solid #1878f3;
   color: --color(--qui-BG-HIGH-LIGHT);
-  background: crimson;
-  border-bottom: 2rpx solid --color(--qui-BG-HIGH-LIGHT);
-  border-radius: 20rpx;
+  border-bottom: 4rpx solid --color(--qui-BG-HIGH-LIGHT);
+  // border-radius: 20rpx;
 }
 .uni-tab-bar .active {
   font-size: $fg-f28;
@@ -644,6 +625,9 @@ export default {
 }
 .main {
   margin-bottom: 130rpx;
+}
+.scroll-y {
+  max-height: calc(100vh - 297rpx);
 }
 .popup-share {
   /* #ifndef APP-NVUE */
