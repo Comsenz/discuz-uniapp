@@ -1,11 +1,10 @@
 <template>
   <view class="msg-box">
-    <uni-nav-bar
-      left-icon="back"
-      :left-text="title"
-      status-bar
-      @clickLeft="clickNavBarLeft"
-    ></uni-nav-bar>
+    <!-- 导航栏 -->
+    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
+      <view slot="left" class="left-text">{{ title }}</view>
+    </uni-nav-bar>
+    <!-- 通知类型列表 -->
     <uni-list>
       <uni-list-item
         v-for="item in list"
@@ -39,26 +38,26 @@
           class="dialog-box"
           v-for="dialog of allDialogList"
           :key="dialog._jv.id"
-          @click="clickDialog(dialog._jv.id, dialog.recipient.id)"
+          @click="clickDialog(dialog)"
         >
           <view class="dialog-box__header">
             <view class="dialog-box__header__info">
               <image
                 class="dialog-box__header__info__user-avatar"
                 :src="
-                  dialog.sender.avatarUrl
-                    ? dialog.sender.avatarUrl
+                  dialog.recipient.avatarUrl
+                    ? dialog.recipient.avatarUrl
                     : 'https://discuz.chat/static/images/noavatar.gif'
                 "
               ></image>
               <view>
                 <view class="dialog-box__header__info__box">
                   <text class="dialog-box__header__info__username">
-                    {{ dialog.sender.username }}
+                    {{ dialog.recipient.username }}
                   </text>
                   <text
                     class="dialog-box__header__info__groupname"
-                    v-for="item in dialog.sender.groups"
+                    v-for="item in dialog.recipient.groups"
                     :key="item.name"
                   >
                     <text v-if="item.name">（{{ item.name }}）</text>
@@ -180,28 +179,30 @@ export default {
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
       this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
-        this.list[0].unReadNum = res.typeUnreadNotifications.related;
-        this.list[1].unReadNum = res.typeUnreadNotifications.replied;
-        this.list[2].unReadNum = res.typeUnreadNotifications.liked;
-        this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
-        this.list[4].unReadNum = res.typeUnreadNotifications.system;
-        console.log(res);
+        console.log('未读通知', res);
+        if (res.typeUnreadNotifications) {
+          this.list[0].unReadNum = res.typeUnreadNotifications.related;
+          this.list[1].unReadNum = res.typeUnreadNotifications.replied;
+          this.list[2].unReadNum = res.typeUnreadNotifications.liked;
+          this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
+          this.list[4].unReadNum = res.typeUnreadNotifications.system;
+        }
       });
     },
 
-    // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面
+    // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     clickUniListItem(item) {
       uni.navigateTo({
-        url: `../message/${item.type}`,
+        url: `../message/notification?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
       });
       console.log(`跳转${item.title}页面`);
     },
 
     // 跳转至 聊天页面
-    clickDialog(dialogId) {
-      console.log('会话id', dialogId);
+    clickDialog(dialogInfo) {
+      console.log('会话信息', dialogInfo);
       uni.navigateTo({
-        url: `../message/chat?dialogId=${dialogId}`,
+        url: `../message/chat?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.recipient.username}`,
       });
     },
 
@@ -224,20 +225,26 @@ export default {
   min-height: 100vh;
   font-size: $fg-f28;
   background-color: #fafafa;
-}
 
-.line {
-  height: 0rpx;
-  margin: 0 0 10rpx;
-  border: 1px solid #ededed;
-}
+  .left-text {
+    min-width: 250rpx;
+    font-weight: bold;
+    color: #343434;
+  }
 
-.red-circle {
-  display: flex;
-}
+  .line {
+    height: 0rpx;
+    margin: 0 0 10rpx;
+    border: 1px solid #ededed;
+  }
 
-.dialog-box__main {
-  margin-bottom: 130rpx;
+  .red-circle {
+    display: flex;
+  }
+
+  .dialog-box__main {
+    margin-bottom: 130rpx;
+  }
 }
 
 .dialog-box {
