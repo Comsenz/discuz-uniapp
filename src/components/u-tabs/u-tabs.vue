@@ -74,12 +74,12 @@ export default {
     // 导航栏的高度和行高
     height: {
       type: [String, Number],
-      default: 80,
+      default: 100,
     },
     // 字体大小
     fontSize: {
       type: [String, Number],
-      default: 30,
+      default: 28,
     },
     // 过渡动画时长, 单位ms
     duration: {
@@ -89,12 +89,12 @@ export default {
     // 选中项的主题颜色
     activeColor: {
       type: String,
-      default: '#2979ff',
+      default: '#1878F3',
     },
     // 未选中项的颜色
     inactiveColor: {
       type: String,
-      default: '#303133',
+      default: '#777777',
     },
     // 菜单底部移动的bar的宽度，单位px
     barWidth: {
@@ -313,6 +313,7 @@ scroll-view /deep/ ::-webkit-scrollbar {
 
 .u-scroll-view {
   width: 100%;
+  height: 100rpx;
   white-space: nowrap;
   position: relative;
 }

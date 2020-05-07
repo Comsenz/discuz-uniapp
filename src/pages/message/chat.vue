@@ -1,5 +1,10 @@
 <template>
   <view class="chat-box">
+    <!-- 导航栏 -->
+    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
+      <view slot="left" class="left-text">{{ username }}</view>
+    </uni-nav-bar>
+    <!-- 消息内容 -->
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
       <view class="chat-box__con__time">{{ item.time }}</view>
       <view
@@ -7,20 +12,23 @@
       >
         <image
           :class="[
-            item.user_id === 1
-              ? 'chat-box__con__msg__image__mine'
-              : 'chat-box__con__msg__image__other',
+            item.user_id === 1 ? 'chat-box__con__msg__mine__img' : 'chat-box__con__msg__other__img',
           ]"
-          :src="item.user.avatarUrl"
+          :src="
+            item.user.avatarUrl === ''
+              ? 'https://discuz.chat/static/images/noavatar.gif'
+              : item.user.avatarUrl
+          "
         ></image>
         <view
           :class="[
-            item.user_id === 1 ? 'chat-box__con__msg__box__mine' : 'chat-box__con__msg__box__other',
+            item.user_id === 1 ? 'chat-box__con__msg__mine__box' : 'chat-box__con__msg__other__box',
           ]"
           v-html="item.message_text_html"
         ></view>
       </view>
     </view>
+    <!-- 底部 -->
     <view class="chat-box__footer">
       <view class="chat-box__footer__msg">
         <input class="uni-input" focus v-model="msg" placeholder="回复..." />
@@ -44,21 +52,29 @@
 </template>
 
 <script>
+import { uniNavBar } from '@dcloudio/uni-ui';
 import quiEmoji from '@/components/qui-emoji/qui-emoji';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
+    uniNavBar,
     quiEmoji,
   },
   data() {
     return {
-      msg: '',
-      emojiShow: false,
+      msg: '', // 输入框内容
+      emojiShow: false, // 表情
+      username: '', // 导航栏标题
+      dialogId: 0, // 会话id
     };
   },
-  onLoad() {
-    this.getChatRecord();
+  onLoad(params) {
+    console.log('params', params);
+    const { username, dialogId } = params;
+    this.username = username;
+    this.dialogId = dialogId;
+    this.getChatRecord(dialogId);
     this.getEmoji();
   },
   computed: {
@@ -69,29 +85,45 @@ export default {
       const keys = Object.keys(recordList);
       if (recordList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
-          recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
-          list.push(recordList[keys[i]]);
+          if (recordList[keys[i]].dialog_id.toString() === this.dialogId) {
+            recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
+            list.push(recordList[keys[i]]);
+          }
         }
       }
-      console.log('list', list);
       console.log('recordList', recordList);
+      console.log('聊天记录：', list);
       return list;
     },
     // 获取所有表情
     allEmoji() {
-      console.log('表情', this.$store.getters['jv/get']('emoji'));
       return this.$store.getters['jv/get']('emoji');
     },
   },
   methods: {
+    // 回到上一个页面
+    clickNavBarLeft() {
+      uni.navigateBack({
+        delta: 1,
+      });
+    },
     // 调用 会话消息列表 的接口
-    getChatRecord() {
+    getChatRecord(dialogId) {
       const params = {
-        'filter[dialog_id]': 1,
+        'filter[dialog_id]': dialogId || this.dialogId,
         include: ['user', 'user.groups'],
+        'page[number]': 1,
+        'page[limit]': 100,
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
-      this.$store.dispatch('jv/get', ['dialog/message', { params }]);
+      this.$store
+        .dispatch('jv/get', ['dialog/message', { params }])
+        .then(res => {
+          console.log('会话消息列表res：', res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 调用 表情 的接口
@@ -105,15 +137,16 @@ export default {
         _jv: {
           type: 'dialog/message',
         },
-        dialog_id: 1,
+        dialog_id: this.dialogId,
         message_text: this.msg,
       };
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
           if (res) {
+            console.log('发送消息res：', res);
             this.getChatRecord();
-            console.log('调用发送消息请求的action，结果为:', res);
+            this.emojiShow = false;
           }
         })
         .catch(err => {
@@ -142,8 +175,15 @@ export default {
 @import '@/styles/base/reset.scss';
 
 .chat-box {
-  height: 100vh;
+  height: 100%;
+  margin-bottom: 130rpx;
   background-color: #ededed;
+
+  .left-text {
+    min-width: 250rpx;
+    font-weight: bold;
+    color: #343434;
+  }
 
   &__con {
     &__time {
@@ -154,19 +194,20 @@ export default {
       text-align: center;
     }
 
-    .chat-box__con__msg__mine {
+    &__msg__mine {
       display: flex;
       flex-direction: row-reverse;
       justify-content: flex-start;
       align-items: center;
 
-      .chat-box__con__msg__image__mine {
+      &__img {
         width: 80rpx;
         height: 80rpx;
         margin: 0 20rpx 0 10rpx;
+        border-radius: 100rpx;
       }
 
-      .chat-box__con__msg__box__mine {
+      &__box {
         position: relative;
         min-height: 40rpx;
         padding: 20rpx;
@@ -176,7 +217,7 @@ export default {
         border-radius: 10rpx;
       }
 
-      .chat-box__con__msg__box__mine:before {
+      &__box:before {
         position: absolute;
         top: 31%;
         right: -30rpx;
@@ -192,7 +233,7 @@ export default {
         box-sizing: content-box;
       }
 
-      .chat-box__con__msg__box__mine:after {
+      &__box:after {
         position: absolute;
         top: 29%;
         right: -35rpx;
@@ -210,19 +251,20 @@ export default {
       }
     }
 
-    .chat-box__con__msg__other {
+    &__msg__other {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
 
-      .chat-box__con__msg__image__other {
+      &__img {
         width: 80rpx;
         height: 80rpx;
         margin: 0 10rpx 0 20rpx;
+        border-radius: 100rpx;
       }
 
-      .chat-box__con__msg__box__other {
+      &__box {
         position: relative;
         min-height: 40rpx;
         padding: 20rpx;
@@ -232,7 +274,7 @@ export default {
         border-radius: 10rpx;
       }
 
-      .chat-box__con__msg__box__other:before {
+      &__box:before {
         position: absolute;
         top: 31%;
         left: -31rpx;
@@ -248,7 +290,7 @@ export default {
         box-sizing: content-box;
       }
 
-      .chat-box__con__msg__box__other:after {
+      &__box:after {
         position: absolute;
         top: 29%;
         left: -35rpx;
@@ -268,8 +310,9 @@ export default {
   }
 
   &__footer {
-    position: absolute;
+    position: fixed;
     bottom: 0rpx;
+    z-index: 99;
     width: 100%;
     min-height: 80rpx;
 
