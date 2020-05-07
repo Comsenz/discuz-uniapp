@@ -37,7 +37,13 @@
           ref="filter"
         ></qui-filter-modal>
       </view>
-      <u-tabs :list="categories" :current="categoryId" @change="toggleTab"></u-tabs>
+      <u-tabs
+        class="scroll-tab"
+        :list="categories"
+        :current="categoryId"
+        @change="toggleTab"
+        is-scroll="isScroll"
+      ></u-tabs>
     </view>
     <view class="sticky">
       <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
@@ -96,7 +102,7 @@
         <view class="popup-share-content">
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick()">
+              <view class="popup-share-box" @click="handleClick(item)">
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
@@ -127,6 +133,12 @@ export default {
   },
   data: () => {
     return {
+      isScroll: true, // 导航菜单是否需要滚动
+      height: 100,    // 导航菜单高度
+      fontSize: 28,   // 导航字体大小
+      duration: 0.5,  // 过渡动画时长, 单位ms
+      activeColor: '#1878F3', // 选中项的主题颜色
+      inactiveColor: '#777777', // 未选中项的颜色
       categoryId: 0, // 主题分类 ID
       threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
@@ -382,6 +394,7 @@ export default {
           text: '文字',
           icon: 'icon-word',
           name: 'text',
+          type: 0,
         });
       }
       if (this.forums.other.can_create_thread_long) {
@@ -389,6 +402,7 @@ export default {
           text: '帖子',
           icon: 'icon-post',
           name: 'post',
+          type: 1,
         });
       }
       if (this.forums.other.can_create_thread_video) {
@@ -396,6 +410,7 @@ export default {
           text: '视频',
           icon: 'icon-video',
           name: 'video',
+          type: 2,
         });
       }
       if (this.forums.other.can_create_thread_image) {
@@ -403,15 +418,16 @@ export default {
           text: '图片',
           icon: 'icon-img',
           name: 'image',
+          type: 3,
         });
       }
       this.$refs.popup.open();
     },
     // 首页底部发帖点击事件跳转
-    handleClick() {
-      console.log(type)
+    handleClick(item) {
+      console.log(item.type)
       uni.navigateTo({
-        url: `/pages/topic/post?type=${type}`,
+        url: `/pages/topic/post?type=${item.type}`,
       });
     },
 
