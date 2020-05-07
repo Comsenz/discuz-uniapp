@@ -18,7 +18,7 @@
           </radio-group>
         </view>
         <view class="popup-content-space"></view>
-        <text class="popup-cancel-btn" @click="cancel('share')">取消</text>
+        <text class="popup-cancel-btn" @click="cancel('1')">取消</text>
       </view>
     </uni-popup>
     <uni-popup ref="payTypePopup" type="bottom">
@@ -28,7 +28,7 @@
           ￥
           <view class="money-num">{{ money }}</view>
         </view>
-        <view class="pay-type-chi" v-for="(item, index) in data" :key="index">
+        <view class="pay-type-chi" v-for="(item, index) in payTypeData" :key="index">
           <view class="pay-type-l">
             <qui-icon name="icon-wxPay" class="icon-pay wxpay"></qui-icon>
             <view class="pay-type-word">{{ p.wxPay }}</view>
@@ -59,14 +59,15 @@
             </radio-group>
           </view>
         </view>-->
+        <qui-button size="100%" type="primary" class="paySureBtn" @tap="payClickShow()">
+          {{ p.surePay }}￥{{ money }}{{ p.rmb }}
+        </qui-button>
         <view class="pay-tip">
-          ￥{{ money }}{{ p.rmb }}{{ payTo }}，{{ toName }}{{ p.ofAccount }}
+          ￥{{ money }}{{ p.rmb }}{{ p.payTo }}，{{ toName }}{{ p.ofAccount }}
         </view>
         <view class="popup-share-content-space"></view>
-        <qui-button size="100%" type="primary" class="publishBtn" @tap="payClickShow()">
-          {{ p.surePay }}￥{{ money }}{{ rmb }}
-        </qui-button>
-        <text class="popup-share-btn" @click="cancel()">取消</text>
+
+        <text class="popup-share-btn" @click="cancel('2')">取消</text>
       </view>
     </uni-popup>
     <qui-pay-keyboard :show="keyboardShow" :password="payPassword" @key="key"></qui-pay-keyboard>
@@ -94,17 +95,17 @@ export default {
       type: String,
       default: '',
     },
-    // payTypeData: {
-    //   type: Array,
-    //   default: () => {
-    //     return [
-    //       {
-    //         name: this.p.wxPay,
-    //         icon: 'icon-wxPay',
-    //       },
-    //     ];
-    //   },
-    // },
+    payTypeData: {
+      type: Array,
+      default: () => {
+        return [
+          {
+            name: '微信支付',
+            icon: 'icon-wxPay',
+          },
+        ];
+      },
+    },
     payPassword: {
       type: String,
       default: '',
@@ -146,8 +147,13 @@ export default {
       this.$refs.payTypePopup.open();
     },
     // 取消支付
-    cancel() {
-      this.$refs.payTypePopup.close();
+    cancel(type) {
+      console.log(type);
+      if (type === '1') {
+        this.$refs.payPopup.close();
+      } else {
+        this.$refs.payTypePopup.close();
+      }
     },
   },
 };
@@ -281,5 +287,9 @@ export default {
   border-top-color: #f5f5f5;
   border-top-style: solid;
   border-top-width: 1px;
+}
+.paySureBtn {
+  width: 100%;
+  border-radius: 0;
 }
 </style>
