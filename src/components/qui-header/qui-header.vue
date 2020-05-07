@@ -12,8 +12,9 @@
         {{ post }}
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
+
       <text class="circleDet-share" @click="open">
-        <qui-icon class="qui-icon" name="shareBtn" size="28" color="#c33"></qui-icon>
+        <qui-icon class="qui-icon" name="icon-share" size="28" color="#c33"></qui-icon>
         {{ share }}
       </text>
     </view>
@@ -71,6 +72,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .header {
+  position: relative;
   width: 100%;
   height: 400rpx;
   background: #1878f3;
@@ -107,9 +109,13 @@ export default {
       color: --color(--qui-BG-2);
     }
     .circleDet-share {
+      // width: 100rpx;
       color: --color(--qui-BG-2);
+      // background: #c33;
     }
     .qui-icon {
+      position: absolute;
+      bottom: 30rpx;
       width: 30rpx;
       height: 30rpx;
       background: chartreuse;

@@ -120,7 +120,7 @@
         <view class="popup-share-content">
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick">
+              <view class="popup-share-box" @click="handleClick()">
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
@@ -423,8 +423,9 @@ export default {
     },
     // 首页底部发帖点击事件跳转
     handleClick() {
+      console.log(type)
       uni.navigateTo({
-        url: '/pages/topic/post',
+        url: `/pages/topic/post?type=${type}`,
       });
     },
 
