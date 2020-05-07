@@ -4,9 +4,6 @@
       <qui-cell-item :title="totalData + '条收藏'" :border="false"></qui-cell-item>
     </view>
     <view class="favorite-content">
-      <uni-popup ref="popup" type="bottom">
-        <qui-drawer :bottom-data="bottomData"></qui-drawer>
-      </uni-popup>
       <scroll-view
         scroll-y="true"
         scroll-with-animation="true"
@@ -53,14 +50,8 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="handleClick">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
+                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
@@ -87,37 +78,23 @@ export default {
   },
   data() {
     return {
-      bottomData: [
-        {
-          text: '文字',
-          icon: 'icon-word',
-          name: 'wx',
-          type: 0,
-        },
-        {
-          text: '图片',
-          icon: 'icon-img',
-          name: 'wx',
-          type: 3,
-        },
-        {
-          text: '视频',
-          icon: 'icon-video',
-          name: 'qq',
-          type: 2,
-        },
-        {
-          text: '帖子',
-          icon: 'icon-post',
-          name: 'sina',
-          type: 1,
-        },
-      ],
       loadingType: 'more',
       data: {},
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
+      bottomData: [
+        {
+          text: '生成海报',
+          icon: 'icon-word',
+          name: 'wx',
+        },
+        {
+          text: '微信分享',
+          icon: 'icon-img',
+          name: 'wx',
+        },
+      ],
     };
   },
   mounted() {
@@ -126,34 +103,16 @@ export default {
   methods: {
     handleClickShare() {
       this.$refs.popup.open();
-      this.bottomData = [
-        {
-          text: '生成海报',
-          icon: 'icon-word',
-          name: 'wx',
-        },
-        {
-          text: '微信分享',
-          icon: 'icon-img',
-          name: 'wx',
-        },
-      ];
     },
-    // 首页头部分享按钮弹窗
-    open() {
-      this.$refs.popup.open();
-      this.bottomData = [
-        {
-          text: '生成海报',
-          icon: 'icon-word',
-          name: 'wx',
-        },
-        {
-          text: '微信分享',
-          icon: 'icon-img',
-          name: 'wx',
-        },
-      ];
+    // 首页底部发帖点击事件跳转
+    handleClick() {
+      uni.navigateTo({
+        url: '/pages/topic/post',
+      });
+    },
+    // 取消按钮
+    cancel() {
+      this.$refs.popup.close();
     },
     // 加载当前点赞数据
     loadlikes() {
@@ -167,11 +126,10 @@ export default {
         .run(() => this.$store.dispatch('jv/get', ['favorites', { params }]))
         .then(res => {
           this.totalData = res._jv.json.meta.threadCount;
-          const data = JSON.parse(JSON.stringify(res));
           // eslint-disable-next-line no-underscore-dangle
-          delete data._jv;
-          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...data, ...this.data };
+          delete res._jv;
+          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
+          this.data = { ...res, ...this.data };
         });
     },
     // 评论部分点击评论跳到详情页
@@ -204,14 +162,7 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(data => {
-        const res = data;
-        if (isLiked) {
-          res.likeCount -= 1;
-        } else {
-          res.likeCount += 1;
-        }
-      });
+      this.$store.dispatch('jv/patch', params);
     },
     // 下拉加载
     pullDown() {
@@ -232,6 +183,8 @@ export default {
 </script>
 
 <style lang="scss" scope>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 page {
   background-color: #f9fafc;
 }
@@ -247,5 +200,78 @@ page {
 }
 .scroll-y {
   max-height: calc(100vh - 148rpx);
+}
+.popup-share {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  flex-direction: column;
+  /* #endif */
+  background: --color(--qui-BG-2);
+}
+.popup-share-content {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  height: 250rpx;
+  padding-top: 40rpx;
+  padding-right: 97rpx;
+  padding-left: 98rpx;
+  background: --color(--qui-BG-BTN-GRAY-1);
+}
+.popup-share-box {
+  width: 120rpx;
+  height: 120rpx;
+  line-height: 120rpx;
+  background: --color(--qui-BG-2);
+  border-radius: 10px;
+}
+.popup-share-content-box {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: column;
+  align-items: center;
+  width: 120rpx;
+  height: 164rpx;
+}
+.popup-share-content-image {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: center;
+  width: 120rpx;
+  height: 120rpx;
+  overflow: hidden;
+  border-radius: 10rpx;
+}
+.content-image {
+  width: 60rpx;
+  height: 60rpx;
+  margin: 35rpx;
+  line-height: 60rpx;
+}
+.popup-share-content-text {
+  padding-top: 5px;
+  font-size: $fg-f26;
+  color: #333;
+}
+.popup-share-btn {
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 90rpx;
+  color: #666;
+  text-align: center;
+  border-top-color: #f5f5f5;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+.popup-share-content-space {
+  width: 100%;
+  height: 9rpx;
+  background: --color(--qui-FC-DDD);
 }
 </style>

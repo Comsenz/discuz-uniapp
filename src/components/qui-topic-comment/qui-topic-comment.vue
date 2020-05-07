@@ -109,7 +109,7 @@
             <qui-icon class="icon" name="icon-delete" size="26" color="#AAA"></qui-icon>
             <view class="themeItem__footer__con">{{ t.delete }}</view>
           </view>
-          <view class="footer__r__child" @click="replyComment">
+          <view class="footer__r__child" @click="replyComment" v-if="commentShow">
             <qui-icon class="icon" name="icon-comments" size="26" color="#AAA"></qui-icon>
             <view class="themeItem__footer__con">{{ t.reply }}</view>
           </view>
@@ -184,6 +184,11 @@ export default {
     modeVal: {
       type: String,
       default: 'center',
+    },
+    // 是否显示评论的回复按钮
+    commentShow: {
+      type: Boolean,
+      default: false,
     },
     // 回复的点赞数
     commentLikeCount: {
