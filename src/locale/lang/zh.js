@@ -135,6 +135,8 @@ export default {
     pay: '支付',
     rmb: '元',
     showMyHead: '支付记录显示我的头像',
+    wxPay: '微信支付',
+    walletPay: '钱包支付',
   },
   auth: {
     userinfo: '获取头像和昵称',
