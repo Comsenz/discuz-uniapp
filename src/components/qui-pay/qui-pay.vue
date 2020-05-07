@@ -18,7 +18,7 @@
           </radio-group>
         </view>
         <view class="popup-content-space"></view>
-        <text class="popup-cancel-btn" @click="cancel('share')">取消</text>
+        <text class="popup-cancel-btn" @click="cancel('1')">取消</text>
       </view>
     </uni-popup>
     <uni-popup ref="payTypePopup" type="bottom">
@@ -59,14 +59,15 @@
             </radio-group>
           </view>
         </view>-->
+        <qui-button size="100%" type="primary" class="payBtn" @tap="payClickShow()">
+          {{ p.surePay }}￥{{ money }}{{ rmb }}
+        </qui-button>
         <view class="pay-tip">
           ￥{{ money }}{{ p.rmb }}{{ payTo }}，{{ toName }}{{ p.ofAccount }}
         </view>
         <view class="popup-share-content-space"></view>
-        <qui-button size="100%" type="primary" class="publishBtn" @tap="payClickShow()">
-          {{ p.surePay }}￥{{ money }}{{ rmb }}
-        </qui-button>
-        <text class="popup-share-btn" @click="cancel()">取消</text>
+
+        <text class="popup-share-btn" @click="cancel('2')">取消</text>
       </view>
     </uni-popup>
     <qui-pay-keyboard :show="keyboardShow" :password="payPassword" @key="key"></qui-pay-keyboard>
@@ -99,7 +100,7 @@ export default {
       default: () => {
         return [
           {
-            name: this.p.wxPay,
+            name: '微信支付',
             icon: 'icon-wxPay',
           },
         ];
@@ -146,8 +147,13 @@ export default {
       this.$refs.payTypePopup.open();
     },
     // 取消支付
-    cancel() {
-      this.$refs.payTypePopup.close();
+    cancel(type) {
+      console.log(type);
+      if (type === '1') {
+        this.$refs.payPopup.close();
+      } else {
+        this.$refs.payTypePopup.close();
+      }
     },
   },
 };
