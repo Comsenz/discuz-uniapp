@@ -28,7 +28,7 @@
           ￥
           <view class="money-num">{{ money }}</view>
         </view>
-        <view class="pay-type-chi" v-for="(item, index) in data" :key="index">
+        <view class="pay-type-chi" v-for="(item, index) in payTypeData" :key="index">
           <view class="pay-type-l">
             <qui-icon name="icon-wxPay" class="icon-pay wxpay"></qui-icon>
             <view class="pay-type-word">{{ p.wxPay }}</view>
@@ -59,11 +59,11 @@
             </radio-group>
           </view>
         </view>-->
-        <qui-button size="100%" type="primary" class="payBtn" @tap="payClickShow()">
-          {{ p.surePay }}￥{{ money }}{{ rmb }}
+        <qui-button size="100%" type="primary" class="paySureBtn" @tap="payClickShow()">
+          {{ p.surePay }}￥{{ money }}{{ p.rmb }}
         </qui-button>
         <view class="pay-tip">
-          ￥{{ money }}{{ p.rmb }}{{ payTo }}，{{ toName }}{{ p.ofAccount }}
+          ￥{{ money }}{{ p.rmb }}{{ p.payTo }}，{{ toName }}{{ p.ofAccount }}
         </view>
         <view class="popup-share-content-space"></view>
 
@@ -287,5 +287,9 @@ export default {
   border-top-color: #f5f5f5;
   border-top-style: solid;
   border-top-width: 1px;
+}
+.paySureBtn {
+  width: 100%;
+  border-radius: 0;
 }
 </style>
