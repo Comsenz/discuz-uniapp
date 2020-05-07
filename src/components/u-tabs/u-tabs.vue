@@ -15,7 +15,7 @@
           v-for="(item, index) in list"
           :key="index"
           @tap="clickTab(index)"
-          :style="[tabItemStyle(index)]"
+          :style="[tabItemStyle(+index)]"
         >
           {{ item.name }}
         </view>
@@ -175,6 +175,7 @@ export default {
     // tab的样式
     tabItemStyle() {
       return index => {
+      // console.log(index,this.currentIndex,typeof(index),'999999999')
         let style = {
           height: `${this.height}rpx`,
           'line-height': `${this.height}rpx`,
