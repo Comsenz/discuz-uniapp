@@ -32,32 +32,6 @@
 </template>
 
 <script>
-/**
- * 筛选弹框
- * @property {String} confirmText 确定弹框的文字 -默认：筛选
- * @property {Boolean} value 显示隐藏 - 默认： 否
- * @property {Array} selectedData 选中的items 
- * @property {Boolean} ifNeedConfirm 是否需要确定按钮
- * @property {Array} filterList 筛选条件 - 数据格式  默认是false
-        [{
-          title: '板块1',
-          data: [
-            { label: '细类1', value: '1',selected:true },
-            { label: '细类2', value: '2' ,selected:false},
-          ],
-        },
-        {
-          title: '板块2',
-          data: [
-            { label: '细类1', value: '1' ,selected:false},
-            { label: '细类2', value: '1' ,selected:false},
-          ],
-        }],
- * @event {Function} confirm  点击确定
- * @event {Function} cancel  取消事件
- * @event {Function} changeSelected  切换选中
- * @example <filter-modal v-model="show" @confirm="confirm" :filter-list="filterList"></filter-modal>
- */
 export default {
   name: 'FilterModal',
   props: {

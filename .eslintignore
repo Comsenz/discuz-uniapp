@@ -15,3 +15,4 @@ commitlint.congig.js
 stylelint.config.js
 src/library
 src/wxcomponents
+src/components/uni-popup

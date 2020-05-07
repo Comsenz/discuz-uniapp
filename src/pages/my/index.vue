@@ -15,8 +15,8 @@
           ></qui-cell-item>
         </view>
       </view>
-      <view class="my-info__introduction">
-        {{ userInfo.signature || '暂无签名' }}
+      <view class="my-info__introduction" v-if="userInfo.signature">
+        {{ userInfo.signature }}
       </view>
     </view>
     <view class="my-tabs">
@@ -114,7 +114,9 @@ page {
 .my-info__box {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 40rpx;
+}
+.my-info__introduction {
+  margin-top: 40rpx;
 }
 .my-info__box__detail {
   position: relative;
