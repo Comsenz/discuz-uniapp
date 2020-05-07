@@ -164,7 +164,17 @@ page {
     padding-right: 40rpx;
   }
   /deep/ .cell-item__body {
-    height: 150rpx;
+    height: auto;
+    padding: 35rpx 0;
+  }
+  .orderlist-items .cell-item__body {
+    align-items: flex-start;
+  }
+  .orderlist-items .cell-item__body__right-brief {
+    position: absolute;
+    right: 0;
+    bottom: 35rpx;
+    width: 100rpx;
   }
   /deep/ .cell-item__body__right-text {
     font-weight: bold;
@@ -204,5 +214,8 @@ page {
 }
 .scroll-y {
   max-height: calc(100vh - 148rpx);
+}
+.cell-item__body__right {
+  padding-left: 59rpx;
 }
 </style>

@@ -166,7 +166,13 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(res => {
+        if (isLiked) {
+          res.likeCount -= 1;
+        } else {
+          res.likeCount += 1;
+        }
+      });
     },
     // 下拉加载
     pullDown() {

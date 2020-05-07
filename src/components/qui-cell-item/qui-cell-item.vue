@@ -42,21 +42,6 @@
 </template>
 
 <script>
-/**
- * 列表单元组件
- * @property {String} title 标题 - 默认：空
- * @property {String} brief 标题下描述文本 - 默认：空
- * @property {String} addon 右侧文字 - 默认：空
- * @property {String} briefRight 右侧文字下描述 - 默认：空
- * @property {Boolean} arrow 右箭头 - 默认：false
- * @property {String} addon2 附加文本2 - 在列表单元下显示文字说明，默认：空
- * @property {Boolean} disabled 禁用状态 - 默认：false
- * @property {Boolean} border 下边框 - 默认：true
- * @property {Boolean} slot-left 插槽左 - 不可同时打开两个插槽，默认：false
- * @property {Boolean} slot-right 插槽右 - 不可再使用addon，默认：false
- * @event {Function} click 列表单元项 点击事件
- * @example <cell-item title="普通条目" addon="附加文案" arrow></cell-item>
- */
 export default {
   name: 'QuiCellItem',
 
