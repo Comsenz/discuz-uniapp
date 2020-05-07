@@ -43,6 +43,7 @@
         :current="categoryId"
         @change="toggleTab"
         is-scroll="isScroll"
+        active-color="#1878F3"
       ></u-tabs>
     </view>
     <view class="sticky">
@@ -149,7 +150,7 @@ export default {
       top: 500,
       filterSelected: { label: '全部', value: '' }, // 筛选类型
       loadingType: 'more', //上拉加载状态
-      totalData: 0, // 总数
+      hasMore: false, // 是否有更多
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
@@ -187,32 +188,8 @@ export default {
       shareBtn: 'icon-share1',
       color: 'red',
       tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
-      bottomData: [
-        {
-          text: '文字',
-          icon: 'icon-word',
-          name: 'wx',
-          type: 0,
-        },
-        {
-          text: '图片',
-          icon: 'icon-img',
-          name: 'wx',
-          type: 3,
-        },
-        {
-          text: '视频',
-          icon: 'icon-video',
-          name: 'qq',
-          type: 2,
-        },
-        {
-          text: '帖子',
-          icon: 'icon-post',
-          name: 'sina',
-          type: 1,
-        },
-      ],
+      isResetList: false, // 是否重置列表
+      bottomData: [],
       tabs: [
         {
           tabsName: '圈子',
@@ -289,14 +266,17 @@ export default {
   methods: {
     // 切换选项卡
     toggleTab(index) {
+      // console.log(index)
+      // 重置列表
+      this.isResetList = true;
       this.categoryId = index;
       this.loadThreadsSticky();
       this.loadThreads();
     },
     // 滑动切换swiper
-    tabChange(e) {
-      this.categoryId = e.detail.current;
-    },
+    // tabChange(e) {
+    //   this.categoryId = e.detail.current;
+    // },
     // 点击筛选下拉框里的按钮
     changeSelected(item, dataIndex, filterIndex) {
       // console.log(item, dataIndex, filterIndex);
@@ -315,7 +295,6 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
-      console.log(id, 77777);
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });
@@ -342,7 +321,8 @@ export default {
     },
     // 筛选选中确定按钮
     confirm(e) {
-      // this.filterSelected = { ...e };
+      // 重置列表
+      this.isResetList = true;
       const filterSelected = { ...e };
 
       this.categoryId = filterSelected[0].data.value;
@@ -508,12 +488,15 @@ export default {
       }
       params['filter[fromUserId]'] = this.threadFollow;
       this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
-        this.totalData = res._jv.json.meta.threadCount;
-        console.log(this.totalData);
-        this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-        this.threads = { ...res, ...this.threads };
+        this.hasMore = !!res._jv.json.links.next;
+        this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        // this.threads = res;
+        if (this.isResetList) {
+          this.threads = res;
+        } else {
+          this.threads = { ...res, ...this.threads };
+        }
+        this.isResetList = false;
       });
     },
     // 内容部分点赞按钮点击事件
@@ -539,7 +522,7 @@ export default {
     // 下拉加载
     pullDown() {
       console.log('下拉加载呢');
-      if (this.pageNum * this.pageSize < this.totalData) {
+      if (this.hasMore) {
         this.pageNum += 1;
         this.loadThreads();
       } else {
