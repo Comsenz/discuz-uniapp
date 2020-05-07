@@ -152,6 +152,10 @@ export default {
     showMyHead: '支付记录显示我的头像',
     wxPay: '微信支付',
     walletPay: '钱包支付',
+    walletBalance: '钱包余额',
+    payTo: '将支付到',
+    ofAccount: '的账户',
+    surePay: '确认支付',
   },
   auth: {
     userinfo: '获取头像和昵称',
