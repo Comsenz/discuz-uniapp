@@ -109,7 +109,6 @@ export default {
     not_install: '该站点未安装',
   },
   topic: {
-    all: '所有',
     persenUnit: '人',
     delete: '删除',
     management: '管理',
@@ -159,5 +158,29 @@ export default {
   },
   auth: {
     userinfo: '获取头像和昵称',
+  },
+  // 首页
+  home: {
+    all: '所有',
+    theme: '成员',
+    homecontent: '内容',
+    share: '分享',
+    confirmText: '筛选',
+    sticky: '置顶',
+    cancel: '取消',
+    tabsCircle: '圈子',
+    tabsNews: '消息',
+    tabsMy: '我',
+    filterPlate: '板块',
+    filterType: '类型',
+    text: '文本',
+    invitation: '帖子',
+    video: '视频',
+    picture: '图片',
+    essence: '精华',
+    followed: '已关注',
+    generatePoster: '生成海报',
+    wxShare: '微信分享',
+    word: '文字',
   },
 };

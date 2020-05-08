@@ -39,7 +39,6 @@
  * @property {String Number} duration 滑块移动一次所需的时间，单位秒（默认0.5）
  * @property {String} active-color 滑块和激活tab文字的颜色（默认#2979ff）
  * @property {String} inactive-color tabs文字颜色（默认#303133）
- * @property {String Number} bar-width 滑块宽度，单位rpx（默认40）
  * @property {Object} active-item-style 活动tabs item的样式，对象形式
  * @property {Object} bar-style 底部滑块的样式，对象形式
  * @property {Boolean} show-bar 是否显示底部的滑块（默认true）
@@ -96,11 +95,6 @@ export default {
       type: String,
       default: '#777777',
     },
-    // 菜单底部移动的bar的宽度，单位px
-    barWidth: {
-      type: [String, Number],
-      default: 30,
-    },
     // 移动bar的高度
     barHeight: {
       type: [String, Number],
@@ -155,6 +149,7 @@ export default {
       parentLeft: 0, // 父元素(tabs组件)到屏幕左边的距离
       id: this.$u.guid(), // id值
       currentIndex: this.current,
+      barWidth: 30,
     };
   },
   computed: {
@@ -175,7 +170,7 @@ export default {
     // tab的样式
     tabItemStyle() {
       return index => {
-      // console.log(index,this.currentIndex,typeof(index),'999999999')
+        // console.log(index,this.currentIndex,typeof(index),'999999999')
         let style = {
           height: `${this.height}rpx`,
           'line-height': `${this.height}rpx`,
