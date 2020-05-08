@@ -74,7 +74,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .header {
@@ -111,17 +111,17 @@ export default {
       line-height: 37rpx;
       text-align: center;
     }
-    .circleDet-num {
-      color: --color(--qui-BG-2);
-    }
-    .circleDet-share {
-      width: 100rpx;
-      font-size: $fg-f26;
-      color: --color(--qui-BG-2);
-    }
-    .qui-icon {
-      padding-right: 13rpx;
-    }
+  }
+  .circleDet-num {
+    color: --color(--qui-BG-2);
+  }
+  .circleDet-share {
+    width: 100rpx;
+    font-size: $fg-f26;
+    color: --color(--qui-BG-2);
+  }
+  .qui-icon {
+    padding-right: 13rpx;
   }
 }
 </style>
