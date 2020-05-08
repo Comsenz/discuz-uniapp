@@ -57,7 +57,14 @@
       :addon="showPrice"
       arrow
       v-if="type !== 0"
-      @click="cellClick"
+      @click="cellClick('pay')"
+    ></qui-cell-item>
+    <qui-cell-item
+      :title="i18n.t('discuzq.post.freeWordCount')"
+      :addon="`${word}字`"
+      v-if="price > 0"
+      arrow
+      @click="cellClick('word')"
     ></qui-cell-item>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
@@ -79,14 +86,31 @@
     <uni-popup ref="popupBtm" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <text class="popup-title">{{ i18n.t('discuzq.post.selectToViewPaymentAmount') }}</text>
-          <view class="popup-content-btn">
+          <text class="popup-title">
+            {{
+              setType === 'pay'
+                ? i18n.t('discuzq.post.selectToViewPaymentAmount')
+                : i18n.t('discuzq.post.selectToViewFreeWordCount')
+            }}
+          </text>
+          <view class="popup-content-btn" v-if="setType === 'pay'">
             <qui-button
               v-for="(item, index) in payNum"
               :key="index"
               :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
               plain
               @click="moneyClick(index)"
+            >
+              {{ item.name }}
+            </qui-button>
+          </view>
+          <view class="popup-content-btn" v-if="setType === 'word'">
+            <qui-button
+              v-for="(item, index) in wordCount"
+              :key="index"
+              :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
+              plain
+              @click="wordClick(index)"
             >
               {{ item.name }}
             </qui-button>
@@ -99,13 +123,34 @@
     <uni-popup ref="popup" type="center">
       <view class="popup-dialog">
         <view class="popup-dialog__top">
-          <text>{{ i18n.t('discuzq.post.enterToViewPaymentAmount') }}</text>
+          <text>
+            {{
+              setType === 'pay'
+                ? i18n.t('discuzq.post.enterToViewPaymentAmount')
+                : i18n.t('discuzq.post.enterTheWordCount')
+            }}
+          </text>
         </view>
         <view class="popup-dialog__cont">
-          <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+          <qui-icon
+            class="popup-dialog__cont-rmb"
+            name="icon-rmb"
+            size="40"
+            v-if="setType === 'pay'"
+          ></qui-icon>
+          <text class="popup-dialog__cont-rmb" v-else>字</text>
           <input
             class="popup-dialog__cont-input"
+            v-if="setType === 'pay'"
             v-model="inputPrice"
+            type="digit"
+            placeholder="0.0"
+            focus
+          />
+          <input
+            class="popup-dialog__cont-input"
+            v-else
+            v-model="inputWord"
             type="digit"
             placeholder="0.0"
             focus
@@ -135,6 +180,7 @@ export default {
       title: '',
       price: 0,
       inputPrice: 0.0,
+      inputWord: 0,
       operating: '',
       emojiShow: false,
       header: {},
@@ -185,10 +231,41 @@ export default {
       ],
       uploadFile: [],
       cursor: 0,
+      wordCount: [
+        {
+          name: '5字',
+          num: 5,
+        },
+        {
+          name: '10字',
+          num: 10,
+        },
+        {
+          name: '15字',
+          num: 15,
+        },
+        {
+          name: '20字',
+          num: 20,
+        },
+        {
+          name: '25字',
+          num: 25,
+        },
+        {
+          name: this.i18n.t('discuzq.post.customize'),
+          num: 0,
+        },
+      ],
+      wordCountCheck: [
+        {
+          name: '5字',
+          num: 5,
+        },
+      ],
+      word: 5,
+      setType: 'pay',
     };
-  },
-  provide: {
-    popup: 'popup',
   },
   computed: {
     ...mapState({
@@ -212,25 +289,43 @@ export default {
     },
   },
   methods: {
+    wordClick(index) {
+      this.wordCountCheck = [];
+      this.wordCountCheck.push(this.wordCount[index]);
+
+      if (this.wordCountCheck[0].name === '自定义') {
+        this.$refs.popupBtm.close();
+
+        this.$nextTick(() => {
+          this.$refs.popup.open();
+        });
+      } else {
+        this.word = this.wordCount[index].num;
+        this.$refs.popupBtm.close();
+      }
+    },
     contBlur(e) {
-      console.log(e.detail.cursor);
       this.cursor = e.detail.cursor;
     },
     diaLogClose() {
       this.$refs.popup.close();
     },
     diaLogOk() {
-      this.price = this.inputPrice;
+      if (this.setType === 'pay') {
+        this.price = this.inputPrice;
+      } else {
+        this.word = this.inputWord;
+      }
+
       this.$refs.popup.close();
     },
 
     moneyClick(index) {
+      this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
 
       if (this.payNumCheck[0].name === '自定义') {
-        console.log('自定义');
-        // this.popupType = 'dialog';
         this.$refs.popupBtm.close();
 
         this.$nextTick(() => {
@@ -241,7 +336,8 @@ export default {
         this.$refs.popupBtm.close();
       }
     },
-    cellClick() {
+    cellClick(type) {
+      this.setType = type;
       this.$refs.popupBtm.open();
     },
     cancel() {
@@ -280,11 +376,12 @@ export default {
       } */
     },
     postClick() {
-      this.postThread();
-
-      /* uni.navigateTo({
-        url: `/pages/topic/index?id=${res.data.data.id}`,
-      }); */
+      this.postThread().then(res => {
+        console.log(res._jv.json.data.id);
+        /* uni.navigateTo({
+          url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+        }); */
+      });
     },
 
     // 接口请求
@@ -311,6 +408,8 @@ export default {
         },
         content: this.textAreaValue,
         type: this.type,
+        price: this.price,
+        free_words: this.word,
       };
 
       if (this.type === 3) {
@@ -325,9 +424,14 @@ export default {
         });
       }
 
-      this.$store.dispatch('jv/post', params).catch(err => {
-        console.log(err);
-      });
+      return this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          return res;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     delAttachments(id) {
       const params = {
@@ -489,6 +593,9 @@ export default {
   /deep/ .cell-item__body__right-text {
     color: --color(--qui-RED);
   }
+}
+/deep/ .cell-item__body__content-title {
+  color: --color(--qui-FC-777);
 }
 
 .popup-dialog {
