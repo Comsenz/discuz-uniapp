@@ -38,8 +38,8 @@
           </qui-cell-item>
         </view>
       </view>
-      <view class="profile-info__introduction">
-        {{ userInfo.signature || '暂无签名' }}
+      <view class="profile-info__introduction" v-if="userInfo.signature">
+        {{ userInfo.signature }}
       </view>
     </view>
     <view class="profile-tabs">
@@ -98,6 +98,7 @@ export default {
       userId: '',
       pageType: '', // 个人主页还是他人主页
       current: 0,
+      dialogId: 0, // 会话id
     };
   },
   computed: {
@@ -163,6 +164,33 @@ export default {
     changeFollow(e) {
       this.getUserInfo(e.userId);
     },
+    // 私信
+    chat() {
+      const params = {
+        _jv: {
+          type: 'dialog',
+        },
+        recipient_username: this.userInfo.username,
+      };
+      // 调用创建会话接口
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          console.log('创建会话接口的响应：', res);
+          this.dialogId = res._jv.json.data.id;
+          this.jumpChatPage();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 跳转到聊天页面（传入用户名和会话id）
+    jumpChatPage() {
+      console.log(`跳转到聊天页面并传入用户名：${this.userInfo.username}和会话：idthis.dialogId`);
+      uni.navigateTo({
+        url: `../notice/msglist?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
+      });
+    },
   },
 };
 </script>
@@ -183,7 +211,9 @@ page {
 .profile-info__box {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 40rpx;
+}
+.profile-info__introduction {
+  margin-top: 40rpx;
 }
 .profile-info__box__detail {
   position: relative;

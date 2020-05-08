@@ -6,6 +6,9 @@ export default {
   discuzq: {
     // 测试，不用的时候可以删掉
     hello: 'Hello',
+    // 常用
+    ok: 'Ok',
+    close: 'Close',
     // 日期相关
     date: {
       now: 'Now',
@@ -70,11 +73,13 @@ export default {
     // 图片
     image: {
       error: 'FAILED',
+      imageUploading: 'Image uploading...',
     },
     // 导航
     pageHeader: {
       title: 'Back',
     },
+    // @人员页面
     atMember: {
       atTitle: 'Select @ member',
       selectedMember: 'Selected member',
@@ -84,10 +89,19 @@ export default {
     role: {
       noRole: 'No role',
     },
+    // 发布页
     post: {
       note: 'You can also enter {num} words',
       placeholder: 'What do you want to say ...',
       post: 'Post',
+      paymentAmount: 'Payment amount',
+      chooseCategory: 'Choose category',
+      selectToViewPaymentAmount: 'Select to view payment amount',
+      cancel: 'Cancel',
+      enterToViewPaymentAmount: 'Enter to view payment amount',
+      free: 'Free',
+      yuan: 'yuan',
+      customize: 'Customize',
     },
   },
 };

@@ -5,17 +5,18 @@
     </view>
     <view class="circleDet">
       <text>
-        {{ theme }}
+        {{ t.theme }}
         <text class="circleDet-num">{{ themeNum }}</text>
       </text>
       <text>
-        {{ post }}
+        {{ t.homecontent }}
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
-      <text class="circleDet-share" @click="open">
-        <qui-icon class="qui-icon" name="shareBtn" size="28" color="#c33"></qui-icon>
-        {{ share }}
-      </text>
+
+      <view class="circleDet-share" @click="open">
+        <qui-icon class="qui-icon" name="icon-share1" size="28" color="#fff"></qui-icon>
+        {{ t.share }}
+      </view>
     </view>
   </view>
 </template>
@@ -39,7 +40,7 @@ export default {
       type: Number,
       default: 0,
     },
-    post: {
+    homecontent: {
       type: String,
       default: '',
     },
@@ -59,6 +60,12 @@ export default {
   data: () => {
     return {};
   },
+  computed: {
+    // 语言包
+    t() {
+      return this.i18n.t('home');
+    },
+  },
   onLond() {},
   methods: {
     open(evt) {
@@ -67,10 +74,11 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .header {
+  position: relative;
   width: 100%;
   height: 400rpx;
   background: #1878f3;
@@ -103,17 +111,17 @@ export default {
       line-height: 37rpx;
       text-align: center;
     }
-    .circleDet-num {
-      color: --color(--qui-BG-2);
-    }
-    .circleDet-share {
-      color: --color(--qui-BG-2);
-    }
-    .qui-icon {
-      width: 30rpx;
-      height: 30rpx;
-      background: chartreuse;
-    }
+  }
+  .circleDet-num {
+    color: --color(--qui-BG-2);
+  }
+  .circleDet-share {
+    width: 100rpx;
+    font-size: $fg-f26;
+    color: --color(--qui-BG-2);
+  }
+  .qui-icon {
+    padding-right: 13rpx;
   }
 }
 </style>

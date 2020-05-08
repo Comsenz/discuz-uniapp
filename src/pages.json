@@ -83,50 +83,59 @@
         "enablePullDownRefresh": true
       }
     },
+    {
+      "path": "pages/site/info",
+      "style": {
+        "navigationBarTitleText": "圈子信息"
+      }
+    },
+    {
+      "path": "pages/site/partner-invite",
+      "style": {
+        "navigationBarTitleText": "圈子信息"
+      }
+    },
     // 消息页面
     {
-      "path": "pages/message/index",
+      "path": "pages/notice/index", // 消息
       "style": {
-        "navigationBarTitleText": "消息"
+        "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/message/related",
+      "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {
-        "navigationBarTitleText": "@我的"
+        "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/message/replied",
+      "path": "pages/notice/msglist", // 来往记录
       "style": {
-        "navigationBarTitleText": "回复我的"
-      }
-    },
-    {
-      "path": "pages/message/liked",
-      "style": {
-        "navigationBarTitleText": "点赞我的"
-      }
-    },
-    {
-      "path": "pages/message/rewarded",
-      "style": {
-        "navigationBarTitleText": "支付我的"
-      }
-    },
-    {
-      "path": "pages/message/system",
-      "style": {
-        "navigationBarTitleText": "系统通知"
-      }
-    },
-    {
-      "path": "pages/message/chat",
-      "style": {
-        "navigationBarTitleText": "聊天室",
+        "navigationStyle": "custom",
         "enablePullDownRefresh": true
       }
     },
+
+    // 圈子管理
+    {
+      "path": "pages/manage/index", // 站长管理
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/manage/users", // 成员管理
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/manage/invite", // 邀请成员
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+
     {
       "path": "pages/topic/post",
       "style": {

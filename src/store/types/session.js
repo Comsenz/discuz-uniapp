@@ -4,3 +4,5 @@ export const SET_USER_ID = 'SET_USER_ID';
 export const CHECK_SESSION = 'CHECK_SESSION';
 // 设置 access token
 export const SET_ACCESS_TOKEN = 'SET_ACCESS_TOKEN';
+// 设置 弹框
+export const SET_AUTH = 'SET_AUTH';

@@ -61,6 +61,7 @@ http.interceptor.response(
     //   // 演示自定义参数的作用
     //   return response.data;
     // }
+    response.status = response.statusCode;
     return response;
   },
   response => {

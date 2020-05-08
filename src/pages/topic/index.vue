@@ -196,7 +196,13 @@
         <text class="popup-share-btn" @click="cancel('share')">取消</text>
       </view>
     </uni-popup>
-    <qui-pay ref="payShow" pay-type="图片查看"></qui-pay>
+    <qui-pay
+      ref="payShow"
+      money="5"
+      balance="354.00"
+      :to-name="thread.user.username"
+      pay-type="图片查看"
+    ></qui-pay>
   </view>
 </template>
 

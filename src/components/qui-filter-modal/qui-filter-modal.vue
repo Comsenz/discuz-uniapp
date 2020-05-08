@@ -8,6 +8,10 @@
     }"
   >
     <view class="filter-modal__content" v-if="showValue" @tap.stop>
+      <view class="filter-modal__content__search" v-if="showSearch">
+        <qui-icon class="icon-search" name="icon-search" size="26" color="#777777"></qui-icon>
+        搜索
+      </view>
       <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
         <view class="filter-modal__content__item-title">{{ item.title }}</view>
         <view
@@ -28,32 +32,6 @@
 </template>
 
 <script>
-/**
- * 筛选弹框
- * @property {String} confirmText 确定弹框的文字 -默认：筛选
- * @property {Boolean} value 显示隐藏 - 默认： 否
- * @property {Array} selectedData 选中的items 
- * @property {Boolean} ifNeedConfirm 是否需要确定按钮
- * @property {Array} filterList 筛选条件 - 数据格式  默认是false
-        [{
-          title: '板块1',
-          data: [
-            { label: '细类1', value: '1',selected:true },
-            { label: '细类2', value: '2' ,selected:false},
-          ],
-        },
-        {
-          title: '板块2',
-          data: [
-            { label: '细类1', value: '1' ,selected:false},
-            { label: '细类2', value: '1' ,selected:false},
-          ],
-        }],
- * @event {Function} confirm  点击确定
- * @event {Function} cancel  取消事件
- * @event {Function} changeSelected  切换选中
- * @example <filter-modal v-model="show" @confirm="confirm" :filter-list="filterList"></filter-modal>
- */
 export default {
   name: 'FilterModal',
   props: {
@@ -82,6 +60,10 @@ export default {
     top: {
       type: Number,
       default: 0,
+    },
+    showSearch: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -166,6 +148,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .filter-modal {
   position: fixed;
   right: 0;
@@ -204,6 +188,15 @@ export default {
   box-sizing: border-box;
   animation: fadeZoom 0.15s linear;
 }
+.icon-search {
+  margin-right: 19rpx;
+}
+.filter-modal__content__search {
+  position: absolute;
+  right: 30rpx;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-777);
+}
 .filter-modal.show {
   opacity: 1;
   visibility: visible;
@@ -223,7 +216,7 @@ export default {
 .filter-modal__content__item-title {
   padding-top: 10rpx;
   padding-bottom: 40rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: bold;
 }
 .filter-modal__content__item-detail {
