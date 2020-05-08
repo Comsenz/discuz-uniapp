@@ -26,14 +26,13 @@
 
 <script>
 import { status } from 'jsonapi-vuex';
-import quiButton from '@/components/qui-button/qui-button';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
-  components: { quiInputCode, quiButton },
+  components: { quiInputCode },
   data() {
     return {
-      userid: 24,
+      userid: '',
       second: 60,
       sun: true,
       phon: true,
@@ -42,12 +41,16 @@ export default {
       coum: '',
       judge: false,
       test: '',
+      icon: 'none',
       num: 5,
+      valifailed: '验证失败',
+      lateron: '稍后重试',
+      duration: 2000,
     };
   },
-  onLoad() {
+  onLoad(arr) {
+    this.userid = Number(arr.id);
     this.senduser();
-    // this.userid = sun.id
   },
   methods: {
     getCode() {
@@ -71,22 +74,21 @@ export default {
         this.sun = !this.sun;
         this.second = 60;
       }, 60000);
-      console.log(this.userphone1);
       this.sendsms();
     },
+    // 获取用户信息
     senduser() {
       const params = {
         _jv: {
           type: 'users',
           id: this.userid,
         },
-        include: 'groups',
+        include: ['groups', 'wechat'],
       };
       const man = status.run(() => this.$store.dispatch('jv/get', params));
       man.then(res => {
         this.userphon = res.mobile;
         this.userphone1 = res.originalMobile;
-        console.log(this.userphon, this.userphone1);
       });
     },
     // 发送短信接口
@@ -100,21 +102,25 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          console.log(res);
           this.num -= 1;
           /* eslint-disable */
           this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
-          console.log(err);
-        });
+          if(err.statusCode === 500 ) {
+            uni.showToast({
+              icon: this.icon,
+              title: this.lateron,
+              duration: this.duration,
+            });
+          }
+        })
     },
     btndata(num) {
       this.coum = num;
     },
     // 验证短信
     submission() {
-      console.log(this.coum);
       const params = {
         _jv: {
           type: 'sms/verify',
@@ -125,7 +131,6 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res);
           if (res) {
             uni.navigateTo({
               url: '/pages/modify/setphon',
@@ -133,7 +138,11 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err);
+          uni.showToast({
+            icon: this.icon,
+            title: this.valifailed,
+            duration: 2000,
+          });
           if (err.statusCode === 422) {
             this.judge = true;
             /* eslint-disable */
@@ -142,7 +151,7 @@ export default {
             this.test = `验证码错误，您还可以重发${this.num}次`;
             this.judge = true;
             if(this.num < 0){
-              this.test = '请过5分钟重试'
+              this.test = '请稍后重试'
             }
           }
         });
@@ -167,13 +176,13 @@ page {
   width: 710rpx;
   height: 100rpx;
   margin: 31rpx 0 0 40rpx;
-  border-bottom: 2rpx solid rgba(237, 237, 237, 1);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .modify-phon-test {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
+  color: --color(--qui-FC-777);
   opacity: 1;
 }
 .modify-phon-num {
@@ -192,11 +201,9 @@ page {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 70rpx;
-  color: rgba(255, 255, 255, 1);
-  text-align: center;
+  color: --color(--qui-FC-FFF);
   background-color: --color(--qui-BG-BTN);
   border-radius: 5rpx;
-  opacity: 1;
 }
 .modify-input {
   width: 710rpx;
@@ -206,22 +213,8 @@ page {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
+  color: --color(--qui-FC-777);
   opacity: 1;
-}
-.modify-vftion-input {
-  display: flex;
-  width: 100%;
-  height: 100rpx;
-}
-.hidden-ipt {
-  width: 0;
-  height: 0;
-  margin: 0;
-  border: 0;
-}
-.modify-title {
-  width: 100%;
 }
 .modify-button {
   width: 670rpx;

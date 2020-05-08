@@ -28,19 +28,20 @@ export default {
   components: { quiInputCode },
   data() {
     return {
-      userid: 24,
+      userid: '',
       pas: true,
       sun: false,
       types: 'password',
-      test: '两次输入的密码不同，请重新输入',
-      status: '',
+      test: '',
       inputpas: '',
       repeatpas: '',
+      icon: 'none',
+      modification: '已有支付密码',
+      time: 2000,
     };
   },
-  onLoad() {
-    this.senduser();
-    // this.userid = sun.id
+  onLoad(arr) {
+    this.userid = Number(arr.id);
   },
   methods: {
     btndata(num) {
@@ -50,26 +51,9 @@ export default {
       }
     },
     btndata2(sum) {
-      if (this.inputpas !== sum) {
-        this.sun = true;
-      }
       this.mobelypas(sum);
     },
-    senduser() {
-      const params = {
-        _jv: {
-          type: 'users',
-          id: this.userid,
-        },
-        include: 'groups',
-      };
-      const man = status.run(() => this.$store.dispatch('jv/get', params));
-      man.then(res => {
-        this.status = res.status;
-      });
-    },
     mobelypas(sum) {
-      console.log(sum);
       const params = {
         _jv: {
           type: 'users',
@@ -81,10 +65,32 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/patch', params));
       postphon
         .then(res => {
-          console.log('users', res);
+          if (res) {
+            uni.showToast({
+              title: '支付密码设置成功',
+              duration: 2000,
+            });
+            uni.navigateTo({
+              url: '/pages/my/profile',
+            });
+          }
         })
         .catch(err => {
-          console.log('users', err);
+          console.log(err);
+          if (err.statusCode === 422) {
+            if (this.inputpas !== sum) {
+              this.sun = true;
+              this.test = '两次输入的密码不同，请重新输入';
+            } else if (this.inputpas === sum) {
+              // this.sun = true;
+              // this.test = '已有支付密码';
+              uni.showToast({
+                icon: this.icon,
+                title: this.modification,
+                duration: this.time,
+              });
+            }
+          }
         });
     },
   },
@@ -98,14 +104,15 @@ export default {
   width: 710rpx;
   height: 200rpx;
   padding: 0 0 0 40rpx;
-  background: rgba(255, 255, 255, 1);
+  margin: 31rpx 0 0;
+  background: --color(--qui-FC-FFF);
   opacity: 1;
 }
 .setpw-tit {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
+  color: --color(--qui-FC-777);
   opacity: 1;
 }
 </style>

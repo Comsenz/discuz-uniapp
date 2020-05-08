@@ -11,42 +11,54 @@
         v-model="inpcont"
       />
       <input
-        :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
+        :class="
+          title ? 'hidden-ipt-input2' : iptValue[0] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+        "
         :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 1 ? iptValue[0] : ''"
       />
       <input
-        :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
+        :class="
+          title ? 'hidden-ipt-input2' : iptValue[1] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+        "
         :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 2 ? iptValue[1] : ''"
       />
       <input
-        :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
+        :class="
+          title ? 'hidden-ipt-input2' : iptValue[2] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+        "
         :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[2] : ''"
       />
       <input
-        :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
+        :class="
+          title ? 'hidden-ipt-input2' : iptValue[3] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+        "
         :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 4 ? iptValue[3] : ''"
       />
       <input
-        :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
+        :class="
+          title ? 'hidden-ipt-input2' : iptValue[4] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+        "
         :type="number"
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[4] : ''"
       />
       <input
-        :class="title ? 'hidden-ipt-input2' : 'hidden-ipt-input'"
+        :class="
+          title ? 'hidden-ipt-input2' : iptValue[5] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+        "
         :type="number"
         disabled
         @tap="onFocus"
@@ -102,6 +114,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .modify-vftion {
   width: 710rpx;
 }
@@ -120,28 +134,31 @@ export default {
   width: 92rpx;
   height: 98rpx;
   margin: 0 24rpx 0 0;
-  font-size: 50rpx;
+  font-size: $fg-f50;
   font-weight: bold;
   line-height: 45rpx;
   text-align: center;
-  border-bottom: 2rpx solid #333;
+  border-bottom: 2rpx solid --color(--qui-FC-333);
 }
 .hidden-ipt-input2 {
   width: 92rpx;
   height: 98rpx;
   margin: 0 24rpx 0 0;
-  font-size: 50rpx;
+  font-size: $fg-f50;
   font-weight: bold;
   line-height: 45rpx;
-  color: rgba(250, 81, 81, 1);
+  color: --color(--qui-RED);
   text-align: center;
-  border-bottom: 2rpx solid #fa5151;
+  border-bottom: 2rpx solid --color(--qui-RED);
+}
+.alias {
+  border-bottom: 2rpx solid rgba(197, 202, 213, 1);
 }
 .hidden-ipt-test {
-  font-size: 24rpx;
+  margin: 21rpx 0 0;
+  font-size: $fg-f24;
   font-weight: 400;
-  line-height: 100rpx;
-  color: rgba(250, 81, 81, 1);
+  color: --color(--qui-RED);
   opacity: 1;
 }
 </style>

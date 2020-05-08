@@ -152,7 +152,7 @@
         "disableScroll": true
       }
     },
-    // 海报分享
+    // 帖子海报分享
     {
       "path": "pages/share/topic",
       "style": {
