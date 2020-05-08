@@ -35,7 +35,7 @@ const actions = {
             uni.getUserInfo({
               // eslint-disable-next-line no-shadow
               success: res => {
-                const data = {
+                let data = {
                   data: {
                     attributes: {
                       js_code: code,
