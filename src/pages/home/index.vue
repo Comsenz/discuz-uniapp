@@ -200,7 +200,7 @@ export default {
           tabsName: '消息',
           tabsIcon: 'icon-message',
           id: 2,
-          url: '../message/index',
+          url: '../notice/index',
         },
         {
           tabsName: '我',

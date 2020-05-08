@@ -85,19 +85,19 @@
     },
     // 消息页面
     {
-      "path": "pages/message/index",
+      "path": "pages/notice/index", // 消息
       "style": {
         "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/message/notification",
+      "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {
         "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/message/chat",
+      "path": "pages/notice/msglist", // 来往记录
       "style": {
         "navigationStyle": "custom",
         "enablePullDownRefresh": true
