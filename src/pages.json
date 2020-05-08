@@ -83,6 +83,7 @@
         "enablePullDownRefresh": true
       }
     },
+
     // 消息页面
     {
       "path": "pages/message/index",
@@ -103,6 +104,27 @@
         "enablePullDownRefresh": true
       }
     },
+
+    // 圈子管理
+    {
+      "path": "pages/manage/index", // 站长管理
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/manage/users", // 成员管理
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/manage/invite", // 邀请成员
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+
     {
       "path": "pages/topic/post",
       "style": {
