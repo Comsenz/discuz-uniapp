@@ -1,12 +1,13 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
 import { http } from '@/api/api-request';
 import { utils } from 'jsonapi-vuex';
-import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN } from '@/store/types/session';
+import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN, SET_AUTH } from '@/store/types/session';
 
 const state = {
   userId: 0,
   wxLogin: false,
   accessToken: '',
+  auth: {},
 };
 
 const actions = {
@@ -22,7 +23,10 @@ const actions = {
   setAccessToken: (context, payload) => {
     context.commit(SET_ACCESS_TOKEN, payload);
   },
-  login: context => {
+  setAuth: (context, payload) => {
+    context.commit(SET_AUTH, payload);
+  },
+  login: (context, payload = {}) => {
     return new Promise((resolve, reject) => {
       uni.login({
         success: res => {
@@ -31,7 +35,7 @@ const actions = {
             uni.getUserInfo({
               // eslint-disable-next-line no-shadow
               success: res => {
-                const data = {
+                let data = {
                   data: {
                     attributes: {
                       js_code: code,
@@ -40,6 +44,7 @@ const actions = {
                     },
                   },
                 };
+                data = Object.assign(payload, data);
                 return http.post('oauth/wechat/miniprogram', data).then(results => {
                   const resData = utils.jsonapiToNorm(results.data.data);
                   uni.setStorageSync('user_id', resData._jv.id);
@@ -75,6 +80,9 @@ const mutations = {
   [SET_ACCESS_TOKEN](state, payload) {
     state.accessToken = payload;
   },
+  [SET_AUTH](state, payload) {
+    state.auth = payload;
+  },
 };
 
 const getters = {
@@ -89,7 +97,7 @@ const getters = {
         case 'isLogin':
           return !!uni.getStorageSync('access_token');
         default:
-          break;
+          return state[data];
       }
     };
   },
