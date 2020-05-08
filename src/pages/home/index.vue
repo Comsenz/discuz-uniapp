@@ -230,6 +230,7 @@ export default {
           tabsName: '圈子',
           tabsIcon: 'icon-home',
           id: 1,
+          // url: '../site/partner-invite?code=8WHvJZfZXBh2U6OoyAYmDDwLvNoYAKiD',
         },
         {
           tabsName: '消息',
