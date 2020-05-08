@@ -5,17 +5,17 @@
     </view>
     <view class="circleDet">
       <text>
-        {{ theme }}
+        {{ t.theme }}
         <text class="circleDet-num">{{ themeNum }}</text>
       </text>
       <text>
-        {{ post }}
+        {{ t.homecontent }}
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
 
       <view class="circleDet-share" @click="open">
         <qui-icon class="qui-icon" name="icon-share1" size="28" color="#fff"></qui-icon>
-        {{ share }}
+        {{ t.share }}
       </view>
     </view>
   </view>
@@ -40,7 +40,7 @@ export default {
       type: Number,
       default: 0,
     },
-    post: {
+    homecontent: {
       type: String,
       default: '',
     },
@@ -59,6 +59,12 @@ export default {
   },
   data: () => {
     return {};
+  },
+  computed: {
+    // 语言包
+    t() {
+      return this.i18n.t('home');
+    },
   },
   onLond() {},
   methods: {
