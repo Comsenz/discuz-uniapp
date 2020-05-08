@@ -83,6 +83,18 @@
         "enablePullDownRefresh": true
       }
     },
+    {
+      "path": "pages/site/info",
+      "style": {
+        "navigationBarTitleText": "圈子信息"
+      }
+    },
+    {
+      "path": "pages/site/partner-invite",
+      "style": {
+        "navigationBarTitleText": "圈子信息"
+      }
+    },
     // 消息页面
     {
       "path": "pages/notice/index", // 消息
