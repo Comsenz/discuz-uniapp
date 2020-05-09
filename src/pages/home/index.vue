@@ -190,12 +190,13 @@ export default {
           tabsName: this.i18n.t('home.tabsCircle'),
           tabsIcon: 'icon-home',
           id: 1,
+          // url: '../site/partner-invite?code=8WHvJZfZXBh2U6OoyAYmDDwLvNoYAKiD',
         },
         {
           tabsName: this.i18n.t('home.tabsNews'),
           tabsIcon: 'icon-message',
           id: 2,
-          url: '../message/index',
+          url: '../notice/index',
         },
         {
           tabsName: this.i18n.t('home.tabsMy'),

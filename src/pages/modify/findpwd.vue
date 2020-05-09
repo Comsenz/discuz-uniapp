@@ -62,6 +62,7 @@ export default {
       test: '',
       passtext: '',
       sendtype: '',
+      passwordsucc: '密码修改成功',
     };
   },
   onLoad(sing) {
@@ -125,14 +126,11 @@ export default {
         type: this.sendtype,
       };
       const sendphon = status.run(() => this.$store.dispatch('jv/post', params));
-      sendphon
-        .then(res => {
-          console.log(res);
+      sendphon.then(res => {
+        if (res) {
           this.num -= 1;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+        }
+      });
     },
     // 验证短信
     postphon() {
@@ -150,10 +148,15 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          console.log('成功', res);
+          if (res) {
+            uni.showToast({
+              icon: 'none',
+              title: this.passwordsucc,
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
-          console.log('失败', err);
           if (err.statusCode === 422) {
             this.passt = true;
             /* eslint-disable */
@@ -161,8 +164,8 @@ export default {
           } else if (err.statusCode === 500) {
             this.test = `验证码错误，您还可以重发${this.num}次`;
             this.pad = true;
-            if(this.num < 0){
-              this.test = '请过5分钟重试'
+            if (this.num < 0) {
+              this.test = '请过稍后重试'
             }
           }
         });
@@ -172,18 +175,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .retireve {
   width: 100vw;
   height: 100vh;
 }
 .retireve-tab {
-  padding: 31rpx 0 0 40rpx;
+  padding: 0 0 0 40rpx;
+  margin-top: 31rpx;
 }
 .retireve-titel {
-  font-size: 50rpx;
+  font-size: $fg-f50;
   font-weight: bold;
   line-height: 60rpx;
-  color: rgba(51, 51, 51, 1);
+  color: --color(--qui-FC-333);
   opacity: 1;
 }
 .retireve-phon {
@@ -191,20 +197,19 @@ export default {
   width: 710rpx;
   height: 100rpx;
   justify-content: space-between;
-  margin: 31rpx 0 0;
-  border-bottom: 2rpx solid rgba(237, 237, 237, 1);
+  margin: 80rpx 0 0;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
 }
 .retireve-phon-test {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
-  opacity: 1;
+  color: --color(--qui-FC-777);
 }
 .retireve-phon-num {
   margin: 0 0 0 109rpx;
-  font-size: 34rpx;
+  font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
   color: rgba(0, 0, 0, 1);
@@ -215,40 +220,38 @@ export default {
   height: 70rpx;
   min-width: 180rpx;
   margin: 15rpx 40rpx 0;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 70rpx;
-  color: rgba(255, 255, 255, 1);
+  color: --color(--qui-FC-FFF);
   text-align: center;
-  background: rgba(24, 120, 243, 1);
+  background-color: --color(--qui-MAIN);
   border-radius: 5rpx;
-  opacity: 1;
 }
 .retireve-pas {
   display: flex;
   width: 100%;
   height: 100rpx;
   padding: 0 40rpx 0 0;
-  border-bottom: 2rpx solid rgba(237, 237, 237, 1);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
   justify-content: space-between;
 }
 .retireve-pas-title {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
+  color: --color(--qui-FC-777);
   opacity: 1;
 }
 .retireve-input {
   width: 710rpx;
 }
 .retireve-input-test {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
-  opacity: 1;
+  color: --color(--qui-FC-777);
 }
 .retireve-vftion-input {
   display: flex;
@@ -264,10 +267,9 @@ export default {
   margin: 52rpx 0 0;
 }
 .retireve-pass {
-  font-size: 24rpx;
+  font-size: $fg-f24;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(250, 81, 81, 1);
-  opacity: 1;
+  color: --color(--qui-RED);
 }
 </style>

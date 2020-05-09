@@ -43,6 +43,10 @@ export default {
       phon: true,
       newphon: '',
       setnum: '',
+      icon: 'none',
+      valifailed: '验证失败',
+      lateron: '稍后重试',
+      duration: 2000,
     };
   },
   methods: {
@@ -70,7 +74,6 @@ export default {
       }, 60000);
     },
     btndata(num) {
-      console.log(num);
       this.setnum = num;
     },
     // 点击获取验证码计时开始
@@ -93,7 +96,6 @@ export default {
     },
     // 新手机号发送验证码
     setphon() {
-      console.log(this.newphon);
       const params = {
         _jv: {
           type: 'sms/send',
@@ -109,7 +111,13 @@ export default {
           this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
-          console.log(err);
+          if(err.statusCode === 500) {
+            uni.showToast({
+              icon: this.icon,
+              title: this.lateron,
+              duration: this.duration,
+            });
+          }
         });
     },
     // 验证手机号
@@ -125,10 +133,20 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          console.log('verify', res);
+          uni.showToast({
+            title: '手机号修改成功',
+            duration: 1000
+          });
+          uni.navigateTo({
+              url: '/pages/my/profile',
+          });
         })
         .catch(err => {
-          console.log('verify', err);
+          uni.showToast({
+            icon: this.icon,
+            title: this.valifailed,
+            duration: 2000,
+          });
           if (err.statusCode === 422) {
             this.tit = true;
             /* eslint-disable */
@@ -137,7 +155,7 @@ export default {
             this.test = `验证码错误，您还可以重发${this.num}次`;
             this.tit = true;
             if(this.num < 0){
-              this.test = '请过5分钟重试'
+              this.test = '请稍后重试'
             }
           }
         });
