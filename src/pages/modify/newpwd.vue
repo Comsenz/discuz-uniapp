@@ -11,7 +11,7 @@
       <input
         type="password"
         class="setuppas-pas-inpa"
-        placeholder=" 请重复输入新密码"
+        placeholder="请重复输入新密码"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuenew"
       />
@@ -32,7 +32,7 @@ import { status } from 'jsonapi-vuex';
 export default {
   data() {
     return {
-      userid: 24,
+      userid: '',
       fun: true,
       valueused: '',
       valuenew: '',
@@ -41,16 +41,29 @@ export default {
       test: '两次输入的密码不一致，请重新输入',
     };
   },
-  onLoad() {
-    //  this.userid = sun.id;
+  onLoad(arr) {
+    this.userid = Number(arr.id);
   },
   methods: {
     submission() {
-      console.log(this.valueused, this.valuenew, this.judge2);
-      if (this.valueused === this.valuenew) {
-        this.setpassword();
-      } else {
-        this.judge2 = true;
+      if (this.valueused && this.valuenew) {
+        if (this.valueused === this.valuenew) {
+          this.setpassword();
+        } else {
+          this.judge2 = true;
+        }
+      } else if (!this.valueused && !this.valuenew) {
+        uni.showToast({
+          icon: 'none',
+          title: '新密码不能为空',
+          duration: 2000,
+        });
+      } else if (this.valueused && !this.valuenew) {
+        uni.showToast({
+          icon: 'none',
+          title: '重复输入密码不能为空',
+          duration: 2000,
+        });
       }
     },
     setpassword() {
@@ -65,11 +78,15 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/patch', params));
       postphon
         .then(res => {
-          console.log('成功', res);
+          if (res) {
+            uni.showToast({
+              title: '密码设置成功',
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
           /* eslint-disable */
-          console.log('失败', err);
           if (err.statusCode === 422) {
             this.judge2 = true;
             this.test = err.data.errors[0].detail[0];
@@ -92,7 +109,8 @@ export default {
 }
 .setuppas-pas {
   width: 100%;
-  padding: 31px 0 0 40rpx;
+  padding: 0 0 0 40rpx;
+  margin-top: 31rpx;
 }
 .setuppas-pas-inpa {
   width: 100%;
@@ -119,9 +137,9 @@ export default {
   margin: 50rpx 0 0;
 }
 .setuppas-erro-messag1 {
+  margin-top: 20rpx;
   font-size: $fg-f24;
   font-weight: 400;
-  line-height: 100rpx;
   color: --color(--qui-RED);
 }
 </style>

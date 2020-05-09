@@ -305,7 +305,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code',
+                "url": `${obj.userweixincode}`,
                 "css": {
                   "width": "140px",
                   "height": "140px",
