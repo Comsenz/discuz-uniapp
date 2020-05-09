@@ -14,7 +14,7 @@
       </text>
 
       <view class="circleDet-share" @click="open">
-        <qui-icon class="qui-icon" name="icon-share1" size="28" color="#fff"></qui-icon>
+        <qui-icon class="qui-icon" name="icon-share1" size="26" color="#fff"></qui-icon>
         {{ t.share }}
       </view>
     </view>
@@ -106,7 +106,7 @@ export default {
     text-align: center;
     // border-bottom: 1rpx solid #ccc;
     text {
-      padding: 0 14rpx;
+      padding: 0 15rpx;
       font-size: $fg-f26;
       line-height: 37rpx;
       text-align: center;
@@ -120,7 +120,7 @@ export default {
     color: --color(--qui-BG-2);
   }
   .qui-icon {
-    padding-right: 13rpx;
+    padding-right: 18rpx;
   }
 }
 </style>

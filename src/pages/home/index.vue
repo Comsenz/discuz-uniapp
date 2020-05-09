@@ -12,8 +12,27 @@
       :color="color"
       @click="open"
     ></qui-header>
-    <uni-popup ref="popup" type="bottom">
-      <qui-drawer :bottom-data="bottomData"></qui-drawer>
+    <uni-popup ref="popupHead" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box" @click="shareHead()">
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="36"
+                  color="#777777"
+                ></qui-icon>
+              </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+      </view>
     </uni-popup>
     <view class="nav">
       <view class="nav__box">
@@ -109,6 +128,29 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="handleClick(item)">
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="36"
+                  color="#777777"
+                ></qui-icon>
+              </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+      </view>
+    </uni-popup>
+
+    <uni-popup ref="popupContent" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box" @click="shareContent()">
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
@@ -236,6 +278,16 @@ export default {
     // 首页主题内容列表
     this.loadThreads();
   },
+  // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    if (res.from === 'button') {// 来自页面内分享按钮
+      console.log(res.target)
+    }
+    return {
+      title: '自定义分享标题',
+      path: '/pages/test/test?id=123'
+    }
+  },
   mounted() {
     const query = uni
       .createSelectorQuery()
@@ -292,7 +344,7 @@ export default {
     },
     // 首页头部分享按钮弹窗
     open() {
-      this.$refs.popup.open();
+      this.$refs.popupHead.open();
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -305,6 +357,12 @@ export default {
           name: 'wx',
         },
       ];
+    },
+    // 头部分享海报
+    shareHead() {
+      uni.navigateTo({
+        url: '/pages/share/site',
+      });   
     },
     // 取消按钮
     cancel() {
@@ -405,7 +463,7 @@ export default {
 
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
-      this.$refs.popup.open();
+      this.$refs.popupContent.open();
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -418,6 +476,12 @@ export default {
           name: 'wx',
         },
       ];
+    },
+   // 内容部分分享海报,跳到分享海报页面 
+    shareContent() {
+      uni.navigateTo({
+        url: '/pages/share/site',
+      });      
     },
     // 首页导航栏分类列表数据
     loadCategories() {
