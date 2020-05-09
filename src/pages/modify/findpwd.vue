@@ -1,21 +1,27 @@
 <template>
   <view class="retireve">
     <view class="retireve-tab">
-      <view class="retireve-titel">忘记密码 \ 找回密码</view>
+      <view class="retireve-titel">
+        {{ i18n.t('modify.forgetpassword') }}\{{ i18n.t('modify.retrievepassword') }}
+      </view>
       <!-- 已绑定手机号码验证 -->
       <view class="retireve-phon" v-if="phon">
         <view class="retireve-phon-test">
-          手机号
+          {{ i18n.t('modify.phonnumber') }}
         </view>
         <view class="retireve-phon-num">
           {{ disphon }}
         </view>
-        <button class="retireve-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
-        <button class="retireve-phon-send" disabled v-else>{{ second }}秒后重发</button>
+        <button class="retireve-phon-send" v-if="sun" @click="btnButton">
+          {{ i18n.t('modify.sendverificode') }}
+        </button>
+        <button class="retireve-phon-send" disabled v-else>
+          {{ second + i18n.t('modify.retransmission') }}
+        </button>
       </view>
       <view class="retireve-pas">
         <view class="retireve-pas-title">
-          请输新密码
+          {{ i18n.t('modify.placeenternewpass') }}
         </view>
         <view class="retireve-pas-input">
           <input class="retireve-pas-input-i" type="password" v-model="newpassword" />
@@ -27,13 +33,13 @@
       <!-- 验证码 -->
       <view class="retireve-input">
         <view class="retireve-input-test">
-          请输入验证码
+          {{ i18n.t('modify.placeentercode') }}
         </view>
         <qui-input-code @getdata="btndata" :title="pad" :text="test"></qui-input-code>
       </view>
       <view class="retireve-button">
         <qui-button type="primary" size="large" @click="submission">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -62,7 +68,6 @@ export default {
       test: '',
       passtext: '',
       sendtype: '',
-      passwordsucc: '密码修改成功',
     };
   },
   onLoad(sing) {
@@ -150,22 +155,27 @@ export default {
         .then(res => {
           if (res) {
             uni.showToast({
-              icon: 'none',
-              title: this.passwordsucc,
+              title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
+            uni.navigateBack(1);
           }
         })
         .catch(err => {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.valifailed'),
+            duration: 2000,
+          });
           if (err.statusCode === 422) {
             this.passt = true;
             /* eslint-disable */
             this.passtext = err.data.errors[0].detail[0];
           } else if (err.statusCode === 500) {
-            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.pad = true;
             if (this.num < 0) {
-              this.test = '请过稍后重试'
+              this.test = this.i18n.t('modify.lateron');
             }
           }
         });
@@ -182,8 +192,9 @@ export default {
   height: 100vh;
 }
 .retireve-tab {
-  padding: 0 0 0 40rpx;
+  padding-left: 40rpx;
   margin-top: 31rpx;
+  box-sizing: border-box;
 }
 .retireve-titel {
   font-size: $fg-f50;
