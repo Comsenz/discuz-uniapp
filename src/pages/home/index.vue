@@ -96,7 +96,12 @@
       </view>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-    <qui-footer @click="footerOpen" :tabs="tabs" :post-img="postImg"></qui-footer>
+    <qui-footer
+      @click="footerOpen"
+      :tabs="tabs"
+      :post-img="postImg"
+      :red-circle="redCircle"
+    ></qui-footer>
 
     <uni-popup ref="popup" type="bottom">
       <view class="popup-share">
@@ -148,6 +153,7 @@ export default {
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
+      redCircle: false, // 消息通知红点
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -168,7 +174,7 @@ export default {
           data: [
             { label: this.i18n.t('home.all'), value: '', selected: true },
             { label: this.i18n.t('home.essence'), value: '1', selected: false },
-            { label: this.i18n.t('home.followed') , value: '2', selected: false },
+            { label: this.i18n.t('home.followed'), value: '2', selected: false },
           ],
         },
       ],
@@ -220,6 +226,8 @@ export default {
     },
   },
   onLoad() {
+    // 获取用户信息
+    this.getUserInfo();
     // 首页导航栏分类列表
     this.loadCategories();
     // 首页主题置顶列表
@@ -270,7 +278,7 @@ export default {
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
-      console.log(id)
+      console.log(id);
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -327,6 +335,7 @@ export default {
           this.threadFollow = 0;
           break;
       }
+      this.loadThreadsSticky();
       this.loadThreads();
     },
     // 筛选框
@@ -387,7 +396,7 @@ export default {
     },
     // 首页底部发帖点击事件跳转
     handleClick(item) {
-      console.log(item.type)
+      console.log(item.type);
       uni.navigateTo({
         url: `/pages/topic/post?type=${item.type}`,
       });
@@ -451,7 +460,7 @@ export default {
     // 首页内容部分数据请求
     loadThreads() {
       if (this.isResetList) {
-          this.threads = {};
+        this.threads = {};
       }
       const params = {
         'filter[isSticky]': 'no',
@@ -506,13 +515,32 @@ export default {
         }
       });
     },
+
+    // 调用 未读通知数 的接口
+    getUserInfo() {
+      console.log(this.tabs[1].idRemind,'111')
+      const id = 1;
+      const params = {
+        include: ['groups'],
+      };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
+        if(res.unreadNotifications === 0){
+         this.redCircle = false;
+        }else{
+          this.redCircle = true;
+        };
+        console.log('未读通知', res.unreadNotifications);
+      });
+    },
+
     // 下拉加载
     pullDown() {
       console.log('下拉加载呢');
       if (this.hasMore) {
         this.pageNum += 1;
         this.loadThreads();
-        console.log(this.pageNum,'页码')
+        console.log(this.pageNum, '页码');
       } else {
         this.loadingType = 'nomore';
       }
@@ -618,80 +646,5 @@ export default {
   // max-height: calc(100vh - 497rpx);
   max-height: calc(100vh - 475rpx);
 }
-.popup-share {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  flex-direction: column;
-  /* #endif */
-  background: --color(--qui-BG-2);
-}
-.popup-share-content {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  height: 250rpx;
-  padding-top: 40rpx;
-  padding-right: 97rpx;
-  padding-left: 98rpx;
-  background: --color(--qui-BG-BTN-GRAY-1);
-  // padding: 15px;
-}
-.popup-share-box {
-  width: 120rpx;
-  height: 120rpx;
-  line-height: 120rpx;
-  background: --color(--qui-BG-2);
-  border-radius: 10px;
-}
-.popup-share-content-box {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: column;
-  align-items: center;
-  width: 120rpx;
-  height: 164rpx;
-  // background: --color(--qui-BG-2);
-}
-.popup-share-content-image {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  justify-content: center;
-  // align-items: center;
-  width: 120rpx;
-  height: 120rpx;
-  overflow: hidden;
-  border-radius: 10rpx;
-}
-.content-image {
-  width: 60rpx;
-  height: 60rpx;
-  margin: 35rpx;
-  line-height: 60rpx;
-}
-.popup-share-content-text {
-  padding-top: 5px;
-  font-size: $fg-f26;
-  color: #333;
-}
-.popup-share-btn {
-  height: 100rpx;
-  font-size: $fg-f28;
-  line-height: 90rpx;
-  color: #666;
-  text-align: center;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
-}
-.popup-share-content-space {
-  width: 100%;
-  height: 9rpx;
-  background: --color(--qui-FC-DDD);
-}
+
 </style>
