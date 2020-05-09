@@ -1,30 +1,17 @@
 <template>
-  <view class="msg-box">
+  <view class="notice-box">
     <!-- 导航栏 -->
     <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
       <view slot="left" class="left-text">{{ title }}</view>
     </uni-nav-bar>
     <!-- 通知类型列表 -->
-    <uni-list>
-      <uni-list-item
-        v-for="item in list"
-        :key="item.id"
-        :title="item.title"
-        :show-arrow="true"
-        @click="clickUniListItem(item)"
-      >
-        <template v-slot:right="">
-          <uni-icons
-            class="red-circle"
-            v-if="item.unReadNum > 0"
-            type="smallcircle-filled"
-            color="red"
-            size="7"
-          ></uni-icons>
-        </template>
-      </uni-list-item>
-    </uni-list>
-    <view class="line"></view>
+    <view class="notice-box__list">
+      <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
+        <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
+          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
+        </qui-cell-item>
+      </view>
+    </view>
     <!-- 会话列表 -->
     <view class="dialog-box__main">
       <scroll-view
@@ -87,14 +74,12 @@
 </template>
 
 <script>
-import { uniNavBar, uniList, uniListItem, uniIcons, uniLoadMore } from '@dcloudio/uni-ui';
+import { uniNavBar, uniIcons, uniLoadMore } from '@dcloudio/uni-ui';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
     uniNavBar,
-    uniList,
-    uniListItem,
     uniIcons,
     uniLoadMore,
   },
@@ -102,11 +87,11 @@ export default {
     return {
       title: '消息',
       list: [
-        { id: 1, title: '@我的', type: 'related', unReadNum: 0 },
-        { id: 2, title: '回复我的', type: 'replied', unReadNum: 0 },
-        { id: 3, title: '点赞我的', type: 'liked', unReadNum: 0 },
-        { id: 4, title: '支付我的', type: 'rewarded', unReadNum: 0 },
-        { id: 5, title: '系统通知', type: 'system', unReadNum: 0 },
+        { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
+        { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
+        { id: 3, title: '点赞我的', type: 'liked', unReadNum: 0, border: true },
+        { id: 4, title: '支付我的', type: 'rewarded', unReadNum: 0, border: true },
+        { id: 5, title: '系统通知', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more',
       tabs: [
@@ -220,7 +205,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
 
-.msg-box {
+.notice-box {
   width: 100%;
   min-height: 100vh;
   font-size: $fg-f28;
@@ -232,14 +217,18 @@ export default {
     color: #343434;
   }
 
-  .line {
-    height: 0rpx;
-    margin: 0 0 10rpx;
-    border: 1px solid #ededed;
-  }
-
   .red-circle {
     display: flex;
+  }
+
+  .notice-box__list {
+    padding-left: 40rpx;
+    background: #fff;
+    border-bottom: 1rpx solid #ededed;
+
+    .cell-item {
+      padding-right: 40rpx;
+    }
   }
 
   .dialog-box__main {
