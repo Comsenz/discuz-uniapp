@@ -51,16 +51,36 @@
       @change="uploadChange"
       @clear="uploadClear"
     ></qui-uploader>
-    <qui-uploader
-      url="https://dq.comsenz-service.com/api/attachments"
-      type="video"
-      :header="header"
-      :form-data="formData"
-      ref="Video"
-      v-if="type === 2"
-      @change="uploadChange"
-      @clear="uploadClear"
-    ></qui-uploader>
+    <view class="post-box__video">
+      <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
+        <video
+          id="video"
+          v-if="type === 2"
+          class="post-box__video__play__video"
+          :src="item.path"
+          :controls="controlsStatus"
+          @fullscreenchange="fullscreenchange"
+        >
+          <!--<cover-view class="cover-video&#45;&#45;del" v-if="fullscreenStatus">
+            <cover-view>
+              <qui-icon name="icon-folding-r" size="40" color="#fff" @click="videoBack"></qui-icon>
+              <cover-view style="color: #fff;">{{ videoName }}</cover-view>
+            </cover-view>
+            <qui-icon name="icon-delete" color="#fff" size="40" @click="videoDel"></qui-icon>
+          </cover-view>-->
+        </video>
+        <view class="post-box__video__play__icon-del">
+          <qui-icon name="icon-close" class="" color="#fff" size="40" @click="videoDel"></qui-icon>
+        </view>
+        <view class="controls-play-icon" @click.stop="playVideo">
+          <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
+        </view>
+      </view>
+      <view class="post-box__video__add" @click="uploadVideo" v-if="videoBeforeList.length < 1">
+        <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
+      </view>
+    </view>
+
     <qui-cell-item
       :class="price > 0 ? 'cell-item-right-text' : ''"
       :title="i18n.t('discuzq.post.paymentAmount')"
@@ -179,6 +199,7 @@
 
 <script>
 import { mapState } from 'vuex';
+// import VodUploader from '../../common/cos-wx-sdk-v5.1';
 
 export default {
   name: 'Post',
@@ -275,7 +296,14 @@ export default {
       ],
       word: 5,
       setType: 'pay',
+      controlsStatus: false,
+      videoBeforeList: [],
+      fullscreenStatus: false,
+      videoName: '',
     };
+  },
+  onReady() {
+    this.videoContext = uni.createVideoContext('video');
   },
   computed: {
     ...mapState({
@@ -299,6 +327,40 @@ export default {
     },
   },
   methods: {
+    // video uploader
+
+    // video
+    videoDel() {
+      this.videoBeforeList = [];
+    },
+    playVideo() {
+      this.controlsStatus = true;
+      this.videoContext.play();
+      this.videoContext.requestFullScreen();
+    },
+    fullscreenchange(e) {
+      this.fullscreenStatus = e.detail.fullScreen;
+      if (!e.detail.fullScreen) {
+        this.controlsStatus = false;
+        this.videoContext.pause();
+      }
+    },
+    uploadVideo() {
+      const _this = this;
+      uni.chooseVideo({
+        count: 1,
+        compressed: false,
+        sourceType: ['camera', 'album'],
+        success(res) {
+          console.log(res);
+          _this.videoName = res.name;
+          _this.videoBeforeList.push({
+            path: res.tempFilePath,
+          });
+        },
+      });
+    },
+
     wordClick(index) {
       this.wordCountCheck = [];
       this.wordCountCheck.push(this.wordCount[index]);
@@ -519,6 +581,66 @@ export default {
     border-radius: 10rpx;
     box-sizing: border-box;
   }
+
+  &__video {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 160rpx;
+    padding: 30rpx 0;
+
+    &__play {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 160rpx;
+      height: 160rpx;
+      margin-right: 13rpx;
+
+      &__video {
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        border: 1px solid #ededed;
+        border-radius: 5rpx;
+      }
+      &__icon-del {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        z-index: 99;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50rpx;
+        height: 50rpx;
+        background-color: #dd524d;
+        border-radius: 50px;
+      }
+      .controls-play-icon {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(1, 1, 1, 0.5);
+      }
+    }
+
+    &__add {
+      width: 160rpx;
+      height: 160rpx;
+      line-height: 160rpx;
+      text-align: center;
+      background-color: #f7f7f7;
+      border: 1px solid #ededed;
+      border-radius: 5rpx;
+    }
+  }
+
   &__ft {
     &-tit {
       display: block;
@@ -664,4 +786,15 @@ export default {
     }
   }
 }
+
+/deep/ .uni-video-cover {
+  display: none;
+}
+
+/* /deep/ .uni-video-cover-play-button {
+  display: none;
+}
+/deep/ .uni-video-cover-duration {
+  display: none;
+} */
 </style>
