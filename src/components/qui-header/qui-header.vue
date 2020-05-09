@@ -116,7 +116,6 @@ export default {
     color: --color(--qui-BG-2);
   }
   .circleDet-share {
-    width: 100rpx;
     font-size: $fg-f26;
     color: --color(--qui-BG-2);
   }
