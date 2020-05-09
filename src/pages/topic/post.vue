@@ -51,6 +51,16 @@
       @change="uploadChange"
       @clear="uploadClear"
     ></qui-uploader>
+    <qui-uploader
+      url="https://dq.comsenz-service.com/api/attachments"
+      type="video"
+      :header="header"
+      :form-data="formData"
+      ref="Video"
+      v-if="type === 2"
+      @change="uploadChange"
+      @clear="uploadClear"
+    ></qui-uploader>
     <qui-cell-item
       :class="price > 0 ? 'cell-item-right-text' : ''"
       :title="i18n.t('discuzq.post.paymentAmount')"
@@ -460,8 +470,8 @@ export default {
     this.formData = {
       isGallery: 1,
     };
-    this.getCategories();
-    this.getEmoji();
+    // this.getCategories();
+    // this.getEmoji();
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
   },
