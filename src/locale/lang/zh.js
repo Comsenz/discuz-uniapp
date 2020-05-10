@@ -183,4 +183,11 @@ export default {
     wxShare: '微信分享',
     word: '文字',
   },
+  // 圈子管理
+  manage: {
+    notSelected: '尚未选',
+    selected: '操作已选',
+  },
+  // 消息
+  notice: {},
 };

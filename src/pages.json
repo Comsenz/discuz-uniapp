@@ -2,7 +2,12 @@
 {
   // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
   "pages": [
-    
+    {
+      "path": "pages/manage/member", // 成员管理
+      "style": {
+        "navigationBarTitleText": "成员管理"
+      }
+    },
     {
       "path": "pages/home/index",
       "style": {
@@ -124,12 +129,7 @@
         "navigationBarTitleText": "站长管理"
       }
     },
-    {
-      "path": "pages/manage/member", // 成员管理
-      "style": {
-        "navigationBarTitleText": "成员管理"
-      }
-    },
+    
     {
       "path": "pages/manage/users", // 圈子成员
       "style": {
