@@ -51,7 +51,7 @@
       @change="uploadChange"
       @clear="uploadClear"
     ></qui-uploader>
-    <view class="post-box__video">
+    <view class="post-box__video" v-if="type === 2">
       <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
         <video
           id="video"
@@ -80,7 +80,6 @@
         <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
       </view>
     </view>
-
     <qui-cell-item
       :class="price > 0 ? 'cell-item-right-text' : ''"
       :title="i18n.t('discuzq.post.paymentAmount')"
@@ -194,12 +193,13 @@
         </view>
       </view>
     </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-// import VodUploader from '../../common/cos-wx-sdk-v5.1';
+import VodUploader from '../../common/cos-wx-sdk-v5.1';
 
 export default {
   name: 'Post',
@@ -300,6 +300,8 @@ export default {
       videoBeforeList: [],
       fullscreenStatus: false,
       videoName: '',
+      percent: 0,
+      fileId: '',
     };
   },
   onReady() {
@@ -327,6 +329,7 @@ export default {
     },
   },
   methods: {
+    // 文章类型（0:文字  1:帖子  2:视频  3:图片）
     // video uploader
 
     // video
@@ -352,10 +355,43 @@ export default {
         compressed: false,
         sourceType: ['camera', 'album'],
         success(res) {
-          console.log(res);
-          _this.videoName = res.name;
+          _this.videoName = res.name ? res.name : _this.i18n.t('discuzq.post.fromWeChatApplet');
           _this.videoBeforeList.push({
             path: res.tempFilePath,
+          });
+
+          VodUploader.start({
+            mediaFile: res,
+            getSignature: _this.getSignature,
+
+            mediaName: res.name,
+            success(result) {
+              console.log('success');
+              console.log(result);
+            },
+            error(result) {
+              console.log('error');
+              console.log(result);
+              uni.showModal({
+                title: '上传失败',
+                content: JSON.stringify(result),
+                showCancel: false,
+              });
+            },
+            progress(result) {
+              console.log('progress');
+              console.log(result);
+              _this.percent = result.percent;
+            },
+            finish(result) {
+              _this.fileId = result.fileId;
+              _this.postVideo(result.fileId);
+              uni.showModal({
+                title: '上传成功',
+                content: '视频上传成功！',
+                showCancel: false,
+              });
+            },
           });
         },
       });
@@ -365,7 +401,7 @@ export default {
       this.wordCountCheck = [];
       this.wordCountCheck.push(this.wordCount[index]);
 
-      if (this.wordCountCheck[0].name === '自定义') {
+      if (this.wordCountCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         this.$refs.popupBtm.close();
 
         this.$nextTick(() => {
@@ -448,12 +484,48 @@ export default {
       } */
     },
     postClick() {
-      this.postThread().then(res => {
-        console.log(res._jv.json.data.id);
-        /* uni.navigateTo({
-          url: `/pages/topic/index?id=${res._jv.json.data.id}`,
-        }); */
-      });
+      let status = true;
+      if (this.textAreaValue.length < 1) {
+        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
+        status = false;
+      } else {
+        switch (this.type) {
+          case 2:
+            if (this.videoBeforeList.length < 1) {
+              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.videoCannotBeEmpty') });
+              status = false;
+            } else if (this.percent !== 1) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+            break;
+          case 3:
+            if (this.uploadFile.length < 1) {
+              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.imageCannotBeEmpty') });
+              status = false;
+            } else {
+              status = true;
+            }
+            break;
+          default:
+            console.log('帖子类型不匹配');
+        }
+      }
+
+      if (status) {
+        this.postThread().then(res => {
+          console.log(res._jv.json.data.id);
+          if (res._jv.json.data.id) {
+            uni.navigateTo({
+              url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+            });
+          }
+        });
+      }
     },
 
     // 接口请求
@@ -496,6 +568,11 @@ export default {
         });
       }
 
+      if (this.type === 2) {
+        params.file_id = this.fileId;
+        params.file_name = this.videoName;
+      }
+
       return this.$store
         .dispatch('jv/post', params)
         .then(res => {
@@ -521,6 +598,24 @@ export default {
           console.log(err);
         });
     },
+    getSignature(callback) {
+      this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
+        if (res.signature) {
+          callback(res.signature);
+        } else {
+          return this.i18n.t('discuzq.post.failedToObtainSignature');
+        }
+      });
+    },
+    postVideo(fileId) {
+      const params = {
+        _jv: {
+          type: 'thread/video',
+        },
+        file_id: fileId,
+      };
+      this.$store.dispatch('jv/post', params);
+    },
   },
   onLoad(option) {
     const token =
@@ -532,8 +627,8 @@ export default {
     this.formData = {
       isGallery: 1,
     };
-    // this.getCategories();
-    // this.getEmoji();
+    this.getCategories();
+    this.getEmoji();
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
   },

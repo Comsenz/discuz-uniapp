@@ -106,6 +106,12 @@ export default {
       enterTheWordCount: '输入查看字数',
       yuan: '元',
       customize: '自定义',
+      theContentCanNotBeBlank: '内容不能为空',
+      imageCannotBeEmpty: '图片不能为空',
+      videoCannotBeEmpty: '视频不能为空',
+      pleaseWaitForTheVideoUploadToComplete: '请等待视频上传完成',
+      failedToObtainSignature: '获取签名失败',
+      fromWeChatApplet: '来自微信小程序',
     },
   },
   core: {

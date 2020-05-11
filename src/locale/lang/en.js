@@ -105,6 +105,12 @@ export default {
       free: 'Free',
       yuan: 'yuan',
       customize: 'Customize',
+      theContentCanNotBeBlank: 'the content can not be blank',
+      imageCannotBeEmpty: 'Image cannot be empty',
+      videoCannotBeEmpty: 'Video cannot be empty',
+      pleaseWaitForTheVideoUploadToComplete: 'Please wait for the video upload to complete',
+      failedToObtainSignature: 'Failed to obtain signature',
+      fromWeChatApplet: 'From WeChat applet',
     },
   },
 };
