@@ -6,31 +6,44 @@
     </uni-nav-bar> -->
     <!-- 标签栏 -->
     <view class="invite-tabs">
-      <qui-tabs :current="current" :values="tabList" @click="changeTab"></qui-tabs>
-    </view>
-    <!-- 记录数 -->
-    <view class="invite-records">
-      <text>共有 {{ count }} 条记录</text>
-    </view>
-    <!-- 邀请列表 -->
-    <view class="invite-content">
-      <qui-cell title="邀请成员" brief="成员" slot-left slot-right>
-        <template v-slot:left>
-          <image class="user-avatar" src="https://discuz.chat/static/images/noavatar.gif"></image>
-        </template>
-        <template v-slot:right>
-          <view class="nouse" @click="invalid">设为无效</view>
-          <view class="line"></view>
-          <view class="share" @click="share">
-            分享
-            <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+      <qui-tabs :current="current" :values="tabList" @clickItem="onClickItem"></qui-tabs>
+      <view class="profile-tabs__content">
+        <view v-if="current === 0" class="items">
+          <!-- 记录数 -->
+          <view class="invite-records">
+            <text>共有 {{ count }} 条记录</text>
           </view>
-        </template>
-      </qui-cell>
-    </view>
-    <!-- 邀请链接按钮 -->
-    <view class="invite-button">
-      <button class="btn" @click="generate">生成邀请链接</button>
+          <!-- 邀请列表 -->
+          <view class="invite-content">
+            <qui-cell title="邀请成员" brief="成员" slot-left slot-right>
+              <template v-slot:left>
+                <image
+                  class="user-avatar"
+                  src="https://discuz.chat/static/images/noavatar.gif"
+                ></image>
+              </template>
+              <template v-slot:right>
+                <view class="nouse" @click="invalid">设为无效</view>
+                <view class="line"></view>
+                <view class="share" @click="share">
+                  分享
+                  <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+                </view>
+              </template>
+            </qui-cell>
+          </view>
+          <!-- 邀请链接按钮 -->
+          <view class="invite-button">
+            <button class="btn" @click="generate">生成邀请链接</button>
+          </view>
+        </view>
+        <view v-if="current === 1" class="items">
+          <view>已使用</view>
+        </view>
+        <view v-if="current === 2" class="items">
+          <view>已失效</view>
+        </view>
+      </view>
     </view>
     <!-- 邀请链接弹窗 -->
     <uni-popup ref="popup" type="bottom">
@@ -85,8 +98,10 @@ export default {
     },
 
     // 改变标签页
-    changeTab() {
-      console.log('改变标签页');
+    onClickItem(e) {
+      if (e.currentIndex !== this.current) {
+        this.current = e.currentIndex;
+      }
     },
 
     // 设为无效
