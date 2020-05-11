@@ -153,10 +153,6 @@ page {
 
 //公共搜索头样式
 .search {
-  .search-item,
-  .search-box {
-    background-color: #fff;
-  }
   /deep/ input .input-placeholder {
     font-size: $fg-f28;
     color: --color(--qui-FC-C6);

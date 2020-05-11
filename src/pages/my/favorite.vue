@@ -17,7 +17,6 @@
           :key="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
-          :theme-btn="item.canHide"
           :theme-reply-btn="item.canReply"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
@@ -28,6 +27,7 @@
           :tags="item.category.name"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
+          theme-btn="icon-delete"
           @click="handleClickShare"
           @handleIsGreat="
             handleIsGreat(
@@ -40,6 +40,7 @@
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item._jv.id)"
+          @deleteClick="itemDelete(item._jv.id, item.isFavorite)"
         ></qui-content>
       </scroll-view>
       <qui-load-more :status="loadingType"></qui-load-more>
@@ -163,6 +164,28 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params);
+    },
+    // 删除收藏
+
+    itemDelete(id, isFavorite) {
+      const params = {
+        _jv: {
+          type: 'threads',
+          id,
+        },
+        isFavorite: isFavorite !== true,
+      };
+      this.$store.dispatch('jv/patch', params).then(() => {
+        this.totalData -= 1;
+        const dataList = this.data;
+        Object.getOwnPropertyNames(dataList).forEach(key => {
+          if (dataList[key]._jv && dataList[key]._jv.id === id) {
+            const data = JSON.parse(JSON.stringify(dataList));
+            delete data[key];
+            this.data = data;
+          }
+        });
+      });
     },
     // 下拉加载
     pullDown() {

@@ -19,10 +19,16 @@
         <text>取消</text>
       </view>
     </view>
-    <view class="search-item" v-if="Object.keys(userList).length > 0">
+    <view class="search-item" v-if="searchValue">
       <view class="search-item__head">
         <view class="search-item__head-title">用户</view>
-        <view class="search-item__head-more" @tap="searchUser">搜索更多用户</view>
+        <view
+          class="search-item__head-more"
+          @tap="searchUser"
+          v-if="Object.keys(userList).length > 0"
+        >
+          搜索更多用户
+        </view>
       </view>
       <view
         class="search-item__users"
@@ -41,11 +47,18 @@
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
+      <qui-no-data tips="没有找到相关用户" v-if="userTotal == 0"></qui-no-data>
     </view>
-    <view class="search-item search-item--themes" v-if="Object.keys(themeList).length > 0">
+    <view class="search-item search-item--themes" v-if="searchValue">
       <view class="search-item__head">
         <view class="search-item__head-title">主题</view>
-        <view class="search-item__head-more" @tap="searchTheme">搜索更多主题</view>
+        <view
+          class="search-item__head-more"
+          @tap="searchTheme"
+          v-if="Object.keys(themeList).length > 0"
+        >
+          搜索更多主题
+        </view>
       </view>
       <qui-content
         v-for="(item, index) in themeList"
@@ -61,6 +74,7 @@
         :theme-essence="item.isEssence"
         @contentClick="contentClick(item._jv.id)"
       ></qui-content>
+      <qui-no-data tips="没有找到相关主题" v-if="themeTotal == 0"></qui-no-data>
     </view>
   </view>
 </template>
@@ -74,6 +88,8 @@ export default {
       searchValue: '',
       userList: {},
       themeList: {},
+      userTotal: '',
+      themeTotal: '',
       pageSize: 3,
       pageNum: 1, // 当前页数
     };
@@ -96,7 +112,7 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
+          this.userTotal = res._jv.json.meta.total;
           delete res._jv;
           this.userList = res;
         });
@@ -107,13 +123,13 @@ export default {
         include: ['user', 'firstPost', 'threadVideo'],
         'filter[isDeleted]': 'no',
         'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
+        'page[limit]': 2,
         'filter[q]': key,
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
+          this.themeTotal = res._jv.json.meta.threadCount;
           delete res._jv;
           this.themeList = res;
         });
@@ -155,6 +171,12 @@ export default {
 @import '@/styles/base/reset.scss';
 page {
   background-color: #f9fafc;
+}
+.search {
+  .search-item,
+  .search-box {
+    background-color: #fff;
+  }
 }
 .search-item {
   padding-left: 40rpx;
