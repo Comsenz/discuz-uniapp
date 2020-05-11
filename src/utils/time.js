@@ -41,3 +41,15 @@ export const time2MorningOrAfternoon = originTime => {
   }
   return `${time.substring(0, 10)} 下午 ${time.substring(11, 16)}`;
 };
+
+/**
+ * 有效期（时间戳减去当前时间戳再转换为天）
+ * @param {*} timestamp 时间戳
+ * @return 天
+ * example:
+ * timestamp2day(1589785128)
+ */
+export const timestamp2day = timestamp => {
+  const interval = timestamp - Math.round(new Date() / 1000);
+  return parseInt(interval / (60 * 60 * 24), 0);
+};
