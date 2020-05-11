@@ -141,6 +141,7 @@ export default {
   },
   pay: {
     passwordTip: '请输入支付密码',
+    passaordSetting: '请设置钱包支付密码',
     balance: '余额',
     sumOfMoney: '金额',
     inputComplete: '输入完成',
@@ -153,6 +154,7 @@ export default {
     wxPay: '微信支付',
     walletPay: '钱包支付',
     walletBalance: '钱包余额',
+    walletBalanceNo: '钱包余额不足，剩余',
     payTo: '将支付到',
     ofAccount: '的账户',
     surePay: '确认支付',
