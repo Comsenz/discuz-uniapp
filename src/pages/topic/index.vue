@@ -666,7 +666,7 @@ export default {
       console.log('创建订单');
       const params = {
         _jv: {
-          type: 'order',
+          type: 'orders',
         },
         type: 2,
         thread_id: this.threadId,
