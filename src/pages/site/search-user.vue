@@ -11,12 +11,9 @@
           @input="searchInput"
           :value="searchValue"
         />
-        <view class="search-box__content-delete" @tap="clearSearch" v-if="searchValue">
+        <view class="search-box__content-delete" @click="clearSearch" v-if="searchValue">
           <qui-icon class="icon-close" name="icon-close" size="34" color="#fff"></qui-icon>
         </view>
-      </view>
-      <view class="search-box__cancel" v-if="searchValue" @tap="back">
-        <text>取消</text>
       </view>
     </view>
     <scroll-view
