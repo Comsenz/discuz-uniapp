@@ -2,9 +2,12 @@
   <view class="chagepas">
     <view class="chagepas-pas">
       <input type="text" class="chagepas-pas-inpa" v-model="sername" />
+      <view class="chagepas-erro-test" v-if="edit">
+        {{ test }}
+      </view>
       <view class="chagepas-pas-btn">
         <qui-button type="primary" size="large" :disabled="disab" @click="submission">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -18,23 +21,33 @@ export default {
     return {
       fun: true,
       valueused: '',
+      edit: false,
       judge: false,
       sername: '',
       myname: '',
-      userid: 24,
+      test: '',
+      userid: '',
+      nametitle: { icon: 'none', duration: 2000 },
+      modifysucc: '名字修改成功',
     };
   },
-  onLoad() {
+  onLoad(arr) {
+    this.userid = Number(arr.id);
     this.mytitle();
-    // this.userid = sun.id
   },
   methods: {
     submission() {
-      console.log(1);
-      this.changname();
+      if (this.sername) {
+        this.changname();
+      } else {
+        uni.showToast({
+          icon: this.nametitle.icon,
+          title: this.i18n.t('modify.emptyname'),
+          duration: this.nametitle.duration,
+        });
+      }
     },
     changname() {
-      console.log(this.sername);
       const params = {
         _jv: {
           type: 'users',
@@ -45,10 +58,19 @@ export default {
       const patchname = status.run(() => this.$store.dispatch('jv/patch', params));
       patchname
         .then(res => {
-          console.log('成功', res);
+          if (res) {
+            uni.showToast({
+              title: this.i18n.t('modify.modifysucc'),
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
-          console.log('失败', err);
+          if (err.statusCode === 500) {
+            this.edit = true;
+            /* eslint-disable */
+            this.test = err.data.errors[0].detail[0];
+          }
         });
     },
     mytitle() {
@@ -60,7 +82,6 @@ export default {
         include: 'groups',
       };
       this.$store.dispatch('jv/get', params).then(data => {
-        console.log(data);
         this.sername = data.username;
       });
     },
@@ -78,6 +99,13 @@ export default {
 .chagepas-pas {
   width: 100%;
   padding: 31rpx 0 0 40rpx;
+  box-sizing: border-box;
+}
+.chagepas-erro-test {
+  margin-top: 20rpx;
+  font-size: $fg-f24;
+  font-weight: 400;
+  color: --color(--qui-RED);
 }
 .chagepas-pas-inpa {
   width: 100%;
@@ -86,11 +114,9 @@ export default {
   font-weight: 400;
   line-height: 100rpx;
   text-align: left;
-  border-bottom: 2rpx solid rgba(237, 237, 237, 1);
-  opacity: 1;
+  border-bottom: 2rpx solid --color(--qui-BG-ED);
 }
 .chagepas-pas-btn {
   margin: 50rpx 0 0;
-  border-radius: 5rpx;
 }
 </style>

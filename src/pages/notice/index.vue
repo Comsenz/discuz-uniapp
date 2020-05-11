@@ -119,7 +119,7 @@ export default {
           tabsName: '消息',
           tabsIcon: 'icon-message',
           id: 2,
-          url: '../message/index',
+          url: '../notice/index',
         },
         {
           tabsName: '我',
@@ -193,7 +193,7 @@ export default {
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     clickUniListItem(item) {
       uni.navigateTo({
-        url: `../message/notification?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
+        url: `../notice/notice?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
       });
       console.log(`跳转${item.title}页面`);
     },
@@ -202,7 +202,7 @@ export default {
     clickDialog(dialogInfo) {
       console.log('会话信息', dialogInfo);
       uni.navigateTo({
-        url: `../message/chat?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.recipient.username}`,
+        url: `../notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.recipient.username}`,
       });
     },
 

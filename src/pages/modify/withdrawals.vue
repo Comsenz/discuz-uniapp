@@ -3,7 +3,7 @@
     <view class="cash-content">
       <!-- 收款人 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="收款人" slot-right :arrow="false" :border="false">
+        <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
           <test class="cash-content-name">
             {{ name }}
           </test>
@@ -11,62 +11,80 @@
       </view>
       <!-- 可提现金额 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="可提现余额" slot-right :arrow="false" :border="false">
+        <qui-cell-item
+          :title="i18n.t('modify.withdrawable')"
+          slot-right
+          :arrow="false"
+          :border="false"
+        >
           <test class="cash-content-name">￥{{ balance }}</test>
         </qui-cell-item>
       </view>
       <!-- 提现金额 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item
+          :title="i18n.t('modify.withdrawable')"
+          slot-right
+          :arrow="false"
+          :border="false"
+        >
           <input
             class="cash-content-input"
             type="number"
-            placeholder="请输入提现金额"
+            :placeholder="i18n.t('modify.enteramount')"
             placeholder-style="color:rgba(221,221,221,1)"
             v-model="cashmany"
             @input="settlement"
           />
         </qui-cell-item>
       </view>
-      <view class="cash-erro-messag1" v-if="judge2">
-        {{ test2 }}
-      </view>
       <!-- 实际提现金额 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="实际提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item
+          :title="i18n.t('modify.actualamout')"
+          slot-right
+          :arrow="false"
+          :border="false"
+        >
           <view class="cash-content-name cash-content-actual">
             <view
               :class="length ? 'cash-content-ellipsis2' : 'cash-content-ellipsis'"
               v-text="contint"
             ></view>
-            <view class="cash-content-proced">手续费：{{ procedures }}元 (30%)</view>
+            <view class="cash-content-proced">
+              {{ i18n.t('modify.servicechaege') + procedures + i18n.t('modify.percentage') }}
+            </view>
           </view>
         </qui-cell-item>
       </view>
       <!-- 验证码 -->
       <view class="input">
         <!-- 已绑定手机号码验证 -->
-        <view class="modify-phon" v-if="phon">
-          <view class="modify-phon-test">
-            已绑定手机
+        <view class="cash-phon" v-if="phon">
+          <view class="cash-phon-test">
+            {{ i18n.t('modify.phonnumber') }}
           </view>
-          <view class="modify-phon-num">
+          <view class="cash-phon-num">
             {{ usertestphon }}
           </view>
-          <button class="modify-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
-          <button class="modify-phon-send" disabled v-else>{{ second }}秒后重发</button>
+          <button class="cash-phon-send" v-if="sun" @click="btnButton">
+            {{ i18n.t('modify.sendverificode') }}
+          </button>
+          <button class="cash-phon-send" disabled v-else>
+            {{ second + i18n.t('modify.retransmission') }}
+          </button>
         </view>
         <!-- 验证码 -->
-        <view class="modify-input">
-          <view class="modify-input-test">
-            请输入验证码
+        <view class="cash-input">
+          <view class="cash-input-test">
+            {{ i18n.t('modify.placeentercode') }}
           </view>
           <qui-input-code @getdata="btndata" :title="judge" :text="test"></qui-input-code>
         </view>
       </view>
-      <view class="modify-button">
+      <view class="cash-button">
         <qui-button type="primary" size="large" @click="btncash">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -81,7 +99,7 @@ export default {
   components: { quiInputCode },
   data() {
     return {
-      userid: 24,
+      userid: '',
       second: 60,
       num: 5,
       cashmany: '',
@@ -93,7 +111,6 @@ export default {
       test: '',
       test2: '',
       judge: false,
-      judge2: false,
       sun: true,
       phon: true,
       length: false,
@@ -101,7 +118,8 @@ export default {
       procedures: 0,
     };
   },
-  onLoad() {
+  onLoad(arr) {
+    this.userid = Number(arr.id);
     this.setmydata();
   },
   methods: {
@@ -116,7 +134,6 @@ export default {
       }, 60000);
     },
     btndata(num) {
-      console.log('num', num);
       this.code = num;
     },
     btncash() {
@@ -129,10 +146,11 @@ export default {
         this.contint = `¥${number.toFixed(2)}`;
         const casnumber = this.cashmany * 0.3;
         this.procedures = casnumber.toFixed(2);
-        console.log(this.procedures);
-      } else {
+      } else if (this.cashmany.length <= 0) {
         this.length = false;
         this.contint = '-.-';
+        const casnumber = this.cashmany * 0.3;
+        this.procedures = casnumber.toFixed(2);
       }
     },
     // 点击获取验证码计时开始
@@ -160,7 +178,6 @@ export default {
         include: ['groups', 'wechat'],
       };
       this.$store.dispatch('jv/get', params).then(data => {
-        console.log(data);
         this.name = data.username;
         this.balance = data.walletBalance;
         this.usertestphon = data.mobile;
@@ -176,16 +193,11 @@ export default {
         type: 'verify',
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
-      postphon
-        .then(res => {
-          console.log(res);
-          this.num -= 1;
-          /* eslint-disable */
-          this.second = res._jv.json.data.attributes.interval;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      postphon.then(res => {
+        this.num -= 1;
+        /* eslint-disable */
+        this.second = res._jv.json.data.attributes.interval;
+      })
     },
     // 验证短信
     verifytitle() {
@@ -199,24 +211,25 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log('成功', res);
           if (res) {
             this.cashwithdrawal();
           }
         })
         .catch(err => {
           if (err.statusCode === 500) {
-            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.judge = true;
-            if (this.num < 0) {
-              this.test = '请过5分钟重试';
+            if (this.num <=0) {
+              this.test = this.i18n.t('modify.lateron');
             }
+          } else if (err.statusCode === 422) {
+            this.test = err.data.errors[0].detail;
+            this.judge = true;
           }
         });
     },
     // 提现申请
     cashwithdrawal() {
-      console.log('cashmany', this.cashmany);
       const params = {
         _jv: {
           type: 'wallet/cash',
@@ -227,14 +240,26 @@ export default {
       const postcash = status.run(() => this.$store.dispatch('jv/post', params));
       postcash
         .then(res => {
-          console.log('成功', res);
+          if(res) {
+            uni.showToast({
+              title: this.i18n.t('modify.withdrawal'),
+              duration: 2000,
+            });
+            this.cashmany = '';
+            this.contint = '';
+            this.procedures = 0;
+            this.setmydata();
+            this.sun = true;
+            this.second = 60;
+          }
         })
         .catch(err => {
-          console.log('失败', err);
           if (err.statusCode === 422) {
-            this.judge2 = true;
-            /* eslint-disable */
-            this.test2 = err.data.errors[0].detail[0];
+            uni.showToast({
+              icon: 'none',
+              title: err.data.errors[0].detail[0],
+              duration: 2000,
+            });
           }
         });
     },
@@ -243,32 +268,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/reset.scss';
 .cash {
   width: 100vw;
   height: 100vh;
 }
 .cash-content {
-  padding: 31rpx 0 0 40rpx;
+  padding-left: 40rpx;
+  margin-top: 31rpx;
 }
 .cash-content-tab {
   padding: 0 40rpx 0 0;
   justify-content: space-between;
-  border-bottom: 2px solid rgba(237, 237, 237, 1);
+  border-bottom: 2px solid --color(--qui-BOR-ED);
 }
 /deep/.cell-item__body__content-title{
-  color: #777;
+  color: --color(--qui-FC-777);
 }
 .cash-content-name {
-  font-size: 34rpx;
+  font-size: $fg-f34;
   font-weight: 400;
-  color: #333;
-  opacity: 1;
+  color: --color(--qui-FC-333);
 }
 .cash-content-input {
   width: 238rpx;
   height: 100%;
+  font-size: $fg-f34;
+  font-weight: bold;
   line-height: 100rpx;
-  color: #333;
+  color: --color(--qui-FC-333);
   text-align: right;
 }
 .cash-content-actual {
@@ -276,96 +305,73 @@ export default {
 }
 .cash-content-ellipsis {
   height: 50rpx;
-  font-size: 24rpx;
+  font-size: $fg-f24;
   font-weight: 400;
   line-height: 50rpx;
-  color: rgba(51, 51, 51, 1);
+  color: --color(--qui-FC-333);
   text-align: right;
-  opacity: 1;
 }
 .cash-content-ellipsis2 {
   height: 50rpx;
-  font-size: 34rpx;
+  font-size: $fg-f34;
   font-weight: 400;
   line-height: 50rpx;
-  color: rgba(250, 81, 81, 1);
+  color: --color(--qui-RED);
   text-align: bold;
-  opacity: 1;
 }
 .cash-content-proced {
   height: 50rpx;
-  font-size: 24rpx;
+  font-size: $fg-f24;
   font-weight: 400;
-  color: rgba(119, 119, 119, 1);
-  opacity: 1;
+  color: --color(--qui-FC-777);
 }
-.modify-phon {
+.cash-phon {
   display: flex;
   width: 710rpx;
   height: 100rpx;
-  border-bottom: 2rpx solid rgba(237, 237, 237, 1);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
-.modify-phon-test {
-  font-size: 28rpx;
+.cash-phon-test {
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
-  opacity: 1;
+  color: --color(--qui-FC-777);
 }
-.modify-phon-num {
-  margin: 0 0 0 109rpx;
-  font-size: 34rpx;
+.cash-phon-num {
+  margin: 0 0 0 165rpx;
+  font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
   color: rgba(0, 0, 0, 1);
-  opacity: 1;
 }
-.modify-phon-send {
+.cash-phon-send {
   display: block;
   height: 70rpx;
   min-width: 180rpx;
   margin: 15rpx 0 0 40rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 70rpx;
-  color: rgba(255, 255, 255, 1);
+  color: --color(--qui-FC-FFF);
   text-align: center;
-  background: rgba(24, 120, 243, 1);
+  background-color: --color(--qui-MAIN);
   border-radius: 5rpx;
-  opacity: 1;
 }
-.modify-input {
+.cash-input {
   width: 710rpx;
 }
-.modify-input-test {
-  font-size: 28rpx;
+.cash-input-test {
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
-  opacity: 1;
+  color: --color(--qui-FC-777);
 }
-.modify-vftion-input {
+.cash-vftion-input {
   display: flex;
   width: 100%;
   height: 100rpx;
 }
-.hidden-ipt {
-  width: 0;
-  height: 0;
-  margin: 0;
-  border: 0;
-}
-.modify-button {
-  width: 670rpx;
-  height: 90rpx;
+.cash-button {
   margin: 52rpx 0 0;
-  opacity: 1;
-}
-.cash-erro-messag1 {
-  font-size: 24rpx;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: rgba(250, 81, 81, 1);
-  opacity: 1;
 }
 </style>

@@ -119,6 +119,7 @@
         </view>
       </view>
     </uni-popup>
+    <view>{{ payNum[0].name }}</view>
   </view>
 </template>
 

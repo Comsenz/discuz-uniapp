@@ -2,14 +2,11 @@
   <view class="authen">
     <view class="authen-input">
       <view class="authen-tit">
-        请输入支付密码，以验证身份
+        {{ i18n.t('modify.authentication') }}
       </view>
       <qui-input-code @getdata="btndata" :title="sun" :text="test" :number="types"></qui-input-code>
-      <view class="authen-erro-messag1" v-if="judge">
-        {{ status }}
-      </view>
       <view class="authen-forget" @click="forgetpay">
-        忘记旧密码?
+        {{ i18n.t('modify.forgetmanypassword') }}
       </view>
     </view>
   </view>
@@ -26,27 +23,25 @@ export default {
       userid: '',
       pas: true,
       sun: false,
-      judge: false,
       types: 'password',
-      test: '两次输入的密码不同，请重新输入',
+      test: '',
       status: '',
       inputpas: '',
       repeatpas: '',
+      icon: 'none',
     };
   },
-  // onLoad(arr) {
-  //   this.userid = arr.id;
-  // },
+  onLoad(arr) {
+    this.userid = Number(arr.id);
+  },
   methods: {
     btndata(num) {
-      console.log('num', num);
       if (num.length === 6) {
         this.mobelypas(num);
       }
     },
     // 验证信息获取token
     mobelypas(sum) {
-      console.log(sum);
       const params = {
         _jv: {
           type: 'users/pay-password/reset',
@@ -58,23 +53,31 @@ export default {
         .then(res => {
           /* eslint-disable */
           if (res._jv.json.data.id) {
-            console.log('验证成功');
+            uni.showToast({
+              title: this.i18n.t('modify.authensucceeded'),
+              duration: 2000,
+            });
           }
         })
         .catch(err => {
+          uni.showToast({
+            icon: this.icon,
+            title: this.i18n.t('modify.authenfailed'),
+            duration: 2000,
+          });
           if (err.statusCode === 422) {
-            this.judge = true;
+            this.sun = true;
             const {data:{errors}} = err;
-            this.status = errors[0].detail[0];
+            this.test = errors[0].detail[0];
           } else if(err.statusCode === 500) {
-            this.judge = true;
-            this.status = '密码输入错误';
+            this.sun = true;
+            this.test = this.i18n.t('modify.passwordinputerro');
           }
         });
     },
     forgetpay() {
       uni.navigateTo({
-        url: '/pages/modify/findpwd?user=24&pas=reset_pay_pwd',
+        url: `/pages/modify/findpwd?user=${this.userid}&pas=reset_pay_pwd`,
       });
     },
   },
@@ -82,32 +85,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .authen-input {
   width: 710rpx;
   height: 200rpx;
   padding: 0 0 0 40rpx;
-  background: rgba(255, 255, 255, 1);
-  opacity: 1;
+  margin: 31rpx 0 0;
+  background: --color(--qui-FC-FFF);
 }
 .authen-tit {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
-  opacity: 1;
+  color: --color(--qui-FC-777);
 }
 .authen-forget {
   margin: 30rpx 0 0;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 37rpx;
-  color: rgba(0, 71, 155, 1);
+  color: --color(--qui-LINK);
 }
 .authen-erro-messag1 {
-  font-size: 24rpx;
+  font-size: $fg-f24;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(250, 81, 81, 1);
-  opacity: 1;
+  color: --color(--qui-RED);
 }
 </style>

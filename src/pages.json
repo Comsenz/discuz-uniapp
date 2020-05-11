@@ -2,6 +2,7 @@
 {
   // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
   "pages": [
+    
     {
       "path": "pages/home/index",
       "style": {
@@ -83,26 +84,65 @@
         "enablePullDownRefresh": true
       }
     },
+    {
+      "path": "pages/site/info",
+      "style": {
+        "navigationBarTitleText": "圈子信息"
+      }
+    },
+    {
+      "path": "pages/site/partner-invite",
+      "style": {
+        "navigationBarTitleText": "圈子信息"
+      }
+    },
     // 消息页面
     {
-      "path": "pages/message/index",
+      "path": "pages/notice/index", // 消息
       "style": {
         "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/message/notification",
+      "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {
         "navigationStyle": "custom"
       }
     },
     {
-      "path": "pages/message/chat",
+      "path": "pages/notice/msglist", // 来往记录
       "style": {
         "navigationStyle": "custom",
         "enablePullDownRefresh": true
       }
     },
+
+    // 圈子管理
+    {
+      "path": "pages/manage/index", // 站长管理
+      "style": {
+        "navigationBarTitleText": "站长管理"
+      }
+    },
+    {
+      "path": "pages/manage/member", // 成员管理
+      "style": {
+        "navigationBarTitleText": "成员管理"
+      }
+    },
+    {
+      "path": "pages/manage/users", // 圈子成员
+      "style": {
+        "navigationBarTitleText": "圈子成员"
+      }
+    },
+    {
+      "path": "pages/manage/invite", // 邀请成员
+      "style": {
+        "navigationBarTitleText": "邀请成员"
+      }
+    },
+
     {
       "path": "pages/topic/post",
       "style": {
@@ -128,7 +168,7 @@
         "disableScroll": true
       }
     },
-    // 海报分享
+    // 帖子海报分享
     {
       "path": "pages/share/topic",
       "style": {

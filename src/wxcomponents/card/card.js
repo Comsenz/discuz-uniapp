@@ -185,7 +185,7 @@ export default class LastCard {
             },
             {
               "type": "image",
-              "url": 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code',
+              "url": `${obj.userweixincode}`,
               "css": {
                 "min-width": "140px",
                 "height": "140px",

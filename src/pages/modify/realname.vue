@@ -4,23 +4,23 @@
       <input
         type="text"
         class="tica-name-inpa"
-        placeholder="容请输入真实姓名"
+        :placeholder="i18n.t('modify.realname')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="myname"
       />
       <input
         type="text"
         class="tica-name-inpa"
-        placeholder="请输入您的身份证号码"
+        :placeholder="i18n.t('modify.enteridnumber')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="myid"
       />
       <view class="tica-erro-messag1" v-if="judge">
         {{ title1 }}
       </view>
-      <view class="chagepas-pas-btn">
+      <view class="tica-pas-btn">
         <qui-button type="primary" size="large" @click="btntica">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -55,19 +55,21 @@ export default {
       const patchname = status.run(() => this.$store.dispatch('jv/patch', params));
       patchname
         .then(res => {
-          console.log('成功', res);
+          if (res) {
+            uni.showToast({
+              title: this.i18n.t('modify.nameauthensucc'),
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
-          console.log('失败', err);
           /* eslint-disable */
           if (err.statusCode === 422) {
             this.judge = true;
             this.title1 = err.data.errors[0].detail[0];
-            console.log('tltle', this.title1);
           } else if (err.statusCode === 500) {
-            this.judge = true
-            this.title1 = err.data.errors[0].detail[0];
-            console.log('tltle', this.title1);
+            this.judge = true;
+            this.title1 = err.data.errors[0].detail;
           }
         });
     },
@@ -85,7 +87,8 @@ export default {
 }
 .tica-name {
   width: 100%;
-  padding: 31px 0 0 40rpx;
+  padding: 0 0 0 40rpx;
+  margin-top: 31rpx;
 }
 .tica-name-inpa {
   width: 100%;
@@ -96,13 +99,13 @@ export default {
   text-align: left;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
-.chagepas-pas-btn {
+.tica-pas-btn {
   margin: 50rpx 0 0;
 }
 .tica-erro-messag1 {
+  margin-top: 20rpx;
   font-size: $fg-f24;
   font-weight: 400;
-  line-height: 100rpx;
   color: --color(--qui-RED);
 }
 </style>

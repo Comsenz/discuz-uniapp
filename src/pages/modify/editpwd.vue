@@ -4,7 +4,7 @@
       <input
         type="password"
         :class="judge ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        placeholder="请输入旧密码"
+        :placeholder="i18n.t('modify.enterold')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valueused"
         @input="changeinput"
@@ -15,7 +15,7 @@
       <input
         type="password"
         :class="judge2 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        placeholder="请输入新密码"
+        :placeholder="i18n.t('modify.enternew')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuenew"
         @input="changeinput2"
@@ -26,40 +26,32 @@
       <input
         type="password"
         :class="judge3 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        placeholder="请重复输入新密码"
+        :placeholder="i18n.t('modify.enterreplace')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuetone"
         @input="changeinput3"
       />
       <view class="chagepas-erro-messag1" v-if="judge3">
-        两次输入的密码不一致，请重新输入
+        {{ i18n.t('modify.masstext') }}
       </view>
       <view class="chagepas-pas-btn">
-        <qui-button
-          class="chagepas-pas-btn"
-          type="primary"
-          size="large"
-          :disabled="disab"
-          @click="submission"
-        >
-          提交
+        <qui-button :type="styledisbla" size="large" :disabled="disab" @click="submission">
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
       <view class="chagepas-erro-forget" @click="runretire">
-        忘记旧密码?
+        {{ i18n.t('modify.forgetoldpassword') }}
       </view>
     </view>
   </view>
 </template>
 <script>
 import { status } from 'jsonapi-vuex';
-import quiButton from '@/components/qui-button/qui-button';
 
 export default {
-  components: { quiButton },
   data() {
     return {
-      userid: 24,
+      userid: '',
       fun: true,
       valueused: '',
       valuenew: '',
@@ -69,45 +61,69 @@ export default {
       judge3: false,
       text: '',
       text1: '',
-      disab: true,
+      styledisbla: 'primary',
+      disab: false,
+      icon: 'none',
     };
   },
-  // onLoad(arr) {
-  //   this.userid = arr.id;
-  // },
+  onLoad(arr) {
+    this.userid = Number(arr.id);
+  },
   methods: {
     submission() {
-      if (this.valuetone !== this.valuenew) {
-        this.judge3 = true;
-        this.disab = true;
+      if (this.valueused && this.valuetone && this.valuenew) {
+        this.changpasword();
+      } else if (!this.valueused) {
+        uni.showToast({
+          icon: this.icon,
+          title: this.i18n.t('modify.oldpassword'),
+          duration: 2000,
+        });
+      } else if (!this.valuenew) {
+        uni.showToast({
+          icon: this.icon,
+          title: this.i18n.t('modify.newpassword'),
+          duration: 2000,
+        });
+      } else if (!this.valuetone) {
+        uni.showToast({
+          icon: this.icon,
+          title: this.i18n.t('modify.confrimpasword'),
+          duration: 2000,
+        });
       }
-      this.changpasword();
     },
     changtype() {
-      console.log(1);
       this.disab = false;
     },
     changeinput() {
       if (this.valueused.length <= 0) {
         this.judge = false;
+        this.disab = false;
+        this.styledisbla = 'primary';
       }
       this.chanagedisab();
     },
     changeinput2() {
       if (this.valuenew <= 0) {
         this.judge2 = false;
+        this.disab = false;
+        this.styledisbla = 'primary';
       }
       this.chanagedisab();
     },
     changeinput3() {
       if (this.valuetone <= 0) {
         this.judge3 = false;
+        this.disab = false;
+        this.styledisbla = 'primary';
       }
       this.chanagedisab();
     },
     chanagedisab() {
       if (this.valueused && this.valuenew && this.valuetone) {
         this.disab = false;
+        this.styledisbla = 'primary';
       }
     },
     // 修改密码请求
@@ -124,15 +140,30 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/patch', params));
       postphon
         .then(res => {
-          console.log('成功', res);
+          if (res) {
+            uni.showToast({
+              title: this.i18n.t('modify.titlepassword'),
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
-          console.log('users', err);
+          this.disab = true;
+          this.styledisbla = 'default';
           /* eslint-disable */
           if (err.statusCode === 422) {
-            this.judge2 = true;
-            this.text1 = err.data.errors[0].detail[0];
+            if (this.valuetone === this.valuenew) {
+              this.judge2 = true;
+              this.judge3 = false;
+              this.text1 = err.data.errors[0].detail[0];
+            } else {
+              this.judge3 = true;
+              this.judge2 = false;
+              this.disab = true;
+            }
           } else if (err.statusCode === 500) {
+            this.judge2 = false;
+            this.judge3 = false;
             this.judge = true;
             this.text = err.data.errors[0].detail[0];
           }
@@ -140,7 +171,7 @@ export default {
     },
     runretire() {
       uni.navigateTo({
-        url: '/pages/modify/findpwd?user=24&pas=reset_pwd',
+        url: `/pages/modify/findpwd?user=${this.userid}&pas=reset_pwd`,
       });
     },
   },
@@ -148,51 +179,50 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .chagepas {
   width: 100vw;
   height: 100vh;
 }
 .chagepas-pas {
   width: 100%;
-  padding: 31px 0 0 40rpx;
-  opacity: 1;
+  padding: 0 0 0 40rpx;
+  margin: 31rpx 0 0;
 }
 .chagepas-pas-inpa {
   width: 100%;
   height: 100rpx;
-  font-size: 34rpx;
+  font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
   text-align: left;
-  border-bottom: 2rpx solid rgba(237, 237, 237, 1);
-  opacity: 1;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .chagepas-pas-inpa2 {
   width: 100%;
   height: 100rpx;
-  font-size: 34rpx;
+  font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(250, 81, 81, 1);
+  color: --color(--qui-RED);
   text-align: left;
-  border-bottom: 2rpx solid rgba(250, 81, 81, 1);
-  opacity: 1;
+  border-bottom: 2rpx solid --color(--qui-RED);
 }
 .chagepas-pas-btn {
   margin: 50rpx auto 0;
 }
 .chagepas-erro-messag1 {
-  font-size: 24rpx;
+  margin-top: 20rpx;
+  font-size: $fg-f24;
   font-weight: 400;
-  line-height: 100rpx;
-  color: rgba(250, 81, 81, 1);
-  opacity: 1;
+  color: --color(--qui-RED);
 }
 .chagepas-erro-forget {
   margin: 30rpx 0 0;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: 400;
   line-height: 37rpx;
-  color: rgba(0, 71, 155, 1);
+  color: --color(--qui-LINK);
 }
 </style>

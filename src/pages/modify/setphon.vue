@@ -2,24 +2,28 @@
   <view class="new">
     <view class="new-phon" v-if="phon">
       <view class="new-phon-test">
-        输入新手机号码
+        {{ i18n.t('modify.newphonnumber') }}
       </view>
       <view class="new-phon-number">
         <input class="new-phon-num" type="text" v-model="newphon" />
-        <button class="new-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
-        <button class="new-phon-send" disabled v-else>{{ second }}秒后重发</button>
+        <button class="new-phon-send" v-if="sun" @click="btnButton">
+          {{ i18n.t('modify.sendverificode') }}
+        </button>
+        <button class="new-phon-send" disabled v-else>
+          {{ second + i18n.t('modify.retransmission') }}
+        </button>
       </view>
     </view>
     <!-- 验证码 -->
     <view class="new-input">
       <view class="new-input-test">
-        请输入验证码
+        {{ i18n.t('modify.placeentercode') }}
       </view>
       <qui-input-code @getdata="btndata" :title="tit" :text="test"></qui-input-code>
     </view>
     <view class="new-button">
       <qui-button type="primary" size="large" @click="dingphon">
-        下一步
+        {{ i18n.t('modify.nextsetp') }}
       </qui-button>
     </view>
   </view>
@@ -43,6 +47,8 @@ export default {
       phon: true,
       newphon: '',
       setnum: '',
+      icon: 'none',
+      duration: 2000,
     };
   },
   methods: {
@@ -70,7 +76,6 @@ export default {
       }, 60000);
     },
     btndata(num) {
-      console.log(num);
       this.setnum = num;
     },
     // 点击获取验证码计时开始
@@ -93,7 +98,6 @@ export default {
     },
     // 新手机号发送验证码
     setphon() {
-      console.log(this.newphon);
       const params = {
         _jv: {
           type: 'sms/send',
@@ -109,7 +113,13 @@ export default {
           this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
-          console.log(err);
+          if(err.statusCode === 500) {
+            uni.showToast({
+              icon: this.icon,
+              title: this.i18n.t('modify.lateron'),
+              duration: this.duration,
+            });
+          }
         });
     },
     // 验证手机号
@@ -125,19 +135,29 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          console.log('verify', res);
+          uni.showToast({
+            title: '手机号修改成功',
+            duration: 1000
+          });
+          uni.navigateTo({
+              url: '/pages/my/profile',
+          });
         })
         .catch(err => {
-          console.log('verify', err);
+          uni.showToast({
+            icon: this.icon,
+            title: this.i18n.t('modify.valifailed'),
+            duration: 2000,
+          });
           if (err.statusCode === 422) {
             this.tit = true;
             /* eslint-disable */
             this.test = err.data.errors[0].detail[0];
           } else if (err.statusCode === 500) {
-            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.tit = true;
             if(this.num < 0){
-              this.test = '请过5分钟重试'
+              this.test = this.i18n.t('modify.lateron');
             }
           }
         });

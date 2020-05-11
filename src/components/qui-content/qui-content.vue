@@ -404,6 +404,7 @@ export default {
       font-weight: 400;
       line-height: 45rpx;
       color: rgba(51, 51, 51, 1);
+      word-wrap: break-word;
     }
     &__reply {
       width: 670rpx;
@@ -419,7 +420,7 @@ export default {
       &__item {
         max-width: 100%;
         max-height: 100%;
-        border-radius: 100%;
+        // border-radius: 100%;
       }
     }
     &__imgtwo {
