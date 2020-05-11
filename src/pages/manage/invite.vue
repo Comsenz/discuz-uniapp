@@ -1,27 +1,25 @@
 <template>
-  <view class="manage-invite-box">
+  <view class="invite">
     <!-- 导航栏 -->
     <!-- <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
       <view slot="left" class="left-text">{{ title }}</view>
     </uni-nav-bar> -->
     <!-- 标签栏 -->
-    <view class="">
-      <qui-tabs :current="current" :values="tabList"></qui-tabs>
+    <view class="invite-tabs">
+      <qui-tabs :current="current" :values="tabList" @click="changeTab"></qui-tabs>
     </view>
-    <view class="texts">
-      <text>
-        共有
-        <text class="count">{{ count }}</text>
-        条记录
-      </text>
+    <!-- 记录数 -->
+    <view class="invite-records">
+      <text>共有 {{ count }} 条记录</text>
     </view>
-    <view class="content">
+    <!-- 邀请列表 -->
+    <view class="invite-content">
       <qui-cell title="邀请成员" brief="成员" slot-left slot-right>
         <template v-slot:left>
           <image class="user-avatar" src="https://discuz.chat/static/images/noavatar.gif"></image>
         </template>
         <template v-slot:right>
-          <view class="nouse" @click="nouse">设为无效</view>
+          <view class="nouse" @click="invalid">设为无效</view>
           <view class="line"></view>
           <view class="share" @click="share">
             分享
@@ -31,21 +29,20 @@
       </qui-cell>
     </view>
     <!-- 邀请链接按钮 -->
-    <view class="button">
-      <button type="default" class="btn" @click="generateUrl">生成邀请链接</button>
+    <view class="invite-button">
+      <button class="btn" @click="generate">生成邀请链接</button>
     </view>
     <!-- 邀请链接弹窗 -->
     <uni-popup ref="popup" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <view class="popup-text">邀请链接</view>
-          <view class="popup-line"></view>
-          <view class="popup-text">邀请链接</view>
-          <view class="popup-line"></view>
-          <view class="popup-text">邀请链接</view>
+          <view @click="generateUrl(item)" v-for="item in inviteList" :key="item.id">
+            <view class="popup-text">{{ item.title }}</view>
+            <view class="popup-line"></view>
+          </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel">取消</text>
       </view>
     </uni-popup>
   </view>
@@ -63,14 +60,19 @@ export default {
 
   data() {
     return {
-      title: '邀请成员',
+      title: '邀请成员', // 页面标题
       current: 0,
-      count: ' 3 ',
+      count: 3, // 邀请链接列表数量
       tabList: [
         { id: 1, title: '未使用' },
         { id: 2, title: '已使用' },
         { id: 3, title: '已失效' },
-      ],
+      ], // 邀请链接类型列表
+      inviteList: [
+        { id: 1, title: '合伙人邀请链接', type: 'partner' },
+        { id: 2, title: '嘉宾邀请链接', type: 'guest' },
+        { id: 3, title: '成员邀请链接', type: 'member' },
+      ], // 邀请链接列表
     };
   },
 
@@ -81,25 +83,37 @@ export default {
         delta: 1,
       });
     },
-    nouse() {
+
+    // 改变标签页
+    changeTab() {
+      console.log('改变标签页');
+    },
+
+    // 设为无效
+    invalid() {
       console.log('无效');
     },
+
+    // 分享
     share() {
       console.log('分享');
+    },
+
+    // 生成邀请链接
+    generate() {
+      console.log('生成邀请链接');
       this.$refs.popup.open();
     },
-    // 生成邀请链接
-    generateUrl() {},
-    // 获取当前滑块的index
-    bindchange(e) {
-      this.currentData = e.detail.current;
+
+    // 生成 合伙人/嘉宾/成员 邀请链接
+    generateUrl(item) {
+      console.log(`生成${item.title}邀请链接`);
     },
-    // 点击切换，滑块index赋值
-    checkCurrent(e) {
-      if (this.currentData === e.target.dataset.current) {
-        return false;
-      }
-      this.currentData = e.target.dataset.current;
+
+    // 点击取消按钮
+    cancel() {
+      console.log('取消');
+      this.$refs.popup.close();
     },
   },
 };
@@ -113,8 +127,7 @@ page {
   background-color: #f9fafc;
 }
 
-.manage-invite-box {
-  height: 100%;
+.invite {
   font-size: $fg-f28;
 
   .left-text {
@@ -123,10 +136,10 @@ page {
     color: #343434;
   }
 
-  .texts {
+  .invite-records {
     margin: 40rpx 0 20rpx 20rpx;
     font-size: $fg-f24;
-    color: #7d7979;
+    color: --color(--qui-FC-7D7979);
   }
 
   .user-avatar {
@@ -136,15 +149,11 @@ page {
     border-radius: 50%;
   }
 
-  .count {
-    font-weight: 400;
-  }
-
-  .content {
+  &-content {
     width: 710rpx;
     height: 440rpx;
     margin: 20rpx 20rpx 0;
-    background: #fff;
+    background: --color(--qui-BG-2);
     border-radius: 6rpx;
     box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
   }
@@ -158,7 +167,7 @@ page {
     display: inline-block;
     width: 0rpx;
     height: 26rpx;
-    border: 2rpx solid #ededed;
+    border: 2rpx solid --color(--qui-BG-ED);
     opacity: 1;
   }
 
@@ -171,44 +180,7 @@ page {
     margin-left: 8rpx;
   }
 
-  .scroll-row {
-    width: 100%;
-    white-space: nowrap;
-
-    &-item {
-      display: inline-block;
-    }
-
-    .text {
-      font-weight: bold;
-      color: #333;
-    }
-  }
-
-  .popup {
-    width: 100%;
-    height: 100rpx;
-    font-size: $fg-f34;
-    font-weight: 400;
-    line-height: 100rpx;
-    color: #333;
-    text-align: center;
-    background-color: #fff;
-    border-radius: 10rpx 10rpx 0rpx 0rpx;
-  }
-
-  .popup-share-btn {
-    height: 100rpx;
-    font-size: $fg-f28;
-    line-height: 90rpx;
-    color: #666;
-    text-align: center;
-    border-top-color: #f5f5f5;
-    border-top-style: solid;
-    border-top-width: 1px;
-  }
-
-  .button {
+  .invite-button {
     position: fixed;
     right: 0;
     bottom: 40rpx;
@@ -216,37 +188,44 @@ page {
     width: 670rpx;
     height: 90rpx;
     margin: auto;
-  }
 
-  .btn {
-    background-color: #fff;
+    .btn {
+      background: --color(--qui-BG-2);
+    }
   }
 
   .popup-share {
     display: flex;
     flex-direction: column;
     background: --color(--qui-BG-2);
-  }
 
-  .popup-share-content {
-    background: --color(--qui-BG-BTN-GRAY-1);
-  }
+    &-content {
+      border-radius: 10rpx 10rpx 0rpx 0rpx;
 
-  .popup-text {
-    width: 100%;
-    height: 100rpx;
-    line-height: 100rpx;
-    text-align: center;
-  }
+      .popup-text {
+        width: 100%;
+        height: 100rpx;
+        font-size: $fg-f34;
+        line-height: 100rpx;
+        text-align: center;
+      }
 
-  .popup-line {
-    border: 2rpx solid #ededed;
-  }
+      .popup-line {
+        border: 2rpx solid --color(--qui-BG-ED);
+      }
 
-  .popup-share-content-space {
-    width: 100%;
-    height: 9rpx;
-    background: --color(--qui-FC-DDD);
+      &-space {
+        border: 8rpx solid --color(--qui-BG-ED);
+      }
+    }
+
+    &-btn {
+      width: 100%;
+      height: 100rpx;
+      font-size: $fg-f28;
+      line-height: 100rpx;
+      text-align: center;
+    }
   }
 }
 </style>
