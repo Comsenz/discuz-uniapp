@@ -84,8 +84,9 @@
       <!-- 评论 -->
       <view class="comment">
         <view class="comment-num">{{ thread.postCount }}{{ t.item }}{{ t.comment }}</view>
+
         <view v-if="postsStatus">
-          <qui-topic-comment
+          <!-- <qui-topic-comment
             v-for="(post, index) in posts"
             :key="index"
             :post-id="post._jv.id"
@@ -108,11 +109,11 @@
             @imageClick="imageClick"
             @deleteComment="deleteComment(post._jv.id)"
             @replyComment="replyComment(post._jv.id)"
-          ></qui-topic-comment>
-          <!-- <view v-for="(post, index) in posts" :key="index">
-          {{ post.likeCount }}
-          <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
-        </view> -->
+          ></qui-topic-comment> -->
+          <view v-for="(post, index) in posts" :key="index">
+            {{ post.likeCount }}
+            <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
+          </view>
         </view>
       </view>
 
@@ -120,14 +121,29 @@
 
       <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
         <view class="comment-popup">
-          <view class="comment-popup-top">
-            <view class="comment-popup-top-l">
-              <qui-icon name="icon-expression" class="comm-icon"></qui-icon>
-              <qui-icon name="icon-call" class="comm-icon"></qui-icon>
-              <qui-icon name="icon-image" class="comm-icon"></qui-icon>
+          <view class="comment-popup-topbox">
+            <view class="comment-popup-top">
+              <view class="comment-popup-top-l">
+                <qui-icon
+                  name="icon-expression"
+                  class="comm-icon"
+                  @click="emojiShow = !emojiShow"
+                ></qui-icon>
+                <qui-icon name="icon-call" class="comm-icon" @click="callClick"></qui-icon>
+                <qui-icon name="icon-image" class="comm-icon" @click="imageUploader"></qui-icon>
+              </view>
+              <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
             </view>
-            <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
+            <qui-emoji
+              :list="allEmoji"
+              position="absolute"
+              top="20rpx"
+              v-if="emojiShow"
+              border-radius="10rpx"
+              @click="getEmojiClick"
+            ></qui-emoji>
           </view>
+
           <view class="comment-content-box">
             <view class="comment-content">
               <textarea
@@ -140,6 +156,17 @@
                 :placeholder-style="placeholderColor"
                 v-model="textAreaValue"
               />
+              <qui-uploader
+                v-if="uploaderShow"
+                url="https://dq.comsenz-service.com/api/attachments"
+                :header="header"
+                :form-data="formData"
+                count="3"
+                async-clear
+                ref="upload"
+                @change="uploadChange"
+                @clear="uploadClear"
+              ></qui-uploader>
             </view>
           </view>
           <qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
@@ -198,10 +225,15 @@
     </uni-popup>
     <qui-pay
       ref="payShow"
-      money="5"
-      balance="354.00"
+      money="1"
+      :wallet-status="true"
+      :pay-password="pwdVal"
+      balance="10"
+      :pay-type-data="payTypeData"
       :to-name="thread.user.username"
       pay-type="图片查看"
+      @radioChange="radioChange"
+      @onInput="onInput"
     ></qui-pay>
   </view>
 </template>
@@ -256,8 +288,26 @@ export default {
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, //回复状态
       commentReply: false, //发布的是否是回复的回复
+      emojiShow: false, //表情组件显示状态
+      uploaderShow: false, //图片上传组件显示状态
+      formData: {}, //上传数据
       commentId: '',
       payShow: false, //是否显示支付
+      pwdVal: '123456', //支付密码
+      payTypeData: [
+        {
+          name: '微信支付',
+          icon: 'icon-wxPay',
+          color: '#09bb07',
+          value: '0',
+        },
+        {
+          name: '钱包支付',
+          icon: 'icon-walletPay',
+          color: '#1878f3',
+          value: '1',
+        },
+      ], //支付方式
     };
   },
   computed: {
@@ -267,10 +317,13 @@ export default {
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
-    posts() {
-      // console.log(this.$store.getters['jv/get']('posts'));
-      const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
-      return posts;
+    // posts() {
+    //   // console.log(this.$store.getters['jv/get']('posts'));
+    //   const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
+    //   return posts;
+    // },
+    allEmoji() {
+      return this.$store.getters['jv/get']('emoji');
     },
     // 语言包
     t() {
@@ -283,9 +336,17 @@ export default {
   onLoad(option) {
     console.log(option.id, '这是详情页接收的id');
     // this.threadId = option.id;
-    this.threadId = 11;
+    this.threadId = 13;
     this.loadThreads();
     this.loadThreadPosts();
+    const token =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI5NTZiYzZhODhiYjUyNzVhMmZmNDU4ZDI5MmU3ZDVkMDExZGYwMDA5YThkZDk5ZjVkMDE4ZjBmMTAzMTdlODI3MTg4OGUzMzJiZDAyNjhlYSIsImlhdCI6MTU4ODczMDY1MiwibmJmIjoxNTg4NzMwNjUyLCJleHAiOjE1OTEzMjI2NTIsInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.B0KIIPZVkSkEIWoi6aOny66ttilbWXv45eNkH4hPew_-h3c483qRjVL9K7ncA8S76Kaqq6fLt_kxqU7gehlsOTRbfDEu8_GgouAnn_t6PmYlG9ybS8D8IJnuU_jZCo4WW-PobtM9yl0lXYTooelU6a1Q0Sx6y7IEPjcG6xIQU-9H4J-Cr1fUYw9TtOMds274KgdGAkCTPRNg0qadz3BZwj-qXn6JkL3haEyzEXIfk1arWXhU2LXAZ2ukzpO2XSkw7kDezjbcQ4B3Lx890CeIzdYf4l8cB3WowYJQMtJl0Qnq6wsU2dycJH9cyXVl_wQ6lCXRiDE-lV0X-SiK3qGQvQ';
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
+    this.formData = {
+      isGallery: 1,
+    };
     // const forums = this.$store.getters['jv/get']('forums/1');
     // console.log(forums);
   },
@@ -315,8 +376,9 @@ export default {
       this.loadDetailStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
-          console.log(this.thread.isDeleted);
+
           this.thread = data;
+          console.log(this.thread.price, '这是接口数据的价格');
           // 追加管理菜单权限字段
           this.selectList[0].canOpera = this.thread.firstPost.canEdit;
           this.selectList[1].canOpera = this.thread.canEssence;
@@ -587,7 +649,7 @@ export default {
       this.loadDetailCommnetStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
-          // this.posts = data;
+          this.posts = data;
           console.log('&&&&&&~~~~~~~~~!', this.posts);
           // console.log(123, this.posts[12].user.groups[10].name);
           // Object.getOwnPropertyNames(data).forEach(function(key) {
@@ -598,6 +660,41 @@ export default {
         }),
       );
     },
+
+    // 创建订单
+    creatOrder(amount) {
+      console.log('创建订单');
+      const params = {
+        _jv: {
+          type: 'order',
+        },
+        type: 2,
+        thread_id: this.threadId,
+        amount: amount,
+      };
+      console.log(params, '传给接口的参数');
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          console.log(res, '成功创建订单');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
+    // 订单支付
+    orderPay() {
+      console.log('订单支付');
+    },
+
+    //输入密码完成时
+    onInput() {
+      console.log('详情页监听到密码输入完成');
+      console.log(this.thread.price, '这是价格');
+      this.creatOrder(this.thread.price);
+    },
+
     // 对象转数组
     limitArray(obj) {
       const arr = [];
@@ -632,10 +729,44 @@ export default {
     payClick() {
       console.log('支付');
     },
+    //选择支付方式，获取值
+    radioChange(val) {
+      console.log(val, '这是父级得到的');
+    },
     // 打赏
     rewardClick() {
       console.log('打赏');
       this.payShow = true;
+    },
+    // 点击表情插入到文本域
+    getEmojiClick(num) {
+      let text = '';
+      text = `${this.textAreaValue.slice(0, this.cursor) +
+        this.allEmoji[num].code +
+        this.textAreaValue.slice(this.cursor)}`;
+
+      this.textAreaValue = text;
+      this.emojiShow = false;
+    },
+    // 点击@跳转到@页
+    callClick() {
+      uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
+    },
+    imageUploader() {
+      console.log('点击上传图片');
+      this.uploaderShow = true;
+      console.log(this.$refs.upload, '输出的');
+      this.$nextTick(() => {
+        this.$refs.upload.uploadClick();
+      });
+    },
+    uploadChange(e) {
+      this.uploadFile = e;
+    },
+    uploadClear(list, del) {
+      this.delAttachments(list.data.id).then(() => {
+        this.$refs.upload.clear(del);
+      });
     },
     // 主题评论点击发布事件
     publishClick() {
@@ -1004,6 +1135,9 @@ page {
   border-top-right-radius: 10rpx;
   border-top-left-radius: 10rpx;
   box-sizing: border-box;
+}
+.comment-popup-topbox {
+  position: relative;
 }
 .comment-popup-top {
   display: flex;
