@@ -15,8 +15,8 @@
           ></qui-cell-item>
         </view>
       </view>
-      <view class="my-info__introduction">
-        {{ userInfo.signature || '暂无签名' }}
+      <view class="my-info__introduction" v-if="userInfo.signature">
+        {{ userInfo.signature }}
       </view>
     </view>
     <view class="my-tabs">
@@ -36,7 +36,9 @@
       </view>
       <view class="my-items">
         <qui-cell-item title="圈子信息" arrow></qui-cell-item>
-        <qui-cell-item title="搜索" arrow></qui-cell-item>
+        <navigator url="/pages/site/search" hover-class="none">
+          <qui-cell-item title="搜索" arrow></qui-cell-item>
+        </navigator>
         <qui-cell-item title="管理圈子" arrow :border="false"></qui-cell-item>
       </view>
     </view>
@@ -114,7 +116,9 @@ page {
 .my-info__box {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 40rpx;
+}
+.my-info__introduction {
+  margin-top: 40rpx;
 }
 .my-info__box__detail {
   position: relative;

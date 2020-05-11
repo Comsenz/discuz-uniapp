@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'quiicons'; /* project id 1741858 */
-  src: url('//at.alicdn.com/t/font_1741858_5jndc95qx1f.eot');
-  src: url('//at.alicdn.com/t/font_1741858_5jndc95qx1f.eot?#iefix') format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1741858_5jndc95qx1f.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1741858_5jndc95qx1f.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1741858_5jndc95qx1f.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1741858_5jndc95qx1f.svg#quiicons') format('svg');
+  src: url('https://at.alicdn.com/t/font_1741858_wana1xqvyat.eot');
+  src: url('https://at.alicdn.com/t/font_1741858_wana1xqvyat.eot?#iefix') format('embedded-opentype'),
+    url('https://at.alicdn.com/t/font_1741858_wana1xqvyat.woff2') format('woff2'),
+    url('https://at.alicdn.com/t/font_1741858_wana1xqvyat.woff') format('woff'),
+    url('https://at.alicdn.com/t/font_1741858_wana1xqvyat.ttf') format('truetype'),
+    url('https://at.alicdn.com/t/font_1741858_wana1xqvyat.svg#quiicons') format('svg');
 }
 
 .qui-icon {
@@ -187,9 +187,11 @@
 .icon-message:before {
   content: '\e64e';
 }
+
 .icon-message1:before {
   content: '\e68d';
 }
+
 .icon-link:before {
   content: '\e64c';
 }
@@ -211,4 +213,20 @@
 
 .icon-close:before {
   content: '\e601';
+}
+
+.icon-wxPay:before {
+  content: '\e691';
+}
+
+.icon-walletPay:before {
+  content: '\e690';
+}
+
+.icon-message-n:before {
+  content: '\e606';
+}
+
+.icon-noData:before {
+  content: '\e602';
 }

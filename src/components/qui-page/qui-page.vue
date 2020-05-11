@@ -6,6 +6,10 @@
     -->
     <qui-page-message v-if="forumError.status === '401'"></qui-page-message>
     <slot v-else />
+
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </view>
 </template>
 
@@ -18,6 +22,17 @@ export default {
       currentTheme: state => state.theme.currentTheme,
       forumError: state => state.forum.error,
     }),
+  },
+  mounted() {
+    this.$store.dispatch('session/setAuth', this.$refs.auth);
+  },
+  methods: {
+    close() {
+      this.$refs.auth.close();
+    },
+    login() {
+      this.$refs.auth.close();
+    },
   },
 };
 </script>

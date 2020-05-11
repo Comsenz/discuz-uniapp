@@ -3,16 +3,18 @@
     <view class="aogph-tab">
       <view class="aogph-tab-ao">
         <view class="aogph-tab-ao-my">
-          我的签名
+          {{ i18n.t('modify.mysignture') }}
         </view>
-        <view class="aogph-tab-ao-test">还能输入{{ num - shuzi }}个字</view>
+        <view class="aogph-tab-ao-test">
+          {{ i18n.t('modify.canalsoinput') }}{{ num - wordnumber }}{{ i18n.t('modify.wordnumber') }}
+        </view>
       </view>
       <view class="aogph-tab-input">
         <textarea
           type="text"
           class="aogph-tab-input-in"
           maxlength="450"
-          placeholder="请输入签名内容"
+          :placeholder="i18n.t('modify.signturecontent')"
           placeholder-style="color:rgba(181,181,181,1)"
           v-model="content"
           @input="fun"
@@ -21,7 +23,7 @@
       </view>
       <view class="aogph-tab-button">
         <qui-button type="primary" size="large" @click="btnbutton">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -30,26 +32,24 @@
 
 <script>
 import { status } from 'jsonapi-vuex';
-import quiButton from '@/components/qui-button/qui-button';
 
 export default {
-  components: { quiButton },
   data() {
     return {
-      userid: 24,
+      userid: '',
       sun: true,
       content: '',
       num: 450,
-      shuzi: '',
+      wordnumber: '',
     };
   },
-  onLoad() {
+  onLoad(arr) {
+    this.userid = Number(arr.id);
     this.mydata();
-    // this.userid = sun.id
   },
   methods: {
     fun(e) {
-      this.shuzi = e.target.value.length;
+      this.wordnumber = e.target.value.length;
     },
     btnbutton() {
       this.signature();
@@ -65,6 +65,7 @@ export default {
       };
       this.$store.dispatch('jv/get', params).then(data => {
         this.content = data.signature;
+        this.wordnumber = this.content.length;
       });
     },
     // 修改签名数据
@@ -77,13 +78,14 @@ export default {
         signature: this.content,
       };
       const patchname = status.run(() => this.$store.dispatch('jv/patch', params));
-      patchname
-        .then(res => {
-          console.log('成功', res);
-        })
-        .catch(err => {
-          console.log('失败', err);
-        });
+      patchname.then(res => {
+        if (res) {
+          uni.showToast({
+            title: this.i18n.t('modify.modificationsucc'),
+            duration: 2000,
+          });
+        }
+      });
     },
   },
 };
@@ -115,9 +117,10 @@ export default {
   width: 100%;
   height: 400rpx;
   padding: 20rpx 0 0 20rpx;
+  margin-top: 20rpx;
   text-align: top;
-  background: rgba(249, 250, 252, 1);
-  border: 1rpx solid rgba(221, 221, 221, 1);
+  background-color: --color(--qui-BG-1);
+  border: 1rpx solid --color(--qui-FC-DDD);
   box-sizing: border-box;
 }
 .aogph-tab-button {

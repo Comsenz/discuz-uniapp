@@ -20,15 +20,6 @@
 </template>
 
 <script>
-/**
- * 列表单元组件 (如果不能满足需求可自行添加slot)
- * @property {Number} current 标题 - 当前索引值 -默认：0
- * @property {Array} values 选项数组 - 支持标题和备注，其他需要的可自行添加
- * @property {Boolean} brief 备注 - 默认：false
- * @property {String} activeColor 选中的标签边框颜色
- * @event {Function} onClick  点击事件
- * @example <qui-tabs :current="current" :values="items"></qui-tabs>
- */
 export default {
   name: 'QuiTabs',
   props: {

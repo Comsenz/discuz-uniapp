@@ -20,10 +20,22 @@
     <view class="ft-box-spacal">
       <image class="ft-box-spacal-icon" src="@/static/publish.svg" @click="footerOpen"></image>
     </view>
+    <uni-icons
+      class="red-circle"
+      type="smallcircle-filled"
+      size="7"
+      color="red"
+      v-if="redCircle"
+    ></uni-icons>
   </view>
 </template>
 <script>
+import { uniIcons } from '@dcloudio/uni-ui';
+
 export default {
+  components: {
+    uniIcons,
+  },
   props: {
     tabs: {
       type: Array,
@@ -34,6 +46,10 @@ export default {
     postImg: {
       type: String,
       default: '',
+    },
+    redCircle: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => {
@@ -50,10 +66,6 @@ export default {
           url: item.url,
         });
       }
-      // 跳转到消息页面
-      // uni.navigateTo({
-      //   url: '../message/index',
-      // });
     },
     footerOpen(evt) {
       this.$emit('click', evt);
@@ -83,6 +95,7 @@ export default {
 }
 .ft-box-icon {
   height: 46rpx;
+  // background: #c33;
 }
 .ft-box-content {
   padding-top: 2px;
@@ -102,6 +115,11 @@ export default {
 }
 .active {
   color: #1878f3;
+}
+.red-circle {
+  position: absolute;
+  top: -3rpx;
+  left: 267rpx;
 }
 // .uni-share {
 //   /* #ifndef APP-NVUE */

@@ -4,14 +4,14 @@
       <input
         type="password"
         class="setuppas-pas-inpa"
-        placeholder="请输入新密码"
+        :placeholder="i18n.t('modify.enternew')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valueused"
       />
       <input
         type="password"
         class="setuppas-pas-inpa"
-        placeholder=" 请重复输入新密码"
+        :placeholder="i18n.t('modify.enterreplace')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuenew"
       />
@@ -20,7 +20,7 @@
       </view>
       <view class="setuppas-pas-btn">
         <qui-button type="primary" size="large" @click="submission">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -32,25 +32,39 @@ import { status } from 'jsonapi-vuex';
 export default {
   data() {
     return {
-      userid: 24,
+      userid: '',
       fun: true,
       valueused: '',
       valuenew: '',
       judge: false,
       judge2: false,
-      test: '两次输入的密码不一致，请重新输入',
+      test: '',
     };
   },
-  onLoad() {
-    //  this.userid = sun.id;
+  onLoad(arr) {
+    this.userid = Number(arr.id);
   },
   methods: {
     submission() {
-      console.log(this.valueused, this.valuenew, this.judge2);
-      if (this.valueused === this.valuenew) {
-        this.setpassword();
-      } else {
-        this.judge2 = true;
+      if (this.valueused && this.valuenew) {
+        if (this.valueused === this.valuenew) {
+          this.setpassword();
+        } else {
+          this.judge2 = true;
+          this.test = this.i18n.t('modify.masstext');
+        }
+      } else if (!this.valueused) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('modify.newpassword'),
+          duration: 2000,
+        });
+      } else if (!this.valuenew) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('modify.confrimpasword'),
+          duration: 2000,
+        });
       }
     },
     setpassword() {
@@ -65,11 +79,15 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/patch', params));
       postphon
         .then(res => {
-          console.log('成功', res);
+          if (res) {
+            uni.showToast({
+              title: this.i18n.t('modify.passwordsetsucc'),
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
           /* eslint-disable */
-          console.log('失败', err);
           if (err.statusCode === 422) {
             this.judge2 = true;
             this.test = err.data.errors[0].detail[0];
@@ -92,7 +110,8 @@ export default {
 }
 .setuppas-pas {
   width: 100%;
-  padding: 31px 0 0 40rpx;
+  padding: 0 0 0 40rpx;
+  margin-top: 31rpx;
 }
 .setuppas-pas-inpa {
   width: 100%;
@@ -119,9 +138,9 @@ export default {
   margin: 50rpx 0 0;
 }
 .setuppas-erro-messag1 {
+  margin-top: 20rpx;
   font-size: $fg-f24;
   font-weight: 400;
-  line-height: 100rpx;
   color: --color(--qui-RED);
 }
 </style>

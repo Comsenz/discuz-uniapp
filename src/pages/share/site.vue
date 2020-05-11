@@ -2,7 +2,7 @@
   <view class="painter">
     <view class="canvas-box">
       <view class="cent">
-        <image :src="imagePath" @tap="previewImage"></image>
+        <image :src="imagePath" @tap="previewImage" :show-menu-by-longpress="true"></image>
       </view>
       <view class="box-img">
         <painter
@@ -14,27 +14,27 @@
         />
       </view>
       <view class="btn-box">
-        <qui-button type="primary" size="large" @click="fun">保存相册</qui-button>
+        <qui-button type="primary" size="large" @click="fun">
+          {{ i18n.t('share.savealbum') }}
+        </qui-button>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-import quiButton from '@/components/qui-button/qui-button';
 import Cardc from '@/wxcomponents/card/cardbasemap'; // 首页海报有底图
 import Carde from '@/wxcomponents/card/cardnobasemap'; // 首页海报无底图
 
 export default {
-  components: { quiButton },
   data() {
     return {
-      userid: 4,
+      userid: '',
       imagePath: '',
       width: 700,
       template: {},
       themeid: '11', // 数据id
-      headerImg: '' || 'https://discuz.chat/static/images/noavatar.gif', // 头像
+      headerImg: '', // 头像
       headerName: '', // 名字
       slitename: '', // 站点名称
       slitelogo: '', // 站点logo
@@ -42,27 +42,31 @@ export default {
       themnumber: '', // 成员人数
       contdata: '', // 内容大小
       introd: '', // 圈子介绍
+      weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
     };
   },
   onLoad() {
     uni.showLoading({
-      title: '拼命生成中...',
+      title: this.i18n.t('share.generating'),
       mask: true,
     });
-    this.usertitle();
     this.$nextTick(() => {
+      this.userid = this.usersid;
       this.slitename = this.forums.set_site.site_name;
       this.slitelogo = this.forums.set_site.site_logo;
       this.sliteback = this.forums.set_site.site_background_image;
       this.themnumber = this.forums.other.count_users;
       this.contdata = this.forums.other.count_threads;
       this.introd = this.forums.set_site.site_introduction;
-      this.initData();
+      this.usertitle();
     });
   },
   computed: {
     forums() {
       return this.$store.getters['jv/get']('forums/1');
+    },
+    usersid() {
+      return this.$store.getters['session/get']('userId');
     },
   },
   methods: {
@@ -77,6 +81,7 @@ export default {
       this.$store.dispatch('jv/get', params).then(data => {
         this.headerName = data.username;
         this.headerImg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.initData();
       });
     },
     initData() {
@@ -89,6 +94,7 @@ export default {
         themnumber: this.themnumber, // 成员人数
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 圈子介绍
+        userweixincode: this.weixincode, // 微信二维码
       };
       if (this.sliteback) {
         this.template = new Cardc().palette(obj);
@@ -104,20 +110,32 @@ export default {
     imgErr() {
       uni.hideLoading();
       uni.showModal({
-        title: '提示',
-        content: '生成海报失败',
+        title: this.i18n.t('discuzq.msgbox.title'),
+        content: this.i18n.t('share.buildfailed'),
         showCancel: false,
       });
     },
     fun() {
-      const imgSrc = this.imagePath;
+      const _this = this;
       uni.saveImageToPhotosAlbum({
-        filePath: imgSrc,
+        filePath: _this.imagePath,
         success(data) {
-          console.log(data);
+          if (data) {
+            uni.showToast({
+              icon: 'none',
+              title: _this.i18n.t('share.successfully'),
+              duration: 2000,
+            });
+          }
         },
         fail(err) {
-          console.log(err);
+          if (err) {
+            uni.showToast({
+              icon: 'none',
+              title: _this.i18n.t('share.savefailed'),
+              duration: 2000,
+            });
+          }
         },
       });
     },
@@ -135,17 +153,11 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
-page {
-  padding: 0;
-  margin: 0;
-  font-size: $fg-f28;
-  color: --color(--qui-FC-333);
-}
 .cent {
   width: 700rpx;
   height: 1082rpx;
   margin: 46rpx 25rpx 0;
-  background: rgba(255, 255, 255, 1);
+  background: --color(--qui-FC-FFF);
   border-radius: 10px;
   box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   image {

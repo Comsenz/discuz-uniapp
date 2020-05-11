@@ -3,7 +3,7 @@
     <view class="popup-share-content">
       <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
         <view class="popup-share-content-image">
-          <view class="popup-share-box">
+          <view class="popup-share-box" @click="shareClick()">
             <qui-icon
               class="content-image"
               :name="item.icon"
@@ -36,6 +36,9 @@ export default {
     cancel() {
       this.$emit('close');
       this.$refs.popup.close();
+    },
+    shareClick() {
+      this.$emit('shareClick');
     },
   },
 };

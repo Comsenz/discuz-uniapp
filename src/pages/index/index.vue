@@ -23,7 +23,7 @@ export default {
   methods: {
     click() {
       uni.navigateTo({
-        url: '../message/index',
+        url: '../notice/index',
       });
     },
   },

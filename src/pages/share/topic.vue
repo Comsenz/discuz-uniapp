@@ -2,7 +2,7 @@
   <view class="painter">
     <view class="canvas-box">
       <view class="cent">
-        <image :src="imagePath" @tap="previewImage"></image>
+        <image :src="imagePath" @tap="previewImage" :show-menu-by-longpress="true"></image>
       </view>
       <view class="box-img">
         <painter
@@ -14,14 +14,15 @@
         />
       </view>
       <view class="btn-box">
-        <qui-button type="primary" size="large" @click="fun">保存相册</qui-button>
+        <qui-button type="primary" size="large" @click="fun">
+          {{ i18n.t('share.savealbum') }}
+        </qui-button>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-import quiButton from '@/components/qui-button/qui-button';
 import Carda from '@/wxcomponents/card/cardtposter'; // 标题文字海报
 import Cardb from '@/wxcomponents/card/cardaitu'; // 标题单图片文字海报
 import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报
@@ -30,13 +31,13 @@ import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报
 import Cardh from '@/wxcomponents/card/card'; // 文字海报
 
 export default {
-  components: { quiButton },
   data() {
     return {
       imagePath: '',
       width: 700,
       template: {},
-      themeid: '14', // 数据id
+      userid: 2,
+      themeid: '', // 数据id
       headerImg: '', // 头像
       headerName: '', // 名字
       postyTepy: '', // 帖子类型
@@ -47,27 +48,37 @@ export default {
       video: '', // 视频帖子
       videoduc: '', // 视频文件名
       videotime: '', // 视频时间
-      weixincode: '', // 微信二维码
+      weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
       attachmentsType: '', // 话题分类
       themwidth: '',
       reconame: '',
       recoimg: '',
     };
   },
-  onLoad() {
+  onLoad(arr) {
     uni.showLoading({
-      title: '拼命生成中...',
+      title: this.i18n.t('share.generating'),
       mask: true,
     });
-    this.getusertitle();
-    this.getthemdata();
+    this.themeid = arr.id || 2;
+    this.$nextTick(() => {
+      this.userid = this.usersid || 24;
+      this.getusertitle();
+      this.getthemdata();
+    });
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
+    // 获取推荐用户信息
     getusertitle() {
       const params = {
         _jv: {
           type: 'users',
-          id: 2,
+          id: this.userid,
         },
         include: 'groups',
       };
@@ -77,6 +88,7 @@ export default {
         this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
       });
     },
+    // 获取帖子内容信息
     getthemdata() {
       this.$store
         .dispatch(
@@ -158,20 +170,33 @@ export default {
     imgErr() {
       uni.hideLoading();
       uni.showModal({
-        title: '提示',
-        content: '生成海报失败',
+        title: this.i18n.t('discuzq.msgbox.title'),
+        content: this.i18n.t('share.buildfailed'),
         showCancel: false,
       });
     },
     fun() {
       const imgSrc = this.imagePath;
+      const _this = this;
       uni.saveImageToPhotosAlbum({
         filePath: imgSrc,
         success(data) {
-          console.log(data);
+          if (data) {
+            uni.showToast({
+              icon: 'none',
+              title: _this.i18n.t('share.successfully'),
+              duration: 2000,
+            });
+          }
         },
         fail(err) {
-          console.log(err);
+          if (err) {
+            uni.showToast({
+              icon: 'none',
+              title: _this.i18n.t('share.savefailed'),
+              duration: 2000,
+            });
+          }
         },
       });
     },
@@ -199,7 +224,7 @@ page {
   width: 700rpx;
   height: 1082rpx;
   margin: 46rpx 25rpx 0;
-  background: rgba(255, 255, 255, 1);
+  background: --color(--qui-FC-FFF);
   border-radius: 10px;
   box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   image {
@@ -211,11 +236,6 @@ page {
   display: block;
 }
 .btn-box {
-  width: 670rpx;
-  height: 90rpx;
   margin: 151rpx 0 40rpx 40rpx;
-  background: rgba(24, 120, 243, 1);
-  border-radius: 5rpx;
-  opacity: 1;
 }
 </style>
