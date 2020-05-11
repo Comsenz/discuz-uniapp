@@ -662,15 +662,16 @@ export default {
     },
 
     // 创建订单
-    creatOrder(amount) {
+    creatOrder(amount, type) {
       console.log('创建订单');
       const params = {
         _jv: {
           type: 'orders',
         },
-        type: 2,
+        type: type,
         thread_id: this.threadId,
         amount: amount,
+        is_anonymous: '1',
       };
       console.log(params, '传给接口的参数');
       this.$store
@@ -692,7 +693,7 @@ export default {
     onInput() {
       console.log('详情页监听到密码输入完成');
       console.log(this.thread.price, '这是价格');
-      this.creatOrder(this.thread.price);
+      this.creatOrder(this.thread.price, '3');
     },
 
     // 对象转数组
