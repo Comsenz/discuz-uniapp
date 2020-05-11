@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       loadingType: 'more',
-      data: [],
+      data: {},
       flag: true, // 滚动节流
       totalData: 0, // 总数
       pageSize: 20,
@@ -185,7 +185,7 @@ export default {
     },
     refresh() {
       this.pageNum = 1;
-      this.data = [];
+      this.data = {};
       this.loadlikes();
     },
   },
