@@ -7,7 +7,7 @@
       </view>
       <view class="chagepas-pas-btn">
         <qui-button type="primary" size="large" :disabled="disab" @click="submission">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -27,7 +27,7 @@ export default {
       myname: '',
       test: '',
       userid: '',
-      nametitle: { icon: 'none', title: '名字不能为空', duration: 2000 },
+      nametitle: { icon: 'none', duration: 2000 },
       modifysucc: '名字修改成功',
     };
   },
@@ -42,7 +42,7 @@ export default {
       } else {
         uni.showToast({
           icon: this.nametitle.icon,
-          title: this.nametitle.title,
+          title: this.i18n.t('modify.emptyname'),
           duration: this.nametitle.duration,
         });
       }
@@ -60,7 +60,7 @@ export default {
         .then(res => {
           if (res) {
             uni.showToast({
-              title: this.modifysucc,
+              title: this.i18n.t('modify.modifysucc'),
               duration: 2000,
             });
           }

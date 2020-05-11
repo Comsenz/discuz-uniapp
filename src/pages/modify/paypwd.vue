@@ -2,13 +2,13 @@
   <view class="setpw">
     <view class="setpw-input" v-if="pas">
       <view class="setpw-tit">
-        请输入支付密码
+        {{ i18n.t('modify.enterpaymentpas') }}
       </view>
       <qui-input-code @getdata="btndata" :title="sun" :text="test" :number="types"></qui-input-code>
     </view>
     <view class="setpw-input" v-else>
       <view class="setpw-tit">
-        请在次输入支付密码
+        {{ i18n.t('modify.enterpaymentagin') }}
       </view>
       <qui-input-code
         @getdata="btndata2"
@@ -36,12 +36,11 @@ export default {
       inputpas: '',
       repeatpas: '',
       icon: 'none',
-      modification: '已有支付密码',
       time: 2000,
     };
   },
   onLoad(arr) {
-    this.userid = Number(arr.id);
+    this.userid = Number(arr.id) || 24;
   },
   methods: {
     btndata(num) {
@@ -67,7 +66,7 @@ export default {
         .then(res => {
           if (res) {
             uni.showToast({
-              title: '支付密码设置成功',
+              title: this.i18n.t('modify.paymentsucceed'),
               duration: 2000,
             });
             uni.navigateTo({
@@ -76,17 +75,16 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err);
           if (err.statusCode === 422) {
             if (this.inputpas !== sum) {
               this.sun = true;
-              this.test = '两次输入的密码不同，请重新输入';
+              this.test = this.i18n.t('modify.reenter');
             } else if (this.inputpas === sum) {
               // this.sun = true;
               // this.test = '已有支付密码';
               uni.showToast({
                 icon: this.icon,
-                title: this.modification,
+                title: this.i18n.t('modify.modification'),
                 duration: this.time,
               });
             }

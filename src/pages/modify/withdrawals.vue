@@ -3,7 +3,7 @@
     <view class="cash-content">
       <!-- 收款人 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="收款人" slot-right :arrow="false" :border="false">
+        <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
           <test class="cash-content-name">
             {{ name }}
           </test>
@@ -11,17 +11,27 @@
       </view>
       <!-- 可提现金额 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="可提现余额" slot-right :arrow="false" :border="false">
+        <qui-cell-item
+          :title="i18n.t('modify.withdrawable')"
+          slot-right
+          :arrow="false"
+          :border="false"
+        >
           <test class="cash-content-name">￥{{ balance }}</test>
         </qui-cell-item>
       </view>
       <!-- 提现金额 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item
+          :title="i18n.t('modify.withdrawable')"
+          slot-right
+          :arrow="false"
+          :border="false"
+        >
           <input
             class="cash-content-input"
             type="number"
-            placeholder="请输入提现金额"
+            :placeholder="i18n.t('modify.enteramount')"
             placeholder-style="color:rgba(221,221,221,1)"
             v-model="cashmany"
             @input="settlement"
@@ -30,13 +40,20 @@
       </view>
       <!-- 实际提现金额 -->
       <view class="cash-content-tab">
-        <qui-cell-item title="实际提现金额" slot-right :arrow="false" :border="false">
+        <qui-cell-item
+          :title="i18n.t('modify.actualamout')"
+          slot-right
+          :arrow="false"
+          :border="false"
+        >
           <view class="cash-content-name cash-content-actual">
             <view
               :class="length ? 'cash-content-ellipsis2' : 'cash-content-ellipsis'"
               v-text="contint"
             ></view>
-            <view class="cash-content-proced">手续费：{{ procedures }}元 (30%)</view>
+            <view class="cash-content-proced">
+              {{ i18n.t('modify.servicechaege') + procedures + i18n.t('modify.percentage') }}
+            </view>
           </view>
         </qui-cell-item>
       </view>
@@ -45,25 +62,29 @@
         <!-- 已绑定手机号码验证 -->
         <view class="cash-phon" v-if="phon">
           <view class="cash-phon-test">
-            手机号
+            {{ i18n.t('modify.phonnumber') }}
           </view>
           <view class="cash-phon-num">
             {{ usertestphon }}
           </view>
-          <button class="cash-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
-          <button class="cash-phon-send" disabled v-else>{{ second }}秒后重发</button>
+          <button class="cash-phon-send" v-if="sun" @click="btnButton">
+            {{ i18n.t('modify.sendverificode') }}
+          </button>
+          <button class="cash-phon-send" disabled v-else>
+            {{ second + i18n.t('modify.retransmission') }}
+          </button>
         </view>
         <!-- 验证码 -->
         <view class="cash-input">
           <view class="cash-input-test">
-            请输入验证码
+            {{ i18n.t('modify.placeentercode') }}
           </view>
           <qui-input-code @getdata="btndata" :title="judge" :text="test"></qui-input-code>
         </view>
       </view>
       <view class="cash-button">
         <qui-button type="primary" size="large" @click="btncash">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -196,10 +217,10 @@ export default {
         })
         .catch(err => {
           if (err.statusCode === 500) {
-            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.judge = true;
-            if (this.num < 0) {
-              this.test = '请过稍后重试';
+            if (this.num <=0) {
+              this.test = this.i18n.t('modify.lateron');
             }
           } else if (err.statusCode === 422) {
             this.test = err.data.errors[0].detail;
@@ -221,7 +242,7 @@ export default {
         .then(res => {
           if(res) {
             uni.showToast({
-              title: '提现成功',
+              title: this.i18n.t('modify.withdrawal'),
               duration: 2000,
             });
             this.cashmany = '';

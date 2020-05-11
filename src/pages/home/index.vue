@@ -1,5 +1,5 @@
 <template>
-  <view class="home">
+  <view :class="'home ' + scrolled">
     <qui-header
       :head-img="forums.set_site.site_logo"
       :background-head-full-img="forums.set_site.site_background_image"
@@ -73,6 +73,7 @@
       @scrolltoupper="refresh"
       show-scrollbar="false"
       class="scroll-y"
+      @scroll="scroll"
     >
       <view class="sticky">
         <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
@@ -178,11 +179,9 @@ import { status } from 'jsonapi-vuex';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
-  components: {
-    //
-  },
   data() {
     return {
+      scrolled: 'affix',
       categoryId: 0, // 主题分类 ID
       threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
@@ -321,6 +320,13 @@ export default {
     }
   },
   methods: {
+    scroll(event) {
+      if (event.target.scrollTop > 0) {
+        this.scrolled = 'scrolled';
+      } else {
+        this.scrolled = 'affix';
+      }
+    },
     // 切换选项卡
     toggleTab(index) {
       // console.log(index)
@@ -659,8 +665,9 @@ export default {
 }
 .nav {
   position: relative;
-  margin-bottom: 30rpx;
+  z-index: 1;
   background: --color(--qui-BG-2);
+  transition: box-shadow 0.2s, -webkit-transform 0.2s;
 
   &__box {
     position: absolute;
@@ -676,6 +683,14 @@ export default {
       line-height: 100rpx;
     }
   }
+}
+
+.scrolled .nav {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.sticky {
+  margin-top: 30rpx;
 }
 
 .sticky__isSticky {

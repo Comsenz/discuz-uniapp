@@ -2,24 +2,28 @@
   <view class="new">
     <view class="new-phon" v-if="phon">
       <view class="new-phon-test">
-        输入新手机号码
+        {{ i18n.t('modify.newphonnumber') }}
       </view>
       <view class="new-phon-number">
         <input class="new-phon-num" type="text" v-model="newphon" />
-        <button class="new-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
-        <button class="new-phon-send" disabled v-else>{{ second }}秒后重发</button>
+        <button class="new-phon-send" v-if="sun" @click="btnButton">
+          {{ i18n.t('modify.sendverificode') }}
+        </button>
+        <button class="new-phon-send" disabled v-else>
+          {{ second + i18n.t('modify.retransmission') }}
+        </button>
       </view>
     </view>
     <!-- 验证码 -->
     <view class="new-input">
       <view class="new-input-test">
-        请输入验证码
+        {{ i18n.t('modify.placeentercode') }}
       </view>
       <qui-input-code @getdata="btndata" :title="tit" :text="test"></qui-input-code>
     </view>
     <view class="new-button">
       <qui-button type="primary" size="large" @click="dingphon">
-        下一步
+        {{ i18n.t('modify.nextsetp') }}
       </qui-button>
     </view>
   </view>
@@ -44,8 +48,6 @@ export default {
       newphon: '',
       setnum: '',
       icon: 'none',
-      valifailed: '验证失败',
-      lateron: '稍后重试',
       duration: 2000,
     };
   },
@@ -114,7 +116,7 @@ export default {
           if(err.statusCode === 500) {
             uni.showToast({
               icon: this.icon,
-              title: this.lateron,
+              title: this.i18n.t('modify.lateron'),
               duration: this.duration,
             });
           }
@@ -144,7 +146,7 @@ export default {
         .catch(err => {
           uni.showToast({
             icon: this.icon,
-            title: this.valifailed,
+            title: this.i18n.t('modify.valifailed'),
             duration: 2000,
           });
           if (err.statusCode === 422) {
@@ -152,10 +154,10 @@ export default {
             /* eslint-disable */
             this.test = err.data.errors[0].detail[0];
           } else if (err.statusCode === 500) {
-            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.tit = true;
             if(this.num < 0){
-              this.test = '请稍后重试'
+              this.test = this.i18n.t('modify.lateron');
             }
           }
         });

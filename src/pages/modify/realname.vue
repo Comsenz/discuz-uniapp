@@ -4,14 +4,14 @@
       <input
         type="text"
         class="tica-name-inpa"
-        placeholder="容请输入真实姓名"
+        :placeholder="i18n.t('modify.realname')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="myname"
       />
       <input
         type="text"
         class="tica-name-inpa"
-        placeholder="请输入您的身份证号码"
+        :placeholder="i18n.t('modify.enteridnumber')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="myid"
       />
@@ -20,7 +20,7 @@
       </view>
       <view class="tica-pas-btn">
         <qui-button type="primary" size="large" @click="btntica">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -57,7 +57,7 @@ export default {
         .then(res => {
           if (res) {
             uni.showToast({
-              title: '实名认证成功',
+              title: this.i18n.t('modify.nameauthensucc'),
               duration: 2000,
             });
           }
