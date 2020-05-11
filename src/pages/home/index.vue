@@ -15,9 +15,10 @@
     <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead()">
+              <view class="popup-share-box" @click="shareHead(index)">
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
@@ -99,7 +100,7 @@
           :tags="item.category.name"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          @click="handleClickShare"
+          @click="handleClickShare(index)"
           @handleIsGreat="
             handleIsGreat(
               item.firstPost._jv.id,
@@ -148,6 +149,7 @@
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent()">
@@ -280,6 +282,15 @@ export default {
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
+    // if (res.from === 'button') {// 来自页面内分享按钮
+    //   console.log(res.target)
+    // }
+    return {
+      title: '自定义分享标题',
+      path: '/pages/test/test?id=123'
+    }
+  },
+ onShareAppMessage(res) {
     if (res.from === 'button') {// 来自页面内分享按钮
       console.log(res.target)
     }
@@ -350,24 +361,39 @@ export default {
           text: this.i18n.t('home.generatePoster'),
           icon: 'icon-word',
           name: 'wx',
+          id: 1,
         },
         {
           text: this.i18n.t('home.wxShare'),
           icon: 'icon-img',
           name: 'wx',
+          id: 2,
         },
       ];
     },
     // 头部分享海报
-    shareHead() {
+    shareHead(index) {
+      if(index === 0){
       uni.navigateTo({
         url: '/pages/share/site',
-      });   
+      });  
+      }else {
+        onShareAppMessage()
+      }
     },
     // 取消按钮
     cancel() {
       this.$refs.popup.close();
     },
+    cancel() {
+      this.$refs.popupContent.close();
+    },
+    cancel() {
+      this.$refs.popupHead.close();
+    },
+    // cancel() {
+    //   this.$refs.popupHead.close();
+    // }
     // 筛选选中确定按钮
     confirm(e) {
       // 重置列表
@@ -478,10 +504,15 @@ export default {
       ];
     },
    // 内容部分分享海报,跳到分享海报页面 
-    shareContent() {
+    shareContent(index) {
+      if(index === 0){
       uni.navigateTo({
         url: '/pages/share/site',
-      });      
+      });
+      }else {
+        onShareAppMessage()       
+      }
+      
     },
     // 首页导航栏分类列表数据
     loadCategories() {
@@ -610,11 +641,11 @@ export default {
         this.loadingType = 'nomore';
       }
     },
-    // refresh() {
-    //   this.pageNum = 1;
-    //   this.threads = [];
-    //   this.loadThreads();
-    // },
+    refresh() {
+      this.pageNum = 1;
+      this.threads = [];
+      this.loadThreads();
+    },
   },
 };
 </script>
