@@ -14,8 +14,8 @@
             <text>共有 {{ count }} 条记录</text>
           </view>
           <!-- 邀请列表 -->
-          <view class="invite-content">
-            <qui-cell title="邀请成员" brief="成员" slot-left slot-right>
+          <view class="invite-content" v-for="item in inviteList" :key="item.id">
+            <qui-cell :title="item.title" :brief="item.time" slot-left slot-right>
               <template v-slot:left>
                 <image
                   class="user-avatar"
@@ -23,9 +23,9 @@
                 ></image>
               </template>
               <template v-slot:right>
-                <view class="nouse" @click="invalid">设为无效</view>
+                <view class="nouse" @click="invalid(item._jv.id)">设为无效</view>
                 <view class="line"></view>
-                <view class="share" @click="share">
+                <view class="share" @click="share(item.code)">
                   分享
                   <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
                 </view>
@@ -49,7 +49,7 @@
     <uni-popup ref="popup" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <view @click="generateUrl(item)" v-for="item in inviteList" :key="item.id">
+          <view @click="generateUrl(item)" v-for="item in allInviteList" :key="item.id">
             <view class="popup-text">{{ item.title }}</view>
             <view class="popup-line"></view>
           </view>
@@ -64,6 +64,7 @@
 <script>
 // import { uniNavBar } from '@dcloudio/uni-ui';
 import quiCell from '@/components/qui-cell';
+import { timestamp2day } from '@/utils/time';
 
 export default {
   components: {
@@ -81,7 +82,7 @@ export default {
         { id: 2, title: '已使用' },
         { id: 3, title: '已失效' },
       ], // 邀请链接类型列表
-      inviteList: [
+      inviteUrlList: [
         { id: 1, title: '合伙人邀请链接', type: 'partner' },
         { id: 2, title: '嘉宾邀请链接', type: 'guest' },
         { id: 3, title: '成员邀请链接', type: 'member' },
@@ -89,7 +90,44 @@ export default {
     };
   },
 
+  onLoad() {
+    this.getInviteList();
+    this.getGroupList();
+  },
+
+  computed: {
+    // 获取管理邀请列表（非管理员无的邀请链接无管理）
+    allInviteList() {
+      const list = [];
+      const inviteList = this.$store.getters['jv/get']('invite');
+      console.log('会话列表接口的响应：', inviteList);
+      const keys = Object.keys(inviteList);
+      if (inviteList && keys.length > 0) {
+        for (let i = 0; i < keys.length; i += 1) {
+          const value = inviteList[keys[i]];
+          const day = timestamp2day(value.endtime);
+          value.time = `有效期剩余${day}天`;
+          list.push(value);
+        }
+      }
+      console.log('list', list);
+      return list;
+    },
+  },
+
   methods: {
+    // 调用 管理邀请列表 接口
+    getInviteList() {
+      this.$store.dispatch('jv/get', 'invite');
+      console.log('获取管理邀请列表');
+    },
+
+    // 调用 获取所有用户组 接口
+    getGroupList() {
+      this.$store.dispatch('jv/get', 'groups');
+      console.log('获取管理邀请列表');
+    },
+
     // 回到上一个页面
     clickNavBarLeft() {
       uni.navigateBack({
@@ -105,13 +143,18 @@ export default {
     },
 
     // 设为无效
-    invalid() {
-      console.log('无效');
+    invalid(id) {
+      this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
+        console.log('设为无效', res);
+      });
     },
 
     // 分享
-    share() {
-      console.log('分享');
+    share(code) {
+      console.log('跳转到分享页面');
+      uni.navigateTo({
+        url: `../site/partner-invite?code=${code}`,
+      });
     },
 
     // 生成邀请链接
@@ -123,6 +166,23 @@ export default {
     // 生成 合伙人/嘉宾/成员 邀请链接
     generateUrl(item) {
       console.log(`生成${item.title}邀请链接`);
+      const params = {
+        _jv: {
+          type: 'dialog/message',
+        },
+        dialog_id: this.dialogId,
+        message_text: this.msg,
+      };
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          if (res) {
+            console.log('发送消息res：', res);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 点击取消按钮
