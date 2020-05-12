@@ -145,7 +145,6 @@ export default {
         .then(res => {
           if (res) {
             console.log('发送消息res：', res);
-            this.getChatRecord();
             this.emojiShow = false;
           }
         })
