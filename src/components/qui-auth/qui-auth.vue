@@ -67,7 +67,8 @@ export default {
     align-items: center;
     justify-content: center;
     &__image {
-      width: 276rpx;
+      height: 100rpx;
+      max-width: 100rpx;
       margin: 10rpx 0 67rpx;
     }
   }

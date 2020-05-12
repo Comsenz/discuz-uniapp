@@ -224,6 +224,7 @@
       </view>
     </uni-popup>
     <qui-pay
+      v-if="payShowStatus"
       ref="payShow"
       money="1"
       :wallet-status="true"
@@ -234,7 +235,9 @@
       pay-type="图片查看"
       @radioChange="radioChange"
       @onInput="onInput"
+      @paysureShow="paysureShow"
     ></qui-pay>
+    <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
   </qui-page>
 </template>
 
@@ -290,8 +293,14 @@ export default {
       uploaderShow: false, //图片上传组件显示状态
       formData: {}, //上传数据
       commentId: '',
-      payShow: false, //是否显示支付
+      // payShow: false, //是否显示支付
+      payShowStatus: false, //是否显示支付
       pwdVal: '123456', //支付密码
+
+      orderSn: '', //订单编号
+      payStatus: false, //订单支付状态
+      payStatusNum: 0, // 订单支付状态查询最大次数
+      coverLoading: false, // loading显示状态
       payTypeData: [
         {
           name: '微信支付',
@@ -343,7 +352,7 @@ export default {
   onLoad(option) {
     console.log(option.id, '这是详情页接收的id');
     // this.threadId = option.id;
-    this.threadId = 13;
+    this.threadId = 137;
     this.loadThreads();
     this.loadThreadPosts();
     const token =
@@ -684,8 +693,8 @@ export default {
     },
 
     // 创建订单
-    creatOrder(amount, type) {
-      console.log('创建订单');
+    creatOrder(amount, type, value) {
+      console.log('创建订单', '这是参数');
       const params = {
         _jv: {
           type: 'orders',
@@ -700,6 +709,11 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           console.log(res, '成功创建订单');
+          this.orderSn = res.order_sn;
+          console.log(type, value, this.orderSn, '这是参数');
+          if (type === '3') {
+            this.orderPay(20, value, this.orderSn);
+          }
         })
         .catch(err => {
           console.log(err);
@@ -707,17 +721,68 @@ export default {
     },
 
     // 订单支付
-    orderPay() {
+    orderPay(type, value, orderSn) {
       console.log('订单支付');
+      const params = {
+        _jv: {
+          type: 'trade/pay/order/' + orderSn,
+        },
+        payment_type: type,
+        pay_password: value,
+      };
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          console.log(res, '订单支付接口请求成功');
+          this.getOrderStatus(orderSn);
+          const payWechat = setInterval(() => {
+            if (this.payStatus == '1' || this.payStatusNum > 10) {
+              clearInterval(payWechat);
+              return;
+            }
+            this.getOrderStatus(orderSn);
+          }, 3000);
+          this.coverLoading = true;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    getOrderStatus(orderSn) {
+      const params = {
+        _jv: {
+          type: 'orders/' + orderSn,
+        },
+      };
+      this.$store
+        .dispatch('jv/get', params)
+        .then(res => {
+          console.log(res.status, '订单支付状态接口查询');
+          this.payStatus = res.status;
+          this.payStatusNum++;
+          if (this.payStatus == '1' || this.payStatusNum > 10) {
+            console.log('支付成功');
+            // this.payShow = false;
+            this.payShowStatus = false;
+            this.coverLoading = false;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     //输入密码完成时
-    onInput() {
+    onInput(val) {
+      console.log(val, '这是详情页输出的密码');
       console.log('详情页监听到密码输入完成');
       console.log(this.thread.price, '这是价格');
-      this.creatOrder(this.thread.price, '3');
+      this.creatOrder(this.thread.price, '3', val);
     },
-
+    // 支付方式选择完成点击确定时
+    paysureShow(payType) {
+      console.log(payType, '这是当前选择的支付方式');
+    },
     // 对象转数组
     limitArray(obj) {
       const arr = [];
@@ -759,7 +824,7 @@ export default {
     // 打赏
     rewardClick() {
       console.log('打赏');
-      this.payShow = true;
+      this.payShowStatus = true;
     },
     // 点击表情插入到文本域
     getEmojiClick(num) {

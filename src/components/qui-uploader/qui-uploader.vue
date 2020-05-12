@@ -60,7 +60,7 @@ export default {
     },
     count: {
       default: 9,
-      type: Number,
+      type: [Number, String],
     },
     asyncClear: {
       default: false,
