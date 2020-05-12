@@ -8,7 +8,7 @@
             {{ p.pay }}{{ money }}{{ p.rmb }}
           </qui-button>-->
           <button class="payBtn" @click="payChoice">{{ p.pay }}￥{{ money }}{{ p.rmb }}</button>
-          <radio-group @change="radioChange">
+          <radio-group @change="radioMyHead">
             <label class="pay-radio">
               <view>
                 <radio :value="checkVal" class="radio" color="#2699fb" />
@@ -45,8 +45,7 @@
               class="check-tip"
               v-else-if="descriptionShow && item.name === p.walletPay && money < balance"
             >
-              {{ p.walletBalance }}，￥{{ balance }}{{ descriptionShow
-              }}{{ item.name === p.walletPay }}，，，，{{ descriptionShow || !walletStatus }}
+              {{ p.walletBalance }}，￥{{ balance }}
             </view>
             <view
               class="check-tip"
@@ -173,7 +172,7 @@ export default {
       trantision: false,
       show: false, // 输入支付密码是否显示
       payImmediatelyClick: false,
-      checkVal: '0',
+      checkVal: '1',
       checkStatus: false, // 单选框状态
       current: 0,
     };
@@ -198,6 +197,10 @@ export default {
     ...mapMutations({
       setRouter: 'pay/SET_ROUTER',
     }),
+    radioMyHead(evt) {
+      console.log(evt.target.value);
+      this.$emit('radioMyHead', evt.target.value);
+    },
     // 父组件触发是否显示弹框
     payClickShow() {
       console.log('这是父组件触发的事件');

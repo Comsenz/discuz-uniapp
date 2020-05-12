@@ -223,20 +223,22 @@
         <text class="popup-share-btn" @click="cancel('share')">取消</text>
       </view>
     </uni-popup>
-    <qui-pay
-      v-if="payShowStatus"
-      ref="payShow"
-      money="1"
-      :wallet-status="true"
-      :pay-password="pwdVal"
-      balance="10"
-      :pay-type-data="payTypeData"
-      :to-name="thread.user.username"
-      pay-type="图片查看"
-      @radioChange="radioChange"
-      @onInput="onInput"
-      @paysureShow="paysureShow"
-    ></qui-pay>
+    <view v-if="payShowStatus">
+      <qui-pay
+        ref="payShow"
+        money="1"
+        :wallet-status="true"
+        :pay-password="pwdVal"
+        balance="10"
+        :pay-type-data="payTypeData"
+        :to-name="thread.user.username"
+        pay-type="图片查看"
+        @radioMyHead="radioMyHead"
+        @radioChange="radioChange"
+        @onInput="onInput"
+        @paysureShow="paysureShow"
+      ></qui-pay>
+    </view>
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
   </qui-page>
 </template>
@@ -293,8 +295,8 @@ export default {
       uploaderShow: false, //图片上传组件显示状态
       formData: {}, //上传数据
       commentId: '',
-      // payShow: false, //是否显示支付
-      payShowStatus: false, //是否显示支付
+      isAnonymous: '0',
+      payShowStatus: true, //是否显示支付
       pwdVal: '123456', //支付密码
 
       orderSn: '', //订单编号
@@ -352,7 +354,7 @@ export default {
   onLoad(option) {
     console.log(option.id, '这是详情页接收的id');
     // this.threadId = option.id;
-    this.threadId = 137;
+    this.threadId = 139;
     this.loadThreads();
     this.loadThreadPosts();
     const token =
@@ -693,7 +695,7 @@ export default {
     },
 
     // 创建订单
-    creatOrder(amount, type, value) {
+    creatOrder(amount, type, value, payType) {
       console.log('创建订单', '这是参数');
       const params = {
         _jv: {
@@ -702,7 +704,7 @@ export default {
         type: type,
         thread_id: this.threadId,
         amount: amount,
-        is_anonymous: '1',
+        is_anonymous: this.isAnonymous,
       };
       console.log(params, '传给接口的参数');
       this.$store
@@ -710,9 +712,14 @@ export default {
         .then(res => {
           console.log(res, '成功创建订单');
           this.orderSn = res.order_sn;
-          console.log(type, value, this.orderSn, '这是参数');
-          if (type === '3') {
-            this.orderPay(20, value, this.orderSn);
+          if (payType == 0) {
+            // 微信支付
+            this.orderPay(13, value, this.orderSn, payType);
+          } else if (payType == 1) {
+            // 钱包支付
+            console.log(type, value, this.orderSn, '这是参数');
+
+            this.orderPay(20, value, this.orderSn, payType);
           }
         })
         .catch(err => {
@@ -721,33 +728,57 @@ export default {
     },
 
     // 订单支付
-    orderPay(type, value, orderSn) {
+    orderPay(type, value, orderSn, payType) {
       console.log('订单支付');
-      const params = {
-        _jv: {
-          type: 'trade/pay/order/' + orderSn,
-        },
-        payment_type: type,
-        pay_password: value,
-      };
+      let params = {};
+      if (payType == 0) {
+        console.log('这是微信支付时触发');
+        params = {
+          _jv: {
+            type: 'trade/pay/order/' + orderSn,
+          },
+          payment_type: type,
+        };
+      } else if (payType == 1) {
+        params = {
+          _jv: {
+            type: 'trade/pay/order/' + orderSn,
+          },
+          payment_type: type,
+          pay_password: value,
+        };
+      }
+
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
           console.log(res, '订单支付接口请求成功');
-          this.getOrderStatus(orderSn);
-          const payWechat = setInterval(() => {
-            if (this.payStatus == '1' || this.payStatusNum > 10) {
-              clearInterval(payWechat);
-              return;
-            }
+          if (payType == 0) {
+            console.log('这是微信支付时触发');
+            this.wechatPay(
+              res.wechat_js.timeStamp,
+              res.wechat_js.nonceStr,
+              res.wechat_js.package,
+              res.wechat_js.signType,
+              res.wechat_js.paySign,
+            );
+          } else if (payType == 1) {
             this.getOrderStatus(orderSn);
-          }, 3000);
-          this.coverLoading = true;
+            const payWechat = setInterval(() => {
+              if (this.payStatus == '1' || this.payStatusNum > 10) {
+                clearInterval(payWechat);
+                return;
+              }
+              this.getOrderStatus(orderSn);
+            }, 3000);
+            this.coverLoading = true;
+          }
         })
         .catch(err => {
           console.log(err);
         });
     },
+    // 查询订单支状
     getOrderStatus(orderSn) {
       const params = {
         _jv: {
@@ -772,16 +803,42 @@ export default {
         });
     },
 
+    wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
+      // 小程序支付。
+      uni.requestPayment({
+        provider: 'wxpay',
+        timeStamp: String(Date.now(timeStamp)),
+        nonceStr: nonceStr,
+        package: packageVal,
+        signType: signType,
+        paySign: paySign,
+        success: function(res) {
+          alert('微信支付成功');
+          console.log('success:' + JSON.stringify(res));
+        },
+        fail: function(err) {
+          alert('微信支付失败');
+          console.log('fail:' + JSON.stringify(err));
+        },
+      });
+    },
     //输入密码完成时
     onInput(val) {
       console.log(val, '这是详情页输出的密码');
       console.log('详情页监听到密码输入完成');
       console.log(this.thread.price, '这是价格');
+      this.value = val;
       this.creatOrder(this.thread.price, '3', val);
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(payType, '这是当前选择的支付方式');
+      if (payType === 0) {
+        console.log('这是详情页获取到的支付方式---微信');
+        console.log(this.value, this.orderSn, '这是密码和订单号');
+        this.creatOrder(this.thread.price, 3, this.value, payType);
+      } else if (payType === 1) {
+        console.log('这是详情页获取到的支付方式---钱包');
+      }
     },
     // 对象转数组
     limitArray(obj) {
@@ -817,6 +874,12 @@ export default {
     payClick() {
       console.log('支付');
     },
+    // 支付是否显示用户头像
+    radioMyHead(val) {
+      console.log(val, '是否显示用户头像');
+      this.isAnonymous = val;
+    },
+
     //选择支付方式，获取值
     radioChange(val) {
       console.log(val, '这是父级得到的');
