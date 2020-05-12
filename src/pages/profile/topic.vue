@@ -133,10 +133,9 @@ export default {
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
           this.totalData = res._jv.json.meta.threadCount;
-          // eslint-disable-next-line no-underscore-dangle
           delete res._jv;
           this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...res, ...this.data };
+          this.data = { ...this.data, ...res };
         });
     },
     // 评论部分点击评论跳到详情页
