@@ -4,14 +4,14 @@
       <input
         type="password"
         class="setuppas-pas-inpa"
-        placeholder="请输入新密码"
+        :placeholder="i18n.t('modify.enternew')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valueused"
       />
       <input
         type="password"
         class="setuppas-pas-inpa"
-        placeholder="请重复输入新密码"
+        :placeholder="i18n.t('modify.enterreplace')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuenew"
       />
@@ -20,7 +20,7 @@
       </view>
       <view class="setuppas-pas-btn">
         <qui-button type="primary" size="large" @click="submission">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -38,7 +38,7 @@ export default {
       valuenew: '',
       judge: false,
       judge2: false,
-      test: '两次输入的密码不一致，请重新输入',
+      test: '',
     };
   },
   onLoad(arr) {
@@ -51,17 +51,18 @@ export default {
           this.setpassword();
         } else {
           this.judge2 = true;
+          this.test = this.i18n.t('modify.masstext');
         }
-      } else if (!this.valueused && !this.valuenew) {
+      } else if (!this.valueused) {
         uni.showToast({
           icon: 'none',
-          title: '新密码不能为空',
+          title: this.i18n.t('modify.newpassword'),
           duration: 2000,
         });
-      } else if (this.valueused && !this.valuenew) {
+      } else if (!this.valuenew) {
         uni.showToast({
           icon: 'none',
-          title: '重复输入密码不能为空',
+          title: this.i18n.t('modify.confrimpasword'),
           duration: 2000,
         });
       }
@@ -80,7 +81,7 @@ export default {
         .then(res => {
           if (res) {
             uni.showToast({
-              title: '密码设置成功',
+              title: this.i18n.t('modify.passwordsetsucc'),
               duration: 2000,
             });
           }

@@ -1,5 +1,8 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
+    <!-- <view class="bar-sticky">
+      <navigationBar :navigation-bar-style="navigationBarStyle" :show-back="false"></navigationBar>
+    </view> -->
     <view class="logoBox">
       <image class="logo" :src="headImg"></image>
     </view>
@@ -14,7 +17,7 @@
       </text>
 
       <view class="circleDet-share" @click="open">
-        <qui-icon class="qui-icon" name="icon-share1" size="28" color="#fff"></qui-icon>
+        <qui-icon class="qui-icon" name="icon-share1" size="26" color="#fff"></qui-icon>
         {{ t.share }}
       </view>
     </view>
@@ -58,7 +61,11 @@ export default {
     },
   },
   data: () => {
-    return {};
+    return {
+      navigationBarStyle: {
+        iconText: '类目', // 导航栏文字
+      },
+    };
   },
   computed: {
     // 语言包
@@ -106,7 +113,7 @@ export default {
     text-align: center;
     // border-bottom: 1rpx solid #ccc;
     text {
-      padding: 0 14rpx;
+      padding: 0 15rpx;
       font-size: $fg-f26;
       line-height: 37rpx;
       text-align: center;
@@ -116,12 +123,17 @@ export default {
     color: --color(--qui-BG-2);
   }
   .circleDet-share {
-    width: 100rpx;
     font-size: $fg-f26;
     color: --color(--qui-BG-2);
   }
   .qui-icon {
-    padding-right: 13rpx;
+    padding-right: 18rpx;
+  }
+  .bar-sticky {
+    position: sticky;
+    // position: -webkit-sticky;
+    top: 0;
+    z-index: 101;
   }
 }
 </style>

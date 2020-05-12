@@ -3,23 +3,29 @@
     <!-- 已绑定手机号码验证 -->
     <view class="modify-phon" v-if="phon">
       <view class="modify-phon-test">
-        已绑定手机
+        {{ i18n.t('modify.phonbound') }}
       </view>
       <view class="modify-phon-num">
         {{ userphon }}
       </view>
-      <button class="modify-phon-send" v-if="sun" @click="btnButton">发送验证码</button>
-      <button class="modify-phon-send" disabled v-else>{{ second }}秒后重发</button>
+      <button class="modify-phon-send" v-if="sun" @click="btnButton">
+        {{ i18n.t('modify.sendverificode') }}
+      </button>
+      <button class="modify-phon-send" disabled v-else>
+        {{ second + i18n.t('modify.retransmission') }}
+      </button>
     </view>
     <!-- 验证码 -->
     <view class="modify-input">
       <view class="modify-input-test">
-        请输入验证码
+        {{ i18n.t('modify.placeentercode') }}
       </view>
       <qui-input-code @getdata="btndata" :title="judge" :text="test"></qui-input-code>
     </view>
     <view class="modify-button">
-      <qui-button type="primary" size="large" @click="submission">提交</qui-button>
+      <qui-button type="primary" size="large" @click="submission">
+        {{ judge ? i18n.t('modify.nextsetp') : i18n.t('modify.submission') }}
+      </qui-button>
     </view>
   </view>
 </template>
@@ -43,8 +49,6 @@ export default {
       test: '',
       icon: 'none',
       num: 5,
-      valifailed: '验证失败',
-      lateron: '稍后重试',
       duration: 2000,
     };
   },
@@ -140,7 +144,7 @@ export default {
         .catch(err => {
           uni.showToast({
             icon: this.icon,
-            title: this.valifailed,
+            title: this.i18n.t('modify.valifailed'),
             duration: 2000,
           });
           if (err.statusCode === 422) {
@@ -148,10 +152,10 @@ export default {
             /* eslint-disable */
             this.test = err.data.errors[0].detail[0];
           } else if (err.statusCode === 500) {
-            this.test = `验证码错误，您还可以重发${this.num}次`;
+            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.judge = true;
             if(this.num < 0){
-              this.test = '请稍后重试'
+              this.test = this.i18n.t('modify.lateron');
             }
           }
         });
@@ -163,10 +167,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-page {
-  width: 100vw;
-  height: 100vh;
-}
 .input {
   width: 100vw;
   height: 100vh;

@@ -36,7 +36,9 @@
       </view>
       <view class="my-items">
         <qui-cell-item title="圈子信息" arrow></qui-cell-item>
-        <qui-cell-item title="搜索" arrow></qui-cell-item>
+        <navigator url="/pages/site/search" hover-class="none">
+          <qui-cell-item title="搜索" arrow></qui-cell-item>
+        </navigator>
         <qui-cell-item title="管理圈子" arrow :border="false"></qui-cell-item>
       </view>
     </view>
@@ -93,7 +95,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 page {
   background-color: #f9fafc;
 }

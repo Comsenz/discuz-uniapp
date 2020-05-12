@@ -14,7 +14,9 @@
         />
       </view>
       <view class="btn-box">
-        <qui-button type="primary" size="large" @click="fun">保存相册</qui-button>
+        <qui-button type="primary" size="large" @click="fun">
+          {{ i18n.t('share.savealbum') }}
+        </qui-button>
       </view>
     </view>
   </view>
@@ -51,21 +53,16 @@ export default {
       themwidth: '',
       reconame: '',
       recoimg: '',
-      generating: '拼命生成中...',
-      title: '提示',
-      buildfailed: '生成海报失败',
-      successfully: '图片保存成功',
-      savefailed: '图片保存失败',
     };
   },
   onLoad(arr) {
     uni.showLoading({
-      title: this.generating,
+      title: this.i18n.t('share.generating'),
       mask: true,
     });
     this.themeid = arr.id || 2;
     this.$nextTick(() => {
-      this.userid = this.usersid;
+      this.userid = this.usersid || 24;
       this.getusertitle();
       this.getthemdata();
     });
@@ -173,8 +170,8 @@ export default {
     imgErr() {
       uni.hideLoading();
       uni.showModal({
-        title: this.title,
-        content: this.buildfailed,
+        title: this.i18n.t('discuzq.msgbox.title'),
+        content: this.i18n.t('share.buildfailed'),
         showCancel: false,
       });
     },
@@ -187,7 +184,7 @@ export default {
           if (data) {
             uni.showToast({
               icon: 'none',
-              title: _this.successfully,
+              title: _this.i18n.t('share.successfully'),
               duration: 2000,
             });
           }
@@ -196,7 +193,7 @@ export default {
           if (err) {
             uni.showToast({
               icon: 'none',
-              title: _this.savefailed,
+              title: _this.i18n.t('share.savefailed'),
               duration: 2000,
             });
           }

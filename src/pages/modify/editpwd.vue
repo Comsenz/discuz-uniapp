@@ -4,7 +4,7 @@
       <input
         type="password"
         :class="judge ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        :placeholder="enterold"
+        :placeholder="i18n.t('modify.enterold')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valueused"
         @input="changeinput"
@@ -15,7 +15,7 @@
       <input
         type="password"
         :class="judge2 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        :placeholder="enternew"
+        :placeholder="i18n.t('modify.enternew')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuenew"
         @input="changeinput2"
@@ -26,21 +26,21 @@
       <input
         type="password"
         :class="judge3 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        :placeholder="enterreplace"
+        :placeholder="i18n.t('modify.enterreplace')"
         placeholder-style="color:rgba(221,221,221,1)"
         v-model="valuetone"
         @input="changeinput3"
       />
       <view class="chagepas-erro-messag1" v-if="judge3">
-        {{ masstext }}
+        {{ i18n.t('modify.masstext') }}
       </view>
       <view class="chagepas-pas-btn">
         <qui-button :type="styledisbla" size="large" :disabled="disab" @click="submission">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
       <view class="chagepas-erro-forget" @click="runretire">
-        忘记旧密码?
+        {{ i18n.t('modify.forgetoldpassword') }}
       </view>
     </view>
   </view>
@@ -61,17 +61,9 @@ export default {
       judge3: false,
       text: '',
       text1: '',
-      masstext: '两次输入的密码不一致，请重新输入',
       styledisbla: 'primary',
       disab: false,
-      enterold: '请输入旧密码',
-      enternew: '请输入新密码',
-      enterreplace: '请重复输入新密码',
       icon: 'none',
-      oldpassword: '旧密码不能为空',
-      newpassword: '新密码不能为空',
-      confrimpasword: '确认密码不能为空',
-      titlepassword: '密码修改成功',
     };
   },
   onLoad(arr) {
@@ -84,19 +76,19 @@ export default {
       } else if (!this.valueused) {
         uni.showToast({
           icon: this.icon,
-          title: this.oldpassword,
+          title: this.i18n.t('modify.oldpassword'),
           duration: 2000,
         });
       } else if (!this.valuenew) {
         uni.showToast({
           icon: this.icon,
-          title: this.newpassword,
+          title: this.i18n.t('modify.newpassword'),
           duration: 2000,
         });
       } else if (!this.valuetone) {
         uni.showToast({
           icon: this.icon,
-          title: this.confrimpasword,
+          title: this.i18n.t('modify.confrimpasword'),
           duration: 2000,
         });
       }
@@ -150,7 +142,7 @@ export default {
         .then(res => {
           if (res) {
             uni.showToast({
-              title: this.titlepassword,
+              title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
           }
