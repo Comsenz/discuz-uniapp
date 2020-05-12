@@ -187,9 +187,11 @@
 .icon-message:before {
   content: '\e64e';
 }
+
 .icon-message1:before {
   content: '\e68d';
 }
+
 .icon-link:before {
   content: '\e64c';
 }
@@ -212,12 +214,19 @@
 .icon-close:before {
   content: '\e601';
 }
+
 .icon-wxPay:before {
   content: '\e691';
 }
+
 .icon-walletPay:before {
   content: '\e690';
 }
+
 .icon-message-n:before {
   content: '\e606';
+}
+
+.icon-noData:before {
+  content: '\e602';
 }

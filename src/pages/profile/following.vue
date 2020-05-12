@@ -117,8 +117,6 @@ export default {
           }
         });
     },
-    // 添加关注
-    // 取消关注
     // 点击头像到个人主页
     toProfile(userId) {
       uni.navigateTo({

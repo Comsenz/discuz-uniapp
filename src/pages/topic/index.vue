@@ -1,5 +1,5 @@
 <template>
-  <view class="content bg" v-if="status">
+  <qui-page class="content bg" v-if="status[loadDetailStatusId]">
     <view class="ft-gap">
       <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
       <qui-topic-content
@@ -85,8 +85,8 @@
       <view class="comment">
         <view class="comment-num">{{ thread.postCount }}{{ t.item }}{{ t.comment }}</view>
 
-        <view v-if="postsStatus">
-          <!-- <qui-topic-comment
+        <view v-if="status[loadDetailCommnetStatusId]">
+          <qui-topic-comment
             v-for="(post, index) in posts"
             :key="index"
             :post-id="post._jv.id"
@@ -109,7 +109,7 @@
             @imageClick="imageClick"
             @deleteComment="deleteComment(post._jv.id)"
             @replyComment="replyComment(post._jv.id)"
-          ></qui-topic-comment> -->
+          ></qui-topic-comment>
           <view v-for="(post, index) in posts" :key="index">
             {{ post.likeCount }}
             <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
@@ -235,7 +235,7 @@
       @radioChange="radioChange"
       @onInput="onInput"
     ></qui-pay>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -248,12 +248,10 @@ export default {
     return {
       threadId: '',
       thread: {},
-      loadDetailStatus: {},
-      status: false,
+      loadDetailStatusId: 0,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
-      // posts: {},
-      loadDetailCommnetStatus: {},
-      postsStatus: false,
+      posts: {},
+      loadDetailCommnetStatusId: 0,
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
       textAreaValue: '', // 评论输入框
@@ -325,12 +323,21 @@ export default {
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
     },
+    //   const thread = this.$store.getters['jv/get']({ _jv: { type: "threads", id: this.threadId}});
+
+    //   // console.log(thread.posts, 'posts');
+    //   return thread.posts;
+    // },
     // 语言包
     t() {
       return this.i18n.t('topic');
     },
     p() {
       return this.i18n.t('pay');
+    },
+
+    status() {
+      return status.status;
     },
   },
   onLoad(option) {
@@ -349,6 +356,22 @@ export default {
     };
     // const forums = this.$store.getters['jv/get']('forums/1');
     // console.log(forums);
+  },
+  watch: {
+    posts: {
+      handler: function(val, oldval) {
+        console.log('newval', val, 'oldval', oldval);
+      },
+      deep: true, //对象内部的属性监听，也叫深度监听
+    },
+  },
+  onShow() {
+    let authTimeout = setTimeout(() => {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      clearTimeout(authTimeout);
+    }, 4000);
   },
   methods: {
     // 加载当前主题数据
@@ -373,52 +396,53 @@ export default {
           'paidUsers',
         ],
       };
-      this.loadDetailStatus = status.run(() =>
-        this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
-          console.log(data, '~~~~~~~~~~~~~~~~~~~');
-
-          this.thread = data;
-          console.log(this.thread.price, '这是接口数据的价格');
-          // 追加管理菜单权限字段
-          this.selectList[0].canOpera = this.thread.firstPost.canEdit;
-          this.selectList[1].canOpera = this.thread.canEssence;
-          this.selectList[2].canOpera = this.thread.canSticky;
-          this.selectList[3].canOpera = this.thread.canDelete;
-          this.selectList[0].canOpera = true;
-          this.selectList[1].isStatus = this.thread.isEssence;
-          this.selectList[2].isStatus = this.thread.isSticky;
-          this.selectList[3].isStatus = false;
-          console.log(this.selectList, '管理菜单数据');
-          if (this.thread.isEssence) {
-            //如果初始化状态为true
-            this.selectList[1].text = '取消精华';
-          }
-          if (this.thread.isSticky) {
-            //如果初始化状态为true
-            this.selectList[2].text = '取消置顶';
-          }
-          this.isLiked = data.firstPost.isLiked;
-          this.status = true;
-          this.topicStatus = data.isApproved;
-          // console.log(lodash.isEmpty(data.paidUsers));
-          if (lodash.isEmpty(data.paidUsers)) {
-            this.paidStatus = false;
-          } else {
-            this.paidStatus = true;
-          }
-          if (lodash.isEmpty(data.rewardedUsers)) {
-            this.rewardStatus = false;
-          } else {
-            this.rewardStatus = true;
-          }
-          if (lodash.isEmpty(data.firstPost.likedUsers)) {
-            this.likedStatus = false;
-          } else {
-            this.likedStatus = true;
-          }
-          // console.log('over', this.limitArray(data.paidUsers, 1));
-        }),
+      const threadAction = status.run(() =>
+        this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]),
       );
+
+      this.loadDetailStatusId = threadAction._statusID;
+
+      threadAction.then(data => {
+        console.log(data, '~~~~~~~~~~~~~~~~~~~');
+        console.log(this.thread.isDeleted);
+        this.thread = data;
+        // 追加管理菜单权限字段
+        this.selectList[0].canOpera = this.thread.firstPost.canEdit;
+        this.selectList[1].canOpera = this.thread.canEssence;
+        this.selectList[2].canOpera = this.thread.canSticky;
+        this.selectList[3].canOpera = this.thread.canDelete;
+        this.selectList[0].canOpera = true;
+        this.selectList[1].isStatus = this.thread.isEssence;
+        this.selectList[2].isStatus = this.thread.isSticky;
+        this.selectList[3].isStatus = false;
+        console.log(this.selectList, '管理菜单数据');
+        if (this.thread.isEssence) {
+          //如果初始化状态为true
+          this.selectList[1].text = '取消精华';
+        }
+        if (this.thread.isSticky) {
+          //如果初始化状态为true
+          this.selectList[2].text = '取消置顶';
+        }
+        this.isLiked = data.firstPost.isLiked;
+        this.topicStatus = data.isApproved;
+        // console.log(lodash.isEmpty(data.paidUsers));
+        if (lodash.isEmpty(data.paidUsers)) {
+          this.paidStatus = false;
+        } else {
+          this.paidStatus = true;
+        }
+        if (lodash.isEmpty(data.rewardedUsers)) {
+          this.rewardStatus = false;
+        } else {
+          this.rewardStatus = true;
+        }
+        if (lodash.isEmpty(data.firstPost.likedUsers)) {
+          this.likedStatus = false;
+        } else {
+          this.likedStatus = true;
+        }
+      });
     },
     // post操作调用接口（包括type 1点赞，2删除主题，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus) {
@@ -623,7 +647,9 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
-          // console.log(res);
+          const post = {};
+          post[res._jv.id] = res;
+          this.posts = Object.assign({}, this.posts, post);
         })
         .catch(err => {
           console.log(err);
@@ -646,19 +672,15 @@ export default {
           'lastThreeComments.replyUser',
         ],
       };
-      this.loadDetailCommnetStatus = status.run(() =>
-        this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
-          delete data._jv;
-          this.posts = data;
-          console.log('&&&&&&~~~~~~~~~!', this.posts);
-          // console.log(123, this.posts[12].user.groups[10].name);
-          // Object.getOwnPropertyNames(data).forEach(function(key) {
-          //   console.log({ key }, data[key].user.username);
-          // });
-
-          this.postsStatus = true;
-        }),
+      let loadDetailCommnetAction = status.run(() =>
+        this.$store.dispatch('jv/get', ['posts', { params }]),
       );
+
+      this.loadDetailCommnetStatusId = loadDetailCommnetAction._statusID;
+      loadDetailCommnetAction.then(data => {
+        delete data._jv;
+        this.posts = data;
+      });
     },
 
     // 创建订单
