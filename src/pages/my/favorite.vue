@@ -127,10 +127,9 @@ export default {
         .run(() => this.$store.dispatch('jv/get', ['favorites', { params }]))
         .then(res => {
           this.totalData = res._jv.json.meta.threadCount;
-          // eslint-disable-next-line no-underscore-dangle
           delete res._jv;
           this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...res, ...this.data };
+          this.data = { ...this.data, ...res };
         });
     },
     // 评论部分点击评论跳到详情页
@@ -205,7 +204,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 page {

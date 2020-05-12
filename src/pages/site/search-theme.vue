@@ -80,10 +80,9 @@ export default {
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
           this.totalData = res._jv.json.meta.total;
-          // eslint-disable-next-line no-underscore-dangle
           delete res._jv;
           this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...res, ...this.data };
+          this.data = { ...this.data, ...res };
         });
     },
     clearSearch() {
@@ -118,9 +117,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
-page {
-  background-color: #f9fafc;
-}
 .search-item {
   padding-left: 40rpx;
   margin-bottom: 30rpx;
@@ -133,6 +129,7 @@ page {
   box-shadow: none;
 }
 /deep/ .themeCount .themeItem {
+  padding-right: 40rpx;
   padding-left: 0;
   margin: 0;
 }

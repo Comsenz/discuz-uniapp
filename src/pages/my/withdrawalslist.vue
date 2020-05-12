@@ -132,14 +132,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/cash', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
           this.totalData = res._jv.json.meta.total;
-          // eslint-disable-next-line no-underscore-dangle
-          const data = JSON.parse(JSON.stringify(res));
-          // eslint-disable-next-line no-underscore-dangle
-          delete data._jv;
-          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          this.dataList = { ...data, ...this.dataList };
+          delete res._jv;
+          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = { ...this.dataList, ...res };
         });
     },
     // 下拉加载
@@ -160,7 +156,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 page {
   background-color: #f9fafc;
 }

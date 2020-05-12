@@ -149,7 +149,7 @@ export default {
   },
   pay: {
     passwordTip: '请输入支付密码',
-    passaordSetting: '请设置钱包支付密码',
+    passwordSetting: '请设置钱包支付密码',
     balance: '余额',
     sumOfMoney: '金额',
     inputComplete: '输入完成',

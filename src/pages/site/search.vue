@@ -44,6 +44,7 @@
         <qui-cell-item
           :title="item.username"
           arrow
+          :border="index == userKeys[2] ? false : true"
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
@@ -60,20 +61,24 @@
           搜索更多主题
         </view>
       </view>
-      <qui-content
+      <view
         v-for="(item, index) in themeList"
         :key="index"
-        :user-name="item.user.username"
-        :theme-image="item.user.avatarUrl"
-        :theme-btn="item.canHide"
-        :user-groups="item.user.groups"
-        :theme-time="item.createdAt"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
-        :tags="item.category.name"
-        :images-list="item.firstPost.images"
-        :theme-essence="item.isEssence"
-        @contentClick="contentClick(item._jv.id)"
-      ></qui-content>
+        :class="index == themeKeys[1] ? 'noBorder' : ''"
+      >
+        <qui-content
+          :user-name="item.user.username"
+          :theme-image="item.user.avatarUrl"
+          :theme-btn="item.canHide"
+          :user-groups="item.user.groups"
+          :theme-time="item.createdAt"
+          :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :tags="item.category.name"
+          :images-list="item.firstPost.images"
+          :theme-essence="item.isEssence"
+          @contentClick="contentClick(item._jv.id)"
+        ></qui-content>
+      </view>
       <qui-no-data tips="没有找到相关主题" v-if="themeTotal == 0"></qui-no-data>
     </view>
   </view>
@@ -90,6 +95,8 @@ export default {
       themeList: {},
       userTotal: '',
       themeTotal: '',
+      userKeys: [], // 处理最后一个不要边框，解决小程序不支持nth选择器
+      themeKeys: [],
       pageSize: 3,
       pageNum: 1, // 当前页数
     };
@@ -115,6 +122,7 @@ export default {
           this.userTotal = res._jv.json.meta.total;
           delete res._jv;
           this.userList = res;
+          this.userKeys = Object.keys(res);
         });
     },
     // 获取主题列表
@@ -132,6 +140,7 @@ export default {
           this.themeTotal = res._jv.json.meta.threadCount;
           delete res._jv;
           this.themeList = res;
+          this.themeKeys = Object.keys(res);
         });
     },
     clearSearch() {
@@ -166,13 +175,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/base/theme/fn.scss';
-@import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
-page {
-  background-color: #f9fafc;
-}
 .search {
+  min-height: 100vh;
+  background-color: #f9fafc;
   .search-item,
   .search-box {
     background-color: #fff;
@@ -191,11 +196,11 @@ page {
   padding: 30rpx 40rpx 20rpx 0;
 }
 .search-item__head-title {
-  font-size: $fg-f28;
+  font-size: 28rpx;
   font-weight: bold;
 }
 .search-item__head-more {
-  font-size: $fg-f24;
+  font-size: 24rpx;
   color: #00479b;
 }
 // 用户
@@ -220,12 +225,6 @@ page {
   position: relative;
   padding-left: 90rpx;
 }
-.search-item__users:nth-child(2) {
-  border: 0;
-}
-/deep/ .themeItem :nth-child(2) {
-  border: 0;
-}
 // 主题
 .search /deep/ .themeCount {
   border-bottom: 2rpx solid #ededed;
@@ -237,5 +236,8 @@ page {
 }
 /deep/ .themeCount .themeItem__footer {
   display: none;
+}
+.noBorder /deep/ .themeCount {
+  border: 0;
 }
 </style>

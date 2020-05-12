@@ -44,19 +44,19 @@
           color="#1878F3"
           @tap="showFilter"
         ></qui-icon>
-        <qui-filter-modal
-          v-model="show"
-          @confirm="confirm"
-          @changeSelected="changeSelected"
-          @change="changeType"
-          :confirm-text="i18n.t('home.confirmText')"
-          :if-need-confirm="ifNeedConfirm"
-          :filter-list="filterList"
-          :top="top"
-          :show-search="showSearch"
-          ref="filter"
-        ></qui-filter-modal>
       </view>
+      <qui-filter-modal
+        v-model="show"
+        @confirm="confirm"
+        @changeSelected="changeSelected"
+        @change="changeType"
+        :confirm-text="i18n.t('home.confirmText')"
+        :if-need-confirm="ifNeedConfirm"
+        :filter-list="filterList"
+        :show-search="showSearch"
+        ref="filter"
+        top="100"
+      ></qui-filter-modal>
       <u-tabs
         class="scroll-tab"
         :list="categories"
@@ -753,6 +753,11 @@ export default {
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   // max-height: calc(100vh - 475rpx);
+}
+.nav .filter-modal {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
 }
 
 </style>
