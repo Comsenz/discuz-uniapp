@@ -47,10 +47,20 @@
         </view>
       </view>
 
-      <view class="themeItem__content" @click="contentClick">
+      <view class="themeItem__content" @click="contentClick()">
         <view class="themeItem__content__text">
           <rich-text :nodes="themeContent"></rich-text>
         </view>
+        <!-- <video
+          id="player-video"
+          width="414"
+          height="270"
+          preload="auto"
+          playsinline
+          webkit-playsinline
+          x5-playsinline
+          ref="playerVideo"
+        ></video> -->
         <view v-if="Object.keys(imagesList).length == 1">
           <view class="themeItem__content__imgone">
             <image
@@ -259,6 +269,11 @@ export default {
       type: String,
       default: 'center',
     },
+    // 视频帖子显示
+    videoShow: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -276,6 +291,12 @@ export default {
       return time2MorningOrAfternoon(this.themeTime);
     },
   },
+  // onLoad() {
+  //   let player = TCPlayer('player-container-id', {
+  //     fileID: '5285890799710670616',
+  //     appID: '1400329073',
+  //   });
+  // },
   methods: {
     // 点击删除按钮
     deleteClick(evt) {
@@ -418,8 +439,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 50%;
+        max-height: 50%;
         // border-radius: 100%;
       }
     }
