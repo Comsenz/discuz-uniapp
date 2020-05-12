@@ -14,23 +14,21 @@
             <text>共有 {{ count }} 条记录</text>
           </view>
           <!-- 邀请列表 -->
-          <view class="invite-content" v-for="item in inviteList" :key="item.id">
-            <qui-cell :title="item.title" :brief="item.time" slot-left slot-right>
-              <template v-slot:left>
-                <image
-                  class="user-avatar"
-                  src="https://discuz.chat/static/images/noavatar.gif"
-                ></image>
-              </template>
-              <template v-slot:right>
-                <view class="nouse" @click="invalid(item._jv.id)">设为无效</view>
-                <view class="line"></view>
-                <view class="share" @click="share(item.code)">
-                  分享
-                  <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
-                </view>
-              </template>
-            </qui-cell>
+          <view class="invite-content">
+            <qui-cell-item
+              v-for="item in allInviteList"
+              :key="item._jv.id"
+              :title="item.title"
+              :brief="item.time"
+              slot-right
+            >
+              <view class="invite-content-invalid" @click="invalid(item._jv.id)">设为无效</view>
+              <view class="invite-content-line"></view>
+              <view class="invite-content-share" @click="share(item.code)">
+                分享
+                <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+              </view>
+            </qui-cell-item>
           </view>
           <!-- 邀请链接按钮 -->
           <view class="invite-button">
@@ -43,13 +41,20 @@
         <view v-if="current === 2" class="items">
           <view>已失效</view>
         </view>
+        <view v-if="current === 3" class="items">
+          <view>已过期</view>
+        </view>
       </view>
     </view>
     <!-- 邀请链接弹窗 -->
     <uni-popup ref="popup" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <view @click="generateUrl(item)" v-for="item in allInviteList" :key="item.id">
+          <view
+            @click="generateUrl(item.group_id)"
+            v-for="item in allInviteList"
+            :key="item._jv.id"
+          >
             <view class="popup-text">{{ item.title }}</view>
             <view class="popup-line"></view>
           </view>
@@ -63,30 +68,26 @@
 
 <script>
 // import { uniNavBar } from '@dcloudio/uni-ui';
-import quiCell from '@/components/qui-cell';
+// import quiCell from '@/components/qui-cell';
 import { timestamp2day } from '@/utils/time';
 
 export default {
   components: {
     // uniNavBar,
-    quiCell,
+    // quiCell,
   },
 
   data() {
     return {
       title: '邀请成员', // 页面标题
-      current: 0,
+      current: 0, // 当前标签页
       count: 3, // 邀请链接列表数量
       tabList: [
         { id: 1, title: '未使用' },
         { id: 2, title: '已使用' },
         { id: 3, title: '已失效' },
+        { id: 4, title: '已过期' },
       ], // 邀请链接类型列表
-      inviteUrlList: [
-        { id: 1, title: '合伙人邀请链接', type: 'partner' },
-        { id: 2, title: '嘉宾邀请链接', type: 'guest' },
-        { id: 3, title: '成员邀请链接', type: 'member' },
-      ], // 邀请链接列表
     };
   },
 
@@ -100,18 +101,81 @@ export default {
     allInviteList() {
       const list = [];
       const inviteList = this.$store.getters['jv/get']('invite');
+      const groupList = this.$store.getters['jv/get']('groups');
       console.log('会话列表接口的响应：', inviteList);
-      const keys = Object.keys(inviteList);
-      if (inviteList && keys.length > 0) {
-        for (let i = 0; i < keys.length; i += 1) {
-          const value = inviteList[keys[i]];
-          const day = timestamp2day(value.endtime);
-          value.time = `有效期剩余${day}天`;
-          list.push(value);
+      console.log('用户组接口的响应：', groupList);
+      const inviteListKeys = Object.keys(inviteList);
+      const groupListKeys = Object.keys(groupList);
+      if (inviteList && inviteListKeys.length > 0) {
+        for (let i = 0; i < inviteListKeys.length; i += 1) {
+          const inviteListValue = inviteList[inviteListKeys[i]];
+          const day = timestamp2day(inviteListValue.endtime);
+          inviteListValue.time = `有效期剩余${day}天`;
+          if (groupListKeys && groupListKeys.length > 0) {
+            for (let j = 0; j < groupListKeys.length; j += 1) {
+              const groupListValue = groupList[groupListKeys[j]];
+              if (inviteListValue.group_id.toString() === groupListValue._jv.id.toString()) {
+                inviteListValue.title = groupListValue.name;
+              }
+            }
+          }
+          list.push(inviteListValue);
         }
       }
       console.log('list', list);
       return list;
+    },
+
+    // 已失效列表
+    invalidList() {
+      console.log(
+        '已失效列表：',
+        this.allInviteList.filter(item => {
+          return item.status === 0;
+        }),
+      );
+      return this.allInviteList.filter(item => {
+        return item.status === 0;
+      });
+    },
+
+    // 未使用列表
+    noUseList() {
+      console.log(
+        '未使用列表：',
+        this.allInviteList.filter(item => {
+          return item.status === 1;
+        }),
+      );
+      return this.allInviteList.filter(item => {
+        return item.status === 1;
+      });
+    },
+
+    // 已使用列表
+    usedList() {
+      console.log(
+        '已使用列表：',
+        this.allInviteList.filter(item => {
+          return item.status === 2;
+        }),
+      );
+      return this.allInviteList.filter(item => {
+        return item.status === 2;
+      });
+    },
+
+    // 已过期列表
+    overdueList() {
+      console.log(
+        '已过期列表：',
+        this.allInviteList.filter(item => {
+          return item.status === 3;
+        }),
+      );
+      return this.allInviteList.filter(item => {
+        return item.status === 3;
+      });
     },
   },
 
@@ -157,32 +221,52 @@ export default {
       });
     },
 
-    // 生成邀请链接
+    // 生成邀请链接弹窗
     generate() {
-      console.log('生成邀请链接');
+      console.log('生成邀请链接弹窗');
       this.$refs.popup.open();
     },
 
     // 生成 合伙人/嘉宾/成员 邀请链接
-    generateUrl(item) {
-      console.log(`生成${item.title}邀请链接`);
-      const params = {
+    generateUrl(groupId) {
+      console.log('生成邀请链接：', groupId);
+      const adminParams = {
         _jv: {
-          type: 'dialog/message',
+          type: 'dialog/invite',
         },
-        dialog_id: this.dialogId,
-        message_text: this.msg,
+        type: 'invite',
+        group_id: groupId,
       };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          if (res) {
-            console.log('发送消息res：', res);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      const userParams = {
+        _jv: {
+          type: 'dialog/userInviteCode',
+        },
+      };
+      // 角色是管理员
+      if (groupId) {
+        this.$store
+          .dispatch('jv/post', adminParams)
+          .then(res => {
+            if (res) {
+              console.log('管理员生成邀请链接res：', res);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      } else {
+        // 角色不是管理员
+        this.$store
+          .dispatch('jv/post', userParams)
+          .then(res => {
+            if (res) {
+              console.log('生成邀请链接res：', res);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
 
     // 点击取消按钮
@@ -225,34 +309,42 @@ page {
   }
 
   &-content {
-    width: 710rpx;
-    height: 440rpx;
-    margin: 20rpx 20rpx 0;
+    padding: 0rpx 0rpx 20rpx 20rpx;
+    margin: 20rpx 20rpx 170rpx;
     background: --color(--qui-BG-2);
     border-radius: 6rpx;
-    box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
-  }
-
-  .nouse {
-    display: inline-block;
-    margin-right: 29rpx;
-  }
-
-  .line {
-    display: inline-block;
-    width: 0rpx;
-    height: 26rpx;
-    border: 2rpx solid --color(--qui-BG-ED);
     opacity: 1;
-  }
+    box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
 
-  .share {
-    display: inline-block;
-    margin: 0 20rpx 0 25rpx;
-  }
+    .cell-item {
+      height: 100rpx;
+    }
 
-  .qui-icon {
-    margin-left: 8rpx;
+    &.cell-item.border:last-child {
+      border: none;
+    }
+
+    &-invalid {
+      display: inline-block;
+      margin-right: 29rpx;
+    }
+
+    &-line {
+      display: inline-block;
+      width: 0rpx;
+      height: 26rpx;
+      border: 2rpx solid --color(--qui-BG-ED);
+      opacity: 1;
+    }
+
+    &-share {
+      display: inline-block;
+      margin: 0 20rpx 0 25rpx;
+
+      .qui-icon {
+        margin-left: 8rpx;
+      }
+    }
   }
 
   .invite-button {
