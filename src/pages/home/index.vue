@@ -64,6 +64,7 @@
         @change="toggleTab"
         is-scroll="isScroll"
         active-color="#1878F3"
+        :style="isTop == 1 ? 'position:fixed;background:#FFFFFF;z-index:9;top:0' : ''"
       ></u-tabs>
     </view>
     <scroll-view
@@ -81,7 +82,7 @@
           </view>
         </view>
       </view>
-
+      <!-- </view> -->
       <view class="main" v-if="jvStatus[threadsStatusId]">
         <qui-content
           v-for="(item, index) in threads"
@@ -112,9 +113,11 @@
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item.user._jv.id)"
         ></qui-content>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
+    <!-- </view> -->
+
     <qui-footer
       @click="footerOpen"
       :tabs="tabs"
@@ -261,11 +264,14 @@ export default {
             name: this.i18n.t('home.all'),
           },
         },
-        this.$store.getters['jv/get']('categories'),
+      this.$store.getters['jv/get']('categories'),
       );
       console.log(tmp);
       return tmp;
     },
+    // categories() {
+    // return this.$store.getters['jv/get']('categories');
+    // },
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
@@ -303,9 +309,9 @@ export default {
     const query = uni
       .createSelectorQuery()
       .in(this)
-      .select('.scroll-tab');
+      // .select('.scroll-tab');
     query
-      // .select('.scroll-tab')
+      .select('.scroll-tab')
       .boundingClientRect(data => {
         console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
@@ -315,7 +321,7 @@ export default {
   },
   onPageScroll(e) {
 
-    console.log(e);
+    // console.log(e);
 
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
@@ -339,6 +345,12 @@ export default {
       this.categoryId = index;
       this.loadThreadsSticky();
       this.loadThreads();
+    },
+    // 点击置顶跳转到详情页
+    stickyClick(id) {
+      uni.navigateTo({
+        url:`/pages/topic/index?id=${id}`
+      })
     },
     // 点击筛选下拉框里的按钮
     changeSelected(item, dataIndex, filterIndex) {
@@ -369,13 +381,13 @@ export default {
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-word',
+          icon: 'icon-poster',
           name: 'wx',
           id: 1,
         },
         {
           text: this.i18n.t('home.wxShare'),
-          icon: 'icon-img',
+          icon: 'icon-wx-friends',
           name: 'wx',
           id: 2,
         },
@@ -387,23 +399,14 @@ export default {
       uni.navigateTo({
         url: '/pages/share/site',
       });  
-      }else {
-        onShareAppMessage()
       }
     },
     // 取消按钮
     cancel() {
       this.$refs.popup.close();
-    },
-    cancel() {
       this.$refs.popupContent.close();
-    },
-    cancel() {
       this.$refs.popupHead.close();
     },
-    // cancel() {
-    //   this.$refs.popupHead.close();
-    // }
     // 筛选选中确定按钮
     confirm(e) {
       // 重置列表
@@ -503,12 +506,12 @@ export default {
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-word',
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
           text: this.i18n.t('home.wxShare'),
-          icon: 'icon-img',
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ];
@@ -614,11 +617,11 @@ export default {
         isLiked: isLiked === true ? false : true,
       };
       this.$store.dispatch('jv/patch', params).then(data => {
-        if (isLiked) {
-          data.likeCount = data.likeCount - 1;
-        } else {
-          data.likeCount = data.likeCount + 1;
-        }
+        // if (isLiked) {
+        //   data.likeCount = data.likeCount - 1;
+        // } else {
+        //   data.likeCount = data.likeCount + 1;
+        // }
       });
     },
 
@@ -696,8 +699,7 @@ export default {
   display: flex;
   width: 710rpx;
   height: 80rpx;
-  margin-bottom: 30rpx;
-  margin-left: 20rpx;
+  margin: 30rpx auto;
   font-size: $fg-f26;
   line-height: 80rpx;
   color: --color(--qui-FC-777);
@@ -754,7 +756,7 @@ export default {
 }
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  max-height: calc(100vh - 475rpx);
+  // max-height: calc(100vh - 475rpx);
 }
 
 </style>
