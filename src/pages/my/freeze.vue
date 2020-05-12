@@ -63,13 +63,10 @@ export default {
         'page[limit]': this.pageSize,
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
-        // eslint-disable-next-line no-underscore-dangle
         this.totalData = res._jv.json.meta.total;
-        const data = JSON.parse(JSON.stringify(res));
-        // eslint-disable-next-line no-underscore-dangle
-        delete data._jv;
-        this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-        this.freezelist = { ...data, ...this.freezelist };
+        delete res._jv;
+        this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
+        this.freezelist = { ...this.freezelist, ...res };
       });
     },
     // 下拉加载
