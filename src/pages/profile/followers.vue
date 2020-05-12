@@ -169,7 +169,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 .following {
   padding: 0 20rpx;
   font-size: 28rpx;

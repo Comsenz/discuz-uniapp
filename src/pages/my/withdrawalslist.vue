@@ -156,7 +156,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 page {
   background-color: #f9fafc;
 }

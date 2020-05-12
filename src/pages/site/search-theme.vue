@@ -117,9 +117,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
-page {
-  background-color: #f9fafc;
-}
 .search-item {
   padding-left: 40rpx;
   margin-bottom: 30rpx;
@@ -132,6 +129,7 @@ page {
   box-shadow: none;
 }
 /deep/ .themeCount .themeItem {
+  padding-right: 40rpx;
   padding-left: 0;
   margin: 0;
 }

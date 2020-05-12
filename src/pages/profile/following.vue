@@ -104,7 +104,6 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
-          console.log(res);
           this.totalData = res._jv.json.meta.total;
           delete res._jv;
           this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
@@ -181,7 +180,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 .following {
   padding: 0 20rpx;
   font-size: 28rpx;

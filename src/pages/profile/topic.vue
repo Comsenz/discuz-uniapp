@@ -187,7 +187,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" scope>
+<style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 /deep/ .themeItem {

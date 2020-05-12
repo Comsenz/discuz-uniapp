@@ -72,7 +72,7 @@ export default {
       date: currentDate,
       dataList: [],
       filterSelected: { label: '全部', value: '' }, // 筛选类型
-      type: ['注册', '打赏', '付费主题'],
+      type: ['注册', '打赏', '付费主题', '付费用户组'],
       filterList: [
         {
           title: '类型',
@@ -151,7 +151,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 page {
   background-color: #f9fafc;
 }

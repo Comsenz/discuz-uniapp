@@ -122,9 +122,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-page {
-  background-color: #f9fafc;
-}
 .search-item {
   padding-left: 40rpx;
   margin-bottom: 30rpx;
