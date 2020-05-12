@@ -290,9 +290,9 @@ export default {
   }
 
   &__con {
-    padding: 10rpx 40rpx 30rpx;
+    padding: 0rpx 40rpx 30rpx;
     font-weight: 400;
-    color: rgba(51, 51, 51, 1);
+    color: #333;
     opacity: 1;
   }
 }

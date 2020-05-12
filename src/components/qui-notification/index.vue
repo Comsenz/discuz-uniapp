@@ -115,7 +115,7 @@ export default {
       &__box {
         width: 100%;
         align-items: center;
-        margin: 20rpx 0 10rpx;
+        margin: 20rpx 0rpx 0rpx;
       }
 
       &__username {
