@@ -104,16 +104,13 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
           this.totalData = res._jv.json.meta.total;
-          const data = JSON.parse(JSON.stringify(res));
-          // eslint-disable-next-line no-underscore-dangle
-          delete data._jv;
-          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          delete res._jv;
+          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
           if (this.totalData === 0) {
             this.followingList = [];
           } else {
-            this.followingList = { ...this.followingList, ...data };
+            this.followingList = { ...this.followingList, ...res };
           }
         });
     },
@@ -165,7 +162,6 @@ export default {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
         // 如果是个人主页直接删除这条数据
-        // eslint-disable-next-line eqeqeq
         if (this.userId === '1') {
           const dataList = this.followingList;
           Object.getOwnPropertyNames(dataList).forEach(key => {
@@ -184,7 +180,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 .following {
   padding: 0 20rpx;
   font-size: 28rpx;

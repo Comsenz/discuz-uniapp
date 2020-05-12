@@ -149,14 +149,12 @@ page {
   left: 455rpx;
   width: 120rpx;
   height: 120rpx;
+  background: --color(--qui-BG-2);
+  border: none;
 }
 
 //公共搜索头样式
 .search {
-  .search-item,
-  .search-box {
-    background-color: #fff;
-  }
   /deep/ input .input-placeholder {
     font-size: $fg-f28;
     color: --color(--qui-FC-C6);

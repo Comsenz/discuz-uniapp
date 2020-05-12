@@ -11,12 +11,9 @@
           @input="searchInput"
           :value="searchValue"
         />
-        <view class="search-box__content-delete" @tap="clearSearch" v-if="searchValue">
+        <view class="search-box__content-delete" @click="clearSearch" v-if="searchValue">
           <qui-icon class="icon-close" name="icon-close" size="34" color="#fff"></qui-icon>
         </view>
-      </view>
-      <view class="search-box__cancel" v-if="searchValue" @tap="back">
-        <text>取消</text>
       </view>
     </view>
     <scroll-view
@@ -83,18 +80,14 @@ export default {
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
           this.totalData = res._jv.json.meta.total;
-          // eslint-disable-next-line no-underscore-dangle
           delete res._jv;
           this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...res, ...this.data };
+          this.data = { ...this.data, ...res };
         });
     },
     clearSearch() {
       this.searchValue = '';
       this.getThemeList('');
-    },
-    back() {
-      uni.navigateBack();
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
@@ -124,9 +117,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/reset.scss';
-page {
-  background-color: #f9fafc;
-}
 .search-item {
   padding-left: 40rpx;
   margin-bottom: 30rpx;
@@ -139,6 +129,7 @@ page {
   box-shadow: none;
 }
 /deep/ .themeCount .themeItem {
+  padding-right: 40rpx;
   padding-left: 0;
   margin: 0;
 }
