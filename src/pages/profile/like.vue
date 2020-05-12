@@ -11,7 +11,7 @@
       <qui-content
         v-for="(item, index) in data"
         :key="index"
-        :user-name="item.user.username"
+        :user-name="item.user.username + index"
         :theme-image="item.user.avatarUrl"
         :theme-btn="item.canHide"
         :theme-reply-btn="item.canReply"
@@ -30,7 +30,7 @@
             item.firstPost._jv.id,
             item.firstPost.canLike,
             item.firstPost.isLiked,
-            item.firstPost.likeCount,
+            index,
           )
         "
         @commentClick="commentClick(item._jv.id)"
@@ -154,7 +154,7 @@ export default {
       });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
+    handleIsGreat(id, canLike, isLiked, index) {
       if (!canLike) {
         console.log('没有点赞权限');
       }
@@ -165,7 +165,14 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(() => {
+        if (isLiked) {
+          const data = JSON.parse(JSON.stringify(this.data));
+          delete data[index];
+          this.data = data;
+          this.$emit('changeFollow', { userId: this.userId });
+        }
+      });
     },
     // 下拉加载
     pullDown() {
