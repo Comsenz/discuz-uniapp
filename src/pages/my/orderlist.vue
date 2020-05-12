@@ -72,7 +72,7 @@ export default {
       date: currentDate,
       dataList: [],
       filterSelected: { label: '全部', value: '' }, // 筛选类型
-      type: ['注册', '打赏', '付费主题'],
+      type: ['注册', '打赏', '付费主题', '付费用户组'],
       filterList: [
         {
           title: '类型',
@@ -127,13 +127,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['orders', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
           this.totalData = res._jv.json.meta.total;
-          const data = JSON.parse(JSON.stringify(res));
-          // eslint-disable-next-line no-underscore-dangle
-          delete data._jv;
-          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          this.dataList = { ...data, ...this.dataList };
+          delete res._jv;
+          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = { ...this.dataList, ...res };
         });
     },
     // 下拉加载
@@ -154,7 +151,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 page {
   background-color: #f9fafc;
 }

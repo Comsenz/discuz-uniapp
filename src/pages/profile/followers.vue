@@ -105,21 +105,16 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
           this.totalData = res._jv.json.meta.total;
-          const data = JSON.parse(JSON.stringify(res));
-          // eslint-disable-next-line no-underscore-dangle
-          delete data._jv;
-          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
+          delete res._jv;
+          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
           if (this.totalData === 0) {
             this.followerList = [];
           } else {
-            this.followerList = { ...this.followerList, ...data };
+            this.followerList = { ...this.followerList, ...res };
           }
         });
     },
-    // 添加关注
-    // 取消关注
     // 点击头像到个人主页
     toProfile(userId) {
       uni.navigateTo({
@@ -174,7 +169,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
 .following {
   padding: 0 20rpx;
   font-size: 28rpx;

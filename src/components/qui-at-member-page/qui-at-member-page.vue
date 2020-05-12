@@ -24,7 +24,11 @@
             <qui-avatar-cell
               :mark="item.toUser.id"
               :title="item.toUser.username"
-              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '@/assets/noavatar.gif'"
+              :icon="
+                item.toUser.avatarUrl
+                  ? item.toUser.avatarUrl
+                  : 'https://discuz.chat/static/images/noavatar.gif'
+              "
               :value="getGroups(item.toUser.groups)"
               :label="item.toUser.label"
             >
@@ -37,7 +41,9 @@
             <qui-avatar-cell
               :mark="item.id"
               :title="item.username"
-              :icon="item.avatarUrl ? item.avatarUrl : '@/assets/noavatar.gif'"
+              :icon="
+                item.avatarUrl ? item.avatarUrl : 'https://discuz.chat/static/images/noavatar.gif'
+              "
               :value="getGroups(item.groups)"
               :label="item.label"
             >
@@ -89,13 +95,18 @@ export default {
     },
     getGroups() {
       const that = this;
+      let name = '';
       return data => {
-        Object.keys(data).forEach((item, index) => {
-          if (item[index]) {
-            return item[index].name;
-          }
-          return that.i18n.t('discuzq.role.noRole');
-        });
+        if (data) {
+          Object.keys(data).forEach(item => {
+            if (data[item]) {
+              name = data[item].name;
+            } else {
+              name = that.i18n.t('discuzq.role.noRole');
+            }
+          });
+        }
+        return name;
       };
     },
   },
@@ -124,8 +135,11 @@ export default {
         this.pageNum = 1;
       }
 
+      this.loadingText = 'discuzq.list.loading';
+
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
+        this.allSiteUser = {};
         this.getSiteMember(1);
       }, 250);
     },
@@ -153,11 +167,10 @@ export default {
       this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
-        if (Object.keys(res) === 0) {
+        if (Object.keys(res).nv_length - 1 === 0) {
           this.loadingText = 'discuzq.list.noData';
-        }
-        if (res._jv.json.meta.total <= 20) {
-          this.loadingText = 'discuzq.list.noData';
+        } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
+          this.loadingText = 'discuzq.list.noMoreData';
         }
       });
     },
@@ -173,13 +186,12 @@ export default {
 
         const data = JSON.parse(JSON.stringify(res));
         delete data._jv;
-        this.allSiteUser = data;
+        this.allSiteUser = { ...data, ...this.allSiteUser };
 
-        if (Object.keys(res) === 0) {
+        if (Object.keys(res).nv_length - 1 === 0) {
           this.loadingText = 'discuzq.list.noData';
-        }
-        if (res._jv.json.meta.total <= 20) {
-          this.loadingText = 'discuzq.list.noData';
+        } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
+          this.loadingText = 'discuzq.list.noMoreData';
         }
       });
     },

@@ -3,16 +3,18 @@
     <view class="aogph-tab">
       <view class="aogph-tab-ao">
         <view class="aogph-tab-ao-my">
-          我的签名
+          {{ i18n.t('modify.mysignture') }}
         </view>
-        <view class="aogph-tab-ao-test">还能输入{{ num - wordnumber }}个字</view>
+        <view class="aogph-tab-ao-test">
+          {{ i18n.t('modify.canalsoinput') }}{{ num - wordnumber }}{{ i18n.t('modify.wordnumber') }}
+        </view>
       </view>
       <view class="aogph-tab-input">
         <textarea
           type="text"
           class="aogph-tab-input-in"
           maxlength="450"
-          placeholder="请输入签名内容"
+          :placeholder="i18n.t('modify.signturecontent')"
           placeholder-style="color:rgba(181,181,181,1)"
           v-model="content"
           @input="fun"
@@ -21,7 +23,7 @@
       </view>
       <view class="aogph-tab-button">
         <qui-button type="primary" size="large" @click="btnbutton">
-          提交
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -79,7 +81,7 @@ export default {
       patchname.then(res => {
         if (res) {
           uni.showToast({
-            title: '修改签名成功',
+            title: this.i18n.t('modify.modificationsucc'),
             duration: 2000,
           });
         }

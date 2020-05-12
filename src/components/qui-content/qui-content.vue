@@ -47,11 +47,11 @@
         </view>
       </view>
 
-      <view class="themeItem__content" @click="contentClick">
+      <view class="themeItem__content" @click="contentClick()">
         <view class="themeItem__content__text">
           <rich-text :nodes="themeContent"></rich-text>
         </view>
-        <view v-if="Object.keys(imagesList).length == 1">
+        <view v-if="Object.keys(imagesList || {}).length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -63,7 +63,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length == 2">
+        <view v-if="Object.keys(imagesList || {}).length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -75,7 +75,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length >= 3">
+        <view v-if="Object.keys(imagesList || {}).length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -87,7 +87,7 @@
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="Object.keys(imagesList).length % 3 != 0"
+              v-if="Object.keys(imagesList || {}).length % 3 != 0"
             ></image>
           </view>
         </view>
@@ -259,6 +259,11 @@ export default {
       type: String,
       default: 'center',
     },
+    // 视频帖子显示
+    videoShow: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -276,6 +281,12 @@ export default {
       return time2MorningOrAfternoon(this.themeTime);
     },
   },
+  // onLoad() {
+  //   let player = TCPlayer('player-container-id', {
+  //     fileID: '5285890799710670616',
+  //     appID: '1400329073',
+  //   });
+  // },
   methods: {
     // 点击删除按钮
     deleteClick(evt) {
@@ -418,8 +429,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 50%;
+        max-height: 50%;
         // border-radius: 100%;
       }
     }

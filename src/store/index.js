@@ -8,6 +8,7 @@ import theme from '@/store/modules/theme';
 import atMember from '@/store/modules/atMember';
 import session from '@/store/modules/session';
 import forum from '@/store/modules/forum';
+import pay from '@/store/modules/pay';
 
 Vue.use(Vuex);
 
@@ -21,6 +22,7 @@ const store = new Vuex.Store({
     atMember,
     session,
     forum,
+    pay,
   },
   state: {},
   mutations: {},

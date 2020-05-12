@@ -95,6 +95,24 @@
         "navigationBarTitleText": "圈子信息"
       }
     },
+    {
+      "path": "pages/site/search",
+      "style": {
+        "navigationBarTitleText": "搜索"
+      }
+    },
+    {
+      "path": "pages/site/search-theme",
+      "style": {
+        "navigationBarTitleText": "主题搜索"
+      }
+    },
+    {
+      "path": "pages/site/search-user",
+      "style": {
+        "navigationBarTitleText": "用户搜索"
+      }
+    },
     // 消息页面
     {
       "path": "pages/notice/index", // 消息

@@ -2,11 +2,11 @@
   <view class="authen">
     <view class="authen-input">
       <view class="authen-tit">
-        请输入支付密码，以验证身份
+        {{ i18n.t('modify.authentication') }}
       </view>
       <qui-input-code @getdata="btndata" :title="sun" :text="test" :number="types"></qui-input-code>
       <view class="authen-forget" @click="forgetpay">
-        忘记旧密码?
+        {{ i18n.t('modify.forgetmanypassword') }}
       </view>
     </view>
   </view>
@@ -29,8 +29,6 @@ export default {
       inputpas: '',
       repeatpas: '',
       icon: 'none',
-      authensucceeded: '身份验证成功',
-      authenfailed: '身份验证失败',
     };
   },
   onLoad(arr) {
@@ -56,7 +54,7 @@ export default {
           /* eslint-disable */
           if (res._jv.json.data.id) {
             uni.showToast({
-              title: this.authensucceeded,
+              title: this.i18n.t('modify.authensucceeded'),
               duration: 2000,
             });
           }
@@ -64,7 +62,7 @@ export default {
         .catch(err => {
           uni.showToast({
             icon: this.icon,
-            title: this.authenfailed,
+            title: this.i18n.t('modify.authenfailed'),
             duration: 2000,
           });
           if (err.statusCode === 422) {
@@ -73,7 +71,7 @@ export default {
             this.test = errors[0].detail[0];
           } else if(err.statusCode === 500) {
             this.sun = true;
-            this.test = '密码输入错误';
+            this.test = this.i18n.t('modify.passwordinputerro');
           }
         });
     },

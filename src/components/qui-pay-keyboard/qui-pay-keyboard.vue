@@ -65,9 +65,8 @@ export default {
     };
   },
   computed: {
-    // 语言包
     p() {
-      return this.i18n.p('pay');
+      return this.i18n.t('pay');
     },
   },
   methods: {
@@ -76,7 +75,8 @@ export default {
         this.password += key;
         if (this.password.length === 6) {
           console.log(this.password);
-          uni.showToast({ title: '输入完成' });
+          this.$emit('onInput', this.password);
+          // uni.showToast({ title: '输入完成' });
         }
       }
     },
@@ -105,7 +105,7 @@ input {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 9;
   width: 100vw;
   height: 100vh;
   background: rgba(102, 102, 102, 0.3);
@@ -117,7 +117,7 @@ input {
   position: fixed;
   top: 35%;
   left: 50%;
-  z-index: 2;
+  z-index: 9;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -142,7 +142,7 @@ input {
   visibility: hidden;
 }
 .visible {
-  z-index: 2;
+  z-index: 8;
   opacity: 0;
   visibility: hidden;
 }
@@ -241,7 +241,7 @@ image {
   position: fixed;
   bottom: 0;
   left: 0;
-  z-index: 2;
+  z-index: 9;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
