@@ -117,8 +117,6 @@ export default {
           }
         });
     },
-    // 添加关注
-    // 取消关注
     // 点击头像到个人主页
     toProfile(userId) {
       uni.navigateTo({
@@ -167,7 +165,6 @@ export default {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
         // 如果是个人主页直接删除这条数据
-        // eslint-disable-next-line eqeqeq
         if (this.userId === '1') {
           const dataList = this.followingList;
           Object.getOwnPropertyNames(dataList).forEach(key => {

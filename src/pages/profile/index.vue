@@ -11,7 +11,7 @@
           <qui-cell-item
             :title="userInfo.username"
             slot-right
-            :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
+            :brief="userInfo.groupsName"
             :border="false"
           >
             <view v-if="userId != '1'">
@@ -103,7 +103,9 @@ export default {
   },
   computed: {
     userInfo() {
-      return this.$store.getters['jv/get'](`users/${this.userId}`);
+      const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
+      userInfo.groupsName = userInfo.groups ? Object.values(userInfo.groups)[0].name : '';
+      return userInfo;
     },
   },
   onLoad(params) {

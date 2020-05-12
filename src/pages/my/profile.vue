@@ -57,6 +57,7 @@ export default {
   },
   computed: {
     profile() {
+      console.log(this.$store.getters['jv/get']('users/1'));
       return this.$store.getters['jv/get']('users/1');
     },
   },

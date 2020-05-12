@@ -153,3 +153,52 @@ page {
   border: none;
 }
 
+//公共搜索头样式
+.search {
+  /deep/ input .input-placeholder {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-C6);
+  }
+  .icon-content-search{
+    position: absolute;
+    top: 18rpx;
+    left: 20rpx;
+  }
+  .icon-close {
+    position: absolute;
+    top: -2rpx;
+    left: 1rpx;
+  }
+  .search-box {
+    display: flex;
+    padding: 30rpx 40rpx 0;
+  }
+  .search-box__content {
+    position: relative;
+    flex: 1 1 0%;
+  }
+  .search-box__cancel {
+    padding-left: 24rpx;
+    font-size: $fg-f28;
+    line-height: 80rpx;
+    justify-content: flex-end;
+    color: #ccc;
+  }
+  .search-box__content-input {
+    height: 80rpx;
+    padding: 0 60rpx;
+    line-height: 80rpx;
+    background: #f6f6f6;
+    border: none;
+    border-radius: 10rpx;
+  }
+  .search-box__content-delete {
+    position: absolute;
+    top: 18rpx;
+    right: 20rpx;
+    width: 36rpx;
+    height: 36rpx;
+    background: #ccc;
+    border-radius: 50%;
+  }
+}

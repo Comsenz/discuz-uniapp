@@ -51,17 +51,7 @@
         <view class="themeItem__content__text">
           <rich-text :nodes="themeContent"></rich-text>
         </view>
-        <!-- <video
-          id="player-video"
-          width="414"
-          height="270"
-          preload="auto"
-          playsinline
-          webkit-playsinline
-          x5-playsinline
-          ref="playerVideo"
-        ></video> -->
-        <view v-if="Object.keys(imagesList).length == 1">
+        <view v-if="Object.keys(imagesList || {}).length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -73,7 +63,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length == 2">
+        <view v-if="Object.keys(imagesList || {}).length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -85,7 +75,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length >= 3">
+        <view v-if="Object.keys(imagesList || {}).length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -97,7 +87,7 @@
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="Object.keys(imagesList).length % 3 != 0"
+              v-if="Object.keys(imagesList || {}).length % 3 != 0"
             ></image>
           </view>
         </view>

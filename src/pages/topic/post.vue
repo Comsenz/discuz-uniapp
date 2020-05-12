@@ -51,13 +51,49 @@
       @change="uploadChange"
       @clear="uploadClear"
     ></qui-uploader>
+    <view class="post-box__video" v-if="type === 2">
+      <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
+        <video
+          id="video"
+          v-if="type === 2"
+          class="post-box__video__play__video"
+          :src="item.path"
+          :controls="controlsStatus"
+          @fullscreenchange="fullscreenchange"
+        >
+          <!--<cover-view class="cover-video&#45;&#45;del" v-if="fullscreenStatus">
+            <cover-view>
+              <qui-icon name="icon-folding-r" size="40" color="#fff" @click="videoBack"></qui-icon>
+              <cover-view style="color: #fff;">{{ videoName }}</cover-view>
+            </cover-view>
+            <qui-icon name="icon-delete" color="#fff" size="40" @click="videoDel"></qui-icon>
+          </cover-view>-->
+        </video>
+        <view class="post-box__video__play__icon-del">
+          <qui-icon name="icon-close" class="" color="#fff" size="40" @click="videoDel"></qui-icon>
+        </view>
+        <view class="controls-play-icon" @click.stop="playVideo">
+          <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
+        </view>
+      </view>
+      <view class="post-box__video__add" @click="uploadVideo" v-if="videoBeforeList.length < 1">
+        <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
+      </view>
+    </view>
     <qui-cell-item
       :class="price > 0 ? 'cell-item-right-text' : ''"
       :title="i18n.t('discuzq.post.paymentAmount')"
       :addon="showPrice"
       arrow
       v-if="type !== 0"
-      @click="cellClick"
+      @click="cellClick('pay')"
+    ></qui-cell-item>
+    <qui-cell-item
+      :title="i18n.t('discuzq.post.freeWordCount')"
+      :addon="`${word}字`"
+      v-if="price > 0"
+      arrow
+      @click="cellClick('word')"
     ></qui-cell-item>
     <view class="post-box__ft">
       <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
@@ -79,14 +115,31 @@
     <uni-popup ref="popupBtm" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <text class="popup-title">{{ i18n.t('discuzq.post.selectToViewPaymentAmount') }}</text>
-          <view class="popup-content-btn">
+          <text class="popup-title">
+            {{
+              setType === 'pay'
+                ? i18n.t('discuzq.post.selectToViewPaymentAmount')
+                : i18n.t('discuzq.post.selectToViewFreeWordCount')
+            }}
+          </text>
+          <view class="popup-content-btn" v-if="setType === 'pay'">
             <qui-button
               v-for="(item, index) in payNum"
               :key="index"
               :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
               plain
               @click="moneyClick(index)"
+            >
+              {{ item.name }}
+            </qui-button>
+          </view>
+          <view class="popup-content-btn" v-if="setType === 'word'">
+            <qui-button
+              v-for="(item, index) in wordCount"
+              :key="index"
+              :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
+              plain
+              @click="wordClick(index)"
             >
               {{ item.name }}
             </qui-button>
@@ -99,13 +152,34 @@
     <uni-popup ref="popup" type="center">
       <view class="popup-dialog">
         <view class="popup-dialog__top">
-          <text>{{ i18n.t('discuzq.post.enterToViewPaymentAmount') }}</text>
+          <text>
+            {{
+              setType === 'pay'
+                ? i18n.t('discuzq.post.enterToViewPaymentAmount')
+                : i18n.t('discuzq.post.enterTheWordCount')
+            }}
+          </text>
         </view>
         <view class="popup-dialog__cont">
-          <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+          <qui-icon
+            class="popup-dialog__cont-rmb"
+            name="icon-rmb"
+            size="40"
+            v-if="setType === 'pay'"
+          ></qui-icon>
+          <text class="popup-dialog__cont-rmb" v-else>字</text>
           <input
             class="popup-dialog__cont-input"
+            v-if="setType === 'pay'"
             v-model="inputPrice"
+            type="digit"
+            placeholder="0.0"
+            focus
+          />
+          <input
+            class="popup-dialog__cont-input"
+            v-else
+            v-model="inputWord"
             type="digit"
             placeholder="0.0"
             focus
@@ -119,12 +193,13 @@
         </view>
       </view>
     </uni-popup>
-    <view>{{ payNum[0].name }}</view>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import VodUploader from '../../common/cos-wx-sdk-v5.1';
 
 export default {
   name: 'Post',
@@ -136,6 +211,7 @@ export default {
       title: '',
       price: 0,
       inputPrice: 0.0,
+      inputWord: 0,
       operating: '',
       emojiShow: false,
       header: {},
@@ -186,10 +262,50 @@ export default {
       ],
       uploadFile: [],
       cursor: 0,
+      wordCount: [
+        {
+          name: '5字',
+          num: 5,
+        },
+        {
+          name: '10字',
+          num: 10,
+        },
+        {
+          name: '15字',
+          num: 15,
+        },
+        {
+          name: '20字',
+          num: 20,
+        },
+        {
+          name: '25字',
+          num: 25,
+        },
+        {
+          name: this.i18n.t('discuzq.post.customize'),
+          num: 0,
+        },
+      ],
+      wordCountCheck: [
+        {
+          name: '5字',
+          num: 5,
+        },
+      ],
+      word: 5,
+      setType: 'pay',
+      controlsStatus: false,
+      videoBeforeList: [],
+      fullscreenStatus: false,
+      videoName: '',
+      percent: 0,
+      fileId: '',
     };
   },
-  provide: {
-    popup: 'popup',
+  onReady() {
+    this.videoContext = uni.createVideoContext('video');
   },
   computed: {
     ...mapState({
@@ -213,25 +329,111 @@ export default {
     },
   },
   methods: {
+    // 文章类型（0:文字  1:帖子  2:视频  3:图片）
+    // video uploader
+
+    // video
+    videoDel() {
+      this.videoBeforeList = [];
+    },
+    playVideo() {
+      this.controlsStatus = true;
+      this.videoContext.play();
+      this.videoContext.requestFullScreen();
+    },
+    fullscreenchange(e) {
+      this.fullscreenStatus = e.detail.fullScreen;
+      if (!e.detail.fullScreen) {
+        this.controlsStatus = false;
+        this.videoContext.pause();
+      }
+    },
+    uploadVideo() {
+      const _this = this;
+      uni.chooseVideo({
+        count: 1,
+        compressed: false,
+        sourceType: ['camera', 'album'],
+        success(res) {
+          _this.videoName = res.name ? res.name : _this.i18n.t('discuzq.post.fromWeChatApplet');
+          _this.videoBeforeList.push({
+            path: res.tempFilePath,
+          });
+
+          VodUploader.start({
+            mediaFile: res,
+            getSignature: _this.getSignature,
+
+            mediaName: res.name,
+            success(result) {
+              console.log('success');
+              console.log(result);
+            },
+            error(result) {
+              console.log('error');
+              console.log(result);
+              uni.showModal({
+                title: '上传失败',
+                content: JSON.stringify(result),
+                showCancel: false,
+              });
+            },
+            progress(result) {
+              console.log('progress');
+              console.log(result);
+              _this.percent = result.percent;
+            },
+            finish(result) {
+              _this.fileId = result.fileId;
+              _this.postVideo(result.fileId);
+              uni.showModal({
+                title: '上传成功',
+                content: '视频上传成功！',
+                showCancel: false,
+              });
+            },
+          });
+        },
+      });
+    },
+
+    wordClick(index) {
+      this.wordCountCheck = [];
+      this.wordCountCheck.push(this.wordCount[index]);
+
+      if (this.wordCountCheck[0].name === this.i18n.t('discuzq.post.customize')) {
+        this.$refs.popupBtm.close();
+
+        this.$nextTick(() => {
+          this.$refs.popup.open();
+        });
+      } else {
+        this.word = this.wordCount[index].num;
+        this.$refs.popupBtm.close();
+      }
+    },
     contBlur(e) {
-      console.log(e.detail.cursor);
       this.cursor = e.detail.cursor;
     },
     diaLogClose() {
       this.$refs.popup.close();
     },
     diaLogOk() {
-      this.price = this.inputPrice;
+      if (this.setType === 'pay') {
+        this.price = this.inputPrice;
+      } else {
+        this.word = this.inputWord;
+      }
+
       this.$refs.popup.close();
     },
 
     moneyClick(index) {
+      this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
 
       if (this.payNumCheck[0].name === '自定义') {
-        console.log('自定义');
-        // this.popupType = 'dialog';
         this.$refs.popupBtm.close();
 
         this.$nextTick(() => {
@@ -242,7 +444,8 @@ export default {
         this.$refs.popupBtm.close();
       }
     },
-    cellClick() {
+    cellClick(type) {
+      this.setType = type;
       this.$refs.popupBtm.open();
     },
     cancel() {
@@ -281,11 +484,48 @@ export default {
       } */
     },
     postClick() {
-      this.postThread();
+      let status = true;
+      if (this.textAreaValue.length < 1) {
+        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
+        status = false;
+      } else {
+        switch (this.type) {
+          case 2:
+            if (this.videoBeforeList.length < 1) {
+              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.videoCannotBeEmpty') });
+              status = false;
+            } else if (this.percent !== 1) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+            break;
+          case 3:
+            if (this.uploadFile.length < 1) {
+              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.imageCannotBeEmpty') });
+              status = false;
+            } else {
+              status = true;
+            }
+            break;
+          default:
+            console.log('帖子类型不匹配');
+        }
+      }
 
-      /* uni.navigateTo({
-        url: `/pages/topic/index?id=${res.data.data.id}`,
-      }); */
+      if (status) {
+        this.postThread().then(res => {
+          console.log(res._jv.json.data.id);
+          if (res._jv.json.data.id) {
+            uni.navigateTo({
+              url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+            });
+          }
+        });
+      }
     },
 
     // 接口请求
@@ -312,6 +552,8 @@ export default {
         },
         content: this.textAreaValue,
         type: this.type,
+        price: this.price,
+        free_words: this.word,
       };
 
       if (this.type === 3) {
@@ -326,9 +568,19 @@ export default {
         });
       }
 
-      this.$store.dispatch('jv/post', params).catch(err => {
-        console.log(err);
-      });
+      if (this.type === 2) {
+        params.file_id = this.fileId;
+        params.file_name = this.videoName;
+      }
+
+      return this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          return res;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     delAttachments(id) {
       const params = {
@@ -345,6 +597,24 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    getSignature(callback) {
+      this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
+        if (res.signature) {
+          callback(res.signature);
+        } else {
+          return this.i18n.t('discuzq.post.failedToObtainSignature');
+        }
+      });
+    },
+    postVideo(fileId) {
+      const params = {
+        _jv: {
+          type: 'thread/video',
+        },
+        file_id: fileId,
+      };
+      this.$store.dispatch('jv/post', params);
     },
   },
   onLoad(option) {
@@ -406,6 +676,66 @@ export default {
     border-radius: 10rpx;
     box-sizing: border-box;
   }
+
+  &__video {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 160rpx;
+    padding: 30rpx 0;
+
+    &__play {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 160rpx;
+      height: 160rpx;
+      margin-right: 13rpx;
+
+      &__video {
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        border: 1px solid #ededed;
+        border-radius: 5rpx;
+      }
+      &__icon-del {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        z-index: 99;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50rpx;
+        height: 50rpx;
+        background-color: #dd524d;
+        border-radius: 50px;
+      }
+      .controls-play-icon {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(1, 1, 1, 0.5);
+      }
+    }
+
+    &__add {
+      width: 160rpx;
+      height: 160rpx;
+      line-height: 160rpx;
+      text-align: center;
+      background-color: #f7f7f7;
+      border: 1px solid #ededed;
+      border-radius: 5rpx;
+    }
+  }
+
   &__ft {
     &-tit {
       display: block;
@@ -491,6 +821,9 @@ export default {
     color: --color(--qui-RED);
   }
 }
+/deep/ .cell-item__body__content-title {
+  color: --color(--qui-FC-777);
+}
 
 .popup-dialog {
   width: 670rpx;
@@ -548,4 +881,15 @@ export default {
     }
   }
 }
+
+/deep/ .uni-video-cover {
+  display: none;
+}
+
+/* /deep/ .uni-video-cover-play-button {
+  display: none;
+}
+/deep/ .uni-video-cover-duration {
+  display: none;
+} */
 </style>

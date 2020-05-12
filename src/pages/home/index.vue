@@ -1,5 +1,5 @@
 <template>
-  <view :class="'home ' + scrolled">
+  <qui-page :class="'home ' + scrolled">
     <qui-header
       :head-img="forums.set_site.site_logo"
       :background-head-full-img="forums.set_site.site_background_image"
@@ -67,31 +67,23 @@
         :style="isTop == 1 ? 'position:fixed;background:#FFFFFF;z-index:9;top:0' : ''"
       ></u-tabs>
     </view>
-
-    <view class="sticky">
-      <view
-        class="sticky__isSticky"
-        v-for="(item, index) in sticky"
-        :key="index"
-        @click="stickyClick(item._jv.id)"
-      >
-        <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
-        <view class="sticky__isSticky__count">
-          {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      show-scrollbar="false"
+      class="scroll-y"
+      @scroll="scroll"
+    >
+      <view class="sticky">
+        <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
+          <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
+          <view class="sticky__isSticky__count">
+            {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
+          </view>
         </view>
       </view>
-    </view>
-
-    <view class="main">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        @scrolltoupper="refresh"
-        show-scrollbar="false"
-        class="scroll-y"
-        @scroll="scroll"
-      >
+      <!-- </view> -->
+      <view class="main" v-if="jvStatus[threadsStatusId]">
         <qui-content
           v-for="(item, index) in threads"
           :key="index"
@@ -122,8 +114,9 @@
           @headClick="headClick(item.user._jv.id)"
         ></qui-content>
         <qui-load-more :status="loadingType"></qui-load-more>
-      </scroll-view>
-    </view>
+      </view>
+    </scroll-view>
+    <!-- </view> -->
 
     <qui-footer
       @click="footerOpen"
@@ -178,7 +171,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -257,11 +250,12 @@ export default {
         },
       ],
       postImg: '../assets.publish.svg',
+      threadsStatusId: 0
     };
   },
   computed: {
     categories() {
-      return Object.assign(
+      const tmp = Object.assign(
         {
           0: {
             _jv: {
@@ -272,6 +266,8 @@ export default {
         },
       this.$store.getters['jv/get']('categories'),
       );
+      console.log(tmp);
+      return tmp;
     },
     // categories() {
     // return this.$store.getters['jv/get']('categories');
@@ -324,6 +320,9 @@ export default {
       .exec();
   },
   onPageScroll(e) {
+
+    // console.log(e);
+
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
     } else {
@@ -523,11 +522,13 @@ export default {
       uni.navigateTo({
         url: '/pages/share/site',
       });
-      } 
+      }
+      
     },
     // 首页导航栏分类列表数据
     loadCategories() {
       this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+        console.log(data, '------');
         delete data._jv;
         const categoryFilterList = [
           {
@@ -566,9 +567,9 @@ export default {
     },
     // 首页内容部分数据请求
     loadThreads() {
-      if (this.isResetList) {
-        this.threads = {};
-      }
+      // if (this.isResetList) {
+      //   this.threads = {};
+      // }
       const params = {
         'filter[isSticky]': 'no',
         'filter[isDeleted]': 'no',
@@ -590,17 +591,18 @@ export default {
         params['filter[type]'] = this.threadType;
       }
       params['filter[fromUserId]'] = this.threadFollow;
-      this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
+
+      const threadsAction = status.run(() => this.$store.dispatch('jv/get', ['threads', { params }]));
+
+      this.threadsStatusId = threadsAction._statusID;
+
+      threadsAction.then(res => {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        if (this.isResetList) {
-          this.threads = res;
-        } else {
-          this.threads = { ...res, ...this.threads };
-        }
-        this.isResetList = false;
-      });
+        this.threads = Object.assign({}, this.threads, res);;
+      })
+
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, likeCount) {
@@ -651,11 +653,6 @@ export default {
       } else {
         this.loadingType = 'nomore';
       }
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.threads = [];
-      this.loadThreads();
     },
   },
 };
