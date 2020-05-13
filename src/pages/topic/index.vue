@@ -246,8 +246,8 @@
 
 <script>
 /* eslint-disable */
-import { status, utils } from 'jsonapi-vuex';
-import lodash from 'lodash';
+import { status, utils } from '@/library/jsonapi-vuex/index';
+import {isEmpty} from 'lodash';
 
 export default {
   data() {
@@ -439,18 +439,18 @@ export default {
         }
         this.isLiked = data.firstPost.isLiked;
         this.topicStatus = data.isApproved;
-        // console.log(lodash.isEmpty(data.paidUsers));
-        if (lodash.isEmpty(data.paidUsers)) {
+        // console.log(isEmpty(data.paidUsers));
+        if (isEmpty(data.paidUsers)) {
           this.paidStatus = false;
         } else {
           this.paidStatus = true;
         }
-        if (lodash.isEmpty(data.rewardedUsers)) {
+        if (isEmpty(data.rewardedUsers)) {
           this.rewardStatus = false;
         } else {
           this.rewardStatus = true;
         }
-        if (lodash.isEmpty(data.firstPost.likedUsers)) {
+        if (isEmpty(data.firstPost.likedUsers)) {
           this.likedStatus = false;
         } else {
           this.likedStatus = true;
