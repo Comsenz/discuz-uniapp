@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="topic-page">
+  <view class="topic-page">
     <uni-popup ref="popup" type="bottom">
       <qui-drawer :bottom-data="bottomData"></qui-drawer>
     </uni-popup>
@@ -60,7 +60,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </qui-page>
+  </view>
 </template>
 
 <script>
@@ -136,9 +136,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
+          console.log(res);
           this.totalData = res._jv.json.meta.threadCount;
           delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           this.data = { ...this.data, ...res };
         });
     },
@@ -185,9 +186,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-@import '@/styles/base/variable/global.scss';
-@import '@/styles/base/theme/fn.scss';
+<style lang="scss" scoped>
 /deep/ .themeItem {
   margin-right: 0;
   margin-left: 0;

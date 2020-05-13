@@ -1,7 +1,10 @@
 <template>
   <qui-page class="favorite">
     <view class="favorite-head">
-      <qui-cell-item :title="totalData + '条收藏'" :border="false"></qui-cell-item>
+      <qui-cell-item
+        :title="totalData + i18n.t('profile.item') + i18n.t('profile.collection')"
+        :border="false"
+      ></qui-cell-item>
     </view>
     <view class="favorite-content">
       <scroll-view
@@ -169,7 +172,6 @@ export default {
       this.$store.dispatch('jv/patch', params);
     },
     // 删除收藏
-
     itemDelete(id, isFavorite) {
       const params = {
         _jv: {
@@ -211,15 +213,12 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-page {
-  background-color: #f9fafc;
-}
 .favorite-head {
   padding-top: 40rpx;
   padding-left: 40rpx;
   margin-bottom: 30rpx;
   background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .favorite-head /deep/ .cell-item__body {
   height: 78rpx;

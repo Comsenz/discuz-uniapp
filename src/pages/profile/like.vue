@@ -1,5 +1,5 @@
 <template>
-  <qui-page :class="'like-page ' + scrolled">
+  <view class="like-page">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -57,7 +57,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </qui-page>
+  </view>
 </template>
 
 <script>
@@ -81,6 +81,7 @@ export default {
       totalData: 0, // 总数
       pageSize: 10,
       pageNum: 1, // 当前页数
+      currentLoginId: uni.getStorageSync('user_id'),
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -170,7 +171,7 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params).then(() => {
-        if (isLiked) {
+        if (isLiked && this.currentLoginId === this.userId) {
           const data = JSON.parse(JSON.stringify(this.data));
           delete data[index];
           this.data = data;
@@ -195,9 +196,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-@import '@/styles/base/variable/global.scss';
-@import '@/styles/base/theme/fn.scss';
+<style lang="scss" scoped>
 /deep/ .themeItem {
   margin-right: 0;
   margin-left: 0;
