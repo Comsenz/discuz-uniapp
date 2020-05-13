@@ -11,7 +11,7 @@
       <qui-content
         v-for="(item, index) in data"
         :key="index"
-        :user-name="item.user.username + index"
+        :user-name="item.user.username"
         :theme-image="item.user.avatarUrl"
         :theme-btn="item.canHide"
         :theme-reply-btn="item.canReply"
@@ -77,7 +77,7 @@ export default {
       data: {},
       flag: true, // 滚动节流
       totalData: 0, // 总数
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       bottomData: [
         {
