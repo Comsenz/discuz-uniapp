@@ -74,7 +74,7 @@
       class="scroll-y"
       @scroll="scroll"
     >
-      <view class="sticky" v-if="jvStatus[threadsStatusId]">
+      <view class="sticky">
         <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
@@ -100,7 +100,6 @@
           :tags="item.category.name"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          :thread-type="item.type"
           @click="handleClickShare(index)"
           @handleIsGreat="
             handleIsGreat(
@@ -177,7 +176,7 @@
 
 <script>
 /* eslint-disable */
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
@@ -185,7 +184,7 @@ export default {
     return {
       scrolled: 'affix',
       categoryId: 0, // 主题分类 ID
-      threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
+      threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
       show: false,
@@ -224,7 +223,7 @@ export default {
         },
       ],
       isTop: 0,
-      threads: {},
+      threads: [],
       sticky: {}, // 置顶帖子内容
       shareBtn: 'icon-share1',
       tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
@@ -235,7 +234,7 @@ export default {
           tabsName: this.i18n.t('home.tabsCircle'),
           tabsIcon: 'icon-home',
           id: 1,
-          url: '/home/index',
+          // url: '../site/partner-invite?code=8WHvJZfZXBh2U6OoyAYmDDwLvNoYAKiD',
         },
         {
           tabsName: this.i18n.t('home.tabsNews'),
@@ -251,31 +250,16 @@ export default {
         },
       ],
       postImg: '../assets.publish.svg',
-      threadsStatusId: 0
+      threadsStatusId: 0,
+      categories: []
     };
   },
   computed: {
-    categories() {
-      const tmp = Object.assign(
-        {
-          0: {
-            _jv: {
-              id: 0,
-            },
-            name: this.i18n.t('home.all'),
-          },
-        },
-      this.$store.getters['jv/get']('categories'),
-      );
-      // console.log(tmp);
-      return tmp;
-    },
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
   },
   onLoad() {
-    console.log(this,'0000')
     // 获取用户信息
     this.getUserInfo();
     // 首页导航栏分类列表
@@ -286,12 +270,21 @@ export default {
     this.loadThreads();
   },
   // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    // if (res.from === 'button') {// 来自页面内分享按钮
+    //   console.log(res.target)
+    // }
+    return {
+      title: '自定义分享标题',
+      path: '/pages/test/test?id=123'
+    }
+  },
  onShareAppMessage(res) {
     if (res.from === 'button') {// 来自页面内分享按钮
       console.log(res.target)
     }
     return {
-      title: this.forums.set_site.site_name,
+      title: '自定义分享标题',
       path: '/pages/test/test?id=123'
     }
   },
@@ -303,14 +296,16 @@ export default {
     query
       .select('.scroll-tab')
       .boundingClientRect(data => {
-        // console.log(`得到布局位置信息${JSON.stringify(data)}`);
+        console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
       })
       .exec();
   },
   onPageScroll(e) {
+
     // console.log(e);
+
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
     } else {
@@ -327,6 +322,7 @@ export default {
     },
     // 切换选项卡
     toggleTab(index) {
+      // console.log(index)
       // 重置列表
       this.isResetList = true;
       this.categoryId = index;
@@ -515,10 +511,19 @@ export default {
     // 首页导航栏分类列表数据
     loadCategories() {
       this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+        console.log(data, '------');
         delete data._jv;
+        this.categories = [
+          {
+            _jv: {
+              id: 0,
+            },
+            name: this.i18n.t('home.all'),
+          }
+        ].concat(data);
         const categoryFilterList = [
           {
-            label: this.i18n.t('home.all'),
+            label: '所有',
             value: 0,
             // selected: 0 === this.categoryId ? true : false,
             selected: true,
@@ -539,25 +544,23 @@ export default {
     },
     // 首页置顶列表数据
     loadThreadsSticky() {
+      this.sticky = {};
       const params = {
         'filter[isSticky]': 'yes',
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
         include: ['firstPost'],
       };
-      const threadsAction = status.run(() => this.$store.dispatch('jv/get', ['threads', { params }]));
-      this.threadsStatusId = threadsAction._statusID;
-      threadsAction.then(data => {
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
         delete data._jv;
         this.sticky = data;
-      })
-      // this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-      //   delete data._jv;
-      //   this.sticky = data;
-      // });
+      });
     },
     // 首页内容部分数据请求
     loadThreads() {
+      // if (this.isResetList) {
+      //   this.threads = {};
+      // }
       const params = {
         'filter[isSticky]': 'no',
         'filter[isDeleted]': 'no',
@@ -588,15 +591,7 @@ export default {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        if(this.isResetList){
-          this.threads = res
-        }else {
-          this.threads = Object.assign({}, {}, res);
-        // this.threads = {...res,...this.threads};
-        }
-        // this.threads = Object.assign({}, {}, res);
-
-        // console.log(this.threads)
+        this.threads = res;
       })
 
     },
@@ -639,7 +634,7 @@ export default {
       });
     },
 
-    // 上拉加载
+    // 下拉加载
     pullDown() {
       console.log('下拉加载呢');
       if (this.hasMore) {
