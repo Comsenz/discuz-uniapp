@@ -1,5 +1,14 @@
 <template>
   <qui-page :class="'home ' + scrolled">
+    <uni-nav-bar
+      v-if="navShow"
+      left-icon="back"
+      left-text="返回"
+      right-text="菜单"
+      title="导航栏组件"
+      fixed="true"
+      status-bar
+    ></uni-nav-bar>
     <qui-header
       :head-img="forums.set_site.site_logo"
       :background-head-full-img="forums.set_site.site_background_image"
@@ -75,7 +84,12 @@
       @scroll="scroll"
     >
       <view class="sticky">
-        <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
+        <view
+          class="sticky__isSticky"
+          v-for="(item, index) in sticky"
+          :key="index"
+          @click="stickyClick(item._jv.id)"
+        >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
             {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
@@ -118,36 +132,12 @@
     </scroll-view>
     <!-- </view> -->
 
-    <qui-footer
+    <!-- <qui-footer
       @click="footerOpen"
       :tabs="tabs"
       :post-img="postImg"
       :red-circle="redCircle"
-    ></qui-footer>
-
-    <uni-popup ref="popup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick(item)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
-              </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
-    </uni-popup>
-
+    ></qui-footer> -->
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -170,6 +160,9 @@
         <view class="popup-share-content-space"></view>
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
+    </uni-popup>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
   </qui-page>
 </template>
@@ -196,6 +189,7 @@ export default {
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
       redCircle: false, // 消息通知红点
+      navShow: false, // 是否显示头部
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -232,7 +226,7 @@ export default {
           tabsName: this.i18n.t('home.tabsCircle'),
           tabsIcon: 'icon-home',
           id: 1,
-          // url: '../site/partner-invite?code=8WHvJZfZXBh2U6OoyAYmDDwLvNoYAKiD',
+          url: '../home/index',
         },
         {
           tabsName: this.i18n.t('home.tabsNews'),
@@ -290,6 +284,9 @@ export default {
       .exec();
   },
   onPageScroll(e) {
+    if (e.scrollTop > 100) {
+      this.navShow = true;
+    }
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
     } else {
@@ -361,6 +358,11 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
+        this.$store.dispatch('session/setAuth', this.$refs.auth);
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+          return;
+        }
         uni.navigateTo({
           url: '/pages/share/site',
         });
@@ -371,6 +373,10 @@ export default {
       this.$refs.popup.close();
       this.$refs.popupContent.close();
       this.$refs.popupHead.close();
+    },
+    // 点赞调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
     // 筛选选中确定按钮
     confirm(e) {
@@ -409,60 +415,8 @@ export default {
     showFilter() {
       this.show = true;
       this.$refs.filter.setData();
+      this.navShow = true;
     },
-    // 首页底部发帖按钮弹窗
-    footerOpen() {
-      if (
-        !this.forums.other.can_create_thread &&
-        !this.forums.other.can_create_thread_long &&
-        !this.forums.other.can_create_thread_video &&
-        !this.forums.other.can_create_thread_image
-      ) {
-        console.log('此处弹出提示无权限发帖');
-        return;
-      }
-      this.bottomData = [];
-      if (this.forums.other.can_create_thread) {
-        this.bottomData.push({
-          text: this.i18n.t('home.word'),
-          icon: 'icon-word',
-          name: 'text',
-          type: 0,
-        });
-      }
-      if (this.forums.other.can_create_thread_long) {
-        this.bottomData.push({
-          text: this.i18n.t('home.invitation'),
-          icon: 'icon-post',
-          name: 'post',
-          type: 1,
-        });
-      }
-      if (this.forums.other.can_create_thread_video) {
-        this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
-        });
-      }
-      if (this.forums.other.can_create_thread_image) {
-        this.bottomData.push({
-          text: this.i18n.t('home.picture'),
-          icon: 'icon-img',
-          name: 'image',
-          type: 3,
-        });
-      }
-      this.$refs.popup.open();
-    },
-    // 首页底部发帖点击事件跳转
-    handleClick(item) {
-      uni.navigateTo({
-        url: `/pages/topic/post?type=${item.type}`,
-      });
-    },
-
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
       this.$refs.popupContent.open();
@@ -569,6 +523,10 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+      }
       if (!canLike) {
         console.log('没有点赞权限');
       }

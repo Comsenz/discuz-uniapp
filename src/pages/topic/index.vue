@@ -4,7 +4,7 @@
       <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
       <qui-topic-content
         v-model="thread"
-        :pay-status="false"
+        :pay-status="true"
         :avatar-url="thread.user.avatarUrl"
         :user-name="thread.user.username"
         :theme-types="thread.type"
@@ -20,6 +20,7 @@
       <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
         {{ p.pay }}
       </qui-button>
+
       <!-- 已支付用户列表 -->
       <view v-if="paidStatus">
         <qui-person-list
@@ -83,7 +84,9 @@
       </view>
       <!-- 评论 -->
       <view class="comment">
-        <view class="comment-num">{{ thread.postCount }}{{ t.item }}{{ t.comment }}</view>
+        <view class="comment-num" v-if="thread.postCount > 1">
+          {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
+        </view>
 
         <view v-if="status[loadDetailCommnetStatusId]">
           <qui-topic-comment
@@ -169,9 +172,12 @@
               ></qui-uploader>
             </view>
           </view>
-          <qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
+          <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishBtn()">
             {{ t.publish }}
-          </qui-button>
+          </qui-button>-->
+          <button class="publishBtn" @click="publishBtn">
+            {{ t.publish }}
+          </button>
         </view>
       </uni-popup>
     </view>
@@ -256,7 +262,7 @@ export default {
       thread: {},
       loadDetailStatusId: 0,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
-      posts: {},
+      posts: [],
       loadDetailCommnetStatusId: 0,
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
@@ -355,8 +361,8 @@ export default {
   },
   onLoad(option) {
     console.log(option.id, '这是详情页接收的id');
-    // this.threadId = option.id;
-    this.threadId = 188;
+    this.threadId = option.id;
+    // this.threadId = 188;
     this.loadThreads();
     this.loadThreadPosts();
     const token =
@@ -505,12 +511,12 @@ export default {
               // this.thread.firstPost.likedUsers.unshift({
               //   _data: { username: this.currentUserName, id: this.userId }
               // });
-              this.thread.firstPost.likeCount = this.thread.firstPost.likeCount + 1;
+              // this.thread.firstPost.likeCount = this.thread.firstPost.likeCount + 1;
             } else {
               // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
               //   value._data.id === this.userId && likedUsers.splice(key, 1);
               // });
-              this.thread.firstPost.likeCount = this.thread.firstPost.likeCount - 1;
+              // this.thread.firstPost.likeCount = this.thread.firstPost.likeCount - 1;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -1298,12 +1304,14 @@ page {
 .comment-popup-top {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   padding: 40rpx 40rpx 20rpx;
   .comment-popup-top-l {
     // flex: 1;
     display: flex;
     flex-direction: row;
-    width: 120rpx;
+    justify-content: flex-start;
+    width: 230rpx;
   }
   .comm-icon {
     flex: 1;
@@ -1327,6 +1335,13 @@ page {
 }
 .publishBtn {
   width: 100%;
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 100rpx;
+  color: --color(--qui-FC-FFF);
+  text-align: center;
+  background: --color(--qui-MAIN);
+  border-radius: 0;
 }
 
 .popup-share {

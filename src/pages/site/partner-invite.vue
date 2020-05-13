@@ -107,7 +107,6 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import { PERMISSION_LIST } from '@/common/const';
 
 export default {
   components: {
@@ -119,7 +118,6 @@ export default {
       post: '内容',
       share: '分享',
       shareBtn: 'icon-share1',
-      permissionlist: PERMISSION_LIST,
       code: '', // 邀请码
       bottomData: [
         {
@@ -139,6 +137,9 @@ export default {
   computed: {
     forums() {
       return this.$store.getters['jv/get']('forums/1');
+    },
+    permissionlist() {
+      return this.i18n.t('permission');
     },
   },
   onLoad(params) {
