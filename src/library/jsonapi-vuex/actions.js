@@ -41,8 +41,6 @@ const actions = (api, conf) => {
 
       return api(apiConf).then(results => {
         let resData = utils.pushPayload(results.data, context);
-        console.log('resdata-----' , resData, results.data);
-
         if (conf.clearOnUpdate) {
           let record = resData
           if (resData.length === 0) {
