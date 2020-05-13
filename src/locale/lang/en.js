@@ -50,6 +50,8 @@ export default {
         nov: 'Nov',
         dec: 'Dec',
       },
+      morning: 'morning',
+      afternoon: 'afternoon',
     },
     // 列表加载提示相关
     list: {
@@ -111,6 +113,32 @@ export default {
       pleaseWaitForTheVideoUploadToComplete: 'Please wait for the video upload to complete',
       failedToObtainSignature: 'Failed to obtain signature',
       fromWeChatApplet: 'From WeChat applet',
+    },
+    // 圈子管理页面
+    manage: {
+      inviteMembers: 'Invite members',
+      siteMembers: 'site of members',
+      masterManagement: 'master of management',
+      manageMembers: 'manage members',
+      nouse: 'nouse',
+      used: 'used',
+      invalid: 'invalid',
+      overdue: 'overdue',
+      setInvalid: 'Set invalid',
+      generateInvitationUrl: 'Generate invitation url',
+      notSelected: 'notSelected',
+      selected: 'selected',
+    },
+    // 消息页面
+    notice: {
+      related: 'Related with me',
+      replied: 'Replied me',
+      liked: 'Liked me',
+      rewarded: 'Rewarded me',
+      system: 'System info',
+      admin: 'Admin',
+      send: 'Send',
+      reply: 'Reply..',
     },
   },
 };

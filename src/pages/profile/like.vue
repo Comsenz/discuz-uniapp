@@ -30,7 +30,7 @@
             item.firstPost._jv.id,
             item.firstPost.canLike,
             item.firstPost.isLiked,
-            item.firstPost.likeCount,
+            index,
           )
         "
         @commentClick="commentClick(item._jv.id)"
@@ -77,7 +77,7 @@ export default {
       data: {},
       flag: true, // 滚动节流
       totalData: 0, // 总数
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       bottomData: [
         {
@@ -154,7 +154,7 @@ export default {
       });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
+    handleIsGreat(id, canLike, isLiked, index) {
       if (!canLike) {
         console.log('没有点赞权限');
       }
@@ -165,7 +165,14 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(() => {
+        if (isLiked) {
+          const data = JSON.parse(JSON.stringify(this.data));
+          delete data[index];
+          this.data = data;
+          this.$emit('changeFollow', { userId: this.userId });
+        }
+      });
     },
     // 下拉加载
     pullDown() {

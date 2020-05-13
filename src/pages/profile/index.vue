@@ -60,7 +60,7 @@
           <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
         </view>
         <view v-if="current == 3" class="items">
-          <like :user-id="userId"></like>
+          <like :user-id="userId" @changeFollow="changeFollow"></like>
         </view>
       </view>
     </view>

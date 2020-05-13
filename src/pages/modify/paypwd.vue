@@ -1,12 +1,19 @@
 <template>
-  <view class="setpw">
-    <view class="setpw-input" v-if="pas">
+  <view class="setpw" @click.stop="toggleBox">
+    <view class="setpw-input" v-if="pas" @click.stop="fourse">
       <view class="setpw-tit">
         {{ i18n.t('modify.enterpaymentpas') }}
       </view>
-      <qui-input-code @getdata="btndata" :title="sun" :text="test" :number="types"></qui-input-code>
+      <qui-input-code
+        @getdata="btndata"
+        :title="sun"
+        :text="test"
+        :show="inshow"
+        :isiphonex="inisIphone"
+        :number="types"
+      ></qui-input-code>
     </view>
-    <view class="setpw-input" v-else>
+    <view class="setpw-input" v-else @click.stop="fourse">
       <view class="setpw-tit">
         {{ i18n.t('modify.enterpaymentagin') }}
       </view>
@@ -14,6 +21,8 @@
         @getdata="btndata2"
         :title="sun"
         :text="test"
+        :show="inshow"
+        :isiphonex="inisIphone"
         :number="types"
       ></qui-input-code>
     </view>
@@ -37,12 +46,17 @@ export default {
       repeatpas: '',
       icon: 'none',
       time: 2000,
+      inshow: false,
+      inisIphone: false,
     };
   },
   onLoad(arr) {
     this.userid = Number(arr.id) || 24;
   },
   methods: {
+    fourse() {
+      this.inshow = true;
+    },
     btndata(num) {
       if (num.length >= 6) {
         this.inputpas = num;
@@ -91,6 +105,9 @@ export default {
           }
         });
     },
+    toggleBox() {
+      this.inshow = false;
+    },
   },
 };
 </script>
@@ -98,6 +115,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+.setpw {
+  width: 100vw;
+  height: 100vh;
+}
 .setpw-input {
   width: 710rpx;
   height: 200rpx;
