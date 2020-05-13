@@ -62,9 +62,9 @@ export default {
   },
   data: () => {
     return {
-      navigationBarStyle: {
-        iconText: '类目', // 导航栏文字
-      },
+      // navigationBarStyle: {
+      //   iconText: '类目', // 导航栏文字
+      // },
     };
   },
   computed: {
