@@ -53,6 +53,7 @@
         </view>
         <video
           v-if="threadType === 2"
+          src="{{ mediaUrl }}"
           id="player-video"
           width="414"
           height="270"
@@ -279,6 +280,10 @@ export default {
     threadType: {
       type: Number,
       default: 0,
+    },
+    mediaUrl: {
+      type: String,
+      default: '',
     },
   },
   data: () => {
