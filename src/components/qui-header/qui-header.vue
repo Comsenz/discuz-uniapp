@@ -4,7 +4,10 @@
       <navigationBar :navigation-bar-style="navigationBarStyle" :show-back="false"></navigationBar>
     </view> -->
     <view class="logoBox">
-      <image class="logo" :src="headImg"></image>
+      <image
+        class="logo"
+        :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
+      ></image>
     </view>
     <view class="circleDet">
       <text>

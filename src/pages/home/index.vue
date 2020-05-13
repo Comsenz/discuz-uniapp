@@ -1,5 +1,25 @@
 <template>
   <qui-page :class="'home ' + scrolled">
+    <uni-nav-bar
+      left-icon="back"
+      left-text="返回"
+      right-text="菜单"
+      title="导航栏组件"
+      fixed="true"
+      status-bar
+    ></uni-nav-bar>
+    <!-- <view
+      v-if="navShow"
+      class="demo"
+      :style="
+        'height:' + demo.height + 'px;' + 'padding-top:' + demo.top + 'px;padding-bottom:10rpx;'
+      "
+    >
+      <view class="left" :style="'top:' + demo.top + 'px'">
+        <view class="iconfont icon-xiaoxi"></view>
+      </view>
+      测试辣
+    </view> -->
     <qui-header
       :head-img="forums.set_site.site_logo"
       :background-head-full-img="forums.set_site.site_background_image"
@@ -75,7 +95,12 @@
       @scroll="scroll"
     >
       <view class="sticky">
-        <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
+        <view
+          class="sticky__isSticky"
+          v-for="(item, index) in sticky"
+          :key="index"
+          @click="stickyClick(item._jv.id)"
+        >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
             {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
@@ -118,36 +143,12 @@
     </scroll-view>
     <!-- </view> -->
 
-    <qui-footer
+    <!-- <qui-footer
       @click="footerOpen"
       :tabs="tabs"
       :post-img="postImg"
       :red-circle="redCircle"
-    ></qui-footer>
-
-    <uni-popup ref="popup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick(item)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
-              </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
-    </uni-popup>
-
+    ></qui-footer> -->
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -198,6 +199,11 @@ export default {
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
       redCircle: false, // 消息通知红点
+      navShow: true, //是否显示头部
+      demo: {
+          top: 0,
+          height: 0
+      },
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -234,7 +240,7 @@ export default {
           tabsName: this.i18n.t('home.tabsCircle'),
           tabsIcon: 'icon-home',
           id: 1,
-          // url: '../site/partner-invite?code=8WHvJZfZXBh2U6OoyAYmDDwLvNoYAKiD',
+          url: '../home/index',
         },
         {
           tabsName: this.i18n.t('home.tabsNews'),
@@ -268,6 +274,9 @@ export default {
     this.loadThreadsSticky();
     // 首页主题内容列表
     this.loadThreads();
+    const demo = uni.getMenuButtonBoundingClientRect()
+    this.demo.top = demo.top
+    this.demo.height = demo.height
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -428,61 +437,6 @@ export default {
       this.show = true;
       this.$refs.filter.setData();
     },
-    // 首页底部发帖按钮弹窗
-    footerOpen() {
-      console.log(this.forums, '9999');
-      if (
-        !this.forums.other.can_create_thread &&
-        !this.forums.other.can_create_thread_long &&
-        !this.forums.other.can_create_thread_video &&
-        !this.forums.other.can_create_thread_image
-      ) {
-        console.log('此处弹出提示无权限发帖');
-        return;
-      }
-      this.bottomData = [];
-      if (this.forums.other.can_create_thread) {
-        this.bottomData.push({
-          text: this.i18n.t('home.word'),
-          icon: 'icon-word',
-          name: 'text',
-          type: 0,
-        });
-      }
-      if (this.forums.other.can_create_thread_long) {
-        this.bottomData.push({
-          text: this.i18n.t('home.invitation'),
-          icon: 'icon-post',
-          name: 'post',
-          type: 1,
-        });
-      }
-      if (this.forums.other.can_create_thread_video) {
-        this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
-        });
-      }
-      if (this.forums.other.can_create_thread_image) {
-        this.bottomData.push({
-          text: this.i18n.t('home.picture'),
-          icon: 'icon-img',
-          name: 'image',
-          type: 3,
-        });
-      }
-      this.$refs.popup.open();
-    },
-    // 首页底部发帖点击事件跳转
-    handleClick(item) {
-      console.log(item.type);
-      uni.navigateTo({
-        url: `/pages/topic/post?type=${item.type}`,
-      });
-    },
-
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
       this.$refs.popupContent.open();
@@ -743,6 +697,27 @@ export default {
   position: absolute;
   z-index: 1000;
   width: 100%;
+}
+.demo{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  background: #fff;
+}
+.left{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 20rpx;
+  float: left;
+  width: max-content;
+  height: max-content;
+  margin: auto;
+}
+.iconfont{
+  color: #3c3c3c;
 }
 
 </style>

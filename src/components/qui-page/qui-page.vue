@@ -10,6 +10,7 @@
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
+    <qui-footer></qui-footer>
   </view>
 </template>
 
