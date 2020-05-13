@@ -1,5 +1,5 @@
 <template>
-  <view class="my-profile">
+  <qui-page class="my-profile">
     <navigator :url="'../modify/editusername?id=' + userId" hover-class="none">
       <qui-cell-item title="用户名" arrow :addon="profile.username"></qui-cell-item>
     </navigator>
@@ -41,7 +41,7 @@
         :border="false"
       ></qui-cell-item>
     </navigator>
-  </view>
+  </qui-page>
 </template>
 
 <script>

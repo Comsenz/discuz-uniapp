@@ -1,5 +1,5 @@
 <template>
-  <view class="freeze">
+  <qui-page class="freeze">
     <view class="freeze-head">
       <view class="freeze-head__num">
         <text>共有</text>
@@ -31,7 +31,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

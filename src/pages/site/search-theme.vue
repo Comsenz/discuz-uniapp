@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -40,7 +40,7 @@
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

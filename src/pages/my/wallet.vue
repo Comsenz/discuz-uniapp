@@ -1,5 +1,5 @@
 <template>
-  <view class="wallet">
+  <qui-page class="wallet">
     <qui-cell-item
       title="可用余额"
       arrow
@@ -26,7 +26,7 @@
     <navigator :url="'../modify/paypwd?id=' + userId" hover-class="none">
       <qui-cell-item v-if="!hasPassword" title="设置支付密码" arrow :border="false"></qui-cell-item>
     </navigator>
-  </view>
+  </qui-page>
 </template>
 
 <script>

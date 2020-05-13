@@ -1,5 +1,5 @@
 <template>
-  <view class="withdrawalslist">
+  <qui-page class="withdrawalslist">
     <view class="withdrawalslist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -50,7 +50,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

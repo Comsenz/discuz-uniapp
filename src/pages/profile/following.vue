@@ -1,5 +1,5 @@
 <template>
-  <view class="following">
+  <qui-page class="following">
     <view class="follow-content">
       <scroll-view
         scroll-y="true"
@@ -62,7 +62,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

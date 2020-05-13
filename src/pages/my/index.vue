@@ -1,5 +1,5 @@
 <template>
-  <view class="my">
+  <qui-page class="my">
     <view class="my-info">
       <view class="my-info__box">
         <view class="my-info__box__detail">
@@ -42,7 +42,7 @@
         <qui-cell-item title="管理圈子" arrow :border="false"></qui-cell-item>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -65,7 +65,9 @@ export default {
   },
   computed: {
     userInfo() {
-      return this.$store.getters['jv/get']('users/1');
+      const data = this.$store.getters['jv/get']('users/1');
+      data.groupsName = data.groups ? Object.values(data.groups)[0].name : '';
+      return data;
     },
   },
   onLoad() {

@@ -1,5 +1,5 @@
 <template>
-  <view class="profile">
+  <qui-page class="profile">
     <view class="profile-info">
       <view class="profile-info__box">
         <view class="profile-info__box__detail">
@@ -64,7 +64,7 @@
         </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
