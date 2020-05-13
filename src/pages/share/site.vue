@@ -2,7 +2,7 @@
   <view class="painter">
     <view class="canvas-box">
       <view class="cent">
-        <image :src="imagePath" @tap="previewImage" :show-menu-by-longpress="true"></image>
+        <image :src="imagePath" mode="widthFix" @tap="previewImage" :show-menu-by-longpress="true" class="cent-image"></image>
       </view>
       <view class="box-img">
         <painter
@@ -155,14 +155,14 @@ export default {
 @import '@/styles/base/reset.scss';
 .cent {
   width: 700rpx;
-  height: 1082rpx;
+  height: 1000rpx;
   margin: 46rpx 25rpx 0;
   background: --color(--qui-FC-FFF);
   border-radius: 10px;
-  box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
-  image {
+  .cent-image {
     width: 100%;
-    height: 100%;
+    box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
+    // height: 100%;
   }
 }
 .icon-unfold {
