@@ -1,9 +1,5 @@
 <template>
   <view class="invite">
-    <!-- 导航栏 -->
-    <!-- <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-text">{{ title }}</view>
-    </uni-nav-bar> -->
     <!-- 标签栏 -->
     <view class="invite-tabs">
       <qui-tabs :current="current" :values="tabList" @clickItem="onClickItem"></qui-tabs>
@@ -39,10 +35,10 @@
           <view>已使用</view>
         </view>
         <view v-if="current === 2" class="items">
-          <view>已失效</view>
+          <view>已过期</view>
         </view>
         <view v-if="current === 3" class="items">
-          <view>已过期</view>
+          <view>已失效</view>
         </view>
       </view>
     </view>
@@ -67,32 +63,26 @@
 </template>
 
 <script>
-// import { uniNavBar } from '@dcloudio/uni-ui';
-// import quiCell from '@/components/qui-cell';
 import { timestamp2day } from '@/utils/time';
 
 export default {
-  components: {
-    // uniNavBar,
-    // quiCell,
-  },
+  components: {},
 
   data() {
     return {
-      title: '邀请成员', // 页面标题
       current: 0, // 当前标签页
       count: 3, // 邀请链接列表数量
       tabList: [
-        { id: 1, title: '未使用' },
-        { id: 2, title: '已使用' },
-        { id: 3, title: '已失效' },
-        { id: 4, title: '已过期' },
+        { id: 1, title: '未使用', status: 1 },
+        { id: 2, title: '已使用', status: 2 },
+        { id: 3, title: '已过期', status: 3 },
+        { id: 4, title: '已失效', status: 0 },
       ], // 邀请链接类型列表
     };
   },
 
   onLoad() {
-    this.getInviteList();
+    this.getInviteList(1);
     this.getGroupList();
   },
 
@@ -125,65 +115,17 @@ export default {
       console.log('list', list);
       return list;
     },
-
-    // 已失效列表
-    invalidList() {
-      console.log(
-        '已失效列表：',
-        this.allInviteList.filter(item => {
-          return item.status === 0;
-        }),
-      );
-      return this.allInviteList.filter(item => {
-        return item.status === 0;
-      });
-    },
-
-    // 未使用列表
-    noUseList() {
-      console.log(
-        '未使用列表：',
-        this.allInviteList.filter(item => {
-          return item.status === 1;
-        }),
-      );
-      return this.allInviteList.filter(item => {
-        return item.status === 1;
-      });
-    },
-
-    // 已使用列表
-    usedList() {
-      console.log(
-        '已使用列表：',
-        this.allInviteList.filter(item => {
-          return item.status === 2;
-        }),
-      );
-      return this.allInviteList.filter(item => {
-        return item.status === 2;
-      });
-    },
-
-    // 已过期列表
-    overdueList() {
-      console.log(
-        '已过期列表：',
-        this.allInviteList.filter(item => {
-          return item.status === 3;
-        }),
-      );
-      return this.allInviteList.filter(item => {
-        return item.status === 3;
-      });
-    },
   },
 
   methods: {
     // 调用 管理邀请列表 接口
-    getInviteList() {
-      this.$store.dispatch('jv/get', 'invite');
-      console.log('获取管理邀请列表');
+    getInviteList(status) {
+      const params = {
+        'filter[status]': status,
+      };
+      this.$store.dispatch('jv/get', ['invite', { params }]).then(res => {
+        console.log('获取管理邀请列表', res);
+      });
     },
 
     // 调用 获取所有用户组 接口
@@ -192,20 +134,13 @@ export default {
       console.log('获取管理邀请列表');
     },
 
-    // 回到上一个页面
-    clickNavBarLeft() {
-      uni.navigateBack({
-        delta: 1,
-      });
-    },
-
     // 改变标签页
     onClickItem(e) {
       if (e.currentIndex !== this.current) {
         this.current = e.currentIndex;
+        this.getInviteList(this.tabList[e.currentIndex].status);
       }
     },
-
     // 设为无效
     invalid(id) {
       this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
@@ -294,7 +229,6 @@ page {
     font-weight: bold;
     color: #343434;
   }
-
   .invite-records {
     margin: 40rpx 0 20rpx 20rpx;
     font-size: $fg-f24;
