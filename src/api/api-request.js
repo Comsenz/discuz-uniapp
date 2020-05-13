@@ -15,7 +15,7 @@ http.setConfig(config => {
   return {
     ...config,
     ...{
-      baseUrl: DISCUZ_REQUEST_HOST,
+      baseUrl: `${DISCUZ_REQUEST_HOST}api/`,
       header: {
         'Content-Type': 'application/vnd.api+json',
         Accept: 'application/vnd.api+json',

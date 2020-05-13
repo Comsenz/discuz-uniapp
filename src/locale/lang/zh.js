@@ -288,4 +288,55 @@ export default {
     passwordinputerro: '密码输入错误',
     forgetmanypassword: '忘记密码？',
   },
+  permission: {
+    viewThreads: '查看主题列表',
+    thread: {
+      viewPosts: '查看主题',
+      reply: '回复主题',
+      hide: '删除主题',
+      hidePosts: '删除回复',
+      favorite: '帖子收藏',
+      likePosts: '帖子点赞',
+      batchEdit: '批量管理主题',
+      editPosts: '编辑',
+      essence: '加精',
+      sticky: '置顶',
+    },
+    createThread: '发布文本',
+    createThreadLong: '发布帖子',
+    createThreadVideo: '发布视频',
+    attachment: {
+      create: ['上传附件', '上传图片'],
+      view: ['查看附件', '查看图片'],
+      delete: '删除附件',
+    },
+    viewUserList: '站点会员列表',
+    case: {
+      create: '申请提现',
+    },
+    order: {
+      create: '创建订单',
+    },
+    user: {
+      view: '查看某个用户信息权限',
+      edit: '编辑用户状态',
+    },
+    userFollow: {
+      create: '关注用户',
+    },
+    group: {
+      edit: '编辑用户组',
+    },
+    viewSiteInfo: '站点信息',
+    createInvite: '管理-邀请加入',
+    dialog: {
+      create: '发布私信 ',
+    },
+    showGroups: '显示用户组名',
+    trade: {
+      pay: {
+        order: '订单支付',
+      },
+    },
+  },
 };
