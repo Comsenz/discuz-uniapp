@@ -1,5 +1,5 @@
 <template>
-  <view class="my">
+  <qui-page class="my">
     <view class="my-info">
       <view class="my-info__box">
         <view class="my-info__box__detail">
@@ -41,17 +41,21 @@
         </navigator>
         <qui-cell-item title="管理圈子" arrow :border="false"></qui-cell-item>
       </view>
+
+      <view class="my-items">
+        <qui-cell-item title="深色模式" slot-right>
+          <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
+        </qui-cell-item>
+      </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
 
 export default {
-  components: {
-    //
-  },
   data() {
     return {
       items: [
@@ -61,6 +65,7 @@ export default {
         { title: '点赞', brief: '65' },
       ],
       current: 0,
+      checked: false,
     };
   },
   computed: {
@@ -70,8 +75,13 @@ export default {
   },
   onLoad() {
     this.getUserInfo();
+
+    this.checked = this.$store.getters['theme/get']('currentTheme') !== THEME_DEFAULT;
   },
   methods: {
+    changeCheck(e) {
+      this.$store.dispatch('theme/setTheme', e ? THEME_DARK : THEME_DEFAULT);
+    },
     onClickItem(e) {
       uni.navigateTo({
         url: `/pages/profile/index?current=${e.currentIndex}&type=my`,
