@@ -370,7 +370,6 @@ export default {
     },
     // 取消按钮
     cancel() {
-      this.$refs.popup.close();
       this.$refs.popupContent.close();
       this.$refs.popupHead.close();
     },
