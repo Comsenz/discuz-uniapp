@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import { PERMISSION_LIST } from '@/common/const';
 
 export default {

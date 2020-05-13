@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
