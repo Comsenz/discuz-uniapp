@@ -1,10 +1,14 @@
 <template>
   <view class="auth">
     <view class="auth__header">
-      <qui-icon @tap="close" class="auth__header__close" name="icon-close" size="20"></qui-icon>
+      <qui-icon @tap="close" class="auth__header__close" name="icon-close" size="36"></qui-icon>
     </view>
     <view class="auth__content">
-      <image class="auth__content__image" mode="widthFix" :src="forums.set_site.site_logo"></image>
+      <image
+        class="auth__content__image"
+        mode="widthFix"
+        :src="forums.set_site.site_logo || '/static/logo.png'"
+      ></image>
 
       <qui-button
         type="primary"
@@ -33,9 +37,14 @@ export default {
     handleGetUserInfo(res) {
       if (res.detail.errMsg === 'getUserInfo:ok') {
         // eslint-disable-next-line no-unused-vars
-        this.$store.dispatch('session/login').then(data => {
-          this.$emit('login', res, data);
-        });
+        this.$store
+          .dispatch('session/login')
+          .then(data => {
+            this.$emit('login', res, data);
+          })
+          .catch(err => {
+            console.log(err);
+          });
       } else {
         this.$emit('login', res);
       }
@@ -67,9 +76,9 @@ export default {
     align-items: center;
     justify-content: center;
     &__image {
-      height: 100rpx;
-      max-width: 100rpx;
-      margin: 10rpx 0 67rpx;
+      width: 275rpx;
+      max-height: 65rpx;
+      margin: 10rpx 0 57rpx;
     }
   }
 }

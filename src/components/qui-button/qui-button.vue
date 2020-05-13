@@ -152,6 +152,12 @@ $font-size-lg: 28rpx;
     width: 670rpx;
     height: 90rpx;
     font-size: $font-size-lg;
+    border-radius: 0;
+  }
+  &[size='max'] {
+    width: 100%;
+    height: 90rpx;
+    font-size: $font-size-lg;
   }
   &[size='medium'] {
     width: 510rpx;

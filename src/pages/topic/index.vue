@@ -4,7 +4,7 @@
       <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
       <qui-topic-content
         v-model="thread"
-        :pay-status="false"
+        :pay-status="true"
         :avatar-url="thread.user.avatarUrl"
         :user-name="thread.user.username"
         :theme-types="thread.type"
@@ -17,9 +17,10 @@
         @personJump="personJump"
         @selectChoice="selectChoice"
       ></qui-topic-content>
-      <qui-button size="100%" type="primary" class="publishBtn" @tap="payClickShow()">
+      <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
         {{ p.pay }}
       </qui-button>
+
       <!-- 已支付用户列表 -->
       <view v-if="paidStatus">
         <qui-person-list
@@ -83,7 +84,9 @@
       </view>
       <!-- 评论 -->
       <view class="comment">
-        <view class="comment-num">{{ thread.postCount }}{{ t.item }}{{ t.comment }}</view>
+        <view class="comment-num" v-if="thread.postCount > 1">
+          {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
+        </view>
 
         <view v-if="status[loadDetailCommnetStatusId]">
           <qui-topic-comment
@@ -161,7 +164,7 @@
                 url="https://dq.comsenz-service.com/api/attachments"
                 :header="header"
                 :form-data="formData"
-                count="3"
+                :count="3"
                 async-clear
                 ref="upload"
                 @change="uploadChange"
@@ -169,9 +172,12 @@
               ></qui-uploader>
             </view>
           </view>
-          <qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
+          <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishBtn()">
             {{ t.publish }}
-          </qui-button>
+          </qui-button>-->
+          <button class="publishBtn" @click="publishBtn">
+            {{ t.publish }}
+          </button>
         </view>
       </uni-popup>
     </view>
@@ -240,13 +246,14 @@
       ></qui-pay>
     </view>
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
+    <qui-toast ref="toast"></qui-toast>
   </qui-page>
 </template>
 
 <script>
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
-import {isEmpty} from 'lodash';
+import { isEmpty } from 'lodash';
 
 export default {
   data() {
@@ -255,7 +262,7 @@ export default {
       thread: {},
       loadDetailStatusId: 0,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
-      posts: {},
+      posts: [],
       loadDetailCommnetStatusId: 0,
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
@@ -293,7 +300,8 @@ export default {
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
-      formData: {}, //上传数据
+      header: {},
+      formData: {}, //请求头部
       commentId: '',
       isAnonymous: '0',
       payShowStatus: true, //是否显示支付
@@ -353,8 +361,8 @@ export default {
   },
   onLoad(option) {
     console.log(option.id, '这是详情页接收的id');
-    // this.threadId = option.id;
-    this.threadId = 139;
+    this.threadId = option.id;
+    // this.threadId = 188;
     this.loadThreads();
     this.loadThreadPosts();
     const token =
@@ -503,12 +511,12 @@ export default {
               // this.thread.firstPost.likedUsers.unshift({
               //   _data: { username: this.currentUserName, id: this.userId }
               // });
-              this.thread.firstPost.likeCount = this.thread.firstPost.likeCount + 1;
+              // this.thread.firstPost.likeCount = this.thread.firstPost.likeCount + 1;
             } else {
               // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
               //   value._data.id === this.userId && likedUsers.splice(key, 1);
               // });
-              this.thread.firstPost.likeCount = this.thread.firstPost.likeCount - 1;
+              // this.thread.firstPost.likeCount = this.thread.firstPost.likeCount - 1;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -696,7 +704,7 @@ export default {
 
     // 创建订单
     creatOrder(amount, type, value, payType) {
-      console.log('创建订单', '这是参数');
+      console.log('创建订单', '这是参数', payType);
       const params = {
         _jv: {
           type: 'orders',
@@ -710,7 +718,7 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '成功创建订单');
+          console.log(res, '成功创建订单', typeof payType, '这是支付类型');
           this.orderSn = res.order_sn;
           if (payType == 0) {
             // 微信支付
@@ -796,10 +804,13 @@ export default {
             // this.payShow = false;
             this.payShowStatus = false;
             this.coverLoading = false;
+            this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
         .catch(err => {
           console.log(err);
+          this.coverLoading = false;
+          this.$refs.toast.show({ message: this.p.payFail });
         });
     },
 
@@ -807,7 +818,7 @@ export default {
       // 小程序支付。
       uni.requestPayment({
         provider: 'wxpay',
-        timeStamp: String(Date.now(timeStamp)),
+        timeStamp: timeStamp,
         nonceStr: nonceStr,
         package: packageVal,
         signType: signType,
@@ -828,7 +839,7 @@ export default {
       console.log('详情页监听到密码输入完成');
       console.log(this.thread.price, '这是价格');
       this.value = val;
-      this.creatOrder(this.thread.price, '3', val);
+      this.creatOrder(this.thread.price, '3', val, '1');
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
@@ -1293,11 +1304,14 @@ page {
 .comment-popup-top {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   padding: 40rpx 40rpx 20rpx;
   .comment-popup-top-l {
-    flex: 1;
+    // flex: 1;
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
+    width: 230rpx;
   }
   .comm-icon {
     flex: 1;
@@ -1321,6 +1335,13 @@ page {
 }
 .publishBtn {
   width: 100%;
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 100rpx;
+  color: --color(--qui-FC-FFF);
+  text-align: center;
+  background: --color(--qui-MAIN);
+  border-radius: 0;
 }
 
 .popup-share {

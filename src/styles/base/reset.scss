@@ -6,6 +6,7 @@
 page,
 body {
   font: $fg-f28 $font-family 1.6;
+  color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-2);
 }
 
@@ -62,7 +63,7 @@ page {
     background-color: #f8f8f8;
   }
   .uni-mask {
-    background: rgba(0, 0, 0, .4);
+    background: rgba(0, 0, 0, 0.4);
   }
 }
 // 分享弹框
@@ -159,7 +160,7 @@ page {
     font-size: $fg-f28;
     color: --color(--qui-FC-C6);
   }
-  .icon-content-search{
+  .icon-content-search {
     position: absolute;
     top: 18rpx;
     left: 20rpx;
