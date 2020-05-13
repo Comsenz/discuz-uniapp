@@ -38,7 +38,7 @@
             @click="selectChoice"
           ></qui-drop-down>
         </view>
-        <image src="@/assets/essence.png" class="essence"></image>
+        <image src="@/static/essence.png" class="essence"></image>
       </view>
     </view>
 
