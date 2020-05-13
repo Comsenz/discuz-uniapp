@@ -199,7 +199,7 @@ export default {
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
-          data: [{ label: this.i18n.t('home.all'), value: '0', selected: true }],
+          data: [],
         },
         {
           title: this.i18n.t('home.filterType'),
