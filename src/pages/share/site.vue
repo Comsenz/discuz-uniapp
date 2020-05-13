@@ -162,13 +162,12 @@ export default {
   .cent-image {
     width: 100%;
     box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
-    // height: 100%;
   }
 }
 .icon-unfold {
   display: block;
 }
 .btn-box {
-  margin: 151rpx 0 40rpx 40rpx;
+  margin: 50rpx 0 40rpx 40rpx;
 }
 </style>
