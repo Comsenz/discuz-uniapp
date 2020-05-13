@@ -1,5 +1,13 @@
 <template>
   <view class="post-box">
+    <view class="post-box__title" v-if="type === 1">
+      <input
+        class="post-box__title-input"
+        type="text"
+        v-model="postTitle"
+        placeholder="请输入帖子标题"
+      />
+    </view>
     <view class="post-box__hd">
       <view class="post-box__hd-l">
         <qui-icon
@@ -18,7 +26,7 @@
         ></qui-icon>
       </view>
       <text class="post-box__hd-r">
-        {{ i18n.t('discuzq.post.note', { num: 450 - textAreaValue.length }) }}
+        {{ i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length }) }}
       </text>
     </view>
     <view class="emoji-bd">
@@ -38,7 +46,7 @@
       placeholder-class="textarea-placeholder"
       v-model="textAreaValue"
       auto-height
-      maxlength="450"
+      :maxlength="textAreaLength"
       @blur="contBlur"
     ></textarea>
     <qui-uploader
@@ -60,15 +68,7 @@
           :src="item.path"
           :controls="controlsStatus"
           @fullscreenchange="fullscreenchange"
-        >
-          <!--<cover-view class="cover-video&#45;&#45;del" v-if="fullscreenStatus">
-            <cover-view>
-              <qui-icon name="icon-folding-r" size="40" color="#fff" @click="videoBack"></qui-icon>
-              <cover-view style="color: #fff;">{{ videoName }}</cover-view>
-            </cover-view>
-            <qui-icon name="icon-delete" color="#fff" size="40" @click="videoDel"></qui-icon>
-          </cover-view>-->
-        </video>
+        ></video>
         <view class="post-box__video__play__icon-del">
           <qui-icon name="icon-close" class="" color="#fff" size="40" @click="videoDel"></qui-icon>
         </view>
@@ -124,10 +124,12 @@
           </text>
           <view class="popup-content-btn" v-if="setType === 'pay'">
             <qui-button
+              class="popup-btn"
               v-for="(item, index) in payNum"
               :key="index"
               :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
               plain
+              size="post"
               @click="moneyClick(index)"
             >
               {{ item.name }}
@@ -135,9 +137,11 @@
           </view>
           <view class="popup-content-btn" v-if="setType === 'word'">
             <qui-button
+              class="popup-btn"
               v-for="(item, index) in wordCount"
               :key="index"
-              :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
+              :type="wordCountCheck[0].name === item.name ? 'primary' : 'default'"
+              size="post"
               plain
               @click="wordClick(index)"
             >
@@ -206,13 +210,15 @@ export default {
   data() {
     return {
       textAreaValue: '',
+      textAreaLength: 450,
+      postTitle: '',
       checkClassData: {},
       type: 0,
       title: '',
       price: 0,
       inputPrice: 0.0,
-      inputWord: 0,
-      operating: '',
+      inputWord: '',
+      operating: '', // 编辑或发布类型
       emojiShow: false,
       header: {},
       formData: {},
@@ -264,23 +270,23 @@ export default {
       cursor: 0,
       wordCount: [
         {
-          name: '5字',
+          name: this.i18n.t('discuzq.post.word', { num: 5 }),
           num: 5,
         },
         {
-          name: '10字',
+          name: this.i18n.t('discuzq.post.word', { num: 10 }),
           num: 10,
         },
         {
-          name: '15字',
+          name: this.i18n.t('discuzq.post.word', { num: 15 }),
           num: 15,
         },
         {
-          name: '20字',
+          name: this.i18n.t('discuzq.post.word', { num: 20 }),
           num: 20,
         },
         {
-          name: '25字',
+          name: this.i18n.t('discuzq.post.word', { num: 25 }),
           num: 25,
         },
         {
@@ -290,7 +296,7 @@ export default {
       ],
       wordCountCheck: [
         {
-          name: '5字',
+          name: this.i18n.t('discuzq.post.word', { num: 5 }),
           num: 5,
         },
       ],
@@ -303,9 +309,6 @@ export default {
       percent: 0,
       fileId: '',
     };
-  },
-  onReady() {
-    this.videoContext = uni.createVideoContext('video');
   },
   computed: {
     ...mapState({
@@ -330,7 +333,6 @@ export default {
   },
   methods: {
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
-    // video uploader
 
     // video
     videoDel() {
@@ -433,7 +435,7 @@ export default {
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
 
-      if (this.payNumCheck[0].name === '自定义') {
+      if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         this.$refs.popupBtm.close();
 
         this.$nextTick(() => {
@@ -490,6 +492,16 @@ export default {
         status = false;
       } else {
         switch (this.type) {
+          case 0:
+            break;
+          case 1:
+            if (this.postTitle.length < 1) {
+              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theTitleCanNotBeBlank') });
+              status = false;
+            } else {
+              status = true;
+            }
+            break;
           case 2:
             if (this.videoBeforeList.length < 1) {
               this.$refs.toast.show({ message: this.i18n.t('discuzq.post.videoCannotBeEmpty') });
@@ -512,13 +524,13 @@ export default {
             }
             break;
           default:
-            console.log('帖子类型不匹配');
+            status = false;
+            this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
         }
       }
 
       if (status) {
         this.postThread().then(res => {
-          console.log(res._jv.json.data.id);
           if (res._jv.json.data.id) {
             uni.navigateTo({
               url: `/pages/topic/index?id=${res._jv.json.data.id}`,
@@ -556,31 +568,48 @@ export default {
         free_words: this.word,
       };
 
-      if (this.type === 3) {
-        params._jv.relationships.attachments = {
-          data: [],
-        };
-        this.uploadFile.forEach(item => {
-          params._jv.relationships.attachments.data.push({
-            type: 'attachments',
-            id: item.data.id,
+      const postPromise = new Promise((resolve, reject) => {
+        switch (this.type) {
+          case 0:
+            resolve();
+            break;
+          case 1:
+            params.title = this.postTitle;
+            resolve();
+            break;
+          case 2:
+            params.file_id = this.fileId;
+            params.file_name = this.videoName;
+            resolve();
+            break;
+          case 3:
+            params._jv.relationships.attachments = {
+              data: [],
+            };
+            this.uploadFile.forEach(item => {
+              params._jv.relationships.attachments.data.push({
+                type: 'attachments',
+                id: item.data.id,
+              });
+            });
+            resolve();
+            break;
+          default:
+            reject();
+            this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
+        }
+      });
+
+      return postPromise.then(() => {
+        return this.$store
+          .dispatch('jv/post', params)
+          .then(res => {
+            return res;
+          })
+          .catch(err => {
+            console.log(err);
           });
-        });
-      }
-
-      if (this.type === 2) {
-        params.file_id = this.fileId;
-        params.file_name = this.videoName;
-      }
-
-      return this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          return res;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      });
     },
     delAttachments(id) {
       const params = {
@@ -631,6 +660,8 @@ export default {
     this.getEmoji();
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
+
+    this.textAreaLength = Number(option.type) === 1 ? 1000 : 450;
   },
   onShow() {
     let atMemberList = '';
@@ -643,6 +674,9 @@ export default {
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
   },
+  onReady() {
+    this.videoContext = uni.createVideoContext('video');
+  },
 };
 </script>
 
@@ -652,7 +686,22 @@ export default {
 .post-box {
   width: 100vw;
   padding: 40rpx;
+  overflow: hidden;
   box-sizing: border-box;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    height: 100rpx;
+    margin-bottom: 30rpx;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    &-input {
+      width: 100%;
+      padding-right: 80rpx;
+      font-size: $fg-f34;
+    }
+  }
   &__hd {
     display: flex;
     justify-content: space-between;
@@ -676,7 +725,6 @@ export default {
     border-radius: 10rpx;
     box-sizing: border-box;
   }
-
   &__video {
     display: flex;
     flex-wrap: wrap;
@@ -735,7 +783,6 @@ export default {
       border-radius: 5rpx;
     }
   }
-
   &__ft {
     &-tit {
       display: block;
@@ -752,15 +799,14 @@ export default {
       }
     }
   }
-  .popup-content-btn {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    button {
-      min-height: 70rpx;
-    }
-  }
 }
+
+.popup-content-btn {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .popup-share {
   /* #ifndef APP-NVUE */
   display: flex;
@@ -798,16 +844,6 @@ export default {
   border-top-width: 1px;
 }
 
-/deep/ .qui-button--button {
-  width: 200rpx;
-  height: 100rpx;
-  font-size: 40rpx;
-}
-
-.qui-button--button[size='default'] {
-  height: 100rpx;
-}
-
 .emoji-bd {
   position: relative;
   width: 100%;
@@ -816,6 +852,11 @@ export default {
   font-size: $fg-f28;
   color: --color(--qui-FC-B5);
 }
+/deep/ input .input-placeholder {
+  font-size: $fg-f34;
+  color: --color(--qui-FC-AAA);
+}
+
 .cell-item-right-text {
   /deep/ .cell-item__body__right-text {
     color: --color(--qui-RED);
@@ -834,7 +875,7 @@ export default {
     padding-top: 40rpx;
     text-align: center;
     text {
-      font-size: 28rpx;
+      font-size: $fg-f28;
       color: --color(--qui-FC-333);
     }
   }
@@ -865,7 +906,7 @@ export default {
 
     button {
       width: 50%;
-      font-size: --color(--qui-FC-777);
+      color: --color(--qui-FC-777);
       background-color: --color(--qui-BG-2);
       border-radius: 0;
       &:after {
@@ -885,11 +926,4 @@ export default {
 /deep/ .uni-video-cover {
   display: none;
 }
-
-/* /deep/ .uni-video-cover-play-button {
-  display: none;
-}
-/deep/ .uni-video-cover-duration {
-  display: none;
-} */
 </style>
