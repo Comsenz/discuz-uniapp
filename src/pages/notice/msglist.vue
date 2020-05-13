@@ -1,8 +1,11 @@
 <template>
   <view class="chat-box">
     <!-- 导航栏 -->
-    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-text">{{ username }}</view>
+    <uni-nav-bar status-bar fixed @clickLeft="clickNavBarLeft">
+      <view slot="left" class="left-con">
+        <qui-icon name="icon-back" class="left-arrow" size="34" color="#343434"></qui-icon>
+        <text class="left-con-text">{{ username }}</text>
+      </view>
     </uni-nav-bar>
     <!-- 消息内容 -->
     <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
@@ -179,10 +182,21 @@ export default {
   margin-bottom: 130rpx;
   background-color: #ededed;
 
-  .left-text {
-    min-width: 250rpx;
-    font-weight: bold;
+  /deep/ .uni-navbar--border {
+    border: none;
+  }
+
+  .left-con {
+    min-width: 300rpx;
     color: #343434;
+
+    .left-arrow {
+      margin: 0rpx 18rpx 0rpx 0rpx;
+    }
+
+    .left-con-text {
+      font-weight: bold;
+    }
   }
 
   &__con {

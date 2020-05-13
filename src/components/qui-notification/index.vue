@@ -13,6 +13,9 @@
           <view>
             <view class="list-box__header__info__box">
               <text class="list-box__header__info__username">{{ item.user_name }}</text>
+              <text class="list-box__header__info__username" v-if="item.type === 'system'">
+                {{ item.title }}
+              </text>
               <text class="list-box__header__info__groupname" v-if="item.thread_user_groups">
                 （{{ item.thread_user_groups }}）
               </text>
@@ -33,20 +36,14 @@
           </view>
         </view>
         <view class="list-box__header__r">
-          <uni-icons
-            class="red-circle"
-            v-if="item.recipient_read_at === null"
-            type="smallcircle-filled"
-            size="7"
-            color="red"
-          ></uni-icons>
           <text class="list-box__header__r__amount" v-if="item.amount">{{ item.amount }}</text>
-          <uni-icons class="uni-icon-wrapper" type="arrowright" :size="20" color="#bbb" />
+          <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
         </view>
       </view>
       <view class="list-box__con">
         <view class="list-box__con__text" v-html="item.post_content"></view>
-        <view class="list-box__con__box" v-if="item.thread_id">
+        <view class="list-box__con__text" v-if="item.type === 'system'">{{ item.content }}</view>
+        <view class="list-box__con__box" v-if="item.thread_id && item.type !== 'system'">
           <view class="list-box__con__box__info">
             <text class="list-box__con__box__info__username">{{ item.thread_user_name }}：</text>
             <text class="list-box__con__box__info__post_content">{{ item.thread_title }}</text>
@@ -55,7 +52,7 @@
         </view>
       </view>
       <view class="list-box__footer" @click="deleteNotification(item.id)">
-        <uni-icons class="uni-icon-wrapper" type="trash" :size="18" color="#777" />
+        <qui-icon name="icon-delete" color="#777" size="26"></qui-icon>
         <text class="list-box__footer__text">删除</text>
       </view>
     </view>
@@ -63,12 +60,8 @@
 </template>
 
 <script>
-import { uniIcons } from '@dcloudio/uni-ui';
-
 export default {
-  components: {
-    uniIcons,
-  },
+  components: {},
 
   props: {
     list: {
@@ -93,7 +86,8 @@ export default {
 .list-box {
   width: 100%;
   min-height: 188rpx;
-  margin: 30rpx 0 10rpx;
+  margin: 0 0 20rpx;
+  font-size: 28rpx;
   color: #333;
   background: #fff;
 
@@ -154,10 +148,10 @@ export default {
   }
 
   &__con {
-    margin: 20rpx 40rpx 10rpx;
+    margin: 0rpx 40rpx 10rpx;
 
     &__text {
-      margin: 20rpx 0 15rpx;
+      margin: 0rpx 0rpx 40rpx;
     }
 
     &__box {
@@ -169,7 +163,7 @@ export default {
       border-radius: 10rpx;
 
       &__info {
-        padding: 23rpx 16rpx 10rpx 20rpx;
+        padding: 20rpx;
         font-size: 24rpx;
         line-height: 35rpx;
         color: #333;
@@ -188,10 +182,11 @@ export default {
   }
 
   &__footer {
-    padding: 10rpx 30rpx 40rpx 0;
+    padding: 10rpx 40rpx 40rpx 0;
     text-align: right;
 
     &__text {
+      margin-left: 11rpx;
       color: #777;
     }
   }
