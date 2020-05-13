@@ -1,5 +1,5 @@
 <template>
-  <view class="input">
+  <view class="input" @click.stop="toggleBox">
     <!-- 已绑定手机号码验证 -->
     <view class="modify-phon" v-if="phon">
       <view class="modify-phon-test">
@@ -16,11 +16,17 @@
       </button>
     </view>
     <!-- 验证码 -->
-    <view class="modify-input">
+    <view class="modify-input" @click.stop="fourse">
       <view class="modify-input-test">
         {{ i18n.t('modify.placeentercode') }}
       </view>
-      <qui-input-code @getdata="btndata" :title="judge" :text="test"></qui-input-code>
+      <qui-input-code
+        @getdata="btndata"
+        :title="judge"
+        :text="test"
+        :show="inshow"
+        :isiphonex="inisIphone"
+      ></qui-input-code>
     </view>
     <view class="modify-button">
       <qui-button type="primary" size="large" @click="submission">
@@ -50,6 +56,8 @@ export default {
       icon: 'none',
       num: 5,
       duration: 2000,
+      inshow: false,
+      inisIphone: false,
     };
   },
   onLoad(arr) {
@@ -57,6 +65,9 @@ export default {
     this.senduser();
   },
   methods: {
+    fourse() {
+      this.inshow = true;
+    },
     getCode() {
       this.showText = false;
       const interval = setInterval(() => {
@@ -160,6 +171,9 @@ export default {
           }
         });
     },
+    toggleBox() {
+      this.inshow = false;
+    },
   },
 };
 </script>
@@ -175,6 +189,7 @@ export default {
   display: flex;
   width: 710rpx;
   height: 100rpx;
+  justify-content: space-between;
   margin: 31rpx 0 0 40rpx;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
@@ -197,7 +212,7 @@ export default {
   display: block;
   height: 70rpx;
   min-width: 180rpx;
-  margin: 15rpx 0 0 40rpx;
+  margin: 15rpx 40rpx  0;
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 70rpx;
