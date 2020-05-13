@@ -201,7 +201,7 @@ export default {
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
-          data: [{ label: this.i18n.t('home.all'), value: '0', selected: true }],
+          data: [],
         },
         {
           title: this.i18n.t('home.filterType'),
@@ -510,8 +510,7 @@ export default {
     },
     // 首页导航栏分类列表数据
     loadCategories() {
-      this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
-        console.log(data, '------');
+      this.$store.dispatch('jv/get', 'categories').then(data => {
         delete data._jv;
         this.categories = [
           {
@@ -521,22 +520,13 @@ export default {
             name: this.i18n.t('home.all'),
           }
         ].concat(data);
-        const categoryFilterList = [
-          {
-            label: '所有',
-            value: 0,
-            // selected: 0 === this.categoryId ? true : false,
-            selected: true,
-          },
-        ];
+        const categoryFilterList = [{ label: this.i18n.t('home.all'), value: '0', selected: true }];
 
-        Object.getOwnPropertyNames(data).forEach(function(key) {
-          categoryFilterList.push({
-            label: data[key].name,
-            value: data[key]._jv.id,
-            // selected: data[key].id === this.categoryId ? true : false,
-            selected: false,
-          });
+        data.map(item => {
+          item.label = item.name,
+          item.value = item._jv.id,
+          item.selected = false,
+          categoryFilterList.push(item);
         });
 
         this.filterList[0].data = categoryFilterList;
