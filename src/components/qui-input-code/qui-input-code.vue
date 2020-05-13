@@ -1,14 +1,13 @@
 <template>
   <view class="modify-vftion">
-    <view class="modify-vftion-input" @tap="onFocus">
+    <view class="modify-vftion-input">
       <input
         type="number"
         class="hidden-ipt"
         maxlength="6"
         :focus="isFocus"
-        @input="setValue"
         @blur="lose"
-        v-model="inpcont"
+        v-model="iptValue"
       />
       <input
         :class="
@@ -68,6 +67,17 @@
     <view class="hidden-ipt-test" v-if="title">
       {{ text }}
     </view>
+    <!-- 键盘 -->
+    <view :class="['keyboard', show ? '' : 'active', isiphonex ? 'isIphone' : '']">
+      <block v-for="(item, index) in 9" :key="index">
+        <view class="keyboard-item" @tap="key(index + 1)">{{ index + 1 }}</view>
+      </block>
+      <view class="keyboard-item hide"></view>
+      <view class="keyboard-item" @tap="key(0)"><text>0</text></view>
+      <view class="keyboard-item delte" @tap="del()">
+        <image class="img" src="@/static/del.png" mode="aspectFill" :lazy-load="true"></image>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -86,28 +96,48 @@ export default {
       default: 'number',
       type: String,
     },
+    show: {
+      default: false,
+      type: Boolean,
+    },
+    isiphonex: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
     return {
       iptValue: '',
       isFocus: false,
       inpcont: '',
+      num: 1,
+      // show:false,
+      // isiphonex:false,
     };
   },
   methods: {
     onFocus() {
       this.isFocus = true;
-    },
-    setValue(event) {
-      // 文本框输入事件
-      const { value } = event.target;
-      setTimeout(() => {
-        this.iptValue = value;
-      }, 1); // 重点
+      // this.show = true;
     },
     lose() {
       this.isFocus = false;
-      this.$emit('getdata', this.inpcont);
+      if (this.iptValue.length === 6) {
+        this.$emit('getdata', this.iptValue);
+      }
+    },
+    key(key) {
+      if (this.iptValue.length < 6) {
+        this.iptValue += key;
+        if (this.iptValue.length === 6) {
+          this.$emit('getdata', this.iptValue);
+        }
+      }
+    },
+    del() {
+      if (this.iptValue.length > 0) {
+        this.iptValue = this.iptValue.substring(0, this.iptValue.length - 1);
+      }
     },
   },
 };
@@ -160,5 +190,50 @@ export default {
   font-weight: 400;
   color: --color(--qui-RED);
   opacity: 1;
+}
+.keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  background: #ebebeb;
+  transition: all 0.2s ease-in 0.2s;
+}
+.active {
+  bottom: -400rpx;
+}
+.keyboard-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 250rpx;
+  height: 99rpx;
+  font-size: 40rpx;
+  color: #333;
+  background: #fff;
+  border: 1rpx solid #ebebeb;
+  border-top: none;
+  border-left: none;
+  box-sizing: border-box;
+}
+.hide {
+  opacity: 0;
+}
+.delte {
+  background: none;
+  box-shadow: none;
+}
+.delte image {
+  width: 60rpx;
+  height: 60rpx;
+}
+.isIphone {
+  //   padding-bottom: 68rpx !important;
+  padding-bottom: 0;
 }
 </style>

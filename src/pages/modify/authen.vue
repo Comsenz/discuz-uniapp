@@ -1,10 +1,17 @@
 <template>
-  <view class="authen">
-    <view class="authen-input">
+  <view class="authen" @click.stop="toggleBox">
+    <view class="authen-input" @click.stop="fourse">
       <view class="authen-tit">
         {{ i18n.t('modify.authentication') }}
       </view>
-      <qui-input-code @getdata="btndata" :title="sun" :text="test" :number="types"></qui-input-code>
+      <qui-input-code
+        @getdata="btndata"
+        :title="sun"
+        :text="test"
+        :number="types"
+        :show="inshow"
+        :isiphonex="inisIphone"
+      ></qui-input-code>
       <view class="authen-forget" @click="forgetpay">
         {{ i18n.t('modify.forgetmanypassword') }}
       </view>
@@ -29,12 +36,17 @@ export default {
       inputpas: '',
       repeatpas: '',
       icon: 'none',
+      inshow: false,
+      inisIphone: false,
     };
   },
   onLoad(arr) {
     this.userid = Number(arr.id);
   },
   methods: {
+    fourse() {
+      this.inshow = true;
+    },
     btndata(num) {
       if (num.length === 6) {
         this.mobelypas(num);
@@ -80,6 +92,9 @@ export default {
         url: `/pages/modify/findpwd?user=${this.userid}&pas=reset_pay_pwd`,
       });
     },
+    toggleBox() {
+      this.inshow = false;
+    },
   },
 };
 </script>
@@ -87,6 +102,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+.authen {
+  width: 100vw;
+  height: 100vh;
+}
 .authen-input {
   width: 710rpx;
   height: 200rpx;

@@ -50,6 +50,8 @@ export default {
         nov: '十一月',
         dec: '十二月',
       },
+      morning: '上午',
+      afternoon: '下午',
     },
     // 列表加载提示相关
     list: {
@@ -182,7 +184,7 @@ export default {
     tabsCircle: '圈子',
     tabsNews: '消息',
     tabsMy: '我',
-    filterPlate: '板块',
+    filterPlate: '版块',
     filterType: '类型',
     text: '文本',
     invitation: '帖子',
@@ -193,6 +195,32 @@ export default {
     generatePoster: '生成海报',
     wxShare: '微信分享',
     word: '文字',
+  },
+  // 圈子管理页面
+  manage: {
+    inviteMembers: '邀请成员',
+    siteMembers: '圈子成员',
+    masterManagement: '站长管理',
+    manageMembers: '成员管理',
+    nouse: '未使用',
+    used: '已使用',
+    invalid: '已失效',
+    overdue: '已过期',
+    setInvalid: '设为无效',
+    generateInvitationUrl: '生成邀请链接',
+    notSelected: '尚未选',
+    selected: '操作已选',
+  },
+  // 消息页面
+  notice: {
+    related: '@我的',
+    replied: '回复我的',
+    liked: '点赞我的',
+    rewarded: '支付我的',
+    system: '系统通知',
+    admin: '管理员',
+    send: '发送',
+    reply: '回复..',
   },
   // 海报分享页
   share: {
