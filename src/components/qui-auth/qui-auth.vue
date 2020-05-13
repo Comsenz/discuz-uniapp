@@ -4,7 +4,11 @@
       <qui-icon @tap="close" class="auth__header__close" name="icon-close" size="36"></qui-icon>
     </view>
     <view class="auth__content">
-      <image class="auth__content__image" mode="widthFix" :src="(forums.set_site.site_logo || '/static/logo.png')"></image>
+      <image
+        class="auth__content__image"
+        mode="widthFix"
+        :src="forums.set_site.site_logo || '/static/logo.png'"
+      ></image>
 
       <qui-button
         type="primary"
@@ -33,9 +37,14 @@ export default {
     handleGetUserInfo(res) {
       if (res.detail.errMsg === 'getUserInfo:ok') {
         // eslint-disable-next-line no-unused-vars
-        this.$store.dispatch('session/login').then(data => {
-          this.$emit('login', res, data);
-        });
+        this.$store
+          .dispatch('session/login')
+          .then(data => {
+            this.$emit('login', res, data);
+          })
+          .catch(err => {
+            console.log(err);
+          });
       } else {
         this.$emit('login', res);
       }
