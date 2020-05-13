@@ -184,7 +184,7 @@ export default {
     tabsCircle: '圈子',
     tabsNews: '消息',
     tabsMy: '我',
-    filterPlate: '板块',
+    filterPlate: '版块',
     filterType: '类型',
     text: '文本',
     invitation: '帖子',

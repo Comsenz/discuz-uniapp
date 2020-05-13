@@ -176,7 +176,7 @@
 
 <script>
 /* eslint-disable */
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
@@ -223,7 +223,7 @@ export default {
         },
       ],
       isTop: 0,
-      threads: {},
+      threads: [],
       sticky: {}, // 置顶帖子内容
       shareBtn: 'icon-share1',
       tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
@@ -250,28 +250,11 @@ export default {
         },
       ],
       postImg: '../assets.publish.svg',
-      threadsStatusId: 0
+      threadsStatusId: 0,
+      categories: []
     };
   },
   computed: {
-    categories() {
-      const tmp = Object.assign(
-        {
-          0: {
-            _jv: {
-              id: 0,
-            },
-            name: this.i18n.t('home.all'),
-          },
-        },
-      this.$store.getters['jv/get']('categories'),
-      );
-      console.log(tmp);
-      return tmp;
-    },
-    // categories() {
-    // return this.$store.getters['jv/get']('categories');
-    // },
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
@@ -530,6 +513,14 @@ export default {
       this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
         console.log(data, '------');
         delete data._jv;
+        this.categories = [
+          {
+            _jv: {
+              id: 0,
+            },
+            name: this.i18n.t('home.all'),
+          }
+        ].concat(data);
         const categoryFilterList = [
           {
             label: '所有',
@@ -600,7 +591,7 @@ export default {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        this.threads = Object.assign({}, this.threads, res);;
+        this.threads = res;
       })
 
     },

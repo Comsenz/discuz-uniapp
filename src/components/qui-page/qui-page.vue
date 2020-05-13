@@ -25,12 +25,17 @@ export default {
   },
   mounted() {
     this.$store.dispatch('session/setAuth', this.$refs.auth);
+    if (!this.$store.getters['session/get']('isLogin')) {
+      this.$refs.auth.open();
+    }
   },
   methods: {
-    close() {
+    close(res) {
+      this.$emit('close', res);
       this.$refs.auth.close();
     },
-    login() {
+    login(res, data) {
+      this.$emit('login', res, data);
       this.$refs.auth.close();
     },
   },

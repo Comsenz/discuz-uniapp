@@ -51,6 +51,17 @@
         <view class="themeItem__content__text">
           <rich-text :nodes="themeContent"></rich-text>
         </view>
+        <video
+          v-if="threadType === 2"
+          id="player-video"
+          width="414"
+          height="270"
+          preload="auto"
+          playsinline
+          webkit-playsinline
+          x5-playsinline
+          ref="playerVideo"
+        ></video>
         <view v-if="Object.keys(imagesList || {}).length == 1">
           <view class="themeItem__content__imgone">
             <image
@@ -263,6 +274,15 @@ export default {
     videoShow: {
       type: Boolean,
       default: false,
+    },
+    // 视频帖类型
+    threadType: {
+      type: Number,
+      default: 0,
+    },
+    mediaUrl: {
+      type: String,
+      default: '',
     },
   },
   data: () => {

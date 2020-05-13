@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
