@@ -17,7 +17,7 @@
         @personJump="personJump"
         @selectChoice="selectChoice"
       ></qui-topic-content>
-      <qui-button size="100%" type="primary" class="publishBtn" @tap="payClickShow()">
+      <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
         {{ p.pay }}
       </qui-button>
       <!-- 已支付用户列表 -->
@@ -161,7 +161,7 @@
                 url="https://dq.comsenz-service.com/api/attachments"
                 :header="header"
                 :form-data="formData"
-                count="3"
+                :count="3"
                 async-clear
                 ref="upload"
                 @change="uploadChange"
@@ -240,6 +240,7 @@
       ></qui-pay>
     </view>
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
+    <qui-toast ref="toast"></qui-toast>
   </qui-page>
 </template>
 
@@ -293,7 +294,8 @@ export default {
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
-      formData: {}, //上传数据
+      header: {},
+      formData: {}, //请求头部
       commentId: '',
       isAnonymous: '0',
       payShowStatus: true, //是否显示支付
@@ -354,7 +356,7 @@ export default {
   onLoad(option) {
     console.log(option.id, '这是详情页接收的id');
     // this.threadId = option.id;
-    this.threadId = 139;
+    this.threadId = 188;
     this.loadThreads();
     this.loadThreadPosts();
     const token =
@@ -696,7 +698,7 @@ export default {
 
     // 创建订单
     creatOrder(amount, type, value, payType) {
-      console.log('创建订单', '这是参数');
+      console.log('创建订单', '这是参数', payType);
       const params = {
         _jv: {
           type: 'orders',
@@ -710,7 +712,7 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '成功创建订单');
+          console.log(res, '成功创建订单', typeof payType, '这是支付类型');
           this.orderSn = res.order_sn;
           if (payType == 0) {
             // 微信支付
@@ -796,10 +798,13 @@ export default {
             // this.payShow = false;
             this.payShowStatus = false;
             this.coverLoading = false;
+            this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
         .catch(err => {
           console.log(err);
+          this.coverLoading = false;
+          this.$refs.toast.show({ message: this.p.payFaild });
         });
     },
 
@@ -807,7 +812,7 @@ export default {
       // 小程序支付。
       uni.requestPayment({
         provider: 'wxpay',
-        timeStamp: String(Date.now(timeStamp)),
+        timeStamp: timeStamp,
         nonceStr: nonceStr,
         package: packageVal,
         signType: signType,
@@ -828,7 +833,7 @@ export default {
       console.log('详情页监听到密码输入完成');
       console.log(this.thread.price, '这是价格');
       this.value = val;
-      this.creatOrder(this.thread.price, '3', val);
+      this.creatOrder(this.thread.price, '3', val, '1');
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
@@ -1295,9 +1300,10 @@ page {
   flex-direction: row;
   padding: 40rpx 40rpx 20rpx;
   .comment-popup-top-l {
-    flex: 1;
+    // flex: 1;
     display: flex;
     flex-direction: row;
+    width: 120rpx;
   }
   .comm-icon {
     flex: 1;

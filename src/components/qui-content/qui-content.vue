@@ -53,7 +53,6 @@
         </view>
         <video
           v-if="threadType === 2"
-          src="{{ mediaUrl }}"
           id="player-video"
           width="414"
           height="270"
