@@ -1,59 +1,87 @@
 <template>
   <view>
-    <view class="list-box" v-for="item in list" :key="item.id">
-      <view class="list-box__header">
-        <view class="list-box__header__info">
-          <image
-            class="list-box__header__info__user-avatar"
-            v-if="item.type !== 'system'"
-            :src="
-              item.user_avatar ? item.user_avatar : 'https://discuz.chat/static/images/noavatar.gif'
-            "
-          ></image>
-          <view>
-            <view class="list-box__header__info__box">
-              <text class="list-box__header__info__username">{{ item.user_name }}</text>
-              <text class="list-box__header__info__username" v-if="item.type === 'system'">
-                {{ item.title }}
-              </text>
-              <text class="list-box__header__info__groupname" v-if="item.thread_user_groups">
-                （{{ item.thread_user_groups }}）
-              </text>
-              <text class="list-box__header__info__title" v-if="item.type === 'related'">
-                @了我
-              </text>
-              <text class="list-box__header__info__title" v-if="item.type === 'replied'">
-                回复了我
-              </text>
-              <text class="list-box__header__info__title" v-if="item.type === 'liked'">
-                点赞了我
-              </text>
-              <text class="list-box__header__info__title" v-if="item.type === 'rewarded'">
-                打赏了我
-              </text>
+    <qui-no-data tips="暂无内容" v-if="!list || list.length <= 0"></qui-no-data>
+    <view class="list-box" v-for="item in list" :key="item.id" v-else>
+      <!-- 除系统通知以外的通知 -->
+      <view class="list-box__notice" v-if="item.type !== 'system'">
+        <view class="list-box__notice__h">
+          <view class="list-box__notice__hl">
+            <image
+              class="list-box__notice__hl-avatar"
+              :src="
+                item.user_avatar
+                  ? item.user_avatar
+                  : 'https://discuz.chat/static/images/noavatar.gif'
+              "
+            ></image>
+            <view class="list-box__notice__hl-info">
+              <view>
+                <text
+                  :class="[
+                    item.thread_user_groups ? '' : 'list-box__notice__hl-info-username-space',
+                    'list-box__notice__hl-info-username',
+                  ]"
+                >
+                  {{ item.user_name }}
+                </text>
+                <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
+                  （{{ item.thread_user_groups }}）
+                </text>
+                <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
+                  @了我
+                </text>
+                <text class="list-box__notice__hl-info-title" v-if="item.type === 'replied'">
+                  回复了我
+                </text>
+                <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
+                  点赞了我
+                </text>
+                <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
+                  打赏了我
+                </text>
+              </view>
+              <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
             </view>
-            <view class="list-box__header__info__time">{{ item.time }}</view>
+          </view>
+          <view class="list-box__notice__hr">
+            <text class="list-box__notice__hr__amount" v-if="item.money">{{ item.money }}</text>
+            <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
           </view>
         </view>
-        <view class="list-box__header__r">
-          <text class="list-box__header__r__amount" v-if="item.amount">{{ item.amount }}</text>
-          <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
-        </view>
-      </view>
-      <view class="list-box__con">
-        <view class="list-box__con__text" v-html="item.post_content"></view>
-        <view class="list-box__con__text" v-if="item.type === 'system'">{{ item.content }}</view>
-        <view class="list-box__con__box" v-if="item.thread_id && item.type !== 'system'">
-          <view class="list-box__con__box__info">
-            <text class="list-box__con__box__info__username">{{ item.thread_user_name }}：</text>
-            <text class="list-box__con__box__info__post_content">{{ item.thread_title }}</text>
-            <view class="list-box__con__box__info__time">{{ item.thread_created_at }}</view>
+        <view class="list-box__notice__con">
+          <view class="list-box__notice__con__text" v-html="item.post_content"></view>
+          <view class="list-box__notice__con__wrap" v-if="item.thread_id">
+            <view class="list-box__notice__con__wrap-info">
+              <text class="list-box__notice__con__wrap-info-username">
+                {{ item.thread_user_name }}：
+              </text>
+              <text>{{ item.thread_title }}</text>
+              <view class="list-box__notice__con__wrap-info-time">
+                {{ item.thread_created_at }}
+              </view>
+            </view>
           </view>
         </view>
       </view>
-      <view class="list-box__footer" @click="deleteNotification(item.id)">
+      <!-- 系统通知 -->
+      <view class="list-box__system-notice" v-else>
+        <view class="list-box__system-notice__h">
+          <view>
+            <view class="list-box__system-notice__hl__title">{{ item.title }}</view>
+            <view class="list-box__system-notice__hl__time">{{ item.time }}</view>
+          </view>
+          <view class="list-box__system-notice__hr">
+            <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
+          </view>
+        </view>
+        <view class="list-box__system-notice__con">
+          <view class="list-box__system-notice__con__text">{{ item.content }}</view>
+        </view>
+      </view>
+      <!-- 删除按钮 -->
+      <view class="list-box__ft" @click="deleteNotification(item.id)">
         <qui-icon name="icon-delete" color="#777" size="26"></qui-icon>
-        <text class="list-box__footer__text">删除</text>
+        <text class="list-box__ft__text">删除</text>
       </view>
     </view>
   </view>
@@ -85,59 +113,58 @@ export default {
 <style lang="scss" scoped>
 .list-box {
   width: 100%;
-  min-height: 188rpx;
   margin: 0 0 20rpx;
   font-size: 28rpx;
   color: #333;
   background: #fff;
 
-  &__header {
-    display: flex;
-    justify-content: space-between;
+  &__notice {
+    padding: 20rpx 40rpx;
 
-    &__info {
+    &__h {
       display: flex;
       justify-content: space-between;
+    }
 
-      &__user-avatar {
+    &__hl {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20rpx;
+
+      &-avatar {
         width: 80rpx;
         height: 80rpx;
-        margin: 20rpx 20rpx 20rpx 40rpx;
         border-radius: 100rpx;
       }
 
-      &__box {
-        width: 100%;
-        align-items: center;
-        margin: 20rpx 0rpx 0rpx;
+      &-info {
+        margin-left: 20rpx;
       }
 
-      &__username {
-        margin-right: 6rpx;
+      &-info-username {
         font-weight: bold;
-        line-height: 37rpx;
         color: #000;
       }
 
-      &__groupname,
-      &__title {
-        font-weight: 400;
-        line-height: 37rpx;
+      &-info-username-space {
+        margin-right: 13rpx;
+      }
+
+      &-info-groupname,
+      &-info-title {
         color: #aaa;
       }
 
-      &__time {
+      &-info-time {
         font-size: 24rpx;
-        line-height: 31rpx;
         color: #aaa;
       }
     }
 
-    &__r {
+    &__hr {
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-right: 30rpx;
 
       &__amount {
         margin-right: 20rpx;
@@ -145,44 +172,60 @@ export default {
         color: #fa5151;
       }
     }
-  }
 
-  &__con {
-    margin: 0rpx 40rpx 10rpx;
-
-    &__text {
-      margin: 0rpx 0rpx 40rpx;
-    }
-
-    &__box {
-      width: 100%;
-      min-height: 145rpx;
-      margin: 15rpx 0 0;
-      font-weight: normal;
-      background: #ededed;
-      border-radius: 10rpx;
-
-      &__info {
-        padding: 20rpx;
-        font-size: 24rpx;
-        line-height: 35rpx;
+    &__con {
+      &__text {
+        margin: 0rpx 0rpx 40rpx;
         color: #333;
       }
 
-      &__info__username {
+      &__wrap {
+        padding: 20rpx;
+        font-size: 24rpx;
+        color: #333;
+        background: #ededed;
+        border-radius: 10rpx;
+      }
+
+      &__wrap-info-username {
         font-weight: bold;
       }
 
-      &__info__time {
-        margin: 10rpx 0 20rpx;
+      &__wrap-info-time {
+        margin: 10rpx 0rpx 0rpx;
         font-size: 20rpx;
         color: #aaa;
       }
     }
   }
 
-  &__footer {
-    padding: 10rpx 40rpx 40rpx 0;
+  &__system-notice {
+    padding: 25rpx 40rpx 20rpx;
+
+    &__h {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20rpx;
+
+      &l__title {
+        font-weight: bold;
+        color: #000;
+      }
+      &l__time {
+        font-size: 24rpx;
+        color: #aaa;
+      }
+    }
+
+    &__con {
+      &__text {
+        color: #333;
+      }
+    }
+  }
+
+  &__ft {
+    padding: 0rpx 40rpx 40rpx 0rpx;
     text-align: right;
 
     &__text {
