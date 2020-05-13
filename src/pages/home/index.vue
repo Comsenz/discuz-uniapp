@@ -1,6 +1,7 @@
 <template>
   <qui-page :class="'home ' + scrolled">
     <uni-nav-bar
+      v-if="navShow"
       left-icon="back"
       left-text="返回"
       right-text="菜单"
@@ -8,18 +9,6 @@
       fixed="true"
       status-bar
     ></uni-nav-bar>
-    <!-- <view
-      v-if="navShow"
-      class="demo"
-      :style="
-        'height:' + demo.height + 'px;' + 'padding-top:' + demo.top + 'px;padding-bottom:10rpx;'
-      "
-    >
-      <view class="left" :style="'top:' + demo.top + 'px'">
-        <view class="iconfont icon-xiaoxi"></view>
-      </view>
-      测试辣
-    </view> -->
     <qui-header
       :head-img="forums.set_site.site_logo"
       :background-head-full-img="forums.set_site.site_background_image"
@@ -172,6 +161,9 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -199,11 +191,7 @@ export default {
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
       redCircle: false, // 消息通知红点
-      navShow: true, //是否显示头部
-      demo: {
-          top: 0,
-          height: 0
-      },
+      navShow: false, // 是否显示头部
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -274,9 +262,6 @@ export default {
     this.loadThreadsSticky();
     // 首页主题内容列表
     this.loadThreads();
-    const demo = uni.getMenuButtonBoundingClientRect()
-    this.demo.top = demo.top
-    this.demo.height = demo.height
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -312,9 +297,9 @@ export default {
       .exec();
   },
   onPageScroll(e) {
-
-    // console.log(e);
-
+    if (e.scrollTop > 100) {
+      this.navShow = true;
+    }
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
     } else {
@@ -388,6 +373,11 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if(index === 0){
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+        return
+      }
       uni.navigateTo({
         url: '/pages/share/site',
       });  
@@ -398,6 +388,10 @@ export default {
       this.$refs.popup.close();
       this.$refs.popupContent.close();
       this.$refs.popupHead.close();
+    },
+    // 点赞调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
     // 筛选选中确定按钮
     confirm(e) {
@@ -436,6 +430,7 @@ export default {
     showFilter() {
       this.show = true;
       this.$refs.filter.setData();
+      this.navShow = true;
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
@@ -541,6 +536,10 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, likeCount) {
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+      }
       if (!canLike) {
         console.log('没有点赞权限');
       }
@@ -698,26 +697,4 @@ export default {
   z-index: 1000;
   width: 100%;
 }
-.demo{
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  background: #fff;
-}
-.left{
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 20rpx;
-  float: left;
-  width: max-content;
-  height: max-content;
-  margin: auto;
-}
-.iconfont{
-  color: #3c3c3c;
-}
-
 </style>

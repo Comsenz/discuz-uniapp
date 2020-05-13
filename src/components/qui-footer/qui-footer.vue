@@ -51,10 +51,14 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </view>
 </template>
 <script>
 import { uniIcons } from '@dcloudio/uni-ui';
+// import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   components: {
@@ -132,6 +136,10 @@ export default {
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+      }
       console.log(this.forums, '9999');
       if (
         !this.forums.other.can_create_thread &&
@@ -187,6 +195,9 @@ export default {
     // 取消按钮
     cancel() {
       this.$refs.popup.close();
+    },
+    close() {
+      this.$refs.auth.close();
     },
   },
 };
