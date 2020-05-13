@@ -120,7 +120,7 @@ export default {
     // 设置钱包支付密码路由
     payUrl: {
       type: String,
-      default: '',
+      default: '/pages/modify/paypwd',
     },
     // 钱包描述是否显示
     descriptionShow: {
@@ -129,13 +129,13 @@ export default {
     },
     // 支付金额
     money: {
-      type: String,
-      default: '0.00',
+      type: [String, Number],
+      default: '0',
     },
     // 余额
     balance: {
-      type: String,
-      default: '0.00',
+      type: [String, Number],
+      default: '0',
     },
     // 支付类型
     payType: {
@@ -199,6 +199,7 @@ export default {
     ...mapMutations({
       setRouter: 'pay/SET_ROUTER',
     }),
+    // 是否选中显示头像
     radioMyHead(evt) {
       console.log(evt.target.value);
       this.$emit('radioMyHead', evt.target.value);
@@ -219,7 +220,7 @@ export default {
       }
       this.$emit('paysureShow', this.current);
     },
-    // 单选框change事件
+    // 支付方式单选框change事件
     radioChange(evt) {
       console.log('这是change事件');
       console.log(typeof evt.target.value, '这是value的类型');

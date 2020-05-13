@@ -247,7 +247,7 @@
 <script>
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
-import {isEmpty} from 'lodash';
+import { isEmpty } from 'lodash';
 
 export default {
   data() {
@@ -804,7 +804,7 @@ export default {
         .catch(err => {
           console.log(err);
           this.coverLoading = false;
-          this.$refs.toast.show({ message: this.p.payFaild });
+          this.$refs.toast.show({ message: this.p.payFail });
         });
     },
 

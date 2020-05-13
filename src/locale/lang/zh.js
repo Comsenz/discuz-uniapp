@@ -169,7 +169,7 @@ export default {
     ofAccount: '的账户',
     surePay: '确认支付',
     paySuccess: '支付成功',
-    payFaild: '支付失败',
+    payFail: '支付失败',
   },
   auth: {
     userinfo: '获取头像和昵称',
