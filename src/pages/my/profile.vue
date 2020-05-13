@@ -1,47 +1,65 @@
 <template>
-  <view class="my-profile">
-    <navigator :url="'../modify/editusername?id=' + userId" hover-class="none">
-      <qui-cell-item title="用户名" arrow :addon="profile.username"></qui-cell-item>
-    </navigator>
-    <qui-cell-item title="头像" slot-right arrow>
-      <image
-        class="my-profile__avatar"
-        :src="profile.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
-        alt="avatarUrl"
-      ></image>
-    </qui-cell-item>
-    <navigator :url="'../modify/mobile?id=' + userId" hover-class="none">
-      <qui-cell-item title="手机号码" arrow :addon="profile.mobile"></qui-cell-item>
-    </navigator>
-    <navigator :url="'../modify/editpwd?id=' + userId" hover-class="none">
-      <qui-cell-item title="密码" arrow addon="修改"></qui-cell-item>
-    </navigator>
-    <qui-cell-item title="微信" arrow :addon="profile.wechat.nickname"></qui-cell-item>
-    <qui-cell-item
-      v-if="profile.realname"
-      title="实名认证"
-      arrow
-      :addon="profile.realname"
-    ></qui-cell-item>
-    <navigator :url="'../modify/signature?id=' + userId" hover-class="none">
+  <qui-page class="profile">
+    <view class="my-profile">
+      <navigator :url="'../modify/editusername?id=' + userId" hover-class="none">
+        <qui-cell-item
+          :title="i18n.t('profile.username')"
+          arrow
+          :addon="profile.username"
+        ></qui-cell-item>
+      </navigator>
+      <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow>
+        <image
+          class="my-profile__avatar"
+          :src="profile.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+          alt="avatarUrl"
+        ></image>
+      </qui-cell-item>
+      <navigator :url="'../modify/mobile?id=' + userId" hover-class="none">
+        <qui-cell-item
+          :title="i18n.t('profile.mobile')"
+          arrow
+          :addon="profile.mobile"
+        ></qui-cell-item>
+      </navigator>
+      <navigator :url="'../modify/editpwd?id=' + userId" hover-class="none">
+        <qui-cell-item
+          :title="i18n.t('profile.password')"
+          arrow
+          :addon="i18n.t('profile.modify')"
+        ></qui-cell-item>
+      </navigator>
+      <qui-cell-item
+        :title="i18n.t('profile.wechat')"
+        arrow
+        :addon="profile.wechat.nickname"
+      ></qui-cell-item>
       <qui-cell-item
         v-if="profile.realname"
-        title="签名"
+        :title="i18n.t('profile.certification')"
         arrow
-        addon="修改"
-        :border="false"
+        :addon="profile.realname"
       ></qui-cell-item>
-    </navigator>
-    <navigator :url="'../modify/realname?id=' + userId" hover-class="none">
-      <qui-cell-item
-        v-if="!profile.realname"
-        title="实名认证"
-        arrow
-        addon="去认证"
-        :border="false"
-      ></qui-cell-item>
-    </navigator>
-  </view>
+      <navigator :url="'../modify/signature?id=' + userId" hover-class="none">
+        <qui-cell-item
+          v-if="profile.realname"
+          :title="i18n.t('profile.signature')"
+          arrow
+          :addon="i18n.t('profile.modify')"
+          :border="false"
+        ></qui-cell-item>
+      </navigator>
+      <navigator :url="'../modify/realname?id=' + userId" hover-class="none">
+        <qui-cell-item
+          v-if="!profile.realname"
+          :title="i18n.t('profile.certification')"
+          arrow
+          :addon="i18n.t('profile.tocertification')"
+          :border="false"
+        ></qui-cell-item>
+      </navigator>
+    </view>
+  </qui-page>
 </template>
 
 <script>
@@ -52,38 +70,33 @@ export default {
   data() {
     return {
       hasPassword: false,
-      userId: 1, // 获取当前登陆用户的ID
+      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
     };
   },
   computed: {
     profile() {
-      console.log(this.$store.getters['jv/get']('users/1'));
-      return this.$store.getters['jv/get']('users/1');
+      return this.$store.getters['jv/get'](`users/${this.userId}`);
     },
-  },
-  methods: {
-    // 获取当前登陆用户的ID
   },
 };
 </script>
 
-<style lang="scss">
-page {
-  background-color: #f9fafc;
-}
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .my-profile {
   padding-top: 40rpx;
   padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
-  .cell-item {
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /deep/ .cell-item {
     padding-right: 40rpx;
   }
   /deep/ .cell-item__body__content-title {
-    color: #777;
+    color: --color(--qui-FC-777);
   }
   .cell-item__body__right {
-    color: #333;
+    color: --color(--qui-FC-333);
   }
 }
 
