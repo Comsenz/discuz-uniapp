@@ -73,7 +73,7 @@
         @change="toggleTab"
         is-scroll="isScroll"
         active-color="#1878F3"
-        :style="isTop == 1 ? 'position:fixed;background:#FFFFFF;z-index:9;top:0' : ''"
+        :style="isTop == 1 ? 'position:fixed;z-index:9;top:0' : ''"
       ></u-tabs>
     </view>
     <scroll-view
