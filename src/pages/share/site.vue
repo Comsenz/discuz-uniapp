@@ -152,7 +152,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
+
 .cent {
   width: 700rpx;
   height: 1082rpx;

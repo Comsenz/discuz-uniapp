@@ -180,7 +180,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
 .chat-box {
   height: 100%;

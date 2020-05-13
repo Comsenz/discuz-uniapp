@@ -280,7 +280,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
 page {
   background-color: #f9fafc;

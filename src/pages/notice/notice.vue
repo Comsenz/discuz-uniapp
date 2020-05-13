@@ -78,7 +78,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
 .notification-box {
   font-size: $fg-f28;
