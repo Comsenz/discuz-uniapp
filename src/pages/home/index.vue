@@ -2,10 +2,7 @@
   <qui-page :class="'home ' + scrolled" :footer="true">
     <uni-nav-bar
       v-if="navShow"
-      left-icon="back"
-      left-text="返回"
-      right-text="菜单"
-      title="导航栏组件"
+      :title="forums.set_site.site_name"
       fixed="true"
       status-bar
     ></uni-nav-bar>
@@ -82,6 +79,7 @@
       show-scrollbar="false"
       class="scroll-y"
       @scroll="scroll"
+      @scrolltolower="pullDown"
     >
       <view class="sticky">
         <view
@@ -270,7 +268,7 @@ export default {
       console.log(res.target);
     }
     return {
-      title: '自定义分享标题',
+      title: this.forums.set_site.site_name,
       path: '/pages/test/test?id=123',
     };
   },
@@ -519,7 +517,13 @@ export default {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        this.threads = res;
+        if (this.isResetList) {
+          this.threads = res;
+        } else {
+          this.threads = [...this.threads, ...res];
+        }
+        // this.threads = res;
+        // this.data = [...this.data, ...res];
       });
     },
     // 内容部分点赞按钮点击事件
