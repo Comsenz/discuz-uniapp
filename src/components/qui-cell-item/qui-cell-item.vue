@@ -111,11 +111,14 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .cell-item--wrap {
   position: relative;
 }
 .cell-item.border {
-  border-bottom: 2rpx solid #ededed;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  transition: $switch-theme-time;
 }
 
 .cell-item__body {
@@ -129,13 +132,15 @@ export default {
 
 .cell-item__body__content-title {
   font-size: 28rpx;
+  color: --color(--qui-FC-333);
+  transition: $switch-theme-time;
 }
 
 .cell-item__body__content-brief,
 .cell-item__body__right-brief {
   margin-top: 6rpx;
   font-size: 24rpx;
-  color: #aaa;
+  color: --color(--qui-FC-AAA);
 }
 
 .cell-item__body__content {

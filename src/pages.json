@@ -85,13 +85,13 @@
     {
       "path": "pages/site/info",
       "style": {
-        "navigationBarTitleText": "圈子信息"
+        "navigationBarTitleText": "站点信息"
       }
     },
     {
       "path": "pages/site/partner-invite",
       "style": {
-        "navigationBarTitleText": "圈子信息"
+        "navigationBarTitleText": "站点信息"
       }
     },
     {
@@ -134,11 +134,11 @@
       }
     },
 
-    // 圈子管理
+    // 站点管理
     {
-      "path": "pages/manage/index", // 站长管理
+      "path": "pages/manage/index", // 站点管理
       "style": {
-        "navigationBarTitleText": "站长管理"
+        "navigationBarTitleText": "站点管理"
       }
     },
     {
@@ -148,9 +148,9 @@
       }
     },
     {
-      "path": "pages/manage/users", // 圈子成员
+      "path": "pages/manage/users", // 站点成员
       "style": {
-        "navigationBarTitleText": "圈子成员"
+        "navigationBarTitleText": "站点成员"
       }
     },
     {
@@ -174,7 +174,7 @@
       "style": {
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "选择@人员"
+        "navigationBarTitleText": ""
       }
     },
     {

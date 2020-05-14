@@ -25,7 +25,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "圈子介绍",
+                "text": "站点介绍",
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",

@@ -114,7 +114,7 @@ export default {
       failedToObtainSignature: 'Failed to obtain signature',
       fromWeChatApplet: 'From WeChat applet',
     },
-    // 圈子管理页面
+    // 站点管理页面
     manage: {
       inviteMembers: 'Invite members',
       siteMembers: 'site of members',
@@ -198,6 +198,23 @@ export default {
       paymenttobemade: 'Payment to bemade',
       paymentsucceed: 'Payment succeed',
       paymentfailed: 'Payment failed',
+    },
+    site: {
+      circleintroduction: 'Circle introduction',
+      creationtime: 'Creation time',
+      periodvalidity: 'Period of validity',
+      day: 'Day',
+      circlemaster: 'Circle master',
+      paynow: 'Pay now',
+      justonelaststepjoinnow: 'Just one last step ,join now',
+      circlemode: 'Circle mode',
+      paymentmode: 'Payment mode',
+      publicmode: 'Public mode',
+      validfromaccession: 'Valid from accession',
+      myauthority: 'My authority',
+      inviteyouas: 'Invite you as',
+      join: 'Join',
+      accepttheinvitationandbecome: 'Accept the invitation and become',
     },
   },
 };

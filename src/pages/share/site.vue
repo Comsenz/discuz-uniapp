@@ -47,7 +47,7 @@ export default {
       sliteback: '', // 站点背景图
       themnumber: '', // 成员人数
       contdata: '', // 内容大小
-      introd: '', // 圈子介绍
+      introd: '', // 站点介绍
       weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
     };
   },
@@ -99,7 +99,7 @@ export default {
         sliteback: this.sliteback, // 站点背景图
         themnumber: this.themnumber, // 成员人数
         contdata: this.contdata, // 内容大小
-        introd: this.introd, // 圈子介绍
+        introd: this.introd, // 站点介绍
         userweixincode: this.weixincode, // 微信二维码
       };
       if (this.sliteback) {

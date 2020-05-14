@@ -76,10 +76,9 @@ export default {
   data() {
     return {
       loadingType: 'more',
-      data: {},
+      data: [],
       flag: true, // 滚动节流
-      totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
       bottomData: [
@@ -134,10 +133,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads/likes', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.threadCount;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     // 评论部分点击评论跳到详情页
@@ -181,16 +181,15 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.loadlikes();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadlikes();
     },
     refresh() {
       this.pageNum = 1;
-      this.data = {};
+      this.data = [];
       this.loadlikes();
     },
   },

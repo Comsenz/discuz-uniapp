@@ -77,6 +77,8 @@
     "flyio": "^0.6.2",
     "jsonpath-plus": "^3.0.0",
     "lodash": "^4.17.15",
+    "lodash.get": "^4.4.2",
+    "lodash.isequal": "^4.5.0",
     "regenerator-runtime": "^0.12.1",
     "vue": "^2.6.11",
     "vue-i18n": "^8.17.5",

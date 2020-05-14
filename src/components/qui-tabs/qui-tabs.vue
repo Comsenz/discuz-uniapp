@@ -67,11 +67,14 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .qui-tabs {
   display: flex;
   flex-direction: row;
-  border-bottom: 2rpx solid #ededed;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
+  transition: $switch-theme-time;
 }
 .qui-tabs__item {
   position: relative;
@@ -86,7 +89,8 @@ export default {
 }
 .qui-tabs__item__brief {
   font-size: 28rpx;
-  color: #333;
+  color: --color(--qui-FC-333);
+  transition: $switch-theme-time;
 }
 .qui-tabs__item__title {
   font-size: 24rpx;

@@ -35,7 +35,7 @@
             <view
               class="follow-content__items__operate"
               @tap="addFollow(followerItem.fromUser)"
-              v-if="followerItem.fromUser.id != '1'"
+              v-if="followerItem.fromUser.id != currentLoginId"
             >
               <text>
                 {{
@@ -84,7 +84,6 @@ export default {
     return {
       loadingType: 'more',
       followerList: [],
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
@@ -95,7 +94,7 @@ export default {
   },
   methods: {
     // 获取用户粉丝列表
-    getFollowerList() {
+    getFollowerList(type) {
       const params = {
         include: ['fromUser', 'fromUser.groups'],
         'filter[type]': 2,
@@ -106,13 +105,14 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          if (this.totalData === 0) {
-            this.followerList = [];
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          if (type === 'change') {
+            this.followerList = res;
           } else {
-            this.followerList = { ...this.followerList, ...res };
+            this.followerList = [...this.followerList, ...res];
           }
         });
     },
@@ -124,12 +124,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getFollowerList(this.pageNum);
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getFollowerList();
     },
     refresh() {
       this.pageNum = 1;
@@ -153,7 +152,7 @@ export default {
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
           this.$emit('changeFollow', { userId: this.userId });
-          this.getFollowerList();
+          this.getFollowerList('change');
         })
         .catch(err => {
           console.log('verify', err);
@@ -163,7 +162,7 @@ export default {
     deleteFollow(userInfo) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
-        this.getFollowerList();
+        this.getFollowerList('change');
       });
     },
   },

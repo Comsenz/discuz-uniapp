@@ -65,18 +65,17 @@ export default {
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         this.totalData = res._jv.json.meta.total;
         delete res._jv;
-        this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-        this.freezelist = { ...this.freezelist, ...res };
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        this.freezelist = [...this.freezelist, ...res];
       });
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.freezelist();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getFreezelist();
     },
     refresh() {
       this.pageNum = 1;

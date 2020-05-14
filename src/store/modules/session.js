@@ -30,6 +30,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       uni.login({
         success: res => {
+          console.log(res);
           if (res.errMsg === 'login:ok') {
             const { code } = res;
             uni.getUserInfo({
@@ -57,12 +58,14 @@ const actions = {
                 });
               },
               fail: error => {
+                console.log(error);
                 reject(error);
               },
             });
           }
         },
         fail: error => {
+          console.log(error);
           reject(error);
         },
       });

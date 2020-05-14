@@ -85,7 +85,7 @@ export default {
   data() {
     return {
       loadingType: 'more',
-      data: {},
+      data: [],
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
@@ -133,10 +133,12 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['favorites', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.threadCount;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            this.totalData = res._jv.json.meta.threadCount;
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     // 评论部分点击评论跳到详情页
@@ -183,10 +185,10 @@ export default {
       this.$store.dispatch('jv/patch', params).then(() => {
         this.totalData -= 1;
         const dataList = this.data;
-        Object.getOwnPropertyNames(dataList).forEach(key => {
-          if (dataList[key]._jv && dataList[key]._jv.id === id) {
+        dataList.forEach((item, index) => {
+          if (item._jv && item._jv.id === id) {
             const data = JSON.parse(JSON.stringify(dataList));
-            delete data[key];
+            data.splice(index, 1);
             this.data = data;
           }
         });
@@ -194,12 +196,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.loadlikes();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadlikes();
     },
     refresh() {
       this.pageNum = 1;

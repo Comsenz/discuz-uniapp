@@ -44,7 +44,7 @@
         <qui-cell-item
           :title="item.username"
           arrow
-          :border="index == userKeys[2] ? false : true"
+          :border="index == 2 ? false : true"
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
@@ -61,11 +61,7 @@
           搜索更多主题
         </view>
       </view>
-      <view
-        v-for="(item, index) in themeList"
-        :key="index"
-        :class="index == themeKeys[1] ? 'noBorder' : ''"
-      >
+      <view v-for="(item, index) in themeList" :key="index" :class="index == 1 ? 'noBorder' : ''">
         <qui-content
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
@@ -91,12 +87,10 @@ export default {
   data() {
     return {
       searchValue: '',
-      userList: {},
-      themeList: {},
+      userList: [],
+      themeList: [],
       userTotal: '',
       themeTotal: '',
-      userKeys: [], // 处理最后一个不要边框，解决小程序不支持nth选择器
-      themeKeys: [],
       pageSize: 3,
       pageNum: 1, // 当前页数
     };
@@ -119,10 +113,8 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
-          this.userTotal = res._jv.json.meta.total;
-          delete res._jv;
+          this.userTotal = res.length;
           this.userList = res;
-          this.userKeys = Object.keys(res);
         });
     },
     // 获取主题列表
@@ -137,10 +129,8 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          this.themeTotal = res._jv.json.meta.threadCount;
-          delete res._jv;
+          this.themeTotal = res.length;
           this.themeList = res;
-          this.themeKeys = Object.keys(res);
         });
     },
     clearSearch() {

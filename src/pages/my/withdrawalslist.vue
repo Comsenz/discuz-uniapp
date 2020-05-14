@@ -67,7 +67,6 @@ export default {
     const currentDate = `${year}-${month}`;
     return {
       loadingType: 'more',
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
@@ -141,20 +140,20 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/cash', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.dataList = { ...this.dataList, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = [...this.dataList, ...res];
         });
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getList();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getList();
     },
     refresh() {
       this.pageNum = 1;

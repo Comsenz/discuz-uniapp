@@ -15,7 +15,7 @@
             :border="false"
           >
             <view v-if="userId != currentLoginId">
-              <view class="profile-info__box__detail-operate">
+              <view class="profile-info__box__detail-operate" @tap="chat">
                 <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
                 <text>私信</text>
               </view>
@@ -149,7 +149,7 @@ export default {
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
           this.getUserInfo(this.userId);
-          if (this.$refs.followers) this.$refs.followers.getFollowerList();
+          if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
         })
         .catch(err => {
           console.log('verify', err);
@@ -159,7 +159,7 @@ export default {
     deleteFollow(userInfo) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
         this.getUserInfo(this.userId);
-        if (this.$refs.followers) this.$refs.followers.getFollowerList();
+        if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
       });
     },
     changeFollow(e) {
@@ -177,7 +177,6 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log('创建会话接口的响应：', res);
           this.dialogId = res._jv.json.data.id;
           this.jumpChatPage();
         })
@@ -187,7 +186,6 @@ export default {
     },
     // 跳转到聊天页面（传入用户名和会话id）
     jumpChatPage() {
-      console.log(`跳转到聊天页面并传入用户名：${this.userInfo.username}和会话：idthis.dialogId`);
       uni.navigateTo({
         url: `../notice/msglist?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
       });
