@@ -7,7 +7,7 @@
       :post="post"
       :post-num="forums.other.count_threads"
       :share="share"
-      :share-btn="shareBtn"
+      iconcolor="#333"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -88,7 +88,7 @@
           :key="index"
           class="site-item__permission"
         >
-          <text>{{ permissionlist[item.permission] }}</text>
+          <text>{{ i18n.t(`permission.${item.permission}`) }}</text>
         </view>
       </qui-cell-item>
     </view>
@@ -99,7 +99,7 @@
         <text class="site-invite__detail__bold">{{ inviteData.group.name }}</text>
         <text>{{ i18n.t('site.join') }}</text>
         <text class="site-invite__detail__bold">DISCUZQ</text>
-        <text>{{ i18n.t('home.tabsCircle') }}</text>
+        <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
@@ -117,12 +117,11 @@ export default {
   components: {
     //
   },
-  data: () => {
+  data() {
     return {
       theme: this.i18n.t('home.theme'),
       post: this.i18n.t('home.homecontent'),
       share: this.i18n.t('home.share'),
-      shareBtn: 'icon-share1',
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -142,9 +141,6 @@ export default {
   computed: {
     forums() {
       return this.$store.getters['jv/get']('forums/1');
-    },
-    permissionlist() {
-      return this.i18n.t('permission');
     },
   },
   onLoad(params) {
@@ -178,8 +174,7 @@ export default {
     submit() {
       const isLogin = !!uni.getStorageSync('access_token');
       if (!isLogin) {
-        this.$store.dispatch('session/login', { code: this.code }).then(data => {
-          console.log(data);
+        this.$store.dispatch('session/login', { code: this.code }).then(() => {
           uni.navigateTo({
             url: '/pages/home/index',
           });
