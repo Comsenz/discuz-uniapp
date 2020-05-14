@@ -48,7 +48,7 @@
       </view>
 
       <view class="themeItem__content">
-        <view class="themeItem__content__text">
+        <view class="themeItem__content__text" @click="contentClick()">
           <view class="themeItem__content__text__longessay" v-if="threadType === 1">
             <view class="themeItem__content__text__longessay__publish">
               {{ i18n.t('home.released') }} :

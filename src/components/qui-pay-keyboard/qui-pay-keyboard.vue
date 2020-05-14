@@ -13,7 +13,7 @@
         <view>{{ p.sumOfMoney }}</view>
         <view class="money">
           ￥
-          <text>11</text>
+          <text>{{ money }}</text>
         </view>
       </view>
       <view class="pay-way">
@@ -56,6 +56,11 @@ export default {
     isIphoneX: {
       type: Boolean,
       default: false,
+    },
+    // 支付金额
+    money: {
+      type: [String, Number],
+      default: '0',
     },
   },
   data() {

@@ -20,7 +20,7 @@
       </text>
 
       <view class="circleDet-share" @click="open">
-        <qui-icon class="qui-icon" name="icon-share1" size="26" color="#fff"></qui-icon>
+        <qui-icon class="qui-icon" name="icon-share1" size="26" :color="iconcolor"></qui-icon>
         {{ t.share }}
       </view>
     </view>
@@ -49,6 +49,10 @@ export default {
     homecontent: {
       type: String,
       default: '',
+    },
+    iconcolor: {
+      type: String,
+      default: '#fff',
     },
     postNum: {
       type: Number,

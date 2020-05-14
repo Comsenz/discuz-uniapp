@@ -33,7 +33,7 @@
         <view class="pay-type-chi" v-for="(item, index) in payTypeData" :key="index">
           <view class="pay-type-l">
             <qui-icon :name="item.icon" :color="item.color" class="icon-pay"></qui-icon>
-            <view class="pay-type-word">{{ item.name }}{{ item.value }}</view>
+            <view class="pay-type-word">{{ item.name }}</view>
           </view>
           <view class="pay-type-r">
             <view
@@ -100,6 +100,7 @@
     </uni-popup>
     <qui-pay-keyboard
       :show="show"
+      :money="money"
       :password="payPassword"
       @onInput="onInput"
       @close="close"

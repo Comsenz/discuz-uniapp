@@ -6,73 +6,6 @@
       fixed="true"
       status-bar
     ></uni-nav-bar>
-    <qui-header
-      :head-img="forums.set_site.site_logo"
-      :background-head-full-img="forums.set_site.site_background_image"
-      :theme="theme"
-      :theme-num="forums.other.count_users"
-      :post="post"
-      :post-num="forums.other.count_threads"
-      :share="share"
-      :share-btn="shareBtn"
-      :color="color"
-      @click="open"
-    ></qui-header>
-    <uni-popup ref="popupHead" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
-              </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
-    </uni-popup>
-    <view class="nav">
-      <view class="nav__box">
-        <qui-icon
-          class="nav__box__icon"
-          name="icon-screen"
-          size="28"
-          color="#1878F3"
-          @tap="showFilter"
-        ></qui-icon>
-      </view>
-      <qui-filter-modal
-        v-model="show"
-        @confirm="confirm"
-        @changeSelected="changeSelected"
-        @change="changeType"
-        :confirm-text="i18n.t('home.confirmText')"
-        :if-need-confirm="ifNeedConfirm"
-        :filter-list="filterList"
-        :show-search="showSearch"
-        ref="filter"
-        top="100"
-      ></qui-filter-modal>
-      <u-tabs
-        class="scroll-tab"
-        :list="categories"
-        :current="categoryId"
-        @change="toggleTab"
-        is-scroll="isScroll"
-        active-color="#1878F3"
-        :style="isTop == 1 ? 'position:fixed;z-index:9;top:0' : ''"
-      ></u-tabs>
-    </view>
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -81,6 +14,74 @@
       @scroll="scroll"
       @scrolltolower="pullDown"
     >
+      <qui-header
+        :head-img="forums.set_site.site_logo"
+        :background-head-full-img="forums.set_site.site_background_image"
+        :theme="theme"
+        :theme-num="forums.other.count_users"
+        :post="post"
+        :post-num="forums.other.count_threads"
+        :share="share"
+        :share-btn="shareBtn"
+        :color="color"
+        @click="open"
+      ></qui-header>
+      <uni-popup ref="popupHead" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content">
+            <button class="popup-share-button" open-type="share"></button>
+            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box" @click="shareHead(index)">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="36"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+                <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+        </view>
+      </uni-popup>
+      <view class="nav">
+        <view class="nav__box">
+          <qui-icon
+            class="nav__box__icon"
+            name="icon-screen"
+            size="28"
+            color="#1878F3"
+            @tap="showFilter"
+          ></qui-icon>
+        </view>
+        <qui-filter-modal
+          v-model="show"
+          @confirm="confirm"
+          @changeSelected="changeSelected"
+          @change="changeType"
+          :confirm-text="i18n.t('home.confirmText')"
+          :if-need-confirm="ifNeedConfirm"
+          :filter-list="filterList"
+          :show-search="showSearch"
+          ref="filter"
+          top="100"
+        ></qui-filter-modal>
+        <u-tabs
+          class="scroll-tab"
+          :list="categories"
+          :current="currentIndex"
+          @change="toggleTab"
+          is-scroll="isScroll"
+          active-color="#1878F3"
+          :style="isTop == 1 ? 'position:fixed;z-index:99999999999;top:0' : ''"
+        ></u-tabs>
+      </view>
+
       <view class="sticky">
         <view
           class="sticky__isSticky"
@@ -175,6 +176,7 @@ export default {
     return {
       scrolled: 'affix',
       categoryId: 0, // 主题分类 ID
+      currentIndex: 0,
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
@@ -284,8 +286,11 @@ export default {
       .exec();
   },
   onPageScroll(e) {
+    console.log(e, '页面滑动');
     if (e.scrollTop > 100) {
       this.navShow = true;
+    } else {
+      this.navShow = false;
     }
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
@@ -302,10 +307,11 @@ export default {
       }
     },
     // 切换选项卡
-    toggleTab(index) {
+    toggleTab(dataInfo) {
       // 重置列表
       this.isResetList = true;
-      this.categoryId = index;
+      this.categoryId = dataInfo.id;
+      this.currentIndex = dataInfo.index;
       this.loadThreadsSticky();
       this.loadThreads();
     },
@@ -382,8 +388,8 @@ export default {
       // 重置列表
       this.isResetList = true;
       const filterSelected = { ...e };
-
       this.categoryId = filterSelected[0].data.value;
+      this.currentIndex = filterSelected[0].data.index;
       this.threadType = filterSelected[1].data.value;
 
       switch (filterSelected[2].data.value) {
@@ -475,6 +481,7 @@ export default {
     loadThreadsSticky() {
       const params = {
         'filter[isSticky]': 'yes',
+        'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
         include: ['firstPost'],
@@ -487,6 +494,7 @@ export default {
     loadThreads() {
       const params = {
         'filter[isSticky]': 'no',
+        'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
         'filter[type]': this.threadType,
