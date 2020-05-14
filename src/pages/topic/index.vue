@@ -4,23 +4,24 @@
       <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
       <qui-topic-content
         v-model="thread"
-        :pay-status="true"
+        :pay-status="thread.price > 0 && thread.paid"
         :avatar-url="thread.user.avatarUrl"
         :user-name="thread.user.username"
-        :theme-types="thread.type"
+        :theme-type="thread.type"
         :theme-time="thread.createdAt"
         :management-show="true"
         :theme-content="thread.firstPost.contentHtml"
         :images-list="thread.firstPost.images"
         :select-list="selectList"
         :tags="[thread.category]"
+        :media-url="thread.threadVideo.media_url"
+        :cover-image="thread.threadVideo.cover_url"
         @personJump="personJump"
         @selectChoice="selectChoice"
       ></qui-topic-content>
       <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
         {{ p.pay }}
       </qui-button> -->
-
       <!-- 已支付用户列表 -->
       <view v-if="paidStatus">
         <qui-person-list
@@ -45,7 +46,7 @@
           :person-list="thread.rewardedUsers"
           :btn-show="true"
           :btn-icon-show="true"
-          btn-icon-name="rmb"
+          btn-icon-name="reward"
           :btn-text="t.reward"
           @personJump="personJump"
           @btnClick="rewardClick"
@@ -567,8 +568,8 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
 
       threadAction.then(data => {
-        console.log(data.firstPost.likedUsers, '~~~~~~~~~~~~~~~~~~~');
-        console.log(this.thread.isDeleted);
+        console.log(data, '~~~~~~~~~~~~~~~~~~~');
+        console.log(this.thread.type);
         this.thread = data;
         // 追加管理菜单权限字段
         this.selectList[0].canOpera = this.thread.firstPost.canEdit;

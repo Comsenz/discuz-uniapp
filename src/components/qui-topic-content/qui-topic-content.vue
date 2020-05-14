@@ -47,7 +47,7 @@
         class="themeItem__content__con"
         :style="{ position: payStatus ? 'static' : 'relative' }"
       >
-        <view class="theme__content_title" v-if="themeType == 1 && themeTitle">
+        <view class="theme__content__title" v-if="themeType == 1 && themeTitle">
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
@@ -57,9 +57,25 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !payStatus && coverImage != null"
         >
-          <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
+          <image class="themeItem__content__coverimg" mode="widthFix" :src="coverImage" alt></image>
         </view>
-
+        <video
+          v-if="themeType == 2 && payStatus"
+          preload="auto"
+          playsinline
+          webkit-playsinline
+          x5-playsinline
+          controls="true"
+          page-gesture="true"
+          show-fullscreen-btn="true"
+          show-play-btn="true"
+          show-mute-btn="true"
+          auto-pause-if-open-native="true"
+          vslide-gesture="true"
+          auto-pause-if-navigate="true"
+          enable-play-gesture="true"
+          :src="mediaUrl"
+        ></video>
         <!--<view v-if="Object.keys(imagesList).length == 1">
           <view class="themeItem__content__imgone">
             <image
@@ -130,12 +146,17 @@ export default {
       default: '0',
     },
     // 主题类型
+    // themeType: {
+    //   validator: value => {
+    //     // 0 文字  1 帖子  2 视频 3 图片
+    //     return ['0', '1', '2', '3'].indexOf(value) !== -1;
+    //   },
+    //   default: '1',
+    // },、
+    // 主题类型 0 文字  1 帖子  2 视频 3 图片
     themeType: {
-      validator: value => {
-        // 0 文字  1 帖子  2 视频 3 图片
-        return ['0', '1', '2', '3'].indexOf(value) !== -1;
-      },
-      default: '1',
+      type: Number,
+      default: 0,
     },
     // 是否支付
     payStatus: {
@@ -208,7 +229,11 @@ export default {
     },
     coverImage: {
       type: String,
-      default: 'https://discuz.chat/static/images/noavatar.gif',
+      default: '',
+    },
+    mediaUrl: {
+      type: String,
+      default: '',
     },
   },
   data: () => {
@@ -322,6 +347,12 @@ export default {
   }
 
   &__content {
+    &__title {
+      word-break: break-all;
+    }
+    &__coverimg {
+      width: 100%;
+    }
     &__con {
       &__cover {
         position: absolute;
