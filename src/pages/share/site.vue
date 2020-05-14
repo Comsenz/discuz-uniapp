@@ -2,7 +2,13 @@
   <view class="painter">
     <view class="canvas-box">
       <view class="cent">
-        <image :src="imagePath" mode="widthFix" @tap="previewImage" :show-menu-by-longpress="true" class="cent-image"></image>
+        <image
+          :src="imagePath"
+          mode="widthFix"
+          @tap="previewImage"
+          :show-menu-by-longpress="true"
+          class="cent-image"
+        ></image>
       </view>
       <view class="box-img">
         <painter
