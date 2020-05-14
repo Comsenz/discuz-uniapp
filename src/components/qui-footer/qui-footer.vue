@@ -86,7 +86,7 @@ export default {
       type: '',
       tabs: [
         {
-          tabsName: '圈子',
+          tabsName: '首页',
           tabsIcon: 'icon-home',
           id: 1,
           url: '../home/index',

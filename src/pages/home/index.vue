@@ -2,8 +2,7 @@
   <qui-page :class="'home ' + scrolled" :footer="true">
     <uni-nav-bar
       v-if="navShow"
-      left-icon="back"
-      title="导航栏组件"
+      :title="forums.set_site.site_name"
       fixed="true"
       status-bar
     ></uni-nav-bar>
@@ -78,9 +77,9 @@
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
-      @scrolltolower="pullDown"
       class="scroll-y"
       @scroll="scroll"
+      @scrolltolower="pullDown"
     >
       <view class="sticky">
         <view
@@ -107,6 +106,8 @@
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :thread-type="item.type"
+          :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
           :theme-comment="item.firstPost.replyCount"
@@ -174,7 +175,7 @@ export default {
     return {
       scrolled: 'affix',
       categoryId: 0, // 主题分类 ID
-      threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
+      threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
       show: false,
@@ -267,7 +268,7 @@ export default {
       console.log(res.target);
     }
     return {
-      title: '自定义分享标题',
+      title: this.forums.set_site.site_name,
       path: '/pages/test/test?id=123',
     };
   },
@@ -454,7 +455,7 @@ export default {
         ];
         const categoryFilterList = [
           {
-            label: '所有',
+            label: this.i18n.t('home.all'),
             value: 0,
             selected: true,
           },
@@ -516,7 +517,13 @@ export default {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        this.threads = res;
+        if (this.isResetList) {
+          this.threads = res;
+        } else {
+          this.threads = [...this.threads, ...res];
+        }
+        // this.threads = res;
+        // this.data = [...this.data, ...res];
       });
     },
     // 内容部分点赞按钮点击事件
@@ -613,7 +620,6 @@ export default {
   margin: 30rpx auto;
   font-size: $fg-f26;
   line-height: 80rpx;
-  color: --color(--qui-FC-777);
   background: --color(--qui-BG-2);
   border-radius: 6rpx;
   box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
@@ -624,13 +630,16 @@ export default {
     margin-top: 27rpx;
     margin-left: 20rpx;
     line-height: 35rpx;
+    color: --color(--qui-FC-777);
     text-align: center;
     background: --color(--qui-BOR-ED);
     border-radius: 6rpx;
+    transition: $switch-theme-time;
   }
   &__count {
     margin-left: 21rpx;
     overflow: hidden;
+    color: #777;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -655,7 +664,6 @@ export default {
 .active .scroll-tab-line {
   color: --color(--qui-BG-HIGH-LIGHT);
   border-bottom: 4rpx solid --color(--qui-BG-HIGH-LIGHT);
-  // border-radius: 20rpx;
 }
 .uni-tab-bar .active {
   font-size: $fg-f28;
@@ -665,10 +673,12 @@ export default {
 .main {
   margin-bottom: 130rpx;
 }
+
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   max-height: calc(100vh - 100rpx);
 }
+
 .nav .filter-modal {
   position: absolute;
   z-index: 1000;

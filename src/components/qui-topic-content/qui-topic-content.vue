@@ -349,8 +349,7 @@ export default {
       font-size: $fg-f28;
       font-weight: 400;
       line-height: 45rpx;
-      color: --color(--qui-FC-);
-      word-break: break-all;
+      color: --color(--qui-FC-333);
       img {
         display: inline-block;
         width: 28rpx;
