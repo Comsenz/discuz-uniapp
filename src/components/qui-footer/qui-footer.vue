@@ -192,6 +192,7 @@ export default {
       uni.navigateTo({
         url: `/pages/topic/post?type=${item.type}`,
       });
+      this.cancel();
     },
     // 取消按钮
     cancel() {

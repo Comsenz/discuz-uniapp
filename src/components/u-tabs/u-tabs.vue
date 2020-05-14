@@ -14,7 +14,7 @@
           :id="'u-tab-item-' + index"
           v-for="(item, index) in list"
           :key="index"
-          @tap="clickTab(index)"
+          @tap="clickTab({ index: index, id: item._jv.id })"
           :style="[tabItemStyle(+index)]"
         >
           {{ item.name }}
@@ -220,9 +220,9 @@ export default {
       this.getTabRect();
     },
     // 点击某一个tab菜单
-    clickTab(index) {
+    clickTab(dataInfo) {
       // 发送事件给父组件
-      this.$emit('change', index);
+      this.$emit('change', dataInfo);
     },
     // 查询tab的布局信息
     getTabRect() {

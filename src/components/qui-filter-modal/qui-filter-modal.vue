@@ -113,7 +113,7 @@ export default {
         moduleData.forEach((v, index) => {
           moduleData[index].selected = index === filterIndex;
         });
-        this.selectedData[dataIndex].data = item;
+        this.selectedData[dataIndex].data = { ...item, index: filterIndex };
         // 不需要确定按钮
         if (!this.ifNeedConfirm) {
           this.confirm();
