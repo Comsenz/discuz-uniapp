@@ -653,21 +653,21 @@ export default {
     this.header = {
       authorization: `Bearer ${token}`,
     };
-
     this.formData = {
       isGallery: 1,
     };
     this.getCategories();
-    this.getEmoji();
+    if (Object.keys(this.allEmoji).length < 1) {
+      this.getEmoji();
+    }
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
-
     this.textAreaLength = Number(option.type) === 1 ? 1000 : 450;
   },
   onShow() {
     let atMemberList = '';
     this.getAtMemberData.map(item => {
-      atMemberList += `@${item.toUser.username} `;
+      atMemberList += `@${item.username} `;
       return atMemberList;
     });
 
