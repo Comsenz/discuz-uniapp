@@ -1,7 +1,7 @@
 <template>
   <qui-page>
     <view class="manage-items">
-      <navigator url="./users" hover-class="none">
+      <navigator url="./member" hover-class="none">
         <qui-cell-item title="成员管理" arrow slot-right>
           <text>设置</text>
         </qui-cell-item>
