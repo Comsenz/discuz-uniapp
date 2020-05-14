@@ -44,29 +44,29 @@
 export default {
   props: {
     mode: {
-      value: Number,
+      type: Number,
       default: 1,
     },
     // 定义默认搜索关键词(水印文字)
     placeholder: {
-      value: String,
+      type: String,
       default: '请输入搜索内容',
     },
     value: {
       type: String,
-      //   default: false,
+      default: '',
     },
     button: {
-      value: String,
+      type: String,
       default: 'outside',
     },
     show: {
-      value: Boolean,
+      type: Boolean,
       default: true,
     },
     radius: {
-      value: String,
-      default: 60,
+      type: String,
+      default: '60',
     },
   },
   data() {

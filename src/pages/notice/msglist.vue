@@ -40,7 +40,7 @@
     <!-- 底部 -->
     <view class="chat-box__footer">
       <view class="chat-box__footer__msg">
-        <input class="uni-input" focus v-model="msg" placeholder="回复..." />
+        <input class="uni-input" v-model="msg" placeholder="回复.." @blur="contBlur" />
         <qui-icon
           name="icon-expression chat-box__footer__msg__icon"
           size="40"
@@ -134,6 +134,7 @@ export default {
         delta: 1,
       });
     },
+
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
       const params = {
@@ -158,6 +159,10 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
 
+    contBlur(e) {
+      this.cursor = e.detail.cursor;
+    },
+
     // 发送消息
     send() {
       const params = {
@@ -172,7 +177,6 @@ export default {
         .then(res => {
           if (res) {
             console.log('发送消息res：', res);
-            this.emojiShow = false;
           }
         })
         .catch(err => {
@@ -188,7 +192,12 @@ export default {
 
     // 获取表情
     getEmojiClick(key) {
-      this.msg += this.allEmoji[key].code;
+      let text = '';
+      text = `${this.msg.slice(0, this.cursor) +
+        this.allEmoji[key].code +
+        this.msg.slice(this.cursor)}`;
+      this.msg = text;
+      this.emojiShow = false;
       console.log('表情', this.allEmoji[key]);
       console.log('msg', this.msg);
     },
@@ -376,6 +385,7 @@ export default {
       background: rgba(255, 255, 255, 1);
       border-radius: 5rpx;
     }
+
     &__btn {
       margin: 0 20rpx 0 10rpx;
       font-size: $fg-f28;

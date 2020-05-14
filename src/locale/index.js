@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import Cookies from 'js-cookie';
 import { COOKIE_CURRENT_LANGUAGE } from '@/common/const';
 import enLocale from './lang/en';
 import zhLocale from './lang/zh';
@@ -18,7 +17,7 @@ const messages = {
 };
 
 // 当前用户选择过的语言
-const currentLang = Cookies.get(COOKIE_CURRENT_LANGUAGE);
+const currentLang = uni.getStorageSync(COOKIE_CURRENT_LANGUAGE);
 // 默认语言为中文
 const defaultLang = 'zh';
 export const i18n = new VueI18n({
@@ -44,10 +43,6 @@ export const localeUse = lang => {
   if (!lang) return;
   // 设置语言
   i18n.locale = lang;
-  // 设置语言存储超时时间 30 天
-  // 小程序是不支持 cookie 的，所以这一块还需要改改，改成本地存储
-  Cookies.set(COOKIE_CURRENT_LANGUAGE, lang, {
-    expires: 30,
-  });
+  uni.setStorageSync(COOKIE_CURRENT_LANGUAGE, lang);
   return currentLocale();
 };

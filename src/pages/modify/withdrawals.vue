@@ -1,5 +1,5 @@
 <template>
-  <view class="cash">
+  <view class="cash" @click.stop="toggleBox">
     <view class="cash-content">
       <!-- 收款人 -->
       <view class="cash-content-tab">
@@ -75,11 +75,17 @@
           </button>
         </view>
         <!-- 验证码 -->
-        <view class="cash-input">
+        <view class="cash-input" @click.stop="fourse">
           <view class="cash-input-test">
             {{ i18n.t('modify.placeentercode') }}
           </view>
-          <qui-input-code @getdata="btndata" :title="judge" :text="test"></qui-input-code>
+          <qui-input-code
+            @getdata="btndata"
+            :title="judge"
+            :text="test"
+            :show="inshow"
+            :isiphonex="inisIphone"
+          ></qui-input-code>
         </view>
       </view>
       <view class="cash-button">
@@ -92,7 +98,7 @@
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
@@ -116,6 +122,8 @@ export default {
       length: false,
       contint: '-.-',
       procedures: 0,
+      inshow: false,
+      inisIphone: false,
     };
   },
   onLoad(arr) {
@@ -123,6 +131,9 @@ export default {
     this.setmydata();
   },
   methods: {
+    fourse() {
+      this.inshow = true;
+    },
     getCode() {
       this.showText = false;
       const interval = setInterval(() => {
@@ -263,6 +274,9 @@ export default {
           }
         });
     },
+    toggleBox() {
+      this.inshow = false;
+    },
   },
 };
 </script>
@@ -329,6 +343,7 @@ export default {
   display: flex;
   width: 710rpx;
   height: 100rpx;
+  justify-content: space-between;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .cash-phon-test {
@@ -348,7 +363,7 @@ export default {
   display: block;
   height: 70rpx;
   min-width: 180rpx;
-  margin: 15rpx 0 0 40rpx;
+  margin: 15rpx 40rpx 0;
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 70rpx;

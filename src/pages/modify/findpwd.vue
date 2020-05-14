@@ -1,5 +1,5 @@
 <template>
-  <view class="retireve">
+  <view class="retireve" @click.stop="toggleBox">
     <view class="retireve-tab">
       <view class="retireve-titel">
         {{ i18n.t('modify.forgetpassword') }}\{{ i18n.t('modify.retrievepassword') }}
@@ -31,11 +31,17 @@
         {{ passtext }}
       </view>
       <!-- 验证码 -->
-      <view class="retireve-input">
+      <view class="retireve-input" @click.stop="fourse">
         <view class="retireve-input-test">
           {{ i18n.t('modify.placeentercode') }}
         </view>
-        <qui-input-code @getdata="btndata" :title="pad" :text="test"></qui-input-code>
+        <qui-input-code
+          @getdata="btndata"
+          :title="pad"
+          :text="test"
+          :show="inshow"
+          :isiphonex="inisIphone"
+        ></qui-input-code>
       </view>
       <view class="retireve-button">
         <qui-button type="primary" size="large" @click="submission">
@@ -47,7 +53,7 @@
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
@@ -68,6 +74,8 @@ export default {
       test: '',
       passtext: '',
       sendtype: '',
+      inshow: false,
+      inisIphone: false,
     };
   },
   onLoad(sing) {
@@ -76,6 +84,9 @@ export default {
     this.personaldata();
   },
   methods: {
+    fourse() {
+      this.inshow = true;
+    },
     getCode() {
       this.showText = false;
       const interval = setInterval(() => {
@@ -179,6 +190,9 @@ export default {
             }
           }
         });
+    },
+    toggleBox() {
+      this.inshow = false;
     },
   },
 };

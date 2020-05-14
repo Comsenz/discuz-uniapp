@@ -1,9 +1,9 @@
 <template>
-  <view class="withdrawalslist">
+  <qui-page class="withdrawalslist">
     <view class="withdrawalslist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
-          <text>状态：{{ filterSelected.label }}</text>
+          <text>{{ `${i18n.t('profile.status')} ：${filterSelected.label}` }}</text>
           <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
           <qui-filter-modal
             v-model="show"
@@ -25,7 +25,7 @@
       fields="month"
       class="date-picker"
     >
-      <view class="uni-input">{{ `时间：${date}` }}</view>
+      <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
     </picker>
     <view class="withdrawalslist-items">
       <scroll-view
@@ -50,17 +50,17 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   components: {
     //
   },
-  data: () => {
+  data() {
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -70,23 +70,31 @@ export default {
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
+      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
       show: false,
       date: currentDate,
-      filterSelected: { label: '全部', value: '' }, // 筛选类型
-      operateStatus: ['待审核', '审核通过', '审核不通过', '待打款', '已打款', '打款失败'],
+      filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
+      operateStatus: [
+        this.i18n.t('profile.tobereviewed'),
+        this.i18n.t('profile.approved'),
+        this.i18n.t('profile.auditfailed'),
+        this.i18n.t('profile.paymenttobemade'),
+        this.i18n.t('profile.paymentsucceed'),
+        this.i18n.t('profile.paymentfailed'),
+      ],
       showDate: false,
       dataList: [],
       filterList: [
         {
-          title: '类型',
+          title: this.i18n.t('profile.type'),
           data: [
-            { label: '全部', value: '', selected: true },
-            { label: '待审核', value: 1 },
-            { label: '审核通过', value: 2 },
-            { label: '审核不通过', value: 3 },
-            { label: '待打款', value: 4 },
-            { label: '已打款', value: 5 },
-            { label: '打款失败', value: 6 },
+            { label: this.i18n.t('profile.all'), value: '', selected: true },
+            { label: this.i18n.t('profile.tobereviewed'), value: 1 },
+            { label: this.i18n.t('profile.approved'), value: 2 },
+            { label: this.i18n.t('profile.auditfailed'), value: 3 },
+            { label: this.i18n.t('profile.paymenttobemade'), value: 4 },
+            { label: this.i18n.t('profile.paymentsucceed'), value: 5 },
+            { label: this.i18n.t('profile.paymentfailed'), value: 6 },
           ],
         },
       ],
@@ -115,8 +123,9 @@ export default {
     getList(type) {
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
+      // cash_status(1-6) '待审核', '审核通过', '审核不通过', '待打款', '已打款', '打款失败'
       const params = {
-        'filter[user]': 1,
+        'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
@@ -156,13 +165,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
-page {
-  background-color: #f9fafc;
-}
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .withdrawalslist {
-  border-bottom: 2rpx solid #ededed;
-  .cell-item {
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /deep/ .cell-item {
     padding-right: 40rpx;
   }
   /deep/ .cell-item__body {
@@ -171,33 +180,32 @@ page {
   /deep/ .cell-item__body__right-text {
     font-weight: bold;
   }
-  .icon-screen {
+  /deep/ .icon-screen {
     margin-left: 20rpx;
   }
 }
-.cell-item--wrap.fail .cell-item__body__content-title {
-  color: #fa5151;
-}
-.cell-item--wrap.success .cell-item__body__content-title {
-  color: #189a00;
-}
-
 .withdrawalslist-items {
   padding-left: 40rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
 }
 .withdrawalslist-head {
   padding-top: 40rpx;
   padding-left: 40rpx;
   margin-bottom: 30rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .withdrawalslist-head /deep/ .cell-item__body {
   height: 78rpx;
 }
 /deep/ .filter-modal {
   top: 118rpx;
+}
+/deep/ .cell-item.fail .cell-item__body__content-title {
+  color: --color(--qui-RED);
+}
+/deep/ .cell-item.success .cell-item__body__content-title {
+  color: #189a00;
 }
 .date-picker {
   position: absolute;

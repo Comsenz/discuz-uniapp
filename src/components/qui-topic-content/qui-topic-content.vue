@@ -38,7 +38,7 @@
             @click="selectChoice"
           ></qui-drop-down>
         </view>
-        <image src="@/assets/essence.png" class="essence"></image>
+        <image src="@/static/essence.png" class="essence"></image>
       </view>
     </view>
 
@@ -105,7 +105,7 @@
         </view>
         <view v-if="!payStatus" class="themeItem__content__con__cover"></view>
         <view v-if="!payStatus" class="themeItem__content__con__surtip">
-          {{ p.surplus }}{{ partVal }}%{{ p.contentHide }}
+          {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
 
@@ -142,10 +142,11 @@ export default {
       type: Boolean,
       default: true,
     },
-    partVal: {
-      type: [Number, String],
-      default: 0,
-    },
+    // 需要支付查看的内容所占的比例
+    // partVal: {
+    //   type: [Number, String],
+    //   default: 0,
+    // },
     userId: {
       type: [Number, String],
       default: '',
@@ -349,6 +350,11 @@ export default {
       font-weight: 400;
       line-height: 45rpx;
       color: rgba(51, 51, 51, 1);
+      img {
+        display: inline-block;
+        width: 28rpx;
+        height: 28rpx;
+      }
     }
 
     &__imgone {
@@ -465,10 +471,5 @@ export default {
       font-size: 26rpx;
     }
   }
-}
-.qq-emotion {
-  display: inline-block;
-  width: 28rpx;
-  height: 28rpx;
 }
 </style>

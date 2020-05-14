@@ -1,5 +1,5 @@
 <template>
-  <view class="my">
+  <qui-page class="my">
     <view class="my-info">
       <view class="my-info__box">
         <view class="my-info__box__detail">
@@ -25,65 +25,86 @@
     <view>
       <view class="my-items">
         <navigator url="./profile" hover-class="none">
-          <qui-cell-item title="我的资料" arrow></qui-cell-item>
+          <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
         </navigator>
         <navigator url="./wallet" hover-class="none">
-          <qui-cell-item title="我的钱包" arrow></qui-cell-item>
+          <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
         </navigator>
         <navigator url="./favorite" hover-class="none">
-          <qui-cell-item title="我的收藏" arrow :border="false"></qui-cell-item>
+          <qui-cell-item
+            :title="i18n.t('profile.myfavorite')"
+            arrow
+            :border="false"
+          ></qui-cell-item>
         </navigator>
       </view>
       <view class="my-items">
-        <qui-cell-item title="圈子信息" arrow></qui-cell-item>
+        <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
         <navigator url="/pages/site/search" hover-class="none">
-          <qui-cell-item title="搜索" arrow></qui-cell-item>
+          <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
         </navigator>
-        <qui-cell-item title="管理圈子" arrow :border="false"></qui-cell-item>
+        <qui-cell-item
+          :title="i18n.t('profile.circlemanagement')"
+          arrow
+          :border="false"
+        ></qui-cell-item>
+      </view>
+
+      <view class="my-items">
+        <qui-cell-item title="深色模式" slot-right>
+          <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
+        </qui-cell-item>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
+import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
 
 export default {
-  components: {
-    //
-  },
   data() {
     return {
       items: [
-        { title: '主题', brief: '73' },
-        { title: '关注', brief: '12' },
-        { title: '粉丝', brief: '31' },
-        { title: '点赞', brief: '65' },
+        { title: this.i18n.t('profile.topic'), brief: '73' },
+        { title: this.i18n.t('profile.following'), brief: '12' },
+        { title: this.i18n.t('profile.followers'), brief: '31' },
+        { title: this.i18n.t('profile.likes'), brief: '65' },
       ],
       current: 0,
+      checked: false,
+      userId: uni.getStorageSync('user_id'),
     };
   },
   computed: {
     userInfo() {
-      return this.$store.getters['jv/get']('users/1');
+      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
+      data.groupsName = data.groups ? Object.values(data.groups)[0].name : '';
+      return data;
     },
   },
   onLoad() {
     this.getUserInfo();
+
+    this.checked = this.$store.getters['theme/get']('currentTheme') !== THEME_DEFAULT;
   },
   methods: {
+    changeCheck(e) {
+      this.$store.dispatch('theme/setTheme', e ? THEME_DARK : THEME_DEFAULT);
+    },
     onClickItem(e) {
       uni.navigateTo({
-        url: `/pages/profile/index?current=${e.currentIndex}&type=my`,
+        url: `/pages/profile/index?current=${e.currentIndex}`,
       });
     },
     // 获取我的信息
     getUserInfo() {
       const params = {
-        include: ['wechat', 'groups'],
+        include: 'wechat,groups',
       };
       status
-        .run(() => this.$store.dispatch('jv/get', ['users/1', { params }]))
+        .run(() => this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]))
         .then(res => {
           this.items[0].brief = res.threadCount || 0;
           this.items[1].brief = res.followCount || 0;
@@ -95,23 +116,22 @@ export default {
 };
 </script>
 
-<style lang="scss">
-page {
-  background-color: #f9fafc;
-}
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .my-items {
   padding-left: 40rpx;
   margin-top: 30rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
-  .cell-item {
-    padding-right: 40rpx;
-  }
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+}
+/deep/ .cell-item {
+  padding-right: 40rpx;
 }
 .my-info {
   padding: 40rpx;
   font-size: 28rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
 }
 .my-info__box {
   display: flex;
@@ -137,16 +157,15 @@ page {
   left: 0;
   width: 80rpx;
   height: 80rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
-.qui-tabs {
-  background: #fff;
+.my-tabs {
+  background: --color(--qui-BG-2);
 }
 .my-tabs .qui-tabs__item--active {
   border: 0;
 }
 .my-tabs .qui-tabs__item--active .qui-tabs__item__title {
-  color: #aaa;
+  color: --color(--qui-FC-AAA);
 }
 </style>

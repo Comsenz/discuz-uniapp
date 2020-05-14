@@ -2,8 +2,10 @@
 import { SET_THEME } from '@/store/types/theme';
 import { THEME_DEFAULT } from '@/common/const';
 
+const theme = uni.getStorageSync('theme') || THEME_DEFAULT;
+
 const state = {
-  currentTheme: THEME_DEFAULT,
+  currentTheme: theme,
 };
 
 const actions = {
@@ -16,6 +18,7 @@ const actions = {
    */
   setTheme(context, payload) {
     context.commit(SET_THEME, payload);
+    uni.setStorageSync('theme', payload);
   },
 };
 
@@ -25,9 +28,18 @@ const mutations = {
   },
 };
 
+const getters = {
+  get: state => {
+    return data => {
+      return state[data];
+    };
+  },
+};
+
 export default {
   namespaced: true,
   state,
   actions,
+  getters,
   mutations,
 };
