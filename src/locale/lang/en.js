@@ -114,7 +114,7 @@ export default {
       failedToObtainSignature: 'Failed to obtain signature',
       fromWeChatApplet: 'From WeChat applet',
     },
-    // 圈子管理页面
+    // 站点管理页面
     manage: {
       inviteMembers: 'Invite members',
       siteMembers: 'site of members',

@@ -32,12 +32,12 @@
     <view class="site-item">
       <qui-cell-item
         class="cell-item--auto cell-item--left"
-        title="圈子介绍"
+        title="站点介绍"
         :addon="forums.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item title="创建时间" :addon="forums.set_site.site_install"></qui-cell-item>
       <qui-cell-item
-        title="圈子模式"
+        title="站点模式"
         :addon="
           forums.set_site.site_mode == 'pay'
             ? '付费模式，¥' +
@@ -96,7 +96,7 @@
         <text class="site-invite__detail__bold">{{ inviteData.group.name }}</text>
         <text>加入</text>
         <text class="site-invite__detail__bold">DISCUZQ</text>
-        <text>圈子</text>
+        <text>站点</text>
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">

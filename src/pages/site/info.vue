@@ -31,7 +31,7 @@
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
-        title="圈子介绍"
+        title="站点介绍"
         :addon="forums.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item title="创建时间" :addon="forums.set_site.site_install"></qui-cell-item>
@@ -70,7 +70,7 @@
       <view class="site-invite__detail">
         <text>只需最后一步，立即加入</text>
         <text class="site-invite__detail__bold">DISCUZQ</text>
-        <text>圈子</text>
+        <text>站点</text>
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
