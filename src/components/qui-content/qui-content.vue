@@ -59,7 +59,7 @@
               size="28"
               style="padding-left: 8rpx;"
             ></qui-icon>
-            <navigator class="navPost" style="display: inline;padding-left: 8rpx;color: #00479b;">
+            <navigator class="navPost">
               {{ themeContent }}
             </navigator>
           </view>
@@ -405,7 +405,9 @@ export default {
       }
 
       &__username {
+        padding-bottom: 10rpx;
         font-weight: bold;
+        line-height: 37rpx;
         color: --color(--qui-FC-333);
         transition: $switch-theme-time;
       }
@@ -582,5 +584,10 @@ export default {
 }
 .themeItem__content__text__longessay__publish {
   display: inline;
+}
+.navPost {
+  display: inline;
+  padding-left: 8rpx;
+  color: #00479b;
 }
 </style>

@@ -195,7 +195,7 @@ export default {
     confirmText: '筛选',
     sticky: '置顶',
     cancel: '取消',
-    tabsCircle: '圈子',
+    tabsCircle: '站点',
     tabsNews: '消息',
     tabsMy: '我',
     filterPlate: '版块',
