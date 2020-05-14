@@ -3,6 +3,7 @@
   bg: background;
   fc: font字体颜色;
   $jt: 箭头颜色
+  bor: 边框颜色
 */
 $light: (
   --qui-BG-1: #f9fafc,
@@ -13,6 +14,7 @@ $light: (
   --qui-BG-BTN-GRAY: #f9fafc,
   --qui-BG-BTN-GRAY-1: #f8f8f8,
   --qui-BG-IT: #f6f6f6,
+  --qui-BG-00: #000,
   --qui-FC-333: #333,
   --qui-FC-777: #777,
   --qui-FC-AAA: #aaa,
@@ -23,6 +25,8 @@ $light: (
   --qui-FC-GRAY: #f9fafc,
   --qui-FC-C6: #c6c6c6,
   --qui-FC-7D7979: #7d7979,
+  --qui-FC-34: #343434,
+  --qui-FC-f7: #f7f7f7,
   --qui-JT-B5: #b5b5b5,
   --qui-BOR-ED: #ededed,
   --qui-BOR-DDD: #ddd,

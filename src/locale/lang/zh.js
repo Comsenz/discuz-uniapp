@@ -96,6 +96,7 @@ export default {
     post: {
       free: '免费',
       note: '还能输入{num}个字',
+      word: '{num}字',
       placeholder: '您想说的..',
       post: '发布',
       paymentAmount: '付费金额',
@@ -114,10 +115,18 @@ export default {
       pleaseWaitForTheVideoUploadToComplete: '请等待视频上传完成',
       failedToObtainSignature: '获取签名失败',
       fromWeChatApplet: '来自微信小程序',
+      theTitleCanNotBeBlank: '标题不能为空',
+      pleaseEnterAPostTitle: 'Please enter a post title',
     },
+  },
+  uploader: {
+    uploadFailed: '上传失败',
+    uploadedSuccessfully: '上传成功',
+    videoUploadedSuccessfully: '视频上传成功',
   },
   core: {
     not_install: '该站点未安装',
+    postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',
   },
   topic: {
     persenUnit: '人',
