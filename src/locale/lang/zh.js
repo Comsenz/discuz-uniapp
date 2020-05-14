@@ -117,6 +117,11 @@ export default {
       pleaseEnterAPostTitle: 'Please enter a post title',
     },
   },
+  uploader: {
+    uploadFailed: '上传失败',
+    uploadedSuccessfully: '上传成功',
+    videoUploadedSuccessfully: '视频上传成功',
+  },
   core: {
     not_install: '该站点未安装',
     postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',

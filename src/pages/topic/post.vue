@@ -375,7 +375,7 @@ export default {
               console.log('error');
               console.log(result);
               uni.showModal({
-                title: '上传失败',
+                title: this.i18n.t('uploader.uploadFailed'),
                 content: JSON.stringify(result),
                 showCancel: false,
               });
@@ -389,8 +389,8 @@ export default {
               _this.fileId = result.fileId;
               _this.postVideo(result.fileId);
               uni.showModal({
-                title: '上传成功',
-                content: '视频上传成功！',
+                title: this.i18n.t('uploader.uploadedSuccessfully'),
+                content: this.i18n.t('uploader.videoUploadedSuccessfully'),
                 showCancel: false,
               });
             },
