@@ -359,7 +359,7 @@ export default {
     myfavorite: '我的收藏',
     circleinfo: '站点信息',
     search: '搜索',
-    circlemanagement: '管理站点',
+    circlemanagement: '站点管理',
     topic: '主题',
     following: '关注',
     followed: '已关注',
