@@ -21,7 +21,7 @@ export default {
   props: {
     footer: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   computed: {

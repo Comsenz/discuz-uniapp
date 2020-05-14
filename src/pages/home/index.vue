@@ -1,5 +1,5 @@
 <template>
-  <qui-page :class="'home ' + scrolled">
+  <qui-page :class="'home ' + scrolled" :footer="true">
     <uni-nav-bar
       v-if="navShow"
       left-icon="back"
