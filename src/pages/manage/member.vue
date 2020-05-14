@@ -211,7 +211,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
 $otherHeight: 292rpx;
 .qui-at-member-page-box {

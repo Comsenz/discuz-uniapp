@@ -203,7 +203,6 @@ export default {
 
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
 .notice-box {
   width: 100%;

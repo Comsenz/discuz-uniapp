@@ -213,7 +213,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 page {
   padding: 0;
   margin: 0;
