@@ -47,20 +47,40 @@
         </view>
       </view>
 
-      <view class="themeItem__content" @click="contentClick()">
+      <view class="themeItem__content">
         <view class="themeItem__content__text">
-          <rich-text :nodes="themeContent"></rich-text>
+          <view class="themeItem__content__text__longessay" v-if="threadType === 1">
+            <view class="themeItem__content__text__longessay__publish">
+              {{ i18n.t('home.released') }} :
+            </view>
+            <qui-icon
+              name="icon-link"
+              color="#00479B"
+              size="28"
+              style="padding-left: 8rpx;"
+            ></qui-icon>
+            <navigator class="navPost" style="display: inline;padding-left: 8rpx;color: #00479b;">
+              {{ themeContent }}
+            </navigator>
+          </view>
+          <rich-text :nodes="themeContent" v-else></rich-text>
         </view>
         <video
           v-if="threadType === 2"
-          id="player-video"
-          width="414"
-          height="270"
           preload="auto"
           playsinline
           webkit-playsinline
           x5-playsinline
-          ref="playerVideo"
+          controls="true"
+          page-gesture="true"
+          show-fullscreen-btn="true"
+          show-play-btn="true"
+          show-mute-btn="true"
+          auto-pause-if-open-native="true"
+          vslide-gesture="true"
+          auto-pause-if-navigate="true"
+          enable-play-gesture="true"
+          :src="mediaUrl"
         ></video>
         <view v-if="Object.keys(imagesList || {}).length == 1">
           <view class="themeItem__content__imgone">
@@ -226,6 +246,11 @@ export default {
       type: String,
       default: '',
     },
+    // 内容类型：0 文字 1 帖子 2 视频 3 图片
+    threadType: {
+      type: Number,
+      default: 0,
+    },
     // 内容区域图片
     imagesList: {
       type: Object,
@@ -269,16 +294,6 @@ export default {
     modeVal: {
       type: String,
       default: 'center',
-    },
-    // 视频帖子显示
-    videoShow: {
-      type: Boolean,
-      default: false,
-    },
-    // 视频帖类型
-    threadType: {
-      type: Number,
-      default: 0,
     },
     mediaUrl: {
       type: String,
@@ -436,6 +451,9 @@ export default {
       line-height: 45rpx;
       color: rgba(51, 51, 51, 1);
       word-wrap: break-word;
+      &__longessay {
+        word-break: break-all;
+      }
     }
     &__reply {
       width: 670rpx;
@@ -558,5 +576,8 @@ export default {
       }
     }
   }
+}
+.themeItem__content__text__longessay__publish {
+  display: inline;
 }
 </style>

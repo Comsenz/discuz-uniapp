@@ -197,6 +197,7 @@ export default {
     generatePoster: '生成海报',
     wxShare: '微信分享',
     word: '文字',
+    released: '发布了',
   },
   // 圈子管理页面
   manage: {

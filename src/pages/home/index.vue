@@ -78,7 +78,6 @@
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
-      @scrolltolower="pullDown"
       class="scroll-y"
       @scroll="scroll"
     >
@@ -107,6 +106,8 @@
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :thread-type="item.type"
+          :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
           :theme-comment="item.firstPost.replyCount"
@@ -174,7 +175,7 @@ export default {
     return {
       scrolled: 'affix',
       categoryId: 0, // 主题分类 ID
-      threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
+      threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
       show: false,
@@ -454,7 +455,7 @@ export default {
         ];
         const categoryFilterList = [
           {
-            label: '所有',
+            label: this.i18n.t('home.all'),
             value: 0,
             selected: true,
           },
