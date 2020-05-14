@@ -5,7 +5,7 @@
         class="post-box__title-input"
         type="text"
         v-model="postTitle"
-        placeholder="请输入帖子标题"
+        :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
       />
     </view>
     <view class="post-box__hd">
@@ -454,6 +454,7 @@ export default {
       this.$refs.popupBtm.close();
     },
     uploadChange(e) {
+      console.log(e);
       this.uploadFile = e;
     },
     uploadClear(list, del) {
