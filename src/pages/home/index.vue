@@ -3,8 +3,6 @@
     <uni-nav-bar
       v-if="navShow"
       left-icon="back"
-      left-text="返回"
-      right-text="菜单"
       title="导航栏组件"
       fixed="true"
       status-bar
@@ -80,6 +78,7 @@
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
+      @scrolltolower="pullDown"
       class="scroll-y"
       @scroll="scroll"
     >
@@ -530,7 +529,8 @@ export default {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        this.threads = res;
+        // this.threads = res;
+        this.threads = { ...this.threads, ...res };
       })
 
     },
@@ -690,7 +690,7 @@ export default {
 }
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  // max-height: calc(100vh - 475rpx);
+  max-height: calc(100vh - 100rpx);
 }
 .nav .filter-modal {
   position: absolute;

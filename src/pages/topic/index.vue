@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content bg" v-if="status[loadDetailStatusId]">
+  <qui-page class="content bg" v-if="status[loadDetailStatusId]" :footer="false">
     <view class="ft-gap">
       <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
       <qui-topic-content

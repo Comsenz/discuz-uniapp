@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="my">
+  <qui-page class="my" :footer="false">
     <view class="my-info">
       <view class="my-info__box">
         <view class="my-info__box__detail">
