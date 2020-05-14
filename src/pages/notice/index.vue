@@ -1,14 +1,10 @@
 <template>
   <view class="notice-box">
-    <!-- 导航栏 -->
-    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-text">{{ title }}</view>
-    </uni-nav-bar>
     <!-- 通知类型列表 -->
     <view class="notice-box__list">
       <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
         <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
-          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
+          <qui-icon name="icon-circle" color="red" size="14"></qui-icon>
         </qui-cell-item>
       </view>
     </view>
@@ -54,14 +50,13 @@
               </view>
             </view>
             <view class="dialog-box__header__r">
-              <uni-icons
-                class="red-circle"
+              <qui-icon
+                name="icon-circle red-circle"
                 v-if="dialog.recipient_read_at === null"
-                type="smallcircle-filled"
-                size="7"
                 color="red"
-              ></uni-icons>
-              <uni-icons class="uni-icon-wrapper" type="arrowright" :size="20" color="#bbb" />
+                size="14"
+              ></qui-icon>
+              <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
             </view>
           </view>
           <view class="dialog-box__con">{{ dialog.dialogMessage.message_text }}</view>
@@ -74,13 +69,11 @@
 </template>
 
 <script>
-import { uniNavBar, uniIcons, uniLoadMore } from '@dcloudio/uni-ui';
+import { uniLoadMore } from '@dcloudio/uni-ui';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    uniNavBar,
-    uniIcons,
     uniLoadMore,
   },
   data() {
@@ -216,10 +209,6 @@ export default {
     color: #343434;
   }
 
-  .red-circle {
-    display: flex;
-  }
-
   .notice-box__list {
     padding-left: 40rpx;
     background: #fff;
@@ -257,7 +246,7 @@ export default {
       &__box {
         width: 100%;
         align-items: center;
-        margin: 20rpx 0 10rpx;
+        margin: 20rpx 0rpx 0rpx;
       }
 
       &__username {
@@ -284,7 +273,11 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-right: 30rpx;
+      margin-right: 40rpx;
+
+      .red-circle {
+        margin-right: 20rpx;
+      }
     }
   }
 

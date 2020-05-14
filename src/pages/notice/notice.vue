@@ -1,8 +1,11 @@
 <template>
   <view class="notification-box">
     <!-- 导航栏 -->
-    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-text">{{ title }}</view>
+    <uni-nav-bar status-bar fixed @clickLeft="clickNavBarLeft">
+      <view slot="left" class="left-con">
+        <qui-icon name="icon-back" class="left-arrow" size="34" color="#343434"></qui-icon>
+        <text class="left-con-text">{{ title }}</text>
+      </view>
     </uni-nav-bar>
     <!-- 通知信息 -->
     <qui-notification :list="allNotifications"></qui-notification>
@@ -43,12 +46,14 @@ export default {
     // 获取通知列表
     allNotifications() {
       const list = [];
-      const likedList = this.$store.getters['jv/get']('notification');
-      const keys = Object.keys(likedList);
-      if (likedList && keys.length > 0) {
+      const noticeList = this.$store.getters['jv/get']('notification');
+      const keys = Object.keys(noticeList);
+      if (noticeList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
-          likedList[keys[i]].time = time2MorningOrAfternoon(likedList[keys[i]].created_at);
-          list.push(likedList[keys[i]]);
+          const value = noticeList[keys[i]];
+          value.time = time2MorningOrAfternoon(value.created_at);
+          value.money = `￥${value.amount}`;
+          list.push(value);
         }
       }
       console.log('通知列表：', list);
@@ -83,10 +88,21 @@ export default {
   font-size: $fg-f28;
   background-color: #f9fafc;
 
-  .left-text {
-    min-width: 250rpx;
-    font-weight: bold;
+  /deep/ .uni-navbar--border {
+    border: none;
+  }
+
+  .left-con {
+    min-width: 300rpx;
     color: #343434;
+
+    .left-arrow {
+      margin: 0rpx 18rpx 0rpx 0rpx;
+    }
+
+    .left-con-text {
+      font-weight: bold;
+    }
   }
 }
 </style>
