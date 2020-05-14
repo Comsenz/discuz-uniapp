@@ -104,6 +104,7 @@ export default {
           url: '../my/index',
         },
       ],
+      bottomData: [],
     };
   },
   computed: {

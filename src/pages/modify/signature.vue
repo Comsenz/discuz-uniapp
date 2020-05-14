@@ -93,7 +93,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 .aogph {
   width: 100vw;
   height: 100vh;

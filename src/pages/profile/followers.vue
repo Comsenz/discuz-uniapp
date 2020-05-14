@@ -40,10 +40,10 @@
               <text>
                 {{
                   followerItem.fromUser.follow == 0
-                    ? '关注'
+                    ? i18n.t('profile.following')
                     : followerItem.fromUser.follow == 1
-                    ? '已关注'
-                    : '互相关注'
+                    ? i18n.t('profile.followed')
+                    : i18n.t('profile.mutualfollow')
                 }}
               </text>
               <qui-icon
@@ -87,6 +87,7 @@ export default {
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
+      currentLoginId: uni.getStorageSync('user_id'),
     };
   },
   mounted() {
@@ -160,7 +161,7 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
         this.getFollowerList();
       });
@@ -170,15 +171,18 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .following {
   padding: 0 20rpx;
   font-size: 28rpx;
-  .cell-item {
+  /deep/ .cell-item__body {
     padding-right: 20rpx;
   }
   .cell-item__body__right {
     font-size: 28rpx;
-    color: #333;
+    color: --color(--qui-FC-333);
   }
   .qui-icon {
     margin-right: 0;
@@ -187,15 +191,12 @@ export default {
 }
 .follow-content {
   padding: 20rpx 0;
-  background: #fff;
+  background: --color(--qui-BG-2);
   box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
 }
 .follow-content__items {
   position: relative;
   padding-left: 110rpx;
-}
-.follow-content__items:last-child .cell-item {
-  border: 0;
 }
 .follow-content__items__avatar {
   position: absolute;
@@ -203,7 +204,6 @@ export default {
   left: 20rpx;
   width: 70rpx;
   height: 70rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
 .scroll-y {
