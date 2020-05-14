@@ -147,8 +147,7 @@
 
 <script>
 /* eslint-disable */
-import { status } from 'jsonapi-vuex';
-import lodash from 'lodash';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {

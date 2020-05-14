@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -81,11 +81,11 @@
       </view>
       <qui-no-data tips="没有找到相关主题" v-if="themeTotal == 0"></qui-no-data>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {

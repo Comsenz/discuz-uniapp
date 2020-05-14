@@ -1,5 +1,5 @@
 <template>
-  <view class="new">
+  <view class="new" @click.stop="toggleBox">
     <view class="new-phon" v-if="phon">
       <view class="new-phon-test">
         {{ i18n.t('modify.newphonnumber') }}
@@ -15,11 +15,17 @@
       </view>
     </view>
     <!-- 验证码 -->
-    <view class="new-input">
+    <view class="new-input" @click.stop="fourse">
       <view class="new-input-test">
         {{ i18n.t('modify.placeentercode') }}
       </view>
-      <qui-input-code @getdata="btndata" :title="tit" :text="test"></qui-input-code>
+      <qui-input-code
+        @getdata="btndata"
+        :title="tit"
+        :text="test"
+        :show="inshow"
+        :isiphonex="inisIphone"
+      ></qui-input-code>
     </view>
     <view class="new-button">
       <qui-button type="primary" size="large" @click="dingphon">
@@ -30,7 +36,7 @@
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
@@ -49,9 +55,14 @@ export default {
       setnum: '',
       icon: 'none',
       duration: 2000,
+      inshow: false,
+      inisIphone: false,
     };
   },
   methods: {
+    fourse() {
+      this.inshow = true;
+    },
     onFocus() {
       this.isFocus = true;
     },
@@ -162,13 +173,16 @@ export default {
           }
         });
     },
+    toggleBox() {
+      this.inshow = false;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
+
 .new {
   width: 100vw;
   height: 100vh;
