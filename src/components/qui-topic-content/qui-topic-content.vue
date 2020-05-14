@@ -60,7 +60,7 @@
           <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
         </view>
 
-        <view v-if="Object.keys(imagesList).length == 1">
+        <!--<view v-if="Object.keys(imagesList).length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -102,7 +102,7 @@
               v-if="Object.keys(imagesList).length % 3 != 0"
             ></image>
           </view>
-        </view>
+        </view>-->
         <view v-if="!payStatus" class="themeItem__content__con__cover"></view>
         <view v-if="!payStatus" class="themeItem__content__con__surtip">
           {{ p.surplus }}{{ p.contentHide }}
@@ -284,9 +284,9 @@ export default {
 
       &__top {
         height: 37rpx;
+        margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         line-height: 37rpx;
       }
 
@@ -301,7 +301,7 @@ export default {
       }
 
       &__time {
-        font-size: 24rpx;
+        font-size: $fg-f24;
         font-weight: 400;
         line-height: 31rpx;
         color: rgba(170, 170, 170, 1);
@@ -315,8 +315,8 @@ export default {
 
       .essence {
         display: inline-block;
-        width: 49rpx;
-        height: 60rpx;
+        width: 31rpx;
+        height: 41rpx;
       }
     }
   }
@@ -349,7 +349,8 @@ export default {
       font-size: $fg-f28;
       font-weight: 400;
       line-height: 45rpx;
-      color: rgba(51, 51, 51, 1);
+      color: --color(--qui-FC-);
+      word-break: break-all;
       img {
         display: inline-block;
         width: 28rpx;
@@ -445,7 +446,7 @@ export default {
     &__themeType2 {
       &__item {
         font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
@@ -466,9 +467,10 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+    font-size: $fg-f28;
     .icon-management {
       margin-right: 7rpx;
-      font-size: 26rpx;
+      font-size: $fg-f26;
     }
   }
 }

@@ -107,7 +107,8 @@ export default {
     personList: {
       handler(newVal) {
         this.personList = newVal;
-        this.personRes = this.limitArray(newVal, this.limitCount);
+        this.personRes = newVal;
+        // this.personRes = this.limitArray(newVal, this.limitCount);
         // console.log(this.personRes, '0000');
       },
       deep: true,
