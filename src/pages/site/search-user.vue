@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -43,7 +43,7 @@
       </view>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -54,8 +54,7 @@ export default {
     return {
       searchValue: '',
       loadingType: 'more',
-      data: {},
-      totalData: 0, // 总数
+      data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
@@ -67,7 +66,7 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = {};
+      this.data = [];
       this.getUserList(e.target.value);
     },
     // 获取用户列表
@@ -82,10 +81,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     clearSearch() {
@@ -103,12 +103,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getUserList(this.searchValue);
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getUserList();
     },
     refresh() {
       this.pageNum = 1;

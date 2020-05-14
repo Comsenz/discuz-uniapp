@@ -42,20 +42,22 @@
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-    <uni-popup ref="popup" type="bottom">
+    <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick">
+              <view class="popup-share-box" @click="shareContent()">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
   </view>
@@ -79,18 +81,17 @@ export default {
       loadingType: 'more',
       data: [],
       flag: true, // 滚动节流
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       bottomData: [
         {
-          text: '生成海报',
-          icon: 'icon-word',
+          text: this.i18n.t('home.generatePoster'),
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
-          text: '微信分享',
-          icon: 'icon-img',
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ],
@@ -101,17 +102,19 @@ export default {
   },
   methods: {
     handleClickShare() {
-      this.$refs.popup.open();
+      this.$refs.popupContent.open();
     },
-    // 首页底部发帖点击事件跳转
-    handleClick() {
-      uni.navigateTo({
-        url: '/pages/topic/post',
-      });
+    // 内容部分分享海报,跳到分享海报页面
+    shareContent(index) {
+      if (index === 0) {
+        uni.navigateTo({
+          url: '/pages/share/site',
+        });
+      }
     },
     // 取消按钮
     cancel() {
-      this.$refs.popup.close();
+      this.$refs.popupContent.close();
     },
     // 加载当前主题数据
     loadThreads() {
@@ -132,17 +135,12 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.threadCount;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
-    },
-    // 评论部分点击评论跳到详情页
-    commentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
@@ -172,12 +170,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.loadThreads();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadThreads();
     },
     refresh() {
       this.pageNum = 1;
@@ -187,9 +184,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-@import '@/styles/base/variable/global.scss';
-@import '@/styles/base/theme/fn.scss';
+<style lang="scss" scoped>
 /deep/ .themeItem {
   margin-right: 0;
   margin-left: 0;

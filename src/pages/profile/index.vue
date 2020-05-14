@@ -1,5 +1,5 @@
 <template>
-  <view class="profile">
+  <qui-page class="profile">
     <view class="profile-info">
       <view class="profile-info__box">
         <view class="profile-info__box__detail">
@@ -14,7 +14,7 @@
             :brief="userInfo.groupsName"
             :border="false"
           >
-            <view v-if="userId != '1'">
+            <view v-if="userId != currentLoginId">
               <view class="profile-info__box__detail-operate">
                 <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
                 <text>私信</text>
@@ -64,7 +64,7 @@
         </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -96,7 +96,7 @@ export default {
         { title: '点赞', brief: '65' },
       ],
       userId: '',
-      pageType: '', // 个人主页还是他人主页
+      currentLoginId: uni.getStorageSync('user_id'),
       current: 0,
       dialogId: 0, // 会话id
     };
@@ -110,12 +110,11 @@ export default {
   },
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
-    const { userId, current, type } = params;
+    const { userId, current } = params;
     // 我的用户id从缓存拿
-    this.userId = userId || 1;
-    this.pageType = type;
+    this.userId = userId || this.currentLoginId;
     this.current = current || 0;
-    this.getUserInfo(userId || 1);
+    this.getUserInfo(userId || this.currentLoginId);
   },
   methods: {
     onClickItem(e) {
@@ -150,7 +149,7 @@ export default {
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
           this.getUserInfo(this.userId);
-          if (this.$refs.followers) this.$refs.followers.getFollowerList();
+          if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
         })
         .catch(err => {
           console.log('verify', err);
@@ -158,9 +157,9 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
         this.getUserInfo(this.userId);
-        if (this.$refs.followers) this.$refs.followers.getFollowerList();
+        if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
       });
     },
     changeFollow(e) {
@@ -197,9 +196,6 @@ export default {
 };
 </script>
 <style lang="scss">
-page {
-  background-color: #f9fafc;
-}
 .profile {
   .qui-icon {
     margin-right: 14rpx;
@@ -245,7 +241,7 @@ page {
 .profile-tabs__content {
   padding-top: 30rpx;
 }
-.qui-tabs {
+/deep/ .qui-tabs {
   background: #fff;
 }
 </style>

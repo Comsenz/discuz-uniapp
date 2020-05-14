@@ -108,7 +108,7 @@ export default {
     // 导航栏的背景颜色
     bgColor: {
       type: String,
-      default: '#ffffff',
+      default: 'transparent',
     },
     // 读取传入的数组对象的属性
     name: {

@@ -10,6 +10,7 @@
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
+    <qui-footer v-if="footer"></qui-footer>
   </view>
 </template>
 
@@ -17,6 +18,12 @@
 import { mapState } from 'vuex';
 
 export default {
+  props: {
+    footer: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     ...mapState({
       currentTheme: state => state.theme.currentTheme,
@@ -50,5 +57,6 @@ export default {
   min-height: 100vh;
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
+  transition: 0.4s;
 }
 </style>

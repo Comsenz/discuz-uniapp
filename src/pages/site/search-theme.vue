@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -40,7 +40,7 @@
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -51,8 +51,7 @@ export default {
     return {
       searchValue: '',
       loadingType: 'more',
-      data: {},
-      totalData: 0, // 总数
+      data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
@@ -64,7 +63,7 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = {};
+      this.data = [];
       this.getThemeList(e.target.value);
     },
     // 获取主题列表
@@ -79,10 +78,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     clearSearch() {
@@ -97,17 +97,16 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getThemeList();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getThemeList('');
     },
     refresh() {
       this.pageNum = 1;
       this.data = [];
-      this.getThemeList();
+      this.getThemeList(this.searchValue);
     },
   },
 };
@@ -116,7 +115,7 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
+
 .search-item {
   padding-left: 40rpx;
   margin-bottom: 30rpx;

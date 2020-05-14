@@ -1,7 +1,10 @@
 <template>
-  <view class="favorite">
+  <qui-page class="favorite">
     <view class="favorite-head">
-      <qui-cell-item :title="totalData + '条收藏'" :border="false"></qui-cell-item>
+      <qui-cell-item
+        :title="totalData + i18n.t('profile.item') + i18n.t('profile.collection')"
+        :border="false"
+      ></qui-cell-item>
     </view>
     <view class="favorite-content">
       <scroll-view
@@ -45,23 +48,25 @@
       </scroll-view>
       <qui-load-more :status="loadingType"></qui-load-more>
     </view>
-    <uni-popup ref="popup" type="bottom">
+    <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick">
+              <view class="popup-share-box" @click="shareContent()">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -80,19 +85,19 @@ export default {
   data() {
     return {
       loadingType: 'more',
-      data: {},
+      data: [],
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       bottomData: [
         {
-          text: '生成海报',
-          icon: 'icon-word',
+          text: this.i18n.t('home.generatePoster'),
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
-          text: '微信分享',
-          icon: 'icon-img',
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ],
@@ -103,17 +108,19 @@ export default {
   },
   methods: {
     handleClickShare() {
-      this.$refs.popup.open();
+      this.$refs.popupContent.open();
     },
-    // 首页底部发帖点击事件跳转
-    handleClick() {
-      uni.navigateTo({
-        url: '/pages/topic/post',
-      });
+    // 内容部分分享海报,跳到分享海报页面
+    shareContent(index) {
+      if (index === 0) {
+        uni.navigateTo({
+          url: '/pages/share/site',
+        });
+      }
     },
     // 取消按钮
     cancel() {
-      this.$refs.popup.close();
+      this.$refs.popupContent.close();
     },
     // 加载当前点赞数据
     loadlikes() {
@@ -126,10 +133,12 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['favorites', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.threadCount;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            this.totalData = res._jv.json.meta.threadCount;
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     // 评论部分点击评论跳到详情页
@@ -165,7 +174,6 @@ export default {
       this.$store.dispatch('jv/patch', params);
     },
     // 删除收藏
-
     itemDelete(id, isFavorite) {
       const params = {
         _jv: {
@@ -177,10 +185,10 @@ export default {
       this.$store.dispatch('jv/patch', params).then(() => {
         this.totalData -= 1;
         const dataList = this.data;
-        Object.getOwnPropertyNames(dataList).forEach(key => {
-          if (dataList[key]._jv && dataList[key]._jv.id === id) {
+        dataList.forEach((item, index) => {
+          if (item._jv && item._jv.id === id) {
             const data = JSON.parse(JSON.stringify(dataList));
-            delete data[key];
+            data.splice(index, 1);
             this.data = data;
           }
         });
@@ -188,12 +196,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.loadlikes();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadlikes();
     },
     refresh() {
       this.pageNum = 1;
@@ -207,15 +214,12 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-page {
-  background-color: #f9fafc;
-}
 .favorite-head {
   padding-top: 40rpx;
   padding-left: 40rpx;
   margin-bottom: 30rpx;
   background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .favorite-head /deep/ .cell-item__body {
   height: 78rpx;
