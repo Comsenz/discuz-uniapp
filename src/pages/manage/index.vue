@@ -1,5 +1,5 @@
 <template>
-  <view class="manage">
+  <qui-page>
     <view class="manage-items">
       <navigator url="./users" hover-class="none">
         <qui-cell-item title="成员管理" arrow slot-right>
@@ -7,32 +7,15 @@
         </qui-cell-item>
       </navigator>
       <navigator url="./invite" hover-class="none">
-        <qui-cell-item title="邀请成员" arrow :border="false"></qui-cell-item>
+        <qui-cell-item title="邀请成员" arrow></qui-cell-item>
       </navigator>
     </view>
-  </view>
+  </qui-page>
 </template>
 
-<script>
-export default {
-  components: {},
-
-  data() {
-    return {};
-  },
-
-  methods: {},
-};
-</script>
-
 <style lang="scss" scope>
-page {
-  background-color: #f9fafc;
-}
 .manage-items {
   padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
 
   .cell-item {
     padding-right: 40rpx;
