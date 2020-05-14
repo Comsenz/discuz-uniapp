@@ -149,7 +149,7 @@ export default {
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
           this.getUserInfo(this.userId);
-          if (this.$refs.followers) this.$refs.followers.getFollowerList();
+          if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
         })
         .catch(err => {
           console.log('verify', err);
@@ -159,7 +159,7 @@ export default {
     deleteFollow(userInfo) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
         this.getUserInfo(this.userId);
-        if (this.$refs.followers) this.$refs.followers.getFollowerList();
+        if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
       });
     },
     changeFollow(e) {

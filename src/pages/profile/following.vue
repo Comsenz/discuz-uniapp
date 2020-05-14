@@ -33,7 +33,7 @@
             <view
               class="follow-content__items__operate"
               @tap="addFollow(followingItem.toUser)"
-              v-if="followingItem.toUser.id != '1'"
+              v-if="followingItem.toUser.id != currentLoginId"
             >
               <text>
                 {{
@@ -83,7 +83,6 @@ export default {
       loadingType: 'more',
       flag: true, // 滚动节流
       followingList: [],
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
@@ -94,7 +93,7 @@ export default {
   },
   methods: {
     // 获取用户关注列表
-    getFollowingList() {
+    getFollowingList(type) {
       const params = {
         include: ['toUser', 'toUser.groups'],
         'filter[type]': 1,
@@ -105,13 +104,14 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          if (this.totalData === 0) {
-            this.followingList = [];
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          if (type === 'change') {
+            this.followingList = res;
           } else {
-            this.followingList = { ...this.followingList, ...res };
+            this.followingList = [...this.followingList, ...res];
           }
         });
     },
@@ -123,12 +123,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getFollowingList();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getFollowingList();
     },
     refresh() {
       this.pageNum = 1;
@@ -152,7 +151,7 @@ export default {
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
           this.$emit('changeFollow', { userId: this.userId });
-          this.getFollowingList();
+          this.getFollowingList('change');
         })
         .catch(err => {
           console.log('verify', err);
@@ -165,15 +164,15 @@ export default {
         // 如果是个人主页直接删除这条数据
         if (this.userId === this.currentLoginId) {
           const dataList = this.followingList;
-          Object.getOwnPropertyNames(dataList).forEach(key => {
-            if (dataList[key].toUser && dataList[key].toUser.id === userInfo.id) {
+          dataList.forEach((item, index) => {
+            if (item.toUser && item.toUser.id === userInfo.id) {
               const data = JSON.parse(JSON.stringify(dataList));
-              delete data[key];
+              data.splice(index, 1);
               this.followingList = data;
             }
           });
         } else {
-          this.getFollowingList();
+          this.getFollowingList('change');
         }
       });
     },

@@ -43,11 +43,13 @@
         <navigator url="/pages/site/search" hover-class="none">
           <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
         </navigator>
-        <qui-cell-item
-          :title="i18n.t('profile.circlemanagement')"
-          arrow
-          :border="false"
-        ></qui-cell-item>
+        <navigator url="/pages/manage/index" hover-class="none">
+          <qui-cell-item
+            :title="i18n.t('profile.circlemanagement')"
+            arrow
+            :border="false"
+          ></qui-cell-item>
+        </navigator>
       </view>
 
       <view class="my-items">
