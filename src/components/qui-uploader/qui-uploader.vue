@@ -224,7 +224,7 @@ export default {
     }
 
     &--image {
-      z-index: 100;
+      z-index: 0;
       width: 100%;
       height: 100%;
       border: 1px solid --color(--qui-BOR-ED);
@@ -233,7 +233,7 @@ export default {
     &--load {
       position: absolute;
       top: 0;
-      z-index: 200;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -255,7 +255,7 @@ export default {
 
       &__text {
         position: relative;
-        z-index: 222;
+        z-index: 2;
         font-size: $fg-f28;
         line-height: 160rpx;
         color: --color(--qui-FC-34);
@@ -264,7 +264,7 @@ export default {
       progress {
         position: absolute;
         bottom: 9.5rpx;
-        z-index: 233;
+        z-index: 3;
         width: 87.5%;
       }
     }

@@ -90,7 +90,7 @@
     ></qui-cell-item>
     <qui-cell-item
       :title="i18n.t('discuzq.post.freeWordCount')"
-      :addon="`${word}字`"
+      :addon="i18n.t('discuzq.post.word', { num: word })"
       v-if="price > 0"
       arrow
       @click="cellClick('word')"
@@ -171,7 +171,9 @@
             size="40"
             v-if="setType === 'pay'"
           ></qui-icon>
-          <text class="popup-dialog__cont-rmb" v-else>字</text>
+          <text class="popup-dialog__cont-rmb" v-else>
+            {{ i18n.t('discuzq.post.word', { num: '' }) }}
+          </text>
           <input
             class="popup-dialog__cont-input"
             v-if="setType === 'pay'"
@@ -454,7 +456,6 @@ export default {
       this.$refs.popupBtm.close();
     },
     uploadChange(e) {
-      console.log(e);
       this.uploadFile = e;
     },
     uploadClear(list, del) {
