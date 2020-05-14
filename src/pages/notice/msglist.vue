@@ -86,7 +86,9 @@ export default {
     this.username = username;
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
-    this.getEmoji();
+    if (Object.keys(this.allEmoji).length < 1) {
+      this.getEmoji();
+    }
     setTimeout(() => {
       uni
         .createSelectorQuery()
