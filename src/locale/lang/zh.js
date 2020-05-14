@@ -148,6 +148,9 @@ export default {
     canWrite: '还能输入',
     word: '个字',
     publish: '发布',
+    replyContentCannotBeEmpty: '回复内容不能为空',
+    supportTheAuthorToCreate: '支持作者继续创作',
+    enterTheRewardPaymeAmount: '输入打赏付费金额',
   },
   pay: {
     passwordTip: '请输入支付密码',
