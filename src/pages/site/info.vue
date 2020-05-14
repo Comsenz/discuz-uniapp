@@ -1,5 +1,5 @@
 <template>
-  <view class="site">
+  <qui-page class="site">
     <qui-header
       :head-img="forums.set_site.site_logo"
       :theme="theme"
@@ -10,20 +10,22 @@
       :share-btn="shareBtn"
       @click="open"
     ></qui-header>
-    <uni-popup ref="popup" type="bottom">
+    <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick">
+              <view class="popup-share-box" @click="shareContent()">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
     <view class="site-item">
@@ -77,7 +79,7 @@
         </qui-button>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -93,13 +95,13 @@ export default {
       shareBtn: 'icon-share1',
       bottomData: [
         {
-          text: '生成海报',
-          icon: 'icon-word',
+          text: this.i18n.t('home.generatePoster'),
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
-          text: '微信分享',
-          icon: 'icon-img',
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ],
@@ -115,18 +117,20 @@ export default {
   },
   methods: {
     // 首页头部分享按钮弹窗
-    open() {
-      this.$refs.popup.open();
+    handleClickShare() {
+      this.$refs.popupContent.open();
     },
     // 取消按钮
     cancel() {
-      this.$refs.popup.close();
+      this.$refs.popupContent.close();
     },
-    // 首页底部发帖点击事件跳转
-    handleClick() {
-      uni.navigateTo({
-        url: '/pages/topic/post',
-      });
+    // 内容部分分享海报,跳到分享海报页面
+    shareContent(index) {
+      if (index === 0) {
+        uni.navigateTo({
+          url: '/pages/share/site',
+        });
+      }
     },
     // 点击头像到个人主页
     toProfile(userId) {
@@ -143,7 +147,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" scope>
+<style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 page {

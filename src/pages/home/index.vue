@@ -1,5 +1,12 @@
 <template>
-  <view :class="'home ' + scrolled">
+  <qui-page :class="'home ' + scrolled" :footer="true">
+    <uni-nav-bar
+      v-if="navShow"
+      left-icon="back"
+      title="导航栏组件"
+      fixed="true"
+      status-bar
+    ></uni-nav-bar>
     <qui-header
       :head-img="forums.set_site.site_logo"
       :background-head-full-img="forums.set_site.site_background_image"
@@ -44,19 +51,19 @@
           color="#1878F3"
           @tap="showFilter"
         ></qui-icon>
-        <qui-filter-modal
-          v-model="show"
-          @confirm="confirm"
-          @changeSelected="changeSelected"
-          @change="changeType"
-          :confirm-text="i18n.t('home.confirmText')"
-          :if-need-confirm="ifNeedConfirm"
-          :filter-list="filterList"
-          :top="top"
-          :show-search="showSearch"
-          ref="filter"
-        ></qui-filter-modal>
       </view>
+      <qui-filter-modal
+        v-model="show"
+        @confirm="confirm"
+        @changeSelected="changeSelected"
+        @change="changeType"
+        :confirm-text="i18n.t('home.confirmText')"
+        :if-need-confirm="ifNeedConfirm"
+        :filter-list="filterList"
+        :show-search="showSearch"
+        ref="filter"
+        top="100"
+      ></qui-filter-modal>
       <u-tabs
         class="scroll-tab"
         :list="categories"
@@ -64,27 +71,32 @@
         @change="toggleTab"
         is-scroll="isScroll"
         active-color="#1878F3"
+        :style="isTop == 1 ? 'position:fixed;z-index:9;top:0' : ''"
       ></u-tabs>
     </view>
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
-      @scrolltolower="pullDown"
-      @scrolltoupper="refresh"
       show-scrollbar="false"
+      @scrolltolower="pullDown"
       class="scroll-y"
       @scroll="scroll"
     >
       <view class="sticky">
-        <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
+        <view
+          class="sticky__isSticky"
+          v-for="(item, index) in sticky"
+          :key="index"
+          @click="stickyClick(item._jv.id)"
+        >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
             {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
           </view>
         </view>
       </view>
-
-      <view class="main">
+      <!-- </view> -->
+      <view class="main" v-if="jvStatus[threadsStatusId]">
         <qui-content
           v-for="(item, index) in threads"
           :key="index"
@@ -114,39 +126,17 @@
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item.user._jv.id)"
         ></qui-content>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </view>
-      <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-    <qui-footer
+    <!-- </view> -->
+
+    <!-- <qui-footer
       @click="footerOpen"
       :tabs="tabs"
       :post-img="postImg"
       :red-circle="redCircle"
-    ></qui-footer>
-
-    <uni-popup ref="popup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick(item)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
-              </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
-    </uni-popup>
-
+    ></qui-footer> -->
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -170,13 +160,14 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </view>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
+  </qui-page>
 </template>
 
 <script>
-/* eslint-disable */
-import { status } from 'jsonapi-vuex';
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {
@@ -190,17 +181,18 @@ export default {
       ifNeedConfirm: true,
       top: 500,
       filterSelected: { label: this.i18n.t('topic.whole'), value: '' }, // 筛选类型
-      loadingType: 'more', //上拉加载状态
+      loadingType: 'more', // 上拉加载状态
       hasMore: false, // 是否有更多
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
       redCircle: false, // 消息通知红点
+      navShow: false, // 是否显示头部
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
-          data: [{ label: this.i18n.t('home.all'), value: '0', selected: true }],
+          data: [],
         },
         {
           title: this.i18n.t('home.filterType'),
@@ -222,10 +214,10 @@ export default {
         },
       ],
       isTop: 0,
-      threads: {},
+      threads: [],
       sticky: {}, // 置顶帖子内容
       shareBtn: 'icon-share1',
-      tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
+      tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       isResetList: false, // 是否重置列表
       bottomData: [],
       tabs: [
@@ -233,7 +225,7 @@ export default {
           tabsName: this.i18n.t('home.tabsCircle'),
           tabsIcon: 'icon-home',
           id: 1,
-          // url: '../site/partner-invite?code=8WHvJZfZXBh2U6OoyAYmDDwLvNoYAKiD',
+          url: '../home/index',
         },
         {
           tabsName: this.i18n.t('home.tabsNews'),
@@ -249,22 +241,11 @@ export default {
         },
       ],
       postImg: '../assets.publish.svg',
+      threadsStatusId: 0,
+      categories: [],
     };
   },
   computed: {
-    categories() {
-      return Object.assign(
-        {
-          0: {
-            _jv: {
-              id: 0,
-            },
-            name: this.i18n.t('home.all'),
-          },
-        },
-        this.$store.getters['jv/get']('categories'),
-      );
-    },
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
@@ -281,30 +262,19 @@ export default {
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
-    // if (res.from === 'button') {// 来自页面内分享按钮
-    //   console.log(res.target)
-    // }
-    return {
-      title: '自定义分享标题',
-      path: '/pages/test/test?id=123'
-    }
-  },
- onShareAppMessage(res) {
-    if (res.from === 'button') {// 来自页面内分享按钮
-      console.log(res.target)
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      console.log(res.target);
     }
     return {
       title: '自定义分享标题',
-      path: '/pages/test/test?id=123'
-    }
+      path: '/pages/test/test?id=123',
+    };
   },
   mounted() {
-    const query = uni
-      .createSelectorQuery()
-      .in(this)
-      .select('.scroll-tab');
+    const query = uni.createSelectorQuery().in(this);
     query
-      // .select('.scroll-tab')
+      .select('.scroll-tab')
       .boundingClientRect(data => {
         console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
@@ -313,6 +283,9 @@ export default {
       .exec();
   },
   onPageScroll(e) {
+    if (e.scrollTop > 100) {
+      this.navShow = true;
+    }
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
     } else {
@@ -329,16 +302,21 @@ export default {
     },
     // 切换选项卡
     toggleTab(index) {
-      // console.log(index)
       // 重置列表
       this.isResetList = true;
       this.categoryId = index;
       this.loadThreadsSticky();
       this.loadThreads();
     },
+    // 点击置顶跳转到详情页
+    stickyClick(id) {
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${id}`,
+      });
+    },
     // 点击筛选下拉框里的按钮
     changeSelected(item, dataIndex, filterIndex) {
-      // console.log(item, dataIndex, filterIndex);
+      console.log(item, dataIndex, filterIndex);
     },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
@@ -348,7 +326,6 @@ export default {
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
-      console.log(id);
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -365,13 +342,13 @@ export default {
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-word',
+          icon: 'icon-poster',
           name: 'wx',
           id: 1,
         },
         {
           text: this.i18n.t('home.wxShare'),
-          icon: 'icon-img',
+          icon: 'icon-wx-friends',
           name: 'wx',
           id: 2,
         },
@@ -379,27 +356,26 @@ export default {
     },
     // 头部分享海报
     shareHead(index) {
-      if(index === 0){
-      uni.navigateTo({
-        url: '/pages/share/site',
-      });  
-      }else {
-        onShareAppMessage()
+      if (index === 0) {
+        this.$store.dispatch('session/setAuth', this.$refs.auth);
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+          return;
+        }
+        uni.navigateTo({
+          url: '/pages/share/site',
+        });
       }
     },
     // 取消按钮
     cancel() {
-      this.$refs.popup.close();
-    },
-    cancel() {
       this.$refs.popupContent.close();
-    },
-    cancel() {
       this.$refs.popupHead.close();
     },
-    // cancel() {
-    //   this.$refs.popupHead.close();
-    // }
+    // 点赞调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
+    },
     // 筛选选中确定按钮
     confirm(e) {
       // 重置列表
@@ -437,107 +413,56 @@ export default {
     showFilter() {
       this.show = true;
       this.$refs.filter.setData();
+      this.navShow = true;
     },
-    // 首页底部发帖按钮弹窗
-    footerOpen() {
-      console.log(this.forums, '9999');
-      if (
-        !this.forums.other.can_create_thread &&
-        !this.forums.other.can_create_thread_long &&
-        !this.forums.other.can_create_thread_video &&
-        !this.forums.other.can_create_thread_image
-      ) {
-        console.log('此处弹出提示无权限发帖');
-        return;
-      }
-      this.bottomData = [];
-      if (this.forums.other.can_create_thread) {
-        this.bottomData.push({
-          text: this.i18n.t('home.word'),
-          icon: 'icon-word',
-          name: 'text',
-          type: 0,
-        });
-      }
-      if (this.forums.other.can_create_thread_long) {
-        this.bottomData.push({
-          text: this.i18n.t('home.invitation'),
-          icon: 'icon-post',
-          name: 'post',
-          type: 1,
-        });
-      }
-      if (this.forums.other.can_create_thread_video) {
-        this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
-        });
-      }
-      if (this.forums.other.can_create_thread_image) {
-        this.bottomData.push({
-          text: this.i18n.t('home.picture'),
-          icon: 'icon-img',
-          name: 'image',
-          type: 3,
-        });
-      }
-      this.$refs.popup.open();
-    },
-    // 首页底部发帖点击事件跳转
-    handleClick(item) {
-      console.log(item.type);
-      uni.navigateTo({
-        url: `/pages/topic/post?type=${item.type}`,
-      });
-    },
-
     // 首页内容部分分享按钮弹窗
     handleClickShare() {
       this.$refs.popupContent.open();
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-word',
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
           text: this.i18n.t('home.wxShare'),
-          icon: 'icon-img',
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ];
     },
-   // 内容部分分享海报,跳到分享海报页面 
+    // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
-      if(index === 0){
-      uni.navigateTo({
-        url: '/pages/share/site',
-      });
-      }else {
-        onShareAppMessage()       
+      if (index === 0) {
+        uni.navigateTo({
+          url: '/pages/share/site',
+        });
       }
-      
     },
     // 首页导航栏分类列表数据
     loadCategories() {
       this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
-        delete data._jv;
+        const resData = [...data] || [];
+        this.categories = [
+          {
+            _jv: {
+              id: 0,
+            },
+            name: this.i18n.t('home.all'),
+          },
+          ...resData,
+        ];
         const categoryFilterList = [
           {
             label: '所有',
             value: 0,
-            // selected: 0 === this.categoryId ? true : false,
             selected: true,
           },
         ];
-
-        Object.getOwnPropertyNames(data).forEach(function(key) {
+        resData.forEach(item => {
           categoryFilterList.push({
-            label: data[key].name,
-            value: data[key]._jv.id,
-            // selected: data[key].id === this.categoryId ? true : false,
+            label: item.name,
+            value: item._jv.id,
             selected: false,
           });
         });
@@ -547,7 +472,6 @@ export default {
     },
     // 首页置顶列表数据
     loadThreadsSticky() {
-      this.sticky = {};
       const params = {
         'filter[isSticky]': 'yes',
         'filter[isDeleted]': 'no',
@@ -555,15 +479,11 @@ export default {
         include: ['firstPost'],
       };
       this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-        delete data._jv;
-        this.sticky = data;
+        this.sticky = [...data];
       });
     },
     // 首页内容部分数据请求
     loadThreads() {
-      if (this.isResetList) {
-        this.threads = {};
-      }
       const params = {
         'filter[isSticky]': 'no',
         'filter[isDeleted]': 'no',
@@ -585,53 +505,51 @@ export default {
         params['filter[type]'] = this.threadType;
       }
       params['filter[fromUserId]'] = this.threadFollow;
-      this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
+
+      const threadsAction = status.run(() =>
+        this.$store.dispatch('jv/get', ['threads', { params }]),
+      );
+
+      this.threadsStatusId = threadsAction._statusID;
+
+      threadsAction.then(res => {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        if (this.isResetList) {
-          this.threads = res;
-        } else {
-          this.threads = { ...res, ...this.threads };
-        }
-        this.isResetList = false;
+        this.threads = res;
       });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked, likeCount) {
+    handleIsGreat(id, canLike, isLiked) {
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+      }
       if (!canLike) {
         console.log('没有点赞权限');
       }
       const params = {
         _jv: {
           type: 'posts',
-          id: id,
+          id,
         },
-        isLiked: isLiked === true ? false : true,
+        isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(data => {
-        if (isLiked) {
-          data.likeCount = data.likeCount - 1;
-        } else {
-          data.likeCount = data.likeCount + 1;
-        }
-      });
+      this.$store.dispatch('jv/patch', params);
     },
-
     // 调用 未读通知数 的接口
     getUserInfo() {
-      console.log(this.tabs[1].idRemind,'111')
       const id = 1;
       const params = {
         include: ['groups'],
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
       this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
-        if(res.unreadNotifications === 0){
-         this.redCircle = false;
-        }else{
+        if (res.unreadNotifications === 0) {
+          this.redCircle = false;
+        } else {
           this.redCircle = true;
-        };
+        }
         console.log('未读通知', res.unreadNotifications);
       });
     },
@@ -646,11 +564,6 @@ export default {
       } else {
         this.loadingType = 'nomore';
       }
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.threads = [];
-      this.loadThreads();
     },
   },
 };
@@ -697,8 +610,7 @@ export default {
   display: flex;
   width: 710rpx;
   height: 80rpx;
-  margin-bottom: 30rpx;
-  margin-left: 20rpx;
+  margin: 30rpx auto;
   font-size: $fg-f26;
   line-height: 80rpx;
   color: --color(--qui-FC-777);
@@ -755,7 +667,11 @@ export default {
 }
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  max-height: calc(100vh - 475rpx);
+  max-height: calc(100vh - 100rpx);
 }
-
+.nav .filter-modal {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+}
 </style>

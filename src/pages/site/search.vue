@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -19,10 +19,16 @@
         <text>取消</text>
       </view>
     </view>
-    <view class="search-item" v-if="Object.keys(userList).length > 0">
+    <view class="search-item" v-if="searchValue">
       <view class="search-item__head">
         <view class="search-item__head-title">用户</view>
-        <view class="search-item__head-more" @tap="searchUser">搜索更多用户</view>
+        <view
+          class="search-item__head-more"
+          @tap="searchUser"
+          v-if="Object.keys(userList).length > 0"
+        >
+          搜索更多用户
+        </view>
       </view>
       <view
         class="search-item__users"
@@ -38,42 +44,53 @@
         <qui-cell-item
           :title="item.username"
           arrow
+          :border="index == 2 ? false : true"
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
+      <qui-no-data tips="没有找到相关用户" v-if="userTotal == 0"></qui-no-data>
     </view>
-    <view class="search-item search-item--themes" v-if="Object.keys(themeList).length > 0">
+    <view class="search-item search-item--themes" v-if="searchValue">
       <view class="search-item__head">
         <view class="search-item__head-title">主题</view>
-        <view class="search-item__head-more" @tap="searchTheme">搜索更多主题</view>
+        <view
+          class="search-item__head-more"
+          @tap="searchTheme"
+          v-if="Object.keys(themeList).length > 0"
+        >
+          搜索更多主题
+        </view>
       </view>
-      <qui-content
-        v-for="(item, index) in themeList"
-        :key="index"
-        :user-name="item.user.username"
-        :theme-image="item.user.avatarUrl"
-        :theme-btn="item.canHide"
-        :user-groups="item.user.groups"
-        :theme-time="item.createdAt"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
-        :tags="item.category.name"
-        :images-list="item.firstPost.images"
-        :theme-essence="item.isEssence"
-        @contentClick="contentClick(item._jv.id)"
-      ></qui-content>
+      <view v-for="(item, index) in themeList" :key="index" :class="index == 1 ? 'noBorder' : ''">
+        <qui-content
+          :user-name="item.user.username"
+          :theme-image="item.user.avatarUrl"
+          :theme-btn="item.canHide"
+          :user-groups="item.user.groups"
+          :theme-time="item.createdAt"
+          :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :tags="item.category.name"
+          :images-list="item.firstPost.images"
+          :theme-essence="item.isEssence"
+          @contentClick="contentClick(item._jv.id)"
+        ></qui-content>
+      </view>
+      <qui-no-data tips="没有找到相关主题" v-if="themeTotal == 0"></qui-no-data>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {
     return {
       searchValue: '',
-      userList: {},
-      themeList: {},
+      userList: [],
+      themeList: [],
+      userTotal: '',
+      themeTotal: '',
       pageSize: 3,
       pageNum: 1, // 当前页数
     };
@@ -96,8 +113,7 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
-          delete res._jv;
+          this.userTotal = res.length;
           this.userList = res;
         });
     },
@@ -107,14 +123,13 @@ export default {
         include: ['user', 'firstPost', 'threadVideo'],
         'filter[isDeleted]': 'no',
         'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
+        'page[limit]': 2,
         'filter[q]': key,
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
-          delete res._jv;
+          this.themeTotal = res.length;
           this.themeList = res;
         });
     },
@@ -150,11 +165,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/base/theme/fn.scss';
-@import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
-page {
+.search {
+  min-height: 100vh;
   background-color: #f9fafc;
+  .search-item,
+  .search-box {
+    background-color: #fff;
+  }
 }
 .search-item {
   padding-left: 40rpx;
@@ -169,11 +186,11 @@ page {
   padding: 30rpx 40rpx 20rpx 0;
 }
 .search-item__head-title {
-  font-size: $fg-f28;
+  font-size: 28rpx;
   font-weight: bold;
 }
 .search-item__head-more {
-  font-size: $fg-f24;
+  font-size: 24rpx;
   color: #00479b;
 }
 // 用户
@@ -198,12 +215,6 @@ page {
   position: relative;
   padding-left: 90rpx;
 }
-.search-item__users:nth-child(2) {
-  border: 0;
-}
-/deep/ .themeItem :nth-child(2) {
-  border: 0;
-}
 // 主题
 .search /deep/ .themeCount {
   border-bottom: 2rpx solid #ededed;
@@ -215,5 +226,8 @@ page {
 }
 /deep/ .themeCount .themeItem__footer {
   display: none;
+}
+.noBorder /deep/ .themeCount {
+  border: 0;
 }
 </style>

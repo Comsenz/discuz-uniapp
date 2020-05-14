@@ -1,5 +1,5 @@
 <template>
-  <view class="site">
+  <qui-page class="site">
     <qui-header
       :head-img="forums.set_site.site_logo"
       :theme="theme"
@@ -11,20 +11,22 @@
       :color="color"
       @click="open"
     ></qui-header>
-    <uni-popup ref="popup" type="bottom">
+    <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick">
+              <view class="popup-share-box" @click="shareContent()">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
     <view class="site-item">
@@ -102,12 +104,11 @@
         </qui-button>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
-import { PERMISSION_LIST } from '@/common/const';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   components: {
@@ -119,17 +120,16 @@ export default {
       post: '内容',
       share: '分享',
       shareBtn: 'icon-share1',
-      permissionlist: PERMISSION_LIST,
       code: '', // 邀请码
       bottomData: [
         {
-          text: '生成海报',
-          icon: 'icon-word',
+          text: this.i18n.t('home.generatePoster'),
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
-          text: '微信分享',
-          icon: 'icon-img',
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ],
@@ -139,6 +139,9 @@ export default {
   computed: {
     forums() {
       return this.$store.getters['jv/get']('forums/1');
+    },
+    permissionlist() {
+      return this.i18n.t('permission');
     },
   },
   onLoad(params) {
@@ -194,7 +197,7 @@ export default {
   },
 };
 </script>
-<style lang="scss" scope>
+<style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 page {
@@ -217,6 +220,83 @@ page {
 .header .circleDet .circleDet-num,
 .header .circleDet .circleDet-share {
   color: #333;
+}
+// 分享弹框的样式
+.popup-share {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  flex-direction: column;
+  /* #endif */
+  background: --color(--qui-BG-2);
+}
+.popup-share-content {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  height: 250rpx;
+  padding-top: 40rpx;
+  padding-right: 97rpx;
+  padding-left: 98rpx;
+  background: --color(--qui-BG-BTN-GRAY-1);
+  // padding: 15px;
+}
+.popup-share-box {
+  width: 120rpx;
+  height: 120rpx;
+  line-height: 120rpx;
+  background: --color(--qui-BG-2);
+  border-radius: 10px;
+}
+.popup-share-content-box {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: column;
+  align-items: center;
+  width: 120rpx;
+  height: 164rpx;
+  // background: --color(--qui-BG-2);
+}
+.popup-share-content-image {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: center;
+  // align-items: center;
+  width: 120rpx;
+  height: 120rpx;
+  overflow: hidden;
+  border-radius: 10rpx;
+}
+.content-image {
+  width: 60rpx;
+  height: 60rpx;
+  margin: 35rpx;
+  line-height: 60rpx;
+}
+.popup-share-content-text {
+  padding-top: 5px;
+  font-size: $fg-f26;
+  color: #333;
+}
+.popup-share-btn {
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 90rpx;
+  color: #666;
+  text-align: center;
+  border-top-color: #f5f5f5;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+.popup-share-content-space {
+  width: 100%;
+  height: 9rpx;
+  background: --color(--qui-FC-DDD);
 }
 //下面部分样式
 .site-item {

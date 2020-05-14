@@ -1,13 +1,13 @@
 <template>
-  <view class="freeze">
+  <qui-page class="freeze">
     <view class="freeze-head">
       <view class="freeze-head__num">
-        <text>共有</text>
+        <text>{{ i18n.t('profile.total') }}</text>
         <text class="freeze-head__num__detail">{{ totalData }}</text>
-        <text>条记录</text>
+        <text>{{ i18n.t('profile.item') + i18n.t('profile.record') }}</text>
       </view>
       <view class="freeze-head__money">
-        <text>涉及金额</text>
+        <text>{{ i18n.t('profile.amountinvolved') }}</text>
         <text class="freeze-head__money__detail">¥{{ totalamount }}</text>
       </view>
     </view>
@@ -31,7 +31,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -63,23 +63,19 @@ export default {
         'page[limit]': this.pageSize,
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
-        // eslint-disable-next-line no-underscore-dangle
         this.totalData = res._jv.json.meta.total;
-        const data = JSON.parse(JSON.stringify(res));
-        // eslint-disable-next-line no-underscore-dangle
-        delete data._jv;
-        this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-        this.freezelist = { ...data, ...this.freezelist };
+        delete res._jv;
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        this.freezelist = [...this.freezelist, ...res];
       });
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.freezelist();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getFreezelist();
     },
     refresh() {
       this.pageNum = 1;
@@ -90,13 +86,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
-page {
-  background-color: #f9fafc;
-}
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .freeze {
-  border-bottom: 2rpx solid #ededed;
-  .cell-item {
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /deep/ .cell-item {
     padding-right: 40rpx;
   }
   /deep/ .cell-item__body {
@@ -110,7 +105,7 @@ page {
 }
 .freeze-items {
   padding-left: 40rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
 }
 .freeze-head__num__detail {
   margin: 0 5rpx;
@@ -127,8 +122,8 @@ page {
   padding-top: 40rpx;
   margin-bottom: 30rpx;
   font-size: 24rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .freeze-head__num {
   justify-content: flex-start;

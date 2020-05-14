@@ -1,37 +1,46 @@
 <template>
   <view class="chat-box">
     <!-- 导航栏 -->
-    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-text">{{ username }}</view>
+    <uni-nav-bar status-bar fixed @clickLeft="clickNavBarLeft">
+      <view slot="left" class="left-con">
+        <qui-icon name="icon-back" class="left-arrow" size="34" color="#343434"></qui-icon>
+        <text class="left-con-text">{{ username }}</text>
+      </view>
     </uni-nav-bar>
     <!-- 消息内容 -->
-    <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
-      <view class="chat-box__con__time">{{ item.time }}</view>
-      <view
-        :class="[item.user_id === 1 ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
-      >
-        <image
-          :class="[
-            item.user_id === 1 ? 'chat-box__con__msg__mine__img' : 'chat-box__con__msg__other__img',
-          ]"
-          :src="
-            item.user.avatarUrl === ''
-              ? 'https://discuz.chat/static/images/noavatar.gif'
-              : item.user.avatarUrl
-          "
-        ></image>
+    <scroll-view style="height: 1200rpx;" scroll-y="true" :scroll-top="scrollTop">
+      <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
+        <view class="chat-box__con__time">{{ item.time }}</view>
         <view
-          :class="[
-            item.user_id === 1 ? 'chat-box__con__msg__mine__box' : 'chat-box__con__msg__other__box',
-          ]"
-          v-html="item.message_text_html"
-        ></view>
+          :class="[item.user_id === 1 ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
+        >
+          <image
+            :class="[
+              item.user_id === 1
+                ? 'chat-box__con__msg__mine__img'
+                : 'chat-box__con__msg__other__img',
+            ]"
+            :src="
+              item.user.avatarUrl === ''
+                ? 'https://discuz.chat/static/images/noavatar.gif'
+                : item.user.avatarUrl
+            "
+          ></image>
+          <view
+            :class="[
+              item.user_id === 1
+                ? 'chat-box__con__msg__mine__box'
+                : 'chat-box__con__msg__other__box',
+            ]"
+            v-html="item.message_text_html"
+          ></view>
+        </view>
       </view>
-    </view>
+    </scroll-view>
     <!-- 底部 -->
     <view class="chat-box__footer">
       <view class="chat-box__footer__msg">
-        <input class="uni-input" focus v-model="msg" placeholder="回复..." />
+        <input class="uni-input" v-model="msg" placeholder="回复.." @blur="contBlur" />
         <qui-icon
           name="icon-expression chat-box__footer__msg__icon"
           size="40"
@@ -63,10 +72,12 @@ export default {
   },
   data() {
     return {
+      scrollTop: 400,
       msg: '', // 输入框内容
       emojiShow: false, // 表情
       username: '', // 导航栏标题
       dialogId: 0, // 会话id
+      height: 0,
     };
   },
   onLoad(params) {
@@ -76,6 +87,22 @@ export default {
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
     this.getEmoji();
+    setTimeout(() => {
+      uni
+        .createSelectorQuery()
+        .selectAll('.chat-box__con')
+        .boundingClientRect()
+        .exec(data => {
+          data[0].forEach(item => {
+            this.height += item.height;
+          });
+          if (this.height > 600) {
+            this.scrollTop = this.height - 600;
+          }
+          console.log('信息', data);
+          console.log('height', this.height);
+        });
+    }, 5000);
   },
   computed: {
     // 获取会话消息列表
@@ -107,6 +134,7 @@ export default {
         delta: 1,
       });
     },
+
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
       const params = {
@@ -131,6 +159,10 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
 
+    contBlur(e) {
+      this.cursor = e.detail.cursor;
+    },
+
     // 发送消息
     send() {
       const params = {
@@ -145,8 +177,6 @@ export default {
         .then(res => {
           if (res) {
             console.log('发送消息res：', res);
-            this.getChatRecord();
-            this.emojiShow = false;
           }
         })
         .catch(err => {
@@ -162,7 +192,12 @@ export default {
 
     // 获取表情
     getEmojiClick(key) {
-      this.msg += this.allEmoji[key].code;
+      let text = '';
+      text = `${this.msg.slice(0, this.cursor) +
+        this.allEmoji[key].code +
+        this.msg.slice(this.cursor)}`;
+      this.msg = text;
+      this.emojiShow = false;
       console.log('表情', this.allEmoji[key]);
       console.log('msg', this.msg);
     },
@@ -172,22 +207,32 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
 .chat-box {
   height: 100%;
   margin-bottom: 130rpx;
   background-color: #ededed;
 
-  .left-text {
-    min-width: 250rpx;
-    font-weight: bold;
+  /deep/ .uni-navbar--border {
+    border: none;
+  }
+
+  .left-con {
+    min-width: 300rpx;
     color: #343434;
+
+    .left-arrow {
+      margin: 0rpx 18rpx 0rpx 0rpx;
+    }
+
+    .left-con-text {
+      font-weight: bold;
+    }
   }
 
   &__con {
     &__time {
-      padding-top: 20rpx;
+      padding: 30rpx 0;
       font-size: $fg-f20;
       font-weight: 400;
       color: rgba(181, 181, 181, 1);
@@ -209,6 +254,7 @@ export default {
 
       &__box {
         position: relative;
+        max-width: 550rpx;
         min-height: 40rpx;
         padding: 20rpx;
         margin: 20rpx;
@@ -266,6 +312,7 @@ export default {
 
       &__box {
         position: relative;
+        max-width: 550rpx;
         min-height: 40rpx;
         padding: 20rpx;
         margin: 20rpx;
@@ -314,7 +361,7 @@ export default {
     bottom: 0rpx;
     z-index: 99;
     width: 100%;
-    min-height: 80rpx;
+    min-height: 140rpx;
 
     &__msg {
       display: flex;
@@ -337,6 +384,7 @@ export default {
       background: rgba(255, 255, 255, 1);
       border-radius: 5rpx;
     }
+
     &__btn {
       margin: 0 20rpx 0 10rpx;
       font-size: $fg-f28;

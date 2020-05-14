@@ -1,7 +1,13 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
+    <!-- <view class="bar-sticky">
+      <navigationBar :navigation-bar-style="navigationBarStyle" :show-back="false"></navigationBar>
+    </view> -->
     <view class="logoBox">
-      <image class="logo" :src="headImg"></image>
+      <image
+        class="logo"
+        :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
+      ></image>
     </view>
     <view class="circleDet">
       <text>
@@ -58,7 +64,11 @@ export default {
     },
   },
   data: () => {
-    return {};
+    return {
+      // navigationBarStyle: {
+      //   iconText: '类目', // 导航栏文字
+      // },
+    };
   },
   computed: {
     // 语言包
@@ -121,6 +131,12 @@ export default {
   }
   .qui-icon {
     padding-right: 18rpx;
+  }
+  .bar-sticky {
+    position: sticky;
+    // position: -webkit-sticky;
+    top: 0;
+    z-index: 101;
   }
 }
 </style>

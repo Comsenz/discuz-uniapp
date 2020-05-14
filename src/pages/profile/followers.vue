@@ -35,15 +35,15 @@
             <view
               class="follow-content__items__operate"
               @tap="addFollow(followerItem.fromUser)"
-              v-if="followerItem.fromUser.id != '1'"
+              v-if="followerItem.fromUser.id != currentLoginId"
             >
               <text>
                 {{
                   followerItem.fromUser.follow == 0
-                    ? '关注'
+                    ? i18n.t('profile.following')
                     : followerItem.fromUser.follow == 1
-                    ? '已关注'
-                    : '互相关注'
+                    ? i18n.t('profile.followed')
+                    : i18n.t('profile.mutualfollow')
                 }}
               </text>
               <qui-icon
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   components: {
@@ -84,9 +84,9 @@ export default {
     return {
       loadingType: 'more',
       followerList: [],
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
+      currentLoginId: uni.getStorageSync('user_id'),
     };
   },
   mounted() {
@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     // 获取用户粉丝列表
-    getFollowerList() {
+    getFollowerList(type) {
       const params = {
         include: ['fromUser', 'fromUser.groups'],
         'filter[type]': 2,
@@ -105,16 +105,14 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['follow', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
-          this.totalData = res._jv.json.meta.total;
-          const data = JSON.parse(JSON.stringify(res));
-          // eslint-disable-next-line no-underscore-dangle
-          delete data._jv;
-          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          if (this.totalData === 0) {
-            this.followerList = [];
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          if (type === 'change') {
+            this.followerList = res;
           } else {
-            this.followerList = { ...this.followerList, ...data };
+            this.followerList = [...this.followerList, ...res];
           }
         });
     },
@@ -126,12 +124,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getFollowerList(this.pageNum);
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getFollowerList();
     },
     refresh() {
       this.pageNum = 1;
@@ -155,7 +152,7 @@ export default {
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
           this.$emit('changeFollow', { userId: this.userId });
-          this.getFollowerList();
+          this.getFollowerList('change');
         })
         .catch(err => {
           console.log('verify', err);
@@ -163,25 +160,28 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
-        this.getFollowerList();
+        this.getFollowerList('change');
       });
     },
   },
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .following {
   padding: 0 20rpx;
   font-size: 28rpx;
-  .cell-item {
+  /deep/ .cell-item__body {
     padding-right: 20rpx;
   }
   .cell-item__body__right {
     font-size: 28rpx;
-    color: #333;
+    color: --color(--qui-FC-333);
   }
   .qui-icon {
     margin-right: 0;
@@ -190,15 +190,12 @@ export default {
 }
 .follow-content {
   padding: 20rpx 0;
-  background: #fff;
+  background: --color(--qui-BG-2);
   box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
 }
 .follow-content__items {
   position: relative;
   padding-left: 110rpx;
-}
-.follow-content__items:last-child .cell-item {
-  border: 0;
 }
 .follow-content__items__avatar {
   position: absolute;
@@ -206,7 +203,6 @@ export default {
   left: 20rpx;
   width: 70rpx;
   height: 70rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
 .scroll-y {

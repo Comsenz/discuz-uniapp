@@ -1,9 +1,9 @@
 <template>
-  <view class="walletlist">
+  <qui-page class="walletlist">
     <view class="walletlist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
-          <text>状态：{{ filterSelected.label }}</text>
+          <text>{{ `${i18n.t('profile.status')} ：${filterSelected.label}` }}</text>
           <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
           <qui-filter-modal
             v-model="show"
@@ -25,7 +25,7 @@
       fields="month"
       class="date-picker"
     >
-      <view class="uni-input">{{ `时间：${date}` }}</view>
+      <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
     </picker>
     <view class="walletlist-items">
       <scroll-view
@@ -47,42 +47,42 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   components: {
     //
   },
-  data: () => {
+  data() {
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const currentDate = `${year}-${month}`;
     return {
       loadingType: 'more',
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
+      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
       date: currentDate,
-      filterSelected: { label: '全部', value: '' }, // 筛选类型
+      filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
       dataList: [],
       filterList: [
         {
-          title: '类型',
+          title: this.i18n.t('profile.type'),
           data: [
-            { label: '所有', value: '', selected: true },
-            { label: '提现冻结', value: 10 },
-            { label: '提现成功', value: 11 },
-            { label: '提现解冻', value: 12 },
-            { label: '注册收入', value: 30 },
-            { label: '打赏收入', value: 31 },
-            { label: '人工收入', value: 32 },
-            { label: '人工支出', value: 50 },
+            { label: this.i18n.t('profile.all'), value: '', selected: true },
+            { label: this.i18n.t('profile.withdrawalfreeze'), value: 10 },
+            { label: this.i18n.t('profile.withdrawalsucceed'), value: 11 },
+            { label: this.i18n.t('profile.withdrawalunfreeze'), value: 12 },
+            { label: this.i18n.t('profile.registeredincome'), value: 30 },
+            { label: this.i18n.t('profile.rewardincome'), value: 31 },
+            { label: this.i18n.t('profile.laborincome'), value: 32 },
+            { label: this.i18n.t('profile.laborexpenditure'), value: 50 },
           ],
         },
       ],
@@ -114,7 +114,7 @@ export default {
       // change_type 10提现冻结，11提现成功，12提现解冻，30注册收入，31打赏收入，32人工收入，50人工支出
       const params = {
         include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
-        'filter[user]': 1,
+        'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
@@ -130,23 +130,20 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['wallet/log', { params }]))
         .then(res => {
-          // eslint-disable-next-line no-underscore-dangle
-          this.totalData = res._jv.json.meta.total;
-          const data = JSON.parse(JSON.stringify(res));
-          // eslint-disable-next-line no-underscore-dangle
-          delete data._jv;
-          this.loadingType = Object.keys(data).length === this.pageSize ? 'more' : 'nomore';
-          this.dataList = { ...data, ...this.dataList };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = [...this.dataList, ...res];
         });
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getList();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getList();
     },
     refresh() {
       this.pageNum = 1;
@@ -157,13 +154,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
-page {
-  background-color: #f9fafc;
-}
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .walletlist {
-  border-bottom: 2rpx solid #ededed;
-  .cell-item {
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /deep/ .cell-item {
     padding-right: 40rpx;
   }
   /deep/ .cell-item__body {
@@ -176,27 +173,27 @@ page {
   /deep/ .cell-item__body__right-text {
     font-weight: bold;
   }
-  .icon-screen {
+  /deep/ .icon-screen {
     margin-left: 20rpx;
   }
 }
-.cell-item--wrap.fail .cell-item__body__right-text {
-  color: #fa5151;
+/deep/ .cell-item--wrap.fail .cell-item__body__right-text {
+  color: --color(--qui-RED);
 }
-.cell-item--wrap.success .cell-item__body__right-text {
+/deep/ .cell-item--wrap.success .cell-item__body__right-text {
   color: #189a00;
 }
 .walletlist-items {
   padding-left: 40rpx;
   margin-top: 30rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
 }
 
 .walletlist-head {
   padding-top: 40rpx;
   padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .walletlist-head /deep/ .cell-item__body {
   height: 78rpx;

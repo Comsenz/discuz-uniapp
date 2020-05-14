@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -11,12 +11,9 @@
           @input="searchInput"
           :value="searchValue"
         />
-        <view class="search-box__content-delete" @tap="clearSearch" v-if="searchValue">
+        <view class="search-box__content-delete" @click="clearSearch" v-if="searchValue">
           <qui-icon class="icon-close" name="icon-close" size="34" color="#fff"></qui-icon>
         </view>
-      </view>
-      <view class="search-box__cancel" v-if="searchValue" @tap="back">
-        <text>取消</text>
       </view>
     </view>
     <scroll-view
@@ -46,19 +43,18 @@
       </view>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {
     return {
       searchValue: '',
       loadingType: 'more',
-      data: {},
-      totalData: 0, // 总数
+      data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
@@ -70,7 +66,7 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = {};
+      this.data = [];
       this.getUserList(e.target.value);
     },
     // 获取用户列表
@@ -85,11 +81,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          // eslint-disable-next-line no-underscore-dangle
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...res, ...this.data };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     clearSearch() {
@@ -107,12 +103,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getUserList(this.searchValue);
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getUserList();
     },
     refresh() {
       this.pageNum = 1;
@@ -126,9 +121,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-page {
-  background-color: #f9fafc;
-}
 .search-item {
   padding-left: 40rpx;
   margin-bottom: 30rpx;

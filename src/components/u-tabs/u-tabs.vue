@@ -60,9 +60,9 @@ export default {
     },
     // 需循环的标签列表
     list: {
-      type: Object,
+      type: Array,
       default() {
-        return {};
+        return [];
       },
     },
     // 当前活动tab的索引
@@ -108,7 +108,7 @@ export default {
     // 导航栏的背景颜色
     bgColor: {
       type: String,
-      default: '#ffffff',
+      default: 'transparent',
     },
     // 读取传入的数组对象的属性
     name: {
@@ -236,7 +236,7 @@ export default {
       // 创建节点查询
       const query = uni.createSelectorQuery().in(this);
       // 历遍所有tab，这里是执行了查询，最终使用exec()会一次性返回查询的数组结果
-      for (let i = 0; i < Object.keys(this.list).length; i++) {
+      for (let i = 0; i < this.list.length; i++) {
         // 只要size和rect两个参数
         query.select(`#u-tab-item-${i}`).fields({
           size: true,

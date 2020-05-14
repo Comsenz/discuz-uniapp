@@ -30,7 +30,7 @@
         </view>
       </view>
     </block>
-    <view class="qui-uploader-box__add" @click="uploadClick" v-if="uploadBeforeList.length < 9">
+    <view class="qui-uploader-box__add" @click="uploadClick" v-if="uploadBeforeList.length < count">
       <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
     </view>
   </view>
@@ -60,7 +60,7 @@ export default {
     },
     count: {
       default: 9,
-      type: Number,
+      type: [Number, String],
     },
     asyncClear: {
       default: false,

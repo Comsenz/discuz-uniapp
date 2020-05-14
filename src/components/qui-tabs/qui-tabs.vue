@@ -59,10 +59,8 @@ export default {
   },
   methods: {
     onClick(index) {
-      if (this.currentIndex !== index) {
-        this.currentIndex = index;
-        this.$emit('clickItem', { currentIndex: index });
-      }
+      this.currentIndex = index;
+      this.$emit('clickItem', { currentIndex: index });
     },
   },
 };
@@ -98,6 +96,7 @@ export default {
   border-bottom: 4rpx solid;
 }
 .qui-tabs__item--active .qui-tabs__item__title {
+  font-weight: bold;
   color: #333;
 }
 </style>

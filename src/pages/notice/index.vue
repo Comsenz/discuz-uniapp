@@ -1,30 +1,13 @@
 <template>
-  <view class="msg-box">
-    <!-- 导航栏 -->
-    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-text">{{ title }}</view>
-    </uni-nav-bar>
+  <view class="notice-box">
     <!-- 通知类型列表 -->
-    <uni-list>
-      <uni-list-item
-        v-for="item in list"
-        :key="item.id"
-        :title="item.title"
-        :show-arrow="true"
-        @click="clickUniListItem(item)"
-      >
-        <template v-slot:right="">
-          <uni-icons
-            class="red-circle"
-            v-if="item.unReadNum > 0"
-            type="smallcircle-filled"
-            color="red"
-            size="7"
-          ></uni-icons>
-        </template>
-      </uni-list-item>
-    </uni-list>
-    <view class="line"></view>
+    <view class="notice-box__list">
+      <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
+        <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
+          <qui-icon name="icon-circle" color="red" size="14"></qui-icon>
+        </qui-cell-item>
+      </view>
+    </view>
     <!-- 会话列表 -->
     <view class="dialog-box__main">
       <scroll-view
@@ -67,14 +50,13 @@
               </view>
             </view>
             <view class="dialog-box__header__r">
-              <uni-icons
-                class="red-circle"
+              <qui-icon
+                name="icon-circle red-circle"
                 v-if="dialog.recipient_read_at === null"
-                type="smallcircle-filled"
-                size="7"
                 color="red"
-              ></uni-icons>
-              <uni-icons class="uni-icon-wrapper" type="arrowright" :size="20" color="#bbb" />
+                size="14"
+              ></qui-icon>
+              <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
             </view>
           </view>
           <view class="dialog-box__con">{{ dialog.dialogMessage.message_text }}</view>
@@ -87,26 +69,22 @@
 </template>
 
 <script>
-import { uniNavBar, uniList, uniListItem, uniIcons, uniLoadMore } from '@dcloudio/uni-ui';
+import { uniLoadMore } from '@dcloudio/uni-ui';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    uniNavBar,
-    uniList,
-    uniListItem,
-    uniIcons,
     uniLoadMore,
   },
   data() {
     return {
       title: '消息',
       list: [
-        { id: 1, title: '@我的', type: 'related', unReadNum: 0 },
-        { id: 2, title: '回复我的', type: 'replied', unReadNum: 0 },
-        { id: 3, title: '点赞我的', type: 'liked', unReadNum: 0 },
-        { id: 4, title: '支付我的', type: 'rewarded', unReadNum: 0 },
-        { id: 5, title: '系统通知', type: 'system', unReadNum: 0 },
+        { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
+        { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
+        { id: 3, title: '点赞我的', type: 'liked', unReadNum: 0, border: true },
+        { id: 4, title: '支付我的', type: 'rewarded', unReadNum: 0, border: true },
+        { id: 5, title: '系统通知', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more',
       tabs: [
@@ -218,9 +196,8 @@ export default {
 
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
-.msg-box {
+.notice-box {
   width: 100%;
   min-height: 100vh;
   font-size: $fg-f28;
@@ -232,14 +209,14 @@ export default {
     color: #343434;
   }
 
-  .line {
-    height: 0rpx;
-    margin: 0 0 10rpx;
-    border: 1px solid #ededed;
-  }
+  .notice-box__list {
+    padding-left: 40rpx;
+    background: #fff;
+    border-bottom: 1rpx solid #ededed;
 
-  .red-circle {
-    display: flex;
+    .cell-item {
+      padding-right: 40rpx;
+    }
   }
 
   .dialog-box__main {
@@ -269,7 +246,7 @@ export default {
       &__box {
         width: 100%;
         align-items: center;
-        margin: 20rpx 0 10rpx;
+        margin: 20rpx 0rpx 0rpx;
       }
 
       &__username {
@@ -296,14 +273,18 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-right: 30rpx;
+      margin-right: 40rpx;
+
+      .red-circle {
+        margin-right: 20rpx;
+      }
     }
   }
 
   &__con {
-    padding: 10rpx 40rpx 30rpx;
+    padding: 0rpx 40rpx 30rpx;
     font-weight: 400;
-    color: rgba(51, 51, 51, 1);
+    color: #333;
     opacity: 1;
   }
 }

@@ -8,12 +8,14 @@
             {{ p.pay }}{{ money }}{{ p.rmb }}
           </qui-button>-->
           <button class="payBtn" @click="payChoice">{{ p.pay }}￥{{ money }}{{ p.rmb }}</button>
-          <radio-group @change="radioChange">
+          <radio-group @change="radioMyHead">
             <label class="pay-radio">
               <view>
                 <radio :value="checkVal" class="radio" color="#2699fb" />
               </view>
-              <view :style="{ color: checkStatus ? '#2699fb' : '#333' }">{{ p.showMyHead }}</view>
+              <view class="radio-word" :style="{ color: checkStatus ? '#2699fb' : '#999' }">
+                {{ p.showMyHead }}
+              </view>
             </label>
           </radio-group>
         </view>
@@ -30,14 +32,40 @@
         </view>
         <view class="pay-type-chi" v-for="(item, index) in payTypeData" :key="index">
           <view class="pay-type-l">
-            <qui-icon name="icon-wxPay" class="icon-pay wxpay"></qui-icon>
-            <view class="pay-type-word">{{ p.wxPay }}</view>
+            <qui-icon :name="item.icon" :color="item.color" class="icon-pay"></qui-icon>
+            <view class="pay-type-word">{{ item.name }}{{ item.value }}</view>
           </view>
           <view class="pay-type-r">
-            <radio-group @change="radioChange" class="pay-radio-box">
-              <label class="pay-radio">
+            <view
+              class="check-tip"
+              v-if="!walletStatus && item.name === p.walletPay"
+              @click="payStatusClick"
+            >
+              {{ p.passwordSetting }}
+            </view>
+            <view
+              class="check-tip"
+              v-else-if="descriptionShow && item.name === p.walletPay && money < balance"
+            >
+              {{ p.walletBalance }}，￥{{ balance }}
+            </view>
+            <view
+              class="check-tip"
+              v-else-if="descriptionShow && item.name === p.walletPay && money > balance"
+            >
+              {{ p.walletBalanceNo }}，{{ balance }}{{ p.rmb }}
+            </view>
+            <radio-group @change="radioChange" class="pay-type-radio-box">
+              <label class="pay-type-radio">
                 <view>
-                  <radio :value="checkVal" class="radio" color="#2699fb" />
+                  <radio
+                    :value="item.value"
+                    :namr="item.index"
+                    :checked="index === current"
+                    class="radio"
+                    color="#2699fb"
+                    :disabled="descriptionShow && !walletStatus && item.name === p.walletPay"
+                  />
                 </view>
               </label>
             </radio-group>
@@ -59,42 +87,67 @@
             </radio-group>
           </view>
         </view>-->
-        <qui-button size="100%" type="primary" class="paySureBtn" @tap="payClickShow()">
-          {{ p.surePay }}￥{{ money }}{{ p.rmb }}
-        </qui-button>
         <view class="pay-tip">
           ￥{{ money }}{{ p.rmb }}{{ p.payTo }}，{{ toName }}{{ p.ofAccount }}
         </view>
+        <qui-button size="max" type="primary" class="paySureBtn" @click="paysureShow">
+          {{ p.surePay }}￥{{ money }}{{ p.rmb }}
+        </qui-button>
         <view class="popup-share-content-space"></view>
 
         <text class="popup-share-btn" @click="cancel('2')">取消</text>
       </view>
     </uni-popup>
-    <qui-pay-keyboard :show="keyboardShow" :password="payPassword" @key="key"></qui-pay-keyboard>
+    <qui-pay-keyboard
+      :show="show"
+      :password="payPassword"
+      @onInput="onInput"
+      @close="close"
+    ></qui-pay-keyboard>
   </view>
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 export default {
   props: {
+    // 钱包设置支付密码状态
+    walletStatus: {
+      type: Boolean,
+      default: false,
+    },
+    // 设置钱包支付密码路由
+    payUrl: {
+      type: String,
+      default: '/pages/modify/paypwd',
+    },
+    // 钱包描述是否显示
+    descriptionShow: {
+      type: Boolean,
+      default: true,
+    },
     // 支付金额
     money: {
-      type: String,
-      default: '0.00',
+      type: [String, Number],
+      default: '0',
     },
     // 余额
     balance: {
-      type: String,
-      default: '0.00',
+      type: [String, Number],
+      default: '0',
     },
+    // 支付类型
     payType: {
       type: String,
       default: '权限',
     },
+    // 支付于用户name
     toName: {
       type: String,
       default: '',
     },
+    // 支付方式数组
     payTypeData: {
       type: Array,
       default: () => {
@@ -102,10 +155,13 @@ export default {
           {
             name: '微信支付',
             icon: 'icon-wxPay',
+            color: '#09bb07',
+            value: '0',
           },
         ];
       },
     },
+    // 支付密码
     payPassword: {
       type: String,
       default: '',
@@ -116,9 +172,11 @@ export default {
     return {
       password: '',
       trantision: false,
-      keyboardShow: false,
-      checkVal: '0',
+      show: false, // 输入支付密码是否显示
+      payImmediatelyClick: false,
+      checkVal: '1',
       checkStatus: false, // 单选框状态
+      current: 0,
     };
   },
   computed: {
@@ -126,19 +184,57 @@ export default {
       return this.i18n.t('pay');
     },
   },
+  watch: {
+    payPassword(val) {
+      this.show = val;
+      this.descriptionShow = parseFloat(this.money) > parseFloat(this.balance);
+      if (!val) {
+        this.show = false;
+      }
+    },
+  },
   onLoad() {},
 
   methods: {
+    ...mapMutations({
+      setRouter: 'pay/SET_ROUTER',
+    }),
+    // 是否选中显示头像
+    radioMyHead(evt) {
+      console.log(evt.target.value);
+      this.$emit('radioMyHead', evt.target.value);
+    },
     // 父组件触发是否显示弹框
     payClickShow() {
       console.log('这是父组件触发的事件');
       this.$refs.payPopup.open();
     },
-    // 单选框change事件
-    radioChange() {
+    // 是否显示钱包密码支付框
+    paysureShow() {
+      if (this.current === 0) {
+        console.log('这是微信支付');
+      } else if (this.current === 1) {
+        console.log('这是钱包支付');
+        this.show = true;
+        this.$refs.payTypePopup.close();
+      }
+      this.$emit('paysureShow', this.current);
+    },
+    // 支付方式单选框change事件
+    radioChange(evt) {
       console.log('这是change事件');
+      console.log(typeof evt.target.value, '这是value的类型');
       this.checkStatus = true;
-      this.$emit('radioChange');
+      for (let i = 0; i < this.payTypeData.length; i += 1) {
+        console.log(this.payTypeData[i].value);
+        console.log(this.payTypeData[i].value, '如果');
+        if (this.payTypeData[i].value === evt.target.value) {
+          this.current = i;
+          console.log(i, '这是得到的');
+          break;
+        }
+      }
+      this.$emit('radioChange', evt.target.value);
     },
     // 确认支付，选择支付方式
     payChoice() {
@@ -154,6 +250,30 @@ export default {
       } else {
         this.$refs.payTypePopup.close();
       }
+    },
+    // 去设置钱包支付密码
+    payStatusClick() {
+      const routes = getCurrentPages(); // 获取当前打开过的页面路由数组
+      const curRoute = routes[routes.length - 1].route; // 获取当前页面路由，也就是最后一个打开的页面路由
+      console.log(curRoute, '这是当前路由');
+      this.setRouter(curRoute);
+      // this.$store.commit('setRouter', curRoute);
+      if (this.payUrl) {
+        console.log(1);
+        uni.navigateTo({ url: this.payUrl });
+      }
+      console.log(2);
+      uni.navigateTo({ url: '/pages/modify/paypwd' });
+    },
+    // 输入密码完成
+    onInput(val) {
+      // 当输入密码为6位数时
+      console.log(val, '输入完成');
+      this.$emit('onInput', val);
+    },
+    close() {
+      console.log('关闭支付');
+      this.show = false;
     },
   },
 };
@@ -212,6 +332,10 @@ export default {
     transform: scale(0.7);
   }
 }
+.radio-word {
+  font-size: 24rpx;
+  line-height: 48rpx;
+}
 .popup-pay-type {
   display: flex;
   flex-direction: column;
@@ -250,9 +374,27 @@ export default {
   align-items: center;
 }
 .icon-pay {
+  display: flex;
   margin-right: 20rpx;
   font-size: 60rpx;
+  line-height: 80rpx;
 }
+// .pay-type-radio-box {
+// }
+.pay-type-radio {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  .radio {
+    transform: scale(0.7);
+  }
+}
+// .icon-wxPay {
+//   color: #09bb07;
+// }
+// .icon-walletPay {
+//   color: #1878f3;
+// }
 .wxpay {
   color: #09bb07;
 }
@@ -290,6 +432,13 @@ export default {
 }
 .paySureBtn {
   width: 100%;
+  border-radius: 0;
+  /deep/ .qui-button--button[type='primary'] {
+    border-radius: 0;
+  }
+}
+/deep/ .qui-button--button {
+  width: 670rpx;
   border-radius: 0;
 }
 </style>

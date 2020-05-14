@@ -1,36 +1,48 @@
 <template>
-  <view class="wallet">
-    <qui-cell-item
-      title="可用余额"
-      arrow
-      :addon="`¥ ${dataInfo.available_amount || 0.0}`"
-      class="wallet-available"
-    ></qui-cell-item>
-    <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" hover-class="none">
+  <qui-page class="wallet-page">
+    <view class="wallet">
       <qui-cell-item
-        title="冻结金额"
+        :title="i18n.t('profile.availableamount')"
         arrow
-        :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"
+        :addon="`¥ ${dataInfo.available_amount || 0.0}`"
+        class="wallet-available"
       ></qui-cell-item>
-    </navigator>
-    <navigator url="./withdrawalslist" hover-class="none">
-      <qui-cell-item title="提现记录" arrow></qui-cell-item>
-    </navigator>
-    <navigator url="./walletlist" hover-class="none">
-      <qui-cell-item title="钱包明细" arrow></qui-cell-item>
-    </navigator>
-    <navigator url="./orderlist" hover-class="none">
-      <qui-cell-item title="订单明细" arrow></qui-cell-item>
-    </navigator>
-    <qui-cell-item v-if="hasPassword" title="钱包密码" arrow :border="false"></qui-cell-item>
-    <navigator :url="'../modify/paypwd?id=' + userId" hover-class="none">
-      <qui-cell-item v-if="!hasPassword" title="设置支付密码" arrow :border="false"></qui-cell-item>
-    </navigator>
-  </view>
+      <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" hover-class="none">
+        <qui-cell-item
+          :title="i18n.t('profile.freezeamount')"
+          arrow
+          :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"
+        ></qui-cell-item>
+      </navigator>
+      <navigator url="./withdrawalslist" hover-class="none">
+        <qui-cell-item :title="i18n.t('profile.withdrawalslist')" arrow></qui-cell-item>
+      </navigator>
+      <navigator url="./walletlist" hover-class="none">
+        <qui-cell-item :title="i18n.t('profile.walletlist')" arrow></qui-cell-item>
+      </navigator>
+      <navigator url="./orderlist" hover-class="none">
+        <qui-cell-item :title="i18n.t('profile.orderlist')" arrow></qui-cell-item>
+      </navigator>
+      <qui-cell-item
+        v-if="hasPassword"
+        :title="i18n.t('profile.walletpassword')"
+        arrow
+        :border="false"
+      ></qui-cell-item>
+      <navigator :url="'../modify/paypwd?id=' + userId" hover-class="none">
+        <qui-cell-item
+          v-if="!hasPassword"
+          :title="i18n.t('profile.setpassword')"
+          arrow
+          :border="false"
+        ></qui-cell-item>
+      </navigator>
+    </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   components: {
@@ -40,7 +52,7 @@ export default {
     return {
       dataInfo: {},
       hasPassword: false,
-      userId: 1, // 获取当前登陆用户的ID
+      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
     };
   },
   onLoad() {
@@ -50,7 +62,7 @@ export default {
     // 获取钱包信息
     getInfo() {
       status
-        .run(() => this.$store.dispatch('jv/get', 'wallet/user/1'))
+        .run(() => this.$store.dispatch('jv/get', `wallet/user/${this.userId}`))
         .then(res => {
           this.dataInfo = res;
           this.hasPassword = res.user.canWalletPay;
@@ -60,26 +72,25 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
-page {
-  background-color: #f9fafc;
-}
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .wallet {
   padding-top: 40rpx;
   padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
-  .cell-item {
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /deep/ .cell-item {
     padding-right: 40rpx;
   }
   /deep/ .cell-item__body__content-title {
-    color: #777;
+    color: --color(--qui-FC-777);
   }
   .cell-item__body__right {
-    color: #333;
+    color: --color(--qui-FC-333);
   }
 }
-.wallet-available .cell-item__body__right-text {
-  color: #fa5151;
+.wallet-available /deep/ .cell-item__body__right-text {
+  color: --color(--qui-RED);
 }
 </style>

@@ -2,7 +2,13 @@
   <view class="painter">
     <view class="canvas-box">
       <view class="cent">
-        <image :src="imagePath" @tap="previewImage" :show-menu-by-longpress="true"></image>
+        <image
+          :src="imagePath"
+          mode="widthFix"
+          @tap="previewImage"
+          :show-menu-by-longpress="true"
+          class="cent-image"
+        ></image>
       </view>
       <view class="box-img">
         <painter
@@ -213,7 +219,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 page {
   padding: 0;
   margin: 0;
@@ -226,16 +231,15 @@ page {
   margin: 46rpx 25rpx 0;
   background: --color(--qui-FC-FFF);
   border-radius: 10px;
-  box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
-  image {
+  .cent-image {
     width: 100%;
-    height: 100%;
+    box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   }
 }
 .icon-unfold {
   display: block;
 }
 .btn-box {
-  margin: 151rpx 0 40rpx 40rpx;
+  margin: 50rpx 0 40rpx 40rpx;
 }
 </style>

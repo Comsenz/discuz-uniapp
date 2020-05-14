@@ -1,6 +1,6 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
 import { http } from '@/api/api-request';
-import { utils } from 'jsonapi-vuex';
+import { utils } from '@/library/jsonapi-vuex/index';
 import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN, SET_AUTH } from '@/store/types/session';
 
 const state = {
