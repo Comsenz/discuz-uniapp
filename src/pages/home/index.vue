@@ -3,6 +3,8 @@
     <uni-nav-bar
       v-if="navShow"
       left-icon="back"
+      left-text="返回"
+      right-text="菜单"
       title="导航栏组件"
       fixed="true"
       status-bar
@@ -614,7 +616,6 @@ export default {
   margin: 30rpx auto;
   font-size: $fg-f26;
   line-height: 80rpx;
-  color: --color(--qui-FC-777);
   background: --color(--qui-BG-2);
   border-radius: 6rpx;
   box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
@@ -625,13 +626,16 @@ export default {
     margin-top: 27rpx;
     margin-left: 20rpx;
     line-height: 35rpx;
+    color: --color(--qui-FC-777);
     text-align: center;
     background: --color(--qui-BOR-ED);
     border-radius: 6rpx;
+    transition: $switch-theme-time;
   }
   &__count {
     margin-left: 21rpx;
     overflow: hidden;
+    color: #777;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -656,7 +660,6 @@ export default {
 .active .scroll-tab-line {
   color: --color(--qui-BG-HIGH-LIGHT);
   border-bottom: 4rpx solid --color(--qui-BG-HIGH-LIGHT);
-  // border-radius: 20rpx;
 }
 .uni-tab-bar .active {
   font-size: $fg-f28;
@@ -666,10 +669,12 @@ export default {
 .main {
   margin-bottom: 130rpx;
 }
+
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   max-height: calc(100vh - 100rpx);
 }
+
 .nav .filter-modal {
   position: absolute;
   z-index: 1000;

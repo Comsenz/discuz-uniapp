@@ -25,7 +25,7 @@
             backgroundColor="#b5b5b5"
           />
         </view>
-        <view class="qui-uploader-box__uploader-file__dele" v-else @click="uploadDelete(index)">
+        <view class="qui-uploader-box__uploader-file__del" v-else @click="uploadDelete(index)">
           <qui-icon class="icon-delete" name="icon-delete" color="#fff" size="17"></qui-icon>
         </view>
       </view>
@@ -197,25 +197,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/base/theme/fn.scss';
+@import '@/styles/base/variable/global.scss';
+
 .qui-uploader-box {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 13rpx;
   width: 100%;
   min-height: 160rpx;
   padding: 30rpx 0;
 
   &__uploader-file {
     position: relative;
-    width: 160rpx;
-    height: 160rpx;
-    margin-right: 14rpx;
-    margin-bottom: 14rpx;
+    width: 100%;
+    height: calc((100vw - 80rpx) / 3);
     box-sizing: border-box;
+
+    &__box {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      margin: 10rpx;
+    }
+
     &--image {
       z-index: 100;
       width: 100%;
       height: 100%;
-      border: 1px solid #ededed;
+      border: 1px solid --color(--qui-BOR-ED);
       border-radius: 5rpx;
     }
     &--load {
@@ -229,14 +241,14 @@ export default {
       width: 100%;
       height: 100%;
       text-align: center;
-      border: 1px solid #ededed;
+      border: 1px solid --color(--qui-BOR-ED);
       border-radius: 5rpx;
       &__mask {
         position: absolute;
         width: 100%;
         height: 100%;
-        background-color: #ededed;
-        border: 1px solid #ededed;
+        background-color: --color(--qui-BG-ED);
+        border: 1px solid --color(--qui-BOR-ED);
         border-radius: 5rpx;
         opacity: 0.7;
       }
@@ -244,9 +256,9 @@ export default {
       &__text {
         position: relative;
         z-index: 222;
-        font-size: 20rpx;
+        font-size: $fg-f28;
         line-height: 160rpx;
-        color: #343434;
+        color: --color(--qui-FC-34);
       }
 
       progress {
@@ -256,16 +268,17 @@ export default {
         width: 87.5%;
       }
     }
-    &__dele {
+    &__del {
       position: absolute;
       bottom: 0;
+      left: 1px;
       z-index: 222;
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
       height: 30rpx;
-      background: #000;
+      background: --color(--qui-BG-00);
       border-radius: 0 0 5rpx 5rpx;
       opacity: 0.5;
       .icon-delete {
@@ -278,12 +291,13 @@ export default {
   }
 
   &__add {
-    width: 160rpx;
-    height: 160rpx;
-    line-height: 160rpx;
-    text-align: center;
-    background-color: #f7f7f7;
-    border: 1px solid #ededed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: calc((100vw - 80rpx) / 3);
+    background-color: --color(--qui-FC-f7);
+    border: 1px solid --color(--qui-BOR-ED);
     border-radius: 5rpx;
   }
 }

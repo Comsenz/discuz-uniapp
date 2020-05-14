@@ -135,12 +135,14 @@
                 <qui-icon name="icon-call" class="comm-icon" @click="callClick"></qui-icon>
                 <qui-icon name="icon-image" class="comm-icon" @click="imageUploader"></qui-icon>
               </view>
-              <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
+              <view class="text-word-tip">
+                {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+              </view>
             </view>
             <qui-emoji
               :list="allEmoji"
               position="absolute"
-              top="20rpx"
+              top="110rpx"
               v-if="emojiShow"
               border-radius="10rpx"
               @click="getEmojiClick"
@@ -156,7 +158,8 @@
                 :maxlength="450"
                 class="comment-textarea"
                 :placeholder="t.writeComments"
-                :placeholder-style="placeholderColor"
+                :placeholder-style="placeholderStyle"
+                placeholder-class="text-placeholder"
                 v-model="textAreaValue"
               />
               <qui-uploader
@@ -254,6 +257,7 @@
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
 import { isEmpty } from 'lodash';
+import { mapState } from 'vuex';
 
 export default {
   data() {
@@ -267,7 +271,7 @@ export default {
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
       textAreaValue: '', // 评论输入框
-      placeholderColor: 'color:#b5b5b5', // 默认textarea的placeholder颜色
+      placeholderStyle: 'color:#b5b5b5', // 默认textarea的placeholder颜色
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
@@ -328,6 +332,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      getAtMemberData: state => state.atMember.atMemberData,
+    }),
     // thread() {
     //   return this.$store.getters['jv/get']('threads/11');
     // },
@@ -339,7 +346,9 @@ export default {
     //   const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
     //   return posts;
     // },
+
     allEmoji() {
+      console.log(this.$store.getters['jv/get']('emoji'), '这是表情');
       return this.$store.getters['jv/get']('emoji');
     },
     //   const thread = this.$store.getters['jv/get']({ _jv: { type: "threads", id: this.threadId}});
@@ -365,6 +374,11 @@ export default {
     // this.threadId = 188;
     this.loadThreads();
     this.loadThreadPosts();
+    console.log(this.allEmoji, '!!~~~~');
+    if (Object.keys(this.allEmoji).length < 1) {
+      this.getEmoji();
+    }
+
     const token =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI5NTZiYzZhODhiYjUyNzVhMmZmNDU4ZDI5MmU3ZDVkMDExZGYwMDA5YThkZDk5ZjVkMDE4ZjBmMTAzMTdlODI3MTg4OGUzMzJiZDAyNjhlYSIsImlhdCI6MTU4ODczMDY1MiwibmJmIjoxNTg4NzMwNjUyLCJleHAiOjE1OTEzMjI2NTIsInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.B0KIIPZVkSkEIWoi6aOny66ttilbWXv45eNkH4hPew_-h3c483qRjVL9K7ncA8S76Kaqq6fLt_kxqU7gehlsOTRbfDEu8_GgouAnn_t6PmYlG9ybS8D8IJnuU_jZCo4WW-PobtM9yl0lXYTooelU6a1Q0Sx6y7IEPjcG6xIQU-9H4J-Cr1fUYw9TtOMds274KgdGAkCTPRNg0qadz3BZwj-qXn6JkL3haEyzEXIfk1arWXhU2LXAZ2ukzpO2XSkw7kDezjbcQ4B3Lx890CeIzdYf4l8cB3WowYJQMtJl0Qnq6wsU2dycJH9cyXVl_wQ6lCXRiDE-lV0X-SiK3qGQvQ';
     this.header = {
@@ -385,14 +399,32 @@ export default {
     },
   },
   onShow() {
-    let authTimeout = setTimeout(() => {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.getters['session/get']('auth').open();
+    // let authTimeout = setTimeout(() => {
+    //   if (!this.$store.getters['session/get']('isLogin')) {
+    //     this.$store.getters['session/get']('auth').open();
+    //   }
+    //   clearTimeout(authTimeout);
+    // }, 4000);
+    console.log(this.getAtMemberData, '~~~~!!@!!');
+    let atMemberList = '';
+    this.getAtMemberData.map(item => {
+      if (item.toUser) {
+        atMemberList += `@${item.toUser.username} `;
+      } else {
+        atMemberList += `@${item.username} `;
       }
-      clearTimeout(authTimeout);
-    }, 4000);
+
+      return atMemberList;
+    });
+
+    this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
+      atMemberList +
+      this.textAreaValue.slice(this.cursor)}`;
   },
   methods: {
+    getEmoji() {
+      this.$store.dispatch('jv/get', ['emoji', {}]);
+    },
     // 加载当前主题数据
     loadThreads() {
       const params = {
@@ -1313,6 +1345,10 @@ page {
     justify-content: flex-start;
     width: 230rpx;
   }
+  .text-word-tip {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-777);
+  }
   .comm-icon {
     flex: 1;
   }
@@ -1329,8 +1365,13 @@ page {
     box-sizing: border-box;
   }
   .comment-textarea {
+    width: 100%;
+    min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;
+  }
+  .text-placeholder {
+    font-size: 28rpx;
   }
 }
 .publishBtn {

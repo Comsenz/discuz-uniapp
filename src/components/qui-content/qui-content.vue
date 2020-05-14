@@ -406,20 +406,23 @@ export default {
 
       &__username {
         font-weight: bold;
-        color: rgba(51, 51, 51, 1);
+        color: --color(--qui-FC-333);
+        transition: $switch-theme-time;
       }
 
       &__isAdmin {
         margin-left: 13rpx;
         font-weight: 400;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
+        transition: $switch-theme-time;
       }
 
       &__time {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 31rpx;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
+        transition: $switch-theme-time;
       }
 
       &__jumpBtn {
@@ -449,7 +452,7 @@ export default {
       font-size: $fg-f28;
       font-weight: 400;
       line-height: 45rpx;
-      color: rgba(51, 51, 51, 1);
+      color: --color(--qui-FC-333);
       word-wrap: break-word;
       &__longessay {
         word-break: break-all;

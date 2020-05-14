@@ -90,11 +90,6 @@ export default {
       type: String,
       default: '#1878F3',
     },
-    // 未选中项的颜色
-    inactiveColor: {
-      type: String,
-      default: '#777777',
-    },
     // 移动bar的高度
     barHeight: {
       type: [String, Number],
@@ -185,8 +180,6 @@ export default {
           style.color = this.activeColor;
           // 给选中的tab item添加外部自定义的样式
           style = Object.assign(style, this.activeItemStyle);
-        } else {
-          style.color = this.inactiveColor;
         }
         return style;
       };
@@ -276,6 +269,8 @@ export default {
 
 <style lang="scss">
 /* stylelint-disable */
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 view,
 scroll-view {
   box-sizing: border-box;
@@ -318,7 +313,9 @@ $screen: 80rpx;
   position: relative;
   display: inline-block;
   text-align: center;
+  color: --color(--qui-FC-777);
   transition-property: background-color, color;
+  transition: $switch-theme-time;
 }
 
 .u-tab-bar {

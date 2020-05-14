@@ -43,15 +43,17 @@
         <navigator url="/pages/site/search" hover-class="none">
           <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
         </navigator>
-        <qui-cell-item
-          :title="i18n.t('profile.circlemanagement')"
-          arrow
-          :border="false"
-        ></qui-cell-item>
+        <navigator url="/pages/manage/index" hover-class="none">
+          <qui-cell-item
+            :title="i18n.t('profile.circlemanagement')"
+            arrow
+            :border="false"
+          ></qui-cell-item>
+        </navigator>
       </view>
 
       <view class="my-items">
-        <qui-cell-item title="深色模式" slot-right>
+        <qui-cell-item :title="i18n.t('profile.theme')" slot-right :border="false">
           <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
         </qui-cell-item>
       </view>
@@ -124,6 +126,7 @@ export default {
   margin-top: 30rpx;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  transition: $switch-theme-time;
 }
 /deep/ .cell-item {
   padding-right: 40rpx;
@@ -132,6 +135,7 @@ export default {
   padding: 40rpx;
   font-size: 28rpx;
   background: --color(--qui-BG-2);
+  transition: $switch-theme-time;
 }
 .my-info__box {
   display: flex;
@@ -139,6 +143,8 @@ export default {
 }
 .my-info__introduction {
   margin-top: 40rpx;
+  color: --color(--qui-FC-333);
+  transition: $switch-theme-time;
 }
 .my-info__box__detail {
   position: relative;
@@ -161,11 +167,13 @@ export default {
 }
 .my-tabs {
   background: --color(--qui-BG-2);
+  transition: $switch-theme-time;
 }
 .my-tabs .qui-tabs__item--active {
   border: 0;
 }
 .my-tabs .qui-tabs__item--active .qui-tabs__item__title {
   color: --color(--qui-FC-AAA);
+  transition: $switch-theme-time;
 }
 </style>
