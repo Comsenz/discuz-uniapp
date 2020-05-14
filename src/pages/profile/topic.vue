@@ -81,7 +81,6 @@ export default {
       loadingType: 'more',
       data: [],
       flag: true, // 滚动节流
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       bottomData: [
@@ -136,11 +135,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          console.log(res);
-          this.totalData = res._jv.json.meta.threadCount;
-          delete res._jv;
+          if (res._jv) {
+            delete res._jv;
+          }
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          this.data = [...this.data, ...res];
         });
     },
     // 内容部分点击跳转到详情页
@@ -171,12 +170,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.loadThreads();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadThreads();
     },
     refresh() {
       this.pageNum = 1;
