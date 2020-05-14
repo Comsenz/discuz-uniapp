@@ -63,9 +63,9 @@
       <qui-cell-item title="我的角色" :addon="userInfo.groups[1].name"></qui-cell-item>
       <qui-cell-item title="加入时间" :addon="userInfo.joinedTime"></qui-cell-item>
       <qui-cell-item title="有效期至" :addon="userInfo.expiredTime"></qui-cell-item>
-      <qui-cell-item title="我的权限" slot-right>
-        <view v-for="(item, index) in permissionInfo" :key="index">
-          <text></text>
+      <qui-cell-item class="cell-item--auto" title="我的权限" slot-right>
+        <view class="site-permission" v-for="(item, index) in permissionInfo" :key="index">
+          {{ item }}
         </view>
       </qui-cell-item>
     </view>
@@ -130,7 +130,7 @@ export default {
 
     // 获取 用户权限
     permissionInfo() {
-      const permissionList = [];
+      let permissionList = [];
       const info = this.$store.getters['jv/get']('users/1');
       const list = this.$store.getters['jv/get']('groups');
       const keys = Object.keys(list);
@@ -139,13 +139,17 @@ export default {
           const value = list[keys[i]];
           if (info && Object.keys(info.groups)) {
             if (value._jv.id === info.groups[1]._jv.id) {
-              permissionList.push(value.permission);
+              if (value.permission) {
+                permissionList = Object.keys(value.permission).map(key => {
+                  return value.permission[key].permission;
+                });
+              }
             }
           }
         }
       }
-      console.log('用户权限：', permissionList[0]);
-      return permissionList[0];
+      console.log('用户权限：', permissionList);
+      return permissionList;
     },
   },
 
@@ -280,5 +284,13 @@ page {
 }
 .cell-item--left .cell-item__body__right {
   text-align: left;
+}
+.site-permission {
+  display: inline-block;
+  padding: 13rpx 28rpx 12rpx;
+  margin: 0rpx 10rpx 10rpx 0rpx;
+  font-size: 26rpx;
+  border: 2rpx solid #ededed;
+  border-radius: 10px;
 }
 </style>
