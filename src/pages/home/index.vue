@@ -375,6 +375,7 @@ export default {
           url: '/pages/share/site',
         });
       }
+      this.cancel();
     },
     // 取消按钮
     cancel() {
@@ -403,7 +404,7 @@ export default {
         // 筛选关注帖
         case '2':
           this.threadEssence = '';
-          this.threadFollow = 1; // TODO 当前用户 ID
+          this.threadFollow = this.user.id; // TODO 当前用户 ID
           break;
         // 不筛选
         default:
@@ -446,9 +447,10 @@ export default {
       // console.log(this.nowThreadId);
       if (index === 0) {
         uni.navigateTo({
-          url: `/pages/share/site?id=${this.nowThreadId}`,
+          url: `/pages/share/topic?id=${this.nowThreadId}`,
         });
       }
+      this.cancel();
     },
     // 首页导航栏分类列表数据
     loadCategories() {

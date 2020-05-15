@@ -146,7 +146,7 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
-      console.log(this.forums, '9999');
+      // console.log(this.forums, '9999');
       if (
         !this.forums.other.can_create_thread &&
         !this.forums.other.can_create_thread_long &&
