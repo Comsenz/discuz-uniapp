@@ -268,12 +268,16 @@ export default {
   onShareAppMessage(res) {
     // 来自页面内分享按钮
     if (res.from === 'button') {
-      console.log(res.target);
+      console.log(this.threads);
+      return {
+        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
+        // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
+      };
     }
     return {
+      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
       title: this.forums.set_site.site_name,
       // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
-      path: '/pages/test/test?id=123',
     };
   },
   mounted() {
@@ -444,7 +448,6 @@ export default {
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
-      // console.log(this.nowThreadId);
       if (index === 0) {
         uni.navigateTo({
           url: `/pages/share/topic?id=${this.nowThreadId}`,
