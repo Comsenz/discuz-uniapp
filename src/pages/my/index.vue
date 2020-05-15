@@ -78,10 +78,10 @@ export default {
   data() {
     return {
       items: [
-        { title: this.i18n.t('profile.topic'), brief: '73' },
-        { title: this.i18n.t('profile.following'), brief: '12' },
-        { title: this.i18n.t('profile.followers'), brief: '31' },
-        { title: this.i18n.t('profile.likes'), brief: '65' },
+        { title: this.i18n.t('profile.topic'), brief: '0' },
+        { title: this.i18n.t('profile.following'), brief: '0' },
+        { title: this.i18n.t('profile.followers'), brief: '0' },
+        { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
       current: 0,
       checked: false,

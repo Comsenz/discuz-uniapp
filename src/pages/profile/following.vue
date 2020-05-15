@@ -37,9 +37,9 @@
             >
               <text>
                 {{
-                  followerItem.fromUser.follow == 0
+                  followingItem.toUser.follow == 0
                     ? i18n.t('profile.following')
-                    : followerItem.fromUser.follow == 1
+                    : followingItem.toUser.follow == 1
                     ? i18n.t('profile.followed')
                     : i18n.t('profile.mutualfollow')
                 }}
