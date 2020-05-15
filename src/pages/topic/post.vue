@@ -90,8 +90,8 @@
     ></qui-cell-item>
     <qui-cell-item
       :title="i18n.t('discuzq.post.freeWordCount')"
-      :addon="`${word}字`"
-      v-if="price > 0"
+      :addon="i18n.t('discuzq.post.word', { num: word })"
+      v-if="price > 0 && type !== 3"
       arrow
       @click="cellClick('word')"
     ></qui-cell-item>
@@ -127,23 +127,10 @@
               class="popup-btn"
               v-for="(item, index) in payNum"
               :key="index"
-              :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
+              :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
               plain
               size="post"
               @click="moneyClick(index)"
-            >
-              {{ item.name }}
-            </qui-button>
-          </view>
-          <view class="popup-content-btn" v-if="setType === 'word'">
-            <qui-button
-              class="popup-btn"
-              v-for="(item, index) in wordCount"
-              :key="index"
-              :type="wordCountCheck[0].name === item.name ? 'primary' : 'default'"
-              size="post"
-              plain
-              @click="wordClick(index)"
             >
               {{ item.name }}
             </qui-button>
@@ -171,7 +158,9 @@
             size="40"
             v-if="setType === 'pay'"
           ></qui-icon>
-          <text class="popup-dialog__cont-rmb" v-else>字</text>
+          <text class="popup-dialog__cont-rmb" v-else>
+            {{ i18n.t('discuzq.post.word', { num: '' }) }}
+          </text>
           <input
             class="popup-dialog__cont-input"
             v-if="setType === 'pay'"
@@ -216,7 +205,7 @@ export default {
       type: 0,
       title: '',
       price: 0,
-      inputPrice: 0.0,
+      inputPrice: '',
       inputWord: '',
       operating: '', // 编辑或发布类型
       emojiShow: false,
@@ -399,21 +388,6 @@ export default {
       });
     },
 
-    wordClick(index) {
-      this.wordCountCheck = [];
-      this.wordCountCheck.push(this.wordCount[index]);
-
-      if (this.wordCountCheck[0].name === this.i18n.t('discuzq.post.customize')) {
-        this.$refs.popupBtm.close();
-
-        this.$nextTick(() => {
-          this.$refs.popup.open();
-        });
-      } else {
-        this.word = this.wordCount[index].num;
-        this.$refs.popupBtm.close();
-      }
-    },
     contBlur(e) {
       this.cursor = e.detail.cursor;
     },
@@ -448,13 +422,16 @@ export default {
     },
     cellClick(type) {
       this.setType = type;
-      this.$refs.popupBtm.open();
+      if (type === 'word') {
+        this.$refs.popup.open();
+      } else {
+        this.$refs.popupBtm.open();
+      }
     },
     cancel() {
       this.$refs.popupBtm.close();
     },
     uploadChange(e) {
-      console.log(e);
       this.uploadFile = e;
     },
     uploadClear(list, del) {
@@ -653,21 +630,21 @@ export default {
     this.header = {
       authorization: `Bearer ${token}`,
     };
-
     this.formData = {
       isGallery: 1,
     };
     this.getCategories();
-    this.getEmoji();
+    if (Object.keys(this.allEmoji).length < 1) {
+      this.getEmoji();
+    }
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
-
-    this.textAreaLength = Number(option.type) === 1 ? 1000 : 450;
+    this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
   },
   onShow() {
     let atMemberList = '';
     this.getAtMemberData.map(item => {
-      atMemberList += `@${item.toUser.username} `;
+      atMemberList += `@${item.username} `;
       return atMemberList;
     });
 
@@ -706,6 +683,7 @@ export default {
   &__hd {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     &-l {
       &__icon {
         margin-right: 54rpx;
@@ -722,7 +700,7 @@ export default {
     padding: 20rpx;
     margin-top: 20rpx;
     background-color: --color(--qui-BG-1);
-    border: 1rpx solid #ddd;
+    border: 1rpx solid --color(--qui-BOR-DDD);
     border-radius: 10rpx;
     box-sizing: border-box;
   }
@@ -863,6 +841,9 @@ export default {
     color: --color(--qui-RED);
   }
 }
+/deep/ .cell-item__body__right .cell-item__body__right-text {
+  font-size: $fg-f34;
+}
 /deep/ .cell-item__body__content-title {
   color: --color(--qui-FC-777);
 }
@@ -894,16 +875,20 @@ export default {
       width: 100%;
       height: 100rpx;
       padding: 0 25rpx 0 80rpx;
+      font-size: 40rpx;
       text-align: right;
       border: 1px solid --color(--qui-BOR-DDD);
+      border-radius: 10rpx;
       box-sizing: border-box;
     }
   }
 
   &__ft {
     display: flex;
+    align-items: center;
     height: 100rpx;
     border-top: 2rpx solid --color(--qui-BOR-DDD);
+    box-sizing: border-box;
 
     button {
       width: 50%;

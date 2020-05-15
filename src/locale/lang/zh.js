@@ -116,7 +116,7 @@ export default {
       failedToObtainSignature: '获取签名失败',
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
-      pleaseEnterAPostTitle: 'Please enter a post title',
+      pleaseEnterAPostTitle: '请输入帖子标题',
     },
   },
   uploader: {
