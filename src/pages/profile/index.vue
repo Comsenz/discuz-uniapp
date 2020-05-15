@@ -17,7 +17,7 @@
             <view v-if="userId != currentLoginId">
               <view class="profile-info__box__detail-operate" @tap="chat">
                 <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
-                <text>{{i18n.t('profile.privateMessage')}}</text>
+                <text>{{ i18n.t('profile.privateMessage') }}</text>
               </view>
               <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
               <view
