@@ -430,4 +430,15 @@ export default {
     join: '加入',
     accepttheinvitationandbecome: '接受邀请，成为',
   },
+  // 搜索
+  search: {
+    searchkeywords: '搜索关键字',
+    cancel: '取消',
+    users: '用户',
+    searchmoreusers: '搜索更多用户',
+    norelatedusersfound: '没有找到相关用户',
+    themes: '主题',
+    searchmorethemes: '搜索更多主题',
+    norelatedthemesfound: '没有找到相关主题',
+  },
 };

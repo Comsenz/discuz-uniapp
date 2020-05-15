@@ -42,7 +42,7 @@ page {
     bottom: 0;
     z-index: 100;
     height: 100rpx;
-    background: #fff;
+    background: --color(--qui-BG-2);
   }
   .uni-picker-container .uni-picker-action {
     width: 50%;
@@ -51,10 +51,10 @@ page {
   }
   .uni-picker-action-cancel {
     color: #aaa;
-    border-right: 2rpx solid #ddd;
+    border-right: 2rpx solid --color(--qui-BG-ED);
   }
   .uni-picker-container .uni-picker-action.uni-picker-action-confirm {
-    color: #333;
+    color: --color(--qui-FC-333);
   }
   .uni-picker-container .uni-picker-item,
   .uni-picker-container .uni-picker-view-indicator {
@@ -63,14 +63,14 @@ page {
     line-height: 100rpx;
   }
   .uni-picker-container .uni-picker-item {
-    background: #f8f8f8;
+    background: --color(--qui-BG-BTN-GRAY-1);
   }
   .uni-picker-container .uni-picker-content {
     height: 300rpx;
   }
   .uni-picker-container .uni-picker {
     padding-bottom: 110rpx;
-    background-color: #f8f8f8;
+    background-color: --color(--qui-BG-BTN-GRAY-1);
   }
   .uni-mask {
     background: rgba(0, 0, 0, 0.4);
@@ -177,8 +177,8 @@ page {
   }
   .icon-close {
     position: absolute;
-    top: -2rpx;
-    left: 1rpx;
+    top: -3rpx;
+    left: 2rpx;
   }
   .search-box {
     display: flex;
@@ -193,13 +193,13 @@ page {
     font-size: $fg-f28;
     line-height: 80rpx;
     justify-content: flex-end;
-    color: #ccc;
+    color: --color(--qui-FC-CCC);
   }
   .search-box__content-input {
     height: 80rpx;
     padding: 0 60rpx;
     line-height: 80rpx;
-    background: #f6f6f6;
+    background: --color(--qui-BG-IT);
     border: none;
     border-radius: 10rpx;
   }
@@ -207,9 +207,5 @@ page {
     position: absolute;
     top: 18rpx;
     right: 20rpx;
-    width: 36rpx;
-    height: 36rpx;
-    background: #ccc;
-    border-radius: 50%;
   }
 }

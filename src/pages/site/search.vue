@@ -7,27 +7,27 @@
           type="text"
           class="search-box__content-input"
           placeholder-class="input-placeholder"
-          placeholder="搜索关键字"
+          :placeholder="i18n.t('search.searchkeywords')"
           @input="searchInput"
           :value="searchValue"
         />
         <view @tap="clearSearch" v-if="searchValue" class="search-box__content-delete">
-          <qui-icon name="icon-close" size="34" color="#fff"></qui-icon>
+          <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
       <view class="search-box__cancel" v-if="searchValue" @tap="clearSearch">
-        <text>取消</text>
+        <text>{{ i18n.t('search.cancel') }}</text>
       </view>
     </view>
     <view class="search-item" v-if="searchValue">
       <view class="search-item__head">
-        <view class="search-item__head-title">用户</view>
+        <view class="search-item__head-title">{{ i18n.t('search.users') }}</view>
         <view
           class="search-item__head-more"
           @tap="searchUser"
           v-if="Object.keys(userList).length > 0"
         >
-          搜索更多用户
+          {{ i18n.t('search.searchmoreusers') }}
         </view>
       </view>
       <view
@@ -48,17 +48,17 @@
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
-      <qui-no-data tips="没有找到相关用户" v-if="userTotal == 0"></qui-no-data>
+      <qui-no-data :tips="i18n.t('search.norelatedusersfound')" v-if="userTotal == 0"></qui-no-data>
     </view>
     <view class="search-item search-item--themes" v-if="searchValue">
       <view class="search-item__head">
-        <view class="search-item__head-title">主题</view>
+        <view class="search-item__head-title">{{ i18n.t('search.themes') }}</view>
         <view
           class="search-item__head-more"
           @tap="searchTheme"
           v-if="Object.keys(themeList).length > 0"
         >
-          搜索更多主题
+          {{ i18n.t('search.searchmorethemes') }}
         </view>
       </view>
       <view v-for="(item, index) in themeList" :key="index" :class="index == 1 ? 'noBorder' : ''">
@@ -75,7 +75,10 @@
           @contentClick="contentClick(item._jv.id)"
         ></qui-content>
       </view>
-      <qui-no-data tips="没有找到相关主题" v-if="themeTotal == 0"></qui-no-data>
+      <qui-no-data
+        :tips="i18n.t('search.norelatedthemesfound')"
+        v-if="themeTotal == 0"
+      ></qui-no-data>
     </view>
   </qui-page>
 </template>
@@ -165,18 +168,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .search {
-  min-height: 100vh;
-  background-color: #f9fafc;
   .search-item,
   .search-box {
-    background-color: #fff;
+    background-color: --color(--qui-BG-2);
   }
 }
 .search-item {
   padding-left: 40rpx;
   margin-bottom: 30rpx;
-  border-bottom: 2rpx solid #ededed;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .search-item__head {
   display: flex;
@@ -186,12 +189,12 @@ export default {
   padding: 30rpx 40rpx 20rpx 0;
 }
 .search-item__head-title {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   font-weight: bold;
 }
 .search-item__head-more {
-  font-size: 24rpx;
-  color: #00479b;
+  font-size: $fg-f24;
+  color: --color(--qui-LINK);
 }
 // 用户
 .cell-item {
@@ -199,8 +202,8 @@ export default {
 }
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: 28rpx;
-  color: #aaa;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-AAA);
 }
 .search-item__users__avatar {
   position: absolute;
@@ -208,7 +211,6 @@ export default {
   left: 0;
   width: 70rpx;
   height: 70rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
 .search-item__users {
@@ -217,7 +219,7 @@ export default {
 }
 // 主题
 .search /deep/ .themeCount {
-  border-bottom: 2rpx solid #ededed;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-shadow: none;
 }
 /deep/ .themeCount .themeItem {

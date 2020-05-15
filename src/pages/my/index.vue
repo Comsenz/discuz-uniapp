@@ -133,7 +133,7 @@ export default {
 }
 .my-info {
   padding: 40rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
 }
@@ -150,7 +150,7 @@ export default {
   position: relative;
   width: 100%;
   padding-left: 100rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   box-sizing: border-box;
 }
 .my-info__box__detail /deep/ .cell-item__body {
