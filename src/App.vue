@@ -12,7 +12,7 @@ export default {
       ]);
       const userId = this.$store.getters['session/get']('userId');
       const params = {
-        include: 'groups,wechat'
+        include: 'groups,wechat',
       };
       await this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
     } catch (errs) {

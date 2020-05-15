@@ -5,18 +5,20 @@ module.exports = {
   data() {
     return {};
   },
-  onLoad(params) {
+  onLoad() {
     // getRect挂载到$u上，因为这方法需要使用in(this)，所以无法把它独立成一个单独的文件导出
     this.$u.getRect = this.$uGetRect;
 
     const pages = getCurrentPages();
-    const currentPage = pages[pages.length-1];
-    if(!this.userIsPay() && currentPage.route !== 'pages/site/info') {
-      uni.redirectTo({
-        url: '/pages/site/info'
-      });
-    }
+    const currentPage = pages[pages.length - 1];
 
+    if (this.forums.set_site.site_mode === SITE_PAY) {
+      if (!this.user.paid && currentPage.route !== 'pages/site/info') {
+        uni.redirectTo({
+          url: '/pages/site/info',
+        });
+      }
+    }
   },
   onReady() {
     const theme = this.$store.getters['theme/get']('currentTheme');
@@ -33,10 +35,8 @@ module.exports = {
       return this.$store.getters['jv/get']('forums/1');
     },
     user() {
-      return this.$store.getters['jv/get'](`users/${this.userId}`);
-    },
-    userId() {
-      return this.$store.getters['session/get']('userId');
+      const userId = this.$store.getters['session/get']('userId');
+      return this.$store.getters['jv/get'](`users/${userId}`);
     },
   },
   methods: {
@@ -58,9 +58,6 @@ module.exports = {
           .exec();
       });
     },
-    userIsPay() {
-      return this.paid && this.forums.set_site.site_mode === SITE_PAY;
-    }
   },
   onReachBottom() {
     uni.$emit('uOnReachBottom');
