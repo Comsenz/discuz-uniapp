@@ -125,7 +125,7 @@ export default {
     // 获取用户信息
     getUserInfo(userId) {
       const params = {
-        include: ['wechat', 'groups'],
+        include: 'groups',
       };
       status
         .run(() => this.$store.dispatch('jv/get', [`users/${userId}`, { params }]))
