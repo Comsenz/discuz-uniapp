@@ -130,9 +130,14 @@ export default {
     select(item) {
       // this.sel = item.id;
       if (item.url) {
-        uni.navigateTo({
-          url: item.url,
-        });
+        this.$store.dispatch('session/setAuth', this.$refs.auth);
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+        } else {
+          uni.navigateTo({
+            url: item.url,
+          });
+        }
       }
     },
     // 首页底部发帖按钮弹窗
