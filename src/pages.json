@@ -77,6 +77,12 @@
       }
     },
     {
+      "path": "pages/site/index",
+      "style": {
+        "navigationBarTitleText": "圈子信息"
+      }
+    },
+    {
       "path": "pages/site/info",
       "style": {
         "navigationBarTitleText": "站点信息"

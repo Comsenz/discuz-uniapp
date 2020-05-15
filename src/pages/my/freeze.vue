@@ -4,7 +4,7 @@
       <view class="freeze-head__num">
         <text>{{ i18n.t('profile.total') }}</text>
         <text class="freeze-head__num__detail">{{ totalData }}</text>
-        <text>{{ i18n.t('profile.item') + i18n.t('profile.record') }}</text>
+        <text>{{ i18n.t('profile.item') + i18n.t('profile.records') }}</text>
       </view>
       <view class="freeze-head__money">
         <text>{{ i18n.t('profile.amountinvolved') }}</text>
@@ -26,7 +26,7 @@
           :title="freezeItem.change_desc"
           :brief="'ID:' + freezeItem.id"
           :addon="'¥' + freezeItem.change_freeze_amount"
-          :brief-right="freezeItem.created_at"
+          :brief-right="timeHandle(freezeItem.created_at)"
         ></qui-cell-item>
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import { time2MinuteOrHour } from '@/utils/time';
+
 export default {
   components: {
     //
@@ -63,11 +65,16 @@ export default {
         'page[limit]': this.pageSize,
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
+        console.log(res);
         this.totalData = res._jv.json.meta.total;
         delete res._jv;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         this.freezelist = [...this.freezelist, ...res];
       });
+    },
+    // 处理时间
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
     },
     // 下拉加载
     pullDown() {
