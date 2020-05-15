@@ -1,20 +1,29 @@
 <template>
   <qui-page :class="'home ' + scrolled" :footer="true">
-    <uni-nav-bar
+    <!-- <uni-nav-bar
       v-if="navShow"
       :title="forums.set_site.site_name"
       fixed="true"
       status-bar
-    ></uni-nav-bar>
+    ></uni-nav-bar> -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
+      :scroll-top="scrollTopNum"
       class="scroll-y"
       @scroll="scroll"
       @scrolltolower="pullDown"
+      @scrolltoupper="toUpper"
     >
+      <uni-nav-bar
+        v-if="navShow"
+        :title="forums.set_site.site_name"
+        fixed="true"
+        status-bar
+      ></uni-nav-bar>
       <qui-header
+        v-if="isTop != 1"
         :head-img="forums.set_site.site_logo"
         :background-head-full-img="forums.set_site.site_background_image"
         :theme="theme"
@@ -49,7 +58,11 @@
           <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
         </view>
       </uni-popup>
-      <view class="nav">
+      <view
+        class="nav"
+        id="navId"
+        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;top:116rpx;' : ''"
+      >
         <view class="nav__box">
           <qui-icon
             class="nav__box__icon"
@@ -78,11 +91,19 @@
           @change="toggleTab"
           is-scroll="isScroll"
           active-color="#1878F3"
-          :style="isTop == 1 ? 'position:fixed;z-index:99999999999;top:0' : ''"
-        ></u-tabs>
+        >
+          <!-- :style="isTop == 1 ? 'position:fixed;z-index:9;top:44' : ''" -->
+        </u-tabs>
       </view>
-
-      <view class="sticky">
+      <!-- <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        show-scrollbar="false"
+        class="scroll-y"
+        @scroll="scroll"
+        @scrolltolower="pullDown"
+      > -->
+      <view class="sticky" :style="isTop == 1 ? 'margin-top:150rpx' : 'margin-top:30rpx'">
         <view
           class="sticky__isSticky"
           v-for="(item, index) in sticky"
@@ -179,6 +200,9 @@ export default {
   data() {
     return {
       scrolled: 'affix',
+      suspended: false, // 是否吸顶状态
+      checkoutTheme: false, // 切换主题  搭配是否吸顶使用
+      scrollTopNum: 0,
       categoryId: 0, // 主题分类 ID
       currentIndex: 0,
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
@@ -295,35 +319,69 @@ export default {
       })
       .exec();
   },
-  onPageScroll(e) {
-    console.log(e, '页面滑动');
-    if (e.scrollTop > 100) {
-      this.navShow = true;
-    } else {
-      this.navShow = false;
-    }
-    if (e.scrollTop > this.myScroll) {
-      this.isTop = 1;
-    } else {
-      this.isTop = 0;
-    }
+  onPageScroll() {
+    // console.log(e, 'scroll')
+    // if (e.scrollTop > 100) {
+    //   this.navShow = true;
+    //   this.suspended = true;
+    // } else {
+    //   this.navShow = false;
+    //   this.suspended = false;
+    // }
+    // if (e.scrollTop > this.myScroll) {
+    //   this.isTop = 1;
+    // } else {
+    //   this.isTop = 0;
+    // }
   },
+
   methods: {
     scroll(event) {
+      console.log(event, 'scroll');
+      if (this.checkoutTheme || this.isTop === 1) {
+        return;
+      }
+      if (event.detail.scrollTop > 100) {
+        this.navShow = true;
+      } else {
+        this.navShow = false;
+      }
+      if (event.detail.scrollTop > this.myScroll) {
+        this.isTop = 1;
+      } else {
+        this.isTop = 0;
+      }
+
       if (event.target.scrollTop > 0) {
         this.scrolled = 'scrolled';
       } else {
         this.scrolled = 'affix';
       }
     },
+
+    // 滑动到顶部
+    toUpper() {
+      console.log('滑动到顶部滑动到顶部滑动到顶部');
+      if (this.isTop === 0) {
+        return;
+      }
+      this.isTop = 0;
+      // this.scrollTopNum = this.myScroll - 5;
+      // this.$nextTick(()=>{
+      //   this.scrollTopNum = this.myScroll - 6;
+      // })
+    },
+
     // 切换选项卡
-    toggleTab(dataInfo) {
+    async toggleTab(dataInfo) {
       // 重置列表
       this.isResetList = true;
+      this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
       this.loadThreadsSticky();
-      this.loadThreads();
+      await this.loadThreads();
+      this.checkoutTheme = false;
     },
     // 点击置顶跳转到详情页
     stickyClick(id) {
@@ -534,7 +592,7 @@ export default {
 
       this.threadsStatusId = threadsAction._statusID;
 
-      threadsAction.then(res => {
+      return threadsAction.then(res => {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
@@ -543,6 +601,7 @@ export default {
         } else {
           this.threads = [...this.threads, ...res];
         }
+        console.log(this.navShow, this.isTop, 'isTop navShow');
         // this.threads = res;
         // this.data = [...this.data, ...res];
       });
