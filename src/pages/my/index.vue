@@ -39,7 +39,9 @@
         </navigator>
       </view>
       <view class="my-items">
-        <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
+        <navigator url="/pages/site/index" hover-class="none">
+          <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
+        </navigator>
         <navigator url="/pages/site/search" hover-class="none">
           <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
         </navigator>

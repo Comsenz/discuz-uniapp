@@ -40,7 +40,7 @@
           v-for="(item, index) in dataList"
           :key="index"
           :title="type[item.type - 1]"
-          :brief="item.created_at"
+          :brief="timeHandle(item.created_at)"
           :addon="item.amount"
           :brief-right="item.status == 1 ? i18n.t('profile.paid') : i18n.t('profile.tobepaid')"
         ></qui-cell-item>
@@ -52,6 +52,7 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import { time2MinuteOrHour } from '@/utils/time';
 
 export default {
   components: {
@@ -60,7 +61,8 @@ export default {
   data() {
     const date = new Date();
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    let month = date.getMonth() + 1;
+    month = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${month}`;
     return {
       loadingType: 'more',
@@ -104,6 +106,10 @@ export default {
     showFilter() {
       this.show = true;
       this.$refs.filter.setData();
+    },
+    // 处理时间
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
     },
     // 日期选中
     bindDateChange(e) {
