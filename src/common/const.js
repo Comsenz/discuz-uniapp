@@ -23,3 +23,5 @@ export const THEME_DARK = 'dark';
  */
 export const LANG_ZH = 'zh';
 export const LANG_EN = 'en';
+
+export const SITE_PAY = 'pay';

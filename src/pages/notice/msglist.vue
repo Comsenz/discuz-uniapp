@@ -1,63 +1,69 @@
 <template>
-  <view class="chat-box">
-    <!-- 导航栏 -->
-    <uni-nav-bar status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-con">
-        <qui-icon name="icon-back" class="left-arrow" size="34" color="#343434"></qui-icon>
-        <text class="left-con-text">{{ username }}</text>
-      </view>
-    </uni-nav-bar>
-    <!-- 消息内容 -->
-    <scroll-view style="height: 1200rpx;" scroll-y="true" :scroll-top="scrollTop">
-      <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
-        <view class="chat-box__con__time">{{ item.time }}</view>
-        <view
-          :class="[item.user_id === 1 ? 'chat-box__con__msg__mine' : 'chat-box__con__msg__other']"
-        >
-          <image
-            :class="[
-              item.user_id === 1
-                ? 'chat-box__con__msg__mine__img'
-                : 'chat-box__con__msg__other__img',
-            ]"
-            :src="
-              item.user.avatarUrl === ''
-                ? 'https://discuz.chat/static/images/noavatar.gif'
-                : item.user.avatarUrl
-            "
-          ></image>
+  <qui-page>
+    <view class="chat-box">
+      <!-- 导航栏 -->
+      <uni-nav-bar status-bar fixed @clickLeft="clickNavBarLeft">
+        <view slot="left" class="left-con">
+          <qui-icon name="icon-back" class="left-arrow" size="34" color="#343434"></qui-icon>
+          <text class="left-con-text">{{ username }}</text>
+        </view>
+      </uni-nav-bar>
+      <!-- 消息内容 -->
+      <scroll-view style="height: 1200rpx;" scroll-y="true" :scroll-top="scrollTop">
+        <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
+          <view class="chat-box__con__time">{{ item.time }}</view>
           <view
             :class="[
-              item.user_id === 1
-                ? 'chat-box__con__msg__mine__box'
-                : 'chat-box__con__msg__other__box',
+              item.user_id.toString() === currentLoginId
+                ? 'chat-box__con__msg__mine'
+                : 'chat-box__con__msg__other',
             ]"
-            v-html="item.message_text_html"
-          ></view>
+          >
+            <image
+              :class="[
+                item.user_id.toString() === currentLoginId
+                  ? 'chat-box__con__msg__mine__img'
+                  : 'chat-box__con__msg__other__img',
+              ]"
+              :src="
+                item.user.avatarUrl === ''
+                  ? 'https://discuz.chat/static/images/noavatar.gif'
+                  : item.user.avatarUrl
+              "
+            ></image>
+            <view
+              :class="[
+                item.user_id.toString() === currentLoginId
+                  ? 'chat-box__con__msg__mine__box'
+                  : 'chat-box__con__msg__other__box',
+              ]"
+              v-html="item.message_text_html"
+            ></view>
+          </view>
         </view>
+      </scroll-view>
+      <!-- 底部 -->
+      <view class="chat-box__footer">
+        <view class="chat-box__footer__msg">
+          <input class="uni-input" v-model="msg" placeholder="回复.." @blur="contBlur" />
+          <qui-icon
+            name="icon-expression chat-box__footer__msg__icon"
+            size="40"
+            color="#7D7979"
+            @click="click"
+          ></qui-icon>
+          <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
+        </view>
+        <qui-emoji
+          :list="allEmoji"
+          position="relative"
+          top="0rpx"
+          v-if="emojiShow"
+          @click="getEmojiClick"
+        ></qui-emoji>
       </view>
-    </scroll-view>
-    <!-- 底部 -->
-    <view class="chat-box__footer">
-      <view class="chat-box__footer__msg">
-        <input class="uni-input" v-model="msg" placeholder="回复.." @blur="contBlur" />
-        <qui-icon
-          name="icon-expression chat-box__footer__msg__icon"
-          size="40"
-          color="#7D7979"
-          @click="click"
-        ></qui-icon>
-        <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
-      </view>
-      <qui-emoji
-        :list="allEmoji"
-        position="relative"
-        top="0rpx"
-        v-if="emojiShow"
-        @click="getEmojiClick"
-      ></qui-emoji>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -78,6 +84,7 @@ export default {
       username: '', // 导航栏标题
       dialogId: 0, // 会话id
       height: 0,
+      currentLoginId: uni.getStorageSync('user_id'), // 当前用户id
     };
   },
   onLoad(params) {
@@ -86,7 +93,9 @@ export default {
     this.username = username;
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
-    this.getEmoji();
+    if (Object.keys(this.allEmoji).length < 1) {
+      this.getEmoji();
+    }
     setTimeout(() => {
       uni
         .createSelectorQuery()
