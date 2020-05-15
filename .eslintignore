@@ -17,3 +17,4 @@ src/library
 src/wxcomponents
 src/components/uni-popup
 src/common/
+src/library/jsonapi-vuex

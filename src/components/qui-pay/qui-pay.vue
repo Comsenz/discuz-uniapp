@@ -8,12 +8,14 @@
             {{ p.pay }}{{ money }}{{ p.rmb }}
           </qui-button>-->
           <button class="payBtn" @click="payChoice">{{ p.pay }}￥{{ money }}{{ p.rmb }}</button>
-          <radio-group @change="radioChange">
+          <radio-group @change="radioMyHead">
             <label class="pay-radio">
               <view>
                 <radio :value="checkVal" class="radio" color="#2699fb" />
               </view>
-              <view :style="{ color: checkStatus ? '#2699fb' : '#333' }">{{ p.showMyHead }}</view>
+              <view class="radio-word" :style="{ color: checkStatus ? '#2699fb' : '#999' }">
+                {{ p.showMyHead }}
+              </view>
             </label>
           </radio-group>
         </view>
@@ -26,12 +28,12 @@
         <view class="pay-title">{{ p.payHave }}{{ payType }}</view>
         <view class="money--box">
           ￥
-          <view class="money-num">{{ money }}，余额{{ balance }}</view>
+          <view class="money-num">{{ money }}</view>
         </view>
         <view class="pay-type-chi" v-for="(item, index) in payTypeData" :key="index">
           <view class="pay-type-l">
             <qui-icon :name="item.icon" :color="item.color" class="icon-pay"></qui-icon>
-            <view class="pay-type-word">{{ item.name }}{{ item.value }}</view>
+            <view class="pay-type-word">{{ item.name }}</view>
           </view>
           <view class="pay-type-r">
             <view
@@ -45,8 +47,7 @@
               class="check-tip"
               v-else-if="descriptionShow && item.name === p.walletPay && money < balance"
             >
-              {{ p.walletBalance }}，￥{{ balance }}{{ descriptionShow
-              }}{{ item.name === p.walletPay }}，，，，{{ descriptionShow || !walletStatus }}
+              {{ p.walletBalance }}，￥{{ balance }}
             </view>
             <view
               class="check-tip"
@@ -54,8 +55,8 @@
             >
               {{ p.walletBalanceNo }}，{{ balance }}{{ p.rmb }}
             </view>
-            <radio-group @change="radioChange" class="pay-radio-box">
-              <label class="pay-radio">
+            <radio-group @change="radioChange" class="pay-type-radio-box">
+              <label class="pay-type-radio">
                 <view>
                   <radio
                     :value="item.value"
@@ -89,7 +90,7 @@
         <view class="pay-tip">
           ￥{{ money }}{{ p.rmb }}{{ p.payTo }}，{{ toName }}{{ p.ofAccount }}
         </view>
-        <qui-button size="large" type="primary" class="paySureBtn" @click="paysureShow">
+        <qui-button size="max" type="primary" class="paySureBtn" @click="paysureShow">
           {{ p.surePay }}￥{{ money }}{{ p.rmb }}
         </qui-button>
         <view class="popup-share-content-space"></view>
@@ -99,6 +100,7 @@
     </uni-popup>
     <qui-pay-keyboard
       :show="show"
+      :money="money"
       :password="payPassword"
       @onInput="onInput"
       @close="close"
@@ -119,7 +121,7 @@ export default {
     // 设置钱包支付密码路由
     payUrl: {
       type: String,
-      default: '',
+      default: '/pages/modify/paypwd',
     },
     // 钱包描述是否显示
     descriptionShow: {
@@ -128,13 +130,13 @@ export default {
     },
     // 支付金额
     money: {
-      type: String,
-      default: '0.00',
+      type: [String, Number],
+      default: '0',
     },
     // 余额
     balance: {
-      type: String,
-      default: '0.00',
+      type: [String, Number],
+      default: '0',
     },
     // 支付类型
     payType: {
@@ -173,7 +175,7 @@ export default {
       trantision: false,
       show: false, // 输入支付密码是否显示
       payImmediatelyClick: false,
-      checkVal: '0',
+      checkVal: '1',
       checkStatus: false, // 单选框状态
       current: 0,
     };
@@ -198,6 +200,11 @@ export default {
     ...mapMutations({
       setRouter: 'pay/SET_ROUTER',
     }),
+    // 是否选中显示头像
+    radioMyHead(evt) {
+      console.log(evt.target.value);
+      this.$emit('radioMyHead', evt.target.value);
+    },
     // 父组件触发是否显示弹框
     payClickShow() {
       console.log('这是父组件触发的事件');
@@ -214,7 +221,7 @@ export default {
       }
       this.$emit('paysureShow', this.current);
     },
-    // 单选框change事件
+    // 支付方式单选框change事件
     radioChange(evt) {
       console.log('这是change事件');
       console.log(typeof evt.target.value, '这是value的类型');
@@ -326,6 +333,10 @@ export default {
     transform: scale(0.7);
   }
 }
+.radio-word {
+  font-size: 24rpx;
+  line-height: 48rpx;
+}
 .popup-pay-type {
   display: flex;
   flex-direction: column;
@@ -364,9 +375,20 @@ export default {
   align-items: center;
 }
 .icon-pay {
+  display: flex;
   margin-right: 20rpx;
   font-size: 60rpx;
   line-height: 80rpx;
+}
+// .pay-type-radio-box {
+// }
+.pay-type-radio {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  .radio {
+    transform: scale(0.7);
+  }
 }
 // .icon-wxPay {
 //   color: #09bb07;
@@ -411,6 +433,13 @@ export default {
 }
 .paySureBtn {
   width: 100%;
+  border-radius: 0;
+  /deep/ .qui-button--button[type='primary'] {
+    border-radius: 0;
+  }
+}
+/deep/ .qui-button--button {
+  width: 670rpx;
   border-radius: 0;
 }
 </style>

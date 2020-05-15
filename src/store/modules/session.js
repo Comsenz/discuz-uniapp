@@ -1,6 +1,6 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
 import { http } from '@/api/api-request';
-import { utils } from 'jsonapi-vuex';
+import { utils } from '@/library/jsonapi-vuex/index';
 import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN, SET_AUTH } from '@/store/types/session';
 
 const state = {
@@ -30,6 +30,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       uni.login({
         success: res => {
+          console.log(res);
           if (res.errMsg === 'login:ok') {
             const { code } = res;
             uni.getUserInfo({
@@ -57,12 +58,14 @@ const actions = {
                 });
               },
               fail: error => {
+                console.log(error);
                 reject(error);
               },
             });
           }
         },
         fail: error => {
+          console.log(error);
           reject(error);
         },
       });

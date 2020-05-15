@@ -1,5 +1,5 @@
 <template>
-  <view class="profile">
+  <qui-page class="profile">
     <view class="profile-info">
       <view class="profile-info__box">
         <view class="profile-info__box__detail">
@@ -14,8 +14,8 @@
             :brief="userInfo.groupsName"
             :border="false"
           >
-            <view v-if="userId != '1'">
-              <view class="profile-info__box__detail-operate">
+            <view v-if="userId != currentLoginId">
+              <view class="profile-info__box__detail-operate" @tap="chat">
                 <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
                 <text>私信</text>
               </view>
@@ -64,11 +64,11 @@
         </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -96,7 +96,7 @@ export default {
         { title: '点赞', brief: '65' },
       ],
       userId: '',
-      pageType: '', // 个人主页还是他人主页
+      currentLoginId: uni.getStorageSync('user_id'),
       current: 0,
       dialogId: 0, // 会话id
     };
@@ -110,12 +110,11 @@ export default {
   },
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
-    const { userId, current, type } = params;
+    const { userId, current } = params;
     // 我的用户id从缓存拿
-    this.userId = userId || 1;
-    this.pageType = type;
+    this.userId = userId || this.currentLoginId;
     this.current = current || 0;
-    this.getUserInfo(userId || 1);
+    this.getUserInfo(userId || this.currentLoginId);
   },
   methods: {
     onClickItem(e) {
@@ -150,7 +149,7 @@ export default {
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
           this.getUserInfo(this.userId);
-          if (this.$refs.followers) this.$refs.followers.getFollowerList();
+          if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
         })
         .catch(err => {
           console.log('verify', err);
@@ -158,9 +157,9 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
         this.getUserInfo(this.userId);
-        if (this.$refs.followers) this.$refs.followers.getFollowerList();
+        if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
       });
     },
     changeFollow(e) {
@@ -178,7 +177,6 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log('创建会话接口的响应：', res);
           this.dialogId = res._jv.json.data.id;
           this.jumpChatPage();
         })
@@ -188,7 +186,6 @@ export default {
     },
     // 跳转到聊天页面（传入用户名和会话id）
     jumpChatPage() {
-      console.log(`跳转到聊天页面并传入用户名：${this.userInfo.username}和会话：idthis.dialogId`);
       uni.navigateTo({
         url: `../notice/msglist?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
       });
@@ -197,9 +194,9 @@ export default {
 };
 </script>
 <style lang="scss">
-page {
-  background-color: #f9fafc;
-}
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .profile {
   .qui-icon {
     margin-right: 14rpx;
@@ -207,8 +204,8 @@ page {
 }
 .profile-info {
   padding: 40rpx;
-  font-size: 28rpx;
-  background: #fff;
+  font-size: $fg-f28;
+  background: --color(--qui-BG-2);
 }
 .profile-info__box {
   display: flex;
@@ -221,7 +218,7 @@ page {
   position: relative;
   width: 100%;
   padding-left: 100rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   box-sizing: border-box;
 }
 .profile-info__box__detail /deep/ .cell-item__body {
@@ -231,7 +228,7 @@ page {
 .profile-info__box__detail-operate {
   display: inline-block;
   margin-left: 42rpx;
-  color: #333;
+  color: --color(--qui-FC-333);
 }
 .profile-info__box__detail-avatar {
   position: absolute;
@@ -239,13 +236,12 @@ page {
   left: 0;
   width: 80rpx;
   height: 80rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
 .profile-tabs__content {
   padding-top: 30rpx;
 }
-.qui-tabs {
-  background: #fff;
+/deep/ .qui-tabs {
+  background: --color(--qui-BG-2);
 }
 </style>

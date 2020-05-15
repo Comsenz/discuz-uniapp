@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -7,12 +7,12 @@
           type="text"
           class="search-box__content-input"
           placeholder-class="input-placeholder"
-          placeholder="搜索关键字"
+          :placeholder="i18n.t('search.searchkeywords')"
           @input="searchInput"
           :value="searchValue"
         />
-        <view class="search-box__content-delete" @click="clearSearch" v-if="searchValue">
-          <qui-icon class="icon-close" name="icon-close" size="34" color="#fff"></qui-icon>
+        <view @tap="clearSearch" v-if="searchValue" class="search-box__content-delete">
+          <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
     </view>
@@ -43,19 +43,18 @@
       </view>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {
     return {
       searchValue: '',
       loadingType: 'more',
-      data: {},
-      totalData: 0, // 总数
+      data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
@@ -67,7 +66,7 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = {};
+      this.data = [];
       this.getUserList(e.target.value);
     },
     // 获取用户列表
@@ -82,10 +81,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     clearSearch() {
@@ -103,12 +103,11 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getUserList(this.searchValue);
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getUserList();
     },
     refresh() {
       this.pageNum = 1;
@@ -123,33 +122,31 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 .search-item {
-  padding-left: 40rpx;
-  margin-bottom: 30rpx;
-  border-bottom: 2rpx solid #ededed;
+  background-color: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 // 用户
-/deep/ .cell-item {
-  padding-right: 40rpx;
-}
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: 28rpx;
-  color: #aaa;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-AAA);
 }
 .search-item__users__avatar {
   position: absolute;
   top: 16rpx;
-  left: 0;
+  left: 40rpx;
   width: 70rpx;
   height: 70rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
 .search-item__users {
   position: relative;
-  padding-left: 90rpx;
+  padding-left: 130rpx;
+}
+.search .search-box {
+  background: --color(--qui-BG-2);
 }
 .scroll-y {
-  max-height: calc(100vh - 115rpx);
+  max-height: calc(100vh - 110rpx);
 }
 </style>

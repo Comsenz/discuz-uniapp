@@ -1,9 +1,9 @@
 <template>
-  <view class="orderlist">
+  <qui-page class="orderlist">
     <view class="orderlist-wrap">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
-          <text>状态：{{ filterSelected.label }}</text>
+          <text>{{ `${i18n.t('profile.status')} :${filterSelected.label}` }}</text>
           <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
           <qui-filter-modal
             v-model="show"
@@ -25,7 +25,7 @@
       fields="month"
       class="date-picker"
     >
-      <view class="uni-input">{{ `时间：${date}` }}</view>
+      <view class="uni-input">{{ `${i18n.t('profile.time')} ：${date}` }}</view>
     </picker>
     <view class="orderlist-items">
       <scroll-view
@@ -40,46 +40,53 @@
           v-for="(item, index) in dataList"
           :key="index"
           :title="type[item.type - 1]"
-          :brief="item.created_at"
+          :brief="timeHandle(item.created_at)"
           :addon="item.amount"
-          :brief-right="item.status == 1 ? '已付款' : '待付款'"
+          :brief-right="item.status == 1 ? i18n.t('profile.paid') : i18n.t('profile.tobepaid')"
         ></qui-cell-item>
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
+import { time2MinuteOrHour } from '@/utils/time';
 
 export default {
   components: {
     //
   },
-  data: () => {
+  data() {
     const date = new Date();
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    let month = date.getMonth() + 1;
+    month = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${month}`;
     return {
       loadingType: 'more',
       flag: true, // 滚动节流
-      totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,
+      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
       dataList: [],
-      filterSelected: { label: '全部', value: '' }, // 筛选类型
-      type: ['注册', '打赏', '付费主题', '付费用户组'],
+      filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
+      type: [
+        this.i18n.t('profile.register'),
+        this.i18n.t('profile.reward'),
+        this.i18n.t('profile.paytheme'),
+        this.i18n.t('profile.paygroup'),
+      ],
       filterList: [
         {
-          title: '类型',
+          title: this.i18n.t('profile.type'),
           data: [
-            { label: '所有', value: '', selected: true },
-            { label: '待付款', value: 0 },
-            { label: '已付款', value: 1 },
+            { label: this.i18n.t('profile.all'), value: '', selected: true },
+            { label: this.i18n.t('profile.tobepaid'), value: 0 },
+            { label: this.i18n.t('profile.paid'), value: 1 },
           ],
         },
       ],
@@ -100,6 +107,10 @@ export default {
       this.show = true;
       this.$refs.filter.setData();
     },
+    // 处理时间
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
+    },
     // 日期选中
     bindDateChange(e) {
       this.date = e.target.value;
@@ -111,7 +122,7 @@ export default {
       // status 0待付款，1已付款
       const params = {
         include: ['user', 'thread', 'thread.firstPost'],
-        'filter[user]': 1,
+        'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[start_time]': `${this.date}-01-00-00-00 `,
@@ -127,20 +138,20 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['orders', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.dataList = { ...this.dataList, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.dataList = [...this.dataList, ...res];
         });
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getList();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getList();
     },
     refresh() {
       this.pageNum = 1;
@@ -151,13 +162,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
-page {
-  background-color: #f9fafc;
-}
+<style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .orderlist {
-  border-bottom: 2rpx solid #ededed;
-  .cell-item {
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /deep/ .cell-item {
     padding-right: 40rpx;
   }
   /deep/ .cell-item__body {
@@ -177,19 +188,19 @@ page {
     font-weight: bold;
     color: #189a00;
   }
-  .icon-screen {
+  /deep/ .icon-screen {
     margin-left: 20rpx;
   }
 }
 .orderlist-items {
   padding-left: 40rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
 }
 .orderlist-wrap {
   padding-top: 40rpx;
   padding-left: 40rpx;
   margin-bottom: 30rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
   border-bottom: 2rpx solid #ededed;
 }
 .orderlist-wrap /deep/ .cell-item__body {
@@ -206,7 +217,7 @@ page {
 .date-picker .uni-input {
   width: 100%;
   height: 78rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   line-height: 78rpx;
 }
 .scroll-y {

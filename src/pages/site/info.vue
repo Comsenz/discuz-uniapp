@@ -1,21 +1,22 @@
 <template>
-  <view class="site">
+  <qui-page class="site">
     <qui-header
-      :head-img="forums.set_site.site_logo"
+      head-img="https://dq.comsenz-service.com/static/images/logo.png"
       :theme="theme"
       :theme-num="forums.other.count_users"
       :post="post"
       :post-num="forums.other.count_threads"
       :share="share"
-      :share-btn="shareBtn"
+      iconcolor="#333"
       @click="open"
     ></qui-header>
-    <uni-popup ref="popup" type="bottom">
+    <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick">
+              <view class="popup-share-box" @click="shareHead(index)">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
             </view>
@@ -23,23 +24,29 @@
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
-        title="圈子介绍"
+        :title="i18n.t('site.circleintroduction')"
         :addon="forums.set_site.site_introduction"
       ></qui-cell-item>
-      <qui-cell-item title="创建时间" :addon="forums.set_site.site_install"></qui-cell-item>
       <qui-cell-item
-        title="付费金额"
+        :title="i18n.t('site.creationtime')"
+        :addon="forums.set_site.site_install"
+      ></qui-cell-item>
+      <qui-cell-item
+        :title="i18n.t('discuzq.post.paymentAmount')"
         :addon="'¥' + (forums.set_site.site_price || 0)"
         class="site-item__pay"
       ></qui-cell-item>
-      <qui-cell-item title="有效期" :addon="forums.set_site.site_expire + '天'"></qui-cell-item>
-      <qui-cell-item title="圈主" slot-right>
+      <qui-cell-item
+        :title="i18n.t('site.periodvalidity')"
+        :addon="forums.set_site.site_expire + i18n.t('site.day')"
+      ></qui-cell-item>
+      <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
@@ -53,7 +60,12 @@
           <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <qui-cell-item title="成员" slot-right :border="false" class="cell-item--auto">
+      <qui-cell-item
+        :title="i18n.t('home.theme')"
+        slot-right
+        :border="false"
+        class="cell-item--auto"
+      >
         <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
           <image
             class="site-item__person-avatar"
@@ -66,18 +78,33 @@
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
-        <text>只需最后一步，立即加入</text>
+        <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
         <text class="site-invite__detail__bold">DISCUZQ</text>
-        <text>圈子</text>
+        <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
-          立即付费，¥{{ forums.set_site.site_price || 0 }}/有效期
-          {{ forums.set_site.site_expire }} 天
+          {{ i18n.t('site.paynow') }}，¥{{ forums.set_site.site_price || 0 }}/{{
+            i18n.t('site.periodvalidity')
+          }}
+          {{ forums.set_site.site_expire + i18n.t('site.day') }}
         </qui-button>
       </view>
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :money="forums.set_site.site_price"
+          :wallet-status="true"
+          balance="10"
+          :pay-type-data="payTypeData"
+          @radioMyHead="radioMyHead"
+          @onInput="onInput"
+          @paysureShow="paysureShow"
+        ></qui-pay>
+      </view>
+      <qui-toast ref="toast"></qui-toast>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -85,21 +112,30 @@ export default {
   components: {
     //
   },
-  data: () => {
+  data() {
     return {
-      theme: '成员',
-      post: '内容',
-      share: '分享',
-      shareBtn: 'icon-share1',
+      theme: this.i18n.t('home.theme'),
+      post: this.i18n.t('home.homecontent'),
+      share: this.i18n.t('home.share'),
+      payShowStatus: true, // 是否显示支付
+      isAnonymous: '0',
+      payTypeData: [
+        {
+          name: '微信支付',
+          icon: 'icon-wxPay',
+          color: '#09bb07',
+          value: '0',
+        },
+      ],
       bottomData: [
         {
-          text: '生成海报',
-          icon: 'icon-word',
+          text: this.i18n.t('home.generatePoster'),
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
-          text: '微信分享',
-          icon: 'icon-img',
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ],
@@ -116,17 +152,101 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
-      this.$refs.popup.open();
+      this.$refs.popupHead.open();
+    },
+    // 头部分享海报
+    shareHead(index) {
+      if (index === 0) {
+        this.$store.dispatch('session/setAuth', this.$refs.auth);
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+          return;
+        }
+        uni.navigateTo({
+          url: '/pages/share/site',
+        });
+      }
+    },
+    // 支付是否显示用户头像
+    radioMyHead(val) {
+      this.isAnonymous = val;
+    },
+    // 输入密码完成时
+    onInput(val) {
+      this.value = val;
+      this.creatOrder(this.forums.set_site.site_price, '1', val);
+    },
+    // 支付方式选择完成点击确定时
+    paysureShow() {
+      this.creatOrder(this.forums.set_site.site_price, 1, this.value);
+    },
+    // 创建订单
+    creatOrder(amount, type, value) {
+      const params = {
+        _jv: {
+          type: 'orders',
+        },
+        type,
+        amount,
+        is_anonymous: this.isAnonymous,
+      };
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.orderSn = res.order_sn;
+          // 微信支付
+          this.orderPay(13, value, this.orderSn);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 订单支付
+    orderPay(type, value, orderSn) {
+      let params = {};
+      params = {
+        _jv: {
+          type: `trade/pay/order/${orderSn}`,
+        },
+        payment_type: type,
+      };
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.wechatPay(
+            res.wechat_js.timeStamp,
+            res.wechat_js.nonceStr,
+            res.wechat_js.package,
+            res.wechat_js.signType,
+            res.wechat_js.paySign,
+          );
+        })
+        .catch(err => {
+          this.$refs.toast.show({ message: err });
+        });
+    },
+    wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
+      // 小程序支付。
+      uni.requestPayment({
+        provider: 'wxpay',
+        timeStamp,
+        nonceStr,
+        package: packageVal,
+        signType,
+        paySign,
+        success() {
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        },
+        fail(err) {
+          console.log(`fail:${JSON.stringify(err)}`);
+        },
+      });
     },
     // 取消按钮
     cancel() {
-      this.$refs.popup.close();
-    },
-    // 首页底部发帖点击事件跳转
-    handleClick() {
-      uni.navigateTo({
-        url: '/pages/topic/post',
-      });
+      this.$refs.popupHead.close();
     },
     // 点击头像到个人主页
     toProfile(userId) {
@@ -136,9 +256,7 @@ export default {
     },
     // 跳支付页面
     submit() {
-      // uni.navigateTo({
-      //   url: '/pages/topic/post',
-      // });
+      this.$refs.payShow.payClickShow();
     },
   },
 };
@@ -146,32 +264,38 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-page {
-  background-color: #f9fafc;
-}
 .site {
   /deep/ .header {
     height: auto;
     margin-bottom: 30rpx;
-    background: #fff;
-    border-bottom: 2rpx solid #ededed;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .header /deep/ .circleDet {
-    color: #777;
+    color: --color(--qui-FC-777);
   }
   .header .logo {
+    height: 100rpx;
     padding-top: 99rpx;
+  }
+  /deep/ .icon-share1 {
+    color: --color(--qui-FC-333);
+  }
+  /deep/ .cell-item__body__content-title {
+    width: 112rpx;
+    margin-right: 40rpx;
+    color: --color(--qui-FC-777);
   }
 }
 .header .circleDet .circleDet-num,
 .header .circleDet .circleDet-share {
-  color: #333;
+  color: --color(--qui-FC-333);
 }
 //下面部分样式
 .site-item {
   padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .site .cell-item {
   padding-right: 40rpx;
@@ -180,11 +304,6 @@ page {
   height: auto;
   padding: 35rpx 0;
   align-items: flex-start;
-}
-.cell-item__body__content-title {
-  width: 112rpx;
-  margin-right: 40rpx;
-  color: #777;
 }
 .site-invite__detail__bold {
   margin: 0 5rpx;
@@ -199,7 +318,7 @@ page {
   text-align: center;
 }
 .site-item__pay .cell-item__body__right-text {
-  color: #fa5151;
+  color: --color(--qui-RED);
 }
 .site-item__person-avatar,
 .site-item__owner-avatar {
@@ -223,5 +342,25 @@ page {
 }
 .cell-item--left .cell-item__body__right {
   text-align: left;
+}
+.popup-pay {
+  .pay-title {
+    display: none;
+  }
+  .payBtn {
+    margin-top: 40rpx;
+  }
+}
+.popup-pay-type {
+  padding-top: 40rpx;
+  .pay-title {
+    display: none;
+  }
+  .pay-tip {
+    display: none;
+  }
+  .pay-type-chi {
+    margin-bottom: 40rpx;
+  }
 }
 </style>

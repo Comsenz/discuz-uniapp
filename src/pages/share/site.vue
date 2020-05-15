@@ -2,7 +2,13 @@
   <view class="painter">
     <view class="canvas-box">
       <view class="cent">
-        <image :src="imagePath" @tap="previewImage" :show-menu-by-longpress="true"></image>
+        <image
+          :src="imagePath"
+          mode="widthFix"
+          @tap="previewImage"
+          :show-menu-by-longpress="true"
+          class="cent-image"
+        ></image>
       </view>
       <view class="box-img">
         <painter
@@ -41,7 +47,7 @@ export default {
       sliteback: '', // 站点背景图
       themnumber: '', // 成员人数
       contdata: '', // 内容大小
-      introd: '', // 圈子介绍
+      introd: '', // 站点介绍
       weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
     };
   },
@@ -93,7 +99,7 @@ export default {
         sliteback: this.sliteback, // 站点背景图
         themnumber: this.themnumber, // 成员人数
         contdata: this.contdata, // 内容大小
-        introd: this.introd, // 圈子介绍
+        introd: this.introd, // 站点介绍
         userweixincode: this.weixincode, // 微信二维码
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
         recomment: this.i18n.t('share.recomment'),
@@ -158,23 +164,22 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
+
 .cent {
   width: 700rpx;
-  height: 1082rpx;
+  height: 1000rpx;
   margin: 46rpx 25rpx 0;
   background: --color(--qui-FC-FFF);
   border-radius: 10px;
-  box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
-  image {
+  .cent-image {
     width: 100%;
-    height: 100%;
+    box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   }
 }
 .icon-unfold {
   display: block;
 }
 .btn-box {
-  margin: 151rpx 0 40rpx 40rpx;
+  margin: 50rpx 0 40rpx 40rpx;
 }
 </style>

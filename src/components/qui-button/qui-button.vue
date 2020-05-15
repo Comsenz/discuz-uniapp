@@ -128,6 +128,7 @@ $txt-color-white: #fff;
 $font-size-sm: 24rpx;
 $font-size-md: 26rpx;
 $font-size-lg: 28rpx;
+$font-size-post: 40rpx;
 
 .qui-button--button {
   display: inline-flex;
@@ -152,6 +153,12 @@ $font-size-lg: 28rpx;
     width: 670rpx;
     height: 90rpx;
     font-size: $font-size-lg;
+    border-radius: 0;
+  }
+  &[size='max'] {
+    width: 100%;
+    height: 90rpx;
+    font-size: $font-size-lg;
   }
   &[size='medium'] {
     width: 510rpx;
@@ -162,6 +169,11 @@ $font-size-lg: 28rpx;
     height: 70rpx;
     padding: 18rpx 20rpx;
     font-size: $font-size-sm;
+  }
+  &[size='post'] {
+    width: 200rpx;
+    height: 100rpx;
+    font-size: $font-size-post;
   }
   &[plain][type='primary'] {
     color: $primary-bg-color;

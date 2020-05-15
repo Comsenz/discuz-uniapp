@@ -239,7 +239,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": obj.siteintroduction,
+                "text": "站点介绍",
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",

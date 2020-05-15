@@ -38,7 +38,7 @@
             @click="selectChoice"
           ></qui-drop-down>
         </view>
-        <image src="@/assets/essence.png" class="essence"></image>
+        <image src="@/static/essence.png" class="essence"></image>
       </view>
     </view>
 
@@ -47,7 +47,7 @@
         class="themeItem__content__con"
         :style="{ position: payStatus ? 'static' : 'relative' }"
       >
-        <view class="theme__content_title" v-if="themeType == 1 && themeTitle">
+        <view class="theme__content__title" v-if="themeType == 1 && themeTitle">
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
@@ -57,10 +57,28 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !payStatus && coverImage != null"
         >
-          <image class="themeItem__content__coverimg" :src="coverImage" alt></image>
+          <image class="themeItem__content__coverimg" mode="widthFix" :src="coverImage" alt></image>
         </view>
-
-        <view v-if="Object.keys(imagesList).length == 1">
+        <video
+          v-if="themeType == 2 && payStatus"
+          preload="auto"
+          playsinline
+          webkit-playsinline
+          x5-playsinline
+          controls="true"
+          page-gesture="true"
+          show-fullscreen-btn="true"
+          show-play-btn="true"
+          show-mute-btn="true"
+          auto-pause-if-open-native="true"
+          vslide-gesture="true"
+          auto-pause-if-navigate="true"
+          enable-play-gesture="true"
+          object-fit="fill"
+          :src="mediaUrl"
+          style="width: 100%;"
+        ></video>
+        <!--<view v-if="Object.keys(imagesList).length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -102,10 +120,10 @@
               v-if="Object.keys(imagesList).length % 3 != 0"
             ></image>
           </view>
-        </view>
+        </view>-->
         <view v-if="!payStatus" class="themeItem__content__con__cover"></view>
         <view v-if="!payStatus" class="themeItem__content__con__surtip">
-          {{ p.surplus }}{{ partVal }}%{{ p.contentHide }}
+          {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
 
@@ -130,22 +148,28 @@ export default {
       default: '0',
     },
     // 主题类型
+    // themeType: {
+    //   validator: value => {
+    //     // 0 文字  1 帖子  2 视频 3 图片
+    //     return ['0', '1', '2', '3'].indexOf(value) !== -1;
+    //   },
+    //   default: '1',
+    // },、
+    // 主题类型 0 文字  1 帖子  2 视频 3 图片
     themeType: {
-      validator: value => {
-        // 0 文字  1 帖子  2 视频 3 图片
-        return ['0', '1', '2', '3'].indexOf(value) !== -1;
-      },
-      default: '1',
+      type: Number,
+      default: 0,
     },
     // 是否支付
     payStatus: {
       type: Boolean,
       default: true,
     },
-    partVal: {
-      type: [Number, String],
-      default: 0,
-    },
+    // 需要支付查看的内容所占的比例
+    // partVal: {
+    //   type: [Number, String],
+    //   default: 0,
+    // },
     userId: {
       type: [Number, String],
       default: '',
@@ -207,7 +231,11 @@ export default {
     },
     coverImage: {
       type: String,
-      default: 'https://discuz.chat/static/images/noavatar.gif',
+      default: '',
+    },
+    mediaUrl: {
+      type: String,
+      default: '',
     },
   },
   data: () => {
@@ -283,9 +311,9 @@ export default {
 
       &__top {
         height: 37rpx;
+        margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         line-height: 37rpx;
       }
 
@@ -300,7 +328,7 @@ export default {
       }
 
       &__time {
-        font-size: 24rpx;
+        font-size: $fg-f24;
         font-weight: 400;
         line-height: 31rpx;
         color: rgba(170, 170, 170, 1);
@@ -314,13 +342,19 @@ export default {
 
       .essence {
         display: inline-block;
-        width: 49rpx;
-        height: 60rpx;
+        width: 31rpx;
+        height: 41rpx;
       }
     }
   }
 
   &__content {
+    &__title {
+      word-break: break-all;
+    }
+    &__coverimg {
+      width: 100%;
+    }
     &__con {
       &__cover {
         position: absolute;
@@ -348,7 +382,12 @@ export default {
       font-size: $fg-f28;
       font-weight: 400;
       line-height: 45rpx;
-      color: rgba(51, 51, 51, 1);
+      color: --color(--qui-FC-333);
+      img {
+        display: inline-block;
+        width: 28rpx;
+        height: 28rpx;
+      }
     }
 
     &__imgone {
@@ -439,7 +478,7 @@ export default {
     &__themeType2 {
       &__item {
         font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
@@ -460,15 +499,11 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+    font-size: $fg-f28;
     .icon-management {
       margin-right: 7rpx;
-      font-size: 26rpx;
+      font-size: $fg-f26;
     }
   }
-}
-.qq-emotion {
-  display: inline-block;
-  width: 28rpx;
-  height: 28rpx;
 }
 </style>

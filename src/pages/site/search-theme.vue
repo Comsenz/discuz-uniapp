@@ -1,5 +1,5 @@
 <template>
-  <view class="search">
+  <qui-page class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
@@ -7,12 +7,12 @@
           type="text"
           class="search-box__content-input"
           placeholder-class="input-placeholder"
-          placeholder="搜索关键字"
+          :placeholder="i18n.t('search.searchkeywords')"
           @input="searchInput"
           :value="searchValue"
         />
-        <view class="search-box__content-delete" @click="clearSearch" v-if="searchValue">
-          <qui-icon class="icon-close" name="icon-close" size="34" color="#fff"></qui-icon>
+        <view @tap="clearSearch" v-if="searchValue" class="search-box__content-delete">
+          <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
     </view>
@@ -40,19 +40,18 @@
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { status } from 'jsonapi-vuex';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {
     return {
       searchValue: '',
       loadingType: 'more',
-      data: {},
-      totalData: 0, // 总数
+      data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
@@ -64,7 +63,7 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = {};
+      this.data = [];
       this.getThemeList(e.target.value);
     },
     // 获取主题列表
@@ -79,10 +78,11 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
-          this.totalData = res._jv.json.meta.total;
-          delete res._jv;
-          this.loadingType = Object.keys(res).length === this.pageSize ? 'more' : 'nomore';
-          this.data = { ...this.data, ...res };
+          if (res._jv) {
+            delete res._jv;
+          }
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          this.data = [...this.data, ...res];
         });
     },
     clearSearch() {
@@ -97,17 +97,16 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      if (this.pageNum * this.pageSize < this.totalData) {
-        this.pageNum += 1;
-        this.getThemeList();
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.getThemeList('');
     },
     refresh() {
       this.pageNum = 1;
       this.data = [];
-      this.getThemeList();
+      this.getThemeList(this.searchValue);
     },
   },
 };
@@ -116,16 +115,16 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
+
 .search-item {
-  padding-left: 40rpx;
   margin-bottom: 30rpx;
-  border-bottom: 2rpx solid #ededed;
+  background-color: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 // 主题
 .search /deep/ .themeCount {
-  padding-right: 40rpx;
-  border-bottom: 2rpx solid #ededed;
+  padding-left: 40rpx;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-shadow: none;
 }
 /deep/ .themeCount .themeItem {
@@ -136,7 +135,15 @@ export default {
 /deep/ .themeCount .themeItem__footer {
   display: none;
 }
+.search-item__theme {
+  position: relative;
+  padding-left: 130rpx;
+}
+.search .search-box {
+  padding: 30rpx 40rpx 0;
+  background: --color(--qui-BG-2);
+}
 .scroll-y {
-  max-height: calc(100vh - 115rpx);
+  max-height: calc(100vh - 110rpx);
 }
 </style>

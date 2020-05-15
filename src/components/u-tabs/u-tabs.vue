@@ -14,7 +14,7 @@
           :id="'u-tab-item-' + index"
           v-for="(item, index) in list"
           :key="index"
-          @tap="clickTab(index)"
+          @tap="clickTab({ index: index, id: item._jv.id })"
           :style="[tabItemStyle(+index)]"
         >
           {{ item.name }}
@@ -60,9 +60,9 @@ export default {
     },
     // 需循环的标签列表
     list: {
-      type: Object,
+      type: Array,
       default() {
-        return {};
+        return [];
       },
     },
     // 当前活动tab的索引
@@ -90,11 +90,6 @@ export default {
       type: String,
       default: '#1878F3',
     },
-    // 未选中项的颜色
-    inactiveColor: {
-      type: String,
-      default: '#777777',
-    },
     // 移动bar的高度
     barHeight: {
       type: [String, Number],
@@ -108,7 +103,7 @@ export default {
     // 导航栏的背景颜色
     bgColor: {
       type: String,
-      default: '#ffffff',
+      default: 'transparent',
     },
     // 读取传入的数组对象的属性
     name: {
@@ -185,8 +180,6 @@ export default {
           style.color = this.activeColor;
           // 给选中的tab item添加外部自定义的样式
           style = Object.assign(style, this.activeItemStyle);
-        } else {
-          style.color = this.inactiveColor;
         }
         return style;
       };
@@ -227,16 +220,16 @@ export default {
       this.getTabRect();
     },
     // 点击某一个tab菜单
-    clickTab(index) {
+    clickTab(dataInfo) {
       // 发送事件给父组件
-      this.$emit('change', index);
+      this.$emit('change', dataInfo);
     },
     // 查询tab的布局信息
     getTabRect() {
       // 创建节点查询
       const query = uni.createSelectorQuery().in(this);
       // 历遍所有tab，这里是执行了查询，最终使用exec()会一次性返回查询的数组结果
-      for (let i = 0; i < Object.keys(this.list).length; i++) {
+      for (let i = 0; i < this.list.length; i++) {
         // 只要size和rect两个参数
         query.select(`#u-tab-item-${i}`).fields({
           size: true,
@@ -276,6 +269,8 @@ export default {
 
 <style lang="scss">
 /* stylelint-disable */
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 view,
 scroll-view {
   box-sizing: border-box;
@@ -318,7 +313,9 @@ $screen: 80rpx;
   position: relative;
   display: inline-block;
   text-align: center;
+  color: --color(--qui-FC-777);
   transition-property: background-color, color;
+  transition: $switch-theme-time;
 }
 
 .u-tab-bar {

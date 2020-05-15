@@ -4,7 +4,10 @@
       <navigationBar :navigation-bar-style="navigationBarStyle" :show-back="false"></navigationBar>
     </view> -->
     <view class="logoBox">
-      <image class="logo" :src="headImg"></image>
+      <image
+        class="logo"
+        :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
+      ></image>
     </view>
     <view class="circleDet">
       <text>
@@ -17,7 +20,7 @@
       </text>
 
       <view class="circleDet-share" @click="open">
-        <qui-icon class="qui-icon" name="icon-share1" size="26" color="#fff"></qui-icon>
+        <qui-icon class="qui-icon" name="icon-share1" size="26" :color="iconcolor"></qui-icon>
         {{ t.share }}
       </view>
     </view>
@@ -47,6 +50,10 @@ export default {
       type: String,
       default: '',
     },
+    iconcolor: {
+      type: String,
+      default: '#fff',
+    },
     postNum: {
       type: Number,
       default: 0,
@@ -62,9 +69,9 @@ export default {
   },
   data: () => {
     return {
-      navigationBarStyle: {
-        iconText: '类目', // 导航栏文字
-      },
+      // navigationBarStyle: {
+      //   iconText: '类目', // 导航栏文字
+      // },
     };
   },
   computed: {
@@ -91,7 +98,7 @@ export default {
   background: #1878f3;
   .logo {
     display: block;
-    width: 400rpx;
+    // width: 400rpx;
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
@@ -109,17 +116,19 @@ export default {
     padding-bottom: 47rpx;
     padding-left: 20rpx;
     line-height: 37rpx;
-    color: --color(--qui-FC-AAA);
+    color: --color(--qui-FC-FFF);
     text-align: center;
+    opacity: 0.5;
     // border-bottom: 1rpx solid #ccc;
     text {
-      padding: 0 15rpx;
+      // padding: 0 15rpx;
       font-size: $fg-f26;
       line-height: 37rpx;
       text-align: center;
     }
   }
   .circleDet-num {
+    padding-left: 15rpx;
     color: --color(--qui-BG-2);
   }
   .circleDet-share {

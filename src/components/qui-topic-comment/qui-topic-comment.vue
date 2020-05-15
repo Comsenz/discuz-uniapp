@@ -27,10 +27,10 @@
         <view class="themeItem__header__r">
           <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
           <view v-else @click="commentLikeClick" class="comment-like">
-            <qui-icon v-if="!!isLiked" name="icon-liked" class="like"></qui-icon>
+            <qui-icon v-if="isLiked" name="icon-liked" class="like"></qui-icon>
             <qui-icon v-else name="icon-like" class="like" size="30"></qui-icon>
             <view class="comment-like-count">
-              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}{{ !!isLiked }}
+              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}
             </view>
           </view>
         </view>
@@ -334,6 +334,7 @@ export default {
       font-weight: 400;
       line-height: 45rpx;
       color: rgba(51, 51, 51, 1);
+      word-break: break-all;
     }
 
     &__imgone {

@@ -1,81 +1,94 @@
 <template>
-  <qui-page :class="'home ' + scrolled">
-    <qui-header
-      :head-img="forums.set_site.site_logo"
-      :background-head-full-img="forums.set_site.site_background_image"
-      :theme="theme"
-      :theme-num="forums.other.count_users"
-      :post="post"
-      :post-num="forums.other.count_threads"
-      :share="share"
-      :share-btn="shareBtn"
-      :color="color"
-      @click="open"
-    ></qui-header>
-    <uni-popup ref="popupHead" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
-              </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
-    </uni-popup>
-    <view class="nav">
-      <view class="nav__box">
-        <qui-icon
-          class="nav__box__icon"
-          name="icon-screen"
-          size="28"
-          color="#1878F3"
-          @tap="showFilter"
-        ></qui-icon>
-      </view>
-      <qui-filter-modal
-        v-model="show"
-        @confirm="confirm"
-        @changeSelected="changeSelected"
-        @change="changeType"
-        :confirm-text="i18n.t('home.confirmText')"
-        :if-need-confirm="ifNeedConfirm"
-        :filter-list="filterList"
-        :show-search="showSearch"
-        ref="filter"
-        top="100"
-      ></qui-filter-modal>
-      <u-tabs
-        class="scroll-tab"
-        :list="categories"
-        :current="categoryId"
-        @change="toggleTab"
-        is-scroll="isScroll"
-        active-color="#1878F3"
-        :style="isTop == 1 ? 'position:fixed;background:#FFFFFF;z-index:9;top:0' : ''"
-      ></u-tabs>
-    </view>
+  <qui-page :class="'home ' + scrolled" :footer="true">
+    <uni-nav-bar
+      v-if="navShow"
+      :title="forums.set_site.site_name"
+      fixed="true"
+      status-bar
+    ></uni-nav-bar>
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
       class="scroll-y"
       @scroll="scroll"
+      @scrolltolower="pullDown"
     >
+      <qui-header
+        :head-img="forums.set_site.site_logo"
+        :background-head-full-img="forums.set_site.site_background_image"
+        :theme="theme"
+        :theme-num="forums.other.count_users"
+        :post="post"
+        :post-num="forums.other.count_threads"
+        :share="share"
+        :share-btn="shareBtn"
+        :color="color"
+        @click="open"
+      ></qui-header>
+      <uni-popup ref="popupHead" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content">
+            <button class="popup-share-button" open-type="share"></button>
+            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box" @click="shareHead(index)">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="36"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+                <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+        </view>
+      </uni-popup>
+      <view class="nav">
+        <view class="nav__box">
+          <qui-icon
+            class="nav__box__icon"
+            name="icon-screen"
+            size="28"
+            color="#1878F3"
+            @tap="showFilter"
+          ></qui-icon>
+        </view>
+        <qui-filter-modal
+          v-model="show"
+          @confirm="confirm"
+          @changeSelected="changeSelected"
+          @change="changeType"
+          :confirm-text="i18n.t('home.confirmText')"
+          :if-need-confirm="ifNeedConfirm"
+          :filter-list="filterList"
+          :show-search="showSearch"
+          ref="filter"
+          top="100"
+        ></qui-filter-modal>
+        <u-tabs
+          class="scroll-tab"
+          :list="categories"
+          :current="currentIndex"
+          @change="toggleTab"
+          is-scroll="isScroll"
+          active-color="#1878F3"
+          :style="isTop == 1 ? 'position:fixed;z-index:99999999999;top:0' : ''"
+        ></u-tabs>
+      </view>
+
       <view class="sticky">
-        <view class="sticky__isSticky" v-for="(item, index) in sticky" :key="index">
+        <view
+          class="sticky__isSticky"
+          v-for="(item, index) in sticky"
+          :key="index"
+          @click="stickyClick(item._jv.id)"
+        >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
             {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
@@ -94,13 +107,15 @@
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :thread-type="item.type"
+          :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
           :theme-comment="item.firstPost.replyCount"
           :tags="item.category.name"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          @click="handleClickShare(index)"
+          @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
               item.firstPost._jv.id,
@@ -118,43 +133,19 @@
     </scroll-view>
     <!-- </view> -->
 
-    <qui-footer
+    <!-- <qui-footer
       @click="footerOpen"
       :tabs="tabs"
       :post-img="postImg"
       :red-circle="redCircle"
-    ></qui-footer>
-
-    <uni-popup ref="popup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="handleClick(item)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
-              </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
-    </uni-popup>
-
+    ></qui-footer> -->
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
           <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent()">
+              <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
@@ -171,37 +162,41 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </qui-page>
 </template>
 
 <script>
-/* eslint-disable */
-import { status } from 'jsonapi-vuex';
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {
     return {
       scrolled: 'affix',
       categoryId: 0, // 主题分类 ID
-      threadType: null, // 主题类型 0普通 1长文 2视频 3图片（null 不筛选）
+      currentIndex: 0,
+      threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
       show: false,
       ifNeedConfirm: true,
       top: 500,
       filterSelected: { label: this.i18n.t('topic.whole'), value: '' }, // 筛选类型
-      loadingType: 'more', //上拉加载状态
+      loadingType: 'more', // 上拉加载状态
       hasMore: false, // 是否有更多
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
       redCircle: false, // 消息通知红点
+      navShow: false, // 是否显示头部
+      nowThreadId: '', // 当前点击主题ID
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
-          data: [{ label: this.i18n.t('home.all'), value: '0', selected: true }],
+          data: [],
         },
         {
           title: this.i18n.t('home.filterType'),
@@ -223,10 +218,10 @@ export default {
         },
       ],
       isTop: 0,
-      threads: {},
+      threads: [],
       sticky: {}, // 置顶帖子内容
       shareBtn: 'icon-share1',
-      tabIndex: 0 /* 选中标签栏的序列,默认显示第一个 */,
+      tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       isResetList: false, // 是否重置列表
       bottomData: [],
       tabs: [
@@ -234,7 +229,7 @@ export default {
           tabsName: this.i18n.t('home.tabsCircle'),
           tabsIcon: 'icon-home',
           id: 1,
-          // url: '../site/partner-invite?code=8WHvJZfZXBh2U6OoyAYmDDwLvNoYAKiD',
+          url: '../home/index',
         },
         {
           tabsName: this.i18n.t('home.tabsNews'),
@@ -250,28 +245,11 @@ export default {
         },
       ],
       postImg: '../assets.publish.svg',
-      threadsStatusId: 0
+      threadsStatusId: 0,
+      categories: [],
     };
   },
   computed: {
-    categories() {
-      const tmp = Object.assign(
-        {
-          0: {
-            _jv: {
-              id: 0,
-            },
-            name: this.i18n.t('home.all'),
-          },
-        },
-      this.$store.getters['jv/get']('categories'),
-      );
-      console.log(tmp);
-      return tmp;
-    },
-    // categories() {
-    // return this.$store.getters['jv/get']('categories');
-    // },
     forums() {
       return this.$store.getters['jv/get']('forums/1');
     },
@@ -288,28 +266,18 @@ export default {
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
-    // if (res.from === 'button') {// 来自页面内分享按钮
-    //   console.log(res.target)
-    // }
-    return {
-      title: '自定义分享标题',
-      path: '/pages/test/test?id=123'
-    }
-  },
- onShareAppMessage(res) {
-    if (res.from === 'button') {// 来自页面内分享按钮
-      console.log(res.target)
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      console.log(res.target);
     }
     return {
-      title: '自定义分享标题',
-      path: '/pages/test/test?id=123'
-    }
+      title: this.forums.set_site.site_name,
+      // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
+      path: '/pages/test/test?id=123',
+    };
   },
   mounted() {
-    const query = uni
-      .createSelectorQuery()
-      .in(this)
-      // .select('.scroll-tab');
+    const query = uni.createSelectorQuery().in(this);
     query
       .select('.scroll-tab')
       .boundingClientRect(data => {
@@ -320,9 +288,12 @@ export default {
       .exec();
   },
   onPageScroll(e) {
-
-    // console.log(e);
-
+    console.log(e, '页面滑动');
+    if (e.scrollTop > 100) {
+      this.navShow = true;
+    } else {
+      this.navShow = false;
+    }
     if (e.scrollTop > this.myScroll) {
       this.isTop = 1;
     } else {
@@ -338,23 +309,23 @@ export default {
       }
     },
     // 切换选项卡
-    toggleTab(index) {
-      // console.log(index)
+    toggleTab(dataInfo) {
       // 重置列表
       this.isResetList = true;
-      this.categoryId = index;
+      this.categoryId = dataInfo.id;
+      this.currentIndex = dataInfo.index;
       this.loadThreadsSticky();
       this.loadThreads();
     },
     // 点击置顶跳转到详情页
     stickyClick(id) {
       uni.navigateTo({
-        url:`/pages/topic/index?id=${id}`
-      })
+        url: `/pages/topic/index?id=${id}`,
+      });
     },
     // 点击筛选下拉框里的按钮
     changeSelected(item, dataIndex, filterIndex) {
-      // console.log(item, dataIndex, filterIndex);
+      console.log(item, dataIndex, filterIndex);
     },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
@@ -364,7 +335,6 @@ export default {
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
-      console.log(id);
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -395,25 +365,33 @@ export default {
     },
     // 头部分享海报
     shareHead(index) {
-      if(index === 0){
-      uni.navigateTo({
-        url: '/pages/share/site',
-      });  
+      if (index === 0) {
+        this.$store.dispatch('session/setAuth', this.$refs.auth);
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+          return;
+        }
+        uni.navigateTo({
+          url: '/pages/share/site',
+        });
       }
     },
     // 取消按钮
     cancel() {
-      this.$refs.popup.close();
       this.$refs.popupContent.close();
       this.$refs.popupHead.close();
+    },
+    // 点赞调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
     // 筛选选中确定按钮
     confirm(e) {
       // 重置列表
       this.isResetList = true;
       const filterSelected = { ...e };
-
       this.categoryId = filterSelected[0].data.value;
+      this.currentIndex = filterSelected[0].data.index;
       this.threadType = filterSelected[1].data.value;
 
       switch (filterSelected[2].data.value) {
@@ -444,64 +422,11 @@ export default {
     showFilter() {
       this.show = true;
       this.$refs.filter.setData();
+      this.navShow = true;
     },
-    // 首页底部发帖按钮弹窗
-    footerOpen() {
-      console.log(this.forums, '9999');
-      if (
-        !this.forums.other.can_create_thread &&
-        !this.forums.other.can_create_thread_long &&
-        !this.forums.other.can_create_thread_video &&
-        !this.forums.other.can_create_thread_image
-      ) {
-        console.log('此处弹出提示无权限发帖');
-        return;
-      }
-      this.bottomData = [];
-      if (this.forums.other.can_create_thread) {
-        this.bottomData.push({
-          text: this.i18n.t('home.word'),
-          icon: 'icon-word',
-          name: 'text',
-          type: 0,
-        });
-      }
-      if (this.forums.other.can_create_thread_long) {
-        this.bottomData.push({
-          text: this.i18n.t('home.invitation'),
-          icon: 'icon-post',
-          name: 'post',
-          type: 1,
-        });
-      }
-      if (this.forums.other.can_create_thread_video) {
-        this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
-        });
-      }
-      if (this.forums.other.can_create_thread_image) {
-        this.bottomData.push({
-          text: this.i18n.t('home.picture'),
-          icon: 'icon-img',
-          name: 'image',
-          type: 3,
-        });
-      }
-      this.$refs.popup.open();
-    },
-    // 首页底部发帖点击事件跳转
-    handleClick(item) {
-      console.log(item.type);
-      uni.navigateTo({
-        url: `/pages/topic/post?type=${item.type}`,
-      });
-    },
-
     // 首页内容部分分享按钮弹窗
-    handleClickShare() {
+    handleClickShare(id) {
+      this.nowThreadId = id;
       this.$refs.popupContent.open();
       this.bottomData = [
         {
@@ -516,34 +441,39 @@ export default {
         },
       ];
     },
-   // 内容部分分享海报,跳到分享海报页面 
+    // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
-      if(index === 0){
-      uni.navigateTo({
-        url: '/pages/share/site',
-      });
+      // console.log(this.nowThreadId);
+      if (index === 0) {
+        uni.navigateTo({
+          url: `/pages/share/site?id=${this.nowThreadId}`,
+        });
       }
-      
     },
     // 首页导航栏分类列表数据
     loadCategories() {
       this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
-        console.log(data, '------');
-        delete data._jv;
+        const resData = [...data] || [];
+        this.categories = [
+          {
+            _jv: {
+              id: 0,
+            },
+            name: this.i18n.t('home.all'),
+          },
+          ...resData,
+        ];
         const categoryFilterList = [
           {
-            label: '所有',
+            label: this.i18n.t('home.all'),
             value: 0,
-            // selected: 0 === this.categoryId ? true : false,
             selected: true,
           },
         ];
-
-        Object.getOwnPropertyNames(data).forEach(function(key) {
+        resData.forEach(item => {
           categoryFilterList.push({
-            label: data[key].name,
-            value: data[key]._jv.id,
-            // selected: data[key].id === this.categoryId ? true : false,
+            label: item.name,
+            value: item._jv.id,
             selected: false,
           });
         });
@@ -553,25 +483,22 @@ export default {
     },
     // 首页置顶列表数据
     loadThreadsSticky() {
-      this.sticky = {};
       const params = {
         'filter[isSticky]': 'yes',
+        'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
         include: ['firstPost'],
       };
       this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
-        delete data._jv;
-        this.sticky = data;
+        this.sticky = [...data];
       });
     },
     // 首页内容部分数据请求
     loadThreads() {
-      // if (this.isResetList) {
-      //   this.threads = {};
-      // }
       const params = {
         'filter[isSticky]': 'no',
+        'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
         'filter[type]': this.threadType,
@@ -592,7 +519,9 @@ export default {
       }
       params['filter[fromUserId]'] = this.threadFollow;
 
-      const threadsAction = status.run(() => this.$store.dispatch('jv/get', ['threads', { params }]));
+      const threadsAction = status.run(() =>
+        this.$store.dispatch('jv/get', ['threads', { params }]),
+      );
 
       this.threadsStatusId = threadsAction._statusID;
 
@@ -600,45 +529,46 @@ export default {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
-        this.threads = Object.assign({}, this.threads, res);;
-      })
-
+        if (this.isResetList) {
+          this.threads = res;
+        } else {
+          this.threads = [...this.threads, ...res];
+        }
+        // this.threads = res;
+        // this.data = [...this.data, ...res];
+      });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked, likeCount) {
+    handleIsGreat(id, canLike, isLiked) {
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+      }
       if (!canLike) {
         console.log('没有点赞权限');
       }
       const params = {
         _jv: {
           type: 'posts',
-          id: id,
+          id,
         },
-        isLiked: isLiked === true ? false : true,
+        isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(data => {
-        // if (isLiked) {
-        //   data.likeCount = data.likeCount - 1;
-        // } else {
-        //   data.likeCount = data.likeCount + 1;
-        // }
-      });
+      this.$store.dispatch('jv/patch', params);
     },
-
     // 调用 未读通知数 的接口
     getUserInfo() {
-      console.log(this.tabs[1].idRemind,'111')
       const id = 1;
       const params = {
         include: ['groups'],
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
       this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
-        if(res.unreadNotifications === 0){
-         this.redCircle = false;
-        }else{
+        if (res.unreadNotifications === 0) {
+          this.redCircle = false;
+        } else {
           this.redCircle = true;
-        };
+        }
         console.log('未读通知', res.unreadNotifications);
       });
     },
@@ -692,17 +622,16 @@ export default {
 }
 
 .sticky {
-  margin-top: 30rpx;
+  margin: 30rpx auto;
 }
 
 .sticky__isSticky {
   display: flex;
   width: 710rpx;
   height: 80rpx;
-  margin: 30rpx auto;
+  margin: 10rpx auto;
   font-size: $fg-f26;
   line-height: 80rpx;
-  color: --color(--qui-FC-777);
   background: --color(--qui-BG-2);
   border-radius: 6rpx;
   box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
@@ -713,13 +642,16 @@ export default {
     margin-top: 27rpx;
     margin-left: 20rpx;
     line-height: 35rpx;
+    color: --color(--qui-FC-777);
     text-align: center;
     background: --color(--qui-BOR-ED);
     border-radius: 6rpx;
+    transition: $switch-theme-time;
   }
   &__count {
     margin-left: 21rpx;
     overflow: hidden;
+    color: #777;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -744,7 +676,6 @@ export default {
 .active .scroll-tab-line {
   color: --color(--qui-BG-HIGH-LIGHT);
   border-bottom: 4rpx solid --color(--qui-BG-HIGH-LIGHT);
-  // border-radius: 20rpx;
 }
 .uni-tab-bar .active {
   font-size: $fg-f28;
@@ -754,14 +685,15 @@ export default {
 .main {
   margin-bottom: 130rpx;
 }
+
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  // max-height: calc(100vh - 475rpx);
+  max-height: calc(100vh - 100rpx);
 }
+
 .nav .filter-modal {
   position: absolute;
   z-index: 1000;
   width: 100%;
 }
-
 </style>

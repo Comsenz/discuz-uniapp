@@ -4,13 +4,14 @@
     :class="{ show: showValue }"
     @tap.stop="cancel"
     :style="{
+      position: posiType,
       top: top + 'rpx',
     }"
   >
     <view class="filter-modal__content" v-if="showValue" @tap.stop>
       <view class="filter-modal__content__search" v-if="showSearch">
-        <qui-icon class="icon-search" name="icon-search" size="26" color="#777777"></qui-icon>
-        搜索
+        <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
+        {{ i18n.t('search.search') }}
       </view>
       <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
         <view class="filter-modal__content__item-title">{{ item.title }}</view>
@@ -56,6 +57,10 @@ export default {
       default: () => {
         return [];
       },
+    },
+    posiType: {
+      type: String,
+      default: 'fixed',
     },
     top: {
       type: Number,
@@ -108,7 +113,7 @@ export default {
         moduleData.forEach((v, index) => {
           moduleData[index].selected = index === filterIndex;
         });
-        this.selectedData[dataIndex].data = item;
+        this.selectedData[dataIndex].data = { ...item, index: filterIndex };
         // 不需要确定按钮
         if (!this.ifNeedConfirm) {
           this.confirm();
@@ -151,12 +156,13 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .filter-modal {
-  position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 999;
   display: flex;
+  width: 100%;
+  min-height: 600rpx;
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
   visibility: hidden;
@@ -184,7 +190,7 @@ export default {
   width: 100%;
   padding: 30rpx;
   overflow: hidden;
-  background: #fff;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
   animation: fadeZoom 0.15s linear;
 }
@@ -205,9 +211,9 @@ export default {
   height: 90rpx;
   margin-top: 40rpx;
   line-height: 90rpx;
-  color: #fff;
+  color: --color(--qui-BG-2);
   text-align: center;
-  background: rgba(24, 120, 243, 1);
+  background: --color(--qui-BG-BTN);
   border-radius: 5rpx;
 }
 .filter-modal__content__item {
@@ -227,13 +233,13 @@ export default {
   margin-bottom: 20rpx;
   font-size: 26rpx;
   line-height: 70rpx;
-  color: #777;
-  background: #f9fafc;
-  border: 1rpx solid #cdf;
+  color: --color(--qui-FC-777);
+  background: --color(--qui-BG-BTN-GRAY);
+  border: 2rpx solid --color(--qui-BG-ED);
   border-radius: 10rpx;
   &.active {
-    color: #fff;
-    background: #1878f3;
+    color: --color(--qui-BG-2);
+    background: --color(--qui-BG-HIGH-LIGHT);
     border: 0;
   }
 }

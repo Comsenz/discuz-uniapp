@@ -1,12 +1,14 @@
 <template>
   <view :class="cssClass">
     <view v-if="mask" class="loading-mask" :style="{ 'z-index': maskZindex }"></view>
-    <view class="qui-loading--circular">
-      <qui-icon :name="name" :color="color" :size="size"></qui-icon>
+    <view class="qui-loading-content" :style="{ 'z-index': maskZindex + 1 }">
+      <view class="qui-loading--circular">
+        <qui-icon :name="name" :color="color" :size="size"></qui-icon>
+      </view>
+      <text class="qui-loading__text" :style="{ color: textColor, 'font-size': textSize + 'px' }">
+        <slot />
+      </text>
     </view>
-    <text class="qui-loading__text" :style="{ color: textColor, 'font-size': textSize + 'px' }">
-      <slot />
-    </text>
   </view>
 </template>
 
@@ -15,7 +17,7 @@ export default {
   props: {
     color: {
       type: String,
-      default: '#ccc',
+      default: '#fff',
     },
     maskZindex: {
       type: [String, Number],
@@ -27,7 +29,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'icon-loading',
+      default: 'icon-loading1',
     },
     size: {
       type: [Number, String],
@@ -63,6 +65,17 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.2);
+}
+.qui-loading-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 .qui-loading {
   position: relative;

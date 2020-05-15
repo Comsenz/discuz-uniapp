@@ -1,91 +1,83 @@
 <template>
-  <view class="notice-box">
-    <!-- 导航栏 -->
-    <uni-nav-bar left-icon="back" status-bar fixed @clickLeft="clickNavBarLeft">
-      <view slot="left" class="left-text">{{ title }}</view>
-    </uni-nav-bar>
-    <!-- 通知类型列表 -->
-    <view class="notice-box__list">
-      <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
-        <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
-          <uni-icons class="red-circle" type="smallcircle-filled" color="red" size="7"></uni-icons>
-        </qui-cell-item>
+  <qui-page :footer="true">
+    <view class="notice-box">
+      <!-- 通知类型列表 -->
+      <view class="notice-box__list">
+        <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
+          <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
+            <qui-icon v-if="item.unReadNum > 0" name="icon-circle" color="red" size="14"></qui-icon>
+          </qui-cell-item>
+        </view>
       </view>
-    </view>
-    <!-- 会话列表 -->
-    <view class="dialog-box__main">
-      <scroll-view
-        scroll-y="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        show-icon="true"
-        class="scroll-y"
-      >
-        <view
-          class="dialog-box"
-          v-for="dialog of allDialogList"
-          :key="dialog._jv.id"
-          @click="clickDialog(dialog)"
+      <!-- 会话列表 -->
+      <view class="dialog-box__main" v-if="allDialogList && allDialogList.length > 0">
+        <scroll-view
+          scroll-y="true"
+          @scrolltolower="pullDown"
+          show-scrollbar="false"
+          show-icon="true"
+          class="scroll-y"
         >
-          <view class="dialog-box__header">
-            <view class="dialog-box__header__info">
-              <image
-                class="dialog-box__header__info__user-avatar"
-                :src="
-                  dialog.recipient.avatarUrl
-                    ? dialog.recipient.avatarUrl
-                    : 'https://discuz.chat/static/images/noavatar.gif'
-                "
-              ></image>
-              <view>
-                <view class="dialog-box__header__info__box">
-                  <text class="dialog-box__header__info__username">
-                    {{ dialog.recipient.username }}
-                  </text>
-                  <text
-                    class="dialog-box__header__info__groupname"
-                    v-for="item in dialog.recipient.groups"
-                    :key="item.name"
-                  >
-                    <text v-if="item.name">（{{ item.name }}）</text>
-                  </text>
+          <view
+            class="dialog-box"
+            v-for="dialog of allDialogList"
+            :key="dialog._jv.id"
+            @click="clickDialog(dialog)"
+          >
+            <view class="dialog-box__header">
+              <view class="dialog-box__header__info">
+                <image
+                  class="dialog-box__header__info__user-avatar"
+                  :src="
+                    dialog.avatar ? dialog.avatar : 'https://discuz.chat/static/images/noavatar.gif'
+                  "
+                ></image>
+                <view>
+                  <view class="dialog-box__header__info__box">
+                    <text class="dialog-box__header__info__username">
+                      {{ dialog.name }}
+                    </text>
+                    <text
+                      class="dialog-box__header__info__groupname"
+                      v-for="item in dialog.groups"
+                      :key="item.name"
+                    >
+                      <text v-if="item.name">（{{ item.name }}）</text>
+                    </text>
+                  </view>
+                  <view class="dialog-box__header__info__time">{{ dialog.time }}</view>
                 </view>
-                <view class="dialog-box__header__info__time">{{ dialog.time }}</view>
+              </view>
+              <view class="dialog-box__header__r">
+                <qui-icon
+                  name="icon-circle red-circle"
+                  v-if="dialog.recipient_read_at === null"
+                  color="red"
+                  size="14"
+                ></qui-icon>
+                <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
               </view>
             </view>
-            <view class="dialog-box__header__r">
-              <uni-icons
-                class="red-circle"
-                v-if="dialog.recipient_read_at === null"
-                type="smallcircle-filled"
-                size="7"
-                color="red"
-              ></uni-icons>
-              <uni-icons class="uni-icon-wrapper" type="arrowright" :size="20" color="#bbb" />
-            </view>
+            <view class="dialog-box__con" v-html="dialog.dialogMessage.message_text_html"></view>
           </view>
-          <view class="dialog-box__con">{{ dialog.dialogMessage.message_text }}</view>
-        </view>
-        <uni-load-more :status="loadingType"></uni-load-more>
-      </scroll-view>
+          <uni-load-more :status="loadingType"></uni-load-more>
+        </scroll-view>
+      </view>
     </view>
-    <qui-footer @click="footerOpen" :tabs="tabs" :post-img="postImg"></qui-footer>
-  </view>
+  </qui-page>
 </template>
 
 <script>
-import { uniNavBar, uniIcons, uniLoadMore } from '@dcloudio/uni-ui';
+import { uniLoadMore } from '@dcloudio/uni-ui';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    uniNavBar,
-    uniIcons,
     uniLoadMore,
   },
   data() {
     return {
-      title: '消息',
+      currentLoginId: uni.getStorageSync('user_id'), // 当前用户id
       list: [
         { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
@@ -94,26 +86,6 @@ export default {
         { id: 5, title: '系统通知', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more',
-      tabs: [
-        {
-          tabsName: '圈子',
-          tabsIcon: 'icon-home',
-          id: 1,
-        },
-        {
-          tabsName: '消息',
-          tabsIcon: 'icon-message',
-          id: 2,
-          url: '../notice/index',
-        },
-        {
-          tabsName: '我',
-          tabsIcon: 'icon-mine',
-          id: 3,
-          url: '../my/index',
-        },
-      ],
-      postImg: '../assets.publish.svg',
     };
   },
   onLoad() {
@@ -123,7 +95,6 @@ export default {
   computed: {
     // 获取会话列表
     allDialogList() {
-      // const id = 2;
       const list = [];
       const dialogList = this.$store.getters['jv/get']('dialog');
       console.log('会话列表接口的响应：', dialogList);
@@ -131,23 +102,24 @@ export default {
       if (dialogList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           const value = dialogList[keys[i]];
-          dialogList[keys[i]].time = time2MorningOrAfternoon(dialogList[keys[i]].created_at);
-          // if (value && value.recipient && value.recipient.id === id) {
+          value.time = time2MorningOrAfternoon(value.created_at);
+          if (value && value.recipient && value.recipient.id.toString() === this.currentLoginId) {
+            value.name = value.sender.username;
+            value.avatar = value.sender.avatarUrl;
+            value.groupname = value.sender.groups;
+          } else if (value && value.sender && value.sender.id.toString() === this.currentLoginId) {
+            value.name = value.recipient.username;
+            value.avatar = value.recipient.avatarUrl;
+            value.groupname = value.recipient.groups;
+          }
           list.push(value);
-          // }
         }
       }
-      console.log('处理之后的数据', list);
+      console.log('会话列表：', list);
       return list;
     },
   },
   methods: {
-    // 回到上一个页面
-    clickNavBarLeft() {
-      uni.navigateBack({
-        delta: 1,
-      });
-    },
     // 调用 会话列表 的接口
     getDialogList() {
       const params = {
@@ -158,12 +130,11 @@ export default {
 
     // 调用 未读通知数 的接口
     getUnreadNotificationNum() {
-      const id = 1;
       const params = {
         include: ['groups'],
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
+      this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, { params }]).then(res => {
         console.log('未读通知', res);
         if (res.typeUnreadNotifications) {
           this.list[0].unReadNum = res.typeUnreadNotifications.related;
@@ -187,7 +158,7 @@ export default {
     clickDialog(dialogInfo) {
       console.log('会话信息', dialogInfo);
       uni.navigateTo({
-        url: `../notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.recipient.username}`,
+        url: `../notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
       });
     },
 
@@ -203,7 +174,6 @@ export default {
 
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
 
 .notice-box {
   width: 100%;
@@ -215,10 +185,6 @@ export default {
     min-width: 250rpx;
     font-weight: bold;
     color: #343434;
-  }
-
-  .red-circle {
-    display: flex;
   }
 
   .notice-box__list {
@@ -258,7 +224,7 @@ export default {
       &__box {
         width: 100%;
         align-items: center;
-        margin: 20rpx 0 10rpx;
+        margin: 20rpx 0rpx 10rpx;
       }
 
       &__username {
@@ -285,7 +251,11 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-right: 30rpx;
+      margin-right: 40rpx;
+
+      .red-circle {
+        margin-right: 20rpx;
+      }
     }
   }
 
