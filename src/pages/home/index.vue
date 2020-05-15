@@ -271,6 +271,7 @@ export default {
     }
     return {
       title: this.forums.set_site.site_name,
+      // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
       path: '/pages/test/test?id=123',
     };
   },
