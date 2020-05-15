@@ -1,7 +1,35 @@
 <template>
-  <view class="manage-users-box">
+  <view class="manage-users">
     <!-- 搜索成员 -->
-    <view class="">
+    <view class="manage-users-search">
+      <view class="search">
+        <view class="search-box">
+          <view class="search-box__content">
+            <qui-icon
+              class="icon-content-search"
+              name="icon-search"
+              size="30"
+              color="#bbb"
+            ></qui-icon>
+            <input
+              type="text"
+              class="search-box__content-input"
+              placeholder-class="input-placeholder"
+              placeholder="搜索成员"
+              @input="searchInput"
+              :value="searchText"
+            />
+            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+              <qui-icon name="icon-close" size="34" color="#fff"></qui-icon>
+            </view>
+          </view>
+          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
+            <text>取消</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- <view class="">
       <qui-search
         class="mSearch-input-box"
         :mode="2"
@@ -12,61 +40,96 @@
         @confirm="doSearch(false)"
         v-model="keyword"
       ></qui-search>
-    </view>
+    </view> -->
     <!-- 搜索内容列表 -->
-    <view class="search-keyword">
+    <!-- <view class="search-keyword">
       <scroll-view class="keyword-list-box" v-show="isShowKeywordList" scroll-y>
         <block v-for="(row, index) in keywordList" :key="index">
           <view class="keyword-entry" hover-class="keyword-entry-tap">
             <view class="keyword-text" @tap.stop="doSearch(keywordList[index].keyword)">
               <rich-text :nodes="row.htmlStr"></rich-text>
-            </view>
-            <!-- <view class="keyword-img" @tap.stop="setKeyword(keywordList[index].keyword)">
+            </view> -->
+    <!-- <view class="keyword-img" @tap.stop="setKeyword(keywordList[index].keyword)">
               <image src="/static/HM-search/back.png"></image>
             </view> -->
-          </view>
+    <!-- </view>
         </block>
       </scroll-view>
-    </view>
+    </view> -->
 
     <!-- 成员列表 -->
-    <view v-for="user in userList" :key="user.id">
-      <qui-avatar-cell
-        center
-        right-color="#aaa"
-        :mark="user.id"
-        :title="user.username"
-        :value="user.groupname"
-        :icon="
-          user.avatarUrl === '' ? 'https://discuz.chat/static/images/noavatar.gif' : user.avatarUrl
-        "
-      ></qui-avatar-cell>
+    <view class="manage-users-wrap">
+      <view v-if="userList && Object.keys(userList).length > 0">
+        <view v-for="user in userList" :key="user.id">
+          <qui-avatar-cell
+            center
+            right-color="#aaa"
+            :mark="user.id"
+            :title="user.username"
+            :value="user.groups[Object.keys(user.groups || {})[0]].name"
+            :icon="
+              user.avatarUrl === ''
+                ? 'https://discuz.chat/static/images/noavatar.gif'
+                : user.avatarUrl
+            "
+          ></qui-avatar-cell>
+        </view>
+      </view>
+      <qui-no-data tips="暂无内容" v-else></qui-no-data>
     </view>
   </view>
 </template>
 
 <script>
-import quiSearch from '@/components/qui-search';
+// import quiSearch from '@/components/qui-search';
 
 export default {
   components: {
-    quiSearch,
+    // quiSearch,
   },
 
   data() {
     return {
-      userList: [
-        { id: 1, username: '白展堂', groupname: '圈主', avatarUrl: '' },
-        { id: 2, username: '莫小贝', groupname: '合伙人', avatarUrl: '' },
-        { id: 3, username: '郭芙蓉', groupname: '好友', avatarUrl: '' },
-      ],
-      keyword: '',
-      keywordList: [],
-      isShowKeywordList: false,
+      searchText: '', // 输入的用户名
     };
   },
 
+  onLoad() {
+    this.searchUser();
+  },
+
+  computed: {
+    userList() {
+      const list = this.$store.getters['jv/get']('users');
+      console.log('list', list);
+      return list;
+    },
+  },
+
   methods: {
+    searchInput(e) {
+      this.searchText = e.target.value;
+      this.searchUser();
+    },
+
+    clearSearch() {
+      this.searchText = '';
+    },
+
+    // 调用 搜索 接口
+    searchUser() {
+      const params = {
+        'filter[username]': this.searchText,
+      };
+      if (this.searchText === '') {
+        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+        this.$store.dispatch('jv/get', ['users', {}]);
+      } else {
+        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+        this.$store.dispatch('jv/get', ['users', { params }]);
+      }
+    },
+
     // 执行搜索
     doSearch(keyword) {
       this.keyword = keyword === false ? this.keyword : keyword;
@@ -118,18 +181,28 @@ export default {
 </script>
 
 <style lang="scss" scope>
-page {
-  background-color: #fff;
-}
-.manage-items {
-  padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
+.manage-users {
+  min-height: 100vh;
+  background-color: #f9fafc;
 
-  .cell-item {
-    padding-right: 40rpx;
+  &-search {
+    .search {
+      position: fixed;
+      top: 0rpx;
+      z-index: 99;
+      width: 100%;
+    }
+
+    .search-box {
+      background-color: #fff;
+    }
+  }
+
+  &-wrap {
+    margin-top: 130rpx;
   }
 }
+
 .search-keyword {
   width: 100%;
   background-color: rgb(242, 242, 242);
