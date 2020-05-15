@@ -177,10 +177,10 @@ export default {
     margin-left: 20rpx;
   }
 }
-/deep/ .cell-item--wrap.fail .cell-item__body__right-text {
+/deep/ .cell-item.fail .cell-item__body__right-text {
   color: --color(--qui-RED);
 }
-/deep/ .cell-item--wrap.success .cell-item__body__right-text {
+/deep/ .cell-item.success .cell-item__body__right-text {
   color: #189a00;
 }
 .walletlist-items {
@@ -209,7 +209,7 @@ export default {
 .date-picker .uni-input {
   width: 100%;
   height: 78rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   line-height: 78rpx;
 }
 .scroll-y {

@@ -281,6 +281,11 @@ export default {
   /deep/ .icon-share1 {
     color: --color(--qui-FC-333);
   }
+  /deep/ .cell-item__body__content-title {
+    width: 112rpx;
+    margin-right: 40rpx;
+    color: --color(--qui-FC-777);
+  }
 }
 .header .circleDet .circleDet-num,
 .header .circleDet .circleDet-share {
@@ -299,11 +304,6 @@ export default {
   height: auto;
   padding: 35rpx 0;
   align-items: flex-start;
-}
-.cell-item__body__content-title {
-  width: 112rpx;
-  margin-right: 40rpx;
-  color: --color(--qui-FC-777);
 }
 .site-invite__detail__bold {
   margin: 0 5rpx;

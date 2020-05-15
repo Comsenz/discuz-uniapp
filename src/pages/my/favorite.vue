@@ -55,7 +55,12 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent()">
-                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="36"
+                  color="#777777"
+                ></qui-icon>
               </view>
               <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
@@ -111,12 +116,10 @@ export default {
       this.$refs.popupContent.open();
     },
     // 内容部分分享海报,跳到分享海报页面
-    shareContent(index) {
-      if (index === 0) {
-        uni.navigateTo({
-          url: '/pages/share/site',
-        });
-      }
+    shareContent() {
+      uni.navigateTo({
+        url: '/pages/share/site',
+      });
     },
     // 取消按钮
     cancel() {
@@ -218,7 +221,7 @@ export default {
   padding-top: 40rpx;
   padding-left: 40rpx;
   margin-bottom: 30rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .favorite-head /deep/ .cell-item__body {

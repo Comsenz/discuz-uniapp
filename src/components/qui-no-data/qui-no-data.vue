@@ -23,10 +23,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .no-data {
   padding-bottom: 40rpx;
   font-size: 28rpx;
-  color: #aaa;
+  color: --color(--qui-FC-AAA);
   text-align: center;
 }
 .tips {
