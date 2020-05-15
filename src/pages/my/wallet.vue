@@ -1,12 +1,14 @@
 <template>
   <qui-page class="wallet-page">
     <view class="wallet">
-      <qui-cell-item
-        :title="i18n.t('profile.availableamount')"
-        arrow
-        :addon="`¥ ${dataInfo.available_amount || 0.0}`"
-        class="wallet-available"
-      ></qui-cell-item>
+      <navigator url="/pages/modify/withdrawals" hover-class="none">
+        <qui-cell-item
+          :title="i18n.t('profile.availableamount')"
+          arrow
+          :addon="`¥ ${dataInfo.available_amount || 0.0}`"
+          class="wallet-available"
+        ></qui-cell-item>
+      </navigator>
       <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.freezeamount')"
@@ -23,13 +25,15 @@
       <navigator url="./orderlist" hover-class="none">
         <qui-cell-item :title="i18n.t('profile.orderlist')" arrow></qui-cell-item>
       </navigator>
-      <qui-cell-item
-        v-if="hasPassword"
-        :title="i18n.t('profile.walletpassword')"
-        arrow
-        :border="false"
-      ></qui-cell-item>
-      <navigator :url="'../modify/paypwd?id=' + userId" hover-class="none">
+      <navigator :url="'/pages/modify/editpwd?id=' + userId" hover-class="none">
+        <qui-cell-item
+          v-if="hasPassword"
+          :title="i18n.t('profile.walletpassword')"
+          arrow
+          :border="false"
+        ></qui-cell-item>
+      </navigator>
+      <navigator :url="'/pages/modify/paypwd?id=' + userId" hover-class="none">
         <qui-cell-item
           v-if="!hasPassword"
           :title="i18n.t('profile.setpassword')"
