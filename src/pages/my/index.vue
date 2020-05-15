@@ -1,65 +1,72 @@
 <template>
-  <qui-page class="my">
-    <view class="my-info">
-      <view class="my-info__box">
-        <view class="my-info__box__detail">
-          <image
-            class="my-info__box__detail-avatar"
-            :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
-            alt="avatarUrl"
-          ></image>
-          <qui-cell-item
-            :title="userInfo.username || ''"
-            :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
-            :border="false"
-          ></qui-cell-item>
+  <qui-page class="my" :footer="true">
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <view class="my-info">
+        <view class="my-info__box">
+          <view class="my-info__box__detail">
+            <image
+              class="my-info__box__detail-avatar"
+              :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              alt="avatarUrl"
+            ></image>
+            <qui-cell-item
+              :title="userInfo.username || ''"
+              :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
+              :border="false"
+            ></qui-cell-item>
+          </view>
+        </view>
+        <view class="my-info__introduction" v-if="userInfo.signature">
+          {{ userInfo.signature }}
         </view>
       </view>
-      <view class="my-info__introduction" v-if="userInfo.signature">
-        {{ userInfo.signature }}
+      <view class="my-tabs">
+        <qui-tabs :values="items" @clickItem="onClickItem" :brief="true" :current="-1"></qui-tabs>
       </view>
-    </view>
-    <view class="my-tabs">
-      <qui-tabs :values="items" @clickItem="onClickItem" :brief="true" :current="-1"></qui-tabs>
-    </view>
-    <view>
-      <view class="my-items">
-        <navigator url="./profile" hover-class="none">
-          <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
-        </navigator>
-        <navigator url="./wallet" hover-class="none">
-          <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
-        </navigator>
-        <navigator url="./favorite" hover-class="none">
-          <qui-cell-item
-            :title="i18n.t('profile.myfavorite')"
-            arrow
-            :border="false"
-          ></qui-cell-item>
-        </navigator>
-      </view>
-      <view class="my-items">
-        <navigator url="/pages/site/index" hover-class="none">
-          <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
-        </navigator>
-        <navigator url="/pages/site/search" hover-class="none">
-          <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
-        </navigator>
-        <navigator url="/pages/manage/index" hover-class="none">
-          <qui-cell-item
-            :title="i18n.t('profile.circlemanagement')"
-            arrow
-            :border="false"
-          ></qui-cell-item>
-        </navigator>
-      </view>
+      <view>
+        <view class="my-items">
+          <navigator url="./profile" hover-class="none">
+            <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
+          </navigator>
+          <navigator url="./wallet" hover-class="none">
+            <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
+          </navigator>
+          <navigator url="./favorite" hover-class="none">
+            <qui-cell-item
+              :title="i18n.t('profile.myfavorite')"
+              arrow
+              :border="false"
+            ></qui-cell-item>
+          </navigator>
+        </view>
+        <view class="my-items">
+          <navigator url="/pages/site/index" hover-class="none">
+            <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
+          </navigator>
+          <navigator url="/pages/site/search" hover-class="none">
+            <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
+          </navigator>
+          <navigator url="/pages/manage/index" hover-class="none">
+            <qui-cell-item
+              :title="i18n.t('profile.circlemanagement')"
+              arrow
+              :border="false"
+            ></qui-cell-item>
+          </navigator>
+        </view>
 
-      <view class="my-items">
-        <qui-cell-item :title="i18n.t('profile.theme')" slot-right :border="false">
-          <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
-        </qui-cell-item>
+        <view class="my-items">
+          <qui-cell-item :title="i18n.t('profile.theme')" slot-right :border="false">
+            <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
+          </qui-cell-item>
+        </view>
       </view>
-    </view>
+    </scroll-view>
   </qui-page>
 </template>
 
@@ -135,6 +142,7 @@ export default {
 }
 .my-info {
   padding: 40rpx;
+  padding-top: 30rpx;
   font-size: $fg-f28;
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
@@ -177,5 +185,8 @@ export default {
 .my-tabs .qui-tabs__item--active .qui-tabs__item__title {
   color: --color(--qui-FC-AAA);
   transition: $switch-theme-time;
+}
+.scroll-y {
+  max-height: calc(100vh - 140rpx);
 }
 </style>

@@ -24,7 +24,7 @@
         :tags="item.category.name"
         :images-list="item.firstPost.images"
         :theme-essence="item.isEssence"
-        @click="handleClickShare"
+        @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
             item.firstPost._jv.id,
@@ -45,7 +45,7 @@
           <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent()">
+              <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
               <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
@@ -80,6 +80,7 @@ export default {
       flag: true, // 滚动节流
       pageSize: 20,
       pageNum: 1, // 当前页数
+      nowThreadId: '',
       currentLoginId: uni.getStorageSync('user_id'),
       bottomData: [
         {
@@ -99,14 +100,15 @@ export default {
     this.loadlikes();
   },
   methods: {
-    handleClickShare() {
+    handleClickShare(id) {
+      this.nowThreadId = id;
       this.$refs.popupContent.open();
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
       if (index === 0) {
         uni.navigateTo({
-          url: '/pages/share/site',
+          url: `/pages/share/topic?id=${this.nowThreadId}`,
         });
       }
     },
