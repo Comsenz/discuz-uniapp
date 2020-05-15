@@ -98,7 +98,7 @@ export default {
   background: #1878f3;
   .logo {
     display: block;
-    width: 400rpx;
+    // width: 400rpx;
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
@@ -116,17 +116,19 @@ export default {
     padding-bottom: 47rpx;
     padding-left: 20rpx;
     line-height: 37rpx;
-    color: --color(--qui-FC-AAA);
+    color: --color(--qui-FC-FFF);
     text-align: center;
+    opacity: 0.5;
     // border-bottom: 1rpx solid #ccc;
     text {
-      padding: 0 15rpx;
+      // padding: 0 15rpx;
       font-size: $fg-f26;
       line-height: 37rpx;
       text-align: center;
     }
   }
   .circleDet-num {
+    padding-left: 15rpx;
     color: --color(--qui-BG-2);
   }
   .circleDet-share {
