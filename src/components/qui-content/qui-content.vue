@@ -238,7 +238,7 @@ export default {
     },
     // 用户组
     userGroups: {
-      type: Object,
+      type: Array,
       default: () => {
         return [];
       },
@@ -255,9 +255,9 @@ export default {
     },
     // 内容区域图片
     imagesList: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
     },
     // 时间

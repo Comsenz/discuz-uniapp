@@ -91,7 +91,11 @@
         >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
-            {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
+            <rich-text
+              class="sticky__isSticky__text"
+              :nodes="item.type == 1 ? item.title : item.firstPost.contentHtml"
+            ></rich-text>
+            <!-- {{ item.type == 1 ? item.title : item.firstPost.contentHtml }} -->
           </view>
         </view>
       </view>
@@ -654,11 +658,19 @@ export default {
     transition: $switch-theme-time;
   }
   &__count {
+    height: 35rpx;
+    margin-top: 27rpx;
     margin-left: 21rpx;
     overflow: hidden;
+    line-height: 35rpx;
     color: #777;
     text-overflow: ellipsis;
     white-space: nowrap;
+    &__text {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
   }
 }
 .horizonal-tab .active {
@@ -700,5 +712,10 @@ export default {
   position: absolute;
   z-index: 1000;
   width: 100%;
+}
+.sticky__isSticky__text {
+  display: inline-block;
+  height: 35rpx;
+  line-height: 35rpx;
 }
 </style>
