@@ -55,12 +55,7 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent()">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="36"
-                  color="#777777"
-                ></qui-icon>
+                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
               <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
