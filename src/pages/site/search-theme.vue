@@ -7,12 +7,12 @@
           type="text"
           class="search-box__content-input"
           placeholder-class="input-placeholder"
-          placeholder="搜索关键字"
+          :placeholder="i18n.t('search.searchkeywords')"
           @input="searchInput"
           :value="searchValue"
         />
-        <view class="search-box__content-delete" @click="clearSearch" v-if="searchValue">
-          <qui-icon class="icon-close" name="icon-close" size="34" color="#fff"></qui-icon>
+        <view @tap="clearSearch" v-if="searchValue" class="search-box__content-delete">
+          <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
     </view>
@@ -117,14 +117,14 @@ export default {
 @import '@/styles/base/variable/global.scss';
 
 .search-item {
-  padding-left: 40rpx;
   margin-bottom: 30rpx;
-  border-bottom: 2rpx solid #ededed;
+  background-color: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 // 主题
 .search /deep/ .themeCount {
-  padding-right: 40rpx;
-  border-bottom: 2rpx solid #ededed;
+  padding-left: 40rpx;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-shadow: none;
 }
 /deep/ .themeCount .themeItem {
@@ -135,7 +135,15 @@ export default {
 /deep/ .themeCount .themeItem__footer {
   display: none;
 }
+.search-item__theme {
+  position: relative;
+  padding-left: 130rpx;
+}
+.search .search-box {
+  padding: 30rpx 40rpx 0;
+  background: --color(--qui-BG-2);
+}
 .scroll-y {
-  max-height: calc(100vh - 115rpx);
+  max-height: calc(100vh - 110rpx);
 }
 </style>

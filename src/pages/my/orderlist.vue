@@ -211,7 +211,7 @@ export default {
 .date-picker .uni-input {
   width: 100%;
   height: 78rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   line-height: 78rpx;
 }
 .scroll-y {

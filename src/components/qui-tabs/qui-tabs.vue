@@ -93,14 +93,14 @@ export default {
   transition: $switch-theme-time;
 }
 .qui-tabs__item__title {
-  font-size: 24rpx;
-  color: #aaa;
+  font-size: $fg-f24;
+  color: --color(--qui-FC-AAA);
 }
 .qui-tabs__item--active {
   border-bottom: 4rpx solid;
 }
 .qui-tabs__item--active .qui-tabs__item__title {
   font-weight: bold;
-  color: #333;
+  color: --color(--qui-FC-333);
 }
 </style>

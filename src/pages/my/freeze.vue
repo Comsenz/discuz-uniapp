@@ -121,7 +121,7 @@ export default {
   padding: 0 40rpx;
   padding-top: 40rpx;
   margin-bottom: 30rpx;
-  font-size: 24rpx;
+  font-size: $fg-f24;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }

@@ -218,6 +218,11 @@ export default {
   .header .logo {
     padding-top: 99rpx;
   }
+  /deep/ .cell-item__body__content-title {
+    width: 112rpx;
+    margin-right: 40rpx;
+    color: --color(--qui-FC-777);
+  }
 }
 .header .circleDet .circleDet-num,
 .header .circleDet .circleDet-share {
@@ -236,11 +241,6 @@ export default {
   height: auto;
   padding: 35rpx 0;
   align-items: flex-start;
-}
-.cell-item__body__content-title {
-  width: 112rpx;
-  margin-right: 40rpx;
-  color: --color(--qui-FC-777);
 }
 .site-invite__detail__bold {
   margin: 0 5rpx;
@@ -280,7 +280,7 @@ export default {
   padding: 0 28rpx;
   margin-right: 10rpx;
   margin-bottom: 10rpx;
-  font-size: 26rpx;
+  font-size: $fg-f26;
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
   border-radius: 10rpx;

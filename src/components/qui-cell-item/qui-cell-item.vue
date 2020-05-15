@@ -1,5 +1,5 @@
 <template>
-  <view :class="['cell-item', 'cell-item--wrap', { border: border }, classItem]" @tap="$_click">
+  <view :class="['cell-item', { border: border }, classItem]" @tap="$_click">
     <view class="cell-item__body">
       <view class="cell-item__body__left" v-if="slotLeft">
         <slot></slot>
@@ -32,12 +32,7 @@
         <view class="cell-item__body__right-brief" v-if="briefRight">{{ briefRight }}</view>
       </view>
     </view>
-    <view
-      v-if="addon2"
-      v-text="addon2"
-      class="cell-item_children"
-      style="font-size: 24upx;color: #858b9c;"
-    ></view>
+    <view v-if="addon2" v-text="addon2" class="cell-item_children"></view>
   </view>
 </template>
 
@@ -113,7 +108,7 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.cell-item--wrap {
+.cell-item {
   position: relative;
 }
 .cell-item.border {
@@ -131,7 +126,7 @@ export default {
 }
 
 .cell-item__body__content-title {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   color: --color(--qui-FC-333);
   transition: $switch-theme-time;
 }
@@ -139,7 +134,7 @@ export default {
 .cell-item__body__content-brief,
 .cell-item__body__right-brief {
   margin-top: 6rpx;
-  font-size: 24rpx;
+  font-size: $fg-f24;
   color: --color(--qui-FC-AAA);
 }
 
@@ -150,12 +145,12 @@ export default {
 .cell-item__body__right {
   align-items: center;
   justify-content: flex-end;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   text-align: right;
 }
 
 .cell-item__body__right .cell-item__body__right-text {
-  font-size: 28rpx;
+  font-size: $fg-f28;
 }
 
 .cell-item__children {
