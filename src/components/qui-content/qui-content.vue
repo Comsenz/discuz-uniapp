@@ -80,9 +80,9 @@
           vslide-gesture="true"
           auto-pause-if-navigate="true"
           enable-play-gesture="true"
+          object-fit="fill"
           :src="mediaUrl"
           style="width: 100%;"
-          object-fit="fill"
         ></video>
         <view v-if="Object.keys(imagesList || {}).length == 1">
           <view class="themeItem__content__imgone">
