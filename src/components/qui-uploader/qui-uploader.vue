@@ -168,8 +168,7 @@ export default {
             _this.uploadBeforeList[index].uploadPercent = 100;
             _this.uploadList.push(JSON.parse(res.data));
           } else {
-            _this.uploadBeforeList.splice(index, 1);
-            _this.uploadList.splice(index, 1);
+            _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
           }
           return resolve(_this.uploadList);
         },

@@ -124,6 +124,7 @@ $plain-bg-color: #fff;
 
 $txt-color-grey: rgba(119, 119, 119, 1);
 $txt-color-white: #fff;
+$text-color-333: #333;
 
 $font-size-sm: 24rpx;
 $font-size-md: 26rpx;
@@ -189,6 +190,13 @@ $font-size-post: 40rpx;
     color: $success-bg-color;
     background-color: $plain-bg-color;
     border-color: currentColor;
+  }
+  &[plain][type='post'] {
+    color: $text-color-333;
+    background-color: $plain-bg-color;
+    border: none;
+    border-radius: 10rpx;
+    box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
   }
   &[disabled] {
     cursor: not-allowed;
