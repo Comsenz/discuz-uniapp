@@ -7,12 +7,12 @@
           type="text"
           class="search-box__content-input"
           placeholder-class="input-placeholder"
-          placeholder="搜索关键字"
+          :placeholder="i18n.t('search.searchkeywords')"
           @input="searchInput"
           :value="searchValue"
         />
-        <view class="search-box__content-delete" @click="clearSearch" v-if="searchValue">
-          <qui-icon class="icon-close" name="icon-close" size="34" color="#fff"></qui-icon>
+        <view @tap="clearSearch" v-if="searchValue" class="search-box__content-delete">
+          <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
     </view>
@@ -122,33 +122,31 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 .search-item {
-  padding-left: 40rpx;
-  margin-bottom: 30rpx;
-  border-bottom: 2rpx solid #ededed;
+  background-color: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 // 用户
-/deep/ .cell-item {
-  padding-right: 40rpx;
-}
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: 28rpx;
-  color: #aaa;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-AAA);
 }
 .search-item__users__avatar {
   position: absolute;
   top: 16rpx;
-  left: 0;
+  left: 40rpx;
   width: 70rpx;
   height: 70rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
 .search-item__users {
   position: relative;
-  padding-left: 90rpx;
+  padding-left: 130rpx;
+}
+.search .search-box {
+  background: --color(--qui-BG-2);
 }
 .scroll-y {
-  max-height: calc(100vh - 115rpx);
+  max-height: calc(100vh - 110rpx);
 }
 </style>

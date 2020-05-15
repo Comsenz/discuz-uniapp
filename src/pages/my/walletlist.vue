@@ -40,7 +40,7 @@
           v-for="(item, index) in dataList"
           :key="index"
           :title="item.change_desc"
-          :brief="item.created_at"
+          :brief="timeHandle(item.created_at)"
           :addon="item.change_available_amount"
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
         ></qui-cell-item>
@@ -52,6 +52,7 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import { time2MinuteOrHour } from '@/utils/time';
 
 export default {
   components: {
@@ -60,7 +61,8 @@ export default {
   data() {
     const date = new Date();
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    let month = date.getMonth() + 1;
+    month = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${month}`;
     return {
       loadingType: 'more',
@@ -107,6 +109,10 @@ export default {
     bindDateChange(e) {
       this.date = e.target.value;
       this.getList('filter');
+    },
+    // 处理时间
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
     },
     getList(type) {
       const dateArr = this.date.split('-');
@@ -177,10 +183,10 @@ export default {
     margin-left: 20rpx;
   }
 }
-/deep/ .cell-item--wrap.fail .cell-item__body__right-text {
+/deep/ .cell-item.fail .cell-item__body__right-text {
   color: --color(--qui-RED);
 }
-/deep/ .cell-item--wrap.success .cell-item__body__right-text {
+/deep/ .cell-item.success .cell-item__body__right-text {
   color: #189a00;
 }
 .walletlist-items {
@@ -209,7 +215,7 @@ export default {
 .date-picker .uni-input {
   width: 100%;
   height: 78rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   line-height: 78rpx;
 }
 .scroll-y {

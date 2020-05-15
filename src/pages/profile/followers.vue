@@ -175,12 +175,12 @@ export default {
 
 .following {
   padding: 0 20rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   /deep/ .cell-item__body {
     padding-right: 20rpx;
   }
   .cell-item__body__right {
-    font-size: 28rpx;
+    font-size: $fg-f28;
     color: --color(--qui-FC-333);
   }
   .qui-icon {

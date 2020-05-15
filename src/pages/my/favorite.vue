@@ -111,12 +111,10 @@ export default {
       this.$refs.popupContent.open();
     },
     // 内容部分分享海报,跳到分享海报页面
-    shareContent(index) {
-      if (index === 0) {
-        uni.navigateTo({
-          url: '/pages/share/site',
-        });
-      }
+    shareContent() {
+      uni.navigateTo({
+        url: '/pages/share/site',
+      });
     },
     // 取消按钮
     cancel() {
@@ -218,7 +216,7 @@ export default {
   padding-top: 40rpx;
   padding-left: 40rpx;
   margin-bottom: 30rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .favorite-head /deep/ .cell-item__body {

@@ -115,7 +115,7 @@
           :tags="item.category.name"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          @click="handleClickShare(index)"
+          @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
               item.firstPost._jv.id,
@@ -145,7 +145,7 @@
           <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent()">
+              <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
@@ -192,6 +192,7 @@ export default {
       showSearch: true, // 筛选显示搜索
       redCircle: false, // 消息通知红点
       navShow: false, // 是否显示头部
+      nowThreadId: '', // 当前点击主题ID
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -424,7 +425,8 @@ export default {
       this.navShow = true;
     },
     // 首页内容部分分享按钮弹窗
-    handleClickShare() {
+    handleClickShare(id) {
+      this.nowThreadId = id;
       this.$refs.popupContent.open();
       this.bottomData = [
         {
@@ -441,9 +443,10 @@ export default {
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
+      // console.log(this.nowThreadId);
       if (index === 0) {
         uni.navigateTo({
-          url: '/pages/share/site',
+          url: `/pages/share/site?id=${this.nowThreadId}`,
         });
       }
     },

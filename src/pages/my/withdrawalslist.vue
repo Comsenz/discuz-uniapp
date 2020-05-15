@@ -42,7 +42,7 @@
           :title="operateStatus[item.cash_status - 1]"
           :brief="item.cash_sn"
           :addon="'¥' + item.cash_apply_amount"
-          :brief-right="item.created_at"
+          :brief-right="timeHandle(item.created_at)"
           :class-item="
             item.cash_status == 3 ? 'fail' : item.cash_status == 4 ? 'success' : 'normal'
           "
@@ -55,6 +55,7 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import { time2MinuteOrHour } from '@/utils/time';
 
 export default {
   components: {
@@ -63,7 +64,8 @@ export default {
   data() {
     const date = new Date();
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
+    let month = date.getMonth() + 1;
+    month = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${month}`;
     return {
       loadingType: 'more',
@@ -118,6 +120,10 @@ export default {
     bindDateChange(e) {
       this.date = e.target.value;
       this.getList('filter');
+    },
+    // 处理时间
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
     },
     getList(type) {
       const dateArr = this.date.split('-');
@@ -217,7 +223,7 @@ export default {
 .date-picker .uni-input {
   width: 100%;
   height: 78rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   line-height: 78rpx;
 }
 .scroll-y {

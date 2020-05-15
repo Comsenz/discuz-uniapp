@@ -39,7 +39,9 @@
         </navigator>
       </view>
       <view class="my-items">
-        <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
+        <navigator url="/pages/site/index" hover-class="none">
+          <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
+        </navigator>
         <navigator url="/pages/site/search" hover-class="none">
           <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
         </navigator>
@@ -133,7 +135,7 @@ export default {
 }
 .my-info {
   padding: 40rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
 }
@@ -150,7 +152,7 @@ export default {
   position: relative;
   width: 100%;
   padding-left: 100rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   box-sizing: border-box;
 }
 .my-info__box__detail /deep/ .cell-item__body {

@@ -194,6 +194,9 @@ export default {
 };
 </script>
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .profile {
   .qui-icon {
     margin-right: 14rpx;
@@ -201,8 +204,8 @@ export default {
 }
 .profile-info {
   padding: 40rpx;
-  font-size: 28rpx;
-  background: #fff;
+  font-size: $fg-f28;
+  background: --color(--qui-BG-2);
 }
 .profile-info__box {
   display: flex;
@@ -215,7 +218,7 @@ export default {
   position: relative;
   width: 100%;
   padding-left: 100rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
   box-sizing: border-box;
 }
 .profile-info__box__detail /deep/ .cell-item__body {
@@ -225,7 +228,7 @@ export default {
 .profile-info__box__detail-operate {
   display: inline-block;
   margin-left: 42rpx;
-  color: #333;
+  color: --color(--qui-FC-333);
 }
 .profile-info__box__detail-avatar {
   position: absolute;
@@ -233,13 +236,12 @@ export default {
   left: 0;
   width: 80rpx;
   height: 80rpx;
-  background: #a8a8a8;
   border-radius: 50%;
 }
 .profile-tabs__content {
   padding-top: 30rpx;
 }
 /deep/ .qui-tabs {
-  background: #fff;
+  background: --color(--qui-BG-2);
 }
 </style>
