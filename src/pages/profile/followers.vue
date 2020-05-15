@@ -160,7 +160,7 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.$emit('changeFollow', { userId: this.userId });
         this.getFollowerList('change');
       });
