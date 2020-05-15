@@ -118,7 +118,11 @@ export default {
     changeCheck(e) {
       this.checkAvatar = [];
       e.detail.value.forEach(item => {
-        this.checkAvatar.push(JSON.parse(item));
+        if (this.followStatus) {
+          this.checkAvatar.push(JSON.parse(item).toUser);
+        } else {
+          this.checkAvatar.push(JSON.parse(item));
+        }
       });
     },
     getCheckMember() {
@@ -201,6 +205,7 @@ export default {
       title: this.i18n.t('discuzq.atMember.atTitle'),
     });
     this.getFollowMember(1);
+    this.setAtMember([]);
   },
 };
 </script>
