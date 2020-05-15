@@ -1,20 +1,29 @@
 <template>
   <qui-page :class="'home ' + scrolled" :footer="true">
-    <uni-nav-bar
+    <!-- <uni-nav-bar
       v-if="navShow"
       :title="forums.set_site.site_name"
       fixed="true"
       status-bar
-    ></uni-nav-bar>
+    ></uni-nav-bar> -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
+      :scroll-top="scrollTopNum"
       class="scroll-y"
       @scroll="scroll"
       @scrolltolower="pullDown"
+      @scrolltoupper="toUpper"
     >
+      <uni-nav-bar
+        v-if="navShow"
+        :title="forums.set_site.site_name"
+        fixed="true"
+        status-bar
+      ></uni-nav-bar>
       <qui-header
+        v-if="isTop != 1"
         :head-img="forums.set_site.site_logo"
         :background-head-full-img="forums.set_site.site_background_image"
         :theme="theme"
@@ -49,7 +58,11 @@
           <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
         </view>
       </uni-popup>
-      <view class="nav">
+      <view
+        class="nav"
+        id="navId"
+        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;top:116rpx;' : ''"
+      >
         <view class="nav__box">
           <qui-icon
             class="nav__box__icon"
@@ -78,11 +91,19 @@
           @change="toggleTab"
           is-scroll="isScroll"
           active-color="#1878F3"
-          :style="isTop == 1 ? 'position:fixed;z-index:99999999999;top:0' : ''"
-        ></u-tabs>
+        >
+          <!-- :style="isTop == 1 ? 'position:fixed;z-index:9;top:44' : ''" -->
+        </u-tabs>
       </view>
-
-      <view class="sticky">
+      <!-- <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        show-scrollbar="false"
+        class="scroll-y"
+        @scroll="scroll"
+        @scrolltolower="pullDown"
+      > -->
+      <view class="sticky" :style="isTop == 1 ? 'margin-top:150rpx' : 'margin-top:30rpx'">
         <view
           class="sticky__isSticky"
           v-for="(item, index) in sticky"
@@ -91,7 +112,11 @@
         >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
-            {{ item.type == 1 ? item.title : item.firstPost.contentHtml }}
+            <rich-text
+              class="sticky__isSticky__text"
+              :nodes="item.type == 1 ? item.title : item.firstPost.contentHtml"
+            ></rich-text>
+            <!-- {{ item.type == 1 ? item.title : item.firstPost.contentHtml }} -->
           </view>
         </view>
       </view>
@@ -175,6 +200,9 @@ export default {
   data() {
     return {
       scrolled: 'affix',
+      suspended: false, // 是否吸顶状态
+      checkoutTheme: false, // 切换主题  搭配是否吸顶使用
+      scrollTopNum: 0,
       categoryId: 0, // 主题分类 ID
       currentIndex: 0,
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
@@ -268,12 +296,16 @@ export default {
   onShareAppMessage(res) {
     // 来自页面内分享按钮
     if (res.from === 'button') {
-      console.log(res.target);
+      console.log(this.threads);
+      return {
+        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
+        // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
+      };
     }
     return {
+      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
       title: this.forums.set_site.site_name,
       // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
-      path: '/pages/test/test?id=123',
     };
   },
   mounted() {
@@ -287,35 +319,69 @@ export default {
       })
       .exec();
   },
-  onPageScroll(e) {
-    console.log(e, '页面滑动');
-    if (e.scrollTop > 100) {
-      this.navShow = true;
-    } else {
-      this.navShow = false;
-    }
-    if (e.scrollTop > this.myScroll) {
-      this.isTop = 1;
-    } else {
-      this.isTop = 0;
-    }
+  onPageScroll() {
+    // console.log(e, 'scroll')
+    // if (e.scrollTop > 100) {
+    //   this.navShow = true;
+    //   this.suspended = true;
+    // } else {
+    //   this.navShow = false;
+    //   this.suspended = false;
+    // }
+    // if (e.scrollTop > this.myScroll) {
+    //   this.isTop = 1;
+    // } else {
+    //   this.isTop = 0;
+    // }
   },
+
   methods: {
     scroll(event) {
+      console.log(event, 'scroll');
+      if (this.checkoutTheme || this.isTop === 1) {
+        return;
+      }
+      if (event.detail.scrollTop > 100) {
+        this.navShow = true;
+      } else {
+        this.navShow = false;
+      }
+      if (event.detail.scrollTop > this.myScroll) {
+        this.isTop = 1;
+      } else {
+        this.isTop = 0;
+      }
+
       if (event.target.scrollTop > 0) {
         this.scrolled = 'scrolled';
       } else {
         this.scrolled = 'affix';
       }
     },
+
+    // 滑动到顶部
+    toUpper() {
+      console.log('滑动到顶部滑动到顶部滑动到顶部');
+      if (this.isTop === 0) {
+        return;
+      }
+      this.isTop = 0;
+      // this.scrollTopNum = this.myScroll - 5;
+      // this.$nextTick(()=>{
+      //   this.scrollTopNum = this.myScroll - 6;
+      // })
+    },
+
     // 切换选项卡
-    toggleTab(dataInfo) {
+    async toggleTab(dataInfo) {
       // 重置列表
       this.isResetList = true;
+      this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
       this.loadThreadsSticky();
-      this.loadThreads();
+      await this.loadThreads();
+      this.checkoutTheme = false;
     },
     // 点击置顶跳转到详情页
     stickyClick(id) {
@@ -375,6 +441,7 @@ export default {
           url: '/pages/share/site',
         });
       }
+      this.cancel();
     },
     // 取消按钮
     cancel() {
@@ -403,7 +470,7 @@ export default {
         // 筛选关注帖
         case '2':
           this.threadEssence = '';
-          this.threadFollow = 1; // TODO 当前用户 ID
+          this.threadFollow = this.user.id; // TODO 当前用户 ID
           break;
         // 不筛选
         default:
@@ -443,12 +510,12 @@ export default {
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
-      // console.log(this.nowThreadId);
       if (index === 0) {
         uni.navigateTo({
-          url: `/pages/share/site?id=${this.nowThreadId}`,
+          url: `/pages/share/topic?id=${this.nowThreadId}`,
         });
       }
+      this.cancel();
     },
     // 首页导航栏分类列表数据
     loadCategories() {
@@ -525,7 +592,7 @@ export default {
 
       this.threadsStatusId = threadsAction._statusID;
 
-      threadsAction.then(res => {
+      return threadsAction.then(res => {
         this.hasMore = !!res._jv.json.links.next;
         this.loadingType = this.hasMore ? 'more' : 'nomore';
         delete res._jv;
@@ -534,6 +601,7 @@ export default {
         } else {
           this.threads = [...this.threads, ...res];
         }
+        console.log(this.navShow, this.isTop, 'isTop navShow');
         // this.threads = res;
         // this.data = [...this.data, ...res];
       });
@@ -649,11 +717,19 @@ export default {
     transition: $switch-theme-time;
   }
   &__count {
+    height: 35rpx;
+    margin-top: 27rpx;
     margin-left: 21rpx;
     overflow: hidden;
+    line-height: 35rpx;
     color: #777;
     text-overflow: ellipsis;
     white-space: nowrap;
+    &__text {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
   }
 }
 .horizonal-tab .active {
@@ -695,5 +771,10 @@ export default {
   position: absolute;
   z-index: 1000;
   width: 100%;
+}
+.sticky__isSticky__text {
+  display: inline-block;
+  height: 35rpx;
+  line-height: 35rpx;
 }
 </style>

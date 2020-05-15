@@ -10,7 +10,7 @@
       'border-radius': borderRadius,
     }"
   >
-    <swiper indicator-dots="true">
+    <swiper>
       <swiper-item v-for="index of getSwiperItem" :key="index">
         <view class="emoji-box__item">
           <view

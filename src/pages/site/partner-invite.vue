@@ -153,6 +153,12 @@ export default {
     open() {
       this.$refs.popupHead.open();
     },
+    // 点击头像到个人主页
+    toProfile(userId) {
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${userId}`,
+      });
+    },
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {

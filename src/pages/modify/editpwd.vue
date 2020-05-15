@@ -97,27 +97,21 @@ export default {
       this.disab = false;
     },
     changeinput() {
-      if (this.valueused.length <= 0) {
-        this.judge = false;
-        this.disab = false;
-        this.styledisbla = 'primary';
-      }
+      this.judge = false;
+      this.disab = false;
+      this.styledisbla = 'primary';
       this.chanagedisab();
     },
     changeinput2() {
-      if (this.valuenew <= 0) {
-        this.judge2 = false;
-        this.disab = false;
-        this.styledisbla = 'primary';
-      }
+      this.judge2 = false;
+      this.disab = false;
+      this.styledisbla = 'primary';
       this.chanagedisab();
     },
     changeinput3() {
-      if (this.valuetone <= 0) {
-        this.judge3 = false;
-        this.disab = false;
-        this.styledisbla = 'primary';
-      }
+      this.judge3 = false;
+      this.disab = false;
+      this.styledisbla = 'primary';
       this.chanagedisab();
     },
     chanagedisab() {

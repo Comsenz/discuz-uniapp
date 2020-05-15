@@ -257,40 +257,34 @@ const Utils = class {
       relationshipsData[relName] = {}
       if (relations) {
         let isItem = !Array.isArray(relations)
-        let relationsData = {}
+        let relationsData = [];
 
         for (let relation of isItem ? Array.of(relations) : relations) {
           let relType = relation['type']
           let relId = relation['id']
 
-          if (!this.hasProperty(relationsData, relId)) {
-            Object.defineProperty(relationsData, relId, {
-              get() {
-                let current = [relName, relType, relId]
-                // Stop if seen contains an array which matches 'current'
-                if (!conf.recurseRelationships && seen.some((a) => a.every((v, i) => v === current[i]))) {
-                  return { [jvtag]: { type: relType, id: relId } }
-                } else {
-                  // prettier-ignore
-                  return getters.get(
-                      `${relType}/${relId}`,
-                      undefined,
-                      [...seen, [relName, relType, relId]]
-                    )
-                }
-              },
-              enumerable: true,
-            })
+          let current = [relName, relType, relId]
+          let data = {};
+          // Stop if seen contains an array which matches 'current'
+          if (!conf.recurseRelationships && seen.some((a) => a.every((v, i) => v === current[i]))) {
+            data = { [jvtag]: { type: relType, id: relId } }
+          } else {
+            // prettier-ignore
+            data = getters.get(
+                `${relType}/${relId}`,
+                undefined,
+                [...seen, [relName, relType, relId]]
+              )
+          }
+          
+          if(relationsData.indexOf(data) === -1) {
+            relationsData.push(data);
           }
         }
         if (isItem) {
-          Object.defineProperty(
-            relationshipsData,
-            relName,
-            Object.getOwnPropertyDescriptor(relationsData, Object.keys(relationsData)[0])
-          )
+          relationshipsData[relName] = relationsData[0];
         } else {
-          Object.defineProperties(relationshipsData[relName], Object.getOwnPropertyDescriptors(relationsData))
+          relationshipsData[relName] = relationsData;
         }
       }
     }
@@ -533,6 +527,7 @@ const Utils = class {
     this.context.commit('addRecords', item);
 
     if (this.conf.followRelationshipsData) {
+      
       item = this.followRelationships(this.context.state, this.context.getters, item);
     }
     return item;

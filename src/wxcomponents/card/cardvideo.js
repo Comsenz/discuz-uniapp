@@ -10,7 +10,7 @@ export default class LastMayday {
             "views": [
               {
                 "type": "image",
-                "url": `${obj.recoimg}`,
+                "url": obj.recoimg,
                 "css": {
                   "width": "80px",
                   "height": "80px",
@@ -26,7 +26,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.reconame}`,
+                "text": obj.reconame,
                 "css": {
                   "color": "#000000",
                   "background": "rgba(0,0,0,0)",
@@ -52,7 +52,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "推荐",
+                "text":obj.recomment,
                 "css": {
                   "color": "#000000",
                   "background": "rgba(0,0,0,0)",
@@ -78,7 +78,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.username}在 ${obj.useratttype}  中发表的  内容`,
+                "text": obj.username + obj.stay + obj.useratttype + obj.published+obj.contents,
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",
@@ -118,7 +118,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "女神视频",
+                "text": obj.goddessvideo,
                 "css": {
                   "color": "#777777",
                   "background": "rgba(0,0,0,0)",
@@ -174,7 +174,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "长按识别小程序码查看详情",
+                "text": obj.longpressrecog,
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",
@@ -200,7 +200,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "来自DISCUZ!Q",
+                "text": obj.comefrom+obj.slitename,
                 "css": {
                   "color": "#AAAAAA",
                   "background": "rgba(0,0,0,0)",
@@ -226,7 +226,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.usertitle}`,
+                "text": obj.usertitle,
                 "css": {
                   "color": "#303133",
                   "background": "rgba(0,0,0,0)",
@@ -252,7 +252,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": `${obj.uservideo}`,
+                "url": obj.uservideo,
                 "css": {
                   "width": "620px",
                   "height": "402px",
@@ -268,7 +268,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.usercontent}`,
+                "text": obj.usercontent,
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",
@@ -350,7 +350,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.uservideoduc}`,
+                "text": obj.uservideoduc,
                 "css": {
                   "color": "#ffffff",
                   "background": "rgba(0,0,0,0)",
