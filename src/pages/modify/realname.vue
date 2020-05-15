@@ -67,9 +67,19 @@ export default {
           if (err.statusCode === 422) {
             this.judge = true;
             this.title1 = err.data.errors[0].detail[0];
+            uni.showToast({
+              icon:'none',
+              title: this.title1,
+              duration: 2000,
+            });
           } else if (err.statusCode === 500) {
             this.judge = true;
             this.title1 = err.data.errors[0].detail;
+            uni.showToast({
+              icon:'none',
+              title: this.title1,
+              duration: 2000,
+            });
           }
         });
     },

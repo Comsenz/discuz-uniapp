@@ -25,7 +25,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "圈子介绍",
+                "text": obj.siteintroduction,
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",
@@ -51,7 +51,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.introd}`,
+                "text": obj.introd,
                 "css": {
                   "color": "#6D6D6D",
                   "background": "rgba(0,0,0,0)",
@@ -91,7 +91,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": `${obj.userweixincode}`,
+                "url": obj.userweixincode,
                 "css": {
                   "min-width": "140px",
                   "height": "140px",
@@ -107,7 +107,7 @@ export default class LastMayday {
               },            
               {
                 "type": "text",
-                "text": "长按识别小程序码查看详情",
+                "text": obj.longpressrecog,
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",
@@ -133,7 +133,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "来自DISCUZ!Q",
+                "text": obj.comefrom+obj.slitename,
                 "css": {
                   "color": "#AAAAAA",
                   "background": "rgba(0,0,0,0)",
@@ -159,7 +159,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": `${obj.sliteback}`,
+                "url": obj.sliteback,
                 "css": {
                   "width": "700px",
                   "height": "450px",
@@ -175,7 +175,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": `${obj.userheader}`,
+                "url": obj.userheader,
                 "css": {
                   "width": "80px",
                   "height": "80px",
@@ -191,7 +191,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.username}`,
+                "text": obj.username,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
@@ -217,7 +217,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "推荐",
+                "text": obj.recomment,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
@@ -243,7 +243,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": `${obj.slitename}`,
+                "text": obj.slitename,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
@@ -269,7 +269,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": `${obj.slitelogo}`,
+                "url": obj.slitelogo,
                 "css": {
                   "width": "285.71px",
                   "height": "44.92px",
@@ -285,7 +285,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "成员",
+                "text": obj.member,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
@@ -337,7 +337,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "内容",
+                "text": obj.contents,
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",

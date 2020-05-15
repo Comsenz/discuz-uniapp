@@ -95,6 +95,12 @@ export default {
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 圈子介绍
         userweixincode: this.weixincode, // 微信二维码
+        longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
+        recomment: this.i18n.t('share.recomment'),
+        siteintroduction: this.i18n.t('share.siteintroduction'),
+        comefrom: this.i18n.t('share.comefrom'),
+        member: this.i18n.t('share.member'),
+        contents: this.i18n.t('share.contents'),
       };
       if (this.sliteback) {
         this.template = new Cardc().palette(obj);

@@ -51,7 +51,7 @@ export default {
     };
   },
   onLoad(arr) {
-    this.userid = Number(arr.id) || 24;
+    this.userid = Number(arr.id);
   },
   methods: {
     fourse() {
@@ -83,9 +83,7 @@ export default {
               title: this.i18n.t('modify.paymentsucceed'),
               duration: 2000,
             });
-            uni.navigateTo({
-              url: '/pages/my/profile',
-            });
+            uni.navigateBack();
           }
         })
         .catch(err => {

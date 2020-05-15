@@ -1,7 +1,14 @@
 <template>
   <view class="chagepas">
     <view class="chagepas-pas">
-      <input type="text" class="chagepas-pas-inpa" v-model="sername" />
+      <input
+        type="text"
+        class="chagepas-pas-inpa"
+        v-model="sername"
+        :placeholder="i18n.t('modify.numbermodifitions')"
+        placeholder-style="color:rgba(221,221,221,1)"
+        maxlength="15"
+      />
       <view class="chagepas-erro-test" v-if="edit">
         {{ test }}
       </view>
@@ -28,7 +35,6 @@ export default {
       test: '',
       userid: '',
       nametitle: { icon: 'none', duration: 2000 },
-      modifysucc: '名字修改成功',
     };
   },
   onLoad(arr) {
@@ -63,6 +69,9 @@ export default {
               title: this.i18n.t('modify.modifysucc'),
               duration: 2000,
             });
+            uni.navigateTo({
+              url: '/pages/my/profile',
+            });
           }
         })
         .catch(err => {
@@ -70,6 +79,10 @@ export default {
             this.edit = true;
             /* eslint-disable */
             this.test = err.data.errors[0].detail[0];
+            uni.showToast({
+              title: this.test,
+              duration: 2000,
+            });
           }
         });
     },

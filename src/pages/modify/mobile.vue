@@ -5,10 +5,10 @@
       <view class="modify-phon-test">
         {{ i18n.t('modify.phonbound') }}
       </view>
-      <view class="modify-phon-num">
-        {{ userphon }}
+      <view :class="userphon ? 'modify-phon-num' : 'modify-phon-num1'">
+        {{ userphon ? userphon : i18n.t('modify.phonnumberempty') }}
       </view>
-      <button class="modify-phon-send" v-if="sun" @click="btnButton">
+      <button class="modify-phon-send" v-if="sun" @click="btnButton" :disabled="noclick">
         {{ i18n.t('modify.sendverificode') }}
       </button>
       <button class="modify-phon-send" disabled v-else>
@@ -58,6 +58,7 @@ export default {
       duration: 2000,
       inshow: false,
       inisIphone: false,
+      noclick: false,
     };
   },
   onLoad(arr) {
@@ -68,6 +69,9 @@ export default {
     fourse() {
       this.inshow = true;
     },
+    // phonempty() {
+    //   if(this.)
+    // },
     getCode() {
       this.showText = false;
       const interval = setInterval(() => {
@@ -104,6 +108,9 @@ export default {
       man.then(res => {
         this.userphon = res.mobile;
         this.userphone1 = res.originalMobile;
+        if (!this.userphon) {
+          this.noclick = true;
+        }
       });
     },
     // 发送短信接口
@@ -207,6 +214,13 @@ export default {
   line-height: 100rpx;
   color: rgba(0, 0, 0, 1);
   opacity: 1;
+}
+.modify-phon-num1 {
+  margin-left: 80rpx;
+  font-size: $fg-f28;
+  font-weight: 400;
+  line-height: 100rpx;
+  color: rgba(221, 221, 221, 1);
 }
 .modify-phon-send {
   display: block;

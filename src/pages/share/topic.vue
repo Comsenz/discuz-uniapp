@@ -36,7 +36,8 @@ export default {
       imagePath: '',
       width: 700,
       template: {},
-      userid: 2,
+      userid: '',
+      slitename: '', // 站点名称
       themeid: '', // 数据id
       headerImg: '', // 头像
       headerName: '', // 名字
@@ -60,9 +61,10 @@ export default {
       title: this.i18n.t('share.generating'),
       mask: true,
     });
-    this.themeid = arr.id || 2;
+    this.themeid = arr.id;
     this.$nextTick(() => {
-      this.userid = this.usersid || 24;
+      this.userid = this.usersid;
+      this.slitename = this.forums.set_site.site_name;
       this.getusertitle();
       this.getthemdata();
     });
@@ -70,6 +72,9 @@ export default {
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
+    },
+    forums() {
+      return this.$store.getters['jv/get']('forums/1');
     },
   },
   methods: {
@@ -123,11 +128,19 @@ export default {
         userattname: this.attachmentsName, // 帖子内容名称
         useratttype: this.attachmentsType, // 帖子分类
         userweixincode: this.weixincode, // 微信二维码
+        slitename: this.slitename, // 站点名称
         uservideo: this.video,
         uservideoduc: this.videoduc,
         namewidth: this.themwidth,
         reconame: this.reconame,
         recoimg: this.recoimg,
+        longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
+        recomment: this.i18n.t('share.recomment'),
+        goddessvideo: this.i18n.t('share.goddessvideo'),
+        comefrom: this.i18n.t('share.comefrom'), // 来自
+        stay: this.i18n.t('share.stay'), // 在
+        published: this.i18n.t('share.published'),
+        contents: this.i18n.t('share.contents'),
       };
       if (this.contentTitle) {
         // 有标题有图片海报
