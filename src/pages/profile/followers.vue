@@ -12,6 +12,7 @@
         <view
           class="follow-content__items"
           v-for="(followerItem, index) in followerList"
+          @tap="toProfile(followerItem.fromUser.id)"
           :key="index"
         >
           <image
@@ -20,7 +21,6 @@
               followerItem.fromUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'
             "
             alt="avatarUrl"
-            @tap="toProfile(followerItem.fromUser.id)"
           ></image>
           <qui-cell-item
             :title="followerItem.fromUser.username"
@@ -35,6 +35,7 @@
             <view
               class="follow-content__items__operate"
               @tap="addFollow(followerItem.fromUser)"
+              @tap.stop
               v-if="followerItem.fromUser.id != currentLoginId"
             >
               <text>

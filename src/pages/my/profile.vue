@@ -68,6 +68,14 @@
           :border="false"
         ></qui-cell-item>
       </navigator>
+      <qui-uploader
+        url="https://dq.comsenz-service.com/api/attachments"
+        :header="header"
+        :form-data="formData"
+        async-clear
+        ref="upload"
+        @change="uploadChange"
+      ></qui-uploader>
     </view>
   </qui-page>
 </template>
@@ -80,6 +88,8 @@ export default {
   data() {
     return {
       hasPassword: false,
+      header: {},
+      formData: {},
       userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
     };
   },
@@ -92,6 +102,26 @@ export default {
       return this.$store.getters['jv/get']('forums/1');
     },
   },
+  onLoad() {
+    const token = uni.getStorageSync('access_token');
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
+    this.formData = {
+      isGallery: 1,
+    };
+  },
+  methods: {
+    uploadChange(e) {
+      console.log(e);
+      this.changeAvatar();
+    },
+    changeAvatar() {
+      this.$store.dispatch('jv/post', `/api/users/${this.userId}/avatar`).then(res => {
+        console.log(res);
+      });
+    },
+  },
 };
 </script>
 
@@ -99,6 +129,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .my-profile {
+  position: relative;
   padding-top: 40rpx;
   padding-left: 40rpx;
   background: --color(--qui-BG-2);
@@ -111,6 +142,21 @@ export default {
   }
   .cell-item__body__right {
     color: --color(--qui-FC-333);
+  }
+  /deep/ .qui-uploader-box {
+    position: absolute;
+    top: 140rpx;
+    right: 0;
+    display: inline;
+    min-height: 100rpx;
+    padding: 0;
+  }
+  /deep/ .qui-uploader-box__add {
+    height: 100rpx;
+    background: transparent;
+  }
+  /deep/ .icon-add {
+    display: none;
   }
 }
 

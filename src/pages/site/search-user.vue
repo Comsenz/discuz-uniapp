@@ -70,7 +70,7 @@ export default {
       this.getUserList(e.target.value);
     },
     // 获取用户列表
-    getUserList(key) {
+    getUserList(key, type) {
       const params = {
         include: 'groups',
         sort: 'createdAt',
@@ -85,12 +85,17 @@ export default {
             delete res._jv;
           }
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-          this.data = [...this.data, ...res];
+          if (type && type === 'search') {
+            this.data = res;
+          } else {
+            this.data = [...this.data, ...res];
+          }
         });
     },
     clearSearch() {
       this.searchValue = '';
-      this.getUserList('');
+      this.pageNum = 1;
+      this.getUserList('', 'search');
     },
     back() {
       uni.navigateBack();
@@ -107,7 +112,7 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getUserList();
+      this.getUserList(this.searchValue);
     },
     refresh() {
       this.pageNum = 1;
