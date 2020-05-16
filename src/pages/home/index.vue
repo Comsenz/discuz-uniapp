@@ -61,7 +61,7 @@
       <view
         class="nav"
         id="navId"
-        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;top:116rpx;' : ''"
+        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;' : ''"
       >
         <view class="nav__box">
           <qui-icon
@@ -82,7 +82,7 @@
           :filter-list="filterList"
           :show-search="showSearch"
           ref="filter"
-          top="100"
+          top="300"
         ></qui-filter-modal>
         <u-tabs
           class="scroll-tab"
@@ -121,7 +121,7 @@
         </view>
       </view>
       <!-- </view> -->
-      <view class="main" v-if="jvStatus[threadsStatusId]">
+      <view class="main">
         <qui-content
           v-for="(item, index) in threads"
           :key="index"
@@ -334,10 +334,9 @@ export default {
     //   this.isTop = 0;
     // }
   },
-
   methods: {
     scroll(event) {
-      console.log(event, 'scroll');
+      // console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
         return;
       }
@@ -489,7 +488,7 @@ export default {
     showFilter() {
       this.show = true;
       this.$refs.filter.setData();
-      this.navShow = true;
+      // this.navShow = true;
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
@@ -593,8 +592,9 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
-        this.hasMore = !!res._jv.json.links.next;
-        this.loadingType = this.hasMore ? 'more' : 'nomore';
+        // this.hasMore = !!res._jv.json.links.next;
+        // this.loadingType = this.hasMore ? 'more' : 'nomore';
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {
           this.threads = res;
@@ -602,8 +602,6 @@ export default {
           this.threads = [...this.threads, ...res];
         }
         console.log(this.navShow, this.isTop, 'isTop navShow');
-        // this.threads = res;
-        // this.data = [...this.data, ...res];
       });
     },
     // 内容部分点赞按钮点击事件
@@ -643,14 +641,12 @@ export default {
 
     // 下拉加载
     pullDown() {
-      console.log('下拉加载呢');
-      if (this.hasMore) {
-        this.pageNum += 1;
-        this.loadThreads();
-        console.log(this.pageNum, '页码');
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadThreads();
+      console.log(this.pageNum, '页码');
     },
   },
 };
@@ -758,9 +754,9 @@ export default {
   font-weight: bold;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
-.main {
-  margin-bottom: 130rpx;
-}
+// .main {
+//   margin-bottom: 130rpx;
+// }
 
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
