@@ -32,7 +32,7 @@
         :theme-btn="item.canHide"
         :user-groups="item.user.groups"
         :theme-time="item.createdAt"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+        :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :tags="item.category.name"
         :images-list="item.firstPost.images"
         :theme-essence="item.isEssence"
@@ -67,7 +67,7 @@ export default {
       this.getThemeList(e.target.value);
     },
     // 获取主题列表
-    getThemeList(key) {
+    getThemeList(key, type) {
       const params = {
         include: ['user', 'firstPost', 'threadVideo'],
         'filter[isDeleted]': 'no',
@@ -82,12 +82,17 @@ export default {
             delete res._jv;
           }
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-          this.data = [...this.data, ...res];
+          if (type && type === 'search') {
+            this.data = res;
+          } else {
+            this.data = [...this.data, ...res];
+          }
         });
     },
     clearSearch() {
       this.searchValue = '';
-      this.getThemeList('');
+      this.pageNum = 1;
+      this.getThemeList('', 'search');
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
@@ -101,7 +106,7 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getThemeList('');
+      this.getThemeList(this.searchValue);
     },
     refresh() {
       this.pageNum = 1;
