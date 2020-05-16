@@ -1057,7 +1057,7 @@ export default {
       if (param.type == '0') {
         console.log('跳转到编辑主题页面');
         uni.navigateTo({
-          url: '/pages/topic/post?navigateTo=edit&id=' + this.thread._jv.id,
+          url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
       } else if (param.type == '4') {
         this.postOpera(this.threadId, '2');
