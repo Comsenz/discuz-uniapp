@@ -68,7 +68,7 @@
             class="nav__box__icon"
             name="icon-screen"
             size="28"
-            color="#1878F3"
+            :color="show ? '#1878F3' : '#777'"
             @tap="showFilter"
           ></qui-icon>
         </view>
@@ -81,8 +81,9 @@
           :if-need-confirm="ifNeedConfirm"
           :filter-list="filterList"
           :show-search="showSearch"
+          posi-type="absolute"
+          top="102"
           ref="filter"
-          top="300"
         ></qui-filter-modal>
         <u-tabs
           class="scroll-tab"
@@ -114,9 +115,9 @@
           <view class="sticky__isSticky__count">
             <rich-text
               class="sticky__isSticky__text"
-              :nodes="item.type == 1 ? item.title : item.firstPost.contentHtml"
+              :nodes="item.type == 1 ? item.title : item.firstPost.summary"
             ></rich-text>
-            <!-- {{ item.type == 1 ? item.title : item.firstPost.contentHtml }} -->
+            <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
           </view>
         </view>
       </view>
@@ -131,7 +132,7 @@
           :theme-reply-btn="item.canReply"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
-          :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
           :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
@@ -221,6 +222,7 @@ export default {
       redCircle: false, // 消息通知红点
       navShow: false, // 是否显示头部
       nowThreadId: '', // 当前点击主题ID
+      filterTop: 450, // 筛选弹窗的位置
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -298,12 +300,12 @@ export default {
     if (res.from === 'button') {
       console.log(this.threads);
       return {
-        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
+        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
         // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
       };
     }
     return {
-      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
+      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
       title: this.forums.set_site.site_name,
       // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
     };
@@ -311,16 +313,17 @@ export default {
   mounted() {
     const query = uni.createSelectorQuery().in(this);
     query
-      .select('.scroll-tab')
+      .select('.nav')
       .boundingClientRect(data => {
         console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
+        console.log(this.filterTop, '筛选');
       })
       .exec();
   },
-  onPageScroll() {
-    // console.log(e, 'scroll')
+  onPageScroll(e) {
+    console.log(e, 'scroll');
     // if (e.scrollTop > 100) {
     //   this.navShow = true;
     //   this.suspended = true;
@@ -336,7 +339,7 @@ export default {
   },
   methods: {
     scroll(event) {
-      // console.log(event, 'scroll');
+      console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
         return;
       }
@@ -486,7 +489,7 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
-      this.show = true;
+      this.show = !this.show;
       this.$refs.filter.setData();
       // this.navShow = true;
     },
@@ -663,6 +666,7 @@ export default {
   position: relative;
   z-index: 1;
   background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: box-shadow 0.2s, -webkit-transform 0.2s;
 
   &__box {
@@ -760,7 +764,8 @@ export default {
 
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  max-height: calc(100vh - 100rpx);
+  // max-height: calc(100vh - 100rpx);
+  height: 100vh;
 }
 
 .nav .filter-modal {

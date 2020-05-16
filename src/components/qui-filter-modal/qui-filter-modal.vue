@@ -156,13 +156,15 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .filter-modal {
+  // position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 999;
   display: flex;
   width: 100%;
-  min-height: 600rpx;
+  // min-height: 600rpx;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
   visibility: hidden;

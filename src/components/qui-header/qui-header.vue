@@ -7,6 +7,7 @@
       <image
         class="logo"
         :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
+        mode="widthFix"
       ></image>
     </view>
     <view class="circleDet">
@@ -98,7 +99,6 @@ export default {
   background: #1878f3;
   .logo {
     display: block;
-    // width: 400rpx;
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
@@ -111,10 +111,7 @@ export default {
   .circleDet {
     display: flex;
     justify-content: space-between;
-    padding-top: 69rpx;
-    padding-right: 20rpx;
-    padding-bottom: 47rpx;
-    padding-left: 20rpx;
+    padding: 69rpx 20rpx 47rpx;
     line-height: 37rpx;
     color: --color(--qui-FC-FFF);
     text-align: center;
