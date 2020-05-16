@@ -381,6 +381,15 @@ export default {
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
+
+      // 切换筛选框选中分类
+      // eslint-disable-next-line
+      this.filterList[0].data.map(item => {
+        // eslint-disable-next-line
+        item.selected = false;
+      });
+      this.filterList[0].data[dataInfo.index].selected = true;
+
       this.loadThreadsSticky();
       await this.loadThreads();
       this.checkoutTheme = false;
