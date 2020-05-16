@@ -61,7 +61,7 @@
       <view
         class="nav"
         id="navId"
-        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;top:116rpx;' : ''"
+        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;' : ''"
       >
         <view class="nav__box">
           <qui-icon
@@ -82,7 +82,7 @@
           :filter-list="filterList"
           :show-search="showSearch"
           ref="filter"
-          top="100"
+          top="300"
         ></qui-filter-modal>
         <u-tabs
           class="scroll-tab"
@@ -337,7 +337,7 @@ export default {
 
   methods: {
     scroll(event) {
-      console.log(event, 'scroll');
+      // console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
         return;
       }
@@ -602,8 +602,6 @@ export default {
           this.threads = [...this.threads, ...res];
         }
         console.log(this.navShow, this.isTop, 'isTop navShow');
-        // this.threads = res;
-        // this.data = [...this.data, ...res];
       });
     },
     // 内容部分点赞按钮点击事件
@@ -646,7 +644,7 @@ export default {
       console.log('下拉加载呢');
       if (this.hasMore) {
         this.pageNum += 1;
-        this.loadThreads();
+        // this.loadThreads();
         console.log(this.pageNum, '页码');
       } else {
         this.loadingType = 'nomore';
@@ -758,9 +756,9 @@ export default {
   font-weight: bold;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
-.main {
-  margin-bottom: 130rpx;
-}
+// .main {
+//   margin-bottom: 130rpx;
+// }
 
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
