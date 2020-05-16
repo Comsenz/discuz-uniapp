@@ -230,7 +230,6 @@ export default {
     // // 加载当前主题数据
     loadPost() {
       const params = {
-        'filter[isDeleted]': 'no',
         include: [
           'user',
           'likedUsers',
@@ -403,7 +402,7 @@ export default {
           delete data._jv;
           this.posts = data;
           console.log('&&&&&&~~~~~~~~~!', this.posts);
-          console.log(123, this.posts[12].user.groups[10].name);
+          // console.log(123, this.posts[12].user.groups[10].name);
           // Object.getOwnPropertyNames(data).forEach(function(key) {
           //   console.log({ key }, data[key].user.username);
           // });
@@ -869,7 +868,7 @@ page {
   background: --color(--qui-FC-DDD);
 }
 .thread-box {
-  padding: 80rpx 40rpx;
+  padding: 50rpx 40rpx 0;
 }
 .thread {
   padding: 20rpx;
@@ -941,6 +940,18 @@ page {
         font-weight: bold;
         color: --color(--qui-RED);
       }
+    }
+  }
+  &__content {
+    &__text {
+      display: flex;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      // -webkit-box-orient: vertical;
+      flex-direction: column;
+      flex-wrap: wrap;
+      -webkit-line-clamp: 2;
     }
   }
 }

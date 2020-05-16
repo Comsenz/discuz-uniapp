@@ -17,7 +17,7 @@
             <view v-if="userId != currentLoginId">
               <view class="profile-info__box__detail-operate" @tap="chat">
                 <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
-                <text>私信</text>
+                <text>{{ i18n.t('profile.privateMessage') }}</text>
               </view>
               <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
               <view
@@ -31,7 +31,13 @@
                   :color="userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? '#333' : '#ff8888'"
                 ></qui-icon>
                 <text>
-                  {{ userInfo.follow == 0 ? '关注' : userInfo.follow == 1 ? '已关注' : '互相关注' }}
+                  {{
+                    userInfo.follow == 0
+                      ? i18n.t('profile.following')
+                      : userInfo.follow == 1
+                      ? i18n.t('profile.followed')
+                      : i18n.t('profile.mutualfollow')
+                  }}
                 </text>
               </view>
             </view>
@@ -90,10 +96,10 @@ export default {
   data() {
     return {
       items: [
-        { title: '主题', brief: '73' },
-        { title: '关注', brief: '12' },
-        { title: '粉丝', brief: '31' },
-        { title: '点赞', brief: '65' },
+        { title: this.i18n.t('profile.topic'), brief: '0' },
+        { title: this.i18n.t('profile.following'), brief: '0' },
+        { title: this.i18n.t('profile.followers'), brief: '0' },
+        { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
       userId: '',
       currentLoginId: uni.getStorageSync('user_id'),
@@ -125,7 +131,7 @@ export default {
     // 获取用户信息
     getUserInfo(userId) {
       const params = {
-        include: ['wechat', 'groups'],
+        include: 'groups',
       };
       status
         .run(() => this.$store.dispatch('jv/get', [`users/${userId}`, { params }]))
@@ -157,7 +163,7 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/${this.currentLoginId}`).then(() => {
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.getUserInfo(this.userId);
         if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
       });

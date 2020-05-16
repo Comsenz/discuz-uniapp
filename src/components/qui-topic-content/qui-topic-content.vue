@@ -78,7 +78,7 @@
           :src="mediaUrl"
           style="width: 100%;"
         ></video>
-        <!--<view v-if="Object.keys(imagesList).length == 1">
+        <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -91,7 +91,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length == 2">
+        <view v-if="imagesList.length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -104,7 +104,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length >= 3">
+        <view v-if="imagesList.length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -117,12 +117,12 @@
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="Object.keys(imagesList).length % 3 != 0"
+              v-if="imagesList.length % 3 != 0"
             ></image>
           </view>
-        </view>-->
-        <view v-if="!payStatus" class="themeItem__content__con__cover"></view>
-        <view v-if="!payStatus" class="themeItem__content__con__surtip">
+        </view>
+        <view v-if="!payStatus && threadPrice" class="themeItem__content__con__cover"></view>
+        <view v-if="!payStatus && threadPrice" class="themeItem__content__con__surtip">
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
@@ -164,6 +164,11 @@ export default {
     payStatus: {
       type: Boolean,
       default: true,
+    },
+    // 当前主题价格
+    threadPrice: {
+      type: Number,
+      default: 0,
     },
     // 需要支付查看的内容所占的比例
     // partVal: {
@@ -212,9 +217,9 @@ export default {
     },
     // 主题图片
     imagesList: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
     },
     // 图片裁剪、缩放的模式
@@ -356,6 +361,7 @@ export default {
       width: 100%;
     }
     &__con {
+      padding-bottom: 20rpx;
       &__cover {
         position: absolute;
         right: 0;
@@ -383,6 +389,7 @@ export default {
       font-weight: 400;
       line-height: 45rpx;
       color: --color(--qui-FC-333);
+      word-break: break-all;
       img {
         display: inline-block;
         width: 28rpx;

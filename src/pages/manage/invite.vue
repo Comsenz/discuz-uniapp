@@ -1,65 +1,142 @@
 <template>
-  <view class="invite">
-    <!-- 标签栏 -->
-    <view class="invite-tabs">
-      <qui-tabs :current="current" :values="tabList" @clickItem="onClickItem"></qui-tabs>
-      <view class="profile-tabs__content">
-        <view v-if="current === 0" class="items">
-          <!-- 记录数 -->
-          <view class="invite-records">
-            <text>共有 {{ count }} 条记录</text>
+  <qui-page>
+    <view class="invite">
+      <!-- 标签栏 -->
+      <view class="invite-tabs">
+        <qui-tabs :current="current" :values="tabList" @clickItem="onClickItem"></qui-tabs>
+        <view class="profile-tabs__content" v-if="allInviteList && allInviteList.length > 0">
+          <view v-if="current === 0" class="items">
+            <!-- 记录数 -->
+            <view class="invite-records">
+              <text>共有 {{ totalData }} 条记录</text>
+            </view>
+            <!-- 邀请列表 -->
+            <view class="invite-content">
+              <qui-cell-item
+                v-for="item in allInviteList"
+                :key="item._jv.id"
+                :title="item.title"
+                :brief="item.time"
+                slot-right
+              >
+                <view class="invite-content-invalid" @click="invalid(item._jv.id)">设为无效</view>
+                <view class="invite-content-line"></view>
+                <view class="invite-content-share" @click="share(item.code)">
+                  分享
+                  <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+                </view>
+              </qui-cell-item>
+            </view>
+            <!-- 邀请链接按钮 -->
+            <view class="invite-button">
+              <button class="btn" @click="generate">生成邀请链接</button>
+            </view>
           </view>
-          <!-- 邀请列表 -->
-          <view class="invite-content">
-            <qui-cell-item
-              v-for="item in allInviteList"
-              :key="item._jv.id"
-              :title="item.title"
-              :brief="item.time"
-              slot-right
-            >
-              <view class="invite-content-invalid" @click="invalid(item._jv.id)">设为无效</view>
-              <view class="invite-content-line"></view>
-              <view class="invite-content-share" @click="share(item.code)">
-                分享
-                <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+          <view v-if="current === 1" class="items">
+            <!-- 记录数 -->
+            <view class="invite-records">
+              <text>共有 {{ totalData }} 条记录</text>
+            </view>
+            <!-- 邀请列表 -->
+            <view class="invite-content">
+              <qui-cell-item
+                v-for="item in allInviteList"
+                :key="item._jv.id"
+                :title="item.title"
+                :brief="item.time"
+                slot-right
+              >
+                <view class="invite-content-invalid" @click="invalid(item._jv.id)">设为无效</view>
+                <view class="invite-content-line"></view>
+                <view class="invite-content-share" @click="share(item.code)">
+                  分享
+                  <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+                </view>
+              </qui-cell-item>
+            </view>
+            <!-- 邀请链接按钮 -->
+            <view class="invite-button">
+              <button class="btn" @click="generate">生成邀请链接</button>
+            </view>
+          </view>
+          <view v-if="current === 2" class="items">
+            <!-- 记录数 -->
+            <view class="invite-records">
+              <text>共有 {{ totalData }} 条记录</text>
+            </view>
+            <!-- 邀请列表 -->
+            <view class="invite-content">
+              <qui-cell-item
+                v-for="item in allInviteList"
+                :key="item._jv.id"
+                :title="item.title"
+                :brief="item.time"
+                slot-right
+              >
+                <view class="invite-content-invalid" @click="invalid(item._jv.id)">设为无效</view>
+                <view class="invite-content-line"></view>
+                <view class="invite-content-share" @click="share(item.code)">
+                  分享
+                  <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+                </view>
+              </qui-cell-item>
+            </view>
+            <!-- 邀请链接按钮 -->
+            <view class="invite-button">
+              <button class="btn" @click="generate">生成邀请链接</button>
+            </view>
+          </view>
+          <view v-if="current === 3" class="items">
+            <!-- 记录数 -->
+            <view class="invite-records">
+              <text>共有 {{ totalData }} 条记录</text>
+            </view>
+            <!-- 邀请列表 -->
+            <view class="invite-content">
+              <qui-cell-item
+                v-for="item in allInviteList"
+                :key="item._jv.id"
+                :title="item.title"
+                :brief="item.time"
+                slot-right
+              >
+                <view class="invite-content-invalid" @click="invalid(item._jv.id)">设为无效</view>
+                <view class="invite-content-line"></view>
+                <view class="invite-content-share" @click="share(item.code)">
+                  分享
+                  <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
+                </view>
+              </qui-cell-item>
+            </view>
+            <!-- 邀请链接按钮 -->
+            <view class="invite-button">
+              <button class="btn" @click="generate">生成邀请链接</button>
+            </view>
+          </view>
+        </view>
+        <qui-no-data tips="暂无内容" v-else></qui-no-data>
+      </view>
+      <!-- 邀请链接弹窗 -->
+      <uni-popup ref="popup" type="bottom">
+        <scroll-view style="height: 968rpx;" scroll-y="true">
+          <view class="popup-wrap">
+            <view class="popup-wrap-con">
+              <view
+                @click="generateUrl(item.group_id)"
+                v-for="item in allInviteList"
+                :key="item._jv.id"
+              >
+                <view class="popup-wrap-con-text">{{ item.title }}</view>
+                <view class="popup-wrap-con-line"></view>
               </view>
-            </qui-cell-item>
+            </view>
+            <view class="popup-wrap-space"></view>
+            <text class="popup-wrap-btn" @click="cancel">取消</text>
           </view>
-          <!-- 邀请链接按钮 -->
-          <view class="invite-button">
-            <button class="btn" @click="generate">生成邀请链接</button>
-          </view>
-        </view>
-        <view v-if="current === 1" class="items">
-          <view>已使用</view>
-        </view>
-        <view v-if="current === 2" class="items">
-          <view>已过期</view>
-        </view>
-        <view v-if="current === 3" class="items">
-          <view>已失效</view>
-        </view>
-      </view>
+        </scroll-view>
+      </uni-popup>
     </view>
-    <!-- 邀请链接弹窗 -->
-    <uni-popup ref="popup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <view
-            @click="generateUrl(item.group_id)"
-            v-for="item in allInviteList"
-            :key="item._jv.id"
-          >
-            <view class="popup-text">{{ item.title }}</view>
-            <view class="popup-line"></view>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel">取消</text>
-      </view>
-    </uni-popup>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -71,7 +148,7 @@ export default {
   data() {
     return {
       current: 0, // 当前标签页
-      count: 3, // 邀请链接列表数量
+      totalData: 3, // 邀请链接列表数量
       tabList: [
         { id: 1, title: '未使用', status: 1 },
         { id: 2, title: '已使用', status: 2 },
@@ -123,15 +200,18 @@ export default {
       const params = {
         'filter[status]': status,
       };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'invite' } });
       this.$store.dispatch('jv/get', ['invite', { params }]).then(res => {
+        this.totalData = res._jv.json.meta.total;
         console.log('获取管理邀请列表', res);
       });
     },
 
     // 调用 获取所有用户组 接口
     getGroupList() {
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'groups' } });
       this.$store.dispatch('jv/get', 'groups');
-      console.log('获取管理邀请列表');
+      console.log('获取所有用户组');
     },
 
     // 改变标签页
@@ -167,14 +247,14 @@ export default {
       console.log('生成邀请链接：', groupId);
       const adminParams = {
         _jv: {
-          type: 'dialog/invite',
+          type: 'invite',
         },
         type: 'invite',
         group_id: groupId,
       };
       const userParams = {
         _jv: {
-          type: 'dialog/userInviteCode',
+          type: 'userInviteCode',
         },
       };
       // 角色是管理员
@@ -215,10 +295,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-
-page {
-  background-color: #f9fafc;
-}
+@import '@/styles/base/theme/fn.scss';
 
 .invite {
   font-size: $fg-f28;
@@ -294,15 +371,16 @@ page {
     }
   }
 
-  .popup-share {
+  .popup-wrap {
     display: flex;
     flex-direction: column;
     background: --color(--qui-BG-2);
+    border-radius: 10rpx 10rpx 0rpx 0rpx;
 
-    &-content {
+    &-con {
       border-radius: 10rpx 10rpx 0rpx 0rpx;
 
-      .popup-text {
+      &-text {
         width: 100%;
         height: 100rpx;
         font-size: $fg-f34;
@@ -310,13 +388,13 @@ page {
         text-align: center;
       }
 
-      .popup-line {
+      &-line {
         border: 2rpx solid --color(--qui-BG-ED);
       }
+    }
 
-      &-space {
-        border: 8rpx solid --color(--qui-BG-ED);
-      }
+    &-space {
+      border: 8rpx solid --color(--qui-BG-ED);
     }
 
     &-btn {
