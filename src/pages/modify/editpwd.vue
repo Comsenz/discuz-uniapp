@@ -1,49 +1,51 @@
 <template>
-  <view class="chagepas">
-    <view class="chagepas-pas">
-      <input
-        type="password"
-        :class="judge ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        :placeholder="i18n.t('modify.enterold')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        v-model="valueused"
-        @input="changeinput"
-      />
-      <view class="chagepas-erro-messag1" v-if="judge">
-        {{ text }}
-      </view>
-      <input
-        type="password"
-        :class="judge2 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        :placeholder="i18n.t('modify.enternew')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        v-model="valuenew"
-        @input="changeinput2"
-      />
-      <view class="chagepas-erro-messag1" v-if="judge2">
-        {{ text1 }}
-      </view>
-      <input
-        type="password"
-        :class="judge3 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
-        :placeholder="i18n.t('modify.enterreplace')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        v-model="valuetone"
-        @input="changeinput3"
-      />
-      <view class="chagepas-erro-messag1" v-if="judge3">
-        {{ i18n.t('modify.masstext') }}
-      </view>
-      <view class="chagepas-pas-btn">
-        <qui-button :type="styledisbla" size="large" :disabled="disab" @click="submission">
-          {{ i18n.t('modify.submission') }}
-        </qui-button>
-      </view>
-      <view class="chagepas-erro-forget" @click="runretire">
-        {{ i18n.t('modify.forgetoldpassword') }}
+  <qui-page>
+    <view class="chagepas">
+      <view class="chagepas-pas">
+        <input
+          type="password"
+          :class="judge ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
+          :placeholder="i18n.t('modify.enterold')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          v-model="valueused"
+          @input="changeinput"
+        />
+        <view class="chagepas-erro-messag1" v-if="judge">
+          {{ text }}
+        </view>
+        <input
+          type="password"
+          :class="judge2 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
+          :placeholder="i18n.t('modify.enternew')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          v-model="valuenew"
+          @input="changeinput2"
+        />
+        <view class="chagepas-erro-messag1" v-if="judge2">
+          {{ text1 }}
+        </view>
+        <input
+          type="password"
+          :class="judge3 ? 'chagepas-pas-inpa2' : 'chagepas-pas-inpa'"
+          :placeholder="i18n.t('modify.enterreplace')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          v-model="valuetone"
+          @input="changeinput3"
+        />
+        <view class="chagepas-erro-messag1" v-if="judge3">
+          {{ i18n.t('modify.masstext') }}
+        </view>
+        <view class="chagepas-pas-btn">
+          <qui-button :type="styledisbla" size="large" :disabled="disab" @click="submission">
+            {{ i18n.t('modify.submission') }}
+          </qui-button>
+        </view>
+        <view class="chagepas-erro-forget" @click="runretire">
+          {{ i18n.t('modify.forgetoldpassword') }}
+        </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
@@ -178,11 +180,13 @@ export default {
 .chagepas {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .chagepas-pas {
   width: 100%;
   padding: 0 0 0 40rpx;
-  margin: 31rpx 0 0;
 }
 .chagepas-pas-inpa {
   width: 100%;

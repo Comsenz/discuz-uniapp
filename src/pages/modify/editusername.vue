@@ -1,16 +1,18 @@
 <template>
-  <view class="chagepas">
-    <view class="chagepas-pas">
-      <input
-        type="text"
-        class="chagepas-pas-inpa"
-        v-model="sername"
-        :placeholder="i18n.t('modify.numbermodifitions')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        maxlength="15"
-      />
-      <view class="chagepas-erro-test" v-if="edit">
-        {{ test }}
+  <qui-page>
+    <view class="chagepas">
+      <view class="chagepas-pas">
+        <input
+          type="text"
+          class="chagepas-pas-inpa"
+          v-model="sername"
+          :placeholder="i18n.t('modify.numbermodifitions')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          maxlength="15"
+        />
+        <view class="chagepas-erro-test" v-if="edit">
+          {{ test }}
+        </view>
       </view>
       <view class="chagepas-pas-btn">
         <qui-button type="primary" size="large" :disabled="disab" @click="submission">
@@ -18,7 +20,7 @@
         </qui-button>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
@@ -80,6 +82,7 @@ export default {
             /* eslint-disable */
             this.test = err.data.errors[0].detail[0];
             uni.showToast({
+              icon: this.nametitle.icon,
               title: this.test,
               duration: 2000,
             });
@@ -108,6 +111,7 @@ export default {
 .chagepas {
   width: 100vw;
   height: 100vh;
+  background-color: --color(--qui-BG-2);
 }
 .chagepas-pas {
   width: 100%;
@@ -127,9 +131,10 @@ export default {
   font-weight: 400;
   line-height: 100rpx;
   text-align: left;
-  border-bottom: 2rpx solid --color(--qui-BG-ED);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .chagepas-pas-btn {
-  margin: 50rpx 0 0;
+  width: 670rpx;
+  margin: 50rpx auto 0;
 }
 </style>
