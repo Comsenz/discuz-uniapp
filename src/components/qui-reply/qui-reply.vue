@@ -44,9 +44,9 @@ export default {
     },
     // 评论的回复列表
     replyList: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
     },
     // 回复的id
