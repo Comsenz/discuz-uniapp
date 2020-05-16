@@ -496,7 +496,6 @@ export default {
       if (status) {
         this.postThread().then(res => {
           if (res._jv.json.data.id) {
-            this.setAtMember([]);
             uni.navigateTo({
               url: `/pages/topic/index?id=${res._jv.json.data.id}`,
             });
@@ -638,6 +637,7 @@ export default {
     this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
+    this.setAtMember([]);
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');
