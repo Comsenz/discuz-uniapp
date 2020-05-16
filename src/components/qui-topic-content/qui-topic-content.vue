@@ -246,7 +246,7 @@ export default {
   data: () => {
     return {
       seleShow: false, // 默认收起管理菜单
-      selectActive: '',
+      selectActive: false,
     };
   },
   onLoad() {
@@ -271,6 +271,7 @@ export default {
       console.log(param, '类型22222');
       this.$emit('selectChoice', param);
       this.seleShow = false;
+      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 点击用户头像以及用户名事件
     personJump() {
