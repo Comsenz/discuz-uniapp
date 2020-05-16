@@ -121,7 +121,7 @@
         </view>
       </view>
       <!-- </view> -->
-      <view class="main" v-if="jvStatus[threadsStatusId]">
+      <view class="main">
         <qui-content
           v-for="(item, index) in threads"
           :key="index"
@@ -334,7 +334,6 @@ export default {
     //   this.isTop = 0;
     // }
   },
-
   methods: {
     scroll(event) {
       // console.log(event, 'scroll');
@@ -489,7 +488,7 @@ export default {
     showFilter() {
       this.show = true;
       this.$refs.filter.setData();
-      this.navShow = true;
+      // this.navShow = true;
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
@@ -593,8 +592,9 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
-        this.hasMore = !!res._jv.json.links.next;
-        this.loadingType = this.hasMore ? 'more' : 'nomore';
+        // this.hasMore = !!res._jv.json.links.next;
+        // this.loadingType = this.hasMore ? 'more' : 'nomore';
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {
           this.threads = res;
@@ -641,14 +641,12 @@ export default {
 
     // 下拉加载
     pullDown() {
-      console.log('下拉加载呢');
-      if (this.hasMore) {
-        this.pageNum += 1;
-        // this.loadThreads();
-        console.log(this.pageNum, '页码');
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadThreads();
+      console.log(this.pageNum, '页码');
     },
   },
 };
