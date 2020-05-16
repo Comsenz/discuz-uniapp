@@ -9,7 +9,7 @@
     }"
   >
     <view class="filter-modal__content" v-if="showValue" @tap.stop>
-      <view class="filter-modal__content__search" v-if="showSearch">
+      <view class="filter-modal__content__search" v-if="showSearch" @click="searchClick">
         <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
         {{ i18n.t('search.search') }}
       </view>
@@ -147,6 +147,10 @@ export default {
         }
       });
       this.selectedData = selectedData;
+    },
+    // 搜索跳转
+    searchClick(evt) {
+      this.$emit('searchClick', evt);
     },
   },
 };

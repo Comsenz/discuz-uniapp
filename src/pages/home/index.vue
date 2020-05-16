@@ -81,6 +81,7 @@
           :if-need-confirm="ifNeedConfirm"
           :filter-list="filterList"
           :show-search="showSearch"
+          @searchClick="searchClick"
           posi-type="absolute"
           top="102"
           ref="filter"
@@ -318,7 +319,6 @@ export default {
         console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
-        console.log(this.filterTop, '筛选');
       })
       .exec();
   },
@@ -393,6 +393,13 @@ export default {
       this.loadThreadsSticky();
       await this.loadThreads();
       this.checkoutTheme = false;
+    },
+    // 筛选分类里的搜索
+    searchClick() {
+      console.log('0000000');
+      uni.navigateTo({
+        url: '/pages/site/search',
+      });
     },
     // 点击置顶跳转到详情页
     stickyClick(id) {
@@ -695,7 +702,7 @@ export default {
 }
 
 .scrolled .nav {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .sticky {
