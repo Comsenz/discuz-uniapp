@@ -767,9 +767,9 @@ export default {
   font-weight: bold;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
-// .main {
-//   margin-bottom: 130rpx;
-// }
+.main {
+  margin-bottom: 130rpx;
+}
 
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
