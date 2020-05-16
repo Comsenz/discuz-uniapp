@@ -200,6 +200,7 @@ export default {
     paymenttobemade: 'Payment to bemade',
     paymentsucceed: 'Payment succeed',
     paymentfailed: 'Payment failed',
+    freezingreason: 'Freezing reason',
   },
   site: {
     circleintroduction: 'Circle introduction',
