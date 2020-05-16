@@ -212,6 +212,19 @@ export default {
       return this.i18n.t('topic');
     },
   },
+  watch: {
+    // 监听得到的数据
+    commentLikeCount: {
+      handler(newVal) {
+        this.commentLikeCount = newVal;
+        console.log('这是监听到的点赞数');
+      },
+      deep: true,
+      immediate: true,
+    },
+    deep: true,
+    immediate: true,
+  },
   methods: {
     // 点击内容事件
     commentJump() {

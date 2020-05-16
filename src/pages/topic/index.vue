@@ -53,7 +53,7 @@
           @btnClick="rewardClick"
         ></qui-person-list>
       </view>
-      <view v-if="likedStatus">
+      <view v-if="likedStatus && thread.firstPost.likeCount > 0">
         <!-- 点赞用户列表 -->
         <qui-person-list
           :type="t.giveLike"
@@ -109,7 +109,9 @@
             :can-delete="post.canDelete"
             :comment-show="true"
             @personJump="personJump(post.user.id)"
-            @commentLikeClick="commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked)"
+            @commentLikeClick="
+              commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index)
+            "
             @commentJump="commentJump(threadId, post._jv.id)"
             @imageClick="imageClick"
             @deleteComment="deleteComment(post._jv.id)"
@@ -334,6 +336,7 @@ export default {
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       posts: [], //评论列表数据
       loadDetailCommnetStatusId: 0,
+      postIndex: '', //点击主题评论时的index
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
       cursor: 0, // 光标位置
@@ -497,8 +500,7 @@ export default {
       this.getEmoji();
     }
     // this.getUser();
-    const token =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI5NTZiYzZhODhiYjUyNzVhMmZmNDU4ZDI5MmU3ZDVkMDExZGYwMDA5YThkZDk5ZjVkMDE4ZjBmMTAzMTdlODI3MTg4OGUzMzJiZDAyNjhlYSIsImlhdCI6MTU4ODczMDY1MiwibmJmIjoxNTg4NzMwNjUyLCJleHAiOjE1OTEzMjI2NTIsInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.B0KIIPZVkSkEIWoi6aOny66ttilbWXv45eNkH4hPew_-h3c483qRjVL9K7ncA8S76Kaqq6fLt_kxqU7gehlsOTRbfDEu8_GgouAnn_t6PmYlG9ybS8D8IJnuU_jZCo4WW-PobtM9yl0lXYTooelU6a1Q0Sx6y7IEPjcG6xIQU-9H4J-Cr1fUYw9TtOMds274KgdGAkCTPRNg0qadz3BZwj-qXn6JkL3haEyzEXIfk1arWXhU2LXAZ2ukzpO2XSkw7kDezjbcQ4B3Lx890CeIzdYf4l8cB3WowYJQMtJl0Qnq6wsU2dycJH9cyXVl_wQ6lCXRiDE-lV0X-SiK3qGQvQ';
+    const token = uni.getStorageSync('access_token');
     this.header = {
       authorization: `Bearer ${token}`,
     };
@@ -636,12 +638,12 @@ export default {
       } else if (type == '2') {
         params = {
           _jv: jvObj,
-          isDeleted: isStatus === true ? false : true,
+          isDeleted: !isStatus,
         };
       } else if (type == '3') {
         params = {
           _jv: jvObj,
-          isDeleted: isStatus === true ? false : true,
+          isDeleted: !isStatus,
         };
       } else if (type == '4') {
         params = {
@@ -656,7 +658,7 @@ export default {
           if (type == '1') {
             // 主题点赞
             this.isLiked = data.isLiked;
-            this.$set(this.thread.firstPost, 'isLiked', data.isLiked);
+            // this.$set(this.thread.firstPost, 'isLiked', data.isLiked);
             console.log(this.thread.firstPost.likeCount, '这是当前点赞数');
             if (data.isLiked) {
               // 未点赞时，点击点赞'
@@ -666,9 +668,6 @@ export default {
                 '这是点赞追加前11111~~~~~~~~~~~~~~~的列表',
               );
               if (this.thread.firstPost.likeCount > 0) {
-                // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-                //   value.id === this.user.id && likedUsers.splice(key, 1);
-                // });
                 this.thread.firstPost.likedUsers.unshift({
                   avatarUrl: this.user.avatarUrl,
                   id: this.user.id,
@@ -690,7 +689,6 @@ export default {
                 value.id === this.user.id && likedUsers.splice(key, 1);
               });
               console.log(this.thread.firstPost.likedUsers, '这是操作后444');
-              // this.thread.firstPost.likeCount = this.thread.firstPost.likeCount - 1;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -709,14 +707,15 @@ export default {
             }
           } else if (type == '4') {
             // 评论点赞
-            if (isStatus) {
+            // console.log(this.postIndex, '这是当前主题的index');
+            // this.$set(this.posts[this.postIndex], 'isLiked', data.isLiked);
+            if (data.isLiked) {
               console.log('点赞数加1');
-              // data.isLiked = true;
-              // data.likeCount = data.likeCount - 1;
+              // this.$set(this.posts[this.postIndex], 'likeCount', this.posts[this.postIndex] + 1);
+              // console.log(this.posts[this.postIndex].likeCount, '这是点赞之后的数');
             } else {
               console.log('点赞数减1');
-              // data.isLiked = false;
-              // data.likeCount = data.likeCount + 1;
+              // this.$set(this.posts[this.postIndex], 'likeCount', this.posts[this.postIndex] - 1);
             }
           }
         })
@@ -891,6 +890,7 @@ export default {
       loadDetailCommnetAction.then(data => {
         delete data._jv;
         this.posts = data;
+        console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
     },
 
@@ -1209,14 +1209,15 @@ export default {
       });
     },
     // 评论点赞
-    commentLikeClick(postId, type, canStatus, isStatus) {
+    commentLikeClick(postId, type, canStatus, isStatus, index) {
       console.log(postId, '请求接口，评论点赞');
+      this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus);
     },
     // 删除评论
     deleteComment(postId) {
       console.log(postId, '删除回复postid');
-      this.postOpera(this.threadId, '3');
+      this.postOpera(postId, '3');
     },
     // 评论的回复
     replyComment(postId) {
