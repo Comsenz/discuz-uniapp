@@ -2,7 +2,6 @@
   <view class="content bg" v-if="status">
     <view class="ft-gap">
       <qui-topic-content
-        v-if="postStatus"
         :avatar-url="post.user.avatarUrl"
         :user-name="post.user.username"
         :theme-time="post.createdAt"
@@ -10,7 +9,7 @@
         :images-list="post.images"
         @personJump="personJump"
       ></qui-topic-content>
-      <view class="thread-box">
+      <view class="thread-box" v-if="loadDetailStatus">
         <view class="thread">
           <view class="thread__header">
             <view class="thread__header__img">
@@ -49,7 +48,7 @@
           </view>
         </view>
       </view>
-      <view v-if="postStatus">
+      <view>
         <!-- 点赞用户列表 -->
         <qui-person-list
           :type="t.giveLike"
@@ -69,10 +68,10 @@
           class="det-con-ft-child"
           @click="commentLikeClick(post._jv.id, post.canLike, post.isLiked)"
         >
-          <qui-icon v-if="post.isLiked" name="icon-liked" class="qui-icon"></qui-icon>
-          <qui-icon v-else name="icon-like" class="qui-icon"></qui-icon>
-          <view class="" v-if="post.isLiked">{{ t.giveLikeAlready }}</view>
-          <view class="" v-else>{{ t.giveLike }}</view>
+          <qui-icon :name="post.isLiked ? 'icon-liked' : 'icon-like'" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">
+            {{ post.isLiked ? t.giveLikeAlready : t.giveLike }}
+          </view>
         </view>
         <view class="det-con-ft-child" @click="replyComment(post._jv.id, thread.canReply)">
           <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
@@ -82,7 +81,7 @@
       <!-- 评论 -->
       <view class="comment">
         <view class="comment-num">{{ post.replyCount }}{{ t.item }}{{ t.comment }}</view>
-        <view v-if="postsStatus">
+        <view>
           <qui-topic-comment
             v-for="(commentPost, index) in post.commentPosts"
             :key="index"
@@ -136,9 +135,12 @@
               />
             </view>
           </view>
-          <qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
+          <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
             {{ t.publish }}
-          </qui-button>
+          </qui-button>-->
+          <button class="publishBtn" @click="publishClick()">
+            {{ t.publish }}
+          </button>
         </view>
       </uni-popup>
     </view>
@@ -216,6 +218,7 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(this.user, '这是用户信息~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     console.log(option.threadId, '这是回复页接收的主题id');
     console.log(option.commentId, '这是回复页接收的回复id');
     this.threadId = option.threadId;
@@ -227,7 +230,7 @@ export default {
     // console.log(forums);
   },
   methods: {
-    // // 加载当前主题数据
+    // // 加载当前评论数据
     loadPost() {
       const params = {
         include: [
@@ -244,7 +247,7 @@ export default {
           'attachments',
         ],
       };
-      this.loadDetailStatus = status.run(() =>
+      this.loadPostStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
           this.post = data;
@@ -253,7 +256,7 @@ export default {
         }),
       );
     },
-    // 加载当前回复数据
+    // 加载当前回复的主题数据
     loadThread() {
       const params = {
         'filter[isDeleted]': 'no',
@@ -287,22 +290,22 @@ export default {
       if (type == '1') {
         params = {
           _jv: jvObj,
-          isLiked: isStatus === true ? false : true,
+          isLiked: !isStatus,
         };
       } else if (type == '2') {
         params = {
           _jv: jvObj,
-          isDeleted: isStatus === true ? false : true,
+          isDeleted: !isStatus,
         };
       } else if (type == '3') {
         params = {
           _jv: jvObj,
-          isDeleted: isStatus === true ? false : true,
+          isDeleted: !isStatus,
         };
       } else if (type == '4') {
         params = {
           _jv: jvObj,
-          isLiked: isStatus === true ? false : true,
+          isLiked: !isStatus,
         };
       }
       this.$store
@@ -312,22 +315,29 @@ export default {
           if (type == '1') {
             this.isLiked = data.isLiked;
             if (data.isLiked) {
-              // 未点赞时，点击点赞'
-              // this.thread.firstPost.likedUsers.unshift({
-              //   _data: { username: this.currentUserName, id: this.userId }
-              // });
-              this.post.likeCount = this.thread.firstPost.likeCount + 1;
+              // 未点赞时，点击点赞
+              console.log('未点赞时，点击点赞');
+              this.post.likedUsers.unshift({
+                avatarUrl: this.user.avatarUrl,
+                id: this.user.id,
+              });
+              // this.post.likeCount = this.thread.firstPost.likeCount + 1;
             } else {
-              // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-              //   value._data.id === this.userId && likedUsers.splice(key, 1);
-              // });
-              this.post.likeCount = this.thread.firstPost.likeCount - 1;
+              console.log('已点赞时，取消点赞');
+              this.post.likedUsers.map((value, key, likedUsers) => {
+                value._data.id === this.user.id && likedUsers.splice(key, 1);
+                value.id === this.user.id && likedUsers.splice(key, 1);
+              });
+              // this.post.likeCount = this.thread.firstPost.likeCount - 1;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
+              uni.navigateTo({
+                url: '/pages/topic/index?id=' + this.threadId,
+              });
               console.log('跳转到主题详情页');
             } else {
-              console.log('当前回复删除失败');
+              console.log('当前评论删除失败');
             }
           } else if (type == '3') {
             if (data.isDeleted) {
@@ -338,10 +348,10 @@ export default {
           } else if (type == '4') {
             if (isStatus) {
               console.log('点赞数加1');
-              data.likeCount = data.likeCount - 1;
+              // data.likeCount = data.likeCount - 1;
             } else {
               console.log('点赞数减1');
-              data.likeCount = data.likeCount + 1;
+              // data.likeCount = data.likeCount + 1;
             }
           }
         })
@@ -382,7 +392,7 @@ export default {
       });
     },
 
-    // 加载当前主题评论的数据
+    // 加载当前主题评论的回复数据
     loadThreadPosts() {
       const params = {
         'filter[isDeleted]': 'no',
@@ -397,7 +407,7 @@ export default {
           'lastThreeComments.replyUser',
         ],
       };
-      this.loadDetailCommnetStatus = status.run(() =>
+      this.loadPostCommentStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
           this.posts = data;
@@ -439,7 +449,9 @@ export default {
       this.postOpera(postId, type, canStatus, isStatus);
     },
     // 删除当前回复
-    deleteReply(postId, canStatus) {},
+    deleteReply(postId, canStatus) {
+      this.postOpera(postId, '2');
+    },
     // 删除回复的评论
     deleteComment(postId) {
       console.log(postId, '删除回复postid');
@@ -789,6 +801,13 @@ page {
 }
 .publishBtn {
   width: 100%;
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 100rpx;
+  color: --color(--qui-FC-FFF);
+  text-align: center;
+  background: --color(--qui-MAIN);
+  border-radius: 0;
 }
 
 .popup-share {
@@ -868,7 +887,7 @@ page {
   background: --color(--qui-FC-DDD);
 }
 .thread-box {
-  padding: 50rpx 40rpx 0;
+  padding: 50rpx 40rpx 80rpx;
 }
 .thread {
   padding: 20rpx;
