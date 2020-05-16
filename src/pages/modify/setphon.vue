@@ -1,38 +1,40 @@
 <template>
-  <view class="new" @click.stop="toggleBox">
-    <view class="new-phon" v-if="phon">
-      <view class="new-phon-test">
-        {{ i18n.t('modify.newphonnumber') }}
+  <qui-page>
+    <view class="new" @click.stop="toggleBox">
+      <view class="new-phon" v-if="phon">
+        <view class="new-phon-test">
+          {{ i18n.t('modify.newphonnumber') }}
+        </view>
+        <view class="new-phon-number">
+          <input class="new-phon-num" type="text" v-model="newphon" />
+          <button class="new-phon-send" v-if="sun" @click="btnButton">
+            {{ i18n.t('modify.sendverificode') }}
+          </button>
+          <button class="new-phon-send" disabled v-else>
+            {{ second + i18n.t('modify.retransmission') }}
+          </button>
+        </view>
       </view>
-      <view class="new-phon-number">
-        <input class="new-phon-num" type="text" v-model="newphon" />
-        <button class="new-phon-send" v-if="sun" @click="btnButton">
-          {{ i18n.t('modify.sendverificode') }}
-        </button>
-        <button class="new-phon-send" disabled v-else>
-          {{ second + i18n.t('modify.retransmission') }}
-        </button>
+      <!-- 验证码 -->
+      <view class="new-input" @click.stop="fourse">
+        <view class="new-input-test">
+          {{ i18n.t('modify.placeentercode') }}
+        </view>
+        <qui-input-code
+          @getdata="btndata"
+          :title="tit"
+          :text="test"
+          :show="inshow"
+          :isiphonex="inisIphone"
+        ></qui-input-code>
+      </view>
+      <view class="new-button">
+        <qui-button type="primary" size="large" @click="dingphon">
+          {{ i18n.t('modify.nextsetp') }}
+        </qui-button>
       </view>
     </view>
-    <!-- 验证码 -->
-    <view class="new-input" @click.stop="fourse">
-      <view class="new-input-test">
-        {{ i18n.t('modify.placeentercode') }}
-      </view>
-      <qui-input-code
-        @getdata="btndata"
-        :title="tit"
-        :text="test"
-        :show="inshow"
-        :isiphonex="inisIphone"
-      ></qui-input-code>
-    </view>
-    <view class="new-button">
-      <qui-button type="primary" size="large" @click="dingphon">
-        {{ i18n.t('modify.nextsetp') }}
-      </qui-button>
-    </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -182,19 +184,23 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-
+@import '@/styles/base/theme/fn.scss';
 .new {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .new-phon {
   width: 710rpx;
   height: 200rpx;
-  margin: 31rpx 0 0 40rpx;
+  margin-left: 40rpx;
   font-size: $fg-f50;
   font-weight: bold;
   line-height: 100rpx;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  box-sizing: border-box;
 }
 .new-phon-test {
   font-size: $fg-f28;
@@ -211,7 +217,7 @@ export default {
   font-size: $fg-f50;
   font-weight: bold;
   line-height: 100rpx;
-  color: rgba(52, 52, 52, 1);
+  color: --color(--qui-FC-333);
 }
 .new-phon-send {
   display: block;
@@ -234,7 +240,7 @@ export default {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(119, 119, 119, 1);
+  color: --color(--qui-FC-777);
   opacity: 1;
 }
 .new-vftion-input {

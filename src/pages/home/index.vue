@@ -339,7 +339,7 @@ export default {
   },
   methods: {
     scroll(event) {
-      console.log(event, 'scroll');
+      // console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
         return;
       }
@@ -381,6 +381,15 @@ export default {
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
+
+      // 切换筛选框选中分类
+      // eslint-disable-next-line
+      this.filterList[0].data.map(item => {
+        // eslint-disable-next-line
+        item.selected = false;
+      });
+      this.filterList[0].data[dataInfo.index].selected = true;
+
       this.loadThreadsSticky();
       await this.loadThreads();
       this.checkoutTheme = false;
@@ -758,9 +767,9 @@ export default {
   font-weight: bold;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
-// .main {
-//   margin-bottom: 130rpx;
-// }
+.main {
+  margin-bottom: 130rpx;
+}
 
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
