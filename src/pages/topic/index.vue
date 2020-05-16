@@ -30,7 +30,7 @@
           :person-num="thread.paidCount"
           :limit-count="limitShowNum"
           :person-list="thread.paidUsers"
-          :btn-show="!thread.paid"
+          :btn-show="thread.price > 0 && !thread.paid"
           :btn-icon-show="true"
           btn-icon-name="rmb"
           :btn-text="payThreadTypeText"
@@ -234,7 +234,7 @@
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
       </view>
     </uni-popup>
     <!--打赏选择金额弹框-->
@@ -356,10 +356,10 @@ export default {
 
       seleShow: false, // 默认收起管理菜单
       selectList: [
-        { text: '编辑', type: '0' },
-        { text: '精华', type: '2' },
-        { text: '置顶', type: '3' },
-        { text: '删除', type: '4' },
+        { text: this.i18n.t('topic.edit'), type: '0' },
+        { text: this.i18n.t('topic.essence'), type: '2' },
+        { text: this.i18n.t('topic.sticky'), type: '3' },
+        { text: this.i18n.t('topic.delete'), type: '4' },
       ], // 管理菜单
 
       limitShowNum: 2,
@@ -472,13 +472,18 @@ export default {
     //   return thread.posts;
     // },
     // 语言包
+    // topic详情页语言包
     t() {
       return this.i18n.t('topic');
     },
+    // pay支付语言包
     p() {
       return this.i18n.t('pay');
     },
-
+    // core公共变量语言包
+    c() {
+      return this.i18n.t('p');
+    },
     status() {
       return status.status;
     },
@@ -578,11 +583,11 @@ export default {
         console.log(this.selectList, '管理菜单数据');
         if (this.thread.isEssence) {
           //如果初始化状态为true
-          this.selectList[1].text = '取消精华';
+          this.selectList[1].text = this.c.cancelEssence;
         }
         if (this.thread.isSticky) {
           //如果初始化状态为true
-          this.selectList[2].text = '取消置顶';
+          this.selectList[2].text = this.c.cancelSticky;
         }
         this.isLiked = data.firstPost.isLiked;
         this.topicStatus = data.isApproved;
@@ -762,16 +767,16 @@ export default {
           } else if (type == '2') {
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
-              this.selectList[1].text = '取消精华';
+              this.selectList[1].text = this.c.essence;
             } else {
-              this.selectList[1].text = '精华';
+              this.selectList[1].text = this.c.cancelEssence;
             }
           } else if (type == '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
-              this.selectList[2].text = '取消置顶';
+              this.selectList[2].text = this.c.cancelSticky;
             } else {
-              this.selectList[2].text = '置顶';
+              this.selectList[2].text = this.c.sticky;
             }
           } else if (type == '4') {
             // if (data.isDeleted) {

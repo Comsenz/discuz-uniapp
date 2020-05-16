@@ -127,6 +127,7 @@ export default {
   core: {
     not_install: '该站点未安装',
     postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',
+    cancel: '取消',
   },
   topic: {
     persenUnit: '人',
@@ -161,6 +162,11 @@ export default {
     replyContentCannotBeEmpty: '回复内容不能为空',
     supportTheAuthorToCreate: '支持作者继续创作',
     enterTheRewardPaymeAmount: '输入打赏付费金额',
+    edit: '编辑',
+    essence: '精华',
+    cancelEssence: '取消精华',
+    sticky: '置顶',
+    cancelSticky: '取消置顶',
   },
   pay: {
     passwordTip: '请输入支付密码',
