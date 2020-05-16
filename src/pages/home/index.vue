@@ -339,7 +339,7 @@ export default {
   },
   methods: {
     scroll(event) {
-      console.log(event, 'scroll');
+      // console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
         return;
       }
