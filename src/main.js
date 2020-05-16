@@ -6,6 +6,11 @@ import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
 
+// 兼容 allSettled 方法处理：https://www.npmjs.com/package/promise.allsettled
+const allSettled = require('promise.allsettled');
+
+Promise.allSettled = Promise.allSettled || allSettled;
+
 Vue.config.productionTip = false;
 
 App.mpType = 'app';
