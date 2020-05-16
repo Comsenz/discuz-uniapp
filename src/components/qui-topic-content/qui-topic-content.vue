@@ -369,7 +369,7 @@ export default {
         bottom: 0;
         left: 0;
         height: 240rpx;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(180deg, --color(--qui-BG-FFF) 0%, --color(--qui-BG-00) 100%);
       }
       &__surtip {
         position: relative;
