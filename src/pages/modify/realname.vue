@@ -1,30 +1,32 @@
 <template>
-  <view class="tica">
-    <view class="tica-name">
-      <input
-        type="text"
-        class="tica-name-inpa"
-        :placeholder="i18n.t('modify.realname')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        v-model="myname"
-      />
-      <input
-        type="text"
-        class="tica-name-inpa"
-        :placeholder="i18n.t('modify.enteridnumber')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        v-model="myid"
-      />
-      <view class="tica-erro-messag1" v-if="judge">
-        {{ title1 }}
-      </view>
-      <view class="tica-pas-btn">
-        <qui-button type="primary" size="large" @click="btntica">
-          {{ i18n.t('modify.submission') }}
-        </qui-button>
+  <qui-page>
+    <view class="tica">
+      <view class="tica-name">
+        <input
+          type="text"
+          class="tica-name-inpa"
+          :placeholder="i18n.t('modify.realname')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          v-model="myname"
+        />
+        <input
+          type="text"
+          class="tica-name-inpa"
+          :placeholder="i18n.t('modify.enteridnumber')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          v-model="myid"
+        />
+        <view class="tica-erro-messag1" v-if="judge">
+          {{ title1 }}
+        </view>
+        <view class="tica-pas-btn">
+          <qui-button type="primary" size="large" @click="btntica">
+            {{ i18n.t('modify.submission') }}
+          </qui-button>
+        </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -60,6 +62,9 @@ export default {
               title: this.i18n.t('modify.nameauthensucc'),
               duration: 2000,
             });
+            uni.navigateTo({
+              url: '/pages/my/profile',
+            });
           }
         })
         .catch(err => {
@@ -90,15 +95,16 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-
 .tica {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .tica-name {
   width: 100%;
   padding: 0 0 0 40rpx;
-  margin-top: 31rpx;
 }
 .tica-name-inpa {
   width: 100%;
