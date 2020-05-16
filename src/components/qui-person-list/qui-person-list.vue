@@ -54,9 +54,9 @@ export default {
     // list列表
     personList: {
       default: () => {
-        return {};
+        return [];
       },
-      type: Object,
+      type: Array,
     },
     // 是否显示按钮
     btnShow: {

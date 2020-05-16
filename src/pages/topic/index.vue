@@ -14,6 +14,7 @@
         :images-list="thread.firstPost.images"
         :select-list="selectList"
         :tags="[thread.category]"
+        :thread-price="thread.price"
         :media-url="thread.threadVideo.media_url"
         :cover-image="thread.threadVideo.cover_url"
         @personJump="personJump"
@@ -32,7 +33,7 @@
           :btn-show="true"
           :btn-icon-show="true"
           btn-icon-name="rmb"
-          btn-text="t.paymentViewPicture"
+          :btn-text="t.paymentViewPicture"
           @personJump="personJump"
           @btnClick="payClickShow"
         ></qui-person-list>
@@ -198,10 +199,14 @@
           )
         "
       >
-        <qui-icon v-if="isLiked" name="icon-liked" class="qui-icon"></qui-icon>
-        <qui-icon v-else name="icon-like" class="qui-icon"></qui-icon>
-        <view class="ft-child-word" v-if="isLiked">{{ t.giveLikeAlready }}</view>
-        <view class="ft-child-word" v-else>{{ t.giveLike }}</view>
+        <!--<qui-icon v-if="thread.firstPost.isLiked" name="icon-liked" class="qui-icon"></qui-icon>-->
+        <qui-icon
+          :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
+          class="qui-icon"
+        ></qui-icon>
+        <view class="ft-child-word">
+          {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
+        </view>
       </view>
       <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
         <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
@@ -323,7 +328,7 @@ export default {
     return {
       threadId: '', //主题id
       userId: 57, //当前用户Id
-      userInfo: '', //当前用户信息
+      // userInfo: '', //当前用户信息
       thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
@@ -418,7 +423,7 @@ export default {
         },
       ],
       price: 0.0, //需要支付的金额
-      inputPrice: 0.0, //自定义金额输入框的值
+      inputPrice: '', //自定义金额输入框的值
       payShowStatus: true, //是否显示支付
       pwdVal: '123456', //支付密码
       orderSn: '', //订单编号
@@ -448,9 +453,9 @@ export default {
     // thread() {
     //   return this.$store.getters['jv/get']('threads/11');
     // },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
+    // forums() {
+    //   return this.$store.getters['jv/get']('forums/1');
+    // },
     // posts() {
     //   // console.log(this.$store.getters['jv/get']('posts'));
     //   const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
@@ -481,6 +486,7 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(this.user, '这是用户信息~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     console.log(option.id, '这是详情页接收的id');
     this.threadId = option.id;
     // this.threadId = 188;
@@ -490,7 +496,7 @@ export default {
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
-    this.getUser();
+    // this.getUser();
     const token =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI5NTZiYzZhODhiYjUyNzVhMmZmNDU4ZDI5MmU3ZDVkMDExZGYwMDA5YThkZDk5ZjVkMDE4ZjBmMTAzMTdlODI3MTg4OGUzMzJiZDAyNjhlYSIsImlhdCI6MTU4ODczMDY1MiwibmJmIjoxNTg4NzMwNjUyLCJleHAiOjE1OTEzMjI2NTIsInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.B0KIIPZVkSkEIWoi6aOny66ttilbWXv45eNkH4hPew_-h3c483qRjVL9K7ncA8S76Kaqq6fLt_kxqU7gehlsOTRbfDEu8_GgouAnn_t6PmYlG9ybS8D8IJnuU_jZCo4WW-PobtM9yl0lXYTooelU6a1Q0Sx6y7IEPjcG6xIQU-9H4J-Cr1fUYw9TtOMds274KgdGAkCTPRNg0qadz3BZwj-qXn6JkL3haEyzEXIfk1arWXhU2LXAZ2ukzpO2XSkw7kDezjbcQ4B3Lx890CeIzdYf4l8cB3WowYJQMtJl0Qnq6wsU2dycJH9cyXVl_wQ6lCXRiDE-lV0X-SiK3qGQvQ';
     this.header = {
@@ -501,14 +507,6 @@ export default {
     };
     // const forums = this.$store.getters['jv/get']('forums/1');
     // console.log(forums);
-  },
-  watch: {
-    posts: {
-      handler: function(val, oldval) {
-        console.log('newval', val, 'oldval', oldval);
-      },
-      deep: true, //对象内部的属性监听，也叫深度监听
-    },
   },
   onShow() {
     // let authTimeout = setTimeout(() => {
@@ -534,12 +532,12 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
     // 用户信息
-    getUser() {
-      this.$store.dispatch('jv/get', ['users/' + this.userId, {}]).then(data => {
-        console.log(data, '这是当前用户数据');
-        this.userInfo = data;
-      });
-    },
+    // getUser() {
+    //   this.$store.dispatch('jv/get', ['users/' + this.userId, {}]).then(data => {
+    //     console.log(data, '这是当前用户数据');
+    //     this.userInfo = data;
+    //   });
+    // },
     // 加载当前主题数据
     loadThreads() {
       const params = {
@@ -633,7 +631,7 @@ export default {
       if (type == '1') {
         params = {
           _jv: jvObj,
-          isLiked: isStatus === true ? false : true,
+          isLiked: !isStatus,
         };
       } else if (type == '2') {
         params = {
@@ -648,7 +646,7 @@ export default {
       } else if (type == '4') {
         params = {
           _jv: jvObj,
-          isLiked: isStatus === true ? false : true,
+          isLiked: !isStatus,
         };
       }
       this.$store
@@ -658,18 +656,22 @@ export default {
           if (type == '1') {
             // 主题点赞
             this.isLiked = data.isLiked;
+            this.$set(this.thread.firstPost, 'isLiked', data.isLiked);
             console.log(this.thread.firstPost.likeCount, '这是当前点赞数');
             if (data.isLiked) {
               // 未点赞时，点击点赞'
-              // this.thread.firstPost.likedUsers.unshift({
-              //   _data: { username: this.currentUserName, id: this.userId }
-              // });
-              // this.thread.firstPost.likeCount = this.thread.firstPost.likeCount + 1;
               console.log('主题未点赞时，点击点赞');
-              console.log(this.thread.firstPost, '这是点赞追加前11111~~~~~~~~~~~~~~~的列表');
+              console.log(
+                this.thread.firstPost.likedUsers,
+                '这是点赞追加前11111~~~~~~~~~~~~~~~的列表',
+              );
               if (this.thread.firstPost.likeCount > 0) {
-                this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-                  value.id === this.userInfo.id && likedUsers.splice(key, 1);
+                // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
+                //   value.id === this.user.id && likedUsers.splice(key, 1);
+                // });
+                this.thread.firstPost.likedUsers.unshift({
+                  avatarUrl: this.user.avatarUrl,
+                  id: this.user.id,
                 });
                 console.log(this.thread.firstPost.likedUsers, '这是点赞追加后2222的列表');
                 this.likedStatus = true;
@@ -679,17 +681,15 @@ export default {
             } else {
               console.log('主题已点赞时，取消点赞');
               if (this.thread.firstPost.likeCount > 0) {
-                this.thread.firstPost.likedUsers.unshift({
-                  username: this.userInfo.avatarUrl,
-                  id: this.userInfo.id,
-                });
                 this.likedStatus = true;
               } else {
                 this.likedStatus = false;
               }
-              // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-              //   value._data.id === this.userId && likedUsers.splice(key, 1);
-              // });
+              console.log(this.thread.firstPost.likedUsers, '这是操作前');
+              this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
+                value.id === this.user.id && likedUsers.splice(key, 1);
+              });
+              console.log(this.thread.firstPost.likedUsers, '这是操作后444');
               // this.thread.firstPost.likeCount = this.thread.firstPost.likeCount - 1;
             }
           } else if (type == '2') {
@@ -841,12 +841,14 @@ export default {
         params._jv.relationships.attachments = {
           data: [],
         };
-        this.uploadFile.forEach(item => {
-          params._jv.relationships.attachments.data.push({
-            type: 'attachments',
-            id: item.data.id,
+        if (this.uploadFile) {
+          this.uploadFile.forEach(item => {
+            params._jv.relationships.attachments.data.push({
+              type: 'attachments',
+              id: item.data.id,
+            });
           });
-        });
+        }
       }
 
       console.log(params, '传给接口的参数');
@@ -1150,6 +1152,7 @@ export default {
       this.price = this.inputPrice;
       this.$refs.customAmountPopup.close();
       this.payShowStatus = true;
+      this.$refs.payShow.payClickShow();
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {

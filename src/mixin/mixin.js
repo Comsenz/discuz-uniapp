@@ -8,7 +8,6 @@ module.exports = {
   onLoad() {
     // getRect挂载到$u上，因为这方法需要使用in(this)，所以无法把它独立成一个单独的文件导出
     this.$u.getRect = this.$uGetRect;
-
     const pages = getCurrentPages();
     const currentPage = pages[pages.length - 1];
 
