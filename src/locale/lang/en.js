@@ -172,6 +172,7 @@ export default {
     orderlist: 'Orderlist',
     walletpassword: 'Wallet password',
     setpassword: 'Set password',
+    setpaypassword: 'Set pay password',
     total: 'Total',
     records: 'Records',
     amountinvolved: 'Amount involved',

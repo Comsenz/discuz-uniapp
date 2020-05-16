@@ -9,7 +9,7 @@
           class="wallet-available"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" hover-class="none">
+      <navigator :url="'./freeze'" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.freezeamount')"
           arrow
