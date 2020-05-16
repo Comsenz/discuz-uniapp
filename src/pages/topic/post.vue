@@ -26,7 +26,11 @@
         ></qui-icon>
       </view>
       <text class="post-box__hd-r">
-        {{ i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length }) }}
+        {{
+          textAreaValue.length &lt;= textAreaLength
+            ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+            : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+        }}
       </text>
     </view>
     <view class="emoji-bd">
@@ -46,7 +50,7 @@
       placeholder-class="textarea-placeholder"
       v-model="textAreaValue"
       auto-height
-      :maxlength="textAreaLength"
+      :maxlength="-1"
       @blur="contBlur"
     ></textarea>
     <qui-uploader
@@ -108,7 +112,12 @@
           {{ item.name }}
         </qui-button>
       </view>
-      <qui-button type="primary" size="large" @click="postClick">
+      <qui-button
+        type="primary"
+        size="large"
+        @click="postClick"
+        :disabled="textAreaValue.length > textAreaLength"
+      >
         {{ i18n.t('discuzq.post.post') }}
       </qui-button>
     </view>
@@ -191,7 +200,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import VodUploader from '../../common/cos-wx-sdk-v5.1';
 
 export default {
@@ -257,32 +266,6 @@ export default {
       ],
       uploadFile: [],
       cursor: 0,
-      wordCount: [
-        {
-          name: this.i18n.t('discuzq.post.word', { num: 5 }),
-          num: 5,
-        },
-        {
-          name: this.i18n.t('discuzq.post.word', { num: 10 }),
-          num: 10,
-        },
-        {
-          name: this.i18n.t('discuzq.post.word', { num: 15 }),
-          num: 15,
-        },
-        {
-          name: this.i18n.t('discuzq.post.word', { num: 20 }),
-          num: 20,
-        },
-        {
-          name: this.i18n.t('discuzq.post.word', { num: 25 }),
-          num: 25,
-        },
-        {
-          name: this.i18n.t('discuzq.post.customize'),
-          num: 0,
-        },
-      ],
       wordCountCheck: [
         {
           name: this.i18n.t('discuzq.post.word', { num: 5 }),
@@ -321,6 +304,9 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      setAtMember: 'atMember/SET_ATMEMBER',
+    }),
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
 
     // video
@@ -510,6 +496,7 @@ export default {
       if (status) {
         this.postThread().then(res => {
           if (res._jv.json.data.id) {
+            this.setAtMember([]);
             uni.navigateTo({
               url: `/pages/topic/index?id=${res._jv.json.data.id}`,
             });
@@ -625,8 +612,8 @@ export default {
     },
   },
   onLoad(option) {
-    const token =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI5NTZiYzZhODhiYjUyNzVhMmZmNDU4ZDI5MmU3ZDVkMDExZGYwMDA5YThkZDk5ZjVkMDE4ZjBmMTAzMTdlODI3MTg4OGUzMzJiZDAyNjhlYSIsImlhdCI6MTU4ODczMDY1MiwibmJmIjoxNTg4NzMwNjUyLCJleHAiOjE1OTEzMjI2NTIsInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.B0KIIPZVkSkEIWoi6aOny66ttilbWXv45eNkH4hPew_-h3c483qRjVL9K7ncA8S76Kaqq6fLt_kxqU7gehlsOTRbfDEu8_GgouAnn_t6PmYlG9ybS8D8IJnuU_jZCo4WW-PobtM9yl0lXYTooelU6a1Q0Sx6y7IEPjcG6xIQU-9H4J-Cr1fUYw9TtOMds274KgdGAkCTPRNg0qadz3BZwj-qXn6JkL3haEyzEXIfk1arWXhU2LXAZ2ukzpO2XSkw7kDezjbcQ4B3Lx890CeIzdYf4l8cB3WowYJQMtJl0Qnq6wsU2dycJH9cyXVl_wQ6lCXRiDE-lV0X-SiK3qGQvQ';
+    const token = uni.getStorageSync('access_token');
+
     this.header = {
       authorization: `Bearer ${token}`,
     };
@@ -696,6 +683,7 @@ export default {
   }
   &__con-text {
     width: 100%;
+    max-height: 900rpx;
     min-height: 400rpx;
     padding: 20rpx;
     margin-top: 20rpx;
