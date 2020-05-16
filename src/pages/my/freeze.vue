@@ -23,7 +23,7 @@
         <qui-cell-item
           v-for="(freezeItem, index) in freezelist"
           :key="index"
-          :title="freezeItem.change_desc"
+          :title="`${i18n.t('profile.freezingreason')} : ${freezeItem.change_desc}`"
           :brief="'ID:' + freezeItem.id"
           :addon="'¥' + freezeItem.change_freeze_amount"
           :brief-right="timeHandle(freezeItem.created_at)"
@@ -52,8 +52,14 @@ export default {
       pageSize: 20,
       pageNum: 1, // 当前页数
       freezelist: [],
+      userId: uni.getStorageSync('user_id'),
       totalamount: 0,
     };
+  },
+  computed: {
+    wallet() {
+      return this.$store.getters['jv/get'](`wallet/user/${this.userId}`);
+    },
   },
   methods: {
     // 获取冻结金额列表数据
@@ -65,7 +71,7 @@ export default {
         'page[limit]': this.pageSize,
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
-        console.log(res);
+        console.log(res._jv);
         this.totalData = res._jv.json.meta.total;
         delete res._jv;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';

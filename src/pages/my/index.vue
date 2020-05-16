@@ -16,7 +16,7 @@
             ></image>
             <qui-cell-item
               :title="userInfo.username || ''"
-              :brief="userInfo.groups ? Object.values(userInfo.groups)[0].name : ''"
+              :brief="userInfo.groupsName"
               :border="false"
             ></qui-cell-item>
           </view>
@@ -51,7 +51,11 @@
           <navigator url="/pages/site/search" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="/pages/manage/index" hover-class="none">
+          <navigator
+            v-if="userInfo.groupsName == '管理员'"
+            url="/pages/manage/index"
+            hover-class="none"
+          >
             <qui-cell-item
               :title="i18n.t('profile.circlemanagement')"
               arrow

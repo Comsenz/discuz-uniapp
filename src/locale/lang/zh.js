@@ -423,6 +423,7 @@ export default {
     paymentsucceed: '已打款',
     paymentfailed: '打款失败',
     theme: '深色模式',
+    freezingreason: '冻结原因',
   },
   site: {
     circleintroduction: '站点介绍',
