@@ -212,7 +212,7 @@ const actions = (api, conf) => {
         // If the server handed back data, store it
         if (results.status === 200 && utils.hasProperty(results.data, 'data')) {
           // Full response
-          context.commit('deleteRecord', data)
+          // context.commit('deleteRecord', data)
           data = utils.jsonapiToNorm(results.data.data)
           context.commit('addRecords', data)
         } else {
