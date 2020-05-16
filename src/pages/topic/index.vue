@@ -68,14 +68,7 @@
         <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
         <view
           class="det-con-ft-child"
-          @click="
-            threadCollectionClick(
-              thread.firstPost._jv.id,
-              thread.canFavorite,
-              thread.isFavorite,
-              '1',
-            )
-          "
+          @click="threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1')"
         >
           <qui-icon v-if="thread.isFavorite" name="icon-collectioned" class="qui-icon"></qui-icon>
 
@@ -91,32 +84,33 @@
         </view>
 
         <view v-if="status[loadDetailCommnetStatusId]">
-          <qui-topic-comment
-            v-for="(post, index) in posts"
-            :key="index"
-            :post-id="post._jv.id"
-            :comment-avatar-url="post.user.avatarUrl"
-            :user-name="post.user.username"
-            :is-liked="post.isLiked"
-            user-role="管理员"
-            :comment-time="post.createdAt"
-            comment-status="1"
-            :comment-content="post.contentHtml"
-            :reply-list="post.lastThreeComments"
-            :comment-like-count="post.likeCount"
-            :images-list="post.images"
-            :reply-count="post.replyCount"
-            :can-delete="post.canDelete"
-            :comment-show="true"
-            @personJump="personJump(post.user.id)"
-            @commentLikeClick="
-              commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index)
-            "
-            @commentJump="commentJump(threadId, post._jv.id)"
-            @imageClick="imageClick"
-            @deleteComment="deleteComment(post._jv.id)"
-            @replyComment="replyComment(post._jv.id)"
-          ></qui-topic-comment>
+          <view v-for="(post, index) in posts" :key="index">
+            <qui-topic-comment
+              v-if="!post.isDeleted"
+              :post-id="post._jv.id"
+              :comment-avatar-url="post.user.avatarUrl"
+              :user-name="post.user.username"
+              :is-liked="post.isLiked"
+              user-role="管理员"
+              :comment-time="post.createdAt"
+              comment-status="1"
+              :comment-content="post.contentHtml"
+              :reply-list="post.lastThreeComments"
+              :comment-like-count="post.likeCount"
+              :images-list="post.images"
+              :reply-count="post.replyCount"
+              :can-delete="post.canDelete"
+              :comment-show="true"
+              @personJump="personJump(post.user.id)"
+              @commentLikeClick="
+                commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index)
+              "
+              @commentJump="commentJump(threadId, post._jv.id)"
+              @imageClick="imageClick"
+              @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted)"
+              @replyComment="replyComment(post._jv.id)"
+            ></qui-topic-comment>
+          </view>
           <!--<view v-for="(post, index) in posts" :key="index">
             {{ post.likeCount }}
             <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
@@ -658,21 +652,15 @@ export default {
           if (type == '1') {
             // 主题点赞
             this.isLiked = data.isLiked;
-            // this.$set(this.thread.firstPost, 'isLiked', data.isLiked);
-            console.log(this.thread.firstPost.likeCount, '这是当前点赞数');
             if (data.isLiked) {
               // 未点赞时，点击点赞'
               console.log('主题未点赞时，点击点赞');
-              console.log(
-                this.thread.firstPost.likedUsers,
-                '这是点赞追加前11111~~~~~~~~~~~~~~~的列表',
-              );
+              console.log(this.thread.firstPost.likedUsers);
               if (this.thread.firstPost.likeCount > 0) {
                 this.thread.firstPost.likedUsers.unshift({
                   avatarUrl: this.user.avatarUrl,
                   id: this.user.id,
                 });
-                console.log(this.thread.firstPost.likedUsers, '这是点赞追加后2222的列表');
                 this.likedStatus = true;
               } else {
                 this.likedStatus = false;
@@ -684,11 +672,9 @@ export default {
               } else {
                 this.likedStatus = false;
               }
-              console.log(this.thread.firstPost.likedUsers, '这是操作前');
               this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
                 value.id === this.user.id && likedUsers.splice(key, 1);
               });
-              console.log(this.thread.firstPost.likedUsers, '这是操作后444');
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -707,15 +693,10 @@ export default {
             }
           } else if (type == '4') {
             // 评论点赞
-            // console.log(this.postIndex, '这是当前主题的index');
-            // this.$set(this.posts[this.postIndex], 'isLiked', data.isLiked);
             if (data.isLiked) {
               console.log('点赞数加1');
-              // this.$set(this.posts[this.postIndex], 'likeCount', this.posts[this.postIndex] + 1);
-              // console.log(this.posts[this.postIndex].likeCount, '这是点赞之后的数');
             } else {
               console.log('点赞数减1');
-              // this.$set(this.posts[this.postIndex], 'likeCount', this.posts[this.postIndex] - 1);
             }
           }
         })
@@ -740,25 +721,25 @@ export default {
         // 主题收藏
         params = {
           _jv: jvObj,
-          isFavorite: isStatus === true ? false : true,
+          isFavorite: !isStatus,
         };
       } else if (type == '2') {
         // 主题加精
         params = {
           _jv: jvObj,
-          isEssence: isStatus === true ? false : true,
+          isEssence: !isStatus,
         };
       } else if (type == '3') {
         // 主题置顶
         params = {
           _jv: jvObj,
-          isSticky: isStatus === true ? false : true,
+          isSticky: !isStatus,
         };
       } else {
         // 主题删除
         params = {
           _jv: jvObj,
-          isDeleted: isStatus === true ? false : true,
+          isDeleted: !isStatus,
         };
       }
       console.log(params, '接口接收的参数');
@@ -784,14 +765,12 @@ export default {
               this.selectList[2].text = '置顶';
             }
           } else if (type == '4') {
-            if (data.isDeleted) {
-              console.log('删除成功，跳转到首页');
-              uni.navigateTo({
-                url: `/pages/home/index`,
-              });
-            } else {
-              console.log('删除失败，跳转到首页');
-            }
+            // if (data.isDeleted) {
+            console.log('删除成功，跳转到首页');
+            uni.navigateTo({
+              url: `/pages/home/index`,
+            });
+            // }
           }
         })
         .catch(err => {
@@ -1077,6 +1056,9 @@ export default {
       console.log(param, '父页面得到的参数');
       if (param.type == '0') {
         console.log('跳转到编辑主题页面');
+        uni.navigateTo({
+          url: '/pages/topic/post?navigateTo=edit&id=' + this.thread._jv.id,
+        });
       } else if (param.type == '4') {
         this.postOpera(this.threadId, '2');
       } else {
@@ -1215,9 +1197,9 @@ export default {
       this.postOpera(postId, type, canStatus, isStatus);
     },
     // 删除评论
-    deleteComment(postId) {
+    deleteComment(postId, type, canStatus, isStatus) {
       console.log(postId, '删除回复postid');
-      this.postOpera(postId, '3');
+      this.postOpera(postId, '3', canStatus, isStatus);
     },
     // 评论的回复
     replyComment(postId) {
@@ -1259,7 +1241,7 @@ export default {
     },
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
-      console.log('主题收藏');
+      console.log(id, canStatus, isStatus, type, '主题收藏参数');
       this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
