@@ -20,7 +20,7 @@
               :value="searchText"
             />
             <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
-              <qui-icon name="icon-close" size="34" color="#fff"></qui-icon>
+              <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
             </view>
           </view>
           <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
@@ -119,7 +119,7 @@ export default {
     // 调用 搜索 接口
     searchUser() {
       const params = {
-        'filter[username]': this.searchText,
+        'filter[username]': `*${this.searchText}*`,
       };
       if (this.searchText === '') {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
