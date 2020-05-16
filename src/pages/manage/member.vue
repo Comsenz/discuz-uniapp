@@ -66,17 +66,22 @@
     </view>
     <!-- 成员管理弹窗 -->
     <uni-popup ref="popup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <view class="popup-text">设为合伙人</view>
-          <view class="popup-line"></view>
-          <view class="popup-text">设为嘉宾</view>
-          <view class="popup-line"></view>
-          <view class="popup-text">设为成员</view>
+      <scroll-view style="height: 968rpx;" scroll-y="true">
+        <view class="popup-wrap">
+          <view class="popup-wrap-con">
+            <view
+              @click="generateUrl(item.group_id)"
+              v-for="item in allInviteList"
+              :key="item._jv.id"
+            >
+              <view class="popup-wrap-con-text">{{ item.title }}</view>
+              <view class="popup-wrap-con-line"></view>
+            </view>
+          </view>
+          <view class="popup-wrap-space"></view>
+          <text class="popup-wrap-btn" @click="cancel">取消</text>
         </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
-      </view>
+      </scroll-view>
     </uni-popup>
   </view>
 </template>
@@ -85,7 +90,6 @@
 import { mapMutations } from 'vuex';
 
 export default {
-  name: 'QuiAtMemberPage',
   data() {
     return {
       allSiteUser: [],
@@ -264,41 +268,38 @@ $otherHeight: 292rpx;
   }
 }
 
-.popup-share {
+.popup-wrap {
   display: flex;
   flex-direction: column;
   background: --color(--qui-BG-2);
-}
+  border-radius: 10rpx 10rpx 0rpx 0rpx;
 
-.popup-share-content {
-  background: --color(--qui-BG-BTN-GRAY-1);
-}
+  &-con {
+    border-radius: 10rpx 10rpx 0rpx 0rpx;
 
-.popup-text {
-  width: 100%;
-  height: 100rpx;
-  line-height: 100rpx;
-  text-align: center;
-}
+    &-text {
+      width: 100%;
+      height: 100rpx;
+      font-size: $fg-f34;
+      line-height: 100rpx;
+      text-align: center;
+    }
 
-.popup-line {
-  border: 2rpx solid #ededed;
-}
+    &-line {
+      border: 2rpx solid --color(--qui-BG-ED);
+    }
+  }
 
-.popup-share-content-space {
-  width: 100%;
-  height: 9rpx;
-  background: --color(--qui-FC-DDD);
-}
+  &-space {
+    border: 8rpx solid --color(--qui-BG-ED);
+  }
 
-.popup-share-btn {
-  height: 100rpx;
-  font-size: $fg-f28;
-  line-height: 90rpx;
-  color: #666;
-  text-align: center;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
+  &-btn {
+    width: 100%;
+    height: 100rpx;
+    font-size: $fg-f28;
+    line-height: 100rpx;
+    text-align: center;
+  }
 }
 </style>

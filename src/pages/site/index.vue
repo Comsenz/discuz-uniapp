@@ -50,16 +50,18 @@
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <qui-cell-item title="成员" slot-right arrow class="cell-item--auto">
-        <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
-          <image
-            class="site-item__person-avatar"
-            :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
-            alt="avatarUrl"
-            @tap="toProfile(item.id)"
-          ></image>
-        </view>
-      </qui-cell-item>
+      <navigator url="/pages/manage/member" hover-class="none">
+        <qui-cell-item title="成员" slot-right arrow class="cell-item--auto">
+          <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
+            <image
+              class="site-item__person-avatar"
+              :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              alt="avatarUrl"
+              @tap="toProfile(item.id)"
+            ></image>
+          </view>
+        </qui-cell-item>
+      </navigator>
       <qui-cell-item title="我的角色" :addon="userInfo.groups[1].name"></qui-cell-item>
       <qui-cell-item title="加入时间" :addon="userInfo.joinedTime"></qui-cell-item>
       <qui-cell-item title="有效期至" :addon="userInfo.expiredTime"></qui-cell-item>
@@ -219,14 +221,11 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-page {
-  background-color: #f9fafc;
-}
+
 .site {
   /deep/ .header {
     height: auto;
     margin-bottom: 30rpx;
-    background: #fff;
     border-bottom: 2rpx solid #ededed;
   }
   .header /deep/ .circleDet {
