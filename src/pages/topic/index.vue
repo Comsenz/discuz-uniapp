@@ -30,10 +30,10 @@
           :person-num="thread.paidCount"
           :limit-count="limitShowNum"
           :person-list="thread.paidUsers"
-          :btn-show="true"
+          :btn-show="thread.price > 0 && !thread.paid"
           :btn-icon-show="true"
           btn-icon-name="rmb"
-          :btn-text="t.paymentViewPicture"
+          :btn-text="payThreadTypeText"
           @personJump="personJump"
           @btnClick="payClickShow"
         ></qui-person-list>
@@ -234,7 +234,7 @@
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
       </view>
     </uni-popup>
     <!--打赏选择金额弹框-->
@@ -329,6 +329,7 @@ export default {
       loadDetailStatusId: 0, // 主题接口请求状态
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       posts: [], //评论列表数据
+      payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
       loadDetailCommnetStatusId: 0,
       postIndex: '', //点击主题评论时的index
       footerShow: true, // 默认显示底部
@@ -355,10 +356,10 @@ export default {
 
       seleShow: false, // 默认收起管理菜单
       selectList: [
-        { text: '编辑', type: '0' },
-        { text: '精华', type: '2' },
-        { text: '置顶', type: '3' },
-        { text: '删除', type: '4' },
+        { text: this.i18n.t('topic.edit'), type: '0' },
+        { text: this.i18n.t('topic.essence'), type: '2' },
+        { text: this.i18n.t('topic.sticky'), type: '3' },
+        { text: this.i18n.t('topic.delete'), type: '4' },
       ], // 管理菜单
 
       limitShowNum: 2,
@@ -471,13 +472,18 @@ export default {
     //   return thread.posts;
     // },
     // 语言包
+    // topic详情页语言包
     t() {
       return this.i18n.t('topic');
     },
+    // pay支付语言包
     p() {
       return this.i18n.t('pay');
     },
-
+    // core公共变量语言包
+    c() {
+      return this.i18n.t('p');
+    },
     status() {
       return status.status;
     },
@@ -577,19 +583,27 @@ export default {
         console.log(this.selectList, '管理菜单数据');
         if (this.thread.isEssence) {
           //如果初始化状态为true
-          this.selectList[1].text = '取消精华';
+          this.selectList[1].text = this.c.cancelEssence;
         }
         if (this.thread.isSticky) {
           //如果初始化状态为true
-          this.selectList[2].text = '取消置顶';
+          this.selectList[2].text = this.c.cancelSticky;
         }
         this.isLiked = data.firstPost.isLiked;
         this.topicStatus = data.isApproved;
         // console.log(isEmpty(data.paidUsers));
-        if (isEmpty(data.paidUsers)) {
-          this.paidStatus = false;
-        } else {
+        if (!data.paid || data.paidUsers.length > 0) {
           this.paidStatus = true;
+        } else {
+          this.paidStatus = false;
+        }
+        if (this.thread.type == 3) {
+          this.payThreadTypeText = this.t.pay + this.thread.price + this.t.paymentViewPicture;
+        } else if (this.thread.type == 2) {
+          this.payThreadTypeText =
+            this.t.pay + this.thread.price + this.t.paymentViewRemainingContent;
+        } else if (this.thread.type == 1) {
+          this.payThreadTypeText = this.t.pay + this.thread.price + this.t.paymentViewVideo;
         }
         // if (isEmpty(data.rewardedUsers)) {
         //   this.rewardStatus = false;
@@ -753,16 +767,16 @@ export default {
           } else if (type == '2') {
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
-              this.selectList[1].text = '取消精华';
+              this.selectList[1].text = this.c.essence;
             } else {
-              this.selectList[1].text = '精华';
+              this.selectList[1].text = this.c.cancelEssence;
             }
           } else if (type == '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
-              this.selectList[2].text = '取消置顶';
+              this.selectList[2].text = this.c.cancelSticky;
             } else {
-              this.selectList[2].text = '置顶';
+              this.selectList[2].text = this.c.sticky;
             }
           } else if (type == '4') {
             // if (data.isDeleted) {
@@ -978,13 +992,20 @@ export default {
             this.$refs.toast.show({ message: this.p.paySuccess });
             if (this.payTypeVal == 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
+              console.log('这是主题支付');
+              this.loadThreads();
             } else if (this.payTypeVal == 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+              console.log('这是主题打赏');
+              this.thread.rewardedUsers.unshift({
+                avatarUrl: this.user.avatarUrl,
+                id: this.user.id,
+              });
             }
           }
         })
         .catch(err => {
-          console.log(err);
+          console.log(err, '123这是catch');
           this.coverLoading = false;
           this.$refs.toast.show({ message: this.p.payFail });
         });
@@ -1077,6 +1098,7 @@ export default {
       console.log('主题支付');
       this.payShowStatus = true;
       this.payTypeVal = 0;
+      this.price = this.thread.price;
       this.$refs.payShow.payClickShow();
     },
     // 支付触发子组件弹出框事件
