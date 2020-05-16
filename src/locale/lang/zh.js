@@ -96,6 +96,7 @@ export default {
     post: {
       free: '免费',
       note: '还能输入{num}个字',
+      exceed: '已超出{num}个字',
       word: '{num}字',
       placeholder: '您想说的..',
       post: '发布',

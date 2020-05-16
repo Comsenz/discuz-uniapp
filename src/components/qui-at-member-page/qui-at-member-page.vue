@@ -52,7 +52,11 @@
           </label>
         </checkbox-group>
         <view class="loading-text">
-          <text>{{ i18n.t(loadingText) }}</text>
+          <qui-icon
+            v-if="loadingText === 'search.norelatedusersfound'"
+            name="icon-noData"
+          ></qui-icon>
+          <text class="loading-text__cont">{{ i18n.t(loadingText) }}</text>
         </view>
       </scroll-view>
     </view>
@@ -81,6 +85,7 @@ export default {
   data() {
     return {
       allSiteUser: [],
+      allFollow: [],
       followStatus: true, // 第一次进来显示follow列表
       checkAvatar: [],
       loadingText: 'discuzq.list.loading',
@@ -90,9 +95,6 @@ export default {
     };
   },
   computed: {
-    allFollow() {
-      return this.$store.getters['jv/get']('follow');
-    },
     getGroups() {
       const that = this;
       let name = '';
@@ -134,6 +136,7 @@ export default {
     searchInput(e) {
       this.followStatus = false;
       this.searchValue = e.detail.value;
+      this.checkAvatar = [];
 
       if (this.pageNum !== 1) {
         this.pageNum = 1;
@@ -143,19 +146,19 @@ export default {
 
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
-        this.allSiteUser = {};
+        this.allSiteUser = [];
         this.getSiteMember(1);
       }, 250);
     },
     lower() {
       if (this.followStatus) {
-        if (this.meta.total > Object.keys(this.allFollow).nv_length) {
+        if (this.meta.total > this.allFollow.length) {
           this.pageNum += 1;
           this.getFollowMember(this.pageNum);
         } else {
           this.loadingText = 'discuzq.list.noMoreData';
         }
-      } else if (this.meta.total > Object.keys(this.allSiteUser).nv_length) {
+      } else if (this.meta.total > this.allSiteUser.length) {
         this.pageNum += 1;
         this.getSiteMember(this.pageNum);
       } else {
@@ -171,8 +174,10 @@ export default {
       this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
+        this.allFollow = [...this.allFollow, ...res];
+
         if (Object.keys(res).nv_length - 1 === 0) {
-          this.loadingText = 'discuzq.list.noData';
+          this.loadingText = 'search.norelatedusersfound';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
           this.loadingText = 'discuzq.list.noMoreData';
         }
@@ -187,13 +192,10 @@ export default {
       };
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         this.meta = res._jv.json.meta;
-
-        const data = JSON.parse(JSON.stringify(res));
-        delete data._jv;
-        this.allSiteUser = { ...data, ...this.allSiteUser };
+        this.allSiteUser = [...this.allSiteUser, ...res];
 
         if (Object.keys(res).nv_length - 1 === 0) {
-          this.loadingText = 'discuzq.list.noData';
+          this.loadingText = 'search.norelatedusersfound';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
           this.loadingText = 'discuzq.list.noMoreData';
         }
@@ -253,7 +255,11 @@ $otherHeight: 292rpx;
         height: 100rpx;
         font-size: 28rpx;
         line-height: 100rpx;
+        color: --color(--qui-FC-AAA);
         text-align: center;
+      }
+      .loading-text__cont {
+        margin-left: 20rpx;
       }
     }
   }
@@ -263,6 +269,13 @@ $otherHeight: 292rpx;
     width: 100%;
     padding: 40rpx;
     box-sizing: border-box;
+    /deep/ .qui-button--button[size='large'] {
+      border-radius: 5rpx;
+    }
+    /deep/ .qui-button--button[disabled] {
+      color: #7d7979;
+      background-color: #fff;
+    }
   }
 }
 </style>
