@@ -1,8 +1,10 @@
 <template>
-  <view class="notification-box">
-    <!-- 通知信息 -->
-    <qui-notification :list="allNotifications"></qui-notification>
-  </view>
+  <qui-page>
+    <view class="notification-box">
+      <!-- 通知信息 -->
+      <qui-notification :list="allNotifications"></qui-notification>
+    </view>
+  </qui-page>
 </template>
 
 <script>
@@ -65,9 +67,4 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-
-.notification-box {
-  font-size: $fg-f28;
-  background-color: #f9fafc;
-}
 </style>

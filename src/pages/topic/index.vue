@@ -507,7 +507,7 @@ export default {
   },
   onLoad(option) {
     console.log(this.user, '这是用户信息~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log(option.id, '这是详情页接收的id');
+    console.log(option, '这是详情页接收的id');
     this.threadId = option.id;
     // this.threadId = 188;
     this.loadThread();
