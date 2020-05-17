@@ -84,7 +84,7 @@ export default {
       loadingType: 'more',
       flag: true, // 滚动节流
       followingList: [],
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
     };

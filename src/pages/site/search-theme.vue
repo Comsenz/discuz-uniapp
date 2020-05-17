@@ -44,15 +44,13 @@
 </template>
 
 <script>
-import { status } from '@/library/jsonapi-vuex/index';
-
 export default {
   data() {
     return {
       searchValue: '',
       loadingType: 'more',
       data: [],
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
     };
   },
@@ -63,8 +61,11 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = [];
-      this.getThemeList(e.target.value);
+      if (this.timeout) clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.data = [];
+        this.getThemeList(e.target.value);
+      }, 250);
     },
     // 获取主题列表
     getThemeList(key, type) {
@@ -75,19 +76,17 @@ export default {
         'page[limit]': this.pageSize,
         'filter[q]': key,
       };
-      status
-        .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
-        .then(res => {
-          if (res._jv) {
-            delete res._jv;
-          }
-          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-          if (type && type === 'search') {
-            this.data = res;
-          } else {
-            this.data = [...this.data, ...res];
-          }
-        });
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
+        if (res._jv) {
+          delete res._jv;
+        }
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        if (type && type === 'search') {
+          this.data = res;
+        } else {
+          this.data = [...this.data, ...res];
+        }
+      });
     },
     clearSearch() {
       this.searchValue = '';
