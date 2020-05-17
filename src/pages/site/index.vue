@@ -62,7 +62,7 @@
           </view>
         </qui-cell-item>
       </navigator>
-      <qui-cell-item title="我的角色" :addon="userInfo.groups[1].name"></qui-cell-item>
+      <qui-cell-item title="我的角色" :addon="userInfo.groups[0].name"></qui-cell-item>
       <qui-cell-item title="加入时间" :addon="userInfo.joinedTime"></qui-cell-item>
       <qui-cell-item title="有效期至" :addon="userInfo.expiredTime"></qui-cell-item>
       <qui-cell-item class="cell-item--auto" title="我的权限" slot-right>
@@ -140,12 +140,16 @@ export default {
         for (let i = 0; i < keys.length; i += 1) {
           const value = list[keys[i]];
           if (info && Object.keys(info.groups)) {
-            if (value._jv.id === info.groups[1]._jv.id) {
-              if (value.permission) {
-                permissionList = Object.keys(value.permission).map(key => {
-                  return value.permission[key].permission;
-                });
+            if (value._jv && info.groups.length > 0) {
+              if (value._jv.id === info.groups[0]._jv.id) {
+                if (value.permission) {
+                  permissionList = Object.keys(value.permission).map(key => {
+                    return value.permission[key].permission;
+                  });
+                }
               }
+            } else {
+              console.log('用户数据', value);
             }
           }
         }

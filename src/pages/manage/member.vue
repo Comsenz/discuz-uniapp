@@ -19,27 +19,37 @@
         scroll-with-animation="true"
         @scrolltolower="lower"
       >
-        <checkbox-group @change="changeCheck" v-if="followStatus">
-          <label v-for="item in allFollow" :key="item.id">
+        <checkbox-group @change="changeCheck" v-if="userList">
+          <label v-for="item in userList" :key="item.id">
             <qui-avatar-cell
-              :mark="item.toUser.id"
-              :title="item.toUser.username"
-              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '@/assets/noavatar.gif'"
-              :value="getGroups(item.toUser.groups)"
-              :label="item.toUser.label"
+              center
+              right-color="#aaa"
+              :mark="item.id"
+              :title="item.username"
+              :value="user.groups[Object.keys(user.groups || {})[0]].name"
+              :icon="
+                user.avatarUrl === ''
+                  ? user.avatarUrl
+                  : 'https://discuz.chat/static/images/noavatar.gif'
+              "
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
         <checkbox-group @change="changeCheck" v-else>
-          <label v-for="item in allSiteUser" :key="item.id">
+          <label v-for="item in userList" :key="item.id">
             <qui-avatar-cell
+              center
+              right-color="#aaa"
               :mark="item.id"
               :title="item.username"
-              :icon="item.avatarUrl ? item.avatarUrl : '@/assets/noavatar.gif'"
-              :value="getGroups(item.groups)"
-              :label="item.label"
+              :value="user.groups[Object.keys(user.groups || {})[0]].name"
+              :icon="
+                user.avatarUrl === ''
+                  ? user.avatarUrl
+                  : 'https://discuz.chat/static/images/noavatar.gif'
+              "
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>
@@ -69,11 +79,7 @@
       <scroll-view style="height: 968rpx;" scroll-y="true">
         <view class="popup-wrap">
           <view class="popup-wrap-con">
-            <view
-              @click="generateUrl(item.group_id)"
-              v-for="item in allInviteList"
-              :key="item._jv.id"
-            >
+            <view @click="modifyGroupName(item)" v-for="item in allInviteList" :key="item._jv.id">
               <view class="popup-wrap-con-text">{{ item.title }}</view>
               <view class="popup-wrap-con-line"></view>
             </view>
@@ -88,6 +94,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import { timestamp2day } from '@/utils/time';
 
 export default {
   data() {
@@ -102,8 +109,41 @@ export default {
     };
   },
   computed: {
+    // 获取管理邀请列表（非管理员无的邀请链接无管理）
+    allInviteList() {
+      const list = [];
+      const inviteList = this.$store.getters['jv/get']('invite');
+      const groupList = this.$store.getters['jv/get']('groups');
+      console.log('会话列表接口的响应：', inviteList);
+      console.log('用户组接口的响应：', groupList);
+      const inviteListKeys = Object.keys(inviteList);
+      const groupListKeys = Object.keys(groupList);
+      if (inviteList && inviteListKeys.length > 0) {
+        for (let i = 0; i < inviteListKeys.length; i += 1) {
+          const inviteListValue = inviteList[inviteListKeys[i]];
+          const day = timestamp2day(inviteListValue.endtime);
+          inviteListValue.time = `有效期剩余${day}天`;
+          if (groupListKeys && groupListKeys.length > 0) {
+            for (let j = 0; j < groupListKeys.length; j += 1) {
+              const groupListValue = groupList[groupListKeys[j]];
+              if (inviteListValue.group_id.toString() === groupListValue._jv.id.toString()) {
+                inviteListValue.title = groupListValue.name;
+              }
+            }
+          }
+          list.push(inviteListValue);
+        }
+      }
+      console.log('list', list);
+      return list;
+    },
     allFollow() {
       return this.$store.getters['jv/get']('follow');
+    },
+    userList() {
+      const list = this.$store.getters['jv/get']('users');
+      console.log('list', list);
+      return list;
     },
     getGroups() {
       const that = this;
@@ -202,10 +242,56 @@ export default {
         }
       });
     },
+    // 调用 管理邀请列表 接口
+    getInviteList(status) {
+      const params = {
+        'filter[status]': status,
+      };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'invite' } });
+      this.$store.dispatch('jv/get', ['invite', { params }]).then(res => {
+        this.totalData = res._jv.json.meta.total;
+        console.log('获取管理邀请列表', res);
+      });
+    },
+
+    // 调用 获取所有用户组 接口
+    getGroupList() {
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'groups' } });
+      this.$store.dispatch('jv/get', 'groups');
+      console.log('获取所有用户组');
+    },
+
+    // 调用 批量修改用户的用户组 接口
+    modifyGroupName(item) {
+      const data = [];
+      if (this.checkAvatar && this.checkAvatar.length > 0) {
+        for (let i = 0; i < this.checkAvatar.length; i += 1) {
+          data.push({ attributes: { id: this.checkAvatar[i].id, groupId: item.group_id } });
+        }
+      }
+      // const params = {
+      //   id
+      //   groupId: item.group_id,
+      // };
+      console.log('this.checkAvatar', this.checkAvatar);
+      console.log('item', item);
+      // const params = {
+      //   'filter[status]': status,
+      // };
+      // this.$store.dispatch('jv/patch', params);
+    },
+
+    // 点击取消按钮
+    cancel() {
+      console.log('取消');
+      this.$refs.popup.close();
+    },
   },
   onLoad() {
+    this.getInviteList(1);
+    this.getGroupList();
     uni.setNavigationBarTitle({
-      title: this.i18n.t('discuzq.atMember.atTitle'),
+      title: '成员管理',
     });
     this.getFollowMember(1);
   },
