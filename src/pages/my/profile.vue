@@ -69,7 +69,7 @@
         ></qui-cell-item>
       </navigator>
       <qui-uploader
-        url="https://dq.comsenz-service.com/api/attachments"
+        :url="`${host}api/users/${userId}/avatar`"
         :header="header"
         :form-data="formData"
         async-clear
@@ -81,6 +81,8 @@
 </template>
 
 <script>
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
+
 export default {
   components: {
     //
@@ -90,6 +92,7 @@ export default {
       hasPassword: false,
       header: {},
       formData: {},
+      host: DISCUZ_REQUEST_HOST,
       userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
     };
   },
@@ -114,12 +117,6 @@ export default {
   methods: {
     uploadChange(e) {
       console.log(e);
-      this.changeAvatar();
-    },
-    changeAvatar() {
-      this.$store.dispatch('jv/post', `/api/users/${this.userId}/avatar`).then(res => {
-        console.log(res);
-      });
     },
   },
 };

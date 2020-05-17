@@ -78,7 +78,7 @@ export default {
       loadingType: 'more',
       data: [],
       flag: true, // 滚动节流
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       nowThreadId: '',
       currentLoginId: uni.getStorageSync('user_id'),
@@ -175,7 +175,7 @@ export default {
       this.$store.dispatch('jv/patch', params).then(() => {
         if (isLiked && this.currentLoginId === this.userId) {
           const data = JSON.parse(JSON.stringify(this.data));
-          delete data[index];
+          data.splice(index, 1);
           this.data = data;
           this.$emit('changeFollow', { userId: this.userId });
         }
