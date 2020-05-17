@@ -5,7 +5,12 @@
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
           <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
-            <qui-icon v-if="item.unReadNum > 0" name="icon-circle" color="red" size="14"></qui-icon>
+            <qui-icon
+              v-if="item.unReadNum && item.unReadNum > 0"
+              name="icon-circle"
+              color="red"
+              size="14"
+            ></qui-icon>
           </qui-cell-item>
         </view>
       </view>

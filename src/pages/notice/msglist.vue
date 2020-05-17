@@ -1,13 +1,6 @@
 <template>
   <qui-page>
     <view class="chat-box">
-      <!-- 导航栏 -->
-      <uni-nav-bar status-bar fixed @clickLeft="clickNavBarLeft">
-        <view slot="left" class="left-con">
-          <qui-icon name="icon-back" class="left-arrow" size="34" color="#343434"></qui-icon>
-          <text class="left-con-text">{{ username }}</text>
-        </view>
-      </uni-nav-bar>
       <!-- 消息内容 -->
       <scroll-view style="height: 1200rpx;" scroll-y="true" :scroll-top="scrollTop">
         <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
@@ -67,30 +60,31 @@
 </template>
 
 <script>
-import { uniNavBar } from '@dcloudio/uni-ui';
 import quiEmoji from '@/components/qui-emoji/qui-emoji';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    uniNavBar,
     quiEmoji,
   },
+
   data() {
     return {
       scrollTop: 400,
       msg: '', // 输入框内容
       emojiShow: false, // 表情
-      username: '', // 导航栏标题
       dialogId: 0, // 会话id
       height: 0,
       currentLoginId: uni.getStorageSync('user_id'), // 当前用户id
     };
   },
+
   onLoad(params) {
     console.log('params', params);
     const { username, dialogId } = params;
-    this.username = username;
+    uni.setNavigationBarTitle({
+      title: username,
+    });
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
     if (Object.keys(this.allEmoji).length < 1) {
@@ -113,6 +107,7 @@ export default {
         });
     }, 5000);
   },
+
   computed: {
     // 获取会话消息列表
     allChatRecord() {
@@ -131,19 +126,14 @@ export default {
       console.log('聊天记录：', list);
       return list;
     },
+
     // 获取所有表情
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
     },
   },
-  methods: {
-    // 回到上一个页面
-    clickNavBarLeft() {
-      uni.navigateBack({
-        delta: 1,
-      });
-    },
 
+  methods: {
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
       const params = {
@@ -221,23 +211,6 @@ export default {
   height: 100%;
   margin-bottom: 130rpx;
   background-color: #ededed;
-
-  /deep/ .uni-navbar--border {
-    border: none;
-  }
-
-  .left-con {
-    min-width: 300rpx;
-    color: #343434;
-
-    .left-arrow {
-      margin: 0rpx 18rpx 0rpx 0rpx;
-    }
-
-    .left-con-text {
-      font-weight: bold;
-    }
-  }
 
   &__con {
     &__time {
