@@ -6,6 +6,7 @@
       "path": "pages/home/index",
       "style": {
         "navigationStyle": "custom"
+        // "onReachBottomDistance":126  //距离底部多远时触发 单位px
       }
     },
     {

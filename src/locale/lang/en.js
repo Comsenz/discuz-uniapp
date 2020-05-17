@@ -148,6 +148,7 @@ export default {
     myfavorite: 'My favorite',
     circleinfo: 'Circle information',
     search: 'Search',
+    privateMessage: 'privateMessage',
     circlemanagement: 'Circle management',
     topic: 'Topic',
     following: 'Following',
@@ -171,6 +172,7 @@ export default {
     orderlist: 'Orderlist',
     walletpassword: 'Wallet password',
     setpassword: 'Set password',
+    setpaypassword: 'Set pay password',
     total: 'Total',
     records: 'Records',
     amountinvolved: 'Amount involved',
@@ -199,6 +201,7 @@ export default {
     paymenttobemade: 'Payment to bemade',
     paymentsucceed: 'Payment succeed',
     paymentfailed: 'Payment failed',
+    freezingreason: 'Freezing reason',
   },
   site: {
     circleintroduction: 'Circle introduction',

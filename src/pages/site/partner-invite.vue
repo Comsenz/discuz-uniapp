@@ -192,8 +192,11 @@ export default {
       }
     },
     getInviteInfo(code) {
+      const params = {
+        'filter[type]': 'invite',
+      };
       status
-        .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
+        .run(() => this.$store.dispatch('jv/get', [`invite/${code}`, { params }]))
         .then(res => {
           this.inviteData = res;
         })

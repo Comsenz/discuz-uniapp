@@ -12,6 +12,7 @@
         <view
           class="follow-content__items"
           v-for="(followingItem, index) in followingList"
+          @tap="toProfile(followingItem.toUser.id)"
           :key="index"
         >
           <image
@@ -20,7 +21,6 @@
               followingItem.toUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'
             "
             alt="avatarUrl"
-            @tap="toProfile(followingItem.toUser.id)"
           ></image>
           <qui-cell-item
             :title="followingItem.toUser.username"
@@ -33,13 +33,14 @@
             <view
               class="follow-content__items__operate"
               @tap="addFollow(followingItem.toUser)"
+              @tap.stop
               v-if="followingItem.toUser.id != currentLoginId"
             >
               <text>
                 {{
-                  followerItem.fromUser.follow == 0
+                  followingItem.toUser.follow == 0
                     ? i18n.t('profile.following')
-                    : followerItem.fromUser.follow == 1
+                    : followingItem.toUser.follow == 1
                     ? i18n.t('profile.followed')
                     : i18n.t('profile.mutualfollow')
                 }}

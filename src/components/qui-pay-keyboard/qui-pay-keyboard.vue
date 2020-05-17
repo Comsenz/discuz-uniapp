@@ -29,7 +29,7 @@
             <view class="code-box-item">{{ (password[index] && '●') || '' }}</view>
           </block>
         </view>
-        <input type="number" v-model="password" />
+        <input type="number" v-model="password" class="number-input" />
       </view>
     </view>
     <!-- 键盘 -->
@@ -103,7 +103,7 @@ export default {
 </script>
 
 <style lang="scss">
-input {
+.number-input {
   display: none;
 }
 .mask {

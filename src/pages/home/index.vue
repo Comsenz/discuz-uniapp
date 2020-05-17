@@ -61,14 +61,14 @@
       <view
         class="nav"
         id="navId"
-        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;top:116rpx;' : ''"
+        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;' : ''"
       >
         <view class="nav__box">
           <qui-icon
             class="nav__box__icon"
             name="icon-screen"
             size="28"
-            color="#1878F3"
+            :color="show ? '#1878F3' : '#777'"
             @tap="showFilter"
           ></qui-icon>
         </view>
@@ -81,8 +81,10 @@
           :if-need-confirm="ifNeedConfirm"
           :filter-list="filterList"
           :show-search="showSearch"
+          @searchClick="searchClick"
+          posi-type="absolute"
+          top="102"
           ref="filter"
-          top="100"
         ></qui-filter-modal>
         <u-tabs
           class="scroll-tab"
@@ -114,14 +116,14 @@
           <view class="sticky__isSticky__count">
             <rich-text
               class="sticky__isSticky__text"
-              :nodes="item.type == 1 ? item.title : item.firstPost.contentHtml"
+              :nodes="item.type == 1 ? item.title : item.firstPost.summary"
             ></rich-text>
-            <!-- {{ item.type == 1 ? item.title : item.firstPost.contentHtml }} -->
+            <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
           </view>
         </view>
       </view>
       <!-- </view> -->
-      <view class="main" v-if="jvStatus[threadsStatusId]">
+      <view class="main">
         <qui-content
           v-for="(item, index) in threads"
           :key="index"
@@ -131,7 +133,7 @@
           :theme-reply-btn="item.canReply"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
-          :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
           :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
@@ -221,6 +223,7 @@ export default {
       redCircle: false, // 消息通知红点
       navShow: false, // 是否显示头部
       nowThreadId: '', // 当前点击主题ID
+      filterTop: 450, // 筛选弹窗的位置
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -298,12 +301,12 @@ export default {
     if (res.from === 'button') {
       console.log(this.threads);
       return {
-        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
+        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
         // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
       };
     }
     return {
-      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.contentHtml,
+      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
       title: this.forums.set_site.site_name,
       // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
     };
@@ -311,7 +314,7 @@ export default {
   mounted() {
     const query = uni.createSelectorQuery().in(this);
     query
-      .select('.scroll-tab')
+      .select('.nav')
       .boundingClientRect(data => {
         console.log(`得到布局位置信息${JSON.stringify(data)}`);
         console.log(`节点离页面顶部的距离为${data.top}`);
@@ -319,8 +322,8 @@ export default {
       })
       .exec();
   },
-  onPageScroll() {
-    // console.log(e, 'scroll')
+  onPageScroll(e) {
+    console.log(e, 'scroll');
     // if (e.scrollTop > 100) {
     //   this.navShow = true;
     //   this.suspended = true;
@@ -334,10 +337,9 @@ export default {
     //   this.isTop = 0;
     // }
   },
-
   methods: {
     scroll(event) {
-      console.log(event, 'scroll');
+      // console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
         return;
       }
@@ -379,9 +381,25 @@ export default {
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
+
+      // 切换筛选框选中分类
+      // eslint-disable-next-line
+      this.filterList[0].data.map(item => {
+        // eslint-disable-next-line
+        item.selected = false;
+      });
+      this.filterList[0].data[dataInfo.index].selected = true;
+
       this.loadThreadsSticky();
       await this.loadThreads();
       this.checkoutTheme = false;
+    },
+    // 筛选分类里的搜索
+    searchClick() {
+      console.log('0000000');
+      uni.navigateTo({
+        url: '/pages/site/search',
+      });
     },
     // 点击置顶跳转到详情页
     stickyClick(id) {
@@ -487,9 +505,9 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
-      this.show = true;
+      this.show = !this.show;
       this.$refs.filter.setData();
-      this.navShow = true;
+      // this.navShow = true;
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
@@ -593,8 +611,9 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
-        this.hasMore = !!res._jv.json.links.next;
-        this.loadingType = this.hasMore ? 'more' : 'nomore';
+        // this.hasMore = !!res._jv.json.links.next;
+        // this.loadingType = this.hasMore ? 'more' : 'nomore';
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {
           this.threads = res;
@@ -602,8 +621,6 @@ export default {
           this.threads = [...this.threads, ...res];
         }
         console.log(this.navShow, this.isTop, 'isTop navShow');
-        // this.threads = res;
-        // this.data = [...this.data, ...res];
       });
     },
     // 内容部分点赞按钮点击事件
@@ -643,14 +660,12 @@ export default {
 
     // 下拉加载
     pullDown() {
-      console.log('下拉加载呢');
-      if (this.hasMore) {
-        this.pageNum += 1;
-        this.loadThreads();
-        console.log(this.pageNum, '页码');
-      } else {
-        this.loadingType = 'nomore';
+      if (this.loadingType !== 'more') {
+        return;
       }
+      this.pageNum += 1;
+      this.loadThreads();
+      console.log(this.pageNum, '页码');
     },
   },
 };
@@ -667,6 +682,7 @@ export default {
   position: relative;
   z-index: 1;
   background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: box-shadow 0.2s, -webkit-transform 0.2s;
 
   &__box {
@@ -686,7 +702,7 @@ export default {
 }
 
 .scrolled .nav {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .sticky {
@@ -764,7 +780,8 @@ export default {
 
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  max-height: calc(100vh - 100rpx);
+  // max-height: calc(100vh - 100rpx);
+  height: 100vh;
 }
 
 .nav .filter-modal {

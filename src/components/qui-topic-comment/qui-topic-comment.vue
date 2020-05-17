@@ -84,7 +84,7 @@
           </view>
         </view>
         <qui-reply
-          v-if="Object.keys(replyList).length > 0"
+          v-if="replyList.length > 0"
           :reply-list="replyList"
           @commentJump="commentJump"
         ></qui-reply>
@@ -158,9 +158,9 @@ export default {
     },
     // 回复的评论
     replyList: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
     },
     // 评论的回复数
@@ -175,9 +175,9 @@ export default {
     },
     // 回复的图片
     imagesList: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
     },
     // 图片裁剪、缩放的模式
@@ -211,6 +211,19 @@ export default {
     t() {
       return this.i18n.t('topic');
     },
+  },
+  watch: {
+    // 监听得到的数据
+    commentLikeCount: {
+      handler(newVal) {
+        this.commentLikeCount = newVal;
+        console.log('这是监听到的点赞数');
+      },
+      deep: true,
+      immediate: true,
+    },
+    deep: true,
+    immediate: true,
   },
   methods: {
     // 点击内容事件

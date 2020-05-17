@@ -1,10 +1,10 @@
 <template>
   <!-- 列表 -->
-  <view class="det-person-box">
+  <view class="det-person-box" :style="{ paddingBottom: btnShow ? '80rpx' : '50rpx' }">
     <view class="det-per-number" v-if="personNum != 0">
       {{ personNum }}{{ t.persenUnit }}{{ type }}
     </view>
-    <view class="det-per-list">
+    <view class="det-per-list" v-if="personRes.length > 0">
       <view class="det-person" v-for="(person, index) in personRes" :key="index">
         <image
           :src="
@@ -54,9 +54,9 @@ export default {
     // list列表
     personList: {
       default: () => {
-        return {};
+        return [];
       },
-      type: Object,
+      type: Array,
     },
     // 是否显示按钮
     btnShow: {
@@ -107,8 +107,8 @@ export default {
     personList: {
       handler(newVal) {
         this.personList = newVal;
-        this.personRes = newVal;
-        // this.personRes = this.limitArray(newVal, this.limitCount);
+        // this.personRes = newVal;
+        this.personRes = this.limitArray(newVal, this.limitCount);
         // console.log(this.personRes, '0000');
       },
       deep: true,
@@ -160,7 +160,7 @@ export default {
 .det-person-box {
   display: flex;
   flex-direction: column;
-  padding: 0 0 40px;
+  padding: 0 0 80rpx;
   text-align: center;
   .det-per-number {
     font-size: $fg-f28;

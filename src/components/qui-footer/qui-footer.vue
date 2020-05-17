@@ -54,6 +54,7 @@
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 <script>
@@ -153,7 +154,7 @@ export default {
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image
       ) {
-        console.log('此处弹出提示无权限发帖');
+        this.$refs.toast.show({ message: '当前没有发帖权限' });
         return;
       }
       this.bottomData = [];
@@ -213,12 +214,13 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .ft {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   display: flex;
   width: 100%;
   height: 119rpx;
   background-color: --color(--qui-BG-2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   justify-content: space-around;
 }
 .ft-box {
