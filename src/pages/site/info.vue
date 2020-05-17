@@ -7,7 +7,7 @@
       :post="post"
       :post-num="forums.other.count_threads"
       :share="share"
-      iconcolor="#333"
+      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -272,11 +272,14 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .header /deep/ .circleDet {
+    padding: 60rpx 40rpx 50rpx;
     color: --color(--qui-FC-777);
+    opacity: 1;
   }
   .header .logo {
-    height: 100rpx;
-    padding-top: 99rpx;
+    width: 295rpx;
+    height: 56rpx;
+    padding-top: 71rpx;
   }
   /deep/ .icon-share1 {
     color: --color(--qui-FC-333);
