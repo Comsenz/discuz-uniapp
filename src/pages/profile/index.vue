@@ -57,7 +57,7 @@
       ></qui-tabs>
       <view class="profile-tabs__content">
         <view v-if="current == 0" class="items">
-          <topic :user-id="userId"></topic>
+          <topic :user-id="userId" @changeFollow="changeFollow"></topic>
         </view>
         <view v-if="current == 1" class="items">
           <following :user-id="userId" @changeFollow="changeFollow"></following>
@@ -111,16 +111,19 @@ export default {
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
       userInfo.groupsName = userInfo.groups ? Object.values(userInfo.groups)[0].name : '';
+      this.setNum(userInfo);
       return userInfo;
     },
   },
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
     const { userId, current } = params;
-    // 我的用户id从缓存拿
+    // 我的用户信息从缓存拿
     this.userId = userId || this.currentLoginId;
     this.current = current || 0;
-    this.getUserInfo(userId || this.currentLoginId);
+    if (this.userId !== this.currentLoginId) {
+      this.getUserInfo(userId);
+    }
   },
   methods: {
     onClickItem(e) {
@@ -133,14 +136,14 @@ export default {
       const params = {
         include: 'groups',
       };
-      status
-        .run(() => this.$store.dispatch('jv/get', [`users/${userId}`, { params }]))
-        .then(res => {
-          this.items[0].brief = res.threadCount || 0;
-          this.items[1].brief = res.followCount || 0;
-          this.items[2].brief = res.fansCount || 0;
-          this.items[3].brief = res.likedCount || 0;
-        });
+      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
+    },
+    // 设置粉丝点赞那些数字
+    setNum(res) {
+      this.items[0].brief = res.threadCount || 0;
+      this.items[1].brief = res.followCount || 0;
+      this.items[2].brief = res.fansCount || 0;
+      this.items[3].brief = res.likedCount || 0;
     },
     // 添加关注
     addFollow(userInfo) {

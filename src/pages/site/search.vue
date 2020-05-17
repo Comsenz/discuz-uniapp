@@ -48,7 +48,10 @@
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
-      <qui-no-data :tips="i18n.t('search.norelatedusersfound')" v-if="userTotal == 0"></qui-no-data>
+      <qui-no-data
+        :tips="i18n.t('search.norelatedusersfound')"
+        v-if="userTotal === 0"
+      ></qui-no-data>
     </view>
     <view class="search-item search-item--themes" v-if="searchValue">
       <view class="search-item__head">
@@ -77,7 +80,7 @@
       </view>
       <qui-no-data
         :tips="i18n.t('search.norelatedthemesfound')"
-        v-if="themeTotal == 0"
+        v-if="themeTotal === 0"
       ></qui-no-data>
     </view>
   </qui-page>
@@ -101,8 +104,11 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.getUserList(e.target.value);
-      this.getThemeList(e.target.value);
+      if (this.timeout) clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.getUserList(e.target.value);
+        this.getThemeList(e.target.value);
+      }, 250);
     },
     // 获取用户列表
     getUserList(key) {
