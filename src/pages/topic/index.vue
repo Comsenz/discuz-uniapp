@@ -119,7 +119,7 @@
                 @commentJump="commentJump(threadId, post._jv.id)"
                 @imageClick="imageClick"
                 @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted)"
-                @replyComment="replyComment(post._jv.id)"
+                @replyComment="replyComment(post)"
               ></qui-topic-comment>
             </view>
             <!--<view v-for="(post, index) in posts" :key="index">
@@ -457,6 +457,7 @@ export default {
           value: '1',
         },
       ], //支付方式
+      currentReplyPost: {},
     };
   },
   computed: {
@@ -693,7 +694,7 @@ export default {
             } else {
               console.log('主题已点赞时，取消点赞');
              
-              likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              this.thread.firstPost.likedUsers.splice(this.thread.firstPost.likedUsers.indexOf(this.user), 1);
               this.thread.firstPost.likeCount--;
             }
           } else if (type == '2') {
@@ -854,8 +855,12 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
-
-          this.posts.push(res);
+          if(!res.isComment) {
+            this.posts.unshift(res);
+          } else {
+            res.replyUser = this.currentReplyPost.user;
+            this.currentReplyPost.lastThreeComments.unshift(res);
+          }
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -1233,13 +1238,14 @@ export default {
       this.postOpera(postId, '3', canStatus, isStatus);
     },
     // 评论的回复
-    replyComment(postId) {
+    replyComment(post) {
       if (!this.thread.canReply) {
         console.log('没有回复权限');
       } else {
         this.commentReply = true;
-        this.commentId = postId;
-        console.log(postId, '评论回复id');
+        this.commentId = post._jv.id;
+        this.currentReplyPost = post;
+        console.log(this.commentId, '评论回复id');
         this.$refs.commentPopup.open();
       }
     },
