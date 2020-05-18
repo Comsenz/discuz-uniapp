@@ -209,18 +209,13 @@ const actions = (api, conf) => {
       }
       merge(apiConf, config)
       return api(apiConf).then((results) => {
+        // debugger;
         // If the server handed back data, store it
-        if (results.status === 200 && utils.hasProperty(results.data, 'data')) {
-          // Full response
-          // context.commit('deleteRecord', data)
-          data = utils.jsonapiToNorm(results.data.data)
-          context.commit('addRecords', data)
-        } else {
-          // 200 (meta-only), or 204 (no resource) response
-          // Update the store record from the patch
-          context.commit('mergeRecords', data)
-        }
 
+        // 200 (meta-only), or 204 (no resource) response
+        // Update the store record from the patch
+        context.commit('mergeRecords', data)
+        
         // NOTE: We deliberately process included records after any `deleteRecord` mutations
         // to avoid deleting any included records that we just added.
         utils.processIncludedRecords(context, results)
