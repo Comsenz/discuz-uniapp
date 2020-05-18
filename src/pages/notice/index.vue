@@ -5,7 +5,12 @@
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
           <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
-            <qui-icon v-if="item.unReadNum > 0" name="icon-circle" color="red" size="14"></qui-icon>
+            <qui-icon
+              v-if="item.unReadNum && item.unReadNum > 0"
+              name="icon-circle"
+              color="red"
+              size="14"
+            ></qui-icon>
           </qui-cell-item>
         </view>
       </view>
@@ -60,7 +65,10 @@
             </view>
             <view class="dialog-box__con" v-html="dialog.dialogMessage.message_text_html"></view>
           </view>
-          <uni-load-more :status="loadingType"></uni-load-more>
+          <uni-load-more
+            :status="loadingType"
+            v-if="allDialogList && allDialogList.length > 0"
+          ></uni-load-more>
         </scroll-view>
       </view>
     </view>
@@ -174,12 +182,12 @@ export default {
 
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 
 .notice-box {
   width: 100%;
   min-height: 100vh;
   font-size: $fg-f28;
-  background-color: #fafafa;
 
   .left-text {
     min-width: 250rpx;
@@ -189,10 +197,11 @@ export default {
 
   .notice-box__list {
     padding-left: 40rpx;
-    background: #fff;
-    border-bottom: 1rpx solid #ededed;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    transition: $switch-theme-time;
 
-    .cell-item {
+    /deep/ .cell-item {
       padding-right: 40rpx;
     }
   }
@@ -204,7 +213,7 @@ export default {
 
 .dialog-box {
   margin: 20rpx 0;
-  background-color: #fff;
+  background: --color(--qui-BG-2);
 
   &__header {
     display: flex;
@@ -231,19 +240,19 @@ export default {
         margin-right: 6rpx;
         font-weight: bold;
         line-height: 37rpx;
-        color: #000;
+        color: --color(--qui-FC-000);
       }
 
       &__groupname {
         font-weight: 400;
         line-height: 37rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: 24rpx;
         line-height: 31rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
 
@@ -262,7 +271,7 @@ export default {
   &__con {
     padding: 0rpx 40rpx 30rpx;
     font-weight: 400;
-    color: #333;
+    color: --color(--qui-FC-333);
     opacity: 1;
   }
 }

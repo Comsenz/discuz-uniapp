@@ -1,13 +1,6 @@
 <template>
   <qui-page>
     <view class="chat-box">
-      <!-- 导航栏 -->
-      <uni-nav-bar status-bar fixed @clickLeft="clickNavBarLeft">
-        <view slot="left" class="left-con">
-          <qui-icon name="icon-back" class="left-arrow" size="34" color="#343434"></qui-icon>
-          <text class="left-con-text">{{ username }}</text>
-        </view>
-      </uni-nav-bar>
       <!-- 消息内容 -->
       <scroll-view style="height: 1200rpx;" scroll-y="true" :scroll-top="scrollTop">
         <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
@@ -37,20 +30,27 @@
                   ? 'chat-box__con__msg__mine__box'
                   : 'chat-box__con__msg__other__box',
               ]"
-              v-html="item.message_text_html"
-            ></view>
+            >
+              <rich-text :nodes="item.message_text_html" style="word-break: break-all;"></rich-text>
+            </view>
           </view>
         </view>
       </scroll-view>
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
-          <input class="uni-input" v-model="msg" placeholder="回复.." @blur="contBlur" />
+          <input
+            class="uni-input"
+            v-model="msg"
+            placeholder="回复.."
+            placeholder-style="color: #b5b5b5; font-size: 28rpx;"
+            @blur="contBlur"
+          />
           <qui-icon
             name="icon-expression chat-box__footer__msg__icon"
             size="40"
-            color="#7D7979"
-            @click="click"
+            :color="emojiShow ? '#1878F3' : '#7D7979'"
+            @click="popEmoji"
           ></qui-icon>
           <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
         </view>
@@ -67,30 +67,31 @@
 </template>
 
 <script>
-import { uniNavBar } from '@dcloudio/uni-ui';
 import quiEmoji from '@/components/qui-emoji/qui-emoji';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   components: {
-    uniNavBar,
     quiEmoji,
   },
+
   data() {
     return {
       scrollTop: 400,
       msg: '', // 输入框内容
       emojiShow: false, // 表情
-      username: '', // 导航栏标题
       dialogId: 0, // 会话id
       height: 0,
       currentLoginId: uni.getStorageSync('user_id'), // 当前用户id
     };
   },
+
   onLoad(params) {
     console.log('params', params);
     const { username, dialogId } = params;
-    this.username = username;
+    uni.setNavigationBarTitle({
+      title: username,
+    });
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
     if (Object.keys(this.allEmoji).length < 1) {
@@ -111,8 +112,9 @@ export default {
           console.log('信息', data);
           console.log('height', this.height);
         });
-    }, 5000);
+    }, 0);
   },
+
   computed: {
     // 获取会话消息列表
     allChatRecord() {
@@ -131,19 +133,14 @@ export default {
       console.log('聊天记录：', list);
       return list;
     },
+
     // 获取所有表情
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
     },
   },
-  methods: {
-    // 回到上一个页面
-    clickNavBarLeft() {
-      uni.navigateBack({
-        delta: 1,
-      });
-    },
 
+  methods: {
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
       const params = {
@@ -191,12 +188,13 @@ export default {
         .catch(err => {
           console.log(err);
         });
+      this.emojiShow = false;
       this.msg = '';
     },
 
     // 弹出表情组件
-    click() {
-      this.emojiShow = true;
+    popEmoji() {
+      this.emojiShow = !this.emojiShow;
     },
 
     // 获取表情
@@ -206,7 +204,6 @@ export default {
         this.allEmoji[key].code +
         this.msg.slice(this.cursor)}`;
       this.msg = text;
-      this.emojiShow = false;
       console.log('表情', this.allEmoji[key]);
       console.log('msg', this.msg);
     },
@@ -216,30 +213,15 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/variable/color.scss';
 
 .chat-box {
   height: 100%;
-  margin-bottom: 130rpx;
-  background-color: #ededed;
-
-  /deep/ .uni-navbar--border {
-    border: none;
-  }
-
-  .left-con {
-    min-width: 300rpx;
-    color: #343434;
-
-    .left-arrow {
-      margin: 0rpx 18rpx 0rpx 0rpx;
-    }
-
-    .left-con-text {
-      font-weight: bold;
-    }
-  }
+  margin-bottom: 140rpx;
 
   &__con {
+    font-size: $fg-f24;
+
     &__time {
       padding: 30rpx 0;
       font-size: $fg-f20;
@@ -264,9 +246,10 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 40rpx;
-        padding: 20rpx;
-        margin: 20rpx;
+        min-height: 60rpx;
+        padding: 25rpx 20rpx;
+        margin-right: 20rpx;
+        line-height: 60rpx;
         background: #d1e0ff;
         border: 1rpx solid #a3caff;
         border-radius: 10rpx;
@@ -274,35 +257,31 @@ export default {
 
       &__box:before {
         position: absolute;
-        top: 31%;
-        right: -30rpx;
+        top: 30rpx;
+        right: -20px;
         z-index: 12;
-        display: block;
         width: 0rpx;
         height: 0rpx;
-        border-top: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-        border-left: 8px solid #d1e0ff;
+        border-top: 11px solid transparent;
+        border-right: 11px solid transparent;
+        border-bottom: 11px solid transparent;
+        border-left: 11px solid #d1e0ff;
         content: '';
-        box-sizing: content-box;
       }
 
       &__box:after {
         position: absolute;
-        top: 29%;
-        right: -35rpx;
+        top: 30rpx;
+        right: -21px;
         z-index: 10;
-        display: block;
         width: 0rpx;
         height: 0rpx;
         padding: 0;
-        border-top: 9px solid transparent;
-        border-right: 9px solid transparent;
-        border-bottom: 9px solid transparent;
-        border-left: 9px solid #a3caff;
+        border-top: 11px solid transparent;
+        border-right: 11px solid transparent;
+        border-bottom: 11px solid transparent;
+        border-left: 11px solid #a3caff;
         content: '';
-        box-sizing: content-box;
       }
     }
 
@@ -322,9 +301,10 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 40rpx;
-        padding: 20rpx;
-        margin: 20rpx;
+        min-height: 60rpx;
+        padding: 25rpx 20rpx;
+        margin-left: 20rpx;
+        line-height: 60rpx;
         background: #fff;
         border: 1rpx solid #e5e5e5;
         border-radius: 10rpx;
@@ -332,35 +312,31 @@ export default {
 
       &__box:before {
         position: absolute;
-        top: 31%;
-        left: -31rpx;
+        top: 30rpx;
+        left: -21px;
         z-index: 12;
-        display: block;
         width: 0rpx;
         height: 0rpx;
-        border-top: 8px solid transparent;
-        border-right: 8px solid #fff;
-        border-bottom: 8px solid transparent;
-        border-left: 8px solid transparent;
+        border-top: 11px solid transparent;
+        border-right: 11px solid #fff;
+        border-bottom: 11px solid transparent;
+        border-left: 11px solid transparent;
         content: '';
-        box-sizing: content-box;
       }
 
       &__box:after {
         position: absolute;
-        top: 29%;
-        left: -35rpx;
+        top: 30rpx;
+        left: -22px;
         z-index: 10;
-        display: block;
         width: 0rpx;
         height: 0rpx;
         padding: 0;
-        border-top: 9px solid transparent;
-        border-right: 9px solid #ccc;
-        border-bottom: 9px solid transparent;
-        border-left: 9px solid transparent;
+        border-top: 11px solid transparent;
+        border-right: 11px solid #ccc;
+        border-bottom: 11px solid transparent;
+        border-left: 11px solid transparent;
         content: '';
-        box-sizing: content-box;
       }
     }
   }
@@ -378,7 +354,7 @@ export default {
       justify-content: space-around;
       align-items: center;
       padding: 20rpx 20rpx 40rpx;
-      background-color: #f8f8f8;
+      background: --color(--qui-BG-2);
 
       &__icon {
         margin-right: 20rpx;

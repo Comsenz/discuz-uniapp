@@ -12,6 +12,7 @@
         <view
           class="follow-content__items"
           v-for="(followingItem, index) in followingList"
+          @tap="toProfile(followingItem.toUser.id)"
           :key="index"
         >
           <image
@@ -20,7 +21,6 @@
               followingItem.toUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'
             "
             alt="avatarUrl"
-            @tap="toProfile(followingItem.toUser.id)"
           ></image>
           <qui-cell-item
             :title="followingItem.toUser.username"
@@ -33,6 +33,7 @@
             <view
               class="follow-content__items__operate"
               @tap="addFollow(followingItem.toUser)"
+              @tap.stop
               v-if="followingItem.toUser.id != currentLoginId"
             >
               <text>
@@ -83,7 +84,7 @@ export default {
       loadingType: 'more',
       flag: true, // 滚动节流
       followingList: [],
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
     };

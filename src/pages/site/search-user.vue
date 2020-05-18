@@ -47,15 +47,13 @@
 </template>
 
 <script>
-import { status } from '@/library/jsonapi-vuex/index';
-
 export default {
   data() {
     return {
       searchValue: '',
       loadingType: 'more',
       data: [],
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
     };
   },
@@ -66,11 +64,14 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = [];
-      this.getUserList(e.target.value);
+      if (this.timeout) clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.data = [];
+        this.getUserList(e.target.value);
+      }, 250);
     },
     // 获取用户列表
-    getUserList(key) {
+    getUserList(key, type) {
       const params = {
         include: 'groups',
         sort: 'createdAt',
@@ -78,19 +79,22 @@ export default {
         'page[limit]': this.pageSize,
         'filter[username]': `*${key}*`,
       };
-      status
-        .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
-        .then(res => {
-          if (res._jv) {
-            delete res._jv;
-          }
-          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+        if (res._jv) {
+          delete res._jv;
+        }
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        if (type && type === 'search') {
+          this.data = res;
+        } else {
           this.data = [...this.data, ...res];
-        });
+        }
+      });
     },
     clearSearch() {
       this.searchValue = '';
-      this.getUserList('');
+      this.pageNum = 1;
+      this.getUserList('', 'search');
     },
     back() {
       uni.navigateBack();
@@ -107,7 +111,7 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getUserList();
+      this.getUserList(this.searchValue);
     },
     refresh() {
       this.pageNum = 1;

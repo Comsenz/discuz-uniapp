@@ -44,18 +44,28 @@
             </view>
           </view>
           <view class="list-box__notice__hr">
-            <text class="list-box__notice__hr__amount" v-if="item.money">{{ item.money }}</text>
+            <text class="list-box__notice__hr__amount" v-if="item.type === 'rewarded'">
+              {{ item.money }}
+            </text>
             <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
           </view>
         </view>
         <view class="list-box__notice__con">
-          <view class="list-box__notice__con__text" v-html="item.post_content"></view>
-          <view class="list-box__notice__con__wrap" v-if="item.thread_id">
+          <view
+            class="list-box__notice__con__text"
+            v-html="item.post_content"
+            @click="jumpMyTopic(item.post_id)"
+          ></view>
+          <view
+            class="list-box__notice__con__wrap"
+            v-if="item.thread_id"
+            @click="jumpOtherTopic(item.thread_id)"
+          >
             <view class="list-box__notice__con__wrap-info">
               <text class="list-box__notice__con__wrap-info-username">
                 {{ item.thread_user_name }}：
               </text>
-              <text>{{ item.thread_title }}</text>
+              <view v-html="item.thread_title" style="display: inline-block;"></view>
               <view class="list-box__notice__con__wrap-info-time">
                 {{ item.thread_created_at }}
               </view>
@@ -106,17 +116,30 @@ export default {
         console.log('删除成功', res);
       });
     },
+
+    jumpMyTopic(topicId) {
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${topicId}`,
+      });
+    },
+
+    jumpOtherTopic(topicId) {
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${topicId}`,
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .list-box {
   width: 100%;
   margin: 0 0 20rpx;
-  font-size: 28rpx;
-  color: #333;
-  background: #fff;
+  font-size: $fg-f28;
 
   &__notice {
     padding: 20rpx 40rpx;
@@ -208,9 +231,11 @@ export default {
       margin-bottom: 20rpx;
 
       &l__title {
+        margin-bottom: 10rpx;
         font-weight: bold;
         color: #000;
       }
+
       &l__time {
         font-size: 24rpx;
         color: #aaa;

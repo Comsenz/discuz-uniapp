@@ -7,7 +7,7 @@
       :post="post"
       :post-num="forums.other.count_threads"
       :share="share"
-      iconcolor="#333"
+      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -83,11 +83,7 @@
         :border="false"
         class="cell-item--auto cell-item--left "
       >
-        <view
-          v-for="(item, index) in inviteData.group.permission"
-          :key="index"
-          class="site-item__permission"
-        >
+        <view v-for="(item, index) in permission" :key="index" class="site-item__permission">
           <text>{{ i18n.t(`permission.${item.permission}`) }}</text>
         </view>
       </qui-cell-item>
@@ -135,6 +131,8 @@ export default {
         },
       ],
       code: '', // 邀请码
+      currentTheme: uni.getStorageSync('theme'),
+      permission: [],
       inviteData: {}, // 邀请的相关信息
     };
   },
@@ -192,10 +190,14 @@ export default {
       }
     },
     getInviteInfo(code) {
+      const params = {
+        'filter[type]': 'invite',
+      };
       status
-        .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
+        .run(() => this.$store.dispatch('jv/get', [`invite/${code}`, { params }]))
         .then(res => {
           this.inviteData = res;
+          this.permission = res.group.permission;
         })
         .catch(err => {
           console.log(err);
@@ -219,10 +221,14 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .header /deep/ .circleDet {
+    padding: 60rpx 40rpx 50rpx;
     color: --color(--qui-FC-777);
+    opacity: 1;
   }
   .header .logo {
-    padding-top: 99rpx;
+    width: 295rpx;
+    height: 56rpx;
+    padding-top: 71rpx;
   }
   /deep/ .cell-item__body__content-title {
     width: 112rpx;

@@ -20,7 +20,7 @@
         :theme-reply-btn="item.canReply"
         :user-groups="item.user.groups"
         :theme-time="item.createdAt"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+        :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :is-great="item.firstPost.isLiked"
         :theme-like="item.firstPost.likeCount"
         :theme-comment="item.firstPost.replyCount"
@@ -81,9 +81,10 @@ export default {
       loadingType: 'more',
       data: [],
       flag: true, // 滚动节流
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       nowThreadId: '',
+      currentLoginId: uni.getStorageSync('user_id'),
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -174,7 +175,12 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(() => {
+        // 如果是个人主页
+        if (this.currentLoginId === this.userId) {
+          this.$emit('changeFollow', { userId: this.userId });
+        }
+      });
     },
     // 下拉加载
     pullDown() {
