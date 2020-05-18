@@ -138,11 +138,6 @@ export default {
       ],
     };
   },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
-  },
   onLoad() {
     //
   },

@@ -133,11 +133,6 @@ export default {
       inviteData: {}, // 邀请的相关信息
     };
   },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
-  },
   onLoad(params) {
     this.code = params.code;
     this.getInviteInfo(params.code);

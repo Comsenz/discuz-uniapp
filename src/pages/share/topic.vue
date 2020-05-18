@@ -86,9 +86,6 @@ export default {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   methods: {
     // 获取推荐用户信息
