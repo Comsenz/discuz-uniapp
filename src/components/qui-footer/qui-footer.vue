@@ -40,7 +40,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="36"
+                  size="46"
                   color="#777777"
                 ></qui-icon>
               </view>
@@ -156,7 +156,7 @@ export default {
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image
       ) {
-        this.$refs.toast.show({ message: '当前没有发帖权限' });
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         return;
       }
       this.bottomData = [];

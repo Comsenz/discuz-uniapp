@@ -86,7 +86,7 @@ export default {
       };
       this.$store.dispatch('jv/get', params).then(data => {
         this.headerName = data.username;
-        this.headerImg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.headerImg = data.avatarUrl || '/static/noavatar.gif';
         this.initData();
       });
     },

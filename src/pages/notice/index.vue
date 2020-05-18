@@ -34,9 +34,7 @@
               <view class="dialog-box__header__info">
                 <image
                   class="dialog-box__header__info__user-avatar"
-                  :src="
-                    dialog.avatar ? dialog.avatar : 'https://discuz.chat/static/images/noavatar.gif'
-                  "
+                  :src="dialog.avatar || '/static/noavatar.gif'"
                 ></image>
                 <view>
                   <view class="dialog-box__header__info__box">

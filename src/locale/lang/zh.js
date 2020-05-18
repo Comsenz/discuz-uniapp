@@ -218,6 +218,7 @@ export default {
     wxShare: '微信分享',
     word: '文字',
     released: '发布了',
+    noPostingPermission: '当前没有发帖权限',
   },
   // 站点管理页面
   manage: {

@@ -10,11 +10,7 @@
       <view class="themeItem__header">
         <view class="themeItem__header__img">
           <image
-            :src="
-              themeImage != '' && themeImage != null
-                ? themeImage
-                : 'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
             alt
             @click="headClick"
           ></image>
@@ -127,7 +123,7 @@
 
         <view class="themeItem__content__tags" v-if="themeType === '1'">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
-            {{ item.tagName }}
+            {{ item.name }}
           </view>
         </view>
       </view>
