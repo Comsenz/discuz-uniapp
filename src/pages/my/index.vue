@@ -178,6 +178,7 @@ export default {
   border: 0;
 }
 /deep/ .qui-tabs__item--active .qui-tabs__item__title {
+  font-weight: normal;
   color: --color(--qui-FC-AAA);
   transition: $switch-theme-time;
 }
