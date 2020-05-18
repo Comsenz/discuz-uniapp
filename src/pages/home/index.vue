@@ -721,10 +721,11 @@ export default {
   box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
   &__box {
     // display: block;
+    width: 62rpx;
     height: 35rpx;
-    min-width: 62rpx;
     margin-top: 27rpx;
     margin-left: 20rpx;
+    font-size: $fg-f20;
     line-height: 35rpx;
     color: --color(--qui-FC-777);
     text-align: center;
