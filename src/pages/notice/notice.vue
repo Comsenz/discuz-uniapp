@@ -2,7 +2,10 @@
   <qui-page>
     <view class="notification-box">
       <!-- 通知信息 -->
-      <qui-notification :list="allNotifications"></qui-notification>
+      <scroll-view>
+        <qui-notification :list="allNotifications"></qui-notification>
+        <qui-load-more :status="loadingType"></qui-load-more>
+      </scroll-view>
     </view>
   </qui-page>
 </template>
@@ -17,7 +20,9 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      loadingType: 'more', // 上拉加载状态
+    };
   },
 
   onLoad(params) {
@@ -67,4 +72,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
+.notification-box {
+  color: --color(--qui-FC-333);
+  background-color: --color(--qui-BG-1);
+  transition: $switch-theme-time;
+}
 </style>

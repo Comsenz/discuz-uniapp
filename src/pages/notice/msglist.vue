@@ -7,17 +7,19 @@
           <view class="chat-box__con__time">{{ item.time }}</view>
           <view
             :class="[
-              item.user_id.toString() === currentLoginId
+              item.user_id === currentLoginId
                 ? 'chat-box__con__msg__mine'
                 : 'chat-box__con__msg__other',
             ]"
           >
             <image
-              :class="[
-                item.user_id.toString() === currentLoginId
-                  ? 'chat-box__con__msg__mine__img'
-                  : 'chat-box__con__msg__other__img',
-              ]"
+              v-if="item.user_id === currentLoginId"
+              class="chat-box__con__msg__mine__img"
+              :src="userInfo.avatarUrl"
+            ></image>
+            <image
+              v-if="item.user_id !== currentLoginId"
+              class="chat-box__con__msg__other__img"
               :src="
                 item.user.avatarUrl === ''
                   ? 'https://discuz.chat/static/images/noavatar.gif'
@@ -26,7 +28,7 @@
             ></image>
             <view
               :class="[
-                item.user_id.toString() === currentLoginId
+                item.user_id === currentLoginId
                   ? 'chat-box__con__msg__mine__box'
                   : 'chat-box__con__msg__other__box',
               ]"
@@ -82,7 +84,7 @@ export default {
       emojiShow: false, // 表情
       dialogId: 0, // 会话id
       height: 0,
-      currentLoginId: uni.getStorageSync('user_id'), // 当前用户id
+      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
     };
   },
 
@@ -137,6 +139,11 @@ export default {
     // 获取所有表情
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
+    },
+
+    // 获取登录信息
+    userInfo() {
+      return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
     },
   },
 
