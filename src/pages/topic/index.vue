@@ -458,6 +458,7 @@ export default {
           value: '1',
         },
       ], //支付方式
+      currentReplyPost: {},
     };
   },
   computed: {
@@ -854,25 +855,12 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
-          console.log(this.postIndex, '这是当前点击的评论的index');
-          if (res.isComment) {
-            // utils
-            //   .deepCopy(this.$store.getters['jv/get']('posts/' + this.commentId))
-            //   .lastThreeComments.push(res);
-            this.$set(
-              utils.deepCopy(this.$store.getters['jv/get']('posts/' + this.commentId))
-                .lastThreeComments,
-              this.postIndex,
-              res,
-            );
-            console.log(
-              utils.deepCopy(this.$store.getters['jv/get']('posts/' + this.commentId))
-                .lastThreeComments,
-            );
+          if (!res.isComment) {
+            this.posts.unshift(res);
           } else {
-            this.posts.push(res);
+            res.replyUser = this.currentReplyPost.user;
+            this.currentReplyPost.lastThreeComments.unshift(res);
           }
-
           this.textAreaValue = '';
           this.uploadFile = '';
         })
