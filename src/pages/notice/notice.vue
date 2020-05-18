@@ -4,7 +4,10 @@
       <!-- 通知信息 -->
       <scroll-view>
         <qui-notification :list="allNotifications"></qui-notification>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more
+          :status="loadingType"
+          v-if="allNotifications && allNotifications.length > 0"
+        ></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>

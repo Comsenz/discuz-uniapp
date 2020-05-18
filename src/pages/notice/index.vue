@@ -57,7 +57,7 @@
               <view class="dialog-box__header__r">
                 <qui-icon
                   name="icon-circle red-circle"
-                  v-if="dialog.recipient_read_at === null"
+                  v-if="dialog.readAt === null"
                   color="red"
                   size="14"
                 ></qui-icon>
@@ -66,10 +66,10 @@
             </view>
             <view class="dialog-box__con" v-html="dialog.dialogMessage.message_text_html"></view>
           </view>
-          <uni-load-more
+          <qui-load-more
             :status="loadingType"
             v-if="allDialogList && allDialogList.length > 0"
-          ></uni-load-more>
+          ></qui-load-more>
         </scroll-view>
       </view>
     </view>
@@ -77,16 +77,14 @@
 </template>
 
 <script>
-import { uniLoadMore } from '@dcloudio/uni-ui';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
-  components: {
-    uniLoadMore,
-  },
+  components: {},
+
   data() {
     return {
-      currentLoginId: uni.getStorageSync('user_id'), // 当前用户id
+      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       list: [
         { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
@@ -97,10 +95,17 @@ export default {
       loadingType: 'more',
     };
   },
+
   onLoad() {
     this.getDialogList();
     this.getUnreadNotificationNum();
   },
+
+  onShow() {
+    this.getDialogList();
+    this.getUnreadNotificationNum();
+  },
+
   computed: {
     // 获取会话列表
     allDialogList() {
@@ -112,14 +117,16 @@ export default {
         for (let i = 0; i < keys.length; i += 1) {
           const value = dialogList[keys[i]];
           value.time = time2MorningOrAfternoon(value.created_at);
-          if (value && value.recipient && value.recipient.id.toString() === this.currentLoginId) {
+          if (value && value.recipient && value.recipient.id === this.currentLoginId) {
             value.name = value.sender.username;
             value.avatar = value.sender.avatarUrl;
             value.groupname = value.sender.groups;
-          } else if (value && value.sender && value.sender.id.toString() === this.currentLoginId) {
+            value.readAt = value.recipient_read_at;
+          } else if (value && value.sender && value.sender.id === this.currentLoginId) {
             value.name = value.recipient.username;
             value.avatar = value.recipient.avatarUrl;
             value.groupname = value.recipient.groups;
+            value.readAt = value.sender_read_at;
           }
           list.push(value);
         }
@@ -128,6 +135,7 @@ export default {
       return list;
     },
   },
+
   methods: {
     // 调用 会话列表 的接口
     getDialogList() {
@@ -219,6 +227,7 @@ export default {
 .dialog-box {
   margin: 20rpx 0;
   background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 
   &__header {
     display: flex;
