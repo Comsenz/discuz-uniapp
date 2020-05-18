@@ -151,7 +151,9 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
-          this.$emit('changeFollow', { userId: this.userId });
+          if (this.userId === this.currentLoginId) {
+            this.$emit('changeFollow', { userId: this.userId });
+          }
           this.getFollowingList('change');
         })
         .catch(err => {
@@ -161,7 +163,6 @@ export default {
     // 取消关注
     deleteFollow(userInfo) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
-        this.$emit('changeFollow', { userId: this.userId });
         // 如果是个人主页直接删除这条数据
         if (this.userId === this.currentLoginId) {
           const dataList = this.followingList;
@@ -172,6 +173,7 @@ export default {
               this.followingList = data;
             }
           });
+          this.$emit('changeFollow', { userId: this.userId });
         } else {
           this.getFollowingList('change');
         }
