@@ -149,7 +149,7 @@
 
 <script>
 /* eslint-disable */
-import { status } from '@/library/jsonapi-vuex/index';
+import { status, utils } from '@/library/jsonapi-vuex/index';
 
 export default {
   data() {
@@ -157,12 +157,12 @@ export default {
       threadId: '',
       commentId: '',
       thread: {},
-      post: {},
+      // post: {},
       loadDetailStatus: {},
       status: false,
       postStatus: false,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
-      posts: {},
+      posts: [],
       loadDetailCommnetStatus: {},
       postsStatus: false,
       footerShow: true, // 默认显示底部
@@ -202,11 +202,9 @@ export default {
     };
   },
   computed: {
-    // thread() {
-    //   return this.$store.getters['jv/get']('threads/11');
-    // },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
+    post() {
+      const commentId = this.commentId;
+      return utils.deepCopy(this.$store.getters['jv/get'](`posts/${commentId}`));
     },
     // postList() {
     //   // console.log(this.$store.getters['jv/get']('posts'));
@@ -225,7 +223,7 @@ export default {
     this.commentId = option.commentId;
     this.loadPost();
     this.loadThread();
-    this.loadThreadPosts();
+    this.loadPostComments();
     // const forums = this.$store.getters['jv/get']('forums/1');
     // console.log(forums);
   },
@@ -250,7 +248,7 @@ export default {
       this.loadPostStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
-          this.post = data;
+          // this.post = data;
           console.log(this.post.likedUsers, '这是点赞列表');
           this.postStatus = true;
         }),
@@ -317,18 +315,12 @@ export default {
             if (data.isLiked) {
               // 未点赞时，点击点赞
               console.log('未点赞时，点击点赞');
-              this.post.likedUsers.unshift({
-                avatarUrl: this.user.avatarUrl,
-                id: this.user.id,
-              });
-              // this.post.likeCount = this.thread.firstPost.likeCount + 1;
+              this.post.likedUsers.unshift(this.user);
+              this.post.likeCount++;
             } else {
               console.log('已点赞时，取消点赞');
-              this.post.likedUsers.map((value, key, likedUsers) => {
-                value._data.id === this.user.id && likedUsers.splice(key, 1);
-                value.id === this.user.id && likedUsers.splice(key, 1);
-              });
-              // this.post.likeCount = this.thread.firstPost.likeCount - 1;
+              this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              this.post.firstPost.likeCount--;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -392,20 +384,14 @@ export default {
       });
     },
 
-    // 加载当前主题评论的回复数据
-    loadThreadPosts() {
+    // 加载当前评论的回复数据
+    loadPostComments() {
       const params = {
+        'filter[thread]': this.threadId,
+        'filter[reply]': this.commentId,
         'filter[isDeleted]': 'no',
-        'filter[thread]': 11,
-        include: [
-          'replyUser',
-          'user.groups',
-          'user',
-          'images',
-          'lastThreeComments',
-          'lastThreeComments.user',
-          'lastThreeComments.replyUser',
-        ],
+        'filter[isComment]': 'yes',
+        include: ['replyUser', 'user.groups', 'user', 'images'],
       };
       this.loadPostCommentStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
