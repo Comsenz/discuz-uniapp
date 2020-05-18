@@ -20,11 +20,7 @@
             <image
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
-              :src="
-                item.user.avatarUrl === ''
-                  ? 'https://discuz.chat/static/images/noavatar.gif'
-                  : item.user.avatarUrl
-              "
+              :src="item.user.avatarUrl || '/static/noavatar.gif'"
             ></image>
             <view
               :class="[

@@ -55,10 +55,7 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="
-              forums.set_site.site_author.avatarUrl ||
-                'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -70,7 +67,7 @@
           <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
             <image
               class="site-item__person-avatar"
-              :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
             ></image>
@@ -193,9 +190,6 @@ export default {
         .then(res => {
           this.inviteData = res;
           this.permission = res.group.permission;
-        })
-        .catch(err => {
-          console.log(err);
         });
     },
     // 邀请链接一些信息请求，有未登陆的情况

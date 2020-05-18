@@ -93,7 +93,7 @@ export default {
     // 移动bar的高度
     barHeight: {
       type: [String, Number],
-      default: 6,
+      default: 4,
     },
     // 单个tab的左或有内边距（左右相同）
     gutter: {

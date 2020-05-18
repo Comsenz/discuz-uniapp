@@ -100,7 +100,7 @@ export default {
       this.$store.dispatch('jv/get', params).then(data => {
         this.reconame = data.username;
         this.themwidth = this.reconame.length * 28 + 3;
-        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.recoimg = data.avatarUrl || '/static/noavatar.gif';
       });
     },
     // 获取帖子内容信息
@@ -112,7 +112,7 @@ export default {
         )
         .then(data => {
           this.headerName = data.user.username;
-          this.headerImg = data.user.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+          this.headerImg = data.user.avatarUrl || '/static/noavatar.gif';
           this.postyTepy = data.type;
           this.contentTitle = data.title;
           this.content = data.firstPost.content;

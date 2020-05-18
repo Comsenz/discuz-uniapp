@@ -11,7 +11,7 @@
           <view class="my-info__box__detail">
             <image
               class="my-info__box__detail-avatar"
-              :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
             ></image>
             <qui-cell-item
@@ -178,6 +178,7 @@ export default {
   border: 0;
 }
 /deep/ .qui-tabs__item--active .qui-tabs__item__title {
+  font-weight: normal;
   color: --color(--qui-FC-AAA);
   transition: $switch-theme-time;
 }

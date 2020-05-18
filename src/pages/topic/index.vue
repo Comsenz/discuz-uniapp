@@ -7,7 +7,6 @@
       :scroll-top="scrollTopNum"
       class="scroll-y"
       @scrolltolower="pullDown"
-      @scrolltoupper="toUpper"
     >
       <view class="ft-gap">
         <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
@@ -119,7 +118,7 @@
                 @commentJump="commentJump(threadId, post._jv.id)"
                 @imageClick="imageClick"
                 @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted)"
-                @replyComment="replyComment(post._jv.id)"
+                @replyComment="replyComment(post._jv.id, index)"
               ></qui-topic-comment>
             </view>
             <!--<view v-for="(post, index) in posts" :key="index">
@@ -377,7 +376,7 @@ export default {
         { text: this.i18n.t('topic.delete'), type: '4' },
       ], // 管理菜单
 
-      limitShowNum: 2,
+      limitShowNum: 5,
       paidStatus: false, // 是否有已支付数据
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
@@ -388,6 +387,7 @@ export default {
       header: {},
       formData: {}, //请求头部
       commentId: '', //评论id
+      postIndex: '', //点击时当前评论Index
       isAnonymous: '0', //支付时是否显示头像，默认不显示
       payTypeText: '支付',
       payTypeVal: '', //点击的支付类型， 0主题支付  1主题打赏
@@ -457,6 +457,7 @@ export default {
           value: '1',
         },
       ], //支付方式
+      currentReplyPost: {},
     };
   },
   computed: {
@@ -685,15 +686,14 @@ export default {
             if (data.isLiked) {
               // 未点赞时，点击点赞'
 
-              console.log('主题未点赞时，点击点赞');
+              console.log('主题未点赞时，点击点赞123');
               console.log(this.thread.firstPost.likedUsers);
-
               this.thread.firstPost.likedUsers.unshift(this.user);
               this.thread.firstPost.likeCount++;
             } else {
-              console.log('主题已点赞时，取消点赞');
-
-              likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              console.log('主题已点赞时，取消点赞456');
+              this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              console.log(this.thread.firstPost.likedUsers);
               this.thread.firstPost.likeCount--;
             }
           } else if (type == '2') {
@@ -714,8 +714,10 @@ export default {
           } else if (type == '4') {
             // 评论点赞
             if (data.isLiked) {
+              this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
             } else {
+              this.posts[this.postIndex].likeCount--;
               console.log('点赞数减1');
             }
           }
@@ -799,12 +801,14 @@ export default {
     },
     // 主题回复，评论的回复调用接口
     postComment() {
+      console.log(this.commentReply, '这是用来判断的');
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
         return false;
       }
       let params = {};
       if (this.commentReply) {
+        console.log('这是1');
         params = {
           _jv: {
             type: 'posts',
@@ -822,6 +826,7 @@ export default {
           replyId: this.commentId,
         };
       } else {
+        console.log('这是2');
         params = {
           _jv: {
             type: 'posts',
@@ -854,8 +859,17 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
-
-          this.posts.push(res);
+          if (!res.isComment) {
+            this.posts.push(res);
+          } else {
+            // console.log(res, '*****************');
+            if (!this.posts[this.postIndex].lastThreeComments) {
+              // console.log(this.postIndex, '走了');
+              this.posts[this.postIndex].lastThreeComments = [];
+            }
+            this.posts[this.postIndex].lastThreeComments.unshift(res);
+            // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
+          }
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -890,8 +904,8 @@ export default {
       loadDetailCommnetAction.then(data => {
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
-        // this.posts = [...this.posts, ...data];
-        this.posts = data;
+        this.posts = [...this.posts, ...data];
+        // this.posts = data;
         console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
     },
@@ -1006,10 +1020,7 @@ export default {
             } else if (this.payTypeVal == 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               console.log('这是主题打赏');
-              this.thread.rewardedUsers.unshift({
-                avatarUrl: this.user.avatarUrl,
-                id: this.user.id,
-              });
+              this.thread.rewardedUsers.unshift(this.user);
             }
           }
         })
@@ -1170,7 +1181,7 @@ export default {
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
-      console.log(this.cursor, '这是失去焦点时，光标的位置');
+      // console.log(this.cursor, '这是失去焦点时，光标的位置');
     },
     // 点击表情插入到文本域
     getEmojiClick(num) {
@@ -1233,13 +1244,15 @@ export default {
       this.postOpera(postId, '3', canStatus, isStatus);
     },
     // 评论的回复
-    replyComment(postId) {
+    replyComment(postId, postIndex) {
       if (!this.thread.canReply) {
         console.log('没有回复权限');
       } else {
         this.commentReply = true;
+        this.postIndex = postIndex;
         this.commentId = postId;
         console.log(postId, '评论回复id');
+        console.log(this.commentReply, '这是评论的回复');
         this.$refs.commentPopup.open();
       }
     },
@@ -1295,12 +1308,13 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      // if (this.loadingType !== 'more') {
-      //   return;
-      // }
-      // this.pageNum += 1;
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      this.pageNum += 1;
       // this.loadThread();
-      // console.log(this.pageNum, '页码');
+      this.loadThreadPosts();
+      console.log(this.pageNum, '页码');
     },
   },
 };
