@@ -2,7 +2,7 @@
   <qui-page class="favorite">
     <view class="favorite-head">
       <qui-cell-item
-        :title="totalData + i18n.t('profile.item') + i18n.t('profile.collection')"
+        :title="`${totalData}${i18n.t('profile.item')}${i18n.t('profile.collection')}`"
         :border="false"
       ></qui-cell-item>
     </view>

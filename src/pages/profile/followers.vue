@@ -156,9 +156,6 @@ export default {
             this.$emit('changeFollow', { userId: this.userId });
           }
           this.getFollowerList('change');
-        })
-        .catch(err => {
-          console.log('verify', err);
         });
     },
     // 取消关注

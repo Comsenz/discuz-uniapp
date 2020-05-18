@@ -198,9 +198,6 @@ export default {
         .then(res => {
           this.inviteData = res;
           this.permission = res.group.permission;
-        })
-        .catch(err => {
-          console.log(err);
         });
     },
     // 邀请链接一些信息请求，有未登陆的情况
