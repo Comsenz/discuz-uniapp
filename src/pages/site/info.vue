@@ -50,10 +50,7 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="
-              forums.set_site.site_author.avatarUrl ||
-                'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -69,7 +66,7 @@
         <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
           <image
             class="site-item__person-avatar"
-            :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+            :src="item.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -190,16 +187,11 @@ export default {
         amount,
         is_anonymous: this.isAnonymous,
       };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          this.orderSn = res.order_sn;
-          // 微信支付
-          this.orderPay(13, value, this.orderSn);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch('jv/post', params).then(res => {
+        this.orderSn = res.order_sn;
+        // 微信支付
+        this.orderPay(13, value, this.orderSn);
+      });
     },
     // 订单支付
     orderPay(type, value, orderSn) {
@@ -210,20 +202,15 @@ export default {
         },
         payment_type: type,
       };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          this.wechatPay(
-            res.wechat_js.timeStamp,
-            res.wechat_js.nonceStr,
-            res.wechat_js.package,
-            res.wechat_js.signType,
-            res.wechat_js.paySign,
-          );
-        })
-        .catch(err => {
-          this.$refs.toast.show({ message: err });
-        });
+      this.$store.dispatch('jv/post', params).then(res => {
+        this.wechatPay(
+          res.wechat_js.timeStamp,
+          res.wechat_js.nonceStr,
+          res.wechat_js.package,
+          res.wechat_js.signType,
+          res.wechat_js.paySign,
+        );
+      });
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。

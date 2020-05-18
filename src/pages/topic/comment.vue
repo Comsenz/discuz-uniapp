@@ -17,7 +17,7 @@
                 :src="
                   thread.user.avatarUrl != '' && thread.user.avatarUrl != null
                     ? thread.user.avatarUrl
-                    : 'https://discuz.chat/static/images/noavatar.gif'
+                    : '/static/noavatar.gif'
                 "
                 alt
                 @click="personJump"

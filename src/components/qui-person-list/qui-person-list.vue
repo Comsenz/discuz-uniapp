@@ -10,7 +10,7 @@
           :src="
             person.avatarUrl != '' && person.avatarUrl != null
               ? person.avatarUrl
-              : 'https://discuz.chat/static/images/noavatar.gif'
+              : '/static/noavatar.gif'
           "
           class="det-per-head"
           @click="personJump(person.id)"

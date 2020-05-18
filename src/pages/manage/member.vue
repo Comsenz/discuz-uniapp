@@ -27,11 +27,7 @@
               :mark="item.id"
               :title="item.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="
-                user.avatarUrl === ''
-                  ? user.avatarUrl
-                  : 'https://discuz.chat/static/images/noavatar.gif'
-              "
+              :icon="user.avatarUrl || '/assets/noavatar.gif'"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>
@@ -45,11 +41,7 @@
               :mark="item.id"
               :title="item.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="
-                user.avatarUrl === ''
-                  ? user.avatarUrl
-                  : 'https://discuz.chat/static/images/noavatar.gif'
-              "
+              :icon="user.avatarUrl || '/static/noavatar.gif'"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>

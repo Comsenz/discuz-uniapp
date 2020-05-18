@@ -801,12 +801,14 @@ export default {
     },
     // 主题回复，评论的回复调用接口
     postComment() {
+      console.log(this.commentReply, '这是用来判断的');
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
         return false;
       }
       let params = {};
       if (this.commentReply) {
+        console.log('这是1');
         params = {
           _jv: {
             type: 'posts',
@@ -824,6 +826,7 @@ export default {
           replyId: this.commentId,
         };
       } else {
+        console.log('这是2');
         params = {
           _jv: {
             type: 'posts',
@@ -859,15 +862,13 @@ export default {
           if (!res.isComment) {
             this.posts.push(res);
           } else {
-            res.replyUser = this.currentReplyPost.user;
-            // console.log(this.currentReplyPost.lastThreeComments, '9998877');
-            if (!this.currentReplyPost.lastThreeComments) {
-              console.log('走了');
-              this.currentReplyPost.lastThreeComments = [];
+            // console.log(res, '*****************');
+            if (!this.posts[this.postIndex].lastThreeComments) {
+              // console.log(this.postIndex, '走了');
+              this.posts[this.postIndex].lastThreeComments = [];
             }
-            console.log(this.currentReplyPost.lastThreeComments, '这是追加前的2222');
-            this.currentReplyPost.lastThreeComments.unshift(res);
-            console.log(this.currentReplyPost.lastThreeComments, '这是追加后的3333');
+            this.posts[this.postIndex].lastThreeComments.unshift(res);
+            // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
           }
           this.textAreaValue = '';
           this.uploadFile = '';
@@ -903,8 +904,8 @@ export default {
       loadDetailCommnetAction.then(data => {
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
-        // this.posts = [...this.posts, ...data];
-        this.posts = data;
+        this.posts = [...this.posts, ...data];
+        // this.posts = data;
         console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
     },
@@ -1251,6 +1252,7 @@ export default {
         this.postIndex = postIndex;
         this.commentId = postId;
         console.log(postId, '评论回复id');
+        console.log(this.commentReply, '这是评论的回复');
         this.$refs.commentPopup.open();
       }
     },

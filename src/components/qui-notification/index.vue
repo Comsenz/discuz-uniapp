@@ -8,11 +8,7 @@
           <view class="list-box__notice__hl">
             <image
               class="list-box__notice__hl-avatar"
-              :src="
-                item.user_avatar
-                  ? item.user_avatar
-                  : 'https://discuz.chat/static/images/noavatar.gif'
-              "
+              :src="item.user_avatar || '/static/noavatar.gif'"
             ></image>
             <view class="list-box__notice__hl-info">
               <view>
