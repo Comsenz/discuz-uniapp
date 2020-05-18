@@ -132,16 +132,28 @@ export default {
   methods: {
     select(item) {
       // this.sel = item.id;
-      if (item.url) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
-        } else {
-          uni.navigateTo({
-            url: item.url,
-          });
-        }
+      if (!item.url) {
+        return;
       }
+
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+        return;
+      }
+
+      const currentPage = getCurrentPages();
+      if (item.tabsName === '首页' && currentPage[0].route === 'pages/home/index') {
+        const len = currentPage.length;
+        uni.navigateBack({
+          delta: len,
+        });
+        return;
+      }
+
+      uni.navigateTo({
+        url: item.url,
+      });
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {
