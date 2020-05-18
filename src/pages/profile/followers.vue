@@ -17,9 +17,7 @@
         >
           <image
             class="follow-content__items__avatar"
-            :src="
-              followerItem.fromUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="followerItem.fromUser.avatarUrl || '@/assets/noavatar.gif'"
             alt="avatarUrl"
           ></image>
           <qui-cell-item
@@ -156,9 +154,6 @@ export default {
             this.$emit('changeFollow', { userId: this.userId });
           }
           this.getFollowerList('change');
-        })
-        .catch(err => {
-          console.log('verify', err);
         });
     },
     // 取消关注
