@@ -54,7 +54,7 @@
           <view
             class="list-box__notice__con__text"
             v-html="item.post_content"
-            @click="jumpMyTopic(item.post_id)"
+            @click="jumpMyComment(item)"
           ></view>
           <view
             class="list-box__notice__con__wrap"
@@ -117,13 +117,15 @@ export default {
       });
     },
 
-    jumpMyTopic(topicId) {
+    jumpMyComment(item) {
+      console.log('跳转到评论页面：', item);
       uni.navigateTo({
-        url: `/pages/topic/index?id=${topicId}`,
+        url: `/pages/topic/index?threadId=${item.thread_id}&commentId=${item.post_id}`,
       });
     },
 
     jumpOtherTopic(topicId) {
+      console.log('跳转到帖子详情页面：', topicId);
       uni.navigateTo({
         url: `/pages/topic/index?id=${topicId}`,
       });
