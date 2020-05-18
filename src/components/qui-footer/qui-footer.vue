@@ -11,11 +11,13 @@
         <qui-icon
           class="ft-box-icon"
           :name="item.tabsIcon"
-          size="36"
+          size="40"
           :class="{ select: true, active: item.id === sel }"
           @click="select(item)"
         ></qui-icon>
-        <text class="ft-box-content">{{ item.tabsName }}</text>
+        <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
+          {{ item.tabsName }}
+        </text>
       </view>
 
       <view class="ft-box-spacal">
@@ -220,7 +222,7 @@ export default {
   width: 100%;
   height: 119rpx;
   background-color: --color(--qui-BG-2);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
   justify-content: space-around;
 }
 .ft-box {
@@ -238,6 +240,7 @@ export default {
 .ft-box-content {
   padding-top: 2px;
   font-size: 20rpx;
+  color: --color(--qui-FC-777);
   text-align: center;
 }
 .ft-box-spacal {
