@@ -29,9 +29,6 @@ export default {
     t() {
       return this.i18n.t('auth');
     },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   methods: {
     handleGetUserInfo(res) {

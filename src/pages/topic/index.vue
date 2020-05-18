@@ -687,12 +687,12 @@ export default {
 
               console.log('主题未点赞时，点击点赞');
               console.log(this.thread.firstPost.likedUsers);
-              
+
               this.thread.firstPost.likedUsers.unshift(this.user);
               this.thread.firstPost.likeCount++;
             } else {
               console.log('主题已点赞时，取消点赞');
-             
+
               likedUsers.splice(likedUsers.indexOf(this.user), 1);
               this.thread.firstPost.likeCount--;
             }

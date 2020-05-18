@@ -205,9 +205,6 @@ export default {
     // thread() {
     //   return this.$store.getters['jv/get']('threads/11');
     // },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
     // postList() {
     //   // console.log(this.$store.getters['jv/get']('posts'));
     //   return this.$store.getters['jv/get']('posts');
