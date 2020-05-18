@@ -1,7 +1,7 @@
 <template>
   <qui-page class="profile">
     <view class="my-profile">
-      <navigator :url="'../modify/editusername?id=' + userId" hover-class="none">
+      <navigator :url="`../modify/editusername?id=${userId}`" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.username')"
           arrow
@@ -17,7 +17,7 @@
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
-        :url="profile.mobile ? '../modify/mobile?id=' + userId : '../modify/setphon?id=' + userId"
+        :url="profile.mobile ? `../modify/mobile?id=${userId}` : `../modify/setphon?id=${userId}`"
         hover-class="none"
         v-if="forums.qcloud.qcloud_sms"
       >
@@ -52,7 +52,7 @@
         arrow
         :addon="profile.realname"
       ></qui-cell-item>
-      <navigator :url="'../modify/realname?id=' + userId" hover-class="none">
+      <navigator :url="`../modify/realname?id=${userId}`" hover-class="none">
         <qui-cell-item
           v-if="!profile.realname && forums.qcloud_faceid"
           :title="i18n.t('profile.certification')"
@@ -60,7 +60,7 @@
           :addon="i18n.t('profile.tocertification')"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="'../modify/signature?id=' + userId" hover-class="none">
+      <navigator :url="`../modify/signature?id=${userId}`" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.signature')"
           arrow

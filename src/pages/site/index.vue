@@ -31,7 +31,7 @@
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
-        title="圈子介绍"
+        title="站点介绍"
         :addon="siteInfo.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item title="创建时间" :addon="siteInfo.set_site.createdAt"></qui-cell-item>
@@ -39,7 +39,7 @@
         title="圈子模式"
         :addon="siteInfo.set_site.site_mode === 'public' ? '公开模式' : '付费模式'"
       ></qui-cell-item>
-      <qui-cell-item title="圈主" slot-right>
+      <qui-cell-item title="站长" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
@@ -168,13 +168,13 @@ export default {
   },
 
   methods: {
-    // 调用 获取配置（圈子信息） 接口
+    // 调用 获取配置（站点信息） 接口
     getSiteInfo() {
       const params = {
         include: ['users'],
       };
       this.$store.dispatch('jv/get', ['forum', { params }]).then(res => {
-        console.log('获取圈子信息：', res);
+        console.log('获取站点信息：', res);
       });
     },
 

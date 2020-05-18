@@ -3,7 +3,7 @@
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
-          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
+          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '@/static/noavatar.gif'"
           class="det-per-head"
           @click="personJump"
         ></image>

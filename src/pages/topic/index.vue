@@ -7,7 +7,6 @@
       :scroll-top="scrollTopNum"
       class="scroll-y"
       @scrolltolower="pullDown"
-      @scrolltoupper="toUpper"
     >
       <view class="ft-gap">
         <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
@@ -687,13 +686,13 @@ export default {
             if (data.isLiked) {
               // 未点赞时，点击点赞'
 
-              console.log('主题未点赞时，点击点赞');
+              console.log('主题未点赞时，点击点赞123');
               console.log(this.thread.firstPost.likedUsers);
               this.thread.firstPost.likedUsers.unshift(this.user);
               this.thread.firstPost.likeCount++;
             } else {
-              console.log('主题已点赞时，取消点赞');
-              likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              console.log('主题已点赞时，取消点赞456');
+              this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
               console.log(this.thread.firstPost.likedUsers);
               this.thread.firstPost.likeCount--;
             }
@@ -715,8 +714,10 @@ export default {
           } else if (type == '4') {
             // 评论点赞
             if (data.isLiked) {
+              this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
             } else {
+              this.posts[this.postIndex].likeCount--;
               console.log('点赞数减1');
             }
           }
@@ -856,10 +857,17 @@ export default {
         .then(res => {
           this.$refs.commentPopup.close();
           if (!res.isComment) {
-            this.posts.unshift(res);
+            this.posts.push(res);
           } else {
             res.replyUser = this.currentReplyPost.user;
+            // console.log(this.currentReplyPost.lastThreeComments, '9998877');
+            if (!this.currentReplyPost.lastThreeComments) {
+              console.log('走了');
+              this.currentReplyPost.lastThreeComments = [];
+            }
+            console.log(this.currentReplyPost.lastThreeComments, '这是追加前的2222');
             this.currentReplyPost.lastThreeComments.unshift(res);
+            console.log(this.currentReplyPost.lastThreeComments, '这是追加后的3333');
           }
           this.textAreaValue = '';
           this.uploadFile = '';
@@ -1298,12 +1306,13 @@ export default {
     },
     // 下拉加载
     pullDown() {
-      // if (this.loadingType !== 'more') {
-      //   return;
-      // }
-      // this.pageNum += 1;
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      this.pageNum += 1;
       // this.loadThread();
-      // console.log(this.pageNum, '页码');
+      this.loadThreadPosts();
+      console.log(this.pageNum, '页码');
     },
   },
 };

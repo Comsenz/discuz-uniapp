@@ -159,9 +159,6 @@ export default {
         .then(() => {
           this.getUserInfo(this.userId);
           if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
-        })
-        .catch(err => {
-          console.log('verify', err);
         });
     },
     // 取消关注
@@ -183,15 +180,10 @@ export default {
         recipient_username: this.userInfo.username,
       };
       // 调用创建会话接口
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          this.dialogId = res._jv.json.data.id;
-          this.jumpChatPage();
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch('jv/post', params).then(res => {
+        this.dialogId = res._jv.json.data.id;
+        this.jumpChatPage();
+      });
     },
     // 跳转到聊天页面（传入用户名和会话id）
     jumpChatPage() {

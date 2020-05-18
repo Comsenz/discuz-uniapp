@@ -1,11 +1,5 @@
 <template>
   <qui-page :class="'home ' + scrolled" :footer="true">
-    <!-- <uni-nav-bar
-      v-if="navShow"
-      :title="forums.set_site.site_name"
-      fixed="true"
-      status-bar
-    ></uni-nav-bar> -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -45,7 +39,7 @@
                   <qui-icon
                     class="content-image"
                     :name="item.icon"
-                    size="36"
+                    size="46"
                     color="#777777"
                   ></qui-icon>
                 </view>
@@ -97,14 +91,6 @@
           <!-- :style="isTop == 1 ? 'position:fixed;z-index:9;top:44' : ''" -->
         </u-tabs>
       </view>
-      <!-- <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        show-scrollbar="false"
-        class="scroll-y"
-        @scroll="scroll"
-        @scrolltolower="pullDown"
-      > -->
       <view class="sticky" :style="isTop == 1 ? 'margin-top:150rpx' : 'margin-top:30rpx'">
         <view
           class="sticky__isSticky"
@@ -138,8 +124,8 @@
           :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
-          :theme-comment="item.firstPost.replyCount"
-          :tags="item.category.name"
+          :theme-comment="item.postCount - 1"
+          :tags="[item.category]"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
           @click="handleClickShare(item._jv.id)"
@@ -158,14 +144,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
     </scroll-view>
-    <!-- </view> -->
 
-    <!-- <qui-footer
-      @click="footerOpen"
-      :tabs="tabs"
-      :post-img="postImg"
-      :red-circle="redCircle"
-    ></qui-footer> -->
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -176,7 +155,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="36"
+                  size="46"
                   color="#777777"
                 ></qui-icon>
               </view>
@@ -301,14 +280,11 @@ export default {
     if (res.from === 'button') {
       console.log(this.threads);
       return {
-        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
-        // imageUrl: '/static/noavatar.gif',
+        title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
       };
     }
     return {
-      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
       title: this.forums.set_site.site_name,
-      // imageUrl: '/static/noavatar.gif',
     };
   },
   mounted() {
@@ -316,26 +292,11 @@ export default {
     query
       .select('.nav')
       .boundingClientRect(data => {
-        console.log(`得到布局位置信息${JSON.stringify(data)}`);
-        console.log(`节点离页面顶部的距离为${data.top}`);
+        // console.log(`得到布局位置信息${JSON.stringify(data)}`);
+        // console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
       })
       .exec();
-  },
-  onPageScroll(e) {
-    console.log(e, 'scroll');
-    // if (e.scrollTop > 100) {
-    //   this.navShow = true;
-    //   this.suspended = true;
-    // } else {
-    //   this.navShow = false;
-    //   this.suspended = false;
-    // }
-    // if (e.scrollTop > this.myScroll) {
-    //   this.isTop = 1;
-    // } else {
-    //   this.isTop = 0;
-    // }
   },
   methods: {
     scroll(event) {
@@ -363,15 +324,10 @@ export default {
 
     // 滑动到顶部
     toUpper() {
-      console.log('滑动到顶部滑动到顶部滑动到顶部');
       if (this.isTop === 0) {
         return;
       }
       this.isTop = 0;
-      // this.scrollTopNum = this.myScroll - 5;
-      // this.$nextTick(()=>{
-      //   this.scrollTopNum = this.myScroll - 6;
-      // })
     },
 
     // 切换选项卡
@@ -396,7 +352,6 @@ export default {
     },
     // 筛选分类里的搜索
     searchClick() {
-      console.log('0000000');
       uni.navigateTo({
         url: '/pages/site/search',
       });
@@ -658,7 +613,7 @@ export default {
       });
     },
 
-    // 下拉加载
+    // 上拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
         return;
