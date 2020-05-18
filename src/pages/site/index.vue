@@ -35,7 +35,10 @@
         :addon="siteInfo.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item title="创建时间" :addon="siteInfo.set_site.createdAt"></qui-cell-item>
-      <qui-cell-item title="圈子模式" :addon="siteInfo.set_site.site_mode"></qui-cell-item>
+      <qui-cell-item
+        title="圈子模式"
+        :addon="siteInfo.set_site.site_mode === 'public' ? '公开模式' : '付费模式'"
+      ></qui-cell-item>
       <qui-cell-item title="圈主" slot-right>
         <view class="site-item__owner">
           <image
@@ -50,7 +53,7 @@
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <navigator url="/pages/manage/member" hover-class="none">
+      <navigator url="/pages/manage/users" hover-class="none">
         <qui-cell-item title="成员" slot-right arrow class="cell-item--auto">
           <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
             <image
@@ -63,8 +66,16 @@
         </qui-cell-item>
       </navigator>
       <qui-cell-item title="我的角色" :addon="userInfo.groups[0].name"></qui-cell-item>
-      <qui-cell-item title="加入时间" :addon="userInfo.joinedTime"></qui-cell-item>
-      <qui-cell-item title="有效期至" :addon="userInfo.expiredTime"></qui-cell-item>
+      <qui-cell-item
+        title="加入时间"
+        :addon="userInfo.joinedTime"
+        v-if="siteInfo.set_site.site_mode === 'pay'"
+      ></qui-cell-item>
+      <qui-cell-item
+        title="有效期至"
+        :addon="userInfo.expiredTime"
+        v-if="siteInfo.set_site.site_mode === 'pay'"
+      ></qui-cell-item>
       <qui-cell-item class="cell-item--auto" title="我的权限" slot-right>
         <view class="site-permission" v-for="(item, index) in permissionInfo" :key="index">
           {{ item }}
