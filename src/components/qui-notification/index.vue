@@ -142,6 +142,7 @@ export default {
   width: 100%;
   margin: 0 0 20rpx;
   font-size: $fg-f28;
+  background-color: --color(--qui-BG-2);
 
   &__notice {
     padding: 20rpx 40rpx;

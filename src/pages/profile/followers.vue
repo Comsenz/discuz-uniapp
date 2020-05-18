@@ -152,7 +152,9 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/post', params))
         .then(() => {
-          this.$emit('changeFollow', { userId: this.userId });
+          if (this.userId === this.currentLoginId) {
+            this.$emit('changeFollow', { userId: this.userId });
+          }
           this.getFollowerList('change');
         })
         .catch(err => {
@@ -162,7 +164,9 @@ export default {
     // 取消关注
     deleteFollow(userInfo) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
-        this.$emit('changeFollow', { userId: this.userId });
+        if (this.userId === this.currentLoginId) {
+          this.$emit('changeFollow', { userId: this.userId });
+        }
         this.getFollowerList('change');
       });
     },

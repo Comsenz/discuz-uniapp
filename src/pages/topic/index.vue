@@ -62,7 +62,7 @@
             @btnClick="rewardClick"
           ></qui-person-list>
         </view>
-        <view v-if="likedStatus && thread.firstPost.likeCount > 0">
+        <view v-if="thread.firstPost.likeCount > 0">
           <!-- 点赞用户列表 -->
           <qui-person-list
             :type="t.giveLike"
@@ -119,7 +119,7 @@
                 @commentJump="commentJump(threadId, post._jv.id)"
                 @imageClick="imageClick"
                 @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted)"
-                @replyComment="replyComment(post._jv.id)"
+                @replyComment="replyComment(post)"
               ></qui-topic-comment>
             </view>
             <!--<view v-for="(post, index) in posts" :key="index">
@@ -457,6 +457,7 @@ export default {
           value: '1',
         },
       ], //支付方式
+      currentReplyPost: {},
     };
   },
   computed: {
@@ -684,27 +685,17 @@ export default {
             this.isLiked = data.isLiked;
             if (data.isLiked) {
               // 未点赞时，点击点赞'
+
               console.log('主题未点赞时，点击点赞');
               console.log(this.thread.firstPost.likedUsers);
-              if (this.thread.firstPost.likeCount > 0) {
-                this.thread.firstPost.likedUsers.unshift({
-                  avatarUrl: this.user.avatarUrl,
-                  id: this.user.id,
-                });
-                this.likedStatus = true;
-              } else {
-                this.likedStatus = false;
-              }
+              
+              this.thread.firstPost.likedUsers.unshift(this.user);
+              this.thread.firstPost.likeCount++;
             } else {
               console.log('主题已点赞时，取消点赞');
-              if (this.thread.firstPost.likeCount > 0) {
-                this.likedStatus = true;
-              } else {
-                this.likedStatus = false;
-              }
-              this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-                value.id === this.user.id && likedUsers.splice(key, 1);
-              });
+             
+              this.thread.firstPost.likedUsers.splice(this.thread.firstPost.likedUsers.indexOf(this.user), 1);
+              this.thread.firstPost.likeCount--;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -864,9 +855,12 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
-          const post = {};
-          post[res._jv.id] = res;
-          this.posts = Object.assign({}, this.posts, post);
+          if(!res.isComment) {
+            this.posts.unshift(res);
+          } else {
+            res.replyUser = this.currentReplyPost.user;
+            this.currentReplyPost.lastThreeComments.unshift(res);
+          }
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -1244,13 +1238,14 @@ export default {
       this.postOpera(postId, '3', canStatus, isStatus);
     },
     // 评论的回复
-    replyComment(postId) {
+    replyComment(post) {
       if (!this.thread.canReply) {
         console.log('没有回复权限');
       } else {
         this.commentReply = true;
-        this.commentId = postId;
-        console.log(postId, '评论回复id');
+        this.commentId = post._jv.id;
+        this.currentReplyPost = post;
+        console.log(this.commentId, '评论回复id');
         this.$refs.commentPopup.open();
       }
     },
