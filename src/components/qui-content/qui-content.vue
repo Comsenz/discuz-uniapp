@@ -127,7 +127,7 @@
 
         <view class="themeItem__content__tags" v-if="themeType === '1'">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
-            {{ item.tagName }}
+            {{ item.name }}
           </view>
         </view>
       </view>
