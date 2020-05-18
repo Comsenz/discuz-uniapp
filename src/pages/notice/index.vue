@@ -8,6 +8,7 @@
             <qui-icon
               v-if="item.unReadNum && item.unReadNum > 0"
               name="icon-circle"
+              class="red-circle"
               color="red"
               size="14"
             ></qui-icon>
@@ -204,6 +205,10 @@ export default {
     /deep/ .cell-item {
       padding-right: 40rpx;
     }
+
+    /deep/ text {
+      vertical-align: middle;
+    }
   }
 
   .dialog-box__main {
@@ -264,6 +269,7 @@ export default {
 
       .red-circle {
         margin-right: 20rpx;
+        vertical-align: middle;
       }
     }
   }
