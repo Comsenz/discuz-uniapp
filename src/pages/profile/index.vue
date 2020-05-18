@@ -121,9 +121,9 @@ export default {
     // 我的用户信息从缓存拿
     this.userId = userId || this.currentLoginId;
     this.current = current || 0;
-    if (this.userId !== this.currentLoginId) {
-      this.getUserInfo(userId);
-    }
+  },
+  onShow() {
+    this.getUserInfo(this.userId);
   },
   methods: {
     onClickItem(e) {

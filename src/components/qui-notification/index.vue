@@ -54,7 +54,7 @@
           <view
             class="list-box__notice__con__text"
             v-html="item.post_content"
-            @click="jumpMyTopic(item.post_id)"
+            @click="jumpMyComment(item)"
           ></view>
           <view
             class="list-box__notice__con__wrap"
@@ -117,13 +117,15 @@ export default {
       });
     },
 
-    jumpMyTopic(topicId) {
+    jumpMyComment(item) {
+      console.log('跳转到评论页面：', item);
       uni.navigateTo({
-        url: `/pages/topic/index?id=${topicId}`,
+        url: `/pages/topic/index?threadId=${item.thread_id}&commentId=${item.post_id}`,
       });
     },
 
     jumpOtherTopic(topicId) {
+      console.log('跳转到帖子详情页面：', topicId);
       uni.navigateTo({
         url: `/pages/topic/index?id=${topicId}`,
       });
@@ -167,7 +169,7 @@ export default {
 
       &-info-username {
         font-weight: bold;
-        color: #000;
+        color: --color(--qui-FC-000);
       }
 
       &-info-username-space {
@@ -176,12 +178,12 @@ export default {
 
       &-info-groupname,
       &-info-title {
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
 
       &-info-time {
         font-size: 24rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
 
@@ -200,14 +202,14 @@ export default {
     &__con {
       &__text {
         margin: 0rpx 0rpx 40rpx;
-        color: #333;
+        color: --color(--qui-FC-333);
       }
 
       &__wrap {
         padding: 20rpx;
         font-size: 24rpx;
-        color: #333;
-        background: #ededed;
+        color: --color(--qui-FC-333);
+        background-color: --color(--qui-BG-ED);
         border-radius: 10rpx;
       }
 
@@ -218,7 +220,7 @@ export default {
       &__wrap-info-time {
         margin: 10rpx 0rpx 0rpx;
         font-size: 20rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
   }
@@ -234,18 +236,18 @@ export default {
       &l__title {
         margin-bottom: 10rpx;
         font-weight: bold;
-        color: #000;
+        color: --color(--qui-FC-000);
       }
 
       &l__time {
         font-size: 24rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
 
     &__con {
       &__text {
-        color: #333;
+        color: --color(--qui-FC-333);
       }
     }
   }
@@ -256,7 +258,7 @@ export default {
 
     &__text {
       margin-left: 11rpx;
-      color: #777;
+      color: --color(--qui-FC-777);
     }
   }
 }
