@@ -62,7 +62,7 @@
             @btnClick="rewardClick"
           ></qui-person-list>
         </view>
-        <view v-if="likedStatus && thread.firstPost.likeCount > 0">
+        <view v-if="thread.firstPost.likeCount > 0">
           <!-- 点赞用户列表 -->
           <qui-person-list
             :type="t.giveLike"
@@ -684,27 +684,17 @@ export default {
             this.isLiked = data.isLiked;
             if (data.isLiked) {
               // 未点赞时，点击点赞'
+
               console.log('主题未点赞时，点击点赞');
               console.log(this.thread.firstPost.likedUsers);
-              if (this.thread.firstPost.likeCount > 0) {
-                this.thread.firstPost.likedUsers.unshift({
-                  avatarUrl: this.user.avatarUrl,
-                  id: this.user.id,
-                });
-                this.likedStatus = true;
-              } else {
-                this.likedStatus = false;
-              }
+              
+              this.thread.firstPost.likedUsers.unshift(this.user);
+              this.thread.firstPost.likeCount++;
             } else {
               console.log('主题已点赞时，取消点赞');
-              if (this.thread.firstPost.likeCount > 0) {
-                this.likedStatus = true;
-              } else {
-                this.likedStatus = false;
-              }
-              this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-                value.id === this.user.id && likedUsers.splice(key, 1);
-              });
+             
+              likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              this.thread.firstPost.likeCount--;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -864,9 +854,8 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
-          const post = {};
-          post[res._jv.id] = res;
-          this.posts = Object.assign({}, this.posts, post);
+
+          this.posts.push(res);
           this.textAreaValue = '';
           this.uploadFile = '';
         })

@@ -1,4 +1,4 @@
-import { status } from '@/library/jsonapi-vuex/index';
+import { status, utils } from '@/library/jsonapi-vuex/index';
 import { THEME_DEFAULT, SITE_PAY } from '@/common/const';
 
 module.exports = {
@@ -35,7 +35,7 @@ module.exports = {
     },
     user() {
       const userId = this.$store.getters['session/get']('userId');
-      return this.$store.getters['jv/get'](`users/${userId}`);
+      return utils.deepCopy(this.$store.getters['jv/get'](`users/${userId}`));
     },
   },
   methods: {
