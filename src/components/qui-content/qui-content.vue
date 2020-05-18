@@ -10,11 +10,7 @@
       <view class="themeItem__header">
         <view class="themeItem__header__img">
           <image
-            :src="
-              themeImage != '' && themeImage != null
-                ? themeImage
-                : 'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
             alt
             @click="headClick"
           ></image>

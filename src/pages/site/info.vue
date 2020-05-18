@@ -50,10 +50,7 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="
-              forums.set_site.site_author.avatarUrl ||
-                'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -69,7 +66,7 @@
         <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
           <image
             class="site-item__person-avatar"
-            :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+            :src="item.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>

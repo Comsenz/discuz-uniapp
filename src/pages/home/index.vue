@@ -302,13 +302,13 @@ export default {
       console.log(this.threads);
       return {
         // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
-        // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
+        // imageUrl: '/static/noavatar.gif',
       };
     }
     return {
       // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
       title: this.forums.set_site.site_name,
-      // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
+      // imageUrl: '/static/noavatar.gif',
     };
   },
   mounted() {

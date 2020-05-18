@@ -11,7 +11,7 @@
       <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow>
         <image
           class="my-profile__avatar"
-          :src="profile.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+          :src="profile.avatarUrl || '/static/noavatar.gif'"
           alt="avatarUrl"
         ></image>
       </qui-cell-item>

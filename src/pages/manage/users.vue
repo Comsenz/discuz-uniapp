@@ -68,11 +68,7 @@
               :mark="user.id"
               :title="user.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="
-                user.avatarUrl === ''
-                  ? 'https://discuz.chat/static/images/noavatar.gif'
-                  : user.avatarUrl
-              "
+              :icon="user.avatarUrl || '/static/noavatar.gif'"
             ></qui-avatar-cell>
           </view>
         </view>

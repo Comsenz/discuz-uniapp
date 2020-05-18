@@ -7,7 +7,7 @@
             :src="
               commentAvatarUrl != '' && commentAvatarUrl != null
                 ? commentAvatarUrl
-                : 'https://discuz.chat/static/images/noavatar.gif'
+                : '/static/noavatar.gif'
             "
             class="det-per-head"
             @click="personJump"

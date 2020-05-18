@@ -38,7 +38,7 @@
       >
         <image
           class="search-item__users__avatar"
-          :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+          :src="item.avatarUrl || '/static/noavatar.gif'"
           alt="avatarUrl"
         ></image>
         <qui-cell-item

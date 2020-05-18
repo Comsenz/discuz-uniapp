@@ -1,7 +1,7 @@
 <template>
   <qui-page class="site">
     <qui-header
-      :head-img="siteInfo.set_site.site_logo"
+      :head-img="siteInfo.set_site.site_logo || '/static/logo.png'"
       :theme="theme"
       :theme-num="siteInfo.other.count_users"
       :post="post"
@@ -43,10 +43,7 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="
-              siteInfo.set_site.site_author.avatar ||
-                'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -58,7 +55,7 @@
           <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
             <image
               class="site-item__person-avatar"
-              :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
             ></image>

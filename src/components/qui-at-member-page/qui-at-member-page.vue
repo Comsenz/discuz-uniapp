@@ -24,11 +24,7 @@
             <qui-avatar-cell
               :mark="item.toUser.id"
               :title="item.toUser.username"
-              :icon="
-                item.toUser.avatarUrl
-                  ? item.toUser.avatarUrl
-                  : 'https://discuz.chat/static/images/noavatar.gif'
-              "
+              :icon="item.toUser.avatarUrl || '/static/noavatar.gif'"
               :value="getGroups(item.toUser.groups)"
               :label="item.toUser.label"
             >
@@ -41,9 +37,7 @@
             <qui-avatar-cell
               :mark="item.id"
               :title="item.username"
-              :icon="
-                item.avatarUrl ? item.avatarUrl : 'https://discuz.chat/static/images/noavatar.gif'
-              "
+              :icon="item.avatarUrl || '/static/noavatar.gif'"
               :value="getGroups(item.groups)"
               :label="item.label"
             >

@@ -5,7 +5,7 @@
         <view class="profile-info__box__detail">
           <image
             class="profile-info__box__detail-avatar"
-            :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+            :src="userInfo.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
           ></image>
           <qui-cell-item

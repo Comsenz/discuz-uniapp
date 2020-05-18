@@ -17,9 +17,7 @@
         >
           <image
             class="follow-content__items__avatar"
-            :src="
-              followerItem.fromUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
           ></image>
           <qui-cell-item
