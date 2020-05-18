@@ -66,7 +66,7 @@
         </view>
         <view
           class="det-con-ft-child"
-          @click="commentLikeClick(post._jv.id, post.canLike, post.isLiked)"
+          @click="postLikeClick(post._jv.id, '1', post.canLike, post.isLiked)"
         >
           <qui-icon :name="post.isLiked ? 'icon-liked' : 'icon-like'" class="qui-icon"></qui-icon>
           <view class="ft-child-word">
@@ -81,9 +81,12 @@
       <!-- 评论 -->
       <view class="comment">
         <view class="comment-num">{{ post.replyCount }}{{ t.item }}{{ t.comment }}</view>
-        <view>
+        <view v-for="(commentPost, index) in postComments" :key="index">
+          <view>{{ commentPost.user.username }}</view>
+        </view>
+        <!-- <view>
           <qui-topic-comment
-            v-for="(commentPost, index) in post.commentPosts"
+            v-for="(commentPost, index) in postComments"
             :key="index"
             :post-id="commentPost._jv.id"
             :comment-avatar-url="commentPost.user.avatarUrl"
@@ -100,13 +103,19 @@
             :comment-show="false"
             @personJump="personJump(commentPost.user.id)"
             @commentLikeClick="
-              commentLikeClick(commentPost._jv.id, '4', commentPost.canLike, commentPost.isLiked)
+              commentLikeClick(
+                commentPost._jv.id,
+                '4',
+                commentPost.canLike,
+                commentPost.isLiked,
+                index,
+              )
             "
             @commentJump="commentJump(commentPost._jv.id)"
             @imageClick="imageClick"
             @deleteComment="deleteComment(commentPost._jv.id)"
           ></qui-topic-comment>
-        </view>
+        </view>-->
       </view>
 
       <!-- <view>{{ forums.set_site.site_name }}</view> -->
@@ -163,6 +172,7 @@ export default {
       postStatus: false,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       posts: [],
+      commentIndex: '', //当前回复的index
       loadDetailCommnetStatus: {},
       postsStatus: false,
       footerShow: true, // 默认显示底部
@@ -198,7 +208,7 @@ export default {
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, //回复状态
-      commentId: '',
+      commentId: '', //当前评论的Id
     };
   },
   computed: {
@@ -269,15 +279,15 @@ export default {
       );
     },
 
-    // post操作调用接口（包括type 1回复点赞，2删除回复，3删除回复的评论，4回复的评论点赞）
+    // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
     postOpera(id, type, canStatus, isStatus) {
       console.log(id, type, canStatus, isStatus);
       if (type == '1' && !canStatus) {
-        console.log('没有主题点赞权限');
+        console.log('没有评论点赞权限');
         return;
       }
       if (type == '4' && !canStatus) {
-        console.log('没有评论点赞权限');
+        console.log('没有评论的回复点赞权限');
         return;
       }
       const jvObj = {
@@ -314,12 +324,14 @@ export default {
             this.isLiked = data.isLiked;
             if (data.isLiked) {
               // 未点赞时，点击点赞
-              console.log('未点赞时，点击点赞');
+              console.log('未点赞时，点击点赞123');
               this.post.likedUsers.unshift(this.user);
               this.post.likeCount++;
             } else {
-              console.log('已点赞时，取消点赞');
+              console.log('已点赞时，取消点赞456');
+              console.log(this.post.likedUsers, '$$$$$$$$$$');
               this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              console.log(this.post.likedUsers, '%%%%%%%%%%%%');
               this.post.firstPost.likeCount--;
             }
           } else if (type == '2') {
@@ -338,10 +350,12 @@ export default {
               console.log('回复的评论删除失败');
             }
           } else if (type == '4') {
-            if (isStatus) {
+            if (data.isLiked) {
               console.log('点赞数加1');
+              this.postComments[this.commentIndex].likeCount++;
               // data.likeCount = data.likeCount - 1;
             } else {
+              this.postComments[this.commentIndex].likeCount++;
               console.log('点赞数减1');
               // data.likeCount = data.likeCount + 1;
             }
@@ -396,8 +410,8 @@ export default {
       this.loadPostCommentStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
-          this.posts = data;
-          console.log('&&&&&&~~~~~~~~~!', this.posts);
+          this.postComments = data;
+          console.log(this.postComments, '&&&&&&~~~~~~~~~!');
           // console.log(123, this.posts[12].user.groups[10].name);
           // Object.getOwnPropertyNames(data).forEach(function(key) {
           //   console.log({ key }, data[key].user.username);
@@ -429,9 +443,9 @@ export default {
       console.log('发布主题评论');
       this.postComment(this.commentId);
     },
-    // 评论点赞
-    commentLikeClick(postId, type, canStatus, isStatus) {
-      console.log(postId, '请求接口，评论点赞');
+    // // 评论点赞
+    postLikeClick(postId, type, canStatus, isStatus) {
+      console.log(postId, type, canStatus, isStatus, '请求接口，评论点赞这是参数');
       this.postOpera(postId, type, canStatus, isStatus);
     },
     // 删除当前回复
@@ -476,9 +490,11 @@ export default {
     },
 
     // 当前回复点赞
-    commentLikeClick(postId, canLike, isLiked) {
-      console.log(this.thread.firstPost.canLike, '主题点赞');
-      this.postOpera(postId, '1', canLike, isLiked);
+    commentLikeClick(postId, type, canLike, isLiked, commentIndex) {
+      console.log(postId, type, canLike, isLiked, commentIndex, '这是评论的回复点赞的cnash8');
+      this.commentIndex = commentIndex;
+      console.log(this.commentIndex, '当前回复的索引值');
+      this.postOpera(postId, '4', canLike, isLiked);
     },
   },
   mounted() {
