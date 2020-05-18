@@ -98,7 +98,6 @@ export default {
   },
   computed: {
     profile() {
-      console.log(this.$store.getters['jv/get'](`users/${this.userId}`));
       return this.$store.getters['jv/get'](`users/${this.userId}`);
     },
     forums() {

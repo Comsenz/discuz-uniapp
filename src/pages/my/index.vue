@@ -174,10 +174,10 @@ export default {
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
 }
-.my-tabs .qui-tabs__item--active {
+/deep/ .my-tabs .qui-tabs__item--active {
   border: 0;
 }
-.my-tabs .qui-tabs__item--active .qui-tabs__item__title {
+/deep/ .qui-tabs__item--active .qui-tabs__item__title {
   color: --color(--qui-FC-AAA);
   transition: $switch-theme-time;
 }
