@@ -67,26 +67,11 @@ export default {
   components: {
     uniIcons,
   },
-  // props: {
-  //   tabs: {
-  //     type: Array,
-  //     default: () => {
-  //       return [];
-  //     },
-  //   },
-  //   postImg: {
-  //     type: String,
-  //     default: '',
-  //   },
-  //   redCircle: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
-  // },
   data: () => {
     return {
       sel: 1,
       type: '',
+      redCircle: false, // 消息通知红点
       tabs: [
         {
           tabsName: '首页',
@@ -220,6 +205,22 @@ export default {
     },
     close() {
       this.$refs.auth.close();
+    },
+    // 调用 未读通知数 的接口
+    getUserInfo() {
+      const id = 1;
+      const params = {
+        include: ['groups'],
+      };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
+        if (res.unreadNotifications === 0) {
+          this.redCircle = false;
+        } else {
+          this.redCircle = true;
+        }
+        console.log('未读通知', res.unreadNotifications);
+      });
     },
   },
 };

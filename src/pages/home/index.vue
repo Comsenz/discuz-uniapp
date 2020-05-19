@@ -199,7 +199,6 @@ export default {
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
-      redCircle: false, // 消息通知红点
       navShow: false, // 是否显示头部
       nowThreadId: '', // 当前点击主题ID
       filterTop: 450, // 筛选弹窗的位置
@@ -266,7 +265,7 @@ export default {
   },
   onLoad() {
     // 获取用户信息
-    this.getUserInfo();
+    // this.getUserInfo();
     // 首页导航栏分类列表
     this.loadCategories();
     // 首页主题置顶列表
@@ -278,9 +277,9 @@ export default {
   onShareAppMessage(res) {
     // 来自页面内分享按钮
     if (res.from === 'button') {
-      console.log(this.threads);
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
-        title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
       };
     }
     return {
@@ -595,22 +594,6 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params);
-    },
-    // 调用 未读通知数 的接口
-    getUserInfo() {
-      const id = 1;
-      const params = {
-        include: ['groups'],
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
-        if (res.unreadNotifications === 0) {
-          this.redCircle = false;
-        } else {
-          this.redCircle = true;
-        }
-        console.log('未读通知', res.unreadNotifications);
-      });
     },
 
     // 上拉加载
