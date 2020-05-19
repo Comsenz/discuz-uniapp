@@ -55,5 +55,5 @@ module.exports = {
       },
     ],
   ],
-  plugins,
+  plugins: ['lodash', ...plugins],
 };
