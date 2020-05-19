@@ -24,20 +24,21 @@
       show-scrollbar="false"
       class="scroll-y search-item"
     >
-      <qui-content
-        v-for="(item, index) in data"
-        :key="index"
-        :user-name="item.user.username"
-        :theme-image="item.user.avatarUrl"
-        :theme-btn="item.canHide"
-        :user-groups="item.user.groups"
-        :theme-time="item.createdAt"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-        :tags="item.category.name"
-        :images-list="item.firstPost.images"
-        :theme-essence="item.isEssence"
-        @contentClick="contentClick(item._jv.id)"
-      ></qui-content>
+      <view v-for="(item, index) in data" :key="index" class="search-item__content">
+        <qui-content
+          :user-name="item.user.username"
+          :theme-image="item.user.avatarUrl"
+          :theme-btn="item.canHide"
+          :user-groups="item.user.groups"
+          :theme-time="item.createdAt"
+          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+          :tags="item.category.name"
+          :images-list="item.firstPost.images"
+          :theme-essence="item.isEssence"
+          @contentClick="contentClick(item._jv.id)"
+        ></qui-content>
+        <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
+      </view>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
   </qui-page>
@@ -149,5 +150,13 @@ export default {
 }
 .scroll-y {
   max-height: calc(100vh - 110rpx);
+}
+.search-item__content {
+  position: relative;
+}
+.arrow {
+  position: absolute;
+  top: 40rpx;
+  right: 40rpx;
 }
 </style>

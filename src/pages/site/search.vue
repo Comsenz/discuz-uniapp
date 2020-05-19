@@ -64,7 +64,12 @@
           {{ i18n.t('search.searchmorethemes') }}
         </view>
       </view>
-      <view v-for="(item, index) in themeList" :key="index" :class="index == 1 ? 'noBorder' : ''">
+      <view
+        v-for="(item, index) in themeList"
+        :key="index"
+        :class="index == 1 ? 'noBorder' : ''"
+        class="search-item__content"
+      >
         <qui-content
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
@@ -77,6 +82,7 @@
           :theme-essence="item.isEssence"
           @contentClick="contentClick(item._jv.id)"
         ></qui-content>
+        <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
       <qui-no-data
         :tips="i18n.t('search.norelatedthemesfound')"
@@ -237,5 +243,13 @@ export default {
 }
 .noBorder /deep/ .themeCount {
   border: 0;
+}
+.search-item__content {
+  position: relative;
+}
+.arrow {
+  position: absolute;
+  top: 40rpx;
+  right: 40rpx;
 }
 </style>
