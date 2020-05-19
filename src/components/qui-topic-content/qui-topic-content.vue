@@ -292,6 +292,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .themeItem {
   width: 100%;
+  background: --color(--qui-BG-2);
 
   &__header {
     display: flex;
@@ -327,19 +328,19 @@ export default {
 
       &__username {
         font-weight: bold;
-        color: rgba(51, 51, 51, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__isAdmin {
         font-weight: 400;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: $fg-f24;
         font-weight: 400;
         line-height: 31rpx;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
       }
     }
     &__opera {
@@ -454,10 +455,11 @@ export default {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 50rpx;
-        color: rgba(119, 119, 119, 1);
+        color: --color(--qui-FC-TAG);
         text-align: center;
-        background: rgba(247, 247, 247, 1);
+        background: --color(--qui-BG-TAG);
         border-radius: 6rpx;
+        transition: $switch-theme-time;
       }
     }
   }

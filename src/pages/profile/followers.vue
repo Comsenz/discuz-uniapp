@@ -32,7 +32,7 @@
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
             <view
               class="follow-content__items__operate"
-              @tap="addFollow(followerItem.fromUser)"
+              @tap="addFollow(followerItem.fromUser, index)"
               @tap.stop
               v-if="followerItem.fromUser.id != currentLoginId"
             >
@@ -135,9 +135,9 @@ export default {
       this.getFollowerList();
     },
     // 添加关注
-    addFollow(userInfo) {
+    addFollow(userInfo, index) {
       if (userInfo.follow !== 0) {
-        this.deleteFollow(userInfo);
+        this.deleteFollow(userInfo, index);
         return;
       }
       const params = {
@@ -149,20 +149,21 @@ export default {
       };
       status
         .run(() => this.$store.dispatch('jv/post', params))
-        .then(() => {
+        .then(res => {
           if (this.userId === this.currentLoginId) {
             this.$emit('changeFollow', { userId: this.userId });
           }
-          this.getFollowerList('change');
+          // is_mutual 是否互相关注 1 是 0 否
+          this.followerList[index].fromUser.follow = res.is_mutual === 1 ? 2 : 1;
         });
     },
     // 取消关注
-    deleteFollow(userInfo) {
+    deleteFollow(userInfo, index) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         if (this.userId === this.currentLoginId) {
           this.$emit('changeFollow', { userId: this.userId });
         }
-        this.getFollowerList('change');
+        this.followerList[index].fromUser.follow = 0;
       });
     },
   },

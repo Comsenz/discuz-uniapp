@@ -61,25 +61,31 @@
           </view>
           <rich-text :nodes="themeContent" v-else></rich-text>
         </view>
-        <video
-          v-if="threadType === 2"
-          preload="auto"
-          playsinline
-          webkit-playsinline
-          x5-playsinline
-          controls="true"
-          page-gesture="true"
-          show-fullscreen-btn="true"
-          show-play-btn="true"
-          show-mute-btn="true"
-          auto-pause-if-open-native="true"
-          vslide-gesture="true"
-          auto-pause-if-navigate="true"
-          enable-play-gesture="true"
-          object-fit="fill"
-          :src="mediaUrl"
-          style="width: 100%;"
-        ></video>
+        <view>
+          <video
+            v-if="threadType === 2"
+            id="myvideo"
+            preload="auto"
+            playsinline
+            webkit-playsinline
+            x5-playsinline
+            controls="true"
+            page-gesture="true"
+            show-fullscreen-btn="true"
+            show-play-btn="true"
+            show-mute-btn="true"
+            auto-pause-if-open-native="true"
+            vslide-gesture="true"
+            auto-pause-if-navigate="true"
+            enable-play-gesture="true"
+            object-fit="fill"
+            direction="0"
+            :src="mediaUrl"
+            style="width: 100%;"
+            bindfullscreenchange="fullScreen"
+            bindended="closeVideo"
+          ></video>
+        </view>
         <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
@@ -320,6 +326,10 @@ export default {
   //     appID: '1400329073',
   //   });
   // },
+  onShow() {
+    this.videoContext = wx.createVideoContext('myvideo', this);
+    this.videoContext.requestFullScreen({ direction: 90 });
+  },
   methods: {
     // 点击删除按钮
     deleteClick(evt) {
@@ -359,8 +369,8 @@ export default {
     position: absolute;
     top: -10rpx;
     left: 679rpx;
-    width: 31rpx;
-    height: 41rpx;
+    width: 36rpx;
+    height: 42rpx;
   }
 }
 .themeItem {

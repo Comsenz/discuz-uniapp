@@ -1,7 +1,7 @@
 <template>
   <qui-page class="site">
     <qui-header
-      head-img="https://dq.comsenz-service.com/static/images/logo.png"
+      head-img="/static/logo.png"
       :theme="theme"
       :theme-num="forums.other.count_users"
       :post="post"
@@ -132,11 +132,6 @@ export default {
       permission: [],
       inviteData: {}, // 邀请的相关信息
     };
-  },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   onLoad(params) {
     this.code = params.code;
