@@ -11,7 +11,6 @@
       <view class="ft-gap">
         <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
         <qui-topic-content
-          v-model="thread"
           :pay-status="thread.price > 0 && thread.paid"
           :avatar-url="thread.user.avatarUrl"
           :user-name="thread.user.username"
@@ -138,10 +137,21 @@
                   <qui-icon
                     name="icon-expression"
                     class="comm-icon"
+                    :size="40"
                     @click="emojiShow = !emojiShow"
                   ></qui-icon>
-                  <qui-icon name="icon-call" class="comm-icon" @click="callClick"></qui-icon>
-                  <qui-icon name="icon-image" class="comm-icon" @click="imageUploader"></qui-icon>
+                  <qui-icon
+                    name="icon-call"
+                    :size="40"
+                    class="comm-icon"
+                    @click="callClick"
+                  ></qui-icon>
+                  <qui-icon
+                    name="icon-image"
+                    :size="40"
+                    class="comm-icon"
+                    @click="imageUploader"
+                  ></qui-icon>
                 </view>
                 <view class="text-word-tip">
                   {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
@@ -171,6 +181,7 @@
                   v-model="textAreaValue"
                   @blur="contBlur"
                 />
+                <!--<textarea placeholder-style="color:#F76260" placeholder="占位符字体是红色的" />-->
                 <qui-uploader
                   v-if="uploaderShow"
                   url="https://dq.comsenz-service.com/api/attachments"
@@ -351,7 +362,7 @@ export default {
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       uploadFile: [], //上传的文件
-      placeholderStyle: 'color:#b5b5b5', // 默认textarea的placeholder颜色
+      placeholderStyle: 'color:#B5B5B5;font-size: 28rpx;', // 默认textarea的placeholder颜色
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
@@ -868,6 +879,7 @@ export default {
               this.posts[this.postIndex].lastThreeComments = [];
             }
             this.posts[this.postIndex].lastThreeComments.unshift(res);
+            this.posts[this.postIndex].replyCount++;
             // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
           }
           this.textAreaValue = '';
@@ -1453,6 +1465,7 @@ page {
   justify-content: space-between;
   width: 100%;
   padding: 0 40rpx 30rpx;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
   &-child {
     display: flex;
@@ -1479,6 +1492,7 @@ page {
   width: 100%;
   padding: 40rpx;
   margin-top: 30rpx;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .comment-num {
@@ -1562,7 +1576,7 @@ page {
   width: 100%;
   height: 80rpx;
   line-height: 80rpx;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
   box-shadow: 0 -3rpx 6rpx rgba(0, 0, 0, 0.05);
 }
 .det-ft-child {
@@ -1585,11 +1599,11 @@ page {
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
 }
 .comment-popup {
   width: 100%;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
   border-top-right-radius: 10rpx;
   border-top-left-radius: 10rpx;
   box-sizing: border-box;
@@ -1610,7 +1624,8 @@ page {
     width: 230rpx;
   }
   .text-word-tip {
-    font-size: $fg-f28;
+    font-size: $fg-f24;
+    line-height: 1;
     color: --color(--qui-FC-777);
   }
   .comm-icon {
@@ -1642,6 +1657,7 @@ page {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;
+  font-weight: normal;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);
   text-align: center;

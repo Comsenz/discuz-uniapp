@@ -3,16 +3,19 @@
   bg: background;
   fc: font字体颜色;
   $jt: 箭头颜色
+  bor: 边框颜色
 */
 $dark: (
   --qui-BG-1: #17191a,
   --qui-BG-2: #2e2f30,
-  --qui-BG-ED: #ededed,
+  --qui-BG-ED: #3f4243,
   --qui-BG-HIGH-LIGHT: #1878f3,
   --qui-BG-BTN: #1878f3,
   --qui-BG-BTN-GRAY: #1878f3,
   --qui-BG-BTN-GRAY-1: #f8f8f8,
   --qui-BG-IT: #f6f6f6,
+  --qui-BG-00: #000,
+  --qui-BG-FFF: #000,
   --qui-FC-333: #ddd,
   --qui-FC-777: #ddd,
   --qui-FC-AAA: #777,
@@ -20,14 +23,18 @@ $dark: (
   --qui-FC-DDD: rgba(255, 255, 255, 0.3),
   --qui-FC-B5: #b5b5b5,
   --qui-FC-FFF: #fff,
-  --qui-FC-GRAY: #f9fafc,
+  --qui-FC-GRAY: #4f4f50,
   --qui-FC-C6: #c6c6c6,
   --qui-FC-7D7979: #7d7979,
+  --qui-FC-34: #343434,
+  --qui-FC-f7: #f7f7f7,
   --qui-JT-B5: #b5b5b5,
   --qui-BOR-ED: #383838,
   --qui-BOR-DDD: #ddd,
-  --qui-LINK: #004798,
+  --qui-LINK: #1878f3,
   --qui-RED: #fa5151,
   --qui-MAIN: #1878f3,
   --qui-FC-000: #ddd,
+  --qui-BG-TAG: #404040,
+  --qui-FC-TAG: #aaa,
 );
