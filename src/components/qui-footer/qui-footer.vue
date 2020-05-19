@@ -101,12 +101,13 @@ export default {
       const currentRout = getCurrentPages()[len - 1].is;
       const str = currentRout.split('pages/')[1];
       if (str) {
-        this.tabs.map(tab => {
-          tab.tabsName = this.i18n.t(tab.tabsName);
+        this.tabs = this.tabs.map(tab => {
+          const tabsName = this.i18n.t(tab.tabsName);
           if (tab.url && tab.url.includes(str)) {
             this.sel = tab.id;
           }
-          return tab;
+          const newTab = { ...tab, tabsName };
+          return newTab;
         });
       }
     }
