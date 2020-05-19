@@ -328,6 +328,7 @@ export default {
     async toggleTab(dataInfo) {
       // 重置列表
       this.isResetList = true;
+      this.pageNum = 1;
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
@@ -423,6 +424,7 @@ export default {
     confirm(e) {
       // 重置列表
       this.isResetList = true;
+      this.pageNum = 1;
       const filterSelected = { ...e };
       this.categoryId = filterSelected[0].data.value;
       this.currentIndex = filterSelected[0].data.index;
@@ -560,8 +562,6 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
-        // this.hasMore = !!res._jv.json.links.next;
-        // this.loadingType = this.hasMore ? 'more' : 'nomore';
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {
@@ -569,7 +569,8 @@ export default {
         } else {
           this.threads = [...this.threads, ...res];
         }
-        console.log(this.navShow, this.isTop, 'isTop navShow');
+        this.isResetList = false;
+        // console.log(this.navShow, this.isTop, 'isTop navShow');
       });
     },
     // 内容部分点赞按钮点击事件
