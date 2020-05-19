@@ -36,7 +36,7 @@ module.exports = {
     },
     user() {
       const userId = this.$store.getters['session/get']('userId');
-      return utils.deepCopy(this.$store.getters['jv/get'](`users/${userId}`));
+      return this.$store.getters['jv/get'](`users/${userId}`);
     },
   },
   methods: {

@@ -11,7 +11,6 @@
       <view class="ft-gap">
         <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
         <qui-topic-content
-          v-model="thread"
           :pay-status="thread.price > 0 && thread.paid"
           :avatar-url="thread.user.avatarUrl"
           :user-name="thread.user.username"
@@ -1453,6 +1452,7 @@ page {
   justify-content: space-between;
   width: 100%;
   padding: 0 40rpx 30rpx;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
   &-child {
     display: flex;
@@ -1479,6 +1479,7 @@ page {
   width: 100%;
   padding: 40rpx;
   margin-top: 30rpx;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .comment-num {
@@ -1562,7 +1563,7 @@ page {
   width: 100%;
   height: 80rpx;
   line-height: 80rpx;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
   box-shadow: 0 -3rpx 6rpx rgba(0, 0, 0, 0.05);
 }
 .det-ft-child {
@@ -1585,11 +1586,11 @@ page {
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
 }
 .comment-popup {
   width: 100%;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
   border-top-right-radius: 10rpx;
   border-top-left-radius: 10rpx;
   box-sizing: border-box;
