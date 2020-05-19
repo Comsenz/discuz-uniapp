@@ -74,22 +74,25 @@ export default {
       redCircle: false, // 消息通知红点
       tabs: [
         {
-          tabsName: '首页',
+          tabsName: 'home.tabsCircle',
           tabsIcon: 'icon-home',
           id: 1,
           url: '../home/index',
+          routePath: 'pages/home/index', // 仅用作标识不用来跳转
         },
         {
-          tabsName: '消息',
+          tabsName: 'home.tabsNews',
           tabsIcon: 'icon-message',
           id: 2,
           url: '../notice/index',
+          routePath: 'pages/notice/index', // 仅用作标识不用来跳转
         },
         {
-          tabsName: '我的',
+          tabsName: 'home.tabsMy',
           tabsIcon: 'icon-mine',
           id: 3,
           url: '../my/index',
+          routePath: 'pages/my/index', // 仅用作标识不用来跳转
         },
       ],
       bottomData: [],
@@ -102,6 +105,7 @@ export default {
       const str = currentRout.split('pages/')[1];
       if (str) {
         this.tabs.forEach(v => {
+          v.tabsName = this.i18n.t(v.tabsName);
           if (v.url && v.url.includes(str)) {
             this.sel = v.id;
           }
@@ -123,7 +127,10 @@ export default {
       }
 
       const currentPage = getCurrentPages();
-      if (item.tabsName === '首页' && currentPage[0].route === 'pages/home/index') {
+      if (
+        item.tabsName === this.i18n.t('home.tabsCircle') &&
+        currentPage[0].route === 'pages/home/index'
+      ) {
         const len = currentPage.length;
         uni.navigateBack({
           delta: len,
