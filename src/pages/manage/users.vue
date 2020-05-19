@@ -1,35 +1,36 @@
 <template>
-  <view class="manage-users">
-    <!-- 搜索成员 -->
-    <view class="manage-users-search">
-      <view class="search">
-        <view class="search-box">
-          <view class="search-box__content">
-            <qui-icon
-              class="icon-content-search"
-              name="icon-search"
-              size="30"
-              color="#bbb"
-            ></qui-icon>
-            <input
-              type="text"
-              class="search-box__content-input"
-              placeholder-class="input-placeholder"
-              placeholder="搜索成员"
-              @input="searchInput"
-              :value="searchText"
-            />
-            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
-              <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
+  <qui-page>
+    <view class="manage-users">
+      <!-- 搜索成员 -->
+      <view class="manage-users-search">
+        <view class="search">
+          <view class="search-box">
+            <view class="search-box__content">
+              <qui-icon
+                class="icon-content-search"
+                name="icon-search"
+                size="30"
+                color="#bbb"
+              ></qui-icon>
+              <input
+                type="text"
+                class="search-box__content-input"
+                placeholder-class="input-placeholder"
+                placeholder="搜索成员"
+                @input="searchInput"
+                :value="searchText"
+              />
+              <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+                <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
+              </view>
             </view>
-          </view>
-          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
-            <text>取消</text>
+            <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
+              <text>取消</text>
+            </view>
           </view>
         </view>
       </view>
-    </view>
-    <!-- <view class="">
+      <!-- <view class="">
       <qui-search
         class="mSearch-input-box"
         :mode="2"
@@ -41,43 +42,40 @@
         v-model="keyword"
       ></qui-search>
     </view> -->
-    <!-- 搜索内容列表 -->
-    <!-- <view class="search-keyword">
+      <!-- 搜索内容列表 -->
+      <!-- <view class="search-keyword">
       <scroll-view class="keyword-list-box" v-show="isShowKeywordList" scroll-y>
         <block v-for="(row, index) in keywordList" :key="index">
           <view class="keyword-entry" hover-class="keyword-entry-tap">
             <view class="keyword-text" @tap.stop="doSearch(keywordList[index].keyword)">
               <rich-text :nodes="row.htmlStr"></rich-text>
             </view> -->
-    <!-- <view class="keyword-img" @tap.stop="setKeyword(keywordList[index].keyword)">
+      <!-- <view class="keyword-img" @tap.stop="setKeyword(keywordList[index].keyword)">
               <image src="/static/HM-search/back.png"></image>
             </view> -->
-    <!-- </view>
+      <!-- </view>
         </block>
       </scroll-view>
     </view> -->
 
-    <!-- 成员列表 -->
-    <view class="manage-users-wrap">
-      <view v-if="userList && Object.keys(userList).length > 0">
-        <view v-for="user in userList" :key="user.id">
-          <qui-avatar-cell
-            center
-            right-color="#aaa"
-            :mark="user.id"
-            :title="user.username"
-            :value="user.groups[Object.keys(user.groups || {})[0]].name"
-            :icon="
-              user.avatarUrl === ''
-                ? 'https://discuz.chat/static/images/noavatar.gif'
-                : user.avatarUrl
-            "
-          ></qui-avatar-cell>
+      <!-- 成员列表 -->
+      <view class="manage-users-wrap">
+        <view v-if="userList && Object.keys(userList).length > 0">
+          <view v-for="user in userList" :key="user.id">
+            <qui-avatar-cell
+              center
+              right-color="#aaa"
+              :mark="user.id"
+              :title="user.username"
+              :value="user.groups[Object.keys(user.groups || {})[0]].name"
+              :icon="user.avatarUrl || '/static/noavatar.gif'"
+            ></qui-avatar-cell>
+          </view>
         </view>
+        <qui-no-data tips="暂无内容" v-else></qui-no-data>
       </view>
-      <qui-no-data tips="暂无内容" v-else></qui-no-data>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

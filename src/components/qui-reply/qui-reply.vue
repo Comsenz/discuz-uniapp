@@ -3,7 +3,6 @@
     class="comment-child-comment-box"
     :style="{
       padding: padVal,
-      background: bgColor,
       borderRadius: radiusVal + 'rpx',
     }"
   >
@@ -32,11 +31,6 @@ export default {
       type: String,
       default: '20rpx',
     },
-    // 盒子的背景色
-    bgColor: {
-      type: String,
-      default: '#ededed',
-    },
     // 盒子的圆角
     radiusVal: {
       type: Number,
@@ -44,9 +38,9 @@ export default {
     },
     // 评论的回复列表
     replyList: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
     },
     // 回复的id
@@ -109,6 +103,7 @@ export default {
   justify-content: flex-start;
   width: 100%;
   margin-top: 40rpx;
+  background: --color(--qui-BG-ED);
   border-radius: 10rpx;
   box-sizing: border-box;
 }

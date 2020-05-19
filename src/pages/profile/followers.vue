@@ -12,15 +12,13 @@
         <view
           class="follow-content__items"
           v-for="(followerItem, index) in followerList"
+          @tap="toProfile(followerItem.fromUser.id)"
           :key="index"
         >
           <image
             class="follow-content__items__avatar"
-            :src="
-              followerItem.fromUser.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(followerItem.fromUser.id)"
           ></image>
           <qui-cell-item
             :title="followerItem.fromUser.username"
@@ -34,7 +32,8 @@
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
             <view
               class="follow-content__items__operate"
-              @tap="addFollow(followerItem.fromUser)"
+              @tap="addFollow(followerItem.fromUser, index)"
+              @tap.stop
               v-if="followerItem.fromUser.id != currentLoginId"
             >
               <text>
@@ -84,7 +83,7 @@ export default {
     return {
       loadingType: 'more',
       followerList: [],
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
     };
@@ -136,9 +135,9 @@ export default {
       this.getFollowerList();
     },
     // 添加关注
-    addFollow(userInfo) {
+    addFollow(userInfo, index) {
       if (userInfo.follow !== 0) {
-        this.deleteFollow(userInfo);
+        this.deleteFollow(userInfo, index);
         return;
       }
       const params = {
@@ -150,19 +149,21 @@ export default {
       };
       status
         .run(() => this.$store.dispatch('jv/post', params))
-        .then(() => {
-          this.$emit('changeFollow', { userId: this.userId });
-          this.getFollowerList('change');
-        })
-        .catch(err => {
-          console.log('verify', err);
+        .then(res => {
+          if (this.userId === this.currentLoginId) {
+            this.$emit('changeFollow', { userId: this.userId });
+          }
+          // is_mutual 是否互相关注 1 是 0 否
+          this.followerList[index].fromUser.follow = res.is_mutual === 1 ? 2 : 1;
         });
     },
     // 取消关注
-    deleteFollow(userInfo) {
+    deleteFollow(userInfo, index) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
-        this.$emit('changeFollow', { userId: this.userId });
-        this.getFollowerList('change');
+        if (this.userId === this.currentLoginId) {
+          this.$emit('changeFollow', { userId: this.userId });
+        }
+        this.followerList[index].fromUser.follow = 0;
       });
     },
   },

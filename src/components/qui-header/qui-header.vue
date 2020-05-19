@@ -1,12 +1,10 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
-    <!-- <view class="bar-sticky">
-      <navigationBar :navigation-bar-style="navigationBarStyle" :show-back="false"></navigationBar>
-    </view> -->
     <view class="logoBox">
       <image
         class="logo"
         :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
+        mode="widthFix"
       ></image>
     </view>
     <view class="circleDet">
@@ -98,23 +96,15 @@ export default {
   background: #1878f3;
   .logo {
     display: block;
-    // width: 400rpx;
+    width: 100%;
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
-    // filter: grayscale(100%);
-    // filter: drop-shadow(18px #fff);
-    // background-image: url('https://discuz.chat/static/images/logo.png'), linear-gradient(#f00, #f00);
-    // background-blend-mode: lighten;
-    // background-size: cover;
   }
   .circleDet {
     display: flex;
     justify-content: space-between;
-    padding-top: 69rpx;
-    padding-right: 20rpx;
-    padding-bottom: 47rpx;
-    padding-left: 20rpx;
+    padding: 69rpx 20rpx 47rpx;
     line-height: 37rpx;
     color: --color(--qui-FC-FFF);
     text-align: center;

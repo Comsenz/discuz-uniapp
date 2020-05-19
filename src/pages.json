@@ -80,7 +80,7 @@
     {
       "path": "pages/site/index",
       "style": {
-        "navigationBarTitleText": "圈子信息"
+        "navigationBarTitleText": "站点信息"
       }
     },
     {
@@ -124,13 +124,13 @@
     {
       "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "通知"
       }
     },
     {
       "path": "pages/notice/msglist", // 来往记录
       "style": {
-        "navigationStyle": "custom",
+        "navigationBarTitleText": "来往记录",
         "enablePullDownRefresh": true
       }
     },

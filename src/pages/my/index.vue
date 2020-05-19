@@ -11,7 +11,7 @@
           <view class="my-info__box__detail">
             <image
               class="my-info__box__detail-avatar"
-              :src="userInfo.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
             ></image>
             <qui-cell-item
@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import { status } from '@/library/jsonapi-vuex/index';
 import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
 
 export default {
@@ -96,12 +95,11 @@ export default {
     userInfo() {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
       data.groupsName = data.groups ? Object.values(data.groups)[0].name : '';
+      this.setNum(data);
       return data;
     },
   },
   onLoad() {
-    this.getUserInfo();
-
     this.checked = this.$store.getters['theme/get']('currentTheme') !== THEME_DEFAULT;
   },
   methods: {
@@ -113,19 +111,12 @@ export default {
         url: `/pages/profile/index?current=${e.currentIndex}`,
       });
     },
-    // 获取我的信息
-    getUserInfo() {
-      const params = {
-        include: 'wechat,groups',
-      };
-      status
-        .run(() => this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]))
-        .then(res => {
-          this.items[0].brief = res.threadCount || 0;
-          this.items[1].brief = res.followCount || 0;
-          this.items[2].brief = res.fansCount || 0;
-          this.items[3].brief = res.likedCount || 0;
-        });
+    // 设置粉丝点赞那些数字
+    setNum(res) {
+      this.items[0].brief = res.threadCount || 0;
+      this.items[1].brief = res.followCount || 0;
+      this.items[2].brief = res.fansCount || 0;
+      this.items[3].brief = res.likedCount || 0;
     },
   },
 };
@@ -183,10 +174,11 @@ export default {
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
 }
-.my-tabs .qui-tabs__item--active {
+/deep/ .my-tabs .qui-tabs__item--active {
   border: 0;
 }
-.my-tabs .qui-tabs__item--active .qui-tabs__item__title {
+/deep/ .qui-tabs__item--active .qui-tabs__item__title {
+  font-weight: normal;
   color: --color(--qui-FC-AAA);
   transition: $switch-theme-time;
 }

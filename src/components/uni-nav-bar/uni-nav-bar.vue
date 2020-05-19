@@ -244,8 +244,8 @@ $nav-height: 44px;
 
 .uni-navbar--border {
   border-bottom-color: $uni-border-color;
-  border-bottom-style: solid;
-  border-bottom-width: 1rpx;
+  // border-bottom-style: solid;
+  // border-bottom-width: 1rpx;
 
 }
 </style>

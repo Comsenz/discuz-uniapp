@@ -1,33 +1,36 @@
 <template>
-  <view class="aogph">
-    <view class="aogph-tab">
-      <view class="aogph-tab-ao">
-        <view class="aogph-tab-ao-my">
-          {{ i18n.t('modify.mysignture') }}
+  <qui-page>
+    <view class="aogph">
+      <view class="aogph-tab">
+        <view class="aogph-tab-ao">
+          <view class="aogph-tab-ao-my">
+            {{ i18n.t('modify.mysignture') }}
+          </view>
+          <view class="aogph-tab-ao-test">
+            {{ i18n.t('modify.canalsoinput') }}
+            {{ num - wordnumber }}{{ i18n.t('modify.wordnumber') }}
+          </view>
         </view>
-        <view class="aogph-tab-ao-test">
-          {{ i18n.t('modify.canalsoinput') }}{{ num - wordnumber }}{{ i18n.t('modify.wordnumber') }}
+        <view class="aogph-tab-input">
+          <textarea
+            type="text"
+            class="aogph-tab-input-in"
+            maxlength="450"
+            :placeholder="i18n.t('modify.signturecontent')"
+            placeholder-style="color:rgba(181,181,181,1)"
+            v-model="content"
+            @input="fun"
+          />
+          <view class="aogph-tab-input-text"></view>
         </view>
-      </view>
-      <view class="aogph-tab-input">
-        <textarea
-          type="text"
-          class="aogph-tab-input-in"
-          maxlength="450"
-          :placeholder="i18n.t('modify.signturecontent')"
-          placeholder-style="color:rgba(181,181,181,1)"
-          v-model="content"
-          @input="fun"
-        />
-        <view class="aogph-tab-input-text"></view>
-      </view>
-      <view class="aogph-tab-button">
-        <qui-button type="primary" size="large" @click="btnbutton">
-          {{ i18n.t('modify.submission') }}
-        </qui-button>
+        <view class="aogph-tab-button">
+          <qui-button type="primary" size="large" @click="btnbutton">
+            {{ i18n.t('modify.submission') }}
+          </qui-button>
+        </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -84,6 +87,9 @@ export default {
             title: this.i18n.t('modify.modificationsucc'),
             duration: 2000,
           });
+          uni.navigateTo({
+            url: '/pages/my/profile',
+          });
         }
       });
     },
@@ -93,9 +99,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .aogph {
   width: 100vw;
   height: 100vh;
+  background-color: --color(--qui-BG-2);
 }
 .aogph-tab {
   padding: 36rpx 40rpx 0;

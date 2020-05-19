@@ -1,13 +1,13 @@
 <template>
   <qui-page class="site">
     <qui-header
-      head-img="https://dq.comsenz-service.com/static/images/logo.png"
+      head-img="/static/logo.png"
       :theme="theme"
       :theme-num="forums.other.count_users"
       :post="post"
       :post-num="forums.other.count_threads"
       :share="share"
-      iconcolor="#333"
+      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -55,10 +55,7 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="
-              forums.set_site.site_author.avatarUrl ||
-                'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -70,7 +67,7 @@
           <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
             <image
               class="site-item__person-avatar"
-              :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
             ></image>
@@ -83,11 +80,7 @@
         :border="false"
         class="cell-item--auto cell-item--left "
       >
-        <view
-          v-for="(item, index) in inviteData.group.permission"
-          :key="index"
-          class="site-item__permission"
-        >
+        <view v-for="(item, index) in permission" :key="index" class="site-item__permission">
           <text>{{ i18n.t(`permission.${item.permission}`) }}</text>
         </view>
       </qui-cell-item>
@@ -135,13 +128,10 @@ export default {
         },
       ],
       code: '', // 邀请码
+      currentTheme: uni.getStorageSync('theme'),
+      permission: [],
       inviteData: {}, // 邀请的相关信息
     };
-  },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   onLoad(params) {
     this.code = params.code;
@@ -192,13 +182,14 @@ export default {
       }
     },
     getInviteInfo(code) {
+      const params = {
+        'filter[type]': 'invite',
+      };
       status
-        .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
+        .run(() => this.$store.dispatch('jv/get', [`invite/${code}`, { params }]))
         .then(res => {
           this.inviteData = res;
-        })
-        .catch(err => {
-          console.log(err);
+          this.permission = res.group.permission;
         });
     },
     // 邀请链接一些信息请求，有未登陆的情况
@@ -219,10 +210,14 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .header /deep/ .circleDet {
+    padding: 60rpx 40rpx 50rpx;
     color: --color(--qui-FC-777);
+    opacity: 1;
   }
   .header .logo {
-    padding-top: 99rpx;
+    width: 295rpx;
+    height: 56rpx;
+    padding-top: 71rpx;
   }
   /deep/ .cell-item__body__content-title {
     width: 112rpx;

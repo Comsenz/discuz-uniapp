@@ -128,6 +128,7 @@ export default {
   core: {
     not_install: '该站点未安装',
     postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',
+    cancel: '取消',
   },
   topic: {
     persenUnit: '人',
@@ -149,8 +150,9 @@ export default {
     comment: '评论',
     noComment: '暂无评论',
     whole: '全部',
-    paymentViewPicture: '支付查看图片',
-    paymentViewRemainingContent: '支付查看剩余内容',
+    paymentViewPicture: '查看图片',
+    paymentViewRemainingContent: '查看剩余内容',
+    paymentViewVideo: '查看视频',
     examineTip: '内容正在审核中，审核通过后才能正常显示！',
     powerTip: '没有权限，请联系站点管理员',
     inReview: '审核中',
@@ -161,6 +163,12 @@ export default {
     replyContentCannotBeEmpty: '回复内容不能为空',
     supportTheAuthorToCreate: '支持作者继续创作',
     enterTheRewardPaymeAmount: '输入打赏付费金额',
+    edit: '编辑',
+    essence: '精华',
+    cancelEssence: '取消精华',
+    sticky: '置顶',
+    cancelSticky: '取消置顶',
+    deleteSuccessAndJumpToHome: '删除成功，跳转到首页',
   },
   pay: {
     passwordTip: '请输入支付密码',
@@ -211,6 +219,7 @@ export default {
     wxShare: '微信分享',
     word: '文字',
     released: '发布了',
+    noPostingPermission: '当前没有发帖权限',
   },
   // 站点管理页面
   manage: {
@@ -394,7 +403,8 @@ export default {
     walletlist: '钱包明细',
     orderlist: '订单明细',
     walletpassword: '钱包密码',
-    setpassword: '设置支付密码',
+    setpassword: '设置密码',
+    setpaypassword: '设置支付密码',
     total: '共有',
     records: '记录',
     amountinvolved: '涉及金额',
