@@ -40,8 +40,10 @@ import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报  164
 import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报 41
 import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
 import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       imagePath: '',

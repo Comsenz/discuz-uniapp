@@ -117,8 +117,8 @@
             ></image>
           </view>
         </view>
-        <view v-if="!payStatus && threadPrice" class="themeItem__content__con__cover"></view>
-        <view v-if="!payStatus && threadPrice" class="themeItem__content__con__surtip">
+        <view v-if="!payStatus && threadPrice > 0" class="themeItem__content__con__cover"></view>
+        <view v-if="!payStatus && threadPrice > 0" class="themeItem__content__con__surtip">
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
@@ -372,7 +372,7 @@ export default {
         bottom: 0;
         left: 0;
         height: 240rpx;
-        background: linear-gradient(180deg, --color(--qui-BG-FFF) 0%, --color(--qui-BG-00) 100%);
+        background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1));
       }
       &__surtip {
         position: relative;
@@ -445,6 +445,7 @@ export default {
     &__tags {
       display: flex;
       flex-wrap: wrap;
+      margin-bottom: 76rpx;
 
       &__item {
         height: 50rpx;

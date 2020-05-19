@@ -105,10 +105,10 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
-  components: {
-    //
-  },
+  mixins: [forums],
   data() {
     return {
       theme: this.i18n.t('home.theme'),

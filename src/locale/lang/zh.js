@@ -168,6 +168,7 @@ export default {
     cancelEssence: '取消精华',
     sticky: '置顶',
     cancelSticky: '取消置顶',
+    deleteSuccessAndJumpToHome: '删除成功，跳转到首页',
   },
   pay: {
     passwordTip: '请输入支付密码',
@@ -185,6 +186,7 @@ export default {
     walletPay: '钱包支付',
     walletBalance: '钱包余额',
     walletBalanceNo: '钱包余额不足，剩余',
+    cancel: '取消',
     payTo: '将支付到',
     ofAccount: '的账户',
     surePay: '确认支付',

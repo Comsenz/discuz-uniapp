@@ -60,13 +60,10 @@
   </view>
 </template>
 <script>
-import { uniIcons } from '@dcloudio/uni-ui';
-// import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
-  components: {
-    uniIcons,
-  },
+  mixins: [forums],
   data: () => {
     return {
       sel: 1,
@@ -74,37 +71,43 @@ export default {
       redCircle: false, // 消息通知红点
       tabs: [
         {
-          tabsName: '首页',
+          tabsName: 'home.tabsCircle',
           tabsIcon: 'icon-home',
           id: 1,
           url: '../home/index',
+          routePath: 'pages/home/index', // 仅用作标识不用来跳转
         },
         {
-          tabsName: '消息',
+          tabsName: 'home.tabsNews',
           tabsIcon: 'icon-message',
           id: 2,
           url: '../notice/index',
+          routePath: 'pages/notice/index', // 仅用作标识不用来跳转
         },
         {
-          tabsName: '我的',
+          tabsName: 'home.tabsMy',
           tabsIcon: 'icon-mine',
           id: 3,
           url: '../my/index',
+          routePath: 'pages/my/index', // 仅用作标识不用来跳转
         },
       ],
       bottomData: [],
     };
   },
-  created() {
+  mounted() {
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
       const str = currentRout.split('pages/')[1];
       if (str) {
-        this.tabs.forEach(v => {
-          if (v.url && v.url.includes(str)) {
-            this.sel = v.id;
+        this.tabs = this.tabs.map(tab => {
+          const tabsName = this.i18n.t(tab.tabsName);
+          if (tab.url && tab.url.includes(str)) {
+            this.sel = tab.id;
           }
+          const newTab = { ...tab, tabsName };
+          return newTab;
         });
       }
     }
@@ -123,7 +126,10 @@ export default {
       }
 
       const currentPage = getCurrentPages();
-      if (item.tabsName === '首页' && currentPage[0].route === 'pages/home/index') {
+      if (
+        item.tabsName === this.i18n.t('home.tabsCircle') &&
+        currentPage[0].route === 'pages/home/index'
+      ) {
         const len = currentPage.length;
         uni.navigateBack({
           delta: len,
