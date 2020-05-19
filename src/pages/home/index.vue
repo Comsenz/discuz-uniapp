@@ -258,11 +258,6 @@ export default {
       categories: [],
     };
   },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
-  },
   onLoad() {
     // 获取用户信息
     // this.getUserInfo();

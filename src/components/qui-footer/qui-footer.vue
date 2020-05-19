@@ -95,11 +95,6 @@ export default {
       bottomData: [],
     };
   },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
-  },
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {

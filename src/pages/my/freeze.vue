@@ -63,7 +63,7 @@ export default {
     // 获取冻结金额列表数据
     getFreezelist() {
       const params = {
-        'filter[user]': 1,
+        'filter[user]': this.userId,
         'filter[change_type]': 10,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,

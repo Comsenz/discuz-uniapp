@@ -100,9 +100,6 @@ export default {
     profile() {
       return this.$store.getters['jv/get'](`users/${this.userId}`);
     },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   onLoad() {
     const token = uni.getStorageSync('access_token');

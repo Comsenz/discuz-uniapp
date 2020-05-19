@@ -22,7 +22,7 @@
             <span class="themeItem__header__title__isAdmin">（{{ userRole }}）</span>
             <view class="themeItem__header__title__jumpBtn">></view>
           </view>
-          <view class="themeItem__header__title__time">{{ commentTime }}</view>
+          <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
         <view class="themeItem__header__r">
           <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
@@ -120,6 +120,8 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     // 回复的用户头像
@@ -210,6 +212,10 @@ export default {
   computed: {
     t() {
       return this.i18n.t('topic');
+    },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.commentTime);
     },
   },
   watch: {
@@ -322,19 +328,19 @@ export default {
 
       &__username {
         font-weight: bold;
-        color: rgba(51, 51, 51, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__isAdmin {
         font-weight: 400;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__time {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 31rpx;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__jumpBtn {
@@ -362,7 +368,7 @@ export default {
       font-size: 28rpx;
       font-weight: 400;
       line-height: 45rpx;
-      color: rgba(51, 51, 51, 1);
+      color: --color(--qui-FC-333);
       word-break: break-all;
     }
 
