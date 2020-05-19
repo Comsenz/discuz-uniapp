@@ -1,7 +1,7 @@
 <template>
   <qui-page class="site">
     <qui-header
-      head-img="https://dq.comsenz-service.com/static/images/logo.png"
+      head-img="/static/logo.png"
       :theme="theme"
       :theme-num="forums.other.count_users"
       :post="post"

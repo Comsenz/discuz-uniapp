@@ -30,7 +30,7 @@
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
             <view
               class="follow-content__items__operate"
-              @tap="addFollow(followingItem.toUser)"
+              @tap="addFollow(followingItem.toUser, index)"
               @tap.stop
               v-if="followingItem.toUser.id != currentLoginId"
             >
@@ -134,9 +134,9 @@ export default {
       this.getFollowingList();
     },
     // 添加关注
-    addFollow(userInfo) {
+    addFollow(userInfo, index) {
       if (userInfo.follow !== 0) {
-        this.deleteFollow(userInfo);
+        this.deleteFollow(userInfo, index);
         return;
       }
       const params = {
@@ -148,29 +148,23 @@ export default {
       };
       status
         .run(() => this.$store.dispatch('jv/post', params))
-        .then(() => {
+        .then(res => {
           if (this.userId === this.currentLoginId) {
             this.$emit('changeFollow', { userId: this.userId });
           }
-          this.getFollowingList('change');
+          // is_mutual 是否互相关注 1 是 0 否
+          this.followingList[index].toUser.follow = res.is_mutual === 1 ? 2 : 1;
         });
     },
     // 取消关注
-    deleteFollow(userInfo) {
+    deleteFollow(userInfo, index) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         // 如果是个人主页直接删除这条数据
         if (this.userId === this.currentLoginId) {
-          const dataList = this.followingList;
-          dataList.forEach((item, index) => {
-            if (item.toUser && item.toUser.id === userInfo.id) {
-              const data = JSON.parse(JSON.stringify(dataList));
-              data.splice(index, 1);
-              this.followingList = data;
-            }
-          });
+          this.followingList.splice(index, 1);
           this.$emit('changeFollow', { userId: this.userId });
         } else {
-          this.getFollowingList('change');
+          this.followingList[index].toUser.follow = 0;
         }
       });
     },
