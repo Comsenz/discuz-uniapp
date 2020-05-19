@@ -31,8 +31,10 @@
 <script>
 import Cardc from '@/wxcomponents/card/cardbasemap'; // 首页海报有底图
 import Carde from '@/wxcomponents/card/cardnobasemap'; // 首页海报无底图
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       userid: '',

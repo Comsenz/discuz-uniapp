@@ -60,13 +60,10 @@
   </view>
 </template>
 <script>
-import { uniIcons } from '@dcloudio/uni-ui';
-// import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
-  components: {
-    uniIcons,
-  },
+  mixins: [forums],
   data: () => {
     return {
       sel: 1,
@@ -98,17 +95,18 @@ export default {
       bottomData: [],
     };
   },
-  created() {
+  mounted() {
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
       const str = currentRout.split('pages/')[1];
       if (str) {
-        this.tabs.forEach(v => {
-          v.tabsName = this.i18n.t(v.tabsName);
-          if (v.url && v.url.includes(str)) {
-            this.sel = v.id;
+        this.tabs.map(tab => {
+          tab.tabsName = this.i18n.t(tab.tabsName);
+          if (tab.url && tab.url.includes(str)) {
+            this.sel = tab.id;
           }
+          return tab;
         });
       }
     }

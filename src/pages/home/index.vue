@@ -176,8 +176,11 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [forums, user],
   data() {
     return {
       scrolled: 'affix',

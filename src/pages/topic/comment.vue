@@ -175,8 +175,10 @@
 <script>
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [user],
   data() {
     return {
       threadId: '',
