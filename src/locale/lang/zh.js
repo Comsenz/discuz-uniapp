@@ -168,6 +168,7 @@ export default {
     cancelEssence: '取消精华',
     sticky: '置顶',
     cancelSticky: '取消置顶',
+    deleteSuccessAndJumpToHome: '删除成功，跳转到首页',
   },
   pay: {
     passwordTip: '请输入支付密码',
