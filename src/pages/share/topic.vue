@@ -1,7 +1,7 @@
 <template>
   <view class="painter">
-    <view class="canvas-box">
-      <view class="cent">
+    <view class="canvas-box" :style="{ paddingTop: paddingtop + 'rpx' }">
+      <view class="cent" :style="{ height: constyle + 'rpx' }">
         <image
           :src="imagePath"
           mode="widthFix"
@@ -19,22 +19,27 @@
           width-pixels="500"
         />
       </view>
-      <view class="btn-box">
+      <!-- <view class="btn-box">
         <qui-button type="primary" size="large" @click="fun">
           {{ i18n.t('share.savealbum') }}
         </qui-button>
-      </view>
+      </view> -->
+    </view>
+    <view class="btn-box">
+      <qui-button type="primary" size="large" @click="fun">
+        {{ i18n.t('share.savealbum') }}
+      </qui-button>
     </view>
   </view>
 </template>
 
 <script>
-import Carda from '@/wxcomponents/card/cardtposter'; // 标题文字海报
-import Cardb from '@/wxcomponents/card/cardaitu'; // 标题单图片文字海报
-import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报
-import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报
-import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报
-import Cardh from '@/wxcomponents/card/card'; // 文字海报
+import Carda from '@/wxcomponents/card/cardtposter'; // 标题文字海报 41
+import Cardb from '@/wxcomponents/card/cardaitu'; // 标题单图片文字海报 43
+import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报  164
+import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报 41
+import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
+import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
 
 export default {
   data() {
@@ -60,6 +65,8 @@ export default {
       themwidth: '',
       reconame: '',
       recoimg: '',
+      constyle: 0,
+      paddingtop: 43,
     };
   },
   onLoad(arr) {
@@ -79,9 +86,6 @@ export default {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   methods: {
     // 获取推荐用户信息
@@ -96,7 +100,7 @@ export default {
       this.$store.dispatch('jv/get', params).then(data => {
         this.reconame = data.username;
         this.themwidth = this.reconame.length * 28 + 3;
-        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.recoimg = data.avatarUrl || '/static/noavatar.gif';
       });
     },
     // 获取帖子内容信息
@@ -108,7 +112,7 @@ export default {
         )
         .then(data => {
           this.headerName = data.user.username;
-          this.headerImg = data.user.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+          this.headerImg = data.user.avatarUrl || '/static/noavatar.gif';
           this.postyTepy = data.type;
           this.contentTitle = data.title;
           this.content = data.firstPost.content;
@@ -151,34 +155,54 @@ export default {
       if (this.contentTitle) {
         // 有标题有图片海报
         if (this.contentImg.length === 1) {
+          this.constyle = 1100;
+          this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
           // 多图片海报
         } else if (this.contentImg.length > 1) {
+          this.constyle = 1084;
+          this.paddingtop = 41;
           this.template = new Cardf().palette(obj);
           // 只有标题文字的海报
         } else if (this.contentImg.length === 0 && this.content) {
+          this.constyle = 1083;
+          this.paddingtop = 41;
           this.template = new Carda().palette(obj);
           // 视频贴
         } else if (this.postyTepy === 2) {
+          this.constyle = 1100;
+          this.paddingtop = 43;
           this.template = new Cardg().palette(obj);
         }
         // 没有标题的海报
       } else if (!this.contentTitle) {
-        // 有一张图片的海报
+        // 只有一张图片的海报
         if (this.content && this.contentImg.length === 1) {
+          this.constyle = 1100;
+          this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
           // 只有一张图片
         } else if (!this.content && this.contentImg.length === 1) {
+          this.constyle = 908;
+          this.paddingtop = 164;
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {
+          this.constyle = 1100;
+          this.paddingtop = 41;
           this.template = new Cardf().palette(obj);
         } else if (this.postyTepy === 2) {
+          this.constyle = 1100;
+          this.paddingtop = 43;
           this.template = new Cardg().palette(obj);
         } else {
+          this.constyle = 1082;
+          this.paddingtop = 46;
           this.template = new Cardh().palette(obj);
         }
       } else {
+        this.constyle = 1082;
+        this.paddingtop = 46;
         this.template = new Cardh().palette();
       }
     },
@@ -232,27 +256,36 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-page {
-  padding: 0;
-  margin: 0;
-  font-size: $fg-f28;
-  color: --color(--qui-FC-333);
+.painter {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100vw;
+  height: 100vh;
+}
+.canvas-box {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 155rpx;
 }
 .cent {
   width: 700rpx;
-  height: 1082rpx;
-  margin: 46rpx 25rpx 0;
+  margin: 0 auto;
   background: --color(--qui-FC-FFF);
-  border-radius: 10px;
+  border-radius: 10rpx;
+  box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   .cent-image {
+    display: block;
     width: 100%;
-    box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
+    height: 100%;
   }
 }
-.icon-unfold {
-  display: block;
+#front {
+  position: fixed;
+  width: 0;
+  height: 0;
 }
 .btn-box {
-  margin: 50rpx 0 40rpx 40rpx;
+  margin: 0 0 40rpx 40rpx;
 }
 </style>

@@ -1,32 +1,34 @@
 <template>
-  <view class="setpw" @click.stop="toggleBox">
-    <view class="setpw-input" v-if="pas" @click.stop="fourse">
-      <view class="setpw-tit">
-        {{ i18n.t('modify.enterpaymentpas') }}
+  <qui-page>
+    <view class="setpw" @click.stop="toggleBox">
+      <view class="setpw-input" v-if="pas" @click.stop="fourse">
+        <view class="setpw-tit">
+          {{ i18n.t('modify.enterpaymentpas') }}
+        </view>
+        <qui-input-code
+          @getdata="btndata"
+          :title="sun"
+          :text="test"
+          :show="inshow"
+          :isiphonex="inisIphone"
+          :number="types"
+        ></qui-input-code>
       </view>
-      <qui-input-code
-        @getdata="btndata"
-        :title="sun"
-        :text="test"
-        :show="inshow"
-        :isiphonex="inisIphone"
-        :number="types"
-      ></qui-input-code>
-    </view>
-    <view class="setpw-input" v-else @click.stop="fourse">
-      <view class="setpw-tit">
-        {{ i18n.t('modify.enterpaymentagin') }}
+      <view class="setpw-input" v-else @click.stop="fourse">
+        <view class="setpw-tit">
+          {{ i18n.t('modify.enterpaymentagin') }}
+        </view>
+        <qui-input-code
+          @getdata="btndata2"
+          :title="sun"
+          :text="test"
+          :show="inshow"
+          :isiphonex="inisIphone"
+          :number="types"
+        ></qui-input-code>
       </view>
-      <qui-input-code
-        @getdata="btndata2"
-        :title="sun"
-        :text="test"
-        :show="inshow"
-        :isiphonex="inisIphone"
-        :number="types"
-      ></qui-input-code>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -64,7 +66,9 @@ export default {
       }
     },
     btndata2(sum) {
-      this.mobelypas(sum);
+      if (sum.length >= 6) {
+        this.mobelypas(sum);
+      }
     },
     mobelypas(sum) {
       const params = {
@@ -116,13 +120,15 @@ export default {
 .setpw {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .setpw-input {
   width: 710rpx;
   height: 200rpx;
   padding: 0 0 0 40rpx;
-  margin: 31rpx 0 0;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
   opacity: 1;
 }
 .setpw-tit {

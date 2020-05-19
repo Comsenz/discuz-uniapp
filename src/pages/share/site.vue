@@ -19,11 +19,11 @@
           width-pixels="500"
         />
       </view>
-      <view class="btn-box">
-        <qui-button type="primary" size="large" @click="fun">
-          {{ i18n.t('share.savealbum') }}
-        </qui-button>
-      </view>
+    </view>
+    <view class="btn-box">
+      <qui-button type="primary" size="large" @click="fun">
+        {{ i18n.t('share.savealbum') }}
+      </qui-button>
     </view>
   </view>
 </template>
@@ -68,9 +68,6 @@ export default {
     });
   },
   computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
@@ -86,7 +83,7 @@ export default {
       };
       this.$store.dispatch('jv/get', params).then(data => {
         this.headerName = data.username;
-        this.headerImg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.headerImg = data.avatarUrl || '/static/noavatar.gif';
         this.initData();
       });
     },
@@ -164,22 +161,38 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-
+.painter {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100vw;
+  height: 100vh;
+}
+.canvas-box {
+  width: 100%;
+  height: 100%;
+  padding-top: 41rpx;
+  margin-bottom: 155rpx;
+}
 .cent {
   width: 700rpx;
-  height: 1000rpx;
-  margin: 46rpx 25rpx 0;
+  height: 980rpx;
+  margin: 0 auto;
   background: --color(--qui-FC-FFF);
   border-radius: 10px;
+  box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   .cent-image {
+    display: block;
     width: 100%;
-    box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
+    height: 100%;
   }
 }
-.icon-unfold {
-  display: block;
+#front {
+  position: fixed;
+  width: 0;
+  height: 0;
 }
 .btn-box {
-  margin: 50rpx 0 40rpx 40rpx;
+  margin: 0 0 40rpx 40rpx;
 }
 </style>

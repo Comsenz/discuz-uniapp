@@ -74,12 +74,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .emoji-box {
   z-index: 1500;
   width: 100%;
   padding: 10rpx 0;
-  background-color: #fff;
-  border: 1rpx solid #ddd;
+  background-color: --color(--qui-BG-ED);
+  border: 1rpx solid --color(--qui-BOR-ED);
 
   &__item {
     display: flex;

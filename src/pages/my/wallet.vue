@@ -9,7 +9,7 @@
           class="wallet-available"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="'./freeze?totalamount=' + dataInfo.freeze_amount" hover-class="none">
+      <navigator :url="'./freeze'" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.freezeamount')"
           arrow
@@ -25,7 +25,7 @@
       <navigator url="./orderlist" hover-class="none">
         <qui-cell-item :title="i18n.t('profile.orderlist')" arrow></qui-cell-item>
       </navigator>
-      <navigator :url="'/pages/modify/editpwd?id=' + userId" hover-class="none">
+      <navigator :url="`/pages/modify/editpwd?id=${userId}`" hover-class="none">
         <qui-cell-item
           v-if="hasPassword"
           :title="i18n.t('profile.walletpassword')"
@@ -33,10 +33,10 @@
           :border="false"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="'/pages/modify/paypwd?id=' + userId" hover-class="none">
+      <navigator :url="`/pages/modify/paypwd?id=${userId}`" hover-class="none">
         <qui-cell-item
           v-if="!hasPassword"
-          :title="i18n.t('profile.setpassword')"
+          :title="i18n.t('profile.setpaypassword')"
           arrow
           :border="false"
         ></qui-cell-item>

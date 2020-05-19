@@ -1,100 +1,102 @@
 <template>
-  <view class="cash" @click.stop="toggleBox">
-    <view class="cash-content">
-      <!-- 收款人 -->
-      <view class="cash-content-tab">
-        <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
-          <test class="cash-content-name">
-            {{ name }}
-          </test>
-        </qui-cell-item>
-      </view>
-      <!-- 可提现金额 -->
-      <view class="cash-content-tab">
-        <qui-cell-item
-          :title="i18n.t('modify.withdrawable')"
-          slot-right
-          :arrow="false"
-          :border="false"
-        >
-          <test class="cash-content-name">￥{{ balance }}</test>
-        </qui-cell-item>
-      </view>
-      <!-- 提现金额 -->
-      <view class="cash-content-tab">
-        <qui-cell-item
-          :title="i18n.t('modify.withdrawable')"
-          slot-right
-          :arrow="false"
-          :border="false"
-        >
-          <input
-            class="cash-content-input"
-            type="number"
-            :placeholder="i18n.t('modify.enteramount')"
-            placeholder-style="color:rgba(221,221,221,1)"
-            v-model="cashmany"
-            @input="settlement"
-          />
-        </qui-cell-item>
-      </view>
-      <!-- 实际提现金额 -->
-      <view class="cash-content-tab">
-        <qui-cell-item
-          :title="i18n.t('modify.actualamout')"
-          slot-right
-          :arrow="false"
-          :border="false"
-        >
-          <view class="cash-content-name cash-content-actual">
-            <view
-              :class="length ? 'cash-content-ellipsis2' : 'cash-content-ellipsis'"
-              v-text="contint"
-            ></view>
-            <view class="cash-content-proced">
-              {{ i18n.t('modify.servicechaege') + procedures + i18n.t('modify.percentage') }}
+  <qui-page>
+    <view class="cash" @click.stop="toggleBox">
+      <view class="cash-content">
+        <!-- 收款人 -->
+        <view class="cash-content-tab">
+          <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
+            <test class="cash-content-name">
+              {{ name }}
+            </test>
+          </qui-cell-item>
+        </view>
+        <!-- 可提现金额 -->
+        <view class="cash-content-tab">
+          <qui-cell-item
+            :title="i18n.t('modify.withdrawable')"
+            slot-right
+            :arrow="false"
+            :border="false"
+          >
+            <test class="cash-content-name">￥{{ balance }}</test>
+          </qui-cell-item>
+        </view>
+        <!-- 提现金额 -->
+        <view class="cash-content-tab">
+          <qui-cell-item
+            :title="i18n.t('modify.withdrawable')"
+            slot-right
+            :arrow="false"
+            :border="false"
+          >
+            <input
+              class="cash-content-input"
+              type="number"
+              :placeholder="i18n.t('modify.enteramount')"
+              placeholder-style="color:rgba(221,221,221,1)"
+              v-model="cashmany"
+              @input="settlement"
+            />
+          </qui-cell-item>
+        </view>
+        <!-- 实际提现金额 -->
+        <view class="cash-content-tab">
+          <qui-cell-item
+            :title="i18n.t('modify.actualamout')"
+            slot-right
+            :arrow="false"
+            :border="false"
+          >
+            <view class="cash-content-name cash-content-actual">
+              <view
+                :class="length ? 'cash-content-ellipsis2' : 'cash-content-ellipsis'"
+                v-text="contint"
+              ></view>
+              <view class="cash-content-proced">
+                {{ i18n.t('modify.servicechaege') + procedures + i18n.t('modify.percentage') }}
+              </view>
             </view>
-          </view>
-        </qui-cell-item>
-      </view>
-      <!-- 验证码 -->
-      <view class="input">
-        <!-- 已绑定手机号码验证 -->
-        <view class="cash-phon" v-if="phon">
-          <view class="cash-phon-test">
-            {{ i18n.t('modify.phonnumber') }}
-          </view>
-          <view class="cash-phon-num">
-            {{ usertestphon }}
-          </view>
-          <button class="cash-phon-send" v-if="sun" @click="btnButton">
-            {{ i18n.t('modify.sendverificode') }}
-          </button>
-          <button class="cash-phon-send" disabled v-else>
-            {{ second + i18n.t('modify.retransmission') }}
-          </button>
+          </qui-cell-item>
         </view>
         <!-- 验证码 -->
-        <view class="cash-input" @click.stop="fourse">
-          <view class="cash-input-test">
-            {{ i18n.t('modify.placeentercode') }}
+        <view class="input">
+          <!-- 已绑定手机号码验证 -->
+          <view class="cash-phon" v-if="phon">
+            <view class="cash-phon-test">
+              {{ i18n.t('modify.phonnumber') }}
+            </view>
+            <view class="cash-phon-num">
+              {{ usertestphon }}
+            </view>
+            <button class="cash-phon-send" v-if="sun" @click="btnButton">
+              {{ i18n.t('modify.sendverificode') }}
+            </button>
+            <button class="cash-phon-send" disabled v-else>
+              {{ second + i18n.t('modify.retransmission') }}
+            </button>
           </view>
-          <qui-input-code
-            @getdata="btndata"
-            :title="judge"
-            :text="test"
-            :show="inshow"
-            :isiphonex="inisIphone"
-          ></qui-input-code>
+          <!-- 验证码 -->
+          <view class="cash-input" @click.stop="fourse">
+            <view class="cash-input-test">
+              {{ i18n.t('modify.placeentercode') }}
+            </view>
+            <qui-input-code
+              @getdata="btndata"
+              :title="judge"
+              :text="test"
+              :show="inshow"
+              :isiphonex="inisIphone"
+            ></qui-input-code>
+          </view>
+        </view>
+        <view class="cash-button">
+          <qui-button type="primary" size="large" @click="btncash">
+            {{ i18n.t('modify.submission') }}
+          </qui-button>
         </view>
       </view>
-      <view class="cash-button">
-        <qui-button type="primary" size="large" @click="btncash">
-          {{ i18n.t('modify.submission') }}
-        </qui-button>
-      </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -283,13 +285,16 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .cash {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .cash-content {
   padding-left: 40rpx;
-  margin-top: 31rpx;
 }
 .cash-content-tab {
   padding: 0 40rpx 0 0;

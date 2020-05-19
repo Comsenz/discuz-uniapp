@@ -6,6 +6,7 @@
         class="hidden-ipt"
         maxlength="6"
         :focus="isFocus"
+        @input="enters"
         @blur="lose"
         v-model="iptValue"
       />
@@ -120,11 +121,11 @@ export default {
       this.isFocus = true;
       // this.show = true;
     },
+    enters() {
+      this.$emit('getdata', this.iptValue);
+    },
     lose() {
       this.isFocus = false;
-      if (this.iptValue.length === 6) {
-        this.$emit('getdata', this.iptValue);
-      }
     },
     key(key) {
       if (this.iptValue.length < 6) {

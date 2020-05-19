@@ -1,39 +1,41 @@
 <template>
-  <view class="input" @click.stop="toggleBox">
-    <!-- 已绑定手机号码验证 -->
-    <view class="modify-phon" v-if="phon">
-      <view class="modify-phon-test">
-        {{ i18n.t('modify.phonbound') }}
+  <qui-page>
+    <view class="input" @click.stop="toggleBox">
+      <!-- 已绑定手机号码验证 -->
+      <view class="modify-phon" v-if="phon">
+        <view class="modify-phon-test">
+          {{ i18n.t('modify.phonbound') }}
+        </view>
+        <view :class="userphon ? 'modify-phon-num' : 'modify-phon-num1'">
+          {{ userphon ? userphon : i18n.t('modify.phonnumberempty') }}
+        </view>
+        <button class="modify-phon-send" v-if="sun" @click="btnButton" :disabled="noclick">
+          {{ i18n.t('modify.sendverificode') }}
+        </button>
+        <button class="modify-phon-send" disabled v-else>
+          {{ second + i18n.t('modify.retransmission') }}
+        </button>
       </view>
-      <view :class="userphon ? 'modify-phon-num' : 'modify-phon-num1'">
-        {{ userphon ? userphon : i18n.t('modify.phonnumberempty') }}
+      <!-- 验证码 -->
+      <view class="modify-input" @click.stop="fourse">
+        <view class="modify-input-test">
+          {{ i18n.t('modify.placeentercode') }}
+        </view>
+        <qui-input-code
+          @getdata="btndata"
+          :title="judge"
+          :text="test"
+          :show="inshow"
+          :isiphonex="inisIphone"
+        ></qui-input-code>
       </view>
-      <button class="modify-phon-send" v-if="sun" @click="btnButton" :disabled="noclick">
-        {{ i18n.t('modify.sendverificode') }}
-      </button>
-      <button class="modify-phon-send" disabled v-else>
-        {{ second + i18n.t('modify.retransmission') }}
-      </button>
-    </view>
-    <!-- 验证码 -->
-    <view class="modify-input" @click.stop="fourse">
-      <view class="modify-input-test">
-        {{ i18n.t('modify.placeentercode') }}
+      <view class="modify-button">
+        <qui-button type="primary" size="large" @click="submission">
+          {{ judge ? i18n.t('modify.nextsetp') : i18n.t('modify.submission') }}
+        </qui-button>
       </view>
-      <qui-input-code
-        @getdata="btndata"
-        :title="judge"
-        :text="test"
-        :show="inshow"
-        :isiphonex="inisIphone"
-      ></qui-input-code>
     </view>
-    <view class="modify-button">
-      <qui-button type="primary" size="large" @click="submission">
-        {{ judge ? i18n.t('modify.nextsetp') : i18n.t('modify.submission') }}
-      </qui-button>
-    </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -69,9 +71,6 @@ export default {
     fourse() {
       this.inshow = true;
     },
-    // phonempty() {
-    //   if(this.)
-    // },
     getCode() {
       this.showText = false;
       const interval = setInterval(() => {
@@ -191,13 +190,16 @@ export default {
 .input {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .modify-phon {
   display: flex;
   width: 710rpx;
   height: 100rpx;
   justify-content: space-between;
-  margin: 31rpx 0 0 40rpx;
+  margin-left: 40rpx;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .modify-phon-test {
@@ -212,7 +214,7 @@ export default {
   font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(0, 0, 0, 1);
+  color: --color(--qui-FC-00);
   opacity: 1;
 }
 .modify-phon-num1 {
@@ -220,7 +222,7 @@ export default {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(221, 221, 221, 1);
+  color: --color(--qui-FC-777);
 }
 .modify-phon-send {
   display: block;

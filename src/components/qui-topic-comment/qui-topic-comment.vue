@@ -7,7 +7,7 @@
             :src="
               commentAvatarUrl != '' && commentAvatarUrl != null
                 ? commentAvatarUrl
-                : 'https://discuz.chat/static/images/noavatar.gif'
+                : '@/static/noavatar.gif'
             "
             class="det-per-head"
             @click="personJump"
@@ -22,7 +22,7 @@
             <span class="themeItem__header__title__isAdmin">（{{ userRole }}）</span>
             <view class="themeItem__header__title__jumpBtn">></view>
           </view>
-          <view class="themeItem__header__title__time">{{ commentTime }}</view>
+          <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
         <view class="themeItem__header__r">
           <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
@@ -120,6 +120,8 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     // 回复的用户头像
@@ -211,17 +213,37 @@ export default {
     t() {
       return this.i18n.t('topic');
     },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.commentTime);
+    },
   },
   watch: {
     // 监听得到的数据
     commentLikeCount: {
       handler(newVal) {
         this.commentLikeCount = newVal;
-        console.log('这是监听到的点赞数');
+        // console.log('这是监听到的点赞数');
       },
       deep: true,
       immediate: true,
     },
+    // replyList: {
+    //   // handler(newVal) {
+    //   //   this.replyList = newVal;
+    //   //   console.log(this.replyList, '这是监听到的评论的回复');
+    //   // },
+    //   handler(newValue, oldValue) {
+    //     for (let i = 0; i < newValue.length; i += 1) {
+    //       if (oldValue[i] !== newValue[i]) {
+    //         console.log(newValue, '34567');
+    //         this.replyList = newValue;
+    //       }
+    //     }
+    //   },
+    //   deep: true,
+    //   immediate: true,
+    // },
     deep: true,
     immediate: true,
   },
@@ -306,19 +328,19 @@ export default {
 
       &__username {
         font-weight: bold;
-        color: rgba(51, 51, 51, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__isAdmin {
         font-weight: 400;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__time {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 31rpx;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__jumpBtn {
@@ -346,7 +368,7 @@ export default {
       font-size: 28rpx;
       font-weight: 400;
       line-height: 45rpx;
-      color: rgba(51, 51, 51, 1);
+      color: --color(--qui-FC-333);
       word-break: break-all;
     }
 

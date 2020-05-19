@@ -4,7 +4,11 @@
       <!-- 标签栏 -->
       <view class="invite-tabs">
         <qui-tabs :current="current" :values="tabList" @clickItem="onClickItem"></qui-tabs>
-        <view class="profile-tabs__content" v-if="allInviteList && allInviteList.length > 0">
+        <qui-no-data
+          tips="暂无内容"
+          v-if="!allInviteList || allInviteList.length <= 0"
+        ></qui-no-data>
+        <view class="profile-tabs__content" v-else>
           <view v-if="current === 0" class="items">
             <!-- 记录数 -->
             <view class="invite-records">
@@ -54,10 +58,6 @@
                 </view>
               </qui-cell-item>
             </view>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">生成邀请链接</button>
-            </view>
           </view>
           <view v-if="current === 2" class="items">
             <!-- 记录数 -->
@@ -80,10 +80,6 @@
                   <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
                 </view>
               </qui-cell-item>
-            </view>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">生成邀请链接</button>
             </view>
           </view>
           <view v-if="current === 3" class="items">
@@ -108,13 +104,8 @@
                 </view>
               </qui-cell-item>
             </view>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">生成邀请链接</button>
-            </view>
           </view>
         </view>
-        <qui-no-data tips="暂无内容" v-else></qui-no-data>
       </view>
       <!-- 邀请链接弹窗 -->
       <uni-popup ref="popup" type="bottom">

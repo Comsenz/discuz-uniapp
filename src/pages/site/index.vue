@@ -1,7 +1,7 @@
 <template>
   <qui-page class="site">
     <qui-header
-      :head-img="siteInfo.set_site.site_logo"
+      :head-img="siteInfo.set_site.site_logo || '/static/logo.png'"
       :theme="theme"
       :theme-num="siteInfo.other.count_users"
       :post="post"
@@ -31,40 +31,48 @@
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
-        title="圈子介绍"
+        title="站点介绍"
         :addon="siteInfo.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item title="创建时间" :addon="siteInfo.set_site.createdAt"></qui-cell-item>
-      <qui-cell-item title="圈子模式" :addon="siteInfo.set_site.site_mode"></qui-cell-item>
-      <qui-cell-item title="圈主" slot-right>
+      <qui-cell-item
+        title="圈子模式"
+        :addon="siteInfo.set_site.site_mode === 'public' ? '公开模式' : '付费模式'"
+      ></qui-cell-item>
+      <qui-cell-item title="站长" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="
-              siteInfo.set_site.site_author.avatar ||
-                'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <navigator url="/pages/manage/member" hover-class="none">
+      <navigator url="/pages/manage/users" hover-class="none">
         <qui-cell-item title="成员" slot-right arrow class="cell-item--auto">
           <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
             <image
               class="site-item__person-avatar"
-              :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+              :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
             ></image>
           </view>
         </qui-cell-item>
       </navigator>
-      <qui-cell-item title="我的角色" :addon="userInfo.groups[1].name"></qui-cell-item>
-      <qui-cell-item title="加入时间" :addon="userInfo.joinedTime"></qui-cell-item>
-      <qui-cell-item title="有效期至" :addon="userInfo.expiredTime"></qui-cell-item>
+      <qui-cell-item title="我的角色" :addon="userInfo.groups[0].name"></qui-cell-item>
+      <qui-cell-item
+        title="加入时间"
+        :addon="userInfo.joinedTime"
+        v-if="siteInfo.set_site.site_mode === 'pay'"
+      ></qui-cell-item>
+      <qui-cell-item
+        title="有效期至"
+        :addon="userInfo.expiredTime"
+        v-if="siteInfo.set_site.site_mode === 'pay'"
+      ></qui-cell-item>
       <qui-cell-item class="cell-item--auto" title="我的权限" slot-right>
         <view class="site-permission" v-for="(item, index) in permissionInfo" :key="index">
           {{ item }}
@@ -140,12 +148,16 @@ export default {
         for (let i = 0; i < keys.length; i += 1) {
           const value = list[keys[i]];
           if (info && Object.keys(info.groups)) {
-            if (value._jv.id === info.groups[1]._jv.id) {
-              if (value.permission) {
-                permissionList = Object.keys(value.permission).map(key => {
-                  return value.permission[key].permission;
-                });
+            if (value._jv && info.groups.length > 0) {
+              if (value._jv.id === info.groups[0]._jv.id) {
+                if (value.permission) {
+                  permissionList = Object.keys(value.permission).map(key => {
+                    return value.permission[key].permission;
+                  });
+                }
               }
+            } else {
+              console.log('用户数据', value);
             }
           }
         }
@@ -156,13 +168,13 @@ export default {
   },
 
   methods: {
-    // 调用 获取配置（圈子信息） 接口
+    // 调用 获取配置（站点信息） 接口
     getSiteInfo() {
       const params = {
         include: ['users'],
       };
       this.$store.dispatch('jv/get', ['forum', { params }]).then(res => {
-        console.log('获取圈子信息：', res);
+        console.log('获取站点信息：', res);
       });
     },
 

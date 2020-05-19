@@ -32,7 +32,7 @@
         :theme-btn="item.canHide"
         :user-groups="item.user.groups"
         :theme-time="item.createdAt"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+        :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :tags="item.category.name"
         :images-list="item.firstPost.images"
         :theme-essence="item.isEssence"
@@ -44,15 +44,13 @@
 </template>
 
 <script>
-import { status } from '@/library/jsonapi-vuex/index';
-
 export default {
   data() {
     return {
       searchValue: '',
       loadingType: 'more',
       data: [],
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
     };
   },
@@ -63,11 +61,14 @@ export default {
   methods: {
     searchInput(e) {
       this.searchValue = e.target.value;
-      this.data = [];
-      this.getThemeList(e.target.value);
+      if (this.timeout) clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.data = [];
+        this.getThemeList(e.target.value);
+      }, 250);
     },
     // 获取主题列表
-    getThemeList(key) {
+    getThemeList(key, type) {
       const params = {
         include: ['user', 'firstPost', 'threadVideo'],
         'filter[isDeleted]': 'no',
@@ -75,19 +76,22 @@ export default {
         'page[limit]': this.pageSize,
         'filter[q]': key,
       };
-      status
-        .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
-        .then(res => {
-          if (res._jv) {
-            delete res._jv;
-          }
-          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
+        if (res._jv) {
+          delete res._jv;
+        }
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        if (type && type === 'search') {
+          this.data = res;
+        } else {
           this.data = [...this.data, ...res];
-        });
+        }
+      });
     },
     clearSearch() {
       this.searchValue = '';
-      this.getThemeList('');
+      this.pageNum = 1;
+      this.getThemeList('', 'search');
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
@@ -101,7 +105,7 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getThemeList('');
+      this.getThemeList(this.searchValue);
     },
     refresh() {
       this.pageNum = 1;

@@ -3,11 +3,7 @@
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
-          :src="
-            avatarUrl != '' && avatarUrl != null
-              ? avatarUrl
-              : 'https://discuz.chat/static/images/noavatar.gif'
-          "
+          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '@/static/noavatar.gif'"
           class="det-per-head"
           @click="personJump"
         ></image>
@@ -16,7 +12,7 @@
         <view class="themeItem__header__title__top">
           <span class="themeItem__header__title__username">{{ userName }}</span>
         </view>
-        <view class="themeItem__header__title__time">{{ themeTime }}</view>
+        <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
@@ -137,6 +133,8 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     // 类型
@@ -246,7 +244,7 @@ export default {
   data: () => {
     return {
       seleShow: false, // 默认收起管理菜单
-      selectActive: '',
+      selectActive: false,
     };
   },
   onLoad() {
@@ -258,6 +256,10 @@ export default {
     },
     p() {
       return this.i18n.t('pay');
+    },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.themeTime);
     },
   },
   methods: {
@@ -271,6 +273,7 @@ export default {
       console.log(param, '类型22222');
       this.$emit('selectChoice', param);
       this.seleShow = false;
+      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 点击用户头像以及用户名事件
     personJump() {
@@ -289,6 +292,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .themeItem {
   width: 100%;
+  background: --color(--qui-BG-2);
 
   &__header {
     display: flex;
@@ -324,19 +328,19 @@ export default {
 
       &__username {
         font-weight: bold;
-        color: rgba(51, 51, 51, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__isAdmin {
         font-weight: 400;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: $fg-f24;
         font-weight: 400;
         line-height: 31rpx;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
       }
     }
     &__opera {
@@ -368,7 +372,7 @@ export default {
         bottom: 0;
         left: 0;
         height: 240rpx;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(180deg, --color(--qui-BG-FFF) 0%, --color(--qui-BG-00) 100%);
       }
       &__surtip {
         position: relative;
@@ -451,10 +455,11 @@ export default {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 50rpx;
-        color: rgba(119, 119, 119, 1);
+        color: --color(--qui-FC-TAG);
         text-align: center;
-        background: rgba(247, 247, 247, 1);
+        background: --color(--qui-BG-TAG);
         border-radius: 6rpx;
+        transition: $switch-theme-time;
       }
     }
   }

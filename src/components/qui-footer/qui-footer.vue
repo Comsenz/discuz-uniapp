@@ -11,11 +11,13 @@
         <qui-icon
           class="ft-box-icon"
           :name="item.tabsIcon"
-          size="36"
+          size="40"
           :class="{ select: true, active: item.id === sel }"
           @click="select(item)"
         ></qui-icon>
-        <text class="ft-box-content">{{ item.tabsName }}</text>
+        <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
+          {{ item.tabsName }}
+        </text>
       </view>
 
       <view class="ft-box-spacal">
@@ -38,7 +40,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="36"
+                  size="46"
                   color="#777777"
                 ></qui-icon>
               </view>
@@ -54,6 +56,7 @@
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 <script>
@@ -64,26 +67,11 @@ export default {
   components: {
     uniIcons,
   },
-  // props: {
-  //   tabs: {
-  //     type: Array,
-  //     default: () => {
-  //       return [];
-  //     },
-  //   },
-  //   postImg: {
-  //     type: String,
-  //     default: '',
-  //   },
-  //   redCircle: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
-  // },
   data: () => {
     return {
       sel: 1,
       type: '',
+      redCircle: false, // 消息通知红点
       tabs: [
         {
           tabsName: '首页',
@@ -107,11 +95,6 @@ export default {
       bottomData: [],
     };
   },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
-  },
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {
@@ -129,16 +112,28 @@ export default {
   methods: {
     select(item) {
       // this.sel = item.id;
-      if (item.url) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
-        } else {
-          uni.navigateTo({
-            url: item.url,
-          });
-        }
+      if (!item.url) {
+        return;
       }
+
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+        return;
+      }
+
+      const currentPage = getCurrentPages();
+      if (item.tabsName === '首页' && currentPage[0].route === 'pages/home/index') {
+        const len = currentPage.length;
+        uni.navigateBack({
+          delta: len,
+        });
+        return;
+      }
+
+      uni.navigateTo({
+        url: item.url,
+      });
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {
@@ -153,7 +148,7 @@ export default {
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image
       ) {
-        console.log('此处弹出提示无权限发帖');
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         return;
       }
       this.bottomData = [];
@@ -206,6 +201,22 @@ export default {
     close() {
       this.$refs.auth.close();
     },
+    // 调用 未读通知数 的接口
+    getUserInfo() {
+      const id = 1;
+      const params = {
+        include: ['groups'],
+      };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
+        if (res.unreadNotifications === 0) {
+          this.redCircle = false;
+        } else {
+          this.redCircle = true;
+        }
+        console.log('未读通知', res.unreadNotifications);
+      });
+    },
   },
 };
 </script>
@@ -219,6 +230,7 @@ export default {
   width: 100%;
   height: 119rpx;
   background-color: --color(--qui-BG-2);
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
   justify-content: space-around;
 }
 .ft-box {
@@ -236,6 +248,7 @@ export default {
 .ft-box-content {
   padding-top: 2px;
   font-size: 20rpx;
+  color: --color(--qui-FC-777);
   text-align: center;
 }
 .ft-box-spacal {

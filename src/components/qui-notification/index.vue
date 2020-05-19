@@ -8,11 +8,7 @@
           <view class="list-box__notice__hl">
             <image
               class="list-box__notice__hl-avatar"
-              :src="
-                item.user_avatar
-                  ? item.user_avatar
-                  : 'https://discuz.chat/static/images/noavatar.gif'
-              "
+              :src="item.user_avatar || '/static/noavatar.gif'"
             ></image>
             <view class="list-box__notice__hl-info">
               <view>
@@ -44,18 +40,28 @@
             </view>
           </view>
           <view class="list-box__notice__hr">
-            <text class="list-box__notice__hr__amount" v-if="item.money">{{ item.money }}</text>
+            <text class="list-box__notice__hr__amount" v-if="item.type === 'rewarded'">
+              {{ item.money }}
+            </text>
             <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
           </view>
         </view>
         <view class="list-box__notice__con">
-          <view class="list-box__notice__con__text" v-html="item.post_content"></view>
-          <view class="list-box__notice__con__wrap" v-if="item.thread_id">
+          <view
+            class="list-box__notice__con__text"
+            v-html="item.post_content"
+            @click="jumpMyComment(item)"
+          ></view>
+          <view
+            class="list-box__notice__con__wrap"
+            v-if="item.thread_id"
+            @click="jumpOtherTopic(item.thread_id)"
+          >
             <view class="list-box__notice__con__wrap-info">
               <text class="list-box__notice__con__wrap-info-username">
                 {{ item.thread_user_name }}：
               </text>
-              <text>{{ item.thread_title }}</text>
+              <view v-html="item.thread_title" style="display: inline-block;"></view>
               <view class="list-box__notice__con__wrap-info-time">
                 {{ item.thread_created_at }}
               </view>
@@ -106,17 +112,33 @@ export default {
         console.log('删除成功', res);
       });
     },
+
+    jumpMyComment(item) {
+      console.log('跳转到评论页面：', item);
+      uni.navigateTo({
+        url: `/pages/topic/index?threadId=${item.thread_id}&commentId=${item.post_id}`,
+      });
+    },
+
+    jumpOtherTopic(topicId) {
+      console.log('跳转到帖子详情页面：', topicId);
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${topicId}`,
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .list-box {
   width: 100%;
   margin: 0 0 20rpx;
-  font-size: 28rpx;
-  color: #333;
-  background: #fff;
+  font-size: $fg-f28;
+  background-color: --color(--qui-BG-2);
 
   &__notice {
     padding: 20rpx 40rpx;
@@ -143,7 +165,7 @@ export default {
 
       &-info-username {
         font-weight: bold;
-        color: #000;
+        color: --color(--qui-FC-000);
       }
 
       &-info-username-space {
@@ -152,12 +174,12 @@ export default {
 
       &-info-groupname,
       &-info-title {
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
 
       &-info-time {
         font-size: 24rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
 
@@ -176,14 +198,14 @@ export default {
     &__con {
       &__text {
         margin: 0rpx 0rpx 40rpx;
-        color: #333;
+        color: --color(--qui-FC-333);
       }
 
       &__wrap {
         padding: 20rpx;
         font-size: 24rpx;
-        color: #333;
-        background: #ededed;
+        color: --color(--qui-FC-333);
+        background-color: --color(--qui-BG-ED);
         border-radius: 10rpx;
       }
 
@@ -194,7 +216,7 @@ export default {
       &__wrap-info-time {
         margin: 10rpx 0rpx 0rpx;
         font-size: 20rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
   }
@@ -208,18 +230,20 @@ export default {
       margin-bottom: 20rpx;
 
       &l__title {
+        margin-bottom: 10rpx;
         font-weight: bold;
-        color: #000;
+        color: --color(--qui-FC-000);
       }
+
       &l__time {
         font-size: 24rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
 
     &__con {
       &__text {
-        color: #333;
+        color: --color(--qui-FC-333);
       }
     }
   }
@@ -230,7 +254,7 @@ export default {
 
     &__text {
       margin-left: 11rpx;
-      color: #777;
+      color: --color(--qui-FC-777);
     }
   }
 }

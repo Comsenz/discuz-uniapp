@@ -105,6 +105,7 @@ export default {
 .authen {
   width: 100vw;
   height: 100vh;
+  background: --color(--qui-BG-2);
 }
 .authen-input {
   width: 710rpx;
