@@ -186,6 +186,7 @@ export default {
     walletPay: '钱包支付',
     walletBalance: '钱包余额',
     walletBalanceNo: '钱包余额不足，剩余',
+    cancel: '取消',
     payTo: '将支付到',
     ofAccount: '的账户',
     surePay: '确认支付',
