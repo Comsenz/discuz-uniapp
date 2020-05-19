@@ -61,6 +61,7 @@
 |type|上传类型(image、video)|String|image
 |header|请求头部|Object|-
 |formData|请求携带data|Object|-
+|name|上传file类型(附件：file，头像：avatar)|String|file
 |count|上传总数量|Number|9
 |asyncClear|是否使用异步删除|Boolean|false
 |filePreview|服务器预览图片|Array|-
