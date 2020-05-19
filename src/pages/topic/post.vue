@@ -55,9 +55,10 @@
         @blur="contBlur"
       ></textarea>
       <qui-uploader
-        url="https://dq.comsenz-service.com/api/attachments"
+        :url="`${url}api/attachments`"
         :header="header"
         :form-data="formData"
+        name="file"
         async-clear
         ref="upload"
         v-if="type === 1 || type === 3"
@@ -209,7 +210,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import VodUploader from '../../common/cos-wx-sdk-v5.1';
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import VodUploader from '@/common/cos-wx-sdk-v5.1';
 
 export default {
   name: 'Post',
@@ -288,6 +290,7 @@ export default {
       videoName: '',
       percent: 0,
       fileId: '',
+      url: '',
     };
   },
   computed: {
@@ -619,6 +622,7 @@ export default {
     },
   },
   onLoad(option) {
+    this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
     this.header = {
