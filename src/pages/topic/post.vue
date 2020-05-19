@@ -103,7 +103,7 @@
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3"
+        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0"
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
