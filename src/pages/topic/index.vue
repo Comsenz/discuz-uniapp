@@ -176,7 +176,7 @@
                   :maxlength="450"
                   class="comment-textarea"
                   :placeholder="t.writeComments"
-                  placeholder-style="color:#f00;font-size: 28rpx;"
+                  :placeholder-style="placeholderStyle"
                   placeholder-class="text-placeholder"
                   v-model="textAreaValue"
                   @blur="contBlur"

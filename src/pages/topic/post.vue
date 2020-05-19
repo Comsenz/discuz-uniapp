@@ -1,207 +1,217 @@
 <template>
-  <view class="post-box">
-    <view class="post-box__title" v-if="type === 1">
-      <input
-        class="post-box__title-input"
-        type="text"
-        v-model="postTitle"
-        :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
-      />
-    </view>
-    <view class="post-box__hd">
-      <view class="post-box__hd-l">
-        <qui-icon
-          class="post-box__hd-l__icon"
-          name="icon-expression"
-          size="40"
-          color="#777"
-          @click="emojiShow = !emojiShow"
-        ></qui-icon>
-        <qui-icon
-          class="post-box__hd-l__icon"
-          name="icon-call"
-          size="40"
-          color="#777"
-          @click="callClick"
-        ></qui-icon>
+  <qui-page>
+    <view class="post-box">
+      <view class="post-box__title" v-if="type === 1">
+        <input
+          class="post-box__title-input"
+          type="text"
+          v-model="postTitle"
+          :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
+        />
       </view>
-      <text class="post-box__hd-r">
-        {{
+      <view class="post-box__hd">
+        <view class="post-box__hd-l">
+          <qui-icon
+            class="post-box__hd-l__icon"
+            name="icon-expression"
+            size="40"
+            color="#777"
+            @click="emojiShow = !emojiShow"
+          ></qui-icon>
+          <qui-icon
+            class="post-box__hd-l__icon"
+            name="icon-call"
+            size="40"
+            color="#777"
+            @click="callClick"
+          ></qui-icon>
+        </view>
+        <text class="post-box__hd-r">
+          {{
           textAreaValue.length &lt;= textAreaLength
-            ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-            : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
-        }}
-      </text>
-    </view>
-    <view class="emoji-bd">
-      <qui-emoji
-        :list="allEmoji"
-        position="absolute"
-        top="20rpx"
-        v-if="emojiShow"
-        border-radius="10rpx"
-        @click="getEmojiClick"
-      ></qui-emoji>
-    </view>
-    <textarea
-      id="textarea"
-      class="post-box__con-text"
-      :placeholder="i18n.t('discuzq.post.placeholder')"
-      placeholder-class="textarea-placeholder"
-      v-model="textAreaValue"
-      auto-height
-      :maxlength="-1"
-      @blur="contBlur"
-    ></textarea>
-    <qui-uploader
-      url="https://dq.comsenz-service.com/api/attachments"
-      :header="header"
-      :form-data="formData"
-      async-clear
-      ref="upload"
-      v-if="type === 1 || type === 3"
-      @change="uploadChange"
-      @clear="uploadClear"
-    ></qui-uploader>
-    <view class="post-box__video" v-if="type === 2">
-      <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
-        <video
-          id="video"
-          v-if="type === 2"
-          class="post-box__video__play__video"
-          :src="item.path"
-          :controls="controlsStatus"
-          @fullscreenchange="fullscreenchange"
-        ></video>
-        <view class="post-box__video__play__icon-del">
-          <qui-icon name="icon-close" class="" color="#fff" size="40" @click="videoDel"></qui-icon>
-        </view>
-        <view class="controls-play-icon" @click.stop="playVideo">
-          <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
-        </view>
+          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+          }}
+        </text>
       </view>
-      <view class="post-box__video__add" @click="uploadVideo" v-if="videoBeforeList.length < 1">
-        <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
+      <view class="emoji-bd">
+        <qui-emoji
+          :list="allEmoji"
+          position="absolute"
+          top="20rpx"
+          v-if="emojiShow"
+          border-radius="10rpx"
+          @click="getEmojiClick"
+        ></qui-emoji>
       </view>
-    </view>
-    <qui-cell-item
-      :class="price > 0 ? 'cell-item-right-text' : ''"
-      :title="i18n.t('discuzq.post.paymentAmount')"
-      :addon="showPrice"
-      arrow
-      v-if="type !== 0"
-      @click="cellClick('pay')"
-    ></qui-cell-item>
-    <qui-cell-item
-      :title="i18n.t('discuzq.post.freeWordCount')"
-      :addon="i18n.t('discuzq.post.word', { num: word })"
-      v-if="price > 0 && type !== 3"
-      arrow
-      @click="cellClick('word')"
-    ></qui-cell-item>
-    <view class="post-box__ft">
-      <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
-      <view class="post-box__ft-categories">
-        <qui-button
-          v-for="(item, index) in allCategories"
-          :key="index"
-          :type="checkClassData[index] ? 'primary' : ''"
-          :plain="checkClassData[index]"
-          @click="checkClass(item, index)"
-        >
-          {{ item.name }}
-        </qui-button>
-      </view>
-      <qui-button
-        type="primary"
-        size="large"
-        @click="postClick"
-        :disabled="textAreaValue.length > textAreaLength"
-      >
-        {{ i18n.t('discuzq.post.post') }}
-      </qui-button>
-    </view>
-    <uni-popup ref="popupBtm" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <text class="popup-title">
-            {{
-              setType === 'pay'
-                ? i18n.t('discuzq.post.selectToViewPaymentAmount')
-                : i18n.t('discuzq.post.selectToViewFreeWordCount')
-            }}
-          </text>
-          <view class="popup-content-btn" v-if="setType === 'pay'">
-            <qui-button
-              class="popup-btn"
-              v-for="(item, index) in payNum"
-              :key="index"
-              :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
-              plain
-              size="post"
-              @click="moneyClick(index)"
-            >
-              {{ item.name }}
-            </qui-button>
+      <textarea
+        id="textarea"
+        class="post-box__con-text"
+        :placeholder="i18n.t('discuzq.post.placeholder')"
+        placeholder-class="textarea-placeholder"
+        v-model="textAreaValue"
+        auto-height
+        :maxlength="-1"
+        @blur="contBlur"
+      ></textarea>
+      <qui-uploader
+        :url="`${url}api/attachments`"
+        :header="header"
+        :form-data="formData"
+        name="file"
+        async-clear
+        ref="upload"
+        v-if="type === 1 || type === 3"
+        @change="uploadChange"
+        @clear="uploadClear"
+      ></qui-uploader>
+      <view class="post-box__video" v-if="type === 2">
+        <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
+          <video
+            id="video"
+            v-if="type === 2"
+            class="post-box__video__play__video"
+            :src="item.path"
+            :controls="controlsStatus"
+            @fullscreenchange="fullscreenchange"
+          ></video>
+          <view class="post-box__video__play__icon-del">
+            <qui-icon
+              name="icon-close"
+              class=""
+              color="#fff"
+              size="40"
+              @click="videoDel"
+            ></qui-icon>
+          </view>
+          <view class="controls-play-icon" @click.stop="playVideo">
+            <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
           </view>
         </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
-      </view>
-    </uni-popup>
-    <uni-popup ref="popup" type="center">
-      <view class="popup-dialog">
-        <view class="popup-dialog__top">
-          <text>
-            {{
-              setType === 'pay'
-                ? i18n.t('discuzq.post.enterToViewPaymentAmount')
-                : i18n.t('discuzq.post.enterTheWordCount')
-            }}
-          </text>
-        </view>
-        <view class="popup-dialog__cont">
-          <qui-icon
-            class="popup-dialog__cont-rmb"
-            name="icon-rmb"
-            size="40"
-            v-if="setType === 'pay'"
-          ></qui-icon>
-          <text class="popup-dialog__cont-rmb" v-else>
-            {{ i18n.t('discuzq.post.word', { num: '' }) }}
-          </text>
-          <input
-            class="popup-dialog__cont-input"
-            v-if="setType === 'pay'"
-            v-model="inputPrice"
-            type="digit"
-            placeholder="0.0"
-            focus
-          />
-          <input
-            class="popup-dialog__cont-input"
-            v-else
-            v-model="inputWord"
-            type="digit"
-            placeholder="0.0"
-            focus
-          />
-        </view>
-        <view class="popup-dialog__ft">
-          <button class="popup-btn--close" @click="diaLogClose">
-            {{ i18n.t('discuzq.close') }}
-          </button>
-          <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+        <view class="post-box__video__add" @click="uploadVideo" v-if="videoBeforeList.length < 1">
+          <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
         </view>
       </view>
-    </uni-popup>
-    <qui-toast ref="toast"></qui-toast>
-  </view>
+      <qui-cell-item
+        :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.paymentAmount')"
+        :addon="showPrice"
+        arrow
+        v-if="type !== 0"
+        @click="cellClick('pay')"
+      ></qui-cell-item>
+      <qui-cell-item
+        :title="i18n.t('discuzq.post.freeWordCount')"
+        :addon="i18n.t('discuzq.post.word', { num: word })"
+        v-if="price > 0 && type !== 3"
+        arrow
+        @click="cellClick('word')"
+      ></qui-cell-item>
+      <view class="post-box__ft">
+        <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
+        <view class="post-box__ft-categories">
+          <qui-button
+            v-for="(item, index) in allCategories"
+            :key="index"
+            :type="checkClassData[index] ? 'primary' : ''"
+            :plain="checkClassData[index]"
+            @click="checkClass(item, index)"
+          >
+            {{ item.name }}
+          </qui-button>
+        </view>
+        <qui-button
+          type="primary"
+          size="large"
+          @click="postClick"
+          :disabled="textAreaValue.length > textAreaLength"
+        >
+          {{ i18n.t('discuzq.post.post') }}
+        </qui-button>
+      </view>
+      <uni-popup ref="popupBtm" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content">
+            <text class="popup-title">
+              {{
+                setType === 'pay'
+                  ? i18n.t('discuzq.post.selectToViewPaymentAmount')
+                  : i18n.t('discuzq.post.selectToViewFreeWordCount')
+              }}
+            </text>
+            <view class="popup-content-btn" v-if="setType === 'pay'">
+              <qui-button
+                class="popup-btn"
+                v-for="(item, index) in payNum"
+                :key="index"
+                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+                plain
+                size="post"
+                @click="moneyClick(index)"
+              >
+                {{ item.name }}
+              </qui-button>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
+        </view>
+      </uni-popup>
+      <uni-popup ref="popup" type="center">
+        <view class="popup-dialog">
+          <view class="popup-dialog__top">
+            <text>
+              {{
+                setType === 'pay'
+                  ? i18n.t('discuzq.post.enterToViewPaymentAmount')
+                  : i18n.t('discuzq.post.enterTheWordCount')
+              }}
+            </text>
+          </view>
+          <view class="popup-dialog__cont">
+            <qui-icon
+              class="popup-dialog__cont-rmb"
+              name="icon-rmb"
+              size="40"
+              v-if="setType === 'pay'"
+            ></qui-icon>
+            <text class="popup-dialog__cont-rmb" v-else>
+              {{ i18n.t('discuzq.post.word', { num: '' }) }}
+            </text>
+            <input
+              class="popup-dialog__cont-input"
+              v-if="setType === 'pay'"
+              v-model="inputPrice"
+              type="digit"
+              placeholder="0.0"
+              focus
+            />
+            <input
+              class="popup-dialog__cont-input"
+              v-else
+              v-model="inputWord"
+              type="digit"
+              placeholder="0.0"
+              focus
+            />
+          </view>
+          <view class="popup-dialog__ft">
+            <button class="popup-btn--close" @click="diaLogClose">
+              {{ i18n.t('discuzq.close') }}
+            </button>
+            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+          </view>
+        </view>
+      </uni-popup>
+      <qui-toast ref="toast"></qui-toast>
+    </view>
+  </qui-page>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import VodUploader from '../../common/cos-wx-sdk-v5.1';
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import VodUploader from '@/common/cos-wx-sdk-v5.1';
 
 export default {
   name: 'Post',
@@ -280,6 +290,7 @@ export default {
       videoName: '',
       percent: 0,
       fileId: '',
+      url: '',
     };
   },
   computed: {
@@ -496,8 +507,7 @@ export default {
       if (status) {
         this.postThread().then(res => {
           if (res._jv.json.data.id) {
-            this.setAtMember([]);
-            uni.navigateTo({
+            uni.redirectTo({
               url: `/pages/topic/index?id=${res._jv.json.data.id}`,
             });
           }
@@ -612,6 +622,7 @@ export default {
     },
   },
   onLoad(option) {
+    this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
     this.header = {
@@ -638,6 +649,7 @@ export default {
     this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
+    this.setAtMember([]);
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');

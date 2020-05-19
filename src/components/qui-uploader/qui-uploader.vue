@@ -58,6 +58,10 @@ export default {
       default: Object,
       type: Object,
     },
+    name: {
+      default: 'file',
+      type: String,
+    },
     count: {
       default: 9,
       type: [Number, String],
@@ -136,7 +140,6 @@ export default {
               res.tempFiles[index].uploadStatus = false;
               _this.uploadBeforeList.push(res.tempFiles[index]);
               _this.upload(
-                res.tempFiles[index],
                 res.tempFilePaths[index],
                 _this.uploadBeforeList.length - 1,
                 beforeUploadFile,
@@ -152,19 +155,18 @@ export default {
         },
       });
     },
-    upload(file, pathUrl, index, length, resolve, reject) {
+    upload(pathUrl, index, length, resolve, reject) {
       const _this = this;
 
       const uploadTask = uni.uploadFile({
         url: _this.url,
         fileType: _this.type,
-        files: file,
         filePath: pathUrl,
         header: _this.header,
-        name: 'file',
+        name: _this.name,
         formData: _this.formData,
         success(res) {
-          if (res.statusCode === 201) {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
             _this.uploadList.push(JSON.parse(res.data));
           } else {
