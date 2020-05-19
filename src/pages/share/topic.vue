@@ -1,36 +1,33 @@
 <template>
-  <view class="painter">
-    <view class="canvas-box" :style="{ paddingTop: paddingtop + 'rpx' }">
-      <view class="cent" :style="{ height: constyle + 'rpx' }">
-        <image
-          :src="imagePath"
-          mode="widthFix"
-          @tap="previewImage"
-          :show-menu-by-longpress="true"
-          class="cent-image"
-        ></image>
+  <qui-page>
+    <view class="painter">
+      <view class="canvas-box" :style="{ paddingTop: paddingtop + 'rpx' }">
+        <view class="cent" :style="{ height: constyle + 'rpx' }">
+          <image
+            :src="imagePath"
+            mode="widthFix"
+            @tap="previewImage"
+            :show-menu-by-longpress="true"
+            class="cent-image"
+          ></image>
+        </view>
+        <view class="box-img">
+          <painter
+            custom-style="margin-left: 40rpx; height: 0rpx; position:fixed"
+            :palette="template"
+            @imgErr="imgErr"
+            @imgOK="onImgOK"
+            width-pixels="500"
+          />
+        </view>
       </view>
-      <view class="box-img">
-        <painter
-          custom-style="margin-left: 40rpx; height: 0rpx; position:fixed"
-          :palette="template"
-          @imgErr="imgErr"
-          @imgOK="onImgOK"
-          width-pixels="500"
-        />
-      </view>
-      <!-- <view class="btn-box">
+      <view class="btn-box">
         <qui-button type="primary" size="large" @click="fun">
           {{ i18n.t('share.savealbum') }}
         </qui-button>
-      </view> -->
+      </view>
     </view>
-    <view class="btn-box">
-      <qui-button type="primary" size="large" @click="fun">
-        {{ i18n.t('share.savealbum') }}
-      </qui-button>
-    </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -62,11 +59,13 @@ export default {
       videotime: '', // 视频时间
       weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
       attachmentsType: '', // 话题分类
-      themwidth: '',
+      themwidth: 180,
+      renamewidth: 400,
       reconame: '',
       recoimg: '',
       constyle: 0,
       paddingtop: 43,
+      imgtop: 0,
     };
   },
   onLoad(arr) {
@@ -103,6 +102,10 @@ export default {
       this.$store.dispatch('jv/get', params).then(data => {
         this.reconame = data.username;
         this.themwidth = this.reconame.length * 28 + 3;
+        if (this.themwidth >= 240) {
+          this.themwidth = 240;
+        }
+        this.renamewidth = 160 + this.themwidth;
         this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
       });
     },
@@ -111,7 +114,7 @@ export default {
       this.$store
         .dispatch(
           'jv/get',
-          `threads/${this.themeid}?include=user,firstPost,firstPost.images,category,threadVideo`,
+          `threads/${this.themeid}?include=user,firstPost,firstPost.images,category,threadVideo,category`,
         )
         .then(data => {
           this.headerName = data.user.username;
@@ -132,6 +135,9 @@ export default {
         });
     },
     initData() {
+      if (!this.contentTitle) {
+        this.imgtop = 80;
+      }
       const obj = {
         username: this.headerName, // 名字
         userheader: this.headerImg, // 头像
@@ -145,8 +151,10 @@ export default {
         uservideo: this.video,
         uservideoduc: this.videoduc,
         namewidth: this.themwidth,
+        renamewidth: this.renamewidth,
         reconame: this.reconame,
         recoimg: this.recoimg,
+        imgtop: this.imgtop,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
         recomment: this.i18n.t('share.recomment'),
         goddessvideo: this.i18n.t('share.goddessvideo'),
@@ -179,7 +187,6 @@ export default {
         }
         // 没有标题的海报
       } else if (!this.contentTitle) {
-        // 只有一张图片的海报
         if (this.content && this.contentImg.length === 1) {
           this.constyle = 1100;
           this.paddingtop = 43;
@@ -259,12 +266,14 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .painter {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100vw;
   height: 100vh;
+  background-color: --color(--qui-BG-2);
 }
 .canvas-box {
   width: 100%;

@@ -71,16 +71,20 @@ export default {
               title: this.i18n.t('modify.modifysucc'),
               duration: 2000,
             });
-            uni.navigateTo({
-              url: '/pages/my/profile',
+            uni.navigateBack({
+              delta: 1,
             });
           }
         })
         .catch(err => {
           if (err.statusCode === 500) {
             this.edit = true;
-            /* eslint-disable */
-            this.test = err.data.errors[0].detail[0];
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.test = sun;
             uni.showToast({
               icon: this.nametitle.icon,
               title: this.test,

@@ -48,12 +48,15 @@ export default {
       repeatpas: '',
       icon: 'none',
       time: 2000,
-      inshow: false,
+      inshow: true,
       inisIphone: false,
+      usertokenid: '',
     };
   },
   onLoad(arr) {
     this.userid = Number(arr.id);
+    this.usertokenid = arr.token || '';
+    console.log(this.usertokenid);
   },
   methods: {
     fourse() {
@@ -76,6 +79,7 @@ export default {
           type: 'users',
           id: this.userid,
         },
+        pay_password_token: this.usertokenid,
         payPassword: this.inputpas,
         pay_password_confirmation: sum,
       };
@@ -87,7 +91,13 @@ export default {
               title: this.i18n.t('modify.paymentsucceed'),
               duration: 2000,
             });
-            uni.navigateBack();
+            if (this.usertokenid) {
+              uni.navigateBack({
+                delta: 2,
+              });
+            } else {
+              uni.navigateBack();
+            }
           }
         })
         .catch(err => {
@@ -96,8 +106,6 @@ export default {
               this.sun = true;
               this.test = this.i18n.t('modify.reenter');
             } else if (this.inputpas === sum) {
-              // this.sun = true;
-              // this.test = '已有支付密码';
               uni.showToast({
                 icon: this.icon,
                 title: this.i18n.t('modify.modification'),

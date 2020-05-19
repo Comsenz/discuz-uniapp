@@ -30,7 +30,7 @@ export default class LastCard {
               "css": {
                 "color": "#000000", // name颜色
                 "background": "rgba(0,0,0,0)",
-                "width": "240px",
+                "width": `${obj.namewidth}px`,
                 "height": "40px",
                 "top": "41px",
                 "left": "140px",
@@ -59,7 +59,7 @@ export default class LastCard {
                 "width": "57px",
                 "height": "40px",
                 "top": "41px",
-                "left": "400px",
+                "left": `${obj.renamewidth}px`,
                 "rotate": "0",
                 "borderRadius": "",
                 "borderWidth": "",
@@ -82,7 +82,7 @@ export default class LastCard {
               "css": {
                 "color": "#333333", // 用户个人简介颜色
                 "background": "rgba(0,0,0,0)",
-                "width": "485px",
+                "width": "520px",
                 "height": "34px",
                 "top": "88px",
                 "left": "140px",
@@ -94,7 +94,7 @@ export default class LastCard {
                 "padding": "0",
                 "fontSize": "24px",
                 "fontWeight": "400",
-                "maxLines": "2",
+                "maxLines": "1",
                 "lineHeight": "34.632000000000005px",
                 "textStyle": "fill",
                 "textDecoration": "none",
@@ -231,7 +231,7 @@ export default class LastCard {
               "css": {
                 "color": "#AAAAAA",
                 "background": "rgba(0,0,0,0)",
-                "width": "164px",
+                "width": "450px",
                 "height": "27px",
                 "top": "989px",
                 "left": "210px",
