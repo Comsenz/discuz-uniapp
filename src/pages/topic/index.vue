@@ -346,8 +346,10 @@ import { status, utils } from '@/library/jsonapi-vuex/index';
 import { isEmpty } from 'lodash';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [user],
   data() {
     return {
       threadId: '', //主题id
