@@ -12,7 +12,7 @@
         <view class="themeItem__header__title__top">
           <span class="themeItem__header__title__username">{{ userName }}</span>
         </view>
-        <view class="themeItem__header__title__time">{{ themeTime }}</view>
+        <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
@@ -133,6 +133,8 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     // 类型
@@ -254,6 +256,10 @@ export default {
     },
     p() {
       return this.i18n.t('pay');
+    },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.themeTime);
     },
   },
   methods: {

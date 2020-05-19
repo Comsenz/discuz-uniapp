@@ -138,10 +138,21 @@
                   <qui-icon
                     name="icon-expression"
                     class="comm-icon"
+                    :size="40"
                     @click="emojiShow = !emojiShow"
                   ></qui-icon>
-                  <qui-icon name="icon-call" class="comm-icon" @click="callClick"></qui-icon>
-                  <qui-icon name="icon-image" class="comm-icon" @click="imageUploader"></qui-icon>
+                  <qui-icon
+                    name="icon-call"
+                    :size="40"
+                    class="comm-icon"
+                    @click="callClick"
+                  ></qui-icon>
+                  <qui-icon
+                    name="icon-image"
+                    :size="40"
+                    class="comm-icon"
+                    @click="imageUploader"
+                  ></qui-icon>
                 </view>
                 <view class="text-word-tip">
                   {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
@@ -166,11 +177,12 @@
                   :maxlength="450"
                   class="comment-textarea"
                   :placeholder="t.writeComments"
-                  :placeholder-style="placeholderStyle"
+                  placeholder-style="color:#f00;font-size: 28rpx;"
                   placeholder-class="text-placeholder"
                   v-model="textAreaValue"
                   @blur="contBlur"
                 />
+                <!--<textarea placeholder-style="color:#F76260" placeholder="占位符字体是红色的" />-->
                 <qui-uploader
                   v-if="uploaderShow"
                   url="https://dq.comsenz-service.com/api/attachments"
@@ -351,7 +363,7 @@ export default {
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       uploadFile: [], //上传的文件
-      placeholderStyle: 'color:#b5b5b5', // 默认textarea的placeholder颜色
+      placeholderStyle: 'color:#B5B5B5;font-size: 28rpx;', // 默认textarea的placeholder颜色
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
@@ -868,6 +880,7 @@ export default {
               this.posts[this.postIndex].lastThreeComments = [];
             }
             this.posts[this.postIndex].lastThreeComments.unshift(res);
+            this.posts[this.postIndex].replyCount++;
             // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
           }
           this.textAreaValue = '';
@@ -1610,7 +1623,8 @@ page {
     width: 230rpx;
   }
   .text-word-tip {
-    font-size: $fg-f28;
+    font-size: $fg-f24;
+    line-height: 1;
     color: --color(--qui-FC-777);
   }
   .comm-icon {
@@ -1642,6 +1656,7 @@ page {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;
+  font-weight: normal;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);
   text-align: center;

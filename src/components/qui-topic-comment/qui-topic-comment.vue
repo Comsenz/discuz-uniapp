@@ -22,7 +22,7 @@
             <span class="themeItem__header__title__isAdmin">（{{ userRole }}）</span>
             <view class="themeItem__header__title__jumpBtn">></view>
           </view>
-          <view class="themeItem__header__title__time">{{ commentTime }}</view>
+          <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
         <view class="themeItem__header__r">
           <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
@@ -120,6 +120,8 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     // 回复的用户头像
@@ -210,6 +212,10 @@ export default {
   computed: {
     t() {
       return this.i18n.t('topic');
+    },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.commentTime);
     },
   },
   watch: {
