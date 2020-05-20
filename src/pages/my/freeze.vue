@@ -38,9 +38,6 @@
 import { time2MinuteOrHour } from '@/utils/time';
 
 export default {
-  components: {
-    //
-  },
   onLoad() {
     this.getFreezelist();
   },

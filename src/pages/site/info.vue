@@ -138,9 +138,6 @@ export default {
       ],
     };
   },
-  onLoad() {
-    //
-  },
   methods: {
     // 首页头部分享按钮弹窗
     open() {
