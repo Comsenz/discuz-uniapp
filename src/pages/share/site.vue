@@ -41,7 +41,6 @@ export default {
       imagePath: '',
       width: 700,
       template: {},
-      themeid: '11', // 数据id
       headerImg: '', // 头像
       headerName: '', // 名字
       slitename: '', // 站点名称
