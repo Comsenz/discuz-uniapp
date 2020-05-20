@@ -10,7 +10,7 @@
       'border-radius': borderRadius,
     }"
   >
-    <swiper>
+    <swiper indicator-dots="true" class="uni-swiper">
       <swiper-item v-for="index of getSwiperItem" :key="index">
         <view class="emoji-box__item">
           <view
@@ -80,8 +80,10 @@ export default {
   z-index: 1500;
   width: 100%;
   padding: 10rpx 0;
-  background-color: --color(--qui-BG-ED);
-  border: 1rpx solid --color(--qui-BOR-ED);
+  background-color: --color(--qui-BG-2);
+  border: 1rpx solid --color(--qui-BOR-DDD);
+  border-radius: 10rpx;
+  box-sizing: border-box;
 
   &__item {
     display: flex;
@@ -98,5 +100,9 @@ export default {
       height: 58rpx;
     }
   }
+}
+
+/deep/ .uni-swiper {
+  height: 350rpx;
 }
 </style>

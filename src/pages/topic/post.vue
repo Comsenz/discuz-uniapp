@@ -15,7 +15,7 @@
             class="post-box__hd-l__icon"
             name="icon-expression"
             size="40"
-            color="#777"
+            :color="emojiShow ? '#1878F3' : '#777'"
             @click="emojiShow = !emojiShow"
           ></qui-icon>
           <qui-icon
@@ -28,9 +28,9 @@
         </view>
         <text class="post-box__hd-r">
           {{
-          textAreaValue.length &lt;= textAreaLength
-          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+        textAreaValue.length &lt;= textAreaLength
+        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
           }}
         </text>
       </view>
@@ -103,7 +103,7 @@
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3"
+        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0"
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
@@ -662,8 +662,10 @@ export default {
 @import '@/styles/base/variable/global.scss';
 .post-box {
   width: 100vw;
+  height: 100%;
   padding: 40rpx;
   overflow: hidden;
+  background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 
   &__title {
@@ -784,6 +786,9 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  .popup-btn {
+    margin-top: 20rpx;
+  }
 }
 
 .popup-share {
@@ -794,23 +799,19 @@ export default {
   background: --color(--qui-BG-2);
 }
 .popup-share-content {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
   height: 477rpx;
   padding: 40rpx 45rpx;
+  text-align: center;
   background: --color(--qui-BG-BTN-GRAY-1);
+  box-sizing: border-box;
   .popup-title {
-    height: 37rpx;
+    font-size: $fg-f28;
   }
 }
 .popup-share-content-space {
   width: 100%;
   height: 9rpx;
-  background: --color(--qui-FC-DDD);
+  background: --color(--qui-BG-ED);
 }
 .popup-share-btn {
   height: 100rpx;
