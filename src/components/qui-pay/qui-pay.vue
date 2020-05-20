@@ -3,9 +3,8 @@
     <uni-popup ref="payPopup" type="bottom">
       <view class="popup-pay">
         <view class="popup-content">
-          <view class="pay-title" v-if="payTypeVal == 0">{{ payTypeText }}</view>
-          <view class="pay-title" v-if="payTypeVal == 1">{{ payTypeText }}</view>
-          <view class="pay-title" v-if="payTypeVal == 2">{{ payTypeText }}</view>
+          <view class="pay-title">{{ payTypeText }}</view>
+
           <!--<qui-button size="100%" type="primary" class="pay-btn" @click="publishClick()">
             {{ p.pay }}{{ money }}{{ p.rmb }}
           </qui-button>-->
@@ -31,9 +30,7 @@
     </uni-popup>
     <uni-popup ref="payTypePopup" type="bottom">
       <view class="popup-pay-type">
-        <view class="pay-title" v-if="payTypeVal == 0">{{ payTypeText }}</view>
-        <view class="pay-title" v-if="payTypeVal == 1">{{ payTypeText }}</view>
-        <view class="pay-title" v-if="payTypeVal == 2">{{ payTypeText }}</view>
+        <view class="pay-title">{{ payTypeText }}</view>
         <view class="money--box">
           ￥
           <view class="money-num">{{ money }}</view>
@@ -157,7 +154,7 @@ export default {
     // 支付类型
     payTypeText: {
       type: String,
-      default: '权限',
+      default: '获得权限',
     },
     // 支付于用户name
     toName: {
