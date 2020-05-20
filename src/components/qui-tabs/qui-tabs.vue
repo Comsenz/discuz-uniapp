@@ -72,6 +72,7 @@ export default {
 .qui-tabs {
   display: flex;
   flex-direction: row;
+  background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
   transition: $switch-theme-time;
@@ -83,8 +84,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 20rpx;
-  padding-bottom: 40rpx;
+  padding: 30rpx;
   box-sizing: border-box;
 }
 .qui-tabs__item__brief {

@@ -1,30 +1,32 @@
 <template>
-  <view class="setuppas">
-    <view class="setuppas-pas">
-      <input
-        type="password"
-        class="setuppas-pas-inpa"
-        :placeholder="i18n.t('modify.enternew')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        v-model="valueused"
-      />
-      <input
-        type="password"
-        class="setuppas-pas-inpa"
-        :placeholder="i18n.t('modify.enterreplace')"
-        placeholder-style="color:rgba(221,221,221,1)"
-        v-model="valuenew"
-      />
-      <view class="setuppas-erro-messag1" v-if="judge2">
-        {{ test }}
-      </view>
-      <view class="setuppas-pas-btn">
-        <qui-button type="primary" size="large" @click="submission">
-          {{ i18n.t('modify.submission') }}
-        </qui-button>
+  <qui-page>
+    <view class="setuppas">
+      <view class="setuppas-pas">
+        <input
+          type="password"
+          class="setuppas-pas-inpa"
+          :placeholder="i18n.t('modify.enternew')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          v-model="valueused"
+        />
+        <input
+          type="password"
+          class="setuppas-pas-inpa"
+          :placeholder="i18n.t('modify.enterreplace')"
+          placeholder-style="color:rgba(221,221,221,1)"
+          v-model="valuenew"
+        />
+        <view class="setuppas-erro-messag1" v-if="judge2">
+          {{ test }}
+        </view>
+        <view class="setuppas-pas-btn">
+          <qui-button type="primary" size="large" @click="submission">
+            {{ i18n.t('modify.submission') }}
+          </qui-button>
+        </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
@@ -87,13 +89,22 @@ export default {
           }
         })
         .catch(err => {
-          /* eslint-disable */
           if (err.statusCode === 422) {
             this.judge2 = true;
-            this.test = err.data.errors[0].detail[0];
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.test = sun;
           } else if (err.statusCode === 500) {
             this.judge2 = true;
-            this.test = err.data.errors[0].detail[0];
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.test = sun;
           }
         });
     },
@@ -107,11 +118,13 @@ export default {
 .setuppas {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .setuppas-pas {
   width: 100%;
   padding: 0 0 0 40rpx;
-  margin-top: 31rpx;
 }
 .setuppas-pas-inpa {
   width: 100%;

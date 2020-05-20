@@ -146,12 +146,16 @@ export default {
         .catch(err => {
           this.disab = true;
           this.styledisbla = 'default';
-          /* eslint-disable */
           if (err.statusCode === 422) {
             if (this.valuetone === this.valuenew) {
               this.judge2 = true;
               this.judge3 = false;
-              this.text1 = err.data.errors[0].detail[0];
+              const [
+                {
+                  detail: [sun],
+                },
+              ] = err.data.errors;
+              this.text1 = sun;
             } else {
               this.judge3 = true;
               this.judge2 = false;
@@ -161,7 +165,12 @@ export default {
             this.judge2 = false;
             this.judge3 = false;
             this.judge = true;
-            this.text = err.data.errors[0].detail[0];
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.text = sun;
           }
         });
     },

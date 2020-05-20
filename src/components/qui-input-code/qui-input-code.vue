@@ -202,6 +202,7 @@ export default {
   flex-wrap: wrap;
   width: 100%;
   background: #ebebeb;
+  border-top: 2rpx solid #ebebeb;
   transition: all 0.2s ease-in 0.2s;
 }
 .active {
