@@ -5,9 +5,9 @@
     <!-- 金额 -->
     <view :class="['content', show ? '' : 'contenthide']">
       <view class="title">
-        <view class="close" @click="close()"><image src="@/static/close.png" /></view>
-        <view class="center">{{ p.passwordTip }}</view>
         <view class="close"></view>
+        <view class="center">{{ p.passwordTip }}</view>
+        <view class="close" @click="close()"><image src="@/static/close.png" /></view>
       </view>
       <view class="pay-money">
         <view>{{ p.sumOfMoney }}</view>
