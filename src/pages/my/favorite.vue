@@ -26,7 +26,7 @@
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
-          :theme-comment="item.firstPost.replyCount"
+          :theme-comment="item.postCount - 1"
           :tags="item.category.name"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
@@ -37,7 +37,7 @@
               item.firstPost._jv.id,
               item.firstPost.canLike,
               item.firstPost.isLiked,
-              item.firstPost.likeCount,
+              index,
             )
           "
           @commentClick="commentClick(item._jv.id)"
@@ -158,7 +158,7 @@ export default {
       });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
+    handleIsGreat(id, canLike, isLiked, index) {
       if (!canLike) {
         console.log('没有点赞权限');
       }
@@ -169,7 +169,10 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(res => {
+        console.log(res);
+        this.data[index].firstPost.likeCount = res.likeCount;
+      });
     },
     // 删除收藏
     itemDelete(id, isFavorite, index) {

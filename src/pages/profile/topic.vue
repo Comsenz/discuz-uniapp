@@ -23,7 +23,7 @@
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :is-great="item.firstPost.isLiked"
         :theme-like="item.firstPost.likeCount"
-        :theme-comment="item.firstPost.replyCount"
+        :theme-comment="item.postCount - 1"
         :tags="item.category.name"
         :images-list="item.firstPost.images"
         :theme-essence="item.isEssence"

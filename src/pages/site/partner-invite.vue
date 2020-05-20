@@ -168,7 +168,7 @@ export default {
     submit() {
       const isLogin = !!uni.getStorageSync('access_token');
       if (!isLogin) {
-        this.$store.dispatch('session/login', { code: this.code }).then(() => {
+        this.$store.dispatch('session/login').then(() => {
           uni.navigateTo({
             url: '/pages/home/index',
           });
@@ -180,11 +180,8 @@ export default {
       }
     },
     getInviteInfo(code) {
-      const params = {
-        'filter[type]': 'invite',
-      };
       status
-        .run(() => this.$store.dispatch('jv/get', [`invite/${code}`, { params }]))
+        .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
         .then(res => {
           this.inviteData = res;
           this.permission = res.group.permission;
