@@ -124,18 +124,17 @@ export default {
       postphon
         .then(res => {
           this.num -= 1;
-          /* eslint-disable */
           this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
-          if(err.statusCode === 500 ) {
+          if (err.statusCode === 500) {
             uni.showToast({
               icon: this.icon,
               title: this.lateron,
               duration: this.duration,
             });
           }
-        })
+        });
     },
     btndata(num) {
       this.coum = num;
@@ -154,7 +153,7 @@ export default {
         .then(res => {
           if (res) {
             uni.navigateTo({
-              url: '/pages/modify/setphon',
+              url: '/pages/modify/setphon?type=rebind',
             });
           }
         })
@@ -166,12 +165,17 @@ export default {
           });
           if (err.statusCode === 422) {
             this.judge = true;
-            /* eslint-disable */
-            this.test = err.data.errors[0].detail[0];
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.test = sun;
           } else if (err.statusCode === 500) {
-            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
+            this.test =
+              this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.judge = true;
-            if(this.num < 0){
+            if (this.num < 0) {
               this.test = this.i18n.t('modify.lateron');
             }
           }
@@ -218,7 +222,6 @@ export default {
   opacity: 1;
 }
 .modify-phon-num1 {
-  margin-left: 80rpx;
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
@@ -228,7 +231,7 @@ export default {
   display: block;
   height: 70rpx;
   min-width: 180rpx;
-  margin: 15rpx 40rpx  0;
+  margin: 15rpx 40rpx 0;
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 70rpx;

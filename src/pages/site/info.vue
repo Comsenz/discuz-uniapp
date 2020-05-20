@@ -105,10 +105,10 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
-  components: {
-    //
-  },
+  mixins: [forums],
   data() {
     return {
       theme: this.i18n.t('home.theme'),
@@ -137,9 +137,6 @@ export default {
         },
       ],
     };
-  },
-  onLoad() {
-    //
   },
   methods: {
     // 首页头部分享按钮弹窗

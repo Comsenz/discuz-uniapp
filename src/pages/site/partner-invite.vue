@@ -105,11 +105,10 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
-  components: {
-    //
-  },
+  mixins: [forums],
   data() {
     return {
       theme: this.i18n.t('home.theme'),
@@ -136,7 +135,6 @@ export default {
   onLoad(params) {
     this.code = params.code;
     this.getInviteInfo(params.code);
-    this.getInfo();
   },
   methods: {
     // 首页头部分享按钮弹窗
@@ -191,10 +189,6 @@ export default {
           this.inviteData = res;
           this.permission = res.group.permission;
         });
-    },
-    // 邀请链接一些信息请求，有未登陆的情况
-    getInfo() {
-      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]);
     },
   },
 };

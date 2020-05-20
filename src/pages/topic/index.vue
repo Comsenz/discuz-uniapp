@@ -18,6 +18,7 @@
             :theme-type="thread.type"
             :theme-time="thread.createdAt"
             :management-show="true"
+            :theme-title="thread.type == 1 ? thread.title : ''"
             :theme-content="thread.firstPost.contentHtml"
             :images-list="thread.firstPost.images"
             :select-list="selectList"
@@ -274,7 +275,7 @@
                 class="popup-btn"
                 v-for="(item, index) in payNum"
                 :key="index"
-                :type="payNumCheck[0].name === item.name ? 'primary' : 'default'"
+                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
                 plain
                 size="post"
                 @click="moneyClick(index)"
@@ -284,7 +285,9 @@
             </view>
           </view>
           <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
+          <text class="popup-share-btn" @click="cancelReward()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
         </view>
       </uni-popup>
       <!--自定义打赏金额弹框-->
@@ -321,10 +324,11 @@
           :money="price"
           :wallet-status="true"
           :pay-password="pwdVal"
-          balance="10"
+          :balance="user.walletBalance"
+          :pay-type-val="payTypeVal"
           :pay-type-data="payTypeData"
           :to-name="thread.user.username"
-          :pay-type="payTypeText"
+          :pay-type-text="payTypeText"
           @radioMyHead="radioMyHead"
           @radioChange="radioChange"
           @onInput="onInput"
@@ -335,7 +339,14 @@
       <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
       <!--轻提示-->
       <qui-toast ref="toast"></qui-toast>
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more
+        :status="loadingType"
+        :content-text="{
+          contentdown: '显示更多...',
+          contentrefresh: '正在加载...',
+          contentnomore: '暂无评论',
+        }"
+      ></qui-load-more>
     </scroll-view>
   </qui-page>
 </template>
@@ -346,8 +357,10 @@ import { status, utils } from '@/library/jsonapi-vuex/index';
 import { isEmpty } from 'lodash';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [user],
   data() {
     return {
       threadId: '', //主题id
@@ -405,7 +418,7 @@ export default {
       commentId: '', //评论id
       postIndex: '', //点击时当前评论Index
       isAnonymous: '0', //支付时是否显示头像，默认不显示
-      payTypeText: '支付',
+      payTypeText: '',
       payTypeVal: '', //点击的支付类型， 0主题支付  1主题打赏
       payNum: [
         {
@@ -448,7 +461,7 @@ export default {
       payNumCheck: [
         {
           name: '￥1',
-          pay: 1,
+          pay: 1.0,
         },
       ],
       price: 0.0, //需要支付的金额
@@ -1131,6 +1144,13 @@ export default {
       console.log('主题支付');
       this.payShowStatus = true;
       this.payTypeVal = 0;
+      if (this.thread.type == 3) {
+        this.payTypeText = this.t.pay + this.t.paymentViewPicture;
+      } else if (this.thread.type == 2) {
+        this.payTypeText = this.t.pay + this.t.paymentViewRemainingContent;
+      } else {
+        this.payTypeText = this.t.pay + this.t.paymentViewVideo;
+      }
       this.price = this.thread.price;
       this.$refs.payShow.payClickShow();
     },
@@ -1155,8 +1175,13 @@ export default {
     rewardClick() {
       console.log('打赏');
       this.payTypeVal = 1;
+      this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
       this.$refs.rewardPopup.open();
+    },
+    // 取消打赏
+    cancelReward() {
+      this.$refs.rewardPopup.close();
     },
     // 打赏选择付费金额
     moneyClick(index) {
@@ -1317,6 +1342,7 @@ export default {
     },
     // 取消分享
     cancel() {
+      console.log();
       this.$refs.sharePopup.close();
     },
     // 下拉加载
@@ -1734,7 +1760,7 @@ page {
 .popup-share-btn {
   height: 100rpx;
   font-size: $fg-f28;
-  line-height: 90rpx;
+  line-height: 100rpx;
   color: #666;
   text-align: center;
   border-top-color: #f5f5f5;
@@ -1743,8 +1769,8 @@ page {
 }
 .popup-share-content-space {
   width: 100%;
-  height: 9rpx;
-  background: --color(--qui-FC-DDD);
+  height: 10rpx;
+  background: --color(--qui-BG-ED);
 }
 .popup-content-btn {
   display: flex;
@@ -1761,8 +1787,10 @@ page {
   height: 477rpx;
   padding: 40rpx 45rpx;
   background: --color(--qui-BG-BTN-GRAY-1);
+  box-sizing: border-box;
   .popup-title {
     height: 37rpx;
+    font-size: $fg-f28;
   }
 }
 .popup-dialog {

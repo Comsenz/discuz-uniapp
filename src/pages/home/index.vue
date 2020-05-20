@@ -128,6 +128,8 @@
           :tags="[item.category]"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
+          :video-width="item.threadVideo.width"
+          :video-height="item.threadVideo.height"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -176,8 +178,11 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [forums, user],
   data() {
     return {
       scrolled: 'affix',
@@ -589,7 +594,14 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(data => {
+        const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
+        if (data.isLiked) {
+          likedPost.likeCount += 1;
+        } else {
+          likedPost.likeCount -= 1;
+        }
+      });
     },
 
     // 上拉加载

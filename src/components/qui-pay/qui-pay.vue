@@ -3,11 +3,16 @@
     <uni-popup ref="payPopup" type="bottom">
       <view class="popup-pay">
         <view class="popup-content">
-          <view class="pay-title">{{ p.payHave }}{{ payType }}</view>
-          <!--<qui-button size="100%" type="primary" class="payBtn" @click="publishClick()">
+          <view class="pay-title">{{ payTypeText }}</view>
+
+          <!--<qui-button size="100%" type="primary" class="pay-btn" @click="publishClick()">
             {{ p.pay }}{{ money }}{{ p.rmb }}
           </qui-button>-->
-          <button class="payBtn" @click="payChoice">{{ p.pay }}￥{{ money }}{{ p.rmb }}</button>
+          <button class="pay-btn" @click="payChoice">
+            {{ p.pay }}
+            <view class="pay-num">￥{{ money }}</view>
+            {{ p.rmb }}
+          </button>
           <radio-group @change="radioMyHead">
             <label class="pay-radio">
               <view>
@@ -20,12 +25,12 @@
           </radio-group>
         </view>
         <view class="popup-content-space"></view>
-        <text class="popup-cancel-btn" @click="cancel('1')">取消</text>
+        <text class="popup-cancel-btn" @click="cancel('1')">{{ p.cancel }}</text>
       </view>
     </uni-popup>
     <uni-popup ref="payTypePopup" type="bottom">
       <view class="popup-pay-type">
-        <view class="pay-title">{{ p.payHave }}{{ payType }}</view>
+        <view class="pay-title">{{ payTypeText }}</view>
         <view class="money--box">
           ￥
           <view class="money-num">{{ money }}</view>
@@ -90,9 +95,12 @@
         <view class="pay-tip">
           ￥{{ money }}{{ p.rmb }}{{ p.payTo }}，{{ toName }}{{ p.ofAccount }}
         </view>
-        <qui-button size="max" type="primary" class="paySureBtn" @click="paysureShow">
+        <!--<qui-button size="max" type="primary" class="paySureBtn" @click="paysureShow">
           {{ p.surePay }}￥{{ money }}{{ p.rmb }}
-        </qui-button>
+        </qui-button>-->
+        <button class="paySureBtn" @click="paysureShow">
+          {{ p.surePay }}￥{{ money }}{{ p.rmb }}
+        </button>
         <view class="popup-share-content-space"></view>
 
         <text class="popup-share-btn" @click="cancel('2')">取消</text>
@@ -138,10 +146,15 @@ export default {
       type: [String, Number],
       default: '0',
     },
+    // 0为主题支付，1为主题打赏，2为站点支付
+    payTypeVal: {
+      type: [String, Number],
+      default: '2',
+    },
     // 支付类型
-    payType: {
+    payTypeText: {
       type: String,
-      default: '权限',
+      default: '获得权限',
     },
     // 支付于用户name
     toName: {
@@ -202,6 +215,7 @@ export default {
     }),
     // 是否选中显示头像
     radioMyHead(evt) {
+      this.checkStatus = true;
       console.log(evt.target.value);
       this.$emit('radioMyHead', evt.target.value);
     },
@@ -225,7 +239,7 @@ export default {
     radioChange(evt) {
       console.log('这是change事件');
       console.log(typeof evt.target.value, '这是value的类型');
-      this.checkStatus = true;
+
       for (let i = 0; i < this.payTypeData.length; i += 1) {
         console.log(this.payTypeData[i].value);
         console.log(this.payTypeData[i].value, '如果');
@@ -315,14 +329,22 @@ export default {
   line-height: 37rpx;
   text-align: center;
 }
-.payBtn {
-  width: 265rpx;
+.pay-btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 465rpx;
   height: 90rpx;
   font-size: $fg-f28;
   line-height: 90rpx;
   color: #fff;
   text-align: center;
   background: --color(--qui-RED);
+  .pay-num {
+    padding: 0 20rpx;
+    font-size: 40rpx;
+    color: --color(--qui-FC-FFF);
+  }
 }
 .pay-radio {
   display: flex;
@@ -367,6 +389,9 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  .pay-type-word {
+    font-size: $fg-f28;
+  }
 }
 .pay-type-r {
   display: flex;
@@ -431,15 +456,26 @@ export default {
   border-top-style: solid;
   border-top-width: 1px;
 }
+// .paySureBtn {
+//   width: 100%;
+//   border-radius: 0;
+//   /deep/ .qui-button--button[type='primary'] {
+//     border-radius: 0;
+//   }
+// }
+// /deep/ .qui-button--button {
+//   width: 670rpx;
+//   border-radius: 0;
+// }
 .paySureBtn {
   width: 100%;
-  border-radius: 0;
-  /deep/ .qui-button--button[type='primary'] {
-    border-radius: 0;
-  }
-}
-/deep/ .qui-button--button {
-  width: 670rpx;
+  height: 100rpx;
+  font-size: $fg-f28;
+  font-weight: normal;
+  line-height: 100rpx;
+  color: --color(--qui-FC-FFF);
+  text-align: center;
+  background: --color(--qui-MAIN);
   border-radius: 0;
 }
 </style>

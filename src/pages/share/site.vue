@@ -1,45 +1,48 @@
 <template>
-  <view class="painter">
-    <view class="canvas-box">
-      <view class="cent">
-        <image
-          :src="imagePath"
-          mode="widthFix"
-          @tap="previewImage"
-          :show-menu-by-longpress="true"
-          class="cent-image"
-        ></image>
+  <qui-page>
+    <view class="painter">
+      <view class="canvas-box">
+        <view class="cent">
+          <image
+            :src="imagePath"
+            mode="widthFix"
+            @tap="previewImage"
+            :show-menu-by-longpress="true"
+            class="cent-image"
+          ></image>
+        </view>
+        <view class="box-img">
+          <painter
+            custom-style="margin-left: 40rpx; height: 0rpx; position:fixed"
+            :palette="template"
+            @imgErr="imgErr"
+            @imgOK="onImgOK"
+            width-pixels="500"
+          />
+        </view>
       </view>
-      <view class="box-img">
-        <painter
-          custom-style="margin-left: 40rpx; height: 0rpx; position:fixed"
-          :palette="template"
-          @imgErr="imgErr"
-          @imgOK="onImgOK"
-          width-pixels="500"
-        />
+      <view class="btn-box">
+        <qui-button type="primary" size="large" @click="fun">
+          {{ i18n.t('share.savealbum') }}
+        </qui-button>
       </view>
     </view>
-    <view class="btn-box">
-      <qui-button type="primary" size="large" @click="fun">
-        {{ i18n.t('share.savealbum') }}
-      </qui-button>
-    </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
 import Cardc from '@/wxcomponents/card/cardbasemap'; // 首页海报有底图
 import Carde from '@/wxcomponents/card/cardnobasemap'; // 首页海报无底图
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       userid: '',
       imagePath: '',
       width: 700,
       template: {},
-      themeid: '11', // 数据id
       headerImg: '', // 头像
       headerName: '', // 名字
       slitename: '', // 站点名称
@@ -48,6 +51,8 @@ export default {
       themnumber: '', // 成员人数
       contdata: '', // 内容大小
       introd: '', // 站点介绍
+      themwidth: 180,
+      renamewidth: 400,
       weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
     };
   },
@@ -83,6 +88,11 @@ export default {
       };
       this.$store.dispatch('jv/get', params).then(data => {
         this.headerName = data.username;
+        this.themwidth = this.headerName.length * 28 + 3;
+        if (this.themwidth >= 240) {
+          this.themwidth = 240;
+        }
+        this.renamewidth = 160 + this.themwidth;
         this.headerImg = data.avatarUrl || '/static/noavatar.gif';
         this.initData();
       });
@@ -98,6 +108,8 @@ export default {
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 站点介绍
         userweixincode: this.weixincode, // 微信二维码
+        namewidth: this.themwidth,
+        renamewidth: this.renamewidth,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
         recomment: this.i18n.t('share.recomment'),
         siteintroduction: this.i18n.t('share.siteintroduction'),
@@ -161,12 +173,14 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .painter {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100vw;
   height: 100vh;
+  background-color: --color(--qui-BG-2);
 }
 .canvas-box {
   width: 100%;

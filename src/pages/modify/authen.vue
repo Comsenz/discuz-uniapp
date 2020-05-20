@@ -1,22 +1,24 @@
 <template>
-  <view class="authen" @click.stop="toggleBox">
-    <view class="authen-input" @click.stop="fourse">
-      <view class="authen-tit">
-        {{ i18n.t('modify.authentication') }}
+  <qui-page>
+    <view class="authen" @click.stop="toggleBox">
+      <view class="authen-input" @click.stop="fourse">
+        <view class="authen-tit">
+          {{ i18n.t('modify.authentication') }}
+        </view>
+        <qui-input-code
+          @getdata="btndata"
+          :title="sun"
+          :text="test"
+          :number="types"
+          :show="inshow"
+          :isiphonex="inisIphone"
+        ></qui-input-code>
       </view>
-      <qui-input-code
-        @getdata="btndata"
-        :title="sun"
-        :text="test"
-        :number="types"
-        :show="inshow"
-        :isiphonex="inisIphone"
-      ></qui-input-code>
       <view class="authen-forget" @click="forgetpay">
         {{ i18n.t('modify.forgetmanypassword') }}
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -36,7 +38,7 @@ export default {
       inputpas: '',
       repeatpas: '',
       icon: 'none',
-      inshow: false,
+      inshow: true,
       inisIphone: false,
     };
   },
@@ -63,11 +65,14 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          /* eslint-disable */
           if (res._jv.json.data.id) {
             uni.showToast({
               title: this.i18n.t('modify.authensucceeded'),
               duration: 2000,
+            });
+            const tokenid = res._jv.json.data.id;
+            uni.navigateTo({
+              url: `/pages/modify/paypwd?token=${tokenid}&id=${this.userid}`,
             });
           }
         })
@@ -79,9 +84,13 @@ export default {
           });
           if (err.statusCode === 422) {
             this.sun = true;
-            const {data:{errors}} = err;
-            this.test = errors[0].detail[0];
-          } else if(err.statusCode === 500) {
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.test = sun;
+          } else if (err.statusCode === 500) {
             this.sun = true;
             this.test = this.i18n.t('modify.passwordinputerro');
           }
@@ -105,14 +114,14 @@ export default {
 .authen {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
   background: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .authen-input {
   width: 710rpx;
-  height: 200rpx;
   padding: 0 0 0 40rpx;
-  margin: 31rpx 0 0;
-  background: --color(--qui-FC-FFF);
+  background: --color(--qui-BG-2);
 }
 .authen-tit {
   font-size: $fg-f28;
@@ -121,7 +130,7 @@ export default {
   color: --color(--qui-FC-777);
 }
 .authen-forget {
-  margin: 30rpx 0 0;
+  margin: 30rpx 0 0 40rpx;
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 37rpx;
