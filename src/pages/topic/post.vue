@@ -786,6 +786,9 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  .popup-btn {
+    margin-top: 20rpx;
+  }
 }
 
 .popup-share {
@@ -796,23 +799,19 @@ export default {
   background: --color(--qui-BG-2);
 }
 .popup-share-content {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
   height: 477rpx;
   padding: 40rpx 45rpx;
+  text-align: center;
   background: --color(--qui-BG-BTN-GRAY-1);
+  box-sizing: border-box;
   .popup-title {
-    height: 37rpx;
+    font-size: $fg-f28;
   }
 }
 .popup-share-content-space {
   width: 100%;
   height: 9rpx;
-  background: --color(--qui-FC-DDD);
+  background: --color(--qui-BG-ED);
 }
 .popup-share-btn {
   height: 100rpx;

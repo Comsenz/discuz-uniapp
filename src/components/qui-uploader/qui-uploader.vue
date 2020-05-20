@@ -9,6 +9,7 @@
         <image
           class="qui-uploader-box__uploader-file--image"
           v-if="uploadBeforeList.length > 0"
+          mode="aspectFill"
           :src="item.path"
           @click="previewPicture(index)"
         ></image>
@@ -275,7 +276,7 @@ export default {
       position: absolute;
       bottom: 0;
       left: 1px;
-      z-index: 222;
+      z-index: 1;
       display: flex;
       justify-content: center;
       align-items: center;
