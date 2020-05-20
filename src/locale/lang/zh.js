@@ -346,7 +346,7 @@ export default {
       delete: '删除附件',
     },
     viewUserList: '站点会员列表',
-    case: {
+    cash: {
       create: '申请提现',
     },
     order: {
