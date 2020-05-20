@@ -379,7 +379,7 @@ export default {
       uni.previewImage({
         current: index,
         urls: preview,
-        indicator: 'default',
+        indicator: 'number',
       });
     },
   },

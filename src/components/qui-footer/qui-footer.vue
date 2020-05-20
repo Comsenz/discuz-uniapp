@@ -95,7 +95,7 @@ export default {
       bottomData: [],
     };
   },
-  mounted() {
+  created() {
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
