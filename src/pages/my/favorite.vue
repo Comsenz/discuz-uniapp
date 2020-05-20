@@ -170,8 +170,10 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params).then(res => {
-        console.log(res);
-        this.data[index].firstPost.likeCount = res.likeCount;
+        const likedData = this.data[index];
+        const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
+        likedData.firstPost.likeCount = count;
+        this.$set(this.data, index, likedData);
       });
     },
     // 删除收藏
