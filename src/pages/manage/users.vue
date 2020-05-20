@@ -79,13 +79,9 @@
 </template>
 
 <script>
-// import quiSearch from '@/components/qui-search';
+import { debounce } from 'lodash';
 
 export default {
-  components: {
-    // quiSearch,
-  },
-
   data() {
     return {
       searchText: '', // 输入的用户名
@@ -105,17 +101,18 @@ export default {
   },
 
   methods: {
-    searchInput(e) {
-      this.searchText = e.target.value;
-      this.searchUser();
-    },
+    // eslint-disable-next-line
+    searchInput: debounce(function(e) {
+      this.searchUser(e.target.value);
+    }, 800),
 
     clearSearch() {
-      this.searchText = '';
+      this.searchInput();
     },
 
     // 调用 搜索 接口
-    searchUser() {
+    searchUser(val = '') {
+      this.searchText = val;
       const params = {
         'filter[username]': `*${this.searchText}*`,
       };

@@ -153,7 +153,6 @@ export default {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
-
     changeCheck(e) {
       this.checkAvatar = [];
       e.detail.value.forEach(item => {
@@ -252,7 +251,6 @@ export default {
       this.$store.dispatch('jv/get', 'groups');
       console.log('获取所有用户组');
     },
-
     // 调用 批量修改用户的用户组 接口
     modifyGroupName(item) {
       const data = [];

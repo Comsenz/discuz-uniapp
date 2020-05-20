@@ -320,8 +320,8 @@ export default {
 
       &__top {
         height: 37rpx;
+        margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-family: $font-family;
         font-size: 28rpx;
         line-height: 37rpx;
       }

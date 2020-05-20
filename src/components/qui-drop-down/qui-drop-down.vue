@@ -91,6 +91,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 
 .select-box {
   display: flex;
