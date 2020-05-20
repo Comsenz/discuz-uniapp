@@ -24,7 +24,7 @@
         <!-- 提现金额 -->
         <view class="cash-content-tab">
           <qui-cell-item
-            :title="i18n.t('modify.withdrawable')"
+            :title="i18n.t('modify.withdrawalamount')"
             slot-right
             :arrow="false"
             :border="false"
@@ -53,7 +53,13 @@
                 v-text="contint"
               ></view>
               <view class="cash-content-proced">
-                {{ i18n.t('modify.servicechaege') + procedures + i18n.t('modify.percentage') }}
+                {{
+                  i18n.t('modify.servicechaege') +
+                    procedures +
+                    i18n.t('modify.percentage') +
+                    percentage +
+                    i18n.t('modify.percentagcon')
+                }}
               </view>
             </view>
           </qui-cell-item>
@@ -65,15 +71,18 @@
             <view class="cash-phon-test">
               {{ i18n.t('modify.phonnumber') }}
             </view>
-            <view class="cash-phon-num">
-              {{ usertestphon }}
+            <view :class="usertestphon ? 'cash-phon-num' : 'cash-phon-num1'">
+              {{ usertestphon ? usertestphon : i18n.t('modify.nohasphon') }}
             </view>
-            <button class="cash-phon-send" v-if="sun" @click="btnButton">
+            <button class="cash-phon-send" v-if="sun" @click="btnButton" :disabled="disabtype">
               {{ i18n.t('modify.sendverificode') }}
             </button>
             <button class="cash-phon-send" disabled v-else>
               {{ second + i18n.t('modify.retransmission') }}
             </button>
+          </view>
+          <view class="cash-erro" v-if="casherro">
+            {{ casherrotest }}
           </view>
           <!-- 验证码 -->
           <view class="cash-input" @click.stop="fourse">
@@ -126,11 +135,27 @@ export default {
       procedures: 0,
       inshow: false,
       inisIphone: false,
+      casherrotest: '',
+      casherro: false,
+      disabtype: false,
+      percentage: 0,
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
+  onLoad() {
+    this.userid = this.usersid;
     this.setmydata();
+    this.$nextTick(() => {
+      const percennumber = this.forums.set_site.site_master_scale || 0;
+      this.percentage = (percennumber / 10) * 100;
+    });
+  },
+  computed: {
+    forums() {
+      return this.$store.getters['jv/get']('forums/1');
+    },
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     fourse() {
@@ -155,19 +180,27 @@ export default {
     settlement() {
       if (this.cashmany.length > 0) {
         this.length = true;
-        const number = this.cashmany - this.cashmany * 0.3;
+        const number = this.cashmany - this.cashmany * this.percentage;
         this.contint = `¥${number.toFixed(2)}`;
-        const casnumber = this.cashmany * 0.3;
+        const casnumber = this.cashmany * this.percentage;
         this.procedures = casnumber.toFixed(2);
       } else if (this.cashmany.length <= 0) {
         this.length = false;
         this.contint = '-.-';
-        const casnumber = this.cashmany * 0.3;
+        const casnumber = this.cashmany * this.percentage;
         this.procedures = casnumber.toFixed(2);
       }
     },
     // 点击获取验证码计时开始
     btnButton() {
+      if (!this.usertestphon) {
+        uni.showToast({
+          icon: 'none',
+          title: '请先绑定手机号',
+          duration: 2000,
+        });
+        return;
+      }
       this.sun = !this.sun;
       this.showText = false;
       const interval = setInterval(() => {
@@ -195,6 +228,9 @@ export default {
         this.balance = data.walletBalance;
         this.usertestphon = data.mobile;
         this.userphon = data.originalMobile;
+        if (!this.usertestphon) {
+          this.disabtype = true;
+        }
       });
     },
     // 发动短信
@@ -208,9 +244,8 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon.then(res => {
         this.num -= 1;
-        /* eslint-disable */
         this.second = res._jv.json.data.attributes.interval;
-      })
+      });
     },
     // 验证短信
     verifytitle() {
@@ -230,14 +265,15 @@ export default {
         })
         .catch(err => {
           if (err.statusCode === 500) {
-            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
+            this.test =
+              this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.judge = true;
-            if (this.num <=0) {
+            if (this.num <= 0) {
               this.test = this.i18n.t('modify.lateron');
             }
           } else if (err.statusCode === 422) {
-            this.test = err.data.errors[0].detail;
-            this.judge = true;
+            this.casherrotest = err.data.errors[0].detail;
+            this.casherro = true;
           }
         });
     },
@@ -253,7 +289,7 @@ export default {
       const postcash = status.run(() => this.$store.dispatch('jv/post', params));
       postcash
         .then(res => {
-          if(res) {
+          if (res) {
             uni.showToast({
               title: this.i18n.t('modify.withdrawal'),
               duration: 2000,
@@ -299,9 +335,9 @@ export default {
 .cash-content-tab {
   padding: 0 40rpx 0 0;
   justify-content: space-between;
-  border-bottom: 2px solid --color(--qui-BOR-ED);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
-/deep/.cell-item__body__content-title{
+/deep/.cell-item__body__content-title {
   color: --color(--qui-FC-777);
 }
 .cash-content-name {
@@ -361,7 +397,14 @@ export default {
   font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
-  color: rgba(0, 0, 0, 1);
+  color: --color(--qui-FC-000);
+}
+.cash-phon-num1 {
+  margin: 0 0 0 10rpx;
+  font-size: $fg-f28;
+  font-weight: 400;
+  line-height: 100rpx;
+  color: --color(--qui-FC-777);
 }
 .cash-phon-send {
   display: block;
@@ -375,6 +418,12 @@ export default {
   text-align: center;
   background-color: --color(--qui-MAIN);
   border-radius: 5rpx;
+}
+.cash-erro {
+  margin-top: 20rpx;
+  font-size: $fg-f24;
+  font-weight: 400;
+  color: --color(--qui-RED);
 }
 .cash-input {
   width: 710rpx;

@@ -20,30 +20,32 @@
           :key="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
+          :theme-btn="item.canHide"
           :theme-reply-btn="item.canReply"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+          :thread-type="item.type"
+          :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
-          :theme-comment="item.firstPost.replyCount"
-          :tags="item.category.name"
+          :theme-comment="item.postCount - 1"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          theme-btn="icon-delete"
+          :video-width="item.threadVideo.width"
+          :video-height="item.threadVideo.height"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
               item.firstPost._jv.id,
               item.firstPost.canLike,
               item.firstPost.isLiked,
-              item.firstPost.likeCount,
+              index,
             )
           "
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item._jv.id)"
-          @deleteClick="itemDelete(item._jv.id, item.isFavorite)"
         ></qui-content>
       </scroll-view>
       <qui-load-more :status="loadingType"></qui-load-more>
@@ -57,7 +59,6 @@
               <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
@@ -73,9 +74,6 @@
 import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
-  components: {
-    //
-  },
   props: {
     userId: {
       type: String,
@@ -162,7 +160,7 @@ export default {
       });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
+    handleIsGreat(id, canLike, isLiked, index) {
       if (!canLike) {
         console.log('没有点赞权限');
       }
@@ -173,10 +171,14 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(res => {
+        const likedData = this.data[index];
+        const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
+        likedData.firstPost.likeCount = count;
+      });
     },
     // 删除收藏
-    itemDelete(id, isFavorite) {
+    itemDelete(id, isFavorite, index) {
       const params = {
         _jv: {
           type: 'threads',
@@ -186,14 +188,7 @@ export default {
       };
       this.$store.dispatch('jv/patch', params).then(() => {
         this.totalData -= 1;
-        const dataList = this.data;
-        dataList.forEach((item, index) => {
-          if (item._jv && item._jv.id === id) {
-            const data = JSON.parse(JSON.stringify(dataList));
-            data.splice(index, 1);
-            this.data = data;
-          }
-        });
+        this.data.splice(index, 1);
       });
     },
     // 下拉加载

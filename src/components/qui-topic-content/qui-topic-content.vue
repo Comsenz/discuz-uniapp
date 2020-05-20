@@ -83,7 +83,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
@@ -96,7 +96,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
@@ -109,7 +109,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
             <image
               class="themeItem__content__imgmore__item"
@@ -290,8 +290,21 @@ export default {
       this.$emit('personJume', this.userId);
     },
     // 点击图片事件(默认参数图片id)
-    imageClick(imageId) {
-      this.$emit('imageClick', imageId);
+    // imageClick(imageId) {
+    //   this.$emit('imageClick', imageId);
+    // },
+    // 预览图片
+    previewPicture(index) {
+      const _this = this;
+      const preview = [];
+      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+        preview.push(_this.imagesList[i].url);
+      }
+      uni.previewImage({
+        current: index,
+        urls: preview,
+        indicator: 'number',
+      });
     },
   },
 };

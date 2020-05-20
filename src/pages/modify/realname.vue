@@ -62,18 +62,20 @@ export default {
               title: this.i18n.t('modify.nameauthensucc'),
               duration: 2000,
             });
-            uni.navigateTo({
-              url: '/pages/my/profile',
-            });
+            uni.navigateBack();
           }
         })
         .catch(err => {
-          /* eslint-disable */
           if (err.statusCode === 422) {
             this.judge = true;
-            this.title1 = err.data.errors[0].detail[0];
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.title1 = sun;
             uni.showToast({
-              icon:'none',
+              icon: 'none',
               title: this.title1,
               duration: 2000,
             });
@@ -81,7 +83,7 @@ export default {
             this.judge = true;
             this.title1 = err.data.errors[0].detail;
             uni.showToast({
-              icon:'none',
+              icon: 'none',
               title: this.title1,
               duration: 2000,
             });
