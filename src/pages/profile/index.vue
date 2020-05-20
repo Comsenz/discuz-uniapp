@@ -59,13 +59,13 @@
         <view v-if="current == 0" class="items">
           <topic :user-id="userId" @changeFollow="changeFollow"></topic>
         </view>
-        <view v-if="current == 1" class="items">
+        <view v-else-if="current == 1" class="items">
           <following :user-id="userId" @changeFollow="changeFollow"></following>
         </view>
-        <view v-if="current == 2" class="items">
+        <view v-else-if="current == 2" class="items">
           <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
         </view>
-        <view v-if="current == 3" class="items">
+        <view v-else class="items">
           <like :user-id="userId" @changeFollow="changeFollow"></like>
         </view>
       </view>

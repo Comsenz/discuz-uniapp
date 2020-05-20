@@ -1,55 +1,57 @@
 <template>
-  <view class="retireve" @click.stop="toggleBox">
-    <view class="retireve-tab">
-      <view class="retireve-titel">
-        {{ i18n.t('modify.forgetpassword') }}\{{ i18n.t('modify.retrievepassword') }}
-      </view>
-      <!-- 已绑定手机号码验证 -->
-      <view class="retireve-phon" v-if="phon">
-        <view class="retireve-phon-test">
-          {{ i18n.t('modify.phonnumber') }}
+  <qui-page>
+    <view class="retireve" @click.stop="toggleBox">
+      <view class="retireve-tab">
+        <view class="retireve-titel">
+          {{ i18n.t('modify.forgetpassword') }}\{{ i18n.t('modify.retrievepassword') }}
         </view>
-        <view class="retireve-phon-num">
-          {{ disphon }}
+        <!-- 已绑定手机号码验证 -->
+        <view class="retireve-phon" v-if="phon">
+          <view class="retireve-phon-test">
+            {{ i18n.t('modify.phonnumber') }}
+          </view>
+          <view :class="disphon ? 'retireve-phon-num' : 'retireve-phon-num1'">
+            {{ disphon ? disphon : i18n.t('modify.phonnumberempty') }}
+          </view>
+          <button class="retireve-phon-send" v-if="sun" @click="btnButton" :disabled="disabletype">
+            {{ i18n.t('modify.sendverificode') }}
+          </button>
+          <button class="retireve-phon-send" disabled v-else>
+            {{ second + i18n.t('modify.retransmission') }}
+          </button>
         </view>
-        <button class="retireve-phon-send" v-if="sun" @click="btnButton">
-          {{ i18n.t('modify.sendverificode') }}
-        </button>
-        <button class="retireve-phon-send" disabled v-else>
-          {{ second + i18n.t('modify.retransmission') }}
-        </button>
-      </view>
-      <view class="retireve-pas">
-        <view class="retireve-pas-title">
-          {{ i18n.t('modify.placeenternewpass') }}
+        <view class="retireve-pas">
+          <view class="retireve-pas-title">
+            {{ i18n.t('modify.placeenternewpass') }}
+          </view>
+          <view class="retireve-pas-input">
+            <input class="retireve-pas-input-i" type="password" v-model="newpassword" />
+          </view>
         </view>
-        <view class="retireve-pas-input">
-          <input class="retireve-pas-input-i" type="password" v-model="newpassword" />
+        <view class="retireve-pass" v-if="passt">
+          {{ passtext }}
         </view>
-      </view>
-      <view class="retireve-pass" v-if="passt">
-        {{ passtext }}
-      </view>
-      <!-- 验证码 -->
-      <view class="retireve-input" @click.stop="fourse">
-        <view class="retireve-input-test">
-          {{ i18n.t('modify.placeentercode') }}
+        <!-- 验证码 -->
+        <view class="retireve-input" @click.stop="fourse">
+          <view class="retireve-input-test">
+            {{ i18n.t('modify.placeentercode') }}
+          </view>
+          <qui-input-code
+            @getdata="btndata"
+            :title="pad"
+            :text="test"
+            :show="inshow"
+            :isiphonex="inisIphone"
+          ></qui-input-code>
         </view>
-        <qui-input-code
-          @getdata="btndata"
-          :title="pad"
-          :text="test"
-          :show="inshow"
-          :isiphonex="inisIphone"
-        ></qui-input-code>
-      </view>
-      <view class="retireve-button">
-        <qui-button type="primary" size="large" @click="submission">
-          {{ i18n.t('modify.submission') }}
-        </qui-button>
+        <view class="retireve-button">
+          <qui-button type="primary" size="large" @click="submission">
+            {{ i18n.t('modify.submission') }}
+          </qui-button>
+        </view>
       </view>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -76,6 +78,7 @@ export default {
       sendtype: '',
       inshow: false,
       inisIphone: false,
+      disabletype: false,
     };
   },
   onLoad(sing) {
@@ -130,6 +133,9 @@ export default {
       this.$store.dispatch('jv/get', params).then(data => {
         this.disphon = data.mobile;
         this.phonnumber = data.originalMobile;
+        if (!this.disphon) {
+          this.disabletype = true;
+        }
       });
     },
     // 发送短信
@@ -169,7 +175,7 @@ export default {
               title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
-            uni.navigateBack(1);
+            uni.navigateBack();
           }
         })
         .catch(err => {
@@ -180,10 +186,15 @@ export default {
           });
           if (err.statusCode === 422) {
             this.passt = true;
-            /* eslint-disable */
-            this.passtext = err.data.errors[0].detail[0];
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.passtext = sun;
           } else if (err.statusCode === 500) {
-            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
+            this.test =
+              this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.pad = true;
             if (this.num < 0) {
               this.test = this.i18n.t('modify.lateron');
@@ -204,10 +215,12 @@ export default {
 .retireve {
   width: 100vw;
   height: 100vh;
+  padding-top: 31rpx;
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .retireve-tab {
   padding-left: 40rpx;
-  margin-top: 31rpx;
   box-sizing: border-box;
 }
 .retireve-titel {
@@ -239,6 +252,13 @@ export default {
   line-height: 100rpx;
   color: rgba(0, 0, 0, 1);
   opacity: 1;
+}
+.retireve-phon-num1 {
+  margin-left: 80rpx;
+  font-size: $fg-f28;
+  font-weight: 400;
+  line-height: 100rpx;
+  color: --color(--qui-FC-777);
 }
 .retireve-phon-send {
   display: block;

@@ -55,9 +55,6 @@ import { status } from '@/library/jsonapi-vuex/index';
 import { time2MinuteOrHour } from '@/utils/time';
 
 export default {
-  components: {
-    //
-  },
   data() {
     const date = new Date();
     const year = date.getFullYear();

@@ -6,14 +6,17 @@
           {{ i18n.t('modify.newphonnumber') }}
         </view>
         <view class="new-phon-number">
-          <input class="new-phon-num" type="text" v-model="newphon" />
-          <button class="new-phon-send" v-if="sun" @click="btnButton">
+          <input class="new-phon-num" type="text" v-model="newphon" @input="changeinput" />
+          <button class="new-phon-send" v-if="sun" @click="btnButton" :disabled="disabtype">
             {{ i18n.t('modify.sendverificode') }}
           </button>
           <button class="new-phon-send" disabled v-else>
             {{ second + i18n.t('modify.retransmission') }}
           </button>
         </view>
+      </view>
+      <view class="newphon-erro" v-if="formeerro">
+        {{ formeerro }}
       </view>
       <!-- 验证码 -->
       <view class="new-input" @click.stop="fourse">
@@ -59,9 +62,22 @@ export default {
       duration: 2000,
       inshow: false,
       inisIphone: false,
+      typebind: 'bind',
+      disabtype: true,
+      formeerro: '',
     };
   },
+  onLoad(arr) {
+    this.typebind = arr.type || 'bind';
+  },
   methods: {
+    changeinput() {
+      if (this.newphon.length < 11) {
+        this.disabtype = true;
+      } else if (this.newphon.length === 11) {
+        this.disabtype = false;
+      }
+    },
     fourse() {
       this.inshow = true;
     },
@@ -116,22 +132,39 @@ export default {
           type: 'sms/send',
         },
         mobile: this.newphon,
-        type: 'rebind',
+        type: this.typebind,
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
           this.num -= 1;
-          /* eslint-disable */
           this.second = res._jv.json.data.attributes.interval;
         })
         .catch(err => {
-          if(err.statusCode === 500) {
+          if (err.statusCode === 500) {
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.formeerro = sun;
             uni.showToast({
               icon: this.icon,
-              title: this.i18n.t('modify.lateron'),
+              title: sun,
               duration: this.duration,
             });
+          } else if (err.statusCode === 422) {
+            uni.showToast({
+              icon: this.icon,
+              title: err.data.errors[0].detail[0],
+              duration: this.duration,
+            });
+            const [
+              {
+                detail: [sun],
+              },
+            ] = err.data.errors;
+            this.formeerro = sun;
           }
         });
     },
@@ -143,18 +176,20 @@ export default {
         },
         mobile: this.newphon,
         code: this.setnum,
-        type: 'rebind',
+        type: this.typebind,
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
-          uni.showToast({
-            title: '手机号修改成功',
-            duration: 1000
-          });
-          uni.navigateTo({
-              url: '/pages/my/profile',
-          });
+          if (res) {
+            uni.showToast({
+              title: this.i18n.t('modify.phontitle'),
+              duration: 1000,
+            });
+            uni.navigateBack({
+              delta: 1,
+            });
+          }
         })
         .catch(err => {
           uni.showToast({
@@ -164,12 +199,30 @@ export default {
           });
           if (err.statusCode === 422) {
             this.tit = true;
-            /* eslint-disable */
-            this.test = err.data.errors[0].detail[0];
+            if (err.data.errors.length > 1) {
+              const [
+                {
+                  detail: [arr],
+                },
+                {
+                  detail: [sun],
+                },
+              ] = err.data.errors;
+              this.formeerro = arr;
+              this.test = sun;
+            } else {
+              const [
+                {
+                  detail: [sun],
+                },
+              ] = err.data.errors;
+              this.test = sun;
+            }
           } else if (err.statusCode === 500) {
-            this.test = this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
+            this.test =
+              this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.tit = true;
-            if(this.num < 0){
+            if (this.num < 0) {
               this.test = this.i18n.t('modify.lateron');
             }
           }
@@ -194,7 +247,6 @@ export default {
 }
 .new-phon {
   width: 710rpx;
-  height: 200rpx;
   margin-left: 40rpx;
   font-size: $fg-f50;
   font-weight: bold;
@@ -218,6 +270,12 @@ export default {
   font-weight: bold;
   line-height: 100rpx;
   color: --color(--qui-FC-333);
+}
+.newphon-erro {
+  margin: 20rpx 0 0 40rpx;
+  font-size: $fg-f24;
+  font-weight: 400;
+  color: --color(--qui-RED);
 }
 .new-phon-send {
   display: block;
