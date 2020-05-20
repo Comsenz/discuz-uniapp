@@ -87,9 +87,7 @@ export default {
             title: this.i18n.t('modify.modificationsucc'),
             duration: 2000,
           });
-          uni.navigateTo({
-            url: '/pages/my/profile',
-          });
+          uni.navigateBack();
         }
       });
     },

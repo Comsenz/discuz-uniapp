@@ -281,9 +281,10 @@ export default {
     validionerro: '验证码错误，您还可以重发',
     frequency: '次',
     newphonnumber: '输入新手机号码',
+    phontitle: '手机号修改成功',
     nextsetp: '下一步',
     enterpaymentpas: '请输入支付密码',
-    enterpaymentagin: '请在次输入支付密码',
+    enterpaymentagin: '请再次输入支付密码',
     modification: '已有支付密码',
     reenter: '两次输入的密码不同，请重新输入',
     paymentsucceed: '支付密码设置成功',
@@ -294,7 +295,8 @@ export default {
     enteramount: '请输入提现金额',
     phonnumber: '手机号',
     servicechaege: '手续费：',
-    percentage: '元 (30%)',
+    percentage: '元 (',
+    percentagcon: '%)',
     withdrawal: '提现成功',
     enterold: '请输入旧密码',
     enternew: '请输入新密码',
@@ -322,6 +324,7 @@ export default {
     authenfailed: '身份验证失败',
     passwordinputerro: '密码输入错误',
     forgetmanypassword: '忘记密码？',
+    nohasphon: '请先绑定手机号',
   },
   permission: {
     viewThreads: '查看主题列表',
@@ -346,7 +349,7 @@ export default {
       delete: '删除附件',
     },
     viewUserList: '站点会员列表',
-    case: {
+    cash: {
       create: '申请提现',
     },
     order: {

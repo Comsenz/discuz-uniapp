@@ -18,6 +18,7 @@
             :theme-type="thread.type"
             :theme-time="thread.createdAt"
             :management-show="true"
+            :theme-title="thread.type == 1 ? thread.title : ''"
             :theme-content="thread.firstPost.contentHtml"
             :images-list="thread.firstPost.images"
             :select-list="selectList"
@@ -323,10 +324,11 @@
           :money="price"
           :wallet-status="true"
           :pay-password="pwdVal"
-          balance="10"
+          :balance="user.walletBalance"
+          :pay-type-val="payTypeVal"
           :pay-type-data="payTypeData"
           :to-name="thread.user.username"
-          :pay-type="payTypeText"
+          :pay-type-text="payTypeText"
           @radioMyHead="radioMyHead"
           @radioChange="radioChange"
           @onInput="onInput"
@@ -416,7 +418,7 @@ export default {
       commentId: '', //评论id
       postIndex: '', //点击时当前评论Index
       isAnonymous: '0', //支付时是否显示头像，默认不显示
-      payTypeText: '支付',
+      payTypeText: '',
       payTypeVal: '', //点击的支付类型， 0主题支付  1主题打赏
       payNum: [
         {
@@ -1142,6 +1144,13 @@ export default {
       console.log('主题支付');
       this.payShowStatus = true;
       this.payTypeVal = 0;
+      if (this.thread.type == 3) {
+        this.payTypeText = this.t.pay + this.t.paymentViewPicture;
+      } else if (this.thread.type == 2) {
+        this.payTypeText = this.t.pay + this.t.paymentViewRemainingContent;
+      } else {
+        this.payTypeText = this.t.pay + this.t.paymentViewVideo;
+      }
       this.price = this.thread.price;
       this.$refs.payShow.payClickShow();
     },
@@ -1166,6 +1175,7 @@ export default {
     rewardClick() {
       console.log('打赏');
       this.payTypeVal = 1;
+      this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
       this.$refs.rewardPopup.open();
     },
@@ -1750,7 +1760,7 @@ page {
 .popup-share-btn {
   height: 100rpx;
   font-size: $fg-f28;
-  line-height: 90rpx;
+  line-height: 100rpx;
   color: #666;
   text-align: center;
   border-top-color: #f5f5f5;

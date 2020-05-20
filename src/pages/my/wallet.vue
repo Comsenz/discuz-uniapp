@@ -25,7 +25,7 @@
       <navigator url="./orderlist" hover-class="none">
         <qui-cell-item :title="i18n.t('profile.orderlist')" arrow></qui-cell-item>
       </navigator>
-      <navigator :url="`/pages/modify/editpwd?id=${userId}`" hover-class="none">
+      <navigator :url="'/pages/modify/authen?id=' + userId" hover-class="none">
         <qui-cell-item
           v-if="hasPassword"
           :title="i18n.t('profile.walletpassword')"
@@ -49,9 +49,6 @@
 import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
-  components: {
-    //
-  },
   data() {
     return {
       dataInfo: {},

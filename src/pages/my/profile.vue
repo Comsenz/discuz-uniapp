@@ -8,7 +8,7 @@
           :addon="profile.username"
         ></qui-cell-item>
       </navigator>
-      <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow>
+      <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow @tap="changeAvatar">
         <image
           class="my-profile__avatar"
           :src="profile.avatarUrl || '/static/noavatar.gif'"
@@ -54,7 +54,7 @@
       ></qui-cell-item>
       <navigator :url="`../modify/realname?id=${userId}`" hover-class="none">
         <qui-cell-item
-          v-if="!profile.realname && forums.qcloud_faceid"
+          v-if="!profile.realname && forums.qcloud.qcloud_faceid"
           :title="i18n.t('profile.certification')"
           arrow
           :addon="i18n.t('profile.tocertification')"
@@ -72,9 +72,12 @@
         :url="`${host}api/users/${userId}/avatar`"
         :header="header"
         :form-data="formData"
+        :count="1"
         async-clear
         ref="upload"
+        name="avatar"
         @change="uploadChange"
+        @chooseSuccess="chooseSuccess"
       ></qui-uploader>
     </view>
   </qui-page>
@@ -82,16 +85,16 @@
 
 <script>
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import forums from '@/mixin/forums';
 
 export default {
-  components: {
-    //
-  },
+  mixins: [forums],
   data() {
     return {
       hasPassword: false,
       header: {},
       formData: {},
+      show: false,
       host: DISCUZ_REQUEST_HOST,
       userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
     };
@@ -112,7 +115,15 @@ export default {
   },
   methods: {
     uploadChange(e) {
-      console.log(e);
+      uni.hideLoading();
+      const newAvatar = e[e.length - 1].data.attributes.avatarUrl;
+      this.profile.avatarUrl = newAvatar;
+    },
+    changeAvatar() {
+      this.$refs.upload.uploadClick();
+    },
+    chooseSuccess() {
+      uni.showLoading();
     },
   },
 };
@@ -137,19 +148,23 @@ export default {
     color: --color(--qui-FC-333);
   }
   /deep/ .qui-uploader-box {
-    position: absolute;
-    top: 140rpx;
-    right: 0;
-    display: inline;
-    min-height: 100rpx;
-    padding: 0;
-  }
-  /deep/ .qui-uploader-box__add {
-    height: 100rpx;
-    background: transparent;
-  }
-  /deep/ .icon-add {
+    // position: absolute;
+    // top: 140rpx;
+    // right: 0;
+    // display: inline;
+    // min-height: 100rpx;
+    // padding: 0;
     display: none;
+    .qui-uploader-box__add {
+      height: 100rpx;
+      background: transparent;
+    }
+    .icon-add {
+      display: none;
+    }
+    .qui-uploader-box__uploader-file {
+      display: none;
+    }
   }
 }
 

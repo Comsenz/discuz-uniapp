@@ -43,7 +43,7 @@
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item._jv.id)"
-          @deleteClick="itemDelete(item._jv.id, item.isFavorite)"
+          @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
       <qui-load-more :status="loadingType"></qui-load-more>
@@ -57,7 +57,6 @@
               <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
@@ -73,9 +72,6 @@
 import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
-  components: {
-    //
-  },
   props: {
     userId: {
       type: String,
@@ -176,7 +172,7 @@ export default {
       this.$store.dispatch('jv/patch', params);
     },
     // 删除收藏
-    itemDelete(id, isFavorite) {
+    itemDelete(id, isFavorite, index) {
       const params = {
         _jv: {
           type: 'threads',
@@ -186,14 +182,7 @@ export default {
       };
       this.$store.dispatch('jv/patch', params).then(() => {
         this.totalData -= 1;
-        const dataList = this.data;
-        dataList.forEach((item, index) => {
-          if (item._jv && item._jv.id === id) {
-            const data = JSON.parse(JSON.stringify(dataList));
-            data.splice(index, 1);
-            this.data = data;
-          }
-        });
+        this.data.splice(index, 1);
       });
     },
     // 下拉加载

@@ -64,9 +64,6 @@
 import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
-  components: {
-    //
-  },
   props: {
     userId: {
       type: String,

@@ -137,7 +137,7 @@ export default class LastMayday {
                 "css": {
                   "color": "#AAAAAA",
                   "background": "rgba(0,0,0,0)",
-                  "width": "163px",
+                  "width": "450px",
                   "height": "34.32px",
                   "top": "889px",
                   "left": "210px",
@@ -195,7 +195,7 @@ export default class LastMayday {
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
-                  "width": "240px",
+                  "width": `${obj.namewidth}px`,
                   "height": "40.04px",
                   "top": "41px",
                   "left": "140px",
@@ -224,7 +224,7 @@ export default class LastMayday {
                   "width": "57px",
                   "height": "40.04px",
                   "top": "41px",
-                  "left": "400px",
+                  "left": `${obj.renamewidth}px`,
                   "rotate": "0",
                   "borderRadius": "",
                   "borderWidth": "",
@@ -247,7 +247,7 @@ export default class LastMayday {
                 "css": {
                   "color": "#FFFFFF",
                   "background": "rgba(0,0,0,0)",
-                  "width": "170px",
+                  "width": "500px",
                   "height": "34.32px",
                   "top": "88px",
                   "left": "140px",

@@ -43,7 +43,7 @@
         class="themeItem__content__con"
         :style="{ position: payStatus ? 'static' : 'relative' }"
       >
-        <view class="theme__content__title" v-if="themeType == 1 && themeTitle">
+        <view class="themeItem__content__con__title" v-if="themeType == 1 && themeTitle">
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
@@ -351,8 +351,8 @@ export default {
 
       .essence {
         display: inline-block;
-        width: 31rpx;
-        height: 41rpx;
+        width: 35rpx;
+        height: 45rpx;
       }
     }
   }
@@ -366,6 +366,13 @@ export default {
     }
     &__con {
       padding-bottom: 20rpx;
+      &__title {
+        padding-bottom: 40rpx;
+        font-size: 30rpx;
+        font-weight: 600;
+        line-height: 40rpx;
+        text-align: left;
+      }
       &__cover {
         position: absolute;
         right: 0;

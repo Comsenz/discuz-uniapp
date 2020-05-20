@@ -78,10 +78,10 @@
             vslide-gesture="true"
             auto-pause-if-navigate="true"
             enable-play-gesture="true"
-            object-fit="fill"
+            object-fit="cover"
             direction="0"
             :src="mediaUrl"
-            style="width: 100%;"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 300rpx'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
           ></video>
@@ -303,10 +303,27 @@ export default {
       type: String,
       default: '',
     },
+    threadVideo: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    videoWidth: {
+      type: Number,
+      default: 0,
+    },
+    videoHeight: {
+      type: Number,
+      default: 0,
+    },
   },
   data: () => {
     return {
       isAdmin: true,
+      // threadVideo: '',
+      threadWidth: '',
+      threadHeight: '',
       // isGreat: false,
     };
   },
@@ -320,12 +337,6 @@ export default {
       return time2MorningOrAfternoon(this.themeTime);
     },
   },
-  // onLoad() {
-  //   let player = TCPlayer('player-container-id', {
-  //     fileID: '5285890799710670616',
-  //     appID: '1400329073',
-  //   });
-  // },
   onShow() {
     this.videoContext = wx.createVideoContext('myvideo', this);
     this.videoContext.requestFullScreen({ direction: 90 });
