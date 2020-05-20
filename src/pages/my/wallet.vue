@@ -49,9 +49,6 @@
 import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
-  components: {
-    //
-  },
   data() {
     return {
       dataInfo: {},

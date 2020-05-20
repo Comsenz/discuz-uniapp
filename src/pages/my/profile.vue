@@ -54,7 +54,7 @@
       ></qui-cell-item>
       <navigator :url="`../modify/realname?id=${userId}`" hover-class="none">
         <qui-cell-item
-          v-if="!profile.realname && forums.qcloud_faceid"
+          v-if="!profile.realname && forums.qcloud.qcloud_faceid"
           :title="i18n.t('profile.certification')"
           arrow
           :addon="i18n.t('profile.tocertification')"
@@ -85,11 +85,10 @@
 
 <script>
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import forums from '@/mixin/forums';
 
 export default {
-  components: {
-    //
-  },
+  mixins: [forums],
   data() {
     return {
       hasPassword: false,
