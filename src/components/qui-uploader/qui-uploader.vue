@@ -134,6 +134,8 @@ export default {
         sizeType: ['original', 'compressed'],
         sourceType: ['album', 'camera'],
         success(res) {
+          // 自定义开始上传的效果和回调
+          _this.$emit('chooseSuccess');
           const promise = res.tempFiles.map((item, index) => {
             return new Promise((resolve, reject) => {
               res.tempFiles[index].uploadPercent = 0;
