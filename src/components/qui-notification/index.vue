@@ -110,6 +110,10 @@ export default {
     deleteNotification(id) {
       this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
         console.log('删除成功', res);
+        uni.showToast({
+          title: '删除成功',
+          duration: 1000,
+        });
       });
     },
 
