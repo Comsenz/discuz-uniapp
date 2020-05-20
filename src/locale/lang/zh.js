@@ -246,7 +246,6 @@ export default {
     system: '系统通知',
     admin: '管理员',
     send: '发送',
-    reply: '回复..',
   },
   // 海报分享页
   share: {
