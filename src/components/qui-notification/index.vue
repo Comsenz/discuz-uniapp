@@ -85,9 +85,9 @@
         </view>
       </view>
       <!-- 删除按钮 -->
-      <view class="list-box__ft" @click="deleteNotification(item.id)">
-        <qui-icon name="icon-delete" color="#777" size="26"></qui-icon>
-        <text class="list-box__ft__text">删除</text>
+      <view class="list-box__ft">
+        <qui-icon name="icon-delete" size="26" @click="deleteNotification(item.id)"></qui-icon>
+        <text class="list-box__ft__text" @click="deleteNotification(item.id)">删除</text>
       </view>
     </view>
   </view>
@@ -227,10 +227,10 @@ export default {
     &__h {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20rpx;
+      margin: 0rpx 0rpx 20rpx;
 
       &l__title {
-        margin-bottom: 10rpx;
+        margin: 0rpx 0rpx 10rpx;
         font-weight: bold;
         color: --color(--qui-FC-000);
       }
@@ -250,11 +250,11 @@ export default {
 
   &__ft {
     padding: 0rpx 40rpx 40rpx 0rpx;
+    color: --color(--qui-FC-777);
     text-align: right;
 
     &__text {
-      margin-left: 11rpx;
-      color: --color(--qui-FC-777);
+      padding: 0rpx 0rpx 0rpx 11rpx;
     }
   }
 }
