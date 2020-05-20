@@ -28,9 +28,9 @@
         </view>
         <text class="post-box__hd-r">
           {{
-          textAreaValue.length &lt;= textAreaLength
-          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+        textAreaValue.length &lt;= textAreaLength
+        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
           }}
         </text>
       </view>
@@ -662,8 +662,10 @@ export default {
 @import '@/styles/base/variable/global.scss';
 .post-box {
   width: 100vw;
+  height: 100%;
   padding: 40rpx;
   overflow: hidden;
+  background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 
   &__title {
