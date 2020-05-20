@@ -89,22 +89,32 @@ export default {
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
-    setTimeout(() => {
-      uni
-        .createSelectorQuery()
-        .selectAll('.chat-box__con')
-        .boundingClientRect()
-        .exec(data => {
-          data[0].forEach(item => {
-            this.height += item.height;
-          });
-          if (this.height > 600) {
-            this.scrollTop = this.height - 600;
-          }
-          console.log('信息', data);
-          console.log('height', this.height);
-        });
-    }, 0);
+    uni.onKeyboardHeightChange(res => {
+      console.log(res.height);
+      if (res.height > 0) {
+        // 键盘弹出（滚动条位置增加键盘高度）
+        this.scrollTop += res.height;
+      } else {
+        // 键盘收起（滚动条位置减少键盘高度）
+        this.scrollTop -= res.height;
+      }
+    });
+    // setTimeout(() => {
+    //   uni
+    //     .createSelectorQuery()
+    //     .selectAll('.chat-box__con')
+    //     .boundingClientRect()
+    //     .exec(data => {
+    //       data[0].forEach(item => {
+    //         this.height += item.height;
+    //       });
+    //       if (this.height > 600) {
+    //         this.scrollTop = this.height - 600;
+    //       }
+    //       console.log('信息', data);
+    //       console.log('height', this.height);
+    //     });
+    // }, 0);
   },
 
   computed: {
@@ -135,6 +145,28 @@ export default {
     userInfo() {
       return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
     },
+  },
+
+  watch:{
+    allChatRecord: function () {
+      this.$nextTick(() => {
+        uni
+          .createSelectorQuery()
+          .selectAll('.chat-box__con')
+          .boundingClientRect()
+          .exec(data => {
+            data[0].forEach(item => {
+              this.height += item.height;
+            });
+            if (this.height > 600) {
+              this.scrollTop = this.height - 600;
+            }
+            console.log('信息', data);
+            console.log('scrollTop', this.scrollTop);
+            console.log('height', this.height);
+          });
+      })
+    }
   },
 
   methods: {
