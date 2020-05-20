@@ -94,7 +94,6 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        console.log(this.themwidth, this.renamewidth);
         this.headerImg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
         this.initData();
       });

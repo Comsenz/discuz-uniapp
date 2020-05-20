@@ -43,6 +43,14 @@ export default {
     this.userid = Number(arr.id);
     this.mytitle();
   },
+  computed: {
+    forums() {
+      return this.$store.getters['jv/get']('forums/1');
+    },
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
+  },
   methods: {
     submission() {
       if (this.sername) {
