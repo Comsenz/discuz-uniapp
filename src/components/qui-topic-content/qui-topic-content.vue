@@ -72,7 +72,7 @@
           enable-play-gesture="true"
           object-fit="fill"
           :src="mediaUrl"
-          style="width: 100%;"
+          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
         <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
@@ -223,7 +223,17 @@ export default {
     // 图片裁剪、缩放的模式
     modeVal: {
       type: String,
-      default: 'center',
+      default: 'aspectFill',
+    },
+    // 视频宽度
+    videoWidth: {
+      type: Number,
+      default: 0,
+    },
+    // 视频高度
+    videoHeight: {
+      type: Number,
+      default: 0,
     },
     // 主题相关标签
     tags: {
@@ -353,6 +363,7 @@ export default {
         display: inline-block;
         width: 35rpx;
         height: 45rpx;
+        vertical-align: top;
       }
     }
   }

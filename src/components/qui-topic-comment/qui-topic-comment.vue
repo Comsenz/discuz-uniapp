@@ -40,7 +40,7 @@
         <view class="themeItem__content__text" @click="commentJump">
           <rich-text :nodes="commentContent"></rich-text>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 1">
+        <view v-if="imagesList.length > 0 && imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -53,7 +53,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 2">
+        <view v-if="imagesList.length > 0 && imagesList.length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -66,7 +66,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length >= 3">
+        <view v-if="imagesList.length > 0 && imagesList.length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -79,7 +79,7 @@
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="Object.keys(imagesList).length % 3 != 0"
+              v-if="imagesList.length % 3 != 0"
             ></image>
           </view>
         </view>
@@ -185,7 +185,7 @@ export default {
     // 图片裁剪、缩放的模式
     modeVal: {
       type: String,
-      default: 'center',
+      default: 'aspectFill',
     },
     // 是否显示评论的回复按钮
     commentShow: {
@@ -378,7 +378,7 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 100%;
+        width: 100%;
         max-height: 100%;
         border-radius: 100%;
       }
