@@ -15,7 +15,7 @@
             class="post-box__hd-l__icon"
             name="icon-expression"
             size="40"
-            color="#777"
+            :color="emojiShow ? '#1878F3' : '#777'"
             @click="emojiShow = !emojiShow"
           ></qui-icon>
           <qui-icon
