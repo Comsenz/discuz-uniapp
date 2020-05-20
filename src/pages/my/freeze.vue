@@ -4,7 +4,7 @@
       <view class="freeze-head__num">
         <text>{{ i18n.t('profile.total') }}</text>
         <text class="freeze-head__num__detail">{{ totalData }}</text>
-        <text>{{ i18n.t('profile.item') + i18n.t('profile.records') }}</text>
+        <text>{{ `${i18n.t('profile.item')}${i18n.t('profile.records')}` }}</text>
       </view>
       <view class="freeze-head__money">
         <text>{{ i18n.t('profile.amountinvolved') }}</text>
@@ -24,8 +24,8 @@
           v-for="(freezeItem, index) in freezelist"
           :key="index"
           :title="`${i18n.t('profile.freezingreason')} : ${freezeItem.change_desc}`"
-          :brief="'ID:' + freezeItem.id"
-          :addon="'¥' + freezeItem.change_freeze_amount"
+          :brief="`ID:${freezeItem.id}`"
+          :addon="`¥${freezeItem.change_freeze_amount}`"
           :brief-right="timeHandle(freezeItem.created_at)"
         ></qui-cell-item>
         <qui-load-more :status="loadingType"></qui-load-more>
@@ -48,7 +48,7 @@ export default {
     return {
       loadingType: 'more',
       totalData: 0, // 总数
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       freezelist: [],
       userId: uni.getStorageSync('user_id'),
@@ -63,7 +63,7 @@ export default {
     // 获取冻结金额列表数据
     getFreezelist() {
       const params = {
-        'filter[user]': 1,
+        'filter[user]': this.userId,
         'filter[change_type]': 10,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,

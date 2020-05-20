@@ -10,7 +10,7 @@
           :src="
             person.avatarUrl != '' && person.avatarUrl != null
               ? person.avatarUrl
-              : 'https://discuz.chat/static/images/noavatar.gif'
+              : '/static/noavatar.gif'
           "
           class="det-per-head"
           @click="personJump(person.id)"
@@ -162,6 +162,7 @@ export default {
   flex-direction: column;
   padding: 0 0 80rpx;
   text-align: center;
+  background: --color(--qui-BG-2);
   .det-per-number {
     font-size: $fg-f28;
     color: --color(--qui-FC-AAA);

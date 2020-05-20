@@ -5,7 +5,13 @@
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
           <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
-            <qui-icon v-if="item.unReadNum > 0" name="icon-circle" color="red" size="14"></qui-icon>
+            <qui-icon
+              v-if="item.unReadNum && item.unReadNum > 0"
+              name="icon-circle"
+              class="red-circle"
+              color="red"
+              size="14"
+            ></qui-icon>
           </qui-cell-item>
         </view>
       </view>
@@ -28,9 +34,7 @@
               <view class="dialog-box__header__info">
                 <image
                   class="dialog-box__header__info__user-avatar"
-                  :src="
-                    dialog.avatar ? dialog.avatar : 'https://discuz.chat/static/images/noavatar.gif'
-                  "
+                  :src="dialog.avatar || '/static/noavatar.gif'"
                 ></image>
                 <view>
                   <view class="dialog-box__header__info__box">
@@ -51,7 +55,7 @@
               <view class="dialog-box__header__r">
                 <qui-icon
                   name="icon-circle red-circle"
-                  v-if="dialog.recipient_read_at === null"
+                  v-if="dialog.readAt === null"
                   color="red"
                   size="14"
                 ></qui-icon>
@@ -60,7 +64,10 @@
             </view>
             <view class="dialog-box__con" v-html="dialog.dialogMessage.message_text_html"></view>
           </view>
-          <uni-load-more :status="loadingType"></uni-load-more>
+          <qui-load-more
+            :status="loadingType"
+            v-if="allDialogList && allDialogList.length > 0"
+          ></qui-load-more>
         </scroll-view>
       </view>
     </view>
@@ -68,16 +75,14 @@
 </template>
 
 <script>
-import { uniLoadMore } from '@dcloudio/uni-ui';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
-  components: {
-    uniLoadMore,
-  },
+  components: {},
+
   data() {
     return {
-      currentLoginId: uni.getStorageSync('user_id'), // 当前用户id
+      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       list: [
         { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
@@ -88,10 +93,17 @@ export default {
       loadingType: 'more',
     };
   },
+
   onLoad() {
     this.getDialogList();
     this.getUnreadNotificationNum();
   },
+
+  onShow() {
+    this.getDialogList();
+    this.getUnreadNotificationNum();
+  },
+
   computed: {
     // 获取会话列表
     allDialogList() {
@@ -103,14 +115,16 @@ export default {
         for (let i = 0; i < keys.length; i += 1) {
           const value = dialogList[keys[i]];
           value.time = time2MorningOrAfternoon(value.created_at);
-          if (value && value.recipient && value.recipient.id.toString() === this.currentLoginId) {
+          if (value && value.recipient && value.recipient.id === this.currentLoginId) {
             value.name = value.sender.username;
             value.avatar = value.sender.avatarUrl;
             value.groupname = value.sender.groups;
-          } else if (value && value.sender && value.sender.id.toString() === this.currentLoginId) {
+            value.readAt = value.recipient_read_at;
+          } else if (value && value.sender && value.sender.id === this.currentLoginId) {
             value.name = value.recipient.username;
             value.avatar = value.recipient.avatarUrl;
             value.groupname = value.recipient.groups;
+            value.readAt = value.sender_read_at;
           }
           list.push(value);
         }
@@ -119,6 +133,7 @@ export default {
       return list;
     },
   },
+
   methods: {
     // 调用 会话列表 的接口
     getDialogList() {
@@ -174,12 +189,12 @@ export default {
 
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 
 .notice-box {
   width: 100%;
   min-height: 100vh;
   font-size: $fg-f28;
-  background-color: #fafafa;
 
   .left-text {
     min-width: 250rpx;
@@ -189,11 +204,16 @@ export default {
 
   .notice-box__list {
     padding-left: 40rpx;
-    background: #fff;
-    border-bottom: 1rpx solid #ededed;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    transition: $switch-theme-time;
 
-    .cell-item {
+    /deep/ .cell-item {
       padding-right: 40rpx;
+    }
+
+    /deep/ text {
+      vertical-align: middle;
     }
   }
 
@@ -204,7 +224,8 @@ export default {
 
 .dialog-box {
   margin: 20rpx 0;
-  background-color: #fff;
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 
   &__header {
     display: flex;
@@ -231,19 +252,19 @@ export default {
         margin-right: 6rpx;
         font-weight: bold;
         line-height: 37rpx;
-        color: #000;
+        color: --color(--qui-FC-000);
       }
 
       &__groupname {
         font-weight: 400;
         line-height: 37rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: 24rpx;
         line-height: 31rpx;
-        color: #aaa;
+        color: --color(--qui-FC-AAA);
       }
     }
 
@@ -255,6 +276,7 @@ export default {
 
       .red-circle {
         margin-right: 20rpx;
+        vertical-align: middle;
       }
     }
   }
@@ -262,7 +284,7 @@ export default {
   &__con {
     padding: 0rpx 40rpx 30rpx;
     font-weight: 400;
-    color: #333;
+    color: --color(--qui-FC-333);
     opacity: 1;
   }
 }

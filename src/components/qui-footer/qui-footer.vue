@@ -11,11 +11,13 @@
         <qui-icon
           class="ft-box-icon"
           :name="item.tabsIcon"
-          size="36"
+          size="40"
           :class="{ select: true, active: item.id === sel }"
           @click="select(item)"
         ></qui-icon>
-        <text class="ft-box-content">{{ item.tabsName }}</text>
+        <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
+          {{ item.tabsName }}
+        </text>
       </view>
 
       <view class="ft-box-spacal">
@@ -38,7 +40,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="36"
+                  size="46"
                   color="#777777"
                 ></qui-icon>
               </view>
@@ -58,71 +60,54 @@
   </view>
 </template>
 <script>
-import { uniIcons } from '@dcloudio/uni-ui';
-// import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
-  components: {
-    uniIcons,
-  },
-  // props: {
-  //   tabs: {
-  //     type: Array,
-  //     default: () => {
-  //       return [];
-  //     },
-  //   },
-  //   postImg: {
-  //     type: String,
-  //     default: '',
-  //   },
-  //   redCircle: {
-  //     type: Boolean,
-  //     default: false,
-  //   },
-  // },
+  mixins: [forums],
   data: () => {
     return {
       sel: 1,
       type: '',
+      redCircle: false, // 消息通知红点
       tabs: [
         {
-          tabsName: '首页',
+          tabsName: 'home.tabsCircle',
           tabsIcon: 'icon-home',
           id: 1,
           url: '../home/index',
+          routePath: 'pages/home/index', // 仅用作标识不用来跳转
         },
         {
-          tabsName: '消息',
+          tabsName: 'home.tabsNews',
           tabsIcon: 'icon-message',
           id: 2,
           url: '../notice/index',
+          routePath: 'pages/notice/index', // 仅用作标识不用来跳转
         },
         {
-          tabsName: '我的',
+          tabsName: 'home.tabsMy',
           tabsIcon: 'icon-mine',
           id: 3,
           url: '../my/index',
+          routePath: 'pages/my/index', // 仅用作标识不用来跳转
         },
       ],
       bottomData: [],
     };
   },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
-  },
-  created() {
+  mounted() {
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
       const str = currentRout.split('pages/')[1];
       if (str) {
-        this.tabs.forEach(v => {
-          if (v.url && v.url.includes(str)) {
-            this.sel = v.id;
+        this.tabs = this.tabs.map(tab => {
+          const tabsName = this.i18n.t(tab.tabsName);
+          if (tab.url && tab.url.includes(str)) {
+            this.sel = tab.id;
           }
+          const newTab = { ...tab, tabsName };
+          return newTab;
         });
       }
     }
@@ -130,16 +115,31 @@ export default {
   methods: {
     select(item) {
       // this.sel = item.id;
-      if (item.url) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
-        } else {
-          uni.navigateTo({
-            url: item.url,
-          });
-        }
+      if (!item.url) {
+        return;
       }
+
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+        return;
+      }
+
+      const currentPage = getCurrentPages();
+      if (
+        item.tabsName === this.i18n.t('home.tabsCircle') &&
+        currentPage[0].route === 'pages/home/index'
+      ) {
+        const len = currentPage.length;
+        uni.navigateBack({
+          delta: len,
+        });
+        return;
+      }
+
+      uni.navigateTo({
+        url: item.url,
+      });
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {
@@ -154,7 +154,7 @@ export default {
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image
       ) {
-        this.$refs.toast.show({ message: '当前没有发帖权限' });
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         return;
       }
       this.bottomData = [];
@@ -207,6 +207,22 @@ export default {
     close() {
       this.$refs.auth.close();
     },
+    // 调用 未读通知数 的接口
+    getUserInfo() {
+      const id = 1;
+      const params = {
+        include: ['groups'],
+      };
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
+        if (res.unreadNotifications === 0) {
+          this.redCircle = false;
+        } else {
+          this.redCircle = true;
+        }
+        console.log('未读通知', res.unreadNotifications);
+      });
+    },
   },
 };
 </script>
@@ -214,12 +230,13 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .ft {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   display: flex;
   width: 100%;
   height: 119rpx;
   background-color: --color(--qui-BG-2);
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
   justify-content: space-around;
 }
 .ft-box {
@@ -237,6 +254,7 @@ export default {
 .ft-box-content {
   padding-top: 2px;
   font-size: 20rpx;
+  color: --color(--qui-FC-777);
   text-align: center;
 }
 .ft-box-spacal {

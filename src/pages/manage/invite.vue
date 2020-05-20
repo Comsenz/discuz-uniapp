@@ -4,7 +4,11 @@
       <!-- 标签栏 -->
       <view class="invite-tabs">
         <qui-tabs :current="current" :values="tabList" @clickItem="onClickItem"></qui-tabs>
-        <view class="profile-tabs__content" v-if="allInviteList && allInviteList.length > 0">
+        <qui-no-data
+          tips="暂无内容"
+          v-if="!allInviteList || allInviteList.length <= 0"
+        ></qui-no-data>
+        <view class="profile-tabs__content" v-else>
           <view v-if="current === 0" class="items">
             <!-- 记录数 -->
             <view class="invite-records">
@@ -54,10 +58,6 @@
                 </view>
               </qui-cell-item>
             </view>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">生成邀请链接</button>
-            </view>
           </view>
           <view v-if="current === 2" class="items">
             <!-- 记录数 -->
@@ -80,10 +80,6 @@
                   <qui-icon name="icon-share1" class="qui-icon"></qui-icon>
                 </view>
               </qui-cell-item>
-            </view>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">生成邀请链接</button>
             </view>
           </view>
           <view v-if="current === 3" class="items">
@@ -108,13 +104,8 @@
                 </view>
               </qui-cell-item>
             </view>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">生成邀请链接</button>
-            </view>
           </view>
         </view>
-        <qui-no-data tips="暂无内容" v-else></qui-no-data>
       </view>
       <!-- 邀请链接弹窗 -->
       <uni-popup ref="popup" type="bottom">
@@ -144,7 +135,6 @@ import { timestamp2day } from '@/utils/time';
 
 export default {
   components: {},
-
   data() {
     return {
       current: 0, // 当前标签页
@@ -157,12 +147,10 @@ export default {
       ], // 邀请链接类型列表
     };
   },
-
   onLoad() {
     this.getInviteList(1);
     this.getGroupList();
   },
-
   computed: {
     // 获取管理邀请列表（非管理员无的邀请链接无管理）
     allInviteList() {
@@ -206,14 +194,12 @@ export default {
         console.log('获取管理邀请列表', res);
       });
     },
-
     // 调用 获取所有用户组 接口
     getGroupList() {
       this.$store.commit('jv/clearRecords', { _jv: { type: 'groups' } });
       this.$store.dispatch('jv/get', 'groups');
       console.log('获取所有用户组');
     },
-
     // 改变标签页
     onClickItem(e) {
       if (e.currentIndex !== this.current) {
@@ -227,7 +213,6 @@ export default {
         console.log('设为无效', res);
       });
     },
-
     // 分享
     share(code) {
       console.log('跳转到分享页面');
@@ -235,13 +220,11 @@ export default {
         url: `../site/partner-invite?code=${code}`,
       });
     },
-
     // 生成邀请链接弹窗
     generate() {
       console.log('生成邀请链接弹窗');
       this.$refs.popup.open();
     },
-
     // 生成 合伙人/嘉宾/成员 邀请链接
     generateUrl(groupId) {
       console.log('生成邀请链接：', groupId);
@@ -283,7 +266,6 @@ export default {
           });
       }
     },
-
     // 点击取消按钮
     cancel() {
       console.log('取消');

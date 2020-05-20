@@ -10,29 +10,25 @@
       <view class="themeItem__header">
         <view class="themeItem__header__img">
           <image
-            :src="
-              themeImage != '' && themeImage != null
-                ? themeImage
-                : 'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
             alt
             @click="headClick"
           ></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
-            <span class="themeItem__header__title__username" @click="headClick">
+            <text class="themeItem__header__title__username" @click="headClick">
               {{ userName }}
-            </span>
-            <span v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
-              <span v-for="(item, index) in userGroups" :key="index">
+            </text>
+            <text v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
+              <text v-for="(item, index) in userGroups" :key="index">
                 {{ item.isDisplay ? `(${item.name})` : '' }}
-              </span>
-            </span>
-            <span v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
+              </text>
+            </text>
+            <text v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
               <!-- {{ themeType === '2' ? '回复了我' : '@了我' }} -->
               {{ themeStatus }}
-            </span>
+            </text>
             <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn"></view>
             <qui-icon
               class="themeItem__header__title__deleteBtn"
@@ -65,25 +61,31 @@
           </view>
           <rich-text :nodes="themeContent" v-else></rich-text>
         </view>
-        <video
-          v-if="threadType === 2"
-          preload="auto"
-          playsinline
-          webkit-playsinline
-          x5-playsinline
-          controls="true"
-          page-gesture="true"
-          show-fullscreen-btn="true"
-          show-play-btn="true"
-          show-mute-btn="true"
-          auto-pause-if-open-native="true"
-          vslide-gesture="true"
-          auto-pause-if-navigate="true"
-          enable-play-gesture="true"
-          object-fit="fill"
-          :src="mediaUrl"
-          style="width: 100%;"
-        ></video>
+        <view>
+          <video
+            v-if="threadType === 2"
+            id="myvideo"
+            preload="auto"
+            playsinline
+            webkit-playsinline
+            x5-playsinline
+            controls="true"
+            page-gesture="true"
+            show-fullscreen-btn="true"
+            show-play-btn="true"
+            show-mute-btn="true"
+            auto-pause-if-open-native="true"
+            vslide-gesture="true"
+            auto-pause-if-navigate="true"
+            enable-play-gesture="true"
+            object-fit="cover"
+            direction="0"
+            :src="mediaUrl"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 300rpx'"
+            bindfullscreenchange="fullScreen"
+            bindended="closeVideo"
+          ></video>
+        </view>
         <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
@@ -127,7 +129,7 @@
 
         <view class="themeItem__content__tags" v-if="themeType === '1'">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
-            {{ item.tagName }}
+            {{ item.name }}
           </view>
         </view>
       </view>
@@ -301,10 +303,27 @@ export default {
       type: String,
       default: '',
     },
+    threadVideo: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    videoWidth: {
+      type: Number,
+      default: 0,
+    },
+    videoHeight: {
+      type: Number,
+      default: 0,
+    },
   },
   data: () => {
     return {
       isAdmin: true,
+      // threadVideo: '',
+      threadWidth: '',
+      threadHeight: '',
       // isGreat: false,
     };
   },
@@ -318,12 +337,10 @@ export default {
       return time2MorningOrAfternoon(this.themeTime);
     },
   },
-  // onLoad() {
-  //   let player = TCPlayer('player-container-id', {
-  //     fileID: '5285890799710670616',
-  //     appID: '1400329073',
-  //   });
-  // },
+  onShow() {
+    this.videoContext = wx.createVideoContext('myvideo', this);
+    this.videoContext.requestFullScreen({ direction: 90 });
+  },
   methods: {
     // 点击删除按钮
     deleteClick(evt) {
@@ -363,8 +380,8 @@ export default {
     position: absolute;
     top: -10rpx;
     left: 679rpx;
-    width: 31rpx;
-    height: 41rpx;
+    width: 36rpx;
+    height: 42rpx;
   }
 }
 .themeItem {
@@ -407,7 +424,6 @@ export default {
       }
 
       &__username {
-        padding-bottom: 10rpx;
         font-weight: bold;
         line-height: 37rpx;
         color: --color(--qui-FC-333);
@@ -422,6 +438,7 @@ export default {
       }
 
       &__time {
+        padding-top: 10rpx;
         font-size: 24rpx;
         font-weight: 400;
         line-height: 31rpx;

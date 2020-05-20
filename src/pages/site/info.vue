@@ -1,13 +1,13 @@
 <template>
   <qui-page class="site">
     <qui-header
-      head-img="https://dq.comsenz-service.com/static/images/logo.png"
+      head-img="/static/logo.png"
       :theme="theme"
       :theme-num="forums.other.count_users"
       :post="post"
       :post-num="forums.other.count_threads"
       :share="share"
-      iconcolor="#333"
+      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -50,10 +50,7 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="
-              forums.set_site.site_author.avatarUrl ||
-                'https://discuz.chat/static/images/noavatar.gif'
-            "
+            :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -69,7 +66,7 @@
         <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
           <image
             class="site-item__person-avatar"
-            :src="item.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif'"
+            :src="item.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
           ></image>
@@ -108,10 +105,10 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
-  components: {
-    //
-  },
+  mixins: [forums],
   data() {
     return {
       theme: this.i18n.t('home.theme'),
@@ -140,11 +137,6 @@ export default {
         },
       ],
     };
-  },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   onLoad() {
     //
@@ -190,16 +182,11 @@ export default {
         amount,
         is_anonymous: this.isAnonymous,
       };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          this.orderSn = res.order_sn;
-          // 微信支付
-          this.orderPay(13, value, this.orderSn);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch('jv/post', params).then(res => {
+        this.orderSn = res.order_sn;
+        // 微信支付
+        this.orderPay(13, value, this.orderSn);
+      });
     },
     // 订单支付
     orderPay(type, value, orderSn) {
@@ -210,20 +197,15 @@ export default {
         },
         payment_type: type,
       };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          this.wechatPay(
-            res.wechat_js.timeStamp,
-            res.wechat_js.nonceStr,
-            res.wechat_js.package,
-            res.wechat_js.signType,
-            res.wechat_js.paySign,
-          );
-        })
-        .catch(err => {
-          this.$refs.toast.show({ message: err });
-        });
+      this.$store.dispatch('jv/post', params).then(res => {
+        this.wechatPay(
+          res.wechat_js.timeStamp,
+          res.wechat_js.nonceStr,
+          res.wechat_js.package,
+          res.wechat_js.signType,
+          res.wechat_js.paySign,
+        );
+      });
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
@@ -272,11 +254,14 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .header /deep/ .circleDet {
+    padding: 60rpx 40rpx 50rpx;
     color: --color(--qui-FC-777);
+    opacity: 1;
   }
   .header .logo {
-    height: 100rpx;
-    padding-top: 99rpx;
+    width: 295rpx;
+    height: 56rpx;
+    padding-top: 71rpx;
   }
   /deep/ .icon-share1 {
     color: --color(--qui-FC-333);

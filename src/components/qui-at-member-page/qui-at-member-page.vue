@@ -1,80 +1,82 @@
 <template>
-  <view class="qui-at-member-page-box">
-    <view class="qui-at-member-page-box__hd">
-      <view class="qui-at-member-page-box__hd__sc">
-        <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
-        <input
-          type="text"
-          placeholder-class="input-placeholder"
-          confirm-type="search"
-          :placeholder="i18n.t('discuzq.atMember.selectedMember')"
-          @input="searchInput"
-        />
+  <qui-page>
+    <view class="qui-at-member-page-box">
+      <view class="qui-at-member-page-box__hd">
+        <view class="qui-at-member-page-box__hd__sc">
+          <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
+          <input
+            type="text"
+            placeholder-class="input-placeholder"
+            confirm-type="search"
+            :placeholder="i18n.t('discuzq.atMember.selectedMember')"
+            @input="searchInput"
+          />
+        </view>
+      </view>
+      <view class="qui-at-member-page-box__lst">
+        <scroll-view
+          class="scroll-Y"
+          scroll-y="true"
+          scroll-with-animation="true"
+          @scrolltolower="lower"
+        >
+          <checkbox-group @change="changeCheck" v-if="followStatus">
+            <label v-for="item in allFollow" :key="item.id">
+              <qui-avatar-cell
+                :mark="item.toUser.id"
+                :title="item.toUser.username"
+                :icon="
+                  item.toUser.avatarUrl
+                    ? item.toUser.avatarUrl
+                    : 'https://discuz.chat/static/images/noavatar.gif'
+                "
+                :value="getGroups(item.toUser.groups)"
+                :label="item.toUser.label"
+              >
+                <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
+              </qui-avatar-cell>
+            </label>
+          </checkbox-group>
+          <checkbox-group @change="changeCheck" v-else>
+            <label v-for="item in allSiteUser" :key="item.id">
+              <qui-avatar-cell
+                :mark="item.id"
+                :title="item.username"
+                :icon="
+                  item.avatarUrl ? item.avatarUrl : 'https://discuz.chat/static/images/noavatar.gif'
+                "
+                :value="getGroups(item.groups)"
+                :label="item.label"
+              >
+                <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
+              </qui-avatar-cell>
+            </label>
+          </checkbox-group>
+          <view class="loading-text">
+            <qui-icon
+              v-if="loadingText === 'search.norelatedusersfound'"
+              name="icon-noData"
+            ></qui-icon>
+            <text class="loading-text__cont">{{ i18n.t(loadingText) }}</text>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="qui-at-member-page-box__ft">
+        <qui-button
+          size="large"
+          :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
+          :disabled="Boolean(checkAvatar.length < 1)"
+          @click="getCheckMember"
+        >
+          {{
+          checkAvatar.length &lt; 1
+          ? i18n.t('discuzq.atMember.notSelected')
+          : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
+          }}
+        </qui-button>
       </view>
     </view>
-    <view class="qui-at-member-page-box__lst">
-      <scroll-view
-        class="scroll-Y"
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="lower"
-      >
-        <checkbox-group @change="changeCheck" v-if="followStatus">
-          <label v-for="item in allFollow" :key="item.id">
-            <qui-avatar-cell
-              :mark="item.toUser.id"
-              :title="item.toUser.username"
-              :icon="
-                item.toUser.avatarUrl
-                  ? item.toUser.avatarUrl
-                  : 'https://discuz.chat/static/images/noavatar.gif'
-              "
-              :value="getGroups(item.toUser.groups)"
-              :label="item.toUser.label"
-            >
-              <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
-            </qui-avatar-cell>
-          </label>
-        </checkbox-group>
-        <checkbox-group @change="changeCheck" v-else>
-          <label v-for="item in allSiteUser" :key="item.id">
-            <qui-avatar-cell
-              :mark="item.id"
-              :title="item.username"
-              :icon="
-                item.avatarUrl ? item.avatarUrl : 'https://discuz.chat/static/images/noavatar.gif'
-              "
-              :value="getGroups(item.groups)"
-              :label="item.label"
-            >
-              <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
-            </qui-avatar-cell>
-          </label>
-        </checkbox-group>
-        <view class="loading-text">
-          <qui-icon
-            v-if="loadingText === 'search.norelatedusersfound'"
-            name="icon-noData"
-          ></qui-icon>
-          <text class="loading-text__cont">{{ i18n.t(loadingText) }}</text>
-        </view>
-      </scroll-view>
-    </view>
-    <view class="qui-at-member-page-box__ft">
-      <qui-button
-        size="large"
-        :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
-        :disabled="Boolean(checkAvatar.length < 1)"
-        @click="getCheckMember"
-      >
-        {{
-          checkAvatar.length &lt; 1
-            ? i18n.t('discuzq.atMember.notSelected')
-            : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
-        }}
-      </qui-button>
-    </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

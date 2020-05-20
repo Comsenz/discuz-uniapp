@@ -30,7 +30,8 @@
 | descriptionShow | 钱包描述是否显示     | boolean        | true                 |
 | money           | 支付金额             | string\|number | 0                    |
 | balance         | 余额                 | string\|number | 0                    |
-| payType         | 支付类型             | string         | 权限                 |
+| payTypeVal      | 支付类型             | string\|number | 2                    |
+| payTypeText     | 支付类型文案         | string         | 权限                 |
 | toName          | 支付于用户 name      | string         |                      |
 | payTypeData     | 支付方式数组         | array          | [                    |
 

@@ -2,7 +2,7 @@
   <qui-page class="favorite">
     <view class="favorite-head">
       <qui-cell-item
-        :title="totalData + i18n.t('profile.item') + i18n.t('profile.collection')"
+        :title="`${totalData}${i18n.t('profile.item')}${i18n.t('profile.collection')}`"
         :border="false"
       ></qui-cell-item>
     </view>
@@ -23,7 +23,7 @@
           :theme-reply-btn="item.canReply"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
-          :theme-content="item.type == 1 ? item.title : item.firstPost.contentHtml"
+          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
           :theme-comment="item.firstPost.replyCount"
@@ -87,7 +87,7 @@ export default {
       loadingType: 'more',
       data: [],
       totalData: 0, // 总数
-      pageSize: 20,
+      pageSize: 10,
       pageNum: 1, // 当前页数
       nowThreadId: '',
       bottomData: [

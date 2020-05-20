@@ -33,7 +33,7 @@
           :border="false"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="'/pages/modify/paypwd?id=' + userId" hover-class="none">
+      <navigator :url="`/pages/modify/paypwd?id=${userId}`" hover-class="none">
         <qui-cell-item
           v-if="!hasPassword"
           :title="i18n.t('profile.setpaypassword')"

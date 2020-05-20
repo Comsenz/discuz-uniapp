@@ -3,11 +3,7 @@
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
-          :src="
-            avatarUrl != '' && avatarUrl != null
-              ? avatarUrl
-              : 'https://discuz.chat/static/images/noavatar.gif'
-          "
+          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '@/static/noavatar.gif'"
           class="det-per-head"
           @click="personJump"
         ></image>
@@ -16,7 +12,7 @@
         <view class="themeItem__header__title__top">
           <span class="themeItem__header__title__username">{{ userName }}</span>
         </view>
-        <view class="themeItem__header__title__time">{{ themeTime }}</view>
+        <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
@@ -47,7 +43,7 @@
         class="themeItem__content__con"
         :style="{ position: payStatus ? 'static' : 'relative' }"
       >
-        <view class="theme__content__title" v-if="themeType == 1 && themeTitle">
+        <view class="themeItem__content__con__title" v-if="themeType == 1 && themeTitle">
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
@@ -121,8 +117,8 @@
             ></image>
           </view>
         </view>
-        <view v-if="!payStatus && threadPrice" class="themeItem__content__con__cover"></view>
-        <view v-if="!payStatus && threadPrice" class="themeItem__content__con__surtip">
+        <view v-if="!payStatus && threadPrice > 0" class="themeItem__content__con__cover"></view>
+        <view v-if="!payStatus && threadPrice > 0" class="themeItem__content__con__surtip">
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
@@ -137,6 +133,8 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     // 类型
@@ -259,6 +257,10 @@ export default {
     p() {
       return this.i18n.t('pay');
     },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.themeTime);
+    },
   },
   methods: {
     // 管理菜单点击事件
@@ -290,6 +292,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .themeItem {
   width: 100%;
+  background: --color(--qui-BG-2);
 
   &__header {
     display: flex;
@@ -325,19 +328,19 @@ export default {
 
       &__username {
         font-weight: bold;
-        color: rgba(51, 51, 51, 1);
+        color: --color(--qui-FC-000);
       }
 
       &__isAdmin {
         font-weight: 400;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: $fg-f24;
         font-weight: 400;
         line-height: 31rpx;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
       }
     }
     &__opera {
@@ -348,8 +351,8 @@ export default {
 
       .essence {
         display: inline-block;
-        width: 31rpx;
-        height: 41rpx;
+        width: 35rpx;
+        height: 45rpx;
       }
     }
   }
@@ -363,13 +366,20 @@ export default {
     }
     &__con {
       padding-bottom: 20rpx;
+      &__title {
+        padding-bottom: 40rpx;
+        font-size: 30rpx;
+        font-weight: 600;
+        line-height: 40rpx;
+        text-align: left;
+      }
       &__cover {
         position: absolute;
         right: 0;
         bottom: 0;
         left: 0;
         height: 240rpx;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1));
       }
       &__surtip {
         position: relative;
@@ -442,6 +452,7 @@ export default {
     &__tags {
       display: flex;
       flex-wrap: wrap;
+      margin-bottom: 76rpx;
 
       &__item {
         height: 50rpx;
@@ -452,10 +463,11 @@ export default {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 50rpx;
-        color: rgba(119, 119, 119, 1);
+        color: --color(--qui-FC-TAG);
         text-align: center;
-        background: rgba(247, 247, 247, 1);
+        background: --color(--qui-BG-TAG);
         border-radius: 6rpx;
+        transition: $switch-theme-time;
       }
     }
   }

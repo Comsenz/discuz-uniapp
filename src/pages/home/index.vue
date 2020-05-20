@@ -1,11 +1,5 @@
 <template>
   <qui-page :class="'home ' + scrolled" :footer="true">
-    <!-- <uni-nav-bar
-      v-if="navShow"
-      :title="forums.set_site.site_name"
-      fixed="true"
-      status-bar
-    ></uni-nav-bar> -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -45,7 +39,7 @@
                   <qui-icon
                     class="content-image"
                     :name="item.icon"
-                    size="36"
+                    size="46"
                     color="#777777"
                   ></qui-icon>
                 </view>
@@ -81,6 +75,7 @@
           :if-need-confirm="ifNeedConfirm"
           :filter-list="filterList"
           :show-search="showSearch"
+          @searchClick="searchClick"
           posi-type="absolute"
           top="102"
           ref="filter"
@@ -96,14 +91,6 @@
           <!-- :style="isTop == 1 ? 'position:fixed;z-index:9;top:44' : ''" -->
         </u-tabs>
       </view>
-      <!-- <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        show-scrollbar="false"
-        class="scroll-y"
-        @scroll="scroll"
-        @scrolltolower="pullDown"
-      > -->
       <view class="sticky" :style="isTop == 1 ? 'margin-top:150rpx' : 'margin-top:30rpx'">
         <view
           class="sticky__isSticky"
@@ -137,10 +124,12 @@
           :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
-          :theme-comment="item.firstPost.replyCount"
-          :tags="item.category.name"
+          :theme-comment="item.postCount - 1"
+          :tags="[item.category]"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
+          :video-width="item.threadVideo.width"
+          :video-height="item.threadVideo.height"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -157,14 +146,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
     </scroll-view>
-    <!-- </view> -->
 
-    <!-- <qui-footer
-      @click="footerOpen"
-      :tabs="tabs"
-      :post-img="postImg"
-      :red-circle="redCircle"
-    ></qui-footer> -->
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -175,7 +157,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="36"
+                  size="46"
                   color="#777777"
                 ></qui-icon>
               </view>
@@ -196,8 +178,11 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [forums, user],
   data() {
     return {
       scrolled: 'affix',
@@ -219,7 +204,6 @@ export default {
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
-      redCircle: false, // 消息通知红点
       navShow: false, // 是否显示头部
       nowThreadId: '', // 当前点击主题ID
       filterTop: 450, // 筛选弹窗的位置
@@ -279,14 +263,9 @@ export default {
       categories: [],
     };
   },
-  computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
-  },
   onLoad() {
     // 获取用户信息
-    this.getUserInfo();
+    // this.getUserInfo();
     // 首页导航栏分类列表
     this.loadCategories();
     // 首页主题置顶列表
@@ -298,16 +277,13 @@ export default {
   onShareAppMessage(res) {
     // 来自页面内分享按钮
     if (res.from === 'button') {
-      console.log(this.threads);
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
-        // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
-        // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
       };
     }
     return {
-      // title: this.threads.type === 1 ? this.threads.title : this.threads.firstPost.summary,
       title: this.forums.set_site.site_name,
-      // imageUrl: 'https://discuz.chat/static/images/noavatar.gif',
     };
   },
   mounted() {
@@ -315,27 +291,11 @@ export default {
     query
       .select('.nav')
       .boundingClientRect(data => {
-        console.log(`得到布局位置信息${JSON.stringify(data)}`);
-        console.log(`节点离页面顶部的距离为${data.top}`);
+        // console.log(`得到布局位置信息${JSON.stringify(data)}`);
+        // console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
-        console.log(this.filterTop, '筛选');
       })
       .exec();
-  },
-  onPageScroll(e) {
-    console.log(e, 'scroll');
-    // if (e.scrollTop > 100) {
-    //   this.navShow = true;
-    //   this.suspended = true;
-    // } else {
-    //   this.navShow = false;
-    //   this.suspended = false;
-    // }
-    // if (e.scrollTop > this.myScroll) {
-    //   this.isTop = 1;
-    // } else {
-    //   this.isTop = 0;
-    // }
   },
   methods: {
     scroll(event) {
@@ -363,21 +323,17 @@ export default {
 
     // 滑动到顶部
     toUpper() {
-      console.log('滑动到顶部滑动到顶部滑动到顶部');
       if (this.isTop === 0) {
         return;
       }
       this.isTop = 0;
-      // this.scrollTopNum = this.myScroll - 5;
-      // this.$nextTick(()=>{
-      //   this.scrollTopNum = this.myScroll - 6;
-      // })
     },
 
     // 切换选项卡
     async toggleTab(dataInfo) {
       // 重置列表
       this.isResetList = true;
+      this.pageNum = 1;
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
@@ -393,6 +349,12 @@ export default {
       this.loadThreadsSticky();
       await this.loadThreads();
       this.checkoutTheme = false;
+    },
+    // 筛选分类里的搜索
+    searchClick() {
+      uni.navigateTo({
+        url: '/pages/site/search',
+      });
     },
     // 点击置顶跳转到详情页
     stickyClick(id) {
@@ -467,6 +429,7 @@ export default {
     confirm(e) {
       // 重置列表
       this.isResetList = true;
+      this.pageNum = 1;
       const filterSelected = { ...e };
       this.categoryId = filterSelected[0].data.value;
       this.currentIndex = filterSelected[0].data.index;
@@ -604,8 +567,6 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
-        // this.hasMore = !!res._jv.json.links.next;
-        // this.loadingType = this.hasMore ? 'more' : 'nomore';
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {
@@ -613,7 +574,8 @@ export default {
         } else {
           this.threads = [...this.threads, ...res];
         }
-        console.log(this.navShow, this.isTop, 'isTop navShow');
+        this.isResetList = false;
+        // console.log(this.navShow, this.isTop, 'isTop navShow');
       });
     },
     // 内容部分点赞按钮点击事件
@@ -632,26 +594,17 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
-    },
-    // 调用 未读通知数 的接口
-    getUserInfo() {
-      const id = 1;
-      const params = {
-        include: ['groups'],
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
-        if (res.unreadNotifications === 0) {
-          this.redCircle = false;
+      this.$store.dispatch('jv/patch', params).then(data => {
+        const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
+        if (data.isLiked) {
+          likedPost.likeCount += 1;
         } else {
-          this.redCircle = true;
+          likedPost.likeCount -= 1;
         }
-        console.log('未读通知', res.unreadNotifications);
       });
     },
 
-    // 下拉加载
+    // 上拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
         return;
@@ -695,7 +648,7 @@ export default {
 }
 
 .scrolled .nav {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .sticky {
@@ -714,10 +667,11 @@ export default {
   box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
   &__box {
     // display: block;
+    width: 62rpx;
     height: 35rpx;
-    min-width: 62rpx;
     margin-top: 27rpx;
     margin-left: 20rpx;
+    font-size: $fg-f20;
     line-height: 35rpx;
     color: --color(--qui-FC-777);
     text-align: center;

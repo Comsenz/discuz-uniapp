@@ -37,8 +37,10 @@ import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报  164
 import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报 41
 import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
 import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       imagePath: '',
@@ -85,9 +87,6 @@ export default {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
   },
   methods: {
     // 获取推荐用户信息
@@ -106,7 +105,7 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.recoimg = data.avatarUrl || '/static/noavatar.gif';
       });
     },
     // 获取帖子内容信息
@@ -118,7 +117,7 @@ export default {
         )
         .then(data => {
           this.headerName = data.user.username;
-          this.headerImg = data.user.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+          this.headerImg = data.user.avatarUrl || '/static/noavatar.gif';
           this.postyTepy = data.type;
           this.contentTitle = data.title;
           this.content = data.firstPost.content;

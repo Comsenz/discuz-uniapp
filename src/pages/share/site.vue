@@ -33,8 +33,10 @@
 <script>
 import Cardc from '@/wxcomponents/card/cardbasemap'; // 首页海报有底图
 import Carde from '@/wxcomponents/card/cardnobasemap'; // 首页海报无底图
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       userid: '',
@@ -71,9 +73,6 @@ export default {
     });
   },
   computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
@@ -94,7 +93,7 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.headerImg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.headerImg = data.avatarUrl || '/static/noavatar.gif';
         this.initData();
       });
     },
