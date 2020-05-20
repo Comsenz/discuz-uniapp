@@ -325,10 +325,9 @@
           :wallet-status="true"
           :pay-password="pwdVal"
           :balance="user.walletBalance"
-          :pay-type-val="payTypeVal"
           :pay-type-data="payTypeData"
           :to-name="thread.user.username"
-          :pay-type-text="payTypeText"
+          :pay-type="payTypeText"
           @radioMyHead="radioMyHead"
           @radioChange="radioChange"
           @onInput="onInput"
@@ -354,7 +353,6 @@
 <script>
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
-import { isEmpty } from 'lodash';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
