@@ -32,7 +32,6 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
-        @scrolltoupper="refresh"
         show-scrollbar="false"
         class="scroll-y"
       >
@@ -146,11 +145,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getList();
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.getList();
     },
   },
