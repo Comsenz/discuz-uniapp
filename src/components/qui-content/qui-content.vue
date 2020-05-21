@@ -418,7 +418,7 @@ export default {
       width: 80rpx;
       height: 80rpx;
       margin-right: 18rpx;
-      background: #ccc;
+      // background: #ccc;
       border-radius: 100%;
 
       image {
@@ -565,7 +565,7 @@ export default {
       &__item {
         height: 50rpx;
         padding: 0 20rpx;
-        margin-right: 10rpx;
+        margin: 20rpx 10rpx 8rpx 0;
         margin-bottom: 8rpx;
         font-family: $font-family;
         font-size: $fg-f24;

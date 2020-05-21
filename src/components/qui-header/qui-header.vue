@@ -4,7 +4,7 @@
       <image
         class="logo"
         :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
-        mode="aspectFill"
+        mode="widthFix"
       ></image>
     </view>
     <view class="circleDet">
@@ -96,7 +96,7 @@ export default {
   background: #1878f3;
   .logo {
     display: block;
-    width: 100%;
+    // width: 100%;
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;

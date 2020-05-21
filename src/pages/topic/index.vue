@@ -17,7 +17,12 @@
             :user-name="thread.user.username"
             :theme-type="thread.type"
             :theme-time="thread.createdAt"
-            :management-show="true"
+            :management-show="
+              selectList[0].canOpera ||
+                selectList[1].canOpera ||
+                selectList[2].canOpera ||
+                selectList[3].canOpera
+            "
             :theme-title="thread.type == 1 ? thread.title : ''"
             :theme-content="thread.firstPost.contentHtml"
             :images-list="thread.firstPost.images"
@@ -168,7 +173,7 @@
             <qui-emoji
               :list="allEmoji"
               position="absolute"
-              top="110rpx"
+              top="104rpx"
               v-if="emojiShow"
               border-radius="10rpx"
               @click="getEmojiClick"
@@ -189,7 +194,6 @@
                 v-model="textAreaValue"
                 @blur="contBlur"
               />
-              <!--<textarea placeholder-style="color:#F76260" placeholder="占位符字体是红色的" />-->
               <qui-uploader
                 v-if="uploaderShow"
                 :url="`${url}api/attachments`"
@@ -213,32 +217,34 @@
         </view>
       </uni-popup>
       <!--详情页底部-->
-      <view class="det-ft flex" v-if="footerShow">
-        <view
-          class="det-ft-child flex"
-          @click="
-            threadLikeClick(
-              thread.firstPost._jv.id,
-              thread.firstPost.canLike,
-              thread.firstPost.isLiked,
-            )
-          "
-        >
-          <qui-icon
-            :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
-            class="qui-icon"
-          ></qui-icon>
-          <view class="ft-child-word">
-            {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
+      <view class="det-ft" v-if="footerShow">
+        <view class="det-ft-con">
+          <view
+            class="det-ft-child flex"
+            @click="
+              threadLikeClick(
+                thread.firstPost._jv.id,
+                thread.firstPost.canLike,
+                thread.firstPost.isLiked,
+              )
+            "
+          >
+            <qui-icon
+              :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
+              class="qui-icon"
+            ></qui-icon>
+            <view class="ft-child-word">
+              {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
+            </view>
           </view>
-        </view>
-        <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
-          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.writeComment }}</view>
-        </view>
-        <view class="det-ft-child flex" @click="shareClick">
-          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.share }}</view>
+          <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
+            <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+            <view class="ft-child-word">{{ t.writeComment }}</view>
+          </view>
+          <view class="det-ft-child flex" @click="shareClick">
+            <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+            <view class="ft-child-word">{{ t.share }}</view>
+          </view>
         </view>
       </view>
       <!--分享弹框-->
@@ -628,7 +634,7 @@ export default {
         this.selectList[1].canOpera = this.thread.canEssence;
         this.selectList[2].canOpera = this.thread.canSticky;
         this.selectList[3].canOpera = this.thread.canHide;
-        this.selectList[0].canOpera = true;
+        // this.selectList[0].isStatus = true;
         this.selectList[1].isStatus = this.thread.isEssence;
         this.selectList[2].isStatus = this.thread.isSticky;
         this.selectList[3].isStatus = false;
@@ -899,9 +905,9 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
+          this.commentReply = false;
           this.commentPopupStatus = false;
           if (!res.isComment) {
-            console.log(res, '追加');
             this.posts.push(res);
             console.log(this.posts, '#####################');
           } else {
@@ -1440,7 +1446,7 @@ page {
 }
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  max-height: calc(100vh - 100rpx);
+  max-height: calc(100vh - 80rpx);
 }
 .content {
   display: flex;
@@ -1660,14 +1666,19 @@ page {
   position: fixed;
   bottom: 0;
   left: 0;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
+  z-index: 7;
   width: 100%;
   height: 80rpx;
   line-height: 80rpx;
   background: --color(--qui-BG-2);
   box-shadow: 0 -3rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+.det-ft-con {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
 }
 .det-ft-child {
   flex: auto;
@@ -1700,12 +1711,14 @@ page {
 }
 .comment-popup-topbox {
   position: relative;
+  padding: 40rpx 0 20rpx;
+  margin: 0 40rpx;
 }
 .comment-popup-top {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 40rpx 40rpx 20rpx;
+
   .comment-popup-top-l {
     // flex: 1;
     display: flex;

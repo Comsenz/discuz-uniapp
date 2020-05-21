@@ -15,13 +15,14 @@
       <view class="select-content">
         <view class="jt-bg" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
         <view class="jt-con" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
-        <view
-          class="select-child"
-          v-for="(child, index) in list"
-          :key="index"
-          @click="handleClick(child.canOpera, child.isStatus, child.type)"
-        >
-          {{ child.text }}
+        <view class="select-con" v-for="(child, index) in list" :key="index">
+          <view
+            class="select-child"
+            v-if="child.canOpera"
+            @click="handleClick(child.canOpera, child.isStatus, child.type)"
+          >
+            {{ child.text }}
+          </view>
         </view>
       </view>
     </view>
