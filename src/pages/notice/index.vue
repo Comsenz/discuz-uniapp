@@ -95,8 +95,11 @@ export default {
         { id: 4, title: '支付我的', type: 'rewarded', unReadNum: 0, border: true },
         { id: 5, title: '系统通知', type: 'system', unReadNum: 0, border: false },
       ],
-      loadingType: 'more',
+      loadingType: 'more', // 上拉加载状态
       isFirst: true, // 是否是第一次进入页面
+      hasMore: false, // 是否有更多
+      pageSize: 10, // 每页10条数据
+      pageNum: 1, // 当前页数
     };
   },
 
@@ -148,9 +151,16 @@ export default {
     // 调用 会话列表 的接口
     getDialogList() {
       const params = {
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
       };
-      this.$store.dispatch('jv/get', ['dialog', { params }]);
+      this.$store.dispatch('jv/get', ['dialog', { params }]).then(res => {
+        console.log('会话列表res', res);
+        if (res) {
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        }
+      });
     },
 
     // 调用 未读通知数 的接口
@@ -187,11 +197,14 @@ export default {
       });
     },
 
-    // 滚动加载更多
-    pullDown(e) {
-      console.log(e);
-      this.loadingType = 'loading';
+    // 上拉加载
+    pullDown() {
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      this.pageNum += 1;
       this.getDialogList();
+      console.log('页码', this.pageNum);
     },
   },
 };

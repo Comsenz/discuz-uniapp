@@ -117,6 +117,13 @@ export default {
     // }, 0);
   },
 
+  onPullDownRefresh() {
+    console.log('refresh');
+    setTimeout(() => {
+      uni.stopPullDownRefresh();
+    }, 1000);
+  },
+
   computed: {
     // 获取会话消息列表
     allChatRecord() {
@@ -147,8 +154,8 @@ export default {
     },
   },
 
-  watch:{
-    allChatRecord: function () {
+  watch: {
+    allChatRecord() {
       this.$nextTick(() => {
         uni
           .createSelectorQuery()
@@ -165,8 +172,8 @@ export default {
             console.log('scrollTop', this.scrollTop);
             console.log('height', this.height);
           });
-      })
-    }
+      });
+    },
   },
 
   methods: {
