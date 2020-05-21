@@ -75,12 +75,14 @@ export default {
       dialogId: 0, // 会话id
       height: 0,
       currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
+      currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
   },
 
   onLoad(params) {
     console.log('params', params);
     const { username, dialogId } = params;
+    console.log('currentTheme', this.currentTheme);
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -89,22 +91,55 @@ export default {
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
+    uni.onKeyboardHeightChange(res => {
+      console.log(res.height);
+      if (res.height > 0) {
+        // 键盘弹出（滚动条位置增加键盘高度）
+        this.scrollTop += res.height;
+      } else {
+        // 键盘收起（滚动条位置减少键盘高度）
+        this.scrollTop -= res.height;
+      }
+    });
+    // setTimeout(() => {
+    //   uni
+    //     .createSelectorQuery()
+    //     .selectAll('.chat-box__con')
+    //     .boundingClientRect()
+    //     .exec(data => {
+    //       data[0].forEach(item => {
+    //         this.height += item.height;
+    //       });
+    //       if (this.height > 600) {
+    //         this.scrollTop = this.height - 600;
+    //       }
+    //       console.log('信息', data);
+    //       console.log('height', this.height);
+    //     });
+    // }, 0);
+  },
+
+  onReady() {
     setTimeout(() => {
-      uni
-        .createSelectorQuery()
-        .selectAll('.chat-box__con')
-        .boundingClientRect()
-        .exec(data => {
-          data[0].forEach(item => {
-            this.height += item.height;
-          });
-          if (this.height > 600) {
-            this.scrollTop = this.height - 600;
-          }
-          console.log('信息', data);
-          console.log('height', this.height);
+      if (this.currentTheme === 'dark') {
+        uni.setNavigationBarColor({
+          frontColor: '#343434',
+          backgroundColor: '#3f4243',
         });
-    }, 0);
+      } else {
+        uni.setNavigationBarColor({
+          frontColor: '#343434',
+          backgroundColor: '#ededed',
+        });
+      }
+    }, 1000);
+  },
+
+  onPullDownRefresh() {
+    console.log('refresh');
+    setTimeout(() => {
+      uni.stopPullDownRefresh();
+    }, 1000);
   },
 
   computed: {
@@ -134,6 +169,28 @@ export default {
     // 获取用户信息
     userInfo() {
       return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
+    },
+  },
+
+  watch: {
+    allChatRecord() {
+      this.$nextTick(() => {
+        uni
+          .createSelectorQuery()
+          .selectAll('.chat-box__con')
+          .boundingClientRect()
+          .exec(data => {
+            data[0].forEach(item => {
+              this.height += item.height;
+            });
+            if (this.height > 600) {
+              this.scrollTop = this.height - 600;
+            }
+            console.log('信息', data);
+            console.log('scrollTop', this.scrollTop);
+            console.log('height', this.height);
+          });
+      });
     },
   },
 
@@ -210,11 +267,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/variable/color.scss';
+@import '@/styles/base/theme/fn.scss';
 
 .chat-box {
   height: 100%;
   margin-bottom: 140rpx;
+  background-color: --color(--qui-BG-ED);
 
   &__con {
     font-size: $fg-f24;
@@ -223,7 +281,7 @@ export default {
       padding: 30rpx 0;
       font-size: $fg-f20;
       font-weight: 400;
-      color: rgba(181, 181, 181, 1);
+      color: --color(--qui-FC-B5);
       text-align: center;
     }
 
@@ -344,6 +402,7 @@ export default {
     z-index: 99;
     width: 100%;
     min-height: 140rpx;
+    background: --color(--qui-BG-BTN-GRAY-1);
 
     &__msg {
       display: flex;
@@ -351,7 +410,6 @@ export default {
       justify-content: space-around;
       align-items: center;
       padding: 20rpx 20rpx 40rpx;
-      background: --color(--qui-BG-2);
 
       &__icon {
         margin-right: 20rpx;
@@ -363,14 +421,14 @@ export default {
       height: 80rpx;
       padding-left: 20rpx;
       line-height: 80rpx;
-      background: rgba(255, 255, 255, 1);
+      background: --color(--qui-BG-2);
       border-radius: 5rpx;
     }
 
     &__btn {
       margin: 0 20rpx 0 10rpx;
       font-size: $fg-f28;
-      background-color: rgba(24, 120, 243, 1);
+      background: --color(--qui-BG-HIGH-LIGHT);
     }
   }
 }

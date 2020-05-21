@@ -55,10 +55,10 @@
             <view class="popup-wrap-con">
               <view
                 @click="generateUrl(item.group_id)"
-                v-for="item in allInviteList"
+                v-for="item in groupList"
                 :key="item._jv.id"
               >
-                <view class="popup-wrap-con-text">{{ item.title }}</view>
+                <view class="popup-wrap-con-text">{{ item.name }}</view>
                 <view class="popup-wrap-con-line"></view>
               </view>
             </view>
@@ -128,6 +128,12 @@ export default {
       }
       console.log('list', list);
       return list;
+    },
+    // 获取用户组列表
+    groupList() {
+      const groups = this.$store.getters['jv/get']('groups');
+      console.log('groups', groups);
+      return groups;
     },
     // 获取用户角色
     userInfos() {
