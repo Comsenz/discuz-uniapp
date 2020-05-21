@@ -129,6 +129,8 @@ export default {
     not_install: '该站点未安装',
     postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',
     cancel: '取消',
+    generatePoster: '生成海报',
+    wxShare: '微信分享',
   },
   topic: {
     persenUnit: '人',
@@ -169,6 +171,8 @@ export default {
     sticky: '置顶',
     cancelSticky: '取消置顶',
     deleteSuccessAndJumpToHome: '删除成功，跳转到首页',
+    imageNumLimit: '评论只允许上传3张图片',
+    noReplyPermission: '没有回复权限',
   },
   pay: {
     passwordTip: '请输入支付密码',
@@ -246,7 +250,6 @@ export default {
     system: '系统通知',
     admin: '管理员',
     send: '发送',
-    reply: '回复..',
   },
   // 海报分享页
   share: {

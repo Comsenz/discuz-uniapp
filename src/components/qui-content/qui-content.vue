@@ -81,7 +81,7 @@
             object-fit="cover"
             direction="0"
             :src="mediaUrl"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 300rpx'"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
           ></video>
@@ -94,6 +94,7 @@
               :key="index"
               :mode="modeVal"
               :src="image.thumbUrl"
+              @click="previewPicture(index)"
               alt
             ></image>
           </view>
@@ -106,6 +107,7 @@
               :key="index"
               :mode="modeVal"
               :src="image.thumbUrl"
+              @click="previewPicture(index)"
               alt
             ></image>
           </view>
@@ -118,6 +120,7 @@
               :key="index"
               :mode="modeVal"
               :src="image.thumbUrl"
+              @click="previewPicture(index)"
               alt
             ></image>
             <image
@@ -297,7 +300,7 @@ export default {
     // 图片裁剪、缩放的模式
     modeVal: {
       type: String,
-      default: 'center',
+      default: 'aspectFill',
     },
     mediaUrl: {
       type: String,
@@ -365,6 +368,19 @@ export default {
     // 点击头像跳转到个人主页
     headClick(evt) {
       this.$emit('headClick', evt);
+    },
+    // 预览图片
+    previewPicture(index) {
+      const _this = this;
+      const preview = [];
+      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+        preview.push(_this.imagesList[i].url);
+      }
+      uni.previewImage({
+        current: index,
+        urls: preview,
+        indicator: 'number',
+      });
     },
   },
 };
@@ -549,7 +565,7 @@ export default {
       &__item {
         height: 50rpx;
         padding: 0 20rpx;
-        margin-right: 10rpx;
+        margin: 20rpx 10rpx 8rpx 0;
         margin-bottom: 8rpx;
         font-family: $font-family;
         font-size: $fg-f24;

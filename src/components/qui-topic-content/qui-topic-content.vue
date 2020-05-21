@@ -72,7 +72,7 @@
           enable-play-gesture="true"
           object-fit="fill"
           :src="mediaUrl"
-          style="width: 100%;"
+          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
         <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
@@ -83,7 +83,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
@@ -96,7 +96,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
@@ -109,7 +109,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
             <image
               class="themeItem__content__imgmore__item"
@@ -223,7 +223,17 @@ export default {
     // 图片裁剪、缩放的模式
     modeVal: {
       type: String,
-      default: 'center',
+      default: 'aspectFill',
+    },
+    // 视频宽度
+    videoWidth: {
+      type: Number,
+      default: 0,
+    },
+    // 视频高度
+    videoHeight: {
+      type: Number,
+      default: 0,
     },
     // 主题相关标签
     tags: {
@@ -280,8 +290,21 @@ export default {
       this.$emit('personJume', this.userId);
     },
     // 点击图片事件(默认参数图片id)
-    imageClick(imageId) {
-      this.$emit('imageClick', imageId);
+    // imageClick(imageId) {
+    //   this.$emit('imageClick', imageId);
+    // },
+    // 预览图片
+    previewPicture(index) {
+      const _this = this;
+      const preview = [];
+      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+        preview.push(_this.imagesList[i].url);
+      }
+      uni.previewImage({
+        current: index,
+        urls: preview,
+        indicator: 'number',
+      });
     },
   },
 };
@@ -353,6 +376,7 @@ export default {
         display: inline-block;
         width: 35rpx;
         height: 45rpx;
+        vertical-align: top;
       }
     }
   }

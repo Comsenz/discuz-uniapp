@@ -20,7 +20,6 @@
       scroll-y="true"
       scroll-with-animation="true"
       @scrolltolower="pullDown"
-      @scrolltoupper="refresh"
       show-scrollbar="false"
       class="scroll-y search-item"
     >
@@ -32,9 +31,12 @@
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-          :tags="item.category.name"
+          :thread-type="item.type"
+          :media-url="item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
+          :video-width="item.threadVideo.width"
+          :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
@@ -51,7 +53,7 @@ export default {
       searchValue: '',
       loadingType: 'more',
       data: [],
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
     };
   },
@@ -106,11 +108,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getThemeList(this.searchValue);
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.getThemeList(this.searchValue);
     },
   },

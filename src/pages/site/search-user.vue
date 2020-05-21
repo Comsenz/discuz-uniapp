@@ -20,7 +20,6 @@
       scroll-y="true"
       scroll-with-animation="true"
       @scrolltolower="pullDown"
-      @scrolltoupper="refresh"
       show-scrollbar="false"
       class="scroll-y search-item"
     >
@@ -34,6 +33,7 @@
           class="search-item__users__avatar"
           :src="item.avatarUrl || '/static/noavatar.gif'"
           alt="avatarUrl"
+          :mode="modeVal"
         ></image>
         <qui-cell-item
           :title="item.username"
@@ -53,8 +53,13 @@ export default {
       searchValue: '',
       loadingType: 'more',
       data: [],
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
+      // 图片裁剪、缩放的模式
+      modeVal: {
+        type: String,
+        default: 'aspectFill',
+      },
     };
   },
   onLoad(params) {
@@ -111,11 +116,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getUserList(this.searchValue);
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.getUserList(this.searchValue);
     },
   },

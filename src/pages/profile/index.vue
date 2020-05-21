@@ -7,6 +7,7 @@
             class="profile-info__box__detail-avatar"
             :src="userInfo.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
+            :mode="modeVal"
           ></image>
           <qui-cell-item
             :title="userInfo.username"
@@ -105,6 +106,11 @@ export default {
       currentLoginId: uni.getStorageSync('user_id'),
       current: 0,
       dialogId: 0, // 会话id
+      // 图片裁剪、缩放的模式
+      modeVal: {
+        type: String,
+        default: 'aspectFill',
+      },
     };
   },
   computed: {

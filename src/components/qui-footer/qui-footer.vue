@@ -13,7 +13,6 @@
           :name="item.tabsIcon"
           size="40"
           :class="{ select: true, active: item.id === sel }"
-          @click="select(item)"
         ></qui-icon>
         <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
           {{ item.tabsName }}
@@ -75,27 +74,27 @@ export default {
           tabsIcon: 'icon-home',
           id: 1,
           url: '../home/index',
-          routePath: 'pages/home/index', // 仅用作标识不用来跳转
+          // routePath: 'pages/home/index', // 仅用作标识不用来跳转
         },
         {
           tabsName: 'home.tabsNews',
           tabsIcon: 'icon-message',
           id: 2,
           url: '../notice/index',
-          routePath: 'pages/notice/index', // 仅用作标识不用来跳转
+          // routePath: 'pages/notice/index', // 仅用作标识不用来跳转
         },
         {
           tabsName: 'home.tabsMy',
           tabsIcon: 'icon-mine',
           id: 3,
           url: '../my/index',
-          routePath: 'pages/my/index', // 仅用作标识不用来跳转
+          // routePath: 'pages/my/index', // 仅用作标识不用来跳转
         },
       ],
       bottomData: [],
     };
   },
-  mounted() {
+  created() {
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
