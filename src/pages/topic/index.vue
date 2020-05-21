@@ -12,7 +12,7 @@
         <view class="bg-white">
           <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
           <qui-topic-content
-            :pay-status="thread.price > 0 && thread.paid"
+            :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
             :avatar-url="thread.user.avatarUrl"
             :user-name="thread.user.username"
             :theme-type="thread.type"
@@ -25,6 +25,8 @@
             :tags="[thread.category]"
             :thread-price="thread.price"
             :media-url="thread.threadVideo.media_url"
+            :video-width="thread.threadVideo.width"
+            :video-height="thread.threadVideo.height"
             :cover-image="thread.threadVideo.cover_url"
             @personJump="personJump"
             @selectChoice="selectChoice"
@@ -136,7 +138,7 @@
       </view>
       <!--回复弹框-->
       <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
-        <view class="comment-popup">
+        <view class="comment-popup" v-if="commentPopupStatus">
           <view class="comment-popup-topbox">
             <view class="comment-popup-top">
               <view class="comment-popup-top-l">
@@ -243,15 +245,15 @@
       <uni-popup ref="sharePopup" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
+            <button class="popup-share-button" open-type="share"></button>
             <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
               <view class="popup-share-content-image">
-                <view class="popup-share-box">
+                <view class="popup-share-box" @click="shareContent(index)">
                   <qui-icon
                     class="content-image"
                     :name="item.icon"
                     size="36"
                     color="#777777"
-                    @click="handleClick"
                   ></qui-icon>
                 </view>
                 <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
@@ -265,7 +267,7 @@
       </uni-popup>
       <!--打赏选择金额弹框-->
       <uni-popup ref="rewardPopup" type="bottom">
-        <view class="popup-share">
+        <view class="popup-box">
           <view class="popup-reward-content">
             <text class="popup-title">
               {{ t.supportTheAuthorToCreate }}
@@ -284,8 +286,8 @@
               </qui-button>
             </view>
           </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancelReward()">
+          <view class="popup-content-space"></view>
+          <text class="popup-cancel-btn" @click="cancelReward()">
             {{ i18n.t('discuzq.post.cancel') }}
           </text>
         </view>
@@ -325,10 +327,9 @@
           :wallet-status="true"
           :pay-password="pwdVal"
           :balance="user.walletBalance"
-          :pay-type-val="payTypeVal"
           :pay-type-data="payTypeData"
           :to-name="thread.user.username"
-          :pay-type-text="payTypeText"
+          :pay-type="payTypeText"
           @radioMyHead="radioMyHead"
           @radioChange="radioChange"
           @onInput="onInput"
@@ -354,7 +355,6 @@
 <script>
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
-import { isEmpty } from 'lodash';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
@@ -378,6 +378,7 @@ export default {
       postIndex: '', //点击主题评论时的index
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
+      commentPopupStatus: false, //回复弹框内容状态是否显示
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       uploadFile: [], //上传的文件
@@ -386,13 +387,13 @@ export default {
       isActive: true,
       bottomData: [
         {
-          text: '生成海报',
-          icon: 'icon-word',
+          text: this.i18n.t('core.generatePoster'),
+          icon: 'icon-poster',
           name: 'wx',
         },
         {
-          text: '微信分享',
-          icon: 'icon-img',
+          text: this.i18n.t('core.wxShare'),
+          icon: 'icon-wx-friends',
           name: 'wx',
         },
       ], //分享方式
@@ -518,7 +519,7 @@ export default {
     },
     // core公共变量语言包
     c() {
-      return this.i18n.t('p');
+      return this.i18n.t('core');
     },
     status() {
       return status.status;
@@ -545,6 +546,19 @@ export default {
       isGallery: 1,
     };
   },
+  // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.threadId}`);
+      return {
+        title: threadShare.type === 1 ? this.thread.title : this.thread.firstPost.summary,
+      };
+    }
+    return {
+      title: this.forums.set_site.site_name,
+    };
+  },
   onShow() {
     // let authTimeout = setTimeout(() => {
     //   if (!this.$store.getters['session/get']('isLogin')) {
@@ -558,10 +572,10 @@ export default {
       atMemberList += `@${item.username} `;
       return atMemberList;
     });
-
     this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
+    this.setAtMember([]);
   },
   methods: {
     ...mapMutations({
@@ -631,7 +645,6 @@ export default {
         }
         this.isLiked = data.firstPost.isLiked;
         this.topicStatus = data.isApproved;
-        // console.log(isEmpty(data.paidUsers));
         if (!data.paid || data.paidUsers.length > 0) {
           this.paidStatus = true;
         } else {
@@ -644,17 +657,12 @@ export default {
         } else if (data.type == 1) {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
         }
-        // if (isEmpty(data.rewardedUsers)) {
-        //   this.rewardStatus = false;
-        // } else {
-        //   this.rewardStatus = true;
-        // }
         if (data.price <= 0) {
           this.rewardStatus = true;
         } else if (data.price > 0 && data.paid) {
           this.rewardStatus = true;
         }
-        if (isEmpty(data.firstPost.likedUsers)) {
+        if (data.firstPost.likedUsers.length < 1) {
           this.likedStatus = false;
         } else {
           this.likedStatus = true;
@@ -713,8 +721,15 @@ export default {
               this.thread.firstPost.likedUsers.unshift(this.user);
               this.thread.firstPost.likeCount++;
             } else {
-              console.log('主题已点赞时，取消点赞456');
-              this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              console.log('主题已点赞时，取消点赞456', this.user.id);
+              console.log(this.thread.firstPost.likedUsers, '@@@~~~');
+              // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+              // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
+              //   value.id === this.user.id && likedUsers.splice(key, 1);
+              // });
+              this.thread.firstPost.likedUsers.forEach((value, key) => {
+                value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
+              });
               console.log(this.thread.firstPost.likedUsers);
               this.thread.firstPost.likeCount--;
             }
@@ -793,6 +808,8 @@ export default {
           console.log(data);
           console.log('请求主题操作接口成功');
           if (type == '1') {
+            console.log('收藏');
+            console.log(this.thread);
             this.thread.isFavorite = data.isFavorite;
           } else if (type == '2') {
             this.selectList[1].isStatus = data.isEssence;
@@ -882,8 +899,9 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
+          this.commentPopupStatus = false;
           if (!res.isComment) {
-            console.log('追加');
+            console.log(res, '追加');
             this.posts.push(res);
             console.log(this.posts, '#####################');
           } else {
@@ -1239,6 +1257,11 @@ export default {
       console.log('点击上传图片');
       this.uploaderShow = true;
       console.log(this.$refs.upload, '输出的');
+      if (this.uploadFile.length == 3) {
+        console.log('3张了');
+        this.$refs.toast.show({ message: this.t.imageNumLimit });
+        return;
+      }
       this.$nextTick(() => {
         this.$refs.upload.uploadClick();
       });
@@ -1252,6 +1275,23 @@ export default {
       this.delAttachments(list.data.id).then(() => {
         this.$refs.upload.clear(del);
       });
+    },
+    // 删除图片
+    delAttachments(id) {
+      const params = {
+        _jv: {
+          type: `attachments/${id}`,
+        },
+      };
+
+      return this.$store
+        .dispatch('jv/delete', params)
+        .then(res => {
+          return res;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     // 主题评论点击发布事件
     publishClick() {
@@ -1284,7 +1324,7 @@ export default {
     // 评论的回复
     replyComment(postId, postIndex) {
       if (!this.thread.canReply) {
-        console.log('没有回复权限');
+        this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
         this.commentReply = true;
         this.postIndex = postIndex;
@@ -1292,6 +1332,7 @@ export default {
         console.log(postId, '评论回复id');
         console.log(this.commentReply, '这是评论的回复');
         this.$refs.commentPopup.open();
+        this.commentPopupStatus = true;
       }
     },
     // 点击图片
@@ -1328,12 +1369,15 @@ export default {
     },
     // 主题回复
     threadComment(threadId) {
-      if (!this.thread.canReply) {
-        console.log('没有回复权限');
-      } else {
+      console.log(this.thread.canReply, this.thread.category.canReplyThread);
+      if (this.thread.canReply && this.thread.category.canReplyThread) {
         console.log(threadId, '主题回复id');
         this.commentId = threadId;
         this.$refs.commentPopup.open();
+        this.commentPopupStatus = true;
+      } else {
+        console.log('没有评论主题权限');
+        this.$refs.toast.show({ message: this.t.noReplyPermission });
       }
     },
     // 分享
@@ -1345,6 +1389,22 @@ export default {
       console.log();
       this.$refs.sharePopup.close();
     },
+
+    // // 内容部分分享按钮弹窗
+    // handleClickShare(id) {
+    //   console.log(id,'这是主题id');
+    //   this.$refs.sharePopup.open();
+    // },
+    // 内容部分分享海报,跳到分享海报页面
+    shareContent(index) {
+      if (index === 0) {
+        uni.navigateTo({
+          url: `/pages/share/topic?id=${this.threadId}`,
+        });
+      }
+      this.cancel();
+    },
+
     // 下拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
@@ -1696,68 +1756,14 @@ page {
   border-radius: 0;
 }
 
-.popup-share {
+.popup-box {
   /* #ifndef APP-NVUE */
   display: flex;
   flex-direction: column;
   /* #endif */
   background: --color(--qui-BG-2);
 }
-.popup-share-content {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  height: 250rpx;
-  padding-top: 40rpx;
-  padding-right: 97rpx;
-  padding-left: 98rpx;
-  background: --color(--qui-BG-BTN-GRAY-1);
-  // padding: 15px;
-}
-.popup-share-box {
-  width: 120rpx;
-  height: 120rpx;
-  line-height: 120rpx;
-  background: --color(--qui-BG-2);
-  border-radius: 10px;
-}
-.popup-share-content-box {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: column;
-  align-items: center;
-  width: 120rpx;
-  height: 164rpx;
-  // background: --color(--qui-BG-2);
-}
-.popup-share-content-image {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  justify-content: center;
-  // align-items: center;
-  width: 120rpx;
-  height: 120rpx;
-  overflow: hidden;
-  border-radius: 10rpx;
-}
-.content-image {
-  width: 60rpx;
-  height: 60rpx;
-  margin: 35rpx;
-  line-height: 60rpx;
-}
-.popup-share-content-text {
-  padding-top: 5px;
-  font-size: $fg-f26;
-  color: #333;
-}
-.popup-share-btn {
+.popup-cancel-btn {
   height: 100rpx;
   font-size: $fg-f28;
   line-height: 100rpx;
@@ -1767,7 +1773,7 @@ page {
   border-top-style: solid;
   border-top-width: 1px;
 }
-.popup-share-content-space {
+.popup-content-space {
   width: 100%;
   height: 10rpx;
   background: --color(--qui-BG-ED);

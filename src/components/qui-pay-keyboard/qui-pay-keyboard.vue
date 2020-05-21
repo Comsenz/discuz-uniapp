@@ -167,10 +167,10 @@ export default {
   width: 50rpx;
   height: 50rpx;
 }
-image {
-  width: 100%;
-  height: 100%;
-}
+// image {
+//   width: 100%;
+//   height: 100%;
+// }
 .pay-money {
   display: flex;
   justify-content: center;

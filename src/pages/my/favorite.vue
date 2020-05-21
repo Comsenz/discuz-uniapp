@@ -20,17 +20,20 @@
           :key="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
+          :theme-btn="item.canHide"
           :theme-reply-btn="item.canReply"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+          :thread-type="item.type"
+          :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
           :theme-comment="item.postCount - 1"
-          :tags="item.category.name"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          theme-btn="icon-delete"
+          :video-width="item.threadVideo.width"
+          :video-height="item.threadVideo.height"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -43,7 +46,6 @@
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item._jv.id)"
-          @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
       <qui-load-more :status="loadingType"></qui-load-more>
@@ -173,7 +175,6 @@ export default {
         const likedData = this.data[index];
         const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
         likedData.firstPost.likeCount = count;
-        this.$set(this.data, index, likedData);
       });
     },
     // 删除收藏
