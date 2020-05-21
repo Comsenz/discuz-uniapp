@@ -194,7 +194,7 @@
               v-else
               v-model="inputWord"
               type="digit"
-              placeholder="0.0"
+              placeholder="0"
               focus
             />
           </view>
@@ -281,11 +281,11 @@ export default {
       cursor: 0,
       wordCountCheck: [
         {
-          name: this.i18n.t('discuzq.post.word', { num: 5 }),
-          num: 5,
+          name: this.i18n.t('discuzq.post.word', { num: 0 }),
+          num: 0,
         },
       ],
-      word: 5,
+      word: 0,
       setType: 'pay',
       controlsStatus: false,
       videoBeforeList: [],

@@ -78,7 +78,10 @@ http.interceptor.response(
             });
             break;
           default:
-            uni.showToast({ title: error.detail ? error.detail : i18n.t(`core.${error.code}`) });
+            uni.showToast({
+              icon: 'none',
+              title: error.detail ? error.detail : i18n.t(`core.${error.code}`),
+            });
         }
         return error;
       });
