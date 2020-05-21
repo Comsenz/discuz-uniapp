@@ -32,9 +32,12 @@
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-          :tags="item.category.name"
+          :thread-type="item.type"
+          :media-url="item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
+          :video-width="item.threadVideo.width"
+          :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>

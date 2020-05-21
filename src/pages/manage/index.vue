@@ -14,11 +14,18 @@
 </template>
 
 <style lang="scss" scope>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
+page {
+  background: --color(--qui-BG-2);
+}
+
 .manage-items {
-  padding-left: 40rpx;
+  padding: 0rpx 0rpx 0rpx 40rpx;
 
   .cell-item {
-    padding-right: 40rpx;
+    padding: 0rpx 40rpx 0rpx 0rpx;
   }
 }
 </style>

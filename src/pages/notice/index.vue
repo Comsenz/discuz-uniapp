@@ -62,7 +62,7 @@
                 <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
               </view>
             </view>
-            <view class="dialog-box__con" v-html="dialog.dialogMessage.message_text_html">
+            <view class="dialog-box__con">
               <rich-text
                 :nodes="dialog.dialogMessage.message_text_html"
                 style="word-break: break-all;"

@@ -36,7 +36,7 @@
       ></qui-cell-item>
       <qui-cell-item title="创建时间" :addon="siteInfo.set_site.createdAt"></qui-cell-item>
       <qui-cell-item
-        title="圈子模式"
+        title="站点模式"
         :addon="siteInfo.set_site.site_mode === 'public' ? '公开模式' : '付费模式'"
       ></qui-cell-item>
       <qui-cell-item title="站长" slot-right>

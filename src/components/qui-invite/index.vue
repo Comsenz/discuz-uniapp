@@ -33,7 +33,7 @@ export default {
     },
     status: {
       type: Number,
-      default: 0,
+      default: 1,
     },
     list: {
       type: Array,
@@ -45,16 +45,21 @@ export default {
   methods: {
     // 设为无效
     invalid(id) {
-      this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
-        console.log('设为无效', res);
-      });
+      if (parseInt(this.status, 10) === 1) {
+        this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
+          console.log('设为无效', res);
+        });
+      }
     },
     // 分享
     share(code) {
-      console.log('跳转到分享页面');
-      uni.navigateTo({
-        url: `../site/partner-invite?code=${code}`,
-      });
+      console.log('status', this.status);
+      if (parseInt(this.status, 10) === 1) {
+        console.log('跳转到分享页面');
+        uni.navigateTo({
+          url: `../site/partner-invite?code=${code}`,
+        });
+      }
     },
   },
 };

@@ -37,13 +37,7 @@
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
-          <input
-            class="uni-input"
-            v-model="msg"
-            placeholder="回复.."
-            placeholder-style="color: #b5b5b5; font-size: 28rpx;"
-            @blur="contBlur"
-          />
+          <input class="uni-input" v-model="msg" @blur="contBlur" />
           <qui-icon
             name="icon-expression chat-box__footer__msg__icon"
             size="40"
@@ -137,7 +131,7 @@ export default {
       return this.$store.getters['jv/get']('emoji');
     },
 
-    // 获取登录信息
+    // 获取用户信息
     userInfo() {
       return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
     },

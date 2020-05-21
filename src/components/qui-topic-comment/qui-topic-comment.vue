@@ -40,7 +40,7 @@
         <view class="themeItem__content__text" @click="commentJump">
           <rich-text :nodes="commentContent"></rich-text>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 1">
+        <view v-if="imagesList.length > 0 && imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -49,11 +49,11 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 2">
+        <view v-if="imagesList.length > 0 && imagesList.length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -62,11 +62,11 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length >= 3">
+        <view v-if="imagesList.length > 0 && imagesList.length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -75,11 +75,11 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="Object.keys(imagesList).length % 3 != 0"
+              v-if="imagesList.length % 3 != 0"
             ></image>
           </view>
         </view>
@@ -185,7 +185,7 @@ export default {
     // 图片裁剪、缩放的模式
     modeVal: {
       type: String,
-      default: 'center',
+      default: 'aspectFill',
     },
     // 是否显示评论的回复按钮
     commentShow: {
@@ -270,8 +270,21 @@ export default {
       this.$emit('replyComment');
     },
     // 点击图片事件(默认参数图片id)
-    imageClick(imageId) {
-      this.$emit('imageClick', imageId);
+    // imageClick(imageId) {
+    //   this.$emit('imageClick', imageId);
+    // },
+    // 预览图片
+    previewPicture(index) {
+      const _this = this;
+      const preview = [];
+      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+        preview.push(_this.imagesList[i].url);
+      }
+      uni.previewImage({
+        current: index,
+        urls: preview,
+        indicator: 'number',
+      });
     },
   },
 };
@@ -378,7 +391,7 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 100%;
+        width: 100%;
         max-height: 100%;
         border-radius: 100%;
       }
