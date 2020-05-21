@@ -6,6 +6,7 @@
           class="post-box__title-input"
           type="text"
           v-model="postTitle"
+          :focus="type === 1"
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
@@ -52,6 +53,7 @@
         v-model="textAreaValue"
         auto-height
         :maxlength="-1"
+        :focus="type !== 1"
         @blur="contBlur"
       ></textarea>
       <qui-uploader
@@ -121,6 +123,7 @@
           </qui-button>
         </view>
         <qui-button
+          :loading="postLoading"
           type="primary"
           size="large"
           @click="postClick"
@@ -291,6 +294,7 @@ export default {
       percent: 0,
       fileId: '',
       url: '',
+      postLoading: false,
     };
   },
   computed: {
@@ -505,7 +509,11 @@ export default {
       }
 
       if (status) {
+        this.postLoading = true;
+        uni.showLoading();
         this.postThread().then(res => {
+          this.postLoading = false;
+          uni.hideLoading();
           if (res._jv.json.data.id) {
             uni.redirectTo({
               url: `/pages/topic/index?id=${res._jv.json.data.id}`,
