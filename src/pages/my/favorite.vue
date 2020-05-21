@@ -24,6 +24,7 @@
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
+          :tags="[item.category]"
           :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
@@ -125,10 +126,21 @@ export default {
     // 加载当前点赞数据
     loadlikes() {
       const params = {
-        include: ['user', 'firstPost'],
+        include: [
+          'user',
+          'firstPost',
+          'user.groups',
+          'lastThreePosts',
+          'lastThreePosts.user',
+          'firstPost.likedUsers',
+          'rewardedUsers',
+          'lastThreePosts.replyUser',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        // 'filter[user_id]': this.userId,
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['favorites', { params }]))
