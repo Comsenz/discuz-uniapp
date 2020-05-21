@@ -216,37 +216,7 @@
           </button>
         </view>
       </uni-popup>
-      <!--详情页底部-->
-      <view class="det-ft" v-if="footerShow">
-        <view class="det-ft-con">
-          <view
-            class="det-ft-child flex"
-            @click="
-              threadLikeClick(
-                thread.firstPost._jv.id,
-                thread.firstPost.canLike,
-                thread.firstPost.isLiked,
-              )
-            "
-          >
-            <qui-icon
-              :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
-              class="qui-icon"
-            ></qui-icon>
-            <view class="ft-child-word">
-              {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
-            </view>
-          </view>
-          <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
-            <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-            <view class="ft-child-word">{{ t.writeComment }}</view>
-          </view>
-          <view class="det-ft-child flex" @click="shareClick">
-            <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-            <view class="ft-child-word">{{ t.share }}</view>
-          </view>
-        </view>
-      </view>
+
       <!--分享弹框-->
       <uni-popup ref="sharePopup" type="bottom">
         <view class="popup-share">
@@ -355,6 +325,37 @@
         }"
       ></qui-load-more>
     </scroll-view>
+    <!--详情页底部-->
+    <view class="det-ft" v-if="footerShow">
+      <view class="det-ft-con">
+        <view
+          class="det-ft-child flex"
+          @click="
+            threadLikeClick(
+              thread.firstPost._jv.id,
+              thread.firstPost.canLike,
+              thread.firstPost.isLiked,
+            )
+          "
+        >
+          <qui-icon
+            :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
+            class="qui-icon"
+          ></qui-icon>
+          <view class="ft-child-word">
+            {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
+          </view>
+        </view>
+        <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
+          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.writeComment }}</view>
+        </view>
+        <view class="det-ft-child flex" @click="shareClick">
+          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.share }}</view>
+        </view>
+      </view>
+    </view>
   </qui-page>
 </template>
 
