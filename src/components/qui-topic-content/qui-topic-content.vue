@@ -443,7 +443,6 @@ export default {
       &__item {
         max-width: 100%;
         max-height: 100%;
-        border-radius: 100%;
       }
     }
     &__imgtwo {

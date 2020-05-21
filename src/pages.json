@@ -12,13 +12,13 @@
     {
       "path": "pages/topic/index",
       "style": {
-        "navigationBarTitleText": "Discuz Q"
+        "navigationBarTitleText": "内容详情页"
       }
     },
     {
       "path": "pages/topic/comment",
       "style": {
-        "navigationBarTitleText": "Discuz Q"
+        "navigationBarTitleText": "评论详情页"
       }
     },
     //个人主页和我的部分页面
