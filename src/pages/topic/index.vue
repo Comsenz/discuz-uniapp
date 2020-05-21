@@ -177,7 +177,7 @@
 
           <view class="comment-content-box">
             <view class="comment-content">
-              <textarea
+              <!--<textarea
                 ref="commentText"
                 auto-height
                 focus="true"
@@ -188,7 +188,7 @@
                 placeholder-class="text-placeholder"
                 v-model="textAreaValue"
                 @blur="contBlur"
-              />
+              />-->
               <!--<textarea placeholder-style="color:#F76260" placeholder="占位符字体是红色的" />-->
               <qui-uploader
                 v-if="uploaderShow"
@@ -1440,7 +1440,7 @@ page {
 }
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
-  max-height: calc(100vh - 100rpx);
+  max-height: calc(100vh - 80rpx);
 }
 .content {
   display: flex;
@@ -1660,7 +1660,7 @@ page {
   position: fixed;
   bottom: 0;
   left: 0;
-  z-index: 7;
+  z-index: 7777;
   align-content: center;
   align-items: center;
   justify-content: center;
