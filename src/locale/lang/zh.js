@@ -176,6 +176,7 @@ export default {
   },
   pay: {
     passwordTip: '请输入支付密码',
+    payNow: '立即支付',
     passwordSetting: '请设置钱包支付密码',
     balance: '余额',
     sumOfMoney: '金额',
@@ -196,6 +197,8 @@ export default {
     surePay: '确认支付',
     paySuccess: '支付成功',
     payFail: '支付失败',
+    payType: '支付方式',
+    payPassword: '支付密码',
   },
   auth: {
     userinfo: '获取头像和昵称',

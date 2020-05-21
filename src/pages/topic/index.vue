@@ -1587,12 +1587,13 @@ page {
 //评论
 .comment {
   width: 100%;
-  padding: 40rpx;
+  padding: 40rpx 0;
   margin-top: 30rpx;
   background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .comment-num {
+  padding: 0 40rpx;
   font-weight: bold;
   line-height: 37rpx;
 }

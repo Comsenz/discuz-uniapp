@@ -305,14 +305,16 @@ export default {
 }
 .themeItem {
   width: 100%;
-  padding: 30rpx 0;
+  padding: 30rpx 40rpx;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
+  box-sizing: border-box;
 
   &__header {
     display: flex;
     justify-content: space-between;
     width: 100%;
     height: 80rpx;
-    margin-bottom: 12rpx;
+    margin-bottom: 20rpx;
 
     &__img {
       width: 80rpx;
@@ -346,14 +348,14 @@ export default {
 
       &__isAdmin {
         font-weight: 400;
-        color: --color(--qui-FC-000);
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 31rpx;
-        color: --color(--qui-FC-000);
+        color: --color(--qui-FC-AAA);
       }
 
       &__jumpBtn {
@@ -393,7 +395,6 @@ export default {
       &__item {
         width: 100%;
         max-height: 100%;
-        border-radius: 100%;
       }
     }
     &__imgtwo {
