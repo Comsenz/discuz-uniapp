@@ -2,7 +2,13 @@
   <qui-page>
     <view class="notification-box">
       <!-- 通知信息 -->
-      <scroll-view>
+      <scroll-view
+        scroll-y="true"
+        @scrolltolower="pullDown"
+        show-scrollbar="false"
+        show-icon="true"
+        class="scroll-y"
+      >
         <qui-notification :list="allNotifications"></qui-notification>
         <qui-load-more
           :status="loadingType"
@@ -25,6 +31,8 @@ export default {
   data() {
     return {
       loadingType: 'more', // 上拉加载状态
+      pageSize: 10, // 每页10条数据
+      pageNum: 1, // 当前页数
     };
   },
 
@@ -64,10 +72,26 @@ export default {
     // 根据type的类型发送不同的通知请求
     getNotifications(type) {
       const params = {
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[type]': type,
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'notification' } });
-      this.$store.dispatch('jv/get', ['notification', { params }]);
+      this.$store.dispatch('jv/get', ['notification', { params }]).then(res => {
+        console.log('会话列表res', res);
+        if (res) {
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        }
+      });
+    },
+    // 上拉加载
+    pullDown() {
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      this.pageNum += 1;
+      this.getDialogList();
+      console.log('页码', this.pageNum);
     },
   },
 };
