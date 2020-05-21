@@ -294,13 +294,12 @@
           </view>
         </view>
       </uni-popup>
-
       <!--支付组件-->
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
           :money="price"
-          :wallet-status="true"
+          :wallet-status="user.canWalletPay"
           :pay-password="pwdVal"
           :balance="user.walletBalance"
           :pay-type-data="payTypeData"
@@ -1587,7 +1586,7 @@ page {
 //评论
 .comment {
   width: 100%;
-  padding: 40rpx 0;
+  padding: 40rpx 0 0;
   margin-top: 30rpx;
   background: --color(--qui-BG-2);
   box-sizing: border-box;
