@@ -24,15 +24,17 @@
             ></qui-icon>
             <view :style="{ color: selectActive }">{{ t.management }}</view>
           </view>
-          <qui-drop-down
-            posival="absolute"
-            :show="seleShow"
-            :list="selectList"
-            :top="60"
-            :right="0"
-            :width="180"
-            @click="selectChoice"
-          ></qui-drop-down>
+          <view>
+            <qui-drop-down
+              posival="absolute"
+              :show="seleShow"
+              :list="selectList"
+              :top="60"
+              :right="0"
+              :width="180"
+              @click="selectChoice"
+            ></qui-drop-down>
+          </view>
         </view>
         <image src="@/static/essence.png" class="essence"></image>
       </view>
@@ -275,6 +277,7 @@ export default {
   methods: {
     // 管理菜单点击事件
     selectClick() {
+      console.log(this.selectList, '这是管理菜单');
       this.seleShow = !this.seleShow;
       this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },

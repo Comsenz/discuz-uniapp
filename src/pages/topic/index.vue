@@ -17,7 +17,12 @@
             :user-name="thread.user.username"
             :theme-type="thread.type"
             :theme-time="thread.createdAt"
-            :management-show="true"
+            :management-show="
+              selectList[0].canOpera ||
+                selectList[1].canOpera ||
+                selectList[2].canOpera ||
+                selectList[3].canOpera
+            "
             :theme-title="thread.type == 1 ? thread.title : ''"
             :theme-content="thread.firstPost.contentHtml"
             :images-list="thread.firstPost.images"
@@ -629,7 +634,7 @@ export default {
         this.selectList[1].canOpera = this.thread.canEssence;
         this.selectList[2].canOpera = this.thread.canSticky;
         this.selectList[3].canOpera = this.thread.canHide;
-        this.selectList[0].canOpera = true;
+        // this.selectList[0].isStatus = true;
         this.selectList[1].isStatus = this.thread.isEssence;
         this.selectList[2].isStatus = this.thread.isSticky;
         this.selectList[3].isStatus = false;
