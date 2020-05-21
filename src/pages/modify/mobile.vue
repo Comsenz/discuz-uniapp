@@ -6,7 +6,7 @@
         <view class="modify-phon-test">
           {{ i18n.t('modify.phonbound') }}
         </view>
-        <view :class="userphon ? 'modify-phon-num' : 'modify-phon-num1'">
+        <view :class="userphon ? 'modify-phon-sun' : 'modify-phon-sun1'">
           {{ userphon ? userphon : i18n.t('modify.phonnumberempty') }}
         </view>
         <button class="modify-phon-send" v-if="sun" @click="btnButton" :disabled="noclick">
@@ -200,7 +200,6 @@ export default {
 }
 .modify-phon {
   display: flex;
-  width: 710rpx;
   height: 100rpx;
   justify-content: space-between;
   margin-left: 40rpx;
@@ -211,17 +210,16 @@ export default {
   font-weight: 400;
   line-height: 100rpx;
   color: --color(--qui-FC-777);
-  opacity: 1;
 }
-.modify-phon-num {
-  margin: 0 0 0 109rpx;
+.modify-phon-sun {
+  margin-left: 90rpx;
   font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
   color: --color(--qui-FC-00);
   opacity: 1;
 }
-.modify-phon-num1 {
+.modify-phon-sun1 {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;
