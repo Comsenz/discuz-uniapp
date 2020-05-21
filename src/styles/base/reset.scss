@@ -163,6 +163,9 @@ page {
   background: --color(--qui-BG-2);
   border: none;
 }
+.popup-share-button[plain] {
+  border: 0;
+}
 
 //公共搜索头样式
 .search {
