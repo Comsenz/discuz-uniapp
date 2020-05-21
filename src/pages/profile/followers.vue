@@ -19,6 +19,7 @@
             class="follow-content__items__avatar"
             :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
+            :mode="modeVal"
           ></image>
           <qui-cell-item
             :title="followerItem.fromUser.username"
@@ -83,6 +84,11 @@ export default {
       pageSize: 10,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
+      // 图片裁剪、缩放的模式
+      modeVal: {
+        type: String,
+        default: 'aspectFill',
+      },
     };
   },
   mounted() {

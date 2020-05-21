@@ -34,6 +34,7 @@
           class="search-item__users__avatar"
           :src="item.avatarUrl || '/static/noavatar.gif'"
           alt="avatarUrl"
+          :mode="modeVal"
         ></image>
         <qui-cell-item
           :title="item.username"
@@ -55,6 +56,11 @@ export default {
       data: [],
       pageSize: 10,
       pageNum: 1, // 当前页数
+      // 图片裁剪、缩放的模式
+      modeVal: {
+        type: String,
+        default: 'aspectFill',
+      },
     };
   },
   onLoad(params) {
