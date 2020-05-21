@@ -13,16 +13,16 @@
             <view class="pay-num">￥{{ money }}</view>
             {{ p.rmb }}
           </button>
-          <radio-group @change="radioMyHead">
+          <checkbox-group @change="radioMyHead">
             <label class="pay-radio">
               <view>
-                <radio :value="checkVal" class="radio" color="#2699fb" />
+                <checkbox :value="checkVal" checked="true" class="radio" color="#2699fb" />
               </view>
               <view class="radio-word" :style="{ color: checkStatus ? '#2699fb' : '#999' }">
                 {{ p.showMyHead }}
               </view>
             </label>
-          </radio-group>
+          </checkbox-group>
         </view>
         <view class="popup-content-space"></view>
         <text class="popup-cancel-btn" @click="cancel('1')">{{ p.cancel }}</text>
@@ -184,7 +184,7 @@ export default {
       show: false, // 输入支付密码是否显示
       payImmediatelyClick: false,
       checkVal: '1',
-      checkStatus: false, // 单选框状态
+      checkStatus: true, // 单选框状态
       current: 0,
     };
   },
@@ -210,7 +210,7 @@ export default {
     }),
     // 是否选中显示头像
     radioMyHead(evt) {
-      this.checkStatus = true;
+      this.checkStatus = !this.checkStatus;
       console.log(evt.target.value);
       this.$emit('radioMyHead', evt.target.value);
     },
