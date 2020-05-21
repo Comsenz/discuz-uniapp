@@ -4,7 +4,6 @@
       scroll-y="true"
       scroll-with-animation="true"
       @scrolltolower="pullDown"
-      @scrolltoupper="refresh"
       show-scrollbar="false"
       class="scroll-y"
     >
@@ -17,13 +16,17 @@
         :theme-reply-btn="item.canReply"
         :user-groups="item.user.groups"
         :theme-time="item.createdAt"
+        :tags="[item.category]"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+        :thread-type="item.type"
+        :media-url="item.threadVideo.media_url"
         :is-great="item.firstPost.isLiked"
         :theme-like="item.firstPost.likeCount"
-        :theme-comment="item.firstPost.replyCount"
-        :tags="item.category.name"
+        :theme-comment="item.postCount - 1"
         :images-list="item.firstPost.images"
         :theme-essence="item.isEssence"
+        :video-width="item.threadVideo.width"
+        :video-height="item.threadVideo.height"
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
@@ -48,7 +51,6 @@
               <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
@@ -75,7 +77,7 @@ export default {
       loadingType: 'more',
       data: [],
       flag: true, // 滚动节流
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
       currentLoginId: uni.getStorageSync('user_id'),
@@ -118,12 +120,11 @@ export default {
       const params = {
         include: [
           'user',
-          'firstPost',
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'category',
           'threadVideo',
-          'firstPost.likedUsers',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
@@ -169,12 +170,17 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(() => {
+      this.$store.dispatch('jv/patch', params).then(res => {
         if (isLiked && this.currentLoginId === this.userId) {
           const data = JSON.parse(JSON.stringify(this.data));
           data.splice(index, 1);
           this.data = data;
           this.$emit('changeFollow', { userId: this.userId });
+        } else {
+          // 修改点赞
+          const likedData = this.data[index];
+          const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
+          likedData.firstPost.likeCount = count;
         }
       });
     },
@@ -184,11 +190,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.loadlikes();
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.loadlikes();
     },
   },

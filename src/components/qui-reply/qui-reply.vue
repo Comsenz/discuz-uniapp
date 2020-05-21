@@ -13,8 +13,6 @@
       @click="commentJump"
     >
       <view class="reply-user">{{ reply.user.username }}</view>
-      <view class="reply-connector" v-if="reply.replyUser.username">{{ t.reply }}</view>
-      <view class="reply-user" v-if="reply.replyUser.username">{{ reply.replyUser.username }}</view>
       <view class="reply-user">：</view>
       <text class="reply-content">
         {{ reply.content }}

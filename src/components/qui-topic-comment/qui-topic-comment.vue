@@ -40,7 +40,7 @@
         <view class="themeItem__content__text" @click="commentJump">
           <rich-text :nodes="commentContent"></rich-text>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 1">
+        <view v-if="imagesList.length > 0 && imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -49,11 +49,11 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length == 2">
+        <view v-if="imagesList.length > 0 && imagesList.length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -62,11 +62,11 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
-        <view v-if="Object.keys(imagesList).length > 0 && Object.keys(imagesList).length >= 3">
+        <view v-if="imagesList.length > 0 && imagesList.length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -75,11 +75,11 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="imageClick(image._jv.id)"
+              @click="previewPicture(index)"
             ></image>
             <image
               class="themeItem__content__imgmore__item"
-              v-if="Object.keys(imagesList).length % 3 != 0"
+              v-if="imagesList.length % 3 != 0"
             ></image>
           </view>
         </view>
@@ -95,15 +95,16 @@
         class="themeItem__footer"
         :style="{ justifyContent: replyCount > 0 ? 'space-between' : 'flex-end' }"
       >
-        <view class="themeItem__footer__l" v-if="replyCount > 0" @click="commentJump">
+        <view class="themeItem__footer__l" v-if="replyCount > 3" @click="commentJump">
           <view class="themeItem__footer__con">{{ replyCount }}{{ t.item }}{{ t.reply }}</view>
           <qui-icon
             class="count-jt"
             name="icon-folding-r"
-            size="28"
+            size="22"
             @click="handleClick"
           ></qui-icon>
         </view>
+        <view v-else></view>
         <view class="themeItem__footer__r">
           <view class="footer__r__child" v-if="canDelete" @click="deleteComment">
             <qui-icon class="icon" name="icon-delete" size="26" color="#AAA"></qui-icon>
@@ -185,7 +186,7 @@ export default {
     // 图片裁剪、缩放的模式
     modeVal: {
       type: String,
-      default: 'center',
+      default: 'aspectFill',
     },
     // 是否显示评论的回复按钮
     commentShow: {
@@ -270,8 +271,21 @@ export default {
       this.$emit('replyComment');
     },
     // 点击图片事件(默认参数图片id)
-    imageClick(imageId) {
-      this.$emit('imageClick', imageId);
+    // imageClick(imageId) {
+    //   this.$emit('imageClick', imageId);
+    // },
+    // 预览图片
+    previewPicture(index) {
+      const _this = this;
+      const preview = [];
+      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+        preview.push(_this.imagesList[i].url);
+      }
+      uni.previewImage({
+        current: index,
+        urls: preview,
+        indicator: 'number',
+      });
     },
   },
 };
@@ -292,14 +306,16 @@ export default {
 }
 .themeItem {
   width: 100%;
-  padding: 30rpx 0;
+  padding: 30rpx 40rpx;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
+  box-sizing: border-box;
 
   &__header {
     display: flex;
     justify-content: space-between;
     width: 100%;
     height: 80rpx;
-    margin-bottom: 12rpx;
+    margin-bottom: 20rpx;
 
     &__img {
       width: 80rpx;
@@ -333,14 +349,14 @@ export default {
 
       &__isAdmin {
         font-weight: 400;
-        color: --color(--qui-FC-000);
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 31rpx;
-        color: --color(--qui-FC-000);
+        color: --color(--qui-FC-AAA);
       }
 
       &__jumpBtn {
@@ -378,9 +394,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 100%;
+        width: 100%;
         max-height: 100%;
-        border-radius: 100%;
       }
     }
     &__imgtwo {
@@ -442,20 +457,20 @@ export default {
   width: 100%;
   padding-top: 20rpx;
   .themeItem__footer__con {
-    font-size: $fg-f28;
+    font-size: $fg-f26;
     line-height: 37rpx;
   }
   &__l {
     display: flex;
     flex-direction: row;
     line-height: 37rpx;
-    color: --color(--qui-MAIN);
+    color: --color(--qui-LINK);
     text-align: left;
     align-items: center;
     .count-jt {
-      padding-left: 10rpx;
-      line-height: 37rpx;
-      color: --color(--qui-MAIN);
+      padding-left: 6rpx;
+      line-height: 34rpx;
+      color: --color(--qui-LINK);
     }
   }
   &__r {

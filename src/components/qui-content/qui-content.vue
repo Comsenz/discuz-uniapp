@@ -75,13 +75,12 @@
             show-play-btn="true"
             show-mute-btn="true"
             auto-pause-if-open-native="true"
-            vslide-gesture="true"
             auto-pause-if-navigate="true"
             enable-play-gesture="true"
             object-fit="cover"
             direction="0"
             :src="mediaUrl"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 300rpx'"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
           ></video>
@@ -94,6 +93,7 @@
               :key="index"
               :mode="modeVal"
               :src="image.thumbUrl"
+              @click="previewPicture(index)"
               alt
             ></image>
           </view>
@@ -106,6 +106,7 @@
               :key="index"
               :mode="modeVal"
               :src="image.thumbUrl"
+              @click="previewPicture(index)"
               alt
             ></image>
           </view>
@@ -118,6 +119,7 @@
               :key="index"
               :mode="modeVal"
               :src="image.thumbUrl"
+              @click="previewPicture(index)"
               alt
             ></image>
             <image
@@ -297,7 +299,7 @@ export default {
     // 图片裁剪、缩放的模式
     modeVal: {
       type: String,
-      default: 'center',
+      default: 'aspectFill',
     },
     mediaUrl: {
       type: String,
@@ -366,6 +368,19 @@ export default {
     headClick(evt) {
       this.$emit('headClick', evt);
     },
+    // 预览图片
+    previewPicture(index) {
+      const _this = this;
+      const preview = [];
+      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+        preview.push(_this.imagesList[i].url);
+      }
+      uni.previewImage({
+        current: index,
+        urls: preview,
+        indicator: 'number',
+      });
+    },
   },
 };
 </script>
@@ -402,7 +417,7 @@ export default {
       width: 80rpx;
       height: 80rpx;
       margin-right: 18rpx;
-      background: #ccc;
+      // background: #ccc;
       border-radius: 100%;
 
       image {
@@ -491,8 +506,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 50%;
-        max-height: 50%;
+        max-width: 70%;
+        max-height: 70%;
         // border-radius: 100%;
       }
     }
@@ -549,7 +564,7 @@ export default {
       &__item {
         height: 50rpx;
         padding: 0 20rpx;
-        margin-right: 10rpx;
+        margin: 20rpx 10rpx 8rpx 0;
         margin-bottom: 8rpx;
         font-family: $font-family;
         font-size: $fg-f24;

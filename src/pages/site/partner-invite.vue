@@ -58,6 +58,7 @@
             :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
+            :mode="modeVal"
           ></image>
           <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
         </view>
@@ -70,6 +71,7 @@
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
+              :mode="modeVal"
             ></image>
           </view>
         </view>
@@ -130,6 +132,11 @@ export default {
       currentTheme: uni.getStorageSync('theme'),
       permission: [],
       inviteData: {}, // 邀请的相关信息
+      // 图片裁剪、缩放的模式
+      modeVal: {
+        type: String,
+        default: 'aspectFill',
+      },
     };
   },
   onLoad(params) {
@@ -164,27 +171,14 @@ export default {
     cancel() {
       this.$refs.popupHead.close();
     },
-    // 用户未登陆自动登陆跳转首页，登陆过的直接跳转首页
     submit() {
-      const isLogin = !!uni.getStorageSync('access_token');
-      if (!isLogin) {
-        this.$store.dispatch('session/login', { code: this.code }).then(() => {
-          uni.navigateTo({
-            url: '/pages/home/index',
-          });
-        });
-      } else {
-        uni.navigateTo({
-          url: '/pages/home/index',
-        });
-      }
+      uni.navigateTo({
+        url: '/pages/home/index',
+      });
     },
     getInviteInfo(code) {
-      const params = {
-        'filter[type]': 'invite',
-      };
       status
-        .run(() => this.$store.dispatch('jv/get', [`invite/${code}`, { params }]))
+        .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
         .then(res => {
           this.inviteData = res;
           this.permission = res.group.permission;

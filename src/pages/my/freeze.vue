@@ -16,7 +16,6 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
-        @scrolltoupper="refresh"
         show-scrollbar="false"
         class="scroll-y"
       >
@@ -45,7 +44,7 @@ export default {
     return {
       loadingType: 'more',
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       freezelist: [],
       userId: uni.getStorageSync('user_id'),
@@ -82,11 +81,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getFreezelist();
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.freezelist = [];
       this.getFreezelist();
     },
   },

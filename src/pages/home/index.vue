@@ -32,7 +32,7 @@
       <uni-popup ref="popupHead" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
-            <button class="popup-share-button" open-type="share"></button>
+            <button class="popup-share-button" open-type="share" plain="true"></button>
             <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
               <view class="popup-share-content-image">
                 <view class="popup-share-box" @click="shareHead(index)">
@@ -150,7 +150,7 @@
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
+          <button class="popup-share-button" open-type="share" plain="true"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent(index)">
@@ -180,6 +180,7 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -200,7 +201,7 @@ export default {
       filterSelected: { label: this.i18n.t('topic.whole'), value: '' }, // 筛选类型
       loadingType: 'more', // 上拉加载状态
       hasMore: false, // 是否有更多
-      pageSize: 10, // 每页10条数据
+      pageSize: 20, // 每页10条数据
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
@@ -291,13 +292,15 @@ export default {
     query
       .select('.nav')
       .boundingClientRect(data => {
-        // console.log(`得到布局位置信息${JSON.stringify(data)}`);
-        // console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
       })
       .exec();
   },
   methods: {
+    ...mapMutations({
+      setCategoryId:'session/SET_CATEGORYID',
+      setCategoryIndex:'session/SET_CATEGORYINDEX'
+    }),
     scroll(event) {
       // console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
@@ -337,7 +340,8 @@ export default {
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
-
+      this.setCategoryId(this.categoryId);
+      this.setCategoryIndex(this.currentIndex);
       // 切换筛选框选中分类
       // eslint-disable-next-line
       this.filterList[0].data.map(item => {
@@ -347,6 +351,10 @@ export default {
       this.filterList[0].data[dataInfo.index].selected = true;
 
       this.loadThreadsSticky();
+      this.scrollTopNum = this.myScroll + 1;
+      this.$nextTick(()=>{
+        this.scrollTopNum = this.myScroll
+      })
       await this.loadThreads();
       this.checkoutTheme = false;
     },
@@ -604,6 +612,7 @@ export default {
       });
     },
 
+
     // 上拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
@@ -611,7 +620,6 @@ export default {
       }
       this.pageNum += 1;
       this.loadThreads();
-      console.log(this.pageNum, '页码');
     },
   },
 };
@@ -680,6 +688,7 @@ export default {
     transition: $switch-theme-time;
   }
   &__count {
+    width: 100%;
     height: 35rpx;
     margin-top: 27rpx;
     margin-left: 21rpx;
@@ -688,6 +697,7 @@ export default {
     color: #777;
     text-overflow: ellipsis;
     white-space: nowrap;
+    -webkit-line-clamp: 1; //3行后显示省略号
     &__text {
       display: flex;
       flex-direction: row;
@@ -699,6 +709,7 @@ export default {
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .scroll-tab {
+  z-index: 100;
   height: 100rpx;
   text-align: center;
   white-space: nowrap;
@@ -740,5 +751,7 @@ export default {
   display: inline-block;
   height: 35rpx;
   line-height: 35rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

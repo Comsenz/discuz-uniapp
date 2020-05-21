@@ -221,6 +221,8 @@ export default {
 $otherHeight: 292rpx;
 .qui-at-member-page-box {
   width: 100%;
+  height: 100%;
+  background-color: --color(--qui-BG-2);
   &__hd {
     display: flex;
     align-items: center;
@@ -270,6 +272,7 @@ $otherHeight: 292rpx;
     bottom: 0;
     width: 100%;
     padding: 40rpx;
+    background-color: --color(--qui-BG-2);
     box-sizing: border-box;
     /deep/ .qui-button--button[size='large'] {
       border-radius: 5rpx;

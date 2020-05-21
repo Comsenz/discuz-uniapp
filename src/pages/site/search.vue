@@ -40,6 +40,7 @@
           class="search-item__users__avatar"
           :src="item.avatarUrl || '/static/noavatar.gif'"
           alt="avatarUrl"
+          :mode="modeVal"
         ></image>
         <qui-cell-item
           :title="item.username"
@@ -77,9 +78,13 @@
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-          :tags="item.category.name"
+          :thread-type="item.type"
+          :tags="[item.category]"
+          :media-url="item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
+          :video-width="item.threadVideo.width"
+          :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
@@ -103,8 +108,12 @@ export default {
       themeList: [],
       userTotal: '',
       themeTotal: '',
-      pageSize: 3,
       pageNum: 1, // 当前页数
+      // 图片裁剪、缩放的模式
+      modeVal: {
+        type: String,
+        default: 'aspectFill',
+      },
     };
   },
   methods: {
@@ -122,7 +131,7 @@ export default {
         include: 'groups',
         sort: 'createdAt',
         'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
+        'page[limit]': 3,
         'filter[username]': `*${key}*`,
       };
       status
@@ -135,7 +144,14 @@ export default {
     // 获取主题列表
     getThemeList(key) {
       const params = {
-        include: ['user', 'firstPost', 'threadVideo'],
+        include: [
+          'user',
+          'user.groups',
+          'firstPost',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
         'filter[isDeleted]': 'no',
         'page[number]': this.pageNum,
         'page[limit]': 2,

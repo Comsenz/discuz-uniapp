@@ -1,31 +1,30 @@
 <template>
   <qui-page class="site">
     <qui-header
-      :head-img="siteInfo.set_site.site_logo || '/static/logo.png'"
+      head-img="/static/logo.png"
       :theme="theme"
       :theme-num="siteInfo.other.count_users"
       :post="post"
       :post-num="siteInfo.other.count_threads"
       :share="share"
-      :share-btn="shareBtn"
+      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
       @click="open"
     ></qui-header>
-    <uni-popup ref="popupContent" type="bottom">
+    <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
           <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent()">
+              <view class="popup-share-box" @click="shareHead(index)">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <!-- <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text> -->
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
     <view class="site-item">
@@ -36,7 +35,7 @@
       ></qui-cell-item>
       <qui-cell-item title="创建时间" :addon="siteInfo.set_site.createdAt"></qui-cell-item>
       <qui-cell-item
-        title="圈子模式"
+        title="站点模式"
         :addon="siteInfo.set_site.site_mode === 'public' ? '公开模式' : '付费模式'"
       ></qui-cell-item>
       <qui-cell-item title="站长" slot-right>
@@ -238,19 +237,33 @@ export default {
   /deep/ .header {
     height: auto;
     margin-bottom: 30rpx;
-    border-bottom: 2rpx solid #ededed;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .header /deep/ .circleDet {
-    color: #777;
+    padding: 60rpx 40rpx 50rpx;
+    color: --color(--qui-FC-777);
+    opacity: 1;
   }
   .header .logo {
-    padding-top: 99rpx;
+    width: 295rpx;
+    height: 56rpx;
+    padding-top: 71rpx;
+  }
+  /deep/ .icon-share1 {
+    color: --color(--qui-FC-333);
+  }
+  /deep/ .cell-item__body__content-title {
+    width: 112rpx;
+    margin-right: 40rpx;
+    color: --color(--qui-FC-777);
   }
 }
 .header .circleDet .circleDet-num,
 .header .circleDet .circleDet-share {
-  color: #333;
+  color: --color(--qui-FC-333);
 }
+
 //下面部分样式
 .site-item {
   padding-left: 40rpx;

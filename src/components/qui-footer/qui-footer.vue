@@ -13,7 +13,6 @@
           :name="item.tabsIcon"
           size="40"
           :class="{ select: true, active: item.id === sel }"
-          @click="select(item)"
         ></qui-icon>
         <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
           {{ item.tabsName }}
@@ -61,6 +60,7 @@
 </template>
 <script>
 import forums from '@/mixin/forums';
+import { mapState } from 'vuex';
 
 export default {
   mixins: [forums],
@@ -75,27 +75,27 @@ export default {
           tabsIcon: 'icon-home',
           id: 1,
           url: '../home/index',
-          routePath: 'pages/home/index', // 仅用作标识不用来跳转
+          // routePath: 'pages/home/index', // 仅用作标识不用来跳转
         },
         {
           tabsName: 'home.tabsNews',
           tabsIcon: 'icon-message',
           id: 2,
           url: '../notice/index',
-          routePath: 'pages/notice/index', // 仅用作标识不用来跳转
+          // routePath: 'pages/notice/index', // 仅用作标识不用来跳转
         },
         {
           tabsName: 'home.tabsMy',
           tabsIcon: 'icon-mine',
           id: 3,
           url: '../my/index',
-          routePath: 'pages/my/index', // 仅用作标识不用来跳转
+          // routePath: 'pages/my/index', // 仅用作标识不用来跳转
         },
       ],
       bottomData: [],
     };
   },
-  mounted() {
+  created() {
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
@@ -111,6 +111,12 @@ export default {
         });
       }
     }
+  },
+  computed: {
+    ...mapState({
+        getCategoryId: state => state.session.categoryId,
+        getCategoryIndex: state => state.session.categoryIndex
+    }),
   },
   methods: {
     select(item) {
@@ -147,7 +153,14 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
-      // console.log(this.forums, '9999');
+
+      if (this.getCategoryId) {
+        const category = this.$store.getters['jv/get'](`categories/${this.getCategoryId}`);
+        if (!category.canCreateThread) {
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+        }
+      }
+
       if (
         !this.forums.other.can_create_thread &&
         !this.forums.other.can_create_thread_long &&
@@ -196,7 +209,7 @@ export default {
     handleClick(item) {
       console.log(item.type);
       uni.navigateTo({
-        url: `/pages/topic/post?type=${item.type}`,
+        url: `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
       });
       this.cancel();
     },
