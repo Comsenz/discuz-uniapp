@@ -168,7 +168,7 @@
             <qui-emoji
               :list="allEmoji"
               position="absolute"
-              top="110rpx"
+              top="104rpx"
               v-if="emojiShow"
               border-radius="10rpx"
               @click="getEmojiClick"
@@ -899,9 +899,9 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           this.$refs.commentPopup.close();
+          this.commentReply = false;
           this.commentPopupStatus = false;
           if (!res.isComment) {
-            console.log(res, '追加');
             this.posts.push(res);
             console.log(this.posts, '#####################');
           } else {
@@ -1660,6 +1660,7 @@ page {
   position: fixed;
   bottom: 0;
   left: 0;
+  z-index: 7;
   align-content: center;
   align-items: center;
   justify-content: center;
@@ -1700,12 +1701,14 @@ page {
 }
 .comment-popup-topbox {
   position: relative;
+  padding: 40rpx 0 20rpx;
+  margin: 0 40rpx;
 }
 .comment-popup-top {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 40rpx 40rpx 20rpx;
+
   .comment-popup-top-l {
     // flex: 1;
     display: flex;
