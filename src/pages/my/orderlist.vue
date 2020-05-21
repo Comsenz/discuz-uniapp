@@ -64,7 +64,7 @@ export default {
     return {
       loadingType: 'more',
       flag: true, // 滚动节流
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,

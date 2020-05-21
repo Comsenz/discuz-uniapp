@@ -66,7 +66,7 @@ export default {
     const currentDate = `${year}-${month}`;
     return {
       loadingType: 'more',
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
       show: false,

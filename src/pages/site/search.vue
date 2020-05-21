@@ -107,7 +107,6 @@ export default {
       themeList: [],
       userTotal: '',
       themeTotal: '',
-      pageSize: 3,
       pageNum: 1, // 当前页数
       // 图片裁剪、缩放的模式
       modeVal: {
@@ -131,7 +130,7 @@ export default {
         include: 'groups',
         sort: 'createdAt',
         'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
+        'page[limit]': 3,
         'filter[username]': `*${key}*`,
       };
       status

@@ -80,7 +80,7 @@ export default {
       loadingType: 'more',
       data: [],
       flag: true, // 滚动节流
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
       currentLoginId: uni.getStorageSync('user_id'),

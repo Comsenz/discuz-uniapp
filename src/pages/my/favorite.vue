@@ -85,7 +85,7 @@ export default {
       loadingType: 'more',
       data: [],
       totalData: 0, // 总数
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
       bottomData: [

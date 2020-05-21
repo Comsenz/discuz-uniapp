@@ -54,7 +54,7 @@ export default {
       searchValue: '',
       loadingType: 'more',
       data: [],
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       // 图片裁剪、缩放的模式
       modeVal: {

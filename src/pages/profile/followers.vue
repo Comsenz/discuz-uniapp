@@ -81,7 +81,7 @@ export default {
     return {
       loadingType: 'more',
       followerList: [],
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       currentLoginId: uni.getStorageSync('user_id'),
       // 图片裁剪、缩放的模式
