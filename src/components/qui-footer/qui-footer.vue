@@ -13,7 +13,6 @@
           :name="item.tabsIcon"
           size="40"
           :class="{ select: true, active: item.id === sel }"
-          @click="select(item)"
         ></qui-icon>
         <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
           {{ item.tabsName }}
