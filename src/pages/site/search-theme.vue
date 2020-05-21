@@ -32,6 +32,7 @@
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
+          :tags="[item.category]"
           :media-url="item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
@@ -73,7 +74,14 @@ export default {
     // 获取主题列表
     getThemeList(key, type) {
       const params = {
-        include: ['user', 'firstPost', 'threadVideo'],
+        include: [
+          'user',
+          'user.groups',
+          'firstPost',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
         'filter[isDeleted]': 'no',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
