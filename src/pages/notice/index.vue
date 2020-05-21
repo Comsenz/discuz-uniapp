@@ -96,6 +96,7 @@ export default {
         { id: 5, title: '系统通知', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more',
+      isFirst: true, // 是否是第一次进入页面
     };
   },
 
@@ -105,8 +106,12 @@ export default {
   },
 
   onShow() {
-    this.getDialogList();
-    this.getUnreadNotificationNum();
+    if (this.isFirst) {
+      this.isFirst = false;
+    } else {
+      this.getDialogList();
+      this.getUnreadNotificationNum();
+    }
   },
 
   computed: {
