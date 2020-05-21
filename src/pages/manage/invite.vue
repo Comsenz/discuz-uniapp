@@ -186,11 +186,10 @@ export default {
           type: 'userInviteCode',
         },
       };
-      debugger;
       if (
         this.userInfos &&
-        this.userInfos.group.length > 0 &&
-        this.userInfos.group[0].name === '管理员'
+        this.userInfos.groups.length > 0 &&
+        this.userInfos.groups[0].name === '管理员'
       ) {
         // 角色是管理员
         this.$store
@@ -198,6 +197,7 @@ export default {
           .then(res => {
             if (res) {
               console.log('管理员生成邀请链接res：', res);
+              this.$refs.popup.close();
             }
           })
           .catch(err => {
@@ -210,6 +210,7 @@ export default {
           .then(res => {
             if (res) {
               console.log('生成邀请链接res：', res);
+              this.$refs.popup.close();
             }
           })
           .catch(err => {
