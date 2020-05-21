@@ -75,12 +75,14 @@ export default {
       dialogId: 0, // 会话id
       height: 0,
       currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
+      currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
   },
 
   onLoad(params) {
     console.log('params', params);
     const { username, dialogId } = params;
+    console.log('currentTheme', this.currentTheme);
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -115,6 +117,23 @@ export default {
     //       console.log('height', this.height);
     //     });
     // }, 0);
+  },
+
+  onReady() {
+    setTimeout(() => {
+      if (this.currentTheme === 'dark') {
+        uni.setNavigationBarColor({
+          frontColor: '#343434',
+          backgroundColor: '#3f4243',
+        });
+      } else {
+        debugger;
+        uni.setNavigationBarColor({
+          frontColor: '#343434',
+          backgroundColor: '#ededed',
+        });
+      }
+    }, 5000);
   },
 
   onPullDownRefresh() {

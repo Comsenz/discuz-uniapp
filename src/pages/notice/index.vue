@@ -97,7 +97,6 @@ export default {
       ],
       loadingType: 'more', // 上拉加载状态
       isFirst: true, // 是否是第一次进入页面
-      hasMore: false, // 是否有更多
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
     };
