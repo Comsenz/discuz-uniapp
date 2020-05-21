@@ -1,13 +1,15 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
 import { http } from '@/api/api-request';
 import { utils } from '@/library/jsonapi-vuex/index';
-import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN, SET_AUTH } from '@/store/types/session';
+import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN, SET_AUTH, SET_CATEGORYID, SET_CATEGORYINDEX} from '@/store/types/session';
 
 const state = {
   userId: 0,
   wxLogin: false,
   accessToken: '',
   auth: {},
+  categoryId: 0,
+  categoryIndex: 0,
 };
 
 const actions = {
@@ -86,6 +88,12 @@ const mutations = {
   [SET_AUTH](state, payload) {
     state.auth = payload;
   },
+  [SET_CATEGORYID](state, payload) {
+    state.categoryId = payload;
+  },
+  [SET_CATEGORYINDEX](state, payload) {
+    state.categoryIndex = payload;
+  }
 };
 
 const getters = {
