@@ -53,12 +53,8 @@
         <scroll-view style="height: 968rpx;" scroll-y="true">
           <view class="popup-wrap">
             <view class="popup-wrap-con">
-              <view
-                @click="generateUrl(item.group_id)"
-                v-for="item in groupList"
-                :key="item._jv.id"
-              >
-                <view class="popup-wrap-con-text">{{ item.name }}</view>
+              <view v-for="item in groupList" :key="item._jv.id">
+                <view class="popup-wrap-con-text" @click="generateUrl(item)">{{ item.name }}</view>
                 <view class="popup-wrap-con-line"></view>
               </view>
             </view>
@@ -155,8 +151,11 @@ export default {
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
+      const params = {
+        'filter[type]': 'invite',
+      };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'groups' } });
-      this.$store.dispatch('jv/get', 'groups');
+      this.$store.dispatch('jv/get', ['groups', { params }]);
       console.log('获取所有用户组');
     },
     // 改变标签页
@@ -173,26 +172,27 @@ export default {
       this.$refs.popup.open();
     },
     // 生成 合伙人/嘉宾/成员 邀请链接
-    generateUrl(groupId) {
-      console.log('生成邀请链接：', groupId);
+    generateUrl(key) {
+      console.log('生成邀请链接的key：', key);
       const adminParams = {
         _jv: {
           type: 'invite',
         },
         type: 'invite',
-        group_id: groupId,
+        group_id: parseInt(this.groupList[key]._jv.id, 10),
       };
       const userParams = {
         _jv: {
           type: 'userInviteCode',
         },
       };
-      // 角色是管理员
+      debugger;
       if (
-        this.userInfo &&
-        this.userInfo.group.length > 0 &&
-        this.userInfo.group[0].name === '管理员'
+        this.userInfos &&
+        this.userInfos.group.length > 0 &&
+        this.userInfos.group[0].name === '管理员'
       ) {
+        // 角色是管理员
         this.$store
           .dispatch('jv/post', adminParams)
           .then(res => {

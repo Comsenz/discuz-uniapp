@@ -120,19 +120,17 @@ export default {
   },
 
   onReady() {
-    setTimeout(() => {
-      if (this.currentTheme === 'dark') {
-        uni.setNavigationBarColor({
-          frontColor: '#343434',
-          backgroundColor: '#3f4243',
-        });
-      } else {
-        uni.setNavigationBarColor({
-          frontColor: '#343434',
-          backgroundColor: '#ededed',
-        });
-      }
-    }, 1000);
+    if (this.currentTheme === 'dark') {
+      uni.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#3f4243',
+      });
+    } else {
+      uni.setNavigationBarColor({
+        frontColor: '#000000',
+        backgroundColor: '#ededed',
+      });
+    }
   },
 
   onPullDownRefresh() {
