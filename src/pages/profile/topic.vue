@@ -7,7 +7,6 @@
       scroll-y="true"
       scroll-with-animation="true"
       @scrolltolower="pullDown"
-      @scrolltoupper="refresh"
       show-scrollbar="false"
       class="scroll-y"
     >
@@ -54,7 +53,6 @@
               <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
@@ -81,7 +79,7 @@ export default {
       loadingType: 'more',
       data: [],
       flag: true, // 滚动节流
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
       currentLoginId: uni.getStorageSync('user_id'),
@@ -191,11 +189,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.loadThreads();
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.loadThreads();
     },
   },

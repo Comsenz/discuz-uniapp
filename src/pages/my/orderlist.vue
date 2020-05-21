@@ -32,7 +32,6 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
-        @scrolltoupper="refresh"
         show-scrollbar="false"
         class="scroll-y"
       >
@@ -64,7 +63,7 @@ export default {
     return {
       loadingType: 'more',
       flag: true, // 滚动节流
-      pageSize: 10,
+      pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,
@@ -148,11 +147,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getList();
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.getList();
     },
   },

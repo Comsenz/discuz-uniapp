@@ -13,6 +13,7 @@
           class="my-profile__avatar"
           :src="profile.avatarUrl || '/static/noavatar.gif'"
           alt="avatarUrl"
+          :mode="modeVal"
         ></image>
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
@@ -79,6 +80,7 @@
         @change="uploadChange"
         @chooseSuccess="chooseSuccess"
       ></qui-uploader>
+      <qui-toast ref="toast"></qui-toast>
     </view>
   </qui-page>
 </template>
@@ -96,6 +98,11 @@ export default {
       formData: {},
       show: false,
       host: DISCUZ_REQUEST_HOST,
+      // 图片裁剪、缩放的模式
+      modeVal: {
+        type: String,
+        default: 'aspectFill',
+      },
       userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
     };
   },
@@ -116,6 +123,7 @@ export default {
   methods: {
     uploadChange(e) {
       uni.hideLoading();
+      this.$refs.toast.show({ message: this.i18n.t('头像上传成功') });
       const newAvatar = e[e.length - 1].data.attributes.avatarUrl;
       this.profile.avatarUrl = newAvatar;
     },
