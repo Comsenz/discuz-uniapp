@@ -1456,7 +1456,7 @@ page {
 }
 .bg-white {
   background-color: --color(--qui-BG-2);
-  border: 1px solid --color(--qui-BOR-ED);
+  border-bottom: 1px solid --color(--qui-BOR-ED);
 }
 .detail-tip {
   display: block;
