@@ -11,7 +11,6 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
-        @scrolltoupper="refresh"
         show-scrollbar="false"
         class="scroll-y"
       >
@@ -32,6 +31,7 @@
           :theme-comment="item.postCount - 1"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
+          themeBtn="icon-delete"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           @click="handleClickShare(item._jv.id)"
@@ -46,6 +46,7 @@
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item._jv.id)"
+          @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
       <qui-load-more :status="loadingType"></qui-load-more>
@@ -197,11 +198,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.loadlikes();
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.loadlikes();
     },
   },

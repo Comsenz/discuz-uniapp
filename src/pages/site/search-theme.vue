@@ -20,7 +20,6 @@
       scroll-y="true"
       scroll-with-animation="true"
       @scrolltolower="pullDown"
-      @scrolltoupper="refresh"
       show-scrollbar="false"
       class="scroll-y search-item"
     >
@@ -109,11 +108,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getThemeList(this.searchValue);
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.data = [];
       this.getThemeList(this.searchValue);
     },
   },

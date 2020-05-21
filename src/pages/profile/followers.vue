@@ -5,7 +5,6 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
-        @scrolltoupper="refresh"
         show-scrollbar="false"
         class="scroll-y"
       >
@@ -130,11 +129,6 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getFollowerList();
-    },
-    refresh() {
-      this.pageNum = 1;
-      this.followerList = [];
       this.getFollowerList();
     },
     // 添加关注
