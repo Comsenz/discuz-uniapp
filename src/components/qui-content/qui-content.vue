@@ -418,7 +418,7 @@ export default {
       width: 80rpx;
       height: 80rpx;
       margin-right: 18rpx;
-      background: #ccc;
+      // background: #ccc;
       border-radius: 100%;
 
       image {
