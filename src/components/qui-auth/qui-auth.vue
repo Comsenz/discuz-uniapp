@@ -51,7 +51,7 @@ export default {
             };
             const userId = data._jv.id;
             this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
-            this.$emit('login', res, data);
+            this.$emit('login', { res, data });
           })
           .catch(err => {
             console.log(err);

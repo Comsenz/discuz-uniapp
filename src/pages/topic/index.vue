@@ -692,6 +692,29 @@ export default {
       };
       let params = {};
       if (type == '1') {
+        const post = this.$store.getters['jv/get'](`posts/${id}`);
+
+        // 主题点赞
+        this.isLiked = !this.isLiked;
+        if (this.isLiked) {
+          // 未点赞时，点击点赞'
+          post.likedUsers.unshift(this.user);
+          post.likeCount++;
+        } else {
+          post.likedUsers.forEach((value, key) => {
+            value.id === this.user.id && post.likedUsers.splice(key, 1);
+          });
+          post.likeCount--;
+        }
+
+        jvObj.relationships = {
+          likedUsers: {
+            data: post.likedUsers.map(item => {
+              return { type: item._jv.type, id: item._jv.id };
+            }),
+          },
+        };
+
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
@@ -718,27 +741,26 @@ export default {
           console.log(data, 'wwwwwwwwwwwwwwwwwwww');
           if (type == '1') {
             // 主题点赞
-            this.isLiked = data.isLiked;
-            if (data.isLiked) {
-              // 未点赞时，点击点赞'
-
-              console.log('主题未点赞时，点击点赞123');
-              console.log(this.thread.firstPost.likedUsers);
-              this.thread.firstPost.likedUsers.unshift(this.user);
-              this.thread.firstPost.likeCount++;
-            } else {
-              console.log('主题已点赞时，取消点赞456', this.user.id);
-              console.log(this.thread.firstPost.likedUsers, '@@@~~~');
-              // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-              //   value.id === this.user.id && likedUsers.splice(key, 1);
-              // });
-              this.thread.firstPost.likedUsers.forEach((value, key) => {
-                value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
-              });
-              console.log(this.thread.firstPost.likedUsers);
-              this.thread.firstPost.likeCount--;
-            }
+            // this.isLiked = data.isLiked;
+            // if (data.isLiked) {
+            //   // 未点赞时，点击点赞'
+            //   console.log('主题未点赞时，点击点赞123');
+            //   console.log(this.thread.firstPost.likedUsers);
+            //   this.thread.firstPost.likedUsers.unshift(this.user);
+            //   this.thread.firstPost.likeCount++;
+            // } else {
+            //   console.log('主题已点赞时，取消点赞456', this.user.id);
+            //   console.log(this.thread.firstPost.likedUsers, '@@@~~~');
+            //   // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+            //   // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
+            //   //   value.id === this.user.id && likedUsers.splice(key, 1);
+            //   // });
+            //   this.thread.firstPost.likedUsers.forEach((value, key) => {
+            //     value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
+            //   });
+            //   console.log(this.thread.firstPost.likedUsers);
+            //   this.thread.firstPost.likeCount--;
+            // }
           } else if (type == '2') {
             if (data.isDeleted) {
               console.log('跳转到首页');
