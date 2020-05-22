@@ -204,7 +204,7 @@ export default {
   .left-text {
     min-width: 250rpx;
     font-weight: bold;
-    color: #343434;
+    color: --color(--qui-FC-34);
   }
 
   .notice-box__list {
@@ -214,7 +214,7 @@ export default {
     transition: $switch-theme-time;
 
     /deep/ .cell-item {
-      padding-right: 40rpx;
+      padding: 0rpx 40rpx 0rpx 0rpx;
     }
 
     /deep/ text {
@@ -223,7 +223,7 @@ export default {
   }
 
   .dialog-box__main {
-    margin-bottom: 130rpx;
+    margin: 0rpx 0rpx 130rpx;
   }
 }
 
@@ -277,10 +277,10 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-right: 40rpx;
+      margin: 0rpx 40rpx 0rpx 0rpx;
 
       .red-circle {
-        margin-right: 20rpx;
+        margin: 0rpx 20rpx 0rpx 0rpx;
         vertical-align: middle;
       }
     }

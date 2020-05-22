@@ -214,7 +214,7 @@ export default {
 
 .chat-box {
   height: 100%;
-  margin-bottom: 140rpx;
+  margin: 0rpx 0rpx 140rpx;
 
   &__con {
     font-size: $fg-f24;
@@ -223,7 +223,7 @@ export default {
       padding: 30rpx 0;
       font-size: $fg-f20;
       font-weight: 400;
-      color: rgba(181, 181, 181, 1);
+      color: --color(--qui-JT-B5);
       text-align: center;
     }
 
@@ -247,8 +247,8 @@ export default {
         padding: 25rpx 20rpx;
         margin-right: 20rpx;
         line-height: 60rpx;
-        background: #d1e0ff;
-        border: 1rpx solid #a3caff;
+        background: --color(--qui-BG-D1E0FF);
+        border: 1rpx solid --colot(--qui-BG-A3CAFF);
         border-radius: 10rpx;
       }
 
@@ -262,7 +262,7 @@ export default {
         border-top: 11px solid transparent;
         border-right: 11px solid transparent;
         border-bottom: 11px solid transparent;
-        border-left: 11px solid #d1e0ff;
+        border-left: 11px solid --color(--qui-BOR-D1E0FF);
         content: '';
       }
 
@@ -277,7 +277,7 @@ export default {
         border-top: 11px solid transparent;
         border-right: 11px solid transparent;
         border-bottom: 11px solid transparent;
-        border-left: 11px solid #a3caff;
+        border-left: 11px solid --color(--qui-BOR-A3CAFF);
         content: '';
       }
     }
@@ -300,10 +300,10 @@ export default {
         max-width: 550rpx;
         min-height: 60rpx;
         padding: 25rpx 20rpx;
-        margin-left: 20rpx;
+        margin: 0rpx 0rpx 0rpx 20rpx;
         line-height: 60rpx;
-        background: #fff;
-        border: 1rpx solid #e5e5e5;
+        background: --color(--qui-BG-2);
+        border: 1rpx solid --color(--qui-BOR-E5);
         border-radius: 10rpx;
       }
 
@@ -315,7 +315,7 @@ export default {
         width: 0rpx;
         height: 0rpx;
         border-top: 11px solid transparent;
-        border-right: 11px solid #fff;
+        border-right: 11px solid --color(--qui-BOR-FFF);
         border-bottom: 11px solid transparent;
         border-left: 11px solid transparent;
         content: '';
@@ -330,7 +330,7 @@ export default {
         height: 0rpx;
         padding: 0;
         border-top: 11px solid transparent;
-        border-right: 11px solid #ccc;
+        border-right: 11px solid --color(--qui-BOR-CCC);
         border-bottom: 11px solid transparent;
         border-left: 11px solid transparent;
         content: '';
@@ -354,23 +354,23 @@ export default {
       background: --color(--qui-BG-2);
 
       &__icon {
-        margin-right: 20rpx;
+        margin: 0rpx 20rpx 0rpx 0rpx;
       }
     }
 
     .uni-input {
       width: 65%;
       height: 80rpx;
-      padding-left: 20rpx;
+      padding: 0rpx 0rpx 0rpx 20rpx;
       line-height: 80rpx;
-      background: rgba(255, 255, 255, 1);
+      background: --color(--qui-BG-2);
       border-radius: 5rpx;
     }
 
     &__btn {
       margin: 0 20rpx 0 10rpx;
       font-size: $fg-f28;
-      background-color: rgba(24, 120, 243, 1);
+      background: --color(--qui-BG-BTN);
     }
   }
 }

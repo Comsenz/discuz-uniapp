@@ -17,12 +17,10 @@
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 
-page {
-  background: --color(--qui-BG-2);
-}
-
 .manage-items {
+  height: 100vh;
   padding: 0rpx 0rpx 0rpx 40rpx;
+  background: --color(--qui-BG-2);
 
   .cell-item {
     padding: 0rpx 40rpx 0rpx 0rpx;
