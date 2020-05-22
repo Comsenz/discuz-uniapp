@@ -22,13 +22,13 @@
       <view class="ft-box-spacal">
         <image class="ft-box-spacal-icon" src="@/static/publish.svg" @click="footerOpen"></image>
       </view>
-      <uni-icons
-        class="red-circle"
-        type="smallcircle-filled"
-        size="7"
-        color="red"
+      <qui-icon
         v-if="redCircle"
-      ></uni-icons>
+        name="icon-circle"
+        class="red-circle"
+        color="red"
+        size="14"
+      ></qui-icon>
     </view>
     <uni-popup ref="popup" type="bottom">
       <view class="popup-share">
@@ -60,10 +60,11 @@
 </template>
 <script>
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 import { mapState } from 'vuex';
 
 export default {
-  mixins: [forums],
+  mixins: [forums, user],
   data: () => {
     return {
       sel: 1,
@@ -74,21 +75,21 @@ export default {
           tabsName: 'home.tabsCircle',
           tabsIcon: 'icon-home',
           id: 1,
-          url: '../home/index',
+          url: '/pages/home/index',
           // routePath: 'pages/home/index', // 仅用作标识不用来跳转
         },
         {
           tabsName: 'home.tabsNews',
           tabsIcon: 'icon-message',
           id: 2,
-          url: '../notice/index',
+          url: '/pages/notice/index',
           // routePath: 'pages/notice/index', // 仅用作标识不用来跳转
         },
         {
           tabsName: 'home.tabsMy',
           tabsIcon: 'icon-mine',
           id: 3,
-          url: '../my/index',
+          url: '/pages/my/index',
           // routePath: 'pages/my/index', // 仅用作标识不用来跳转
         },
       ],
@@ -100,8 +101,17 @@ export default {
       getCategoryId: state => state.session.categoryId,
       getCategoryIndex: state => state.session.categoryIndex,
     }),
+    usersId() {
+      return this.$store.getters['session/get']('userId');
+    },
+  },
+  onLoad() {
+    console.log(this.user, 'onload');
   },
   created() {
+    // // 获取用户信息
+    this.getUserInfo();
+    console.log(this.user, 'created');
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
@@ -222,16 +232,16 @@ export default {
     },
     // 调用 未读通知数 的接口
     getUserInfo() {
-      const id = 1;
+      // const id = 1;
       const params = {
-        include: ['groups'],
+        include: ['groups', 'wechat'],
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
-        if (res.unreadNotifications === 0) {
-          this.redCircle = false;
-        } else {
+      this.$store.dispatch('jv/get', [`users/${this.usersId}`, { params }]).then(res => {
+        if (res.unreadNotifications > 0) {
           this.redCircle = true;
+        } else {
+          this.redCircle = false;
         }
         console.log('未读通知', res.unreadNotifications);
       });
