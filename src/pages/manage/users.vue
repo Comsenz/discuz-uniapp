@@ -30,38 +30,10 @@
           </view>
         </view>
       </view>
-      <!-- <view class="">
-      <qui-search
-        class="mSearch-input-box"
-        :mode="2"
-        button="inside"
-        :placeholder="defaultKeyword"
-        @search="doSearch(false)"
-        @input="inputChange"
-        @confirm="doSearch(false)"
-        v-model="keyword"
-      ></qui-search>
-    </view> -->
-      <!-- 搜索内容列表 -->
-      <!-- <view class="search-keyword">
-      <scroll-view class="keyword-list-box" v-show="isShowKeywordList" scroll-y>
-        <block v-for="(row, index) in keywordList" :key="index">
-          <view class="keyword-entry" hover-class="keyword-entry-tap">
-            <view class="keyword-text" @tap.stop="doSearch(keywordList[index].keyword)">
-              <rich-text :nodes="row.htmlStr"></rich-text>
-            </view> -->
-      <!-- <view class="keyword-img" @tap.stop="setKeyword(keywordList[index].keyword)">
-              <image src="/static/HM-search/back.png"></image>
-            </view> -->
-      <!-- </view>
-        </block>
-      </scroll-view>
-    </view> -->
-
       <!-- 成员列表 -->
       <view class="manage-users-wrap">
         <view v-if="userList && Object.keys(userList).length > 0">
-          <view v-for="user in userList" :key="user.id">
+          <view class="manage-users-wrap-list" v-for="user in userList" :key="user.id">
             <qui-avatar-cell
               center
               right-color="#aaa"
@@ -69,6 +41,7 @@
               :title="user.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
               :icon="user.avatarUrl || '/static/noavatar.gif'"
+              @click="getNameId(user)"
             ></qui-avatar-cell>
           </view>
         </view>
@@ -101,6 +74,12 @@ export default {
   },
 
   methods: {
+    getNameId(item) {
+      console.log('item', item);
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${userId}`,
+      });
+    },
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
       this.searchUser(e.target.value);
@@ -176,6 +155,9 @@ export default {
 </script>
 
 <style lang="scss" scope>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .manage-users {
   min-height: 100vh;
   background-color: #f9fafc;
@@ -195,6 +177,10 @@ export default {
 
   &-wrap {
     margin-top: 130rpx;
+
+    &-list{
+      background: --color(--qui-BG-2);
+    }
   }
 }
 
