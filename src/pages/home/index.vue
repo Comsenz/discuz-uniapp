@@ -592,9 +592,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
-      if (!canLike) {
-        console.log('没有点赞权限');
-      }
+      // if (!canLike) {
+      //   console.log('没有点赞权限');
+      // }
       const params = {
         _jv: {
           type: 'posts',
@@ -611,7 +611,6 @@ export default {
         }
       });
     },
-
     // 上拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
