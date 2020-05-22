@@ -177,6 +177,11 @@ export default {
     deleteSuccessAndJumpToHome: '删除成功，跳转到首页',
     imageNumLimit: '评论只允许上传3张图片',
     noReplyPermission: '没有回复权限',
+    noReplyLikePermission: '没有评论点赞权限',
+    noCommentLikePermission: '没有回复点赞权限',
+    deleteSuccessAndJumpToTopic: '删除成功，跳转到主题详情页',
+    deleteFailed: '删除失败',
+    deleteSuccess: '删除成功',
   },
   pay: {
     passwordTip: '请输入支付密码',
