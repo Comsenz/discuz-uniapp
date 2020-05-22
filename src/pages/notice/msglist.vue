@@ -75,12 +75,14 @@ export default {
       dialogId: 0, // 会话id
       height: 0,
       currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
+      currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
   },
 
   onLoad(params) {
     console.log('params', params);
     const { username, dialogId } = params;
+    console.log('currentTheme', this.currentTheme);
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -89,22 +91,53 @@ export default {
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
+    uni.onKeyboardHeightChange(res => {
+      console.log(res.height);
+      if (res.height > 0) {
+        // 键盘弹出（滚动条位置增加键盘高度）
+        this.scrollTop += res.height;
+      } else {
+        // 键盘收起（滚动条位置减少键盘高度）
+        this.scrollTop -= res.height;
+      }
+    });
+    // setTimeout(() => {
+    //   uni
+    //     .createSelectorQuery()
+    //     .selectAll('.chat-box__con')
+    //     .boundingClientRect()
+    //     .exec(data => {
+    //       data[0].forEach(item => {
+    //         this.height += item.height;
+    //       });
+    //       if (this.height > 600) {
+    //         this.scrollTop = this.height - 600;
+    //       }
+    //       console.log('信息', data);
+    //       console.log('height', this.height);
+    //     });
+    // }, 0);
+  },
+
+  onReady() {
+    if (this.currentTheme === 'dark') {
+      uni.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#3f4243',
+      });
+    } else {
+      uni.setNavigationBarColor({
+        frontColor: '#000000',
+        backgroundColor: '#ededed',
+      });
+    }
+  },
+
+  onPullDownRefresh() {
+    console.log('refresh');
     setTimeout(() => {
-      uni
-        .createSelectorQuery()
-        .selectAll('.chat-box__con')
-        .boundingClientRect()
-        .exec(data => {
-          data[0].forEach(item => {
-            this.height += item.height;
-          });
-          if (this.height > 600) {
-            this.scrollTop = this.height - 600;
-          }
-          console.log('信息', data);
-          console.log('height', this.height);
-        });
-    }, 0);
+      uni.stopPullDownRefresh();
+    }, 1000);
   },
 
   computed: {
@@ -134,6 +167,28 @@ export default {
     // 获取用户信息
     userInfo() {
       return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
+    },
+  },
+
+  watch: {
+    allChatRecord() {
+      this.$nextTick(() => {
+        uni
+          .createSelectorQuery()
+          .selectAll('.chat-box__con')
+          .boundingClientRect()
+          .exec(data => {
+            data[0].forEach(item => {
+              this.height += item.height;
+            });
+            if (this.height > 600) {
+              this.scrollTop = this.height - 600;
+            }
+            console.log('信息', data);
+            console.log('scrollTop', this.scrollTop);
+            console.log('height', this.height);
+          });
+      });
     },
   },
 
@@ -210,7 +265,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/variable/color.scss';
+@import '@/styles/base/theme/fn.scss';
 
 .chat-box {
   height: 100%;
@@ -244,10 +299,8 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 60rpx;
         padding: 25rpx 20rpx;
         margin-right: 20rpx;
-        line-height: 60rpx;
         background: --color(--qui-BG-D1E0FF);
         border: 1rpx solid --colot(--qui-BG-A3CAFF);
         border-radius: 10rpx;
@@ -299,10 +352,8 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 60rpx;
         padding: 25rpx 20rpx;
         margin: 0rpx 0rpx 0rpx 20rpx;
-        line-height: 60rpx;
         background: --color(--qui-BG-2);
         border: 1rpx solid --color(--qui-BOR-E5);
         border-radius: 10rpx;
@@ -345,6 +396,7 @@ export default {
     z-index: 99;
     width: 100%;
     min-height: 140rpx;
+    background: --color(--qui-BG-BTN-GRAY-1);
 
     &__msg {
       display: flex;

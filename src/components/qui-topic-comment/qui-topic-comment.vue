@@ -95,15 +95,16 @@
         class="themeItem__footer"
         :style="{ justifyContent: replyCount > 0 ? 'space-between' : 'flex-end' }"
       >
-        <view class="themeItem__footer__l" v-if="replyCount > 0" @click="commentJump">
+        <view class="themeItem__footer__l" v-if="replyCount > 3" @click="commentJump">
           <view class="themeItem__footer__con">{{ replyCount }}{{ t.item }}{{ t.reply }}</view>
           <qui-icon
             class="count-jt"
             name="icon-folding-r"
-            size="28"
+            size="22"
             @click="handleClick"
           ></qui-icon>
         </view>
+        <view v-else></view>
         <view class="themeItem__footer__r">
           <view class="footer__r__child" v-if="canDelete" @click="deleteComment">
             <qui-icon class="icon" name="icon-delete" size="26" color="#AAA"></qui-icon>
@@ -456,20 +457,20 @@ export default {
   width: 100%;
   padding-top: 20rpx;
   .themeItem__footer__con {
-    font-size: $fg-f28;
+    font-size: $fg-f26;
     line-height: 37rpx;
   }
   &__l {
     display: flex;
     flex-direction: row;
     line-height: 37rpx;
-    color: --color(--qui-MAIN);
+    color: --color(--qui-LINK);
     text-align: left;
     align-items: center;
     .count-jt {
-      padding-left: 10rpx;
-      line-height: 37rpx;
-      color: --color(--qui-MAIN);
+      padding-left: 6rpx;
+      line-height: 34rpx;
+      color: --color(--qui-LINK);
     }
   }
   &__r {

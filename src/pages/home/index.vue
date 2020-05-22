@@ -180,6 +180,7 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -291,13 +292,15 @@ export default {
     query
       .select('.nav')
       .boundingClientRect(data => {
-        // console.log(`得到布局位置信息${JSON.stringify(data)}`);
-        // console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
       })
       .exec();
   },
   methods: {
+    ...mapMutations({
+      setCategoryId: 'session/SET_CATEGORYID',
+      setCategoryIndex: 'session/SET_CATEGORYINDEX',
+    }),
     scroll(event) {
       // console.log(event, 'scroll');
       if (this.checkoutTheme || this.isTop === 1) {
@@ -337,7 +340,8 @@ export default {
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
-      console.log(this.categoryId, '分类');
+      this.setCategoryId(this.categoryId);
+      this.setCategoryIndex(this.currentIndex);
       // 切换筛选框选中分类
       // eslint-disable-next-line
       this.filterList[0].data.map(item => {
@@ -347,6 +351,10 @@ export default {
       this.filterList[0].data[dataInfo.index].selected = true;
 
       this.loadThreadsSticky();
+      this.scrollTopNum = this.myScroll + 1;
+      this.$nextTick(() => {
+        this.scrollTopNum = this.myScroll;
+      });
       await this.loadThreads();
       this.checkoutTheme = false;
     },

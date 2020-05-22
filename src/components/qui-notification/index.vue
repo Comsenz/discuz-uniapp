@@ -49,6 +49,7 @@
         <view class="list-box__notice__con">
           <view
             class="list-box__notice__con__text"
+            v-if="item.post_content"
             v-html="item.post_content"
             @click="jumpMyComment(item)"
           ></view>
