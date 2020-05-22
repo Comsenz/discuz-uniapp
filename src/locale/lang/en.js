@@ -159,6 +159,7 @@ export default {
     username: 'Username',
     avatar: 'Avatar',
     mobile: 'Mobile',
+    bindingmobile: 'Binding mobile',
     password: 'Password',
     modify: 'Modify',
     wechat: 'Wechat',
