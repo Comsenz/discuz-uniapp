@@ -115,8 +115,8 @@
           <qui-button
             v-for="(item, index) in allCategories"
             :key="index"
-            :type="checkClassData[index] ? 'primary' : ''"
-            :plain="checkClassData[index]"
+            :type="index === categoryIndex ? 'primary' : ''"
+            :plain="index === categoryIndex"
             @click="checkClass(item, index)"
           >
             {{ item.name }}
@@ -295,15 +295,14 @@ export default {
       fileId: '',
       url: '',
       postLoading: false,
+      allCategories: [],
+      categoryIndex: 0,
     };
   },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
     }),
-    allCategories() {
-      return this.$store.getters['jv/get']('categories');
-    },
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
     },
@@ -454,9 +453,9 @@ export default {
     },
     checkClass(e, index) {
       // 单选功能
-      this.checkClassData = {};
-      this.$set(this.checkClassData, index, e);
-
+      this.categoryIndex = index;
+      this.checkClassData = [];
+      this.checkClassData.push(this.allCategories[this.categoryIndex]);
       // 多选功能
       /* if (!this.checkClassData[index]) {
         this.$set(this.checkClassData, index, e);
@@ -526,7 +525,13 @@ export default {
     // 接口请求
     getCategories() {
       this.$store.dispatch('jv/get', ['categories', {}]).then(res => {
-        this.$set(this.checkClassData, 1, res[1]);
+        this.allCategories = res;
+        if (this.categoryIndex) {
+          this.checkClassData = [];
+          this.checkClassData.push(res[this.categoryIndex]);
+        } else {
+          this.checkClassData.push(res[0]);
+        }
       });
     },
     getEmoji() {
@@ -540,7 +545,7 @@ export default {
             category: {
               data: {
                 type: 'categories',
-                id: Object.keys(this.checkClassData)[0],
+                id: this.checkClassData[0]._jv.id,
               },
             },
           },
@@ -645,6 +650,7 @@ export default {
     }
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
+    if (option.categoryIndex) this.categoryIndex = Number(option.categoryIndex);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
   },
   onShow() {
