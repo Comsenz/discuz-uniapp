@@ -215,6 +215,7 @@ export default {
 .chat-box {
   height: 100%;
   margin: 0rpx 0rpx 140rpx;
+  background: --color(--qui-BG-ED);
 
   &__con {
     font-size: $fg-f24;
@@ -351,7 +352,7 @@ export default {
       justify-content: space-around;
       align-items: center;
       padding: 20rpx 20rpx 40rpx;
-      background: --color(--qui-BG-2);
+      background: --color(--qui-BG-BTN-GRAY-1);
 
       &__icon {
         margin: 0rpx 20rpx 0rpx 0rpx;
