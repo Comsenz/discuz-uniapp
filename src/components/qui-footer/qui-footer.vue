@@ -272,12 +272,14 @@ export default {
 }
 .ft-box-spacal {
   position: relative;
+  top: -20rpx;
   width: 125rpx;
   height: 125rpx;
+  border-radius: 50%;
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
 }
 .ft-box-spacal-icon {
   position: relative;
-  top: -20rpx;
   width: 125rpx;
   height: 125rpx;
 }
