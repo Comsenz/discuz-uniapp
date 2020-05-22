@@ -80,7 +80,7 @@ http.interceptor.response(
           default:
             uni.showToast({
               icon: 'none',
-              title: error.detail ? error.detail : i18n.t(`core.${error.code}`),
+              title: error.detail ? error.detail[0] : i18n.t(`core.${error.code}`),
             });
         }
         return error;

@@ -54,7 +54,9 @@
           </checkbox-group>
           <view class="loading-text">
             <qui-icon
-              v-if="loadingText === 'search.norelatedusersfound'"
+              v-if="
+                loadingText === 'search.norelatedusersfound' || loadingText === 'search.noFollowers'
+              "
               name="icon-noData"
             ></qui-icon>
             <text class="loading-text__cont">{{ i18n.t(loadingText) }}</text>
@@ -179,7 +181,7 @@ export default {
         this.allFollow = [...this.allFollow, ...res];
 
         if (Object.keys(res).nv_length - 1 === 0) {
-          this.loadingText = 'search.norelatedusersfound';
+          this.loadingText = 'search.noFollowers';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
           this.loadingText = 'discuzq.list.noMoreData';
         }
