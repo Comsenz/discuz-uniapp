@@ -38,7 +38,7 @@
         "
         @commentClick="commentClick(item._jv.id)"
         @contentClick="contentClick(item._jv.id)"
-        @headClick="headClick(item._jv.id)"
+        @headClick="headClick(item.user._jv.id)"
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
