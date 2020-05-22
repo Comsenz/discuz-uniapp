@@ -44,17 +44,6 @@
 
 <script>
 export default {
-  data() {
-    return {
-      bottomData: [
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-        },
-      ],
-    }
-  },
   props: {
     total: {
       type: Number,
@@ -65,6 +54,12 @@ export default {
       default: 1,
     },
     list: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+    bottomData: {
       type: Array,
       default: () => {
         return [];
@@ -81,7 +76,7 @@ export default {
       }
     },
     // 分享
-    share(code) {
+    share() {
       console.log('status', this.status);
       if (parseInt(this.status, 10) === 1) {
         console.log('跳转到分享页面');
