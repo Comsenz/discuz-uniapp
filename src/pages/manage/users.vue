@@ -74,21 +74,21 @@ export default {
   },
 
   methods: {
-    getNameId(item) {
-      console.log('item', item);
+    // 跳转到个人主页
+    getNameId(key) {
+      console.log('key', key);
       uni.navigateTo({
-        url: `/pages/profile/index?userId=${userId}`,
+        url: `/pages/profile/index?userId=${this.userList[key].id}`,
       });
     },
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
       this.searchUser(e.target.value);
     }, 800),
-
     clearSearch() {
       this.searchInput();
+      this.searchUser();
     },
-
     // 调用 搜索 接口
     searchUser(val = '') {
       this.searchText = val;
@@ -103,53 +103,6 @@ export default {
         this.$store.dispatch('jv/get', ['users', { params }]);
       }
     },
-
-    // 执行搜索
-    doSearch(keyword) {
-      this.keyword = keyword === false ? this.keyword : keyword;
-      this.saveKeyword(keyword); // 保存为历史
-      uni.showToast({
-        title: this.keyword,
-        icon: 'none',
-        duration: 2000,
-      });
-    },
-    // 监听输入
-    inputChange(event) {
-      // 兼容引入组件时传入参数情况
-      const keyword = event.detail ? event.detail.value : event;
-      if (!keyword) {
-        this.keywordList = [];
-        this.isShowKeywordList = false;
-        return;
-      }
-      this.isShowKeywordList = true;
-      // 以下示例截取淘宝的关键字，请替换成你的接口
-      uni.request({
-        url: `https://suggest.taobao.com/sug?code=utf-8&q=${keyword}`, // 仅为示例
-        success: res => {
-          this.keywordList = [];
-          this.keywordList = this.drawCorrelativeKeyword(res.data.result, keyword);
-        },
-      });
-    },
-    // 高亮关键字
-    drawCorrelativeKeyword(keywords, keyword) {
-      const len = keywords.length;
-      const keywordArr = [];
-      for (let i = 0; i < len; i += 1) {
-        const row = keywords[i];
-        // 定义高亮#9f9f9f
-        let html = row[0].replace(keyword, `<span style='color: #9f9f9f;'>${keyword}</span>`);
-        html = `<div>${html}</div>`;
-        const tmpObj = {
-          keyword: row[0],
-          htmlStr: html,
-        };
-        keywordArr.push(tmpObj);
-      }
-      return keywordArr;
-    },
   },
 };
 </script>
@@ -160,7 +113,7 @@ export default {
 
 .manage-users {
   min-height: 100vh;
-  background-color: #f9fafc;
+  background-color: --color(--qui-BG-1);
 
   &-search {
     .search {
@@ -171,39 +124,16 @@ export default {
     }
 
     .search-box {
-      background-color: #fff;
+      background-color: --color(--qui-BG-2);
     }
   }
 
   &-wrap {
     margin-top: 130rpx;
 
-    &-list{
+    &-list {
       background: --color(--qui-BG-2);
     }
   }
-}
-
-.search-keyword {
-  width: 100%;
-  background-color: rgb(242, 242, 242);
-}
-.keyword-list-box {
-  height: calc(100vh - 110rpx);
-  padding-top: 10rpx;
-  background-color: #fff;
-  border-radius: 20rpx 20rpx 0 0;
-}
-.keyword-entry-tap {
-  background-color: #eee;
-}
-.keyword-entry .keyword-text,
-.keyword-entry .keyword-img {
-  display: flex;
-  height: 80rpx;
-  align-items: center;
-}
-.keyword-entry .keyword-text {
-  width: 90%;
 }
 </style>

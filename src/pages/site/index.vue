@@ -10,6 +10,7 @@
       :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
       @click="open"
     ></qui-header>
+    <!-- 分享弹窗 -->
     <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -24,9 +25,10 @@
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">取消</text>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <!-- 站点信息 -->
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
@@ -86,7 +88,7 @@ export default {
   components: {
     //
   },
-  data: () => {
+  data() {
     return {
       theme: '成员',
       post: '内容',
@@ -95,14 +97,12 @@ export default {
       currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       bottomData: [
         {
-          // text: this.i18n.t('home.generatePoster'),
-          text: '生成海报',
+          text: this.i18n.t('home.generatePoster'),
           icon: 'icon-poster',
           name: 'wx',
         },
         {
-          // text: this.i18n.t('home.wxShare'),
-          text: '微信分享',
+          text: this.i18n.t('home.wxShare'),
           icon: 'icon-wx-friends',
           name: 'wx',
         },
@@ -148,7 +148,7 @@ export default {
       if (list && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           const value = list[keys[i]];
-          if (info && Object.keys(info.groups)) {
+          if (info && info.groups && Object.keys(info.groups)) {
             if (value._jv && info.groups.length > 0) {
               if (value._jv.id === info.groups[0]._jv.id) {
                 if (value.permission) {
@@ -187,6 +187,10 @@ export default {
         console.log('获取用户组权限：', res);
       });
     },
+    // 首页头部分享按钮弹窗
+    open() {
+      this.$refs.popupHead.open();
+    },
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
@@ -202,7 +206,7 @@ export default {
     },
     // 取消按钮
     cancel() {
-      this.$refs.popupContent.close();
+      this.$refs.popupHead.close();
     },
     // 点击头像到个人主页
     toProfile(userId) {

@@ -198,6 +198,7 @@ export default {
             if (res) {
               console.log('管理员生成邀请链接res：', res);
               this.$refs.popup.close();
+              this.getInviteList(1);
             }
           })
           .catch(err => {
@@ -211,6 +212,7 @@ export default {
             if (res) {
               console.log('生成邀请链接res：', res);
               this.$refs.popup.close();
+              this.getInviteList(1);
             }
           })
           .catch(err => {
