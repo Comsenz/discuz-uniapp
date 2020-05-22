@@ -211,12 +211,6 @@ const actions = (api, conf) => {
       return api(apiConf).then(results => {
         // If the server handed back data, store it
 
-        // 点赞关系特殊处理
-        if (utils.hasProperty(data, 'isLiked')) {
-          context.state[data._jv.type][[data._jv.id]]._jv.relationships.likedUsers =
-            data._jv.relationships.likedUsers;
-        }
-
         // 200 (meta-only), or 204 (no resource) response
         // Update the store record from the patch
         context.commit('mergeRecords', data);
