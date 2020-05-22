@@ -95,6 +95,12 @@ export default {
       bottomData: [],
     };
   },
+  computed: {
+    ...mapState({
+      getCategoryId: state => state.session.categoryId,
+      getCategoryIndex: state => state.session.categoryIndex,
+    }),
+  },
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {
@@ -111,12 +117,6 @@ export default {
         });
       }
     }
-  },
-  computed: {
-    ...mapState({
-        getCategoryId: state => state.session.categoryId,
-        getCategoryIndex: state => state.session.categoryIndex
-    }),
   },
   methods: {
     select(item) {
@@ -157,7 +157,7 @@ export default {
       if (this.getCategoryId) {
         const category = this.$store.getters['jv/get'](`categories/${this.getCategoryId}`);
         if (!category.canCreateThread) {
-        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+          this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         }
       }
 
@@ -272,12 +272,14 @@ export default {
 }
 .ft-box-spacal {
   position: relative;
+  top: -20rpx;
   width: 125rpx;
   height: 125rpx;
+  border-radius: 50%;
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
 }
 .ft-box-spacal-icon {
   position: relative;
-  top: -20rpx;
   width: 125rpx;
   height: 125rpx;
 }

@@ -380,7 +380,7 @@ export default {
 
   &__content {
     &__text {
-      font-family: $font-family;
+      overflow: hidden;
       font-size: 28rpx;
       font-weight: 400;
       line-height: 45rpx;

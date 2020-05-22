@@ -484,6 +484,7 @@ export default {
   &__content {
     &__text {
       margin-bottom: 12rpx;
+      overflow: hidden;
       font-family: $font-family;
       font-size: $fg-f28;
       font-weight: 400;
@@ -506,8 +507,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 70%;
-        max-height: 70%;
+        max-width: 80%;
+        max-height: 80%;
         // border-radius: 100%;
       }
     }
