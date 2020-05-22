@@ -320,7 +320,7 @@ export default {
     canalsoinput: '还能输入',
     wordnumber: '个字',
     signturecontent: '请输入签名内容',
-    modificationsucc: '修改签名成功',
+    modificationsucc: '签名设置成功',
     passwordsetsucc: '密码设置成功',
     forgetpassword: '忘记密码 ',
     retrievepassword: ' 找回密码',
@@ -331,6 +331,8 @@ export default {
     passwordinputerro: '密码输入错误',
     forgetmanypassword: '忘记密码？',
     nohasphon: '请先绑定手机号',
+    idtitl: '非法身份证号（长度、校验位等不正确）',
+    nametitl2: '非法姓名（长度、格式等不正确）',
   },
   permission: {
     viewThreads: '查看主题列表',
