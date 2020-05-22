@@ -225,7 +225,7 @@
                   <qui-icon
                     class="content-image"
                     :name="item.icon"
-                    size="36"
+                    size="46"
                     color="#777777"
                   ></qui-icon>
                 </view>
@@ -372,7 +372,7 @@ export default {
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
-      topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
+      topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
       posts: [], //评论列表数据
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
@@ -696,11 +696,14 @@ export default {
 
         // 主题点赞
         this.isLiked = !this.isLiked;
+        console.log(this.isLiked, post, '~!@#$%~~~~~~~~~');
         if (this.isLiked) {
           // 未点赞时，点击点赞'
+          console.log('zoule11111111');
           post.likedUsers.unshift(this.user);
           post.likeCount++;
         } else {
+          console.log('zoule22222');
           post.likedUsers.forEach((value, key) => {
             value.id === this.user.id && post.likedUsers.splice(key, 1);
           });
@@ -742,7 +745,7 @@ export default {
           if (type == '1') {
             // 主题点赞
             // this.isLiked = data.isLiked;
-            // if (data.isLiked) {
+            // if (data.isLiked) {  `
             //   // 未点赞时，点击点赞'
             //   console.log('主题未点赞时，点击点赞123');
             //   console.log(this.thread.firstPost.likedUsers);

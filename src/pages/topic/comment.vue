@@ -56,7 +56,7 @@
                 <view class="thread__content" @click="contentClick">
                   <view class="thread__content__text">
                     <rich-text
-                      :nodes="thread.firstPost.contentHtml.slice(0, 40) + '...'"
+                      :nodes="thread.firstPost.contentHtml.slice(0, 38) + '...'"
                     ></rich-text>
                   </view>
                 </view>
