@@ -38,7 +38,7 @@
         <qui-cell-item
           :title="i18n.t('profile.password')"
           arrow
-          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpaypassword')"
+          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
       <qui-cell-item
