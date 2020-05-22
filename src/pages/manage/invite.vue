@@ -87,7 +87,6 @@ export default {
         { id: 3, title: '已过期', status: 3 },
         { id: 4, title: '已失效', status: 0 },
       ], // 邀请链接的类型列表
-      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       role: '', // 用户角色
       status: 1, // 邀请链接的类型
       bottomData: [
@@ -104,6 +103,12 @@ export default {
     this.getGroupList();
   },
   computed: {
+    // 获取当前登录的id
+    currentLoginId(){
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', typeof parseInt(userId, 10));
+      return parseInt(userId, 10);
+    },
     // 获取管理邀请列表（非管理员无的邀请链接无管理）
     allInviteList() {
       const list = [];

@@ -194,7 +194,7 @@ export default {
     // 跳转到聊天页面（传入用户名和会话id）
     jumpChatPage() {
       uni.navigateTo({
-        url: `../notice/msglist?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
+        url: `/pages/notice/msglist?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
       });
     },
   },

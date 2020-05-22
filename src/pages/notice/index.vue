@@ -87,7 +87,6 @@ export default {
 
   data() {
     return {
-      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       list: [
         { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
@@ -117,6 +116,12 @@ export default {
   },
 
   computed: {
+    // 获取当前登录的id
+    currentLoginId(){
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', typeof parseInt(userId, 10));
+      return parseInt(userId, 10);
+    },
     // 获取会话列表
     allDialogList() {
       const list = [];
@@ -183,7 +188,7 @@ export default {
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     clickUniListItem(item) {
       uni.navigateTo({
-        url: `../notice/notice?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
+        url: `/pages/notice/notice?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
       });
       console.log(`跳转${item.title}页面`);
     },
@@ -192,7 +197,7 @@ export default {
     clickDialog(dialogInfo) {
       console.log('会话信息', dialogInfo);
       uni.navigateTo({
-        url: `../notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
+        url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
       });
     },
 

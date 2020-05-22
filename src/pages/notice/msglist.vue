@@ -74,7 +74,6 @@ export default {
       emojiShow: false, // 表情
       dialogId: 0, // 会话id
       height: 0,
-      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
   },
@@ -141,6 +140,12 @@ export default {
   },
 
   computed: {
+    // 获取当前登录的id
+    currentLoginId(){
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', typeof parseInt(userId, 10));
+      return parseInt(userId, 10);
+    },
     // 获取会话消息列表
     allChatRecord() {
       const list = [];

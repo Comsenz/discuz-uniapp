@@ -104,7 +104,6 @@ export default {
       post: '内容',
       share: '分享',
       shareBtn: 'icon-share1',
-      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -126,6 +125,12 @@ export default {
   },
 
   computed: {
+    // 获取当前登录的id
+    currentLoginId(){
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', typeof parseInt(userId, 10));
+      return parseInt(userId, 10);
+    },
     // 获取当前的主题模式
     currentTheme() {
       const theme = this.$store.getters['theme/get']('currentTheme');
