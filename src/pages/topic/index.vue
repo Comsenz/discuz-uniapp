@@ -142,7 +142,7 @@
         </view>
       </view>
       <!--回复弹框-->
-      <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+      <!--<uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
         <view class="comment-popup" v-if="commentPopupStatus">
           <view class="comment-popup-topbox">
             <view class="comment-popup-top">
@@ -208,17 +208,14 @@
               ></qui-uploader>
             </view>
           </view>
-          <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishBtn()">
-          {{ t.publish }}
-        </qui-button>-->
           <button class="publishBtn" @click="publishClick()">
             {{ t.publish }}
           </button>
         </view>
-      </uni-popup>
+      </uni-popup>-->
 
       <!--分享弹框-->
-      <uni-popup ref="sharePopup" type="bottom">
+      <!--<uni-popup ref="sharePopup" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
             <button class="popup-share-button" open-type="share"></button>
@@ -232,7 +229,6 @@
                     color="#777777"
                   ></qui-icon>
                 </view>
-                <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
               </view>
               <text class="popup-share-content-text">{{ item.text }}</text>
             </view>
@@ -240,9 +236,9 @@
           <view class="popup-share-content-space"></view>
           <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
         </view>
-      </uni-popup>
+      </uni-popup>-->
       <!--打赏选择金额弹框-->
-      <uni-popup ref="rewardPopup" type="bottom">
+      <!--<uni-popup ref="rewardPopup" type="bottom">
         <view class="popup-box">
           <view class="popup-reward-content">
             <text class="popup-title">
@@ -267,9 +263,9 @@
             {{ i18n.t('discuzq.post.cancel') }}
           </text>
         </view>
-      </uni-popup>
+      </uni-popup>-->
       <!--自定义打赏金额弹框-->
-      <uni-popup ref="customAmountPopup" type="center">
+      <!--<uni-popup ref="customAmountPopup" type="center">
         <view class="popup-dialog">
           <view class="popup-dialog__top">
             <text>
@@ -293,9 +289,9 @@
             <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
           </view>
         </view>
-      </uni-popup>
+      </uni-popup>-->
       <!--支付组件-->
-      <view v-if="payShowStatus">
+      <!--<view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
           :money="price"
@@ -310,7 +306,7 @@
           @onInput="onInput"
           @paysureShow="paysureShow"
         ></qui-pay>
-      </view>
+      </view>-->
       <!--遮罩层组件-->
       <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
       <!--轻提示-->
