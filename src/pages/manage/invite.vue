@@ -243,7 +243,7 @@ export default {
   .left-text {
     min-width: 250rpx;
     font-weight: bold;
-    color: #343434;
+    color: --color(--qui-FC-34);
   }
 
   .user-avatar {
