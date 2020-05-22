@@ -182,7 +182,7 @@
 
           <view class="comment-content-box">
             <view class="comment-content">
-              <textarea
+              <!--<textarea
                 ref="commentText"
                 auto-height
                 focus="true"
@@ -193,7 +193,7 @@
                 placeholder-class="text-placeholder"
                 v-model="textAreaValue"
                 @blur="contBlur"
-              />
+              />-->
               <qui-uploader
                 v-if="uploaderShow"
                 :url="`${url}api/attachments`"
