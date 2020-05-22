@@ -10,7 +10,6 @@
     >
       <view class="ft-gap">
         <view class="bg-white">
-          <view>这是钱包状态{{ user.canWalletPay }}</view>
           <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
           <qui-topic-content
             :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
