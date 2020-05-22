@@ -10,14 +10,14 @@
  * @param {object} conf - a jsonapi-vuex config object
  */
 
-import get from 'lodash.get'
-import merge from 'lodash.merge'
+import get from 'lodash.get';
+import merge from 'lodash.merge';
 
-import { utils } from './index'
+import { utils } from './index';
 
 const actions = (api, conf) => {
   // Short var name
-  let jvtag = conf['jvtag']
+  const { jvtag } = conf;
   return {
     /**
      * Get items from the API
@@ -32,23 +32,23 @@ const actions = (api, conf) => {
      * @return {object} Restructured representation of the requested item(s)
      */
     get: (context, args) => {
-      const [data, config] = utils.unpackArgs(args)
-      const path = utils.getURL(data)
-      const apiConf = { method: 'get', url: path }
+      const [data, config] = utils.unpackArgs(args);
+      const path = utils.getURL(data);
+      const apiConf = { method: 'get', url: path };
       // https://github.com/axios/axios/issues/362
-      config['data'] = config['data'] || {}
-      merge(apiConf, config)
+      config.data = config.data || {};
+      merge(apiConf, config);
 
       return api(apiConf).then(results => {
-        let resData = utils.pushPayload(results.data, context);
+        const resData = utils.pushPayload(results.data, context);
         if (conf.clearOnUpdate) {
-          let record = resData
+          let record = resData;
           if (resData.length === 0) {
             // No records - assume type == endpoint
-            let [type] = utils.getTypeId(resData)
-            record = { _jv: { type: type } }
+            const [type] = utils.getTypeId(resData);
+            record = { _jv: { type } };
           }
-          context.commit('clearRecords', record)
+          context.commit('clearRecords', record);
         }
         return resData;
       });
@@ -67,91 +67,91 @@ const actions = (api, conf) => {
      * @return {object} Restructured representation of the requested item(s)
      */
     getRelated: async (context, args) => {
-      const data = utils.unpackArgs(args)[0]
-      let [type, id, relName] = utils.getTypeId(data)
+      const data = utils.unpackArgs(args)[0];
+      const [type, id, relName] = utils.getTypeId(data);
       if (!type || !id) {
-        throw 'No type/id specified'
+        throw 'No type/id specified';
       }
 
-      let rels
+      let rels;
       if (typeof data === 'object' && utils.hasProperty(data[jvtag], 'relationships')) {
-        rels = data[jvtag]['relationships']
+        rels = data[jvtag].relationships;
       } else {
-        let record = await context.dispatch('get', args)
+        const record = await context.dispatch('get', args);
 
-        rels = get(record, [jvtag, 'relationships'], {})
+        rels = get(record, [jvtag, 'relationships'], {});
         if (relName && utils.hasProperty(rels, relName)) {
           // Only process requested relname
-          rels = { [relName]: rels[relName] }
+          rels = { [relName]: rels[relName] };
         }
       }
 
       // We can't pass multiple/non-promise vars in a promise chain,
       // so must define such vars in a higher scope
-      let relNames = []
-      let relPromises = []
+      const relNames = [];
+      const relPromises = [];
 
       // Iterate over all records in rels
       for (let [relName, relItems] of Object.entries(rels)) {
-        let relData
+        let relData;
         // relationships value might be empty if user-constructed
         // so fetch relationships resource linkage for these
         if (!relItems) {
           try {
-            const resLink = await api.get(`${type}/${id}/relationships/${relName}`)
-            relItems = resLink.data
+            const resLink = await api.get(`${type}/${id}/relationships/${relName}`);
+            relItems = resLink.data;
           } catch (error) {
-            throw `No such relationship: ${relName}`
+            throw `No such relationship: ${relName}`;
           }
         }
         // Extract relationships from 'data' (type/id)
         // empty to-one rels (null) are special-cased
-        if (utils.hasProperty(relItems, 'data') && relItems['data'] !== null) {
-          relData = relItems['data']
+        if (utils.hasProperty(relItems, 'data') && relItems.data !== null) {
+          relData = relItems.data;
           if (!Array.isArray(relData)) {
             // Treat as if always an array
-            relData = [relData]
+            relData = [relData];
           }
           // Or from 'links/related'
         } else if (utils.hasProperty(relItems, 'links')) {
-          relData = relItems['links']['related']
+          relData = relItems.links.related;
           if (!(typeof relData === 'string')) {
-            relData = relData['href']
+            relData = relData.href;
           }
-          relData = [relData]
+          relData = [relData];
         }
         if (relData) {
           for (let entry of relData) {
             // Rewrite 'data' objects to normalised form
             if (!(typeof entry === 'string')) {
-              entry = { [jvtag]: entry }
+              entry = { [jvtag]: entry };
             }
-            relNames.push(relName)
-            relPromises.push(context.dispatch('get', entry))
+            relNames.push(relName);
+            relPromises.push(context.dispatch('get', entry));
           }
         } else {
           // Empty to-one rels should have a relName but no data
-          relNames.push(relName)
+          relNames.push(relName);
           // prettier-ignore
           relPromises.push(new Promise((resolve) => { resolve({}) }))
         }
       }
       // 'Merge' all promise resolution/rejection
-      return Promise.all(relPromises).then((results) => {
-        let related = {}
+      return Promise.all(relPromises).then(results => {
+        const related = {};
         results.forEach((result, i) => {
           // Get the relName from the same array position as the result item
-          let relName = relNames[i]
-          let normItem = { [relName]: {} }
+          const relName = relNames[i];
+          const normItem = { [relName]: {} };
           if (utils.hasProperty(result, jvtag)) {
-            normItem[relName][result[jvtag]['type']] = {
-              [result[jvtag]['id']]: result,
-            }
+            normItem[relName][result[jvtag].type] = {
+              [result[jvtag].id]: result,
+            };
           }
-          merge(related, normItem)
-        })
-        return related
-      })
+          merge(related, normItem);
+        });
+        return related;
+      });
     },
     /**
      * Post an item to the API
@@ -165,25 +165,25 @@ const actions = (api, conf) => {
      * @return {object} Restructured representation of the posted item
      */
     post: (context, args) => {
-      let [data, config] = utils.unpackArgs(args)
-      const path = utils.getURL(data, true)
+      let [data, config] = utils.unpackArgs(args);
+      const path = utils.getURL(data, true);
       const apiConf = {
         method: 'post',
         url: path,
         data: utils.normToJsonapi(data),
-      }
-      merge(apiConf, config)
-      return api(apiConf).then((results) => {
-        utils.processIncludedRecords(context, results)
+      };
+      merge(apiConf, config);
+      return api(apiConf).then(results => {
+        utils.processIncludedRecords(context, results);
 
         // If the server handed back data, store it (to get id)
         // spec says 201, but some servers (wrongly) return 200
         if (results.status === 200 || results.status === 201) {
-          data = utils.jsonapiToNorm(results.data.data)
+          data = utils.jsonapiToNorm(results.data.data);
         }
-        context.commit('addRecords', data)
-        return utils.preserveJSON(context.getters.get(data), results.data)
-      })
+        context.commit('addRecords', data);
+        return utils.preserveJSON(context.getters.get(data), results.data);
+      });
     },
     /**
      * Patch an item in the API
@@ -197,30 +197,34 @@ const actions = (api, conf) => {
      * @return {object} Restructured representation of the patched item
      */
     patch: (context, args) => {
-      let [data, config] = utils.unpackArgs(args)
+      let [data, config] = utils.unpackArgs(args);
       if (conf.cleanPatch) {
-        data = utils.cleanPatch(data, context.state, conf.cleanPatchProps)
+        data = utils.cleanPatch(data, context.state, conf.cleanPatchProps);
       }
-      const path = utils.getURL(data)
+      const path = utils.getURL(data);
       const apiConf = {
         method: 'patch',
         url: path,
         data: utils.normToJsonapi(data),
-      }
-      merge(apiConf, config)
-      return api(apiConf).then((results) => {
-        // debugger;
+      };
+      merge(apiConf, config);
+      return api(apiConf).then(results => {
         // If the server handed back data, store it
+        debugger;
+        // if(utils.hasProperty(data, 'isLiked')) {
+        //   context.state[data._jv.type][[data._jv.id]]._jv.relationships.likedUsers = data._jv.relationships.likedUsers;
+        // }
+
 
         // 200 (meta-only), or 204 (no resource) response
         // Update the store record from the patch
-        context.commit('mergeRecords', data)
-        
+        context.commit('mergeRecords', data);
+
         // NOTE: We deliberately process included records after any `deleteRecord` mutations
         // to avoid deleting any included records that we just added.
-        utils.processIncludedRecords(context, results)
-        return utils.preserveJSON(context.getters.get(data), results.data)
-      })
+        utils.processIncludedRecords(context, results);
+        return utils.preserveJSON(context.getters.get(data), results.data);
+      });
     },
     /**
      * Delete an item from the API
@@ -235,20 +239,19 @@ const actions = (api, conf) => {
      * @return {object} Restructured representation of the deleted item
      */
     delete: (context, args) => {
-      const [data, config] = utils.unpackArgs(args)
-      const path = utils.getURL(data)
-      const apiConf = { method: 'delete', url: path }
-      merge(apiConf, config)
-      return api(apiConf).then((results) => {
-        utils.processIncludedRecords(context, results)
+      const [data, config] = utils.unpackArgs(args);
+      const path = utils.getURL(data);
+      const apiConf = { method: 'delete', url: path };
+      merge(apiConf, config);
+      return api(apiConf).then(results => {
+        utils.processIncludedRecords(context, results);
 
-        context.commit('deleteRecord', data)
+        context.commit('deleteRecord', data);
         if (results.data) {
-          return utils.preserveJSON(utils.jsonapiToNorm(results.data.data), results.data)
-        } else {
-          return data
+          return utils.preserveJSON(utils.jsonapiToNorm(results.data.data), results.data);
         }
-      })
+        return data;
+      });
     },
     /**
      * Get items from the API without updating the Vuex store
@@ -269,9 +272,9 @@ const actions = (api, conf) => {
         commit: () => {},
         dispatch: context.dispatch,
         getters: context.getters,
-      }
+      };
       // Use a new actions 'instance' instead of 'dispatch' to allow context override
-      return actions(api, conf).get(nocontext, args)
+      return actions(api, conf).get(nocontext, args);
     },
     /**
      * Alias for {@link module:jsonapi-vuex.jsonapiModule.actions.get}
@@ -279,7 +282,7 @@ const actions = (api, conf) => {
      * @memberof module:jsonapi-vuex.jsonapiModule.actions
      */
     get fetch() {
-      return this.get
+      return this.get;
     },
     /**
      * Alias for {@link module:jsonapi-vuex.jsonapiModule.actions.post}
@@ -287,7 +290,7 @@ const actions = (api, conf) => {
      * @memberof module:jsonapi-vuex.jsonapiModule.actions
      */
     get create() {
-      return this.post
+      return this.post;
     },
     /**
      * Alias for {@link module:jsonapi-vuex.jsonapiModule.actions.patch}
@@ -295,9 +298,9 @@ const actions = (api, conf) => {
      * @memberof module:jsonapi-vuex.jsonapiModule.actions
      */
     get update() {
-      return this.patch
+      return this.patch;
     },
-  }
-}
+  };
+};
 
-export default actions
+export default actions;
