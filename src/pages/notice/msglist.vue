@@ -307,36 +307,36 @@ export default {
         padding: 25rpx 20rpx;
         margin-right: 20rpx;
         background: --color(--qui-BG-D1E0FF);
-        border: 1rpx solid --colot(--qui-BG-A3CAFF);
+        border: 1rpx solid --color(--qui-BG-A3CAFF);
         border-radius: 10rpx;
       }
 
       &__box:before {
         position: absolute;
         top: 30rpx;
-        right: -20px;
-        z-index: 12;
+        right: -18.6rpx;
+        z-index: 100;
         width: 0rpx;
         height: 0rpx;
-        border-top: 11px solid transparent;
-        border-right: 11px solid transparent;
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid --color(--qui-BOR-D1E0FF);
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid transparent;
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid --color(--qui-BOR-D1E0FF);
         content: '';
       }
 
       &__box:after {
         position: absolute;
         top: 30rpx;
-        right: -21px;
-        z-index: 10;
+        right: -20rpx;
+        z-index: 99;
         width: 0rpx;
         height: 0rpx;
         padding: 0;
-        border-top: 11px solid transparent;
-        border-right: 11px solid transparent;
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid --color(--qui-BOR-A3CAFF);
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid transparent;
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid --color(--qui-BOR-A3CAFF);
         content: '';
       }
     }
@@ -367,29 +367,29 @@ export default {
       &__box:before {
         position: absolute;
         top: 30rpx;
-        left: -21px;
-        z-index: 12;
+        left: -18.6rpx;
+        z-index: 100;
         width: 0rpx;
         height: 0rpx;
-        border-top: 11px solid transparent;
-        border-right: 11px solid --color(--qui-BOR-FFF);
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid transparent;
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid --color(--qui-BOR-FFF);
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid transparent;
         content: '';
       }
 
       &__box:after {
         position: absolute;
         top: 30rpx;
-        left: -22px;
-        z-index: 10;
+        left: -20rpx;
+        z-index: 99;
         width: 0rpx;
         height: 0rpx;
         padding: 0;
-        border-top: 11px solid transparent;
-        border-right: 11px solid --color(--qui-BOR-CCC);
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid transparent;
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid --color(--qui-BOR-CCC);
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid transparent;
         content: '';
       }
     }

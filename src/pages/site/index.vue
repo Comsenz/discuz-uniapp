@@ -202,6 +202,7 @@ export default {
     // 调用 用户组权限 接口
     getPermissions() {
       const params = {
+        'filter[type]': 'invite',
         include: ['permission'],
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
