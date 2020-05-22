@@ -127,7 +127,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 
 .search-item {
-  margin-bottom: 30rpx;
+  padding-top: 15rpx;
   background-color: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
