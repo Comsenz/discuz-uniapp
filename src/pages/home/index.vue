@@ -592,9 +592,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
-      if (!canLike) {
-        console.log('没有点赞权限');
-      }
+      // if (!canLike) {
+      //   console.log('没有点赞权限');
+      // }
       const params = {
         _jv: {
           type: 'posts',
@@ -686,8 +686,8 @@ export default {
     transition: $switch-theme-time;
   }
   &__count {
-    width: 100%;
-    height: 35rpx;
+    width: 572rpx;
+    height: 100%;
     margin-top: 27rpx;
     margin-left: 21rpx;
     overflow: hidden;
@@ -695,7 +695,6 @@ export default {
     color: #777;
     text-overflow: ellipsis;
     white-space: nowrap;
-    -webkit-line-clamp: 1; //3行后显示省略号
     &__text {
       display: flex;
       flex-direction: row;
@@ -747,6 +746,7 @@ export default {
 }
 .sticky__isSticky__text {
   display: inline-block;
+  width: 100%;
   height: 35rpx;
   line-height: 35rpx;
   text-overflow: ellipsis;

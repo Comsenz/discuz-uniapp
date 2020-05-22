@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content" v-if="status[loadDetailStatusId]">
+  <qui-page class="content">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -106,7 +106,7 @@
             {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
           </view>
 
-          <view v-if="status[loadDetailCommnetStatusId]">
+          <view>
             <view v-for="(post, index) in posts" :key="index">
               <qui-topic-comment
                 v-if="!post.isDeleted"
@@ -208,9 +208,6 @@
               ></qui-uploader>
             </view>
           </view>
-          <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishBtn()">
-          {{ t.publish }}
-        </qui-button>-->
           <button class="publishBtn" @click="publishClick()">
             {{ t.publish }}
           </button>
@@ -228,11 +225,10 @@
                   <qui-icon
                     class="content-image"
                     :name="item.icon"
-                    size="36"
+                    size="46"
                     color="#777777"
                   ></qui-icon>
                 </view>
-                <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
               </view>
               <text class="popup-share-content-text">{{ item.text }}</text>
             </view>
@@ -270,27 +266,29 @@
       </uni-popup>
       <!--自定义打赏金额弹框-->
       <uni-popup ref="customAmountPopup" type="center">
-        <view class="popup-dialog">
-          <view class="popup-dialog__top">
-            <text>
-              {{ t.enterTheRewardPaymeAmount }}
-            </text>
-          </view>
-          <view class="popup-dialog__cont">
-            <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
-            <input
-              class="popup-dialog__cont-input"
-              v-model="inputPrice"
-              type="digit"
-              placeholder="0.0"
-              focus
-            />
-          </view>
-          <view class="popup-dialog__ft">
-            <button class="popup-btn--close" @click="diaLogClose">
-              {{ i18n.t('discuzq.close') }}
-            </button>
-            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+        <view v-if="customAmountStatus">
+          <view class="popup-dialog">
+            <view class="popup-dialog__top">
+              <text>
+                {{ t.enterTheRewardPaymeAmount }}
+              </text>
+            </view>
+            <view class="popup-dialog__cont">
+              <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+              <input
+                class="popup-dialog__cont-input"
+                v-model="inputPrice"
+                type="digit"
+                placeholder="0.0"
+                focus
+              />
+            </view>
+            <view class="popup-dialog__ft">
+              <button class="popup-btn--close" @click="diaLogClose">
+                {{ i18n.t('discuzq.close') }}
+              </button>
+              <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+            </view>
           </view>
         </view>
       </uni-popup>
@@ -320,7 +318,7 @@
         :content-text="{
           contentdown: '显示更多...',
           contentrefresh: '正在加载...',
-          contentnomore: '暂无评论',
+          contentnomore: contentnomoreVal,
         }"
       ></qui-load-more>
     </scroll-view>
@@ -374,7 +372,7 @@ export default {
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
-      topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
+      topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
       posts: [], //评论列表数据
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
@@ -467,8 +465,8 @@ export default {
       ], // 打赏金额数组列表
       payNumCheck: [
         {
-          name: '￥1',
-          pay: 1.0,
+          name: '',
+          pay: '',
         },
       ],
       price: 0.0, //需要支付的金额
@@ -494,7 +492,9 @@ export default {
         },
       ], //支付方式
       currentReplyPost: {},
+      contentnomoreVal: '',
       url: '',
+      customAmountStatus: false, // 自定义价格弹框初始化状态
     };
   },
   computed: {
@@ -692,6 +692,32 @@ export default {
       };
       let params = {};
       if (type == '1') {
+        const post = this.$store.getters['jv/get'](`posts/${id}`);
+
+        // 主题点赞
+        this.isLiked = !this.isLiked;
+        console.log(this.isLiked, post, '~!@#$%~~~~~~~~~');
+        if (this.isLiked) {
+          // 未点赞时，点击点赞'
+          console.log('zoule11111111');
+          post.likedUsers.unshift(this.user);
+          post.likeCount++;
+        } else {
+          console.log('zoule22222');
+          post.likedUsers.forEach((value, key) => {
+            value.id === this.user.id && post.likedUsers.splice(key, 1);
+          });
+          post.likeCount--;
+        }
+
+        jvObj.relationships = {
+          likedUsers: {
+            data: post.likedUsers.map(item => {
+              return { type: item._jv.type, id: item._jv.id };
+            }),
+          },
+        };
+
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
@@ -718,27 +744,26 @@ export default {
           console.log(data, 'wwwwwwwwwwwwwwwwwwww');
           if (type == '1') {
             // 主题点赞
-            this.isLiked = data.isLiked;
-            if (data.isLiked) {
-              // 未点赞时，点击点赞'
-
-              console.log('主题未点赞时，点击点赞123');
-              console.log(this.thread.firstPost.likedUsers);
-              this.thread.firstPost.likedUsers.unshift(this.user);
-              this.thread.firstPost.likeCount++;
-            } else {
-              console.log('主题已点赞时，取消点赞456', this.user.id);
-              console.log(this.thread.firstPost.likedUsers, '@@@~~~');
-              // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-              //   value.id === this.user.id && likedUsers.splice(key, 1);
-              // });
-              this.thread.firstPost.likedUsers.forEach((value, key) => {
-                value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
-              });
-              console.log(this.thread.firstPost.likedUsers);
-              this.thread.firstPost.likeCount--;
-            }
+            // this.isLiked = data.isLiked;
+            // if (data.isLiked) {  `
+            //   // 未点赞时，点击点赞'
+            //   console.log('主题未点赞时，点击点赞123');
+            //   console.log(this.thread.firstPost.likedUsers);
+            //   this.thread.firstPost.likedUsers.unshift(this.user);
+            //   this.thread.firstPost.likeCount++;
+            // } else {
+            //   console.log('主题已点赞时，取消点赞456', this.user.id);
+            //   console.log(this.thread.firstPost.likedUsers, '@@@~~~');
+            //   // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+            //   // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
+            //   //   value.id === this.user.id && likedUsers.splice(key, 1);
+            //   // });
+            //   this.thread.firstPost.likedUsers.forEach((value, key) => {
+            //     value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
+            //   });
+            //   console.log(this.thread.firstPost.likedUsers);
+            //   this.thread.firstPost.likeCount--;
+            // }
           } else if (type == '2') {
             if (data.isDeleted) {
               console.log('跳转到首页');
@@ -955,6 +980,11 @@ export default {
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
+        if (data.length == 0) {
+          this.contentnomoreVal = this.t.noComment;
+        } else {
+          this.contentnomoreVal = this.t.noMoreData;
+        }
         // this.posts = data;
         console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
@@ -1205,6 +1235,7 @@ export default {
     },
     // 取消打赏
     cancelReward() {
+      this.payNumCheck = [];
       this.$refs.rewardPopup.close();
     },
     // 打赏选择付费金额
@@ -1219,6 +1250,7 @@ export default {
 
         this.$nextTick(() => {
           this.$refs.customAmountPopup.open();
+          this.customAmountStatus = true;
         });
       } else {
         console.log('点击');
@@ -1232,11 +1264,13 @@ export default {
     // 自定义付费金额弹框点击关闭时
     diaLogClose() {
       this.$refs.customAmountPopup.close();
+      this.customAmountStatus = false;
     },
     // 自定义付费金额弹框点击确定时
     diaLogOk() {
       this.price = this.inputPrice;
       this.$refs.customAmountPopup.close();
+      this.customAmountStatus = false;
       this.payShowStatus = true;
       this.$refs.payShow.payClickShow();
     },

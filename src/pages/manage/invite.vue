@@ -198,6 +198,7 @@ export default {
             if (res) {
               console.log('管理员生成邀请链接res：', res);
               this.$refs.popup.close();
+              this.getInviteList(1);
             }
           })
           .catch(err => {
@@ -211,6 +212,7 @@ export default {
             if (res) {
               console.log('生成邀请链接res：', res);
               this.$refs.popup.close();
+              this.getInviteList(1);
             }
           })
           .catch(err => {
@@ -243,7 +245,7 @@ export default {
   .left-text {
     min-width: 250rpx;
     font-weight: bold;
-    color: #343434;
+    color: --color(--qui-FC-34);
   }
 
   .user-avatar {
