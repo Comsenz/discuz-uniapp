@@ -182,7 +182,6 @@
             <view class="comment-content">
               <textarea
                 ref="commentText"
-                auto-height
                 focus="true"
                 :maxlength="450"
                 class="comment-textarea"
@@ -1772,7 +1771,7 @@ page {
   padding: 0 40rpx 30rpx;
   .comment-content {
     width: 100%;
-    height: 400rpx;
+    // height: 400rpx;
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
@@ -1781,7 +1780,7 @@ page {
   }
   .comment-textarea {
     width: 100%;
-    max-height: 120rpx;
+    height: 120rpx;
     min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;
