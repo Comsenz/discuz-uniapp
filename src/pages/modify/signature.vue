@@ -15,11 +15,14 @@
           <textarea
             type="text"
             class="aogph-tab-input-in"
-            maxlength="450"
+            maxlength="140"
             :placeholder="i18n.t('modify.signturecontent')"
             placeholder-style="color:rgba(181,181,181,1)"
             v-model="content"
+            :focus="true"
+            :cursor="focuscours"
             @input="fun"
+            :show-confirm-bar="false"
           />
           <view class="aogph-tab-input-text"></view>
         </view>
@@ -42,8 +45,9 @@ export default {
       userid: '',
       sun: true,
       content: '',
-      num: 450,
+      num: 140,
       wordnumber: '',
+      focuscours: '',
     };
   },
   onLoad(arr) {
@@ -69,6 +73,7 @@ export default {
       this.$store.dispatch('jv/get', params).then(data => {
         this.content = data.signature;
         this.wordnumber = this.content.length;
+        this.focuscours = this.wordnumber + 1;
       });
     },
     // 修改签名数据
@@ -87,7 +92,9 @@ export default {
             title: this.i18n.t('modify.modificationsucc'),
             duration: 2000,
           });
-          uni.navigateBack();
+          setTimeout(() => {
+            uni.navigateBack();
+          }, 1000);
         }
       });
     },

@@ -75,12 +75,14 @@ export default {
       dialogId: 0, // 会话id
       height: 0,
       currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
+      currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
   },
 
   onLoad(params) {
     console.log('params', params);
     const { username, dialogId } = params;
+    console.log('currentTheme', this.currentTheme);
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -89,22 +91,53 @@ export default {
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
+    uni.onKeyboardHeightChange(res => {
+      console.log(res.height);
+      if (res.height > 0) {
+        // 键盘弹出（滚动条位置增加键盘高度）
+        this.scrollTop += res.height;
+      } else {
+        // 键盘收起（滚动条位置减少键盘高度）
+        this.scrollTop -= res.height;
+      }
+    });
+    // setTimeout(() => {
+    //   uni
+    //     .createSelectorQuery()
+    //     .selectAll('.chat-box__con')
+    //     .boundingClientRect()
+    //     .exec(data => {
+    //       data[0].forEach(item => {
+    //         this.height += item.height;
+    //       });
+    //       if (this.height > 600) {
+    //         this.scrollTop = this.height - 600;
+    //       }
+    //       console.log('信息', data);
+    //       console.log('height', this.height);
+    //     });
+    // }, 0);
+  },
+
+  onReady() {
+    if (this.currentTheme === 'dark') {
+      uni.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#3f4243',
+      });
+    } else {
+      uni.setNavigationBarColor({
+        frontColor: '#000000',
+        backgroundColor: '#ededed',
+      });
+    }
+  },
+
+  onPullDownRefresh() {
+    console.log('refresh');
     setTimeout(() => {
-      uni
-        .createSelectorQuery()
-        .selectAll('.chat-box__con')
-        .boundingClientRect()
-        .exec(data => {
-          data[0].forEach(item => {
-            this.height += item.height;
-          });
-          if (this.height > 600) {
-            this.scrollTop = this.height - 600;
-          }
-          console.log('信息', data);
-          console.log('height', this.height);
-        });
-    }, 0);
+      uni.stopPullDownRefresh();
+    }, 1000);
   },
 
   computed: {
@@ -134,6 +167,28 @@ export default {
     // 获取用户信息
     userInfo() {
       return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
+    },
+  },
+
+  watch: {
+    allChatRecord() {
+      this.$nextTick(() => {
+        uni
+          .createSelectorQuery()
+          .selectAll('.chat-box__con')
+          .boundingClientRect()
+          .exec(data => {
+            data[0].forEach(item => {
+              this.height += item.height;
+            });
+            if (this.height > 600) {
+              this.scrollTop = this.height - 600;
+            }
+            console.log('信息', data);
+            console.log('scrollTop', this.scrollTop);
+            console.log('height', this.height);
+          });
+      });
     },
   },
 
@@ -210,11 +265,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/variable/color.scss';
+@import '@/styles/base/theme/fn.scss';
 
 .chat-box {
   height: 100%;
-  margin-bottom: 140rpx;
+  margin: 0rpx 0rpx 140rpx;
+  background: --color(--qui-BG-ED);
 
   &__con {
     font-size: $fg-f24;
@@ -223,7 +279,7 @@ export default {
       padding: 30rpx 0;
       font-size: $fg-f20;
       font-weight: 400;
-      color: rgba(181, 181, 181, 1);
+      color: --color(--qui-JT-B5);
       text-align: center;
     }
 
@@ -243,12 +299,10 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 60rpx;
         padding: 25rpx 20rpx;
         margin-right: 20rpx;
-        line-height: 60rpx;
-        background: #d1e0ff;
-        border: 1rpx solid #a3caff;
+        background: --color(--qui-BG-D1E0FF);
+        border: 1rpx solid --colot(--qui-BG-A3CAFF);
         border-radius: 10rpx;
       }
 
@@ -262,7 +316,7 @@ export default {
         border-top: 11px solid transparent;
         border-right: 11px solid transparent;
         border-bottom: 11px solid transparent;
-        border-left: 11px solid #d1e0ff;
+        border-left: 11px solid --color(--qui-BOR-D1E0FF);
         content: '';
       }
 
@@ -277,7 +331,7 @@ export default {
         border-top: 11px solid transparent;
         border-right: 11px solid transparent;
         border-bottom: 11px solid transparent;
-        border-left: 11px solid #a3caff;
+        border-left: 11px solid --color(--qui-BOR-A3CAFF);
         content: '';
       }
     }
@@ -298,12 +352,10 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 60rpx;
         padding: 25rpx 20rpx;
-        margin-left: 20rpx;
-        line-height: 60rpx;
-        background: #fff;
-        border: 1rpx solid #e5e5e5;
+        margin: 0rpx 0rpx 0rpx 20rpx;
+        background: --color(--qui-BG-2);
+        border: 1rpx solid --color(--qui-BOR-E5);
         border-radius: 10rpx;
       }
 
@@ -315,7 +367,7 @@ export default {
         width: 0rpx;
         height: 0rpx;
         border-top: 11px solid transparent;
-        border-right: 11px solid #fff;
+        border-right: 11px solid --color(--qui-BOR-FFF);
         border-bottom: 11px solid transparent;
         border-left: 11px solid transparent;
         content: '';
@@ -330,7 +382,7 @@ export default {
         height: 0rpx;
         padding: 0;
         border-top: 11px solid transparent;
-        border-right: 11px solid #ccc;
+        border-right: 11px solid --color(--qui-BOR-CCC);
         border-bottom: 11px solid transparent;
         border-left: 11px solid transparent;
         content: '';
@@ -344,6 +396,7 @@ export default {
     z-index: 99;
     width: 100%;
     min-height: 140rpx;
+    background: --color(--qui-BG-BTN-GRAY-1);
 
     &__msg {
       display: flex;
@@ -351,26 +404,26 @@ export default {
       justify-content: space-around;
       align-items: center;
       padding: 20rpx 20rpx 40rpx;
-      background: --color(--qui-BG-2);
+      background: --color(--qui-BG-BTN-GRAY-1);
 
       &__icon {
-        margin-right: 20rpx;
+        margin: 0rpx 20rpx 0rpx 0rpx;
       }
     }
 
     .uni-input {
       width: 65%;
       height: 80rpx;
-      padding-left: 20rpx;
+      padding: 0rpx 0rpx 0rpx 20rpx;
       line-height: 80rpx;
-      background: rgba(255, 255, 255, 1);
+      background: --color(--qui-BG-2);
       border-radius: 5rpx;
     }
 
     &__btn {
       margin: 0 20rpx 0 10rpx;
       font-size: $fg-f28;
-      background-color: rgba(24, 120, 243, 1);
+      background: --color(--qui-BG-BTN);
     }
   }
 }

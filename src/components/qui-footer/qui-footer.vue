@@ -60,6 +60,7 @@
 </template>
 <script>
 import forums from '@/mixin/forums';
+import { mapState } from 'vuex';
 
 export default {
   mixins: [forums],
@@ -111,6 +112,12 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+        getCategoryId: state => state.session.categoryId,
+        getCategoryIndex: state => state.session.categoryIndex
+    }),
+  },
   methods: {
     select(item) {
       // this.sel = item.id;
@@ -146,7 +153,14 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
-      // console.log(this.forums, '9999');
+
+      if (this.getCategoryId) {
+        const category = this.$store.getters['jv/get'](`categories/${this.getCategoryId}`);
+        if (!category.canCreateThread) {
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+        }
+      }
+
       if (
         !this.forums.other.can_create_thread &&
         !this.forums.other.can_create_thread_long &&
@@ -195,7 +209,7 @@ export default {
     handleClick(item) {
       console.log(item.type);
       uni.navigateTo({
-        url: `/pages/topic/post?type=${item.type}`,
+        url: `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
       });
       this.cancel();
     },

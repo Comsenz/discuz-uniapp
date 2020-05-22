@@ -46,14 +46,18 @@
                         （{{ group.name }}）
                       </span>
                     </view>
-                    <view class="thread__header__title__time">{{ thread.createdAt }}</view>
+                    <view class="thread__header__title__time">
+                      {{ localTime }}
+                    </view>
                   </view>
                   <image src="@/static/essence.png" alt class="addFine"></image>
                 </view>
 
                 <view class="thread__content" @click="contentClick">
                   <view class="thread__content__text">
-                    <rich-text :nodes="thread.firstPost.contentHtml"></rich-text>
+                    <rich-text
+                      :nodes="thread.firstPost.contentHtml.slice(0, 40) + '...'"
+                    ></rich-text>
                   </view>
                 </view>
               </view>
@@ -93,8 +97,10 @@
             </view>
           </view>
           <!-- 评论 -->
-          <view class="comment">
-            <view class="comment-num">{{ post.replyCount }}{{ t.item }}{{ t.comment }}</view>
+          <view class="comment" v-if="post.postCount > 1">
+            <view class="comment-num" v-if="post.postCount > 1">
+              {{ post.replyCount }}{{ t.item }}{{ t.comment }}
+            </view>
             <view v-if="postComments">
               <qui-topic-comment
                 v-for="(commentPost, index) in postComments"
@@ -176,6 +182,7 @@
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
 import user from '@/mixin/user';
+import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   mixins: [user],
@@ -246,6 +253,10 @@ export default {
     t() {
       return this.i18n.t('topic');
     },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.thread.createdAt);
+    },
   },
   onLoad(option) {
     console.log(this.user, '这是用户信息~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
@@ -296,6 +307,7 @@ export default {
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
           // console.log(data, '~~~~~~~~~~~~~~~~~~~');
           this.thread = data;
+          // this.thread.firstPost.contentHtml = this.thread.firstPost.contentHtml.slice(0, 80);
           this.status = true;
         }),
       );
@@ -511,7 +523,13 @@ export default {
       //   }
       // });
     },
-
+    // 跳回到主题详情页
+    contentClick() {
+      console.log('跳回到主题详情页');
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${this.threadId}`,
+      });
+    },
     // 当前回复点赞
     commentLikeClick(postId, type, canLike, isLiked, commentIndex) {
       console.log(postId, type, canLike, isLiked, commentIndex, '这是评论的回复点赞的cnash8');
@@ -690,11 +708,13 @@ page {
 //评论
 .comment {
   width: 100%;
-  padding: 40rpx;
+  padding: 40rpx 0 0;
   margin-top: 30rpx;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .comment-num {
+  padding: 0 40rpx;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -955,9 +975,9 @@ page {
 
       &__top {
         height: 37rpx;
+        margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         line-height: 37rpx;
       }
 
@@ -992,7 +1012,7 @@ page {
       }
       &__reward {
         float: right;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         font-weight: bold;
         color: --color(--qui-RED);
       }

@@ -37,6 +37,20 @@ export default {
         this.$store
           .dispatch('session/login')
           .then(data => {
+            this.$store.dispatch('jv/get', [
+              'forum',
+              {
+                params: {
+                  include: 'users',
+                },
+              },
+            ]);
+
+            const params = {
+              include: 'groups,wechat',
+            };
+            const userId = data._jv.id;
+            this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
             this.$emit('login', res, data);
           })
           .catch(err => {

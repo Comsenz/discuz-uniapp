@@ -49,6 +49,7 @@
         <view class="list-box__notice__con">
           <view
             class="list-box__notice__con__text"
+            v-if="item.post_content"
             v-html="item.post_content"
             @click="jumpMyComment(item)"
           ></view>
@@ -155,7 +156,7 @@ export default {
     &__hl {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20rpx;
+      margin: 0rpx 0rpx 20rpx;
 
       &-avatar {
         width: 80rpx;
@@ -164,7 +165,7 @@ export default {
       }
 
       &-info {
-        margin-left: 20rpx;
+        margin: 0rpx 0rpx 0rpx 20rpx;
       }
 
       &-info-username {
@@ -173,7 +174,7 @@ export default {
       }
 
       &-info-username-space {
-        margin-right: 13rpx;
+        margin: 0rpx 13rpx 0rpx 0rpx;
       }
 
       &-info-groupname,
@@ -195,7 +196,7 @@ export default {
       &__amount {
         margin-right: 20rpx;
         font-weight: bold;
-        color: #fa5151;
+        color: --color(--qui-RED);
       }
     }
 

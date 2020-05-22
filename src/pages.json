@@ -115,7 +115,7 @@
 
     // 消息页面
     {
-      "path": "pages/notice/index", // 消息
+      "path": "pages/notice/index",
       "style": {
         "navigationBarTitleText": "消息"
       }
@@ -127,7 +127,7 @@
       }
     },
     {
-      "path": "pages/notice/msglist", // 来往记录
+      "path": "pages/notice/msglist",
       "style": {
         "navigationBarTitleText": "来往记录",
         "enablePullDownRefresh": true
@@ -136,25 +136,25 @@
 
     // 站点管理
     {
-      "path": "pages/manage/index", // 站点管理
+      "path": "pages/manage/index",
       "style": {
         "navigationBarTitleText": "站点管理"
       }
     },
     {
-      "path": "pages/manage/member", // 成员管理
+      "path": "pages/manage/member",
       "style": {
         "navigationBarTitleText": "成员管理"
       }
     },
     {
-      "path": "pages/manage/users", // 站点成员
+      "path": "pages/manage/users",
       "style": {
         "navigationBarTitleText": "站点成员"
       }
     },
     {
-      "path": "pages/manage/invite", // 邀请成员
+      "path": "pages/manage/invite",
       "style": {
         "navigationBarTitleText": "邀请成员"
       }

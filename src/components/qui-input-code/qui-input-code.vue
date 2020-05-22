@@ -18,6 +18,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 1 ? iptValue[0] : ''"
+        :focus="iptValue[0] ? false : true"
+        :cursor="1"
       />
       <input
         :class="
@@ -27,6 +29,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 2 ? iptValue[1] : ''"
+        :focus="iptValue[0] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -36,6 +40,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[2] : ''"
+        :focus="iptValue[1] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -45,6 +51,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 4 ? iptValue[3] : ''"
+        :focus="iptValue[2] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -54,6 +62,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[4] : ''"
+        :focus="iptValue[3] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -63,6 +73,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 4 ? iptValue[5] : ''"
+        :focus="iptValue[4] ? true : false"
+        :cursor="1"
       />
     </view>
     <view class="hidden-ipt-test" v-if="title">
