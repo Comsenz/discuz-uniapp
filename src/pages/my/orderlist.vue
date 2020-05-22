@@ -40,7 +40,7 @@
           :key="index"
           :title="type[item.type - 1]"
           :brief="timeHandle(item.created_at)"
-          :addon="item.amount"
+          :addon="'-' + item.amount"
           :brief-right="item.status == 1 ? i18n.t('profile.paid') : i18n.t('profile.tobepaid')"
         ></qui-cell-item>
         <qui-load-more :status="loadingType"></qui-load-more>

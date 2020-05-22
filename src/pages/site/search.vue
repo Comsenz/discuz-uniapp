@@ -86,6 +86,7 @@
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
+          @headClick="toProfile(item.user._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
@@ -267,5 +268,8 @@ export default {
   position: absolute;
   top: 40rpx;
   right: 40rpx;
+}
+.addFine {
+  display: none;
 }
 </style>

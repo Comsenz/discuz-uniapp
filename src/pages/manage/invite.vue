@@ -11,6 +11,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
@@ -24,6 +25,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
@@ -33,6 +35,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
@@ -42,6 +45,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
@@ -86,6 +90,13 @@ export default {
       currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       role: '', // 用户角色
       status: 1, // 邀请链接的类型
+      bottomData: [
+        {
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
+          name: 'wx',
+        },
+      ],
     };
   },
   onLoad() {
@@ -198,6 +209,7 @@ export default {
             if (res) {
               console.log('管理员生成邀请链接res：', res);
               this.$refs.popup.close();
+              this.getInviteList(1);
             }
           })
           .catch(err => {
@@ -211,6 +223,7 @@ export default {
             if (res) {
               console.log('生成邀请链接res：', res);
               this.$refs.popup.close();
+              this.getInviteList(1);
             }
           })
           .catch(err => {

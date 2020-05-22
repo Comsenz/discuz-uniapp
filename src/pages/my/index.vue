@@ -50,7 +50,11 @@
             <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
           </navigator>
           <navigator url="/pages/site/search" hover-class="none">
-            <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
+            <qui-cell-item
+              :title="i18n.t('profile.search')"
+              arrow
+              :border="userInfo.groupsName == '管理员' ? true : false"
+            ></qui-cell-item>
           </navigator>
           <navigator
             v-if="userInfo.groupsName == '管理员'"

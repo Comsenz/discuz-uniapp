@@ -24,7 +24,7 @@
             name="icon-folding-r"
             v-if="!$slots.rightIcon"
             color="#ddd"
-            size="14"
+            size="22"
           ></qui-icon>
         </view>
       </view>
