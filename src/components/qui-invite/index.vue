@@ -81,7 +81,6 @@ export default {
     },
     // 分享
     share() {
-      console.log('status', this.status);
       if (parseInt(this.status, 10) === 1) {
         console.log('跳转到分享页面');
         this.$refs.popupHead.open();

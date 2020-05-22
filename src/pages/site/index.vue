@@ -18,7 +18,12 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="46"
+                  :color="currentTheme === 'dark' ? '#aaa' : '#777'"
+                ></qui-icon>
               </view>
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
@@ -121,6 +126,12 @@ export default {
   },
 
   computed: {
+    // 获取当前的主题模式
+    currentTheme() {
+      const theme = this.$store.getters['theme/get']('currentTheme');
+      return theme;
+    },
+
     // 获取 站点信息
     siteInfo() {
       const info = this.$store.getters['jv/get']('forums/1');
@@ -260,8 +271,8 @@ export default {
 //下面部分样式
 .site-item {
   padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .site .cell-item {
   padding-right: 40rpx;
@@ -274,10 +285,10 @@ export default {
 .cell-item__body__content-title {
   width: 112rpx;
   margin-right: 40rpx;
-  color: #777;
+  color: --color(--qui-FC-777);
 }
 .site-item__pay .cell-item__body__right-text {
-  color: #fa5151;
+  color: --color(--qui-RED);
 }
 .site-item__person-avatar,
 .site-item__owner-avatar {
