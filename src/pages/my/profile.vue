@@ -25,7 +25,7 @@
         <qui-cell-item
           :title="i18n.t('profile.mobile')"
           arrow
-          :addon="profile.mobile"
+          :addon="profile.mobile ? profile.mobile : i18n.t('profile.bindingmobile')"
         ></qui-cell-item>
       </navigator>
       <!--没有密码，跳到“设置密码”页,反之跳到密码是修改页面，-->

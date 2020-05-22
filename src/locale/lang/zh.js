@@ -407,6 +407,7 @@ export default {
     username: '用户名',
     avatar: '头像',
     mobile: '手机号码',
+    bindingmobile: '绑定手机',
     password: '密码',
     modify: '修改',
     wechat: '微信',
