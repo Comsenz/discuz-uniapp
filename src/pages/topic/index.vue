@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content" v-if="status[loadDetailStatusId]">
+  <qui-page class="content">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -106,7 +106,7 @@
             {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
           </view>
 
-          <view v-if="status[loadDetailCommnetStatusId]">
+          <view>
             <view v-for="(post, index) in posts" :key="index">
               <qui-topic-comment
                 v-if="!post.isDeleted"
@@ -320,7 +320,7 @@
         :content-text="{
           contentdown: '显示更多...',
           contentrefresh: '正在加载...',
-          contentnomore: '暂无评论',
+          contentnomore: contentnomoreVal,
         }"
       ></qui-load-more>
     </scroll-view>
@@ -467,8 +467,8 @@ export default {
       ], // 打赏金额数组列表
       payNumCheck: [
         {
-          name: '￥1',
-          pay: 1.0,
+          name: '',
+          pay: '',
         },
       ],
       price: 0.0, //需要支付的金额
@@ -494,6 +494,7 @@ export default {
         },
       ], //支付方式
       currentReplyPost: {},
+      contentnomoreVal: '',
       url: '',
     };
   },
@@ -955,6 +956,11 @@ export default {
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
+        if (this.posts.length == 0) {
+          this.contentnomoreVal = '暂无评论';
+        } else {
+          this.contentnomoreVal = '没有更多数据了';
+        }
         // this.posts = data;
         console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
@@ -1205,6 +1211,7 @@ export default {
     },
     // 取消打赏
     cancelReward() {
+      this.payNumCheck = [];
       this.$refs.rewardPopup.close();
     },
     // 打赏选择付费金额

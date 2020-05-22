@@ -422,11 +422,10 @@ export default {
     padding: 0 40rpx;
     &__text {
       margin-bottom: 12rpx;
-      font-family: $font-family;
+      overflow: hidden;
       font-size: $fg-f28;
       font-weight: 400;
       line-height: 45rpx;
-      color: --color(--qui-FC-333);
       word-break: break-all;
       img {
         display: inline-block;
