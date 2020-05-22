@@ -44,6 +44,7 @@
               @click="getNameId(user)"
             ></qui-avatar-cell>
           </view>
+          <qui-load-more :status="loadingType"></qui-load-more>
         </view>
         <qui-no-data tips="暂无内容" v-else></qui-no-data>
       </view>
@@ -58,6 +59,9 @@ export default {
   data() {
     return {
       searchText: '', // 输入的用户名
+      loadingType: 'more', // 上拉加载状态
+      pageSize: 10, // 每页10条数据
+      pageNum: 1, // 当前页数
     };
   },
 
@@ -93,14 +97,26 @@ export default {
     searchUser(val = '') {
       this.searchText = val;
       const params = {
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[username]': `*${this.searchText}*`,
       };
       if (this.searchText === '') {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-        this.$store.dispatch('jv/get', ['users', {}]);
+        this.$store.dispatch('jv/get', ['users', {}]).then(res => {
+        console.log('会话列表res', res);
+        if (res) {
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        }
+      });
       } else {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-        this.$store.dispatch('jv/get', ['users', { params }]);
+        this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+        console.log('会话列表res', res);
+        if (res) {
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        }
+      });
       }
     },
   },
