@@ -38,7 +38,7 @@
         <qui-cell-item
           :title="i18n.t('profile.password')"
           arrow
-          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpaypassword')"
+          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
       <qui-cell-item
@@ -166,23 +166,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   /deep/ .qui-uploader-box {
-    // position: absolute;
-    // top: 140rpx;
-    // right: 0;
-    // display: inline;
-    // min-height: 100rpx;
-    // padding: 0;
     display: none;
-    .qui-uploader-box__add {
-      height: 100rpx;
-      background: transparent;
-    }
-    .icon-add {
-      display: none;
-    }
-    .qui-uploader-box__uploader-file {
-      display: none;
-    }
   }
 }
 
