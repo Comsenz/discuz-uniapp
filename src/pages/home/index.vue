@@ -298,8 +298,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setCategoryId:'session/SET_CATEGORYID',
-      setCategoryIndex:'session/SET_CATEGORYINDEX'
+      setCategoryId: 'session/SET_CATEGORYID',
+      setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
     scroll(event) {
       // console.log(event, 'scroll');
@@ -352,9 +352,9 @@ export default {
 
       this.loadThreadsSticky();
       this.scrollTopNum = this.myScroll + 1;
-      this.$nextTick(()=>{
-        this.scrollTopNum = this.myScroll
-      })
+      this.$nextTick(() => {
+        this.scrollTopNum = this.myScroll;
+      });
       await this.loadThreads();
       this.checkoutTheme = false;
     },
@@ -592,9 +592,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
-      if (!canLike) {
-        console.log('没有点赞权限');
-      }
+      // if (!canLike) {
+      //   console.log('没有点赞权限');
+      // }
       const params = {
         _jv: {
           type: 'posts',
@@ -611,8 +611,6 @@ export default {
         }
       });
     },
-
-
     // 上拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
