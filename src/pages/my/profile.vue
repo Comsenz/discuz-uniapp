@@ -77,7 +77,8 @@
         async-clear
         ref="upload"
         name="avatar"
-        @change="uploadChange"
+        @uploadSuccess="uploadSuccess"
+        @uploadFail="uploadFail"
         @chooseSuccess="chooseSuccess"
       ></qui-uploader>
       <qui-toast ref="toast"></qui-toast>
@@ -121,11 +122,20 @@ export default {
     };
   },
   methods: {
-    uploadChange(e) {
+    uploadSuccess(res, fileList) {
       uni.hideLoading();
-      this.$refs.toast.show({ message: this.i18n.t('头像上传成功') });
-      const newAvatar = e[e.length - 1].data.attributes.avatarUrl;
-      this.profile.avatarUrl = newAvatar;
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        this.$refs.toast.show({ message: '头像上传成功' });
+        const newAvatar = fileList[fileList.length - 1].data.attributes.avatarUrl;
+        this.profile.avatarUrl = newAvatar;
+      } else {
+        const { code } = JSON.parse(res.data).errors[0];
+        if (code === 'upload_time_not_up') {
+          this.$refs.toast.show({ message: '上传头像频繁，一天仅允许上传一次头像' });
+        } else {
+          this.$refs.toast.show({ message: code });
+        }
+      }
     },
     changeAvatar() {
       this.$refs.upload.uploadClick();
