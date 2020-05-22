@@ -142,7 +142,7 @@
         </view>
       </view>
       <!--回复弹框-->
-      <!--<uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+      <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
         <view class="comment-popup" v-if="commentPopupStatus">
           <view class="comment-popup-topbox">
             <view class="comment-popup-top">
@@ -212,10 +212,10 @@
             {{ t.publish }}
           </button>
         </view>
-      </uni-popup>-->
+      </uni-popup>
 
       <!--分享弹框-->
-      <!--<uni-popup ref="sharePopup" type="bottom">
+      <uni-popup ref="sharePopup" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
             <button class="popup-share-button" open-type="share"></button>
@@ -236,9 +236,9 @@
           <view class="popup-share-content-space"></view>
           <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
         </view>
-      </uni-popup>-->
+      </uni-popup>
       <!--打赏选择金额弹框-->
-      <!--<uni-popup ref="rewardPopup" type="bottom">
+      <uni-popup ref="rewardPopup" type="bottom">
         <view class="popup-box">
           <view class="popup-reward-content">
             <text class="popup-title">
@@ -263,35 +263,37 @@
             {{ i18n.t('discuzq.post.cancel') }}
           </text>
         </view>
-      </uni-popup>-->
+      </uni-popup>
       <!--自定义打赏金额弹框-->
-      <!--<uni-popup ref="customAmountPopup" type="center">
-        <view class="popup-dialog">
-          <view class="popup-dialog__top">
-            <text>
-              {{ t.enterTheRewardPaymeAmount }}
-            </text>
-          </view>
-          <view class="popup-dialog__cont">
-            <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
-            <input
-              class="popup-dialog__cont-input"
-              v-model="inputPrice"
-              type="digit"
-              placeholder="0.0"
-              focus
-            />
-          </view>
-          <view class="popup-dialog__ft">
-            <button class="popup-btn--close" @click="diaLogClose">
-              {{ i18n.t('discuzq.close') }}
-            </button>
-            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+      <uni-popup ref="customAmountPopup" type="center">
+        <view v-if="customAmountStatus">
+          <view class="popup-dialog">
+            <view class="popup-dialog__top">
+              <text>
+                {{ t.enterTheRewardPaymeAmount }}
+              </text>
+            </view>
+            <view class="popup-dialog__cont">
+              <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+              <input
+                class="popup-dialog__cont-input"
+                v-model="inputPrice"
+                type="digit"
+                placeholder="0.0"
+                focus
+              />
+            </view>
+            <view class="popup-dialog__ft">
+              <button class="popup-btn--close" @click="diaLogClose">
+                {{ i18n.t('discuzq.close') }}
+              </button>
+              <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+            </view>
           </view>
         </view>
-      </uni-popup>-->
+      </uni-popup>
       <!--支付组件-->
-      <!--<view v-if="payShowStatus">
+      <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
           :money="price"
@@ -306,7 +308,7 @@
           @onInput="onInput"
           @paysureShow="paysureShow"
         ></qui-pay>
-      </view>-->
+      </view>
       <!--遮罩层组件-->
       <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
       <!--轻提示-->
@@ -492,6 +494,7 @@ export default {
       currentReplyPost: {},
       contentnomoreVal: '',
       url: '',
+      customAmountStatus: false, // 自定义价格弹框初始化状态
     };
   },
   computed: {
@@ -1222,6 +1225,7 @@ export default {
 
         this.$nextTick(() => {
           this.$refs.customAmountPopup.open();
+          this.customAmountStatus = true;
         });
       } else {
         console.log('点击');
@@ -1235,11 +1239,13 @@ export default {
     // 自定义付费金额弹框点击关闭时
     diaLogClose() {
       this.$refs.customAmountPopup.close();
+      this.customAmountStatus = false;
     },
     // 自定义付费金额弹框点击确定时
     diaLogOk() {
       this.price = this.inputPrice;
       this.$refs.customAmountPopup.close();
+      this.customAmountStatus = false;
       this.payShowStatus = true;
       this.$refs.payShow.payClickShow();
     },
