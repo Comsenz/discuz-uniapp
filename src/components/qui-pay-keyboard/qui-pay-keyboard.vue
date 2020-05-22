@@ -240,7 +240,7 @@ export default {
   width: 98rpx;
   height: 96rpx;
   font-size: 40rpx;
-  line-height: 75rpx;
+  line-height: 96rpx;
   text-align: center;
   background: --color(--qui-BG-FFF);
 }

@@ -10,6 +10,7 @@
     >
       <view class="ft-gap">
         <view class="bg-white">
+          <view>这是钱包状态{{ user.canWalletPay }}</view>
           <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
           <qui-topic-content
             :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
@@ -102,9 +103,7 @@
         </view>
         <!-- 评论 -->
         <view class="comment" v-if="thread.postCount > 1">
-          <view class="comment-num" v-if="thread.postCount > 1">
-            {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
-          </view>
+          <view class="comment-num">{{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}</view>
 
           <view>
             <view v-for="(post, index) in posts" :key="index">
@@ -472,7 +471,7 @@ export default {
       price: 0.0, //需要支付的金额
       inputPrice: '', //自定义金额输入框的值
       payShowStatus: true, //是否显示支付
-      pwdVal: '123456', //支付密码
+      pwdVal: '', //支付密码
       orderSn: '', //订单编号
       payStatus: false, //订单支付状态
       payStatusNum: 0, // 订单支付状态查询最大次数

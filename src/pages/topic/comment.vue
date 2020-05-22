@@ -98,9 +98,7 @@
           </view>
           <!-- 评论 -->
           <view class="comment" v-if="post.postCount > 1">
-            <view class="comment-num" v-if="post.postCount > 1">
-              {{ post.replyCount }}{{ t.item }}{{ t.comment }}
-            </view>
+            <view class="comment-num">{{ post.replyCount }}{{ t.item }}{{ t.comment }}</view>
             <view v-if="postComments">
               <qui-topic-comment
                 v-for="(commentPost, index) in postComments"
