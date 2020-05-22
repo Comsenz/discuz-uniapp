@@ -15,12 +15,30 @@
       >
         <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">设为无效</view>
         <view class="invite-con-list-line"></view>
-        <view class="invite-con-list-share" @click="share(item.code)">
+        <view class="invite-con-list-share" @click="share">
           分享
           <qui-icon name="icon-share1" class="share-icon"></qui-icon>
         </view>
       </qui-cell-item>
     </view>
+    <!-- 分享弹窗 -->
+    <uni-popup ref="popupHead" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box" @click="shareHead(index)">
+                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
+              </view>
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+      </view>
+    </uni-popup>
   </view>
 </template>
 
@@ -41,6 +59,12 @@ export default {
         return [];
       },
     },
+    bottomData: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
   },
   methods: {
     // 设为无效
@@ -56,14 +80,29 @@ export default {
       }
     },
     // 分享
-    share(code) {
+    share() {
       console.log('status', this.status);
       if (parseInt(this.status, 10) === 1) {
         console.log('跳转到分享页面');
+        this.$refs.popupHead.open();
+      }
+    },
+    // 头部分享海报
+    shareHead(index) {
+      if (index === 0) {
+        this.$store.dispatch('session/setAuth', this.$refs.auth);
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+          return;
+        }
         uni.navigateTo({
-          url: `../site/partner-invite?code=${code}`,
+          url: '/pages/share/site',
         });
       }
+    },
+    // 取消按钮
+    cancel() {
+      this.$refs.popupHead.close();
     },
   },
 };

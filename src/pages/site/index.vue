@@ -74,9 +74,14 @@
         :addon="userInfo.expiredTime"
         v-if="siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>
-      <qui-cell-item class="cell-item--auto" title="我的权限" slot-right>
-        <view class="site-permission" v-for="(item, index) in permissionInfo" :key="index">
-          {{ item }}
+      <qui-cell-item
+        :title="i18n.t('site.myauthority')"
+        slot-right
+        :border="false"
+        class="cell-item--auto cell-item--left"
+      >
+        <view v-for="(item, index) in permissionInfo" :key="index" class="site-item__permission">
+          <text>{{ i18n.t(`permission.${item}`) }}</text>
         </view>
       </qui-cell-item>
     </view>
@@ -298,12 +303,15 @@ export default {
 .cell-item--left .cell-item__body__right {
   text-align: left;
 }
-.site-permission {
+.site-item__permission {
   display: inline-block;
-  padding: 13rpx 28rpx 12rpx;
-  margin: 0rpx 10rpx 10rpx 0rpx;
-  font-size: 26rpx;
-  border: 2rpx solid #ededed;
-  border-radius: 10px;
+  height: 60rpx;
+  padding: 0 28rpx;
+  margin-right: 10rpx;
+  margin-bottom: 10rpx;
+  font-size: $fg-f26;
+  line-height: 60rpx;
+  border: 2rpx solid --color(--qui-BOR-ED);
+  border-radius: 10rpx;
 }
 </style>
