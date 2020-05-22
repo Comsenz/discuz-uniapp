@@ -956,10 +956,10 @@ export default {
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
-        if (this.posts.length == 0) {
-          this.contentnomoreVal = '暂无评论';
+        if (data.length == 0) {
+          this.contentnomoreVal = this.t.noComment;
         } else {
-          this.contentnomoreVal = '没有更多数据了';
+          this.contentnomoreVal = this.t.noMoreData;
         }
         // this.posts = data;
         console.log(this.posts, '这是主题评论列表！！！@@@@@');
