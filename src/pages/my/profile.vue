@@ -166,23 +166,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   /deep/ .qui-uploader-box {
-    // position: absolute;
-    // top: 140rpx;
-    // right: 0;
-    // display: inline;
-    // min-height: 100rpx;
-    // padding: 0;
     display: none;
-    .qui-uploader-box__add {
-      height: 100rpx;
-      background: transparent;
-    }
-    .icon-add {
-      display: none;
-    }
-    .qui-uploader-box__uploader-file {
-      display: none;
-    }
   }
 }
 
