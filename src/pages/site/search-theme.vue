@@ -39,6 +39,7 @@
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
+          @headClick="headClick(item.user._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
@@ -110,6 +111,12 @@ export default {
         url: `/pages/topic/index?id=${id}`,
       });
     },
+    // 点击头像调转到个人主页
+    headClick(id) {
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
     // 下拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
@@ -163,5 +170,8 @@ export default {
   position: absolute;
   top: 40rpx;
   right: 40rpx;
+}
+.addFine {
+  display: none;
 }
 </style>

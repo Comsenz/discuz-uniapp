@@ -45,7 +45,7 @@
           "
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
-          @headClick="headClick(item._jv.id)"
+          @headClick="headClick(item.user._jv.id)"
           @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
@@ -230,5 +230,8 @@ export default {
 }
 .scroll-y {
   max-height: calc(100vh - 148rpx);
+}
+.addFine {
+  display: none;
 }
 </style>
