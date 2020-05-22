@@ -75,7 +75,6 @@
             show-play-btn="true"
             show-mute-btn="true"
             auto-pause-if-open-native="true"
-            vslide-gesture="true"
             auto-pause-if-navigate="true"
             enable-play-gesture="true"
             object-fit="cover"
@@ -507,8 +506,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 50%;
-        max-height: 50%;
+        max-width: 70%;
+        max-height: 70%;
         // border-radius: 100%;
       }
     }

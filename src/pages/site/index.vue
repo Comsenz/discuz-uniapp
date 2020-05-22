@@ -51,7 +51,7 @@
       </qui-cell-item>
       <navigator url="/pages/manage/users" hover-class="none">
         <qui-cell-item title="成员" slot-right arrow class="cell-item--auto">
-          <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
+          <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
             <image
               class="site-item__person-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
