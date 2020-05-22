@@ -11,7 +11,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottomData="bottomData"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
@@ -25,7 +25,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottomData="bottomData"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
@@ -35,7 +35,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottomData="bottomData"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
@@ -45,7 +45,7 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottomData="bottomData"
+              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
