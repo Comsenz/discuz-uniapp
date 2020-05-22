@@ -239,27 +239,6 @@ export default {
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       isResetList: false, // 是否重置列表
       bottomData: [],
-      tabs: [
-        {
-          tabsName: this.i18n.t('home.tabsCircle'),
-          tabsIcon: 'icon-home',
-          id: 1,
-          url: '../home/index',
-        },
-        {
-          tabsName: this.i18n.t('home.tabsNews'),
-          tabsIcon: 'icon-message',
-          id: 2,
-          url: '../notice/index',
-        },
-        {
-          tabsName: this.i18n.t('home.tabsMy'),
-          tabsIcon: 'icon-mine',
-          id: 3,
-          url: '../my/index',
-        },
-      ],
-      postImg: '../assets.publish.svg',
       threadsStatusId: 0,
       categories: [],
     };
@@ -435,6 +414,7 @@ export default {
     },
     // 筛选选中确定按钮
     confirm(e) {
+      // console.log(this.user, '重置');
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
