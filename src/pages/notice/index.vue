@@ -117,9 +117,9 @@ export default {
 
   computed: {
     // 获取当前登录的id
-    currentLoginId(){
+    currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
-      console.log('获取当前登录的id', typeof parseInt(userId, 10));
+      console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
     // 获取会话列表
@@ -131,7 +131,9 @@ export default {
       if (dialogList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           const value = dialogList[keys[i]];
-          value.time = time2MorningOrAfternoon(value.created_at);
+          if (value && value.dialogMessage) {
+            value.time = time2MorningOrAfternoon(value.dialogMessage.created_at);
+          }
           if (value && value.recipient && value.recipient.id === this.currentLoginId) {
             value.name = value.sender.username;
             value.avatar = value.sender.avatarUrl;
@@ -157,6 +159,7 @@ export default {
       const params = {
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        sort: '-dialogMessageId',
         include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
       };
       this.$store.dispatch('jv/get', ['dialog', { params }]).then(res => {

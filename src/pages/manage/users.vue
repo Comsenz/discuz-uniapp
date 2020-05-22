@@ -104,19 +104,19 @@ export default {
       if (this.searchText === '') {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
         this.$store.dispatch('jv/get', ['users', {}]).then(res => {
-        console.log('会话列表res', res);
-        if (res) {
-          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-        }
-      });
+          console.log('会话列表res', res);
+          if (res) {
+            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          }
+        });
       } else {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-        console.log('会话列表res', res);
-        if (res) {
-          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-        }
-      });
+          console.log('会话列表res', res);
+          if (res) {
+            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          }
+        });
       }
     },
   },

@@ -141,9 +141,9 @@ export default {
 
   computed: {
     // 获取当前登录的id
-    currentLoginId(){
+    currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
-      console.log('获取当前登录的id', typeof parseInt(userId, 10));
+      console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
     // 获取会话消息列表
