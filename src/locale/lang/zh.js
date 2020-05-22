@@ -131,6 +131,9 @@ export default {
     cancel: '取消',
     generatePoster: '生成海报',
     wxShare: '微信分享',
+    contentdown: '显示更多...',
+    contentrefresh: '正在加载...',
+    noMoreData: '没有更多数据了',
   },
   topic: {
     persenUnit: '人',

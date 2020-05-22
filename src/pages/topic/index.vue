@@ -313,8 +313,8 @@
       <qui-load-more
         :status="loadingType"
         :content-text="{
-          contentdown: '显示更多...',
-          contentrefresh: '正在加载...',
+          contentdown: c.contentdown,
+          contentrefresh: c.contentrefresh,
           contentnomore: contentnomoreVal,
         }"
       ></qui-load-more>
@@ -794,11 +794,6 @@ export default {
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
     threadOpera(id, canStatus, isStatus, type) {
       console.log(id, canStatus, isStatus, type);
-      if (!canStatus) {
-        if (type == '1') {
-          console.log('没有收藏权限');
-        }
-      }
       const jvObj = {
         type: 'threads',
         id: id,
