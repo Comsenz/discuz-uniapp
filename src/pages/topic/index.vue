@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content" v-if="status[loadDetailStatusId]">
+  <qui-page class="content">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -17,7 +17,12 @@
             :user-name="thread.user.username"
             :theme-type="thread.type"
             :theme-time="thread.createdAt"
-            :management-show="true"
+            :management-show="
+              selectList[0].canOpera ||
+                selectList[1].canOpera ||
+                selectList[2].canOpera ||
+                selectList[3].canOpera
+            "
             :theme-title="thread.type == 1 ? thread.title : ''"
             :theme-content="thread.firstPost.contentHtml"
             :images-list="thread.firstPost.images"
@@ -97,11 +102,9 @@
         </view>
         <!-- 评论 -->
         <view class="comment" v-if="thread.postCount > 1">
-          <view class="comment-num" v-if="thread.postCount > 1">
-            {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
-          </view>
+          <view class="comment-num">{{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}</view>
 
-          <view v-if="status[loadDetailCommnetStatusId]">
+          <view>
             <view v-for="(post, index) in posts" :key="index">
               <qui-topic-comment
                 v-if="!post.isDeleted"
@@ -177,9 +180,8 @@
 
           <view class="comment-content-box">
             <view class="comment-content">
-              <!--<textarea
+              <textarea
                 ref="commentText"
-                auto-height
                 focus="true"
                 :maxlength="450"
                 class="comment-textarea"
@@ -188,8 +190,7 @@
                 placeholder-class="text-placeholder"
                 v-model="textAreaValue"
                 @blur="contBlur"
-              />-->
-              <!--<textarea placeholder-style="color:#F76260" placeholder="占位符字体是红色的" />-->
+              />
               <qui-uploader
                 v-if="uploaderShow"
                 :url="`${url}api/attachments`"
@@ -204,43 +205,12 @@
               ></qui-uploader>
             </view>
           </view>
-          <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishBtn()">
-          {{ t.publish }}
-        </qui-button>-->
           <button class="publishBtn" @click="publishClick()">
             {{ t.publish }}
           </button>
         </view>
       </uni-popup>
-      <!--详情页底部-->
-      <view class="det-ft flex" v-if="footerShow">
-        <view
-          class="det-ft-child flex"
-          @click="
-            threadLikeClick(
-              thread.firstPost._jv.id,
-              thread.firstPost.canLike,
-              thread.firstPost.isLiked,
-            )
-          "
-        >
-          <qui-icon
-            :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
-            class="qui-icon"
-          ></qui-icon>
-          <view class="ft-child-word">
-            {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
-          </view>
-        </view>
-        <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
-          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.writeComment }}</view>
-        </view>
-        <view class="det-ft-child flex" @click="shareClick">
-          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.share }}</view>
-        </view>
-      </view>
+
       <!--分享弹框-->
       <uni-popup ref="sharePopup" type="bottom">
         <view class="popup-share">
@@ -252,11 +222,10 @@
                   <qui-icon
                     class="content-image"
                     :name="item.icon"
-                    size="36"
+                    size="46"
                     color="#777777"
                   ></qui-icon>
                 </view>
-                <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
               </view>
               <text class="popup-share-content-text">{{ item.text }}</text>
             </view>
@@ -294,37 +263,38 @@
       </uni-popup>
       <!--自定义打赏金额弹框-->
       <uni-popup ref="customAmountPopup" type="center">
-        <view class="popup-dialog">
-          <view class="popup-dialog__top">
-            <text>
-              {{ t.enterTheRewardPaymeAmount }}
-            </text>
-          </view>
-          <view class="popup-dialog__cont">
-            <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
-            <input
-              class="popup-dialog__cont-input"
-              v-model="inputPrice"
-              type="digit"
-              placeholder="0.0"
-              focus
-            />
-          </view>
-          <view class="popup-dialog__ft">
-            <button class="popup-btn--close" @click="diaLogClose">
-              {{ i18n.t('discuzq.close') }}
-            </button>
-            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+        <view v-if="customAmountStatus">
+          <view class="popup-dialog">
+            <view class="popup-dialog__top">
+              <text>
+                {{ t.enterTheRewardPaymeAmount }}
+              </text>
+            </view>
+            <view class="popup-dialog__cont">
+              <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+              <input
+                class="popup-dialog__cont-input"
+                v-model="inputPrice"
+                type="digit"
+                placeholder="0.0"
+                focus
+              />
+            </view>
+            <view class="popup-dialog__ft">
+              <button class="popup-btn--close" @click="diaLogClose">
+                {{ i18n.t('discuzq.close') }}
+              </button>
+              <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+            </view>
           </view>
         </view>
       </uni-popup>
-
       <!--支付组件-->
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
           :money="price"
-          :wallet-status="true"
+          :wallet-status="user.canWalletPay"
           :pay-password="pwdVal"
           :balance="user.walletBalance"
           :pay-type-data="payTypeData"
@@ -343,12 +313,43 @@
       <qui-load-more
         :status="loadingType"
         :content-text="{
-          contentdown: '显示更多...',
-          contentrefresh: '正在加载...',
-          contentnomore: '暂无评论',
+          contentdown: c.contentdown,
+          contentrefresh: c.contentrefresh,
+          contentnomore: contentnomoreVal,
         }"
       ></qui-load-more>
     </scroll-view>
+    <!--详情页底部-->
+    <view class="det-ft" v-if="footerShow">
+      <view class="det-ft-con">
+        <view
+          class="det-ft-child flex"
+          @click="
+            threadLikeClick(
+              thread.firstPost._jv.id,
+              thread.firstPost.canLike,
+              thread.firstPost.isLiked,
+            )
+          "
+        >
+          <qui-icon
+            :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
+            class="qui-icon"
+          ></qui-icon>
+          <view class="ft-child-word">
+            {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
+          </view>
+        </view>
+        <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
+          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.writeComment }}</view>
+        </view>
+        <view class="det-ft-child flex" @click="shareClick">
+          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.share }}</view>
+        </view>
+      </view>
+    </view>
   </qui-page>
 </template>
 
@@ -368,7 +369,7 @@ export default {
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
-      topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
+      topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
       posts: [], //评论列表数据
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
@@ -461,14 +462,14 @@ export default {
       ], // 打赏金额数组列表
       payNumCheck: [
         {
-          name: '￥1',
-          pay: 1.0,
+          name: '',
+          pay: '',
         },
       ],
       price: 0.0, //需要支付的金额
       inputPrice: '', //自定义金额输入框的值
       payShowStatus: true, //是否显示支付
-      pwdVal: '123456', //支付密码
+      pwdVal: '', //支付密码
       orderSn: '', //订单编号
       payStatus: false, //订单支付状态
       payStatusNum: 0, // 订单支付状态查询最大次数
@@ -488,7 +489,9 @@ export default {
         },
       ], //支付方式
       currentReplyPost: {},
+      contentnomoreVal: '',
       url: '',
+      customAmountStatus: false, // 自定义价格弹框初始化状态
     };
   },
   computed: {
@@ -500,7 +503,6 @@ export default {
       return utils.deepCopy(this.$store.getters['jv/get'](`threads/${threadId}`));
     },
     // posts() {
-    //   // console.log(this.$store.getters['jv/get']('posts'));
     //   const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
     //   return posts;
     // },
@@ -526,13 +528,10 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.user, '这是用户信息~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log(option, '这是详情页接收的id');
+    console.log(this.user, '这是用户信息~~~~~~~~~~');
     this.threadId = option.id;
-    // this.threadId = 188;
     this.loadThread();
     this.loadThreadPosts();
-    console.log(this.allEmoji, '!!~~~~');
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
@@ -566,7 +565,6 @@ export default {
     //   }
     //   clearTimeout(authTimeout);
     // }, 4000);
-    console.log(this.getAtMemberData, '~~~~!!@!!');
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -585,13 +583,6 @@ export default {
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
-    // 用户信息
-    // getUser() {
-    //   this.$store.dispatch('jv/get', ['users/' + this.userId, {}]).then(data => {
-    //     console.log(data, '这是当前用户数据');
-    //     this.userInfo = data;
-    //   });
-    // },
     // 加载当前主题数据
     loadThread() {
       const params = {
@@ -621,21 +612,18 @@ export default {
 
       threadAction.then(data => {
         console.log(data, '~~~~~~~~~~~~~~~~~~~');
-        console.log(this.thread.type);
         // this.thread = data;
         // 追加管理菜单权限字段
         this.selectList[0].canOpera = this.thread.firstPost.canEdit;
         this.selectList[1].canOpera = this.thread.canEssence;
         this.selectList[2].canOpera = this.thread.canSticky;
         this.selectList[3].canOpera = this.thread.canHide;
-        this.selectList[0].canOpera = true;
+        // this.selectList[0].isStatus = true;
         this.selectList[1].isStatus = this.thread.isEssence;
         this.selectList[2].isStatus = this.thread.isSticky;
         this.selectList[3].isStatus = false;
-        console.log(this.selectList, '管理菜单数据');
         if (data.isEssence) {
           //如果初始化状态为true
-          console.log(this.t.cancelEssence, '初始化');
           this.selectList[1].text = this.t.cancelEssence;
         }
         if (data.isSticky) {
@@ -686,6 +674,31 @@ export default {
       };
       let params = {};
       if (type == '1') {
+        const post = this.$store.getters['jv/get'](`posts/${id}`);
+
+        // 主题点赞
+        this.isLiked = !this.isLiked;
+        if (this.isLiked) {
+          // 未点赞时，点击点赞'
+          console.log('zoule11111111');
+          post.likedUsers.unshift(this.user);
+          post.likeCount++;
+        } else {
+          console.log('zoule22222');
+          post.likedUsers.forEach((value, key) => {
+            value.id === this.user.id && post.likedUsers.splice(key, 1);
+          });
+          post.likeCount--;
+        }
+
+        jvObj.relationships = {
+          likedUsers: {
+            data: post.likedUsers.map(item => {
+              return { type: item._jv.type, id: item._jv.id };
+            }),
+          },
+        };
+
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
@@ -712,30 +725,28 @@ export default {
           console.log(data, 'wwwwwwwwwwwwwwwwwwww');
           if (type == '1') {
             // 主题点赞
-            this.isLiked = data.isLiked;
-            if (data.isLiked) {
-              // 未点赞时，点击点赞'
-
-              console.log('主题未点赞时，点击点赞123');
-              console.log(this.thread.firstPost.likedUsers);
-              this.thread.firstPost.likedUsers.unshift(this.user);
-              this.thread.firstPost.likeCount++;
-            } else {
-              console.log('主题已点赞时，取消点赞456', this.user.id);
-              console.log(this.thread.firstPost.likedUsers, '@@@~~~');
-              // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-              //   value.id === this.user.id && likedUsers.splice(key, 1);
-              // });
-              this.thread.firstPost.likedUsers.forEach((value, key) => {
-                value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
-              });
-              console.log(this.thread.firstPost.likedUsers);
-              this.thread.firstPost.likeCount--;
-            }
+            // this.isLiked = data.isLiked;
+            // if (data.isLiked) {  `
+            //   // 未点赞时，点击点赞'
+            //   console.log('主题未点赞时，点击点赞123');
+            //   console.log(this.thread.firstPost.likedUsers);
+            //   this.thread.firstPost.likedUsers.unshift(this.user);
+            //   this.thread.firstPost.likeCount++;
+            // } else {
+            //   console.log('主题已点赞时，取消点赞456', this.user.id);
+            //   console.log(this.thread.firstPost.likedUsers, '@@@~~~');
+            //   // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+            //   // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
+            //   //   value.id === this.user.id && likedUsers.splice(key, 1);
+            //   // });
+            //   this.thread.firstPost.likedUsers.forEach((value, key) => {
+            //     value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
+            //   });
+            //   console.log(this.thread.firstPost.likedUsers);
+            //   this.thread.firstPost.likeCount--;
+            // }
           } else if (type == '2') {
             if (data.isDeleted) {
-              console.log('跳转到首页');
               uni.navigateTo({
                 url: `/pages/home/index`,
               });
@@ -766,11 +777,6 @@ export default {
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
     threadOpera(id, canStatus, isStatus, type) {
       console.log(id, canStatus, isStatus, type);
-      if (!canStatus) {
-        if (type == '1') {
-          console.log('没有收藏权限');
-        }
-      }
       const jvObj = {
         type: 'threads',
         id: id,
@@ -949,6 +955,11 @@ export default {
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
+        if (data.length == 0) {
+          this.contentnomoreVal = this.t.noComment;
+        } else {
+          this.contentnomoreVal = this.t.noMoreData;
+        }
         // this.posts = data;
         console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
@@ -1138,9 +1149,7 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
-      console.log(param, '父页面得到的参数');
       if (param.type == '0') {
-        console.log('跳转到编辑主题页面');
         uni.navigateTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
@@ -1152,10 +1161,9 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
-      console.log(id, '用户id');
-      // uni.navigateTo({
-      //   url: '/pages/home/index',
-      // });
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
     },
     // 主题支付
     payClickShow() {
@@ -1172,13 +1180,6 @@ export default {
       this.price = this.thread.price;
       this.$refs.payShow.payClickShow();
     },
-    // 支付触发子组件弹出框事件
-    // payClickShow() {
-    //   this.$refs.payShow.payClickShow();
-    //   console.log(this.$refs.payShow);
-    //   // this.$refs.payShow.childMethod();
-    //   // console.log(this.$refs.payShow);
-    // },
     // 支付是否显示用户头像
     radioMyHead(val) {
       console.log(val, '是否显示用户头像');
@@ -1191,7 +1192,6 @@ export default {
     },
     // 打赏
     rewardClick() {
-      console.log('打赏');
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
@@ -1199,6 +1199,7 @@ export default {
     },
     // 取消打赏
     cancelReward() {
+      this.payNumCheck = [];
       this.$refs.rewardPopup.close();
     },
     // 打赏选择付费金额
@@ -1206,16 +1207,15 @@ export default {
       // this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
-      console.log(this.payNumCheck[0].name, '这是选中的打赏的name值');
 
       if (this.payNumCheck[0].name === '自定义') {
         this.$refs.rewardPopup.close();
 
         this.$nextTick(() => {
           this.$refs.customAmountPopup.open();
+          this.customAmountStatus = true;
         });
       } else {
-        console.log('点击');
         this.price = this.payNumCheck[0].pay;
         this.payShowStatus = true;
         this.$refs.rewardPopup.close();
@@ -1226,18 +1226,19 @@ export default {
     // 自定义付费金额弹框点击关闭时
     diaLogClose() {
       this.$refs.customAmountPopup.close();
+      this.customAmountStatus = false;
     },
     // 自定义付费金额弹框点击确定时
     diaLogOk() {
       this.price = this.inputPrice;
       this.$refs.customAmountPopup.close();
+      this.customAmountStatus = false;
       this.payShowStatus = true;
       this.$refs.payShow.payClickShow();
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
-      // console.log(this.cursor, '这是失去焦点时，光标的位置');
     },
     // 点击表情插入到文本域
     getEmojiClick(num) {
@@ -1254,11 +1255,8 @@ export default {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
     imageUploader() {
-      console.log('点击上传图片');
       this.uploaderShow = true;
-      console.log(this.$refs.upload, '输出的');
       if (this.uploadFile.length == 3) {
-        console.log('3张了');
         this.$refs.toast.show({ message: this.t.imageNumLimit });
         return;
       }
@@ -1267,9 +1265,7 @@ export default {
       });
     },
     uploadChange(e) {
-      console.log('这是上传');
       this.uploadFile = e;
-      console.log(this.uploadFile, '这是上传的图片数据');
     },
     uploadClear(list, del) {
       this.delAttachments(list.data.id).then(() => {
@@ -1295,30 +1291,21 @@ export default {
     },
     // 主题评论点击发布事件
     publishClick() {
-      console.log('发布主题评论');
       this.postComment(this.commentId);
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
-      console.log(threadId, 'threadId跳转到评论详情页');
-      console.log(postId, 'postId跳转到评论详情页');
-
-      // uni.navigateTo({
-      //   url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
-      // });
       uni.navigateTo({
         url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
       });
     },
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus, index) {
-      console.log(postId, '请求接口，评论点赞');
       this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus);
     },
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus) {
-      console.log(postId, '删除回复postid');
       this.postOpera(postId, '3', canStatus, isStatus);
     },
     // 评论的回复
@@ -1329,54 +1316,30 @@ export default {
         this.commentReply = true;
         this.postIndex = postIndex;
         this.commentId = postId;
-        console.log(postId, '评论回复id');
-        console.log(this.commentReply, '这是评论的回复');
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
       }
     },
     // 点击图片
     imageClick(imageId) {
-      console.log(imageId, '图片id');
       this.previewImg();
-    },
-    // 图片预览
-    previewImg() {
-      console.log('图片预览');
-      // uni.previewImage({
-      //   urls: '',
-      //   longPressActions: {
-      //     itemList: ['发送给朋友', '保存图片', '收藏'],
-      //     success: function(data) {
-      //       // console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
-      //     },
-      //     fail: function(err) {
-      //       // console.log(err.errMsg);
-      //     }
-      //   }
-      // });
     },
 
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
-      console.log(this.thread.firstPost.canLike, '主题点赞');
       this.postOpera(postId, '1', canLike, isLiked);
     },
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
-      console.log(id, canStatus, isStatus, type, '主题收藏参数');
       this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment(threadId) {
-      console.log(this.thread.canReply, this.thread.category.canReplyThread);
       if (this.thread.canReply && this.thread.category.canReplyThread) {
-        console.log(threadId, '主题回复id');
         this.commentId = threadId;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
       } else {
-        console.log('没有评论主题权限');
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       }
     },
@@ -1386,15 +1349,8 @@ export default {
     },
     // 取消分享
     cancel() {
-      console.log();
       this.$refs.sharePopup.close();
     },
-
-    // // 内容部分分享按钮弹窗
-    // handleClickShare(id) {
-    //   console.log(id,'这是主题id');
-    //   this.$refs.sharePopup.open();
-    // },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
       if (index === 0) {
@@ -1413,7 +1369,6 @@ export default {
       this.pageNum += 1;
       // this.loadThread();
       this.loadThreadPosts();
-      console.log(this.pageNum, '页码');
     },
   },
 };
@@ -1450,7 +1405,7 @@ page {
 }
 .bg-white {
   background-color: --color(--qui-BG-2);
-  border: 1px solid --color(--qui-BOR-ED);
+  border-bottom: 1px solid --color(--qui-BOR-ED);
 }
 .detail-tip {
   display: block;
@@ -1580,12 +1535,13 @@ page {
 //评论
 .comment {
   width: 100%;
-  padding: 40rpx;
+  padding: 40rpx 0 0;
   margin-top: 30rpx;
   background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .comment-num {
+  padding: 0 40rpx;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -1660,15 +1616,19 @@ page {
   position: fixed;
   bottom: 0;
   left: 0;
-  z-index: 7777;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
+  z-index: 0;
   width: 100%;
   height: 80rpx;
   line-height: 80rpx;
   background: --color(--qui-BG-2);
   box-shadow: 0 -3rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+.det-ft-con {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
 }
 .det-ft-child {
   flex: auto;
@@ -1729,7 +1689,7 @@ page {
   padding: 0 40rpx 30rpx;
   .comment-content {
     width: 100%;
-    height: 400rpx;
+    // height: 400rpx;
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
@@ -1738,7 +1698,7 @@ page {
   }
   .comment-textarea {
     width: 100%;
-    max-height: 120rpx;
+    height: 120rpx;
     min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;

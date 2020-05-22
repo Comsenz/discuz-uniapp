@@ -75,7 +75,6 @@
             show-play-btn="true"
             show-mute-btn="true"
             auto-pause-if-open-native="true"
-            vslide-gesture="true"
             auto-pause-if-navigate="true"
             enable-play-gesture="true"
             object-fit="cover"
@@ -418,7 +417,7 @@ export default {
       width: 80rpx;
       height: 80rpx;
       margin-right: 18rpx;
-      background: #ccc;
+      // background: #ccc;
       border-radius: 100%;
 
       image {
@@ -485,6 +484,7 @@ export default {
   &__content {
     &__text {
       margin-bottom: 12rpx;
+      overflow: hidden;
       font-family: $font-family;
       font-size: $fg-f28;
       font-weight: 400;
@@ -507,8 +507,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 50%;
-        max-height: 50%;
+        max-width: 80%;
+        max-height: 80%;
         // border-radius: 100%;
       }
     }

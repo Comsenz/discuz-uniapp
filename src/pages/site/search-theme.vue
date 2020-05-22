@@ -32,12 +32,14 @@
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
+          :tags="[item.category]"
           :media-url="item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
+          @headClick="headClick(item.user._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
@@ -73,7 +75,14 @@ export default {
     // 获取主题列表
     getThemeList(key, type) {
       const params = {
-        include: ['user', 'firstPost', 'threadVideo'],
+        include: [
+          'user',
+          'user.groups',
+          'firstPost',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
         'filter[isDeleted]': 'no',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
@@ -102,6 +111,12 @@ export default {
         url: `/pages/topic/index?id=${id}`,
       });
     },
+    // 点击头像调转到个人主页
+    headClick(id) {
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
     // 下拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
@@ -119,7 +134,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 
 .search-item {
-  margin-bottom: 30rpx;
+  padding-top: 15rpx;
   background-color: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
@@ -155,5 +170,8 @@ export default {
   position: absolute;
   top: 40rpx;
   right: 40rpx;
+}
+.addFine {
+  display: none;
 }
 </style>

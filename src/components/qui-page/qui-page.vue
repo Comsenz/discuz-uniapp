@@ -58,8 +58,8 @@ export default {
       this.$emit('close', res);
       this.$refs.auth.close();
     },
-    login(res, data) {
-      this.$emit('login', res, data);
+    login(data) {
+      this.$emit('login', data);
       this.$refs.auth.close();
     },
     _setColor(theme) {

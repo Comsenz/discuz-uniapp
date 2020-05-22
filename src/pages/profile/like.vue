@@ -16,6 +16,7 @@
         :theme-reply-btn="item.canReply"
         :user-groups="item.user.groups"
         :theme-time="item.createdAt"
+        :tags="[item.category]"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
         :media-url="item.threadVideo.media_url"
@@ -37,7 +38,7 @@
         "
         @commentClick="commentClick(item._jv.id)"
         @contentClick="contentClick(item._jv.id)"
-        @headClick="headClick(item._jv.id)"
+        @headClick="headClick(item.user._jv.id)"
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
@@ -119,12 +120,11 @@ export default {
       const params = {
         include: [
           'user',
-          'firstPost',
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'category',
           'threadVideo',
-          'firstPost.likedUsers',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,

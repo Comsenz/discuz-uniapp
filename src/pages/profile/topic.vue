@@ -21,6 +21,7 @@
         :theme-time="item.createdAt"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
+        :tags="[item.category]"
         :media-url="item.threadVideo.media_url"
         :is-great="item.firstPost.isLiked"
         :theme-like="item.firstPost.likeCount"
@@ -40,7 +41,7 @@
         "
         @commentClick="commentClick(item._jv.id)"
         @contentClick="contentClick(item._jv.id)"
-        @headClick="headClick(item._jv.id)"
+        @headClick="headClick(item.user._jv.id)"
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>

@@ -6,7 +6,15 @@
           {{ i18n.t('modify.newphonnumber') }}
         </view>
         <view class="new-phon-number">
-          <input class="new-phon-num" type="text" v-model="newphon" @input="changeinput" />
+          <input
+            class="new-phon-num"
+            type="number"
+            v-model="newphon"
+            :focus="true"
+            :cursor="1"
+            @input="changeinput"
+            maxlength="11"
+          />
           <button class="new-phon-send" v-if="sun" @click="btnButton" :disabled="disabtype">
             {{ i18n.t('modify.sendverificode') }}
           </button>
@@ -33,7 +41,7 @@
       </view>
       <view class="new-button">
         <qui-button type="primary" size="large" @click="dingphon">
-          {{ i18n.t('modify.nextsetp') }}
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>

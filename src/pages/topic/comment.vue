@@ -46,14 +46,18 @@
                         （{{ group.name }}）
                       </span>
                     </view>
-                    <view class="thread__header__title__time">{{ thread.createdAt }}</view>
+                    <view class="thread__header__title__time">
+                      {{ localTime }}
+                    </view>
                   </view>
                   <image src="@/static/essence.png" alt class="addFine"></image>
                 </view>
 
                 <view class="thread__content" @click="contentClick">
                   <view class="thread__content__text">
-                    <rich-text :nodes="thread.firstPost.contentHtml"></rich-text>
+                    <rich-text
+                      :nodes="thread.firstPost.contentHtml.slice(0, 38) + '...'"
+                    ></rich-text>
                   </view>
                 </view>
               </view>
@@ -93,7 +97,7 @@
             </view>
           </view>
           <!-- 评论 -->
-          <view class="comment">
+          <view class="comment" v-if="post.postCount > 1">
             <view class="comment-num">{{ post.replyCount }}{{ t.item }}{{ t.comment }}</view>
             <view v-if="postComments">
               <qui-topic-comment
@@ -176,6 +180,7 @@
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
 import user from '@/mixin/user';
+import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   mixins: [user],
@@ -246,18 +251,18 @@ export default {
     t() {
       return this.i18n.t('topic');
     },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.thread.createdAt);
+    },
   },
   onLoad(option) {
     console.log(this.user, '这是用户信息~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-    console.log(option.threadId, '这是回复页接收的主题id');
-    console.log(option.commentId, '这是回复页接收的回复id');
     this.threadId = option.threadId;
     this.commentId = option.commentId;
     this.loadPost();
     this.loadThread();
     this.loadPostComments();
-    // const forums = this.$store.getters['jv/get']('forums/1');
-    // console.log(forums);
   },
   methods: {
     // // 加载当前评论数据
@@ -280,8 +285,6 @@ export default {
       this.loadPostStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
-          // this.post = data;
-          console.log(this.post.likedUsers, '这是点赞列表');
           this.postStatus = true;
         }),
       );
@@ -305,11 +308,11 @@ export default {
     postOpera(id, type, canStatus, isStatus) {
       console.log(id, type, canStatus, isStatus);
       if (type == '1' && !canStatus) {
-        console.log('没有评论点赞权限');
+        this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
       }
       if (type == '4' && !canStatus) {
-        console.log('没有评论的回复点赞权限');
+        this.$refs.toast.show({ message: this.t.noCommentLikePermission });
         return;
       }
       const jvObj = {
@@ -341,19 +344,16 @@ export default {
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          console.log(data, 'wwwwwwwwwwwwwwwwwwww');
+          console.log(data, 'wwwwww');
           if (type == '1') {
             this.isLiked = data.isLiked;
             if (data.isLiked) {
               // 未点赞时，点击点赞
-              console.log('未点赞时，点击点赞123');
               this.post.likedUsers.unshift(this.user);
               this.post.likeCount++;
             } else {
-              console.log('已点赞时，取消点赞456');
-              console.log(this.post.likedUsers, '$$$$$$$$$$');
+              // 已点赞时，取消点赞
               this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              console.log(this.post.likedUsers, '%%%%%%%%%%%%');
               this.post.firstPost.likeCount--;
             }
           } else if (type == '2') {
@@ -361,30 +361,30 @@ export default {
               uni.navigateTo({
                 url: '/pages/topic/index?id=' + this.threadId,
               });
-              console.log('跳转到主题详情页');
+              this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
             } else {
-              console.log('当前评论删除失败');
+              this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '3') {
             if (data.isDeleted) {
-              console.log('回复的评论删除成功');
+              // 回复的评论删除成功
+              this.$refs.toast.show({ message: this.t.deleteSuccess });
             } else {
-              console.log('回复的评论删除失败');
+              // 回复的评论删除失败
+              this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '4') {
             if (data.isLiked) {
-              console.log('点赞数加1');
+              // 评论点赞成功
               this.postComments[this.commentIndex].likeCount++;
-              // data.likeCount = data.likeCount - 1;
             } else {
+              // 评论点赞失败
               this.postComments[this.commentIndex].likeCount++;
-              console.log('点赞数减1');
-              // data.likeCount = data.likeCount + 1;
             }
           }
         })
         .catch(err => {
-          console.log('1111');
+          console.log(err);
         });
     },
 
@@ -406,7 +406,6 @@ export default {
         isComment: true,
         replyId: this.commentId,
       };
-      console.log(params, '传给接口的参数');
       status.run(() => {
         this.$store
           .dispatch('jv/post', params)
@@ -432,13 +431,8 @@ export default {
       this.loadPostCommentStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
-          // this.postComments = data;
           this.postComments = [...this.postComments, ...data];
-          console.log(this.postComments, '&&&&&&~~~~~~~~~!');
-          // console.log(123, this.posts[12].user.groups[10].name);
-          // Object.getOwnPropertyNames(data).forEach(function(key) {
-          //   console.log({ key }, data[key].user.username);
-          // });
+          console.log(this.postComments, '&&&&&&~~~~~~!');
 
           this.postsStatus = true;
         }),
@@ -455,20 +449,17 @@ export default {
 
     // 跳转到用户主页
     personJump(id) {
-      console.log(id, '用户id');
-      // uni.navigateTo({
-      //   url: '/pages/home/index',
-      // });
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
     },
 
-    // 主题评论点击发布事件
+    // 评论点回复击发布事件
     publishClick() {
-      console.log('发布主题评论');
       this.postComment(this.commentId);
     },
     // // 评论点赞
     postLikeClick(postId, type, canStatus, isStatus) {
-      console.log(postId, type, canStatus, isStatus, '请求接口，评论点赞这是参数');
       this.postOpera(postId, type, canStatus, isStatus);
     },
     // 删除当前回复
@@ -477,46 +468,26 @@ export default {
     },
     // 删除回复的评论
     deleteComment(postId) {
-      console.log(postId, '删除回复postid');
       this.postOpera(postId, '3');
     },
     // 评论的回复
     replyComment(postId, canStatus) {
       if (!canStatus) {
-        console.log('没有回复权限');
+        this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
         // this.commentId = postId;
-        console.log(postId, '评论回复id');
         this.$refs.commentPopup.open();
       }
     },
-    // 点击图片
-    imageClick(imageId) {
-      console.log(imageId, '图片id');
-      this.previewImg();
+    // 跳回到主题详情页
+    contentClick() {
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${this.threadId}`,
+      });
     },
-    // 图片预览
-    previewImg() {
-      console.log('图片预览');
-      // uni.previewImage({
-      //   urls: '',
-      //   longPressActions: {
-      //     itemList: ['发送给朋友', '保存图片', '收藏'],
-      //     success: function(data) {
-      //       // console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
-      //     },
-      //     fail: function(err) {
-      //       // console.log(err.errMsg);
-      //     }
-      //   }
-      // });
-    },
-
     // 当前回复点赞
     commentLikeClick(postId, type, canLike, isLiked, commentIndex) {
-      console.log(postId, type, canLike, isLiked, commentIndex, '这是评论的回复点赞的cnash8');
       this.commentIndex = commentIndex;
-      console.log(this.commentIndex, '当前回复的索引值');
       this.postOpera(postId, '4', canLike, isLiked);
     },
     // 下拉加载
@@ -526,11 +497,7 @@ export default {
       }
       this.pageNum += 1;
       this.loadPostComments();
-      console.log(this.pageNum, '页码');
     },
-  },
-  mounted() {
-    console.log(this.$refs.commentText, '获取的dom');
   },
 };
 </script>
@@ -690,11 +657,13 @@ page {
 //评论
 .comment {
   width: 100%;
-  padding: 40rpx;
+  padding: 40rpx 0 0;
   margin-top: 30rpx;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .comment-num {
+  padding: 0 40rpx;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -955,9 +924,9 @@ page {
 
       &__top {
         height: 37rpx;
+        margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-family: $font-family;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         line-height: 37rpx;
       }
 
@@ -992,7 +961,7 @@ page {
       }
       &__reward {
         float: right;
-        font-size: 28rpx;
+        font-size: $fg-f28;
         font-weight: bold;
         color: --color(--qui-RED);
       }
