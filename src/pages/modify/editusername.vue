@@ -5,7 +5,6 @@
         <input
           type="text"
           class="chagepas-pas-inpa"
-          v-model="sername"
           :placeholder="i18n.t('modify.numbermodifitions')"
           placeholder-style="color:rgba(221,221,221,1)"
           maxlength="15"
@@ -32,16 +31,14 @@ export default {
       valueused: '',
       edit: false,
       judge: false,
-      sername: '',
       myname: '',
       test: '',
       userid: '',
       nametitle: { icon: 'none', duration: 2000 },
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
-    this.mytitle();
+  onLoad() {
+    this.userid = this.usersid;
   },
   computed: {
     forums() {
@@ -100,18 +97,6 @@ export default {
             });
           }
         });
-    },
-    mytitle() {
-      const params = {
-        _jv: {
-          type: 'users',
-          id: this.userid,
-        },
-        include: 'groups',
-      };
-      this.$store.dispatch('jv/get', params).then(data => {
-        this.sername = data.username;
-      });
     },
   },
 };

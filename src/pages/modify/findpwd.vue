@@ -175,7 +175,7 @@ export default {
               title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
-            uni.navigateBack();
+            // uni.navigateBack();
           }
         })
         .catch(err => {
