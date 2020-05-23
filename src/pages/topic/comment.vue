@@ -137,45 +137,45 @@
           </view>
 
           <!-- <view>{{ forums.set_site.site_name }}</view> -->
-
-          <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
-            <view class="comment-popup">
-              <view class="comment-popup-top">
-                <view class="comment-popup-top-l">
-                  <qui-icon name="icon-expression" class="comm-icon"></qui-icon>
-                  <qui-icon name="icon-call" class="comm-icon"></qui-icon>
-                  <qui-icon name="icon-image" class="comm-icon"></qui-icon>
-                </view>
-                <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
-              </view>
-              <view class="comment-content-box">
-                <view class="comment-content">
-                  <textarea
-                    ref="commentText"
-                    auto-height
-                    focus="true"
-                    :maxlength="450"
-                    class="comment-textarea"
-                    :placeholder="t.writeComments"
-                    :placeholder-style="placeholderColor"
-                    v-model="textAreaValue"
-                  />
-                </view>
-              </view>
-              <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
-            {{ t.publish }}
-          </qui-button>-->
-              <button class="publishBtn" @click="publishClick()">
-                {{ t.publish }}
-              </button>
-            </view>
-          </uni-popup>
         </view>
       </view>
-      <!--轻提示-->
-      <qui-toast ref="toast"></qui-toast>
+
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
+    <!--轻提示-->
+    <qui-toast ref="toast"></qui-toast>
+    <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+      <view class="comment-popup">
+        <view class="comment-popup-top">
+          <view class="comment-popup-top-l">
+            <qui-icon name="icon-expression" class="comm-icon"></qui-icon>
+            <qui-icon name="icon-call" class="comm-icon"></qui-icon>
+            <qui-icon name="icon-image" class="comm-icon"></qui-icon>
+          </view>
+          <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
+        </view>
+        <view class="comment-content-box">
+          <view class="comment-content">
+            <textarea
+              ref="commentText"
+              auto-height
+              focus="true"
+              :maxlength="450"
+              class="comment-textarea"
+              :placeholder="t.writeComments"
+              :placeholder-style="placeholderColor"
+              v-model="textAreaValue"
+            />
+          </view>
+        </view>
+        <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
+            {{ t.publish }}
+          </qui-button>-->
+        <button class="publishBtn" @click="publishClick()">
+          {{ t.publish }}
+        </button>
+      </view>
+    </uni-popup>
   </qui-page>
 </template>
 
