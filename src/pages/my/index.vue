@@ -93,7 +93,7 @@ export default {
       ],
       current: 0,
       checked: false,
-      userId: uni.getStorageSync('user_id'),
+      userId: this.$store.getters['session/get']('userId'),
       // 图片裁剪、缩放的模式
       modeVal: {
         type: String,
@@ -111,7 +111,6 @@ export default {
   },
   onLoad() {
     this.checked = this.$store.getters['theme/get']('currentTheme') !== THEME_DEFAULT;
-    this.getInfo();
   },
   methods: {
     changeCheck(e) {
@@ -128,12 +127,6 @@ export default {
       this.items[1].brief = res.followCount || 0;
       this.items[2].brief = res.fansCount || 0;
       this.items[3].brief = res.likedCount || 0;
-    },
-    getInfo() {
-      const params = {
-        include: 'groups,wechat',
-      };
-      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]);
     },
   },
 };
