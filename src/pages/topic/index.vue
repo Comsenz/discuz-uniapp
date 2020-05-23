@@ -189,6 +189,7 @@
                 :placeholder="t.writeComments"
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
+                v-show="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
               />
