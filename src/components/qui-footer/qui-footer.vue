@@ -105,13 +105,9 @@ export default {
       return this.$store.getters['session/get']('userId');
     },
   },
-  onLoad() {
-    console.log(this.user, 'onload');
-  },
   created() {
     // // 获取用户信息
     this.getUserInfo();
-    console.log(this.user, 'created');
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
@@ -243,7 +239,7 @@ export default {
         } else {
           this.redCircle = false;
         }
-        console.log('未读通知', res.unreadNotifications);
+        // console.log('未读通知', res.unreadNotifications);
       });
     },
   },

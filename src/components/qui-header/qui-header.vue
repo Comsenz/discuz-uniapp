@@ -4,7 +4,7 @@
       <image
         class="logo"
         :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
-        mode="widthFix"
+        mode="aspectFit"
       ></image>
     </view>
     <view class="circleDet">
