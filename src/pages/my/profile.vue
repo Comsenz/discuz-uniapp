@@ -1,13 +1,25 @@
 <template>
   <qui-page class="profile">
     <view class="my-profile">
-      <navigator :url="`/pages/modify/editusername?id=${userId}`" hover-class="none">
+      <!-- canEditUsername 是否允许修改用户名-->
+      <navigator
+        :url="`/pages/modify/editusername?id=${userId}`"
+        hover-class="none"
+        v-if="profile.canEditUsername"
+      >
         <qui-cell-item
           :title="i18n.t('profile.username')"
           arrow
           :addon="profile.username"
         ></qui-cell-item>
       </navigator>
+      <qui-cell-item
+        :title="i18n.t('profile.username')"
+        arrow
+        class="no-arrow"
+        v-if="!profile.canEditUsername"
+        :addon="profile.username"
+      ></qui-cell-item>
       <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow @tap="changeAvatar">
         <image
           class="my-profile__avatar"
@@ -56,12 +68,16 @@
       <qui-cell-item
         v-if="profile.realname && forums.qcloud.qcloud_faceid"
         :title="i18n.t('profile.certification')"
-        arrow
         :addon="profile.realname"
+        arrow
+        class="no-arrow"
       ></qui-cell-item>
-      <navigator :url="`/pages/modify/realname?id=${userId}`" hover-class="none">
+      <navigator
+        :url="`/pages/modify/realname?id=${userId}`"
+        hover-class="none"
+        v-if="!profile.realname && forums.qcloud.qcloud_faceid"
+      >
         <qui-cell-item
-          v-if="!profile.realname && forums.qcloud.qcloud_faceid"
           :title="i18n.t('profile.certification')"
           arrow
           :addon="i18n.t('profile.tocertification')"
@@ -118,6 +134,13 @@ export default {
       return this.$store.getters['jv/get'](`users/${this.userId}`);
     },
   },
+  // 解决左上角返回数据不刷新情况
+  onShow() {
+    const params = {
+      include: 'groups,wechat',
+    };
+    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]);
+  },
   onLoad() {
     const token = uni.getStorageSync('access_token');
     this.header = {
@@ -173,6 +196,9 @@ export default {
   }
   /deep/ .qui-uploader-box {
     display: none;
+  }
+  /deep/ .no-arrow .arrow {
+    visibility: hidden;
   }
 }
 

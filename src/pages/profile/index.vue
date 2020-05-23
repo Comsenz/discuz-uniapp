@@ -124,10 +124,10 @@ export default {
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
     const { userId, current } = params;
-    // 我的用户信息从缓存拿
     this.userId = userId || this.currentLoginId;
     this.current = current || 0;
   },
+  // 解决左上角返回数据不刷新情况
   onShow() {
     this.getUserInfo(this.userId);
   },
