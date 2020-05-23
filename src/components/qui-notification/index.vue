@@ -82,7 +82,9 @@
           </view>
         </view>
         <view class="list-box__system-notice__con">
-          <view class="list-box__system-notice__con__text" v-if="item.type === 'system'">{{ item.content }}</view>
+          <view class="list-box__system-notice__con__text" v-if="item.type === 'system'">
+            {{ item.content }}
+          </view>
         </view>
       </view>
       <!-- 删除按钮 -->
@@ -121,7 +123,7 @@ export default {
     jumpMyComment(item) {
       console.log('跳转到评论页面：', item);
       uni.navigateTo({
-        url: `/pages/topic/index?id=${item.thread_id}&commentId=${item.post_id}`,
+        url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.post_id}`,
       });
     },
 
