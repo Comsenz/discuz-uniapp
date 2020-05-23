@@ -1694,7 +1694,7 @@ page {
   padding: 0 40rpx 30rpx;
   .comment-content {
     width: 100%;
-    height: 400rpx;
+    height: 420rpx;
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
@@ -1703,7 +1703,7 @@ page {
   }
   .comment-textarea {
     width: 100%;
-    height: 120rpx;
+    height: 104rpx;
     min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;
