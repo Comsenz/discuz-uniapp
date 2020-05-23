@@ -123,6 +123,10 @@ import { mapMutations } from 'vuex';
 
 export default {
   props: {
+    threadId: {
+      type: [String, Number],
+      default: '',
+    },
     // 钱包设置支付密码状态
     walletStatus: {
       type: Boolean,
@@ -266,10 +270,11 @@ export default {
     },
     // 去设置钱包支付密码
     payStatusClick() {
+      // /* 获取当前路由 */
       const routes = getCurrentPages(); // 获取当前打开过的页面路由数组
       const curRoute = routes[routes.length - 1].route; // 获取当前页面路由，也就是最后一个打开的页面路由
-      console.log(curRoute, '这是当前路由');
-      this.setRouter(curRoute);
+      // console.log(curRoute, this.threadId, '这是当前路由');
+      this.setRouter(`${curRoute}/${this.threadId}`);
       // this.$store.commit('setRouter', curRoute);
       if (this.payUrl) {
         console.log(1);

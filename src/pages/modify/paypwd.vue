@@ -27,12 +27,14 @@
           :number="types"
         ></qui-input-code>
       </view>
+      <button @click="btn">按钮</button>
     </view>
   </qui-page>
 </template>
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import { mapState } from 'vuex';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
@@ -62,8 +64,14 @@ export default {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
+    ...mapState({
+      setRouter: state => state.pay.model,
+    }),
   },
   methods: {
+    btn() {
+      console.log(this.setRouter, '@~~~~');
+    },
     fourse() {
       this.inshow = true;
     },

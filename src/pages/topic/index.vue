@@ -264,6 +264,7 @@
     <view v-if="payShowStatus">
       <qui-pay
         ref="payShow"
+        :thread-id="thread._jv.id"
         :money="price"
         :wallet-status="user.canWalletPay"
         :pay-password="pwdVal"
@@ -348,7 +349,7 @@
             ></qui-uploader>
           </view>
         </view>
-        <button class="publishBtn" @click="publishClick()">
+        <button class="publishBtn" @click="publishClickStatus && publishClick()">
           {{ t.publish }}
         </button>
       </view>
@@ -418,6 +419,7 @@ export default {
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
+      publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
       formData: {}, //请求头部
@@ -684,11 +686,9 @@ export default {
         this.isLiked = !this.isLiked;
         if (this.isLiked) {
           // 未点赞时，点击点赞'
-          console.log('zoule11111111');
           post.likedUsers.unshift(this.user);
           post.likeCount++;
         } else {
-          console.log('zoule22222');
           post.likedUsers.forEach((value, key) => {
             value.id === this.user.id && post.likedUsers.splice(key, 1);
           });
@@ -775,7 +775,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('1111');
+          console.log(err);
         });
     },
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
@@ -846,7 +846,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('1111');
+          console.log(err);
         });
     },
     // 主题回复，评论的回复调用接口
@@ -854,6 +854,7 @@ export default {
       console.log(this.commentReply, '这是用来判断的');
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
+        this.publishClickStatus = true;
         return false;
       }
       let params = {};
@@ -911,6 +912,8 @@ export default {
           this.$refs.commentPopup.close();
           this.commentReply = false;
           this.commentPopupStatus = false;
+          this.publishClickStatus = true;
+          console.log('~~~~~~~~~~~~');
           if (!res.isComment) {
             this.posts.push(res);
             console.log(this.posts, '#####################');
@@ -928,6 +931,7 @@ export default {
           this.uploadFile = '';
         })
         .catch(err => {
+          this.publishClickStatus = true;
           console.log(err);
         });
     },
@@ -1296,6 +1300,7 @@ export default {
     },
     // 主题评论点击发布事件
     publishClick() {
+      this.publishClickStatus = false;
       this.postComment(this.commentId);
     },
     // 跳转到评论详情页
