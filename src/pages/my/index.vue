@@ -31,13 +31,13 @@
       </view>
       <view>
         <view class="my-items">
-          <navigator url="./profile" hover-class="none">
+          <navigator url="/pages/my/profile" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="./wallet" hover-class="none">
+          <navigator url="/pages/my/wallet" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="./favorite" hover-class="none">
+          <navigator url="/pages/my/favorite" hover-class="none">
             <qui-cell-item
               :title="i18n.t('profile.myfavorite')"
               arrow
@@ -166,6 +166,7 @@ export default {
 .my-info__introduction {
   margin-top: 40rpx;
   color: --color(--qui-FC-333);
+  word-break: break-all;
   transition: $switch-theme-time;
 }
 .my-info__box__detail {

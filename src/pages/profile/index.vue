@@ -221,6 +221,9 @@ export default {
 }
 .profile-info__introduction {
   margin-top: 40rpx;
+  color: --color(--qui-FC-333);
+  word-break: break-all;
+  transition: $switch-theme-time;
 }
 .profile-info__box__detail {
   position: relative;
