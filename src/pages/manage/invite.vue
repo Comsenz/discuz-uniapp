@@ -18,6 +18,7 @@
               :list="allInviteList"
               :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
+              @setInvalid="setInvalid"
             ></qui-invite>
             <qui-no-data tips="暂无内容" v-else></qui-no-data>
             <!-- 邀请链接按钮 -->
@@ -241,6 +242,17 @@ export default {
           });
       }
     },
+    // 删除链接
+    setInvalid(id) {
+      this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
+        console.log('设为无效', res);
+        uni.showToast({
+          title: '该链接已失效',
+          duration: 1000,
+        });
+        this.getInviteList(this.status);
+      });
+    },
     // 点击取消按钮
     cancel() {
       console.log('取消');
@@ -258,11 +270,11 @@ export default {
   font-size: $fg-f28;
 
   &-tabs {
-    &-h {
-      position: fixed;
-      top: 0rpx;
-      width: 100%;
-    }
+    // &-h {
+    //   position: fixed;
+    //   top: 0rpx;
+    //   width: 100%;
+    // }
 
     /deep/ .qui-tabs__item--active .qui-tabs__item__title {
       font-size: $fg-f28;
