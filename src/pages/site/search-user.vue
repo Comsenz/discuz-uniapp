@@ -15,6 +15,9 @@
           <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
+      <view class="search-box__cancel" v-if="searchValue" @tap="clearSearch">
+        <text>{{ i18n.t('search.cancel') }}</text>
+      </view>
     </view>
     <scroll-view
       scroll-y="true"

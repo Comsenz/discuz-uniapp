@@ -269,7 +269,7 @@ export default {
   top: 40rpx;
   right: 40rpx;
 }
-.addFine {
+/deep/ .themeCount .addFine {
   display: none;
 }
 </style>

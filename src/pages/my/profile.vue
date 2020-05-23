@@ -1,13 +1,25 @@
 <template>
   <qui-page class="profile">
     <view class="my-profile">
-      <navigator :url="`../modify/editusername?id=${userId}`" hover-class="none">
+      <!-- canEditUsername 是否允许修改用户名-->
+      <navigator
+        :url="`/pages/modify/editusername?id=${userId}`"
+        hover-class="none"
+        v-if="profile.canEditUsername"
+      >
         <qui-cell-item
           :title="i18n.t('profile.username')"
           arrow
           :addon="profile.username"
         ></qui-cell-item>
       </navigator>
+      <qui-cell-item
+        :title="i18n.t('profile.username')"
+        arrow
+        class="no-arrow"
+        v-if="!profile.canEditUsername"
+        :addon="profile.username"
+      ></qui-cell-item>
       <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow @tap="changeAvatar">
         <image
           class="my-profile__avatar"
@@ -18,7 +30,11 @@
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
-        :url="profile.mobile ? `../modify/mobile?id=${userId}` : `../modify/setphon?id=${userId}`"
+        :url="
+          profile.mobile
+            ? `/pages/modify/mobile?id=${userId}`
+            : `/pages/modify/setphon?id=${userId}`
+        "
         hover-class="none"
         v-if="forums.qcloud.qcloud_sms"
       >
@@ -31,7 +47,9 @@
       <!--没有密码，跳到“设置密码”页,反之跳到密码是修改页面，-->
       <navigator
         :url="
-          profile.hasPassword ? `../modify/editpwd?id=${userId}` : `../modify/newpwd?id=${userId}`
+          profile.hasPassword
+            ? `/pages/modify/editpwd?id=${userId}`
+            : `/pages/modify/newpwd?id=${userId}`
         "
         hover-class="none"
       >
@@ -50,18 +68,22 @@
       <qui-cell-item
         v-if="profile.realname && forums.qcloud.qcloud_faceid"
         :title="i18n.t('profile.certification')"
-        arrow
         :addon="profile.realname"
+        arrow
+        class="no-arrow"
       ></qui-cell-item>
-      <navigator :url="`../modify/realname?id=${userId}`" hover-class="none">
+      <navigator
+        :url="`/pages/modify/realname?id=${userId}`"
+        hover-class="none"
+        v-if="!profile.realname && forums.qcloud.qcloud_faceid"
+      >
         <qui-cell-item
-          v-if="!profile.realname && forums.qcloud.qcloud_faceid"
           :title="i18n.t('profile.certification')"
           arrow
           :addon="i18n.t('profile.tocertification')"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="`../modify/signature?id=${userId}`" hover-class="none">
+      <navigator :url="`/pages/modify/signature?id=${userId}`" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.signature')"
           arrow
@@ -102,15 +124,22 @@ export default {
       // 图片裁剪、缩放的模式
       modeVal: {
         type: String,
-        default: 'aspectFill',
+        default: 'widthFix',
       },
-      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
     };
   },
   computed: {
     profile() {
       return this.$store.getters['jv/get'](`users/${this.userId}`);
     },
+  },
+  // 解决左上角返回数据不刷新情况
+  onShow() {
+    const params = {
+      include: 'groups,wechat',
+    };
+    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]);
   },
   onLoad() {
     const token = uni.getStorageSync('access_token');
@@ -167,6 +196,9 @@ export default {
   }
   /deep/ .qui-uploader-box {
     display: none;
+  }
+  /deep/ .no-arrow .arrow {
+    visibility: hidden;
   }
 }
 
