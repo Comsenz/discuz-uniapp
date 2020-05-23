@@ -53,7 +53,7 @@
             <qui-cell-item
               :title="i18n.t('profile.search')"
               arrow
-              :border="userInfo.groupsName == '管理员' ? true : false"
+              :class="userInfo.groupsName == '管理员' ? '' : 'no-border'"
             ></qui-cell-item>
           </navigator>
           <navigator
@@ -144,6 +144,9 @@ export default {
 }
 /deep/ .cell-item {
   padding-right: 40rpx;
+}
+/deep/ .no-border .cell-item {
+  border: 0;
 }
 .my-info {
   padding: 40rpx;
