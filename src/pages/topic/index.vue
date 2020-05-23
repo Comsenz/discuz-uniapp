@@ -686,11 +686,9 @@ export default {
         this.isLiked = !this.isLiked;
         if (this.isLiked) {
           // 未点赞时，点击点赞'
-          console.log('zoule11111111');
           post.likedUsers.unshift(this.user);
           post.likeCount++;
         } else {
-          console.log('zoule22222');
           post.likedUsers.forEach((value, key) => {
             value.id === this.user.id && post.likedUsers.splice(key, 1);
           });
@@ -777,7 +775,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('1111');
+          console.log(err);
         });
     },
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
@@ -848,7 +846,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('1111');
+          console.log(err);
         });
     },
     // 主题回复，评论的回复调用接口
@@ -1304,7 +1302,6 @@ export default {
     publishClick() {
       this.publishClickStatus = false;
       this.postComment(this.commentId);
-      console.log('执行111111');
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
