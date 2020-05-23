@@ -47,7 +47,7 @@ export default {
       pageSize: 20,
       pageNum: 1, // 当前页数
       freezelist: [],
-      userId: uni.getStorageSync('user_id'),
+      userId: this.$store.getters['session/get']('userId'),
     };
   },
   computed: {
