@@ -67,7 +67,7 @@ export default {
       loadingType: 'more',
       pageSize: 20,
       pageNum: 1, // 当前页数
-      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
       show: false,
       date: currentDate,
       filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型

@@ -82,7 +82,7 @@ export default {
       followerList: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
-      currentLoginId: uni.getStorageSync('user_id'),
+      currentLoginId: this.$store.getters['session/get']('userId'),
       // 图片裁剪、缩放的模式
       modeVal: {
         type: String,

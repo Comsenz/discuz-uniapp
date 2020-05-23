@@ -1,7 +1,7 @@
 <template>
   <qui-page class="profile">
     <view class="my-profile">
-      <navigator :url="`../modify/editusername?id=${userId}`" hover-class="none">
+      <navigator :url="`/pages/modify/editusername?id=${userId}`" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.username')"
           arrow
@@ -18,7 +18,11 @@
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
-        :url="profile.mobile ? `../modify/mobile?id=${userId}` : `../modify/setphon?id=${userId}`"
+        :url="
+          profile.mobile
+            ? `/pages/modify/mobile?id=${userId}`
+            : `/pages/modify/setphon?id=${userId}`
+        "
         hover-class="none"
         v-if="forums.qcloud.qcloud_sms"
       >
@@ -31,7 +35,9 @@
       <!--没有密码，跳到“设置密码”页,反之跳到密码是修改页面，-->
       <navigator
         :url="
-          profile.hasPassword ? `../modify/editpwd?id=${userId}` : `../modify/newpwd?id=${userId}`
+          profile.hasPassword
+            ? `/pages/modify/editpwd?id=${userId}`
+            : `/pages/modify/newpwd?id=${userId}`
         "
         hover-class="none"
       >
@@ -53,7 +59,7 @@
         arrow
         :addon="profile.realname"
       ></qui-cell-item>
-      <navigator :url="`../modify/realname?id=${userId}`" hover-class="none">
+      <navigator :url="`/pages/modify/realname?id=${userId}`" hover-class="none">
         <qui-cell-item
           v-if="!profile.realname && forums.qcloud.qcloud_faceid"
           :title="i18n.t('profile.certification')"
@@ -61,7 +67,7 @@
           :addon="i18n.t('profile.tocertification')"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="`../modify/signature?id=${userId}`" hover-class="none">
+      <navigator :url="`/pages/modify/signature?id=${userId}`" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.signature')"
           arrow
@@ -102,9 +108,9 @@ export default {
       // 图片裁剪、缩放的模式
       modeVal: {
         type: String,
-        default: 'aspectFill',
+        default: 'widthFix',
       },
-      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
     };
   },
   computed: {
