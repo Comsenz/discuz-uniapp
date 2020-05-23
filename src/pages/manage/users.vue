@@ -60,7 +60,7 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
-      pageSize: 10, // 每页10条数据
+      pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
     };
   },
@@ -87,7 +87,9 @@ export default {
     },
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
-      this.searchUser(e.target.value);
+      if (e && e.target) {
+        this.searchUser(e.target.value);
+      }
     }, 800),
     clearSearch() {
       this.searchInput();
@@ -104,7 +106,7 @@ export default {
       if (this.searchText === '') {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
         this.$store.dispatch('jv/get', ['users', {}]).then(res => {
-          console.log('会话列表res', res);
+          console.log('搜索res', res);
           if (res) {
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
@@ -112,7 +114,7 @@ export default {
       } else {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('会话列表res', res);
+          console.log('搜索res', res);
           if (res) {
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }

@@ -1,17 +1,35 @@
 <template>
   <view class="qui-at-member-page-box">
-    <view class="qui-at-member-page-box__hd">
-      <view class="qui-at-member-page-box__hd__sc">
-        <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
-        <input
-          type="text"
-          placeholder-class="input-placeholder"
-          confirm-type="search"
-          :placeholder="i18n.t('discuzq.atMember.selectedMember')"
-          @input="searchInput"
-        />
+    <!-- 搜索成员 -->
+    <view class="manage-users-search">
+      <view class="search">
+        <view class="search-box">
+          <view class="search-box__content">
+            <qui-icon
+              class="icon-content-search"
+              name="icon-search"
+              size="30"
+              color="#bbb"
+            ></qui-icon>
+            <input
+              type="text"
+              class="search-box__content-input"
+              placeholder-class="input-placeholder"
+              placeholder="搜索成员"
+              @input="searchInput"
+              :value="searchText"
+            />
+            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+              <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
+            </view>
+          </view>
+          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
+            <text>取消</text>
+          </view>
+        </view>
       </view>
     </view>
+    <!-- 成员列表 -->
     <view class="qui-at-member-page-box__lst">
       <scroll-view
         class="scroll-Y"
@@ -50,6 +68,7 @@
         <view class="loading-text">
           <text>{{ i18n.t(loadingText) }}</text>
         </view>
+        <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
     <view class="qui-at-member-page-box__ft">
@@ -71,8 +90,8 @@
       <scroll-view style="height: 968rpx;" scroll-y="true">
         <view class="popup-wrap">
           <view class="popup-wrap-con">
-            <view @click="modifyGroupName(item)" v-for="item in allInviteList" :key="item._jv.id">
-              <view class="popup-wrap-con-text">{{ item.title }}</view>
+            <view @click="modifyGroupName(item)" v-for="item in groupList" :key="item._jv.id">
+              <view class="popup-wrap-con-text">{{ item.name }}</view>
               <view class="popup-wrap-con-line"></view>
             </view>
           </view>
@@ -86,48 +105,31 @@
 
 <script>
 import { mapMutations } from 'vuex';
-import { timestamp2day } from '@/utils/time';
+import { debounce } from 'lodash';
 
 export default {
   data() {
     return {
-      allSiteUser: [],
-      followStatus: true, // 第一次进来显示follow列表
       checkAvatar: [],
-      loadingText: 'discuzq.list.loading',
-      searchValue: '',
-      pageNum: 1,
-      meta: {},
+      loadingType: 'more', // 上拉加载状态
+      pageSize: 20, // 每页20条数据
+      pageNum: 1, // 当前页数
+      searchText: '',
     };
   },
+  onLoad() {
+    this.getGroupList();
+    uni.setNavigationBarTitle({
+      title: '成员管理',
+    });
+    this.searchUser();
+  },
   computed: {
-    // 获取管理邀请列表（非管理员无的邀请链接无管理）
-    allInviteList() {
-      const list = [];
-      const inviteList = this.$store.getters['jv/get']('invite');
-      const groupList = this.$store.getters['jv/get']('groups');
-      console.log('会话列表接口的响应：', inviteList);
-      console.log('用户组接口的响应：', groupList);
-      const inviteListKeys = Object.keys(inviteList);
-      const groupListKeys = Object.keys(groupList);
-      if (inviteList && inviteListKeys.length > 0) {
-        for (let i = 0; i < inviteListKeys.length; i += 1) {
-          const inviteListValue = inviteList[inviteListKeys[i]];
-          const day = timestamp2day(inviteListValue.endtime);
-          inviteListValue.time = `有效期剩余${day}天`;
-          if (groupListKeys && groupListKeys.length > 0) {
-            for (let j = 0; j < groupListKeys.length; j += 1) {
-              const groupListValue = groupList[groupListKeys[j]];
-              if (inviteListValue.group_id.toString() === groupListValue._jv.id.toString()) {
-                inviteListValue.title = groupListValue.name;
-              }
-            }
-          }
-          list.push(inviteListValue);
-        }
-      }
-      console.log('list', list);
-      return list;
+    // 获取用户组列表
+    groupList() {
+      const groups = this.$store.getters['jv/get']('groups');
+      console.log('groups', groups);
+      return groups;
     },
     allFollow() {
       return this.$store.getters['jv/get']('follow');
@@ -137,19 +139,85 @@ export default {
       console.log('list', list);
       return list;
     },
-    getGroups() {
-      const that = this;
-      return data => {
-        Object.keys(data).forEach((item, index) => {
-          if (item[index]) {
-            return item[index].name;
-          }
-          return that.i18n.t('discuzq.role.noRole');
-        });
-      };
-    },
   },
   methods: {
+    // eslint-disable-next-line
+    searchInput: debounce(function(e) {
+      if (e && e.target) {
+        this.searchUser(e.target.value);
+      }
+    }, 800),
+    clearSearch() {
+      this.searchInput();
+      this.searchUser();
+    },
+    // 调用 获取所有用户组 接口
+    getGroupList() {
+      this.$store.commit('jv/clearRecords', { _jv: { type: 'groups' } });
+      this.$store.dispatch('jv/get', 'groups');
+      console.log('获取所有用户组');
+    },
+    // 调用 搜索 接口
+    searchUser(val = '') {
+      this.searchText = val;
+      const params = {
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
+        'filter[username]': `*${this.searchText}*`,
+      };
+      if (this.searchText === '') {
+        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+        this.$store.dispatch('jv/get', ['users', {}]).then(res => {
+          console.log('搜索res', res);
+          if (res) {
+            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          }
+        });
+      } else {
+        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+        this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+          console.log('搜索res', res);
+          if (res) {
+            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          }
+        });
+      }
+    },
+    // 调用 批量修改用户的用户组 接口
+    modifyGroupName(key) {
+      const data = [];
+      if (this.checkAvatar && this.checkAvatar.length > 0) {
+        for (let i = 0; i < this.checkAvatar.length; i += 1) {
+          data.push({
+            attributes: {
+              id: this.checkAvatar[i].id,
+              groupId: this.groupList[key]._jv.id,
+            },
+          });
+        }
+      }
+      const params = [
+        {
+          _jv: {
+            type: 'users',
+          },
+        },
+        {
+          data: {
+            data,
+          },
+        },
+      ];
+      this.$store.dispatch('jv/patch', params).then(res => {
+        console.log('修改用户组res', res);
+        if (res) {
+          this.getGroupList();
+          this.searchUser();
+          this.checkAvatar = [];
+          this.$refs.popup.close();
+        }
+      });
+    },
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
@@ -160,130 +228,13 @@ export default {
       });
     },
     getCheckMember() {
-      // this.setAtMember(this.checkAvatar);
-      // uni.navigateBack({
-      //   delta: 1,
-      // });
       this.$refs.popup.open();
     },
-    searchInput(e) {
-      this.followStatus = false;
-      this.searchValue = e.detail.value;
-
-      if (this.pageNum !== 1) {
-        this.pageNum = 1;
-      }
-
-      if (this.timeout) clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.getSiteMember(1);
-      }, 250);
-    },
-    lower() {
-      if (this.followStatus) {
-        if (this.meta.total > Object.keys(this.allFollow).nv_length) {
-          this.pageNum += 1;
-          this.getFollowMember(this.pageNum);
-        } else {
-          this.loadingText = 'discuzq.list.noMoreData';
-        }
-      } else if (this.meta.total > Object.keys(this.allSiteUser).nv_length) {
-        this.pageNum += 1;
-        this.getSiteMember(this.pageNum);
-      } else {
-        this.loadingText = 'discuzq.list.noMoreData';
-      }
-    },
-    getFollowMember(number) {
-      const params = {
-        include: ['toUser', 'toUser.groups'],
-        'page[size]': 20,
-        'page[number]': number,
-      };
-      this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
-        /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
-        this.meta = res._jv.json.meta;
-        if (Object.keys(res) === 0) {
-          this.loadingText = 'discuzq.list.noData';
-        }
-        if (res._jv.json.meta.total <= 20) {
-          this.loadingText = 'discuzq.list.noData';
-        }
-      });
-    },
-    getSiteMember(number) {
-      const params = {
-        'filter[username]': `*${this.searchValue}*`,
-        'filter[status]': 'normal',
-        'page[size]': 20,
-        'page[number]': number,
-      };
-      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-        this.meta = res._jv.json.meta;
-
-        const data = JSON.parse(JSON.stringify(res));
-        delete data._jv;
-        this.allSiteUser = data;
-
-        if (Object.keys(res) === 0) {
-          this.loadingText = 'discuzq.list.noData';
-        }
-        if (res._jv.json.meta.total <= 20) {
-          this.loadingText = 'discuzq.list.noData';
-        }
-      });
-    },
-    // 调用 管理邀请列表 接口
-    getInviteList(status) {
-      const params = {
-        'filter[status]': status,
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'invite' } });
-      this.$store.dispatch('jv/get', ['invite', { params }]).then(res => {
-        this.totalData = res._jv.json.meta.total;
-        console.log('获取管理邀请列表', res);
-      });
-    },
-
-    // 调用 获取所有用户组 接口
-    getGroupList() {
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'groups' } });
-      this.$store.dispatch('jv/get', 'groups');
-      console.log('获取所有用户组');
-    },
-    // 调用 批量修改用户的用户组 接口
-    modifyGroupName(item) {
-      const data = [];
-      if (this.checkAvatar && this.checkAvatar.length > 0) {
-        for (let i = 0; i < this.checkAvatar.length; i += 1) {
-          data.push({ attributes: { id: this.checkAvatar[i].id, groupId: item.group_id } });
-        }
-      }
-      // const params = {
-      //   id
-      //   groupId: item.group_id,
-      // };
-      console.log('this.checkAvatar', this.checkAvatar);
-      console.log('item', item);
-      // const params = {
-      //   'filter[status]': status,
-      // };
-      // this.$store.dispatch('jv/patch', params);
-    },
-
     // 点击取消按钮
     cancel() {
       console.log('取消');
       this.$refs.popup.close();
     },
-  },
-  onLoad() {
-    this.getInviteList(1);
-    this.getGroupList();
-    uni.setNavigationBarTitle({
-      title: '成员管理',
-    });
-    this.getFollowMember(1);
   },
 };
 </script>
@@ -292,38 +243,23 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
+.mamage-users-search {
+  .search {
+    position: fixed;
+    top: 0rpx;
+    z-index: 99;
+    width: 100%;
+  }
+
+  .search-box {
+    background-color: --color(--qui-BG-2);
+  }
+}
+
 $otherHeight: 292rpx;
 .qui-at-member-page-box {
   width: 100%;
-  &__hd {
-    display: flex;
-    align-items: center;
-    height: 80rpx;
-    padding: 20rpx 40rpx;
 
-    &__sc {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      padding: 0 10rpx;
-      background-color: --color(--qui-BG-IT);
-      border-radius: 10rpx;
-
-      .icon-search {
-        margin: 0 10rpx;
-        color: #bbb;
-      }
-      input {
-        width: 100%;
-        height: 100%;
-      }
-      /deep/ input .input-placeholder {
-        font-size: $fg-f28;
-        color: --color(--qui-FC-C6);
-      }
-    }
-  }
   &__lst {
     .scroll-Y {
       height: calc(100vh - #{$otherHeight});
