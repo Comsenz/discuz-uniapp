@@ -9,10 +9,10 @@
         show-icon="true"
         class="scroll-y"
       >
-        <qui-notification :list="allNotifications"></qui-notification>
+        <qui-notification :list="noticeList"></qui-notification>
         <qui-load-more
           :status="loadingType"
-          v-if="allNotifications && allNotifications.length > 0"
+          v-if="noticeList && noticeList.length > 0"
         ></qui-load-more>
       </scroll-view>
     </view>
@@ -27,18 +27,19 @@ export default {
   components: {
     quiNotification,
   },
-
   data() {
     return {
       loadingType: 'more', // 上拉加载状态
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
+      noticeList: [], // 通知列表
+      type: '', // 当前的通知类型
     };
   },
-
   onLoad(params) {
     console.log('通知列表的params：', params);
     const { title, type, unReadNum } = params;
+    this.type = type;
     let navTitle = title;
     if (parseInt(unReadNum, 10) > 0) {
       navTitle = `${title}(${unReadNum}条)`;
@@ -46,31 +47,11 @@ export default {
     uni.setNavigationBarTitle({
       title: navTitle,
     });
-    this.getNotifications(type);
+    this.getNotices(type);
   },
-
-  computed: {
-    // 获取通知列表
-    allNotifications() {
-      const list = [];
-      const noticeList = this.$store.getters['jv/get']('notification');
-      const keys = Object.keys(noticeList);
-      if (noticeList && keys.length > 0) {
-        for (let i = 0; i < keys.length; i += 1) {
-          const value = noticeList[keys[i]];
-          value.time = time2MorningOrAfternoon(value.created_at);
-          value.money = `￥${value.amount}`;
-          list.push(value);
-        }
-      }
-      console.log('通知列表：', list);
-      return list;
-    },
-  },
-
   methods: {
     // 根据type的类型发送不同的通知请求
-    getNotifications(type) {
+    getNotices(type) {
       const params = {
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
@@ -78,8 +59,14 @@ export default {
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'notification' } });
       this.$store.dispatch('jv/get', ['notification', { params }]).then(res => {
-        console.log('会话列表res', res);
-        if (res) {
+        console.log('通知列表res', res);
+        if (res && res.length > 0) {
+          const list = JSON.parse(JSON.stringify(res));
+          for (let i = 0; i < list.length; i += 1) {
+            list[i].time = time2MorningOrAfternoon(list[i].created_at);
+            list[i].money = `￥${list[i].amount}`;
+          }
+          this.noticeList = list;
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });
@@ -90,7 +77,7 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getDialogList();
+      this.getNotices(this.type);
       console.log('页码', this.pageNum);
     },
   },

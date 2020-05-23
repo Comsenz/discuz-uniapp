@@ -3,7 +3,7 @@
     <view class="notice-box">
       <!-- 通知类型列表 -->
       <view class="notice-box__list">
-        <view v-for="item in list" :key="item.id" @click="clickUniListItem(item)">
+        <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
           <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
             <qui-icon
               v-if="item.unReadNum && item.unReadNum > 0"
@@ -16,7 +16,7 @@
         </view>
       </view>
       <!-- 会话列表 -->
-      <view class="dialog-box__main" v-if="allDialogList && allDialogList.length > 0">
+      <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
         <scroll-view
           scroll-y="true"
           @scrolltolower="pullDown"
@@ -26,9 +26,9 @@
         >
           <view
             class="dialog-box"
-            v-for="dialog of allDialogList"
+            v-for="dialog of dialogList"
             :key="dialog._jv.id"
-            @click="clickDialog(dialog)"
+            @click="jumpMsglistPage(dialog)"
           >
             <view class="dialog-box__header">
               <view class="dialog-box__header__info">
@@ -71,7 +71,7 @@
           </view>
           <qui-load-more
             :status="loadingType"
-            v-if="allDialogList && allDialogList.length > 0"
+            v-if="dialogList && dialogList.length > 0"
           ></qui-load-more>
         </scroll-view>
       </view>
@@ -83,8 +83,6 @@
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
-  components: {},
-
   data() {
     return {
       list: [
@@ -98,23 +96,21 @@ export default {
       isFirst: true, // 是否是第一次进入页面
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
+      dialogList: [], // 会话列表
     };
   },
-
   onLoad() {
     this.getDialogList();
-    this.getUnreadNotificationNum();
+    this.getUnreadNoticeNum();
   },
-
   onShow() {
     if (this.isFirst) {
       this.isFirst = false;
     } else {
       this.getDialogList();
-      this.getUnreadNotificationNum();
+      this.getUnreadNoticeNum();
     }
   },
-
   computed: {
     // 获取当前登录的id
     currentLoginId() {
@@ -122,37 +118,7 @@ export default {
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
-    // 获取会话列表
-    allDialogList() {
-      const list = [];
-      const dialogList = this.$store.getters['jv/get']('dialog');
-      console.log('会话列表接口的响应：', dialogList);
-      const keys = Object.keys(dialogList);
-      if (dialogList && keys.length > 0) {
-        for (let i = 0; i < keys.length; i += 1) {
-          const value = dialogList[keys[i]];
-          if (value && value.dialogMessage) {
-            value.time = time2MorningOrAfternoon(value.dialogMessage.created_at);
-          }
-          if (value && value.recipient && value.recipient.id === this.currentLoginId) {
-            value.name = value.sender.username;
-            value.avatar = value.sender.avatarUrl;
-            value.groupname = value.sender.groups;
-            value.readAt = value.recipient_read_at;
-          } else if (value && value.sender && value.sender.id === this.currentLoginId) {
-            value.name = value.recipient.username;
-            value.avatar = value.recipient.avatarUrl;
-            value.groupname = value.recipient.groups;
-            value.readAt = value.sender_read_at;
-          }
-          list.push(value);
-        }
-      }
-      console.log('会话列表：', list);
-      return list;
-    },
   },
-
   methods: {
     // 调用 会话列表 的接口
     getDialogList() {
@@ -164,14 +130,31 @@ export default {
       };
       this.$store.dispatch('jv/get', ['dialog', { params }]).then(res => {
         console.log('会话列表res', res);
-        if (res) {
+        if (res && res.length > 0) {
+          const list = JSON.parse(JSON.stringify(res));
+          for (let i = 0; i < list.length; i += 1) {
+            if (list[i] && list[i].dialogMessage) {
+              list[i].time = time2MorningOrAfternoon(list[i].dialogMessage.created_at);
+            }
+            if (list[i] && list[i].recipient && list[i].recipient.id === this.currentLoginId) {
+              list[i].name = list[i].sender.username;
+              list[i].avatar = list[i].sender.avatarUrl;
+              list[i].groupname = list[i].sender.groups;
+              list[i].readAt = list[i].recipient_read_at;
+            } else if (list[i] && list[i].sender && list[i].sender.id === this.currentLoginId) {
+              list[i].name = list[i].recipient.username;
+              list[i].avatar = list[i].recipient.avatarUrl;
+              list[i].groupname = list[i].recipient.groups;
+              list[i].readAt = list[i].sender_read_at;
+            }
+          }
+          this.dialogList = list;
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });
     },
-
     // 调用 未读通知数 的接口
-    getUnreadNotificationNum() {
+    getUnreadNoticeNum() {
       const params = {
         include: ['groups'],
       };
@@ -187,23 +170,20 @@ export default {
         }
       });
     },
-
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
-    clickUniListItem(item) {
+    jumpNoticePage(item) {
       uni.navigateTo({
         url: `/pages/notice/notice?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
       });
       console.log(`跳转${item.title}页面`);
     },
-
     // 跳转至 聊天页面
-    clickDialog(dialogInfo) {
+    jumpMsglistPage(dialogInfo) {
       console.log('会话信息', dialogInfo);
       uni.navigateTo({
         url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
       });
     },
-
     // 上拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
