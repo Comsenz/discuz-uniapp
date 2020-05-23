@@ -29,29 +29,6 @@
         :color="color"
         @click="open"
       ></qui-header>
-      <uni-popup ref="popupHead" type="bottom">
-        <view class="popup-share">
-          <view class="popup-share-content">
-            <button class="popup-share-button" open-type="share" plain="true"></button>
-            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-              <view class="popup-share-content-image">
-                <view class="popup-share-box" @click="shareHead(index)">
-                  <qui-icon
-                    class="content-image"
-                    :name="item.icon"
-                    size="46"
-                    color="#777777"
-                  ></qui-icon>
-                </view>
-                <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-              </view>
-              <text class="popup-share-content-text">{{ item.text }}</text>
-            </view>
-          </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-        </view>
-      </uni-popup>
       <view
         class="nav"
         id="navId"
@@ -130,6 +107,7 @@
           :theme-essence="item.isEssence"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
+          :video-id="item.threadVideo._jv.id"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -146,7 +124,29 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
     </scroll-view>
-
+    <uni-popup ref="popupHead" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share" plain="true"></button>
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box" @click="shareHead(index)">
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="46"
+                  color="#777777"
+                ></qui-icon>
+              </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+      </view>
+    </uni-popup>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -282,9 +282,9 @@ export default {
     }),
     scroll(event) {
       // console.log(event, 'scroll');
-      if (this.checkoutTheme || this.isTop === 1) {
-        return;
-      }
+      // if (this.checkoutTheme || this.isTop === 1) {
+      //   return;
+      // }
       if (event.detail.scrollTop > 100) {
         this.navShow = true;
       } else {
@@ -302,7 +302,6 @@ export default {
         this.scrolled = 'affix';
       }
     },
-
     // 滑动到顶部
     toUpper() {
       if (this.isTop === 0) {
@@ -316,7 +315,7 @@ export default {
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
-      // this.checkoutTheme = true;
+      this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
       this.setCategoryId(this.categoryId);
@@ -331,11 +330,17 @@ export default {
 
       this.loadThreadsSticky();
       this.threads = [];
+      // this.scrollTopNum = 1;
+      // this.$nextTick(() => {
+      //   this.scrollTopNum = 0;
+      //   this.navShow = false;
+      // });
       // this.scrollTopNum = this.myScroll + 1;
       // this.$nextTick(() => {
       //   this.scrollTopNum = this.myScroll;
       // });
       await this.loadThreads();
+      this.navShow = false;
       this.checkoutTheme = false;
     },
     // 筛选分类里的搜索
@@ -564,7 +569,7 @@ export default {
           this.threads = [...this.threads, ...res];
         }
         this.isResetList = false;
-        // console.log(this.navShow, this.isTop, 'isTop navShow');
+        console.log(this.navShow, this.isTop, 'isTop navShow');
       });
     },
     // 内容部分点赞按钮点击事件
