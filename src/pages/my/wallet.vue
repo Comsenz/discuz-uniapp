@@ -9,20 +9,20 @@
           class="wallet-available"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="'./freeze'" hover-class="none">
+      <navigator url="/pages/my/freeze" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.freezeamount')"
           arrow
           :addon="`¥ ${dataInfo.freeze_amount || 0.0}`"
         ></qui-cell-item>
       </navigator>
-      <navigator url="./withdrawalslist" hover-class="none">
+      <navigator url="/pages/my/withdrawalslist" hover-class="none">
         <qui-cell-item :title="i18n.t('profile.withdrawalslist')" arrow></qui-cell-item>
       </navigator>
-      <navigator url="./walletlist" hover-class="none">
+      <navigator url="/pages/my/walletlist" hover-class="none">
         <qui-cell-item :title="i18n.t('profile.walletlist')" arrow></qui-cell-item>
       </navigator>
-      <navigator url="./orderlist" hover-class="none">
+      <navigator url="/pages/my/orderlist" hover-class="none">
         <qui-cell-item :title="i18n.t('profile.orderlist')" arrow></qui-cell-item>
       </navigator>
       <navigator :url="'/pages/modify/authen?id=' + userId" hover-class="none">
@@ -53,7 +53,7 @@ export default {
     return {
       dataInfo: {},
       hasPassword: false,
-      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
     };
   },
   onLoad() {

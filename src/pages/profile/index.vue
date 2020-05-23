@@ -103,7 +103,7 @@ export default {
         { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
       userId: '',
-      currentLoginId: uni.getStorageSync('user_id'),
+      currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
       dialogId: 0, // 会话id
       // 图片裁剪、缩放的模式

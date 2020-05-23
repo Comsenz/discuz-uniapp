@@ -83,7 +83,7 @@ export default {
       pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
-      currentLoginId: uni.getStorageSync('user_id'),
+      currentLoginId: this.$store.getters['session/get']('userId'),
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
