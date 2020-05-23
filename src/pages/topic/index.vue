@@ -101,10 +101,12 @@
           </view>
         </view>
         <!-- 评论 -->
-        <view class="comment" v-if="thread.postCount > 1">
-          <view class="comment-num">{{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}</view>
+        <view class="comment">
+          <view class="comment-num" :style="{ paddingBottom: post.postCount > 1 ? '0' : '40rpx' }">
+            {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
+          </view>
 
-          <view>
+          <view v-if="posts.length > 0">
             <view v-for="(post, index) in posts" :key="index">
               <qui-topic-comment
                 v-if="!post.isDeleted"
@@ -1551,6 +1553,7 @@ page {
 }
 .comment-num {
   padding: 0 40rpx;
+  font-size: $fg-f28;
   font-weight: bold;
   line-height: 37rpx;
 }

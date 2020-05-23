@@ -106,13 +106,15 @@
         <text class="popup-share-btn" @click="cancel('2')">取消</text>
       </view>
     </uni-popup>
-    <qui-pay-keyboard
-      :show="show"
-      :money="money"
-      :password="payPassword"
-      @onInput="onInput"
-      @close="close"
-    ></qui-pay-keyboard>
+    <uni-popup ref="keyboardPopup" type="center">
+      <qui-pay-keyboard
+        :show="show"
+        :money="money"
+        :password="payPassword"
+        @onInput="onInput"
+        @close="close"
+      ></qui-pay-keyboard>
+    </uni-popup>
   </view>
 </template>
 
@@ -227,6 +229,7 @@ export default {
         console.log('这是钱包支付');
         this.show = true;
         this.$refs.payTypePopup.close();
+        this.$refs.keyboardPopup.open();
       }
       this.$emit('paysureShow', this.current);
     },
@@ -284,6 +287,7 @@ export default {
     close() {
       console.log('关闭支付');
       this.show = false;
+      this.$refs.keyboardPopup.close();
     },
   },
 };
