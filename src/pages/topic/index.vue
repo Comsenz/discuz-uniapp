@@ -174,6 +174,7 @@
               top="104rpx"
               v-if="emojiShow"
               border-radius="10rpx"
+              :color="emojiShow ? '#1878F3' : '#777'"
               @click="getEmojiClick"
             ></qui-emoji>
           </view>
@@ -188,9 +189,13 @@
                 :placeholder="t.writeComments"
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
+                v-show="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
               />
+              <view class="comment-textarea" v-show="emojiShow">
+                {{ textAreaValue }}
+              </view>
               <qui-uploader
                 v-if="uploaderShow"
                 :url="`${url}api/attachments`"
@@ -1689,7 +1694,7 @@ page {
   padding: 0 40rpx 30rpx;
   .comment-content {
     width: 100%;
-    // height: 400rpx;
+    height: 400rpx;
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
