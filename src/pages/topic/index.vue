@@ -193,9 +193,9 @@
                 v-model="textAreaValue"
                 @blur="contBlur"
               />
-              <view class="comment-textarea" v-show="emojiShow">
+              <!--<view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
-              </view>
+              </view>-->
               <qui-uploader
                 v-if="uploaderShow"
                 :url="`${url}api/attachments`"
