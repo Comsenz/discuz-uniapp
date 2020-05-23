@@ -121,7 +121,7 @@ export default {
     jumpMyComment(item) {
       console.log('跳转到评论页面：', item);
       uni.navigateTo({
-        url: `/pages/topic/index?id=${item.thread_id}&commentId=${item.post_id}`,
+        url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.post_id}`,
       });
     },
 
