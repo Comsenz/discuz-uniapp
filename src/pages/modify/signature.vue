@@ -50,9 +50,14 @@ export default {
       focuscours: '',
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
+  onLoad() {
+    this.userid = this.usersid;
     this.mydata();
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     fun(e) {

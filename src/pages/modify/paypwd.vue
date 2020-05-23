@@ -54,9 +54,14 @@ export default {
     };
   },
   onLoad(arr) {
-    this.userid = Number(arr.id);
+    this.userid = this.usersid;
     this.usertokenid = arr.token || '';
     console.log(this.usertokenid);
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     fourse() {

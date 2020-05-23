@@ -156,6 +156,7 @@ export default {
               },
             ] = err.data.errors;
             this.formeerro = sun;
+            this.sun = true;
             uni.showToast({
               icon: this.icon,
               title: sun,

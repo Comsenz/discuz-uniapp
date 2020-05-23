@@ -139,7 +139,7 @@
                       "textStyle": "fill",
                       "textDecoration": "none",
                       "fontFamily": "",
-                      "textAlign": "left"
+                      "textAlign": "center"
                     }
                   },
                   {

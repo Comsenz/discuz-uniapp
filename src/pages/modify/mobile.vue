@@ -63,9 +63,14 @@ export default {
       noclick: false,
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
+  onLoad() {
+    this.userid = this.usersid;
     this.senduser();
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     fourse() {
