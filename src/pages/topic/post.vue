@@ -6,6 +6,7 @@
           class="post-box__title-input"
           type="text"
           v-model="postTitle"
+          :focus="type === 1"
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
@@ -34,12 +35,11 @@
           }}
         </text>
       </view>
-      <view class="emoji-bd">
+      <view class="emoji-bd" v-show="emojiShow">
         <qui-emoji
           :list="allEmoji"
           position="absolute"
           top="20rpx"
-          v-if="emojiShow"
           border-radius="10rpx"
           @click="getEmojiClick"
         ></qui-emoji>
@@ -50,14 +50,20 @@
         :placeholder="i18n.t('discuzq.post.placeholder')"
         placeholder-class="textarea-placeholder"
         v-model="textAreaValue"
-        auto-height
+        auto-height="true"
         :maxlength="-1"
+        :focus="type !== 1"
+        v-show="!emojiShow"
         @blur="contBlur"
       ></textarea>
+      <view class="post-box__con-text" v-show="emojiShow">
+        {{ textAreaValue }}
+      </view>
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
         :form-data="formData"
+        :file-preview="filePreview"
         name="file"
         async-clear
         ref="upload"
@@ -113,14 +119,15 @@
           <qui-button
             v-for="(item, index) in allCategories"
             :key="index"
-            :type="checkClassData[index] ? 'primary' : ''"
-            :plain="checkClassData[index]"
+            :type="item._jv.id === categoryId ? 'primary' : ''"
+            :plain="item._jv.id === categoryId"
             @click="checkClass(item, index)"
           >
             {{ item.name }}
           </qui-button>
         </view>
         <qui-button
+          :loading="postLoading"
           type="primary"
           size="large"
           @click="postClick"
@@ -184,15 +191,17 @@
               v-model="inputPrice"
               type="digit"
               placeholder="0.0"
-              focus
+              :maxlength="8"
+              :focus="setType === 'pay'"
             />
             <input
               class="popup-dialog__cont-input"
               v-else
               v-model="inputWord"
               type="digit"
-              placeholder="0.0"
-              focus
+              placeholder="0"
+              :maxlength="5"
+              :focus="setType === 'word'"
             />
           </view>
           <view class="popup-dialog__ft">
@@ -217,19 +226,18 @@ export default {
   name: 'Post',
   data() {
     return {
-      textAreaValue: '',
-      textAreaLength: 450,
-      postTitle: '',
-      checkClassData: {},
-      type: 0,
-      title: '',
-      price: 0,
-      inputPrice: '',
-      inputWord: '',
+      textAreaValue: '', // 输入框内容
+      textAreaLength: 450, // 输入框可输入字
+      postTitle: '', // 标题
+      checkClassData: [],
+      type: 0, // 帖子类型
+      price: 0, // 付费金额
+      inputPrice: '', // 付费金额输入框
+      inputWord: '', // 查看字数输入框
       operating: '', // 编辑或发布类型
-      emojiShow: false,
-      header: {},
-      formData: {},
+      emojiShow: false, // 表情是否显示
+      header: {}, // 图片请求头部
+      formData: {}, // 图片请求data
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -267,39 +275,43 @@ export default {
           name: this.i18n.t('discuzq.post.customize'),
           pay: 0,
         },
-      ],
+      ], // 付费金额
       payNumCheck: [
         {
           name: this.i18n.t('discuzq.post.free'),
           pay: 0,
         },
-      ],
-      uploadFile: [],
-      cursor: 0,
+      ], // 付费金额选中
+      uploadFile: [], // 图片上传列表
+      cursor: 0, // 内容输入框光标未知
       wordCountCheck: [
         {
-          name: this.i18n.t('discuzq.post.word', { num: 5 }),
-          num: 5,
+          name: this.i18n.t('discuzq.post.word', { num: 0 }),
+          num: 0,
         },
-      ],
-      word: 5,
-      setType: 'pay',
-      controlsStatus: false,
-      videoBeforeList: [],
-      fullscreenStatus: false,
-      videoName: '',
-      percent: 0,
-      fileId: '',
-      url: '',
+      ], // 查看字数选中
+      word: 0, // 可查看字数
+      setType: 'pay', // 金额或查看字
+      controlsStatus: false, // 是否显示默认播放控件
+      videoBeforeList: [], // 视频上传列表
+      fullscreenStatus: false, // 视频全屏状态
+      videoName: '', // 视频名称
+      percent: 0, // 视频上传进度
+      fileId: '', // 视频ID
+      url: '', // 视频url
+      postLoading: false, // 发布按钮loading状态
+      allCategories: [], // 所有分类
+      categoryIndex: 0, // 分类下标
+      categoryId: 1, // 分类id
+      threadId: '', // 编辑时帖子id
+      postDetails: {}, // 编辑时帖子详情
+      filePreview: [], // 服务器上传
     };
   },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
     }),
-    allCategories() {
-      return this.$store.getters['jv/get']('categories');
-    },
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
     },
@@ -320,9 +332,10 @@ export default {
     }),
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
 
-    // video
+    // video相关方法
     videoDel() {
       this.videoBeforeList = [];
+      this.percent = 0;
     },
     playVideo() {
       this.controlsStatus = true;
@@ -361,7 +374,7 @@ export default {
               console.log('error');
               console.log(result);
               uni.showModal({
-                title: this.i18n.t('uploader.uploadFailed'),
+                title: _this.i18n.t('uploader.uploadFailed'),
                 content: JSON.stringify(result),
                 showCancel: false,
               });
@@ -375,8 +388,8 @@ export default {
               _this.fileId = result.fileId;
               _this.postVideo(result.fileId);
               uni.showModal({
-                title: this.i18n.t('uploader.uploadedSuccessfully'),
-                content: this.i18n.t('uploader.videoUploadedSuccessfully'),
+                title: _this.i18n.t('uploader.uploadedSuccessfully'),
+                content: _this.i18n.t('uploader.videoUploadedSuccessfully'),
                 showCancel: false,
               });
             },
@@ -385,6 +398,7 @@ export default {
       });
     },
 
+    // 弹框相关方法
     contBlur(e) {
       this.cursor = e.detail.cursor;
     },
@@ -428,14 +442,19 @@ export default {
     cancel() {
       this.$refs.popupBtm.close();
     },
+
+    // 图片上传相关方法
     uploadChange(e) {
       this.uploadFile = e;
     },
     uploadClear(list, del) {
-      this.delAttachments(list.data.id).then(() => {
+      const id = this.operating === 'edit' ? list.id : list.data.id;
+      this.delAttachments(id).then(() => {
         this.$refs.upload.clear(del);
       });
     },
+
+    // 表情点击事件
     getEmojiClick(num) {
       let text = '';
       text = `${this.textAreaValue.slice(0, this.cursor) +
@@ -445,14 +464,17 @@ export default {
       this.textAreaValue = text;
       this.emojiShow = false;
     },
+    // @人员跳转
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
+    // 分类点击
     checkClass(e, index) {
       // 单选功能
-      this.checkClassData = {};
-      this.$set(this.checkClassData, index, e);
-
+      this.categoryIndex = index;
+      this.categoryId = e._jv.id;
+      this.checkClassData = [];
+      this.checkClassData.push(this.allCategories[index]);
       // 多选功能
       /* if (!this.checkClassData[index]) {
         this.$set(this.checkClassData, index, e);
@@ -460,6 +482,7 @@ export default {
         this.$delete(this.checkClassData, index);
       } */
     },
+    // 发布按钮点击
     postClick() {
       let status = true;
       if (this.textAreaValue.length < 1) {
@@ -491,11 +514,13 @@ export default {
             }
             break;
           case 3:
-            if (this.uploadFile.length < 1) {
-              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.imageCannotBeEmpty') });
-              status = false;
-            } else {
-              status = true;
+            if (this.operating !== 'edit') {
+              if (this.uploadFile.length < 1) {
+                this.$refs.toast.show({ message: this.i18n.t('discuzq.post.imageCannotBeEmpty') });
+                status = false;
+              } else {
+                status = true;
+              }
             }
             break;
           default:
@@ -505,7 +530,11 @@ export default {
       }
 
       if (status) {
+        this.postLoading = true;
+        uni.showLoading();
         this.postThread().then(res => {
+          this.postLoading = false;
+          uni.hideLoading();
           if (res._jv.json.data.id) {
             uni.redirectTo({
               url: `/pages/topic/index?id=${res._jv.json.data.id}`,
@@ -517,8 +546,17 @@ export default {
 
     // 接口请求
     getCategories() {
-      this.$store.dispatch('jv/get', ['categories', {}]).then(res => {
-        this.$set(this.checkClassData, 1, res[1]);
+      this.$store.dispatch('jv/get', ['categories?filter[createThread]=1', {}]).then(res => {
+        this.allCategories = res;
+        res.map(item => {
+          if (Number(item._jv.id) === Number(this.categoryId)) {
+            this.checkClassData.push(item);
+          } else {
+            this.checkClassData = [];
+            this.checkClassData.push(res[0]);
+          }
+          return item;
+        });
       });
     },
     getEmoji() {
@@ -527,12 +565,12 @@ export default {
     postThread() {
       const params = {
         _jv: {
-          type: 'threads',
+          type: `${this.operating === 'edit' ? `threads/${this.threadId}` : 'threads'}`,
           relationships: {
             category: {
               data: {
                 type: 'categories',
-                id: Object.keys(this.checkClassData)[0],
+                id: this.checkClassData[0]._jv.id,
               },
             },
           },
@@ -542,7 +580,6 @@ export default {
         price: this.price,
         free_words: this.word,
       };
-
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
           case 0:
@@ -577,7 +614,7 @@ export default {
 
       return postPromise.then(() => {
         return this.$store
-          .dispatch('jv/post', params)
+          .dispatch(`jv/${this.operating === 'edit' ? 'patch' : 'post'}`, params)
           .then(res => {
             return res;
           })
@@ -620,6 +657,47 @@ export default {
       };
       this.$store.dispatch('jv/post', params);
     },
+    getPostThread() {
+      const params = {
+        include: ['firstPost', 'firstPost.images', 'threadVideo', 'category'],
+      };
+
+      this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        this.postDetails = res;
+
+        this.type = res.type;
+        this.textAreaValue = res.firstPost.content;
+        this.postTitle = res.title;
+        this.categoryId = res.category._jv.id;
+        if (Number(res.price) > 0) {
+          this.price = res.price;
+          this.word = res.freeWords;
+        }
+        this.textAreaLength = this.type === 1 ? 10000 : 450;
+
+        switch (Number(res.type)) {
+          case 2:
+            this.percent = 1;
+            this.videoBeforeList.push({
+              path: res.threadVideo.media_url,
+            });
+            break;
+          case 3:
+            res.firstPost.images.map(item => {
+              this.filePreview.push({
+                path: item.url,
+                id: item._jv.id,
+              });
+              return item;
+            });
+            break;
+          default:
+            console.log('未知类型');
+        }
+
+        console.log(res);
+      });
+    },
   },
   onLoad(option) {
     this.url = DISCUZ_REQUEST_HOST;
@@ -637,7 +715,14 @@ export default {
     }
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
+    if (option.threadId) this.threadId = option.threadId;
+    if (option.categoryIndex) this.categoryIndex = Number(option.categoryIndex);
+    if (option.categoryId) this.categoryId = Number(option.threadId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
+
+    if (this.operating === 'edit') {
+      this.getPostThread();
+    }
   },
   onShow() {
     let atMemberList = '';
@@ -696,11 +781,13 @@ export default {
     }
   }
   &__con-text {
+    z-index: 0;
     width: 100%;
     max-height: 900rpx;
     min-height: 400rpx;
     padding: 20rpx;
     margin-top: 20rpx;
+    line-height: 20px;
     background-color: --color(--qui-BG-1);
     border: 1rpx solid --color(--qui-BOR-DDD);
     border-radius: 10rpx;

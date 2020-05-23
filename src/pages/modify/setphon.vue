@@ -41,7 +41,7 @@
       </view>
       <view class="new-button">
         <qui-button type="primary" size="large" @click="dingphon">
-          {{ i18n.t('modify.nextsetp') }}
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>

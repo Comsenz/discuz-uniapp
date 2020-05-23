@@ -25,7 +25,7 @@
         <qui-cell-item
           :title="i18n.t('profile.mobile')"
           arrow
-          :addon="profile.mobile"
+          :addon="profile.mobile ? profile.mobile : i18n.t('profile.bindingmobile')"
         ></qui-cell-item>
       </navigator>
       <!--没有密码，跳到“设置密码”页,反之跳到密码是修改页面，-->
@@ -38,7 +38,7 @@
         <qui-cell-item
           :title="i18n.t('profile.password')"
           arrow
-          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpaypassword')"
+          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
       <qui-cell-item
@@ -77,7 +77,8 @@
         async-clear
         ref="upload"
         name="avatar"
-        @change="uploadChange"
+        @uploadSuccess="uploadSuccess"
+        @uploadFail="uploadFail"
         @chooseSuccess="chooseSuccess"
       ></qui-uploader>
       <qui-toast ref="toast"></qui-toast>
@@ -121,11 +122,20 @@ export default {
     };
   },
   methods: {
-    uploadChange(e) {
+    uploadSuccess(res, fileList) {
       uni.hideLoading();
-      this.$refs.toast.show({ message: this.i18n.t('头像上传成功') });
-      const newAvatar = e[e.length - 1].data.attributes.avatarUrl;
-      this.profile.avatarUrl = newAvatar;
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        this.$refs.toast.show({ message: '头像上传成功' });
+        const newAvatar = fileList[fileList.length - 1].data.attributes.avatarUrl;
+        this.profile.avatarUrl = newAvatar;
+      } else {
+        const { code } = JSON.parse(res.data).errors[0];
+        if (code === 'upload_time_not_up') {
+          this.$refs.toast.show({ message: '上传头像频繁，一天仅允许上传一次头像' });
+        } else {
+          this.$refs.toast.show({ message: code });
+        }
+      }
     },
     changeAvatar() {
       this.$refs.upload.uploadClick();
@@ -156,23 +166,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   /deep/ .qui-uploader-box {
-    // position: absolute;
-    // top: 140rpx;
-    // right: 0;
-    // display: inline;
-    // min-height: 100rpx;
-    // padding: 0;
     display: none;
-    .qui-uploader-box__add {
-      height: 100rpx;
-      background: transparent;
-    }
-    .icon-add {
-      display: none;
-    }
-    .qui-uploader-box__uploader-file {
-      display: none;
-    }
   }
 }
 

@@ -74,7 +74,6 @@ export default {
       emojiShow: false, // 表情
       dialogId: 0, // 会话id
       height: 0,
-      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
   },
@@ -120,19 +119,17 @@ export default {
   },
 
   onReady() {
-    setTimeout(() => {
-      if (this.currentTheme === 'dark') {
-        uni.setNavigationBarColor({
-          frontColor: '#343434',
-          backgroundColor: '#3f4243',
-        });
-      } else {
-        uni.setNavigationBarColor({
-          frontColor: '#343434',
-          backgroundColor: '#ededed',
-        });
-      }
-    }, 1000);
+    if (this.currentTheme === 'dark') {
+      uni.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#3f4243',
+      });
+    } else {
+      uni.setNavigationBarColor({
+        frontColor: '#000000',
+        backgroundColor: '#ededed',
+      });
+    }
   },
 
   onPullDownRefresh() {
@@ -143,6 +140,12 @@ export default {
   },
 
   computed: {
+    // 获取当前登录的id
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', userId);
+      return parseInt(userId, 10);
+    },
     // 获取会话消息列表
     allChatRecord() {
       const list = [];
@@ -271,8 +274,8 @@ export default {
 
 .chat-box {
   height: 100%;
-  margin-bottom: 140rpx;
-  background-color: --color(--qui-BG-ED);
+  margin: 0rpx 0rpx 140rpx;
+  background: --color(--qui-BG-ED);
 
   &__con {
     font-size: $fg-f24;
@@ -281,7 +284,7 @@ export default {
       padding: 30rpx 0;
       font-size: $fg-f20;
       font-weight: 400;
-      color: --color(--qui-FC-B5);
+      color: --color(--qui-JT-B5);
       text-align: center;
     }
 
@@ -301,41 +304,39 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 60rpx;
         padding: 25rpx 20rpx;
         margin-right: 20rpx;
-        line-height: 60rpx;
-        background: #d1e0ff;
-        border: 1rpx solid #a3caff;
+        background: --color(--qui-BG-D1E0FF);
+        border: 1rpx solid --color(--qui-BG-A3CAFF);
         border-radius: 10rpx;
       }
 
       &__box:before {
         position: absolute;
         top: 30rpx;
-        right: -20px;
-        z-index: 12;
+        right: -18.6rpx;
+        z-index: 100;
         width: 0rpx;
         height: 0rpx;
-        border-top: 11px solid transparent;
-        border-right: 11px solid transparent;
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid #d1e0ff;
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid transparent;
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid --color(--qui-BOR-D1E0FF);
         content: '';
       }
 
       &__box:after {
         position: absolute;
         top: 30rpx;
-        right: -21px;
-        z-index: 10;
+        right: -20rpx;
+        z-index: 99;
         width: 0rpx;
         height: 0rpx;
         padding: 0;
-        border-top: 11px solid transparent;
-        border-right: 11px solid transparent;
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid #a3caff;
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid transparent;
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid --color(--qui-BOR-A3CAFF);
         content: '';
       }
     }
@@ -356,41 +357,39 @@ export default {
       &__box {
         position: relative;
         max-width: 550rpx;
-        min-height: 60rpx;
         padding: 25rpx 20rpx;
-        margin-left: 20rpx;
-        line-height: 60rpx;
-        background: #fff;
-        border: 1rpx solid #e5e5e5;
+        margin: 0rpx 0rpx 0rpx 20rpx;
+        background: --color(--qui-BG-2);
+        border: 1rpx solid --color(--qui-BOR-E5);
         border-radius: 10rpx;
       }
 
       &__box:before {
         position: absolute;
         top: 30rpx;
-        left: -21px;
-        z-index: 12;
+        left: -18.6rpx;
+        z-index: 100;
         width: 0rpx;
         height: 0rpx;
-        border-top: 11px solid transparent;
-        border-right: 11px solid #fff;
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid transparent;
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid --color(--qui-BOR-FFF);
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid transparent;
         content: '';
       }
 
       &__box:after {
         position: absolute;
         top: 30rpx;
-        left: -22px;
-        z-index: 10;
+        left: -20rpx;
+        z-index: 99;
         width: 0rpx;
         height: 0rpx;
         padding: 0;
-        border-top: 11px solid transparent;
-        border-right: 11px solid #ccc;
-        border-bottom: 11px solid transparent;
-        border-left: 11px solid transparent;
+        border-top: 10rpx solid transparent;
+        border-right: 10rpx solid --color(--qui-BOR-CCC);
+        border-bottom: 10rpx solid transparent;
+        border-left: 10rpx solid transparent;
         content: '';
       }
     }
@@ -410,16 +409,17 @@ export default {
       justify-content: space-around;
       align-items: center;
       padding: 20rpx 20rpx 40rpx;
+      background: --color(--qui-BG-BTN-GRAY-1);
 
       &__icon {
-        margin-right: 20rpx;
+        margin: 0rpx 20rpx 0rpx 0rpx;
       }
     }
 
     .uni-input {
       width: 65%;
       height: 80rpx;
-      padding-left: 20rpx;
+      padding: 0rpx 0rpx 0rpx 20rpx;
       line-height: 80rpx;
       background: --color(--qui-BG-2);
       border-radius: 5rpx;
@@ -428,7 +428,7 @@ export default {
     &__btn {
       margin: 0 20rpx 0 10rpx;
       font-size: $fg-f28;
-      background: --color(--qui-BG-HIGH-LIGHT);
+      background: --color(--qui-BG-BTN);
     }
   }
 }

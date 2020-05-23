@@ -158,10 +158,11 @@ page {
   position: absolute;
   top: 43 rpx;
   left: 455rpx;
+  z-index: 10;
   width: 120rpx;
   height: 120rpx;
   background: --color(--qui-BG-2);
-  border: none;
+  opacity: 0;
 }
 .popup-share-button[plain] {
   border: 0;

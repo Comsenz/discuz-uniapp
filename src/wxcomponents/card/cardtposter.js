@@ -1,8 +1,11 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable class-methods-use-this */
 export default class LastMayday {
-  palette(obj) { 
+  palette(obj) {
     return (
+      {
+        "width": "700px",
+        "height": "1082px",
+        "background": "#ffffff",
+        "views": [
           {
             "width": "700px",
             "height": "1082px",
@@ -278,6 +281,8 @@ export default class LastMayday {
               }
             ]
           }
+        ]
+      }
     )
   }
 }

@@ -87,7 +87,6 @@ export default {
 
   data() {
     return {
-      currentLoginId: parseInt(uni.getStorageSync('user_id'), 10), // 当前用户id
       list: [
         { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
@@ -117,6 +116,12 @@ export default {
   },
 
   computed: {
+    // 获取当前登录的id
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', userId);
+      return parseInt(userId, 10);
+    },
     // 获取会话列表
     allDialogList() {
       const list = [];
@@ -126,7 +131,9 @@ export default {
       if (dialogList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           const value = dialogList[keys[i]];
-          value.time = time2MorningOrAfternoon(value.created_at);
+          if (value && value.dialogMessage) {
+            value.time = time2MorningOrAfternoon(value.dialogMessage.created_at);
+          }
           if (value && value.recipient && value.recipient.id === this.currentLoginId) {
             value.name = value.sender.username;
             value.avatar = value.sender.avatarUrl;
@@ -152,6 +159,7 @@ export default {
       const params = {
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        sort: '-dialogMessageId',
         include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
       };
       this.$store.dispatch('jv/get', ['dialog', { params }]).then(res => {
@@ -183,7 +191,7 @@ export default {
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     clickUniListItem(item) {
       uni.navigateTo({
-        url: `../notice/notice?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
+        url: `/pages/notice/notice?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
       });
       console.log(`跳转${item.title}页面`);
     },
@@ -192,7 +200,7 @@ export default {
     clickDialog(dialogInfo) {
       console.log('会话信息', dialogInfo);
       uni.navigateTo({
-        url: `../notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
+        url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
       });
     },
 
@@ -221,7 +229,7 @@ export default {
   .left-text {
     min-width: 250rpx;
     font-weight: bold;
-    color: #343434;
+    color: --color(--qui-FC-34);
   }
 
   .notice-box__list {
@@ -231,7 +239,7 @@ export default {
     transition: $switch-theme-time;
 
     /deep/ .cell-item {
-      padding-right: 40rpx;
+      padding: 0rpx 40rpx 0rpx 0rpx;
     }
 
     /deep/ text {
@@ -240,7 +248,7 @@ export default {
   }
 
   .dialog-box__main {
-    margin-bottom: 130rpx;
+    margin: 0rpx 0rpx 130rpx;
   }
 }
 
@@ -294,10 +302,10 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-right: 40rpx;
+      margin: 0rpx 40rpx 0rpx 0rpx;
 
       .red-circle {
-        margin-right: 20rpx;
+        margin: 0rpx 20rpx 0rpx 0rpx;
         vertical-align: middle;
       }
     }
