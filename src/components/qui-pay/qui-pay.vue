@@ -69,7 +69,10 @@
                     :checked="index === current"
                     class="radio"
                     color="#2699fb"
-                    :disabled="descriptionShow && !walletStatus && item.name === p.walletPay"
+                    :disabled="
+                      (descriptionShow && !walletStatus && item.name === p.walletPay) ||
+                        (descriptionShow && !(money > balance) && item.name === p.walletPay)
+                    "
                   />
                 </view>
               </label>
