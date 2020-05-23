@@ -49,7 +49,7 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent(index)">
-                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
+                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
               </view>
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
