@@ -1703,7 +1703,7 @@ page {
   }
   .comment-textarea {
     width: 100%;
-    height: 104rpx;
+    height: 94rpx;
     min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;
