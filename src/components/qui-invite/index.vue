@@ -13,10 +13,10 @@
         :brief="item.time"
         slot-right
       >
-        <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">设为无效</view>
+        <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">{{ i18n.t('manage.setInvalid') }}</view>
         <view class="invite-con-list-line"></view>
         <view class="invite-con-list-share" @click="share">
-          分享
+          {{ i18n.t('manage.share') }}
           <qui-icon name="icon-share1" class="share-icon"></qui-icon>
         </view>
       </qui-cell-item>

@@ -15,7 +15,7 @@
               type="text"
               class="search-box__content-input"
               placeholder-class="input-placeholder"
-              placeholder="搜索成员"
+              :placeholder="i18n.t('manage.searchMembers')"
               @input="searchInput"
               :value="searchText"
             />
@@ -24,7 +24,7 @@
             </view>
           </view>
           <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
-            <text>取消</text>
+            <text>{{ i18n.t('home.cancel') }}</text>
           </view>
         </view>
       </view>
@@ -96,7 +96,7 @@
             </view>
           </view>
           <view class="popup-wrap-space"></view>
-          <text class="popup-wrap-btn" @click="cancel">取消</text>
+          <text class="popup-wrap-btn" @click="cancel">{{ i18n.t('home.cancel') }}</text>
         </view>
       </scroll-view>
     </uni-popup>

@@ -1,6 +1,6 @@
 <template>
   <view>
-    <qui-no-data tips="暂无内容" v-if="!list || list.length <= 0"></qui-no-data>
+    <qui-no-data :tips="i18n.t('manage.noContent')" v-if="!list || list.length <= 0"></qui-no-data>
     <view class="list-box" v-for="item in list" :key="item.id" v-else>
       <!-- 除系统通知以外的通知 -->
       <view class="list-box__notice" v-if="item.type !== 'system'">
@@ -21,19 +21,19 @@
                   {{ item.user_name }}
                 </text>
                 <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
-                  （{{ item.thread_user_groups }}）
+                  （{{ i18n.t(item.thread_user_groups) }}）
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
-                  @了我
+                  {{ i18n.t('notice.relatedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'replied'">
-                  回复了我
+                  {{ i18n.t('notice.repliedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
-                  点赞了我
+                  {{ i18n.t('notice.likedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
-                  打赏了我
+                  {{ i18n.t('notice.rewardedMe') }}
                 </text>
               </view>
               <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
@@ -99,7 +99,7 @@
       <!-- 删除按钮 -->
       <view class="list-box__ft">
         <qui-icon name="icon-delete" size="26" @click="deleteNotification(item.id)"></qui-icon>
-        <text class="list-box__ft__text" @click="deleteNotification(item.id)">删除</text>
+        <text class="list-box__ft__text" @click="deleteNotification(item.id)">{{ i18n.t('notice.delete') }}</text>
       </view>
     </view>
   </view>

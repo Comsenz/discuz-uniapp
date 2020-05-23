@@ -20,10 +20,10 @@
               v-if="allInviteList && allInviteList.length > 0"
               @setInvalid="setInvalid"
             ></qui-invite>
-            <qui-no-data tips="暂无内容" v-else></qui-no-data>
+            <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
             <!-- 邀请链接按钮 -->
             <view class="invite-button">
-              <button class="btn" @click="generate">生成邀请链接</button>
+              <button class="btn" @click="generate">{{ i18n.t('manage.generateInvitationUrl') }}</button>
             </view>
           </view>
           <view v-if="current === 1" class="items">
@@ -34,7 +34,7 @@
               :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
-            <qui-no-data tips="暂无内容" v-else></qui-no-data>
+            <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
           </view>
           <view v-if="current === 2" class="items">
             <qui-invite
@@ -44,7 +44,7 @@
               :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
-            <qui-no-data tips="暂无内容" v-else></qui-no-data>
+            <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
           </view>
           <view v-if="current === 3" class="items">
             <qui-invite
@@ -54,7 +54,7 @@
               :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
-            <qui-no-data tips="暂无内容" v-else></qui-no-data>
+            <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
           </view>
         </view>
       </view>
@@ -69,7 +69,7 @@
               </view>
             </view>
             <view class="popup-wrap-space"></view>
-            <text class="popup-wrap-btn" @click="cancel">取消</text>
+            <text class="popup-wrap-btn" @click="cancel">{{ i18n.t('home.cancel') }}</text>
           </view>
         </scroll-view>
       </uni-popup>
@@ -246,11 +246,13 @@ export default {
     setInvalid(id) {
       this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
         console.log('设为无效', res);
-        uni.showToast({
-          title: '该链接已失效',
-          duration: 1000,
-        });
-        this.getInviteList(this.status);
+        if (res) {
+          uni.showToast({
+            title: '该链接已失效',
+            duration: 2000,
+          });
+          this.getInviteList(this.status);
+        }
       });
     },
     // 点击取消按钮

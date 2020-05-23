@@ -84,11 +84,13 @@ export default {
     deleteNotice(id) {
       this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
         console.log('删除成功', res);
-        uni.showToast({
-          title: '删除成功',
-          duration: 1000,
-        });
-        this.getNotices(this.type);
+        if (res) {
+          uni.showToast({
+            title: '删除成功',
+            duration: 2000,
+          });
+          this.getNotices(this.type);
+        }
       });
     },
   },

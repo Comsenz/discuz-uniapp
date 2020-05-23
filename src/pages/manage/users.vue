@@ -16,7 +16,7 @@
                 type="text"
                 class="search-box__content-input"
                 placeholder-class="input-placeholder"
-                placeholder="搜索成员"
+                :placeholder="i18n.t('manage.searchMembers')"
                 @input="searchInput"
                 :value="searchText"
               />
@@ -25,7 +25,7 @@
               </view>
             </view>
             <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
-              <text>取消</text>
+              <text>{{ i18n.t('home.cancel') }}</text>
             </view>
           </view>
         </view>
@@ -46,7 +46,7 @@
           </view>
           <qui-load-more :status="loadingType"></qui-load-more>
         </view>
-        <qui-no-data tips="暂无内容" v-else></qui-no-data>
+        <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
       </view>
     </view>
   </qui-page>
