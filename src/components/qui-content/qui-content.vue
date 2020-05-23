@@ -61,7 +61,7 @@
           </view>
           <rich-text :nodes="themeContent" v-else></rich-text>
         </view>
-        <cover-view class="content__video">
+        <view class="content__video">
           <video
             v-if="threadType === 2"
             id="myvideo"
@@ -73,10 +73,9 @@
             page-gesture="false"
             show-fullscreen-btn="true"
             show-play-btn="true"
-            show-mute-btn="true"
             auto-pause-if-open-native="true"
             auto-pause-if-navigate="true"
-            enable-play-gesture="true"
+            enable-play-gesture="false"
             vslide-gesture="“false"
             vslide-gesture-in-fullscreen="false"
             object-fit="cover"
@@ -87,7 +86,7 @@
             bindended="closeVideo"
             bindplay="bindPlay"
           ></video>
-        </cover-view>
+        </view>
         <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
