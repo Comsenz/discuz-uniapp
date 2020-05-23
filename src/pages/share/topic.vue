@@ -232,42 +232,111 @@ export default {
         showCancel: false,
       });
     },
+    openseting() {
+      uni.openSetting({
+        success(res) {
+          console.log(res);
+        },
+      });
+    },
     fun() {
-      const imgSrc = this.imagePath;
       const _this = this;
       if (!this.jurisdiction) {
         uni.openSetting({
           success(res) {
+            console.log(res);
             _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
           },
         });
       }
+      // uni.showModal({
+      //   title: '提示',
+      //   content: '确定保存到相册吗',
+      //   success(res) {
+      //     if (res.confirm) {
+      //       uni.downloadFile({
+      //         url: _this.imagePath, // 图片地址
+      //         success(esc) {
+      //           if (res.statusCode === 200) {
+      //             uni.saveImageToPhotosAlbum({
+      //               filePath: esc.tempFilePath,
+      //               success() {
+      //                 uni.showToast({
+      //                   title: '保存成功',
+      //                   icon: 'none',
+      //                 });
+      //               },
+      //               fail() {
+      //                 uni.showToast({
+      //                   title: '保存失败',
+      //                   icon: 'none',
+      //                 });
+      //               },
+      //             });
+      //           }
+      //         },
+      //       });
+      //     }
+      //   },
+      // });
+      // uni.downloadFile({
+      //   url: _this.imagePath,
+      //   success(res) {
       uni.saveImageToPhotosAlbum({
-        filePath: imgSrc,
+        filePath: _this.imagePath,
         success() {
-          uni.showToast({
-            icon: 'none',
-            title: _this.i18n.t('share.successfully'),
-            duration: 2000,
-          });
+          console.log('save success');
         },
         fail(err) {
-          if (err) {
-            uni.showToast({
-              icon: 'none',
-              title: _this.i18n.t('share.savefailed'),
-              duration: 2000,
-            });
-            if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
-              uni.openSetting({
-                success(res) {
-                  _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
-                },
-              });
-            }
+          if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
+            _this.jurisdiction = false;
           }
         },
       });
+      //   },
+      // });
+
+      // const _this = this;
+      // if (!this.jurisdiction) {
+      //   uni.openSetting({
+      //     success(res) {
+      //       _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+      //     },
+      //   });
+      // }
+      // uni.saveImageToPhotosAlbum({
+      //   filePath: imgSrc,
+      //   success() {
+      //     uni.showToast({
+      //       icon: 'none',
+      //       title: _this.i18n.t('share.successfully'),
+      //       duration: 2000,
+      //     });
+      //   },
+      //   fail(err) {
+      //     console.log(err);
+      //     if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
+      //       console.log(1);
+      //       uni.authorize({
+      //         scope: 'scope.writePhotosAlbum',
+      //         success() {
+      //           uni.getLocation();
+      //         },
+      //       });
+      //       uni.openSetting({
+      //         success(res) {
+      //           console.log(res);
+      //           _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+      //         },
+      //       });
+      //     }
+      //     uni.showToast({
+      //       icon: 'none',
+      //       title: _this.i18n.t('share.savefailed'),
+      //       duration: 2000,
+      //     });
+      //   },
+      // });
     },
     previewImage() {
       const currimg = this.imagePath; // 这里获取到的是一张本地的图片

@@ -96,7 +96,6 @@ export default {
         }
         this.renamewidth = 160 + this.themwidth;
         this.headerImg = data.avatarUrl || '/static/noavatar.gif';
-        console.log(this.headerImg);
         this.initData();
       });
     },
