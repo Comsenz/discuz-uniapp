@@ -9,7 +9,7 @@
         show-icon="true"
         class="scroll-y"
       >
-        <qui-notification :list="noticeList"></qui-notification>
+        <qui-notification :list="noticeList" @deleteNotice="deleteNotice"></qui-notification>
         <qui-load-more
           :status="loadingType"
           v-if="noticeList && noticeList.length > 0"
@@ -79,6 +79,17 @@ export default {
       this.pageNum += 1;
       this.getNotices(this.type);
       console.log('页码', this.pageNum);
+    },
+    // 删除通知
+    deleteNotice(id) {
+      this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
+        console.log('删除成功', res);
+        uni.showToast({
+          title: '删除成功',
+          duration: 1000,
+        });
+        this.getNotices(this.type);
+      });
     },
   },
 };

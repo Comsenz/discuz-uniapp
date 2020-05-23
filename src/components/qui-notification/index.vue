@@ -60,9 +60,18 @@
           >
             <view class="list-box__notice__con__wrap-info">
               <text class="list-box__notice__con__wrap-info-username">
-                {{ item.thread_user_name }}：
+                {{ item.thread_username }}：
               </text>
-              <view v-html="item.thread_title" style="display: inline-block;"></view>
+              <view
+                v-if="item.type !== 'rewarded' && item.type !== 'system'"
+                v-html="item.thread_title"
+                style="display: inline-block;"
+              ></view>
+              <view
+                v-if="item.type === 'rewarded'"
+                v-html="item.content"
+                style="display: inline-block;"
+              ></view>
               <view class="list-box__notice__con__wrap-info-time">
                 {{ item.thread_created_at }}
               </view>
@@ -82,7 +91,9 @@
           </view>
         </view>
         <view class="list-box__system-notice__con">
-          <view class="list-box__system-notice__con__text" v-if="item.type === 'system'">{{ item.content }}</view>
+          <view class="list-box__system-notice__con__text" v-if="item.type === 'system'">
+            {{ item.content }}
+          </view>
         </view>
       </view>
       <!-- 删除按钮 -->
@@ -109,22 +120,14 @@ export default {
 
   methods: {
     deleteNotification(id) {
-      this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
-        console.log('删除成功', res);
-        uni.showToast({
-          title: '删除成功',
-          duration: 1000,
-        });
-      });
+      this.$emit('deleteNotice', id);
     },
-
     jumpMyComment(item) {
       console.log('跳转到评论页面：', item);
       uni.navigateTo({
         url: `/pages/topic/index?id=${item.thread_id}&commentId=${item.post_id}`,
       });
     },
-
     jumpOtherTopic(topicId) {
       console.log('跳转到帖子详情页面：', topicId);
       uni.navigateTo({

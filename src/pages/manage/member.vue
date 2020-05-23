@@ -26,8 +26,8 @@
               right-color="#aaa"
               :mark="item.id"
               :title="item.username"
-              :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="user.avatarUrl || '/assets/noavatar.gif'"
+              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :icon="item.avatarUrl || '/static/noavatar.gif'"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>
@@ -40,8 +40,8 @@
               right-color="#aaa"
               :mark="item.id"
               :title="item.username"
-              :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="user.avatarUrl || '/static/noavatar.gif'"
+              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :icon="item.avatarUrl || '/static/noavatar.gif'"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>

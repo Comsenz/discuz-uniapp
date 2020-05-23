@@ -3,7 +3,12 @@
     <view class="invite">
       <!-- 标签栏 -->
       <view class="invite-tabs">
-        <qui-tabs :current="current" :values="tabList" @clickItem="onClickItem"></qui-tabs>
+        <qui-tabs
+          class="invite-tabs-h"
+          :current="current"
+          :values="tabList"
+          @clickItem="onClickItem"
+        ></qui-tabs>
         <view class="">{{ role }}</view>
         <view class="profile-tabs__content">
           <view v-if="current === 0" class="items">
@@ -253,6 +258,12 @@ export default {
   font-size: $fg-f28;
 
   &-tabs {
+    &-h {
+      position: fixed;
+      top: 0rpx;
+      width: 100%;
+    }
+
     /deep/ .qui-tabs__item--active .qui-tabs__item__title {
       font-size: $fg-f28;
     }
