@@ -316,7 +316,7 @@ export default {
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
-      this.checkoutTheme = true;
+      // this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
       this.setCategoryId(this.categoryId);
@@ -330,10 +330,11 @@ export default {
       this.filterList[0].data[dataInfo.index].selected = true;
 
       this.loadThreadsSticky();
-      this.scrollTopNum = this.myScroll + 1;
-      this.$nextTick(() => {
-        this.scrollTopNum = this.myScroll;
-      });
+      this.threads = [];
+      // this.scrollTopNum = this.myScroll + 1;
+      // this.$nextTick(() => {
+      //   this.scrollTopNum = this.myScroll;
+      // });
       await this.loadThreads();
       this.checkoutTheme = false;
     },
