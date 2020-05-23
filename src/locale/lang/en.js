@@ -155,7 +155,7 @@ export default {
       like: 'Like Me',
       likedMe: 'Liked me',
       reward: 'Reward Me',
-      rewardedMe:'Rewarded me',
+      rewardedMe: 'Rewarded me',
       system: 'System notices',
       admin: 'Admin',
       delete: 'Delete',
