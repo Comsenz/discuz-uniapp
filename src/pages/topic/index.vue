@@ -183,7 +183,7 @@
             <view class="comment-content">
               <textarea
                 ref="commentText"
-                focus="true"
+                :focus="focusVal"
                 :maxlength="450"
                 class="comment-textarea"
                 :placeholder="t.writeComments"
@@ -420,6 +420,7 @@ export default {
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
+      focusVal: true, // 默认输入框获取焦点状态
       header: {},
       formData: {}, //请求头部
       commentId: '', //评论id
@@ -1200,6 +1201,7 @@ export default {
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
+      this.payNumCheck = [];
       this.$refs.rewardPopup.open();
     },
     // 取消打赏
@@ -1323,6 +1325,7 @@ export default {
         this.commentId = postId;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
+        this.focusVal = true;
       }
     },
     // 点击图片
@@ -1344,6 +1347,7 @@ export default {
         this.commentId = threadId;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
+        this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       }
