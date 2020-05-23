@@ -1201,6 +1201,7 @@ export default {
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
+      this.payNumCheck = [];
       this.$refs.rewardPopup.open();
     },
     // 取消打赏
