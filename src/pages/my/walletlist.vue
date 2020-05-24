@@ -43,7 +43,7 @@
           :addon="item.change_available_amount"
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>
@@ -61,7 +61,7 @@ export default {
     month = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${month}`;
     return {
-      loadingType: 'more',
+      loadingType: '',
       pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
@@ -111,6 +111,7 @@ export default {
       return time2MinuteOrHour(time);
     },
     getList(type) {
+      this.loadingType = 'loading';
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       // change_type 10提现冻结，11提现成功，12提现解冻，30注册收入，31打赏收入，32人工收入，50人工支出

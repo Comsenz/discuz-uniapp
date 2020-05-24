@@ -44,7 +44,7 @@
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </scroll-view>
   </qui-page>
 </template>
@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       searchValue: '',
-      loadingType: 'more',
+      loadingType: '',
       data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
@@ -75,11 +75,13 @@ export default {
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.data = [];
+        this.pageNum = 1;
         this.getUserList(e.target.value);
       }, 250);
     },
     // 获取用户列表
     getUserList(key, type) {
+      this.loadingType = 'loading';
       const params = {
         include: 'groups',
         sort: 'createdAt',
@@ -92,7 +94,7 @@ export default {
           delete res._jv;
         }
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-        if (type && type === 'search') {
+        if (type && type === 'clear') {
           this.data = res;
         } else {
           this.data = [...this.data, ...res];
@@ -102,7 +104,7 @@ export default {
     clearSearch() {
       this.searchValue = '';
       this.pageNum = 1;
-      this.getUserList('', 'search');
+      this.getUserList('', 'clear');
     },
     back() {
       uni.navigateBack();
