@@ -46,7 +46,7 @@
             item.cash_status == 3 ? 'fail' : item.cash_status == 4 ? 'success' : 'normal'
           "
         ></qui-cell-item>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>
@@ -64,7 +64,7 @@ export default {
     month = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${month}`;
     return {
-      loadingType: 'more',
+      loadingType: '',
       pageSize: 20,
       pageNum: 1, // 当前页数
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
@@ -122,6 +122,7 @@ export default {
       return time2MinuteOrHour(time);
     },
     getList(type) {
+      this.loadingType = 'loading';
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       // cash_status(1-6) '待审核', '审核通过', '审核不通过', '待打款', '已打款', '打款失败'

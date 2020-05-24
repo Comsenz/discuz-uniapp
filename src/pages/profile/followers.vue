@@ -60,7 +60,7 @@
             </view>
           </qui-cell-item>
         </view>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
     </view>
   </view>
@@ -78,7 +78,7 @@ export default {
   },
   data() {
     return {
-      loadingType: 'more',
+      loadingType: '',
       followerList: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
@@ -96,6 +96,7 @@ export default {
   methods: {
     // 获取用户粉丝列表
     getFollowerList(type) {
+      this.loadingType = 'loading';
       const params = {
         include: ['fromUser', 'fromUser.groups'],
         'filter[type]': 2,

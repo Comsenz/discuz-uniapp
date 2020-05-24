@@ -43,7 +43,7 @@
         @contentClick="contentClick(item._jv.id)"
         @headClick="headClick(item.user._jv.id)"
       ></qui-content>
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </scroll-view>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
@@ -77,7 +77,7 @@ export default {
   },
   data() {
     return {
-      loadingType: 'more',
+      loadingType: '',
       data: [],
       flag: true, // 滚动节流
       pageSize: 20,
@@ -120,6 +120,7 @@ export default {
     },
     // 加载当前主题数据
     loadThreads() {
+      this.loadingType = 'loading';
       const params = {
         'filter[isDeleted]': 'no',
         include: [

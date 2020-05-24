@@ -27,7 +27,7 @@
           :addon="`¥${freezeItem.change_freeze_amount}`"
           :brief-right="timeHandle(freezeItem.created_at)"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>
@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      loadingType: 'more',
+      loadingType: '',
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
@@ -58,6 +58,7 @@ export default {
   methods: {
     // 获取冻结金额列表数据
     getFreezelist() {
+      this.loadingType = 'loading';
       const params = {
         'filter[user]': this.userId,
         'filter[change_type]': 10,
