@@ -133,6 +133,7 @@ export default {
       member: 'member',
       contents: 'contents',
       share: 'share',
+      circleinfo: 'circleinfo',
       siteintroduction: 'siteintroduction',
       creationtime: 'creationtime',
       circlemode: 'circlemode',
@@ -144,6 +145,7 @@ export default {
       periodvalidity: 'periodvalidity',
       myauthority: 'myauthority',
       setting: 'setting',
+      noContent: 'No Content',
     },
     // 消息页面
     notice: {

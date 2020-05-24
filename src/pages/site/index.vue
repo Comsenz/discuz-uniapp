@@ -37,15 +37,18 @@
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
-        title="站点介绍"
+        :title="i18n.t('manage.siteintroduction')"
         :addon="siteInfo.set_site.site_introduction"
       ></qui-cell-item>
-      <qui-cell-item title="创建时间" :addon="siteInfo.set_site.createdAt"></qui-cell-item>
       <qui-cell-item
-        title="站点模式"
-        :addon="siteInfo.set_site.site_mode === 'public' ? '公开模式' : '付费模式'"
+        :title="i18n.t('manage.creationtime')"
+        :addon="siteInfo.set_site.createdAt"
       ></qui-cell-item>
-      <qui-cell-item title="站长" slot-right>
+      <qui-cell-item
+        :title="i18n.t('manage.circlemode')"
+        :addon="siteInfo.set_site.site_mode === 'public' ? i18n.t('manage.publicmode') : i18n.t('manage.paymentmode')"
+      ></qui-cell-item>
+      <qui-cell-item :title="i18n.t('manage.circlemaster')" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
@@ -68,14 +71,14 @@
           </view>
         </qui-cell-item>
       </navigator>
-      <qui-cell-item title="我的角色" :addon="userInfo.groups[0].name"></qui-cell-item>
+      <qui-cell-item :title="i18n.t('manage.myRole')" :addon="userInfo.groups[0].name"></qui-cell-item>
       <qui-cell-item
-        title="加入时间"
+        :title="i18n.t('manage.joinedTime')"
         :addon="userInfo.joinedTime"
         v-if="siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>
       <qui-cell-item
-        title="有效期至"
+        :title="i18n.t('manage.periodvalidity')"
         :addon="userInfo.expiredTime"
         v-if="siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>

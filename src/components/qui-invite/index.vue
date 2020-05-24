@@ -13,10 +13,10 @@
         :brief="item.time"
         slot-right
       >
-        <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">设为无效</view>
+        <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">{{ i18n.t('manage.setInvalid') }}</view>
         <view class="invite-con-list-line"></view>
         <view class="invite-con-list-share" @click="share">
-          分享
+          {{ i18n.t('manage.share') }}
           <qui-icon name="icon-share1" class="share-icon"></qui-icon>
         </view>
       </qui-cell-item>
@@ -69,15 +69,7 @@ export default {
   methods: {
     // 设为无效
     invalid(id) {
-      if (parseInt(this.status, 10) === 1) {
-        this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
-          console.log('设为无效', res);
-          uni.showToast({
-            title: '该链接已失效',
-            duration: 1000,
-          });
-        });
-      }
+      this.$emit('setInvalid', id);
     },
     // 分享
     share() {

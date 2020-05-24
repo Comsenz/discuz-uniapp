@@ -4,7 +4,7 @@
       <!-- 通知类型列表 -->
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
-          <qui-cell-item :title="item.title" :border="item.border" arrow slot-right>
+          <qui-cell-item :title="i18n.t(item.title)" :border="item.border" arrow slot-right>
             <qui-icon
               v-if="item.unReadNum && item.unReadNum > 0"
               name="icon-circle"
@@ -86,11 +86,11 @@ export default {
   data() {
     return {
       list: [
-        { id: 1, title: '@我的', type: 'related', unReadNum: 0, border: true },
-        { id: 2, title: '回复我的', type: 'replied', unReadNum: 0, border: true },
-        { id: 3, title: '点赞我的', type: 'liked', unReadNum: 0, border: true },
-        { id: 4, title: '支付我的', type: 'rewarded', unReadNum: 0, border: true },
-        { id: 5, title: '系统通知', type: 'system', unReadNum: 0, border: false },
+        { id: 1, title: 'notice.relate', type: 'related', unReadNum: 0, border: true },
+        { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
+        { id: 3, title: 'notice.like', type: 'liked', unReadNum: 0, border: true },
+        { id: 4, title: 'notice.reward', type: 'rewarded', unReadNum: 0, border: true },
+        { id: 5, title: 'notice.system', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more', // 上拉加载状态
       isFirst: true, // 是否是第一次进入页面
@@ -173,9 +173,9 @@ export default {
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
       uni.navigateTo({
-        url: `/pages/notice/notice?title=${item.title}&type=${item.type}&unReadNum=${item.unReadNum}`,
+        url: `/pages/notice/notice?title=${this.i18n.t(item.title)}&type=${item.type}&unReadNum=${item.unReadNum}`,
       });
-      console.log(`跳转${item.title}页面`);
+      console.log(`跳转${this.i18n.t(item.title)}页面`);
     },
     // 跳转至 聊天页面
     jumpMsglistPage(dialogInfo) {
