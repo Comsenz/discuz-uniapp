@@ -85,6 +85,8 @@ export default {
     this.sendtype = sing.pas;
     this.userid = Number(sing.user);
     this.personaldata();
+    const pages = getCurrentPages();
+    console.log(pages);
   },
   methods: {
     fourse() {
@@ -175,7 +177,13 @@ export default {
               title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
-            // uni.navigateBack();
+            uni.redirectTo({
+              url: '/pages/my/profile',
+              success() {
+                const pages = getCurrentPages();
+                pages[2].onLoad();
+              },
+            });
           }
         })
         .catch(err => {
@@ -191,7 +199,11 @@ export default {
                 detail: [sun],
               },
             ] = err.data.errors;
-            this.passtext = sun;
+            uni.showToast({
+              icon: 'none',
+              title: sun,
+              duration: 2000,
+            });
           } else if (err.statusCode === 500) {
             this.test =
               this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');

@@ -1,11 +1,6 @@
 export default class LastMayday {
   palette(obj) {
     return (
-      {
-        "width": "700px",
-        "height": "1100px",
-        "background": "#ffffff",
-        "views": [
           {
             "width": "700px",
             "height": "1100px",
@@ -379,8 +374,6 @@ export default class LastMayday {
               }
             ]
           }
-        ]
-      }
     );
   }
 }

@@ -53,12 +53,17 @@ export default {
       inshow: true,
       inisIphone: false,
       usertokenid: '',
+      currs: '',
     };
   },
   onLoad(arr) {
     this.userid = this.usersid;
     this.usertokenid = arr.token || '';
-    console.log(this.usertokenid);
+    const pages = getCurrentPages();
+    console.log(pages);
+    if (pages.length) {
+      this.currs = pages[pages.length - 2].route;
+    }
   },
   computed: {
     usersid() {
@@ -108,8 +113,22 @@ export default {
               uni.navigateBack({
                 delta: 2,
               });
+            } else if (this.currs === 'pages/topic/index') {
+              uni.redirectTo({
+                url: '/pages/topic/index',
+                success() {
+                  const pages = getCurrentPages();
+                  pages[2].onLoad();
+                },
+              });
             } else {
-              uni.navigateBack();
+              uni.navigateBack({
+                delta: 1,
+                success() {
+                  const pages = getCurrentPages();
+                  pages[2].onLoad(); // 执行前一个页面的onLoad方法
+                },
+              });
             }
           }
         })

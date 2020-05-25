@@ -92,6 +92,13 @@ export default {
               duration: 2000,
             });
           }
+          uni.navigateBack({
+            delta: 1,
+            success() {
+              const pages = getCurrentPages();
+              pages[2].onLoad();
+            },
+          });
         })
         .catch(err => {
           if (err.statusCode === 422) {
