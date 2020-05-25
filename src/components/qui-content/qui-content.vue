@@ -72,7 +72,7 @@
             x5-playsinline
             :page-gesture="false"
             show-fullscreen-btn="true"
-            show-play-btn="true"
+            :show-play-btn="true"
             auto-pause-if-open-native="true"
             auto-pause-if-navigate="true"
             enable-play-gesture="false"

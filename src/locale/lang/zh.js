@@ -179,6 +179,7 @@ export default {
     contentdown: '显示更多...',
     contentrefresh: '正在加载...',
     noMoreData: '没有更多数据了',
+    loading: '加载中',
   },
   topic: {
     persenUnit: '人',
