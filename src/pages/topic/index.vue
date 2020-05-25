@@ -1,10 +1,10 @@
 <template>
   <qui-page class="content">
-    <view
+    <!--<view
       v-if="loadDetailStatusId == 0"
       class="skeletonScreen"
       :style="{ height: windowHeight + 'px' }"
-    ></view>
+    ></view>-->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -12,7 +12,6 @@
       :scroll-top="scrollTopNum"
       class="scroll-y"
       @scrolltolower="pullDown"
-      v-else
     >
       <view class="ft-gap">
         <view class="bg-white">
@@ -35,6 +34,7 @@
             :select-list="selectList"
             :tags="[thread.category]"
             :thread-price="thread.price"
+            :thread-is-essence="thread.isEssence"
             :media-url="thread.threadVideo.media_url"
             :video-width="thread.threadVideo.width"
             :video-height="thread.threadVideo.height"
