@@ -36,32 +36,33 @@
           <view class="money-num">{{ money }}</view>
         </view>
         <view class="pay-type-chi" v-for="(item, index) in payTypeData" :key="index">
-          <view class="pay-type-l">
-            <qui-icon :name="item.icon" :color="item.color" class="icon-pay"></qui-icon>
-            <view class="pay-type-word">{{ item.name }}</view>
-          </view>
-          <view class="pay-type-r">
-            <view
-              class="check-tip"
-              v-if="!walletStatus && item.name === p.walletPay"
-              @click="payStatusClick"
-            >
-              {{ p.passwordSetting }}
-            </view>
-            <view
-              class="check-tip"
-              v-else-if="descriptionShow && item.name === p.walletPay && money < balance"
-            >
-              {{ p.walletBalance }}，￥{{ balance }}
-            </view>
-            <view
-              class="check-tip"
-              v-else-if="descriptionShow && item.name === p.walletPay && money > balance"
-            >
-              {{ p.walletBalanceNo }}，{{ balance }}{{ p.rmb }}
-            </view>
-            <radio-group @change="radioChange" class="pay-type-radio-box">
-              <label class="pay-type-radio">
+          <radio-group @change="radioChange" class="pay-type-radio-box">
+            <label class="pay-type-radio">
+              <view class="pay-type-l">
+                <qui-icon :name="item.icon" :color="item.color" class="icon-pay"></qui-icon>
+                <view class="pay-type-word">{{ item.name }}</view>
+              </view>
+              <view class="pay-type-r">
+                <view
+                  class="check-tip"
+                  v-if="!walletStatus && item.name === p.walletPay"
+                  @click="payStatusClick"
+                >
+                  {{ p.passwordSetting }}
+                </view>
+                <view
+                  class="check-tip"
+                  v-else-if="descriptionShow && item.name === p.walletPay && money < balance"
+                >
+                  {{ p.walletBalance }}，￥{{ balance }}
+                </view>
+                <view
+                  class="check-tip"
+                  v-else-if="descriptionShow && item.name === p.walletPay && money > balance"
+                >
+                  {{ p.walletBalanceNo }}{{ balance }}{{ p.rmb }}
+                </view>
+
                 <view>
                   <radio
                     :value="item.value"
@@ -75,26 +76,11 @@
                     "
                   />
                 </view>
-              </label>
-            </radio-group>
-          </view>
+              </view>
+            </label>
+          </radio-group>
         </view>
-        <!--<view class="pay-type-chi">
-          <view class="pay-type-l">
-            <qui-icon name="icon-walletPay" class="icon-pay walletpay"></qui-icon>
-            <view class="pay-type-word">{{ p.walletPay }}</view>
-          </view>
-          <view class="pay-type-r">
-            <view class="check-tip">{{ p.walletBalance }}，￥{{ balance }}</view>
-            <radio-group @change="radioChange" class="pay-radio-box">
-              <label class="pay-radio">
-                <view>
-                  <radio :value="checkVal" class="radio" color="#2699fb" />
-                </view>
-              </label>
-            </radio-group>
-          </view>
-        </view>-->
+
         <view class="pay-tip">
           ￥{{ money }}{{ p.rmb }}{{ p.payTo }}，{{ toName }}{{ p.ofAccount }}
         </view>
@@ -111,11 +97,13 @@
     </uni-popup>
     <uni-popup ref="keyboardPopup" type="center">
       <qui-pay-keyboard
+        ref="keyboard"
         :show="show"
         :money="money"
         :password="payPassword"
         @onInput="onInput"
         @close="close"
+        @clear="clear"
       ></qui-pay-keyboard>
     </uni-popup>
   </view>
@@ -147,13 +135,13 @@ export default {
     },
     // 支付金额
     money: {
-      type: [String, Number],
-      default: '0',
+      type: [Number],
+      default: 0,
     },
     // 余额
     balance: {
-      type: [String, Number],
-      default: '0',
+      type: [Number],
+      default: 0,
     },
     // 支付类型
     payType: {
@@ -299,10 +287,17 @@ export default {
       console.log(val, '输入完成');
       this.$emit('onInput', val);
     },
+    // 关闭密码输入框
     close() {
       console.log('关闭支付');
       this.show = false;
       this.$refs.keyboardPopup.close();
+      this.$emit('close');
+    },
+    // 清空密码输入框
+    clear() {
+      this.$refs.keyboard.clear();
+      console.log('清空');
     },
   },
 };
@@ -391,12 +386,22 @@ export default {
   }
 }
 .pay-type-chi {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  // display: flex;
+  // flex-direction: row;
+  // justify-content: space-between;
   height: 99rpx;
   padding: 0 40rpx;
   align-items: center;
+  box-sizing: border-box;
+}
+
+.pay-type-radio {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  .radio {
+    transform: scale(0.7);
+  }
 }
 .pay-type-l {
   display: flex;
@@ -419,22 +424,7 @@ export default {
   font-size: 60rpx;
   line-height: 80rpx;
 }
-// .pay-type-radio-box {
-// }
-.pay-type-radio {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  .radio {
-    transform: scale(0.7);
-  }
-}
-// .icon-wxPay {
-//   color: #09bb07;
-// }
-// .icon-walletPay {
-//   color: #1878f3;
-// }
+
 .wxpay {
   color: #09bb07;
 }

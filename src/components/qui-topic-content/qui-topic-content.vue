@@ -60,19 +60,21 @@
         <video
           v-if="themeType == 2 && payStatus"
           preload="auto"
+          bindpause="handlepause"
           playsinline
           webkit-playsinline
           x5-playsinline
-          controls="true"
-          page-gesture="true"
+          :page-gesture="false"
           show-fullscreen-btn="true"
           show-play-btn="true"
-          show-mute-btn="true"
           auto-pause-if-open-native="true"
-          vslide-gesture="true"
           auto-pause-if-navigate="true"
-          enable-play-gesture="true"
-          object-fit="fill"
+          enable-play-gesture="false"
+          :vslide-gesture="false"
+          :vslide-gesture-in-fullscreen="false"
+          object-fit="cover"
+          direction="90"
+          x5-video-player-type="h5-page"
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
@@ -119,8 +121,20 @@
             ></image>
           </view>
         </view>
-        <view v-if="!payStatus && threadPrice > 0" class="themeItem__content__con__cover"></view>
-        <view v-if="!payStatus && threadPrice > 0" class="themeItem__content__con__surtip">
+        <view
+          v-if="!payStatus && threadPrice > 0 && themeType == 1"
+          class="themeItem__content__con__cover"
+          :style="{
+            background:
+              getTheme == 'light'
+                ? 'linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))'
+                : 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))',
+          }"
+        ></view>
+        <view
+          v-if="!payStatus && threadPrice > 0 && themeType == 1"
+          class="themeItem__content__con__surtip"
+        >
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
@@ -136,6 +150,7 @@
 
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
+import { mapState } from 'vuex';
 
 export default {
   props: {
@@ -263,6 +278,9 @@ export default {
     console.log(this.tags);
   },
   computed: {
+    ...mapState({
+      getTheme: state => state.theme.currentTheme,
+    }),
     t() {
       return this.i18n.t('topic');
     },
@@ -406,7 +424,7 @@ export default {
         bottom: 0;
         left: 0;
         height: 240rpx;
-        background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1));
+        // background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
       }
       &__surtip {
         position: relative;

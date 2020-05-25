@@ -42,6 +42,7 @@
             :text="test"
             :show="inshow"
             :isiphonex="inisIphone"
+            ref="quiinput"
           ></qui-input-code>
         </view>
         <view class="retireve-button">
@@ -172,15 +173,15 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon
         .then(res => {
+          const pages = getCurrentPages();
           if (res) {
             uni.showToast({
               title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
             uni.redirectTo({
-              url: '/pages/my/profile',
+              url: `/${pages[2].route}`,
               success() {
-                const pages = getCurrentPages();
                 pages[2].onLoad();
               },
             });
@@ -212,10 +213,15 @@ export default {
               this.test = this.i18n.t('modify.lateron');
             }
           }
+          this.empty();
         });
     },
     toggleBox() {
       this.inshow = false;
+    },
+    empty() {
+      const empty = this.$refs.quiinput;
+      empty.deleat();
     },
   },
 };

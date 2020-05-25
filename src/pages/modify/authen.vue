@@ -12,6 +12,7 @@
           :number="types"
           :show="inshow"
           :isiphonex="inisIphone"
+          ref="quiinput"
         ></qui-input-code>
       </view>
       <view class="authen-forget" @click="forgetpay">
@@ -99,15 +100,20 @@ export default {
             this.sun = true;
             this.test = this.i18n.t('modify.passwordinputerro');
           }
+          this.empty();
         });
     },
     forgetpay() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: `/pages/modify/findpwd?user=${this.userid}&pas=reset_pay_pwd`,
       });
     },
     toggleBox() {
       this.inshow = false;
+    },
+    empty() {
+      const empty = this.$refs.quiinput;
+      empty.deleat();
     },
   },
 };
