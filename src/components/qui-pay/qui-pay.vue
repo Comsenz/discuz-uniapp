@@ -71,7 +71,7 @@
                     color="#2699fb"
                     :disabled="
                       (descriptionShow && !walletStatus && item.name === p.walletPay) ||
-                        (descriptionShow && !(money > balance) && item.name === p.walletPay)
+                        (descriptionShow && !(money < balance) && item.name === p.walletPay)
                     "
                   />
                 </view>
@@ -209,6 +209,13 @@ export default {
       if (!val) {
         this.show = false;
       }
+    },
+    money: {
+      handler(newVal) {
+        console.log(newVal, '这是监听到的点赞数');
+      },
+      deep: true,
+      immediate: true,
     },
   },
   onLoad() {},

@@ -50,7 +50,12 @@
                       {{ localTime }}
                     </view>
                   </view>
-                  <image src="@/static/essence.png" alt class="addFine"></image>
+                  <image
+                    v-if="thread.isEssence"
+                    src="@/static/essence.png"
+                    alt
+                    class="addFine"
+                  ></image>
                 </view>
 
                 <view class="thread__content" @click="contentClick">
@@ -140,7 +145,14 @@
         </view>
       </view>
 
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more
+        :status="loadingType"
+        :content-text="{
+          contentdown: c.contentdown,
+          contentrefresh: c.contentrefresh,
+          contentnomore: contentnomoreVal,
+        }"
+      ></qui-load-more>
     </scroll-view>
     <!--轻提示-->
     <qui-toast ref="toast"></qui-toast>
@@ -253,6 +265,10 @@ export default {
     // 语言包
     t() {
       return this.i18n.t('topic');
+    },
+    // core公共变量语言包
+    c() {
+      return this.i18n.t('core');
     },
     // 时间转化
     localTime() {
