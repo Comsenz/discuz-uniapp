@@ -4,9 +4,9 @@
       <view
         class="ft-box "
         :class="{ select: true, active: item.id === sel }"
-        @click="select(item)"
         v-for="(item, index) in tabs"
         :key="index"
+        @click="select(item, index)"
       >
         <qui-icon
           class="ft-box-icon"
@@ -125,8 +125,10 @@ export default {
     }
   },
   methods: {
-    select(item) {
-      // this.sel = item.id;
+    select(item, index) {
+      this.$emit('click', item, index);
+
+      this.sel = item.id;
       if (!item.url) {
         return;
       }
@@ -146,12 +148,11 @@ export default {
         uni.navigateBack({
           delta: len,
         });
-        return;
       }
 
-      uni.navigateTo({
-        url: item.url,
-      });
+      // uni.navigateTo({
+      //   url: item.url,
+      // });
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {

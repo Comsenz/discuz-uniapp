@@ -1,5 +1,6 @@
 <template>
-  <qui-page class="my" :footer="true">
+  <qui-page class="my">
+    <uni-nav-bar title="我的" fixed="true" status-bar></uni-nav-bar>
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -127,6 +128,10 @@ export default {
       this.items[1].brief = res.followCount || 0;
       this.items[2].brief = res.fansCount || 0;
       this.items[3].brief = res.likedCount || 0;
+    },
+    // 组件初始化数据
+    ontrueGetList() {
+      this.checked = this.$store.getters['theme/get']('currentTheme') !== THEME_DEFAULT;
     },
   },
 };
