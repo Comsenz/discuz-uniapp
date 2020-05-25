@@ -1,6 +1,7 @@
 <template>
-  <qui-page :footer="true">
+  <qui-page>
     <view class="notice-box">
+      <uni-nav-bar title="消息" fixed="true" status-bar></uni-nav-bar>
       <!-- 通知类型列表 -->
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
@@ -195,6 +196,11 @@ export default {
       this.pageNum += 1;
       this.getDialogList();
       console.log('页码', this.pageNum);
+    },
+    // 组件初始化数据
+    ontrueGetList() {
+      this.getDialogList();
+      this.getUnreadNoticeNum();
     },
   },
 };
