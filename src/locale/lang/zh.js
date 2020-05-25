@@ -332,6 +332,7 @@ export default {
     admin: '管理员',
     delete: '删除',
     send: '发送',
+    emptycontent: '内容不能为空',
   },
   // 海报分享页
   share: {
