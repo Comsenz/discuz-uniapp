@@ -34,7 +34,10 @@ http.validateStatus = statusCode => {
  * function cancel(text, config) {}
  */
 http.interceptor.request(config => {
-  uni.showLoading();
+  uni.showLoading({
+    title: i18n.t('core.loading'),
+    mask: true,
+  });
   // cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config
   try {
     const accessToken = uni.getStorageSync('access_token');
@@ -54,10 +57,6 @@ http.interceptor.response(
   response => {
     uni.hideLoading();
     // 状态码 >= 200 < 300 会走这里
-    // if (response.config.custom.verification) {
-    //   // 演示自定义参数的作用
-    //   return response.data;
-    // }
     response.status = response.statusCode;
     return response;
   },
@@ -65,7 +64,10 @@ http.interceptor.response(
     uni.hideLoading();
     // 对响应错误做点什么 （statusCode !== 200），必须return response
     if (response && response.data && response.data.errors) {
-      response.data.errors.map(error => {
+      const pages = getCurrentPages();
+      const currentPage = pages[pages.length - 1];
+
+      response.data.errors.forEach(error => {
         switch (error.code) {
           case 'access_denied':
             // token 无效 重新请求
@@ -77,13 +79,26 @@ http.interceptor.response(
               },
             });
             break;
+          case 'not_install':
+            if (currentPage.route !== 'pages/common/message') {
+              uni.redirectTo({
+                url: '/pages/common/message?status=not_install',
+              });
+            }
+            break;
+          case 'site_closed':
+            if (currentPage.route !== 'pages/common/message') {
+              uni.redirectTo({
+                url: '/pages/common/message?status=site_closed',
+              });
+            }
+            break;
           default:
             uni.showToast({
               icon: 'none',
               title: error.detail ? error.detail[0] : i18n.t(`core.${error.code}`),
             });
         }
-        return error;
       });
     } else {
       uni.showToast({ title: response.errMsg });
