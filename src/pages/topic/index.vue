@@ -101,10 +101,12 @@
           </view>
         </view>
         <!-- 评论 -->
-        <view class="comment" v-if="thread.postCount > 1">
-          <view class="comment-num">{{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}</view>
+        <view class="comment">
+          <view class="comment-num" :style="{ paddingBottom: post.postCount > 1 ? '0' : '40rpx' }">
+            {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
+          </view>
 
-          <view>
+          <view v-if="posts.length > 0">
             <view v-for="(post, index) in posts" :key="index">
               <qui-topic-comment
                 v-if="!post.isDeleted"
@@ -139,177 +141,7 @@
           </view>
         </view>
       </view>
-      <!--回复弹框-->
-      <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
-        <view class="comment-popup" v-if="commentPopupStatus">
-          <view class="comment-popup-topbox">
-            <view class="comment-popup-top">
-              <view class="comment-popup-top-l">
-                <qui-icon
-                  name="icon-expression"
-                  class="comm-icon"
-                  :size="40"
-                  @click="emojiShow = !emojiShow"
-                ></qui-icon>
-                <qui-icon
-                  name="icon-call"
-                  :size="40"
-                  class="comm-icon"
-                  @click="callClick"
-                ></qui-icon>
-                <qui-icon
-                  name="icon-image"
-                  :size="40"
-                  class="comm-icon"
-                  @click="imageUploader"
-                ></qui-icon>
-              </view>
-              <view class="text-word-tip">
-                {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
-              </view>
-            </view>
-            <qui-emoji
-              :list="allEmoji"
-              position="absolute"
-              top="104rpx"
-              v-if="emojiShow"
-              border-radius="10rpx"
-              @click="getEmojiClick"
-            ></qui-emoji>
-          </view>
 
-          <view class="comment-content-box">
-            <view class="comment-content">
-              <textarea
-                ref="commentText"
-                focus="true"
-                :maxlength="450"
-                class="comment-textarea"
-                :placeholder="t.writeComments"
-                placeholder-style="color:#b5b5b5;font-size: 28rpx;"
-                placeholder-class="text-placeholder"
-                v-model="textAreaValue"
-                @blur="contBlur"
-              />
-              <qui-uploader
-                v-if="uploaderShow"
-                :url="`${url}api/attachments`"
-                :header="header"
-                :form-data="formData"
-                :count="3"
-                name="file"
-                async-clear
-                ref="upload"
-                @change="uploadChange"
-                @clear="uploadClear"
-              ></qui-uploader>
-            </view>
-          </view>
-          <button class="publishBtn" @click="publishClick()">
-            {{ t.publish }}
-          </button>
-        </view>
-      </uni-popup>
-
-      <!--分享弹框-->
-      <uni-popup ref="sharePopup" type="bottom">
-        <view class="popup-share">
-          <view class="popup-share-content">
-            <button class="popup-share-button" open-type="share"></button>
-            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-              <view class="popup-share-content-image">
-                <view class="popup-share-box" @click="shareContent(index)">
-                  <qui-icon
-                    class="content-image"
-                    :name="item.icon"
-                    size="46"
-                    color="#777777"
-                  ></qui-icon>
-                </view>
-              </view>
-              <text class="popup-share-content-text">{{ item.text }}</text>
-            </view>
-          </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
-        </view>
-      </uni-popup>
-      <!--打赏选择金额弹框-->
-      <uni-popup ref="rewardPopup" type="bottom">
-        <view class="popup-box">
-          <view class="popup-reward-content">
-            <text class="popup-title">
-              {{ t.supportTheAuthorToCreate }}
-            </text>
-            <view class="popup-content-btn">
-              <qui-button
-                class="popup-btn"
-                v-for="(item, index) in payNum"
-                :key="index"
-                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
-                plain
-                size="post"
-                @click="moneyClick(index)"
-              >
-                {{ item.name }}
-              </qui-button>
-            </view>
-          </view>
-          <view class="popup-content-space"></view>
-          <text class="popup-cancel-btn" @click="cancelReward()">
-            {{ i18n.t('discuzq.post.cancel') }}
-          </text>
-        </view>
-      </uni-popup>
-      <!--自定义打赏金额弹框-->
-      <uni-popup ref="customAmountPopup" type="center">
-        <view v-if="customAmountStatus">
-          <view class="popup-dialog">
-            <view class="popup-dialog__top">
-              <text>
-                {{ t.enterTheRewardPaymeAmount }}
-              </text>
-            </view>
-            <view class="popup-dialog__cont">
-              <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
-              <input
-                class="popup-dialog__cont-input"
-                v-model="inputPrice"
-                type="digit"
-                placeholder="0.0"
-                focus
-              />
-            </view>
-            <view class="popup-dialog__ft">
-              <button class="popup-btn--close" @click="diaLogClose">
-                {{ i18n.t('discuzq.close') }}
-              </button>
-              <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
-            </view>
-          </view>
-        </view>
-      </uni-popup>
-      <!--支付组件-->
-      <view v-if="payShowStatus">
-        <qui-pay
-          ref="payShow"
-          :money="price"
-          :wallet-status="user.canWalletPay"
-          :pay-password="pwdVal"
-          :balance="user.walletBalance"
-          :pay-type-data="payTypeData"
-          :to-name="thread.user.username"
-          :pay-type="payTypeText"
-          @radioMyHead="radioMyHead"
-          @radioChange="radioChange"
-          @onInput="onInput"
-          @paysureShow="paysureShow"
-        ></qui-pay>
-      </view>
-      <!--遮罩层组件-->
-      <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
-      <!--轻提示-->
-      <qui-toast ref="toast"></qui-toast>
       <qui-load-more
         :status="loadingType"
         :content-text="{
@@ -350,6 +182,178 @@
         </view>
       </view>
     </view>
+    <!--分享弹框-->
+    <uni-popup ref="sharePopup" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share"></button>
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box" @click="shareContent(index)">
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="46"
+                  color="#777777"
+                ></qui-icon>
+              </view>
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
+      </view>
+    </uni-popup>
+    <!--打赏选择金额弹框-->
+    <uni-popup ref="rewardPopup" type="bottom">
+      <view class="popup-box">
+        <view class="popup-reward-content">
+          <text class="popup-title">
+            {{ t.supportTheAuthorToCreate }}
+          </text>
+          <view class="popup-content-btn">
+            <qui-button
+              class="popup-btn"
+              v-for="(item, index) in payNum"
+              :key="index"
+              :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+              plain
+              size="post"
+              @click="moneyClick(index)"
+            >
+              {{ item.name }}
+            </qui-button>
+          </view>
+        </view>
+        <view class="popup-content-space"></view>
+        <text class="popup-cancel-btn" @click="cancelReward()">
+          {{ i18n.t('discuzq.post.cancel') }}
+        </text>
+      </view>
+    </uni-popup>
+    <!--自定义打赏金额弹框-->
+    <uni-popup ref="customAmountPopup" type="center">
+      <view v-if="customAmountStatus">
+        <view class="popup-dialog">
+          <view class="popup-dialog__top">
+            <text>
+              {{ t.enterTheRewardPaymeAmount }}
+            </text>
+          </view>
+          <view class="popup-dialog__cont">
+            <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+            <input
+              class="popup-dialog__cont-input"
+              v-model="inputPrice"
+              type="digit"
+              placeholder="0.0"
+              focus
+            />
+          </view>
+          <view class="popup-dialog__ft">
+            <button class="popup-btn--close" @click="diaLogClose">
+              {{ i18n.t('discuzq.close') }}
+            </button>
+            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+          </view>
+        </view>
+      </view>
+    </uni-popup>
+    <!--支付组件-->
+    <view v-if="payShowStatus">
+      <qui-pay
+        ref="payShow"
+        :thread-id="thread._jv.id"
+        :money="price"
+        :wallet-status="user.canWalletPay"
+        :pay-password="pwdVal"
+        :balance="user.walletBalance"
+        :pay-type-data="payTypeData"
+        :to-name="thread.user.username"
+        :pay-type="payTypeText"
+        @radioMyHead="radioMyHead"
+        @radioChange="radioChange"
+        @onInput="onInput"
+        @paysureShow="paysureShow"
+      ></qui-pay>
+    </view>
+    <!--遮罩层组件-->
+    <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
+    <!--轻提示-->
+    <qui-toast ref="toast"></qui-toast>
+
+    <!--回复弹框-->
+    <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+      <view class="comment-popup" v-if="commentPopupStatus">
+        <view class="comment-popup-topbox">
+          <view class="comment-popup-top">
+            <view class="comment-popup-top-l">
+              <qui-icon
+                name="icon-expression"
+                class="comm-icon"
+                :size="40"
+                @click="emojiShow = !emojiShow"
+              ></qui-icon>
+              <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
+              <qui-icon
+                name="icon-image"
+                :size="40"
+                class="comm-icon"
+                @click="imageUploader"
+              ></qui-icon>
+            </view>
+            <view class="text-word-tip">
+              {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+            </view>
+          </view>
+          <qui-emoji
+            :list="allEmoji"
+            position="absolute"
+            top="104rpx"
+            v-if="emojiShow"
+            border-radius="10rpx"
+            :color="emojiShow ? '#1878F3' : '#777'"
+            @click="getEmojiClick"
+          ></qui-emoji>
+        </view>
+
+        <view class="comment-content-box">
+          <view class="comment-content">
+            <textarea
+              ref="commentText"
+              :focus="focusVal"
+              :maxlength="450"
+              class="comment-textarea"
+              :placeholder="t.writeComments"
+              placeholder-style="color:#b5b5b5;font-size: 28rpx;"
+              placeholder-class="text-placeholder"
+              v-show="!emojiShow"
+              v-model="textAreaValue"
+              @blur="contBlur"
+            />
+            <!--<view class="comment-textarea" v-show="emojiShow">
+                {{ textAreaValue }}
+              </view>-->
+            <qui-uploader
+              v-if="uploaderShow"
+              :url="`${url}api/attachments`"
+              :header="header"
+              :form-data="formData"
+              :count="3"
+              name="file"
+              async-clear
+              ref="upload"
+              @change="uploadChange"
+              @clear="uploadClear"
+            ></qui-uploader>
+          </view>
+        </view>
+        <button class="publishBtn" @click="publishClickStatus && publishClick()">
+          {{ t.publish }}
+        </button>
+      </view>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -415,6 +419,8 @@ export default {
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
+      publishClickStatus: true, //发布按钮点击状态
+      focusVal: true, // 默认输入框获取焦点状态
       header: {},
       formData: {}, //请求头部
       commentId: '', //评论id
@@ -680,11 +686,9 @@ export default {
         this.isLiked = !this.isLiked;
         if (this.isLiked) {
           // 未点赞时，点击点赞'
-          console.log('zoule11111111');
           post.likedUsers.unshift(this.user);
           post.likeCount++;
         } else {
-          console.log('zoule22222');
           post.likedUsers.forEach((value, key) => {
             value.id === this.user.id && post.likedUsers.splice(key, 1);
           });
@@ -771,7 +775,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('1111');
+          console.log(err);
         });
     },
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
@@ -842,7 +846,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('1111');
+          console.log(err);
         });
     },
     // 主题回复，评论的回复调用接口
@@ -850,6 +854,7 @@ export default {
       console.log(this.commentReply, '这是用来判断的');
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
+        this.publishClickStatus = true;
         return false;
       }
       let params = {};
@@ -907,6 +912,8 @@ export default {
           this.$refs.commentPopup.close();
           this.commentReply = false;
           this.commentPopupStatus = false;
+          this.publishClickStatus = true;
+          console.log('~~~~~~~~~~~~');
           if (!res.isComment) {
             this.posts.push(res);
             console.log(this.posts, '#####################');
@@ -924,6 +931,7 @@ export default {
           this.uploadFile = '';
         })
         .catch(err => {
+          this.publishClickStatus = true;
           console.log(err);
         });
     },
@@ -1195,6 +1203,7 @@ export default {
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
+      this.payNumCheck = [];
       this.$refs.rewardPopup.open();
     },
     // 取消打赏
@@ -1291,6 +1300,7 @@ export default {
     },
     // 主题评论点击发布事件
     publishClick() {
+      this.publishClickStatus = false;
       this.postComment(this.commentId);
     },
     // 跳转到评论详情页
@@ -1318,6 +1328,7 @@ export default {
         this.commentId = postId;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
+        this.focusVal = true;
       }
     },
     // 点击图片
@@ -1339,6 +1350,7 @@ export default {
         this.commentId = threadId;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
+        this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       }
@@ -1542,6 +1554,7 @@ page {
 }
 .comment-num {
   padding: 0 40rpx;
+  font-size: $fg-f28;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -1689,7 +1702,7 @@ page {
   padding: 0 40rpx 30rpx;
   .comment-content {
     width: 100%;
-    // height: 400rpx;
+    height: 420rpx;
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
@@ -1698,7 +1711,7 @@ page {
   }
   .comment-textarea {
     width: 100%;
-    height: 120rpx;
+    height: 94rpx;
     min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;

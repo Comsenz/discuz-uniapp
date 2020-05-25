@@ -44,7 +44,9 @@
             :color="emojiShow ? '#1878F3' : '#7D7979'"
             @click="popEmoji"
           ></qui-icon>
-          <button class="chat-box__footer__btn" type="primary" @click="send">发送</button>
+          <button class="chat-box__footer__btn" type="primary" @click="send">
+            {{ i18n.t('notice.send') }}
+          </button>
         </view>
         <qui-emoji
           :list="allEmoji"

@@ -43,7 +43,7 @@
           :addon="'-' + item.amount"
           :brief-right="item.status == 1 ? i18n.t('profile.paid') : i18n.t('profile.tobepaid')"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>
@@ -61,13 +61,13 @@ export default {
     month = month < 10 ? `0${month}` : month;
     const currentDate = `${year}-${month}`;
     return {
-      loadingType: 'more',
+      loadingType: '',
       flag: true, // 滚动节流
       pageSize: 20,
       pageNum: 1, // 当前页数
       show: false,
       date: currentDate,
-      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
       dataList: [],
       filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
       type: [
@@ -113,6 +113,7 @@ export default {
       this.getList('filter');
     },
     getList(type) {
+      this.loadingType = 'loading';
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       // status 0待付款，1已付款

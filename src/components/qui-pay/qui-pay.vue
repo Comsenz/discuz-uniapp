@@ -69,7 +69,10 @@
                     :checked="index === current"
                     class="radio"
                     color="#2699fb"
-                    :disabled="descriptionShow && !walletStatus && item.name === p.walletPay"
+                    :disabled="
+                      (descriptionShow && !walletStatus && item.name === p.walletPay) ||
+                        (descriptionShow && !(money > balance) && item.name === p.walletPay)
+                    "
                   />
                 </view>
               </label>
@@ -106,13 +109,15 @@
         <text class="popup-share-btn" @click="cancel('2')">取消</text>
       </view>
     </uni-popup>
-    <qui-pay-keyboard
-      :show="show"
-      :money="money"
-      :password="payPassword"
-      @onInput="onInput"
-      @close="close"
-    ></qui-pay-keyboard>
+    <uni-popup ref="keyboardPopup" type="center">
+      <qui-pay-keyboard
+        :show="show"
+        :money="money"
+        :password="payPassword"
+        @onInput="onInput"
+        @close="close"
+      ></qui-pay-keyboard>
+    </uni-popup>
   </view>
 </template>
 
@@ -121,6 +126,10 @@ import { mapMutations } from 'vuex';
 
 export default {
   props: {
+    threadId: {
+      type: [String, Number],
+      default: '',
+    },
     // 钱包设置支付密码状态
     walletStatus: {
       type: Boolean,
@@ -227,6 +236,7 @@ export default {
         console.log('这是钱包支付');
         this.show = true;
         this.$refs.payTypePopup.close();
+        this.$refs.keyboardPopup.open();
       }
       this.$emit('paysureShow', this.current);
     },
@@ -263,10 +273,11 @@ export default {
     },
     // 去设置钱包支付密码
     payStatusClick() {
+      // /* 获取当前路由 */
       const routes = getCurrentPages(); // 获取当前打开过的页面路由数组
       const curRoute = routes[routes.length - 1].route; // 获取当前页面路由，也就是最后一个打开的页面路由
-      console.log(curRoute, '这是当前路由');
-      this.setRouter(curRoute);
+      // console.log(curRoute, this.threadId, '这是当前路由');
+      this.setRouter(`${curRoute}/${this.threadId}`);
       // this.$store.commit('setRouter', curRoute);
       if (this.payUrl) {
         console.log(1);
@@ -284,6 +295,7 @@ export default {
     close() {
       console.log('关闭支付');
       this.show = false;
+      this.$refs.keyboardPopup.close();
     },
   },
 };

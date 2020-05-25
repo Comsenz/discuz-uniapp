@@ -61,7 +61,7 @@
           </view>
           <rich-text :nodes="themeContent" v-else></rich-text>
         </view>
-        <view>
+        <view class="content__video">
           <video
             v-if="threadType === 2"
             id="myvideo"
@@ -70,19 +70,21 @@
             webkit-playsinline
             x5-playsinline
             controls="true"
-            page-gesture="true"
+            page-gesture="false"
             show-fullscreen-btn="true"
             show-play-btn="true"
-            show-mute-btn="true"
             auto-pause-if-open-native="true"
             auto-pause-if-navigate="true"
-            enable-play-gesture="true"
+            enable-play-gesture="false"
+            vslide-gesture="“false"
+            vslide-gesture-in-fullscreen="false"
             object-fit="cover"
-            direction="0"
+            direction="90"
             :src="mediaUrl"
             :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
+            bindplay="bindPlay"
           ></video>
         </view>
         <view v-if="imagesList.length == 1">
@@ -319,6 +321,10 @@ export default {
       type: Number,
       default: 0,
     },
+    videoId: {
+      type: Number,
+      default: 0,
+    },
   },
   data: () => {
     return {
@@ -326,6 +332,7 @@ export default {
       // threadVideo: '',
       threadWidth: '',
       threadHeight: '',
+      indexCurrent: null, // 用于记录当前播放的视频的索引值
       // isGreat: false,
     };
   },
@@ -339,10 +346,10 @@ export default {
       return time2MorningOrAfternoon(this.themeTime);
     },
   },
-  onShow() {
-    this.videoContext = wx.createVideoContext('myvideo', this);
-    this.videoContext.requestFullScreen({ direction: 90 });
-  },
+  // onShow() {
+  //   this.videoContext = wx.createVideoContext('myvideo', this);
+  //   this.videoContext.requestFullScreen({ direction: 90 });
+  // },
   methods: {
     // 点击删除按钮
     deleteClick(evt) {
@@ -381,6 +388,46 @@ export default {
         indicator: 'number',
       });
     },
+    // 视频不能同时播放
+    bindPlay(e) {
+      console.log(e, '视频啊啊啊啊啊啊');
+      // const that = this;
+      // const curIdx = e.currentTarget.dataset.index;
+      // // 有播放时先将prev暂停，再播放当前点击的current
+      // if (that.data.indexCurrent != null) {
+      //   const videoContextPrev = wx.createVideoContext(`myVideo${that.data.indexCurrent}`);
+      //   if (that.data.indexCurrent != curIdx) {
+      //     videoContextPrev.pause();
+      //   }
+      //   that.setData({
+      //     indexCurrent: curIdx,
+      //   });
+      //   const videoContextCurrent = wx.createVideoContext(`myVideo${curIdx}`);
+      //   videoContextCurrent.play();
+      // } else {
+      //   // 没有播放时播放视频
+      //   that.setData({
+      //     indexCurrent: curIdx,
+      //   });
+      //   const videoContext = wx.createVideoContext(`myVideo${curIdx}`); // 这里对应的视频id
+      //   videoContext.play();
+      // }
+    },
+    // 视频切换暂停播放
+    // play(e) {
+    //   console.log(e);
+    //   // const that = this;
+    //   // const { id } = e.currentTarget;
+    //   // for (let i = 0; i < that.data.healthKjList.length; i++) {
+    //   //   if (id === `myVideo${i}`) {
+    //   //     // console.log('播放视频不做处理');
+    //   //   } else {
+    //   //     // console.log('暂停其他正在播放的视频');
+    //   //     const videoContext = wx.createVideoContext(`myVideo${i}`, that);
+    //   //     videoContext.pause();
+    //   //   }
+    //   // }
+    // },
   },
 };
 </script>
@@ -625,4 +672,7 @@ export default {
   padding-left: 8rpx;
   color: #00479b;
 }
+// .content__video {
+
+// }
 </style>

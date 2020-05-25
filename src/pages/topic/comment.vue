@@ -55,9 +55,7 @@
 
                 <view class="thread__content" @click="contentClick">
                   <view class="thread__content__text">
-                    <rich-text
-                      :nodes="thread.firstPost.contentHtml.slice(0, 38) + '...'"
-                    ></rich-text>
+                    <rich-text :nodes="thread.firstPost.contentHtml.slice(0, 38)"></rich-text>
                   </view>
                 </view>
               </view>
@@ -97,9 +95,14 @@
             </view>
           </view>
           <!-- 评论 -->
-          <view class="comment" v-if="post.postCount > 1">
-            <view class="comment-num">{{ post.replyCount }}{{ t.item }}{{ t.comment }}</view>
-            <view v-if="postComments">
+          <view class="comment">
+            <view
+              class="comment-num"
+              :style="{ paddingBottom: post.postCount > 1 ? '0' : '40rpx' }"
+            >
+              {{ post.replyCount }}{{ t.item }}{{ t.comment }}
+            </view>
+            <view v-if="postComments && posts.length > 0">
               <qui-topic-comment
                 v-for="(commentPost, index) in postComments"
                 :key="index"
@@ -134,45 +137,45 @@
           </view>
 
           <!-- <view>{{ forums.set_site.site_name }}</view> -->
-
-          <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
-            <view class="comment-popup">
-              <view class="comment-popup-top">
-                <view class="comment-popup-top-l">
-                  <qui-icon name="icon-expression" class="comm-icon"></qui-icon>
-                  <qui-icon name="icon-call" class="comm-icon"></qui-icon>
-                  <qui-icon name="icon-image" class="comm-icon"></qui-icon>
-                </view>
-                <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
-              </view>
-              <view class="comment-content-box">
-                <view class="comment-content">
-                  <textarea
-                    ref="commentText"
-                    auto-height
-                    focus="true"
-                    :maxlength="450"
-                    class="comment-textarea"
-                    :placeholder="t.writeComments"
-                    :placeholder-style="placeholderColor"
-                    v-model="textAreaValue"
-                  />
-                </view>
-              </view>
-              <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
-            {{ t.publish }}
-          </qui-button>-->
-              <button class="publishBtn" @click="publishClick()">
-                {{ t.publish }}
-              </button>
-            </view>
-          </uni-popup>
         </view>
       </view>
-      <!--轻提示-->
-      <qui-toast ref="toast"></qui-toast>
+
       <qui-load-more :status="loadingType"></qui-load-more>
     </scroll-view>
+    <!--轻提示-->
+    <qui-toast ref="toast"></qui-toast>
+    <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+      <view class="comment-popup">
+        <view class="comment-popup-top">
+          <view class="comment-popup-top-l">
+            <qui-icon name="icon-expression" class="comm-icon"></qui-icon>
+            <qui-icon name="icon-call" class="comm-icon"></qui-icon>
+            <qui-icon name="icon-image" class="comm-icon"></qui-icon>
+          </view>
+          <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
+        </view>
+        <view class="comment-content-box">
+          <view class="comment-content">
+            <textarea
+              ref="commentText"
+              auto-height
+              focus="true"
+              :maxlength="450"
+              class="comment-textarea"
+              :placeholder="t.writeComments"
+              :placeholder-style="placeholderColor"
+              v-model="textAreaValue"
+            />
+          </view>
+        </view>
+        <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
+            {{ t.publish }}
+          </qui-button>-->
+        <button class="publishBtn" @click="publishClick()">
+          {{ t.publish }}
+        </button>
+      </view>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -297,7 +300,7 @@ export default {
       };
       this.loadDetailStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
-          // console.log(data, '~~~~~~~~~~~~~~~~~~~');
+          console.log(data, '~~~~~~~~~~~~~~~~~~~');
           this.thread = data;
           this.status = true;
         }),
@@ -664,6 +667,7 @@ page {
 }
 .comment-num {
   padding: 0 40rpx;
+  font-size: $fg-f28;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -971,12 +975,10 @@ page {
     &__text {
       display: flex;
       overflow: hidden;
-      text-overflow: ellipsis;
-      word-break: break-all;
-      // -webkit-box-orient: vertical;
       flex-direction: column;
       flex-wrap: wrap;
-      -webkit-line-clamp: 2;
+      font-size: $fg-f28;
+      word-break: break-all;
     }
   }
 }

@@ -58,7 +58,7 @@
             </view>
           </qui-cell-item>
         </view>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
     </view>
   </view>
@@ -76,12 +76,12 @@ export default {
   },
   data() {
     return {
-      loadingType: 'more',
+      loadingType: '',
       flag: true, // 滚动节流
       followingList: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
-      currentLoginId: uni.getStorageSync('user_id'),
+      currentLoginId: this.$store.getters['session/get']('userId'),
       // 图片裁剪、缩放的模式
       modeVal: {
         type: String,
@@ -95,6 +95,7 @@ export default {
   methods: {
     // 获取用户关注列表
     getFollowingList(type) {
+      this.loadingType = 'loading';
       const params = {
         include: ['toUser', 'toUser.groups'],
         'filter[type]': 1,
@@ -156,13 +157,11 @@ export default {
     // 取消关注
     deleteFollow(userInfo, index) {
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
-        // 如果是个人主页直接删除这条数据
         if (this.userId === this.currentLoginId) {
-          this.followingList.splice(index, 1);
+          // this.followingList.splice(index, 1);
           this.$emit('changeFollow', { userId: this.userId });
-        } else {
-          this.followingList[index].toUser.follow = 0;
         }
+        this.followingList[index].toUser.follow = 0;
       });
     },
   },

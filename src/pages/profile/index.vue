@@ -103,7 +103,7 @@ export default {
         { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
       userId: '',
-      currentLoginId: uni.getStorageSync('user_id'),
+      currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
       dialogId: 0, // 会话id
       // 图片裁剪、缩放的模式
@@ -124,10 +124,10 @@ export default {
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
     const { userId, current } = params;
-    // 我的用户信息从缓存拿
     this.userId = userId || this.currentLoginId;
     this.current = current || 0;
   },
+  // 解决左上角返回数据不刷新情况
   onShow() {
     this.getUserInfo(this.userId);
   },
@@ -221,6 +221,9 @@ export default {
 }
 .profile-info__introduction {
   margin-top: 40rpx;
+  color: --color(--qui-FC-333);
+  word-break: break-all;
+  transition: $switch-theme-time;
 }
 .profile-info__box__detail {
   position: relative;

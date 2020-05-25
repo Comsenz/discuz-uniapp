@@ -15,6 +15,9 @@
           <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
+      <view class="search-box__cancel" v-if="searchValue" @tap="clearSearch">
+        <text>{{ i18n.t('search.cancel') }}</text>
+      </view>
     </view>
     <scroll-view
       scroll-y="true"
@@ -43,7 +46,7 @@
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </scroll-view>
   </qui-page>
 </template>
@@ -53,7 +56,7 @@ export default {
   data() {
     return {
       searchValue: '',
-      loadingType: 'more',
+      loadingType: '',
       data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
@@ -69,11 +72,13 @@ export default {
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.data = [];
+        this.pageNum = 1;
         this.getThemeList(e.target.value);
       }, 250);
     },
     // 获取主题列表
     getThemeList(key, type) {
+      this.loadingType = 'loading';
       const params = {
         include: [
           'user',
@@ -93,7 +98,7 @@ export default {
           delete res._jv;
         }
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-        if (type && type === 'search') {
+        if (type && type === 'clear') {
           this.data = res;
         } else {
           this.data = [...this.data, ...res];
@@ -103,7 +108,7 @@ export default {
     clearSearch() {
       this.searchValue = '';
       this.pageNum = 1;
-      this.getThemeList('', 'search');
+      this.getThemeList('', 'clear');
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
@@ -171,7 +176,7 @@ export default {
   top: 40rpx;
   right: 40rpx;
 }
-.addFine {
+/deep/ .themeCount .addFine {
   display: none;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <view>
-    <qui-no-data tips="暂无内容" v-if="!list || list.length <= 0"></qui-no-data>
+    <qui-no-data :tips="i18n.t('manage.noContent')" v-if="!list || list.length <= 0"></qui-no-data>
     <view class="list-box" v-for="item in list" :key="item.id" v-else>
       <!-- 除系统通知以外的通知 -->
       <view class="list-box__notice" v-if="item.type !== 'system'">
@@ -21,19 +21,19 @@
                   {{ item.user_name }}
                 </text>
                 <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
-                  （{{ item.thread_user_groups }}）
+                  （{{ i18n.t(item.thread_user_groups) }}）
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
-                  @了我
+                  {{ i18n.t('notice.relatedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'replied'">
-                  回复了我
+                  {{ i18n.t('notice.repliedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
-                  点赞了我
+                  {{ i18n.t('notice.likedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
-                  打赏了我
+                  {{ i18n.t('notice.rewardedMe') }}
                 </text>
               </view>
               <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
@@ -60,9 +60,18 @@
           >
             <view class="list-box__notice__con__wrap-info">
               <text class="list-box__notice__con__wrap-info-username">
-                {{ item.thread_user_name }}：
+                {{ item.thread_username }}：
               </text>
-              <view v-html="item.thread_title" style="display: inline-block;"></view>
+              <view
+                v-if="item.type !== 'rewarded' && item.type !== 'system'"
+                v-html="item.thread_title"
+                style="display: inline-block;"
+              ></view>
+              <view
+                v-if="item.type === 'rewarded'"
+                v-html="item.content"
+                style="display: inline-block;"
+              ></view>
               <view class="list-box__notice__con__wrap-info-time">
                 {{ item.thread_created_at }}
               </view>
@@ -82,13 +91,17 @@
           </view>
         </view>
         <view class="list-box__system-notice__con">
-          <view class="list-box__system-notice__con__text">{{ item.content }}</view>
+          <view class="list-box__system-notice__con__text" v-if="item.type === 'system'">
+            {{ item.content }}
+          </view>
         </view>
       </view>
       <!-- 删除按钮 -->
       <view class="list-box__ft">
         <qui-icon name="icon-delete" size="26" @click="deleteNotification(item.id)"></qui-icon>
-        <text class="list-box__ft__text" @click="deleteNotification(item.id)">删除</text>
+        <text class="list-box__ft__text" @click="deleteNotification(item.id)">
+          {{ i18n.t('notice.delete') }}
+        </text>
       </view>
     </view>
   </view>
@@ -109,22 +122,14 @@ export default {
 
   methods: {
     deleteNotification(id) {
-      this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
-        console.log('删除成功', res);
-        uni.showToast({
-          title: '删除成功',
-          duration: 1000,
-        });
-      });
+      this.$emit('deleteNotice', id);
     },
-
     jumpMyComment(item) {
       console.log('跳转到评论页面：', item);
       uni.navigateTo({
-        url: `/pages/topic/index?threadId=${item.thread_id}&commentId=${item.post_id}`,
+        url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.post_id}`,
       });
     },
-
     jumpOtherTopic(topicId) {
       console.log('跳转到帖子详情页面：', topicId);
       uni.navigateTo({

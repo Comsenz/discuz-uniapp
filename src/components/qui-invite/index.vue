@@ -7,16 +7,19 @@
     <!-- 邀请列表 -->
     <view class="invite-con-list">
       <qui-cell-item
-        v-for="item in list"
+        v-for="(item, index) in list"
+        :border="index < list.length - 1"
         :key="item._jv.id"
         :title="item.title"
         :brief="item.time"
         slot-right
       >
-        <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">设为无效</view>
+        <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">
+          {{ i18n.t('manage.setInvalid') }}
+        </view>
         <view class="invite-con-list-line"></view>
         <view class="invite-con-list-share" @click="share">
-          分享
+          {{ i18n.t('manage.share') }}
           <qui-icon name="icon-share1" class="share-icon"></qui-icon>
         </view>
       </qui-cell-item>
@@ -24,12 +27,12 @@
     <!-- 分享弹窗 -->
     <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
+        <view class="popup-share-content" style="box-sizing: border-box;">
+          <button class="popup-share-button__center" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
+              <view class="popup-share-box">
+                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
               </view>
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
@@ -66,18 +69,24 @@ export default {
       },
     },
   },
+  // 唤起小程序原生分享
+  onShareAppMessage(res) {
+    console.log('唤起小程序原生分享');
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
+      return {
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+      };
+    }
+    return {
+      title: this.forums.set_site.site_name,
+    };
+  },
   methods: {
     // 设为无效
     invalid(id) {
-      if (parseInt(this.status, 10) === 1) {
-        this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
-          console.log('设为无效', res);
-          uni.showToast({
-            title: '该链接已失效',
-            duration: 1000,
-          });
-        });
-      }
+      this.$emit('setInvalid', id);
     },
     // 分享
     share() {
@@ -86,20 +95,6 @@ export default {
         this.$refs.popupHead.open();
       }
     },
-    // 头部分享海报
-    shareHead(index) {
-      if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
-          return;
-        }
-        uni.navigateTo({
-          url: '/pages/share/site',
-        });
-      }
-    },
-    // 取消按钮
     cancel() {
       this.$refs.popupHead.close();
     },
@@ -131,10 +126,6 @@ export default {
 
     .cell-item {
       height: 100rpx;
-    }
-
-    &.cell-item.border:last-child {
-      border: none;
     }
 
     &-invalid {
