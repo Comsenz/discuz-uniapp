@@ -1226,6 +1226,7 @@ export default {
         });
       } else {
         this.price = this.payNumCheck[0].pay;
+        console.log(this.price, '这是选中的钱');
         this.payShowStatus = true;
         this.$refs.rewardPopup.close();
         this.payTypeVal = 1;

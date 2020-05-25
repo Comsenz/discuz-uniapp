@@ -164,6 +164,15 @@ page {
   background: --color(--qui-BG-2);
   opacity: 0;
 }
+.popup-share-button__center {
+  position: absolute;
+  top: 43 rpx;
+  z-index: 10;
+  width: 120rpx;
+  height: 120rpx;
+  background: --color(--qui-BG-2);
+  opacity: 0;
+}
 .popup-share-button[plain] {
   border: 0;
 }

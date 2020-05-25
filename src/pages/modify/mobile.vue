@@ -27,6 +27,7 @@
           :text="test"
           :show="inshow"
           :isiphonex="inisIphone"
+          ref="quiinput"
         ></qui-input-code>
       </view>
       <view class="modify-button">
@@ -61,6 +62,7 @@ export default {
       inshow: false,
       inisIphone: false,
       noclick: false,
+      detail: '',
     };
   },
   onLoad() {
@@ -180,6 +182,7 @@ export default {
             this.test =
               this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.judge = true;
+            this.empty();
             if (this.num < 0) {
               this.test = this.i18n.t('modify.lateron');
             }
@@ -188,6 +191,10 @@ export default {
     },
     toggleBox() {
       this.inshow = false;
+    },
+    empty() {
+      const empty = this.$refs.quiinput;
+      empty.deleat();
     },
   },
 };

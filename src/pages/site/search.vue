@@ -45,7 +45,7 @@
         <qui-cell-item
           :title="item.username"
           arrow
-          :border="index == 2 ? false : true"
+          :border="index == userList.length - 1 ? false : true"
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
@@ -68,7 +68,7 @@
       <view
         v-for="(item, index) in themeList"
         :key="index"
-        :class="index == 1 ? 'noBorder' : ''"
+        :class="index == themeList.length - 1 ? 'noBorder' : ''"
         class="search-item__content"
       >
         <qui-content

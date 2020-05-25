@@ -302,6 +302,7 @@ export default {
     member: '成员',
     contents: '内容',
     share: '分享',
+    circleinfo: '站点信息',
     siteintroduction: '站点介绍',
     creationtime: '创建时间',
     circlemode: '站点模式',
@@ -313,6 +314,7 @@ export default {
     periodvalidity: '有效期至',
     myauthority: '我的权限',
     setting: '设置',
+    noContent: '暂无内容',
   },
   // 消息页面
   notice: {

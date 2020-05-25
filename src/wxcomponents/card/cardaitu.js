@@ -92,7 +92,7 @@ export default class LastMayday {
               "padding": "0px",
               "fontSize": "24px",
               "fontWeight": "400",
-              "maxLines": "2",
+              "maxLines": "1",
               "lineHeight": "34.632000000000005px",
               "textStyle": "fill",
               "textDecoration": "none",
@@ -137,7 +137,7 @@ export default class LastMayday {
               "textStyle": "fill",
               "textDecoration": "none",
               "fontFamily": "",
-              "textAlign": "left"
+              "textAlign": "center"
             }
           },
           {

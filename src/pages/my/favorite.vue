@@ -49,7 +49,7 @@
           @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </view>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
@@ -83,7 +83,7 @@ export default {
   },
   data() {
     return {
-      loadingType: 'more',
+      loadingType: '',
       data: [],
       totalData: 0, // 总数
       pageSize: 20,
@@ -125,6 +125,7 @@ export default {
     },
     // 加载当前点赞数据
     loadlikes() {
+      this.loadingType = 'loading';
       const params = {
         include: [
           'user',

@@ -148,6 +148,8 @@ export default {
       this.cost = this.forums.set_cash.cash_rate;
       this.percentage = this.forums.set_cash.cash_rate * 100;
     });
+    const pages = getCurrentPages();
+    console.log(pages);
   },
   computed: {
     forums() {
@@ -300,6 +302,13 @@ export default {
             this.setmydata();
             this.sun = true;
             this.second = 60;
+            uni.redirectTo({
+              url: '/pages/my/wallet',
+              success() {
+                const pages = getCurrentPages();
+                pages[1].onLoad();
+              },
+            });
           }
         })
         .catch(err => {
