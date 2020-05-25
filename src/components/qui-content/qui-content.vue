@@ -61,10 +61,10 @@
           </view>
           <rich-text :nodes="themeContent" v-else></rich-text>
         </view>
-        <view class="content__video">
+        <view class="content__video" @click="videoClick">
           <video
             v-if="threadType === 2"
-            :id="videoId"
+            :id="'myvideo' + currentindex"
             preload="auto"
             bindpause="handlepause"
             playsinline
@@ -85,7 +85,6 @@
             :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
-            @play="bindPlay"
           ></video>
         </view>
         <view v-if="imagesList.length == 1">
@@ -326,6 +325,10 @@ export default {
       type: Number,
       default: 0,
     },
+    currentindex: {
+      type: Number,
+      default: 0,
+    },
   },
   data: () => {
     return {
@@ -333,7 +336,7 @@ export default {
       // threadVideo: '',
       threadWidth: '',
       threadHeight: '',
-      indexCurrent: null, // 用于记录当前播放的视频的索引值
+      videoContext: null, // 用于记录当前播放的视频的索引值
       // isGreat: false,
       preid: 0,
       currentid: 0,
@@ -348,6 +351,10 @@ export default {
     localTime() {
       return time2MorningOrAfternoon(this.themeTime);
     },
+  },
+  mounted() {
+    this.videoContext = wx.createVideoContext(`myvideo${this.$props.currentindex}`, this);
+    // console.log(this.videoContext, 'inshow')
   },
   // onShow() {
   //   this.videoContext = wx.createVideoContext('myvideo', this);
@@ -391,25 +398,15 @@ export default {
         indicator: 'number',
       });
     },
-    // 视频不能同时播放
-    bindPlay(e) {
-      console.log(e);
+    // 视频的view点击事件
+    videoClick() {
+      const curIdx = this.$props.currentindex;
+      this.$emit('videoPlay', curIdx);
     },
-    // 视频切换暂停播放
-    // play(e) {
-    //   console.log(e);
-    //   // const that = this;
-    //   // const { id } = e.currentTarget;
-    //   // for (let i = 0; i < that.data.healthKjList.length; i++) {
-    //   //   if (id === `myVideo${i}`) {
-    //   //     // console.log('播放视频不做处理');
-    //   //   } else {
-    //   //     // console.log('暂停其他正在播放的视频');
-    //   //     const videoContext = wx.createVideoContext(`myVideo${i}`, that);
-    //   //     videoContext.pause();
-    //   //   }
-    //   // }
-    // },
+    // 视频不能同时播放
+    pauseVideo() {
+      this.videoContext.pause();
+    },
   },
 };
 </script>
