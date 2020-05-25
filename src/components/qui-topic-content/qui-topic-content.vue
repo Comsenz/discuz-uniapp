@@ -36,7 +36,7 @@
             ></qui-drop-down>
           </view>
         </view>
-        <image src="@/static/essence.png" class="essence"></image>
+        <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
       </view>
     </view>
 
@@ -215,6 +215,11 @@ export default {
     themeTitle: {
       type: String,
       default: '',
+    },
+    // 是否加精
+    threadIsEssence: {
+      type: Boolean,
+      default: false,
     },
     // 发布内容
     themeContent: {

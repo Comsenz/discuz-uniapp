@@ -35,6 +35,7 @@
             :select-list="selectList"
             :tags="[thread.category]"
             :thread-price="thread.price"
+            :thread-isEssence="thread.isEssence"
             :media-url="thread.threadVideo.media_url"
             :video-width="thread.threadVideo.width"
             :video-height="thread.threadVideo.height"
