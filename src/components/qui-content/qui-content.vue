@@ -64,12 +64,12 @@
         <view class="content__video">
           <video
             v-if="threadType === 2"
-            id="myvideo"
+            :id="videoId"
             preload="auto"
+            bindpause="handlepause"
             playsinline
             webkit-playsinline
             x5-playsinline
-            controls="true"
             page-gesture="false"
             show-fullscreen-btn="true"
             show-play-btn="true"
@@ -84,7 +84,7 @@
             :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
-            bindplay="bindPlay"
+            @play="bindPlay"
           ></video>
         </view>
         <view v-if="imagesList.length == 1">
@@ -334,6 +334,8 @@ export default {
       threadHeight: '',
       indexCurrent: null, // 用于记录当前播放的视频的索引值
       // isGreat: false,
+      preid: 0,
+      currentid: 0,
     };
   },
   computed: {
@@ -390,28 +392,7 @@ export default {
     },
     // 视频不能同时播放
     bindPlay(e) {
-      console.log(e, '视频啊啊啊啊啊啊');
-      // const that = this;
-      // const curIdx = e.currentTarget.dataset.index;
-      // // 有播放时先将prev暂停，再播放当前点击的current
-      // if (that.data.indexCurrent != null) {
-      //   const videoContextPrev = wx.createVideoContext(`myVideo${that.data.indexCurrent}`);
-      //   if (that.data.indexCurrent != curIdx) {
-      //     videoContextPrev.pause();
-      //   }
-      //   that.setData({
-      //     indexCurrent: curIdx,
-      //   });
-      //   const videoContextCurrent = wx.createVideoContext(`myVideo${curIdx}`);
-      //   videoContextCurrent.play();
-      // } else {
-      //   // 没有播放时播放视频
-      //   that.setData({
-      //     indexCurrent: curIdx,
-      //   });
-      //   const videoContext = wx.createVideoContext(`myVideo${curIdx}`); // 这里对应的视频id
-      //   videoContext.play();
-      // }
+      console.log(e);
     },
     // 视频切换暂停播放
     // play(e) {
