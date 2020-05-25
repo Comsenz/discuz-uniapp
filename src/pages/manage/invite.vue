@@ -23,7 +23,9 @@
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
             <!-- 邀请链接按钮 -->
             <view class="invite-button">
-              <button class="btn" @click="generate">{{ i18n.t('manage.generateInvitationUrl') }}</button>
+              <button class="btn" @click="generate">
+                {{ i18n.t('manage.generateInvitationUrl') }}
+              </button>
             </view>
           </view>
           <view v-if="current === 1" class="items">
