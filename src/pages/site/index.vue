@@ -46,7 +46,11 @@
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.circlemode')"
-        :addon="siteInfo.set_site.site_mode === 'public' ? i18n.t('manage.publicmode') : i18n.t('manage.paymentmode')"
+        :addon="
+          siteInfo.set_site.site_mode === 'public'
+            ? i18n.t('manage.publicmode')
+            : i18n.t('manage.paymentmode')
+        "
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('manage.circlemaster')" slot-right>
         <view class="site-item__owner">
@@ -71,7 +75,10 @@
           </view>
         </qui-cell-item>
       </navigator>
-      <qui-cell-item :title="i18n.t('manage.myRole')" :addon="userInfo.groups[0].name"></qui-cell-item>
+      <qui-cell-item
+        :title="i18n.t('manage.myRole')"
+        :addon="userInfo.groups[0].name"
+      ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.joinedTime')"
         :addon="userInfo.joinedTime"

@@ -173,7 +173,10 @@ export default {
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
       uni.navigateTo({
-        url: `/pages/notice/notice?title=${this.i18n.t(item.title)}&type=${item.type}&unReadNum=${item.unReadNum}`,
+        url: `/pages/notice/notice
+        ?title=${this.i18n.t(item.title)}
+        &type=${item.type}
+        &unReadNum=${item.unReadNum}`,
       });
       console.log(`跳转${this.i18n.t(item.title)}页面`);
     },

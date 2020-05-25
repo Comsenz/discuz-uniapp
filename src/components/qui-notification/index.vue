@@ -99,7 +99,9 @@
       <!-- 删除按钮 -->
       <view class="list-box__ft">
         <qui-icon name="icon-delete" size="26" @click="deleteNotification(item.id)"></qui-icon>
-        <text class="list-box__ft__text" @click="deleteNotification(item.id)">{{ i18n.t('notice.delete') }}</text>
+        <text class="list-box__ft__text" @click="deleteNotification(item.id)">
+          {{ i18n.t('notice.delete') }}
+        </text>
       </view>
     </view>
   </view>
