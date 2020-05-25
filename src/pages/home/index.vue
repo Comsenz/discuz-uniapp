@@ -89,7 +89,9 @@
       <view class="main">
         <qui-content
           v-for="(item, index) in threads"
+          :ref="'myVideo' + index"
           :key="index"
+          :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
           :theme-btn="item.canHide"
@@ -120,6 +122,7 @@
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item.user._jv.id)"
+          @videoPlay="handleVideoPlay"
         ></qui-content>
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
@@ -241,6 +244,7 @@ export default {
       bottomData: [],
       threadsStatusId: 0,
       categories: [],
+      playIndex: null,
     };
   },
   onLoad() {
@@ -604,6 +608,13 @@ export default {
       }
       this.pageNum += 1;
       this.loadThreads();
+    },
+    // 视频禁止同时播放
+    handleVideoPlay(index) {
+      if (this.playIndex !== index && this.playIndex !== null) {
+        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
+      }
+      this.playIndex = index;
     },
   },
 };
