@@ -261,14 +261,17 @@ export default {
 }
 .ft-box {
   display: flex;
+  width: 20%;
   height: 72rpx;
   margin-top: 20rpx;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-content: center;
 }
 .ft-box-icon {
+  display: flex;
   height: 46rpx;
+  justify-content: center;
   // background: #c33;
 }
 .ft-box-content {
