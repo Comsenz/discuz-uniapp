@@ -145,6 +145,18 @@ export default {
       ],
     };
   },
+  // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      return {
+        title: this.forums.set_site.site_name,
+      };
+    }
+    return {
+      title: this.forums.set_site.site_name,
+    };
+  },
   methods: {
     // 首页头部分享按钮弹窗
     open() {
