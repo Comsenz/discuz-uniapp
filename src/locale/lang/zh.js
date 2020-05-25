@@ -348,6 +348,7 @@ export default {
     contents: '内容',
     siteintroduction: '站点介绍',
     member: '成员',
+    confirm: '确定保存到相册吗',
   },
   // 信息修改页
   modify: {

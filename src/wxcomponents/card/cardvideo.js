@@ -322,32 +322,6 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": "03:29",
-                "css": {
-                  "color": "#ffffff",
-                  "background": "rgba(0,0,0,0)",
-                  "width": "80px",
-                  "height": "27.119999999999997px",
-                  "top": "601px",
-                  "left": "85px",
-                  "rotate": "0",
-                  "borderRadius": "",
-                  "borderWidth": "",
-                  "borderColor": "#000000",
-                  "shadow": "",
-                  "padding": "0px",
-                  "fontSize": "24px",
-                  "fontWeight": "400",
-                  "maxLines": "1",
-                  "lineHeight": "26.64px",
-                  "textStyle": "fill",
-                  "textDecoration": "none",
-                  "fontFamily": "",
-                  "textAlign": "center"
-                }
-              },
-              {
-                "type": "text",
                 "text": obj.uservideoduc,
                 "css": {
                   "color": "#ffffff",

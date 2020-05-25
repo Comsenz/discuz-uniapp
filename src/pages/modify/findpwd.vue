@@ -188,11 +188,11 @@ export default {
           }
         })
         .catch(err => {
-          uni.showToast({
-            icon: 'none',
-            title: this.i18n.t('modify.valifailed'),
-            duration: 2000,
-          });
+          // uni.showToast({
+          //   icon: 'none',
+          //   title: this.i18n.t('modify.valifailed'),
+          //   duration: 2000,
+          // });
           if (err.statusCode === 422) {
             this.passt = true;
             const [
