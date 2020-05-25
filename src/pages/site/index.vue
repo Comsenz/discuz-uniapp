@@ -104,10 +104,13 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
   components: {
     //
   },
+  mixins: [forums],
   data() {
     return {
       theme: '成员',
@@ -132,6 +135,18 @@ export default {
   onLoad() {
     this.getSiteInfo();
     this.getPermissions();
+  },
+  // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      return {
+        title: this.forums.set_site.site_name,
+      };
+    }
+    return {
+      title: this.forums.set_site.site_name,
+    };
   },
 
   computed: {
