@@ -107,7 +107,7 @@
             >
               {{ post.replyCount }}{{ t.item }}{{ t.comment }}
             </view>
-            <view v-if="postComments && posts.length > 0">
+            <view v-if="postComments.length > 0">
               <qui-topic-comment
                 v-for="(commentPost, index) in postComments"
                 :key="index"
@@ -251,6 +251,7 @@ export default {
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
       pageSize: 5, //这是主题回复每页数据条数
+      contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据了
     };
   },
   computed: {
@@ -451,6 +452,12 @@ export default {
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
           this.postComments = [...this.postComments, ...data];
+          this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
+          if (data.length == 0) {
+            this.contentnomoreVal = this.t.noComment;
+          } else {
+            this.contentnomoreVal = this.t.noMoreData;
+          }
           console.log(this.postComments, '&&&&&&~~~~~~!');
 
           this.postsStatus = true;
