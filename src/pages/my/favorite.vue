@@ -16,7 +16,9 @@
       >
         <qui-content
           v-for="(item, index) in data"
+          :ref="'myVideo' + index"
           :key="index"
+          :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
           :theme-reply-btn="item.canReply"
@@ -34,6 +36,7 @@
           theme-btn="icon-delete"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
+          :video-id="item.threadVideo._jv.id"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -46,6 +49,7 @@
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item.user._jv.id)"
+          @videoPlay="handleVideoPlay"
           @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
@@ -189,6 +193,13 @@ export default {
         const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
         likedData.firstPost.likeCount = count;
       });
+    },
+    // 视频禁止同时播放
+    handleVideoPlay(index) {
+      if (this.playIndex !== index && this.playIndex !== null) {
+        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
+      }
+      this.playIndex = index;
     },
     // 删除收藏
     itemDelete(id, isFavorite, index) {

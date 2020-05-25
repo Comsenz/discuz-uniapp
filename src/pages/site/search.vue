@@ -72,6 +72,8 @@
         class="search-item__content"
       >
         <qui-content
+          :ref="'myVideo' + index"
+          :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
           :theme-btn="item.canHide"
@@ -85,8 +87,10 @@
           :theme-essence="item.isEssence"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
+          :video-id="item.threadVideo._jv.id"
           @contentClick="contentClick(item._jv.id)"
           @headClick="toProfile(item.user._jv.id)"
+          @videoPlay="handleVideoPlay"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
@@ -175,6 +179,13 @@ export default {
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
+    },
+    // 视频禁止同时播放
+    handleVideoPlay(index) {
+      if (this.playIndex !== index && this.playIndex !== null) {
+        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
+      }
+      this.playIndex = index;
     },
     // 点击头像到个人主页
     toProfile(userId) {
