@@ -37,8 +37,8 @@ import Cardb from '@/wxcomponents/card/cardaitu'; // 标题单图片文字海报
 import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报  164
 import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报 41
 import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
-// import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
-import Cardi from '@/wxcomponents/card/cardtext';
+import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
+// import Cardi from '@/wxcomponents/card/cardtext';
 import forums from '@/mixin/forums';
 
 export default {
@@ -211,13 +211,13 @@ export default {
           this.constyle = 1082;
           this.paddingtop = 46;
           // this.template = new Cardh().palette(obj);
-          this.template = new Cardi().palette(obj);
+          this.template = new Cardh().palette(obj);
         }
       } else {
         this.constyle = 1082;
         this.paddingtop = 46;
         // this.template = new Cardh().palette();
-        this.template = new Cardi().palette(obj);
+        this.template = new Cardh().palette(obj);
       }
     },
     onImgOK(e) {

@@ -93,7 +93,6 @@
     </view> -->
   </view>
 </template>
-
 <script>
 export default {
   props: {
@@ -102,7 +101,7 @@ export default {
       type: Boolean,
     },
     text: {
-      default: '输入错误',
+      default: '',
       type: String,
     },
     number: {
@@ -124,14 +123,11 @@ export default {
       isFocus: false,
       inpcont: '',
       num: 1,
-      // show:false,
-      // isiphonex:false,
     };
   },
   methods: {
     onFocus() {
       this.isFocus = true;
-      // this.show = true;
     },
     enters() {
       this.$emit('getdata', this.iptValue);
@@ -142,17 +138,15 @@ export default {
     lose() {
       this.isFocus = false;
     },
+    deleat() {
+      this.iptValue = '';
+    },
     // key(key) {
     //   if (this.iptValue.length < 6) {
     //     this.iptValue += key;
     //     if (this.iptValue.length === 6) {
     //       this.$emit('getdata', this.iptValue);
     //     }
-    //   }
-    // },
-    // del() {
-    //   if (this.iptValue.length > 0) {
-    //     this.iptValue = this.iptValue.substring(0, this.iptValue.length - 1);
     //   }
     // },
   },
