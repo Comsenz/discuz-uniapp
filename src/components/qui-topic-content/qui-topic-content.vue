@@ -60,19 +60,21 @@
         <video
           v-if="themeType == 2 && payStatus"
           preload="auto"
+          bindpause="handlepause"
           playsinline
           webkit-playsinline
           x5-playsinline
-          controls="true"
-          page-gesture="true"
+          :page-gesture="false"
           show-fullscreen-btn="true"
           show-play-btn="true"
-          show-mute-btn="true"
           auto-pause-if-open-native="true"
-          vslide-gesture="true"
           auto-pause-if-navigate="true"
-          enable-play-gesture="true"
-          object-fit="fill"
+          enable-play-gesture="false"
+          :vslide-gesture="false"
+          :vslide-gesture-in-fullscreen="false"
+          object-fit="cover"
+          direction="90"
+          x5-video-player-type="h5-page"
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
