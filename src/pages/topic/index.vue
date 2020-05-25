@@ -774,6 +774,9 @@ export default {
             }
           } else if (type == '4') {
             // 评论点赞
+            this.posts[this.postIndex].isLiked = data.isLiked;
+
+            // 主题点赞
             if (data.isLiked) {
               this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
