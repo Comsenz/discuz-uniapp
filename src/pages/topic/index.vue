@@ -41,6 +41,8 @@
             :cover-image="thread.threadVideo.cover_url"
             @personJump="personJump"
             @selectChoice="selectChoice"
+            @videocoverClick="payClickShow"
+            @previewPicture="payClickShow"
           ></qui-topic-content>
           <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
           {{ p.pay }}
