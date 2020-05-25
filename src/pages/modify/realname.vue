@@ -98,6 +98,10 @@ export default {
             });
             uni.redirectTo({
               url: '/pages/my/profile',
+              success() {
+                const pages = getCurrentPages();
+                pages[2].onLoad();
+              },
             });
           }
         })

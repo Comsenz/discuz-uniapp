@@ -98,7 +98,12 @@ export default {
             duration: 2000,
           });
           setTimeout(() => {
-            uni.navigateBack();
+            uni.navigateBack({
+              success() {
+                const pages = getCurrentPages();
+                pages[2].onLoad();
+              },
+            });
           }, 1000);
         }
       });

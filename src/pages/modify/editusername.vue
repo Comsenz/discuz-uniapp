@@ -8,6 +8,7 @@
           :placeholder="i18n.t('modify.numbermodifitions')"
           placeholder-style="color:rgba(221,221,221,1)"
           maxlength="15"
+          v-model="sername"
         />
         <view class="chagepas-erro-test" v-if="edit">
           {{ test }}
@@ -34,6 +35,7 @@ export default {
       myname: '',
       test: '',
       userid: '',
+      sername: '',
       nametitle: { icon: 'none', duration: 2000 },
     };
   },
@@ -78,6 +80,10 @@ export default {
             });
             uni.navigateBack({
               delta: 1,
+              success() {
+                const pages = getCurrentPages();
+                pages[2].onLoad();
+              },
             });
           }
         })
