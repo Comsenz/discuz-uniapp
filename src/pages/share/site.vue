@@ -17,7 +17,7 @@
             :palette="template"
             @imgErr="imgErr"
             @imgOK="onImgOK"
-            width-pixels="500"
+            width-pixels="2080"
           />
         </view>
       </view>
@@ -53,6 +53,8 @@ export default {
       introd: '', // 站点介绍
       themwidth: 180,
       renamewidth: 400,
+      openSettingBtnHidden: true,
+      jurisdiction: true,
       weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
     };
   },
@@ -136,27 +138,82 @@ export default {
         showCancel: false,
       });
     },
+    // fun() {
+    //   const _this = this;
+    //   if (!this.jurisdiction) {
+    //     uni.openSetting({
+    //       success(res) {
+    //         _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+    //       },
+    //     });
+    //   }
+    //   uni.saveImageToPhotosAlbum({
+    //     filePath: _this.imagePath,
+    //     success(data) {
+    //       if (data) {
+    //         uni.showToast({
+    //           icon: 'none',
+    //           title: _this.i18n.t('share.successfully'),
+    //           duration: 2000,
+    //         });
+    //       }
+    //     },
+    //     fail(err) {
+    //       if (err) {
+    //         uni.showToast({
+    //           icon: 'none',
+    //           title: _this.i18n.t('share.savefailed'),
+    //           duration: 2000,
+    //         });
+    //         if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
+    //           uni.openSetting({
+    //             success(res) {
+    //               _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+    //             },
+    //           });
+    //         }
+    //       }
+    //     },
+    //   });
+    // },
     fun() {
+      const imgSrc = this.imagePath;
       const _this = this;
-      uni.saveImageToPhotosAlbum({
-        filePath: _this.imagePath,
-        success(data) {
-          if (data) {
-            uni.showToast({
-              icon: 'none',
-              title: _this.i18n.t('share.successfully'),
-              duration: 2000,
-            });
-          }
-        },
-        fail(err) {
-          if (err) {
-            uni.showToast({
-              icon: 'none',
-              title: _this.i18n.t('share.savefailed'),
-              duration: 2000,
-            });
-          }
+      if (!this.jurisdiction) {
+        uni.openSetting({
+          success(res) {
+            _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+          },
+        });
+      }
+      uni.getImageInfo({
+        success() {
+          uni.saveImageToPhotosAlbum({
+            filePath: imgSrc,
+            success() {
+              uni.showToast({
+                icon: 'none',
+                title: _this.i18n.t('share.successfully'),
+                duration: 2000,
+              });
+            },
+            fail(err) {
+              if (err) {
+                uni.showToast({
+                  icon: 'none',
+                  title: _this.i18n.t('share.savefailed'),
+                  duration: 2000,
+                });
+                if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
+                  uni.openSetting({
+                    success(res) {
+                      _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+                    },
+                  });
+                }
+              }
+            },
+          });
         },
       });
     },
@@ -177,7 +234,6 @@ export default {
 .painter {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 100vw;
   height: 100vh;
   background-color: --color(--qui-BG-2);
@@ -186,7 +242,7 @@ export default {
   width: 100%;
   height: 100%;
   padding-top: 41rpx;
-  margin-bottom: 155rpx;
+  margin-bottom: 80rpx;
 }
 .cent {
   width: 700rpx;
@@ -208,5 +264,9 @@ export default {
 }
 .btn-box {
   margin: 0 0 40rpx 40rpx;
+}
+canvas {
+  width: 600px;
+  height: 300px;
 }
 </style>

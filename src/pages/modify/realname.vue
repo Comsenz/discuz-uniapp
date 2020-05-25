@@ -9,6 +9,9 @@
           placeholder-style="color:rgba(221,221,221,1)"
           v-model="myname"
         />
+        <view class="tica-erro-messag1" v-if="judge">
+          {{ title2 }}
+        </view>
         <input
           type="text"
           class="tica-name-inpa"
@@ -39,12 +42,43 @@ export default {
       myname: '',
       myid: '',
       title1: '',
+      title2: '',
       judge: false,
+      icon: 'none',
     };
   },
   methods: {
+    realnameauthen() {
+      if (!this.myname) {
+        uni.showToast({
+          icon: this.icon,
+          title: '名字不能为空',
+          duration: 2000,
+        });
+      } else if (!this.myid) {
+        uni.showToast({
+          icon: this.icon,
+          title: '身份证号码不能为空',
+          duration: 2000,
+        });
+      }
+    },
     btntica() {
-      this.authentication();
+      if (this.myname && this.myid) {
+        this.authentication();
+      } else if (!this.myname) {
+        uni.showToast({
+          icon: this.icon,
+          title: '名字不能为空',
+          duration: 2000,
+        });
+      } else if (!this.myid) {
+        uni.showToast({
+          icon: this.icon,
+          title: '身份证号码不能为空',
+          duration: 2000,
+        });
+      }
     },
     authentication() {
       const params = {
@@ -62,7 +96,13 @@ export default {
               title: this.i18n.t('modify.nameauthensucc'),
               duration: 2000,
             });
-            uni.navigateBack();
+            uni.redirectTo({
+              url: '/pages/my/profile',
+              success() {
+                const pages = getCurrentPages();
+                pages[2].onLoad();
+              },
+            });
           }
         })
         .catch(err => {
@@ -81,12 +121,21 @@ export default {
             });
           } else if (err.statusCode === 500) {
             this.judge = true;
-            this.title1 = err.data.errors[0].detail;
-            uni.showToast({
-              icon: 'none',
-              title: this.title1,
-              duration: 2000,
-            });
+            if (err.data.errors[0].detail === this.i18n.t('modify.idtitl')) {
+              this.title1 = err.data.errors[0].detail;
+              uni.showToast({
+                icon: 'none',
+                title: this.title1,
+                duration: 2000,
+              });
+            } else {
+              this.title2 = err.data.errors[0].detail;
+              uni.showToast({
+                icon: 'none',
+                title: this.title2,
+                duration: 2000,
+              });
+            }
           }
         });
     },

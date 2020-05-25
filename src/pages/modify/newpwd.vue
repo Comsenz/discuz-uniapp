@@ -43,8 +43,13 @@ export default {
       test: '',
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
+  onLoad() {
+    this.userid = this.usersid;
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     submission() {
@@ -87,6 +92,13 @@ export default {
               duration: 2000,
             });
           }
+          uni.navigateBack({
+            delta: 1,
+            success() {
+              const pages = getCurrentPages();
+              pages[2].onLoad();
+            },
+          });
         })
         .catch(err => {
           if (err.statusCode === 422) {

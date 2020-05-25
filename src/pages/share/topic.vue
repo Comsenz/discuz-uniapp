@@ -17,7 +17,7 @@
             :palette="template"
             @imgErr="imgErr"
             @imgOK="onImgOK"
-            width-pixels="500"
+            width-pixels="2080"
           />
         </view>
       </view>
@@ -31,12 +31,14 @@
 </template>
 
 <script>
-import Carda from '@/wxcomponents/card/cardtposter'; // 标题文字海报 41
+// import Carda from '@/wxcomponents/card/cardtposter'; // 标题文字海报 41
+import Cardk from '@/wxcomponents/card/cardtpostertwo'; // 标题文字海报 41
 import Cardb from '@/wxcomponents/card/cardaitu'; // 标题单图片文字海报 43
 import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报  164
 import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报 41
 import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
 import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
+// import Cardi from '@/wxcomponents/card/cardtext';
 import forums from '@/mixin/forums';
 
 export default {
@@ -68,6 +70,7 @@ export default {
       constyle: 0,
       paddingtop: 43,
       imgtop: 0,
+      jurisdiction: true,
     };
   },
   onLoad(arr) {
@@ -105,7 +108,7 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.recoimg = data.avatarUrl || '/static/noavatar.gif';
+        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
       });
     },
     // 获取帖子内容信息
@@ -156,7 +159,7 @@ export default {
         imgtop: this.imgtop,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
         recomment: this.i18n.t('share.recomment'),
-        goddessvideo: this.i18n.t('share.goddessvideo'),
+        goddessvideo: this.attachmentsType,
         comefrom: this.i18n.t('share.comefrom'), // 来自
         stay: this.i18n.t('share.stay'), // 在
         published: this.i18n.t('share.published'),
@@ -177,7 +180,7 @@ export default {
         } else if (this.contentImg.length === 0 && this.content) {
           this.constyle = 1083;
           this.paddingtop = 41;
-          this.template = new Carda().palette(obj);
+          this.template = new Cardk().palette(obj);
           // 视频贴
         } else if (this.postyTepy === 2) {
           this.constyle = 1100;
@@ -207,12 +210,14 @@ export default {
         } else {
           this.constyle = 1082;
           this.paddingtop = 46;
+          // this.template = new Cardh().palette(obj);
           this.template = new Cardh().palette(obj);
         }
       } else {
         this.constyle = 1082;
         this.paddingtop = 46;
-        this.template = new Cardh().palette();
+        // this.template = new Cardh().palette();
+        this.template = new Cardh().palette(obj);
       }
     },
     onImgOK(e) {
@@ -227,30 +232,111 @@ export default {
         showCancel: false,
       });
     },
+    openseting() {
+      uni.openSetting({
+        success(res) {
+          console.log(res);
+        },
+      });
+    },
     fun() {
-      const imgSrc = this.imagePath;
       const _this = this;
+      if (!this.jurisdiction) {
+        uni.openSetting({
+          success(res) {
+            console.log(res);
+            _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+          },
+        });
+      }
+      // uni.showModal({
+      //   title: '提示',
+      //   content: '确定保存到相册吗',
+      //   success(res) {
+      //     if (res.confirm) {
+      //       uni.downloadFile({
+      //         url: _this.imagePath, // 图片地址
+      //         success(esc) {
+      //           if (res.statusCode === 200) {
+      //             uni.saveImageToPhotosAlbum({
+      //               filePath: esc.tempFilePath,
+      //               success() {
+      //                 uni.showToast({
+      //                   title: '保存成功',
+      //                   icon: 'none',
+      //                 });
+      //               },
+      //               fail() {
+      //                 uni.showToast({
+      //                   title: '保存失败',
+      //                   icon: 'none',
+      //                 });
+      //               },
+      //             });
+      //           }
+      //         },
+      //       });
+      //     }
+      //   },
+      // });
+      // uni.downloadFile({
+      //   url: _this.imagePath,
+      //   success(res) {
       uni.saveImageToPhotosAlbum({
-        filePath: imgSrc,
-        success(data) {
-          if (data) {
-            uni.showToast({
-              icon: 'none',
-              title: _this.i18n.t('share.successfully'),
-              duration: 2000,
-            });
-          }
+        filePath: _this.imagePath,
+        success() {
+          console.log('save success');
         },
         fail(err) {
-          if (err) {
-            uni.showToast({
-              icon: 'none',
-              title: _this.i18n.t('share.savefailed'),
-              duration: 2000,
-            });
+          if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
+            _this.jurisdiction = false;
           }
         },
       });
+      //   },
+      // });
+
+      // const _this = this;
+      // if (!this.jurisdiction) {
+      //   uni.openSetting({
+      //     success(res) {
+      //       _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+      //     },
+      //   });
+      // }
+      // uni.saveImageToPhotosAlbum({
+      //   filePath: imgSrc,
+      //   success() {
+      //     uni.showToast({
+      //       icon: 'none',
+      //       title: _this.i18n.t('share.successfully'),
+      //       duration: 2000,
+      //     });
+      //   },
+      //   fail(err) {
+      //     console.log(err);
+      //     if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
+      //       console.log(1);
+      //       uni.authorize({
+      //         scope: 'scope.writePhotosAlbum',
+      //         success() {
+      //           uni.getLocation();
+      //         },
+      //       });
+      //       uni.openSetting({
+      //         success(res) {
+      //           console.log(res);
+      //           _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+      //         },
+      //       });
+      //     }
+      //     uni.showToast({
+      //       icon: 'none',
+      //       title: _this.i18n.t('share.savefailed'),
+      //       duration: 2000,
+      //     });
+      //   },
+      // });
     },
     previewImage() {
       const currimg = this.imagePath; // 这里获取到的是一张本地的图片

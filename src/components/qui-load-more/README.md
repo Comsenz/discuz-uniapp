@@ -18,7 +18,7 @@
 | iconType | 指定图标样式[snow|circle|auto] 指定图标样式 | String | 根据手机系统自动 |
 | color | 图标和文字颜色 | String| #aaa |
 | contentText | 各状态文字说明 | String| 空 |
-
+| showIcon | 是否显示 loading 图标 | Boolean| true |
 
 ### 事件说明
 

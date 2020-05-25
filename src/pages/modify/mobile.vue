@@ -6,7 +6,7 @@
         <view class="modify-phon-test">
           {{ i18n.t('modify.phonbound') }}
         </view>
-        <view :class="userphon ? 'modify-phon-num' : 'modify-phon-num1'">
+        <view :class="userphon ? 'modify-phon-sun' : 'modify-phon-sun1'">
           {{ userphon ? userphon : i18n.t('modify.phonnumberempty') }}
         </view>
         <button class="modify-phon-send" v-if="sun" @click="btnButton" :disabled="noclick">
@@ -27,6 +27,7 @@
           :text="test"
           :show="inshow"
           :isiphonex="inisIphone"
+          ref="quiinput"
         ></qui-input-code>
       </view>
       <view class="modify-button">
@@ -61,11 +62,17 @@ export default {
       inshow: false,
       inisIphone: false,
       noclick: false,
+      detail: '',
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
+  onLoad() {
+    this.userid = this.usersid;
     this.senduser();
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     fourse() {
@@ -175,6 +182,7 @@ export default {
             this.test =
               this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.judge = true;
+            this.empty();
             if (this.num < 0) {
               this.test = this.i18n.t('modify.lateron');
             }
@@ -183,6 +191,10 @@ export default {
     },
     toggleBox() {
       this.inshow = false;
+    },
+    empty() {
+      const empty = this.$refs.quiinput;
+      empty.deleat();
     },
   },
 };
@@ -200,7 +212,6 @@ export default {
 }
 .modify-phon {
   display: flex;
-  width: 710rpx;
   height: 100rpx;
   justify-content: space-between;
   margin-left: 40rpx;
@@ -211,17 +222,16 @@ export default {
   font-weight: 400;
   line-height: 100rpx;
   color: --color(--qui-FC-777);
-  opacity: 1;
 }
-.modify-phon-num {
-  margin: 0 0 0 109rpx;
+.modify-phon-sun {
+  margin-left: 90rpx;
   font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
   color: --color(--qui-FC-00);
   opacity: 1;
 }
-.modify-phon-num1 {
+.modify-phon-sun1 {
   font-size: $fg-f28;
   font-weight: 400;
   line-height: 100rpx;

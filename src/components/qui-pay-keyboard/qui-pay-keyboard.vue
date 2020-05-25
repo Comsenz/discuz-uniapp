@@ -6,23 +6,29 @@
     <view :class="['content', show ? '' : 'contenthide']">
       <view class="title">
         <view class="close"></view>
-        <view class="center">{{ p.passwordTip }}</view>
-        <view class="close" @click="close()"><image src="@/static/close.png" /></view>
+        <view class="center">{{ p.payNow }}</view>
+        <qui-icon
+          name="icon-close"
+          size="40"
+          color="#aaa"
+          class="icon-close"
+          @click="close()"
+        ></qui-icon>
       </view>
       <view class="pay-money">
-        <view>{{ p.sumOfMoney }}</view>
         <view class="money">
           ￥
           <text>{{ money }}</text>
         </view>
       </view>
       <view class="pay-way">
-        <view>支付方式</view>
+        <view>{{ p.payType }}</view>
         <view class="pay-img">
-          <image src="@/static/yue.png" />
-          {{ p.balance }}
+          <qui-icon name="icon-walletPay" size="40" color="#1878F3" class="icon-pay"></qui-icon>
+          {{ p.walletPay }}
         </view>
       </view>
+      <view class="pay-password">{{ p.payPassword }}</view>
       <view :class="['code', show ? '' : 'visible']">
         <view class="code-box">
           <block v-for="(item, index) in 6" :key="index">
@@ -103,6 +109,9 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .number-input {
   display: none;
 }
@@ -120,21 +129,22 @@ export default {
 }
 .content {
   position: fixed;
-  top: 35%;
-  left: 50%;
+  top: 15%;
+  left: 40rpx;
   z-index: 9;
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  flex-direction: column;
   justify-content: center;
-  width: 588rpx;
-  height: 570rpx;
-  margin-top: -285rpx;
-  margin-left: -294rpx;
-  background: #fff;
-  border-radius: 15rpx;
+  width: 670rpx;
+  height: 610rpx;
+  padding: 40rpx;
+  margin-top: 0;
+  margin-left: 0;
+  background: --color(--qui-BG-FFF);
+  border-radius: 14rpx;
   opacity: 1;
   visibility: visible;
+  box-sizing: border-box;
   transition: all 0.3s ease;
 }
 .contenthide {
@@ -155,9 +165,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 560rpx;
-  height: 80rpx;
-  font-size: 32rpx;
+  padding: 0 0 24rpx;
+  font-size: 28rpx;
+  line-height: 37rpx;
 }
 .center {
   font-size: 32rpx;
@@ -167,17 +177,11 @@ export default {
   width: 50rpx;
   height: 50rpx;
 }
-// image {
-//   width: 100%;
-//   height: 100%;
-// }
 .pay-money {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  width: 525rpx;
-  height: 240rpx;
-  border-bottom: 1rpx solid #ebebeb;
+  height: 160rpx;
 }
 .pay-money view {
   display: flex;
@@ -190,10 +194,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 520rpx;
-  height: 85rpx;
-  font-size: 28rpx;
-  color: #8a8a8a;
+  padding-bottom: 40rpx;
+  font-size: 34rpx;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
+}
+.pay-password {
+  font-size: 34rpx;
+  line-height: 80rpx;
+  text-align: left;
 }
 .money {
   margin-bottom: 50rpx;
@@ -208,12 +216,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #333;
 }
-.pay-img image {
-  width: 35rpx;
-  height: 35rpx;
-  margin-right: 10rpx;
+.icon-pay {
+  margin-right: 20rpx;
 }
 .code {
   display: flex;
@@ -229,18 +234,18 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border: 1px solid #d0d0d0;
+  border: 1px solid --color(--qui-BOR-D5);
 }
 .code-box-item {
-  width: 86rpx;
-  height: 86rpx;
+  width: 98rpx;
+  height: 96rpx;
   font-size: 40rpx;
-  line-height: 75rpx;
+  line-height: 96rpx;
   text-align: center;
-  background: #fff;
+  background: --color(--qui-BG-FFF);
 }
 .code-box-item:not(:last-child) {
-  border-right: 1px solid #d0d0d0;
+  border-right: 1px solid --color(--qui-BOR-D5);
 }
 .keyboard {
   position: fixed;
@@ -251,7 +256,7 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   width: 100%;
-  background: #ebebeb;
+  background: --color(--qui-BG-IT);
   transition: all 0.2s ease-in 0.2s;
 }
 .active {

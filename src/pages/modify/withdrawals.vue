@@ -48,10 +48,9 @@
             :border="false"
           >
             <view class="cash-content-name cash-content-actual">
-              <view
-                :class="length ? 'cash-content-ellipsis2' : 'cash-content-ellipsis'"
-                v-text="contint"
-              ></view>
+              <view class="cash-content-ellipsis2">
+                {{ contint }}
+              </view>
               <view class="cash-content-proced">
                 {{
                   i18n.t('modify.servicechaege') +
@@ -131,7 +130,7 @@ export default {
       sun: true,
       phon: true,
       length: false,
-      contint: '-.-',
+      contint: '',
       procedures: 0,
       inshow: false,
       inisIphone: false,
@@ -139,15 +138,18 @@ export default {
       casherro: false,
       disabtype: false,
       percentage: 0,
+      cost: 0,
     };
   },
   onLoad() {
     this.userid = this.usersid;
     this.setmydata();
     this.$nextTick(() => {
-      const percennumber = this.forums.set_site.site_master_scale || 0;
-      this.percentage = (percennumber / 10) * 100;
+      this.cost = this.forums.set_cash.cash_rate;
+      this.percentage = this.forums.set_cash.cash_rate * 100;
     });
+    const pages = getCurrentPages();
+    console.log(pages);
   },
   computed: {
     forums() {
@@ -180,14 +182,14 @@ export default {
     settlement() {
       if (this.cashmany.length > 0) {
         this.length = true;
-        const number = this.cashmany - this.cashmany * this.percentage;
+        const number = this.cashmany - this.cashmany * this.cost;
         this.contint = `¥${number.toFixed(2)}`;
-        const casnumber = this.cashmany * this.percentage;
+        const casnumber = this.cashmany * this.cost;
         this.procedures = casnumber.toFixed(2);
       } else if (this.cashmany.length <= 0) {
-        this.length = false;
-        this.contint = '-.-';
-        const casnumber = this.cashmany * this.percentage;
+        // this.length = false;
+        this.contint = '';
+        const casnumber = this.cashmany * this.cost;
         this.procedures = casnumber.toFixed(2);
       }
     },
@@ -300,6 +302,13 @@ export default {
             this.setmydata();
             this.sun = true;
             this.second = 60;
+            uni.redirectTo({
+              url: '/pages/my/wallet',
+              success() {
+                const pages = getCurrentPages();
+                pages[1].onLoad();
+              },
+            });
           }
         })
         .catch(err => {
@@ -393,7 +402,7 @@ export default {
   color: --color(--qui-FC-777);
 }
 .cash-phon-num {
-  margin: 0 0 0 165rpx;
+  margin: 0 0 0 150rpx;
   font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;

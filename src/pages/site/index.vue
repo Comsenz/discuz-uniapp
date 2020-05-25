@@ -1,45 +1,58 @@
 <template>
   <qui-page class="site">
     <qui-header
-      :head-img="siteInfo.set_site.site_logo || '/static/logo.png'"
+      head-img="/static/logo.png"
       :theme="theme"
       :theme-num="siteInfo.other.count_users"
       :post="post"
       :post-num="siteInfo.other.count_threads"
       :share="share"
-      :share-btn="shareBtn"
+      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
       @click="open"
     ></qui-header>
-    <uni-popup ref="popupContent" type="bottom">
+    <!-- 分享弹窗 -->
+    <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
           <button class="popup-share-button" open-type="share"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent()">
-                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
+              <view class="popup-share-box" @click="shareHead(index)">
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="46"
+                  :color="currentTheme === 'dark' ? '#aaa' : '#777'"
+                ></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
-        <!-- <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text> -->
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <!-- 站点信息 -->
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
-        title="站点介绍"
+        :title="i18n.t('manage.siteintroduction')"
         :addon="siteInfo.set_site.site_introduction"
       ></qui-cell-item>
-      <qui-cell-item title="创建时间" :addon="siteInfo.set_site.createdAt"></qui-cell-item>
       <qui-cell-item
-        title="站点模式"
-        :addon="siteInfo.set_site.site_mode === 'public' ? '公开模式' : '付费模式'"
+        :title="i18n.t('manage.creationtime')"
+        :addon="siteInfo.set_site.createdAt"
       ></qui-cell-item>
-      <qui-cell-item title="站长" slot-right>
+      <qui-cell-item
+        :title="i18n.t('manage.circlemode')"
+        :addon="
+          siteInfo.set_site.site_mode === 'public'
+            ? i18n.t('manage.publicmode')
+            : i18n.t('manage.paymentmode')
+        "
+      ></qui-cell-item>
+      <qui-cell-item :title="i18n.t('manage.circlemaster')" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
@@ -52,7 +65,7 @@
       </qui-cell-item>
       <navigator url="/pages/manage/users" hover-class="none">
         <qui-cell-item title="成员" slot-right arrow class="cell-item--auto">
-          <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
+          <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
             <image
               class="site-item__person-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
@@ -62,20 +75,28 @@
           </view>
         </qui-cell-item>
       </navigator>
-      <qui-cell-item title="我的角色" :addon="userInfo.groups[0].name"></qui-cell-item>
       <qui-cell-item
-        title="加入时间"
+        :title="i18n.t('manage.myRole')"
+        :addon="userInfo.groups[0].name"
+      ></qui-cell-item>
+      <qui-cell-item
+        :title="i18n.t('manage.joinedTime')"
         :addon="userInfo.joinedTime"
         v-if="siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>
       <qui-cell-item
-        title="有效期至"
+        :title="i18n.t('manage.periodvalidity')"
         :addon="userInfo.expiredTime"
         v-if="siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>
-      <qui-cell-item class="cell-item--auto" title="我的权限" slot-right>
-        <view class="site-permission" v-for="(item, index) in permissionInfo" :key="index">
-          {{ item }}
+      <qui-cell-item
+        :title="i18n.t('site.myauthority')"
+        slot-right
+        :border="false"
+        class="cell-item--auto cell-item--left"
+      >
+        <view v-for="(item, index) in permissionInfo" :key="index" class="site-item__permission">
+          <text>{{ i18n.t(`permission.${item}`) }}</text>
         </view>
       </qui-cell-item>
     </view>
@@ -87,34 +108,45 @@ export default {
   components: {
     //
   },
-  data: () => {
+  data() {
     return {
       theme: '成员',
       post: '内容',
       share: '分享',
       shareBtn: 'icon-share1',
-      // bottomData: [
-      //   {
-      //     text: this.i18n.t('home.generatePoster'),
-      //     icon: 'icon-poster',
-      //     name: 'wx',
-      //   },
-      //   {
-      //     text: this.i18n.t('home.wxShare'),
-      //     icon: 'icon-wx-friends',
-      //     name: 'wx',
-      //   },
-      // ],
+      bottomData: [
+        {
+          text: this.i18n.t('home.generatePoster'),
+          icon: 'icon-poster',
+          name: 'wx',
+        },
+        {
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
+          name: 'wx',
+        },
+      ],
     };
   },
 
   onLoad() {
     this.getSiteInfo();
-    this.getUserInfo();
     this.getPermissions();
   },
 
   computed: {
+    // 获取当前登录的id
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', userId);
+      return parseInt(userId, 10);
+    },
+    // 获取当前的主题模式
+    currentTheme() {
+      const theme = this.$store.getters['theme/get']('currentTheme');
+      return theme;
+    },
+
     // 获取 站点信息
     siteInfo() {
       const info = this.$store.getters['jv/get']('forums/1');
@@ -127,7 +159,7 @@ export default {
 
     // 获取 用户信息
     userInfo() {
-      const info = this.$store.getters['jv/get']('users/1');
+      const info = this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
       if (info && info.joinedAt) {
         info.joinedTime = info.joinedAt.slice(0, 10);
       }
@@ -141,13 +173,13 @@ export default {
     // 获取 用户权限
     permissionInfo() {
       let permissionList = [];
-      const info = this.$store.getters['jv/get']('users/1');
+      const info = this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
       const list = this.$store.getters['jv/get']('groups');
       const keys = Object.keys(list);
       if (list && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           const value = list[keys[i]];
-          if (info && Object.keys(info.groups)) {
+          if (info && info.groups && Object.keys(info.groups)) {
             if (value._jv && info.groups.length > 0) {
               if (value._jv.id === info.groups[0]._jv.id) {
                 if (value.permission) {
@@ -177,43 +209,36 @@ export default {
         console.log('获取站点信息：', res);
       });
     },
-
-    // 调用 用户资料 接口
-    getUserInfo() {
-      const id = 1;
-      const params = {
-        include: ['groups'],
-      };
-      this.$store.dispatch('jv/get', [`users/${id}`, { params }]).then(res => {
-        console.log('获取用户资料：', res);
-      });
-    },
-
     // 调用 用户组权限 接口
     getPermissions() {
       const params = {
+        'filter[type]': 'invite',
         include: ['permission'],
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
         console.log('获取用户组权限：', res);
       });
     },
-
     // 首页头部分享按钮弹窗
-    handleClickShare() {
-      this.$refs.popupContent.open();
+    open() {
+      this.$refs.popupHead.open();
     },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupContent.close();
-    },
-    // 内容部分分享海报,跳到分享海报页面
-    shareContent(index) {
+    // 头部分享海报
+    shareHead(index) {
       if (index === 0) {
+        this.$store.dispatch('session/setAuth', this.$refs.auth);
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+          return;
+        }
         uni.navigateTo({
           url: '/pages/share/site',
         });
       }
+    },
+    // 取消按钮
+    cancel() {
+      this.$refs.popupHead.close();
     },
     // 点击头像到个人主页
     toProfile(userId) {
@@ -221,16 +246,10 @@ export default {
         url: `/pages/profile/index?userId=${userId}`,
       });
     },
-    // 跳支付页面
-    submit() {
-      // uni.navigateTo({
-      //   url: '/pages/topic/post',
-      // });
-    },
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 
@@ -238,24 +257,38 @@ export default {
   /deep/ .header {
     height: auto;
     margin-bottom: 30rpx;
-    border-bottom: 2rpx solid #ededed;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .header /deep/ .circleDet {
-    color: #777;
+    padding: 60rpx 40rpx 50rpx;
+    color: --color(--qui-FC-777);
+    opacity: 1;
   }
   .header .logo {
-    padding-top: 99rpx;
+    width: 295rpx;
+    height: 56rpx;
+    padding-top: 71rpx;
+  }
+  /deep/ .icon-share1 {
+    color: --color(--qui-FC-333);
+  }
+  /deep/ .cell-item__body__content-title {
+    width: 112rpx;
+    margin-right: 40rpx;
+    color: --color(--qui-FC-777);
   }
 }
 .header .circleDet .circleDet-num,
 .header .circleDet .circleDet-share {
-  color: #333;
+  color: --color(--qui-FC-333);
 }
+
 //下面部分样式
 .site-item {
   padding-left: 40rpx;
-  background: #fff;
-  border-bottom: 2rpx solid #ededed;
+  background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .site .cell-item {
   padding-right: 40rpx;
@@ -268,10 +301,10 @@ export default {
 .cell-item__body__content-title {
   width: 112rpx;
   margin-right: 40rpx;
-  color: #777;
+  color: --color(--qui-FC-777);
 }
 .site-item__pay .cell-item__body__right-text {
-  color: #fa5151;
+  color: --color(--qui-RED);
 }
 .site-item__person-avatar,
 .site-item__owner-avatar {
@@ -292,16 +325,20 @@ export default {
 }
 .site-item__person {
   display: inline-block;
+  vertical-align: middle;
 }
 .cell-item--left .cell-item__body__right {
   text-align: left;
 }
-.site-permission {
+.site-item__permission {
   display: inline-block;
-  padding: 13rpx 28rpx 12rpx;
-  margin: 0rpx 10rpx 10rpx 0rpx;
-  font-size: 26rpx;
-  border: 2rpx solid #ededed;
-  border-radius: 10px;
+  height: 60rpx;
+  padding: 0 28rpx;
+  margin-right: 10rpx;
+  margin-bottom: 10rpx;
+  font-size: $fg-f26;
+  line-height: 60rpx;
+  border: 2rpx solid --color(--qui-BOR-ED);
+  border-radius: 10rpx;
 }
 </style>

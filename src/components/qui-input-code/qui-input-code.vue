@@ -5,7 +5,7 @@
         type="number"
         class="hidden-ipt"
         maxlength="6"
-        :focus="isFocus"
+        :focus="isFocus || show"
         @input="enters"
         @blur="lose"
         v-model="iptValue"
@@ -18,6 +18,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 1 ? iptValue[0] : ''"
+        :focus="iptValue[0] ? false : true"
+        :cursor="1"
       />
       <input
         :class="
@@ -27,6 +29,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 2 ? iptValue[1] : ''"
+        :focus="iptValue[0] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -36,6 +40,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[2] : ''"
+        :focus="iptValue[1] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -45,6 +51,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 4 ? iptValue[3] : ''"
+        :focus="iptValue[2] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -54,6 +62,8 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 3 ? iptValue[4] : ''"
+        :focus="iptValue[3] ? true : false"
+        :cursor="1"
       />
       <input
         :class="
@@ -63,13 +73,15 @@
         disabled
         @tap="onFocus"
         :value="iptValue.length >= 4 ? iptValue[5] : ''"
+        :focus="iptValue[4] ? true : false"
+        :cursor="1"
       />
     </view>
     <view class="hidden-ipt-test" v-if="title">
       {{ text }}
     </view>
     <!-- 键盘 -->
-    <view :class="['keyboard', show ? '' : 'active', isiphonex ? 'isIphone' : '']">
+    <!-- <view :class="['keyboard', show ? '' : 'active', isiphonex ? 'isIphone' : '']">
       <block v-for="(item, index) in 9" :key="index">
         <view class="keyboard-item" @tap="key(index + 1)">{{ index + 1 }}</view>
       </block>
@@ -78,10 +90,9 @@
       <view class="keyboard-item delte" @tap="del()">
         <image class="img" src="@/static/del.png" mode="aspectFill" :lazy-load="true"></image>
       </view>
-    </view>
+    </view> -->
   </view>
 </template>
-
 <script>
 export default {
   props: {
@@ -90,7 +101,7 @@ export default {
       type: Boolean,
     },
     text: {
-      default: '输入错误',
+      default: '',
       type: String,
     },
     number: {
@@ -112,34 +123,32 @@ export default {
       isFocus: false,
       inpcont: '',
       num: 1,
-      // show:false,
-      // isiphonex:false,
     };
   },
   methods: {
     onFocus() {
       this.isFocus = true;
-      // this.show = true;
     },
     enters() {
       this.$emit('getdata', this.iptValue);
     },
+    // keyboard() {
+    //   this.isFocus = false;
+    // },
     lose() {
       this.isFocus = false;
     },
-    key(key) {
-      if (this.iptValue.length < 6) {
-        this.iptValue += key;
-        if (this.iptValue.length === 6) {
-          this.$emit('getdata', this.iptValue);
-        }
-      }
+    deleat() {
+      this.iptValue = '';
     },
-    del() {
-      if (this.iptValue.length > 0) {
-        this.iptValue = this.iptValue.substring(0, this.iptValue.length - 1);
-      }
-    },
+    // key(key) {
+    //   if (this.iptValue.length < 6) {
+    //     this.iptValue += key;
+    //     if (this.iptValue.length === 6) {
+    //       this.$emit('getdata', this.iptValue);
+    //     }
+    //   }
+    // },
   },
 };
 </script>
@@ -192,50 +201,50 @@ export default {
   color: --color(--qui-RED);
   opacity: 1;
 }
-.keyboard {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-  background: #ebebeb;
-  border-top: 2rpx solid #ebebeb;
-  transition: all 0.2s ease-in 0.2s;
-}
-.active {
-  bottom: -400rpx;
-}
-.keyboard-item {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 250rpx;
-  height: 99rpx;
-  font-size: 40rpx;
-  color: #333;
-  background: #fff;
-  border: 1rpx solid #ebebeb;
-  border-top: none;
-  border-left: none;
-  box-sizing: border-box;
-}
-.hide {
-  opacity: 0;
-}
-.delte {
-  background: none;
-  box-shadow: none;
-}
-.delte image {
-  width: 60rpx;
-  height: 60rpx;
-}
-.isIphone {
-  //   padding-bottom: 68rpx !important;
-  padding-bottom: 0;
-}
+// .keyboard {
+//   position: fixed;
+//   bottom: 0;
+//   left: 0;
+//   z-index: 2;
+//   display: flex;
+//   justify-content: center;
+//   flex-wrap: wrap;
+//   width: 100%;
+//   background: #ebebeb;
+//   border-top: 2rpx solid #ebebeb;
+//   transition: all 0.2s ease-in 0.2s;
+// }
+// .active {
+//   bottom: -400rpx;
+// }
+// .keyboard-item {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+//   width: 250rpx;
+//   height: 99rpx;
+//   font-size: 40rpx;
+//   color: #333;
+//   background: #fff;
+//   border: 1rpx solid #ebebeb;
+//   border-top: none;
+//   border-left: none;
+//   box-sizing: border-box;
+// }
+// .hide {
+//   opacity: 0;
+// }
+// .delte {
+//   background: none;
+//   box-shadow: none;
+// }
+// .delte image {
+//   width: 60rpx;
+//   height: 60rpx;
+// }
+// .isIphone {
+//   //   padding-bottom: 68rpx !important;
+//   padding-bottom: 0;
+// }
 </style>

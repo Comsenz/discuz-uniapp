@@ -45,7 +45,7 @@
         <qui-cell-item
           :title="item.username"
           arrow
-          :border="index == 2 ? false : true"
+          :border="index == userList.length - 1 ? false : true"
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
@@ -68,7 +68,7 @@
       <view
         v-for="(item, index) in themeList"
         :key="index"
-        :class="index == 1 ? 'noBorder' : ''"
+        :class="index == themeList.length - 1 ? 'noBorder' : ''"
         class="search-item__content"
       >
         <qui-content
@@ -79,12 +79,14 @@
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
+          :tags="[item.category]"
           :media-url="item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
+          @headClick="toProfile(item.user._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
@@ -143,7 +145,14 @@ export default {
     // 获取主题列表
     getThemeList(key) {
       const params = {
-        include: ['user', 'firstPost', 'threadVideo'],
+        include: [
+          'user',
+          'user.groups',
+          'firstPost',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
         'filter[isDeleted]': 'no',
         'page[number]': this.pageNum,
         'page[limit]': 2,
@@ -259,5 +268,8 @@ export default {
   position: absolute;
   top: 40rpx;
   right: 40rpx;
+}
+/deep/ .themeCount .addFine {
+  display: none;
 }
 </style>

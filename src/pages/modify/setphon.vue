@@ -6,7 +6,15 @@
           {{ i18n.t('modify.newphonnumber') }}
         </view>
         <view class="new-phon-number">
-          <input class="new-phon-num" type="text" v-model="newphon" @input="changeinput" />
+          <input
+            class="new-phon-num"
+            type="number"
+            v-model="newphon"
+            :focus="true"
+            :cursor="1"
+            @input="changeinput"
+            maxlength="11"
+          />
           <button class="new-phon-send" v-if="sun" @click="btnButton" :disabled="disabtype">
             {{ i18n.t('modify.sendverificode') }}
           </button>
@@ -29,11 +37,12 @@
           :text="test"
           :show="inshow"
           :isiphonex="inisIphone"
+          ref="quiinput"
         ></qui-input-code>
       </view>
       <view class="new-button">
         <qui-button type="primary" size="large" @click="dingphon">
-          {{ i18n.t('modify.nextsetp') }}
+          {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
     </view>
@@ -69,6 +78,8 @@ export default {
   },
   onLoad(arr) {
     this.typebind = arr.type || 'bind';
+    const pages = getCurrentPages();
+    console.log(pages);
   },
   methods: {
     changeinput() {
@@ -139,6 +150,13 @@ export default {
         .then(res => {
           this.num -= 1;
           this.second = res._jv.json.data.attributes.interval;
+          uni.redirectTo({
+            url: '/pages/my/profile',
+            success() {
+              const pages = getCurrentPages();
+              pages[2].onLoad();
+            },
+          });
         })
         .catch(err => {
           if (err.statusCode === 500) {
@@ -148,6 +166,7 @@ export default {
               },
             ] = err.data.errors;
             this.formeerro = sun;
+            this.sun = true;
             uni.showToast({
               icon: this.icon,
               title: sun,
@@ -186,9 +205,23 @@ export default {
               title: this.i18n.t('modify.phontitle'),
               duration: 1000,
             });
-            uni.navigateBack({
-              delta: 1,
-            });
+            if (this.typebind === 'bind') {
+              uni.navigateBack({
+                delta: 1,
+                success() {
+                  const pages = getCurrentPages();
+                  pages[2].onLoad();
+                },
+              });
+            } else {
+              uni.navigateBack({
+                delta: 2,
+                success() {
+                  const pages = getCurrentPages();
+                  pages[2].onLoad();
+                },
+              });
+            }
           }
         })
         .catch(err => {
@@ -222,14 +255,20 @@ export default {
             this.test =
               this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
             this.tit = true;
+            this.empty();
             if (this.num < 0) {
               this.test = this.i18n.t('modify.lateron');
+              this.empty();
             }
           }
         });
     },
     toggleBox() {
       this.inshow = false;
+    },
+    empty() {
+      const empty = this.$refs.quiinput;
+      empty.deleat();
     },
   },
 };

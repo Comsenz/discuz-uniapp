@@ -31,13 +31,13 @@
       </view>
       <view>
         <view class="my-items">
-          <navigator url="./profile" hover-class="none">
+          <navigator url="/pages/my/profile" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="./wallet" hover-class="none">
+          <navigator url="/pages/my/wallet" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="./favorite" hover-class="none">
+          <navigator url="/pages/my/favorite" hover-class="none">
             <qui-cell-item
               :title="i18n.t('profile.myfavorite')"
               arrow
@@ -50,7 +50,11 @@
             <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
           </navigator>
           <navigator url="/pages/site/search" hover-class="none">
-            <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
+            <qui-cell-item
+              :title="i18n.t('profile.search')"
+              arrow
+              :class="userInfo.groupsName == '管理员' ? '' : 'no-border'"
+            ></qui-cell-item>
           </navigator>
           <navigator
             v-if="userInfo.groupsName == '管理员'"
@@ -89,7 +93,7 @@ export default {
       ],
       current: 0,
       checked: false,
-      userId: uni.getStorageSync('user_id'),
+      userId: this.$store.getters['session/get']('userId'),
       // 图片裁剪、缩放的模式
       modeVal: {
         type: String,
@@ -141,6 +145,9 @@ export default {
 /deep/ .cell-item {
   padding-right: 40rpx;
 }
+/deep/ .no-border .cell-item {
+  border: 0;
+}
 .my-info {
   padding: 40rpx;
   padding-top: 30rpx;
@@ -155,6 +162,7 @@ export default {
 .my-info__introduction {
   margin-top: 40rpx;
   color: --color(--qui-FC-333);
+  word-break: break-all;
   transition: $switch-theme-time;
 }
 .my-info__box__detail {

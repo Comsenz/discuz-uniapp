@@ -16,7 +16,7 @@
                 type="text"
                 class="search-box__content-input"
                 placeholder-class="input-placeholder"
-                placeholder="搜索成员"
+                :placeholder="i18n.t('manage.searchMembers')"
                 @input="searchInput"
                 :value="searchText"
               />
@@ -25,43 +25,15 @@
               </view>
             </view>
             <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
-              <text>取消</text>
+              <text>{{ i18n.t('home.cancel') }}</text>
             </view>
           </view>
         </view>
       </view>
-      <!-- <view class="">
-      <qui-search
-        class="mSearch-input-box"
-        :mode="2"
-        button="inside"
-        :placeholder="defaultKeyword"
-        @search="doSearch(false)"
-        @input="inputChange"
-        @confirm="doSearch(false)"
-        v-model="keyword"
-      ></qui-search>
-    </view> -->
-      <!-- 搜索内容列表 -->
-      <!-- <view class="search-keyword">
-      <scroll-view class="keyword-list-box" v-show="isShowKeywordList" scroll-y>
-        <block v-for="(row, index) in keywordList" :key="index">
-          <view class="keyword-entry" hover-class="keyword-entry-tap">
-            <view class="keyword-text" @tap.stop="doSearch(keywordList[index].keyword)">
-              <rich-text :nodes="row.htmlStr"></rich-text>
-            </view> -->
-      <!-- <view class="keyword-img" @tap.stop="setKeyword(keywordList[index].keyword)">
-              <image src="/static/HM-search/back.png"></image>
-            </view> -->
-      <!-- </view>
-        </block>
-      </scroll-view>
-    </view> -->
-
       <!-- 成员列表 -->
       <view class="manage-users-wrap">
         <view v-if="userList && Object.keys(userList).length > 0">
-          <view v-for="user in userList" :key="user.id">
+          <view class="manage-users-wrap-list" v-for="user in userList" :key="user.id">
             <qui-avatar-cell
               center
               right-color="#aaa"
@@ -69,10 +41,12 @@
               :title="user.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
               :icon="user.avatarUrl || '/static/noavatar.gif'"
+              @click="getNameId(user)"
             ></qui-avatar-cell>
           </view>
+          <qui-load-more :status="loadingType"></qui-load-more>
         </view>
-        <qui-no-data tips="暂无内容" v-else></qui-no-data>
+        <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
       </view>
     </view>
   </qui-page>
@@ -85,6 +59,9 @@ export default {
   data() {
     return {
       searchText: '', // 输入的用户名
+      loadingType: 'more', // 上拉加载状态
+      pageSize: 20, // 每页20条数据
+      pageNum: 1, // 当前页数
     };
   },
 
@@ -101,84 +78,60 @@ export default {
   },
 
   methods: {
+    // 跳转到个人主页
+    getNameId(key) {
+      console.log('key', key);
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${this.userList[key].id}`,
+      });
+    },
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
-      this.searchUser(e.target.value);
+      if (e && e.target) {
+        this.searchUser(e.target.value);
+      }
     }, 800),
-
     clearSearch() {
       this.searchInput();
+      this.searchUser();
     },
-
     // 调用 搜索 接口
     searchUser(val = '') {
       this.searchText = val;
       const params = {
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[username]': `*${this.searchText}*`,
       };
       if (this.searchText === '') {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-        this.$store.dispatch('jv/get', ['users', {}]);
+        this.$store.dispatch('jv/get', ['users', {}]).then(res => {
+          console.log('搜索res', res);
+          if (res) {
+            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          }
+        });
       } else {
         this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-        this.$store.dispatch('jv/get', ['users', { params }]);
+        this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+          console.log('搜索res', res);
+          if (res) {
+            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          }
+        });
       }
-    },
-
-    // 执行搜索
-    doSearch(keyword) {
-      this.keyword = keyword === false ? this.keyword : keyword;
-      this.saveKeyword(keyword); // 保存为历史
-      uni.showToast({
-        title: this.keyword,
-        icon: 'none',
-        duration: 2000,
-      });
-    },
-    // 监听输入
-    inputChange(event) {
-      // 兼容引入组件时传入参数情况
-      const keyword = event.detail ? event.detail.value : event;
-      if (!keyword) {
-        this.keywordList = [];
-        this.isShowKeywordList = false;
-        return;
-      }
-      this.isShowKeywordList = true;
-      // 以下示例截取淘宝的关键字，请替换成你的接口
-      uni.request({
-        url: `https://suggest.taobao.com/sug?code=utf-8&q=${keyword}`, // 仅为示例
-        success: res => {
-          this.keywordList = [];
-          this.keywordList = this.drawCorrelativeKeyword(res.data.result, keyword);
-        },
-      });
-    },
-    // 高亮关键字
-    drawCorrelativeKeyword(keywords, keyword) {
-      const len = keywords.length;
-      const keywordArr = [];
-      for (let i = 0; i < len; i += 1) {
-        const row = keywords[i];
-        // 定义高亮#9f9f9f
-        let html = row[0].replace(keyword, `<span style='color: #9f9f9f;'>${keyword}</span>`);
-        html = `<div>${html}</div>`;
-        const tmpObj = {
-          keyword: row[0],
-          htmlStr: html,
-        };
-        keywordArr.push(tmpObj);
-      }
-      return keywordArr;
     },
   },
 };
 </script>
 
 <style lang="scss" scope>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
+
 .manage-users {
   min-height: 100vh;
-  background-color: #f9fafc;
+  background-color: --color(--qui-BG-1);
 
   &-search {
     .search {
@@ -189,35 +142,16 @@ export default {
     }
 
     .search-box {
-      background-color: #fff;
+      background-color: --color(--qui-BG-2);
     }
   }
 
   &-wrap {
     margin-top: 130rpx;
-  }
-}
 
-.search-keyword {
-  width: 100%;
-  background-color: rgb(242, 242, 242);
-}
-.keyword-list-box {
-  height: calc(100vh - 110rpx);
-  padding-top: 10rpx;
-  background-color: #fff;
-  border-radius: 20rpx 20rpx 0 0;
-}
-.keyword-entry-tap {
-  background-color: #eee;
-}
-.keyword-entry .keyword-text,
-.keyword-entry .keyword-img {
-  display: flex;
-  height: 80rpx;
-  align-items: center;
-}
-.keyword-entry .keyword-text {
-  width: 90%;
+    &-list {
+      background: --color(--qui-BG-2);
+    }
+  }
 }
 </style>

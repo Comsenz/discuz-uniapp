@@ -1,8 +1,11 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable class-methods-use-this */
 export default class LastMayday {
-  palette(obj) { 
+  palette(obj) {
     return (
+      {
+        "width": "700px",
+        "height": "1082px",
+        "background": "#ffffff",
+        "views": [
           {
             "width": "700px",
             "height": "1082px",
@@ -31,7 +34,7 @@ export default class LastMayday {
                   "color": "#000000",
                   "background": "rgba(0,0,0,0)",
                   "width": `${obj.namewidth}px`,
-                  "height": "40.04px",
+                  "height": "31.639999999999997px",
                   "top": "41px",
                   "left": "140px",
                   "rotate": "0",
@@ -43,7 +46,7 @@ export default class LastMayday {
                   "fontSize": "28px",
                   "fontWeight": "bold",
                   "maxLines": "2",
-                  "lineHeight": "40.40400000000001px",
+                  "lineHeight": "31.080000000000002px",
                   "textStyle": "fill",
                   "textDecoration": "none",
                   "fontFamily": "",
@@ -69,7 +72,7 @@ export default class LastMayday {
                   "fontSize": "28px",
                   "fontWeight": "400",
                   "maxLines": "2",
-                  "lineHeight": "40.40400000000001px",
+                  "lineHeight": "31.080000000000002px",
                   "textStyle": "fill",
                   "textDecoration": "none",
                   "fontFamily": "",
@@ -82,8 +85,8 @@ export default class LastMayday {
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",
-                  "width": "520px",
-                  "height": "34.32px",
+                  "width": "555px",
+                  "height": "27.119999999999997px",
                   "top": "88px",
                   "left": "140px",
                   "rotate": "0",
@@ -95,7 +98,7 @@ export default class LastMayday {
                   "fontSize": "24px",
                   "fontWeight": "400",
                   "maxLines": "2",
-                  "lineHeight": "34.632000000000005px",
+                  "lineHeight": "26.64px",
                   "textStyle": "fill",
                   "textDecoration": "none",
                   "fontFamily": "",
@@ -139,7 +142,7 @@ export default class LastMayday {
                   "textStyle": "fill",
                   "textDecoration": "none",
                   "fontFamily": "",
-                  "textAlign": "left"
+                  "textAlign": "center"
                 }
               },
               {
@@ -278,6 +281,8 @@ export default class LastMayday {
               }
             ]
           }
+        ]
+      }
     )
   }
 }

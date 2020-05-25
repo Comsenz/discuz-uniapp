@@ -27,12 +27,14 @@
           :number="types"
         ></qui-input-code>
       </view>
+      <button @click="btn">按钮</button>
     </view>
   </qui-page>
 </template>
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import { mapState } from 'vuex';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
@@ -51,14 +53,30 @@ export default {
       inshow: true,
       inisIphone: false,
       usertokenid: '',
+      currs: '',
     };
   },
   onLoad(arr) {
-    this.userid = Number(arr.id);
+    this.userid = this.usersid;
     this.usertokenid = arr.token || '';
-    console.log(this.usertokenid);
+    const pages = getCurrentPages();
+    console.log(pages);
+    if (pages.length) {
+      this.currs = pages[pages.length - 2].route;
+    }
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
+    ...mapState({
+      setRouter: state => state.pay.model,
+    }),
   },
   methods: {
+    btn() {
+      console.log(this.setRouter, '@~~~~');
+    },
     fourse() {
       this.inshow = true;
     },
@@ -95,8 +113,22 @@ export default {
               uni.navigateBack({
                 delta: 2,
               });
+            } else if (this.currs === 'pages/topic/index') {
+              uni.redirectTo({
+                url: '/pages/topic/index',
+                success() {
+                  const pages = getCurrentPages();
+                  pages[2].onLoad();
+                },
+              });
             } else {
-              uni.navigateBack();
+              uni.navigateBack({
+                delta: 1,
+                success() {
+                  const pages = getCurrentPages();
+                  pages[2].onLoad(); // 执行前一个页面的onLoad方法
+                },
+              });
             }
           }
         })

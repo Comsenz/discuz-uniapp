@@ -113,7 +113,7 @@ export default {
 }
 .cell-item.border {
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  transition: $switch-theme-time;
+  // transition: $switch-theme-time;
 }
 
 .cell-item__body {

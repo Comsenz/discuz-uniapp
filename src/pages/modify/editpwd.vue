@@ -66,10 +66,18 @@ export default {
       styledisbla: 'primary',
       disab: false,
       icon: 'none',
+      currs: '',
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
+  onLoad() {
+    this.userid = this.usersid;
+    const pages = getCurrentPages();
+    console.log(pages[2]);
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     submission() {
@@ -140,6 +148,13 @@ export default {
             uni.showToast({
               title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
+            });
+            uni.navigateBack({
+              delta: 1,
+              success() {
+                const pages = getCurrentPages();
+                pages[2].onLoad();
+              },
             });
           }
         })

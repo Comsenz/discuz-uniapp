@@ -24,6 +24,7 @@
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
+          :tags="[item.category]"
           :media-url="item.threadVideo.media_url"
           :is-great="item.firstPost.isLiked"
           :theme-like="item.firstPost.likeCount"
@@ -44,11 +45,11 @@
           "
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
-          @headClick="headClick(item._jv.id)"
+          @headClick="headClick(item.user._jv.id)"
           @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </view>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
@@ -57,7 +58,7 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent(index)">
-                <qui-icon class="content-image" :name="item.icon" size="36" color="#777"></qui-icon>
+                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
               </view>
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
@@ -82,7 +83,7 @@ export default {
   },
   data() {
     return {
-      loadingType: 'more',
+      loadingType: '',
       data: [],
       totalData: 0, // 总数
       pageSize: 20,
@@ -124,11 +125,23 @@ export default {
     },
     // 加载当前点赞数据
     loadlikes() {
+      this.loadingType = 'loading';
       const params = {
-        include: ['user', 'firstPost'],
+        include: [
+          'user',
+          'firstPost',
+          'user.groups',
+          'lastThreePosts',
+          'lastThreePosts.user',
+          'firstPost.likedUsers',
+          'rewardedUsers',
+          'lastThreePosts.replyUser',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        // 'filter[user_id]': this.userId,
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['favorites', { params }]))
@@ -218,5 +231,8 @@ export default {
 }
 .scroll-y {
   max-height: calc(100vh - 148rpx);
+}
+.addFine {
+  display: none;
 }
 </style>

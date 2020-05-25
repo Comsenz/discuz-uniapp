@@ -15,6 +15,9 @@
           <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
         </view>
       </view>
+      <view class="search-box__cancel" v-if="searchValue" @tap="clearSearch">
+        <text>{{ i18n.t('search.cancel') }}</text>
+      </view>
     </view>
     <scroll-view
       scroll-y="true"
@@ -32,16 +35,18 @@
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
+          :tags="[item.category]"
           :media-url="item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           @contentClick="contentClick(item._jv.id)"
+          @headClick="headClick(item.user._jv.id)"
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </scroll-view>
   </qui-page>
 </template>
@@ -51,7 +56,7 @@ export default {
   data() {
     return {
       searchValue: '',
-      loadingType: 'more',
+      loadingType: '',
       data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
@@ -67,13 +72,22 @@ export default {
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.data = [];
+        this.pageNum = 1;
         this.getThemeList(e.target.value);
       }, 250);
     },
     // 获取主题列表
     getThemeList(key, type) {
+      this.loadingType = 'loading';
       const params = {
-        include: ['user', 'firstPost', 'threadVideo'],
+        include: [
+          'user',
+          'user.groups',
+          'firstPost',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
         'filter[isDeleted]': 'no',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
@@ -84,7 +98,7 @@ export default {
           delete res._jv;
         }
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-        if (type && type === 'search') {
+        if (type && type === 'clear') {
           this.data = res;
         } else {
           this.data = [...this.data, ...res];
@@ -94,12 +108,18 @@ export default {
     clearSearch() {
       this.searchValue = '';
       this.pageNum = 1;
-      this.getThemeList('', 'search');
+      this.getThemeList('', 'clear');
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
+      });
+    },
+    // 点击头像调转到个人主页
+    headClick(id) {
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
       });
     },
     // 下拉加载
@@ -119,7 +139,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 
 .search-item {
-  margin-bottom: 30rpx;
+  padding-top: 15rpx;
   background-color: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
@@ -155,5 +175,8 @@ export default {
   position: absolute;
   top: 40rpx;
   right: 40rpx;
+}
+/deep/ .themeCount .addFine {
+  display: none;
 }
 </style>

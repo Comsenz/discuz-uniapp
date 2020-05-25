@@ -1,13 +1,25 @@
 <template>
   <qui-page class="profile">
     <view class="my-profile">
-      <navigator :url="`../modify/editusername?id=${userId}`" hover-class="none">
+      <!-- canEditUsername 是否允许修改用户名-->
+      <navigator
+        :url="`/pages/modify/editusername?id=${userId}`"
+        hover-class="none"
+        v-if="profile.canEditUsername"
+      >
         <qui-cell-item
           :title="i18n.t('profile.username')"
           arrow
           :addon="profile.username"
         ></qui-cell-item>
       </navigator>
+      <qui-cell-item
+        :title="i18n.t('profile.username')"
+        arrow
+        class="no-arrow"
+        v-if="!profile.canEditUsername"
+        :addon="profile.username"
+      ></qui-cell-item>
       <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow @tap="changeAvatar">
         <image
           class="my-profile__avatar"
@@ -18,27 +30,33 @@
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
-        :url="profile.mobile ? `../modify/mobile?id=${userId}` : `../modify/setphon?id=${userId}`"
+        :url="
+          profile.mobile
+            ? `/pages/modify/mobile?id=${userId}`
+            : `/pages/modify/setphon?id=${userId}`
+        "
         hover-class="none"
         v-if="forums.qcloud.qcloud_sms"
       >
         <qui-cell-item
           :title="i18n.t('profile.mobile')"
           arrow
-          :addon="profile.mobile"
+          :addon="profile.mobile ? profile.mobile : i18n.t('profile.bindingmobile')"
         ></qui-cell-item>
       </navigator>
       <!--没有密码，跳到“设置密码”页,反之跳到密码是修改页面，-->
       <navigator
         :url="
-          profile.hasPassword ? `../modify/editpwd?id=${userId}` : `../modify/newpwd?id=${userId}`
+          profile.hasPassword
+            ? `/pages/modify/editpwd?id=${userId}`
+            : `/pages/modify/newpwd?id=${userId}`
         "
         hover-class="none"
       >
         <qui-cell-item
           :title="i18n.t('profile.password')"
           arrow
-          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpaypassword')"
+          :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
       <qui-cell-item
@@ -50,18 +68,22 @@
       <qui-cell-item
         v-if="profile.realname && forums.qcloud.qcloud_faceid"
         :title="i18n.t('profile.certification')"
-        arrow
         :addon="profile.realname"
+        arrow
+        class="no-arrow"
       ></qui-cell-item>
-      <navigator :url="`../modify/realname?id=${userId}`" hover-class="none">
+      <navigator
+        :url="`/pages/modify/realname?id=${userId}`"
+        hover-class="none"
+        v-if="!profile.realname && forums.qcloud.qcloud_faceid"
+      >
         <qui-cell-item
-          v-if="!profile.realname && forums.qcloud.qcloud_faceid"
           :title="i18n.t('profile.certification')"
           arrow
           :addon="i18n.t('profile.tocertification')"
         ></qui-cell-item>
       </navigator>
-      <navigator :url="`../modify/signature?id=${userId}`" hover-class="none">
+      <navigator :url="`/pages/modify/signature?id=${userId}`" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.signature')"
           arrow
@@ -77,7 +99,8 @@
         async-clear
         ref="upload"
         name="avatar"
-        @change="uploadChange"
+        @uploadSuccess="uploadSuccess"
+        @uploadFail="uploadFail"
         @chooseSuccess="chooseSuccess"
       ></qui-uploader>
       <qui-toast ref="toast"></qui-toast>
@@ -101,15 +124,22 @@ export default {
       // 图片裁剪、缩放的模式
       modeVal: {
         type: String,
-        default: 'aspectFill',
+        default: 'widthFix',
       },
-      userId: uni.getStorageSync('user_id'), // 获取当前登陆用户的ID
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
     };
   },
   computed: {
     profile() {
       return this.$store.getters['jv/get'](`users/${this.userId}`);
     },
+  },
+  // 解决左上角返回数据不刷新情况
+  onShow() {
+    const params = {
+      include: 'groups,wechat',
+    };
+    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]);
   },
   onLoad() {
     const token = uni.getStorageSync('access_token');
@@ -121,11 +151,20 @@ export default {
     };
   },
   methods: {
-    uploadChange(e) {
+    uploadSuccess(res, fileList) {
       uni.hideLoading();
-      this.$refs.toast.show({ message: this.i18n.t('头像上传成功') });
-      const newAvatar = e[e.length - 1].data.attributes.avatarUrl;
-      this.profile.avatarUrl = newAvatar;
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        this.$refs.toast.show({ message: '头像上传成功' });
+        const newAvatar = fileList[fileList.length - 1].data.attributes.avatarUrl;
+        this.profile.avatarUrl = newAvatar;
+      } else {
+        const { code } = JSON.parse(res.data).errors[0];
+        if (code === 'upload_time_not_up') {
+          this.$refs.toast.show({ message: '上传头像频繁，一天仅允许上传一次头像' });
+        } else {
+          this.$refs.toast.show({ message: code });
+        }
+      }
     },
     changeAvatar() {
       this.$refs.upload.uploadClick();
@@ -156,23 +195,10 @@ export default {
     color: --color(--qui-FC-333);
   }
   /deep/ .qui-uploader-box {
-    // position: absolute;
-    // top: 140rpx;
-    // right: 0;
-    // display: inline;
-    // min-height: 100rpx;
-    // padding: 0;
     display: none;
-    .qui-uploader-box__add {
-      height: 100rpx;
-      background: transparent;
-    }
-    .icon-add {
-      display: none;
-    }
-    .qui-uploader-box__uploader-file {
-      display: none;
-    }
+  }
+  /deep/ .no-arrow .arrow {
+    visibility: hidden;
   }
 }
 

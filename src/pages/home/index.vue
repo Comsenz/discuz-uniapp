@@ -29,29 +29,6 @@
         :color="color"
         @click="open"
       ></qui-header>
-      <uni-popup ref="popupHead" type="bottom">
-        <view class="popup-share">
-          <view class="popup-share-content">
-            <button class="popup-share-button" open-type="share"></button>
-            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-              <view class="popup-share-content-image">
-                <view class="popup-share-box" @click="shareHead(index)">
-                  <qui-icon
-                    class="content-image"
-                    :name="item.icon"
-                    size="46"
-                    color="#777777"
-                  ></qui-icon>
-                </view>
-                <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
-              </view>
-              <text class="popup-share-content-text">{{ item.text }}</text>
-            </view>
-          </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-        </view>
-      </uni-popup>
       <view
         class="nav"
         id="navId"
@@ -130,6 +107,7 @@
           :theme-essence="item.isEssence"
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
+          :video-id="item.threadVideo._jv.id"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -146,11 +124,33 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
     </scroll-view>
-
+    <uni-popup ref="popupHead" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content">
+          <button class="popup-share-button" open-type="share" plain="true"></button>
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box" @click="shareHead(index)">
+                <qui-icon
+                  class="content-image"
+                  :name="item.icon"
+                  size="46"
+                  color="#777777"
+                ></qui-icon>
+              </view>
+              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+      </view>
+    </uni-popup>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
+          <button class="popup-share-button" open-type="share" plain="true"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent(index)">
@@ -180,6 +180,7 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -200,7 +201,7 @@ export default {
       filterSelected: { label: this.i18n.t('topic.whole'), value: '' }, // 筛选类型
       loadingType: 'more', // 上拉加载状态
       hasMore: false, // 是否有更多
-      pageSize: 10, // 每页10条数据
+      pageSize: 20, // 每页10条数据
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
@@ -238,27 +239,6 @@ export default {
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       isResetList: false, // 是否重置列表
       bottomData: [],
-      tabs: [
-        {
-          tabsName: this.i18n.t('home.tabsCircle'),
-          tabsIcon: 'icon-home',
-          id: 1,
-          url: '../home/index',
-        },
-        {
-          tabsName: this.i18n.t('home.tabsNews'),
-          tabsIcon: 'icon-message',
-          id: 2,
-          url: '../notice/index',
-        },
-        {
-          tabsName: this.i18n.t('home.tabsMy'),
-          tabsIcon: 'icon-mine',
-          id: 3,
-          url: '../my/index',
-        },
-      ],
-      postImg: '../assets.publish.svg',
       threadsStatusId: 0,
       categories: [],
     };
@@ -291,18 +271,20 @@ export default {
     query
       .select('.nav')
       .boundingClientRect(data => {
-        // console.log(`得到布局位置信息${JSON.stringify(data)}`);
-        // console.log(`节点离页面顶部的距离为${data.top}`);
         this.myScroll = data.top;
       })
       .exec();
   },
   methods: {
+    ...mapMutations({
+      setCategoryId: 'session/SET_CATEGORYID',
+      setCategoryIndex: 'session/SET_CATEGORYINDEX',
+    }),
     scroll(event) {
       // console.log(event, 'scroll');
-      if (this.checkoutTheme || this.isTop === 1) {
-        return;
-      }
+      // if (this.checkoutTheme || this.isTop === 1) {
+      //   return;
+      // }
       if (event.detail.scrollTop > 100) {
         this.navShow = true;
       } else {
@@ -320,7 +302,6 @@ export default {
         this.scrolled = 'affix';
       }
     },
-
     // 滑动到顶部
     toUpper() {
       if (this.isTop === 0) {
@@ -337,7 +318,8 @@ export default {
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
       this.currentIndex = dataInfo.index;
-
+      this.setCategoryId(this.categoryId);
+      this.setCategoryIndex(this.currentIndex);
       // 切换筛选框选中分类
       // eslint-disable-next-line
       this.filterList[0].data.map(item => {
@@ -347,7 +329,18 @@ export default {
       this.filterList[0].data[dataInfo.index].selected = true;
 
       this.loadThreadsSticky();
+      this.threads = [];
+      // this.scrollTopNum = 1;
+      // this.$nextTick(() => {
+      //   this.scrollTopNum = 0;
+      //   this.navShow = false;
+      // });
+      // this.scrollTopNum = this.myScroll + 1;
+      // this.$nextTick(() => {
+      //   this.scrollTopNum = this.myScroll;
+      // });
       await this.loadThreads();
+      this.navShow = false;
       this.checkoutTheme = false;
     },
     // 筛选分类里的搜索
@@ -427,6 +420,7 @@ export default {
     },
     // 筛选选中确定按钮
     confirm(e) {
+      // console.log(this.user, '重置');
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
@@ -575,7 +569,7 @@ export default {
           this.threads = [...this.threads, ...res];
         }
         this.isResetList = false;
-        // console.log(this.navShow, this.isTop, 'isTop navShow');
+        console.log(this.navShow, this.isTop, 'isTop navShow');
       });
     },
     // 内容部分点赞按钮点击事件
@@ -584,9 +578,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
-      if (!canLike) {
-        console.log('没有点赞权限');
-      }
+      // if (!canLike) {
+      //   console.log('没有点赞权限');
+      // }
       const params = {
         _jv: {
           type: 'posts',
@@ -603,7 +597,6 @@ export default {
         }
       });
     },
-
     // 上拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
@@ -611,7 +604,6 @@ export default {
       }
       this.pageNum += 1;
       this.loadThreads();
-      console.log(this.pageNum, '页码');
     },
   },
 };
@@ -680,7 +672,8 @@ export default {
     transition: $switch-theme-time;
   }
   &__count {
-    height: 35rpx;
+    width: 572rpx;
+    height: 100%;
     margin-top: 27rpx;
     margin-left: 21rpx;
     overflow: hidden;
@@ -739,7 +732,10 @@ export default {
 }
 .sticky__isSticky__text {
   display: inline-block;
+  width: 100%;
   height: 35rpx;
   line-height: 35rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

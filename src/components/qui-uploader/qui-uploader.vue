@@ -175,12 +175,16 @@ export default {
           } else {
             _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
           }
+          // 抛出接口信息
+          _this.$emit('uploadSuccess', res, _this.uploadList);
           return resolve(_this.uploadList);
         },
         fail(res) {
           console.log(res);
           _this.uploadBeforeList.splice(index, 1);
           _this.uploadList.splice(index, 1);
+          // 上传失败回调
+          _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
         },
       });

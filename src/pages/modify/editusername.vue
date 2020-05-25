@@ -5,10 +5,10 @@
         <input
           type="text"
           class="chagepas-pas-inpa"
-          v-model="sername"
           :placeholder="i18n.t('modify.numbermodifitions')"
           placeholder-style="color:rgba(221,221,221,1)"
           maxlength="15"
+          v-model="sername"
         />
         <view class="chagepas-erro-test" v-if="edit">
           {{ test }}
@@ -32,16 +32,15 @@ export default {
       valueused: '',
       edit: false,
       judge: false,
-      sername: '',
       myname: '',
       test: '',
       userid: '',
+      sername: '',
       nametitle: { icon: 'none', duration: 2000 },
     };
   },
-  onLoad(arr) {
-    this.userid = Number(arr.id);
-    this.mytitle();
+  onLoad() {
+    this.userid = this.usersid;
   },
   computed: {
     forums() {
@@ -81,6 +80,10 @@ export default {
             });
             uni.navigateBack({
               delta: 1,
+              success() {
+                const pages = getCurrentPages();
+                pages[2].onLoad();
+              },
             });
           }
         })
@@ -100,18 +103,6 @@ export default {
             });
           }
         });
-    },
-    mytitle() {
-      const params = {
-        _jv: {
-          type: 'users',
-          id: this.userid,
-        },
-        include: 'groups',
-      };
-      this.$store.dispatch('jv/get', params).then(data => {
-        this.sername = data.username;
-      });
     },
   },
 };
