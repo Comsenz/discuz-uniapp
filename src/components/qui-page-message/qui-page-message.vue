@@ -14,10 +14,10 @@
         src="@/static/msg-warning.svg"
         mode="aspectFit"
         lazy-load
-        v-if="status === 'closed'"
+        v-if="status === 'site_closed' || status === 'not_install'"
       ></image>
       <view class="page-message--title" v-if="message.title">{{ message.title }}</view>
-      <view class="page-message--subtitle" v-if="message.subtitle || status === 'closed'">
+      <view class="page-message--subtitle" v-if="message.subtitle || status === 'site_closed'">
         {{ message.subtitle | closedError(forumError, status) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
@@ -25,7 +25,7 @@
         class="page-message--exit"
         open-type="exit"
         target="miniProgram"
-        v-if="status === 'closed'"
+        v-if="status === 'site_closed' || status === 'not_install'"
       >
         {{ message.btnTxt }}
       </navigator>
@@ -40,7 +40,8 @@
 import { mapState } from 'vuex';
 
 const TYPE_404 = '404';
-const TYPE_CLOSED = 'closed';
+const TYPE_CLOSED = 'site_closed';
+const NOT_INSTALL = 'not_install';
 const message = {
   [TYPE_404]: {
     title: '页面没有找到',
@@ -50,6 +51,12 @@ const message = {
   },
   [TYPE_CLOSED]: {
     title: '站点已关闭',
+    subtitle: '', // 从接口读取站点关闭后的提示语
+    btnTxt: '点击关闭',
+    icon: '@/static/msg-warning.svg',
+  },
+  [NOT_INSTALL]: {
+    title: '站点未安装',
     subtitle: '', // 从接口读取站点关闭后的提示语
     btnTxt: '点击关闭',
     icon: '@/static/msg-warning.svg',
