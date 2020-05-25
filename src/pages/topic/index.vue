@@ -1,5 +1,10 @@
 <template>
   <qui-page class="content">
+    <view
+      v-if="loadDetailStatusId == 0"
+      class="skeletonScreen"
+      :style="{ height: windowHeight + 'px' }"
+    ></view>
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -7,6 +12,7 @@
       :scroll-top="scrollTopNum"
       class="scroll-y"
       @scrolltolower="pullDown"
+      v-else
     >
       <view class="ft-gap">
         <view class="bg-white">
@@ -275,13 +281,14 @@
         @radioMyHead="radioMyHead"
         @radioChange="radioChange"
         @onInput="onInput"
+        @close="close"
         @paysureShow="paysureShow"
       ></qui-pay>
     </view>
     <!--遮罩层组件-->
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
     <!--轻提示-->
-    <qui-toast ref="toast"></qui-toast>
+    <qui-toast ref="toast" :type="loading"></qui-toast>
 
     <!--回复弹框-->
     <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
@@ -498,6 +505,7 @@ export default {
       contentnomoreVal: '',
       url: '',
       customAmountStatus: false, // 自定义价格弹框初始化状态
+      windowHeight: '', //设备高度
     };
   },
   computed: {
@@ -535,6 +543,9 @@ export default {
   },
   onLoad(option) {
     console.log(this.user, '这是用户信息~~~~~~~~~~');
+    console.log(option.id, '这是主题id');
+    console.log(uni.getSystemInfoSync().windowHeight, '设备信息');
+    this.windowHeight = uni.getSystemInfoSync().windowHeight;
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -615,6 +626,7 @@ export default {
       );
 
       this.loadDetailStatusId = threadAction._statusID;
+      console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
       threadAction.then(data => {
         console.log(data, '~~~~~~~~~~~~~~~~~~~');
@@ -647,9 +659,9 @@ export default {
         if (data.type == 3) {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
         } else if (data.type == 2) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-        } else if (data.type == 1) {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
+        } else if (data.type == 1) {
+          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
         }
         if (data.price <= 0) {
           this.rewardStatus = true;
@@ -1054,6 +1066,8 @@ export default {
           }
         })
         .catch(err => {
+          // 清空支付的密码
+          this.$refs['payShow'].clear();
           console.log(err);
         });
     },
@@ -1405,6 +1419,11 @@ page {
 }
 .flex {
   display: flex;
+}
+.skeletonScreen {
+  width: 100%;
+  height: 100%;
+  background: --color(--qui-BG-2);
 }
 .scroll-y {
   // max-height: calc(100vh - 497rpx);

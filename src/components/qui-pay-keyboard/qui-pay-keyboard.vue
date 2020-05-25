@@ -93,6 +93,7 @@ export default {
     },
     clear() {
       this.password = '';
+      this.$emit('clear');
     },
     close() {
       this.password = '';
