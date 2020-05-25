@@ -677,7 +677,7 @@ export default {
         }
       });
     },
-    // post操作调用接口（包括type 1点赞，2删除主题，3删除回复，4回复点赞）
+    // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus) {
       console.log(id, type, canStatus, isStatus);
       if (type == '1' && !canStatus) {
@@ -720,11 +720,6 @@ export default {
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
-        };
-      } else if (type == '2') {
-        params = {
-          _jv: jvObj,
-          isDeleted: !isStatus,
         };
       } else if (type == '3') {
         params = {
@@ -792,7 +787,7 @@ export default {
           console.log(err);
         });
     },
-    // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
+    // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶，else删除主题）
     threadOpera(id, canStatus, isStatus, type) {
       console.log(id, canStatus, isStatus, type);
       const jvObj = {
@@ -1177,8 +1172,6 @@ export default {
         uni.navigateTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
-      } else if (param.type == '4') {
-        this.postOpera(this.threadId, '2');
       } else {
         this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
       }
