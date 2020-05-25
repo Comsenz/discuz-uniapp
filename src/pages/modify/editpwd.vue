@@ -153,6 +153,7 @@ export default {
               delta: 1,
               success() {
                 const pages = getCurrentPages();
+                console.log(pages);
                 pages[2].onLoad();
               },
             });
@@ -190,7 +191,7 @@ export default {
         });
     },
     runretire() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: `/pages/modify/findpwd?user=${this.userid}&pas=reset_pwd`,
       });
     },

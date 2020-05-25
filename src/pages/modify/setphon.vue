@@ -154,6 +154,7 @@ export default {
             url: '/pages/my/profile',
             success() {
               const pages = getCurrentPages();
+              console.log(pages);
               pages[2].onLoad();
             },
           });

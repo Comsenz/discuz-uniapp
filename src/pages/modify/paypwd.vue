@@ -25,9 +25,9 @@
           :show="inshow"
           :isiphonex="inisIphone"
           :number="types"
+          ref="quiinput"
         ></qui-input-code>
       </view>
-      <button @click="btn">按钮</button>
     </view>
   </qui-page>
 </template>
@@ -54,15 +54,14 @@ export default {
       inisIphone: false,
       usertokenid: '',
       currs: '',
+      themid: '',
     };
   },
   onLoad(arr) {
     this.userid = this.usersid;
     this.usertokenid = arr.token || '';
-    const pages = getCurrentPages();
-    console.log(pages);
-    if (pages.length) {
-      this.currs = pages[pages.length - 2].route;
+    if (this.setRouter) {
+      this.themid = this.setRouter.replace(/[^0-9]/gi, '');
     }
   },
   computed: {
@@ -74,9 +73,6 @@ export default {
     }),
   },
   methods: {
-    btn() {
-      console.log(this.setRouter, '@~~~~');
-    },
     fourse() {
       this.inshow = true;
     },
@@ -104,6 +100,7 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/patch', params));
       postphon
         .then(res => {
+          const pages = getCurrentPages();
           if (res) {
             uni.showToast({
               title: this.i18n.t('modify.paymentsucceed'),
@@ -113,19 +110,18 @@ export default {
               uni.navigateBack({
                 delta: 2,
               });
-            } else if (this.currs === 'pages/topic/index') {
+              pages[2].onLoad();
+            } else if (pages[1].route === 'pages/topic/index') {
               uni.redirectTo({
-                url: '/pages/topic/index',
+                url: `/pages/topic/index?id=${this.themid}`,
                 success() {
-                  const pages = getCurrentPages();
-                  pages[2].onLoad();
+                  pages[1].onLoad();
                 },
               });
             } else {
               uni.navigateBack({
                 delta: 1,
                 success() {
-                  const pages = getCurrentPages();
                   pages[2].onLoad(); // 执行前一个页面的onLoad方法
                 },
               });
@@ -137,18 +133,24 @@ export default {
             if (this.inputpas !== sum) {
               this.sun = true;
               this.test = this.i18n.t('modify.reenter');
+              this.empty();
             } else if (this.inputpas === sum) {
               uni.showToast({
                 icon: this.icon,
                 title: this.i18n.t('modify.modification'),
                 duration: this.time,
               });
+              this.empty();
             }
           }
         });
     },
     toggleBox() {
       this.inshow = false;
+    },
+    empty() {
+      const empty = this.$refs.quiinput;
+      empty.deleat();
     },
   },
 };
