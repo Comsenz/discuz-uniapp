@@ -537,7 +537,7 @@ export default {
 
   &__content {
     &__text {
-      padding-bottom: 40rpx;
+      padding: 20rpx 0;
       overflow: hidden;
       font-family: $font-family;
       font-size: $fg-f28;
@@ -569,7 +569,7 @@ export default {
     &__imgtwo {
       display: flex;
       justify-content: space-between;
-      margin-top: 30rpx;
+      margin-top: 20rpx;
       line-height: 0;
       &__item {
         display: block;
