@@ -1,5 +1,10 @@
 <template>
   <qui-page class="content">
+    <!--<view
+      v-if="loadDetailStatusId == 0"
+      class="skeletonScreen"
+      :style="{ height: windowHeight + 'px' }"
+    ></view>-->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -29,12 +34,15 @@
             :select-list="selectList"
             :tags="[thread.category]"
             :thread-price="thread.price"
+            :thread-is-essence="thread.isEssence"
             :media-url="thread.threadVideo.media_url"
             :video-width="thread.threadVideo.width"
             :video-height="thread.threadVideo.height"
             :cover-image="thread.threadVideo.cover_url"
             @personJump="personJump"
             @selectChoice="selectChoice"
+            @videocoverClick="payClickShow"
+            @previewPicture="payClickShow"
           ></qui-topic-content>
           <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
           {{ p.pay }}
@@ -275,13 +283,14 @@
         @radioMyHead="radioMyHead"
         @radioChange="radioChange"
         @onInput="onInput"
+        @close="close"
         @paysureShow="paysureShow"
       ></qui-pay>
     </view>
     <!--遮罩层组件-->
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
     <!--轻提示-->
-    <qui-toast ref="toast"></qui-toast>
+    <qui-toast ref="toast" :type="loading"></qui-toast>
 
     <!--回复弹框-->
     <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
@@ -363,9 +372,11 @@ import { status, utils } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
+import forums from '@/mixin/forums';
 
 export default {
   mixins: [user],
+  mixins: [forums],
   data() {
     return {
       threadId: '', //主题id
@@ -399,7 +410,7 @@ export default {
         {
           text: this.i18n.t('core.wxShare'),
           icon: 'icon-wx-friends',
-          name: 'wx',
+          name: 'wxFriends',
         },
       ], //分享方式
 
@@ -498,6 +509,7 @@ export default {
       contentnomoreVal: '',
       url: '',
       customAmountStatus: false, // 自定义价格弹框初始化状态
+      windowHeight: '', //设备高度
     };
   },
   computed: {
@@ -534,7 +546,10 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.user, '这是用户信息~~~~~~~~~~');
+    // console.log(this.forums, '这是站点信息~~~~~~~~~~');
+    console.log(option.id, '这是主题id');
+    console.log(uni.getSystemInfoSync().windowHeight, '设备信息');
+    this.windowHeight = uni.getSystemInfoSync().windowHeight;
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -615,6 +630,7 @@ export default {
       );
 
       this.loadDetailStatusId = threadAction._statusID;
+      console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
       threadAction.then(data => {
         console.log(data, '~~~~~~~~~~~~~~~~~~~');
@@ -647,14 +663,14 @@ export default {
         if (data.type == 3) {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
         } else if (data.type == 2) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-        } else if (data.type == 1) {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
+        } else if (data.type == 1) {
+          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
         }
         if (data.price <= 0) {
           this.rewardStatus = true;
-        } else if (data.price > 0 && data.paid) {
-          this.rewardStatus = true;
+        } else {
+          this.rewardStatus = false;
         }
         if (data.firstPost.likedUsers.length < 1) {
           this.likedStatus = false;
@@ -663,7 +679,7 @@ export default {
         }
       });
     },
-    // post操作调用接口（包括type 1点赞，2删除主题，3删除回复，4回复点赞）
+    // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus) {
       console.log(id, type, canStatus, isStatus);
       if (type == '1' && !canStatus) {
@@ -706,11 +722,6 @@ export default {
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
-        };
-      } else if (type == '2') {
-        params = {
-          _jv: jvObj,
-          isDeleted: !isStatus,
         };
       } else if (type == '3') {
         params = {
@@ -765,6 +776,7 @@ export default {
             }
           } else if (type == '4') {
             // 评论点赞
+            this.posts[this.postIndex].isLiked = data.isLiked;
             if (data.isLiked) {
               this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
@@ -778,7 +790,7 @@ export default {
           console.log(err);
         });
     },
-    // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶）
+    // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶，else删除主题）
     threadOpera(id, canStatus, isStatus, type) {
       console.log(id, canStatus, isStatus, type);
       const jvObj = {
@@ -1054,6 +1066,8 @@ export default {
           }
         })
         .catch(err => {
+          // 清空支付的密码
+          this.$refs['payShow'].clear();
           console.log(err);
         });
     },
@@ -1161,8 +1175,6 @@ export default {
         uni.navigateTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
-      } else if (param.type == '4') {
-        this.postOpera(this.threadId, '2');
       } else {
         this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
       }
@@ -1226,6 +1238,7 @@ export default {
         });
       } else {
         this.price = this.payNumCheck[0].pay;
+        console.log(this.price, '这是选中的钱');
         this.payShowStatus = true;
         this.$refs.rewardPopup.close();
         this.payTypeVal = 1;
@@ -1358,6 +1371,12 @@ export default {
     // 分享
     shareClick() {
       this.$refs.sharePopup.open();
+      console.log(this.forums, '!!~~~~~');
+      if (this.forums.set_site.site_mode == 'pay') {
+        this.bottomData.map((value, key, bottomData) => {
+          value.name === 'wxFriends' && bottomData.splice(key, 1);
+        });
+      }
     },
     // 取消分享
     cancel() {
@@ -1404,6 +1423,11 @@ page {
 }
 .flex {
   display: flex;
+}
+.skeletonScreen {
+  width: 100%;
+  height: 100%;
+  background: --color(--qui-BG-2);
 }
 .scroll-y {
   // max-height: calc(100vh - 497rpx);

@@ -78,8 +78,6 @@ export default {
   },
   onLoad(arr) {
     this.typebind = arr.type || 'bind';
-    const pages = getCurrentPages();
-    console.log(pages);
   },
   methods: {
     changeinput() {
@@ -150,13 +148,6 @@ export default {
         .then(res => {
           this.num -= 1;
           this.second = res._jv.json.data.attributes.interval;
-          uni.redirectTo({
-            url: '/pages/my/profile',
-            success() {
-              const pages = getCurrentPages();
-              pages[2].onLoad();
-            },
-          });
         })
         .catch(err => {
           if (err.statusCode === 500) {
@@ -184,6 +175,7 @@ export default {
               },
             ] = err.data.errors;
             this.formeerro = sun;
+            this.sun = true;
           }
         });
     },

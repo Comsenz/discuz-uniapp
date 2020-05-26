@@ -8,6 +8,7 @@
         show-scrollbar="false"
         show-icon="true"
         class="scroll-y"
+        style="height: 100vh;"
       >
         <qui-notification :list="noticeList" @deleteNotice="deleteNotice"></qui-notification>
         <qui-load-more
@@ -30,7 +31,7 @@ export default {
   data() {
     return {
       loadingType: 'more', // 上拉加载状态
-      pageSize: 10, // 每页10条数据
+      pageSize: 5, // 每页10条数据
       pageNum: 1, // 当前页数
       noticeList: [], // 通知列表
       type: '', // 当前的通知类型
@@ -60,13 +61,13 @@ export default {
       this.$store.commit('jv/clearRecords', { _jv: { type: 'notification' } });
       this.$store.dispatch('jv/get', ['notification', { params }]).then(res => {
         console.log('通知列表res', res);
-        if (res && res.length > 0) {
-          const list = JSON.parse(JSON.stringify(res));
-          for (let i = 0; i < list.length; i += 1) {
-            list[i].time = time2MorningOrAfternoon(list[i].created_at);
-            list[i].money = `￥${list[i].amount}`;
+        if (res && res._jv) {
+          delete res._jv;
+          for (let i = 0; i < res.length; i += 1) {
+            res[i].time = time2MorningOrAfternoon(res[i].created_at);
+            res[i].money = `￥${res[i].amount}`;
           }
-          this.noticeList = list;
+          this.noticeList = [...this.noticeList, ...res];
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });
@@ -85,11 +86,13 @@ export default {
       this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
         console.log('删除成功', res);
         if (res) {
+          this.pageNum = 1;
+          this.noticeList = [];
+          this.getNotices(this.type);
           uni.showToast({
             title: '删除成功',
             duration: 2000,
           });
-          this.getNotices(this.type);
         }
       });
     },

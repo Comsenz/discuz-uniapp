@@ -4,7 +4,7 @@
   <canvas canvas-id="bottom" :style="(painterStyle)+';position: absolute;'"></canvas>
   <canvas canvas-id="k-canvas" :style="(painterStyle)+';position: absolute;'"></canvas>
   <canvas canvas-id="top" :style="(painterStyle)+';position: absolute;'"></canvas>
-  <canvas canvas-id="front" :style="(painterStyle)+';position: absolute;'" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @touchcancel="onTouchCancel" :disable-scroll="true"></canvas>
+  <canvas canvas-id="front" :style="(painterStyle)+';position: absolute;'" :disable-scroll="true"></canvas>
 </view></uni-shadow-root>
 </template>
 

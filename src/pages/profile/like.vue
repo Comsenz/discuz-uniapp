@@ -9,7 +9,9 @@
     >
       <qui-content
         v-for="(item, index) in data"
+        :ref="'myVideo' + index"
         :key="index"
+        :currentindex="index"
         :user-name="item.user.username"
         :theme-image="item.user.avatarUrl"
         :theme-btn="item.canHide"
@@ -27,6 +29,7 @@
         :theme-essence="item.isEssence"
         :video-width="item.threadVideo.width"
         :video-height="item.threadVideo.height"
+        :video-id="item.threadVideo._jv.id"
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
@@ -39,6 +42,7 @@
         @commentClick="commentClick(item._jv.id)"
         @contentClick="contentClick(item._jv.id)"
         @headClick="headClick(item.user._jv.id)"
+        @videoPlay="handleVideoPlay"
       ></qui-content>
       <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </scroll-view>
@@ -58,6 +62,9 @@
         <view class="popup-share-content-space"></view>
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
+    </uni-popup>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
   </view>
 </template>
@@ -98,6 +105,16 @@ export default {
   mounted() {
     this.loadlikes();
   },
+  // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
+      return {
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+      };
+    }
+  },
   methods: {
     handleClickShare(id) {
       this.nowThreadId = id;
@@ -114,6 +131,10 @@ export default {
     // 取消按钮
     cancel() {
       this.$refs.popupContent.close();
+    },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
     // 加载当前点赞数据
     loadlikes() {
@@ -161,8 +182,9 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
-      if (!canLike) {
-        console.log('没有点赞权限');
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
       }
       const params = {
         _jv: {
@@ -184,6 +206,13 @@ export default {
           likedData.firstPost.likeCount = count;
         }
       });
+    },
+    // 视频禁止同时播放
+    handleVideoPlay(index) {
+      if (this.playIndex !== index && this.playIndex !== null) {
+        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
+      }
+      this.playIndex = index;
     },
     // 下拉加载
     pullDown() {

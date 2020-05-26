@@ -4,8 +4,8 @@ module.exports = {
   onLoad() {
     // getRect挂载到$u上，因为这方法需要使用in(this)，所以无法把它独立成一个单独的文件导出
     this.$u.getRect = this.$uGetRect;
-  },
-  onReady() {
+
+    // 设置主题
     const theme = this.$store.getters['theme/get']('currentTheme');
     uni.setNavigationBarColor({
       frontColor: theme === THEME_DEFAULT ? '#000000' : '#ffffff',

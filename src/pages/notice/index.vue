@@ -1,6 +1,7 @@
 <template>
-  <qui-page :footer="true">
+  <qui-page>
     <view class="notice-box">
+      <uni-nav-bar title="消息" fixed="true" status-bar></uni-nav-bar>
       <!-- 通知类型列表 -->
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
@@ -14,16 +15,15 @@
             ></qui-icon>
           </qui-cell-item>
         </view>
-      </view>
-      <!-- 会话列表 -->
-      <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
-        <scroll-view
-          scroll-y="true"
-          @scrolltolower="pullDown"
-          show-scrollbar="false"
-          show-icon="true"
-          class="scroll-y"
-        >
+        <!-- 会话列表 -->
+        <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
+          <!-- <scroll-view
+            scroll-y="true"
+            @scrolltolower="pullDown"
+            show-scrollbar="false"
+            show-icon="true"
+            class="scroll-y"
+          > -->
           <view
             class="dialog-box"
             v-for="dialog of dialogList"
@@ -73,7 +73,8 @@
             :status="loadingType"
             v-if="dialogList && dialogList.length > 0"
           ></qui-load-more>
-        </scroll-view>
+          <!-- </scroll-view> -->
+        </view>
       </view>
     </view>
   </qui-page>
@@ -102,6 +103,16 @@ export default {
   onLoad() {
     this.getDialogList();
     this.getUnreadNoticeNum();
+    if (!(getApp() && getApp().systemInfo && getApp().systemInfo.screenHeight)) {
+      try {
+        getApp().systemInfo = wx.getSystemInfoSync();
+        console.log('no height,then get height:', getApp().systemInfo.screenHeight);
+      } catch (e) {
+        console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
+      }
+    } else {
+      console.log('screenHeight', getApp().systemInfo.screenHeight);
+    }
   },
   onShow() {
     if (this.isFirst) {
@@ -136,19 +147,24 @@ export default {
             if (list[i] && list[i].dialogMessage) {
               list[i].time = time2MorningOrAfternoon(list[i].dialogMessage.created_at);
             }
-            if (list[i] && list[i].recipient && list[i].recipient.id === this.currentLoginId) {
-              list[i].name = list[i].sender.username;
-              list[i].avatar = list[i].sender.avatarUrl;
-              list[i].groupname = list[i].sender.groups;
-              list[i].readAt = list[i].recipient_read_at;
-            } else if (list[i] && list[i].sender && list[i].sender.id === this.currentLoginId) {
-              list[i].name = list[i].recipient.username;
-              list[i].avatar = list[i].recipient.avatarUrl;
-              list[i].groupname = list[i].recipient.groups;
-              list[i].readAt = list[i].sender_read_at;
+            if (list[i] && list[i].recipient && list[i].sender) {
+              if (list[i].recipient.id === this.currentLoginId) {
+                list[i].name = list[i].sender.username;
+                list[i].avatar = list[i].sender.avatarUrl;
+                list[i].groupname = list[i].sender.groups;
+                list[i].readAt = list[i].recipient_read_at;
+              } else if (list[i].sender.id === this.currentLoginId) {
+                list[i].name = list[i].recipient.username;
+                list[i].avatar = list[i].recipient.avatarUrl;
+                list[i].groupname = list[i].recipient.groups;
+                list[i].readAt = list[i].sender_read_at;
+              }
+            } else {
+              list.splice(i, 1);
+              i -= 1;
             }
           }
-          this.dialogList = list;
+          this.dialogList = [...this.dialogList, ...list];
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });
@@ -173,10 +189,9 @@ export default {
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
       uni.navigateTo({
-        url: `/pages/notice/notice
-        ?title=${this.i18n.t(item.title)}
-        &type=${item.type}
-        &unReadNum=${item.unReadNum}`,
+        url: `/pages/notice/notice?title=${this.i18n.t(item.title)}&type=${item.type}&unReadNum=${
+          item.unReadNum
+        }`,
       });
       console.log(`跳转${this.i18n.t(item.title)}页面`);
     },
@@ -195,6 +210,11 @@ export default {
       this.pageNum += 1;
       this.getDialogList();
       console.log('页码', this.pageNum);
+    },
+    // 组件初始化数据
+    ontrueGetList() {
+      this.getDialogList();
+      this.getUnreadNoticeNum();
     },
   },
 };

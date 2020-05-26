@@ -6,9 +6,5 @@
   <canvas 
     canvas-id="front" 
     style="{{painterStyle}};position: absolute;"
-    bindtouchstart="onTouchStart"
-    bindtouchmove="onTouchMove"
-    bindtouchend="onTouchEnd"
-    bindtouchcancel="onTouchCancel"
     disable-scroll="{{true}}" />
 </view>

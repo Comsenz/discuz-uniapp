@@ -102,6 +102,9 @@
         </qui-button>
       </view>
     </view>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -143,6 +146,18 @@ export default {
     this.code = params.code;
     this.getInviteInfo(params.code);
   },
+  // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      return {
+        title: this.forums.set_site.site_name,
+      };
+    }
+    return {
+      title: this.forums.set_site.site_name,
+    };
+  },
   methods: {
     // 首页头部分享按钮弹窗
     open() {
@@ -166,6 +181,10 @@ export default {
           url: '/pages/share/site',
         });
       }
+    },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
     // 取消按钮
     cancel() {

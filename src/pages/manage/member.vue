@@ -35,7 +35,7 @@
         class="scroll-Y"
         scroll-y="true"
         scroll-with-animation="true"
-        @scrolltolower="lower"
+        @scrolltolower="pullDown"
       >
         <checkbox-group @change="changeCheck" v-if="userList">
           <label v-for="item in userList" :key="item.id">
@@ -65,9 +65,6 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <view class="loading-text">
-          <text>{{ i18n.t(loadingText) }}</text>
-        </view>
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
@@ -104,41 +101,26 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
 import { debounce } from 'lodash';
 
 export default {
   data() {
     return {
-      checkAvatar: [],
       loadingType: 'more', // 上拉加载状态
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
-      searchText: '',
+      searchText: '', // 搜索内容
+      userList: [], // 搜索结果
+      groupList: [], // 用户角色
+      checkAvatar: [],
     };
   },
   onLoad() {
+    this.getUserList();
     this.getGroupList();
     uni.setNavigationBarTitle({
       title: '成员管理',
     });
-    this.searchUser();
-  },
-  computed: {
-    // 获取用户组列表
-    groupList() {
-      const groups = this.$store.getters['jv/get']('groups');
-      console.log('groups', groups);
-      return groups;
-    },
-    allFollow() {
-      return this.$store.getters['jv/get']('follow');
-    },
-    userList() {
-      const list = this.$store.getters['jv/get']('users');
-      console.log('list', list);
-      return list;
-    },
   },
   methods: {
     // eslint-disable-next-line
@@ -148,50 +130,75 @@ export default {
       }
     }, 800),
     clearSearch() {
-      this.searchInput();
-      this.searchUser();
+      this.searchText = '';
+      this.pageNum = 1;
+      this.userList = [];
+      this.getUserList();
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'groups' } });
-      this.$store.dispatch('jv/get', 'groups');
-      console.log('获取所有用户组');
+      this.$store.dispatch('jv/get', 'groups').then(res => {
+        console.log('获取所有用户组：', res);
+        if (res._jv) {
+          delete res._jv;
+          this.groupList = res;
+        }
+      });
+    },
+    // 调用 分页搜索 接口
+    getUserList() {
+      const params = {
+        include: 'groups',
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
+        'filter[username]': `*${this.searchText}*`,
+      };
+      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+        console.log('页面分页搜索：', res);
+        if (res && res._jv) {
+          delete res._jv;
+          this.userList = [...this.userList, ...res];
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        }
+      });
     },
     // 调用 搜索 接口
     searchUser(val = '') {
       this.searchText = val;
       const params = {
-        'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
+        include: 'groups',
         'filter[username]': `*${this.searchText}*`,
       };
       if (this.searchText === '') {
-        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-        this.$store.dispatch('jv/get', ['users', {}]).then(res => {
-          console.log('搜索res', res);
-          if (res) {
+        this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+          console.log('内容为空的搜索：', res);
+          if (res && res._jv) {
+            delete res._jv;
+            this.userList = res;
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       } else {
-        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('搜索res', res);
-          if (res) {
+          console.log('搜索res：', res);
+          if (res && res._jv) {
+            delete res._jv;
+            this.userList = res;
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
     },
     // 调用 批量修改用户的用户组 接口
-    modifyGroupName(key) {
+    modifyGroupName(item) {
+      console.log('item', item);
       const data = [];
       if (this.checkAvatar && this.checkAvatar.length > 0) {
         for (let i = 0; i < this.checkAvatar.length; i += 1) {
           data.push({
             attributes: {
               id: this.checkAvatar[i].id,
-              groupId: this.groupList[key]._jv.id,
+              groupId: parseInt(item._jv.id, 10),
             },
           });
         }
@@ -212,15 +219,12 @@ export default {
         console.log('修改用户组res', res);
         if (res) {
           this.getGroupList();
-          this.searchUser();
+          this.clearSearch();
           this.checkAvatar = [];
           this.$refs.popup.close();
         }
       });
     },
-    ...mapMutations({
-      setAtMember: 'atMember/SET_ATMEMBER',
-    }),
     changeCheck(e) {
       this.checkAvatar = [];
       e.detail.value.forEach(item => {
@@ -234,6 +238,15 @@ export default {
     cancel() {
       console.log('取消');
       this.$refs.popup.close();
+    },
+    // 上拉加载
+    pullDown() {
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      this.pageNum += 1;
+      this.getUserList();
+      console.log('页码', this.pageNum);
     },
   },
 };

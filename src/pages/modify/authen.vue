@@ -12,9 +12,10 @@
           :number="types"
           :show="inshow"
           :isiphonex="inisIphone"
+          ref="quiinput"
         ></qui-input-code>
       </view>
-      <view class="authen-forget" @click="forgetpay">
+      <view class="authen-forget" @click="forgetpay" v-if="forums.qcloud.qcloud_sms">
         {{ i18n.t('modify.forgetmanypassword') }}
       </view>
     </view>
@@ -24,9 +25,11 @@
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
+import forums from '@/mixin/forums';
 
 export default {
   components: { quiInputCode },
+  mixins: [forums],
   data() {
     return {
       userid: '',
@@ -99,15 +102,20 @@ export default {
             this.sun = true;
             this.test = this.i18n.t('modify.passwordinputerro');
           }
+          this.empty();
         });
     },
     forgetpay() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: `/pages/modify/findpwd?user=${this.userid}&pas=reset_pay_pwd`,
       });
     },
     toggleBox() {
       this.inshow = false;
+    },
+    empty() {
+      const empty = this.$refs.quiinput;
+      empty.deleat();
     },
   },
 };

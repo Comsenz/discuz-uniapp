@@ -50,7 +50,12 @@
                       {{ localTime }}
                     </view>
                   </view>
-                  <image src="@/static/essence.png" alt class="addFine"></image>
+                  <image
+                    v-if="thread.isEssence"
+                    src="@/static/essence.png"
+                    alt
+                    class="addFine"
+                  ></image>
                 </view>
 
                 <view class="thread__content" @click="contentClick">
@@ -72,7 +77,11 @@
               ></qui-person-list>
             </view>
             <view class="det-con-ft">
-              <view class="det-con-ft-child" @click="deleteReply(post._jv.id, post.canHide)">
+              <view
+                v-if="post.canHide"
+                class="det-con-ft-child"
+                @click="deleteReply(post._jv.id, post.canHide)"
+              >
                 <qui-icon name="icon-delete" class="qui-icon"></qui-icon>
                 <view>{{ t.delete }}</view>
               </view>
@@ -102,7 +111,7 @@
             >
               {{ post.replyCount }}{{ t.item }}{{ t.comment }}
             </view>
-            <view v-if="postComments && posts.length > 0">
+            <view v-if="postComments.length > 0">
               <qui-topic-comment
                 v-for="(commentPost, index) in postComments"
                 :key="index"
@@ -140,7 +149,14 @@
         </view>
       </view>
 
-      <qui-load-more :status="loadingType"></qui-load-more>
+      <qui-load-more
+        :status="loadingType"
+        :content-text="{
+          contentdown: c.contentdown,
+          contentrefresh: c.contentrefresh,
+          contentnomore: contentnomoreVal,
+        }"
+      ></qui-load-more>
     </scroll-view>
     <!--轻提示-->
     <qui-toast ref="toast"></qui-toast>
@@ -239,6 +255,7 @@ export default {
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
       pageSize: 5, //这是主题回复每页数据条数
+      contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据了
     };
   },
   computed: {
@@ -253,6 +270,10 @@ export default {
     // 语言包
     t() {
       return this.i18n.t('topic');
+    },
+    // core公共变量语言包
+    c() {
+      return this.i18n.t('core');
     },
     // 时间转化
     localTime() {
@@ -377,6 +398,7 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '4') {
+            this.postComments[this.commentIndex].isLiked = data.isLiked;
             if (data.isLiked) {
               // 评论点赞成功
               this.postComments[this.commentIndex].likeCount++;
@@ -435,6 +457,12 @@ export default {
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
           this.postComments = [...this.postComments, ...data];
+          this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
+          if (data.length == 0) {
+            this.contentnomoreVal = this.t.noComment;
+          } else {
+            this.contentnomoreVal = this.t.noMoreData;
+          }
           console.log(this.postComments, '&&&&&&~~~~~~!');
 
           this.postsStatus = true;
