@@ -57,6 +57,13 @@ export default {
     });
     // console.log('是否为刘海屏', this.is_lhp);
   },
+  onShow() {
+    if (this.isFirst) {
+      this.isFirst = false;
+    } else {
+      this.$refs.quinotice.ontrueGetList();
+    }
+  },
   // 唤起小程序原声分享
   onShareAppMessage(res, id) {
     // 来自页面内分享按钮
@@ -68,12 +75,6 @@ export default {
     }
     return {
       title: this.forums.set_site.site_name,
-    };
-  onShow() {
-    if (this.isFirst) {
-      this.isFirst = false;
-    } else {
-      this.$refs.quinotice.ontrueGetList();
     }
   },
   methods: {
@@ -113,7 +114,7 @@ export default {
     //   console.log('如果想要自定义刷新的话，插件市场就有一个   非常好用也非常容易入手');
     // },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
