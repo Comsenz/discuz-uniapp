@@ -759,14 +759,16 @@ export default {
       let state = 0;
       const posts = {
         _jv: {
-          type: `posts/${this.firstPostId}`,
+          type: 'posts',
+          id: this.firstPostId,
           relationships: {},
         },
         content: this.textAreaValue,
       };
       const threads = {
         _jv: {
-          type: `threads/${this.threadId}`,
+          type: 'threads',
+          id: this.threadId,
           relationships: {
             category: {
               data: {
