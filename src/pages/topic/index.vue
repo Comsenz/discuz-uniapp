@@ -291,7 +291,6 @@
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
     <!--轻提示-->
     <qui-toast ref="toast" :type="loading"></qui-toast>
-
     <!--回复弹框-->
     <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
       <view class="comment-popup" v-if="commentPopupStatus">
@@ -599,6 +598,13 @@ export default {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
+
+    callMember(id) {
+      uni.navigateTo({
+        url: `/pages/my/index?userId=${id}`,
+      });
+    },
+
     // 表情接口请求
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);

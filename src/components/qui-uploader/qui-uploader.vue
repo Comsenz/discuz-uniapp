@@ -113,6 +113,8 @@ export default {
       this.uploadList.splice(index, 1);
       return beforeUpload;
     },
+
+    // 图片预览
     previewPicture(index) {
       const _this = this;
       const preview = [];
@@ -125,11 +127,17 @@ export default {
         indicator: 'default',
       });
     },
+
+    // 上传图片到本地
     uploadClick() {
       const _this = this;
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
 
+      // 上传图片后返回false状态
+      this.$emit('uploadClick', false);
+
+      // 上传图片到本地
       uni.chooseImage({
         count: _this.count - _this.uploadBeforeList.length,
         sizeType: ['original', 'compressed'],
@@ -153,11 +161,14 @@ export default {
           });
 
           Promise.allSettled(promise).then(() => {
-            _this.$emit('change', _this.uploadList);
+            // 返回上传成功列表和成功状态值
+            _this.$emit('change', _this.uploadList, true);
           });
         },
       });
     },
+
+    // 上传图片到服务器
     upload(pathUrl, index, length, resolve, reject) {
       const _this = this;
 
