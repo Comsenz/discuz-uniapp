@@ -154,6 +154,7 @@ export default {
       this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
+        return;
       }
 
       if (this.getCategoryId) {
