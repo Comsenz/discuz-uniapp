@@ -114,6 +114,7 @@ export default {
       imageCannotBeEmpty: '图片不能为空',
       videoCannotBeEmpty: '视频不能为空',
       pleaseWaitForTheVideoUploadToComplete: '请等待视频上传完成',
+      pleaseWaitForTheImageUploadToComplete: '请等待图片上传完成',
       failedToObtainSignature: '获取签名失败',
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
@@ -124,6 +125,7 @@ export default {
     uploadFailed: '上传失败',
     uploadedSuccessfully: '上传成功',
     videoUploadedSuccessfully: '视频上传成功',
+    videoUploading: '视频上传中...',
   },
   core: {
     not_install: '该站点未安装',
