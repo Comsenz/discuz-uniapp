@@ -1,6 +1,12 @@
 <template>
-  <qui-page class="my">
-    <uni-nav-bar title="我的" fixed="true" status-bar></uni-nav-bar>
+  <view class="my">
+    <uni-nav-bar
+      title="我的"
+      fixed="true"
+      :color="checked ? '#ffffff' : '#000000'"
+      :background-color="checked ? '#2e2f30' : '#ffffff'"
+      status-bar
+    ></uni-nav-bar>
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -14,7 +20,7 @@
               class="my-info__box__detail-avatar"
               :src="userInfo.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
-              :mode="modeVal"
+              mode="aspectFill"
             ></image>
             <qui-cell-item
               :title="userInfo.username || ''"
@@ -77,7 +83,7 @@
         </view>
       </view>
     </scroll-view>
-  </qui-page>
+  </view>
 </template>
 
 <script>
@@ -95,11 +101,6 @@ export default {
       current: 0,
       checked: false,
       userId: this.$store.getters['session/get']('userId'),
-      // 图片裁剪、缩放的模式
-      modeVal: {
-        type: String,
-        default: 'aspectFill',
-      },
     };
   },
   computed: {

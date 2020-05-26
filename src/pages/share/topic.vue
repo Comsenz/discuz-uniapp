@@ -70,7 +70,7 @@ export default {
       constyle: 0,
       paddingtop: 43,
       imgtop: 0,
-      jurisdiction: true,
+      jurisdiction: false,
     };
   },
   onLoad(arr) {
@@ -126,7 +126,7 @@ export default {
           this.content = data.firstPost.content;
           const arr = Object.values(data.firstPost.images);
           arr.forEach(value => {
-            this.contentImg.push(value.url);
+            this.contentImg.push(value.thumbUrl);
           });
           this.attachmentsType = data.category.name;
           if (this.postyTepy === 2) {

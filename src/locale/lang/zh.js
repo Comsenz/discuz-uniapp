@@ -128,6 +128,11 @@ export default {
     videoUploading: '视频上传中...',
   },
   core: {
+    admin_login: '管理员登录',
+    back_home: '返回首页',
+    close: '点击关闭',
+    page_not_found: '页面没有找到',
+    page_not_found_detail: '您要访问的页面可能已被删除，已更改名称或者暂时不可用',
     not_install: '该站点未安装',
     postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',
     cancel: '取消',
@@ -398,6 +403,7 @@ export default {
     masstext: '两次输入的密码不一致，请重新输入',
     realname: '请输入真实姓名',
     enteridnumber: '请输入您的身份证号码',
+    idcardisempty: '身份证号码不能为空',
     nameauthensucc: '实名认证成功',
     mysignture: '我的签名',
     canalsoinput: '还能输入',
@@ -416,6 +422,7 @@ export default {
     nohasphon: '请先绑定手机号',
     idtitl: '非法身份证号（长度、校验位等不正确）',
     nametitl2: '非法姓名（长度、格式等不正确）',
+    verifyoldphon: '验证旧手机',
   },
   permission: {
     viewThreads: '查看主题列表',

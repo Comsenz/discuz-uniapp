@@ -19,6 +19,7 @@
           :ref="'myVideo' + index"
           :key="index"
           :currentindex="index"
+          :pay-status="(item.price > 0 && item.paid) || item.price == 0"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
           :theme-reply-btn="item.canReply"
@@ -37,6 +38,7 @@
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           :video-id="item.threadVideo._jv.id"
+          :cover-image="item.threadVideo.cover_url"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -80,8 +82,10 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   props: {
     userId: {
       type: String,
@@ -113,18 +117,17 @@ export default {
   mounted() {
     this.loadlikes();
   },
-  // 唤起小程序原声分享
-  onShareAppMessage(res) {
-    // 来自页面内分享按钮
-    if (res.from === 'button') {
-      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
-      return {
-        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
-      };
-    }
-  },
   methods: {
     handleClickShare(id) {
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+          },
+        ];
+      }
       this.nowThreadId = id;
       this.$refs.popupContent.open();
     },

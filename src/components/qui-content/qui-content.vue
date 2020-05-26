@@ -61,9 +61,15 @@
           </view>
           <rich-text :nodes="themeContent" v-else></rich-text>
         </view>
-        <view class="content__video" @click="videoClick">
+        <view
+          class="theme__content__videocover"
+          v-if="threadType == 2 && !payStatus && coverImage != null"
+        >
+          <image class="themeItem__content__coverimg" mode="widthFix" :src="coverImage" alt></image>
+        </view>
+        <view class="content__video" @click="videoClick" v-if="threadType === 2 && payStatus">
           <video
-            v-if="threadType === 2"
+            v-if="threadType === 2 && payStatus"
             :id="'myvideo' + currentindex"
             preload="auto"
             bindpause="handlepause"
@@ -131,7 +137,7 @@
           </view>
         </view>
 
-        <view class="themeItem__content__tags" v-if="themeType === '1'">
+        <view class="themeItem__content__tags" v-if="themeType === '1' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
           </view>
@@ -192,6 +198,7 @@
 
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
+import { mapState } from 'vuex';
 
 export default {
   props: {
@@ -329,6 +336,16 @@ export default {
       type: Number,
       default: 0,
     },
+    // 视频显示缩略图
+    coverImage: {
+      type: String,
+      default: '',
+    },
+    // 是否支付
+    payStatus: {
+      type: Boolean,
+      default: true,
+    },
   },
   data: () => {
     return {
@@ -340,6 +357,7 @@ export default {
       // isGreat: false,
       preid: 0,
       currentid: 0,
+      categoryShow: true,
     };
   },
   computed: {
@@ -351,15 +369,14 @@ export default {
     localTime() {
       return time2MorningOrAfternoon(this.themeTime);
     },
+    ...mapState({
+      getCategoryId: state => state.session.categoryId,
+      getCategoryIndex: state => state.session.categoryIndex,
+    }),
   },
   mounted() {
     this.videoContext = wx.createVideoContext(`myvideo${this.$props.currentindex}`, this);
-    // console.log(this.videoContext, 'inshow')
   },
-  // onShow() {
-  //   this.videoContext = wx.createVideoContext('myvideo', this);
-  //   this.videoContext.requestFullScreen({ direction: 90 });
-  // },
   methods: {
     // 点击删除按钮
     deleteClick(evt) {
@@ -385,19 +402,7 @@ export default {
     headClick(evt) {
       this.$emit('headClick', evt);
     },
-    // 预览图片
-    previewPicture(index) {
-      const _this = this;
-      const preview = [];
-      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
-        preview.push(_this.imagesList[i].url);
-      }
-      uni.previewImage({
-        current: index,
-        urls: preview,
-        indicator: 'number',
-      });
-    },
+
     // 视频的view点击事件
     videoClick() {
       const curIdx = this.$props.currentindex;
@@ -406,6 +411,23 @@ export default {
     // 视频不能同时播放
     pauseVideo() {
       this.videoContext.pause();
+    },
+    // 预览图片
+    previewPicture(index) {
+      if (this.threadType === 3 && !this.payStatus) {
+        this.contentClick();
+      } else {
+        const _this = this;
+        const preview = [];
+        for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+          preview.push(_this.imagesList[i].url);
+        }
+        uni.previewImage({
+          current: index,
+          urls: preview,
+          indicator: 'number',
+        });
+      }
     },
   },
 };
@@ -509,7 +531,7 @@ export default {
 
   &__content {
     &__text {
-      margin-bottom: 12rpx;
+      padding-bottom: 12rpx;
       overflow: hidden;
       font-family: $font-family;
       font-size: $fg-f28;
@@ -650,6 +672,12 @@ export default {
   display: inline;
   padding-left: 8rpx;
   color: #00479b;
+}
+.themeItem__content__coverimg {
+  width: 100%;
+}
+.theme__content__videocover {
+  width: 100%;
 }
 // .content__video {
 

@@ -149,8 +149,6 @@ export default {
       this.cost = this.forums.set_cash.cash_rate;
       this.percentage = this.forums.set_cash.cash_rate * 100;
     });
-    const pages = getCurrentPages();
-    console.log(pages);
   },
   computed: {
     forums() {
@@ -199,7 +197,7 @@ export default {
       if (!this.usertestphon) {
         uni.showToast({
           icon: 'none',
-          title: '请先绑定手机号',
+          title: this.i18n.t('modify.nohasphon'),
           duration: 2000,
         });
         return;

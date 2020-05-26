@@ -69,7 +69,6 @@ export default {
     return {
       sel: 1,
       type: '',
-      redCircle: false, // 消息通知红点
       tabs: [
         {
           tabsName: 'home.tabsCircle',
@@ -94,6 +93,7 @@ export default {
         },
       ],
       bottomData: [],
+      isTabBar: [], // 禁止页面第二次加载
     };
   },
   computed: {
@@ -101,13 +101,11 @@ export default {
       getCategoryId: state => state.session.categoryId,
       getCategoryIndex: state => state.session.categoryIndex,
     }),
-    usersId() {
-      return this.$store.getters['session/get']('userId');
+    redCircle() {
+      return this.user.unreadNotifications;
     },
   },
   created() {
-    // // 获取用户信息
-    this.getUserInfo();
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
@@ -126,19 +124,16 @@ export default {
   },
   methods: {
     select(item, index) {
-      this.$emit('click', item, index);
-
-      this.sel = item.id;
-      if (!item.url) {
-        return;
-      }
-
+      this.$emit('click', item, index, this.isTabBar);
       this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
         return;
       }
-
+      this.sel = item.id;
+      if (!item.url) {
+        return;
+      }
       const currentPage = getCurrentPages();
       if (
         item.tabsName === this.i18n.t('home.tabsCircle') &&
@@ -159,6 +154,7 @@ export default {
       this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
+        return;
       }
 
       if (this.getCategoryId) {
@@ -227,22 +223,6 @@ export default {
     close() {
       this.$refs.auth.close();
     },
-    // 调用 未读通知数 的接口
-    getUserInfo() {
-      // const id = 1;
-      const params = {
-        include: ['groups', 'wechat'],
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${this.usersId}`, { params }]).then(res => {
-        if (res.unreadNotifications > 0) {
-          this.redCircle = true;
-        } else {
-          this.redCircle = false;
-        }
-        // console.log('未读通知', res.unreadNotifications);
-      });
-    },
   },
 };
 </script>
@@ -299,6 +279,6 @@ export default {
 .red-circle {
   position: absolute;
   top: -3rpx;
-  left: 267rpx;
+  left: 302rpx;
 }
 </style>
