@@ -37,8 +37,8 @@
         scroll-with-animation="true"
         @scrolltolower="pullDown"
       >
-        <checkbox-group @change="changeCheck" v-if="userList">
-          <label v-for="item in userList" :key="item.id">
+        <checkbox-group @change="changeCheck" v-if="checkAvatar && checkAvatar.length <= 0">
+          <label v-for="item in userListShow" :key="item.id">
             <qui-avatar-cell
               center
               right-color="#aaa"
@@ -52,7 +52,7 @@
           </label>
         </checkbox-group>
         <checkbox-group @change="changeCheck" v-else>
-          <label v-for="item in userList" :key="item.id">
+          <label v-for="item in userListShow" :key="item.id">
             <qui-avatar-cell
               center
               right-color="#aaa"
@@ -106,34 +106,45 @@ import { debounce } from 'lodash';
 export default {
   data() {
     return {
+      searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
-      pageSize: 20, // 每页20条数据
+      pageSize: 10, // 每页20条数据
       pageNum: 1, // 当前页数
-      searchText: '', // 搜索内容
-      userList: [], // 搜索结果
+      searchPageNum: 1, // 搜索的当前页数
+      userList: [], // 用户数据
+      searchUserList: [], // 搜索的用户数据
+      isSearch: false, // 是否搜索
       groupList: [], // 用户角色
-      checkAvatar: [],
+      checkAvatar: [], // 选择的用户
     };
   },
   onLoad() {
-    this.getUserList();
+    this.searchUser();
     this.getGroupList();
     uni.setNavigationBarTitle({
       title: '成员管理',
     });
   },
+  computed: {
+    userListShow() {
+      return this.isSearch ? this.searchUserList : this.userList;
+    },
+  },
   methods: {
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
       if (e && e.target) {
+        this.isSearch = true;
+        this.searchPageNum = 1;
+        this.searchUserList = [];
         this.searchUser(e.target.value);
       }
     }, 800),
     clearSearch() {
+      this.isSearch = false;
       this.searchText = '';
-      this.pageNum = 1;
-      this.userList = [];
-      this.getUserList();
+      this.checkAvatar = [];
+      this.searchUser();
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
@@ -145,28 +156,13 @@ export default {
         }
       });
     },
-    // 调用 分页搜索 接口
-    getUserList() {
-      const params = {
-        include: 'groups',
-        'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
-        'filter[username]': `*${this.searchText}*`,
-      };
-      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-        console.log('页面分页搜索：', res);
-        if (res && res._jv) {
-          delete res._jv;
-          this.userList = [...this.userList, ...res];
-          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-        }
-      });
-    },
     // 调用 搜索 接口
     searchUser(val = '') {
       this.searchText = val;
       const params = {
         include: 'groups',
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[username]': `*${this.searchText}*`,
       };
       if (this.searchText === '') {
@@ -174,20 +170,38 @@ export default {
           console.log('内容为空的搜索：', res);
           if (res && res._jv) {
             delete res._jv;
-            this.userList = res;
+            if (this.isSearch) {
+              this.searchUserList = [...this.searchUserList, ...res];
+            } else {
+              this.userList = [...this.userList, ...res];
+            }
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       } else {
+        params['page[number]'] = this.searchPageNum;
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
           console.log('搜索res：', res);
           if (res && res._jv) {
             delete res._jv;
-            this.userList = res;
+            this.searchUserList = [...this.searchUserList, ...res];
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
+    },
+    // 上拉加载
+    pullDown() {
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      if (this.isSearch) {
+        this.searchPageNum += 1;
+      } else {
+        this.pageNum += 1;
+      }
+      this.searchUser(this.searchText);
+      console.log('页码', this.pageNum);
     },
     // 调用 批量修改用户的用户组 接口
     modifyGroupName(item) {
@@ -238,15 +252,6 @@ export default {
     cancel() {
       console.log('取消');
       this.$refs.popup.close();
-    },
-    // 上拉加载
-    pullDown() {
-      if (this.loadingType !== 'more') {
-        return;
-      }
-      this.pageNum += 1;
-      this.getUserList();
-      console.log('页码', this.pageNum);
     },
   },
 };
