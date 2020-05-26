@@ -23,13 +23,6 @@
     },
     //个人主页和我的部分页面
     {
-      "path": "pages/my/index",
-      "style": {
-        "navigationBarTitleText": "我的",
-        "navigationStyle": "default"
-      }
-    },
-    {
       "path": "pages/my/profile",
       "style": {
         "navigationBarTitleText": "我的资料"
@@ -115,12 +108,12 @@
     },
 
     // 消息页面
-    {
-      "path": "pages/notice/index",
-      "style": {
-        "navigationBarTitleText": "消息"
-      }
-    },
+    // {
+    //   "path": "pages/notice/index",
+    //   "style": {
+    //     "navigationBarTitleText": "消息"
+    //   }
+    // },
     {
       "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {

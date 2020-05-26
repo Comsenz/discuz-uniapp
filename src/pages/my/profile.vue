@@ -61,7 +61,6 @@
       </navigator>
       <qui-cell-item
         :title="i18n.t('profile.wechat')"
-        arrow
         :addon="profile.wechat.nickname"
       ></qui-cell-item>
       <!-- qcloud_faceid 是否开启实名认证 -->
@@ -161,6 +160,8 @@ export default {
         const { code } = JSON.parse(res.data).errors[0];
         if (code === 'upload_time_not_up') {
           this.$refs.toast.show({ message: '上传头像频繁，一天仅允许上传一次头像' });
+        } else if (code === 'validation_error') {
+          this.$refs.toast.show({ message: '验证错误' });
         } else {
           this.$refs.toast.show({ message: code });
         }

@@ -64,9 +64,6 @@ http.interceptor.response(
     uni.hideLoading();
     // 对响应错误做点什么 （statusCode !== 200），必须return response
     if (response && response.data && response.data.errors) {
-      const pages = getCurrentPages();
-      const currentPage = pages[pages.length - 1];
-
       response.data.errors.forEach(error => {
         switch (error.code) {
           case 'access_denied':
@@ -78,20 +75,6 @@ http.interceptor.response(
                 http.request(response.config);
               },
             });
-            break;
-          case 'not_install':
-            if (currentPage.route !== 'pages/common/message') {
-              uni.redirectTo({
-                url: '/pages/common/message?status=not_install',
-              });
-            }
-            break;
-          case 'site_closed':
-            if (currentPage.route !== 'pages/common/message') {
-              uni.redirectTo({
-                url: '/pages/common/message?status=site_closed',
-              });
-            }
             break;
           default:
             uni.showToast({

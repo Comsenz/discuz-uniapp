@@ -126,6 +126,11 @@ export default {
     videoUploadedSuccessfully: '视频上传成功',
   },
   core: {
+    admin_login: '管理员登录',
+    back_home: '返回首页',
+    close: '点击关闭',
+    page_not_found: '页面没有找到',
+    page_not_found_detail: '您要访问的页面可能已被删除，已更改名称或者暂时不可用',
     not_install: '该站点未安装',
     postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',
     cancel: '取消',
