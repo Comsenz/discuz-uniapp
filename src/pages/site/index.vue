@@ -82,12 +82,12 @@
       <qui-cell-item
         :title="i18n.t('manage.joinedTime')"
         :addon="userInfo.joinedTime"
-        v-if="siteInfo.set_site.site_mode === 'pay'"
+        v-if="siteInfo.set_site.site_mode === 'pay' && userInfo.joinedAt"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.periodvalidity')"
         :addon="userInfo.expiredTime"
-        v-if="siteInfo.set_site.site_mode === 'pay'"
+        v-if="siteInfo.set_site.site_mode === 'pay' && userInfo.expiredAt"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.myauthority')"

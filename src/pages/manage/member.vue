@@ -37,7 +37,7 @@
         scroll-with-animation="true"
         @scrolltolower="pullDown"
       >
-        <checkbox-group @change="changeCheck" v-if="checkAvatar && checkAvatar.length <= 0">
+        <checkbox-group @change="changeCheck">
           <label v-for="item in userListShow" :key="item.id">
             <qui-avatar-cell
               center
@@ -51,7 +51,7 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <checkbox-group @change="changeCheck" v-else>
+        <!-- <checkbox-group @change="changeCheck" v-else>
           <label v-for="item in userListShow" :key="item.id">
             <qui-avatar-cell
               center
@@ -64,7 +64,7 @@
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>
           </label>
-        </checkbox-group>
+        </checkbox-group> -->
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
@@ -143,8 +143,8 @@ export default {
     clearSearch() {
       this.isSearch = false;
       this.searchText = '';
-      this.checkAvatar = [];
       this.searchUser();
+      this.checkAvatar = [];
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
@@ -233,13 +233,14 @@ export default {
         console.log('修改用户组res', res);
         if (res) {
           this.getGroupList();
+          this.pageNum += 1;
           this.clearSearch();
-          this.checkAvatar = [];
           this.$refs.popup.close();
         }
       });
     },
     changeCheck(e) {
+      console.log('eeeeee', e);
       this.checkAvatar = [];
       e.detail.value.forEach(item => {
         this.checkAvatar.push(JSON.parse(item));
