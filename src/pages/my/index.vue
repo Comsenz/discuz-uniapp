@@ -105,7 +105,7 @@ export default {
   computed: {
     userInfo() {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-      data.groupsName = data.groups ? Object.values(data.groups)[0].name : '';
+      data.groupsName = data.groups ? data.groups[0].name : '';
       this.setNum(data);
       return data;
     },

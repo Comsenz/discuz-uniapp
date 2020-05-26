@@ -11,6 +11,7 @@ export default {
     };
   },
   onLoad(params) {
+    uni.hideHomeButton();
     const { status } = params;
     if (!status) this.status = TYPE_404;
     else this.status = status;

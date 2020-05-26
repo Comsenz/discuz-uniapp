@@ -138,46 +138,7 @@ export default {
         showCancel: false,
       });
     },
-    // fun() {
-    //   const _this = this;
-    //   if (!this.jurisdiction) {
-    //     uni.openSetting({
-    //       success(res) {
-    //         _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
-    //       },
-    //     });
-    //   }
-    //   uni.saveImageToPhotosAlbum({
-    //     filePath: _this.imagePath,
-    //     success(data) {
-    //       if (data) {
-    //         uni.showToast({
-    //           icon: 'none',
-    //           title: _this.i18n.t('share.successfully'),
-    //           duration: 2000,
-    //         });
-    //       }
-    //     },
-    //     fail(err) {
-    //       if (err) {
-    //         uni.showToast({
-    //           icon: 'none',
-    //           title: _this.i18n.t('share.savefailed'),
-    //           duration: 2000,
-    //         });
-    //         if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
-    //           uni.openSetting({
-    //             success(res) {
-    //               _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
-    //             },
-    //           });
-    //         }
-    //       }
-    //     },
-    //   });
-    // },
     fun() {
-      const imgSrc = this.imagePath;
       const _this = this;
       if (!this.jurisdiction) {
         uni.openSetting({
@@ -186,34 +147,32 @@ export default {
           },
         });
       }
-      uni.getImageInfo({
-        success() {
-          uni.saveImageToPhotosAlbum({
-            filePath: imgSrc,
-            success() {
-              uni.showToast({
-                icon: 'none',
-                title: _this.i18n.t('share.successfully'),
-                duration: 2000,
-              });
-            },
-            fail(err) {
-              if (err) {
+      uni.showModal({
+        title: _this.i18n.t('discuzq.msgbox.title'),
+        content: _this.i18n.t('share.confirm'),
+        success(res) {
+          if (res.confirm) {
+            uni.saveImageToPhotosAlbum({
+              filePath: _this.imagePath,
+              success() {
                 uni.showToast({
+                  title: _this.i18n.t('share.successfully'),
                   icon: 'none',
-                  title: _this.i18n.t('share.savefailed'),
                   duration: 2000,
                 });
+              },
+              fail(err) {
                 if (err.errMsg === 'saveImageToPhotosAlbum:fail auth deny') {
-                  uni.openSetting({
-                    success(res) {
-                      _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
-                    },
-                  });
+                  _this.jurisdiction = false;
                 }
-              }
-            },
-          });
+                uni.showToast({
+                  title: _this.i18n.t('share.savefailed'),
+                  icon: 'none',
+                  duration: 2000,
+                });
+              },
+            });
+          }
         },
       });
     },

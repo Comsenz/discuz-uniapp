@@ -23,9 +23,7 @@
           <qui-cell-item
             :title="followingItem.toUser.username"
             slot-right
-            :brief="
-              followingItem.toUser.groups ? Object.values(followingItem.toUser.groups)[0].name : ''
-            "
+            :brief="followingItem.toUser.groups ? followingItem.toUser.groups[0].name : ''"
           >
             <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
             <view

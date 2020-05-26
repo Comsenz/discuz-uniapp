@@ -38,6 +38,8 @@ export default {
     return {
       show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
+      isFirst: true, // 是否是第一次进入页面
+
     };
   },
   onLoad() {
@@ -67,6 +69,12 @@ export default {
     return {
       title: this.forums.set_site.site_name,
     };
+  onShow() {
+    if (this.isFirst) {
+      this.isFirst = false;
+    } else {
+      this.$refs.quinotice.ontrueGetList();
+    }
   },
   methods: {
     // 切换组件

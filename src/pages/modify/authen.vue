@@ -15,7 +15,7 @@
           ref="quiinput"
         ></qui-input-code>
       </view>
-      <view class="authen-forget" @click="forgetpay">
+      <view class="authen-forget" @click="forgetpay" v-if="forums.qcloud.qcloud_sms">
         {{ i18n.t('modify.forgetmanypassword') }}
       </view>
     </view>
@@ -25,9 +25,11 @@
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
 import quiInputCode from '@/components/qui-input-code/qui-input-code';
+import forums from '@/mixin/forums';
 
 export default {
   components: { quiInputCode },
+  mixins: [forums],
   data() {
     return {
       userid: '',

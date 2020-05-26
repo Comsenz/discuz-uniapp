@@ -2,7 +2,13 @@
   <qui-page>
     <view class="chat-box">
       <!-- 消息内容 -->
-      <scroll-view style="height: 1200rpx;" scroll-y="true" :scroll-top="scrollTop">
+      <scroll-view
+        :style="{ height: scv + 'rpx' }"
+        scroll-y="true"
+        :scroll-top="scrollTop"
+        @scroll="scroll"
+        @scrolltoupper="toUpper"
+      >
         <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
           <view class="chat-box__con__time">{{ item.time }}</view>
           <view
@@ -34,6 +40,7 @@
           </view>
         </view>
       </scroll-view>
+
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
@@ -71,74 +78,19 @@ export default {
 
   data() {
     return {
-      scrollTop: 400,
+      scrollTop: 0,
+      old: {
+        scrollTop: 0,
+      },
       msg: '', // 输入框内容
       emojiShow: false, // 表情
       dialogId: 0, // 会话id
       height: 0,
+      scv: 0,
+      pageSize: 20, // 每页10条数据
+      pageNum: 1, // 当前页数
       currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
-  },
-
-  onLoad(params) {
-    console.log('params', params);
-    const { username, dialogId } = params;
-    console.log('currentTheme', this.currentTheme);
-    uni.setNavigationBarTitle({
-      title: username,
-    });
-    this.dialogId = dialogId;
-    this.getChatRecord(dialogId);
-    if (Object.keys(this.allEmoji).length < 1) {
-      this.getEmoji();
-    }
-    uni.onKeyboardHeightChange(res => {
-      console.log(res.height);
-      if (res.height > 0) {
-        // 键盘弹出（滚动条位置增加键盘高度）
-        this.scrollTop += res.height;
-      } else {
-        // 键盘收起（滚动条位置减少键盘高度）
-        this.scrollTop -= res.height;
-      }
-    });
-    // setTimeout(() => {
-    //   uni
-    //     .createSelectorQuery()
-    //     .selectAll('.chat-box__con')
-    //     .boundingClientRect()
-    //     .exec(data => {
-    //       data[0].forEach(item => {
-    //         this.height += item.height;
-    //       });
-    //       if (this.height > 600) {
-    //         this.scrollTop = this.height - 600;
-    //       }
-    //       console.log('信息', data);
-    //       console.log('height', this.height);
-    //     });
-    // }, 0);
-  },
-
-  onReady() {
-    if (this.currentTheme === 'dark') {
-      uni.setNavigationBarColor({
-        frontColor: '#ffffff',
-        backgroundColor: '#3f4243',
-      });
-    } else {
-      uni.setNavigationBarColor({
-        frontColor: '#000000',
-        backgroundColor: '#ededed',
-      });
-    }
-  },
-
-  onPullDownRefresh() {
-    console.log('refresh');
-    setTimeout(() => {
-      uni.stopPullDownRefresh();
-    }, 1000);
   },
 
   computed: {
@@ -179,6 +131,86 @@ export default {
 
   watch: {
     allChatRecord() {
+      this.scrollToBottom();
+    },
+  },
+  created() {
+    if (
+      !(
+        getApp() &&
+        getApp().systemInfo &&
+        getApp().systemInfo.screenWidth &&
+        getApp().systemInfo.windowHeight
+      )
+    ) {
+      try {
+        getApp().systemInfo = wx.getSystemInfoSync();
+        console.log('getApp().systemInfo.screenWidth', getApp().systemInfo.screenWidth);
+        const screenK = getApp().systemInfo.screenWidth / 750;
+        this.scv = getApp().systemInfo.windowHeight / screenK - 140;
+        console.log('screenK', screenK);
+        console.log('scv(rpx):', this.scv);
+      } catch (e) {
+        console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
+      }
+    } else {
+      console.log('getApp().systemInfo.screenWidth', getApp().systemInfo.screenWidth);
+      const screenK = getApp().systemInfo.screenWidth / 750;
+      this.scv = getApp().systemInfo.windowHeight / screenK - 140;
+      console.log('screenK', screenK);
+      console.log('scv(rpx):', this.scv);
+    }
+  },
+  onLoad(params) {
+    console.log('params', params);
+    const { username, dialogId } = params;
+    console.log('currentTheme', this.currentTheme);
+    uni.setNavigationBarTitle({
+      title: username,
+    });
+    this.dialogId = dialogId;
+    this.getChatRecord(dialogId);
+    if (Object.keys(this.allEmoji).length < 1) {
+      this.getEmoji();
+    }
+    uni.onKeyboardHeightChange(res => {
+      console.log(res.height);
+      if (res.height > 0) {
+        // 键盘弹出（滚动条位置增加键盘高度）
+        this.$nextTick(() => {
+          this.scrollTop += res.height;
+        });
+      } else {
+        // 键盘收起（滚动条位置减少键盘高度）
+        this.$nextTick(() => {
+          this.scrollTop -= res.height;
+        });
+      }
+    });
+  },
+
+  onReady() {
+    if (this.currentTheme === 'dark') {
+      uni.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#3f4243',
+      });
+    } else {
+      uni.setNavigationBarColor({
+        frontColor: '#000000',
+        backgroundColor: '#ededed',
+      });
+    }
+  },
+
+  onPullDownRefresh() {
+    this.pageNum += 1;
+    console.log('refresh');
+    this.getChatRecord(this.dialogId);
+  },
+
+  methods: {
+    scrollToBottom() {
       this.$nextTick(() => {
         uni
           .createSelectorQuery()
@@ -197,22 +229,35 @@ export default {
           });
       });
     },
-  },
-
-  methods: {
+    toUpper() {
+      uni.startPullDownRefresh();
+      this.pageNum += 1;
+      console.log('refresh');
+      this.getChatRecord(this.dialogId);
+    },
+    scroll(e) {
+      console.log('this.old.scrollTop', this.old.scrollTop);
+      this.old.scrollTop = e.detail.scrollTop;
+    },
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
+      uni.showNavigationBarLoading();
       const params = {
         'filter[dialog_id]': dialogId || this.dialogId,
         include: ['user', 'user.groups'],
-        'page[number]': 1,
-        'page[limit]': 100,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
       this.$store
         .dispatch('jv/get', ['dialog/message', { params }])
         .then(res => {
           console.log('会话消息列表res：', res);
+          if (res) {
+            console.log('停止手动刷新');
+            uni.hideNavigationBarLoading();
+            uni.stopPullDownRefresh();
+          }
         })
         .catch(err => {
           console.log(err);
@@ -230,29 +275,51 @@ export default {
 
     // 发送消息
     send() {
-      const params = {
-        _jv: {
-          type: 'dialog/message',
-        },
-        dialog_id: this.dialogId,
-        message_text: this.msg,
-      };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          if (res) {
-            console.log('发送消息res：', res);
-          }
-        })
-        .catch(err => {
-          console.log(err);
+      if (this.msg === '') {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('notice.emptycontent'),
+          duration: 2000,
         });
-      this.emojiShow = false;
-      this.msg = '';
+      } else {
+        const params = {
+          _jv: {
+            type: 'dialog/message',
+          },
+          dialog_id: this.dialogId,
+          message_text: this.msg,
+        };
+        this.$store
+          .dispatch('jv/post', params)
+          .then(res => {
+            if (res) {
+              console.log('发送消息res：', res);
+              this.scrollToBottom();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        this.msg = '';
+        this.emojiShow = false;
+      }
     },
 
     // 弹出表情组件
     popEmoji() {
+      if (this.emojiShow) {
+        this.scrollTop = this.old.scrollTop;
+        this.scrollToBottom();
+        this.$nextTick(() => {
+          this.scrollTop -= 185;
+        });
+      } else {
+        this.scrollTop = this.old.scrollTop;
+        this.scrollToBottom();
+        this.$nextTick(() => {
+          this.scrollTop += 185;
+        });
+      }
       this.emojiShow = !this.emojiShow;
     },
 
@@ -278,6 +345,16 @@ export default {
   height: 100%;
   margin: 0rpx 0rpx 140rpx;
   background: --color(--qui-BG-ED);
+
+  &-wrap {
+    position: absolute;
+    top: 0rpx;
+    right: 0rpx;
+    bottom: 0rpx;
+    left: 0rpx;
+    margin: auto;
+    overflow: auto;
+  }
 
   &__con {
     font-size: $fg-f24;
@@ -400,7 +477,7 @@ export default {
   &__footer {
     position: fixed;
     bottom: 0rpx;
-    z-index: 99;
+    z-index: 999;
     width: 100%;
     min-height: 140rpx;
     background: --color(--qui-BG-BTN-GRAY-1);

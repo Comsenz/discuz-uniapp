@@ -54,6 +54,7 @@
         <view
           class="theme__content__videocover"
           v-if="themeType == 2 && !payStatus && coverImage != null"
+          @click="videocoverClick"
         >
           <image class="themeItem__content__coverimg" mode="widthFix" :src="coverImage" alt></image>
         </view>
@@ -87,7 +88,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="previewPicture(index)"
+              @click="previewPicture(payStatus, index)"
             ></image>
           </view>
         </view>
@@ -100,7 +101,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="previewPicture(index)"
+              @click="previewPicture(payStatus, index)"
             ></image>
           </view>
         </view>
@@ -113,7 +114,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               alt
-              @click="previewPicture(index)"
+              @click="previewPicture(payStatus, index)"
             ></image>
             <image
               class="themeItem__content__imgmore__item"
@@ -315,22 +316,32 @@ export default {
     personJump() {
       this.$emit('personJume', this.userId);
     },
+    // 点击视频封面图事件
+    videocoverClick() {
+      this.$emit('videocoverClick');
+    },
     // 点击图片事件(默认参数图片id)
     // imageClick(imageId) {
     //   this.$emit('imageClick', imageId);
     // },
     // 预览图片
-    previewPicture(index) {
-      const _this = this;
-      const preview = [];
-      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
-        preview.push(_this.imagesList[i].url);
+    previewPicture(payStatus, index) {
+      if (payStatus) {
+        // 如果对当前主题已支付
+        const _this = this;
+        const preview = [];
+        for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+          preview.push(_this.imagesList[i].url);
+        }
+        uni.previewImage({
+          current: index,
+          urls: preview,
+          indicator: 'number',
+        });
+      } else {
+        // 如果未支付当前主题
+        this.$emit('previewPicture');
       }
-      uni.previewImage({
-        current: index,
-        urls: preview,
-        indicator: 'number',
-      });
     },
   },
 };

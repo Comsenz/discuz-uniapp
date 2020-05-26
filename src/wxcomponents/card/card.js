@@ -25,7 +25,7 @@ export default class LastMayday {
               },
               {
                 "type": "text",
-                "text": obj.usercontent,
+                "text":obj.usercontent,
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",

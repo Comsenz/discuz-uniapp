@@ -276,8 +276,11 @@ export default {
               this.test = this.i18n.t('modify.lateron');
             }
           } else if (err.statusCode === 422) {
-            this.casherrotest = err.data.errors[0].detail;
-            this.casherro = true;
+            uni.showToast({
+              icon: this.icon,
+              title: err.data.errors[0].detail,
+              duration: 2000,
+            });
             this.empty();
           }
         });
@@ -321,6 +324,14 @@ export default {
               title: err.data.errors[0].detail[0],
               duration: 2000,
             });
+            this.empty();
+          } else if (err.statusCode === 500) {
+            uni.showToast({
+              icon: 'none',
+              title: err.data.errors[0].detail,
+              duration: 2000,
+            });
+            this.empty();
           }
         });
     },
