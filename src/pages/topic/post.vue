@@ -670,9 +670,6 @@ export default {
         res.map(item => {
           if (Number(item._jv.id) === Number(this.categoryId)) {
             this.checkClassData.push(item);
-          } else {
-            this.checkClassData = [];
-            this.checkClassData.push(res[0]);
           }
           return item;
         });
