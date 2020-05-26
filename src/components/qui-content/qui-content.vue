@@ -456,10 +456,16 @@ export default {
   box-sizing: border-box;
 
   &__header {
+    // display: flex;
+    // width: 100%;
+    // height: 80rpx;
+    // margin-bottom: 12rpx;
     display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
     width: 100%;
-    height: 80rpx;
-    margin-bottom: 12rpx;
+    padding-bottom: 12rpx;
+    box-sizing: border-box;
 
     &__img {
       width: 80rpx;
@@ -531,7 +537,7 @@ export default {
 
   &__content {
     &__text {
-      padding-bottom: 12rpx;
+      padding: 20rpx 0;
       overflow: hidden;
       font-family: $font-family;
       font-size: $fg-f28;
@@ -552,7 +558,7 @@ export default {
     &__imgone {
       display: flex;
       justify-content: flex-start;
-      margin-top: 30rpx;
+      margin-top: 10rpx;
       line-height: 0;
       &__item {
         max-width: 80%;
@@ -563,7 +569,7 @@ export default {
     &__imgtwo {
       display: flex;
       justify-content: space-between;
-      margin-top: 30rpx;
+      margin-top: 20rpx;
       line-height: 0;
       &__item {
         display: block;
@@ -613,7 +619,7 @@ export default {
       &__item {
         height: 50rpx;
         padding: 0 20rpx;
-        margin: 20rpx 10rpx 8rpx 0;
+        margin: 0rpx 10rpx 8rpx 0;
         margin-bottom: 8rpx;
         font-family: $font-family;
         font-size: $fg-f24;
