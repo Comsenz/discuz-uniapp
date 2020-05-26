@@ -395,6 +395,7 @@ export default {
     masstext: '两次输入的密码不一致，请重新输入',
     realname: '请输入真实姓名',
     enteridnumber: '请输入您的身份证号码',
+    idcardisempty: '身份证号码不能为空',
     nameauthensucc: '实名认证成功',
     mysignture: '我的签名',
     canalsoinput: '还能输入',
@@ -413,6 +414,7 @@ export default {
     nohasphon: '请先绑定手机号',
     idtitl: '非法身份证号（长度、校验位等不正确）',
     nametitl2: '非法姓名（长度、格式等不正确）',
+    verifyoldphon: '验证旧手机',
   },
   permission: {
     viewThreads: '查看主题列表',

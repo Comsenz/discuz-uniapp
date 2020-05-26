@@ -1,6 +1,9 @@
 <template>
   <qui-page>
     <view class="input" @click.stop="toggleBox">
+      <view class="mobile-titel">
+        {{ i18n.t('modify.verifyoldphon') }}
+      </view>
       <!-- 已绑定手机号码验证 -->
       <view class="modify-phon" v-if="phon">
         <view class="modify-phon-test">
@@ -209,6 +212,14 @@ export default {
   padding-top: 31rpx;
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
+}
+.mobile-titel {
+  margin-left: 40rpx;
+  font-size: $fg-f50;
+  font-weight: bold;
+  line-height: 60rpx;
+  color: --color(--qui-FC-333);
+  opacity: 1;
 }
 .modify-phon {
   display: flex;

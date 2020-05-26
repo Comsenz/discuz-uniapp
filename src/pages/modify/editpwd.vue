@@ -73,7 +73,6 @@ export default {
   },
   onLoad() {
     this.userid = this.usersid;
-    console.log(this.forums);
   },
   computed: {
     usersid() {
@@ -154,7 +153,6 @@ export default {
               delta: 1,
               success() {
                 const pages = getCurrentPages();
-                console.log(pages);
                 pages[2].onLoad();
               },
             });

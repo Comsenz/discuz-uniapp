@@ -52,13 +52,13 @@ export default {
       if (!this.myname) {
         uni.showToast({
           icon: this.icon,
-          title: '名字不能为空',
+          title: this.i18n.t('modify.emptyname'),
           duration: 2000,
         });
       } else if (!this.myid) {
         uni.showToast({
           icon: this.icon,
-          title: '身份证号码不能为空',
+          title: this.i18n.t('modify.idcardisempty'),
           duration: 2000,
         });
       }
@@ -69,13 +69,13 @@ export default {
       } else if (!this.myname) {
         uni.showToast({
           icon: this.icon,
-          title: '名字不能为空',
+          title: this.i18n.t('modify.emptyname'),
           duration: 2000,
         });
       } else if (!this.myid) {
         uni.showToast({
           icon: this.icon,
-          title: '身份证号码不能为空',
+          title: this.i18n.t('modify.idcardisempty'),
           duration: 2000,
         });
       }
