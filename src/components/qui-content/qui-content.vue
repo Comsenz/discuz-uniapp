@@ -137,7 +137,7 @@
           </view>
         </view>
 
-        <view class="themeItem__content__tags" v-if="themeType === '1'">
+        <view class="themeItem__content__tags" v-if="themeType === '1' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
           </view>
@@ -198,6 +198,7 @@
 
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
+import { mapState } from 'vuex';
 
 export default {
   props: {
@@ -356,6 +357,7 @@ export default {
       // isGreat: false,
       preid: 0,
       currentid: 0,
+      categoryShow: true,
     };
   },
   computed: {
@@ -367,15 +369,14 @@ export default {
     localTime() {
       return time2MorningOrAfternoon(this.themeTime);
     },
+    ...mapState({
+      getCategoryId: state => state.session.categoryId,
+      getCategoryIndex: state => state.session.categoryIndex,
+    }),
   },
   mounted() {
     this.videoContext = wx.createVideoContext(`myvideo${this.$props.currentindex}`, this);
-    // console.log(this.videoContext, 'inshow')
   },
-  // onShow() {
-  //   this.videoContext = wx.createVideoContext('myvideo', this);
-  //   this.videoContext.requestFullScreen({ direction: 90 });
-  // },
   methods: {
     // 点击删除按钮
     deleteClick(evt) {
