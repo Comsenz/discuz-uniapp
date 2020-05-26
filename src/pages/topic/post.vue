@@ -194,6 +194,7 @@
               placeholder="0.0"
               :maxlength="8"
               :focus="setType === 'pay'"
+              @input="checkNum"
             />
             <input
               class="popup-dialog__cont-input"
@@ -351,6 +352,21 @@ export default {
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
+    // 处理金额
+    /* eslint-disable */
+    checkNum(e) {
+      const value = e.target.value.match(/^\d*(\.?\d{0,2})/g)[0];
+      this.$nextTick(function() {
+        try {
+          this.inputPrice = Number(value);
+        } catch (e) {
+          uni.showToast({
+            title: '金额输入不正确！',
+            icon: 'none',
+          });
+        }
+      });
+    },
 
     // video相关方法
     videoDel() {
