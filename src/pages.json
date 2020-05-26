@@ -22,13 +22,6 @@
       }
     },
     //个人主页和我的部分页面
-    // {
-    //   "path": "pages/my/index",
-    //   "style": {
-    //     "navigationBarTitleText": "我的",
-    //     "navigationStyle": "default"
-    //   }
-    // },
     {
       "path": "pages/my/profile",
       "style": {

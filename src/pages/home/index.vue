@@ -23,33 +23,22 @@
 
 <script>
 import forums from '@/mixin/forums';
-import user from '@/mixin/user';
 
 export default {
-  mixins: [forums, user],
+  mixins: [forums],
   data() {
     return {
       show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
-      isFirst: true, // 是否是第一次进入页面
     };
   },
   onLoad() {
-    const _this = this;
     this.$nextTick(() => {
       // 一定要等视图更新完再调用方法
-      setTimeout(() => {
-        _this.$refs.home.ontrueGetList(); // 初次加载第一个页面的请求数据
-      }, 100);
+      this.$refs.home.ontrueGetList();
     });
   },
-  onShow() {
-    if (this.isFirst) {
-      this.isFirst = false;
-    } else {
-      this.$refs.quinotice.ontrueGetList();
-    }
-  },
+
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -66,34 +55,11 @@ export default {
   methods: {
     // 切换组件
     cut_index(e, type, isTabBar) {
-      const _this = this;
-      _this.show_index = type;
-      switch (_this.show_index) {
-        case 0:
-          if (isTabBar.indexOf(0) === -1) {
-            _this.$refs.home.ontrueGetList();
-          }
-          break;
-        case 1:
-          if (isTabBar.indexOf(1) === -1) {
-            _this.$refs.quinotice.ontrueGetList();
-          }
-          break;
-        case 2:
-          if (isTabBar.indexOf(2) === -1) {
-            _this.$refs.quimy.ontrueGetList();
-          }
-          break;
-        case 3:
-          if (isTabBar.indexOf(3) === -1) {
-            _this.$refs.information.ontrueGetList();
-          }
-          break;
-        default:
-          break;
-      }
-      // 已请求的接口的页面不再请求
+      const tabs = ['home', 'quinotice', 'quimy', 'information'];
+      const currentTab = tabs[type];
+      this.show_index = type;
       if (isTabBar.indexOf(type) === -1) {
+        this.$refs[currentTab].ontrueGetList();
         isTabBar.push(type);
       }
     },
@@ -101,18 +67,6 @@ export default {
     handleClickShare(e) {
       this.nowThreadId = e;
     },
-    // onPullDownRefresh() {
-    //   uni.showToast({
-    //     title: `第${this.show_index + 1}个页面的刷新`,
-    //   });
-    //   setTimeout(function() {
-    //     uni.stopPullDownRefresh();
-    //   }, 2000);
-    //   console.log(
-    //     '下拉刷新四个组件公用的下拉刷新方法,根据在哪个页面下拉执行哪个页面的刷新方方法即可',
-    //   );
-    //   console.log('如果想要自定义刷新的话，插件市场就有一个   非常好用也非常容易入手');
-    // },
   },
 };
 </script>
