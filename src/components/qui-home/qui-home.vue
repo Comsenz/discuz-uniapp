@@ -249,14 +249,14 @@ export default {
       playIndex: null,
     };
   },
-  onLoad() {
-    // 首页导航栏分类列表
-    this.loadCategories();
-    // 首页主题置顶列表
-    this.loadThreadsSticky();
-    // 首页主题内容列表
-    this.loadThreads();
-  },
+  // onLoad() {
+  //   // 首页导航栏分类列表
+  //   this.loadCategories();
+  //   // 首页主题置顶列表
+  //   this.loadThreadsSticky();
+  //   // 首页主题内容列表
+  //   this.loadThreads();
+  // },
   mounted() {
     const query = uni.createSelectorQuery().in(this);
     query

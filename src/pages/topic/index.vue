@@ -375,12 +375,11 @@ import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 
 export default {
-  mixins: [user],
-  mixins: [forums],
+  mixins: [user, forums],
   data() {
     return {
       threadId: '', //主题id
-      userId: 57, //当前用户Id
+      // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
@@ -546,7 +545,7 @@ export default {
     },
   },
   onLoad(option) {
-    // console.log(this.forums, '这是站点信息~~~~~~~~~~');
+    console.log(this.user, '这是用户信息~~~~~~~~~~');
     console.log(option.id, '这是主题id');
     console.log(uni.getSystemInfoSync().windowHeight, '设备信息');
     this.windowHeight = uni.getSystemInfoSync().windowHeight;

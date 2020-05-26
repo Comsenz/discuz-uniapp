@@ -20,23 +20,34 @@ export default {
         };
         user = await this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
       }
-
       const pages = getCurrentPages();
-      const currentPage = pages[pages.length - 1];
-
       if (forums.set_site.site_mode === SITE_PAY) {
-        if (!user.paid && currentPage.route !== 'pages/site/info') {
+        let currentPage = {};
+        if (pages.length > 0) {
+          currentPage = pages[pages.length - 1];
+          if (!user.paid && currentPage.route !== 'pages/site/info') {
+            uni.redirectTo({
+              url: '/pages/site/info',
+            });
+          }
+        } else if (!user.paid) {
           uni.redirectTo({
             url: '/pages/site/info',
           });
         }
       }
+
+      this.$store.dispatch('forum/setError', { loading: false });
+
+      if (getApp().globalData.init) {
+        getApp().globalData.init();
+      }
     } catch (errs) {
-      if (errs) {
-        const status = errs.statusCode;
-        if (status.toString === '401' && errs.data && errs.data.errors) {
-          this.$store.dispatch('forum/setError', errs.data.errors[0]);
-        }
+      if (errs && errs.data && errs.data.errors) {
+        this.$store.dispatch('forum/setError', {
+          loading: false,
+          ...errs.data.errors[0],
+        });
       }
     }
   },
