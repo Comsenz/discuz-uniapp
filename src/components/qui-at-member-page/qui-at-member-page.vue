@@ -88,17 +88,18 @@ export default {
   name: 'QuiAtMemberPage',
   data() {
     return {
-      allSiteUser: [],
-      allFollow: [],
+      allSiteUser: [], // 所有站点成员
+      allFollow: [], // 所有关注成员
       followStatus: true, // 第一次进来显示follow列表
-      checkAvatar: [],
+      checkAvatar: [], // 选择人员列表
       loadingText: 'discuzq.list.loading',
-      searchValue: '',
-      pageNum: 1,
-      meta: {},
+      searchValue: '', // 搜索值
+      pageNum: 1, // 页面
+      meta: {}, // 接口返回meta值
     };
   },
   computed: {
+    // 处理角色名称
     getGroups() {
       const that = this;
       let name = '';
@@ -121,6 +122,7 @@ export default {
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
 
+    // 多选人员
     changeCheck(e) {
       this.checkAvatar = [];
       e.detail.value.forEach(item => {
@@ -137,6 +139,7 @@ export default {
         delta: 1,
       });
     },
+    // 人员搜索
     searchInput(e) {
       this.followStatus = false;
       this.searchValue = e.detail.value;
@@ -154,6 +157,7 @@ export default {
         this.getSiteMember(1);
       }, 250);
     },
+    // 上划加载更多
     lower() {
       if (this.followStatus) {
         if (this.meta.total > this.allFollow.length) {
@@ -169,6 +173,8 @@ export default {
         this.loadingText = 'discuzq.list.noMoreData';
       }
     },
+
+    // 接口请求
     getFollowMember(number) {
       const params = {
         include: ['toUser', 'toUser.groups'],
