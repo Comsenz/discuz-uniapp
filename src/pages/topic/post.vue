@@ -56,8 +56,8 @@
         v-show="!emojiShow"
         @blur="contBlur"
       ></textarea>
-      <view class="post-box__con-text" v-show="emojiShow">
-        {{ textAreaValue }}
+      <view class="post-box__con-text post-box__con-text--static" v-show="emojiShow">
+        <text>{{ textAreaValue }}</text>
       </view>
       <qui-uploader
         :url="`${url}api/attachments`"
@@ -118,9 +118,9 @@
         <view class="post-box__ft-categories">
           <qui-button
             v-for="(item, index) in allCategories"
-            :key="index"
-            :type="item._jv.id === categoryId ? 'primary' : ''"
-            :plain="item._jv.id === categoryId"
+            :key="item._jv.id"
+            :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
+            :plain="Number(item._jv.id) === Number(categoryId)"
             @click="checkClass(item, index)"
           >
             {{ item.name }}
@@ -303,7 +303,8 @@ export default {
       allCategories: [], // 所有分类
       categoryIndex: 0, // 分类下标
       categoryId: 1, // 分类id
-      threadId: '', // 编辑时帖子id
+      threadId: '', // 编辑时主题id
+      firstPostId: '', // 编辑时帖子id
       postDetails: {}, // 编辑时帖子详情
       filePreview: [], // 服务器上传
     };
@@ -456,6 +457,22 @@ export default {
 
     // 表情点击事件
     getEmojiClick(num) {
+      // const query = uni
+      //   .createSelectorQuery()
+      //   .in(this)
+      //   .select('#textarea');
+      // query
+      //   .fields(
+      //     {
+      //       size: true,
+      //       scrollOffset: true,
+      //     },
+      //     data => {
+      //       console.log(data);
+      //     },
+      //   )
+      //   .exec();
+
       let text = '';
       text = `${this.textAreaValue.slice(0, this.cursor) +
         this.allEmoji[num].code +
@@ -482,7 +499,7 @@ export default {
         this.$delete(this.checkClassData, index);
       } */
     },
-    // 发布按钮点击
+    // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       let status = true;
       if (this.textAreaValue.length < 1) {
@@ -532,16 +549,66 @@ export default {
       if (status) {
         this.postLoading = true;
         uni.showLoading();
-        this.postThread().then(res => {
-          this.postLoading = false;
-          uni.hideLoading();
-          if (res._jv.json.data.id) {
-            uni.redirectTo({
-              url: `/pages/topic/index?id=${res._jv.json.data.id}`,
-            });
-          }
-        });
+
+        if (this.operating === 'edit') {
+          this.editThread().then(() => {
+            this.postLoading = false;
+            uni.hideLoading();
+            // uni.redirectTo({
+            //   url: `/pages/topic/index?id=${this.threadId}`,
+            // });
+          });
+        } else {
+          this.postThread().then(res => {
+            this.postLoading = false;
+            uni.hideLoading();
+            if (res._jv.json.data.id) {
+              uni.redirectTo({
+                url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+              });
+            }
+          });
+        }
       }
+    },
+
+    // 编辑回显主题，处理附件
+    setAnnex(type, data) {
+      switch (type) {
+        case 'img':
+          data.firstPost.images.map(item => {
+            this.filePreview.push({
+              path: item.url,
+              id: item._jv.id,
+            });
+            return item;
+          });
+          break;
+        case 'video':
+          this.videoBeforeList.push({
+            path: data.threadVideo.media_url,
+          });
+          break;
+        default:
+          console.log('没有匹配模式');
+          break;
+      }
+    },
+    // 发布主题，处理图片
+    addImg() {
+      const attachments = {};
+      attachments.data = [];
+
+      this.uploadFile.forEach(item => {
+        if (item.data) {
+          attachments.data.push({
+            type: 'attachments',
+            id: item.data.id,
+          });
+        }
+      });
+
+      return attachments;
     },
 
     // 接口请求
@@ -565,7 +632,7 @@ export default {
     postThread() {
       const params = {
         _jv: {
-          type: `${this.operating === 'edit' ? `threads/${this.threadId}` : 'threads'}`,
+          type: 'threads',
           relationships: {
             category: {
               data: {
@@ -580,6 +647,7 @@ export default {
         price: this.price,
         free_words: this.word,
       };
+
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
           case 0:
@@ -587,6 +655,7 @@ export default {
             break;
           case 1:
             params.title = this.postTitle;
+            params._jv.relationships.attachments = this.addImg();
             resolve();
             break;
           case 2:
@@ -595,15 +664,7 @@ export default {
             resolve();
             break;
           case 3:
-            params._jv.relationships.attachments = {
-              data: [],
-            };
-            this.uploadFile.forEach(item => {
-              params._jv.relationships.attachments.data.push({
-                type: 'attachments',
-                id: item.data.id,
-              });
-            });
+            params._jv.relationships.attachments = this.addImg();
             resolve();
             break;
           default:
@@ -614,7 +675,7 @@ export default {
 
       return postPromise.then(() => {
         return this.$store
-          .dispatch(`jv/${this.operating === 'edit' ? 'patch' : 'post'}`, params)
+          .dispatch('jv/post', params)
           .then(res => {
             return res;
           })
@@ -664,10 +725,9 @@ export default {
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
         this.postDetails = res;
-
+        this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
         this.textAreaValue = res.firstPost.content;
-        this.postTitle = res.title;
         this.categoryId = res.category._jv.id;
         if (Number(res.price) > 0) {
           this.price = res.price;
@@ -676,27 +736,81 @@ export default {
         this.textAreaLength = this.type === 1 ? 10000 : 450;
 
         switch (Number(res.type)) {
+          case 0:
+            break;
+          case 1:
+            this.postTitle = res.title;
+            this.setAnnex('img', res);
+            break;
           case 2:
             this.percent = 1;
-            this.videoBeforeList.push({
-              path: res.threadVideo.media_url,
-            });
+            this.setAnnex('video', res);
             break;
           case 3:
-            res.firstPost.images.map(item => {
-              this.filePreview.push({
-                path: item.url,
-                id: item._jv.id,
-              });
-              return item;
-            });
+            this.setAnnex('img', res);
             break;
           default:
             console.log('未知类型');
         }
-
-        console.log(res);
       });
+    },
+    // 编辑帖子接口
+    async editThread() {
+      let state = 0;
+      const posts = {
+        _jv: {
+          type: `posts/${this.firstPostId}`,
+          relationships: {},
+        },
+        content: this.textAreaValue,
+      };
+      const threads = {
+        _jv: {
+          type: `threads/${this.threadId}`,
+          relationships: {
+            category: {
+              data: {
+                type: 'categories',
+                id: this.checkClassData[0]._jv.id,
+              },
+            },
+          },
+        },
+      };
+
+      switch (this.type) {
+        case 0:
+          break;
+        case 1:
+          threads.title = this.postTitle;
+          threads.price = this.price;
+          threads.free_words = this.word;
+          posts._jv.relationships.attachments = this.addImg();
+          break;
+        case 2:
+          threads.file_id = this.fileId;
+          threads.file_name = this.videoName;
+          threads.price = this.price;
+          break;
+        case 3:
+          threads.price = this.price;
+          posts._jv.relationships.attachments = this.addImg();
+          break;
+        default:
+          break;
+      }
+
+      await this.$store.dispatch('jv/patch', posts).then(res => {
+        if (res._jv.json.data.id) state += 1;
+      });
+      await this.$store.dispatch('jv/patch', threads).then(res => {
+        if (res._jv.json.data.id) state += 1;
+      });
+
+      if (state === 2) {
+        return state;
+      }
+      throw new Error('出错了');
     },
   },
   onLoad(option) {
@@ -717,7 +831,8 @@ export default {
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
     if (option.categoryIndex) this.categoryIndex = Number(option.categoryIndex);
-    if (option.categoryId) this.categoryId = Number(option.threadId);
+    if (option.categoryId)
+      this.categoryId = Number(option.categoryId) === 0 ? 1 : Number(option.categoryId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
 
     if (this.operating === 'edit') {
@@ -792,7 +907,12 @@ export default {
     border: 1rpx solid --color(--qui-BOR-DDD);
     border-radius: 10rpx;
     box-sizing: border-box;
+
+    &--static {
+      overflow: auto;
+    }
   }
+
   &__video {
     display: flex;
     flex-wrap: wrap;
