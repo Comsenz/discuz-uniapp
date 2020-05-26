@@ -160,13 +160,17 @@
     </scroll-view>
     <!--轻提示-->
     <qui-toast ref="toast"></qui-toast>
-    <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+    <!--<uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
       <view class="comment-popup">
         <view class="comment-popup-top">
           <view class="comment-popup-top-l">
-            <qui-icon name="icon-expression" class="comm-icon"></qui-icon>
-            <qui-icon name="icon-call" class="comm-icon"></qui-icon>
-            <qui-icon name="icon-image" class="comm-icon"></qui-icon>
+            <qui-icon
+              name="icon-expression"
+              class="comm-icon"
+              @click="emojiShow = !emojiShow"
+            ></qui-icon>
+            <qui-icon name="icon-call" class="comm-icon" @click="callClick"></qui-icon>
+            <qui-icon name="icon-image" class="comm-icon" @click="imageUploader"></qui-icon>
           </view>
           <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
         </view>
@@ -184,9 +188,74 @@
             />
           </view>
         </view>
-        <!--<qui-button size="100%" type="primary" class="publishBtn" @click="publishClick()">
-            {{ t.publish }}
-          </qui-button>-->
+        <button class="publishBtn" @click="publishClick()">
+          {{ t.publish }}
+        </button>
+      </view>
+    </uni-popup>-->
+    <!--回复弹框-->
+    <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+      <view class="comment-popup" v-if="commentPopupStatus">
+        <view class="comment-popup-topbox">
+          <view class="comment-popup-top">
+            <view class="comment-popup-top-l">
+              <qui-icon
+                name="icon-expression"
+                class="comm-icon"
+                :size="40"
+                @click="emojiShow = !emojiShow"
+              ></qui-icon>
+              <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
+              <qui-icon
+                name="icon-image"
+                :size="40"
+                class="comm-icon"
+                @click="imageUploader"
+              ></qui-icon>
+            </view>
+            <view class="text-word-tip">
+              {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+            </view>
+          </view>
+          <qui-emoji
+            :list="allEmoji"
+            position="absolute"
+            top="104rpx"
+            v-if="emojiShow"
+            border-radius="10rpx"
+            :color="emojiShow ? '#1878F3' : '#777'"
+            @click="getEmojiClick"
+          ></qui-emoji>
+        </view>
+
+        <view class="comment-content-box">
+          <view class="comment-content">
+            <textarea
+              ref="commentText"
+              :focus="focusVal"
+              :maxlength="450"
+              class="comment-textarea"
+              :placeholder="t.writeComments"
+              placeholder-style="color:#b5b5b5;font-size: 28rpx;"
+              placeholder-class="text-placeholder"
+              v-show="!emojiShow"
+              v-model="textAreaValue"
+              @blur="contBlur"
+            />
+            <qui-uploader
+              v-if="uploaderShow"
+              :url="`${url}api/attachments`"
+              :header="header"
+              :form-data="formData"
+              :count="3"
+              name="file"
+              async-clear
+              ref="upload"
+              @change="uploadChange"
+              @clear="uploadClear"
+            ></qui-uploader>
+          </view>
+        </view>
         <button class="publishBtn" @click="publishClick()">
           {{ t.publish }}
         </button>
@@ -198,6 +267,7 @@
 <script>
 /* eslint-disable */
 import { status, utils } from '@/library/jsonapi-vuex/index';
+import { mapState, mapMutations } from 'vuex';
 import user from '@/mixin/user';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
@@ -220,7 +290,14 @@ export default {
       postsStatus: false,
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
+      commentPopupStatus: false, //回复弹框内容状态是否显示
+      emojiShow: false, //表情组件显示状态
+      uploaderShow: false, //图片上传组件显示状态
       textAreaValue: '', // 评论输入框
+      publishClickStatus: true, //发布按钮点击状态
+      focusVal: true, // 默认输入框获取焦点状态
+      header: {},
+      formData: {}, //请求头部
       placeholderColor: 'color:#b5b5b5', // 默认textarea的placeholder颜色
       isLiked: false, // 主题点赞状态
       role: '管理员',
@@ -259,6 +336,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      getAtMemberData: state => state.atMember.atMemberData,
+    }),
     post() {
       const commentId = this.commentId;
       return utils.deepCopy(this.$store.getters['jv/get'](`posts/${commentId}`));
@@ -288,8 +368,22 @@ export default {
     this.loadThread();
     this.loadPostComments();
   },
+  onShow() {
+    let atMemberList = '';
+    this.getAtMemberData.map(item => {
+      atMemberList += `@${item.username} `;
+      return atMemberList;
+    });
+    this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
+      atMemberList +
+      this.textAreaValue.slice(this.cursor)}`;
+    this.setAtMember([]);
+  },
   methods: {
-    // // 加载当前评论数据
+    ...mapMutations({
+      setAtMember: 'atMember/SET_ATMEMBER',
+    }),
+    // 加载当前评论数据
     loadPost() {
       const params = {
         include: [
@@ -398,13 +492,16 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '4') {
+            console.log(this.postComments, '@@@@~~~~');
             this.postComments[this.commentIndex].isLiked = data.isLiked;
             if (data.isLiked) {
               // 评论点赞成功
+              console.log('点赞数加1');
               this.postComments[this.commentIndex].likeCount++;
             } else {
               // 评论点赞失败
-              this.postComments[this.commentIndex].likeCount++;
+              console.log('点赞数减1');
+              this.postComments[this.commentIndex].likeCount--;
             }
           }
         })
@@ -415,6 +512,12 @@ export default {
 
     // 主题回复调用接口
     postComment() {
+      // console.log('调接口了');
+      if (this.textAreaValue.length < 1) {
+        this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
+        this.publishClickStatus = true;
+        return false;
+      }
       const params = {
         _jv: {
           type: 'posts',
@@ -436,9 +539,12 @@ export default {
           .dispatch('jv/post', params)
           .then(res => {
             this.$refs.commentPopup.close();
+            this.commentPopupStatus = false;
+            this.publishClickStatus = true;
             // console.log(res);
           })
           .catch(err => {
+            this.publishClickStatus = true;
             console.log(err);
           });
       });
@@ -484,9 +590,64 @@ export default {
         url: `/pages/profile/index?userId=${id}`,
       });
     },
+    // 回复文本域失去焦点时，获取光标位置
+    contBlur(e) {
+      this.cursor = e.detail.cursor;
+    },
+    // 点击表情插入到文本域
+    getEmojiClick(num) {
+      let text = '';
+      text = `${this.textAreaValue.slice(0, this.cursor) +
+        this.allEmoji[num].code +
+        this.textAreaValue.slice(this.cursor)}`;
 
+      this.textAreaValue = text;
+      this.emojiShow = false;
+    },
+    // 点击@跳转到@页
+    callClick() {
+      uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
+    },
+    // 上传图片
+    imageUploader() {
+      this.uploaderShow = true;
+      if (this.uploadFile.length == 3) {
+        this.$refs.toast.show({ message: this.t.imageNumLimit });
+        return;
+      }
+      this.$nextTick(() => {
+        this.$refs.upload.uploadClick();
+      });
+    },
+    uploadChange(e) {
+      this.uploadFile = e;
+    },
+    uploadClear(list, del) {
+      this.delAttachments(list.data.id).then(() => {
+        this.$refs.upload.clear(del);
+      });
+    },
+    // 删除图片
+    delAttachments(id) {
+      const params = {
+        _jv: {
+          type: `attachments/${id}`,
+        },
+      };
+
+      return this.$store
+        .dispatch('jv/delete', params)
+        .then(res => {
+          return res;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     // 评论点回复击发布事件
     publishClick() {
+      // console.log('走了');
+      this.publishClickStatus = false;
       this.postComment(this.commentId);
     },
     // // 评论点赞
@@ -507,6 +668,7 @@ export default {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
         // this.commentId = postId;
+        this.commentPopupStatus = true;
         this.$refs.commentPopup.open();
       }
     },
@@ -811,11 +973,13 @@ page {
 .comment-popup-top {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   padding: 40rpx 40rpx 20rpx;
   .comment-popup-top-l {
-    flex: 1;
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
+    width: 230rpx;
   }
   .comm-icon {
     flex: 1;

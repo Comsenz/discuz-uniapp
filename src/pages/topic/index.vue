@@ -1275,6 +1275,7 @@ export default {
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
+    // 上传图片
     imageUploader() {
       this.uploaderShow = true;
       if (this.uploadFile.length == 3) {
