@@ -103,6 +103,9 @@
       </view>
       <qui-toast ref="toast"></qui-toast>
     </view>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -254,7 +257,16 @@ export default {
     },
     // 跳支付页面
     submit() {
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+        return;
+      }
       this.$refs.payShow.payClickShow();
+    },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
   },
 };
@@ -345,11 +357,13 @@ export default {
   text-align: left;
 }
 .popup-pay {
-  .pay-title {
+  .pay-title,
+  .pay-radio {
     display: none;
   }
-  .payBtn {
+  .pay-btn {
     margin-top: 40rpx;
+    margin-bottom: 40rpx;
   }
 }
 .popup-pay-type {

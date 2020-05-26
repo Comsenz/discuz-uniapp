@@ -398,6 +398,7 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '4') {
+            this.postComments[this.commentIndex].isLiked = data.isLiked;
             if (data.isLiked) {
               // 评论点赞成功
               this.postComments[this.commentIndex].likeCount++;
