@@ -3,6 +3,13 @@
     <view class="notice-box">
       <uni-nav-bar title="消息" fixed="true" status-bar></uni-nav-bar>
       <!-- 通知类型列表 -->
+      <!-- <scroll-view
+        scroll-y="true"
+        @scrolltolower="pullDown"
+        show-scrollbar="false"
+        show-icon="true"
+        class="scroll-y"
+      > -->
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
           <qui-cell-item :title="i18n.t(item.title)" :border="item.border" arrow slot-right>
@@ -76,6 +83,7 @@
           <!-- </scroll-view> -->
         </view>
       </view>
+      <!-- </scroll-view> -->
     </view>
   </qui-page>
 </template>
@@ -112,14 +120,6 @@ export default {
       }
     } else {
       console.log('screenHeight', getApp().systemInfo.screenHeight);
-    }
-  },
-  onShow() {
-    if (this.isFirst) {
-      this.isFirst = false;
-    } else {
-      this.getDialogList();
-      this.getUnreadNoticeNum();
     }
   },
   computed: {
@@ -160,8 +160,8 @@ export default {
                 list[i].readAt = list[i].sender_read_at;
               }
             } else {
-              list.splice(i, 1);
-              i -= 1;
+              list[i].name = '该用户已被删除';
+              list[i].avatar = '';
             }
           }
           this.dialogList = [...this.dialogList, ...list];

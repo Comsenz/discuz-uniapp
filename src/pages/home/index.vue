@@ -28,6 +28,8 @@ export default {
   data() {
     return {
       show_index: 0, // 控制显示那个组件
+      isFirst: true, // 是否是第一次进入页面
+
     };
   },
   onLoad() {
@@ -44,6 +46,13 @@ export default {
       }, 100);
     });
     // console.log('是否为刘海屏', this.is_lhp);
+  },
+  onShow() {
+    if (this.isFirst) {
+      this.isFirst = false;
+    } else {
+      this.$refs.quinotice.ontrueGetList();
+    }
   },
   methods: {
     // 切换组件
