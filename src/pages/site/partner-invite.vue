@@ -161,6 +161,15 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+          },
+        ];
+      }
       this.$refs.popupHead.open();
     },
     // 点击头像到个人主页

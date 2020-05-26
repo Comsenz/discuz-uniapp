@@ -1,7 +1,13 @@
 <template>
   <view>
     <view class="notice-box">
-      <uni-nav-bar title="消息" fixed="true" status-bar></uni-nav-bar>
+      <uni-nav-bar
+        :title="title"
+        fixed="true"
+        :color="theme ? '#000000' : '#ffffff'"
+        :background-color="theme ? '#ffffff' : '#2e2f30'"
+        status-bar
+      ></uni-nav-bar>
       <!-- 通知类型列表 -->
       <!-- <scroll-view
         scroll-y="true"
@@ -89,11 +95,14 @@
 </template>
 
 <script>
+import { THEME_DEFAULT } from '@/common/const';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   data() {
     return {
+      title: this.i18n.t('notice.notice'), // 标题
+      theme: '', // 当前的主题
       list: [
         { id: 1, title: 'notice.relate', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
@@ -111,6 +120,7 @@ export default {
   onLoad() {
     this.getDialogList();
     this.getUnreadNoticeNum();
+    this.theme = this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
     if (!(getApp() && getApp().systemInfo && getApp().systemInfo.screenHeight)) {
       try {
         getApp().systemInfo = wx.getSystemInfoSync();
