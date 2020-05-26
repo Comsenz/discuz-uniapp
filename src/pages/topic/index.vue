@@ -544,7 +544,7 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.user, '这是用户信息~~~~~~~~~~');
+    console.log(this.forums, '这是站点信息~~~~~~~~~~');
     console.log(option.id, '这是主题id');
     console.log(uni.getSystemInfoSync().windowHeight, '设备信息');
     this.windowHeight = uni.getSystemInfoSync().windowHeight;
@@ -775,8 +775,6 @@ export default {
           } else if (type == '4') {
             // 评论点赞
             this.posts[this.postIndex].isLiked = data.isLiked;
-
-            // 主题点赞
             if (data.isLiked) {
               this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
