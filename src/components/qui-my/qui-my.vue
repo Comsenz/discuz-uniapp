@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="my">
+  <view class="my">
     <uni-nav-bar title="我的" fixed="true" status-bar></uni-nav-bar>
     <scroll-view
       scroll-y="true"
@@ -77,7 +77,7 @@
         </view>
       </view>
     </scroll-view>
-  </qui-page>
+  </view>
 </template>
 
 <script>

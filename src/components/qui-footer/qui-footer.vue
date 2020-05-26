@@ -94,6 +94,7 @@ export default {
         },
       ],
       bottomData: [],
+      isTabBar: [], // 禁止页面第二次加载
     };
   },
   computed: {
@@ -126,19 +127,16 @@ export default {
   },
   methods: {
     select(item, index) {
-      this.$emit('click', item, index);
-
-      this.sel = item.id;
-      if (!item.url) {
-        return;
-      }
-
+      this.$emit('click', item, index, this.isTabBar);
       this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
         return;
       }
-
+      this.sel = item.id;
+      if (!item.url) {
+        return;
+      }
       const currentPage = getCurrentPages();
       if (
         item.tabsName === this.i18n.t('home.tabsCircle') &&

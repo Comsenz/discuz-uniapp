@@ -22,40 +22,26 @@
 </template>
 
 <script>
-/* eslint-disable */
-import quiMy from '@/pages/my/index';
-import quiNotice from '@/pages/notice/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 
 export default {
   mixins: [forums, user],
-  components: {
-    'qui-my': quiMy,
-    'qui-notice': quiNotice,
-  },
   data() {
     return {
       show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
       isFirst: true, // 是否是第一次进入页面
-
     };
   },
   onLoad() {
     const _this = this;
-    // this.is_lhp = this.$is_bang;
-    this.$nextTick(function() {
-      // 一定要等视图更新完再调用方法   -----------++++++++++++++++重要
-      setTimeout(function() {
-        // uni.setNavigationBarColor({
-        //   frontColor: '#ffffff',
-        //   backgroundColor: '#6739b6',
-        // });
+    this.$nextTick(() => {
+      // 一定要等视图更新完再调用方法
+      setTimeout(() => {
         _this.$refs.home.ontrueGetList(); // 初次加载第一个页面的请求数据
       }, 100);
     });
-    // console.log('是否为刘海屏', this.is_lhp);
   },
   onShow() {
     if (this.isFirst) {
@@ -65,7 +51,7 @@ export default {
     }
   },
   // 唤起小程序原声分享
-  onShareAppMessage(res, id) {
+  onShareAppMessage(res) {
     // 来自页面内分享按钮
     if (res.from === 'button' && res.target.id !== 'top') {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
@@ -75,26 +61,40 @@ export default {
     }
     return {
       title: this.forums.set_site.site_name,
-    }
+    };
   },
   methods: {
     // 切换组件
-    cut_index(e, type) {
+    cut_index(e, type, isTabBar) {
       const _this = this;
       _this.show_index = type;
       switch (_this.show_index) {
         case 0:
-          _this.$refs.home.ontrueGetList();
+          if (isTabBar.indexOf(0) === -1) {
+            _this.$refs.home.ontrueGetList();
+          }
           break;
         case 1:
-          _this.$refs.quinotice.ontrueGetList();
+          if (isTabBar.indexOf(1) === -1) {
+            _this.$refs.quinotice.ontrueGetList();
+          }
           break;
         case 2:
-          _this.$refs.quimy.ontrueGetList();
+          if (isTabBar.indexOf(2) === -1) {
+            _this.$refs.quimy.ontrueGetList();
+          }
           break;
         case 3:
-          _this.$refs.information.ontrueGetList();
+          if (isTabBar.indexOf(3) === -1) {
+            _this.$refs.information.ontrueGetList();
+          }
           break;
+        default:
+          break;
+      }
+      // 已请求的接口的页面不再请求
+      if (isTabBar.indexOf(type) === -1) {
+        isTabBar.push(type);
       }
     },
     // 点击分享事件
@@ -114,7 +114,7 @@ export default {
     //   console.log('如果想要自定义刷新的话，插件市场就有一个   非常好用也非常容易入手');
     // },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

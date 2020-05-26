@@ -1,5 +1,5 @@
 <template>
-  <qui-page :class="'home ' + scrolled">
+  <view :class="'home ' + scrolled">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -178,7 +178,7 @@
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
-  </qui-page>
+  </view>
 </template>
 
 <script>

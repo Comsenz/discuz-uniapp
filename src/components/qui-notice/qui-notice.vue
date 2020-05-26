@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <view>
     <view class="notice-box">
       <uni-nav-bar title="消息" fixed="true" status-bar></uni-nav-bar>
       <!-- 通知类型列表 -->
@@ -85,7 +85,7 @@
       </view>
       <!-- </scroll-view> -->
     </view>
-  </qui-page>
+  </view>
 </template>
 
 <script>
