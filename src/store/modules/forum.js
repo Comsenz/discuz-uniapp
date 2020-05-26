@@ -1,7 +1,9 @@
 const SET_FORUM_ERROR = 'SET_FORUM_ERROR';
 
 const state = {
-  error: {},
+  error: {
+    loading: true,
+  },
 };
 
 const actions = {
