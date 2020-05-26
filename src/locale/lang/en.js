@@ -162,6 +162,7 @@ export default {
       admin: 'Admin',
       delete: 'Delete',
       send: 'Send',
+      emptycontent: 'the content can not be empty',
     },
   },
   // 我的和个人主页

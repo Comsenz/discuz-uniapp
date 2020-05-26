@@ -249,11 +249,11 @@ export default {
       this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
         console.log('设为无效', res);
         if (res) {
+          this.getInviteList(this.status);
           uni.showToast({
             title: '该链接已失效',
             duration: 2000,
           });
-          this.getInviteList(this.status);
         }
       });
     },

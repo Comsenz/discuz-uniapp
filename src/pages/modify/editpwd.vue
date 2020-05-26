@@ -40,7 +40,7 @@
             {{ i18n.t('modify.submission') }}
           </qui-button>
         </view>
-        <view class="chagepas-erro-forget" @click="runretire">
+        <view class="chagepas-erro-forget" @click="runretire" v-if="forums.qcloud.qcloud_sms">
           {{ i18n.t('modify.forgetoldpassword') }}
         </view>
       </view>
@@ -49,8 +49,10 @@
 </template>
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       userid: '',
@@ -71,8 +73,7 @@ export default {
   },
   onLoad() {
     this.userid = this.usersid;
-    const pages = getCurrentPages();
-    console.log(pages[2]);
+    console.log(this.forums);
   },
   computed: {
     usersid() {

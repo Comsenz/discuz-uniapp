@@ -31,23 +31,31 @@
         </view>
       </view>
       <!-- 成员列表 -->
-      <view class="manage-users-wrap">
-        <view v-if="userList && Object.keys(userList).length > 0">
-          <view class="manage-users-wrap-list" v-for="user in userList" :key="user.id">
-            <qui-avatar-cell
-              center
-              right-color="#aaa"
-              :mark="user.id"
-              :title="user.username"
-              :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="user.avatarUrl || '/static/noavatar.gif'"
-              @click="getNameId(user)"
-            ></qui-avatar-cell>
+      <scroll-view
+        class="scroll-Y"
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+        style="height: 100vh;"
+      >
+        <view class="manage-users-wrap">
+          <view v-if="userListShow && userListShow.length > 0">
+            <view class="manage-users-wrap-list" v-for="user in userListShow" :key="user.id">
+              <qui-avatar-cell
+                center
+                right-color="#aaa"
+                :mark="user.id"
+                :title="user.username"
+                :value="user.groups[Object.keys(user.groups || {})[0]].name"
+                :icon="user.avatarUrl || '/static/noavatar.gif'"
+                @click="getNameId(user)"
+              ></qui-avatar-cell>
+            </view>
+            <qui-load-more :status="loadingType"></qui-load-more>
           </view>
-          <qui-load-more :status="loadingType"></qui-load-more>
+          <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
         </view>
-        <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
-      </view>
+      </scroll-view>
     </view>
   </qui-page>
 </template>
@@ -60,23 +68,22 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
-      pageSize: 20, // 每页20条数据
+      pageSize: 5, // 每页20条数据
       pageNum: 1, // 当前页数
+      searchPageNum: 1, // 搜索的当前页数
+      userList: [], // 用户数据
+      searchUserList: [], // 搜索的用户数据
+      isSearch: false, // 是否搜索
     };
   },
-
   onLoad() {
     this.searchUser();
   },
-
   computed: {
-    userList() {
-      const list = this.$store.getters['jv/get']('users');
-      console.log('list', list);
-      return list;
+    userListShow() {
+      return this.isSearch ? this.searchUserList : this.userList;
     },
   },
-
   methods: {
     // 跳转到个人主页
     getNameId(key) {
@@ -88,38 +95,63 @@ export default {
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
       if (e && e.target) {
+        this.isSearch = true;
+        this.searchPageNum = 1;
+        this.searchUserList = [];
         this.searchUser(e.target.value);
       }
     }, 800),
     clearSearch() {
-      this.searchInput();
+      this.isSearch = false;
+      this.searchText = '';
       this.searchUser();
     },
     // 调用 搜索 接口
     searchUser(val = '') {
       this.searchText = val;
       const params = {
+        include: 'groups',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[username]': `*${this.searchText}*`,
       };
       if (this.searchText === '') {
-        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-        this.$store.dispatch('jv/get', ['users', {}]).then(res => {
-          console.log('搜索res', res);
-          if (res) {
+        this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+          console.log('内容为空的搜索：', res);
+          if (res && res._jv) {
+            delete res._jv;
+            if (this.isSearch) {
+              this.searchUserList = [...this.searchUserList, ...res];
+            } else {
+              this.userList = [...this.userList, ...res];
+            }
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       } else {
-        this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+        params['page[number]'] = this.searchPageNum;
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('搜索res', res);
-          if (res) {
+          console.log('搜索res：', res);
+          if (res && res._jv) {
+            delete res._jv;
+            this.searchUserList = [...this.searchUserList, ...res];
             this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
+    },
+    // 上拉加载
+    pullDown() {
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      if (this.isSearch) {
+        this.searchPageNum += 1;
+      } else {
+        this.pageNum += 1;
+      }
+      this.searchUser(this.searchText);
+      console.log('页码', this.pageNum);
     },
   },
 };

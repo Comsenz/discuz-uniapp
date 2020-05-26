@@ -77,7 +77,11 @@
               ></qui-person-list>
             </view>
             <view class="det-con-ft">
-              <view class="det-con-ft-child" @click="deleteReply(post._jv.id, post.canHide)">
+              <view
+                v-if="post.canHide"
+                class="det-con-ft-child"
+                @click="deleteReply(post._jv.id, post.canHide)"
+              >
                 <qui-icon name="icon-delete" class="qui-icon"></qui-icon>
                 <view>{{ t.delete }}</view>
               </view>

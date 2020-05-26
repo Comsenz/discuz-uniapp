@@ -332,6 +332,7 @@ export default {
     admin: '管理员',
     delete: '删除',
     send: '发送',
+    emptycontent: '内容不能为空',
   },
   // 海报分享页
   share: {
@@ -349,6 +350,7 @@ export default {
     contents: '内容',
     siteintroduction: '站点介绍',
     member: '成员',
+    confirm: '确定保存到相册吗',
   },
   // 信息修改页
   modify: {
