@@ -72,6 +72,9 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -137,6 +140,10 @@ export default {
     cancel() {
       this.$refs.popupContent.close();
     },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
+    },
     // 加载当前点赞数据
     loadlikes() {
       this.loadingType = 'loading';
@@ -188,8 +195,9 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
-      if (!canLike) {
-        console.log('没有点赞权限');
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
       }
       const params = {
         _jv: {

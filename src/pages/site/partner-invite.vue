@@ -102,6 +102,9 @@
         </qui-button>
       </view>
     </view>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -178,6 +181,10 @@ export default {
           url: '/pages/share/site',
         });
       }
+    },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
     // 取消按钮
     cancel() {
