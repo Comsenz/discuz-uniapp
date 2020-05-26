@@ -1,6 +1,12 @@
 <template>
   <qui-page class="my">
-    <uni-nav-bar title="我的" fixed="true" status-bar></uni-nav-bar>
+    <uni-nav-bar
+      title="我的"
+      fixed="true"
+      :color="checked ? '#ffffff' : '#000000'"
+      :background-color="checked ? '#2e2f30' : '#ffffff'"
+      status-bar
+    ></uni-nav-bar>
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
