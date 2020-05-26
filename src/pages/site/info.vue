@@ -53,7 +53,7 @@
             :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
-            :mode="modeVal"
+            mode="aspectFill"
           ></image>
           <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
         </view>
@@ -70,7 +70,7 @@
             :src="item.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
-            :mode="modeVal"
+            mode="aspectFill"
           ></image>
         </view>
       </qui-cell-item>
@@ -103,6 +103,9 @@
       </view>
       <qui-toast ref="toast"></qui-toast>
     </view>
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -118,11 +121,6 @@ export default {
       share: this.i18n.t('home.share'),
       payShowStatus: true, // 是否显示支付
       isAnonymous: '0',
-      // 图片裁剪、缩放的模式
-      modeVal: {
-        type: String,
-        default: 'aspectFill',
-      },
       payTypeData: [
         {
           name: '微信支付',
@@ -160,6 +158,15 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+          },
+        ];
+      }
       this.$refs.popupHead.open();
     },
     // 头部分享海报
@@ -254,7 +261,16 @@ export default {
     },
     // 跳支付页面
     submit() {
+      this.$store.dispatch('session/setAuth', this.$refs.auth);
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+        return;
+      }
       this.$refs.payShow.payClickShow();
+    },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
   },
 };
@@ -345,11 +361,13 @@ export default {
   text-align: left;
 }
 .popup-pay {
-  .pay-title {
+  .pay-title,
+  .pay-radio {
     display: none;
   }
-  .payBtn {
+  .pay-btn {
     margin-top: 40rpx;
+    margin-bottom: 40rpx;
   }
 }
 .popup-pay-type {

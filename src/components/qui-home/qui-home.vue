@@ -1,5 +1,5 @@
 <template>
-  <qui-page :class="'home ' + scrolled">
+  <view :class="'home ' + scrolled">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -92,6 +92,7 @@
           :ref="'myVideo' + index"
           :key="index"
           :currentindex="index"
+          :pay-status="(item.price > 0 && item.paid) || item.price == 0"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
           :theme-btn="item.canHide"
@@ -110,6 +111,7 @@
           :video-width="item.threadVideo.width"
           :video-height="item.threadVideo.height"
           :video-id="item.threadVideo._jv.id"
+          :cover-image="item.threadVideo.cover_url"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -130,7 +132,7 @@
     <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share" plain="true"></button>
+          <button class="popup-share-button" open-type="share" plain="true" id="top"></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareHead(index)">
@@ -176,7 +178,7 @@
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
-  </qui-page>
+  </view>
 </template>
 
 <script>
@@ -247,27 +249,14 @@ export default {
       playIndex: null,
     };
   },
-  onLoad() {
-    // 首页导航栏分类列表
-    this.loadCategories();
-    // 首页主题置顶列表
-    this.loadThreadsSticky();
-    // 首页主题内容列表
-    this.loadThreads();
-  },
-  // 唤起小程序原声分享
-  onShareAppMessage(res) {
-    // 来自页面内分享按钮
-    if (res.from === 'button') {
-      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
-      return {
-        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
-      };
-    }
-    return {
-      title: this.forums.set_site.site_name,
-    };
-  },
+  // onLoad() {
+  //   // 首页导航栏分类列表
+  //   this.loadCategories();
+  //   // 首页主题置顶列表
+  //   this.loadThreadsSticky();
+  //   // 首页主题内容列表
+  //   this.loadThreads();
+  // },
   mounted() {
     const query = uni.createSelectorQuery().in(this);
     query
@@ -382,6 +371,17 @@ export default {
     // 首页头部分享按钮弹窗
     open() {
       this.$refs.popupHead.open();
+      // 付费模式下不显示微信分享
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+            id: 1,
+          },
+        ];
+      }
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -463,8 +463,20 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      this.$emit('handleClickShare', id);
       this.nowThreadId = id;
       this.$refs.popupContent.open();
+      // 付费模式下不显示微信分享
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+            id: 1,
+          },
+        ];
+      }
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),

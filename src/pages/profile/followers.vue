@@ -18,7 +18,7 @@
             class="follow-content__items__avatar"
             :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
-            :mode="modeVal"
+            mode="aspectFill"
           ></image>
           <qui-cell-item
             :title="followerItem.fromUser.username"
@@ -79,11 +79,6 @@ export default {
       pageSize: 20,
       pageNum: 1, // 当前页数
       currentLoginId: this.$store.getters['session/get']('userId'),
-      // 图片裁剪、缩放的模式
-      modeVal: {
-        type: String,
-        default: 'aspectFill',
-      },
     };
   },
   mounted() {

@@ -25,7 +25,7 @@
           class="my-profile__avatar"
           :src="profile.avatarUrl || '/static/noavatar.gif'"
           alt="avatarUrl"
-          :mode="modeVal"
+          mode="widthFix"
         ></image>
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
@@ -61,7 +61,6 @@
       </navigator>
       <qui-cell-item
         :title="i18n.t('profile.wechat')"
-        arrow
         :addon="profile.wechat.nickname"
       ></qui-cell-item>
       <!-- qcloud_faceid 是否开启实名认证 -->
@@ -121,11 +120,6 @@ export default {
       formData: {},
       show: false,
       host: DISCUZ_REQUEST_HOST,
-      // 图片裁剪、缩放的模式
-      modeVal: {
-        type: String,
-        default: 'widthFix',
-      },
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
     };
   },
@@ -161,6 +155,8 @@ export default {
         const { code } = JSON.parse(res.data).errors[0];
         if (code === 'upload_time_not_up') {
           this.$refs.toast.show({ message: '上传头像频繁，一天仅允许上传一次头像' });
+        } else if (code === 'validation_error') {
+          this.$refs.toast.show({ message: '验证错误' });
         } else {
           this.$refs.toast.show({ message: code });
         }

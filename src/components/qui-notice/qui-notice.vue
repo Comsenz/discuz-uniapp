@@ -1,8 +1,21 @@
 <template>
-  <qui-page>
+  <view>
     <view class="notice-box">
-      <uni-nav-bar title="消息" fixed="true" status-bar></uni-nav-bar>
+      <uni-nav-bar
+        :title="title"
+        fixed="true"
+        :color="theme ? '#000000' : '#ffffff'"
+        :background-color="theme ? '#ffffff' : '#2e2f30'"
+        status-bar
+      ></uni-nav-bar>
       <!-- 通知类型列表 -->
+      <!-- <scroll-view
+        scroll-y="true"
+        @scrolltolower="pullDown"
+        show-scrollbar="false"
+        show-icon="true"
+        class="scroll-y"
+      > -->
       <view class="notice-box__list">
         <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
           <qui-cell-item :title="i18n.t(item.title)" :border="item.border" arrow slot-right>
@@ -15,16 +28,15 @@
             ></qui-icon>
           </qui-cell-item>
         </view>
-      </view>
-      <!-- 会话列表 -->
-      <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
-        <scroll-view
-          scroll-y="true"
-          @scrolltolower="pullDown"
-          show-scrollbar="false"
-          show-icon="true"
-          class="scroll-y"
-        >
+        <!-- 会话列表 -->
+        <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
+          <!-- <scroll-view
+            scroll-y="true"
+            @scrolltolower="pullDown"
+            show-scrollbar="false"
+            show-icon="true"
+            class="scroll-y"
+          > -->
           <view
             class="dialog-box"
             v-for="dialog of dialogList"
@@ -74,18 +86,23 @@
             :status="loadingType"
             v-if="dialogList && dialogList.length > 0"
           ></qui-load-more>
-        </scroll-view>
+          <!-- </scroll-view> -->
+        </view>
       </view>
+      <!-- </scroll-view> -->
     </view>
-  </qui-page>
+  </view>
 </template>
 
 <script>
+import { THEME_DEFAULT } from '@/common/const';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   data() {
     return {
+      title: this.i18n.t('notice.notice'), // 标题
+      theme: '', // 当前的主题
       list: [
         { id: 1, title: 'notice.relate', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
@@ -103,13 +120,16 @@ export default {
   onLoad() {
     this.getDialogList();
     this.getUnreadNoticeNum();
-  },
-  onShow() {
-    if (this.isFirst) {
-      this.isFirst = false;
+    this.theme = this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
+    if (!(getApp() && getApp().systemInfo && getApp().systemInfo.screenHeight)) {
+      try {
+        getApp().systemInfo = wx.getSystemInfoSync();
+        console.log('no height,then get height:', getApp().systemInfo.screenHeight);
+      } catch (e) {
+        console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
+      }
     } else {
-      this.getDialogList();
-      this.getUnreadNoticeNum();
+      console.log('screenHeight', getApp().systemInfo.screenHeight);
     }
   },
   computed: {
@@ -137,19 +157,24 @@ export default {
             if (list[i] && list[i].dialogMessage) {
               list[i].time = time2MorningOrAfternoon(list[i].dialogMessage.created_at);
             }
-            if (list[i] && list[i].recipient && list[i].recipient.id === this.currentLoginId) {
-              list[i].name = list[i].sender.username;
-              list[i].avatar = list[i].sender.avatarUrl;
-              list[i].groupname = list[i].sender.groups;
-              list[i].readAt = list[i].recipient_read_at;
-            } else if (list[i] && list[i].sender && list[i].sender.id === this.currentLoginId) {
-              list[i].name = list[i].recipient.username;
-              list[i].avatar = list[i].recipient.avatarUrl;
-              list[i].groupname = list[i].recipient.groups;
-              list[i].readAt = list[i].sender_read_at;
+            if (list[i] && list[i].recipient && list[i].sender) {
+              if (list[i].recipient.id === this.currentLoginId) {
+                list[i].name = list[i].sender.username;
+                list[i].avatar = list[i].sender.avatarUrl;
+                list[i].groupname = list[i].sender.groups;
+                list[i].readAt = list[i].recipient_read_at;
+              } else if (list[i].sender.id === this.currentLoginId) {
+                list[i].name = list[i].recipient.username;
+                list[i].avatar = list[i].recipient.avatarUrl;
+                list[i].groupname = list[i].recipient.groups;
+                list[i].readAt = list[i].sender_read_at;
+              }
+            } else {
+              list[i].name = '该用户已被删除';
+              list[i].avatar = '';
             }
           }
-          this.dialogList = list;
+          this.dialogList = [...this.dialogList, ...list];
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });

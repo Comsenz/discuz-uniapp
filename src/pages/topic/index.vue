@@ -372,13 +372,14 @@ import { status, utils } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
+import forums from '@/mixin/forums';
 
 export default {
-  mixins: [user],
+  mixins: [user, forums],
   data() {
     return {
       threadId: '', //主题id
-      userId: 57, //当前用户Id
+      // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
@@ -408,7 +409,7 @@ export default {
         {
           text: this.i18n.t('core.wxShare'),
           icon: 'icon-wx-friends',
-          name: 'wx',
+          name: 'wxFriends',
         },
       ], //分享方式
 
@@ -667,8 +668,8 @@ export default {
         }
         if (data.price <= 0) {
           this.rewardStatus = true;
-        } else if (data.price > 0 && data.paid) {
-          this.rewardStatus = true;
+        } else {
+          this.rewardStatus = false;
         }
         if (data.firstPost.likedUsers.length < 1) {
           this.likedStatus = false;
@@ -775,8 +776,6 @@ export default {
           } else if (type == '4') {
             // 评论点赞
             this.posts[this.postIndex].isLiked = data.isLiked;
-
-            // 主题点赞
             if (data.isLiked) {
               this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
@@ -1371,6 +1370,12 @@ export default {
     // 分享
     shareClick() {
       this.$refs.sharePopup.open();
+      console.log(this.forums, '!!~~~~~');
+      if (this.forums.set_site.site_mode == 'pay') {
+        this.bottomData.map((value, key, bottomData) => {
+          value.name === 'wxFriends' && bottomData.splice(key, 1);
+        });
+      }
     },
     // 取消分享
     cancel() {
