@@ -127,15 +127,6 @@ export default {
     if (uni.report && this.title !== '') {
       uni.report('title', this.title);
     }
-    const query = uni.createSelectorQuery().in(this);
-    query
-      .select('.uni-navbar')
-      .boundingClientRect(data => {
-        if (data) {
-          this.$emit('heightChanged', data.height);
-        }
-      })
-      .exec();
   },
   methods: {
     onClickLeft() {

@@ -14,7 +14,6 @@
         :title="forums.set_site.site_name"
         fixed="true"
         status-bar
-        @heightChanged="navbarHeightChanged"
       ></uni-nav-bar>
       <qui-header
         v-if="headerShow"
@@ -206,7 +205,7 @@ export default {
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
-      navbarShow: true, // 是否显示顶部导航栏
+      navbarShow: false, // 是否显示顶部导航栏
       navbarHeight: 0, // 顶部导航栏的高度
       headerShow: true, // 是否显示标题图(背景+logo)，不显示标题图时，分类切换栏需要固定顶部
       navTop: 0, // 切换分类导航的top
@@ -263,11 +262,9 @@ export default {
       .boundingClientRect(data => {
         this.navTop = data.top;
         this.navHeight = data.height;
-        if (this.navbarHeight) {
-          this.navTop -= this.navbarHeight;
-        }
       })
       .exec();
+    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
   },
   methods: {
     ...mapMutations({
@@ -277,19 +274,7 @@ export default {
     topMargin() {
       return `margin-top: calc(${this.navTop - this.navbarHeight + this.navHeight}px + 30rpx)`;
     },
-    navbarHeightChanged(height) {
-      if (height > this.navbarHeight) {
-        this.navbarHeight = height;
-        if (this.navTop) {
-          this.navTop -= this.navbarHeight;
-        }
-        this.navbarShow = false; // 先挂载uni-nav-bar，计算出它的高度，然后在这里再改成false，从dom中删除
-      }
-    },
     scroll(event) {
-      console.log(
-        `scrollTop: ${event.detail.scrollTop}, navbarHeight: ${this.navbarHeight}, navTop: ${this.navTop}, navHeight: ${this.navHeight}`,
-      );
       if (!this.navbarHeight) {
         return;
       }
