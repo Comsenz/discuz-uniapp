@@ -97,8 +97,10 @@
 <script>
 import { THEME_DEFAULT } from '@/common/const';
 import { time2MorningOrAfternoon } from '@/utils/time';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [user],
   data() {
     return {
       title: this.i18n.t('notice.notice'), // 标题
@@ -182,20 +184,28 @@ export default {
     },
     // 调用 未读通知数 的接口
     getUnreadNoticeNum() {
-      const params = {
-        include: ['groups'],
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, { params }]).then(res => {
-        console.log('未读通知', res);
-        if (res.typeUnreadNotifications) {
-          this.list[0].unReadNum = res.typeUnreadNotifications.related;
-          this.list[1].unReadNum = res.typeUnreadNotifications.replied;
-          this.list[2].unReadNum = res.typeUnreadNotifications.liked;
-          this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
-          this.list[4].unReadNum = res.typeUnreadNotifications.system;
-        }
-      });
+      if (this.user && this.user.typeUnreadNotifications) {
+        console.log('this.user', this.user);
+        this.list[0].unReadNum = this.user.typeUnreadNotifications.related;
+        this.list[1].unReadNum = this.user.typeUnreadNotifications.replied;
+        this.list[2].unReadNum = this.user.typeUnreadNotifications.liked;
+        this.list[3].unReadNum = this.user.typeUnreadNotifications.rewarded;
+        this.list[4].unReadNum = this.user.typeUnreadNotifications.system;
+      }
+      //   const params = {
+      //     include: ['groups'],
+      //   };
+      //   this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+      //   this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, { params }]).then(res => {
+      //     console.log('未读通知', res);
+      //     if (res.typeUnreadNotifications) {
+      //       this.list[0].unReadNum = res.typeUnreadNotifications.related;
+      //       this.list[1].unReadNum = res.typeUnreadNotifications.replied;
+      //       this.list[2].unReadNum = res.typeUnreadNotifications.liked;
+      //       this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
+      //       this.list[4].unReadNum = res.typeUnreadNotifications.system;
+      //     }
+      //   });
     },
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
