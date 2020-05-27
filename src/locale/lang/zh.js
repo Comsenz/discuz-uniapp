@@ -334,7 +334,7 @@ export default {
     repliedMe: '回复了我',
     like: '点赞我的',
     likedMe: '点赞了我',
-    reward: '支付我的',
+    reward: '财务通知',
     rewardedMe: '打赏了我',
     system: '系统通知',
     admin: '管理员',
