@@ -44,10 +44,8 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
-  components: { quiInputCode },
   data() {
     return {
       userid: '',

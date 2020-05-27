@@ -389,7 +389,7 @@ export default {
     servicechaege: '手续费：',
     percentage: '元 (',
     percentagcon: '%)',
-    withdrawal: '提现成功',
+    withdrawal: '提现提交成功',
     enterold: '请输入旧密码',
     enternew: '请输入新密码',
     enterreplace: '请重复输入新密码',

@@ -153,7 +153,7 @@ export default {
               delta: 1,
               success() {
                 const pages = getCurrentPages();
-                pages[2].onLoad();
+                pages[1].onLoad();
               },
             });
           }

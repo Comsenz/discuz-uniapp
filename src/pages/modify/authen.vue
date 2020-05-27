@@ -24,11 +24,9 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import quiInputCode from '@/components/qui-input-code/qui-input-code';
 import forums from '@/mixin/forums';
 
 export default {
-  components: { quiInputCode },
   mixins: [forums],
   data() {
     return {

@@ -51,10 +51,8 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
-  components: { quiInputCode },
   data() {
     return {
       iptValue: '',
@@ -90,9 +88,6 @@ export default {
     fourse() {
       this.inshow = true;
     },
-    onFocus() {
-      this.isFocus = true;
-    },
     setValue(event) {
       // 文本框输入事件
       const { value } = event.target;
@@ -100,19 +95,16 @@ export default {
         this.iptValue = value;
       }, 1); // 重点
     },
-    lose() {
-      this.isFocus = false;
-    },
-    getCode() {
-      this.showText = false;
-      const interval = setInterval(() => {
-        this.second -= 1;
-      }, 1000);
-      setTimeout(() => {
-        clearInterval(interval);
-        this.showText = true;
-      }, 60000);
-    },
+    // getCode() {
+    //   this.showText = false;
+    //   const interval = setInterval(() => {
+    //     this.second -= 1;
+    //   }, 1000);
+    //   setTimeout(() => {
+    //     clearInterval(interval);
+    //     this.showText = true;
+    //   }, 60000);
+    // },
     btndata(num) {
       this.setnum = num;
     },
@@ -202,7 +194,7 @@ export default {
                 delta: 1,
                 success() {
                   const pages = getCurrentPages();
-                  pages[2].onLoad();
+                  pages[1].onLoad();
                 },
               });
             } else {
@@ -210,7 +202,7 @@ export default {
                 delta: 2,
                 success() {
                   const pages = getCurrentPages();
-                  pages[2].onLoad();
+                  pages[1].onLoad();
                 },
               });
             }

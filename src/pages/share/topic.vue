@@ -40,6 +40,7 @@ import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
 import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
 // import Cardi from '@/wxcomponents/card/cardtext';
 import forums from '@/mixin/forums';
+import { AVATAR_ADDRESS, CODE_ADDRESS } from '@/common/const';
 
 export default {
   mixins: [forums],
@@ -61,7 +62,6 @@ export default {
       video: '', // 视频帖子
       videoduc: '', // 视频文件名
       videotime: '', // 视频时间
-      weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
       attachmentsType: '', // 话题分类
       themwidth: 180,
       renamewidth: 400,
@@ -70,7 +70,8 @@ export default {
       constyle: 0,
       paddingtop: 43,
       imgtop: 0,
-      jurisdiction: false,
+      jurisdiction: true,
+      that: '',
     };
   },
   onLoad(arr) {
@@ -79,12 +80,11 @@ export default {
       mask: true,
     });
     this.themeid = arr.id;
-    this.$nextTick(() => {
-      this.userid = this.usersid;
-      this.slitename = this.forums.set_site.site_name;
-      this.getusertitle();
-      this.getthemdata();
-    });
+    this.userid = this.usersid;
+    this.slitename = this.forums.set_site.site_name;
+    console.log(this.userid, this.slitename);
+    this.getusertitle();
+    this.getthemdata();
   },
   computed: {
     usersid() {
@@ -102,13 +102,15 @@ export default {
         include: 'groups',
       };
       this.$store.dispatch('jv/get', params).then(data => {
+        console.log(data);
         this.reconame = data.username;
         this.themwidth = this.reconame.length * 28 + 3;
         if (this.themwidth >= 240) {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.recoimg = data.avatarUrl || AVATAR_ADDRESS;
+        console.log(this.recoimg);
       });
     },
     // 获取帖子内容信息
@@ -119,8 +121,9 @@ export default {
           `threads/${this.themeid}?include=user,firstPost,firstPost.images,category,threadVideo,category`,
         )
         .then(data => {
+          console.log(data);
           this.headerName = data.user.username;
-          this.headerImg = data.user.avatarUrl || '/static/noavatar.gif';
+          this.headerImg = data.user.avatarUrl || AVATAR_ADDRESS;
           this.postyTepy = data.type;
           this.contentTitle = data.title;
           this.content = data.firstPost.content;
@@ -148,7 +151,7 @@ export default {
         usercontimg: this.contentImg, // 内容图片
         userattname: this.attachmentsName, // 帖子内容名称
         useratttype: this.attachmentsType, // 帖子分类
-        userweixincode: this.weixincode, // 微信二维码
+        userweixincode: CODE_ADDRESS, // 微信二维码
         slitename: this.slitename, // 站点名称
         uservideo: this.video,
         uservideoduc: this.videoduc,
@@ -234,6 +237,17 @@ export default {
     },
     fun() {
       const _this = this;
+      uni.getSetting({
+        success(res) {
+          console.log(res.authSetting['scope.writePhotosAlbum']);
+          if (!res.authSetting['scope.writePhotosAlbum']) {
+            _this.jurisdiction = false;
+          } else {
+            _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+          }
+          console.log(_this.jurisdiction);
+        },
+      });
       if (!this.jurisdiction) {
         uni.openSetting({
           success(res) {

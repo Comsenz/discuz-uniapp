@@ -101,7 +101,7 @@ export default {
             uni.navigateBack({
               success() {
                 const pages = getCurrentPages();
-                pages[2].onLoad();
+                pages[1].onLoad();
               },
             });
           }, 1000);

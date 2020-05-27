@@ -25,3 +25,13 @@ export const LANG_ZH = 'zh';
 export const LANG_EN = 'en';
 
 export const SITE_PAY = 'pay';
+
+/**
+ * 二维码地址
+ */
+export const CODE_ADDRESS = 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code';
+
+/**
+ * 头像地址
+ */
+export const AVATAR_ADDRESS = 'https://discuz.chat/static/images/noavatar.gif';

@@ -110,10 +110,8 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
-  components: { quiInputCode },
   data() {
     return {
       userid: '',
@@ -296,23 +294,25 @@ export default {
       postcash
         .then(res => {
           if (res) {
-            uni.showToast({
-              title: this.i18n.t('modify.withdrawal'),
-              duration: 2000,
-            });
             this.cashmany = '';
             this.contint = '';
             this.procedures = 0;
             this.setmydata();
             this.sun = true;
             this.second = 60;
-            uni.redirectTo({
-              url: '/pages/my/wallet',
-              success() {
-                const pages = getCurrentPages();
-                pages[1].onLoad();
-              },
+            uni.showToast({
+              title: this.i18n.t('modify.withdrawal'),
+              duration: 2000,
             });
+            setTimeout(() => {
+              uni.redirectTo({
+                url: '/pages/my/wallet',
+                success() {
+                  const pages = getCurrentPages();
+                  pages[1].onLoad();
+                },
+              });
+            }, 1500);
           }
         })
         .catch(err => {
@@ -418,7 +418,7 @@ export default {
   color: --color(--qui-FC-777);
 }
 .cash-phon-num {
-  margin: 0 0 0 150rpx;
+  margin: 0 0 0 100rpx;
   font-size: $fg-f34;
   font-weight: 400;
   line-height: 100rpx;
