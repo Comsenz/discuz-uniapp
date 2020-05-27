@@ -2,17 +2,20 @@
   <qui-page @pageLoaded="handlePageLoaded">
     <view class="content">
       <view class="view-content">
-        <qui-home
+        <qui-page-home
           v-if="showHome"
           ref="home"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
-        ></qui-home>
-        <qui-notice
+        ></qui-page-home>
+        <qui-page-notice
           ref="quinotice"
           :style="{ display: show_index === 1 ? 'block' : 'none' }"
-        ></qui-notice>
-        <qui-my ref="quimy" :style="{ display: show_index === 2 ? 'block' : 'none' }"></qui-my>
+        ></qui-page-notice>
+        <qui-page-my
+          ref="quimy"
+          :style="{ display: show_index === 2 ? 'block' : 'none' }"
+        ></qui-page-my>
       </view>
 
       <view class="tabBar">

@@ -62,6 +62,8 @@
       <qui-cell-item
         :title="i18n.t('profile.wechat')"
         :addon="profile.wechat.nickname"
+        arrow
+        class="no-arrow"
       ></qui-cell-item>
       <!-- qcloud_faceid 是否开启实名认证 -->
       <qui-cell-item

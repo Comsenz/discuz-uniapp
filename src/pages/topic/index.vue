@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content">
+  <qui-page class="content" @pageLoaded="handlePageLoaded">
     <!--<view
       v-if="loadDetailStatusId == 0"
       class="skeletonScreen"
@@ -1414,6 +1414,11 @@ export default {
       // this.loadThread();
       this.loadThreadPosts();
     },
+
+   // 优化加载
+   handlePageLoaded() {
+
+   },
   },
 };
 </script>

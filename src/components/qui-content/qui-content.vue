@@ -6,18 +6,17 @@
       alt
       v-if="themeEssence && themeType == '1'"
     ></image>
-    <view class="themeItem">
-      <view class="themeItem__header">
+    <view class="themeItem" @click="backgroundClick">
+      <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
           <image
             :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
             alt
-            @click="headClick"
           ></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
-            <text class="themeItem__header__title__username" @click="headClick">
+            <text class="themeItem__header__title__username">
               {{ userName }}
             </text>
             <text v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
@@ -43,8 +42,8 @@
         </view>
       </view>
 
-      <view class="themeItem__content">
-        <view class="themeItem__content__text" @click="contentClick()">
+      <view class="themeItem__content" @click.stop="" @click="contentClick">
+        <view class="themeItem__content__text">
           <view class="themeItem__content__text__longessay" v-if="threadType === 1">
             <view class="themeItem__content__text__longessay__publish">
               {{ i18n.t('home.released') }} :
@@ -67,7 +66,7 @@
         >
           <image class="themeItem__content__coverimg" mode="widthFix" :src="coverImage" alt></image>
         </view>
-        <view class="content__video" @click="videoClick" v-if="threadType === 2 && payStatus">
+        <view class="content__video" v-if="threadType === 2 && payStatus">
           <video
             v-if="threadType === 2 && payStatus"
             :id="'myvideo' + currentindex"
@@ -91,6 +90,8 @@
             :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
+            @click="videoClick"
+            @click.stop=""
           ></video>
         </view>
         <view v-if="imagesList.length == 1">
@@ -102,6 +103,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               @click="previewPicture(index)"
+              @click.stop=""
               alt
             ></image>
           </view>
@@ -115,6 +117,7 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               @click="previewPicture(index)"
+              @click.stop=""
               alt
             ></image>
           </view>
@@ -128,25 +131,27 @@
               :mode="modeVal"
               :src="image.thumbUrl"
               @click="previewPicture(index)"
+              @click.stop=""
               alt
             ></image>
             <image
               class="themeItem__content__imgmore__item"
               v-if="imagesList.length % 3 != 0"
+              @click.stop=""
             ></image>
           </view>
         </view>
 
-        <view class="themeItem__content__tags" v-if="themeType === '1' && getCategoryId === 0">
+        <view class="themeItem__content__tags" v-if="themeType === '0' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
           </view>
         </view>
       </view>
 
-      <view class="themeItem__comment"></view>
+      <view class="themeItem__comment" @click.stop=""></view>
 
-      <view class="themeItem__footer">
+      <view class="themeItem__footer" @click.stop="">
         <view v-if="themeType === '1'" class="themeItem__footer__themeType1">
           <view
             :class="[
@@ -402,6 +407,10 @@ export default {
     headClick(evt) {
       this.$emit('headClick', evt);
     },
+    // 点击整个区域, 优先级最低，如果覆盖有别的可点击区域，则此事件不会触发
+    backgroundClick(evt) {
+      this.$emit('backgroundClick', evt);
+    },
 
     // 视频的view点击事件
     videoClick() {
@@ -460,10 +469,10 @@ export default {
     // width: 100%;
     // height: 80rpx;
     // margin-bottom: 12rpx;
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 100%;
+    width: auto;
     padding-bottom: 12rpx;
     box-sizing: border-box;
 

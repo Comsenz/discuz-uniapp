@@ -120,6 +120,7 @@
           "
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
+          @backgroundClick="contentClick(item._jv.id)"
           @headClick="headClick(item.user._jv.id)"
           @videoPlay="handleVideoPlay"
         ></qui-content>
