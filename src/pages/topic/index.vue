@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content" @pageLoaded="handlePageLoaded">
+  <qui-page class="content">
     <!--<view
       v-if="loadDetailStatusId == 0"
       class="skeletonScreen"
@@ -1359,7 +1359,7 @@ export default {
     tagClick(tagId) {
       console.log(tagId, '这是分类id');
       uni.navigateTo({
-        url: `/pages/home/index`,
+        url: `/pages/home/index?id=${tagId}`,
       });
     },
     // 主题点赞
@@ -1414,11 +1414,6 @@ export default {
       // this.loadThread();
       this.loadThreadPosts();
     },
-
-   // 优化加载
-   handlePageLoaded() {
-
-   },
   },
 };
 </script>
