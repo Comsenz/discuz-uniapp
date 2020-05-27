@@ -9,6 +9,7 @@
             <image
               class="list-box__notice__hl-avatar"
               :src="item.user_avatar || '/static/noavatar.gif'"
+              @click="jumpUserPage(item.user_id)"
             ></image>
             <view class="list-box__notice__hl-info">
               <view>
@@ -121,6 +122,12 @@ export default {
   },
 
   methods: {
+    jumpUserPage(id) {
+      console.log('跳转到个人主页', id);
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
     deleteNotification(id) {
       this.$emit('deleteNotice', id);
     },
@@ -216,7 +223,7 @@ export default {
         font-size: 24rpx;
         color: --color(--qui-FC-333);
         background-color: --color(--qui-BG-ED);
-        border-radius: 7rpx;
+        border-radius: 10rpx;
       }
 
       &__wrap-info-username {

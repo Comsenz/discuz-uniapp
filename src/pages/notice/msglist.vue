@@ -22,11 +22,13 @@
               v-if="item.user_id === currentLoginId"
               class="chat-box__con__msg__mine__img"
               :src="userInfo.avatarUrl"
+              @click="jumpUserPage(item.user_id)"
             ></image>
             <image
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
               :src="item.user.avatarUrl || '/static/noavatar.gif'"
+              @click="jumpUserPage(item.user_id)"
             ></image>
             <view
               :class="[
@@ -326,6 +328,12 @@ export default {
       this.msg = text;
       console.log('表情', this.allEmoji[key]);
       console.log('msg', this.msg);
+    },
+    jumpUserPage(id) {
+      console.log('跳转到个人主页', id);
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
     },
   },
 };
