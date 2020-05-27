@@ -62,21 +62,22 @@
             class="site-item__owner-avatar"
             :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(siteInfo.set_site.site_author.id)"
           ></image>
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <qui-cell-item :title="i18n.t('home.theme')" slot-right arrow class="cell-item--auto">
-        <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
-          <image
-            class="site-item__person-avatar"
-            :src="item.avatarUrl || '/static/noavatar.gif'"
-            alt="avatarUrl"
-            @tap="toProfile(item.id)"
-          ></image>
-        </view>
-      </qui-cell-item>
+      <navigator url="/pages/manage/users" hover-class="none">
+        <qui-cell-item :title="i18n.t('home.theme')" slot-right arrow class="cell-item--auto">
+          <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
+            <image
+              class="site-item__person-avatar"
+              :src="item.avatarUrl || '/static/noavatar.gif'"
+              alt="avatarUrl"
+              @tap="jumpUserPage(item.id)"
+            ></image>
+          </view>
+        </qui-cell-item>
+      </navigator>
       <qui-cell-item
         :title="i18n.t('manage.myRole')"
         :addon="userInfo.groups[0].name"
@@ -254,25 +255,17 @@ export default {
     onShareAppMessage(res) {
       // 来自页面内分享按钮
       if (res.from === 'button') {
-        const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
         return {
-          title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+          title: this.forums.set_site.site_name,
         };
       }
       return {
-        title: this.info.set_site.site_name,
+        title: this.forums.set_site.site_name,
       };
     },
     // 取消按钮
     cancel() {
       this.$refs.popupHead.close();
-    },
-    // 点击头像到个人主页
-    toProfile(userId) {
-      console.log('点击头像到个人主页：', userId);
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${userId}`,
-      });
     },
   },
 };
