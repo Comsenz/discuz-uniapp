@@ -1741,7 +1741,7 @@ page {
     width: 100%;
     height: 420rpx;
     padding: 20rpx;
-    background: --color(--qui-FC-GRAY);
+    border-radius: 7rpx;-qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
     border-radius: 10rpx;
     box-sizing: border-box;

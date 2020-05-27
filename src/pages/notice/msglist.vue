@@ -387,7 +387,7 @@ export default {
       &__box:before {
         position: absolute;
         top: 30rpx;
-        right: -18.6rpx;
+        border-radius: 7rpx;
         z-index: 100;
         width: 0rpx;
         height: 0rpx;
@@ -440,7 +440,7 @@ export default {
       &__box:before {
         position: absolute;
         top: 30rpx;
-        left: -18.6rpx;
+        border-radius: 7rpx;
         z-index: 100;
         width: 0rpx;
         height: 0rpx;
