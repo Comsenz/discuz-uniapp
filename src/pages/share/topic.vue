@@ -108,7 +108,7 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.recoimg = data.avatarUrl || '/static/noavatar.gif';
       });
     },
     // 获取帖子内容信息
