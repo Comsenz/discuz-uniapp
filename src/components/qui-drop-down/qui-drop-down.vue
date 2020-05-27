@@ -123,9 +123,9 @@ export default {
     color: #6d6d6d;
     text-align: center;
     border-bottom: 1px solid --color(--qui-BOR-ED);
-    &:last-child {
-      border-bottom: 1px solid transparent;
-    }
   }
+}
+.select-con:last-child .select-child {
+  border-bottom: 1px solid transparent;
 }
 </style>
