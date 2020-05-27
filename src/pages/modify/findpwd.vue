@@ -86,8 +86,6 @@ export default {
     this.sendtype = sing.pas;
     this.userid = Number(sing.user);
     this.personaldata();
-    const pages = getCurrentPages();
-    console.log(pages);
   },
   methods: {
     fourse() {
@@ -180,7 +178,7 @@ export default {
               duration: 2000,
             });
             uni.redirectTo({
-              url: `/${pages[2].route}`,
+              url: `/${pages[1].route}`,
               success() {
                 pages[2].onLoad();
               },

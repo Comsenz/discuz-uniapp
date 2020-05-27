@@ -57,7 +57,7 @@ export default {
             console.log(err);
           });
       } else {
-        this.$emit('login', res);
+        this.$emit('login', { res });
       }
     },
     close() {

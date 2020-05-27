@@ -20,7 +20,7 @@
               class="my-info__box__detail-avatar"
               :src="userInfo.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
-              :mode="modeVal"
+              mode="aspectFill"
             ></image>
             <qui-cell-item
               :title="userInfo.username || ''"
@@ -101,11 +101,6 @@ export default {
       current: 0,
       checked: false,
       userId: this.$store.getters['session/get']('userId'),
-      // 图片裁剪、缩放的模式
-      modeVal: {
-        type: String,
-        default: 'aspectFill',
-      },
     };
   },
   computed: {

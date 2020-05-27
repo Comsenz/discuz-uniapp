@@ -1,23 +1,22 @@
 <template>
-  <view :class="'home ' + scrolled">
+  <view class="home">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
-      :scroll-top="scrollTopNum"
       class="scroll-y"
       @scroll="scroll"
       @scrolltolower="pullDown"
       @scrolltoupper="toUpper"
     >
       <uni-nav-bar
-        v-if="navShow"
+        v-if="navbarShow"
         :title="forums.set_site.site_name"
         fixed="true"
         status-bar
       ></uni-nav-bar>
       <qui-header
-        v-if="isTop != 1"
+        v-if="headerShow"
         :head-img="forums.set_site.site_logo"
         :background-head-full-img="forums.set_site.site_background_image"
         :theme="theme"
@@ -32,7 +31,7 @@
       <view
         class="nav"
         id="navId"
-        :style="isTop === 1 ? 'width:100%;position:fixed;z-index:9;' : ''"
+        :style="headerShow ? '' : 'width:100%;position:fixed;z-index:9;'"
       >
         <view class="nav__box">
           <qui-icon
@@ -64,11 +63,9 @@
           @change="toggleTab"
           is-scroll="isScroll"
           active-color="#1878F3"
-        >
-          <!-- :style="isTop == 1 ? 'position:fixed;z-index:9;top:44' : ''" -->
-        </u-tabs>
+        ></u-tabs>
       </view>
-      <view class="sticky" :style="isTop == 1 ? 'margin-top:150rpx' : 'margin-top:30rpx'">
+      <view class="sticky" :style="headerShow ? 'margin-top:30rpx' : topMargin()">
         <view
           class="sticky__isSticky"
           v-for="(item, index) in sticky"
@@ -191,10 +188,8 @@ export default {
   mixins: [forums, user],
   data() {
     return {
-      scrolled: 'affix',
       suspended: false, // 是否吸顶状态
       checkoutTheme: false, // 切换主题  搭配是否吸顶使用
-      scrollTopNum: 0,
       categoryId: 0, // 主题分类 ID
       currentIndex: 0,
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
@@ -210,7 +205,11 @@ export default {
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
-      navShow: false, // 是否显示头部
+      navbarShow: false, // 是否显示顶部导航栏
+      navbarHeight: 0, // 顶部导航栏的高度
+      headerShow: true, // 是否显示标题图(背景+logo)，不显示标题图时，分类切换栏需要固定顶部
+      navTop: 0, // 切换分类导航的top
+      navHeight: 0, // 切换分类导航的高度
       nowThreadId: '', // 当前点击主题ID
       filterTop: 450, // 筛选弹窗的位置
       filterList: [
@@ -237,7 +236,6 @@ export default {
           ],
         },
       ],
-      isTop: 0,
       threads: [],
       sticky: {}, // 置顶帖子内容
       shareBtn: 'icon-share1',
@@ -249,56 +247,49 @@ export default {
       playIndex: null,
     };
   },
-  onLoad() {
-    // 首页导航栏分类列表
-    this.loadCategories();
-    // 首页主题置顶列表
-    this.loadThreadsSticky();
-    // 首页主题内容列表
-    this.loadThreads();
-  },
+  // onLoad() {
+  //   // 首页导航栏分类列表
+  //   this.loadCategories();
+  //   // 首页主题置顶列表
+  //   this.loadThreadsSticky();
+  //   // 首页主题内容列表
+  //   this.loadThreads();
+  // },
   mounted() {
     const query = uni.createSelectorQuery().in(this);
     query
       .select('.nav')
       .boundingClientRect(data => {
-        this.myScroll = data.top;
+        this.navTop = data.top;
+        this.navHeight = data.height;
       })
       .exec();
+    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
   },
   methods: {
     ...mapMutations({
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
+    topMargin() {
+      return `margin-top: calc(${this.navTop - this.navbarHeight + this.navHeight}px + 30rpx)`;
+    },
     scroll(event) {
-      // console.log(event, 'scroll');
-      // if (this.checkoutTheme || this.isTop === 1) {
-      //   return;
-      // }
-      if (event.detail.scrollTop > 100) {
-        this.navShow = true;
-      } else {
-        this.navShow = false;
+      if (!this.navbarHeight) {
+        return;
       }
-      if (event.detail.scrollTop > this.myScroll) {
-        this.isTop = 1;
+      if (this.navTop - event.detail.scrollTop <= this.navbarHeight) {
+        this.navbarShow = true;
+        this.headerShow = false;
       } else {
-        this.isTop = 0;
-      }
-
-      if (event.target.scrollTop > 0) {
-        this.scrolled = 'scrolled';
-      } else {
-        this.scrolled = 'affix';
+        this.navbarShow = false;
+        this.headerShow = true;
       }
     },
     // 滑动到顶部
     toUpper() {
-      if (this.isTop === 0) {
-        return;
-      }
-      this.isTop = 0;
+      this.navbarShow = false;
+      this.headerShow = true;
     },
 
     // 切换选项卡
@@ -321,17 +312,7 @@ export default {
 
       this.loadThreadsSticky();
       this.threads = [];
-      // this.scrollTopNum = 1;
-      // this.$nextTick(() => {
-      //   this.scrollTopNum = 0;
-      //   this.navShow = false;
-      // });
-      // this.scrollTopNum = this.myScroll + 1;
-      // this.$nextTick(() => {
-      //   this.scrollTopNum = this.myScroll;
-      // });
       await this.loadThreads();
-      this.navShow = false;
       this.checkoutTheme = false;
     },
     // 筛选分类里的搜索

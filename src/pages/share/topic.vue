@@ -70,7 +70,7 @@ export default {
       constyle: 0,
       paddingtop: 43,
       imgtop: 0,
-      jurisdiction: true,
+      jurisdiction: false,
     };
   },
   onLoad(arr) {
@@ -108,7 +108,7 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.recoimg = data.avatarUrl || 'https://discuz.chat/static/images/noavatar.gif';
+        this.recoimg = data.avatarUrl || '/static/noavatar.gif';
       });
     },
     // 获取帖子内容信息
@@ -126,7 +126,7 @@ export default {
           this.content = data.firstPost.content;
           const arr = Object.values(data.firstPost.images);
           arr.forEach(value => {
-            this.contentImg.push(value.url);
+            this.contentImg.push(value.thumbUrl);
           });
           this.attachmentsType = data.category.name;
           if (this.postyTepy === 2) {

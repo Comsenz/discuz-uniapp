@@ -20,7 +20,7 @@
             </span>
 
             <span class="themeItem__header__title__isAdmin">（{{ userRole }}）</span>
-            <view class="themeItem__header__title__jumpBtn">></view>
+            <view class="themeItem__header__title__jumpBtn"></view>
           </view>
           <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>

@@ -291,7 +291,6 @@
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
     <!--轻提示-->
     <qui-toast ref="toast" :type="loading"></qui-toast>
-
     <!--回复弹框-->
     <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
       <view class="comment-popup" v-if="commentPopupStatus">
@@ -375,12 +374,11 @@ import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 
 export default {
-  mixins: [user],
-  mixins: [forums],
+  mixins: [user, forums],
   data() {
     return {
       threadId: '', //主题id
-      userId: 57, //当前用户Id
+      // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
@@ -546,7 +544,7 @@ export default {
     },
   },
   onLoad(option) {
-    // console.log(this.forums, '这是站点信息~~~~~~~~~~');
+    console.log(this.user, '这是用户信息~~~~~~~~~~');
     console.log(option.id, '这是主题id');
     console.log(uni.getSystemInfoSync().windowHeight, '设备信息');
     this.windowHeight = uni.getSystemInfoSync().windowHeight;
@@ -600,6 +598,13 @@ export default {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
+
+    callMember(id) {
+      uni.navigateTo({
+        url: `/pages/my/index?userId=${id}`,
+      });
+    },
+
     // 表情接口请求
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);
@@ -1276,6 +1281,7 @@ export default {
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
+    // 上传图片
     imageUploader() {
       this.uploaderShow = true;
       if (this.uploadFile.length == 3) {

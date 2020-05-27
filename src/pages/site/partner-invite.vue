@@ -58,7 +58,7 @@
             :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
             alt="avatarUrl"
             @tap="toProfile(item.id)"
-            :mode="modeVal"
+            mode="aspectFill"
           ></image>
           <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
         </view>
@@ -71,7 +71,7 @@
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
-              :mode="modeVal"
+              mode="aspectFill"
             ></image>
           </view>
         </view>
@@ -135,11 +135,6 @@ export default {
       currentTheme: uni.getStorageSync('theme'),
       permission: [],
       inviteData: {}, // 邀请的相关信息
-      // 图片裁剪、缩放的模式
-      modeVal: {
-        type: String,
-        default: 'aspectFill',
-      },
     };
   },
   onLoad(params) {
