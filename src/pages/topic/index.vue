@@ -1741,9 +1741,9 @@ page {
     width: 100%;
     height: 420rpx;
     padding: 20rpx;
-    border-radius: 7rpx;-qui-FC-GRAY);
+    background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
   }
   .comment-textarea {

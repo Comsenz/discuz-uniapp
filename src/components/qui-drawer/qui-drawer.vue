@@ -18,7 +18,7 @@
       </view>
     </view>
     <view class="popup-share-content-space"></view>
-    <text class="popup-share-btn" @click="cancel('share')">坖消</text>
+    <text class="popup-share-btn" @click="cancel('share')">??</text>
   </view>
 </template>
 <script>
