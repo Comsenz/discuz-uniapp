@@ -315,7 +315,7 @@ export default {
   width: 700rpx;
   margin: 0 auto;
   background: --color(--qui-FC-FFF);
-  border-radius: 10rpx;
+  border-radius: 7rpx;
   box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   .cent-image {
     display: block;

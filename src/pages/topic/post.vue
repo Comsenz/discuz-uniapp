@@ -70,6 +70,7 @@
         v-if="type === 1 || type === 3"
         @change="uploadChange"
         @clear="uploadClear"
+        @uploadClick="uploadClick"
       ></qui-uploader>
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
@@ -193,6 +194,7 @@
               placeholder="0.0"
               :maxlength="8"
               :focus="setType === 'pay'"
+              @input="checkNum"
             />
             <input
               class="popup-dialog__cont-input"
@@ -208,7 +210,24 @@
             <button class="popup-btn--close" @click="diaLogClose">
               {{ i18n.t('discuzq.close') }}
             </button>
-            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+            <button
+              class="popup-btn--ok"
+              v-if="setType === 'pay'"
+              :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
+              :disabled="inputPrice === ''"
+              @click="diaLogOk"
+            >
+              {{ i18n.t('discuzq.ok') }}
+            </button>
+            <button
+              class="popup-btn--ok"
+              v-else
+              :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
+              :disabled="inputWord === ''"
+              @click="diaLogOk"
+            >
+              {{ i18n.t('discuzq.ok') }}
+            </button>
           </view>
         </view>
       </uni-popup>
@@ -302,11 +321,12 @@ export default {
       postLoading: false, // 发布按钮loading状态
       allCategories: [], // 所有分类
       categoryIndex: 0, // 分类下标
-      categoryId: 1, // 分类id
+      categoryId: '', // 分类id
       threadId: '', // 编辑时主题id
       firstPostId: '', // 编辑时帖子id
       postDetails: {}, // 编辑时帖子详情
       filePreview: [], // 服务器上传
+      uploadStatus: true, // 图片上传状态
     };
   },
   computed: {
@@ -332,6 +352,21 @@ export default {
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
+    // 处理金额
+    /* eslint-disable */
+    checkNum(e) {
+      const value = e.target.value.match(/^\d*(\.?\d{0,2})/g)[0];
+      this.$nextTick(function() {
+        try {
+          this.inputPrice = Number(value);
+        } catch (e) {
+          uni.showToast({
+            title: '金额输入不正确！',
+            icon: 'none',
+          });
+        }
+      });
+    },
 
     // video相关方法
     videoDel() {
@@ -357,6 +392,9 @@ export default {
         compressed: false,
         sourceType: ['camera', 'album'],
         success(res) {
+          _this.$refs.toast.showLoading({
+            message: _this.i18n.t('uploader.videoUploading'),
+          });
           _this.videoName = res.name ? res.name : _this.i18n.t('discuzq.post.fromWeChatApplet');
           _this.videoBeforeList.push({
             path: res.tempFilePath,
@@ -374,25 +412,27 @@ export default {
             error(result) {
               console.log('error');
               console.log(result);
-              uni.showModal({
-                title: _this.i18n.t('uploader.uploadFailed'),
-                content: JSON.stringify(result),
-                showCancel: false,
-              });
+              // uni.showModal({
+              //   title: _this.i18n.t('uploader.uploadFailed'),
+              //   content: JSON.stringify(result),
+              //   showCancel: false,
+              // });
+              _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
             },
             progress(result) {
               console.log('progress');
               console.log(result);
               _this.percent = result.percent;
+              if (result.percent === 1) {
+                _this.$refs.toast.hideLoading();
+              }
             },
             finish(result) {
               _this.fileId = result.fileId;
               _this.postVideo(result.fileId);
-              uni.showModal({
-                title: _this.i18n.t('uploader.uploadedSuccessfully'),
-                content: _this.i18n.t('uploader.videoUploadedSuccessfully'),
-                showCancel: false,
-              });
+              // _this.$refs.toast.show({
+              //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
+              // });
             },
           });
         },
@@ -423,8 +463,8 @@ export default {
 
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         this.$refs.popupBtm.close();
-
         this.$nextTick(() => {
+          this.inputPrice = '';
           this.$refs.popup.open();
         });
       } else {
@@ -445,8 +485,12 @@ export default {
     },
 
     // 图片上传相关方法
-    uploadChange(e) {
+    uploadClick() {
+      this.uploadStatus = false;
+    },
+    uploadChange(e, status) {
       this.uploadFile = e;
+      this.uploadStatus = status;
     },
     uploadClear(list, del) {
       const id = this.operating === 'edit' ? list.id : list.data.id;
@@ -501,49 +545,78 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      if (!this.categoryId) {
+        console.log('分类为空', this.i18n.t('discuzq.post.theclassifyCanNotBeBlank'));
+        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
+        return false;
+      }
       let status = true;
-      if (this.textAreaValue.length < 1) {
-        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
-        status = false;
-      } else {
-        switch (this.type) {
-          case 0:
-            break;
-          case 1:
-            if (this.postTitle.length < 1) {
-              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theTitleCanNotBeBlank') });
-              status = false;
-            } else {
-              status = true;
-            }
-            break;
-          case 2:
-            if (this.videoBeforeList.length < 1) {
-              this.$refs.toast.show({ message: this.i18n.t('discuzq.post.videoCannotBeEmpty') });
-              status = false;
-            } else if (this.percent !== 1) {
+      switch (this.type) {
+        case 0:
+          if (this.textAreaValue.length < 1) {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
+            status = false;
+          } else {
+            status = true;
+          }
+          break;
+        case 1:
+          if (this.postTitle.length < 1) {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theTitleCanNotBeBlank') });
+            status = false;
+          } else if (this.textAreaValue.length < 1) {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
+            status = false;
+          } else if (!this.uploadStatus) {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
+            });
+            status = false;
+          } else {
+            status = true;
+          }
+          break;
+        case 2:
+          if (this.textAreaValue.length < 1) {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
+            status = false;
+          } else if (this.videoBeforeList.length < 1) {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.videoCannotBeEmpty') });
+            status = false;
+          } else if (this.percent !== 1) {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
+            });
+            status = false;
+          } else {
+            status = true;
+          }
+          break;
+        case 3:
+          if (this.operating !== 'edit') {
+            if (this.textAreaValue.length < 1) {
               this.$refs.toast.show({
-                message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
+                message: this.i18n.t('discuzq.post.theContentCanNotBeBlank'),
+              });
+              status = false;
+            } else if (!this.uploadStatus) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
+              });
+              status = false;
+            } else if (this.uploadFile.length < 1) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
               });
               status = false;
             } else {
               status = true;
             }
-            break;
-          case 3:
-            if (this.operating !== 'edit') {
-              if (this.uploadFile.length < 1) {
-                this.$refs.toast.show({ message: this.i18n.t('discuzq.post.imageCannotBeEmpty') });
-                status = false;
-              } else {
-                status = true;
-              }
-            }
-            break;
-          default:
-            status = false;
-            this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
-        }
+          }
+          break;
+        default:
+          status = false;
+          this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
       }
 
       if (status) {
@@ -554,9 +627,9 @@ export default {
           this.editThread().then(() => {
             this.postLoading = false;
             uni.hideLoading();
-            // uni.redirectTo({
-            //   url: `/pages/topic/index?id=${this.threadId}`,
-            // });
+            uni.redirectTo({
+              url: `/pages/topic/index?id=${this.threadId}`,
+            });
           });
         } else {
           this.postThread().then(res => {
@@ -618,9 +691,6 @@ export default {
         res.map(item => {
           if (Number(item._jv.id) === Number(this.categoryId)) {
             this.checkClassData.push(item);
-          } else {
-            this.checkClassData = [];
-            this.checkClassData.push(res[0]);
           }
           return item;
         });
@@ -834,7 +904,7 @@ export default {
     if (option.threadId) this.threadId = option.threadId;
     if (option.categoryIndex) this.categoryIndex = Number(option.categoryIndex);
     if (option.categoryId)
-      this.categoryId = Number(option.categoryId) === 0 ? 1 : Number(option.categoryId);
+      this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
 
     if (this.operating === 'edit') {
@@ -907,7 +977,7 @@ export default {
     line-height: 20px;
     background-color: --color(--qui-BG-1);
     border: 1rpx solid --color(--qui-BOR-DDD);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
 
     &--static {
@@ -1088,7 +1158,7 @@ export default {
       font-size: 40rpx;
       text-align: right;
       border: 1px solid --color(--qui-BOR-DDD);
-      border-radius: 10rpx;
+      border-radius: 7rpx;
       box-sizing: border-box;
     }
   }
@@ -1115,6 +1185,10 @@ export default {
       &:first-of-type {
         border-bottom-left-radius: 10rpx;
       }
+    }
+
+    .popup-btn--ok--blue {
+      color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
 }

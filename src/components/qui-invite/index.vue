@@ -18,30 +18,12 @@
           {{ i18n.t('manage.setInvalid') }}
         </view>
         <view class="invite-con-list-line"></view>
-        <view class="invite-con-list-share" @click="share">
+        <view class="invite-con-list-share" @click="share(item.code)">
           {{ i18n.t('manage.share') }}
           <qui-icon name="icon-share1" class="share-icon"></qui-icon>
         </view>
       </qui-cell-item>
     </view>
-    <!-- 分享弹窗 -->
-    <uni-popup ref="popupHead" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content" style="box-sizing: border-box;">
-          <button class="popup-share-button__center" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box">
-                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
-              </view>
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
-    </uni-popup>
   </view>
 </template>
 
@@ -52,51 +34,19 @@ export default {
       type: Number,
       default: 0,
     },
-    status: {
-      type: Number,
-      default: 1,
-    },
     list: {
       type: Array,
       default: () => {
         return [];
       },
     },
-    bottomData: {
-      type: Array,
-      default: () => {
-        return [];
-      },
-    },
-  },
-  // 唤起小程序原生分享
-  onShareAppMessage(res) {
-    console.log('唤起小程序原生分享');
-    // 来自页面内分享按钮
-    if (res.from === 'button') {
-      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
-      return {
-        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
-      };
-    }
-    return {
-      title: this.forums.set_site.site_name,
-    };
   },
   methods: {
-    // 设为无效
     invalid(id) {
       this.$emit('setInvalid', id);
     },
-    // 分享
-    share() {
-      if (parseInt(this.status, 10) === 1) {
-        console.log('跳转到分享页面');
-        this.$refs.popupHead.open();
-      }
-    },
-    cancel() {
-      this.$refs.popupHead.close();
+    share(code) {
+      this.$emit('share', code);
     },
   },
 };

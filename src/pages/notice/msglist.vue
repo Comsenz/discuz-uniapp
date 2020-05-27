@@ -22,11 +22,13 @@
               v-if="item.user_id === currentLoginId"
               class="chat-box__con__msg__mine__img"
               :src="userInfo.avatarUrl"
+              @click="jumpUserPage(item.user_id)"
             ></image>
             <image
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
               :src="item.user.avatarUrl || '/static/noavatar.gif'"
+              @click="jumpUserPage(item.user_id)"
             ></image>
             <view
               :class="[
@@ -87,7 +89,7 @@ export default {
       dialogId: 0, // 会话id
       height: 0,
       scv: 0,
-      pageSize: 20, // 每页10条数据
+      pageSize: 5, // 每页10条数据
       pageNum: 1, // 当前页数
       currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
@@ -202,13 +204,11 @@ export default {
       });
     }
   },
-
-  onPullDownRefresh() {
-    this.pageNum += 1;
-    console.log('refresh');
-    this.getChatRecord(this.dialogId);
-  },
-
+  // onPullDownRefresh() {
+  //   this.pageNum += 1;
+  //   console.log('refresh');
+  //   this.getChatRecord(this.dialogId);
+  // },
   methods: {
     scrollToBottom() {
       this.$nextTick(() => {
@@ -247,6 +247,7 @@ export default {
         include: ['user', 'user.groups'],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        sort: '-createdAt',
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
       this.$store
@@ -263,16 +264,13 @@ export default {
           console.log(err);
         });
     },
-
     // 调用 表情 的接口
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
-
     contBlur(e) {
       this.cursor = e.detail.cursor;
     },
-
     // 发送消息
     send() {
       if (this.msg === '') {
@@ -304,7 +302,6 @@ export default {
         this.emojiShow = false;
       }
     },
-
     // 弹出表情组件
     popEmoji() {
       if (this.emojiShow) {
@@ -322,7 +319,6 @@ export default {
       }
       this.emojiShow = !this.emojiShow;
     },
-
     // 获取表情
     getEmojiClick(key) {
       let text = '';
@@ -332,6 +328,12 @@ export default {
       this.msg = text;
       console.log('表情', this.allEmoji[key]);
       console.log('msg', this.msg);
+    },
+    jumpUserPage(id) {
+      console.log('跳转到个人主页', id);
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
     },
   },
 };

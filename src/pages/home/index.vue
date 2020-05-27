@@ -1,17 +1,21 @@
 <template>
-  <qui-page>
+  <qui-page @pageLoaded="handlePageLoaded">
     <view class="content">
       <view class="view-content">
-        <qui-home
+        <qui-page-home
+          v-if="showHome"
           ref="home"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
-        ></qui-home>
-        <qui-notice
+        ></qui-page-home>
+        <qui-page-notice
           ref="quinotice"
           :style="{ display: show_index === 1 ? 'block' : 'none' }"
-        ></qui-notice>
-        <qui-my ref="quimy" :style="{ display: show_index === 2 ? 'block' : 'none' }"></qui-my>
+        ></qui-page-notice>
+        <qui-page-my
+          ref="quimy"
+          :style="{ display: show_index === 2 ? 'block' : 'none' }"
+        ></qui-page-my>
       </view>
 
       <view class="tabBar">
@@ -30,14 +34,10 @@ export default {
     return {
       show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
+      showHome: false,
     };
   },
-  onLoad() {
-    this.$nextTick(() => {
-      // 一定要等视图更新完再调用方法
-      this.$refs.home.ontrueGetList();
-    });
-  },
+  onLoad() {},
 
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -66,6 +66,13 @@ export default {
     // 点击分享事件
     handleClickShare(e) {
       this.nowThreadId = e;
+    },
+    handlePageLoaded() {
+      this.showHome = true;
+      this.$nextTick(() => {
+        // 一定要等视图更新完再调用方法
+        this.$refs.home.ontrueGetList();
+      });
     },
   },
 };

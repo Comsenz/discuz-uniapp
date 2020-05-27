@@ -9,87 +9,87 @@
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
-      <!-- <scroll-view
+      <scroll-view
         scroll-y="true"
         @scrolltolower="pullDown"
         show-scrollbar="false"
         show-icon="true"
         class="scroll-y"
-      > -->
-      <view class="notice-box__list">
-        <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
-          <qui-cell-item :title="i18n.t(item.title)" :border="item.border" arrow slot-right>
-            <qui-icon
-              v-if="item.unReadNum && item.unReadNum > 0"
-              name="icon-circle"
-              class="red-circle"
-              color="red"
-              size="14"
-            ></qui-icon>
-          </qui-cell-item>
-        </view>
-        <!-- 会话列表 -->
-        <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
-          <!-- <scroll-view
-            scroll-y="true"
-            @scrolltolower="pullDown"
-            show-scrollbar="false"
-            show-icon="true"
-            class="scroll-y"
-          > -->
-          <view
-            class="dialog-box"
-            v-for="dialog of dialogList"
-            :key="dialog._jv.id"
-            @click="jumpMsglistPage(dialog)"
-          >
-            <view class="dialog-box__header">
-              <view class="dialog-box__header__info">
-                <image
-                  class="dialog-box__header__info__user-avatar"
-                  :src="dialog.avatar || '/static/noavatar.gif'"
-                ></image>
-                <view>
-                  <view class="dialog-box__header__info__box">
-                    <text class="dialog-box__header__info__username">
-                      {{ dialog.name }}
-                    </text>
-                    <text
-                      class="dialog-box__header__info__groupname"
-                      v-for="item in dialog.groups"
-                      :key="item.name"
-                    >
-                      <text v-if="item.name">（{{ item.name }}）</text>
-                    </text>
+      >
+        <view class="notice-box__list">
+          <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
+            <qui-cell-item :title="i18n.t(item.title)" :border="item.border" arrow slot-right>
+              <qui-icon
+                v-if="item.unReadNum && item.unReadNum > 0"
+                name="icon-circle"
+                class="red-circle"
+                color="red"
+                size="14"
+              ></qui-icon>
+            </qui-cell-item>
+          </view>
+          <!-- 会话列表 -->
+          <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
+            <!-- <scroll-view
+              scroll-y="true"
+              @scrolltolower="pullDown"
+              show-scrollbar="false"
+              show-icon="true"
+              class="scroll-y"
+            > -->
+            <view
+              class="dialog-box"
+              v-for="dialog of dialogList"
+              :key="dialog._jv.id"
+              @click="jumpMsglistPage(dialog)"
+            >
+              <view class="dialog-box__header">
+                <view class="dialog-box__header__info">
+                  <image
+                    class="dialog-box__header__info__user-avatar"
+                    :src="dialog.avatar || '/static/noavatar.gif'"
+                  ></image>
+                  <view>
+                    <view class="dialog-box__header__info__box">
+                      <text class="dialog-box__header__info__username">
+                        {{ dialog.name }}
+                      </text>
+                      <text
+                        class="dialog-box__header__info__groupname"
+                        v-for="item in dialog.groups"
+                        :key="item.name"
+                      >
+                        <text v-if="item.name">（{{ item.name }}）</text>
+                      </text>
+                    </view>
+                    <view class="dialog-box__header__info__time">{{ dialog.time }}</view>
                   </view>
-                  <view class="dialog-box__header__info__time">{{ dialog.time }}</view>
+                </view>
+                <view class="dialog-box__header__r">
+                  <qui-icon
+                    name="icon-circle red-circle"
+                    v-if="dialog.readAt === null"
+                    color="red"
+                    size="14"
+                  ></qui-icon>
+                  <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
                 </view>
               </view>
-              <view class="dialog-box__header__r">
-                <qui-icon
-                  name="icon-circle red-circle"
-                  v-if="dialog.readAt === null"
-                  color="red"
-                  size="14"
-                ></qui-icon>
-                <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
+              <view class="dialog-box__con">
+                <rich-text
+                  :nodes="dialog.dialogMessage.message_text_html"
+                  style="word-break: break-all;"
+                ></rich-text>
               </view>
             </view>
-            <view class="dialog-box__con">
-              <rich-text
-                :nodes="dialog.dialogMessage.message_text_html"
-                style="word-break: break-all;"
-              ></rich-text>
-            </view>
+            <qui-load-more
+              :status="loadingType"
+              v-if="dialogList && dialogList.length > 0"
+            ></qui-load-more>
+            <!-- </scroll-view> -->
           </view>
-          <qui-load-more
-            :status="loadingType"
-            v-if="dialogList && dialogList.length > 0"
-          ></qui-load-more>
-          <!-- </scroll-view> -->
         </view>
-      </view>
-      <!-- </scroll-view> -->
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -97,12 +97,13 @@
 <script>
 import { THEME_DEFAULT } from '@/common/const';
 import { time2MorningOrAfternoon } from '@/utils/time';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [user],
   data() {
     return {
       title: this.i18n.t('notice.notice'), // 标题
-      theme: '', // 当前的主题
       list: [
         { id: 1, title: 'notice.relate', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
@@ -117,21 +118,6 @@ export default {
       dialogList: [], // 会话列表
     };
   },
-  onLoad() {
-    this.getDialogList();
-    this.getUnreadNoticeNum();
-    this.theme = this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
-    if (!(getApp() && getApp().systemInfo && getApp().systemInfo.screenHeight)) {
-      try {
-        getApp().systemInfo = wx.getSystemInfoSync();
-        console.log('no height,then get height:', getApp().systemInfo.screenHeight);
-      } catch (e) {
-        console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
-      }
-    } else {
-      console.log('screenHeight', getApp().systemInfo.screenHeight);
-    }
-  },
   computed: {
     // 获取当前登录的id
     currentLoginId() {
@@ -139,7 +125,24 @@ export default {
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
+    theme() {
+      return this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
+    },
   },
+  // mounted() {
+  //   console.log('调用mounted()');
+  //   console.log('theme', this.theme);
+  //   if (!(getApp() && getApp().systemInfo && getApp().systemInfo.screenHeight)) {
+  //     try {
+  //       getApp().systemInfo = wx.getSystemInfoSync();
+  //       console.log('no height,then get height:', getApp().systemInfo.screenHeight);
+  //     } catch (e) {
+  //       console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
+  //     }
+  //   } else {
+  //     console.log('screenHeight', getApp().systemInfo.screenHeight);
+  //   }
+  // },
   methods: {
     // 调用 会话列表 的接口
     getDialogList() {
@@ -181,20 +184,28 @@ export default {
     },
     // 调用 未读通知数 的接口
     getUnreadNoticeNum() {
-      const params = {
-        include: ['groups'],
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, { params }]).then(res => {
-        console.log('未读通知', res);
-        if (res.typeUnreadNotifications) {
-          this.list[0].unReadNum = res.typeUnreadNotifications.related;
-          this.list[1].unReadNum = res.typeUnreadNotifications.replied;
-          this.list[2].unReadNum = res.typeUnreadNotifications.liked;
-          this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
-          this.list[4].unReadNum = res.typeUnreadNotifications.system;
-        }
-      });
+      if (this.user && this.user.typeUnreadNotifications) {
+        console.log('this.user', this.user);
+        this.list[0].unReadNum = this.user.typeUnreadNotifications.related;
+        this.list[1].unReadNum = this.user.typeUnreadNotifications.replied;
+        this.list[2].unReadNum = this.user.typeUnreadNotifications.liked;
+        this.list[3].unReadNum = this.user.typeUnreadNotifications.rewarded;
+        this.list[4].unReadNum = this.user.typeUnreadNotifications.system;
+      }
+      //   const params = {
+      //     include: ['groups'],
+      //   };
+      //   this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
+      //   this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, { params }]).then(res => {
+      //     console.log('未读通知', res);
+      //     if (res.typeUnreadNotifications) {
+      //       this.list[0].unReadNum = res.typeUnreadNotifications.related;
+      //       this.list[1].unReadNum = res.typeUnreadNotifications.replied;
+      //       this.list[2].unReadNum = res.typeUnreadNotifications.liked;
+      //       this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
+      //       this.list[4].unReadNum = res.typeUnreadNotifications.system;
+      //     }
+      //   });
     },
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {

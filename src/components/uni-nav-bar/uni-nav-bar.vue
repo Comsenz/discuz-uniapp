@@ -246,6 +246,5 @@ $nav-height: 44px;
   border-bottom-color: $uni-border-color;
   // border-bottom-style: solid;
   // border-bottom-width: 1rpx;
-
 }
 </style>

@@ -46,6 +46,11 @@ export default {
         uni.setNavigationBarColor(this.navBarColor);
       },
     },
+    forumError(newValue) {
+      if (newValue.loading === false) {
+        this.$emit('pageLoaded');
+      }
+    },
   },
   mounted() {
     this.$store.dispatch('session/setAuth', this.$refs.auth);

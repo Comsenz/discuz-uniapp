@@ -43,6 +43,7 @@
             @selectChoice="selectChoice"
             @videocoverClick="payClickShow"
             @previewPicture="payClickShow"
+            @tagClick="tagClick"
           ></qui-topic-content>
           <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
           {{ p.pay }}
@@ -291,7 +292,6 @@
     <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
     <!--轻提示-->
     <qui-toast ref="toast" :type="loading"></qui-toast>
-
     <!--回复弹框-->
     <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
       <view class="comment-popup" v-if="commentPopupStatus">
@@ -599,6 +599,13 @@ export default {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
+
+    callMember(id) {
+      uni.navigateTo({
+        url: `/pages/my/index?userId=${id}`,
+      });
+    },
+
     // 表情接口请求
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);
@@ -1275,6 +1282,7 @@ export default {
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
+    // 上传图片
     imageUploader() {
       this.uploaderShow = true;
       if (this.uploadFile.length == 3) {
@@ -1347,7 +1355,13 @@ export default {
     imageClick(imageId) {
       this.previewImg();
     },
-
+    // 点击分类标签
+    tagClick(tagId) {
+      console.log(tagId, '这是分类id');
+      uni.navigateTo({
+        url: `/pages/home/index?id=${tagId}`,
+      });
+    },
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
       this.postOpera(postId, '1', canLike, isLiked);
@@ -1729,7 +1743,7 @@ page {
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
   }
   .comment-textarea {
@@ -1781,14 +1795,16 @@ page {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  .popup-btn {
+    margin-top: 20rpx;
+  }
 }
 .popup-reward-content {
   /* #ifndef APP-NVUE */
   display: flex;
   /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: center;
   height: 477rpx;
   padding: 40rpx 45rpx;
   background: --color(--qui-BG-BTN-GRAY-1);
@@ -1796,6 +1812,7 @@ page {
   .popup-title {
     height: 37rpx;
     font-size: $fg-f28;
+    text-align: center;
   }
 }
 .popup-dialog {

@@ -18,7 +18,7 @@
       </view>
     </view>
     <view class="popup-share-content-space"></view>
-    <text class="popup-share-btn" @click="cancel('share')">取消</text>
+    <text class="popup-share-btn" @click="cancel('share')">??</text>
   </view>
 </template>
 <script>
@@ -95,7 +95,7 @@ export default {
   width: 120rpx;
   height: 120rpx;
   overflow: hidden;
-  border-radius: 10rpx;
+  border-radius: 7rpx;
 }
 .content-image {
   width: 60rpx;
