@@ -43,6 +43,7 @@
             @selectChoice="selectChoice"
             @videocoverClick="payClickShow"
             @previewPicture="payClickShow"
+            @tagClick="tagClick"
           ></qui-topic-content>
           <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
           {{ p.pay }}
@@ -1354,7 +1355,13 @@ export default {
     imageClick(imageId) {
       this.previewImg();
     },
-
+    // 点击分类标签
+    tagClick(tagId) {
+      console.log(tagId, '这是分类id');
+      uni.navigateTo({
+        url: `/pages/home/index`,
+      });
+    },
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
       this.postOpera(postId, '1', canLike, isLiked);

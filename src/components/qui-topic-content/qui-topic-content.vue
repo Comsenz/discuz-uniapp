@@ -3,7 +3,7 @@
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
-          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '@/static/noavatar.gif'"
+          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
           class="det-per-head"
           @click="personJump"
         ></image>
@@ -141,7 +141,12 @@
       </view>
 
       <view class="themeItem__content__tags" v-if="tags.length > 0">
-        <view class="themeItem__content__tags__item" v-for="(tag, index) in tags" :key="index">
+        <view
+          class="themeItem__content__tags__item"
+          v-for="(tag, index) in tags"
+          :key="index"
+          @click="tagClick(tag._jv.id)"
+        >
           {{ tag.name }}
         </view>
       </view>
@@ -342,6 +347,11 @@ export default {
         // 如果未支付当前主题
         this.$emit('previewPicture');
       }
+    },
+    // 点击分类标签
+    tagClick(tagId) {
+      console.log('这是子组件里点击分类执行的');
+      this.$emit('tagClick', tagId);
     },
   },
 };
