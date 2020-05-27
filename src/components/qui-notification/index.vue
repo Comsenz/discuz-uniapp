@@ -216,7 +216,7 @@ export default {
         font-size: 24rpx;
         color: --color(--qui-FC-333);
         background-color: --color(--qui-BG-ED);
-        border-radius: 10rpx;
+        border-radius: 7rpx;
       }
 
       &__wrap-info-username {

@@ -321,7 +321,7 @@ export default {
       postLoading: false, // 发布按钮loading状态
       allCategories: [], // 所有分类
       categoryIndex: 0, // 分类下标
-      categoryId: 1, // 分类id
+      categoryId: '', // 分类id
       threadId: '', // 编辑时主题id
       firstPostId: '', // 编辑时帖子id
       postDetails: {}, // 编辑时帖子详情
@@ -545,6 +545,11 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      if (!this.categoryId) {
+        console.log('分类为空', this.i18n.t('discuzq.post.theclassifyCanNotBeBlank'));
+        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
+        return false;
+      }
       let status = true;
       switch (this.type) {
         case 0:
@@ -899,7 +904,7 @@ export default {
     if (option.threadId) this.threadId = option.threadId;
     if (option.categoryIndex) this.categoryIndex = Number(option.categoryIndex);
     if (option.categoryId)
-      this.categoryId = Number(option.categoryId) === 0 ? 1 : Number(option.categoryId);
+      this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
 
     if (this.operating === 'edit') {
@@ -972,7 +977,7 @@ export default {
     line-height: 20px;
     background-color: --color(--qui-BG-1);
     border: 1rpx solid --color(--qui-BOR-DDD);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
 
     &--static {
@@ -1153,7 +1158,7 @@ export default {
       font-size: 40rpx;
       text-align: right;
       border: 1px solid --color(--qui-BOR-DDD);
-      border-radius: 10rpx;
+      border-radius: 7rpx;
       box-sizing: border-box;
     }
   }

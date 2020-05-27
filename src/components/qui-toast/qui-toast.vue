@@ -113,7 +113,7 @@ export default {
     padding: 30rpx;
     text-align: center;
     background-color: rgba($color: #000, $alpha: 0.8);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
   }
   &--icon {

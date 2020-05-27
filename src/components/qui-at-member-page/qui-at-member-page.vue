@@ -238,7 +238,7 @@ $otherHeight: 292rpx;
       height: 100%;
       padding: 0 10rpx;
       background-color: --color(--qui-BG-IT);
-      border-radius: 10rpx;
+      border-radius: 7rpx;
 
       .icon-search {
         margin: 0 10rpx;

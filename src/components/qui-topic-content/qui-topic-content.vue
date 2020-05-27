@@ -414,7 +414,7 @@ export default {
       }
     }
     &__opera {
-      align-self: flex-end;
+      align-self: flex-start;
       flex: 1;
       text-align: right;
       flex-shrink: 0;

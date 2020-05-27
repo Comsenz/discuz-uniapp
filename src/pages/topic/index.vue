@@ -1743,7 +1743,7 @@ page {
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
   }
   .comment-textarea {
@@ -1795,14 +1795,16 @@ page {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  .popup-btn {
+    margin-top: 20rpx;
+  }
 }
 .popup-reward-content {
   /* #ifndef APP-NVUE */
   display: flex;
   /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  flex-direction: column;
+  justify-content: center;
   height: 477rpx;
   padding: 40rpx 45rpx;
   background: --color(--qui-BG-BTN-GRAY-1);
@@ -1810,6 +1812,7 @@ page {
   .popup-title {
     height: 37rpx;
     font-size: $fg-f28;
+    text-align: center;
   }
 }
 .popup-dialog {
