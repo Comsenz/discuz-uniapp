@@ -993,7 +993,7 @@ page {
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
   }
   .comment-textarea {
@@ -1060,7 +1060,7 @@ page {
   width: 120rpx;
   height: 120rpx;
   overflow: hidden;
-  border-radius: 10rpx;
+  border-radius: 7rpx;
 }
 .content-image {
   width: 60rpx;

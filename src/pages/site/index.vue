@@ -367,6 +367,6 @@ export default {
   font-size: $fg-f26;
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
-  border-radius: 10rpx;
+  border-radius: 7rpx;
 }
 </style>

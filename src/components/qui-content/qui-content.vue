@@ -562,7 +562,7 @@ export default {
       width: 670rpx;
       height: 145rpx;
       background: --color(--qui-BOR-ED);
-      border-radius: 10rpx;
+      border-radius: 7rpx;
     }
     &__imgone {
       display: flex;

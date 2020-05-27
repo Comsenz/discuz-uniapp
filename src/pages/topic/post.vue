@@ -977,7 +977,7 @@ export default {
     line-height: 20px;
     background-color: --color(--qui-BG-1);
     border: 1rpx solid --color(--qui-BOR-DDD);
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-sizing: border-box;
 
     &--static {
@@ -1158,7 +1158,7 @@ export default {
       font-size: 40rpx;
       text-align: right;
       border: 1px solid --color(--qui-BOR-DDD);
-      border-radius: 10rpx;
+      border-radius: 7rpx;
       box-sizing: border-box;
     }
   }

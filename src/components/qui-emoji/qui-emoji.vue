@@ -82,7 +82,7 @@ export default {
   padding: 10rpx 0;
   background-color: --color(--qui-BG-2);
   border: 1rpx solid --color(--qui-BOR-DDD);
-  border-radius: 10rpx;
+  border-radius: 7rpx;
   box-sizing: border-box;
 
   &__item {
