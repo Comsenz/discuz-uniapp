@@ -68,7 +68,7 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
-      pageSize: 5, // 每页20条数据
+      pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       searchPageNum: 1, // 搜索的当前页数
       userList: [], // 用户数据
