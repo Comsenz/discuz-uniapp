@@ -1132,7 +1132,6 @@ page {
       }
 
       &__isAdmin {
-        margin-left: 13rpx;
         font-weight: 400;
         color: rgba(170, 170, 170, 1);
       }
@@ -1170,6 +1169,7 @@ page {
       flex-direction: column;
       flex-wrap: wrap;
       font-size: $fg-f28;
+      line-height: 45rpx;
       word-break: break-all;
     }
   }
