@@ -789,17 +789,21 @@ export default {
       };
       this.$store.dispatch('jv/post', params);
     },
+    // 获取当前编辑的主题数据
     getPostThread() {
       const params = {
         include: ['firstPost', 'firstPost.images', 'threadVideo', 'category'],
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        console.log(res, '这是当前主题的数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
+        this.checkClassData.push(res.category);
+        console.log(this.checkClassData, '这是从接口拿到的分类数据');
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
@@ -827,6 +831,7 @@ export default {
     },
     // 编辑帖子接口
     async editThread() {
+      console.log(this.checkClassData, '这是选中的分类');
       let state = 0;
       const posts = {
         _jv: {
