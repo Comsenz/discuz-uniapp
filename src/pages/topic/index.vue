@@ -1865,4 +1865,7 @@ page {
     }
   }
 }
+.popup-share-content {
+  box-sizing: border-box;
+}
 </style>
