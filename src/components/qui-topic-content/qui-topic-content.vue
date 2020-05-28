@@ -399,6 +399,7 @@ export default {
         font-weight: bold;
         line-height: 37rpx;
         color: --color(--qui-FC-000);
+        white-space: nowrap;
       }
 
       &__isAdmin {
