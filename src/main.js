@@ -5,7 +5,7 @@ import { i18n, localeUse } from './locale';
 import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
-import { THEME_DEFAULT } from './common/const';
+import { THEME_DEFAULT, THEME_DARK } from './common/const';
 
 // 兼容 allSettled 方法处理：https://www.npmjs.com/package/promise.allsettled
 const allSettled = require('promise.allsettled');
@@ -23,6 +23,8 @@ const currentTheme = uni.getStorageSync('theme') || THEME_DEFAULT;
 const $u = {
   guid,
   currentTheme,
+  light: () => THEME_DEFAULT,
+  dark: () => THEME_DARK,
 };
 Vue.prototype.$u = $u;
 Vue.mixin(mixin);

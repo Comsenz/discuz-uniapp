@@ -100,19 +100,13 @@ export default {
       ],
       current: 0,
       checked: false,
-      userId: this.$store.getters['session/get']('userId'),
+      userInfo: {},
     };
   },
   computed: {
-    userInfo() {
-      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-      data.groupsName = data.groups ? data.groups[0].name : '';
-      this.setNum(data);
-      return data;
+    userId() {
+      return this.$store.getters['session/get']('userId');
     },
-  },
-  onLoad() {
-    this.checked = this.$store.getters['theme/get']('currentTheme') !== THEME_DEFAULT;
   },
   methods: {
     changeCheck(e) {
@@ -132,7 +126,12 @@ export default {
     },
     // 组件初始化数据
     ontrueGetList() {
-      this.checked = getApp().globalData.theme !== THEME_DEFAULT;
+      this.checked = this.theme !== THEME_DEFAULT;
+      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
+      data.groupsName = data.groups ? data.groups[0].name : '';
+      this.setNum(data);
+      console.log('laskjdflksjdflsdf', data);
+      this.userInfo = data;
     },
   },
 };

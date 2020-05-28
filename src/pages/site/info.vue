@@ -2,12 +2,12 @@
   <qui-page :data-qui-theme="theme" class="site">
     <qui-header
       head-img="/static/logo.png"
-      :theme="theme"
+      :theme="i18n.t('home.theme')"
       :theme-num="forums.other.count_users"
-      :post="post"
+      :post="i18n.t('home.homecontent')"
       :post-num="forums.other.count_threads"
-      :share="share"
-      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
+      :share="i18n.t('home.share')"
+      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -103,9 +103,6 @@
       </view>
       <qui-toast ref="toast"></qui-toast>
     </view>
-    <uni-popup ref="auth" type="bottom">
-      <qui-auth @login="login" @close="close"></qui-auth>
-    </uni-popup>
   </qui-page>
 </template>
 
@@ -116,9 +113,6 @@ export default {
   mixins: [forums],
   data() {
     return {
-      theme: this.i18n.t('home.theme'),
-      post: this.i18n.t('home.homecontent'),
-      share: this.i18n.t('home.share'),
       payShowStatus: true, // 是否显示支付
       isAnonymous: '0',
       payTypeData: [
@@ -172,9 +166,8 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
         if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
+          this.$store.getters['session/get']('auth').open();
           return;
         }
         uni.navigateTo({
@@ -261,9 +254,8 @@ export default {
     },
     // 跳支付页面
     submit() {
-      this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$refs.auth.open();
+        this.$store.getters['session/get']('auth').open();
         return;
       }
       this.$refs.payShow.payClickShow();

@@ -129,6 +129,7 @@ export default {
     videoUploading: '视频上传中...',
   },
   core: {
+    not_authenticated: '请登录',
     admin_login: '管理员登录',
     back_home: '返回首页',
     close: '点击关闭',

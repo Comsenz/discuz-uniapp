@@ -38,7 +38,11 @@ export default {
       showHome: false,
     };
   },
-  onLoad() {},
+  onLoad() {
+    if (!this.showHome) {
+      this.handlePageLoaded();
+    }
+  },
 
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -58,6 +62,15 @@ export default {
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy', 'information'];
       const currentTab = tabs[type];
+
+      if (
+        !this.$store.getters['session/get']('isLogin') &&
+        ['quinotice', 'quimy'].indexOf(currentTab) >= 0
+      ) {
+        this.$store.getters['session/get']('auth').open();
+        return;
+      }
+
       this.show_index = type;
       if (isTabBar.indexOf(type) === -1) {
         this.$refs[currentTab].ontrueGetList();
