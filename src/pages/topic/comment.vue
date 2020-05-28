@@ -160,39 +160,6 @@
     </scroll-view>
     <!--轻提示-->
     <qui-toast ref="toast"></qui-toast>
-    <!--<uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
-      <view class="comment-popup">
-        <view class="comment-popup-top">
-          <view class="comment-popup-top-l">
-            <qui-icon
-              name="icon-expression"
-              class="comm-icon"
-              @click="emojiShow = !emojiShow"
-            ></qui-icon>
-            <qui-icon name="icon-call" class="comm-icon" @click="callClick"></qui-icon>
-            <qui-icon name="icon-image" class="comm-icon" @click="imageUploader"></qui-icon>
-          </view>
-          <view>{{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}</view>
-        </view>
-        <view class="comment-content-box">
-          <view class="comment-content">
-            <textarea
-              ref="commentText"
-              auto-height
-              focus="true"
-              :maxlength="450"
-              class="comment-textarea"
-              :placeholder="t.writeComments"
-              :placeholder-style="placeholderColor"
-              v-model="textAreaValue"
-            />
-          </view>
-        </view>
-        <button class="publishBtn" @click="publishClick()">
-          {{ t.publish }}
-        </button>
-      </view>
-    </uni-popup>-->
     <!--回复弹框-->
     <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
       <view class="comment-popup" v-if="commentPopupStatus">
@@ -203,7 +170,7 @@
                 name="icon-expression"
                 class="comm-icon"
                 :size="40"
-                @click="emojiShow = !emojiShow"
+                @click="expressionClick"
               ></qui-icon>
               <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
               <qui-icon
@@ -270,6 +237,7 @@ import { status, utils } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import user from '@/mixin/user';
 import { time2MorningOrAfternoon } from '@/utils/time';
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
 
 export default {
   mixins: [user],
@@ -294,6 +262,7 @@ export default {
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
       textAreaValue: '', // 评论输入框
+      uploadFile: [], //上传的文件
       publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
@@ -332,7 +301,8 @@ export default {
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
       pageSize: 5, //这是主题回复每页数据条数
-      contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据了
+      contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
+      url: '',
     };
   },
   computed: {
@@ -342,6 +312,9 @@ export default {
     post() {
       const commentId = this.commentId;
       return utils.deepCopy(this.$store.getters['jv/get'](`posts/${commentId}`));
+    },
+    allEmoji() {
+      return this.$store.getters['jv/get']('emoji');
     },
     // postList() {
     //   // console.log(this.$store.getters['jv/get']('posts'));
@@ -367,6 +340,16 @@ export default {
     this.loadPost();
     this.loadThread();
     this.loadPostComments();
+    this.url = DISCUZ_REQUEST_HOST;
+    const token = uni.getStorageSync('access_token');
+    console.log(this.allEmoji, '这是表情');
+    console.log(this.url, '这是url');
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
+    this.formData = {
+      isGallery: 1,
+    };
   },
   onShow() {
     let atMemberList = '';
@@ -534,20 +517,31 @@ export default {
         isComment: true,
         replyId: this.commentId,
       };
-      status.run(() => {
-        this.$store
-          .dispatch('jv/post', params)
-          .then(res => {
-            this.$refs.commentPopup.close();
-            this.commentPopupStatus = false;
-            this.publishClickStatus = true;
-            // console.log(res);
-          })
-          .catch(err => {
-            this.publishClickStatus = true;
-            console.log(err);
+      params._jv.relationships.attachments = {
+        data: [],
+      };
+      if (this.uploadFile) {
+        this.uploadFile.forEach(item => {
+          params._jv.relationships.attachments.data.push({
+            type: 'attachments',
+            id: item.data.id,
           });
-      });
+        });
+      }
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.$refs.commentPopup.close();
+          this.commentPopupStatus = false;
+          this.publishClickStatus = true;
+          this.postComments.push(res);
+          this.post.postCount++;
+          // console.log(res);
+        })
+        .catch(err => {
+          this.publishClickStatus = true;
+          console.log(err);
+        });
     },
 
     // 加载当前评论的回复数据
@@ -603,6 +597,10 @@ export default {
 
       this.textAreaValue = text;
       this.emojiShow = false;
+    },
+    expressionClick() {
+      console.log('点击');
+      this.emojiShow = !this.emojiShow;
     },
     // 点击@跳转到@页
     callClick() {
@@ -979,10 +977,11 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 230rpx;
+    width: 285rpx;
   }
   .comm-icon {
     flex: 1;
+    color: --color(--qui-FC-777);
   }
 }
 .comment-content-box {
@@ -997,6 +996,9 @@ page {
     box-sizing: border-box;
   }
   .comment-textarea {
+    width: 100%;
+    height: 94rpx;
+    min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;
   }
