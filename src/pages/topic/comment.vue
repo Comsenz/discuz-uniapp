@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content bg" v-if="loadPostStatus">
+  <qui-page :data-qui-theme="theme" class="content bg" v-if="loadPostStatus">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"

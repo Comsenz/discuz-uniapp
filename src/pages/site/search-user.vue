@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="search">
+  <qui-page :data-qui-theme="theme" class="search">
     <view class="search-box">
       <view class="search-box__content">
         <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>

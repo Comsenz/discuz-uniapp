@@ -1,5 +1,5 @@
 <template>
-  <view :data-qui-theme="currentTheme" class="qui-page">
+  <view class="qui-page">
     <!--
       放在这里是因为数据是异步请求的，然后判断论坛的显示状态。
       这样每个页面还是需要引入这个组件，一个是和主题相关，一个是和站点显示状态有关
@@ -16,20 +16,10 @@
 
 <script>
 import { mapState } from 'vuex';
-import { THEME_DEFAULT } from '@/common/const';
 
 export default {
-  data() {
-    return {
-      navBarColor: {
-        frontColor: '#000000',
-        backgroundColor: '#ffffff',
-      },
-    };
-  },
   computed: {
     ...mapState({
-      currentTheme: state => state.theme.currentTheme,
       forumError: state => state.forum.error,
     }),
     loading() {
@@ -40,12 +30,6 @@ export default {
     },
   },
   watch: {
-    currentTheme: {
-      handler(n) {
-        this._setColor(n);
-        uni.setNavigationBarColor(this.navBarColor);
-      },
-    },
     forumError(newValue) {
       if (newValue.loading === false) {
         this.$emit('pageLoaded');
@@ -68,10 +52,6 @@ export default {
     login(data) {
       this.$emit('login', data);
       this.$refs.auth.close();
-    },
-    _setColor(theme) {
-      this.navBarColor.frontColor = theme === THEME_DEFAULT ? '#000000' : '#ffffff';
-      this.navBarColor.backgroundColor = theme === THEME_DEFAULT ? '#ffffff' : '#2e2f30';
     },
   },
 };

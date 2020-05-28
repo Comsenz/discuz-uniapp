@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="site">
+  <qui-page :data-qui-theme="theme" class="site">
     <qui-header
       head-img="/static/logo.png"
       :theme="theme"
@@ -291,8 +291,7 @@ export default {
     opacity: 1;
   }
   .header .logo {
-    width: 295rpx;
-    height: 56rpx;
+    height: 75rpx;
     padding-top: 71rpx;
   }
   /deep/ .icon-share1 {

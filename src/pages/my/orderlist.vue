@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="orderlist">
+  <qui-page :data-qui-theme="theme" class="orderlist">
     <view class="orderlist-wrap">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -40,7 +40,7 @@
           :key="index"
           :title="type[item.type - 1]"
           :brief="timeHandle(item.created_at)"
-          :addon="'-' + item.amount"
+          :addon="'-￥' + item.amount"
           :brief-right="item.status == 1 ? i18n.t('profile.paid') : i18n.t('profile.tobepaid')"
         ></qui-cell-item>
         <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
@@ -192,6 +192,7 @@ export default {
   padding-top: 40rpx;
   padding-left: 40rpx;
   margin-bottom: 30rpx;
+  color: --color(--qui-FC-333);
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid #ededed;
 }

@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content">
+  <qui-page :data-qui-theme="theme" class="content">
     <!--<view
       v-if="loadDetailStatusId == 0"
       class="skeletonScreen"

@@ -1,5 +1,5 @@
 <template>
-  <qui-page @pageLoaded="handlePageLoaded">
+  <qui-page :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
     <view class="content">
       <view class="view-content">
         <qui-page-home
@@ -79,8 +79,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .view-content {
   width: 100vw;
   height: calc(100vh - 98rpx);
+}
+// my页面和notice页面样式渗透不进去的问题
+/deep/ .my .cell-item,
+/deep/ .notice-box .cell-item {
+  padding-right: 40rpx;
+}
+/deep/ .no-border .cell-item {
+  border: 0;
+}
+/deep/ .my-info__box__detail .cell-item__body {
+  height: 80rpx;
+  align-items: flex-start;
+}
+/deep/ .my-tabs .qui-tabs__item--active {
+  border: 0;
+}
+/deep/ .my .qui-tabs__item__title {
+  font-weight: normal;
+  color: --color(--qui-FC-AAA);
+}
+/deep/ .my .qui-tabs__item__brief {
+  font-weight: bold;
+}
+/deep/ .my-info__box__detail .cell-item__body__content-title {
+  font-weight: bold;
 }
 </style>
