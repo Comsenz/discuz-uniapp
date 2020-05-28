@@ -72,6 +72,8 @@ export default {
       imgtop: 0,
       jurisdiction: true,
       that: '',
+      attachlength: 97,
+      marglength: 160,
     };
   },
   onLoad(arr) {
@@ -82,7 +84,6 @@ export default {
     this.themeid = arr.id;
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
-    console.log(this.userid, this.slitename);
     this.getusertitle();
     this.getthemdata();
   },
@@ -102,7 +103,6 @@ export default {
         include: 'groups',
       };
       this.$store.dispatch('jv/get', params).then(data => {
-        console.log(data);
         this.reconame = data.username;
         this.themwidth = this.reconame.length * 28 + 3;
         if (this.themwidth >= 240) {
@@ -110,7 +110,6 @@ export default {
         }
         this.renamewidth = 160 + this.themwidth;
         this.recoimg = data.avatarUrl || AVATAR_ADDRESS;
-        console.log(this.recoimg);
       });
     },
     // 获取帖子内容信息
@@ -121,7 +120,6 @@ export default {
           `threads/${this.themeid}?include=user,firstPost,firstPost.images,category,threadVideo,category`,
         )
         .then(data => {
-          console.log(data);
           this.headerName = data.user.username;
           this.headerImg = data.user.avatarUrl || AVATAR_ADDRESS;
           this.postyTepy = data.type;
@@ -132,6 +130,8 @@ export default {
             this.contentImg.push(value.thumbUrl);
           });
           this.attachmentsType = data.category.name;
+          this.attachlength = this.attachmentsType.length * 24 + 3;
+          this.marglength = this.attachlength + 40;
           if (this.postyTepy === 2) {
             this.video = data.threadVideo.cover_url;
             this.videoduc = data.threadVideo.file_name;
@@ -160,6 +160,8 @@ export default {
         reconame: this.reconame,
         recoimg: this.recoimg,
         imgtop: this.imgtop,
+        attachlength: this.attachlength,
+        marglength: this.marglength,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
         recomment: this.i18n.t('share.recomment'),
         goddessvideo: this.attachmentsType,
@@ -239,13 +241,11 @@ export default {
       const _this = this;
       uni.getSetting({
         success(res) {
-          console.log(res.authSetting['scope.writePhotosAlbum']);
           if (!res.authSetting['scope.writePhotosAlbum']) {
             _this.jurisdiction = false;
           } else {
             _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
           }
-          console.log(_this.jurisdiction);
         },
       });
       if (!this.jurisdiction) {

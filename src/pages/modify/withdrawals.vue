@@ -31,7 +31,7 @@
           >
             <input
               class="cash-content-input"
-              type="number"
+              type="digit"
               :placeholder="i18n.t('modify.enteramount')"
               placeholder-style="color:rgba(221,221,221,1)"
               v-model="cashmany"

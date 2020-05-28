@@ -134,7 +134,7 @@ export default class LastMayday {
             "type": "text",
             "text": obj.member,
             "css": {
-              "color": "#FFFFFF",
+              "color": "rgba(255,255,255,0.5)",
               "background": "rgba(0,0,0,0)",
               "width": "53px",
               "height": "37.18000000000001px",
@@ -186,7 +186,7 @@ export default class LastMayday {
             "type": "text",
             "text": obj.contents,
             "css": {
-              "color": "#FFFFFF",
+              "color": "rgba(255,255,255,0.5)",
               "background": "rgba(0,0,0,0)",
               "width": "53px",
               "height": "37.18000000000001px",

@@ -10,7 +10,7 @@ export default class LastMayday {
             "type": "rect",
             "css": {
               "background": "#F7F7F7",
-              "width": "136px",
+              "width": `${obj.marglength}px`,
               "height": "50px",
               "top": "757px",
               "left": "40px",
@@ -26,7 +26,7 @@ export default class LastMayday {
             "css": {
               "color": "#777777",
               "background": "rgba(0,0,0,0)",
-              "width": "97px",
+              "width": `${obj.attachlength}px`,
               "height": "27.119999999999997px",
               "top": "769px",
               "left": "60px",
