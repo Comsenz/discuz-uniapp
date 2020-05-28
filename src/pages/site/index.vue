@@ -2,12 +2,12 @@
   <qui-page :data-qui-theme="theme" class="site">
     <qui-header
       head-img="/static/logo.png"
-      :theme="theme"
+      :theme="i18n.t('home.theme')"
       :theme-num="siteInfo.other.count_users"
-      :post="post"
+      :post="i18n.t('home.homecontent')"
       :post-num="siteInfo.other.count_threads"
-      :share="share"
-      :iconcolor="currentTheme ? '#333' : '#fff'"
+      :share="i18n.t('home.share')"
+      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <!-- 分享弹窗 -->
@@ -26,7 +26,7 @@
                   class="content-image"
                   :name="item.icon"
                   size="46"
-                  :color="currentTheme ? '#aaa' : '#777'"
+                  :color="theme === $u.light() ? '#aaa' : '#777'"
                 ></qui-icon>
               </view>
             </view>
@@ -109,16 +109,12 @@
 </template>
 
 <script>
-import { THEME_DEFAULT } from '@/common/const';
 import forums from '@/mixin/forums';
 
 export default {
   mixins: [forums],
   data() {
     return {
-      theme: this.i18n.t('home.theme'),
-      post: this.i18n.t('home.homecontent'),
-      share: this.i18n.t('home.share'),
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -154,9 +150,6 @@ export default {
       const userId = this.$store.getters['session/get']('userId');
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
-    },
-    currentTheme() {
-      return this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
     },
     // 获取 站点信息
     siteInfo() {
@@ -243,9 +236,8 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
         if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
+          this.$store.getters['session/get']('auth').open();
           return;
         }
         uni.navigateTo({

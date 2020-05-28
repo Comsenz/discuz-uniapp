@@ -423,6 +423,7 @@ export default {
               console.log('progress');
               console.log(result);
               _this.percent = result.percent;
+              console.log(result, '视频上传进度');
               if (result.percent === 1) {
                 _this.$refs.toast.hideLoading();
               }

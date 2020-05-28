@@ -143,7 +143,7 @@ export default {
       type: [Number],
       default: 0,
     },
-    // 支付类型
+    // 支付主题类型
     payType: {
       type: String,
       default: '获得权限',
@@ -182,6 +182,7 @@ export default {
       payImmediatelyClick: false,
       checkVal: '1',
       checkStatus: true, // 单选框状态
+      checkStatusVal: 1, // 单选框状态
       current: 0,
     };
   },
@@ -215,13 +216,22 @@ export default {
     // 是否选中显示头像
     radioMyHead(evt) {
       this.checkStatus = !this.checkStatus;
-      console.log(evt.target.value);
-      this.$emit('radioMyHead', evt.target.value);
+      this.checkStatusVal = 1 ? 0 : 1;
+      if (evt.target.value.length <= 0) {
+        this.checkStatusVal = 1;
+      } else {
+        this.checkStatusVal = 0;
+      }
+      this.$emit('radioMyHead', this.checkStatusVal);
     },
     // 父组件触发是否显示弹框
-    payClickShow() {
-      console.log('这是父组件触发的事件');
-      this.$refs.payPopup.open();
+    payClickShow(val) {
+      console.log(val, '这是父组件触发的事件');
+      if (val === 0) {
+        this.$refs.payPopup.open();
+      } else {
+        this.$refs.payTypePopup.open();
+      }
     },
     // 是否显示钱包密码支付框
     paysureShow() {

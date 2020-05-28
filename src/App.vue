@@ -1,21 +1,19 @@
 <script>
-import { SITE_PAY, THEME_DEFAULT } from '@/common/const';
+import { SITE_PAY } from '@/common/const';
+import Vue from 'vue';
 
 const themeListeners = [];
-const currentTheme = uni.getStorageSync('theme') || THEME_DEFAULT;
 
 export default {
   globalData: {
-    theme: currentTheme,
     themeChanged(theme) {
-      this.theme = theme;
+      Vue.prototype.$u.currentTheme = theme;
       themeListeners.forEach(listener => {
         listener(theme);
       });
       uni.setStorage({
         key: 'theme',
         data: theme,
-        success: () => {},
       });
     },
     watchThemeChange(listener) {

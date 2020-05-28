@@ -45,12 +45,10 @@ export default {
     }
   },
   methods: {
-    close(res) {
-      this.$emit('close', res);
+    close() {
       this.$refs.auth.close();
     },
-    login(data) {
-      this.$emit('login', data);
+    login() {
       this.$refs.auth.close();
     },
   },

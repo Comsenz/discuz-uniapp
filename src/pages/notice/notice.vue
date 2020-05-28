@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="notification-box">
       <!-- 通知信息 -->
       <scroll-view
