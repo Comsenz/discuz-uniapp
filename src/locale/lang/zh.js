@@ -342,6 +342,7 @@ export default {
     delete: '删除',
     send: '发送',
     emptycontent: '内容不能为空',
+    contentMaxLength: '不能超过450个字',
   },
   // 海报分享页
   share: {
@@ -541,12 +542,6 @@ export default {
     paymentfailed: '打款失败',
     theme: '深色模式',
     freezingreason: '冻结原因',
-    theuserwasdeleted: '该用户被删除',
-    thethemewasdeleted: '该主题被删除',
-    givearewardforyourtheme: '打赏了你的主题',
-    givearewardforthetheme: '打赏了主题',
-    paidtoseeyourtheme: '付费查看了你的主题',
-    paidtoview: '付费查看了',
   },
   site: {
     circleintroduction: '站点介绍',
