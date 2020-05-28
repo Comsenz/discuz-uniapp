@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="profile">
+  <qui-page :data-qui-theme="theme" class="profile">
     <view class="my-profile">
       <!-- canEditUsername 是否允许修改用户名-->
       <navigator

@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="profile">
+  <qui-page :data-qui-theme="theme" class="profile">
     <view class="profile-info">
       <view class="profile-info__box">
         <view class="profile-info__box__detail">

@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="orderlist">
+  <qui-page :data-qui-theme="theme" class="orderlist">
     <view class="orderlist-wrap">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">

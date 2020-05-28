@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="wallet-page">
+  <qui-page :data-qui-theme="theme" class="wallet-page">
     <view class="wallet">
       <navigator url="/pages/modify/withdrawals" hover-class="none">
         <qui-cell-item

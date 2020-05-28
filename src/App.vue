@@ -1,7 +1,35 @@
 <script>
-import { SITE_PAY } from '@/common/const';
+import { SITE_PAY, THEME_DEFAULT } from '@/common/const';
+
+const themeListeners = [];
+const currentTheme = uni.getStorageSync('theme') || THEME_DEFAULT;
 
 export default {
+  globalData: {
+    theme: currentTheme,
+    themeChanged(theme) {
+      this.theme = theme;
+      themeListeners.forEach(listener => {
+        listener(theme);
+      });
+      uni.setStorage({
+        key: 'theme',
+        data: theme,
+        success: () => {},
+      });
+    },
+    watchThemeChange(listener) {
+      if (themeListeners.indexOf(listener) < 0) {
+        themeListeners.push(listener);
+      }
+    },
+    unWatchThemeChange(listener) {
+      const index = themeListeners.indexOf(listener);
+      if (index > -1) {
+        themeListeners.splice(index, 1);
+      }
+    },
+  },
   async onLaunch() {
     try {
       const forums = await this.$store.dispatch('jv/get', [

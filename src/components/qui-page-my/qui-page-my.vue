@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     changeCheck(e) {
-      this.$store.dispatch('theme/setTheme', e ? THEME_DARK : THEME_DEFAULT);
+      getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
     },
     onClickItem(e) {
       uni.navigateTo({
@@ -132,7 +132,7 @@ export default {
     },
     // 组件初始化数据
     ontrueGetList() {
-      this.checked = this.$store.getters['theme/get']('currentTheme') !== THEME_DEFAULT;
+      this.checked = getApp().globalData.theme !== THEME_DEFAULT;
     },
   },
 };
