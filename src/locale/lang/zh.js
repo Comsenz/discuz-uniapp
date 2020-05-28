@@ -541,6 +541,12 @@ export default {
     paymentfailed: '打款失败',
     theme: '深色模式',
     freezingreason: '冻结原因',
+    theuserwasdeleted: '该用户被删除',
+    thethemewasdeleted: '该主题被删除',
+    givearewardforyourtheme: '打赏了你的主题',
+    givearewardforthetheme: '打赏了主题',
+    paidtoseeyourtheme: '付费查看了你的主题',
+    paidtoview: '付费查看了',
   },
   site: {
     circleintroduction: '站点介绍',
