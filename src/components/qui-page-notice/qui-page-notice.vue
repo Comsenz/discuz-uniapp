@@ -4,8 +4,6 @@
       <uni-nav-bar
         :title="title"
         fixed="true"
-        :color="theme ? '#000000' : '#ffffff'"
-        :background-color="theme ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
@@ -95,7 +93,6 @@
 </template>
 
 <script>
-import { THEME_DEFAULT } from '@/common/const';
 import { time2MorningOrAfternoon } from '@/utils/time';
 import user from '@/mixin/user';
 
@@ -124,9 +121,6 @@ export default {
       const userId = this.$store.getters['session/get']('userId');
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
-    },
-    theme() {
-      return this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
     },
   },
   // mounted() {

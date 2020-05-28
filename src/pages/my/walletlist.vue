@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="walletlist">
+  <qui-page :data-qui-theme="theme" class="walletlist">
     <view class="walletlist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">

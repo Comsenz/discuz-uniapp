@@ -1,5 +1,5 @@
 <template>
-  <qui-page @pageLoaded="handlePageLoaded">
+  <qui-page :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
     <view class="content">
       <view class="view-content">
         <qui-page-home
