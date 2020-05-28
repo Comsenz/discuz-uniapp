@@ -1,7 +1,13 @@
 <template>
   <view>
     <view class="notice-box">
-      <uni-nav-bar :title="title" fixed="true" status-bar></uni-nav-bar>
+      <uni-nav-bar
+        :title="title"
+        fixed="true"
+        :color="theme === 'light' ? '#000000' : '#ffffff'"
+        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
+        status-bar
+      ></uni-nav-bar>
       <!-- 通知类型列表 -->
       <scroll-view
         scroll-y="true"
@@ -94,6 +100,12 @@ import user from '@/mixin/user';
 
 export default {
   mixins: [user],
+  props: {
+    theme: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
       title: this.i18n.t('notice.notice'), // 标题

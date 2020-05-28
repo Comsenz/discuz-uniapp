@@ -7,7 +7,7 @@
       :post="post"
       :post-num="siteInfo.other.count_threads"
       :share="share"
-      :iconcolor="currentTheme ? '#333' : '#fff'"
+      :iconcolor="theme === 'light' ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <!-- 分享弹窗 -->
@@ -26,7 +26,7 @@
                   class="content-image"
                   :name="item.icon"
                   size="46"
-                  :color="currentTheme ? '#aaa' : '#777'"
+                  :color="theme === 'light' ? '#aaa' : '#777'"
                 ></qui-icon>
               </view>
             </view>
@@ -109,7 +109,6 @@
 </template>
 
 <script>
-import { THEME_DEFAULT } from '@/common/const';
 import forums from '@/mixin/forums';
 
 export default {
@@ -154,9 +153,6 @@ export default {
       const userId = this.$store.getters['session/get']('userId');
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
-    },
-    currentTheme() {
-      return this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
     },
     // 获取 站点信息
     siteInfo() {
