@@ -3,12 +3,12 @@ import { THEME_DEFAULT } from '@/common/const';
 module.exports = {
   data() {
     return {
-      theme: '',
+      theme: this.$u.currentTheme,
     };
   },
   onLoad() {
     const app = getApp();
-    this.themeChanged(app.globalData.theme);
+    this.themeChanged(this.$u.currentTheme);
     app.globalData.watchThemeChange(this.themeChanged);
 
     // getRect挂载到$u上，因为这方法需要使用in(this)，所以无法把它独立成一个单独的文件导出
