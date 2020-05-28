@@ -342,8 +342,6 @@ export default {
     this.loadPostComments();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
-    console.log(this.allEmoji, '这是表情');
-    console.log(this.url, '这是url');
     this.header = {
       authorization: `Bearer ${token}`,
     };
