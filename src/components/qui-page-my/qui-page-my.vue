@@ -184,6 +184,6 @@ export default {
   transition: $switch-theme-time;
 }
 .scroll-y {
-  max-height: calc(100vh - 140rpx);
+  max-height: calc(100vh - 260rpx);
 }
 </style>
