@@ -55,7 +55,7 @@ export default {
   methods: {
     // 切换组件
     cut_index(e, type, isTabBar) {
-      const tabs = ['home', 'quinotice', 'quimy', 'information'];
+      const tabs = ['home', 'quinotice', 'quimy'];
       const currentTab = tabs[type];
       this.show_index = type;
       if (isTabBar.indexOf(type) === -1) {
