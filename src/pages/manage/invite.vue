@@ -358,6 +358,9 @@ export default {
     margin: auto;
 
     .btn {
+      font-size: $fg-f28;
+      line-height: 90rpx;
+      color: --color(--qui-FC-333);
       background: --color(--qui-BG-2);
     }
   }

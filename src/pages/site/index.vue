@@ -287,8 +287,7 @@ export default {
     opacity: 1;
   }
   .header .logo {
-    width: 295rpx;
-    height: 56rpx;
+    height: 75rpx;
     padding-top: 71rpx;
   }
   /deep/ .icon-share1 {
