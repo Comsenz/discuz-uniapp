@@ -439,6 +439,7 @@ export default {
         font-weight: 600;
         line-height: 40rpx;
         text-align: left;
+        word-break: break-all;
       }
       &__cover {
         position: absolute;
