@@ -35,6 +35,7 @@
               size="28"
               color="#AAA"
               @click="deleteClick"
+              @tap.stop
             ></qui-icon>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>

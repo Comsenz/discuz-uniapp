@@ -78,17 +78,19 @@ export default class LastMayday {
                 }
               },
               {
-                "type": "qrcode",
-                "content":`${obj.userweixincode}`,
+                "type": "image",
+                "url": `${obj.userweixincode}`,
                 "css": {
-                  "color": "#000000",
-                  "background": "#ffffff",
                   "width": "140px",
                   "height": "140px",
                   "top": "912px",
                   "left": "40px",
                   "rotate": "0",
-                  "borderRadius": ""
+                  "borderRadius": "0px",
+                  "borderWidth": "",
+                  "borderColor": "#000000",
+                  "shadow": "",
+                  "mode": "scaleToFill"
                 }
               },
               {

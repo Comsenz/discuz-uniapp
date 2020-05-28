@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content">
+  <qui-page :data-qui-theme="theme" class="content">
     <!--<view
       v-if="loadDetailStatusId == 0"
       class="skeletonScreen"
@@ -521,10 +521,6 @@ export default {
       const threadId = this.threadId;
       return utils.deepCopy(this.$store.getters['jv/get'](`threads/${threadId}`));
     },
-    // posts() {
-    //   const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
-    //   return posts;
-    // },
 
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
@@ -547,22 +543,12 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.user, '这是用户信息~~~~~~~~~~');
-    console.log(option.id, '这是主题id');
-    console.log(uni.getSystemInfoSync().windowHeight, '设备信息');
-    this.windowHeight = uni.getSystemInfoSync().windowHeight;
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
-    this.url = DISCUZ_REQUEST_HOST;
-    const token = uni.getStorageSync('access_token');
-
-    this.header = {
-      authorization: `Bearer ${token}`,
-    };
     this.formData = {
       isGallery: 1,
     };
@@ -581,12 +567,6 @@ export default {
     };
   },
   onShow() {
-    // let authTimeout = setTimeout(() => {
-    //   if (!this.$store.getters['session/get']('isLogin')) {
-    //     this.$store.getters['session/get']('auth').open();
-    //   }
-    //   clearTimeout(authTimeout);
-    // }, 4000);
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;

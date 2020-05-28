@@ -35,10 +35,8 @@
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
 import { mapState } from 'vuex';
-import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
-  components: { quiInputCode },
   data() {
     return {
       userid: '',
@@ -59,7 +57,9 @@ export default {
   },
   onLoad(arr) {
     this.userid = this.usersid;
-    this.usertokenid = arr.token || '';
+    if (arr) {
+      this.usertokenid = arr.token || '';
+    }
     if (this.setRouter) {
       this.themid = this.setRouter.replace(/[^0-9]/gi, '');
     }
@@ -122,7 +122,7 @@ export default {
               uni.navigateBack({
                 delta: 1,
                 success() {
-                  pages[2].onLoad(); // 执行前一个页面的onLoad方法
+                  pages[1].onLoad(); // 执行前一个页面的onLoad方法
                 },
               });
             }

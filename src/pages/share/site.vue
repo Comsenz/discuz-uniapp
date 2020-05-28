@@ -34,6 +34,7 @@
 import Cardc from '@/wxcomponents/card/cardbasemap'; // 首页海报有底图
 import Carde from '@/wxcomponents/card/cardnobasemap'; // 首页海报无底图
 import forums from '@/mixin/forums';
+import { AVATAR_ADDRESS, CODE_ADDRESS } from '@/common/const';
 
 export default {
   mixins: [forums],
@@ -55,7 +56,7 @@ export default {
       renamewidth: 400,
       openSettingBtnHidden: true,
       jurisdiction: true,
-      weixincode: 'https://dq.comsenz-service.com/api/oauth/wechat/miniprogram/code', // 微信二维码
+      weixincode: CODE_ADDRESS, // 微信二维码
     };
   },
   onLoad() {
@@ -95,7 +96,7 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.headerImg = data.avatarUrl || '/static/noavatar.gif';
+        this.headerImg = data.avatarUrl || AVATAR_ADDRESS;
         this.initData();
       });
     },
@@ -109,7 +110,7 @@ export default {
         themnumber: this.themnumber, // 成员人数
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 站点介绍
-        userweixincode: this.weixincode, // 微信二维码
+        userweixincode: CODE_ADDRESS, // 微信二维码
         namewidth: this.themwidth,
         renamewidth: this.renamewidth,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别

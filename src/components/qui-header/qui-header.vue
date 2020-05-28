@@ -36,10 +36,6 @@ export default {
       type: String,
       default: '',
     },
-    theme: {
-      type: String,
-      default: '',
-    },
     themeNum: {
       type: Number,
       default: 0,

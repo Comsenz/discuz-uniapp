@@ -100,7 +100,7 @@ export default {
               url: '/pages/my/profile',
               success() {
                 const pages = getCurrentPages();
-                pages[2].onLoad();
+                pages[1].onLoad();
               },
             });
           }

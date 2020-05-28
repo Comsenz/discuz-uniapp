@@ -5,6 +5,7 @@ import { i18n, localeUse } from './locale';
 import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
+import { THEME_DEFAULT, THEME_DARK } from './common/const';
 
 // 兼容 allSettled 方法处理：https://www.npmjs.com/package/promise.allsettled
 const allSettled = require('promise.allsettled');
@@ -18,8 +19,12 @@ App.mpType = 'app';
 Vue.prototype.$localeUse = localeUse;
 // 因为小程序识别不了模板文件中的 $t 等 vue-i18n 相关的语法 api，因此直接挂载到 vue 的原型上，直接使用
 Vue.prototype.i18n = i18n;
+const currentTheme = uni.getStorageSync('theme') || THEME_DEFAULT;
 const $u = {
   guid,
+  currentTheme,
+  light: () => THEME_DEFAULT,
+  dark: () => THEME_DARK,
 };
 Vue.prototype.$u = $u;
 Vue.mixin(mixin);

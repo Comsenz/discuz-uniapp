@@ -91,7 +91,6 @@ export default {
       scv: 0,
       pageSize: 5, // 每页10条数据
       pageNum: 1, // 当前页数
-      currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
     };
   },
 
@@ -146,7 +145,7 @@ export default {
       )
     ) {
       try {
-        getApp().systemInfo = wx.getSystemInfoSync();
+        getApp().systemInfo = uni.getSystemInfoSync();
         console.log('getApp().systemInfo.screenWidth', getApp().systemInfo.screenWidth);
         const screenK = getApp().systemInfo.screenWidth / 750;
         this.scv = getApp().systemInfo.windowHeight / screenK - 140;
@@ -166,7 +165,6 @@ export default {
   onLoad(params) {
     console.log('params', params);
     const { username, dialogId } = params;
-    console.log('currentTheme', this.currentTheme);
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -191,24 +189,6 @@ export default {
     });
   },
 
-  onReady() {
-    if (this.currentTheme === 'dark') {
-      uni.setNavigationBarColor({
-        frontColor: '#ffffff',
-        backgroundColor: '#3f4243',
-      });
-    } else {
-      uni.setNavigationBarColor({
-        frontColor: '#000000',
-        backgroundColor: '#ededed',
-      });
-    }
-  },
-  // onPullDownRefresh() {
-  //   this.pageNum += 1;
-  //   console.log('refresh');
-  //   this.getChatRecord(this.dialogId);
-  // },
   methods: {
     scrollToBottom() {
       this.$nextTick(() => {

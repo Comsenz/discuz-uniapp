@@ -57,10 +57,8 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import quiInputCode from '@/components/qui-input-code/qui-input-code';
 
 export default {
-  components: { quiInputCode },
   data() {
     return {
       userid: '',
@@ -180,7 +178,7 @@ export default {
             uni.redirectTo({
               url: `/${pages[1].route}`,
               success() {
-                pages[2].onLoad();
+                pages[1].onLoad();
               },
             });
           }
