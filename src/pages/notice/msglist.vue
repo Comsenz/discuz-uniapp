@@ -146,7 +146,7 @@ export default {
       )
     ) {
       try {
-        getApp().systemInfo = wx.getSystemInfoSync();
+        getApp().systemInfo = uni.getSystemInfoSync();
         console.log('getApp().systemInfo.screenWidth', getApp().systemInfo.screenWidth);
         const screenK = getApp().systemInfo.screenWidth / 750;
         this.scv = getApp().systemInfo.windowHeight / screenK - 140;

@@ -7,7 +7,7 @@
       :post="post"
       :post-num="siteInfo.other.count_threads"
       :share="share"
-      :iconcolor="currentTheme ? '#fff' : '#333'"
+      :iconcolor="currentTheme ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <!-- 分享弹窗 -->
@@ -62,6 +62,7 @@
             class="site-item__owner-avatar"
             :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
+            @tap="jumpUserPage(item.id)"
           ></image>
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
@@ -74,6 +75,7 @@
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="jumpUserPage(item.id)"
+              @tap.stop
             ></image>
           </view>
         </qui-cell-item>
@@ -266,6 +268,13 @@ export default {
     // 取消按钮
     cancel() {
       this.$refs.popupHead.close();
+    },
+    // 跳转到个人主页
+    jumpUserPage(userId) {
+      console.log('点击头像到个人主页', userId);
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${userId}`,
+      });
     },
   },
 };
