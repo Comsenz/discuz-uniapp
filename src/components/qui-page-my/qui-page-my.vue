@@ -3,8 +3,8 @@
     <uni-nav-bar
       title="我的"
       fixed="true"
-      :color="checked ? '#ffffff' : '#000000'"
-      :background-color="checked ? '#2e2f30' : '#ffffff'"
+      :color="checked ? '#fff' : '#000'"
+      :background-color="checked ? '#2e2f30' : '#fff'"
       status-bar
     ></uni-nav-bar>
     <scroll-view
@@ -148,12 +148,6 @@ export default {
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: $switch-theme-time;
 }
-/deep/ .cell-item {
-  padding-right: 40rpx;
-}
-/deep/ .no-border .cell-item {
-  border: 0;
-}
 .my-info {
   padding: 40rpx;
   padding-top: 30rpx;
@@ -178,10 +172,6 @@ export default {
   font-size: $fg-f28;
   box-sizing: border-box;
 }
-.my-info__box__detail /deep/ .cell-item__body {
-  height: 80rpx;
-  align-items: flex-start;
-}
 .my-info__box__detail-avatar {
   position: absolute;
   top: 0;
@@ -192,14 +182,6 @@ export default {
 }
 .my-tabs {
   background: --color(--qui-BG-2);
-  transition: $switch-theme-time;
-}
-/deep/ .my-tabs .qui-tabs__item--active {
-  border: 0;
-}
-/deep/ .qui-tabs__item--active .qui-tabs__item__title {
-  font-weight: normal;
-  color: --color(--qui-FC-AAA);
   transition: $switch-theme-time;
 }
 .scroll-y {

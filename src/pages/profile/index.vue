@@ -203,6 +203,9 @@ export default {
   .qui-icon {
     margin-right: 14rpx;
   }
+  /deep/ .qui-tabs__item__brief {
+    font-weight: bold;
+  }
 }
 .profile-info {
   padding: 40rpx;
@@ -230,6 +233,9 @@ export default {
 .profile-info__box__detail /deep/ .cell-item__body {
   height: 80rpx;
   align-items: flex-start;
+}
+.profile-info__box__detail /deep/ .cell-item__body__content-title {
+  font-weight: bold;
 }
 .profile-info__box__detail-operate {
   display: inline-block;
