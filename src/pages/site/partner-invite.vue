@@ -64,10 +64,14 @@
         </view>
       </qui-cell-item>
       <qui-cell-item :title="i18n.t('home.theme')" slot-right class="cell-item--auto">
-        <view>
-          <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
+        <view class="site-item__person">
+          <view
+            v-for="(item, index) in forums.users"
+            :key="index"
+            class="site-item__person__content"
+          >
             <image
-              class="site-item__person-avatar"
+              class="site-item__person__content-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
@@ -257,14 +261,14 @@ export default {
   padding-bottom: 20rpx;
   text-align: center;
 }
-.site-item__person-avatar,
+.site-item__person__content-avatar,
 .site-item__owner-avatar {
   width: 60rpx;
   height: 60rpx;
   margin-left: 8rpx;
   border-radius: 50%;
 }
-.site-item__person-avatar {
+.site-item__person__content-avatar {
   margin-left: 8rpx;
 }
 .site-item__owner {
@@ -275,6 +279,9 @@ export default {
   margin-right: 20rpx;
 }
 .site-item__person {
+  font-size: 0;
+}
+.site-item__person__content {
   display: inline-block;
 }
 .site-item__permission {
