@@ -1,11 +1,7 @@
 <template>
   <view>
     <view class="notice-box">
-      <uni-nav-bar
-        :title="title"
-        fixed="true"
-        status-bar
-      ></uni-nav-bar>
+      <uni-nav-bar :title="title" fixed="true" status-bar></uni-nav-bar>
       <!-- 通知类型列表 -->
       <scroll-view
         scroll-y="true"

@@ -248,7 +248,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .favorite-head {
@@ -264,7 +264,12 @@ export default {
 .scroll-y {
   max-height: calc(100vh - 148rpx);
 }
-.addFine {
+/deep/ .themeCount .addFine {
   display: none;
+}
+/deep/ .themeCount .icon-delete {
+  position: absolute;
+  top: 30rpx;
+  right: 50rpx;
 }
 </style>
