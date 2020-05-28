@@ -1,20 +1,24 @@
 <template>
-  <qui-page class="site">
+  <qui-page :data-qui-theme="theme" class="site">
     <qui-header
       head-img="/static/logo.png"
-      :theme="theme"
+      :theme="i18n.t('home.theme')"
       :theme-num="siteInfo.other.count_users"
-      :post="post"
+      :post="i18n.t('home.homecontent')"
       :post-num="siteInfo.other.count_threads"
-      :share="share"
-      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
+      :share="i18n.t('home.share')"
+      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <!-- 分享弹窗 -->
     <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
+        <view class="popup-share-content" style="box-sizing: border-box;">
+          <button
+            class="popup-share-button"
+            open-type="share"
+            v-if="siteInfo.set_site.site_mode !== 'pay'"
+          ></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareHead(index)">
@@ -22,7 +26,7 @@
                   class="content-image"
                   :name="item.icon"
                   size="46"
-                  :color="currentTheme === 'dark' ? '#aaa' : '#777'"
+                  :color="theme === $u.light() ? '#aaa' : '#777'"
                 ></qui-icon>
               </view>
             </view>
@@ -58,19 +62,20 @@
             class="site-item__owner-avatar"
             :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(item.id)"
+            @tap="jumpUserPage(item.id)"
           ></image>
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
       <navigator url="/pages/manage/users" hover-class="none">
-        <qui-cell-item title="成员" slot-right arrow class="cell-item--auto">
+        <qui-cell-item :title="i18n.t('home.theme')" slot-right arrow class="cell-item--auto">
           <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
             <image
               class="site-item__person-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
-              @tap="toProfile(item.id)"
+              @tap="jumpUserPage(item.id)"
+              @tap.stop
             ></image>
           </view>
         </qui-cell-item>
@@ -82,12 +87,12 @@
       <qui-cell-item
         :title="i18n.t('manage.joinedTime')"
         :addon="userInfo.joinedTime"
-        v-if="siteInfo.set_site.site_mode === 'pay'"
+        v-if="siteInfo.set_site.site_mode === 'pay' && userInfo.joinedAt"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.periodvalidity')"
         :addon="userInfo.expiredTime"
-        v-if="siteInfo.set_site.site_mode === 'pay'"
+        v-if="siteInfo.set_site.site_mode === 'pay' && userInfo.expiredAt"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.myauthority')"
@@ -107,16 +112,9 @@
 import forums from '@/mixin/forums';
 
 export default {
-  components: {
-    //
-  },
   mixins: [forums],
   data() {
     return {
-      theme: '成员',
-      post: '内容',
-      share: '分享',
-      shareBtn: 'icon-share1',
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -131,7 +129,6 @@ export default {
       ],
     };
   },
-
   onLoad() {
     this.getSiteInfo();
     this.getPermissions();
@@ -148,20 +145,12 @@ export default {
       title: this.forums.set_site.site_name,
     };
   },
-
   computed: {
-    // 获取当前登录的id
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
-    // 获取当前的主题模式
-    currentTheme() {
-      const theme = this.$store.getters['theme/get']('currentTheme');
-      return theme;
-    },
-
     // 获取 站点信息
     siteInfo() {
       const info = this.$store.getters['jv/get']('forums/1');
@@ -171,7 +160,6 @@ export default {
       console.log('站点信息：', info);
       return info;
     },
-
     // 获取 用户信息
     userInfo() {
       const info = this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
@@ -184,7 +172,6 @@ export default {
       console.log('用户信息：', info);
       return info;
     },
-
     // 获取 用户权限
     permissionInfo() {
       let permissionList = [];
@@ -213,7 +200,6 @@ export default {
       return permissionList;
     },
   },
-
   methods: {
     // 调用 获取配置（站点信息） 接口
     getSiteInfo() {
@@ -236,14 +222,22 @@ export default {
     },
     // 首页头部分享按钮弹窗
     open() {
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+          },
+        ];
+      }
       this.$refs.popupHead.open();
     },
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
         if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
+          this.$store.getters['session/get']('auth').open();
           return;
         }
         uni.navigateTo({
@@ -255,21 +249,21 @@ export default {
     onShareAppMessage(res) {
       // 来自页面内分享按钮
       if (res.from === 'button') {
-        const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
         return {
-          title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+          title: this.forums.set_site.site_name,
         };
       }
       return {
-        title: this.info.set_site.site_name,
+        title: this.forums.set_site.site_name,
       };
     },
     // 取消按钮
     cancel() {
       this.$refs.popupHead.close();
     },
-    // 点击头像到个人主页
-    toProfile(userId) {
+    // 跳转到个人主页
+    jumpUserPage(userId) {
+      console.log('点击头像到个人主页', userId);
       uni.navigateTo({
         url: `/pages/profile/index?userId=${userId}`,
       });
@@ -294,8 +288,7 @@ export default {
     opacity: 1;
   }
   .header .logo {
-    width: 295rpx;
-    height: 56rpx;
+    height: 75rpx;
     padding-top: 71rpx;
   }
   /deep/ .icon-share1 {
@@ -367,6 +360,6 @@ export default {
   font-size: $fg-f26;
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
-  border-radius: 10rpx;
+  border-radius: 7rpx;
 }
 </style>

@@ -137,7 +137,7 @@ $font-size-post: 40rpx;
   justify-content: center;
   color: $txt-color-grey;
   background-color: $default-bg-color;
-  border-radius: 10rpx;
+  border-radius: 7rpx;
   &[type='primary'] {
     color: $txt-color-white;
     background-color: $primary-bg-color;
@@ -195,7 +195,7 @@ $font-size-post: 40rpx;
     color: $text-color-333;
     background-color: $plain-bg-color;
     border: none;
-    border-radius: 10rpx;
+    border-radius: 7rpx;
     box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
   }
   &[disabled] {

@@ -3,40 +3,35 @@
     <view class="notice-box">
       <uni-nav-bar
         :title="title"
-        fixed="true"
-        :color="theme ? '#000000' : '#ffffff'"
-        :background-color="theme ? '#ffffff' : '#2e2f30'"
+        fixed
+        :color="theme === 'light' ? '#000000' : '#ffffff'"
+        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
-      <!-- <scroll-view
-        scroll-y="true"
+      <scroll-view
+        scroll-y
         @scrolltolower="pullDown"
         show-scrollbar="false"
-        show-icon="true"
-        class="scroll-y"
-      > -->
-      <view class="notice-box__list">
-        <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
-          <qui-cell-item :title="i18n.t(item.title)" :border="item.border" arrow slot-right>
-            <qui-icon
-              v-if="item.unReadNum && item.unReadNum > 0"
-              name="icon-circle"
-              class="red-circle"
-              color="red"
-              size="14"
-            ></qui-icon>
-          </qui-cell-item>
+        show-icon
+        class="scroll-Y"
+        :style="'top:' + navbarHeight + 'px'"
+      >
+        <view class="notice-box__list">
+          <view v-for="item in list" :key="item.id" @click="jumpNoticePage(item)">
+            <qui-cell-item :title="i18n.t(item.title)" :border="item.border" arrow slot-right>
+              <qui-icon
+                v-if="item.unReadNum && item.unReadNum > 0"
+                name="icon-circle"
+                class="red-circle"
+                color="red"
+                size="14"
+              ></qui-icon>
+            </qui-cell-item>
+          </view>
         </view>
         <!-- 会话列表 -->
         <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
-          <!-- <scroll-view
-            scroll-y="true"
-            @scrolltolower="pullDown"
-            show-scrollbar="false"
-            show-icon="true"
-            class="scroll-y"
-          > -->
           <view
             class="dialog-box"
             v-for="dialog of dialogList"
@@ -86,23 +81,27 @@
             :status="loadingType"
             v-if="dialogList && dialogList.length > 0"
           ></qui-load-more>
-          <!-- </scroll-view> -->
         </view>
-      </view>
-      <!-- </scroll-view> -->
+      </scroll-view>
     </view>
   </view>
 </template>
 
 <script>
-import { THEME_DEFAULT } from '@/common/const';
 import { time2MorningOrAfternoon } from '@/utils/time';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [user],
+  props: {
+    theme: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
       title: this.i18n.t('notice.notice'), // 标题
-      theme: '', // 当前的主题
       list: [
         { id: 1, title: 'notice.relate', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
@@ -115,22 +114,8 @@ export default {
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
       dialogList: [], // 会话列表
+      navbarHeight: 0, // 顶部导航栏的高度
     };
-  },
-  onLoad() {
-    this.getDialogList();
-    this.getUnreadNoticeNum();
-    this.theme = this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
-    if (!(getApp() && getApp().systemInfo && getApp().systemInfo.screenHeight)) {
-      try {
-        getApp().systemInfo = wx.getSystemInfoSync();
-        console.log('no height,then get height:', getApp().systemInfo.screenHeight);
-      } catch (e) {
-        console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
-      }
-    } else {
-      console.log('screenHeight', getApp().systemInfo.screenHeight);
-    }
   },
   computed: {
     // 获取当前登录的id
@@ -139,6 +124,10 @@ export default {
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
+  },
+  mounted() {
+    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
+    console.log('-----navbarHeight-------', this.navbarHeight);
   },
   methods: {
     // 调用 会话列表 的接口
@@ -181,20 +170,14 @@ export default {
     },
     // 调用 未读通知数 的接口
     getUnreadNoticeNum() {
-      const params = {
-        include: ['groups'],
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'users' } });
-      this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, { params }]).then(res => {
-        console.log('未读通知', res);
-        if (res.typeUnreadNotifications) {
-          this.list[0].unReadNum = res.typeUnreadNotifications.related;
-          this.list[1].unReadNum = res.typeUnreadNotifications.replied;
-          this.list[2].unReadNum = res.typeUnreadNotifications.liked;
-          this.list[3].unReadNum = res.typeUnreadNotifications.rewarded;
-          this.list[4].unReadNum = res.typeUnreadNotifications.system;
-        }
-      });
+      if (this.user && this.user.typeUnreadNotifications) {
+        console.log('this.user', this.user);
+        this.list[0].unReadNum = this.user.typeUnreadNotifications.related;
+        this.list[1].unReadNum = this.user.typeUnreadNotifications.replied;
+        this.list[2].unReadNum = this.user.typeUnreadNotifications.liked;
+        this.list[3].unReadNum = this.user.typeUnreadNotifications.rewarded;
+        this.list[4].unReadNum = this.user.typeUnreadNotifications.system;
+      }
     },
     // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
@@ -234,6 +217,13 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 
+.scroll-Y {
+  position: fixed;
+  right: 0rpx;
+  bottom: 119rpx;
+  left: 0rpx;
+}
+
 .notice-box {
   width: 100%;
   min-height: 100vh;
@@ -245,23 +235,15 @@ export default {
     color: --color(--qui-FC-34);
   }
 
-  .notice-box__list {
+  &__list {
     padding-left: 40rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
     transition: $switch-theme-time;
 
-    /deep/ .cell-item {
-      padding: 0rpx 40rpx 0rpx 0rpx;
-    }
-
     /deep/ text {
       vertical-align: middle;
     }
-  }
-
-  .dialog-box__main {
-    margin: 0rpx 0rpx 130rpx;
   }
 }
 

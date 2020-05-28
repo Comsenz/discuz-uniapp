@@ -48,7 +48,7 @@
                 :title="user.username"
                 :value="user.groups[Object.keys(user.groups || {})[0]].name"
                 :icon="user.avatarUrl || '/static/noavatar.gif'"
-                @click="getNameId(user)"
+                @click="jumpUserPage(user.id)"
               ></qui-avatar-cell>
             </view>
             <qui-load-more :status="loadingType"></qui-load-more>
@@ -68,7 +68,7 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
-      pageSize: 5, // 每页20条数据
+      pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       searchPageNum: 1, // 搜索的当前页数
       userList: [], // 用户数据
@@ -86,10 +86,10 @@ export default {
   },
   methods: {
     // 跳转到个人主页
-    getNameId(key) {
-      console.log('key', key);
+    jumpUserPage(userId) {
+      console.log('点击头像到个人主页', userId);
       uni.navigateTo({
-        url: `/pages/profile/index?userId=${this.userList[key].id}`,
+        url: `/pages/profile/index?userId=${userId}`,
       });
     },
     // eslint-disable-next-line

@@ -3,7 +3,7 @@
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
-          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '@/static/noavatar.gif'"
+          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
           class="det-per-head"
           @click="personJump"
         ></image>
@@ -127,7 +127,7 @@
           class="themeItem__content__con__cover"
           :style="{
             background:
-              getTheme == 'light'
+              theme === $u.light()
                 ? 'linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))'
                 : 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))',
           }"
@@ -141,7 +141,12 @@
       </view>
 
       <view class="themeItem__content__tags" v-if="tags.length > 0">
-        <view class="themeItem__content__tags__item" v-for="(tag, index) in tags" :key="index">
+        <view
+          class="themeItem__content__tags__item"
+          v-for="(tag, index) in tags"
+          :key="index"
+          @click="tagClick(tag._jv.id)"
+        >
           {{ tag.name }}
         </view>
       </view>
@@ -151,7 +156,6 @@
 
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
-import { mapState } from 'vuex';
 
 export default {
   props: {
@@ -284,9 +288,6 @@ export default {
     console.log(this.tags);
   },
   computed: {
-    ...mapState({
-      getTheme: state => state.theme.currentTheme,
-    }),
     t() {
       return this.i18n.t('topic');
     },
@@ -342,6 +343,11 @@ export default {
         // 如果未支付当前主题
         this.$emit('previewPicture');
       }
+    },
+    // 点击分类标签
+    tagClick(tagId) {
+      console.log('这是子组件里点击分类执行的');
+      this.$emit('tagClick', tagId);
     },
   },
 };
@@ -404,7 +410,7 @@ export default {
       }
     }
     &__opera {
-      align-self: flex-end;
+      align-self: flex-start;
       flex: 1;
       text-align: right;
       flex-shrink: 0;
@@ -433,6 +439,7 @@ export default {
         font-weight: 600;
         line-height: 40rpx;
         text-align: left;
+        word-break: break-all;
       }
       &__cover {
         position: absolute;

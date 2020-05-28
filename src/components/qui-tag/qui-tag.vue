@@ -81,7 +81,7 @@ $padding-lg: 26rpx;
   font-size: $font-size-md;
   color: $txt-color-white;
   border: 1px solid currentColor;
-  border-radius: 10rpx;
+  border-radius: 7rpx;
   box-sizing: border-box;
 
   &--default {

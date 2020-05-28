@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="notification-box">
       <!-- 通知信息 -->
       <scroll-view
@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       loadingType: 'more', // 上拉加载状态
-      pageSize: 5, // 每页10条数据
+      pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       noticeList: [], // 通知列表
       type: '', // 当前的通知类型

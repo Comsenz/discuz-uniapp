@@ -1,13 +1,13 @@
 <template>
-  <qui-page class="site">
+  <qui-page :data-qui-theme="theme" class="site">
     <qui-header
       head-img="/static/logo.png"
-      :theme="theme"
+      :theme="i18n.t('home.theme')"
       :theme-num="forums.other.count_users"
-      :post="post"
+      :post="i18n.t('home.homecontent')"
       :post-num="forums.other.count_threads"
-      :share="share"
-      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
+      :share="i18n.t('home.share')"
+      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -102,9 +102,6 @@
         </qui-button>
       </view>
     </view>
-    <uni-popup ref="auth" type="bottom">
-      <qui-auth @login="login" @close="close"></qui-auth>
-    </uni-popup>
   </qui-page>
 </template>
 
@@ -116,9 +113,6 @@ export default {
   mixins: [forums],
   data() {
     return {
-      theme: this.i18n.t('home.theme'),
-      post: this.i18n.t('home.homecontent'),
-      share: this.i18n.t('home.share'),
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -132,7 +126,6 @@ export default {
         },
       ],
       code: '', // 邀请码
-      currentTheme: uni.getStorageSync('theme'),
       permission: [],
       inviteData: {}, // 邀请的相关信息
     };
@@ -176,9 +169,8 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
         if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
+          this.$store.getters['session/get']('auth').open();
           return;
         }
         uni.navigateTo({
@@ -226,8 +218,7 @@ export default {
     opacity: 1;
   }
   .header .logo {
-    width: 295rpx;
-    height: 56rpx;
+    height: 75rpx;
     padding-top: 71rpx;
   }
   /deep/ .cell-item__body__content-title {
@@ -295,7 +286,7 @@ export default {
   font-size: $fg-f26;
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
-  border-radius: 10rpx;
+  border-radius: 7rpx;
 }
 .cell-item--left .cell-item__body__right {
   text-align: left;

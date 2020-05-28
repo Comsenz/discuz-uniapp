@@ -242,7 +242,7 @@ export default {
   color: --color(--qui-FC-777);
   background: --color(--qui-BG-BTN-GRAY);
   border: 2rpx solid --color(--qui-BG-ED);
-  border-radius: 10rpx;
+  border-radius: 7rpx;
   &.active {
     color: --color(--qui-BG-2);
     background: --color(--qui-BG-HIGH-LIGHT);

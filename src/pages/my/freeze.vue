@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="freeze">
+  <qui-page :data-qui-theme="theme" class="freeze">
     <view class="freeze-head">
       <view class="freeze-head__num">
         <text>{{ i18n.t('profile.total') }}</text>

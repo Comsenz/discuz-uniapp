@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="withdrawalslist">
+  <qui-page :data-qui-theme="theme" class="withdrawalslist">
     <view class="withdrawalslist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">

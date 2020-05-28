@@ -16,9 +16,9 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
               @setInvalid="setInvalid"
+              @share="share"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
             <!-- 邀请链接按钮 -->
@@ -33,7 +33,6 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
@@ -43,7 +42,6 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
@@ -53,7 +51,6 @@
               :total="total"
               :status="status"
               :list="allInviteList"
-              :bottom-data="bottomData"
               v-if="allInviteList && allInviteList.length > 0"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
@@ -71,9 +68,34 @@
               </view>
             </view>
             <view class="popup-wrap-space"></view>
-            <text class="popup-wrap-btn" @click="cancel">{{ i18n.t('home.cancel') }}</text>
+            <text class="popup-wrap-btn" @click="cancelModify">{{ i18n.t('home.cancel') }}</text>
           </view>
         </scroll-view>
+      </uni-popup>
+      <!-- 分享弹窗 -->
+      <uni-popup ref="popupShare" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content" style="box-sizing: border-box;">
+            <button class="popup-share-button__center" open-type="share"></button>
+            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="46"
+                    color="#777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancelShare('share')">
+            {{ i18n.t('home.cancel') }}
+          </text>
+        </view>
       </uni-popup>
     </view>
   </qui-page>
@@ -82,9 +104,11 @@
 <script>
 import { timestamp2day } from '@/utils/time';
 import quiInvite from '@/components/qui-invite';
+import forums from '@/mixin/forums';
 
 export default {
   components: { quiInvite },
+  mixins: [forums],
   data() {
     return {
       current: 0, // 当前标签页
@@ -109,6 +133,22 @@ export default {
   onLoad() {
     this.getInviteList(1);
     this.getGroupList();
+  },
+  // 唤起小程序原生分享
+  onShareAppMessage(res) {
+    console.log('唤起小程序原生分享', res);
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      console.log('res.from为button');
+      return {
+        title: this.forums.set_site.site_name,
+        path: `/pages/site/partner-invite?code=${this.code}`,
+      };
+    }
+    return {
+      title: this.forums.set_site.site_name,
+      path: `/pages/site/partner-invite?code=${this.code}`,
+    };
   },
   computed: {
     // 获取当前登录的id
@@ -160,7 +200,6 @@ export default {
       return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
     },
   },
-
   methods: {
     // 调用 管理邀请列表 接口
     getInviteList(status) {
@@ -257,9 +296,20 @@ export default {
         }
       });
     },
-    // 点击取消按钮
-    cancel() {
-      console.log('取消');
+    // 分享
+    share(code) {
+      this.code = code;
+      console.log('分享');
+      this.$refs.popupShare.open();
+    },
+    // 取消分享
+    cancelShare() {
+      console.log('取消分享');
+      this.$refs.popupShare.close();
+    },
+    // 取消修改用户组
+    cancelModify() {
+      console.log('取消修改用户组');
       this.$refs.popup.close();
     },
   },
@@ -308,6 +358,9 @@ export default {
     margin: auto;
 
     .btn {
+      font-size: $fg-f28;
+      line-height: 90rpx;
+      color: --color(--qui-FC-333);
       background: --color(--qui-BG-2);
     }
   }

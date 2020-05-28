@@ -102,7 +102,7 @@ export default {
   width: 100%;
   margin-top: 40rpx;
   background: --color(--qui-BG-ED);
-  border-radius: 10rpx;
+  border-radius: 7rpx;
   box-sizing: border-box;
 }
 .comment-reply-box {

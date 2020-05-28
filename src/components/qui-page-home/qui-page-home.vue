@@ -120,6 +120,7 @@
           "
           @commentClick="commentClick(item._jv.id)"
           @contentClick="contentClick(item._jv.id)"
+          @backgroundClick="contentClick(item._jv.id)"
           @headClick="headClick(item.user._jv.id)"
           @videoPlay="handleVideoPlay"
         ></qui-content>
@@ -171,9 +172,6 @@
         <view class="popup-share-content-space"></view>
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
-    </uni-popup>
-    <uni-popup ref="auth" type="bottom">
-      <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
   </view>
 </template>
@@ -381,9 +379,8 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
         if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
+          this.$store.getters['session/get']('auth').open();
           return;
         }
         uni.navigateTo({
@@ -569,9 +566,8 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
-      this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$refs.auth.open();
+        this.$store.getters['session/get']('auth').open();
       }
       // if (!canLike) {
       //   console.log('没有点赞权限');
@@ -625,7 +621,7 @@ export default {
 .home {
   min-height: 100vh;
   color: --color(--qui-FC-333);
-  background-color: #f9fafc;
+  background-color: --color(--qui-BG-1);
 }
 .nav {
   position: relative;
