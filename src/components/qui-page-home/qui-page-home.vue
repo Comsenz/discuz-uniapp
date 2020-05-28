@@ -13,6 +13,8 @@
         v-if="navbarShow"
         :title="forums.set_site.site_name"
         fixed="true"
+        :color="theme === 'light' ? '#000000' : '#ffffff'"
+        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <qui-header
@@ -258,11 +260,13 @@ export default {
     query
       .select('.nav')
       .boundingClientRect(data => {
-        this.navTop = data.top;
-        this.navHeight = data.height;
+        if (data.top > 0) {
+          this.navTop = data.top;
+          this.navHeight = data.height;
+          this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
+        }
       })
       .exec();
-    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
   },
   methods: {
     ...mapMutations({
