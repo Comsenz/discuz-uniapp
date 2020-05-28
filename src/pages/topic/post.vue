@@ -578,10 +578,7 @@ export default {
           }
           break;
         case 2:
-          if (this.textAreaValue.length < 1) {
-            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
-            status = false;
-          } else if (this.videoBeforeList.length < 1) {
+          if (this.videoBeforeList.length < 1) {
             this.$refs.toast.show({ message: this.i18n.t('discuzq.post.videoCannotBeEmpty') });
             status = false;
           } else if (this.percent !== 1) {
@@ -595,12 +592,7 @@ export default {
           break;
         case 3:
           if (this.operating !== 'edit') {
-            if (this.textAreaValue.length < 1) {
-              this.$refs.toast.show({
-                message: this.i18n.t('discuzq.post.theContentCanNotBeBlank'),
-              });
-              status = false;
-            } else if (!this.uploadStatus) {
+            if (!this.uploadStatus) {
               this.$refs.toast.show({
                 message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
