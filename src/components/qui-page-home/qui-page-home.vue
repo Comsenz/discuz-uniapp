@@ -247,26 +247,17 @@ export default {
       playIndex: null,
     };
   },
-  // onLoad() {
-  //   // 首页导航栏分类列表
-  //   this.loadCategories();
-  //   // 首页主题置顶列表
-  //   this.loadThreadsSticky();
-  //   // 首页主题内容列表
-  //   this.loadThreads();
-  // },
   mounted() {
-    const query = uni.createSelectorQuery().in(this);
-    query
-      .select('.nav')
-      .boundingClientRect(data => {
-        if (data.top > 0) {
-          this.navTop = data.top;
-          this.navHeight = data.height;
-          this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
-        }
-      })
-      .exec();
+    uni.getSystemInfo({
+      success: res => {
+        const rpx = res.screenWidth / 750;
+        const qui_header_height = 400 * rpx;
+        const nav_height = 102 * rpx;
+        this.navTop = qui_header_height;
+        this.navHeight = nav_height;
+        this.navbarHeight = res.statusBarHeight + 44;
+      },
+    });
   },
   methods: {
     ...mapMutations({
