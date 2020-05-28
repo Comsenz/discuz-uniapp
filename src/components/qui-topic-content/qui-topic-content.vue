@@ -393,7 +393,11 @@ export default {
       }
 
       &__username {
+        width: 100%;
+        height: 37rpx;
+        overflow: hidden;
         font-weight: bold;
+        line-height: 37rpx;
         color: --color(--qui-FC-000);
       }
 
