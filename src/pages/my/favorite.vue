@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="favorite">
+  <qui-page :data-qui-theme="theme" class="favorite">
     <view class="favorite-head">
       <qui-cell-item
         :title="`${totalData}${i18n.t('profile.item')}${i18n.t('profile.collection')}`"
@@ -73,9 +73,6 @@
         <view class="popup-share-content-space"></view>
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
-    </uni-popup>
-    <uni-popup ref="auth" type="bottom">
-      <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
   </qui-page>
 </template>
@@ -198,9 +195,8 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
-      this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$refs.auth.open();
+        this.$store.getters['session/get']('auth').open();
       }
       const params = {
         _jv: {
@@ -248,7 +244,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .favorite-head {
@@ -264,7 +260,12 @@ export default {
 .scroll-y {
   max-height: calc(100vh - 148rpx);
 }
-.addFine {
+/deep/ .themeCount .addFine {
   display: none;
+}
+/deep/ .themeCount .icon-delete {
+  position: absolute;
+  top: 30rpx;
+  right: 50rpx;
 }
 </style>

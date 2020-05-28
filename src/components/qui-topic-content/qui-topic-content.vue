@@ -127,7 +127,7 @@
           class="themeItem__content__con__cover"
           :style="{
             background:
-              getTheme == 'light'
+              theme === $u.light()
                 ? 'linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))'
                 : 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))',
           }"
@@ -156,7 +156,6 @@
 
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
-import { mapState } from 'vuex';
 
 export default {
   props: {
@@ -289,9 +288,6 @@ export default {
     console.log(this.tags);
   },
   computed: {
-    ...mapState({
-      getTheme: state => state.theme.currentTheme,
-    }),
     t() {
       return this.i18n.t('topic');
     },
@@ -397,8 +393,13 @@ export default {
       }
 
       &__username {
+        width: 100%;
+        height: 37rpx;
+        overflow: hidden;
         font-weight: bold;
+        line-height: 37rpx;
         color: --color(--qui-FC-000);
+        white-space: nowrap;
       }
 
       &__isAdmin {
@@ -443,6 +444,7 @@ export default {
         font-weight: 600;
         line-height: 40rpx;
         text-align: left;
+        word-break: break-all;
       }
       &__cover {
         position: absolute;

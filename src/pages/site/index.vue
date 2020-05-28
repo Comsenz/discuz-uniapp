@@ -1,13 +1,13 @@
 <template>
-  <qui-page class="site">
+  <qui-page :data-qui-theme="theme" class="site">
     <qui-header
       head-img="/static/logo.png"
-      :theme="theme"
+      :theme="i18n.t('home.theme')"
       :theme-num="siteInfo.other.count_users"
-      :post="post"
+      :post="i18n.t('home.homecontent')"
       :post-num="siteInfo.other.count_threads"
-      :share="share"
-      :iconcolor="currentTheme ? '#fff' : '#333'"
+      :share="i18n.t('home.share')"
+      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <!-- 分享弹窗 -->
@@ -26,7 +26,7 @@
                   class="content-image"
                   :name="item.icon"
                   size="46"
-                  :color="currentTheme ? '#aaa' : '#777'"
+                  :color="theme === $u.light() ? '#aaa' : '#777'"
                 ></qui-icon>
               </view>
             </view>
@@ -62,21 +62,24 @@
             class="site-item__owner-avatar"
             :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(siteInfo.set_site.site_author.id)"
+            @tap="jumpUserPage(item.id)"
           ></image>
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <qui-cell-item :title="i18n.t('home.theme')" slot-right arrow class="cell-item--auto">
-        <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
-          <image
-            class="site-item__person-avatar"
-            :src="item.avatarUrl || '/static/noavatar.gif'"
-            alt="avatarUrl"
-            @tap="toProfile(item.id)"
-          ></image>
-        </view>
-      </qui-cell-item>
+      <navigator url="/pages/manage/users" hover-class="none">
+        <qui-cell-item :title="i18n.t('home.theme')" slot-right arrow class="cell-item--auto">
+          <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
+            <image
+              class="site-item__person-avatar"
+              :src="item.avatarUrl || '/static/noavatar.gif'"
+              alt="avatarUrl"
+              @tap="jumpUserPage(item.id)"
+              @tap.stop
+            ></image>
+          </view>
+        </qui-cell-item>
+      </navigator>
       <qui-cell-item
         :title="i18n.t('manage.myRole')"
         :addon="userInfo.groups[0].name"
@@ -106,16 +109,12 @@
 </template>
 
 <script>
-import { THEME_DEFAULT } from '@/common/const';
 import forums from '@/mixin/forums';
 
 export default {
   mixins: [forums],
   data() {
     return {
-      theme: this.i18n.t('home.theme'),
-      post: this.i18n.t('home.homecontent'),
-      share: this.i18n.t('home.share'),
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -151,9 +150,6 @@ export default {
       const userId = this.$store.getters['session/get']('userId');
       console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
-    },
-    currentTheme() {
-      return this.$store.getters['theme/get']('currentTheme') === THEME_DEFAULT;
     },
     // 获取 站点信息
     siteInfo() {
@@ -240,9 +236,8 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
         if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
+          this.$store.getters['session/get']('auth').open();
           return;
         }
         uni.navigateTo({
@@ -254,22 +249,21 @@ export default {
     onShareAppMessage(res) {
       // 来自页面内分享按钮
       if (res.from === 'button') {
-        const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
         return {
-          title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+          title: this.forums.set_site.site_name,
         };
       }
       return {
-        title: this.info.set_site.site_name,
+        title: this.forums.set_site.site_name,
       };
     },
     // 取消按钮
     cancel() {
       this.$refs.popupHead.close();
     },
-    // 点击头像到个人主页
-    toProfile(userId) {
-      console.log('点击头像到个人主页：', userId);
+    // 跳转到个人主页
+    jumpUserPage(userId) {
+      console.log('点击头像到个人主页', userId);
       uni.navigateTo({
         url: `/pages/profile/index?userId=${userId}`,
       });
@@ -294,8 +288,7 @@ export default {
     opacity: 1;
   }
   .header .logo {
-    width: 295rpx;
-    height: 56rpx;
+    height: 75rpx;
     padding-top: 71rpx;
   }
   /deep/ .icon-share1 {

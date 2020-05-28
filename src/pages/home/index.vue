@@ -1,5 +1,5 @@
 <template>
-  <qui-page @pageLoaded="handlePageLoaded">
+  <qui-page :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
     <view class="content">
       <view class="view-content">
         <qui-page-home
@@ -10,6 +10,7 @@
         ></qui-page-home>
         <qui-page-notice
           ref="quinotice"
+          :theme="theme"
           :style="{ display: show_index === 1 ? 'block' : 'none' }"
         ></qui-page-notice>
         <qui-page-my
@@ -37,7 +38,11 @@ export default {
       showHome: false,
     };
   },
-  onLoad() {},
+  onLoad() {
+    if (!this.showHome) {
+      this.handlePageLoaded();
+    }
+  },
 
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -57,6 +62,15 @@ export default {
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy', 'information'];
       const currentTab = tabs[type];
+
+      if (
+        !this.$store.getters['session/get']('isLogin') &&
+        ['quinotice', 'quimy'].indexOf(currentTab) >= 0
+      ) {
+        this.$store.getters['session/get']('auth').open();
+        return;
+      }
+
       this.show_index = type;
       if (isTabBar.indexOf(type) === -1) {
         this.$refs[currentTab].ontrueGetList();
@@ -79,8 +93,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .view-content {
   width: 100vw;
   height: calc(100vh - 98rpx);
+}
+// my页面和notice页面样式渗透不进去的问题
+/deep/ .my .cell-item,
+/deep/ .notice-box .cell-item {
+  padding-right: 40rpx;
+}
+/deep/ .no-border .cell-item {
+  border: 0;
+}
+/deep/ .my-info__box__detail .cell-item__body {
+  height: 80rpx;
+  align-items: flex-start;
+}
+/deep/ .my-tabs .qui-tabs__item--active {
+  border: 0;
+}
+/deep/ .my .qui-tabs__item__title {
+  font-weight: normal;
+  color: --color(--qui-FC-AAA);
+}
+/deep/ .my .qui-tabs__item__brief {
+  font-weight: bold;
+}
+/deep/ .my-info__box__detail .cell-item__body__content-title {
+  font-weight: bold;
 }
 </style>

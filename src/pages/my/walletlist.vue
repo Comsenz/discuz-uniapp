@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="walletlist">
+  <qui-page :data-qui-theme="theme" class="walletlist">
     <view class="walletlist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -42,6 +42,7 @@
           :brief="timeHandle(item.created_at)"
           :addon="item.change_available_amount"
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
+          @click="toTopic(item)"
         ></qui-cell-item>
         <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
@@ -136,9 +137,70 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
+          res.forEach((item, index) => {
+            let desc = this.handleTitle(item);
+            // 截取42个字
+            if (desc.length > 42) {
+              desc = `${desc.substr(0, 42)}...`;
+            }
+            res[index].change_desc = desc;
+          });
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           this.dataList = [...this.dataList, ...res];
         });
+    },
+    // 处理主题相关的数据
+    handleTitle(item) {
+      switch (item.change_type) {
+        case 31: {
+          // 打赏收入
+          const user = item.order.user
+            ? item.order.user.username
+            : this.i18n.t('profile.theuserwasdeleted');
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.order.thread
+            ? item.order.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${user} ${this.i18n.t('profile.givearewardforyourtheme')} ${thread}`;
+        }
+        case 41: {
+          // 打赏支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.order.thread
+            ? item.order.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.givearewardforyourtheme')} ${thread}`;
+        }
+        case 60: {
+          // 付费主题收入
+          const user = item.order.user
+            ? item.order.user.username
+            : this.i18n.t('profile.theuserwasdeleted');
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.order.thread
+            ? item.order.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.givearewardforthetheme');
+          return `${user} ${this.i18n.t('profile.paidtoseeyourtheme')} ${thread}`;
+        }
+        case 61: {
+          // 付费主题支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.order.thread
+            ? item.order.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.paidtoview')} ${thread}`;
+        }
+        default:
+          return item.change_desc;
+      }
+    },
+    toTopic(data) {
+      if (!data.order || !data.order.thread) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${data.order.thread._jv.id}`,
+      });
     },
     // 下拉加载
     pullDown() {

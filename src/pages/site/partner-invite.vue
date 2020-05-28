@@ -1,13 +1,13 @@
 <template>
-  <qui-page class="site">
+  <qui-page :data-qui-theme="theme" class="site">
     <qui-header
       head-img="/static/logo.png"
-      :theme="theme"
+      :theme="i18n.t('home.theme')"
       :theme-num="forums.other.count_users"
-      :post="post"
+      :post="i18n.t('home.homecontent')"
       :post-num="forums.other.count_threads"
-      :share="share"
-      :iconcolor="currentTheme == 'dark' ? '#fff' : '#333'"
+      :share="i18n.t('home.share')"
+      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
@@ -64,10 +64,14 @@
         </view>
       </qui-cell-item>
       <qui-cell-item :title="i18n.t('home.theme')" slot-right class="cell-item--auto">
-        <view>
-          <view v-for="(item, index) in forums.users" :key="index" class="site-item__person">
+        <view class="site-item__person">
+          <view
+            v-for="(item, index) in forums.users"
+            :key="index"
+            class="site-item__person__content"
+          >
             <image
-              class="site-item__person-avatar"
+              class="site-item__person__content-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="toProfile(item.id)"
@@ -102,9 +106,6 @@
         </qui-button>
       </view>
     </view>
-    <uni-popup ref="auth" type="bottom">
-      <qui-auth @login="login" @close="close"></qui-auth>
-    </uni-popup>
   </qui-page>
 </template>
 
@@ -116,9 +117,6 @@ export default {
   mixins: [forums],
   data() {
     return {
-      theme: this.i18n.t('home.theme'),
-      post: this.i18n.t('home.homecontent'),
-      share: this.i18n.t('home.share'),
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -132,7 +130,6 @@ export default {
         },
       ],
       code: '', // 邀请码
-      currentTheme: uni.getStorageSync('theme'),
       permission: [],
       inviteData: {}, // 邀请的相关信息
     };
@@ -176,9 +173,8 @@ export default {
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
-        this.$store.dispatch('session/setAuth', this.$refs.auth);
         if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
+          this.$store.getters['session/get']('auth').open();
           return;
         }
         uni.navigateTo({
@@ -226,8 +222,7 @@ export default {
     opacity: 1;
   }
   .header .logo {
-    width: 295rpx;
-    height: 56rpx;
+    height: 75rpx;
     padding-top: 71rpx;
   }
   /deep/ .cell-item__body__content-title {
@@ -266,14 +261,14 @@ export default {
   padding-bottom: 20rpx;
   text-align: center;
 }
-.site-item__person-avatar,
+.site-item__person__content-avatar,
 .site-item__owner-avatar {
   width: 60rpx;
   height: 60rpx;
   margin-left: 8rpx;
   border-radius: 50%;
 }
-.site-item__person-avatar {
+.site-item__person__content-avatar {
   margin-left: 8rpx;
 }
 .site-item__owner {
@@ -284,6 +279,9 @@ export default {
   margin-right: 20rpx;
 }
 .site-item__person {
+  font-size: 0;
+}
+.site-item__person__content {
   display: inline-block;
 }
 .site-item__permission {

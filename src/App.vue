@@ -1,7 +1,33 @@
 <script>
 import { SITE_PAY } from '@/common/const';
+import Vue from 'vue';
+
+const themeListeners = [];
 
 export default {
+  globalData: {
+    themeChanged(theme) {
+      Vue.prototype.$u.currentTheme = theme;
+      themeListeners.forEach(listener => {
+        listener(theme);
+      });
+      uni.setStorage({
+        key: 'theme',
+        data: theme,
+      });
+    },
+    watchThemeChange(listener) {
+      if (themeListeners.indexOf(listener) < 0) {
+        themeListeners.push(listener);
+      }
+    },
+    unWatchThemeChange(listener) {
+      const index = themeListeners.indexOf(listener);
+      if (index > -1) {
+        themeListeners.splice(index, 1);
+      }
+    },
+  },
   async onLaunch() {
     try {
       const forums = await this.$store.dispatch('jv/get', [

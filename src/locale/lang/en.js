@@ -146,6 +146,7 @@ export default {
       myauthority: 'myauthority',
       setting: 'setting',
       noContent: 'No Content',
+      contentMaxLength: 'No more than 450 words',
     },
     // 消息页面
     notice: {

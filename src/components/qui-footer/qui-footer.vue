@@ -52,9 +52,6 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-    <uni-popup ref="auth" type="bottom">
-      <qui-auth @login="login" @close="close"></qui-auth>
-    </uni-popup>
     <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
@@ -93,7 +90,7 @@ export default {
         },
       ],
       bottomData: [],
-      isTabBar: [], // 禁止页面第二次加载
+      isTabBar: [0], // 禁止页面第二次加载
     };
   },
   computed: {
@@ -125,11 +122,6 @@ export default {
   methods: {
     select(item, index) {
       this.$emit('click', item, index, this.isTabBar);
-      this.$store.dispatch('session/setAuth', this.$refs.auth);
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$refs.auth.open();
-        return;
-      }
       this.sel = item.id;
       if (!item.url) {
         return;
@@ -144,16 +136,11 @@ export default {
           delta: len,
         });
       }
-
-      // uni.navigateTo({
-      //   url: item.url,
-      // });
     },
     // 首页底部发帖按钮弹窗
     footerOpen() {
-      this.$store.dispatch('session/setAuth', this.$refs.auth);
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$refs.auth.open();
+        this.$store.getters['session/get']('auth').open();
         return;
       }
 

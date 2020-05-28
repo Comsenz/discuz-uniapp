@@ -46,7 +46,7 @@
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
-          <input class="uni-input" v-model="msg" @blur="contBlur" />
+          <input class="uni-input" :maxlength="451" v-model="msg" @blur="contBlur" />
           <qui-icon
             name="icon-expression chat-box__footer__msg__icon"
             size="40"
@@ -91,7 +91,7 @@ export default {
       scv: 0,
       pageSize: 5, // 每页10条数据
       pageNum: 1, // 当前页数
-      currentTheme: uni.getStorageSync('theme'), // 当前主题的模式
+      navbarHeight: 0,
     };
   },
 
@@ -146,7 +146,7 @@ export default {
       )
     ) {
       try {
-        getApp().systemInfo = wx.getSystemInfoSync();
+        getApp().systemInfo = uni.getSystemInfoSync();
         console.log('getApp().systemInfo.screenWidth', getApp().systemInfo.screenWidth);
         const screenK = getApp().systemInfo.screenWidth / 750;
         this.scv = getApp().systemInfo.windowHeight / screenK - 140;
@@ -164,9 +164,10 @@ export default {
     }
   },
   onLoad(params) {
+    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
+    console.log('-----navbarHeight-------', this.navbarHeight);
     console.log('params', params);
     const { username, dialogId } = params;
-    console.log('currentTheme', this.currentTheme);
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -191,24 +192,6 @@ export default {
     });
   },
 
-  onReady() {
-    if (this.currentTheme === 'dark') {
-      uni.setNavigationBarColor({
-        frontColor: '#ffffff',
-        backgroundColor: '#3f4243',
-      });
-    } else {
-      uni.setNavigationBarColor({
-        frontColor: '#000000',
-        backgroundColor: '#ededed',
-      });
-    }
-  },
-  // onPullDownRefresh() {
-  //   this.pageNum += 1;
-  //   console.log('refresh');
-  //   this.getChatRecord(this.dialogId);
-  // },
   methods: {
     scrollToBottom() {
       this.$nextTick(() => {
@@ -269,7 +252,17 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
     contBlur(e) {
-      this.cursor = e.detail.cursor;
+      console.log('-----e----', e);
+      if (e && e.detail) {
+        this.cursor = e.detail.cursor;
+        if (e.detail.value.length > 450) {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('notice.contentMaxLength'),
+            duration: 2000,
+          });
+        }
+      }
     },
     // 发送消息
     send() {
@@ -277,6 +270,12 @@ export default {
         uni.showToast({
           icon: 'none',
           title: this.i18n.t('notice.emptycontent'),
+          duration: 2000,
+        });
+      } else if (this.msg.length > 450) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('notice.contentMaxLength'),
           duration: 2000,
         });
       } else {

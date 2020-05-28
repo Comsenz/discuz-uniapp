@@ -129,6 +129,7 @@ export default {
     videoUploading: '视频上传中...',
   },
   core: {
+    not_authenticated: '请登录',
     admin_login: '管理员登录',
     back_home: '返回首页',
     close: '点击关闭',
@@ -341,6 +342,7 @@ export default {
     delete: '删除',
     send: '发送',
     emptycontent: '内容不能为空',
+    contentMaxLength: '不能超过450个字',
   },
   // 海报分享页
   share: {

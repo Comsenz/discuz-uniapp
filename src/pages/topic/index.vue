@@ -1,5 +1,5 @@
 <template>
-  <qui-page class="content">
+  <qui-page :data-qui-theme="theme" class="content">
     <!--<view
       v-if="loadDetailStatusId == 0"
       class="skeletonScreen"
@@ -273,6 +273,7 @@
     <view v-if="payShowStatus">
       <qui-pay
         ref="payShow"
+        :pay-type-val="payTypeVal"
         :thread-id="thread._jv.id"
         :money="price"
         :wallet-status="user.canWalletPay"
@@ -421,10 +422,11 @@ export default {
         { text: this.i18n.t('topic.delete'), type: '4' },
       ], // 管理菜单
 
-      limitShowNum: 5,
+      limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
+      rewardArr: [], // 打赏数据保存
       commentStatus: {}, //回复状态
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
@@ -519,10 +521,6 @@ export default {
       const threadId = this.threadId;
       return utils.deepCopy(this.$store.getters['jv/get'](`threads/${threadId}`));
     },
-    // posts() {
-    //   const posts = this.$store.getters['jv/get']('posts', '{ _jv: { type: "threads", id: "48" }');
-    //   return posts;
-    // },
 
     allEmoji() {
       return this.$store.getters['jv/get']('emoji');
@@ -545,22 +543,12 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.user, '这是用户信息~~~~~~~~~~');
-    console.log(option.id, '这是主题id');
-    console.log(uni.getSystemInfoSync().windowHeight, '设备信息');
-    this.windowHeight = uni.getSystemInfoSync().windowHeight;
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
-    this.url = DISCUZ_REQUEST_HOST;
-    const token = uni.getStorageSync('access_token');
-
-    this.header = {
-      authorization: `Bearer ${token}`,
-    };
     this.formData = {
       isGallery: 1,
     };
@@ -579,12 +567,6 @@ export default {
     };
   },
   onShow() {
-    // let authTimeout = setTimeout(() => {
-    //   if (!this.$store.getters['session/get']('isLogin')) {
-    //     this.$store.getters['session/get']('auth').open();
-    //   }
-    //   clearTimeout(authTimeout);
-    // }, 4000);
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -673,6 +655,7 @@ export default {
         } else if (data.type == 1) {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
         }
+        this.rewardArr = data.rewardedUsers;
         if (data.price <= 0) {
           this.rewardStatus = true;
         } else {
@@ -1102,8 +1085,10 @@ export default {
               this.loadThread();
             } else if (this.payTypeVal == 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              console.log('这是主题打赏');
-              this.thread.rewardedUsers.unshift(this.user);
+              // console.log('这是主题打赏1111', this.thread.rewardedUsers);
+              this.rewardArr = this.rewardArr.concat([this.user]);
+              this.thread.rewardedUsers = this.rewardArr;
+              // console.log('这是主题打赏，追加之后的数据', this.thread.rewardedUsers);
             }
           }
         })
@@ -1141,9 +1126,11 @@ export default {
       this.value = val;
       if (this.payTypeVal == 0) {
         // 这是主题支付
+        console.log('这是主题支付调接口');
         this.creatOrder(this.thread.price, 3, val, '1');
       } else if (this.payTypeVal == 1) {
         // 这是主题打赏
+        console.log('这是主题打赏调接口~~~~~');
         this.creatOrder(this.price, 2, val, '1');
       }
     },
@@ -1196,6 +1183,7 @@ export default {
       console.log('主题支付');
       this.payShowStatus = true;
       this.payTypeVal = 0;
+      console.log(this.payTypeVal, '这是类型，0为主题支付，1为主题打赏');
       if (this.thread.type == 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
       } else if (this.thread.type == 2) {
@@ -1204,7 +1192,7 @@ export default {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
       }
       this.price = this.thread.price;
-      this.$refs.payShow.payClickShow();
+      this.$refs.payShow.payClickShow(this.payTypeVal);
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
@@ -1218,6 +1206,7 @@ export default {
     },
     // 打赏
     rewardClick() {
+      console.log('这是打赏');
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
@@ -1248,7 +1237,10 @@ export default {
         this.payShowStatus = true;
         this.$refs.rewardPopup.close();
         this.payTypeVal = 1;
-        this.$refs.payShow.payClickShow();
+        this.$nextTick(() => {
+          // this.$refs.payShow.payClickShow();
+          this.$refs.payShow.payClickShow(this.payTypeVal);
+        });
       }
     },
     // 自定义付费金额弹框点击关闭时
@@ -1262,7 +1254,8 @@ export default {
       this.$refs.customAmountPopup.close();
       this.customAmountStatus = false;
       this.payShowStatus = true;
-      this.$refs.payShow.payClickShow();
+      // this.$refs.payShow.payClickShow();
+      this.$refs.payShow.payClickShow(this.payTypeVal);
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
@@ -1724,7 +1717,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 230rpx;
+    width: 285rpx;
   }
   .text-word-tip {
     font-size: $fg-f24;
@@ -1733,6 +1726,7 @@ page {
   }
   .comm-icon {
     flex: 1;
+    color: --color(--qui-FC-777);
   }
 }
 .comment-content-box {
@@ -1870,5 +1864,8 @@ page {
       }
     }
   }
+}
+.popup-share-content {
+  box-sizing: border-box;
 }
 </style>
