@@ -47,7 +47,11 @@
               :value="item.groups[Object.keys(item.groups || {})[0]].name"
               :icon="item.avatarUrl || '/static/noavatar.gif'"
             >
-              <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
+              <checkbox
+                slot="rightIcon"
+                :value="JSON.stringify(item)"
+                :checked="checkAvatar.includes(item)"
+              ></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
@@ -233,8 +237,21 @@ export default {
         console.log('修改用户组res', res);
         if (res) {
           this.getGroupList();
-          this.pageNum += 1;
-          this.clearSearch();
+          this.pageNum = 1;
+          // const params = {
+          //   include: 'groups',
+          //   'page[number]': this.pageNum,
+          //   'page[limit]': this.pageSize,
+          //   'filter[username]': `*${this.searchText}*`,
+          // };
+          // this.$store.dispatch('jv/get', ['users', { params }]).then( res => {
+          //   console.log('内容为空的搜索：', res);
+          //   if (res && res._jv) {
+          //     delete res._jv;
+          //     this.userList = res
+          //     this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          //   }
+          // });
           this.$refs.popup.close();
         }
       });
