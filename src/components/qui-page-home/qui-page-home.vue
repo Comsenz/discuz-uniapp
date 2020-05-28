@@ -251,11 +251,9 @@ export default {
     uni.getSystemInfo({
       success: res => {
         const rpx = res.screenWidth / 750;
-        const qui_header_height = 400 * rpx;
-        const nav_height = 102 * rpx;
-        this.navTop = qui_header_height;
-        this.navHeight = nav_height;
-        this.navbarHeight = res.statusBarHeight + 44;
+        this.navTop = 400 /* qui-header 的高度 */ * rpx;
+        this.navHeight = 102 /* nav的高度 */ * rpx;
+        this.navbarHeight = res.statusBarHeight + 44 /* uni-nav-bar的高度 */;
       },
     });
   },
