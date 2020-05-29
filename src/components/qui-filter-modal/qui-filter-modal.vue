@@ -244,7 +244,7 @@ export default {
   &.active {
     color: --color(--qui-FC-FFF);
     background: --color(--qui-MAIN);
-    border: 0;
+    border-color: transparent;
   }
 }
 </style>
