@@ -13,7 +13,7 @@
             :focus="true"
             :cursor="1"
             @input="changeinput"
-            maxlength="13"
+            maxlength="11"
           />
           <button class="new-phon-send" v-if="sun" @click="btnButton" :disabled="disabtype">
             {{ i18n.t('modify.sendverificode') }}
@@ -81,12 +81,12 @@ export default {
   },
   methods: {
     changeinput() {
-      if (this.newphon.length === 3 || this.newphon.length === 8) {
-        this.newphon += ' ';
-      }
-      if (this.newphon.length < 13) {
+      // if (this.newphon.length === 3 || this.newphon.length === 8) {
+      //   this.newphon += ' ';
+      // }
+      if (this.newphon.length < 11) {
         this.disabtype = true;
-      } else if (this.newphon.length === 13) {
+      } else if (this.newphon.length === 11) {
         this.disabtype = false;
         this.novice = this.newphon.replace(/\s+/g, '');
       }
@@ -172,7 +172,7 @@ export default {
         _jv: {
           type: 'sms/verify',
         },
-        mobile: this.novice,
+        mobile: this.newphon,
         code: this.setnum,
         type: this.typebind,
       };

@@ -32,10 +32,10 @@
             <input
               class="cash-content-input"
               type="digit"
-              :placeholder="i18n.t('modify.enteramount')"
-              placeholder-style="color:rgba(221,221,221,1)"
               v-model="cashmany"
               @input="settlement"
+              :placeholder="i18n.t('modify.enteramount')"
+              placeholder-style="color:rgba(221,221,221,1)"
             />
           </qui-cell-item>
         </view>
@@ -177,7 +177,16 @@ export default {
       this.verifytitle();
     },
     settlement() {
+      this.cashmany = this.cashmany.replace(/[^\d.]/g, '');
+      this.cashmany = this.cashmany.replace(/\.{2,}/g, '.');
+      console.log(this.cashmany);
       if (this.cashmany.length > 0) {
+        // this.cashmany = this.cashmany
+        if (this.cashmany[0] === '.') {
+          const num = 0;
+          const cun = '.';
+          this.cashmany = num + cun;
+        }
         this.length = true;
         const number = this.cashmany - this.cashmany * this.cost;
         this.contint = `¥${number.toFixed(2)}`;
@@ -189,6 +198,7 @@ export default {
         const casnumber = this.cashmany * this.cost;
         this.procedures = casnumber.toFixed(2);
       }
+      return this.cashmany;
     },
     // 点击获取验证码计时开始
     btnButton() {

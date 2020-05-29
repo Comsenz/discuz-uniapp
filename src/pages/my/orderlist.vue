@@ -38,7 +38,7 @@
         <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
-          :title="type[item.type - 1]"
+          :title="item.titleType"
           :brief="timeHandle(item.created_at)"
           :addon="'-￥' + item.amount"
           :brief-right="statusType[item.status]"
@@ -71,13 +71,6 @@ export default {
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
       dataList: [],
       filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
-      type: [
-        // 标题类型 1：注册，2：打赏，3：付费主题，4：付费用户组
-        this.i18n.t('profile.register'),
-        this.i18n.t('profile.reward'),
-        this.i18n.t('profile.paytheme'),
-        this.i18n.t('profile.paygroup'),
-      ],
       statusType: {
         0: this.i18n.t('profile.tobepaid'),
         1: this.i18n.t('profile.paid'),
@@ -156,41 +149,49 @@ export default {
             if (desc.length > 42) {
               desc = `${desc.substr(0, 42)}...`;
             }
-            res[index].change_desc = desc;
+            res[index].titleType = desc;
           });
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           this.dataList = [...this.dataList, ...res];
         });
     },
     toTopic(data) {
-      if (!data.order || !data.order.thread) {
+      if (!data.thread) {
         return;
       }
       uni.navigateTo({
-        url: `/pages/topic/index?id=${data.order.thread._jv.id}`,
+        url: `/pages/topic/index?id=${data.thread._jv.id}`,
       });
     },
     // 处理主题相关的数据
     handleTitle(item) {
       switch (item.type) {
+        case 1: {
+          // 注册
+          return this.i18n.t('profile.register');
+        }
         case 2: {
           // 打赏支出
           const regex = /(<([^>]+)>)/gi;
-          const thread = item.order.thread
-            ? item.order.thread.firstPost.summary.replace(regex, '')
+          const thread = item.thread
+            ? item.thread.firstPost.summary.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.givearewardforthetheme')} ${thread}`;
         }
         case 3: {
           // 付费主题支出
           const regex = /(<([^>]+)>)/gi;
-          const thread = item.order.thread
-            ? item.order.thread.firstPost.summary.replace(regex, '')
+          const thread = item.thread
+            ? item.thread.firstPost.summary.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.paidtoview')} ${thread}`;
         }
+        case 4: {
+          // 付费用户组
+          return this.i18n.t('profile.paygroup');
+        }
         default:
-          return item.change_desc;
+          return item.type;
       }
     },
     // 下拉加载

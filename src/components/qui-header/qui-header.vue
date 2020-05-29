@@ -9,11 +9,11 @@
     </view>
     <view class="circleDet">
       <text>
-        {{ t.theme }}
+        <text class=circleDet-txt>{{ t.theme }}</text>
         <text class="circleDet-num">{{ themeNum }}</text>
       </text>
       <text>
-        {{ t.homecontent }}
+        <text class=circleDet-txt>{{ t.homecontent }}</text>
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
 
@@ -102,15 +102,18 @@ export default {
     justify-content: space-between;
     padding: 69rpx 20rpx 47rpx;
     line-height: 37rpx;
-    color: --color(--qui-FC-FFF);
     text-align: center;
-    opacity: 0.5;
     text {
       // padding: 0 15rpx;
-      font-size: $fg-f26;
+      // font-size: $fg-f26;
       line-height: 37rpx;
       text-align: center;
     }
+  }
+  .circleDet-txt {
+    font-size: $fg-f26;
+    color: --color(--qui-FC-FFF);
+    opacity: 0.5;
   }
   .circleDet-num {
     padding-left: 15rpx;
