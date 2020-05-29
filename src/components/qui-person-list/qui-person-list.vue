@@ -17,7 +17,7 @@
           @error="imageError"
           v-if="imageStatus"
         ></image>
-        <image v-else src="/static/noavatar.gif"></image>
+        <image v-else src="/static/noavatar.gif" class="det-per-head"></image>
       </view>
     </view>
     <view class="fold-box" :style="{ transform: transform }" v-if="personNum > limitCount">
