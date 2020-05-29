@@ -55,20 +55,6 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <!-- <checkbox-group @change="changeCheck" v-else>
-          <label v-for="item in userListShow" :key="item.id">
-            <qui-avatar-cell
-              center
-              right-color="#aaa"
-              :mark="item.id"
-              :title="item.username"
-              :value="item.groups[Object.keys(item.groups || {})[0]].name"
-              :icon="item.avatarUrl || '/static/noavatar.gif'"
-            >
-              <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
-            </qui-avatar-cell>
-          </label>
-        </checkbox-group> -->
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>

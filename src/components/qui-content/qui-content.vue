@@ -5,6 +5,8 @@
       src="@/static/essence.png"
       alt
       v-if="themeEssence && themeType == '1'"
+      @error="imageError"
+      @load="imageLoad"
     ></image>
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
@@ -366,6 +368,7 @@ export default {
       categoryShow: true,
     };
   },
+
   computed: {
     // 语言包
     t() {
@@ -439,6 +442,13 @@ export default {
         });
       }
     },
+    // 头像加载失败,显示默认头像
+    imageError(e) {
+      console.log(e, '有失败的图片了吧');
+    },
+    imageLoad(e) {
+      console.log(e, '成功加载了图片呢');
+    },
   },
 };
 </script>
@@ -462,6 +472,7 @@ export default {
   margin: 0 20rpx 30rpx;
   background: --color(--qui-BG-2);
   border-radius: 6rpx;
+  box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
 
   &__header {
@@ -542,7 +553,7 @@ export default {
 
   &__content {
     &__text {
-      padding: 20rpx 0;
+      // padding: 20rpx 0;
       overflow: hidden;
       font-family: $font-family;
       font-size: $fg-f28;

@@ -343,8 +343,14 @@ export default {
       }
 
       &__username {
+        display: inline-block;
+        width: 70%;
+        height: 37rpx;
+        overflow: hidden;
         font-weight: bold;
+        line-height: 37rpx;
         color: --color(--qui-FC-000);
+        white-space: nowrap;
       }
 
       &__isAdmin {

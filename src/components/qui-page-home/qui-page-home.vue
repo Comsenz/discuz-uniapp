@@ -186,6 +186,7 @@ import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
+  props: ['tagId'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
@@ -247,6 +248,9 @@ export default {
       playIndex: null,
     };
   },
+  created() {
+    console.log(this.tagId);
+  },
   mounted() {
     uni.getSystemInfo({
       success: res => {
@@ -285,11 +289,18 @@ export default {
 
     // 切换选项卡
     async toggleTab(dataInfo) {
+      console.log(dataInfo, '切换选项啦');
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
+      console.log(this.tagId, '我就看看能不能拿到你');
+      if (this.tagId !== '') {
+        this.tagId = dataInfo.id;
+      }
+      this.threadEssence = '';
+      this.threadFollow = 0;
       this.currentIndex = dataInfo.index;
       this.setCategoryId(this.categoryId);
       this.setCategoryIndex(this.currentIndex);
@@ -573,12 +584,14 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params).then(data => {
+        console.log('data', data);
         const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
-        if (data.isLiked) {
-          likedPost.likeCount += 1;
-        } else {
-          likedPost.likeCount -= 1;
-        }
+        console.log('likedPost', likedPost);
+        // if (data.isLiked) {
+        //   likedPost.likeCount += 1;
+        // } else {
+        //   likedPost.likeCount -= 1;
+        // }
       });
     },
     // 上拉加载

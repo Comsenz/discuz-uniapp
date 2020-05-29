@@ -4,8 +4,8 @@
       <uni-nav-bar
         :title="title"
         fixed
-        :color="$u.light() ? '#000000' : '#ffffff'"
-        :background-color="$u.light() ? '#ffffff' : '#2e2f30'"
+        :color="theme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="theme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
@@ -169,11 +169,13 @@ export default {
         this.list[0].unReadNum = this.user.typeUnreadNotifications.related;
         this.list[1].unReadNum = this.user.typeUnreadNotifications.replied;
         this.list[2].unReadNum = this.user.typeUnreadNotifications.liked;
-        this.list[3].unReadNum = this.user.typeUnreadNotifications.rewarded;
+        this.list[3].unReadNum =
+          this.user.typeUnreadNotifications.rewarded ||
+          this.user.typeUnreadNotifications.withdrawal;
         this.list[4].unReadNum = this.user.typeUnreadNotifications.system;
       }
     },
-    // 跳转至 @我的/回复我的/点赞我的/支付我的/系统通知 页面（传入标题，类型和未读通知条数）
+    // 跳转至 @我的/回复我的/点赞我的/财务通知/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
       uni.navigateTo({
         url: `/pages/notice/notice?title=${this.i18n.t(item.title)}&type=${item.type}&unReadNum=${
