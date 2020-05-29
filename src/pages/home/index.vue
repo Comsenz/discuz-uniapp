@@ -5,7 +5,7 @@
         <qui-page-home
           v-if="showHome"
           ref="home"
-          :tagId="tagId"
+          :tag-id="tagId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
@@ -40,8 +40,8 @@ export default {
     };
   },
   onLoad(option) {
-    if (option.id !== ''){
-    this.tagId = option.id;
+    if (option.id !== '') {
+      this.tagId = option.id;
     }
     // console.log(option, option.id, '这是首页的分类啊啊啊啊啊')
     // console.log(this.tagId)
