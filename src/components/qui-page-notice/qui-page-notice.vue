@@ -4,8 +4,8 @@
       <uni-nav-bar
         :title="title"
         fixed
-        :color="$u.light() ? '#000000' : '#ffffff'"
-        :background-color="$u.light() ? '#ffffff' : '#2e2f30'"
+        :color="theme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="theme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
