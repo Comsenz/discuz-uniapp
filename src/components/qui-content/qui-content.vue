@@ -443,7 +443,7 @@ export default {
     },
     // 头像加载失败,显示默认头像
     imageError(e) {
-        console.error('image发生error事件，携带值为' + e.detail.errMsg)
+      console.error(`image发生error事件，携带值为${e.detail.errMsg}`);
     },
   },
 };

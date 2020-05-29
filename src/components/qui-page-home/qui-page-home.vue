@@ -285,16 +285,16 @@ export default {
 
     // 切换选项卡
     async toggleTab(dataInfo) {
-      console.log(dataInfo, '切换选项啦')
+      console.log(dataInfo, '切换选项啦');
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
-      console.log(this.tagId, '我就看看能不能拿到你')
-      if (this.tagId !== ''){
-        this.tagId = dataInfo.id
-      };
+      console.log(this.tagId, '我就看看能不能拿到你');
+      if (this.tagId !== '') {
+        this.tagId = dataInfo.id;
+      }
       this.threadEssence = '';
       this.threadFollow = 0;
       this.currentIndex = dataInfo.index;
