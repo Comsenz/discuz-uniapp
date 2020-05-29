@@ -680,7 +680,7 @@ export default {
     line-height: 35rpx;
     color: --color(--qui-FC-777);
     text-align: center;
-    background: --color(--qui-BOR-ED);
+    background: --color(--qui-BG-777);
     border-radius: 6rpx;
     transition: $switch-theme-time;
   }

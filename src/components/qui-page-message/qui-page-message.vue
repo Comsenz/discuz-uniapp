@@ -14,29 +14,21 @@
         src="@/static/msg-warning.svg"
         mode="aspectFit"
         lazy-load
-        v-if="forumError.code === 'site_closed' || forumError.code === 'not_install'"
+        v-if="show"
       ></image>
       <view class="page-message--title" v-if="message.title">{{ message.title }}</view>
-      <view
-        class="page-message--subtitle"
-        v-if="message.subtitle || forumError.code === 'site_closed'"
-      >
+      <view class="page-message--subtitle" v-if="show">
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
 
-      <navigator
-        class="out page-message--exit"
-        open-type="exit"
-        target="miniProgram"
-        v-if="forumError.code === 'site_closed' || forumError.code === 'not_install'"
-      >
+      <navigator class="out page-message--exit" open-type="exit" target="miniProgram" v-if="show">
         <qui-button size="medium" @click="handleClick" class="out-btn">
           {{ message.btnTxt }}
         </qui-button>
       </navigator>
 
-      <qui-button size="medium" @click="handleLoginClick">
+      <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
         {{ i18n.t('core.admin_login') }}
       </qui-button>
     </view>
@@ -50,6 +42,7 @@ import { i18n } from '@/locale';
 const TYPE_404 = '404';
 const TYPE_CLOSED = 'site_closed';
 const NOT_INSTALL = 'not_install';
+const BAN_USER = 'ban_user';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -69,6 +62,12 @@ const message = {
     btnTxt: i18n.t('core.close'),
     icon: '@/static/msg-warning.svg',
   },
+  [BAN_USER]: {
+    title: i18n.t('core.ban_user'),
+    subtitle: '', // 从接口读取站点关闭后的提示语
+    btnTxt: i18n.t('core.close'),
+    icon: '@/static/msg-warning.svg',
+  },
 };
 export default {
   filters: {
@@ -83,6 +82,9 @@ export default {
     }),
     message() {
       return message[this.forumError.code] || {};
+    },
+    show() {
+      return [TYPE_CLOSED, NOT_INSTALL, BAN_USER].indexOf(this.forumError.code) >= 0;
     },
   },
   methods: {

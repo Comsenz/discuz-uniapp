@@ -5,6 +5,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
 
 const http = new Request();
+let tostTimeout;
 
 /**
  * @description 修改全局默认配置
@@ -77,9 +78,12 @@ http.interceptor.response(
             });
             break;
           default:
-            uni.showToast({
-              icon: 'none',
-              title: error.detail ? error.detail[0] : i18n.t(`core.${error.code}`),
+            clearTimeout(tostTimeout);
+            tostTimeout = setTimeout(() => {
+              uni.showToast({
+                icon: 'none',
+                title: error.detail ? error.detail[0] : i18n.t(`core.${error.code}`),
+              });
             });
         }
       });
