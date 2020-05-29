@@ -361,7 +361,7 @@ export default {
 
       &__username {
         height: 37rpx;
-        max-width: 70%;
+        max-width: 336rpx;
         overflow: hidden;
         font-weight: bold;
         line-height: 37rpx;
