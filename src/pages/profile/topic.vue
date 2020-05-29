@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="topic-page">
+  <view class="topic-page">
     <uni-popup ref="popup" type="bottom">
       <qui-drawer :bottom-data="bottomData"></qui-drawer>
     </uni-popup>
@@ -68,7 +68,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </qui-page>
+  </view>
 </template>
 
 <script>

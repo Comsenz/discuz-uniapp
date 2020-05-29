@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="like-page">
+  <view class="like-page">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -65,7 +65,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </qui-page>
+  </view>
 </template>
 
 <script>
@@ -230,6 +230,6 @@ export default {
   margin-left: 0;
 }
 .scroll-y {
-  max-height: calc(100vh - 297rpx);
+  max-height: calc(100vh - 515rpx);
 }
 </style>
