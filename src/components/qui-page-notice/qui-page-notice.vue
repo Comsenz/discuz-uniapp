@@ -4,8 +4,8 @@
       <uni-nav-bar
         :title="title"
         fixed
-        :color="theme === $u.light() ? '#000000' : '#ffffff'"
-        :background-color="theme === $u.light() ? '#ffffff' : '#2e2f30'"
+        :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
@@ -94,7 +94,7 @@ import user from '@/mixin/user';
 export default {
   mixins: [user],
   props: {
-    theme: {
+    navTheme: {
       type: String,
       default: '',
     },

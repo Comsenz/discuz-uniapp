@@ -13,8 +13,8 @@
         v-if="navbarShow"
         :title="forums.set_site.site_name"
         fixed="true"
-        :color="theme === 'light' ? '#000000' : '#ffffff'"
-        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
+        :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <qui-header
@@ -186,7 +186,7 @@ import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
-  props: ['tagId'],
+  props: ['tagId', 'navTheme'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
