@@ -10,6 +10,7 @@
           @handleClickShare="handleClickShare"
         ></qui-page-home>
         <qui-page-notice
+          :theme="theme"
           ref="quinotice"
           :style="{ display: show_index === 1 ? 'block' : 'none' }"
         ></qui-page-notice>
