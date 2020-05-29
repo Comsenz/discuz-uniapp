@@ -11,7 +11,10 @@
             "
             class="det-per-head"
             @click="personJump"
+            @error="imageError"
+            v-if="imageStatus"
           ></image>
+          <image v-else src="/static/noavatar.gif"></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -19,8 +22,13 @@
               {{ userName }}
             </span>
 
-            <span class="themeItem__header__title__isAdmin">（{{ userRole }}）</span>
-            <view class="themeItem__header__title__jumpBtn"></view>
+            <span
+              class="themeItem__header__title__isAdmin"
+              v-for="(group, index) in userRole"
+              :key="index"
+            >
+              {{ group.isDisplay ? `（${group.name}）` : '' }}
+            </span>
           </view>
           <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
@@ -142,8 +150,10 @@ export default {
     },
     // 回复的用户的角色
     userRole: {
-      type: String,
-      default: '',
+      type: Array,
+      default: () => {
+        return [];
+      },
     },
     // 回复的审核状态
     commentStatus: {
@@ -208,6 +218,7 @@ export default {
     return {
       isAdmin: true,
       isGreat: false,
+      imageStatus: true,
     };
   },
   computed: {
@@ -287,6 +298,10 @@ export default {
         indicator: 'number',
       });
     },
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.imageStatus = false;
+    },
   },
 };
 </script>
@@ -333,8 +348,10 @@ export default {
 
     &__title {
       flex: 1;
-
       &__top {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
@@ -343,9 +360,8 @@ export default {
       }
 
       &__username {
-        display: inline-block;
-        width: 70%;
         height: 37rpx;
+        max-width: 70%;
         overflow: hidden;
         font-weight: bold;
         line-height: 37rpx;
@@ -354,7 +370,10 @@ export default {
       }
 
       &__isAdmin {
+        display: inline-block;
+        height: 37rpx;
         font-weight: 400;
+        line-height: 37rpx;
         color: --color(--qui-FC-AAA);
       }
 

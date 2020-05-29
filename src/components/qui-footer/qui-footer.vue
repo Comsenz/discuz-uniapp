@@ -247,7 +247,7 @@ export default {
   // background: #c33;
 }
 .ft-box-content {
-  padding-top: 3rpx;
+  padding-top: 10rpx;
   font-size: 20rpx;
   line-height: 26rpx;
   color: --color(--qui-FC-777);

@@ -182,7 +182,7 @@ export default {
       payImmediatelyClick: false,
       checkVal: '1',
       checkStatus: true, // 单选框状态
-      checkStatusVal: 1, // 单选框状态
+      // checkStatusVal: 1, // 单选框状态
       current: 0,
     };
   },
@@ -216,13 +216,13 @@ export default {
     // 是否选中显示头像
     radioMyHead(evt) {
       this.checkStatus = !this.checkStatus;
-      this.checkStatusVal = 1 ? 0 : 1;
+      // this.checkStatusVal = 1 ? 0 : 1;
       if (evt.target.value.length <= 0) {
         this.checkStatusVal = 1;
       } else {
         this.checkStatusVal = 0;
       }
-      this.$emit('radioMyHead', this.checkStatusVal);
+      this.$emit('radioMyHead', this.checkStatus);
     },
     // 父组件触发是否显示弹框
     payClickShow(val) {

@@ -13,13 +13,13 @@
         v-if="navbarShow"
         :title="forums.set_site.site_name"
         fixed="true"
-        :color="theme === 'light' ? '#000000' : '#ffffff'"
-        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
+        :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <qui-header
         v-if="headerShow"
-        :head-img="forums.set_site.site_logo"
+        :head-img="forums.set_site.site_header_logo"
         :background-head-full-img="forums.set_site.site_background_image"
         :theme="theme"
         :theme-num="forums.other.count_users"
@@ -186,7 +186,7 @@ import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
-  props: ['tagId'],
+  props: ['tagId', 'navTheme'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
@@ -248,9 +248,6 @@ export default {
       playIndex: null,
     };
   },
-  created() {
-    console.log(this.tagId);
-  },
   mounted() {
     uni.getSystemInfo({
       success: res => {
@@ -286,6 +283,17 @@ export default {
       this.navbarShow = false;
       this.headerShow = true;
     },
+    // 初始化选中的选项卡
+    initCategoryInfo() {
+      this.categoryId = this.$props.tagId || 0;
+      for (let i = 0, len = this.categories.length; i < len; i += 1) {
+        if (+this.categories[i]._jv.id === +this.categoryId) {
+          this.currentIndex = i;
+          return;
+        }
+      }
+      // console.log(this.categoryId, this.currentIndex, 'id-----index')
+    },
 
     // 切换选项卡
     async toggleTab(dataInfo) {
@@ -295,10 +303,6 @@ export default {
       this.pageNum = 1;
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
-      console.log(this.tagId, '我就看看能不能拿到你');
-      if (this.tagId !== '') {
-        this.tagId = dataInfo.id;
-      }
       this.threadEssence = '';
       this.threadFollow = 0;
       this.currentIndex = dataInfo.index;
@@ -482,8 +486,8 @@ export default {
       this.cancel();
     },
     // 首页导航栏分类列表数据
-    loadCategories() {
-      this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+    async loadCategories() {
+      await this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
         const resData = [...data] || [];
         this.categories = [
           {
@@ -610,9 +614,10 @@ export default {
       this.playIndex = index;
     },
     // 组件初始化请求接口
-    ontrueGetList() {
+    async ontrueGetList() {
       // 首页导航栏分类列表
-      this.loadCategories();
+      await this.loadCategories();
+      this.initCategoryInfo();
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
@@ -680,7 +685,7 @@ export default {
     line-height: 35rpx;
     color: --color(--qui-FC-777);
     text-align: center;
-    background: --color(--qui-BOR-ED);
+    background: --color(--qui-BG-777);
     border-radius: 6rpx;
     transition: $switch-theme-time;
   }
