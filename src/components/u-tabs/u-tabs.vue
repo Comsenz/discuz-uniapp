@@ -78,7 +78,7 @@ export default {
     // 字体大小
     fontSize: {
       type: [String, Number],
-      default: 28,
+      default: 26,
     },
     // 过渡动画时长, 单位ms
     duration: {
@@ -176,8 +176,10 @@ export default {
         };
         // 字体加粗
         if (index === this.currentIndex && this.bold) style.fontWeight = 'bold';
+        if (index === this.currentIndex) style.fontSize = '28';
         if (index === this.currentIndex) {
           style.color = this.activeColor;
+          // style.font-size = 28;
           // 给选中的tab item添加外部自定义的样式
           style = Object.assign(style, this.activeItemStyle);
         }

@@ -1,63 +1,55 @@
 <template>
   <view class="following">
     <view class="follow-content">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        class="scroll-y"
+      <view
+        class="follow-content__items"
+        v-for="(followerItem, index) in followerList"
+        @tap="toProfile(followerItem.fromUser.id)"
+        :key="index"
       >
-        <view
-          class="follow-content__items"
-          v-for="(followerItem, index) in followerList"
-          @tap="toProfile(followerItem.fromUser.id)"
-          :key="index"
+        <image
+          class="follow-content__items__avatar"
+          :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
+          alt="avatarUrl"
+          mode="aspectFill"
+        ></image>
+        <qui-cell-item
+          :title="followerItem.fromUser.username"
+          slot-right
+          :brief="followerItem.fromUser.groups ? followerItem.fromUser.groups[0].name : ''"
         >
-          <image
-            class="follow-content__items__avatar"
-            :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
-            alt="avatarUrl"
-            mode="aspectFill"
-          ></image>
-          <qui-cell-item
-            :title="followerItem.fromUser.username"
-            slot-right
-            :brief="followerItem.fromUser.groups ? followerItem.fromUser.groups[0].name : ''"
+          <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
+          <view
+            class="follow-content__items__operate"
+            @tap="addFollow(followerItem.fromUser, index)"
+            @tap.stop
+            v-if="followerItem.fromUser.id != currentLoginId"
           >
-            <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-            <view
-              class="follow-content__items__operate"
-              @tap="addFollow(followerItem.fromUser, index)"
-              @tap.stop
-              v-if="followerItem.fromUser.id != currentLoginId"
-            >
-              <text>
-                {{
-                  followerItem.fromUser.follow == 0
-                    ? i18n.t('profile.following')
-                    : followerItem.fromUser.follow == 1
-                    ? i18n.t('profile.followed')
-                    : i18n.t('profile.mutualfollow')
-                }}
-              </text>
-              <qui-icon
-                class="text"
-                :name="followerItem.fromUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                size="22"
-                :color="
-                  followerItem.fromUser.follow == 0
-                    ? '#777'
-                    : followerItem.fromUser.follow == 1
-                    ? '#ddd'
-                    : '#ff8888'
-                "
-              ></qui-icon>
-            </view>
-          </qui-cell-item>
-        </view>
-        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
-      </scroll-view>
+            <text>
+              {{
+                followerItem.fromUser.follow == 0
+                  ? i18n.t('profile.following')
+                  : followerItem.fromUser.follow == 1
+                  ? i18n.t('profile.followed')
+                  : i18n.t('profile.mutualfollow')
+              }}
+            </text>
+            <qui-icon
+              class="text"
+              :name="followerItem.fromUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
+              size="22"
+              :color="
+                followerItem.fromUser.follow == 0
+                  ? '#777'
+                  : followerItem.fromUser.follow == 1
+                  ? '#ddd'
+                  : '#ff8888'
+              "
+            ></qui-icon>
+          </view>
+        </qui-cell-item>
+      </view>
+      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     </view>
   </view>
 </template>
@@ -194,9 +186,6 @@ export default {
   width: 70rpx;
   height: 70rpx;
   border-radius: 50%;
-}
-.scroll-y {
-  max-height: calc(100vh - 297rpx);
 }
 .text {
   margin-left: 12rpx;

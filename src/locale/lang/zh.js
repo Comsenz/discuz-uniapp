@@ -343,6 +343,8 @@ export default {
     send: '发送',
     emptycontent: '内容不能为空',
     contentMaxLength: '不能超过450个字',
+    approved: '您的提现审核已通过，请注意查收。',
+    unapproved: '您的提现审核已拒绝，拒绝原因：审核不通过。',
   },
   // 海报分享页
   share: {

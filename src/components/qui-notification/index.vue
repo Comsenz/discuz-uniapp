@@ -44,6 +44,9 @@
             <text class="list-box__notice__hr__amount" v-if="item.type === 'rewarded'">
               {{ item.money }}
             </text>
+            <text class="list-box__notice__hr__cash-amount" v-if="item.type === 'withdrawal'">
+              {{ item.money }}
+            </text>
             <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
           </view>
         </view>
@@ -54,6 +57,14 @@
             v-html="item.post_content"
             @click="jumpMyComment(item)"
           ></view>
+          <view class="list-box__notice__con__wrap" v-if="item.type === 'withdrawal'">
+            <view v-if="item.cash_status === 2">
+              {{ i18n.t('notice.approved') }}
+            </view>
+            <view v-if="item.cash_status === 3">
+              {{ i18n.t('notice.unapproved') }}
+            </view>
+          </view>
           <view
             class="list-box__notice__con__wrap"
             v-if="item.thread_id"
@@ -209,6 +220,12 @@ export default {
         margin-right: 20rpx;
         font-weight: bold;
         color: --color(--qui-RED);
+      }
+
+      &__cash-amount {
+        margin-right: 20rpx;
+        font-weight: bold;
+        color: --color(--qui-GREEN);
       }
     }
 
