@@ -44,21 +44,24 @@
           @click="getEmojiClick"
         ></qui-emoji>
       </view>
-      <textarea
-        id="textarea"
-        class="post-box__con-text"
-        :placeholder="i18n.t('discuzq.post.placeholder')"
-        placeholder-class="textarea-placeholder"
-        v-model="textAreaValue"
-        auto-height="true"
-        :maxlength="-1"
-        :focus="type !== 1"
-        v-if="!emojiShow"
-        @blur="contBlur"
-      ></textarea>
-      <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
-        <text>{{ textAreaValue }}</text>
+      <view class="post-box__con">
+        <textarea
+          id="textarea"
+          class="post-box__con-text"
+          :placeholder="i18n.t('discuzq.post.placeholder')"
+          placeholder-class="textarea-placeholder"
+          v-model="textAreaValue"
+          auto-height="true"
+          :maxlength="-1"
+          :focus="type !== 1"
+          v-if="!emojiShow"
+          @blur="contBlur"
+        ></textarea>
+        <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
+          <text>{{ textAreaValue }}</text>
+        </view>
       </view>
+
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -967,18 +970,29 @@ export default {
       color: --color(--qui-FC-777);
     }
   }
+  &__con {
+    width: 100%;
+    padding: 20rpx;
+    margin-top: 20rpx;
+    overflow: hidden;
+    background-color: --color(--qui-BG-1);
+    border: 1rpx solid --color(--qui-BOR-DDD);
+    border-radius: 7rpx;
+    box-sizing: border-box;
+  }
   &__con-text {
     z-index: 0;
     width: 100%;
     max-height: 900rpx;
     min-height: 400rpx;
-    padding: 20rpx;
-    margin-top: 20rpx;
+    // padding: 20rpx;
+    // margin-top: 20rpx;
+    overflow: hidden;
     line-height: 20px;
-    background-color: --color(--qui-BG-1);
-    border: 1rpx solid --color(--qui-BOR-DDD);
-    border-radius: 7rpx;
-    box-sizing: border-box;
+    // background-color: --color(--qui-BG-1);
+    // border: 1rpx solid --color(--qui-BOR-DDD);
+    // border-radius: 7rpx;
+    // box-sizing: border-box;
 
     &--static {
       overflow: auto;

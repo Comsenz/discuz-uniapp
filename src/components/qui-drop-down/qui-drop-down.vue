@@ -13,7 +13,7 @@
       }"
     >
       <view class="select-content">
-        <view class="jt-bg" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
+        <view class="jt-bg" :style="{ right: jtRight + 'rpx' }"></view>
         <view class="jt-con" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
         <view class="select-con" v-for="(child, index) in list" :key="index">
           <view
@@ -97,7 +97,8 @@ export default {
 .select-box {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.16);
+  border: 1px solid --color(--qui-BOR-ED);
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.16);
 }
 .select-content {
   position: relative;
@@ -108,6 +109,7 @@ export default {
     top: -10rpx;
     width: 16rpx;
     height: 16rpx;
+    background: --color(--qui-BOR-ED);
     transform: rotate(45deg);
   }
   .jt-con {
