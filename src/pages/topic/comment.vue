@@ -31,7 +31,10 @@
                       "
                       alt
                       @click="personJump"
+                      @error="imageError"
+                      v-if="imageStatus"
                     ></image>
+                    <image v-else src="/static/noavatar.gif"></image>
                   </view>
                   <view class="thread__header__title">
                     <view class="thread__header__title__top">
@@ -303,6 +306,7 @@ export default {
       pageSize: 5, //这是主题回复每页数据条数
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
+      imageStatus: true, // 头像地址错误时显示默认头像
     };
   },
   computed: {
@@ -686,6 +690,10 @@ export default {
       }
       this.pageNum += 1;
       this.loadPostComments();
+    },
+    // 头像失效
+    imageError() {
+      this.imageStatus = false;
     },
   },
 };

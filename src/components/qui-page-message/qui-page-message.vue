@@ -21,15 +21,20 @@
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
-
-      <navigator class="out page-message--exit" open-type="exit" target="miniProgram" v-if="show">
+      <navigator
+        class="out page-message--exit"
+        open-type="exit"
+        hover-class="none"
+        target="miniProgram"
+        v-if="show"
+      >
         <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}
+          {{ message.btnTxt }}123
         </qui-button>
       </navigator>
 
       <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
-        {{ i18n.t('core.admin_login') }}
+        {{ i18n.t('core.admin_login') }}456
       </qui-button>
     </view>
   </view>
@@ -117,6 +122,7 @@ export default {
   }
   &--inner {
     position: relative;
+    padding-bottom: 20rpx;
     margin-top: 140rpx;
     text-align: center;
   }
@@ -139,6 +145,7 @@ export default {
 }
 .out {
   height: 90rpx;
+  margin-bottom: 40rpx;
   .page-message--exit {
     position: absolute;
     bottom: 0;
