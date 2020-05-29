@@ -5,7 +5,8 @@
       src="@/static/essence.png"
       alt
       v-if="themeEssence && themeType == '1'"
-      @load="imageError"
+      @error="imageError"
+      @load="imageLoad"
     ></image>
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
@@ -443,7 +444,10 @@ export default {
     },
     // 头像加载失败,显示默认头像
     imageError(e) {
-      console.error(`image发生error事件，携带值为${e.detail.errMsg}`);
+      console.log(e, '有失败的图片了吧');
+    },
+    imageLoad(e) {
+      console.log(e, '成功加载了图片呢');
     },
   },
 };

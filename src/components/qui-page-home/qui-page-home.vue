@@ -186,6 +186,7 @@ import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
+  props: ['tagId'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
@@ -246,6 +247,9 @@ export default {
       categories: [],
       playIndex: null,
     };
+  },
+  created() {
+    console.log(this.tagId);
   },
   mounted() {
     uni.getSystemInfo({
@@ -580,12 +584,14 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params).then(data => {
+        console.log('data', data);
         const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
-        if (data.isLiked) {
-          likedPost.likeCount += 1;
-        } else {
-          likedPost.likeCount -= 1;
-        }
+        console.log('likedPost', likedPost);
+        // if (data.isLiked) {
+        //   likedPost.likeCount += 1;
+        // } else {
+        //   likedPost.likeCount -= 1;
+        // }
       });
     },
     // 上拉加载
