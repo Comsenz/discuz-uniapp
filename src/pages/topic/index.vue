@@ -1107,8 +1107,18 @@ export default {
         success: function(res) {
           console.log('微信支付成功');
           console.log('success:' + JSON.stringify(res));
+          console.log(_this.payTypeVal, '支付类型');
+          _this.payShowStatus = false;
+          _this.coverLoading = false;
+          if (_this.payTypeVal == 0) {
+            // 这是主题支付，支付完成刷新详情页，重新请求数据
+            _this.loadThread();
+          } else if (_this.payTypeVal == 1) {
+            // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+            _this.rewardArr = _this.rewardArr.concat([_this.user]);
+            _this.thread.rewardedUsers = _this.rewardArr;
+          }
           _this.$refs.toast.show({ message: _this.p.paySuccess });
-          _this.loadThread();
         },
         fail: function(err) {
           console.log('微信支付失败');
@@ -1258,7 +1268,10 @@ export default {
       this.customAmountStatus = false;
       this.payShowStatus = true;
       // this.$refs.payShow.payClickShow();
-      this.$refs.payShow.payClickShow(this.payTypeVal);
+      // this.$refs.payShow.payClickShow(this.payTypeVal);
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
