@@ -42,10 +42,11 @@ export default {
     };
   },
   onLoad(option) {
+    console.log(option, '000000')
     if (option.id !== '') {
       this.tagId = option.id;
     }
-    if (this.showHome) {
+    if (!this.showHome) {
       this.handlePageLoaded();
     }
   },
@@ -88,6 +89,7 @@ export default {
       this.nowThreadId = e;
     },
     handlePageLoaded() {
+      console.log(this.showHome, 'this.showHome')
       this.showHome = true;
       this.$nextTick(() => {
         // 一定要等视图更新完再调用方法
