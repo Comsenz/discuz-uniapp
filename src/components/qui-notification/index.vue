@@ -34,7 +34,9 @@
                   {{ i18n.t('notice.likedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
-                  {{ i18n.t('notice.rewardedMe') }}
+                  {{
+                    item.order_type === 3 ? i18n.t('notice.payedMe') : i18n.t('notice.rewardedMe')
+                  }}
                 </text>
               </view>
               <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
