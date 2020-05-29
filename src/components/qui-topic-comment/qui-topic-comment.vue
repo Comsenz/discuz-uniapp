@@ -14,7 +14,7 @@
             @error="imageError"
             v-if="imageStatus"
           ></image>
-          <image v-else src="/static/noavatar.gif"></image>
+          <image v-else src="/static/noavatar.gif" class="det-per-head"></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">

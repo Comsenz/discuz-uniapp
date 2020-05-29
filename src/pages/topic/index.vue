@@ -1172,7 +1172,7 @@ export default {
     // 管理菜单内标签点击事件
     selectChoice(param) {
       if (param.type == '0') {
-        uni.navigateTo({
+        uni.redirectTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
       } else {
@@ -1360,7 +1360,7 @@ export default {
     // 点击分类标签
     tagClick(tagId) {
       console.log(tagId, '这是分类id');
-      uni.navigateTo({
+      uni.redirectTo({
         url: `/pages/home/index?id=${tagId}`,
       });
     },
