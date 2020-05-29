@@ -1096,6 +1096,7 @@ export default {
 
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
+      const _this = this;
       uni.requestPayment({
         provider: 'wxpay',
         timeStamp: timeStamp,
@@ -1104,12 +1105,17 @@ export default {
         signType: signType,
         paySign: paySign,
         success: function(res) {
-          alert('微信支付成功');
+          console.log('微信支付成功');
           console.log('success:' + JSON.stringify(res));
+          _this.$refs.toast.show({ message: _this.p.paySuccess });
+          _this.loadThread();
         },
         fail: function(err) {
-          alert('微信支付失败');
+          console.log('微信支付失败');
           console.log('fail:' + JSON.stringify(err));
+          _this.payShowStatus = false;
+          _this.coverLoading = false;
+          _this.$refs.toast.show({ message: _this.p.payFail });
         },
       });
     },
@@ -1187,7 +1193,9 @@ export default {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
       }
       this.price = this.thread.price;
-      this.$refs.payShow.payClickShow(this.payTypeVal);
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
