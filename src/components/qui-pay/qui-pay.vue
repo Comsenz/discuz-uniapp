@@ -460,27 +460,6 @@ export default {
   height: 9rpx;
   background: --color(--qui-FC-DDD);
 }
-.popup-share-btn {
-  height: 100rpx;
-  font-size: $fg-f28;
-  line-height: 90rpx;
-  color: #666;
-  text-align: center;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
-}
-// .paySureBtn {
-//   width: 100%;
-//   border-radius: 0;
-//   /deep/ .qui-button--button[type='primary'] {
-//     border-radius: 0;
-//   }
-// }
-// /deep/ .qui-button--button {
-//   width: 670rpx;
-//   border-radius: 0;
-// }
 .paySureBtn {
   width: 100%;
   height: 100rpx;

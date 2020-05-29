@@ -146,6 +146,7 @@ export default {
       myauthority: 'myauthority',
       setting: 'setting',
       noContent: 'No Content',
+      contentMaxLength: 'No more than 450 words',
     },
     // 消息页面
     notice: {
@@ -233,6 +234,7 @@ export default {
     givearewardforthetheme: 'Give a reward for thetheme',
     paidtoseeyourtheme: 'Paid to see your theme',
     paidtoview: 'Paid to view',
+    orderexpired: 'Order expired',
   },
   site: {
     circleintroduction: 'Circle introduction',

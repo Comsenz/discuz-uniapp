@@ -11,7 +11,6 @@
         ></qui-page-home>
         <qui-page-notice
           ref="quinotice"
-          :theme="theme"
           :style="{ display: show_index === 1 ? 'block' : 'none' }"
         ></qui-page-notice>
         <qui-page-my

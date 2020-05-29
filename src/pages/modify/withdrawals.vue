@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
@@ -31,7 +31,7 @@
           >
             <input
               class="cash-content-input"
-              type="number"
+              type="digit"
               :placeholder="i18n.t('modify.enteramount')"
               placeholder-style="color:rgba(221,221,221,1)"
               v-model="cashmany"

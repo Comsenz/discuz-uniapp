@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="invite">
       <!-- 标签栏 -->
       <view class="invite-tabs">

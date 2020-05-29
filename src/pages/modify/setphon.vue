@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="new" @click.stop="toggleBox">
       <view class="new-phon" v-if="phon">
         <view class="new-phon-test">
@@ -13,7 +13,7 @@
             :focus="true"
             :cursor="1"
             @input="changeinput"
-            maxlength="11"
+            maxlength="13"
           />
           <button class="new-phon-send" v-if="sun" @click="btnButton" :disabled="disabtype">
             {{ i18n.t('modify.sendverificode') }}
@@ -72,6 +72,8 @@ export default {
       typebind: 'bind',
       disabtype: true,
       formeerro: '',
+      novice: '',
+      interval: '',
     };
   },
   onLoad(arr) {
@@ -79,49 +81,41 @@ export default {
   },
   methods: {
     changeinput() {
-      if (this.newphon.length < 11) {
+      if (this.newphon.length === 3 || this.newphon.length === 8) {
+        this.newphon += ' ';
+      }
+      if (this.newphon.length < 13) {
         this.disabtype = true;
-      } else if (this.newphon.length === 11) {
+      } else if (this.newphon.length === 13) {
         this.disabtype = false;
+        this.novice = this.newphon.replace(/\s+/g, '');
       }
     },
     fourse() {
       this.inshow = true;
     },
-    setValue(event) {
-      // 文本框输入事件
-      const { value } = event.target;
-      setTimeout(() => {
-        this.iptValue = value;
-      }, 1); // 重点
-    },
-    // getCode() {
-    //   this.showText = false;
-    //   const interval = setInterval(() => {
-    //     this.second -= 1;
-    //   }, 1000);
+    // setValue(event) {
+    //   // 文本框输入事件
+    //   const { value } = event.target;
     //   setTimeout(() => {
-    //     clearInterval(interval);
-    //     this.showText = true;
-    //   }, 60000);
+    //     this.iptValue = value.replace(/[^\d\s]/ig,"");
+    //   }, 1); // 重点
     // },
     btndata(num) {
       this.setnum = num;
     },
     // 点击获取验证码计时开始
     btnButton() {
-      this.sun = !this.sun;
-      this.showText = false;
-      const interval = setInterval(() => {
-        this.second -= 1;
+      this.setphon();
+      const num = 1;
+      clearInterval(this.interval);
+      this.interval = setInterval(() => {
+        this.second -= num;
       }, 1000);
       setTimeout(() => {
-        clearInterval(interval);
-        this.showText = true;
-        this.sun = !this.sun;
-        this.second = 60;
+        clearInterval(this.interval);
+        this.sun = true;
       }, 60000);
-      this.setphon();
     },
     dingphon() {
       this.bindphon();
@@ -132,7 +126,7 @@ export default {
         _jv: {
           type: 'sms/send',
         },
-        mobile: this.newphon,
+        mobile: this.novice,
         type: this.typebind,
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
@@ -140,6 +134,7 @@ export default {
         .then(res => {
           this.num -= 1;
           this.second = res._jv.json.data.attributes.interval;
+          this.sun = false;
         })
         .catch(err => {
           if (err.statusCode === 500) {
@@ -177,7 +172,7 @@ export default {
         _jv: {
           type: 'sms/verify',
         },
-        mobile: this.newphon,
+        mobile: this.novice,
         code: this.setnum,
         type: this.typebind,
       };

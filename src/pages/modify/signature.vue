@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="aogph">
       <view class="aogph-tab">
         <view class="aogph-tab-ao">

@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="retireve" @click.stop="toggleBox">
       <view class="retireve-tab">
         <view class="retireve-titel">
@@ -78,6 +78,7 @@ export default {
       inshow: false,
       inisIphone: false,
       disabletype: false,
+      interval: '',
     };
   },
   onLoad(sing) {
@@ -101,13 +102,14 @@ export default {
     },
     // 点击获取验证码计时开始
     btnButton() {
+      clearInterval(this.interval);
       this.sun = !this.sun;
       this.showText = false;
-      const interval = setInterval(() => {
+      this.interval = setInterval(() => {
         this.second -= 1;
       }, 1000);
       setTimeout(() => {
-        clearInterval(interval);
+        clearInterval(this.interval);
         this.showText = true;
         this.sun = !this.sun;
         this.second = 60;
@@ -175,8 +177,8 @@ export default {
               title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
-            uni.redirectTo({
-              url: `/${pages[1].route}`,
+            uni.navigateBack({
+              delta: 1,
               success() {
                 pages[1].onLoad();
               },

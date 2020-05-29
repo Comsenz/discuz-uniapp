@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="painter">
       <view class="canvas-box">
         <view class="cent">
@@ -141,6 +141,15 @@ export default {
     },
     fun() {
       const _this = this;
+      uni.getSetting({
+        success(res) {
+          if (!res.authSetting['scope.writePhotosAlbum']) {
+            _this.jurisdiction = false;
+          } else {
+            _this.jurisdiction = res.authSetting['scope.writePhotosAlbum'];
+          }
+        },
+      });
       if (!this.jurisdiction) {
         uni.openSetting({
           success(res) {

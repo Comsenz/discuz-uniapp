@@ -13,6 +13,8 @@
         v-if="navbarShow"
         :title="forums.set_site.site_name"
         fixed="true"
+        :color="theme === 'light' ? '#000000' : '#ffffff'"
+        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <qui-header
@@ -245,20 +247,15 @@ export default {
       playIndex: null,
     };
   },
-  props: ['tagId'],
-  created() {
-    console.log(this.tagId, '这是分类呢')
-  },
   mounted() {
-    const query = uni.createSelectorQuery().in(this);
-    query
-      .select('.nav')
-      .boundingClientRect(data => {
-        this.navTop = data.top;
-        this.navHeight = data.height;
-      })
-      .exec();
-    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
+    uni.getSystemInfo({
+      success: res => {
+        const rpx = res.screenWidth / 750;
+        this.navTop = 400 /* qui-header 的高度 */ * rpx;
+        this.navHeight = 102 /* nav的高度 */ * rpx;
+        this.navbarHeight = res.statusBarHeight + 44 /* uni-nav-bar的高度 */;
+      },
+    });
   },
   methods: {
     ...mapMutations({

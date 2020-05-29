@@ -118,11 +118,11 @@ export default {
       // change_type 10提现冻结，11提现成功，12提现解冻，30注册收入，31打赏收入，32人工收入，50人工支出
       const params = {
         include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
-        'filter[user]': 1,
+        'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[start_time]': `${this.date}-01-00-00-00 `,
-        'filter[end_time]': `${this.date}-${days}-00-00-00 `,
+        'filter[start_time]': `${this.date}-01-00-00-00`,
+        'filter[end_time]': `${this.date}-${days}-00-00-00`,
       };
       if (type && type === 'filter') {
         params.pageNum = 1;

@@ -41,7 +41,7 @@
           :title="type[item.type - 1]"
           :brief="timeHandle(item.created_at)"
           :addon="'-￥' + item.amount"
-          :brief-right="item.status == 1 ? i18n.t('profile.paid') : i18n.t('profile.tobepaid')"
+          :brief-right="statusType[item.status]"
         ></qui-cell-item>
         <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
@@ -71,11 +71,17 @@ export default {
       dataList: [],
       filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
       type: [
+        // 标题类型
         this.i18n.t('profile.register'),
         this.i18n.t('profile.reward'),
         this.i18n.t('profile.paytheme'),
         this.i18n.t('profile.paygroup'),
       ],
+      statusType: {
+        0: this.i18n.t('profile.tobepaid'),
+        1: this.i18n.t('profile.paid'),
+        4: this.i18n.t('profile.orderexpired'),
+      },
       filterList: [
         {
           title: this.i18n.t('profile.type'),
@@ -83,6 +89,7 @@ export default {
             { label: this.i18n.t('profile.all'), value: '', selected: true },
             { label: this.i18n.t('profile.tobepaid'), value: 0 },
             { label: this.i18n.t('profile.paid'), value: 1 },
+            { label: this.i18n.t('profile.orderexpired'), value: 4 },
           ],
         },
       ],
@@ -116,20 +123,20 @@ export default {
       this.loadingType = 'loading';
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
-      // status 0待付款，1已付款
+      // status 0待付款，1已付款 4订单过期
       const params = {
         include: ['user', 'thread', 'thread.firstPost'],
         'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[start_time]': `${this.date}-01-00-00-00 `,
-        'filter[end_time]': `${this.date}-${days}-00-00-00 `,
+        'filter[start_time]': `${this.date}-01-00-00-00`,
+        'filter[end_time]': `${this.date}-${days}-00-00-00`,
       };
       if (type && type === 'filter') {
         params.pageNum = 1;
         this.dataList = [];
       }
-      if (this.filterSelected.value) {
+      if (this.filterSelected.value || this.filterSelected.value === 0) {
         params['filter[status]'] = this.filterSelected.value;
       }
       status

@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-at-member-page-box">
+  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
     <!-- 搜索成员 -->
     <view class="manage-users-search">
       <view class="search">
@@ -97,7 +97,7 @@
         </view>
       </scroll-view>
     </uni-popup>
-  </view>
+  </qui-page>
 </template>
 
 <script>

@@ -111,7 +111,7 @@ export default {
       yuan: '元',
       customize: '自定义',
       theContentCanNotBeBlank: '内容不能为空',
-      theclassifyCanNotBeBlank: '标签不能为空',
+      theclassifyCanNotBeBlank: '分类不能为空',
       imageCannotBeEmpty: '图片不能为空',
       videoCannotBeEmpty: '视频不能为空',
       pleaseWaitForTheVideoUploadToComplete: '请等待视频上传完成',
@@ -342,6 +342,7 @@ export default {
     delete: '删除',
     send: '发送',
     emptycontent: '内容不能为空',
+    contentMaxLength: '不能超过450个字',
   },
   // 海报分享页
   share: {
@@ -547,6 +548,7 @@ export default {
     givearewardforthetheme: '打赏了主题',
     paidtoseeyourtheme: '付费查看了你的主题',
     paidtoview: '付费查看了',
+    orderexpired: '订单过期',
   },
   site: {
     circleintroduction: '站点介绍',

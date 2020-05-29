@@ -393,8 +393,13 @@ export default {
       }
 
       &__username {
+        width: 100%;
+        height: 37rpx;
+        overflow: hidden;
         font-weight: bold;
+        line-height: 37rpx;
         color: --color(--qui-FC-000);
+        white-space: nowrap;
       }
 
       &__isAdmin {
@@ -531,7 +536,7 @@ export default {
         line-height: 50rpx;
         color: --color(--qui-FC-TAG);
         text-align: center;
-        background: --color(--qui-BG-TAG);
+        background: --color(--qui-BG-40);
         border-radius: 6rpx;
         transition: $switch-theme-time;
       }

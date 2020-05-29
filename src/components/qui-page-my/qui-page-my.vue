@@ -130,7 +130,6 @@ export default {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
       data.groupsName = data.groups ? data.groups[0].name : '';
       this.setNum(data);
-      console.log('laskjdflksjdflsdf', data);
       this.userInfo = data;
     },
   },
@@ -184,6 +183,6 @@ export default {
   transition: $switch-theme-time;
 }
 .scroll-y {
-  max-height: calc(100vh - 140rpx);
+  max-height: calc(100vh - 260rpx);
 }
 </style>
