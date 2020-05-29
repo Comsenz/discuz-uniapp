@@ -61,7 +61,7 @@ export default {
       this.loadingType = 'loading';
       const params = {
         'filter[user]': this.userId,
-        'filter[change_type]': 10,
+        'filter[change_type]': [10, 11, 12],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
       };
