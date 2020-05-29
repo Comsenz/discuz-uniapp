@@ -5,16 +5,15 @@
       src="@/static/essence.png"
       alt
       v-if="themeEssence && themeType == '1'"
-      @error="imageError"
-      @load="imageLoad"
     ></image>
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
           <image
-            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
-            alt
+            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"      @error="imageError"
+            v-if="imageStatus"
           ></image>
+          <image v-else src="/static/noavatar.gif"></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -366,6 +365,7 @@ export default {
       preid: 0,
       currentid: 0,
       categoryShow: true,
+      imageStatus: true,
     };
   },
 
@@ -443,12 +443,9 @@ export default {
       }
     },
     // 头像加载失败,显示默认头像
-    imageError(e) {
-        console.log('有失败的图片了吧')
+    imageError() {
+        this.imageStatus = false;
     },
-    imageLoad(e) {
-      console.log(e, '成功加载了图片呢')
-    }
   },
 };
 </script>

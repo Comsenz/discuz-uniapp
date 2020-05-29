@@ -6,7 +6,10 @@
           :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
           class="det-per-head"
           @click="personJump"
+          @error="imageError"
+          v-if="imageStatus"
         ></image>
+        <image v-else src="/static/noavatar.gif"></image>
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top">
@@ -282,6 +285,7 @@ export default {
     return {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
+      imageStatus: true, // 头像地址错误时显示默认头像
     };
   },
   onLoad() {
@@ -348,6 +352,10 @@ export default {
     tagClick(tagId) {
       console.log('这是子组件里点击分类执行的');
       this.$emit('tagClick', tagId);
+    },
+    // 头像失效
+    imageError() {
+      this.imageStatus = false;
     },
   },
 };

@@ -11,7 +11,10 @@
             "
             class="det-per-head"
             @click="personJump"
+            @error="imageError"
+            v-if="imageStatus"
           ></image>
+          <image v-else src="/static/noavatar.gif"></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -208,6 +211,7 @@ export default {
     return {
       isAdmin: true,
       isGreat: false,
+      imageStatus: true,
     };
   },
   computed: {
@@ -286,6 +290,10 @@ export default {
         urls: preview,
         indicator: 'number',
       });
+    },
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.imageStatus = false;
     },
   },
 };
