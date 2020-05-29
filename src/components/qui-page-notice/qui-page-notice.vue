@@ -4,8 +4,8 @@
       <uni-nav-bar
         :title="title"
         fixed
-        :color="theme === 'light' ? '#000000' : '#ffffff'"
-        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
+        :color="$u.light() ? '#000000' : '#ffffff'"
+        :background-color="$u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
@@ -92,7 +92,7 @@ import { time2MorningOrAfternoon } from '@/utils/time';
 import user from '@/mixin/user';
 
 export default {
-  mixins: [user,mixin],
+  mixins: [user],
   data() {
     return {
       title: this.i18n.t('notice.notice'), // 标题
