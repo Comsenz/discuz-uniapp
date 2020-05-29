@@ -118,7 +118,7 @@
                 :comment-avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-liked="post.isLiked"
-                user-role="管理员"
+                :user-role="post.user.groups"
                 :comment-time="post.createdAt"
                 :comment-status="post.isApproved"
                 :comment-content="post.summary"
@@ -538,6 +538,7 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(this.user, '这是用户信息');
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -687,12 +688,12 @@ export default {
         if (this.isLiked) {
           // 未点赞时，点击点赞'
           post.likedUsers.unshift(this.user);
-          post.likeCount++;
+          // post.likeCount++;
         } else {
           post.likedUsers.forEach((value, key) => {
             value.id === this.user.id && post.likedUsers.splice(key, 1);
           });
-          post.likeCount--;
+          // post.likeCount--;
         }
 
         jvObj.relationships = {
@@ -762,10 +763,10 @@ export default {
             // 评论点赞
             this.posts[this.postIndex].isLiked = data.isLiked;
             if (data.isLiked) {
-              this.posts[this.postIndex].likeCount++;
+              // this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
             } else {
-              this.posts[this.postIndex].likeCount--;
+              // this.posts[this.postIndex].likeCount--;
               console.log('点赞数减1');
             }
           }

@@ -19,8 +19,13 @@
               {{ userName }}
             </span>
 
-            <span class="themeItem__header__title__isAdmin">（{{ userRole }}）</span>
-            <view class="themeItem__header__title__jumpBtn"></view>
+            <span
+              class="themeItem__header__title__isAdmin"
+              v-for="(group, index) in userRole"
+              :key="index"
+            >
+              {{ group.isDisplay ? `（${group.name}）` : '' }}
+            </span>
           </view>
           <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
@@ -142,8 +147,10 @@ export default {
     },
     // 回复的用户的角色
     userRole: {
-      type: String,
-      default: '',
+      type: Array,
+      default: () => {
+        return [];
+      },
     },
     // 回复的审核状态
     commentStatus: {
@@ -333,8 +340,10 @@ export default {
 
     &__title {
       flex: 1;
-
       &__top {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
@@ -343,9 +352,8 @@ export default {
       }
 
       &__username {
-        display: inline-block;
-        width: 70%;
         height: 37rpx;
+        max-width: 70%;
         overflow: hidden;
         font-weight: bold;
         line-height: 37rpx;
@@ -354,7 +362,10 @@ export default {
       }
 
       &__isAdmin {
+        display: inline-block;
+        height: 37rpx;
         font-weight: 400;
+        line-height: 37rpx;
         color: --color(--qui-FC-AAA);
       }
 
