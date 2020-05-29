@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="retireve" @click.stop="toggleBox">
       <view class="retireve-tab">
         <view class="retireve-titel">

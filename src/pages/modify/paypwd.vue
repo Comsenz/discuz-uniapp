@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="setpw" @click.stop="toggleBox">
       <view class="setpw-input" v-if="pas" @click.stop="fourse">
         <view class="setpw-tit">

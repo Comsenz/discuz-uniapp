@@ -1,10 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content">
-    <!--<view
-      v-if="loadDetailStatusId == 0"
-      class="skeletonScreen"
-      :style="{ height: windowHeight + 'px' }"
-    ></view>-->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"

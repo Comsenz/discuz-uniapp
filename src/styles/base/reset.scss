@@ -96,6 +96,7 @@ page {
   padding-top: 40rpx;
   padding-right: 97rpx;
   padding-left: 98rpx;
+  background: --color(--qui-BG-BTN-GRAY-1);
 }
 .popup-share-box {
   width: 120rpx;
@@ -135,7 +136,7 @@ page {
 .popup-share-content-text {
   margin-top: 13rpx;
   font-size: $fg-f28;
-  color: --color(--qui-FC-777);
+  color: --color(--qui-FC-TAG);
 }
 .popup-share-btn {
   height: 100rpx;
@@ -143,9 +144,6 @@ page {
   line-height: 100rpx;
   color: --color(--qui-FC-333);
   text-align: center;
-  border-top-color: --color(--qui-BOR-DDD);
-  border-top-style: solid;
-  border-top-width: 1px;
 }
 .popup-share-content-space {
   width: 100%;

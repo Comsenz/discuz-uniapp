@@ -1,5 +1,7 @@
 <template>
-  <qui-page-message :type="status"></qui-page-message>
+  <qui-page :data-qui-theme="theme">
+    <qui-page-message :type="status"></qui-page-message>
+  </qui-page>
 </template>
 
 <script>

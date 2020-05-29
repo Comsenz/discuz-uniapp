@@ -53,18 +53,6 @@ export default {
   /* #endif */
   background: --color(--qui-BG-2);
 }
-.popup-share-content {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  height: 250rpx;
-  padding-top: 40rpx;
-  padding-right: 97rpx;
-  padding-left: 98rpx;
-}
 .popup-share-box {
   // width: 120rpx;
   height: 120rpx;
@@ -106,16 +94,6 @@ export default {
   padding-bottom: 10px;
   font-size: $fg-f26;
   color: --color(--qui-FC-TAG);
-}
-.popup-share-btn {
-  height: 100rpx;
-  font-size: $fg-f28;
-  line-height: 90rpx;
-  color: #666;
-  text-align: center;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
 }
 .popup-share-content-space {
   width: 100%;
