@@ -43,9 +43,7 @@ export default {
     if (option.id !== '') {
       this.tagId = option.id;
     }
-    // console.log(option, option.id, '这是首页的分类啊啊啊啊啊')
-    // console.log(this.tagId)
-    if (!this.showHome) {
+    if (this.showHome) {
       this.handlePageLoaded();
     }
   },

@@ -64,10 +64,6 @@ export default {
       }
 
       this.$store.dispatch('forum/setError', { loading: false });
-
-      if (getApp().globalData.init) {
-        getApp().globalData.init();
-      }
     } catch (errs) {
       if (errs && errs.data && errs.data.errors) {
         this.$store.dispatch('forum/setError', {
