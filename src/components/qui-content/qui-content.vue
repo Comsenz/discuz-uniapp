@@ -551,7 +551,7 @@ export default {
 
   &__content {
     &__text {
-      // padding: 20rpx 0;
+      padding-bottom: 20rpx;
       overflow: hidden;
       font-family: $font-family;
       font-size: $fg-f28;
