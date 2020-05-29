@@ -486,10 +486,11 @@ export default {
     },
 
     // 图片上传相关方法
-    uploadClick() {
-      this.uploadStatus = false;
+    uploadClick(e) {
+      this.uploadStatus = e;
     },
     uploadChange(e, status) {
+      console.log(e, status);
       this.uploadFile = e;
       this.uploadStatus = status;
     },
@@ -569,6 +570,7 @@ export default {
             this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
             status = false;
           } else if (!this.uploadStatus) {
+            console.log(this.uploadStatus, '这是类型1的上传状态');
             this.$refs.toast.show({
               message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
             });
@@ -628,7 +630,7 @@ export default {
           this.postThread().then(res => {
             this.postLoading = false;
             uni.hideLoading();
-            if (res._jv.json.data.id) {
+            if (res && res._jv.json.data.id) {
               uni.redirectTo({
                 url: `/pages/topic/index?id=${res._jv.json.data.id}`,
               });
