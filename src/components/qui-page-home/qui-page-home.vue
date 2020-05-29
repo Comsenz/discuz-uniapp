@@ -249,7 +249,7 @@ export default {
     };
   },
   created() {
-    console.log(this.tagId, 'eyeyeyeeyeyyeyy')
+    console.log(this.tagId, 'eyeyeyeeyeyyeyy');
   },
   mounted() {
     uni.getSystemInfo({
@@ -288,7 +288,7 @@ export default {
     },
     // 初始化选中的选项卡
     initCategoryInfo() {
-      console.log(this.categories, '123456789')
+      console.log(this.categories, '123456789');
       this.categoryId = this.$props.tagId || 0;
       for (let i = 0, len = this.categories.length; i < len; i += 1) {
         if (+this.categories[i]._jv.id === +this.categoryId) {
@@ -296,7 +296,7 @@ export default {
           return;
         }
       }
-      console.log(this.categoryId, this.currentIndex, 'id-----index')
+      console.log(this.categoryId, this.currentIndex, 'id-----index');
     },
 
     // 切换选项卡
