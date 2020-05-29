@@ -50,7 +50,7 @@
               <checkbox
                 slot="rightIcon"
                 :value="JSON.stringify(item)"
-                :checked="checkAvatar.includes(item)"
+                :checked="checkAvatar.find(value => value.id === item.id)"
               ></checkbox>
             </qui-avatar-cell>
           </label>

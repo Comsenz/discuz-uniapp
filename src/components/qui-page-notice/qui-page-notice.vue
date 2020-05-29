@@ -92,13 +92,7 @@ import { time2MorningOrAfternoon } from '@/utils/time';
 import user from '@/mixin/user';
 
 export default {
-  mixins: [user],
-  props: {
-    theme: {
-      type: String,
-      default: '',
-    },
-  },
+  mixins: [user,mixin],
   data() {
     return {
       title: this.i18n.t('notice.notice'), // 标题
@@ -106,7 +100,7 @@ export default {
         { id: 1, title: 'notice.relate', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
         { id: 3, title: 'notice.like', type: 'liked', unReadNum: 0, border: true },
-        { id: 4, title: 'notice.reward', type: 'rewarded', unReadNum: 0, border: true },
+        { id: 4, title: 'notice.reward', type: 'rewarded,withdrawal', unReadNum: 0, border: true },
         { id: 5, title: 'notice.system', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more', // 上拉加载状态

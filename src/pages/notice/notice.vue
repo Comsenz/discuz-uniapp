@@ -65,7 +65,12 @@ export default {
           delete res._jv;
           for (let i = 0; i < res.length; i += 1) {
             res[i].time = time2MorningOrAfternoon(res[i].created_at);
-            res[i].money = `￥${res[i].amount}`;
+            if (res[i].type === 'rewarded' && res[i].amount) {
+              res[i].money = `￥${res[i].amount}`;
+            }
+            if (res[i].type === 'withdrawal' && res[i].cash_actual_amount) {
+              res[i].money = `-￥${res[i].cash_actual_amount}`;
+            }
           }
           this.noticeList = [...this.noticeList, ...res];
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
