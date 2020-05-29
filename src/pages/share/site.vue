@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="painter">
       <view class="canvas-box">
         <view class="cent">

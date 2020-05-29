@@ -1,5 +1,5 @@
 <template>
-  <view class="like-page">
+  <qui-page :data-qui-theme="theme" class="like-page">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -65,7 +65,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
-  </view>
+  </qui-page>
 </template>
 
 <script>

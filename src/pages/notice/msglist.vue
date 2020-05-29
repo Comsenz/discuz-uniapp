@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="chat-box">
       <!-- 消息内容 -->
       <scroll-view

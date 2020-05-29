@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="authen" @click.stop="toggleBox">
       <view class="authen-input" @click.stop="fourse">
         <view class="authen-tit">

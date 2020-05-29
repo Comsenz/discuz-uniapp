@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="post-box">
       <view class="post-box__title" v-if="type === 1">
         <input
@@ -1090,16 +1090,6 @@ export default {
   width: 100%;
   height: 9rpx;
   background: --color(--qui-BG-ED);
-}
-.popup-share-btn {
-  height: 100rpx;
-  font-size: $fg-f28;
-  line-height: 90rpx;
-  color: #666;
-  text-align: center;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
 }
 
 .emoji-bd {
