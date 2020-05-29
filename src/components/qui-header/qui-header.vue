@@ -9,11 +9,11 @@
     </view>
     <view class="circleDet">
       <text>
-        <text class=circleDet-txt>{{ t.theme }}</text>
+        <text class="circleDet-txt">{{ t.theme }}</text>
         <text class="circleDet-num">{{ themeNum }}</text>
       </text>
       <text>
-        <text class=circleDet-txt>{{ t.homecontent }}</text>
+        <text class="circleDet-txt">{{ t.homecontent }}</text>
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
 

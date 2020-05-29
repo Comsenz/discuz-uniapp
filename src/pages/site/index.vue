@@ -62,7 +62,7 @@
             class="site-item__owner-avatar"
             :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="jumpUserPage(item.id)"
+            @tap="jumpUserPage(siteInfo.set_site.site_author.id)"
           ></image>
           <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
         </view>
