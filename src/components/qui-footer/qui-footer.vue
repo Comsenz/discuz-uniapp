@@ -39,7 +39,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="46"
+                  size="56"
                   color="#777777"
                 ></qui-icon>
               </view>

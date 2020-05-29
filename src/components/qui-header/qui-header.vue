@@ -105,7 +105,6 @@ export default {
     color: --color(--qui-FC-FFF);
     text-align: center;
     opacity: 0.5;
-    // border-bottom: 1rpx solid #ccc;
     text {
       // padding: 0 15rpx;
       font-size: $fg-f26;
@@ -115,6 +114,7 @@ export default {
   }
   .circleDet-num {
     padding-left: 15rpx;
+    font-size: $fg-f28;
     color: --color(--qui-BG-2);
   }
   .circleDet-share {

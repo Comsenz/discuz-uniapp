@@ -245,14 +245,10 @@ export default {
       playIndex: null,
     };
   },
-  // onLoad() {
-  //   // 首页导航栏分类列表
-  //   this.loadCategories();
-  //   // 首页主题置顶列表
-  //   this.loadThreadsSticky();
-  //   // 首页主题内容列表
-  //   this.loadThreads();
-  // },
+  props: ['tagId'],
+  created() {
+    console.log(this.tagId, '这是分类呢')
+  },
   mounted() {
     const query = uni.createSelectorQuery().in(this);
     query
@@ -292,11 +288,18 @@ export default {
 
     // 切换选项卡
     async toggleTab(dataInfo) {
+      console.log(dataInfo, '切换选项啦')
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
+      console.log(this.tagId, '我就看看能不能拿到你')
+      if (this.tagId !== ''){
+        this.tagId = dataInfo.id
+      };
+      this.threadEssence = '';
+      this.threadFollow = 0;
       this.currentIndex = dataInfo.index;
       this.setCategoryId(this.categoryId);
       this.setCategoryIndex(this.currentIndex);
