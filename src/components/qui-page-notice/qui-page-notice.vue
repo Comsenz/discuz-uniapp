@@ -4,8 +4,8 @@
       <uni-nav-bar
         :title="title"
         fixed
-        :color="theme === 'light' ? '#000000' : '#ffffff'"
-        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
+        :color="theme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="theme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <!-- 通知类型列表 -->
@@ -100,7 +100,7 @@ export default {
         { id: 1, title: 'notice.relate', type: 'related', unReadNum: 0, border: true },
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
         { id: 3, title: 'notice.like', type: 'liked', unReadNum: 0, border: true },
-        { id: 4, title: 'notice.reward', type: 'rewarded', unReadNum: 0, border: true },
+        { id: 4, title: 'notice.reward', type: 'rewarded,withdrawal', unReadNum: 0, border: true },
         { id: 5, title: 'notice.system', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more', // 上拉加载状态
