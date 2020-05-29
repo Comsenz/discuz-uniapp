@@ -29,11 +29,11 @@ export default {
     },
     name: {
       type: String,
-      default: 'icon-loading1',
+      default: 'icon-load',
     },
     size: {
       type: [Number, String],
-      default: 30,
+      default: 40,
     },
     textSize: {
       type: [Number, String],
