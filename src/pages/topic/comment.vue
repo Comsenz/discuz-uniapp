@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="content bg" v-if="loadPostStatus">
+  <qui-page :data-qui-theme="theme" class="content bg" v-if="loaded">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -232,6 +232,9 @@
       </view>
     </uni-popup>
   </qui-page>
+  <view v-else class="loading">
+    <u-loading :size="60"></u-loading>
+  </view>
 </template>
 
 <script>
@@ -249,11 +252,10 @@ export default {
       threadId: '',
       commentId: '',
       thread: {},
-      loadPostStatus: false,
       // post: {},
       loadDetailStatus: {},
       status: false,
-      postStatus: false,
+      // postStatus: false,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       posts: [],
       commentIndex: '', //当前回复的index
@@ -388,7 +390,7 @@ export default {
       this.loadPostStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
-          this.postStatus = true;
+          this.loaded = true;
         }),
       );
     },
