@@ -11,6 +11,7 @@ export const DISCUZ_REQUEST_HOST = process.env.VUE_APP_REQUEST_HOST;
  */
 // 存储到 cookie 中的当前语言 key 值
 export const COOKIE_CURRENT_LANGUAGE = '__discuzq_lang';
+export const STORGE_GET_USER_TIME = '__discuzq_getusertime';
 
 /**
  * 主题

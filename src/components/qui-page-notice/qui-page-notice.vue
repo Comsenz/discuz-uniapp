@@ -183,6 +183,8 @@ export default {
     },
     // 跳转至 @我的/回复我的/点赞我的/财务通知/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
+      // 如果有未读消息，点击时请求并更新消息信息
+      if (item.unReadNum) this.getUserInfo(true);
       uni.navigateTo({
         url: `/pages/notice/notice?title=${this.i18n.t(item.title)}&type=${item.type}&unReadNum=${
           item.unReadNum
