@@ -238,21 +238,25 @@ export default {
         if (res) {
           this.getGroupList();
           this.pageNum = 1;
-          // const params = {
-          //   include: 'groups',
-          //   'page[number]': this.pageNum,
-          //   'page[limit]': this.pageSize,
-          //   'filter[username]': `*${this.searchText}*`,
-          // };
-          // this.$store.dispatch('jv/get', ['users', { params }]).then( res => {
-          //   console.log('内容为空的搜索：', res);
-          //   if (res && res._jv) {
-          //     delete res._jv;
-          //     this.userList = res
-          //     this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-          //   }
-          // });
+          this.getList();
           this.$refs.popup.close();
+        }
+      });
+    },
+    getList() {
+      const params = {
+        include: 'groups',
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
+        'filter[username]': `*${this.searchText}*`,
+      };
+      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+        console.log('第一页的数据：', res);
+        if (res && res._jv) {
+          delete res._jv;
+          this.userList = res;
+          this.checkAvatar.splice(0, this.checkAvatar.length);
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });
     },
