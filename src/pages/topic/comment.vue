@@ -31,7 +31,10 @@
                       "
                       alt
                       @click="personJump"
+                      @error="imageError"
+                      v-if="imageStatus"
                     ></image>
+                    <image v-else src="/static/noavatar.gif"></image>
                   </view>
                   <view class="thread__header__title">
                     <view class="thread__header__title__top">
@@ -119,7 +122,7 @@
                 :comment-avatar-url="commentPost.user.avatarUrl"
                 :user-name="commentPost.user.username"
                 :is-liked="commentPost.isLiked"
-                user-role="管理员"
+                :user-role="commentPost.user.groups"
                 :comment-time="commentPost.createdAt"
                 :comment-status="commentPost.isApproved"
                 :comment-content="commentPost.contentHtml"
@@ -303,6 +306,7 @@ export default {
       pageSize: 5, //这是主题回复每页数据条数
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
+      imageStatus: true, // 头像地址错误时显示默认头像
     };
   },
   computed: {
@@ -449,11 +453,11 @@ export default {
             if (data.isLiked) {
               // 未点赞时，点击点赞
               this.post.likedUsers.unshift(this.user);
-              this.post.likeCount++;
+              // this.post.likeCount++;
             } else {
               // 已点赞时，取消点赞
               this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              this.post.firstPost.likeCount--;
+              // this.post.firstPost.likeCount--;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -478,11 +482,11 @@ export default {
             if (data.isLiked) {
               // 评论点赞成功
               console.log('点赞数加1');
-              this.postComments[this.commentIndex].likeCount++;
+              // this.postComments[this.commentIndex].likeCount++;
             } else {
               // 评论点赞失败
               console.log('点赞数减1');
-              this.postComments[this.commentIndex].likeCount--;
+              // this.postComments[this.commentIndex].likeCount--;
             }
           }
         })
@@ -561,7 +565,7 @@ export default {
           } else {
             this.contentnomoreVal = this.t.noMoreData;
           }
-          console.log(this.postComments, '&&&&&&~~~~~~!');
+          console.log(this.postComments, '~~~~~~~~~~~~~~~~~&&&&&&~~~~~~!');
 
           this.postsStatus = true;
         }),
@@ -686,6 +690,10 @@ export default {
       }
       this.pageNum += 1;
       this.loadPostComments();
+    },
+    // 头像失效
+    imageError() {
+      this.imageStatus = false;
     },
   },
 };
@@ -1019,25 +1027,11 @@ page {
   /* #endif */
   background: --color(--qui-BG-2);
 }
-.popup-share-content {
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  height: 250rpx;
-  padding-top: 40rpx;
-  padding-right: 97rpx;
-  padding-left: 98rpx;
-  background: --color(--qui-BG-BTN-GRAY-1);
-  // padding: 15px;
-}
 .popup-share-box {
   width: 120rpx;
   height: 120rpx;
   line-height: 120rpx;
-  background: --color(--qui-BG-2);
+  background: --color(--qui-BG-40);
   border-radius: 10px;
 }
 .popup-share-content-box {
@@ -1071,17 +1065,7 @@ page {
 .popup-share-content-text {
   padding-top: 5px;
   font-size: $fg-f26;
-  color: #333;
-}
-.popup-share-btn {
-  height: 100rpx;
-  font-size: $fg-f28;
-  line-height: 90rpx;
-  color: #666;
-  text-align: center;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
+  color: --color(--qui-FC-TAG);
 }
 .popup-share-content-space {
   width: 100%;

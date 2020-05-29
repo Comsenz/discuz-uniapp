@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="new" @click.stop="toggleBox">
       <view class="new-phon" v-if="phon">
         <view class="new-phon-test">

@@ -38,10 +38,11 @@
         <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
-          :title="type[item.type - 1]"
+          :title="item.titleType"
           :brief="timeHandle(item.created_at)"
           :addon="'-￥' + item.amount"
-          :brief-right="item.status == 1 ? i18n.t('profile.paid') : i18n.t('profile.tobepaid')"
+          :brief-right="statusType[item.status]"
+          @click="toTopic(item)"
         ></qui-cell-item>
         <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
@@ -70,12 +71,13 @@ export default {
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
       dataList: [],
       filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
-      type: [
-        this.i18n.t('profile.register'),
-        this.i18n.t('profile.reward'),
-        this.i18n.t('profile.paytheme'),
-        this.i18n.t('profile.paygroup'),
-      ],
+      statusType: {
+        0: this.i18n.t('profile.tobepaid'),
+        1: this.i18n.t('profile.paid'),
+        2: this.i18n.t('profile.cancelorder'),
+        3: this.i18n.t('profile.payfail'),
+        4: this.i18n.t('profile.orderexpired'),
+      },
       filterList: [
         {
           title: this.i18n.t('profile.type'),
@@ -83,6 +85,9 @@ export default {
             { label: this.i18n.t('profile.all'), value: '', selected: true },
             { label: this.i18n.t('profile.tobepaid'), value: 0 },
             { label: this.i18n.t('profile.paid'), value: 1 },
+            { label: this.i18n.t('profile.cancelorder'), value: 2 },
+            { label: this.i18n.t('profile.payfail'), value: 3 },
+            { label: this.i18n.t('profile.orderexpired'), value: 4 },
           ],
         },
       ],
@@ -116,20 +121,20 @@ export default {
       this.loadingType = 'loading';
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
-      // status 0待付款，1已付款
+      // status 0 待付款，1 已付款 ，2取消订单，3支付失败，4 订单已过期
       const params = {
         include: ['user', 'thread', 'thread.firstPost'],
         'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[start_time]': `${this.date}-01-00-00-00 `,
-        'filter[end_time]': `${this.date}-${days}-00-00-00 `,
+        'filter[start_time]': `${this.date}-01-00-00-00`,
+        'filter[end_time]': `${this.date}-${days}-00-00-00`,
       };
       if (type && type === 'filter') {
         params.pageNum = 1;
         this.dataList = [];
       }
-      if (this.filterSelected.value) {
+      if (this.filterSelected.value || this.filterSelected.value === 0) {
         params['filter[status]'] = this.filterSelected.value;
       }
       status
@@ -138,9 +143,56 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
+          res.forEach((item, index) => {
+            let desc = this.handleTitle(item);
+            // 截取42个字
+            if (desc.length > 42) {
+              desc = `${desc.substr(0, 42)}...`;
+            }
+            res[index].titleType = desc;
+          });
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           this.dataList = [...this.dataList, ...res];
         });
+    },
+    toTopic(data) {
+      if (!data.thread) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${data.thread._jv.id}`,
+      });
+    },
+    // 处理主题相关的数据
+    handleTitle(item) {
+      switch (item.type) {
+        case 1: {
+          // 注册
+          return this.i18n.t('profile.register');
+        }
+        case 2: {
+          // 打赏支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.thread
+            ? item.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.givearewardforthetheme')} ${thread}`;
+        }
+        case 3: {
+          // 付费主题支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.thread
+            ? item.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.paidtoview')} ${thread}`;
+        }
+        case 4: {
+          // 付费用户组
+          return this.i18n.t('profile.paygroup');
+        }
+        default:
+          return item.type;
+      }
     },
     // 下拉加载
     pullDown() {

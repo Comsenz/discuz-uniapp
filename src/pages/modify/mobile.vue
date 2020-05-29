@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="input" @click.stop="toggleBox">
       <view class="mobile-titel">
         {{ i18n.t('modify.verifyoldphon') }}

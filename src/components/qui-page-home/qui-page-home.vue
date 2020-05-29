@@ -13,11 +13,13 @@
         v-if="navbarShow"
         :title="forums.set_site.site_name"
         fixed="true"
+        :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <qui-header
         v-if="headerShow"
-        :head-img="forums.set_site.site_logo"
+        :head-img="forums.set_site.site_header_logo"
         :background-head-full-img="forums.set_site.site_background_image"
         :theme="theme"
         :theme-num="forums.other.count_users"
@@ -184,6 +186,7 @@ import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
+  props: ['tagId', 'navTheme'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
@@ -245,24 +248,15 @@ export default {
       playIndex: null,
     };
   },
-  // onLoad() {
-  //   // 首页导航栏分类列表
-  //   this.loadCategories();
-  //   // 首页主题置顶列表
-  //   this.loadThreadsSticky();
-  //   // 首页主题内容列表
-  //   this.loadThreads();
-  // },
   mounted() {
-    const query = uni.createSelectorQuery().in(this);
-    query
-      .select('.nav')
-      .boundingClientRect(data => {
-        this.navTop = data.top;
-        this.navHeight = data.height;
-      })
-      .exec();
-    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
+    uni.getSystemInfo({
+      success: res => {
+        const rpx = res.screenWidth / 750;
+        this.navTop = 400 /* qui-header 的高度 */ * rpx;
+        this.navHeight = 102 /* nav的高度 */ * rpx;
+        this.navbarHeight = res.statusBarHeight + 44 /* uni-nav-bar的高度 */;
+      },
+    });
   },
   methods: {
     ...mapMutations({
@@ -289,14 +283,28 @@ export default {
       this.navbarShow = false;
       this.headerShow = true;
     },
+    // 初始化选中的选项卡
+    initCategoryInfo() {
+      this.categoryId = this.$props.tagId || 0;
+      for (let i = 0, len = this.categories.length; i < len; i += 1) {
+        if (+this.categories[i]._jv.id === +this.categoryId) {
+          this.currentIndex = i;
+          return;
+        }
+      }
+      // console.log(this.categoryId, this.currentIndex, 'id-----index')
+    },
 
     // 切换选项卡
     async toggleTab(dataInfo) {
+      console.log(dataInfo, '切换选项啦');
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
       this.checkoutTheme = true;
       this.categoryId = dataInfo.id;
+      this.threadEssence = '';
+      this.threadFollow = 0;
       this.currentIndex = dataInfo.index;
       this.setCategoryId(this.categoryId);
       this.setCategoryIndex(this.currentIndex);
@@ -478,8 +486,8 @@ export default {
       this.cancel();
     },
     // 首页导航栏分类列表数据
-    loadCategories() {
-      this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+    async loadCategories() {
+      await this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
         const resData = [...data] || [];
         this.categories = [
           {
@@ -580,12 +588,14 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params).then(data => {
+        console.log('data', data);
         const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
-        if (data.isLiked) {
-          likedPost.likeCount += 1;
-        } else {
-          likedPost.likeCount -= 1;
-        }
+        console.log('likedPost', likedPost);
+        // if (data.isLiked) {
+        //   likedPost.likeCount += 1;
+        // } else {
+        //   likedPost.likeCount -= 1;
+        // }
       });
     },
     // 上拉加载
@@ -604,9 +614,10 @@ export default {
       this.playIndex = index;
     },
     // 组件初始化请求接口
-    ontrueGetList() {
+    async ontrueGetList() {
       // 首页导航栏分类列表
-      this.loadCategories();
+      await this.loadCategories();
+      this.initCategoryInfo();
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
@@ -674,7 +685,7 @@ export default {
     line-height: 35rpx;
     color: --color(--qui-FC-777);
     text-align: center;
-    background: --color(--qui-BOR-ED);
+    background: --color(--qui-BG-777);
     border-radius: 6rpx;
     transition: $switch-theme-time;
   }

@@ -130,7 +130,6 @@ export default {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
       data.groupsName = data.groups ? data.groups[0].name : '';
       this.setNum(data);
-      console.log('laskjdflksjdflsdf', data);
       this.userInfo = data;
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-at-member-page-box">
+  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
     <!-- 搜索成员 -->
     <view class="manage-users-search">
       <view class="search">
@@ -47,24 +47,14 @@
               :value="item.groups[Object.keys(item.groups || {})[0]].name"
               :icon="item.avatarUrl || '/static/noavatar.gif'"
             >
-              <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
+              <checkbox
+                slot="rightIcon"
+                :value="JSON.stringify(item)"
+                :checked="checkAvatar.find(value => value.id === item.id)"
+              ></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <!-- <checkbox-group @change="changeCheck" v-else>
-          <label v-for="item in userListShow" :key="item.id">
-            <qui-avatar-cell
-              center
-              right-color="#aaa"
-              :mark="item.id"
-              :title="item.username"
-              :value="item.groups[Object.keys(item.groups || {})[0]].name"
-              :icon="item.avatarUrl || '/static/noavatar.gif'"
-            >
-              <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
-            </qui-avatar-cell>
-          </label>
-        </checkbox-group> -->
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
@@ -97,7 +87,7 @@
         </view>
       </scroll-view>
     </uni-popup>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -233,9 +223,26 @@ export default {
         console.log('修改用户组res', res);
         if (res) {
           this.getGroupList();
-          this.pageNum += 1;
-          this.clearSearch();
+          this.pageNum = 1;
+          this.getList();
           this.$refs.popup.close();
+        }
+      });
+    },
+    getList() {
+      const params = {
+        include: 'groups',
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
+        'filter[username]': `*${this.searchText}*`,
+      };
+      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+        console.log('第一页的数据：', res);
+        if (res && res._jv) {
+          delete res._jv;
+          this.userList = res;
+          this.checkAvatar.splice(0, this.checkAvatar.length);
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });
     },

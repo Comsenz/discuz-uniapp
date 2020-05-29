@@ -1,53 +1,40 @@
 <template>
   <view class="like-page">
-    <scroll-view
-      scroll-y="true"
-      scroll-with-animation="true"
-      @scrolltolower="pullDown"
-      show-scrollbar="false"
-      class="scroll-y"
-    >
-      <qui-content
-        v-for="(item, index) in data"
-        :ref="'myVideo' + index"
-        :key="index"
-        :currentindex="index"
-        :pay-status="(item.price > 0 && item.paid) || item.price == 0"
-        :user-name="item.user.username"
-        :theme-image="item.user.avatarUrl"
-        :theme-btn="item.canHide"
-        :theme-reply-btn="item.canReply"
-        :user-groups="item.user.groups"
-        :theme-time="item.createdAt"
-        :tags="[item.category]"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-        :thread-type="item.type"
-        :media-url="item.threadVideo.media_url"
-        :is-great="item.firstPost.isLiked"
-        :theme-like="item.firstPost.likeCount"
-        :theme-comment="item.postCount - 1"
-        :images-list="item.firstPost.images"
-        :theme-essence="item.isEssence"
-        :video-width="item.threadVideo.width"
-        :video-height="item.threadVideo.height"
-        :video-id="item.threadVideo._jv.id"
-        :cover-image="item.threadVideo.cover_url"
-        @click="handleClickShare(item._jv.id)"
-        @handleIsGreat="
-          handleIsGreat(
-            item.firstPost._jv.id,
-            item.firstPost.canLike,
-            item.firstPost.isLiked,
-            index,
-          )
-        "
-        @commentClick="commentClick(item._jv.id)"
-        @contentClick="contentClick(item._jv.id)"
-        @headClick="headClick(item.user._jv.id)"
-        @videoPlay="handleVideoPlay"
-      ></qui-content>
-      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
-    </scroll-view>
+    <qui-content
+      v-for="(item, index) in data"
+      :ref="'myVideo' + index"
+      :key="index"
+      :currentindex="index"
+      :pay-status="(item.price > 0 && item.paid) || item.price == 0"
+      :user-name="item.user.username"
+      :theme-image="item.user.avatarUrl"
+      :theme-btn="item.canHide"
+      :theme-reply-btn="item.canReply"
+      :user-groups="item.user.groups"
+      :theme-time="item.createdAt"
+      :tags="[item.category]"
+      :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+      :thread-type="item.type"
+      :media-url="item.threadVideo.media_url"
+      :is-great="item.firstPost.isLiked"
+      :theme-like="item.firstPost.likeCount"
+      :theme-comment="item.postCount - 1"
+      :images-list="item.firstPost.images"
+      :theme-essence="item.isEssence"
+      :video-width="item.threadVideo.width"
+      :video-height="item.threadVideo.height"
+      :video-id="item.threadVideo._jv.id"
+      :cover-image="item.threadVideo.cover_url"
+      @click="handleClickShare(item._jv.id)"
+      @handleIsGreat="
+        handleIsGreat(item.firstPost._jv.id, item.firstPost.canLike, item.firstPost.isLiked, index)
+      "
+      @commentClick="commentClick(item._jv.id)"
+      @contentClick="contentClick(item._jv.id)"
+      @headClick="headClick(item.user._jv.id)"
+      @videoPlay="handleVideoPlay"
+    ></qui-content>
+    <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -192,7 +179,7 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(res => {
+      this.$store.dispatch('jv/patch', params).then(() => {
         if (isLiked && this.currentLoginId === this.userId) {
           const data = JSON.parse(JSON.stringify(this.data));
           data.splice(index, 1);
@@ -200,9 +187,9 @@ export default {
           this.$emit('changeFollow', { userId: this.userId });
         } else {
           // 修改点赞
-          const likedData = this.data[index];
-          const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
-          likedData.firstPost.likeCount = count;
+          // const likedData = this.data[index];
+          // const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
+          // likedData.firstPost.likeCount = count;
         }
       });
     },
@@ -228,8 +215,5 @@ export default {
 /deep/ .themeItem {
   margin-right: 0;
   margin-left: 0;
-}
-.scroll-y {
-  max-height: calc(100vh - 297rpx);
 }
 </style>

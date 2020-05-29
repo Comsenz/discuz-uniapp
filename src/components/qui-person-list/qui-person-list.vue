@@ -14,7 +14,10 @@
           "
           class="det-per-head"
           @click="personJump(person.id)"
+          @error="imageError"
+          v-if="imageStatus"
         ></image>
+        <image v-else src="/static/noavatar.gif"></image>
       </view>
     </view>
     <view class="fold-box" :style="{ transform: transform }" v-if="personNum > limitCount">
@@ -94,6 +97,7 @@ export default {
       personRes: [],
       foldStatus: false,
       transform: '',
+      imageStatus: true, // 头像地址错误时显示默认头像
     };
   },
   onLoad() {},
@@ -149,6 +153,10 @@ export default {
     },
     btnClick(param) {
       this.$emit('btnClick', param);
+    },
+    // 头像失效
+    imageError() {
+      this.imageStatus = false;
     },
   },
 };

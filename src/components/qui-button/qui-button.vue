@@ -115,14 +115,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 // css
-$default-bg-color: rgba(249, 250, 252, 1);
+$default-bg-color: --color(--qui-BG-F9F);
 $primary-bg-color: rgba(24, 120, 243, 1);
 $success-bg-color: #07c160;
 $danger-bg-color: #ee0a24;
 $plain-bg-color: #fff;
 
-$txt-color-grey: rgba(119, 119, 119, 1);
+$txt-color-grey: --color(--qui-FC-TAG);
 $txt-color-white: #fff;
 $text-color-333: #333;
 

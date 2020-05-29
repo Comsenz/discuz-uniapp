@@ -160,14 +160,12 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .filter-modal {
-  // position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 999;
   display: flex;
   width: 100%;
-  // min-height: 600rpx;
   height: 100vh;
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
@@ -239,14 +237,14 @@ export default {
   margin-bottom: 20rpx;
   font-size: 26rpx;
   line-height: 70rpx;
-  color: --color(--qui-FC-777);
-  background: --color(--qui-BG-BTN-GRAY);
-  border: 2rpx solid --color(--qui-BG-ED);
+  color: --color(--qui-FC-TAG);
+  background: --color(--qui-BG-F9F);
+  border: 2rpx solid --color(--qui-BOR-CCDD);
   border-radius: 7rpx;
   &.active {
-    color: --color(--qui-BG-2);
-    background: --color(--qui-BG-HIGH-LIGHT);
-    border: 0;
+    color: --color(--qui-FC-FFF);
+    background: --color(--qui-MAIN);
+    border-color: transparent;
   }
 }
 </style>

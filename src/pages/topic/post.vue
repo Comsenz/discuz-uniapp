@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="post-box">
       <view class="post-box__title" v-if="type === 1">
         <input
@@ -53,10 +53,10 @@
         auto-height="true"
         :maxlength="-1"
         :focus="type !== 1"
-        v-show="!emojiShow"
+        v-if="!emojiShow"
         @blur="contBlur"
       ></textarea>
-      <view class="post-box__con-text post-box__con-text--static" v-show="emojiShow">
+      <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
         <text>{{ textAreaValue }}</text>
       </view>
       <qui-uploader
@@ -392,7 +392,7 @@ export default {
         compressed: false,
         sourceType: ['camera', 'album'],
         success(res) {
-          _this.$refs.toast.showLoading({
+          _this.$refs.toast.show({
             message: _this.i18n.t('uploader.videoUploading'),
           });
           _this.videoName = res.name ? res.name : _this.i18n.t('discuzq.post.fromWeChatApplet');
@@ -486,10 +486,11 @@ export default {
     },
 
     // 图片上传相关方法
-    uploadClick() {
-      this.uploadStatus = false;
+    uploadClick(e) {
+      this.uploadStatus = e;
     },
     uploadChange(e, status) {
+      console.log(e, status);
       this.uploadFile = e;
       this.uploadStatus = status;
     },
@@ -569,6 +570,7 @@ export default {
             this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
             status = false;
           } else if (!this.uploadStatus) {
+            console.log(this.uploadStatus, '这是类型1的上传状态');
             this.$refs.toast.show({
               message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
             });
@@ -628,7 +630,7 @@ export default {
           this.postThread().then(res => {
             this.postLoading = false;
             uni.hideLoading();
-            if (res._jv.json.data.id) {
+            if (res && res._jv.json.data.id) {
               uni.redirectTo({
                 url: `/pages/topic/index?id=${res._jv.json.data.id}`,
               });
@@ -1079,7 +1081,6 @@ export default {
   height: 477rpx;
   padding: 40rpx 45rpx;
   text-align: center;
-  background: --color(--qui-BG-BTN-GRAY-1);
   box-sizing: border-box;
   .popup-title {
     font-size: $fg-f28;
@@ -1089,16 +1090,6 @@ export default {
   width: 100%;
   height: 9rpx;
   background: --color(--qui-BG-ED);
-}
-.popup-share-btn {
-  height: 100rpx;
-  font-size: $fg-f28;
-  line-height: 90rpx;
-  color: #666;
-  text-align: center;
-  border-top-color: #f5f5f5;
-  border-top-style: solid;
-  border-top-width: 1px;
 }
 
 .emoji-bd {

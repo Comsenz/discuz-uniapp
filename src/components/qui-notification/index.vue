@@ -34,7 +34,9 @@
                   {{ i18n.t('notice.likedMe') }}
                 </text>
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
-                  {{ i18n.t('notice.rewardedMe') }}
+                  {{
+                    item.order_type === 3 ? i18n.t('notice.payedMe') : i18n.t('notice.rewardedMe')
+                  }}
                 </text>
               </view>
               <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
@@ -42,6 +44,9 @@
           </view>
           <view class="list-box__notice__hr">
             <text class="list-box__notice__hr__amount" v-if="item.type === 'rewarded'">
+              {{ item.money }}
+            </text>
+            <text class="list-box__notice__hr__cash-amount" v-if="item.type === 'withdrawal'">
               {{ item.money }}
             </text>
             <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
@@ -54,6 +59,14 @@
             v-html="item.post_content"
             @click="jumpMyComment(item)"
           ></view>
+          <view class="list-box__notice__con__wrap" v-if="item.type === 'withdrawal'">
+            <view v-if="item.cash_status === 2">
+              {{ i18n.t('notice.approved') }}
+            </view>
+            <view v-if="item.cash_status === 3">
+              {{ i18n.t('notice.unapproved') }}
+            </view>
+          </view>
           <view
             class="list-box__notice__con__wrap"
             v-if="item.thread_id"
@@ -209,6 +222,12 @@ export default {
         margin-right: 20rpx;
         font-weight: bold;
         color: --color(--qui-RED);
+      }
+
+      &__cash-amount {
+        margin-right: 20rpx;
+        font-weight: bold;
+        color: --color(--qui-GREEN);
       }
     }
 

@@ -134,15 +134,14 @@ export default {
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
 
-      // 上传图片后返回false状态
-      this.$emit('uploadClick', false);
-
       // 上传图片到本地
       uni.chooseImage({
         count: _this.count - _this.uploadBeforeList.length,
         sizeType: ['original', 'compressed'],
         sourceType: ['album', 'camera'],
         success(res) {
+          // 上传图片后返回false状态
+          _this.$emit('uploadClick', false);
           // 自定义开始上传的效果和回调
           _this.$emit('chooseSuccess');
           const promise = res.tempFiles.map((item, index) => {

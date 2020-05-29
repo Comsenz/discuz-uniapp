@@ -121,8 +121,8 @@ export default {
         'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[start_time]': `${this.date}-01-00-00-00 `,
-        'filter[end_time]': `${this.date}-${days}-00-00-00 `,
+        'filter[start_time]': `${this.date}-01-00-00-00`,
+        'filter[end_time]': `${this.date}-${days}-00-00-00`,
       };
       if (type && type === 'filter') {
         params.pageNum = 1;
@@ -169,7 +169,7 @@ export default {
           const thread = item.order.thread
             ? item.order.thread.firstPost.summary.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
-          return `${this.i18n.t('profile.givearewardforyourtheme')} ${thread}`;
+          return `${this.i18n.t('profile.givearewardforthetheme')} ${thread}`;
         }
         case 60: {
           // 付费主题收入

@@ -130,6 +130,7 @@ export default {
     };
   },
   onLoad() {
+    uni.hideHomeButton();
     this.getSiteInfo();
     this.getPermissions();
   },

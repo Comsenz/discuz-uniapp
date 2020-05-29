@@ -5,12 +5,14 @@
         <qui-page-home
           v-if="showHome"
           ref="home"
+          :nav-theme="theme"
+          :tag-id="tagId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
         <qui-page-notice
+          :nav-theme="theme"
           ref="quinotice"
-          :theme="theme"
           :style="{ display: show_index === 1 ? 'block' : 'none' }"
         ></qui-page-notice>
         <qui-page-my
@@ -36,10 +38,14 @@ export default {
       show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
       showHome: false,
+      tagId: 0, // 标签ID
     };
   },
-  onLoad() {
-    if (!this.showHome) {
+  onLoad(option) {
+    if (option.id !== '') {
+      this.tagId = option.id;
+    }
+    if (this.showHome) {
       this.handlePageLoaded();
     }
   },
@@ -60,7 +66,7 @@ export default {
   methods: {
     // 切换组件
     cut_index(e, type, isTabBar) {
-      const tabs = ['home', 'quinotice', 'quimy', 'information'];
+      const tabs = ['home', 'quinotice', 'quimy'];
       const currentTab = tabs[type];
 
       if (

@@ -1,10 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content">
-    <!--<view
-      v-if="loadDetailStatusId == 0"
-      class="skeletonScreen"
-      :style="{ height: windowHeight + 'px' }"
-    ></view>-->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -123,7 +118,7 @@
                 :comment-avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-liked="post.isLiked"
-                user-role="管理员"
+                :user-role="post.user.groups"
                 :comment-time="post.createdAt"
                 :comment-status="post.isApproved"
                 :comment-content="post.summary"
@@ -543,6 +538,7 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(this.user, '这是用户信息');
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -692,12 +688,12 @@ export default {
         if (this.isLiked) {
           // 未点赞时，点击点赞'
           post.likedUsers.unshift(this.user);
-          post.likeCount++;
+          // post.likeCount++;
         } else {
           post.likedUsers.forEach((value, key) => {
             value.id === this.user.id && post.likedUsers.splice(key, 1);
           });
-          post.likeCount--;
+          // post.likeCount--;
         }
 
         jvObj.relationships = {
@@ -767,10 +763,10 @@ export default {
             // 评论点赞
             this.posts[this.postIndex].isLiked = data.isLiked;
             if (data.isLiked) {
-              this.posts[this.postIndex].likeCount++;
+              // this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
             } else {
-              this.posts[this.postIndex].likeCount--;
+              // this.posts[this.postIndex].likeCount--;
               console.log('点赞数减1');
             }
           }
@@ -1101,6 +1097,7 @@ export default {
 
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
+      const _this = this;
       uni.requestPayment({
         provider: 'wxpay',
         timeStamp: timeStamp,
@@ -1109,12 +1106,27 @@ export default {
         signType: signType,
         paySign: paySign,
         success: function(res) {
-          alert('微信支付成功');
+          console.log('微信支付成功');
           console.log('success:' + JSON.stringify(res));
+          // console.log(_this.payTypeVal, '支付类型');
+          _this.payShowStatus = false;
+          _this.coverLoading = false;
+          if (_this.payTypeVal == 0) {
+            // 这是主题支付，支付完成刷新详情页，重新请求数据
+            _this.loadThread();
+          } else if (_this.payTypeVal == 1) {
+            // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+            _this.rewardArr = _this.rewardArr.concat([_this.user]);
+            _this.thread.rewardedUsers = _this.rewardArr;
+          }
+          _this.$refs.toast.show({ message: _this.p.paySuccess });
         },
         fail: function(err) {
-          alert('微信支付失败');
+          console.log('微信支付失败');
           console.log('fail:' + JSON.stringify(err));
+          _this.payShowStatus = false;
+          _this.coverLoading = false;
+          _this.$refs.toast.show({ message: _this.p.payFail });
         },
       });
     },
@@ -1165,7 +1177,7 @@ export default {
     // 管理菜单内标签点击事件
     selectChoice(param) {
       if (param.type == '0') {
-        uni.navigateTo({
+        uni.redirectTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
       } else {
@@ -1192,7 +1204,9 @@ export default {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
       }
       this.price = this.thread.price;
-      this.$refs.payShow.payClickShow(this.payTypeVal);
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
@@ -1255,7 +1269,10 @@ export default {
       this.customAmountStatus = false;
       this.payShowStatus = true;
       // this.$refs.payShow.payClickShow();
-      this.$refs.payShow.payClickShow(this.payTypeVal);
+      // this.$refs.payShow.payClickShow(this.payTypeVal);
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
