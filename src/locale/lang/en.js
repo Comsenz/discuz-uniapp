@@ -159,6 +159,7 @@ export default {
       likedMe: 'Liked me',
       reward: 'Reward Me',
       rewardedMe: 'Rewarded me',
+      payedMe: 'Payed me',
       system: 'System notices',
       admin: 'Admin',
       delete: 'Delete',
