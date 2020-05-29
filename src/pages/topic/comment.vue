@@ -255,7 +255,6 @@ export default {
       // post: {},
       loadDetailStatus: {},
       status: false,
-      // postStatus: false,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       posts: [],
       commentIndex: '', //当前回复的index
