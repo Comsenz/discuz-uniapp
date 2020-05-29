@@ -552,6 +552,8 @@ export default {
     paidtoseeyourtheme: '付费查看了你的主题',
     paidtoview: '付费查看了',
     orderexpired: '订单过期',
+    payfail: '支付失败',
+    cancelorder: '取消订单',
   },
   site: {
     circleintroduction: '站点介绍',

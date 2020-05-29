@@ -169,7 +169,7 @@ export default {
           const thread = item.order.thread
             ? item.order.thread.firstPost.summary.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
-          return `${this.i18n.t('profile.givearewardforyourtheme')} ${thread}`;
+          return `${this.i18n.t('profile.givearewardforthetheme')} ${thread}`;
         }
         case 60: {
           // 付费主题收入

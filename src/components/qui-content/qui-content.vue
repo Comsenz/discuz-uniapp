@@ -10,7 +10,8 @@
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
           <image
-            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"      @error="imageError"
+            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
+            @error="imageError"
             v-if="imageStatus"
           ></image>
           <image v-else src="/static/noavatar.gif"></image>
@@ -444,7 +445,7 @@ export default {
     },
     // 头像加载失败,显示默认头像
     imageError() {
-        this.imageStatus = false;
+      this.imageStatus = false;
     },
   },
 };
