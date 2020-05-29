@@ -64,15 +64,12 @@ export default {
   padding-top: 40rpx;
   padding-right: 97rpx;
   padding-left: 98rpx;
-  background: --color(--qui-BG-BTN-GRAY-1);
-
-  // padding: 15px;
 }
 .popup-share-box {
   // width: 120rpx;
   height: 120rpx;
   line-height: 120rpx;
-  background: --color(--qui-BG-2);
+  background: --color(--qui-BG-40);
   border-radius: 10px;
 }
 .popup-share-content-box {
@@ -95,6 +92,7 @@ export default {
   width: 120rpx;
   height: 120rpx;
   overflow: hidden;
+  background: --color(--qui-BG-40);
   border-radius: 7rpx;
 }
 .content-image {
@@ -107,7 +105,7 @@ export default {
   padding-top: 5px;
   padding-bottom: 10px;
   font-size: $fg-f26;
-  color: #333;
+  color: --color(--qui-FC-TAG);
 }
 .popup-share-btn {
   height: 100rpx;

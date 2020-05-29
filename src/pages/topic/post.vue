@@ -1081,7 +1081,6 @@ export default {
   height: 477rpx;
   padding: 40rpx 45rpx;
   text-align: center;
-  background: --color(--qui-BG-BTN-GRAY-1);
   box-sizing: border-box;
   .popup-title {
     font-size: $fg-f28;

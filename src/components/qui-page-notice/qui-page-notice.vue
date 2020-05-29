@@ -93,12 +93,6 @@ import user from '@/mixin/user';
 
 export default {
   mixins: [user],
-  props: {
-    theme: {
-      type: String,
-      default: '',
-    },
-  },
   data() {
     return {
       title: this.i18n.t('notice.notice'), // 标题

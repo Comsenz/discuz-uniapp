@@ -228,6 +228,13 @@ export default {
     paymentsucceed: 'Payment succeed',
     paymentfailed: 'Payment failed',
     freezingreason: 'Freezing reason',
+    theuserwasdeleted: 'The user was deleted',
+    thethemewasdeleted: 'The theme was deleted',
+    givearewardforyourtheme: 'Give a reward for your theme',
+    givearewardforthetheme: 'Give a reward for thetheme',
+    paidtoseeyourtheme: 'Paid to see your theme',
+    paidtoview: 'Paid to view',
+    orderexpired: 'Order expired',
   },
   site: {
     circleintroduction: 'Circle introduction',
