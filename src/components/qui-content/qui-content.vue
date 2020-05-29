@@ -51,7 +51,7 @@
             </view>
             <qui-icon
               name="icon-link"
-              color="#00479B"
+              :color="theme === $u.light() ? '#00479B' : '#1E78F3'"
               size="28"
               style="padding-left: 8rpx;"
             ></qui-icon>
@@ -458,7 +458,6 @@ export default {
   }
 }
 .themeItem {
-  // width: 100%;
   padding: 30rpx;
   margin: 0 20rpx 30rpx;
   background: --color(--qui-BG-2);
@@ -466,10 +465,6 @@ export default {
   box-sizing: border-box;
 
   &__header {
-    // display: flex;
-    // width: 100%;
-    // height: 80rpx;
-    // margin-bottom: 12rpx;
     display: inline-flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -573,7 +568,6 @@ export default {
       &__item {
         max-width: 80%;
         max-height: 80%;
-        // border-radius: 100%;
       }
     }
     &__imgtwo {
@@ -606,21 +600,6 @@ export default {
         background: #fff;
       }
     }
-
-    // &__img {
-    //   display: flex;
-    //   justify-content: space-between;
-    //   margin-top: 22rpx;
-    //   line-height: 0;
-
-    //   &__item {
-    //     display: block;
-    //     width: 48%;
-    //     height: 211rpx;
-    //     margin-bottom: 20rpx;
-    //     background: #fff;
-    //   }
-    // }
 
     &__tags {
       display: flex;
@@ -660,10 +639,6 @@ export default {
       .qui-icon {
         margin-right: 15rpx;
       }
-
-      // &__greated {
-      //   // color: rgba(221, 221, 221, 1);
-      // }
     }
 
     &__themeType2 {
@@ -687,7 +662,7 @@ export default {
 .navPost {
   display: inline;
   padding-left: 8rpx;
-  color: #00479b;
+  color: --color(--qui-LINK);
 }
 .themeItem__content__coverimg {
   width: 100%;

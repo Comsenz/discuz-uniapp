@@ -536,7 +536,7 @@ export default {
         line-height: 50rpx;
         color: --color(--qui-FC-TAG);
         text-align: center;
-        background: --color(--qui-BG-TAG);
+        background: --color(--qui-BG-40);
         border-radius: 6rpx;
         transition: $switch-theme-time;
       }

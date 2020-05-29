@@ -115,11 +115,11 @@ export default {
   }
   .circleDet-num {
     padding-left: 15rpx;
-    color: --color(--qui-BG-2);
+    color: --color(--qui-FC-FFF);
   }
   .circleDet-share {
     font-size: $fg-f26;
-    color: --color(--qui-BG-2);
+    color: --color(--qui-FC-FFF);
   }
   .qui-icon {
     padding-right: 18rpx;
