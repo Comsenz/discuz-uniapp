@@ -42,6 +42,7 @@
           :brief="timeHandle(item.created_at)"
           :addon="'-￥' + item.amount"
           :brief-right="statusType[item.status]"
+          @click="toTopic(item)"
         ></qui-cell-item>
         <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
       </scroll-view>
@@ -71,7 +72,7 @@ export default {
       dataList: [],
       filterSelected: { label: this.i18n.t('profile.all'), value: '' }, // 筛选类型
       type: [
-        // 标题类型
+        // 标题类型 1：注册，2：打赏，3：付费主题，4：付费用户组
         this.i18n.t('profile.register'),
         this.i18n.t('profile.reward'),
         this.i18n.t('profile.paytheme'),
@@ -80,6 +81,8 @@ export default {
       statusType: {
         0: this.i18n.t('profile.tobepaid'),
         1: this.i18n.t('profile.paid'),
+        2: this.i18n.t('profile.cancelorder'),
+        3: this.i18n.t('profile.payfail'),
         4: this.i18n.t('profile.orderexpired'),
       },
       filterList: [
@@ -89,6 +92,8 @@ export default {
             { label: this.i18n.t('profile.all'), value: '', selected: true },
             { label: this.i18n.t('profile.tobepaid'), value: 0 },
             { label: this.i18n.t('profile.paid'), value: 1 },
+            { label: this.i18n.t('profile.cancelorder'), value: 2 },
+            { label: this.i18n.t('profile.payfail'), value: 3 },
             { label: this.i18n.t('profile.orderexpired'), value: 4 },
           ],
         },
@@ -123,7 +128,7 @@ export default {
       this.loadingType = 'loading';
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
-      // status 0待付款，1已付款 4订单过期
+      // status 0 待付款，1 已付款 ，2取消订单，3支付失败，4 订单已过期
       const params = {
         include: ['user', 'thread', 'thread.firstPost'],
         'filter[user]': this.userId,
@@ -145,9 +150,48 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
+          res.forEach((item, index) => {
+            let desc = this.handleTitle(item);
+            // 截取42个字
+            if (desc.length > 42) {
+              desc = `${desc.substr(0, 42)}...`;
+            }
+            res[index].change_desc = desc;
+          });
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           this.dataList = [...this.dataList, ...res];
         });
+    },
+    toTopic(data) {
+      if (!data.order || !data.order.thread) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/topic/index?id=${data.order.thread._jv.id}`,
+      });
+    },
+    // 处理主题相关的数据
+    handleTitle(item) {
+      switch (item.type) {
+        case 2: {
+          // 打赏支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.order.thread
+            ? item.order.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.givearewardforthetheme')} ${thread}`;
+        }
+        case 3: {
+          // 付费主题支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.order.thread
+            ? item.order.thread.firstPost.summary.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.paidtoview')} ${thread}`;
+        }
+        default:
+          return item.change_desc;
+      }
     },
     // 下拉加载
     pullDown() {
