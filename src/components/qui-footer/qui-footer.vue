@@ -11,7 +11,7 @@
         <qui-icon
           class="ft-box-icon"
           :name="item.tabsIcon"
-          size="40"
+          size="48"
           :class="{ select: true, active: item.id === sel }"
         ></qui-icon>
         <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
@@ -39,7 +39,7 @@
                 <qui-icon
                   class="content-image"
                   :name="item.icon"
-                  size="46"
+                  size="56"
                   color="#777777"
                 ></qui-icon>
               </view>
@@ -144,6 +144,11 @@ export default {
         return;
       }
 
+      if (!this.forums.other.can_create_thread_in_category) {
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+        return;
+      }
+
       if (this.getCategoryId) {
         const category = this.$store.getters['jv/get'](`categories/${this.getCategoryId}`);
         if (!category.canCreateThread) {
@@ -242,8 +247,9 @@ export default {
   // background: #c33;
 }
 .ft-box-content {
-  padding-top: 2px;
+  padding-top: 10rpx;
   font-size: 20rpx;
+  line-height: 26rpx;
   color: --color(--qui-FC-777);
   text-align: center;
 }

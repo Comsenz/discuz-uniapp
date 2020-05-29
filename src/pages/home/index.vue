@@ -5,6 +5,7 @@
         <qui-page-home
           v-if="showHome"
           ref="home"
+          :tag-id="tagId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
@@ -35,9 +36,15 @@ export default {
       show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
       showHome: false,
+      tagId: 0, // 标签ID
     };
   },
-  onLoad() {
+  onLoad(option) {
+    if (option.id !== '') {
+      this.tagId = option.id;
+    }
+    // console.log(option, option.id, '这是首页的分类啊啊啊啊啊')
+    // console.log(this.tagId)
     if (!this.showHome) {
       this.handlePageLoaded();
     }
@@ -59,7 +66,7 @@ export default {
   methods: {
     // 切换组件
     cut_index(e, type, isTabBar) {
-      const tabs = ['home', 'quinotice', 'quimy', 'information'];
+      const tabs = ['home', 'quinotice', 'quimy'];
       const currentTab = tabs[type];
 
       if (

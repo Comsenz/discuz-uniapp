@@ -111,7 +111,7 @@ export default {
       yuan: '元',
       customize: '自定义',
       theContentCanNotBeBlank: '内容不能为空',
-      theclassifyCanNotBeBlank: '标签不能为空',
+      theclassifyCanNotBeBlank: '分类不能为空',
       imageCannotBeEmpty: '图片不能为空',
       videoCannotBeEmpty: '视频不能为空',
       pleaseWaitForTheVideoUploadToComplete: '请等待视频上传完成',
@@ -343,6 +343,8 @@ export default {
     send: '发送',
     emptycontent: '内容不能为空',
     contentMaxLength: '不能超过450个字',
+    approved: '您的提现审核已通过，请注意查收。',
+    unapproved: '您的提现审核已拒绝，拒绝原因：审核不通过。',
   },
   // 海报分享页
   share: {
