@@ -230,6 +230,6 @@ export default {
   margin-left: 0;
 }
 .scroll-y {
-  max-height: calc(100vh - 297rpx);
+  max-height: calc(100vh - 515rpx);
 }
 </style>

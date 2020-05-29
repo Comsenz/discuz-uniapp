@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="manage-items">
       <navigator url="./member" hover-class="none">
         <qui-cell-item :title="i18n.t('manage.manageMembers')" arrow slot-right>

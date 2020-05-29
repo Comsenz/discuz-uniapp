@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="manage-users">
       <!-- 搜索成员 -->
       <view class="manage-users-search">

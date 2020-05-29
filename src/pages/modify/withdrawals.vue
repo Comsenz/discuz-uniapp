@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
