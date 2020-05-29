@@ -5,11 +5,13 @@
         <qui-page-home
           v-if="showHome"
           ref="home"
+          :nav-theme="theme"
           :tag-id="tagId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
         <qui-page-notice
+          :nav-theme="theme"
           ref="quinotice"
           :style="{ display: show_index === 1 ? 'block' : 'none' }"
         ></qui-page-notice>
@@ -43,9 +45,7 @@ export default {
     if (option.id !== '') {
       this.tagId = option.id;
     }
-    // console.log(option, option.id, '这是首页的分类啊啊啊啊啊')
-    // console.log(this.tagId)
-    if (!this.showHome) {
+    if (this.showHome) {
       this.handlePageLoaded();
     }
   },

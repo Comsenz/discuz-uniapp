@@ -179,7 +179,7 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(res => {
+      this.$store.dispatch('jv/patch', params).then(() => {
         if (isLiked && this.currentLoginId === this.userId) {
           const data = JSON.parse(JSON.stringify(this.data));
           data.splice(index, 1);
@@ -187,9 +187,9 @@ export default {
           this.$emit('changeFollow', { userId: this.userId });
         } else {
           // 修改点赞
-          const likedData = this.data[index];
-          const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
-          likedData.firstPost.likeCount = count;
+          // const likedData = this.data[index];
+          // const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
+          // likedData.firstPost.likeCount = count;
         }
       });
     },

@@ -13,8 +13,8 @@
         v-if="navbarShow"
         :title="forums.set_site.site_name"
         fixed="true"
-        :color="theme === 'light' ? '#000000' : '#ffffff'"
-        :background-color="theme === 'light' ? '#ffffff' : '#2e2f30'"
+        :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
+        :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
       ></uni-nav-bar>
       <qui-header
@@ -186,6 +186,7 @@ import { mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
+  props: ['tagId', 'navTheme'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
@@ -589,7 +590,9 @@ export default {
         isLiked: isLiked !== true,
       };
       this.$store.dispatch('jv/patch', params).then(data => {
+        console.log('data', data);
         const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
+        console.log('likedPost', likedPost);
         // if (data.isLiked) {
         //   likedPost.likeCount += 1;
         // } else {
@@ -684,7 +687,7 @@ export default {
     line-height: 35rpx;
     color: --color(--qui-FC-777);
     text-align: center;
-    background: --color(--qui-BOR-ED);
+    background: --color(--qui-BG-777);
     border-radius: 6rpx;
     transition: $switch-theme-time;
   }

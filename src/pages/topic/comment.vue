@@ -119,7 +119,7 @@
                 :comment-avatar-url="commentPost.user.avatarUrl"
                 :user-name="commentPost.user.username"
                 :is-liked="commentPost.isLiked"
-                user-role="管理员"
+                :user-role="commentPost.user.groups"
                 :comment-time="commentPost.createdAt"
                 :comment-status="commentPost.isApproved"
                 :comment-content="commentPost.contentHtml"
@@ -449,11 +449,11 @@ export default {
             if (data.isLiked) {
               // 未点赞时，点击点赞
               this.post.likedUsers.unshift(this.user);
-              this.post.likeCount++;
+              // this.post.likeCount++;
             } else {
               // 已点赞时，取消点赞
               this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              this.post.firstPost.likeCount--;
+              // this.post.firstPost.likeCount--;
             }
           } else if (type == '2') {
             if (data.isDeleted) {
@@ -478,11 +478,11 @@ export default {
             if (data.isLiked) {
               // 评论点赞成功
               console.log('点赞数加1');
-              this.postComments[this.commentIndex].likeCount++;
+              // this.postComments[this.commentIndex].likeCount++;
             } else {
               // 评论点赞失败
               console.log('点赞数减1');
-              this.postComments[this.commentIndex].likeCount--;
+              // this.postComments[this.commentIndex].likeCount--;
             }
           }
         })
@@ -561,7 +561,7 @@ export default {
           } else {
             this.contentnomoreVal = this.t.noMoreData;
           }
-          console.log(this.postComments, '&&&&&&~~~~~~!');
+          console.log(this.postComments, '~~~~~~~~~~~~~~~~~&&&&&&~~~~~~!');
 
           this.postsStatus = true;
         }),
