@@ -468,6 +468,7 @@ export default {
   margin: 0 20rpx 30rpx;
   background: --color(--qui-BG-2);
   border-radius: 6rpx;
+  box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
 
   &__header {
