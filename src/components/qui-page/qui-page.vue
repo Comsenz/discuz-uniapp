@@ -68,9 +68,4 @@ export default {
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;
 }
-.loading {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-}
 </style>
