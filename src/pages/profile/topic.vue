@@ -169,7 +169,7 @@ export default {
       });
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked, index) {
+    handleIsGreat(id, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
@@ -180,14 +180,14 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(res => {
+      this.$store.dispatch('jv/patch', params).then(() => {
         // 如果是个人主页
         if (this.currentLoginId === this.userId) {
           this.$emit('changeFollow', { userId: this.userId });
         }
-        const likedData = this.data[index];
-        const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
-        likedData.firstPost.likeCount = count;
+        // const likedData = this.data[index];
+        // const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
+        // likedData.firstPost.likeCount = count;
       });
     },
     // 视频禁止同时播放
