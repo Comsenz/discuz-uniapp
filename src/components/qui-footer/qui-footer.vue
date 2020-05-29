@@ -222,8 +222,10 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .ft {
+  // position: absolute;
   position: fixed;
   bottom: 0;
+  z-index: 1;
   display: flex;
   width: 100%;
   height: 119rpx;
