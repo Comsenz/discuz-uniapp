@@ -41,6 +41,7 @@
             </view>
           </view>
         </view>
+        <view style="height: 10rpx;"></view>
       </scroll-view>
 
       <!-- 底部 -->

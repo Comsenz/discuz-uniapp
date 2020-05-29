@@ -12,7 +12,7 @@
               @click="jumpUserPage(item.user_id)"
             ></image>
             <view class="list-box__notice__hl-info">
-              <view>
+              <view class="list-box__notice__hl-info-con">
                 <text
                   :class="[
                     item.thread_user_groups ? '' : 'list-box__notice__hl-info-username-space',
@@ -191,6 +191,10 @@ export default {
 
       &-info {
         margin: 0rpx 0rpx 0rpx 20rpx;
+      }
+
+      &-info-con {
+        width: 380rpx;
       }
 
       &-info-username {
