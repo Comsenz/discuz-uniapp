@@ -248,7 +248,6 @@ export default {
       playIndex: null,
     };
   },
-  props: ['tagId'],
   mounted() {
     uni.getSystemInfo({
       success: res => {
@@ -285,11 +284,10 @@ export default {
       this.headerShow = true;
     },
     // 初始化选中的选项卡
-    initCategoryInfo(){
-      // console.log(this.categories, 'this.categories')
+    initCategoryInfo() {
       this.categoryId = this.$props.tagId || 0;
-      for(let i = 0, len = this.categories.length; i < len; i ++){
-        if(+this.categories[i]._jv.id === +this.categoryId){
+      for (let i = 0, len = this.categories.length; i < len; i += 1) {
+        if (+this.categories[i]._jv.id === +this.categoryId) {
           this.currentIndex = i;
           return;
         }
@@ -618,7 +616,7 @@ export default {
     // 组件初始化请求接口
     async ontrueGetList() {
       // 首页导航栏分类列表
-     await this.loadCategories();
+      await this.loadCategories();
       this.initCategoryInfo();
       // 首页主题置顶列表
       this.loadThreadsSticky();
