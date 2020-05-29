@@ -247,6 +247,10 @@ export default {
       playIndex: null,
     };
   },
+  props: ['tagId'],
+  created(){
+    console.log(this.tagId)
+  },
   mounted() {
     uni.getSystemInfo({
       success: res => {
@@ -581,11 +585,11 @@ export default {
       };
       this.$store.dispatch('jv/patch', params).then(data => {
         const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
-        if (data.isLiked) {
-          likedPost.likeCount += 1;
-        } else {
-          likedPost.likeCount -= 1;
-        }
+        // if (data.isLiked) {
+        //   likedPost.likeCount += 1;
+        // } else {
+        //   likedPost.likeCount -= 1;
+        // }
       });
     },
     // 上拉加载
