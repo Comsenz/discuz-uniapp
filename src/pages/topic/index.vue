@@ -1107,7 +1107,7 @@ export default {
         success: function(res) {
           console.log('微信支付成功');
           console.log('success:' + JSON.stringify(res));
-          console.log(_this.payTypeVal, '支付类型');
+          // console.log(_this.payTypeVal, '支付类型');
           _this.payShowStatus = false;
           _this.coverLoading = false;
           if (_this.payTypeVal == 0) {

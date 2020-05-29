@@ -392,7 +392,7 @@ export default {
         compressed: false,
         sourceType: ['camera', 'album'],
         success(res) {
-          _this.$refs.toast.showLoading({
+          _this.$refs.toast.show({
             message: _this.i18n.t('uploader.videoUploading'),
           });
           _this.videoName = res.name ? res.name : _this.i18n.t('discuzq.post.fromWeChatApplet');
