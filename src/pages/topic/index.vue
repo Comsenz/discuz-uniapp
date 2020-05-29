@@ -1177,7 +1177,7 @@ export default {
     // 管理菜单内标签点击事件
     selectChoice(param) {
       if (param.type == '0') {
-        uni.navigateTo({
+        uni.redirectTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
       } else {
