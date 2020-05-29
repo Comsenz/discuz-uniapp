@@ -444,11 +444,11 @@ export default {
     },
     // 头像加载失败,显示默认头像
     imageError(e) {
-        console.log('有失败的图片了吧')
+      console.log(e, '有失败的图片了吧');
     },
     imageLoad(e) {
-      console.log(e, '成功加载了图片呢')
-    }
+      console.log(e, '成功加载了图片呢');
+    },
   },
 };
 </script>

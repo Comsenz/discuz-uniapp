@@ -337,6 +337,7 @@ export default {
     likedMe: '点赞了我',
     reward: '财务通知',
     rewardedMe: '打赏了我',
+    payedMe: '支付了我',
     system: '系统通知',
     admin: '管理员',
     delete: '删除',
