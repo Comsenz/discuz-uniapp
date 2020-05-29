@@ -53,10 +53,10 @@
         auto-height="true"
         :maxlength="-1"
         :focus="type !== 1"
-        v-show="!emojiShow"
+        v-if="!emojiShow"
         @blur="contBlur"
       ></textarea>
-      <view class="post-box__con-text post-box__con-text--static" v-show="emojiShow">
+      <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
         <text>{{ textAreaValue }}</text>
       </view>
       <qui-uploader
