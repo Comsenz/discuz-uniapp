@@ -1,76 +1,86 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
-    <view class="profile-info">
-      <view class="profile-info__box">
-        <view class="profile-info__box__detail">
-          <image
-            class="profile-info__box__detail-avatar"
-            :src="userInfo.avatarUrl || '/static/noavatar.gif'"
-            alt="avatarUrl"
-            mode="aspectFill"
-          ></image>
-          <qui-cell-item
-            :title="userInfo.username"
-            slot-right
-            :brief="userInfo.groupsName"
-            :border="false"
-          >
-            <view v-if="userId != currentLoginId">
-              <view class="profile-info__box__detail-operate" @tap="chat">
-                <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
-                <text>{{ i18n.t('profile.privateMessage') }}</text>
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      @scrolltolower="pullDown"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <view class="profile-info">
+        <view class="profile-info__box">
+          <view class="profile-info__box__detail">
+            <image
+              class="profile-info__box__detail-avatar"
+              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
+              alt="avatarUrl"
+              mode="aspectFill"
+            ></image>
+            <qui-cell-item
+              :title="userInfo.username"
+              slot-right
+              :brief="userInfo.groupsName"
+              :border="false"
+            >
+              <view v-if="userId != currentLoginId">
+                <view class="profile-info__box__detail-operate" @tap="chat">
+                  <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
+                  <text>{{ i18n.t('profile.privateMessage') }}</text>
+                </view>
+                <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
+                <view
+                  class="profile-info__box__detail-operate"
+                  @tap="userInfo.follow == 0 ? addFollow(userInfo) : deleteFollow(userInfo)"
+                >
+                  <qui-icon
+                    class="text"
+                    :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
+                    size="22"
+                    :color="
+                      userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? '#333' : '#ff8888'
+                    "
+                  ></qui-icon>
+                  <text>
+                    {{
+                      userInfo.follow == 0
+                        ? i18n.t('profile.following')
+                        : userInfo.follow == 1
+                        ? i18n.t('profile.followed')
+                        : i18n.t('profile.mutualfollow')
+                    }}
+                  </text>
+                </view>
               </view>
-              <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
-              <view
-                class="profile-info__box__detail-operate"
-                @tap="userInfo.follow == 0 ? addFollow(userInfo) : deleteFollow(userInfo)"
-              >
-                <qui-icon
-                  class="text"
-                  :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                  size="22"
-                  :color="userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? '#333' : '#ff8888'"
-                ></qui-icon>
-                <text>
-                  {{
-                    userInfo.follow == 0
-                      ? i18n.t('profile.following')
-                      : userInfo.follow == 1
-                      ? i18n.t('profile.followed')
-                      : i18n.t('profile.mutualfollow')
-                  }}
-                </text>
-              </view>
-            </view>
-          </qui-cell-item>
+            </qui-cell-item>
+          </view>
+        </view>
+        <view class="profile-info__introduction" v-if="userInfo.signature">
+          {{ userInfo.signature }}
         </view>
       </view>
-      <view class="profile-info__introduction" v-if="userInfo.signature">
-        {{ userInfo.signature }}
-      </view>
-    </view>
-    <view class="profile-tabs">
-      <qui-tabs
-        :current="current"
-        :values="items"
-        @clickItem="onClickItem"
-        :brief="true"
-      ></qui-tabs>
-      <view class="profile-tabs__content">
-        <view v-if="current == 0" class="items">
-          <topic :user-id="userId" @changeFollow="changeFollow"></topic>
-        </view>
-        <view v-else-if="current == 1" class="items">
-          <following :user-id="userId" @changeFollow="changeFollow"></following>
-        </view>
-        <view v-else-if="current == 2" class="items">
-          <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
-        </view>
-        <view v-else class="items">
-          <like :user-id="userId" @changeFollow="changeFollow"></like>
+      <view class="profile-tabs">
+        <qui-tabs
+          :current="current"
+          :values="items"
+          @clickItem="onClickItem"
+          :brief="true"
+        ></qui-tabs>
+        <view class="profile-tabs__content">
+          <view v-if="current == 0" class="items">
+            <topic :user-id="userId" @changeFollow="changeFollow" ref="topic"></topic>
+          </view>
+          <view v-else-if="current == 1" class="items">
+            <following :user-id="userId" @changeFollow="changeFollow" ref="following"></following>
+          </view>
+          <view v-else-if="current == 2" class="items">
+            <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
+          </view>
+          <view v-else class="items">
+            <like :user-id="userId" @changeFollow="changeFollow" ref="like"></like>
+          </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
   </qui-page>
 </template>
 
@@ -172,6 +182,11 @@ export default {
     changeFollow(e) {
       this.getUserInfo(e.userId);
     },
+    pullDown() {
+      const { current } = this;
+      const item = ['topic', 'following', 'followers', 'like'];
+      this.$refs[item[current]].pullDown();
+    },
     // 私信
     chat() {
       const params = {
@@ -255,5 +270,8 @@ export default {
 }
 /deep/ .qui-tabs {
   background: --color(--qui-BG-2);
+}
+.scroll-y {
+  max-height: 100vh;
 }
 </style>
