@@ -243,13 +243,13 @@ export default {
   align-content: center;
 }
 .ft-box-icon {
-  display: flex;
-  height: 46rpx;
-  justify-content: center;
+  align-self: center;
+  height: 50rpx;
   // background: #c33;
 }
 .ft-box-content {
-  padding-top: 10rpx;
+  align-self: center;
+  margin-top: 10rpx;
   font-size: 20rpx;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
