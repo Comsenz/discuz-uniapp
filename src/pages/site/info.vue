@@ -44,26 +44,25 @@
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.periodvalidity')"
-        :addon="forums.set_site.site_expire + i18n.t('site.day')"
+        :addon="
+          forums.set_site.site_expire
+            ? forums.set_site.site_expire + i18n.t('site.day')
+            : i18n.t('site.permanent')
+        "
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
+            :src="forums.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(item.id)"
+            @tap="toProfile(forums.set_site.site_author.id)"
             mode="aspectFill"
           ></image>
           <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('home.theme')"
-        slot-right
-        :border="false"
-        class="cell-item--auto"
-      >
+      <qui-cell-item :title="i18n.t('home.theme')" slot-right :border="false">
         <view class="site-item__person">
           <view
             v-for="(item, index) in forums.users"
@@ -89,10 +88,14 @@
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.paynow') }}，¥{{ forums.set_site.site_price || 0 }}/{{
-            i18n.t('site.periodvalidity')
+          {{ i18n.t('site.paynow') }}，¥{{ forums.set_site.site_price || 0 }}
+          {{
+            forums.set_site.site_expire
+              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site.site_expire}${i18n.t(
+                  'site.day',
+                )}`
+              : ` / ${i18n.t('site.permanent')}`
           }}
-          {{ forums.set_site.site_expire + i18n.t('site.day') }}
         </qui-button>
       </view>
       <view v-if="payShowStatus">
@@ -285,15 +288,15 @@ export default {
   }
   .header /deep/ .circleDet {
     padding: 60rpx 40rpx 50rpx;
-    color: --color(--qui-FC-777);
+    opacity: 1;
+  }
+  .header /deep/ .circleDet-txt {
+    color: --color(--qui-FC-333);
     opacity: 1;
   }
   .header .logo {
     height: 75rpx;
     padding-top: 71rpx;
-  }
-  /deep/ .icon-share1 {
-    color: --color(--qui-FC-333);
   }
   /deep/ .cell-item__body__content-title {
     width: 112rpx;
@@ -324,8 +327,10 @@ export default {
   font-weight: bold;
 }
 .site-invite__detail {
-  margin-top: 50rpx;
-  margin-bottom: 30rpx;
+  width: 90%;
+  padding: 0 20rpx;
+  margin: 50rpx auto 30rpx;
+  font-size: 28rpx;
 }
 .site-invite {
   padding-bottom: 20rpx;
@@ -352,6 +357,8 @@ export default {
   margin-right: 20rpx;
 }
 .site-item__person {
+  height: 60rpx;
+  overflow: hidden;
   font-size: 0;
 }
 .site-item__person__content {

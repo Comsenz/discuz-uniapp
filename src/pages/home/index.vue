@@ -44,11 +44,7 @@ export default {
     };
   },
   onLoad() {
-<<<<<<< HEAD
-    if (!this.showHome) {
-=======
     if (this.showHome) {
->>>>>>> 12ee994ee318aed638d9792e1706139777a91ab1
       this.handlePageLoaded();
     }
   },

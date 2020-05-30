@@ -241,6 +241,7 @@ export default {
     orderexpired: 'Order expired',
     payfail: 'Pay fail',
     cancelorder: 'Cancel order',
+    permanent: 'Permanent',
   },
   site: {
     circleintroduction: 'Circle introduction',
