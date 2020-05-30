@@ -179,7 +179,6 @@ export default {
     settlement() {
       this.cashmany = this.cashmany.replace(/[^\d.]/g, '');
       this.cashmany = this.cashmany.replace(/\.{2,}/g, '.');
-      console.log(this.cashmany);
       if (this.cashmany.length > 0) {
         // this.cashmany = this.cashmany
         if (this.cashmany[0] === '.') {

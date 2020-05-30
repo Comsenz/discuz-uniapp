@@ -55,10 +55,10 @@ export default {
       renamewidth: 400,
       openSettingBtnHidden: true,
       jurisdiction: true,
+      leftwidth: 253,
     };
   },
   onLoad() {
-    console.log(this.forums);
     uni.showLoading({
       title: this.i18n.t('share.generating'),
       mask: true,
@@ -66,7 +66,7 @@ export default {
     this.$nextTick(() => {
       this.userid = this.usersid;
       this.slitename = this.forums.set_site.site_name;
-      this.slitelogo = this.forums.set_site.site_logo;
+      this.slitelogo = this.forums.set_site.site_header_logo;
       this.sliteback = this.forums.set_site.site_background_image;
       this.themnumber = this.forums.other.count_users;
       this.contdata = this.forums.other.count_threads;
@@ -81,6 +81,7 @@ export default {
   },
   methods: {
     usertitle() {
+      const that = this;
       const params = {
         _jv: {
           type: 'users',
@@ -96,7 +97,18 @@ export default {
         }
         this.renamewidth = 160 + this.themwidth;
         this.headerImg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-        this.initData();
+        if (this.slitelogo) {
+          uni.getImageInfo({
+            src: that.slitelogo,
+            success(image) {
+              const num = image.width * (88 / image.height);
+              that.leftwidth = (700 - num) / 2;
+            },
+          });
+        }
+        setTimeout(() => {
+          this.initData();
+        }, 300);
       });
     },
     initData() {
@@ -109,6 +121,7 @@ export default {
         themnumber: this.themnumber, // 成员人数
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 站点介绍
+        leftwidth: this.leftwidth,
         userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code`, // 微信二维码
         namewidth: this.themwidth,
         renamewidth: this.renamewidth,

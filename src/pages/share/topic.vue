@@ -35,7 +35,7 @@
 import Cardk from '@/wxcomponents/card/cardtpostertwo'; // 标题文字海报 41
 import Cardb from '@/wxcomponents/card/cardaitu'; // 标题单图片文字海报 43
 import Cardd from '@/wxcomponents/card/cardimg'; // 纯图片海报  164
-import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报 41
+// import Cardf from '@/wxcomponents/card/cardpicture'; // 标题多图片海报 41
 import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
 import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
 // import Cardi from '@/wxcomponents/card/cardtext';
@@ -134,7 +134,7 @@ export default {
           arr.forEach(value => {
             this.contentImg.push(value.thumbUrl);
           });
-          if (this.contentImg.length === 1) {
+          if (this.contentImg) {
             uni.getImageInfo({
               src: that.contentImg[0],
               success(image) {
@@ -146,38 +146,39 @@ export default {
                 }
               },
             });
-          } else if (this.contentImg.length > 1) {
-            uni.getImageInfo({
-              src: that.contentImg[0],
-              success(image) {
-                const num = image.height * (310 / image.width);
-                if (num > 201) {
-                  that.picutre = num - 201;
-                } else {
-                  that.picutre = 0;
-                }
-              },
-            });
-            uni.getImageInfo({
-              src: that.contentImg[1],
-              success(image) {
-                const num = image.height * (290 / image.width);
-                if (num > 201) {
-                  that.picutrecopy = num - 201;
-                } else {
-                  that.picutrecopy = 0;
-                }
-              },
-            });
-            setTimeout(() => {
-              console.log(this.picutre, this.picutrecopy);
-              if (this.picutre > this.picutrecopy) {
-                this.heightdefill = this.picutre;
-              } else {
-                this.heightdefill = this.picutrecopy;
-              }
-            }, 400);
           }
+          // else if (this.contentImg.length > 1) {
+          //   uni.getImageInfo({
+          //     src: that.contentImg[0],
+          //     success(image) {
+          //       const num = image.height * (310 / image.width);
+          //       if (num > 201) {
+          //         that.picutre = num - 201;
+          //       } else {
+          //         that.picutre = 0;
+          //       }
+          //     },
+          //   });
+          //   uni.getImageInfo({
+          //     src: that.contentImg[1],
+          //     success(image) {
+          //       const num = image.height * (290 / image.width);
+          //       if (num > 201) {
+          //         that.picutrecopy = num - 201;
+          //       } else {
+          //         that.picutrecopy = 0;
+          //       }
+          //     },
+          //   });
+          //   setTimeout(() => {
+          //     console.log(this.picutre, this.picutrecopy);
+          //     if (this.picutre > this.picutrecopy) {
+          //       this.heightdefill = this.picutre;
+          //     } else {
+          //       this.heightdefill = this.picutrecopy;
+          //     }
+          //   }, 400);
+          // }
           this.attachmentsType = data.category.name;
           this.attachlength = this.attachmentsType.length * 24 + 3;
           this.marglength = this.attachlength + 40;
@@ -230,9 +231,9 @@ export default {
           this.template = new Cardb().palette(obj);
           // 多图片海报
         } else if (this.contentImg.length > 1) {
-          this.constyle = 1084 + this.heightdefill;
-          this.paddingtop = 41;
-          this.template = new Cardf().palette(obj);
+          this.constyle = 1100 + this.heightdefill;
+          this.paddingtop = 43;
+          this.template = new Cardb().palette(obj);
           // 只有标题文字的海报
         } else if (this.contentImg.length === 0 && this.content) {
           this.constyle = 1083;
@@ -257,9 +258,9 @@ export default {
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {
-          this.constyle = 1084 + this.heightdefill;
-          this.paddingtop = 41;
-          this.template = new Cardf().palette(obj);
+          this.constyle = 1100 + this.heightdefill;
+          this.paddingtop = 43;
+          this.template = new Cardb().palette(obj);
         } else if (this.postyTepy === 2) {
           this.constyle = 1100;
           this.paddingtop = 43;
