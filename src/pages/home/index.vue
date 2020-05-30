@@ -31,6 +31,7 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import { mapState } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -43,8 +44,16 @@ export default {
       currentTab: 'home',
     };
   },
+  computed: {
+    ...mapState({
+      forumError: state => state.forum.error,
+    }),
+    loading() {
+      return this.forumError.loading;
+    },
+  },
   onLoad() {
-    if (this.showHome) {
+    if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
   },

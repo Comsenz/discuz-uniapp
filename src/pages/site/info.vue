@@ -146,6 +146,14 @@ export default {
       ],
     };
   },
+  onLoad() {
+    uni.hideHomeButton();
+    this.$u.event.$on('logind', () => {
+      uni.redirectTo({
+        url: '/pages/home/index',
+      });
+    });
+  },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
