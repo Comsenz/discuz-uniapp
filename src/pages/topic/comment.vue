@@ -339,7 +339,6 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.user, '这是用户信息~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
     this.threadId = option.threadId;
     this.commentId = option.commentId;
     this.loadPost();
@@ -388,7 +387,6 @@ export default {
       };
       this.loadPostStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
-          console.log(data, '~~~~~~~~~~~~~~~~~~~');
           this.loaded = true;
         }),
       );
@@ -401,7 +399,6 @@ export default {
       };
       this.loadDetailStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
-          console.log(data, '~~~~~~~~~~~~~~~~~~~');
           this.thread = data;
           this.status = true;
         }),
@@ -410,7 +407,7 @@ export default {
 
     // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
     postOpera(id, type, canStatus, isStatus) {
-      console.log(id, type, canStatus, isStatus);
+      // console.log(id, type, canStatus, isStatus);
       if (type == '1' && !canStatus) {
         this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
@@ -448,7 +445,6 @@ export default {
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          console.log(data, 'wwwwww');
           if (type == '1') {
             this.isLiked = data.isLiked;
             if (data.isLiked) {
@@ -478,15 +474,12 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '4') {
-            console.log(this.postComments, '@@@@~~~~');
             this.postComments[this.commentIndex].isLiked = data.isLiked;
             if (data.isLiked) {
               // 评论点赞成功
-              console.log('点赞数加1');
               // this.postComments[this.commentIndex].likeCount++;
             } else {
               // 评论点赞失败
-              console.log('点赞数减1');
               // this.postComments[this.commentIndex].likeCount--;
             }
           }
@@ -498,7 +491,6 @@ export default {
 
     // 主题回复调用接口
     postComment() {
-      // console.log('调接口了');
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
         this.publishClickStatus = true;
@@ -539,7 +531,6 @@ export default {
           this.publishClickStatus = true;
           this.postComments.push(res);
           this.post.postCount++;
-          // console.log(res);
         })
         .catch(err => {
           this.publishClickStatus = true;
@@ -566,8 +557,6 @@ export default {
           } else {
             this.contentnomoreVal = this.t.noMoreData;
           }
-          console.log(this.postComments, '~~~~~~~~~~~~~~~~~&&&&&&~~~~~~!');
-
           this.postsStatus = true;
         }),
       );
@@ -602,7 +591,6 @@ export default {
       this.emojiShow = false;
     },
     expressionClick() {
-      console.log('点击');
       this.emojiShow = !this.emojiShow;
     },
     // 点击@跳转到@页
@@ -647,7 +635,6 @@ export default {
     },
     // 评论点回复击发布事件
     publishClick() {
-      // console.log('走了');
       this.publishClickStatus = false;
       this.postComment(this.commentId);
     },

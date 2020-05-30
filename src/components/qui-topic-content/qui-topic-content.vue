@@ -289,7 +289,7 @@ export default {
     };
   },
   onLoad() {
-    console.log(this.tags);
+    // console.log(this.tags);
   },
   computed: {
     t() {
@@ -306,13 +306,11 @@ export default {
   methods: {
     // 管理菜单点击事件
     selectClick() {
-      console.log(this.selectList, '这是管理菜单');
       this.seleShow = !this.seleShow;
       this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 管理菜单选中事件
     selectChoice(param) {
-      console.log(param, '类型22222');
       this.$emit('selectChoice', param);
       this.seleShow = false;
       this.selectActive = this.seleShow ? '#1878F3' : '#333333';
@@ -350,7 +348,6 @@ export default {
     },
     // 点击分类标签
     tagClick(tagId) {
-      console.log('这是子组件里点击分类执行的');
       this.$emit('tagClick', tagId);
     },
     // 头像失效
