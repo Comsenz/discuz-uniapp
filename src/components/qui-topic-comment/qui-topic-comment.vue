@@ -239,8 +239,6 @@ export default {
       deep: true,
       immediate: true,
     },
-    deep: true,
-    immediate: true,
   },
   methods: {
     // 点击内容事件
@@ -345,9 +343,11 @@ export default {
         height: 37rpx;
         max-width: 336rpx;
         overflow: hidden;
+
         font-weight: bold;
         line-height: 37rpx;
         color: --color(--qui-FC-000);
+        text-overflow: ellipsis;
         white-space: nowrap;
       }
 
