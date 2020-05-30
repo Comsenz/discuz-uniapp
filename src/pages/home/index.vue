@@ -6,7 +6,6 @@
           v-if="showHome"
           ref="home"
           :nav-theme="theme"
-          :tag-id="tagId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
