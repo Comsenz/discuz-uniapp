@@ -111,8 +111,9 @@ export default {
     personList: {
       handler(newVal) {
         newVal.map(item => {
-          item.showAvatar = true;
-          return item;
+          const person = item;
+          person.showAvatar = true;
+          return person;
         });
         this.personRes = newVal;
       },
@@ -152,7 +153,9 @@ export default {
     },
     // 头像失效
     imageError(person) {
-      person.showAvatar = false;
+      const item = person;
+      item.showAvatar = false;
+      return item;
     },
   },
 };

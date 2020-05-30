@@ -215,8 +215,8 @@
               :placeholder="t.writeComments"
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
-              :show-confirm-bar="false"
-              adjust-position="true"
+              :show-confirm-bar="barStatus"
+              cursor-spacing="100"
               v-show="!emojiShow"
               v-model="textAreaValue"
               @blur="contBlur"
@@ -275,6 +275,7 @@ export default {
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
       textAreaValue: '', // 评论输入框
+      barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       uploadFile: [], //上传的文件
       publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
