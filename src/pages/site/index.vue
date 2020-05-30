@@ -92,7 +92,7 @@
       <qui-cell-item
         :title="i18n.t('manage.periodvalidity')"
         :addon="userInfo.expiredTime"
-        v-if="siteInfo.set_site.site_mode === 'pay' && userInfo.expiredAt"
+        v-if="siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.myauthority')"
@@ -169,6 +169,8 @@ export default {
       }
       if (info && info.expiredAt) {
         info.expiredTime = info.expiredAt.substr(0, 10);
+      } else {
+        info.expiredTime = '永久有效';
       }
       console.log('用户信息：', info);
       return info;
