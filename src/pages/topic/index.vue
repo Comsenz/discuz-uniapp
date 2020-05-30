@@ -769,10 +769,10 @@ export default {
             // 评论点赞
             this.posts[this.postIndex].isLiked = data.isLiked;
             if (data.isLiked) {
-              this.posts[this.postIndex].likeCount++;
+              // this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
             } else {
-              this.posts[this.postIndex].likeCount--;
+              // this.posts[this.postIndex].likeCount--;
               console.log('点赞数减1');
             }
           }

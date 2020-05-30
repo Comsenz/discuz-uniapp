@@ -355,7 +355,7 @@ export default {
     savefailed: '图片保存失败',
     savealbum: '保存相册',
     longpressrecog: '长按识别小程序码查看详情',
-    recomment: '推荐',
+    recomment: '   推荐',
     goddessvideo: '女神视频',
     comefrom: '来自',
     stay: '在',
@@ -572,6 +572,7 @@ export default {
     inviteyouas: '邀请您，作为',
     join: '加入',
     accepttheinvitationandbecome: '接受邀请，成为',
+    permanent: '永久有效',
   },
   // 搜索
   search: {

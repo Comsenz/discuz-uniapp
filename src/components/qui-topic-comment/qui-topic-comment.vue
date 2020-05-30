@@ -235,27 +235,10 @@ export default {
     commentLikeCount: {
       handler(newVal) {
         this.commentLikeCount = newVal;
-        // console.log('这是监听到的点赞数');
       },
       deep: true,
       immediate: true,
     },
-    // replyList: {
-    //   // handler(newVal) {
-    //   //   this.replyList = newVal;
-    //   //   console.log(this.replyList, '这是监听到的评论的回复');
-    //   // },
-    //   handler(newValue, oldValue) {
-    //     for (let i = 0; i < newValue.length; i += 1) {
-    //       if (oldValue[i] !== newValue[i]) {
-    //         console.log(newValue, '34567');
-    //         this.replyList = newValue;
-    //       }
-    //     }
-    //   },
-    //   deep: true,
-    //   immediate: true,
-    // },
     deep: true,
     immediate: true,
   },
@@ -278,7 +261,6 @@ export default {
     },
     // 回复事件
     replyComment() {
-      console.log('评论回复');
       this.$emit('replyComment');
     },
     // 点击图片事件(默认参数图片id)

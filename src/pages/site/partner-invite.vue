@@ -37,33 +37,20 @@
         :title="i18n.t('site.creationtime')"
         :addon="forums.set_site.site_install"
       ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.circlemode')"
-        :addon="
-          forums.set_site.site_mode == 'pay'
-            ? i18n.t('site.paymentmode') +
-              '，¥' +
-              forums.set_site.site_price +
-              '，' +
-              i18n.t('site.validfromaccession') +
-              forums.set_site.site_expire +
-              i18n.t('site.day')
-            : i18n.t('site.publicmode')
-        "
-      ></qui-cell-item>
+      <qui-cell-item :title="i18n.t('site.circlemode')" :addon="handleMode()"></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="forums.set_site.site_author.avatarUrl || '/static/noavatar.gif'"
+            :src="forums.set_site.site_author.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(item.id)"
+            @tap="toProfile(forums.set_site.site_author.id)"
             mode="aspectFill"
           ></image>
           <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
         </view>
       </qui-cell-item>
-      <qui-cell-item :title="i18n.t('home.theme')" slot-right class="cell-item--auto">
+      <qui-cell-item :title="i18n.t('home.theme')" slot-right>
         <view class="site-item__person">
           <view
             v-for="(item, index) in forums.users"
@@ -95,9 +82,9 @@
       <view class="site-invite__detail">
         <text class="site-invite__detail__bold">{{ inviteData.user.username }}</text>
         <text>{{ i18n.t('site.inviteyouas') }}</text>
-        <text class="site-invite__detail__bold">{{ inviteData.group.name }}</text>
+        <text class="site-invite__detail__bold">{{ `[ ${inviteData.group.name} ]` }}</text>
         <text>{{ i18n.t('site.join') }}</text>
-        <text class="site-invite__detail__bold">DISCUZQ</text>
+        <text class="site-invite__detail__bold">{{ forums.set_site.site_name }}</text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
@@ -138,6 +125,10 @@ export default {
     this.code = params.code;
     this.getInviteInfo(params.code);
   },
+  onReady() {
+    // 处理站点模式
+    this.handleMode();
+  },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -163,6 +154,24 @@ export default {
         ];
       }
       this.$refs.popupHead.open();
+    },
+    handleMode() {
+      if (!this.forums.set_site) {
+        return;
+      }
+      if (this.forums.set_site.site_mode === 'pay') {
+        const siteMode = `${this.i18n.t('site.paymentmode')}，¥${
+          this.forums.set_site.site_price
+        }，`;
+        const siteExpire = this.forums.set_site.site_expire
+          ? this.i18n.t('site.periodvalidity') +
+            this.forums.set_site.site_expire +
+            this.i18n.t('site.day')
+          : this.i18n.t('site.permanent');
+        return siteMode + siteExpire;
+      }
+      const siteMode = this.i18n.t('site.publicmode');
+      return siteMode;
     },
     // 点击头像到个人主页
     toProfile(userId) {
@@ -218,7 +227,10 @@ export default {
   }
   .header /deep/ .circleDet {
     padding: 60rpx 40rpx 50rpx;
-    color: --color(--qui-FC-777);
+    opacity: 1;
+  }
+  .header /deep/ .circleDet-txt {
+    color: --color(--qui-FC-333);
     opacity: 1;
   }
   .header .logo {
@@ -254,8 +266,10 @@ export default {
   font-weight: bold;
 }
 .site-invite__detail {
-  margin-top: 50rpx;
-  margin-bottom: 30rpx;
+  width: 85%;
+  padding: 0 20rpx;
+  margin: 50rpx auto 30rpx;
+  font-size: 28rpx;
 }
 .site-invite {
   padding-bottom: 20rpx;
@@ -279,6 +293,8 @@ export default {
   margin-right: 20rpx;
 }
 .site-item__person {
+  height: 60rpx;
+  overflow: hidden;
   font-size: 0;
 }
 .site-item__person__content {
