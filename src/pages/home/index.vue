@@ -43,12 +43,8 @@ export default {
       currentTab: 'home',
     };
   },
-  onLoad(option) {
-    console.log(option, '000000');
-    if (option.id !== '') {
-      this.tagId = option.id;
-    }
-    if (!this.showHome) {
+  onLoad() {
+    if (this.showHome) {
       this.handlePageLoaded();
     }
   },
