@@ -1,5 +1,5 @@
 <script>
-import { SITE_PAY } from '@/common/const';
+import { SITE_PAY, STORGE_GET_USER_TIME } from '@/common/const';
 import Vue from 'vue';
 
 const themeListeners = [];
@@ -45,6 +45,7 @@ export default {
           include: 'groups,wechat',
         };
         user = await this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
+        uni.setStorageSync(STORGE_GET_USER_TIME, new Date().getTime());
       }
       const pages = getCurrentPages();
       if (forums.set_site.site_mode === SITE_PAY) {

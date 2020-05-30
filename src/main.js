@@ -25,6 +25,7 @@ const $u = {
   currentTheme,
   light: () => THEME_DEFAULT,
   dark: () => THEME_DARK,
+  event: new Vue(),
 };
 Vue.prototype.$u = $u;
 Vue.mixin(mixin);

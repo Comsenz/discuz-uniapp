@@ -30,15 +30,17 @@
 
 <script>
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 
 export default {
-  mixins: [forums],
+  mixins: [forums, user],
   data() {
     return {
       show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
       showHome: false,
       tagId: 0, // 标签ID
+      currentTab: 'home',
     };
   },
   onLoad() {
@@ -60,15 +62,25 @@ export default {
       title: this.forums.set_site.site_name,
     };
   },
+  onShow() {
+    if (this.currentTab === 'quinotice') {
+      this.$nextTick(() => {
+        this.$refs[this.currentTab].getUnreadNoticeNum();
+      });
+    }
+  },
   methods: {
     // 切换组件
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy'];
-      const currentTab = tabs[type];
+      this.currentTab = tabs[type];
 
+      if (this.currentTab === 'quinotice') {
+        this.getUserInfo();
+      }
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['quinotice', 'quimy'].indexOf(currentTab) >= 0
+        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         this.$store.getters['session/get']('auth').open();
         return;
@@ -76,7 +88,7 @@ export default {
 
       this.show_index = type;
       if (isTabBar.indexOf(type) === -1) {
-        this.$refs[currentTab].ontrueGetList();
+        this.$refs[this.currentTab].ontrueGetList();
         isTabBar.push(type);
       }
     },
