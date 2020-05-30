@@ -1,7 +1,7 @@
 <template>
   <view class="home">
     <scroll-view
-      scroll-y="true"
+      :scroll-y="scrollable"
       scroll-with-animation="true"
       show-scrollbar="false"
       class="scroll-y"
@@ -85,7 +85,7 @@
         </view>
       </view>
       <!-- </view> -->
-      <view class="main">
+      <view class="main" id="main">
         <qui-content
           v-for="(item, index) in threads"
           :ref="'myVideo' + index"
@@ -257,6 +257,8 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
+      scrollable: true, // scroll-view是否可滚动的开关
+      mainBottom: 0, // 正文区域的底部，整个屏幕高度减qui-bottom的高度
     };
   },
   computed: {
@@ -272,6 +274,7 @@ export default {
         this.navTop = 400 /* qui-header 的高度 */ * rpx;
         this.navHeight = 102 /* nav的高度 */ * rpx;
         this.navbarHeight = res.statusBarHeight + 44 /* uni-nav-bar的高度 */;
+        this.mainBottom = res.screenHeight - 119 /* qui-footer的高度 */ * rpx;
       },
     });
 
@@ -284,6 +287,16 @@ export default {
       // 首页主题内容列表
       this.loadThreads();
     });
+
+    setInterval(() => {
+      this.$uGetRect('#main').then(rect => {
+        if (rect.top >= 0 && rect.bottom < this.mainBottom) {
+          this.scrollable = false;
+        } else {
+          this.scrollable = true;
+        }
+      });
+    }, 200);
   },
   methods: {
     ...mapMutations({
