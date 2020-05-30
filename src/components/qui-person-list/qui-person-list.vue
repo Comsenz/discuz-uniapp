@@ -13,7 +13,12 @@
           @click="personJump(person.id)"
           @error="imageError(person)"
         ></image>
-        <image v-else src="/static/noavatar.gif" class="det-per-head"></image>
+        <image
+          v-else
+          src="/static/noavatar.gif"
+          class="det-per-head"
+          @click="personJump(person.id)"
+        ></image>
       </view>
     </view>
     <view class="fold-box" :style="{ transform: transform }" v-if="personNum > limitCount">
@@ -106,8 +111,9 @@ export default {
     personList: {
       handler(newVal) {
         newVal.map(item => {
-          item.showAvatar = true;
-          return item;
+          const person = item;
+          person.showAvatar = true;
+          return person;
         });
         this.personRes = newVal;
       },
@@ -147,7 +153,9 @@ export default {
     },
     // 头像失效
     imageError(person) {
-      person.showAvatar = false;
+      const item = person;
+      item.showAvatar = false;
+      return item;
     },
   },
 };

@@ -176,7 +176,7 @@ export default {
         };
         // 字体加粗
         if (index === this.currentIndex && this.bold) style.fontWeight = 'bold';
-        if (index === this.currentIndex) style.fontSize = 28;
+        if (index === this.currentIndex) style['font-size'] = '28rpx';
         if (index === this.currentIndex) {
           style.color = this.activeColor;
           // style.font-size = 28;

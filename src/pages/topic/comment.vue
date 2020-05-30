@@ -17,7 +17,7 @@
               :theme-time="post.createdAt"
               :theme-content="post.contentHtml"
               :images-list="post.images"
-              @personJump="personJump"
+              @personJump="personJump(post.user._jv.id)"
             ></qui-topic-content>
             <view class="thread-box" v-if="loadDetailStatus">
               <view class="thread">
@@ -30,15 +30,22 @@
                           : '/static/noavatar.gif'
                       "
                       alt
-                      @click="personJump"
+                      @click="personJump(thread.user._jv.id)"
                       @error="imageError"
                       v-if="imageStatus"
                     ></image>
-                    <image v-else src="/static/noavatar.gif"></image>
+                    <image
+                      v-else
+                      src="/static/noavatar.gif"
+                      @click="personJump(thread.user._jv.id)"
+                    ></image>
                   </view>
                   <view class="thread__header__title">
                     <view class="thread__header__title__top">
-                      <span class="thread__header__title__username" @click="personJump">
+                      <span
+                        class="thread__header__title__username"
+                        @click="personJump(thread.user._jv.id)"
+                      >
                         {{ thread.user.username }}
                       </span>
                       <span
@@ -208,7 +215,8 @@
               :placeholder="t.writeComments"
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
-              :show-confirm-bar="false"
+              :show-confirm-bar="barStatus"
+              cursor-spacing="100"
               v-show="!emojiShow"
               v-model="textAreaValue"
               @blur="contBlur"
@@ -267,6 +275,7 @@ export default {
       emojiShow: false, //表情组件显示状态
       uploaderShow: false, //图片上传组件显示状态
       textAreaValue: '', // 评论输入框
+      barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       uploadFile: [], //上传的文件
       publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态

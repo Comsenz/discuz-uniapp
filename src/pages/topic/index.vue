@@ -34,7 +34,7 @@
             :video-width="thread.threadVideo.width"
             :video-height="thread.threadVideo.height"
             :cover-image="thread.threadVideo.cover_url"
-            @personJump="personJump"
+            @personJump="personJump(thread.user._jv.id)"
             @selectChoice="selectChoice"
             @videocoverClick="payClickShow"
             @previewPicture="payClickShow"
@@ -333,7 +333,8 @@
               :placeholder="t.writeComments"
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
-              :show-confirm-bar="false"
+              :show-confirm-bar="barStatus"
+              cursor-spacing="100"
               v-show="!emojiShow"
               v-model="textAreaValue"
               @blur="contBlur"
@@ -396,6 +397,7 @@ export default {
       commentPopupStatus: false, //回复弹框内容状态是否显示
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
+      barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       uploadFile: [], //上传的文件
       isLiked: false, // 主题点赞状态
       role: '管理员',
@@ -1182,6 +1184,7 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
+      console.log(id, '这是当前主题用户Id');
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });
