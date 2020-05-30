@@ -253,9 +253,6 @@ export default {
       categoryIndex: state => state.session.categoryIndex,
     }),
   },
-  created() {
-    console.log(this.tagId, 'eyeyeyeeyeyyeyy');
-  },
   mounted() {
     uni.getSystemInfo({
       success: res => {
@@ -423,7 +420,7 @@ export default {
       this.pageNum = 1;
       const filterSelected = { ...e };
       this.categoryId = filterSelected[0].data.value;
-      // this.currentIndex = filterSelected[0].data.index;
+      this.currentIndex = filterSelected[0].data.index;
       this.threadType = filterSelected[1].data.value;
 
       switch (filterSelected[2].data.value) {
