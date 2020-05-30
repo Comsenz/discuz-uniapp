@@ -34,7 +34,7 @@
             :video-width="thread.threadVideo.width"
             :video-height="thread.threadVideo.height"
             :cover-image="thread.threadVideo.cover_url"
-            @personJump="personJump"
+            @personJump="personJump(thread.user._jv.id)"
             @selectChoice="selectChoice"
             @videocoverClick="payClickShow"
             @previewPicture="payClickShow"
@@ -334,6 +334,7 @@
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
               :show-confirm-bar="false"
+              adjust-position="true"
               v-show="!emojiShow"
               v-model="textAreaValue"
               @blur="contBlur"
@@ -1182,6 +1183,7 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
+      console.log(id, '这是当前主题用户Id');
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });

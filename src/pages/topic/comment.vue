@@ -17,7 +17,7 @@
               :theme-time="post.createdAt"
               :theme-content="post.contentHtml"
               :images-list="post.images"
-              @personJump="personJump"
+              @personJump="personJump(post.user._jv.id)"
             ></qui-topic-content>
             <view class="thread-box" v-if="loadDetailStatus">
               <view class="thread">
@@ -30,15 +30,22 @@
                           : '/static/noavatar.gif'
                       "
                       alt
-                      @click="personJump"
+                      @click="personJump(thread.user._jv.id)"
                       @error="imageError"
                       v-if="imageStatus"
                     ></image>
-                    <image v-else src="/static/noavatar.gif"></image>
+                    <image
+                      v-else
+                      src="/static/noavatar.gif"
+                      @click="personJump(thread.user._jv.id)"
+                    ></image>
                   </view>
                   <view class="thread__header__title">
                     <view class="thread__header__title__top">
-                      <span class="thread__header__title__username" @click="personJump">
+                      <span
+                        class="thread__header__title__username"
+                        @click="personJump(thread.user._jv.id)"
+                      >
                         {{ thread.user.username }}
                       </span>
                       <span
@@ -209,6 +216,7 @@
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
               :show-confirm-bar="false"
+              adjust-position="true"
               v-show="!emojiShow"
               v-model="textAreaValue"
               @blur="contBlur"

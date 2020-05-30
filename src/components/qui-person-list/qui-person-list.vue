@@ -13,7 +13,12 @@
           @click="personJump(person.id)"
           @error="imageError(person)"
         ></image>
-        <image v-else src="/static/noavatar.gif" class="det-per-head"></image>
+        <image
+          v-else
+          src="/static/noavatar.gif"
+          class="det-per-head"
+          @click="personJump(person.id)"
+        ></image>
       </view>
     </view>
     <view class="fold-box" :style="{ transform: transform }" v-if="personNum > limitCount">
