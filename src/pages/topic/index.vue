@@ -579,8 +579,9 @@ export default {
   methods: {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
+      setCategoryId: 'session/SET_CATEGORYID',
+      setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
-
     callMember(id) {
       uni.navigateTo({
         url: `/pages/my/index?userId=${id}`,
@@ -1359,10 +1360,18 @@ export default {
     },
     // 点击分类标签
     tagClick(tagId) {
-      console.log(tagId, '这是分类id');
-      uni.redirectTo({
-        url: `/pages/home/index?id=${tagId}`,
-      });
+      this.$u.event.$emit('tagClick', tagId);
+      const pages = getCurrentPages();
+      const delta = pages.indexOf(pages[pages.length - 1]);
+      if (pages.length === 1) {
+        uni.redirectTo({
+          url: '/pages/home/index',
+        });
+      } else {
+        uni.navigateBack({
+          delta,
+        });
+      }
     },
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {

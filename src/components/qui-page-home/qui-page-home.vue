@@ -61,7 +61,7 @@
         <u-tabs
           class="scroll-tab"
           :list="categories"
-          :current="currentIndex"
+          :current="categoryIndex"
           @change="toggleTab"
           is-scroll="isScroll"
           active-color="#1878F3"
@@ -182,7 +182,7 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -191,8 +191,7 @@ export default {
     return {
       suspended: false, // 是否吸顶状态
       checkoutTheme: false, // 切换主题  搭配是否吸顶使用
-      categoryId: 0, // 主题分类 ID
-      currentIndex: 0,
+      // categoryId: 0, // 主题分类 ID
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
@@ -248,6 +247,12 @@ export default {
       playIndex: null,
     };
   },
+  computed: {
+    ...mapState({
+      categoryId: state => state.session.categoryId,
+      categoryIndex: state => state.session.categoryIndex,
+    }),
+  },
   created() {
     console.log(this.tagId, 'eyeyeyeeyeyyeyy');
   },
@@ -259,6 +264,10 @@ export default {
         this.navHeight = 102 /* nav的高度 */ * rpx;
         this.navbarHeight = res.statusBarHeight + 44 /* uni-nav-bar的高度 */;
       },
+    });
+
+    this.$u.event.$on('tagClick', tagId => {
+      this.setCategoryIndex(this.getCategorieIndex(tagId));
     });
   },
   methods: {
@@ -287,16 +296,12 @@ export default {
       this.headerShow = true;
     },
     // 初始化选中的选项卡
-    initCategoryInfo() {
-      console.log(this.categories, '123456789');
-      this.categoryId = this.$props.tagId || 0;
+    getCategorieIndex(tagId) {
       for (let i = 0, len = this.categories.length; i < len; i += 1) {
-        if (+this.categories[i]._jv.id === +this.categoryId) {
-          this.currentIndex = i;
-          return;
+        if (+this.categories[i]._jv.id === +tagId) {
+          return i;
         }
       }
-      console.log(this.categoryId, this.currentIndex, 'id-----index');
     },
 
     // 切换选项卡
@@ -306,12 +311,12 @@ export default {
       this.isResetList = true;
       this.pageNum = 1;
       this.checkoutTheme = true;
-      this.categoryId = dataInfo.id;
       this.threadEssence = '';
       this.threadFollow = 0;
-      this.currentIndex = dataInfo.index;
-      this.setCategoryId(this.categoryId);
-      this.setCategoryIndex(this.currentIndex);
+      // this.currentIndex = dataInfo.index;
+      this.setCategoryId(dataInfo.id);
+      // this.categoryIndex = dataInfo.index;
+      this.setCategoryIndex(dataInfo.index);
       // 切换筛选框选中分类
       // eslint-disable-next-line
       this.filterList[0].data.map(item => {
@@ -418,7 +423,7 @@ export default {
       this.pageNum = 1;
       const filterSelected = { ...e };
       this.categoryId = filterSelected[0].data.value;
-      this.currentIndex = filterSelected[0].data.index;
+      // this.currentIndex = filterSelected[0].data.index;
       this.threadType = filterSelected[1].data.value;
 
       switch (filterSelected[2].data.value) {
@@ -621,7 +626,7 @@ export default {
     async ontrueGetList() {
       // 首页导航栏分类列表
       await this.loadCategories();
-      this.initCategoryInfo();
+      // this.initCategoryInfo();
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
