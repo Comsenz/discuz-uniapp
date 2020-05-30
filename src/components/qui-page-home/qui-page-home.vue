@@ -723,7 +723,7 @@ export default {
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   // max-height: calc(100vh - 100rpx);
-  height: 100vh;
+  height: calc(100vh - 119rpx);
 }
 
 .nav .filter-modal {
