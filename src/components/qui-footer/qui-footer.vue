@@ -273,7 +273,7 @@ export default {
 }
 .red-circle {
   position: absolute;
-  top: -3rpx;
-  left: 302rpx;
+  top: -10rpx;
+  left: 310rpx;
 }
 </style>
