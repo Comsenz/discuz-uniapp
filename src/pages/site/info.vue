@@ -148,10 +148,12 @@ export default {
   },
   onLoad() {
     uni.hideHomeButton();
-    this.$u.event.$on('logind', () => {
-      uni.redirectTo({
-        url: '/pages/home/index',
-      });
+    this.$u.event.$on('logind', data => {
+      if (data.paid) {
+        uni.redirectTo({
+          url: '/pages/home/index',
+        });
+      }
     });
   },
   // 唤起小程序原声分享
