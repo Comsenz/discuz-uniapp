@@ -9,7 +9,7 @@
         @scroll="scroll"
         @scrolltoupper="toUpper"
       >
-        <view class="chat-box__con" v-for="item in allChatRecord" :key="item.id">
+        <view class="chat-box__con" v-for="item in allChatRecord" :key="item._jv.id">
           <view class="chat-box__con__time">{{ item.time }}</view>
           <view
             :class="[

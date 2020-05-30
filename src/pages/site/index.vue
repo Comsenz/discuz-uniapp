@@ -68,10 +68,14 @@
         </view>
       </qui-cell-item>
       <navigator url="/pages/manage/users" hover-class="none">
-        <qui-cell-item :title="i18n.t('home.theme')" slot-right arrow class="cell-item--auto">
-          <view v-for="(item, index) in siteInfo.users" :key="index" class="site-item__person">
+        <qui-cell-item class="member" :title="i18n.t('home.theme')" slot-right arrow>
+          <view
+            v-for="(item, index) in siteInfo.users"
+            :key="index"
+            class="site-item__person__content"
+          >
             <image
-              class="site-item__person-avatar"
+              class="site-item__person__content-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
               @tap="jumpUserPage(item.id)"
@@ -285,9 +289,8 @@ export default {
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
-  .header /deep/ .circleDet {
-    padding: 60rpx 40rpx 50rpx;
-    color: --color(--qui-FC-777);
+  .header /deep/ .circleDet-txt {
+    color: --color(--qui-FC-333);
     opacity: 1;
   }
   .header .logo {
@@ -330,15 +333,12 @@ export default {
 .site-item__pay .cell-item__body__right-text {
   color: --color(--qui-RED);
 }
-.site-item__person-avatar,
+.site-item__person__content-avatar,
 .site-item__owner-avatar {
   width: 60rpx;
   height: 60rpx;
   margin-left: 8rpx;
   border-radius: 50%;
-}
-.site-item__person-avatar {
-  margin-left: 8rpx;
 }
 .site-item__owner {
   display: flex;
@@ -347,9 +347,14 @@ export default {
 .site-item__owner-avatar {
   margin-right: 20rpx;
 }
-.site-item__person {
+/deep/ .member .cell-item__body__right {
+  display: flex;
+}
+.site-item__person__content {
   display: inline-block;
-  vertical-align: middle;
+  height: 60rpx;
+  overflow: hidden;
+  font-size: 0;
 }
 .cell-item--left .cell-item__body__right {
   text-align: left;
