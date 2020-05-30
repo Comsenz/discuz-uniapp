@@ -118,7 +118,7 @@
                 :comment-avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-liked="post.isLiked"
-                user-role="管理员"
+                :user-role="post.user.groups"
                 :comment-time="post.createdAt"
                 :comment-status="post.isApproved"
                 :comment-content="post.summary"

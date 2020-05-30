@@ -7,15 +7,11 @@
     <view class="det-per-list" v-if="personRes.length > 0">
       <view class="det-person" v-for="(person, index) in personRes" :key="index">
         <image
-          :src="
-            person.avatarUrl != '' && person.avatarUrl != null
-              ? person.avatarUrl
-              : '/static/noavatar.gif'
-          "
+          :src="person.avatarUrl ? person.avatarUrl : '/static/noavatar.gif'"
           class="det-per-head"
+          v-if="person.showAvatar"
           @click="personJump(person.id)"
-          @error="imageError"
-          v-if="imageStatus"
+          @error="imageError(person)"
         ></image>
         <image v-else src="/static/noavatar.gif" class="det-per-head"></image>
       </view>
@@ -97,7 +93,6 @@ export default {
       personRes: [],
       foldStatus: false,
       transform: '',
-      imageStatus: true, // 头像地址错误时显示默认头像
     };
   },
   onLoad() {},
@@ -110,16 +105,15 @@ export default {
     // 监听得到的数据
     personList: {
       handler(newVal) {
-        this.personList = newVal;
-        // this.personRes = newVal;
-        this.personRes = this.limitArray(newVal, this.limitCount);
+        newVal.map(item => {
+          item.showAvatar = true;
+          return item;
+        });
+        this.personRes = newVal;
       },
       deep: true,
       immediate: true,
     },
-
-    deep: true,
-    immediate: true,
   },
   methods: {
     // 数组取前几条数据
@@ -152,8 +146,8 @@ export default {
       this.$emit('btnClick', param);
     },
     // 头像失效
-    imageError() {
-      this.imageStatus = false;
+    imageError(person) {
+      person.showAvatar = false;
     },
   },
 };
