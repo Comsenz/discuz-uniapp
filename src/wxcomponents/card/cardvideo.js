@@ -28,7 +28,7 @@ export default class LastMayday {
                 "css": {
                   "color": "#000000",
                   "background": "rgba(0,0,0,0)",
-                  "width": `${obj.namewidth}px`,
+                  "width": "500px",
                   "height": "40.04px",
                   "top": "41px",
                   "left": "140px",
@@ -48,39 +48,39 @@ export default class LastMayday {
                   "textAlign": "left"
                 }
               },
-              {
-                "type": "text",
-                "text":obj.recomment,
-                "css": {
-                  "color": "#000000",
-                  "background": "rgba(0,0,0,0)",
-                  "width": "57px",
-                  "height": "40.04px",
-                  "top": "41px",
-                  "left": `${obj.renamewidth}px`,
-                  "rotate": "0",
-                  "borderRadius": "",
-                  "borderWidth": "",
-                  "borderColor": "#000000",
-                  "shadow": "",
-                  "padding": "0px",
-                  "fontSize": "28px",
-                  "fontWeight": "400",
-                  "maxLines": "2",
-                  "lineHeight": "40.40400000000001px",
-                  "textStyle": "fill",
-                  "textDecoration": "none",
-                  "fontFamily": "",
-                  "textAlign": "left"
-                }
-              },
+              // {
+              //   "type": "text",
+              //   "text":obj.recomment,
+              //   "css": {
+              //     "color": "#000000",
+              //     "background": "rgba(0,0,0,0)",
+              //     "width": "57px",
+              //     "height": "40.04px",
+              //     "top": "41px",
+              //     "left": `${obj.renamewidth}px`,
+              //     "rotate": "0",
+              //     "borderRadius": "",
+              //     "borderWidth": "",
+              //     "borderColor": "#000000",
+              //     "shadow": "",
+              //     "padding": "0px",
+              //     "fontSize": "28px",
+              //     "fontWeight": "400",
+              //     "maxLines": "2",
+              //     "lineHeight": "40.40400000000001px",
+              //     "textStyle": "fill",
+              //     "textDecoration": "none",
+              //     "fontFamily": "",
+              //     "textAlign": "left"
+              //   }
+              // },
               {
                 "type": "text",
                 "text": obj.username + obj.stay + obj.useratttype + obj.published+obj.contents,
                 "css": {
                   "color": "#333333",
                   "background": "rgba(0,0,0,0)",
-                  "width": "555px",
+                  "width": "535px",
                   "height": "34.32px",
                   "top": "88px",
                   "left": "140px",

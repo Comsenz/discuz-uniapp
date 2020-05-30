@@ -3,7 +3,7 @@ export default class LastMayday {
     return (
       {
         "width": "700px",
-        "height": "1100px",
+        "height": `${obj.heightdefill+1100}px`,
         "background": "#ffffff",
         "views": [
           {
@@ -28,7 +28,7 @@ export default class LastMayday {
             "css": {
               "color": "#000000",
               "background": "rgba(0,0,0,0)",
-              "width": `${obj.namewidth}px`,
+              "width": "500px",
               "height": "40.04px",
               "top": "41px",
               "left": "140px",
@@ -48,39 +48,39 @@ export default class LastMayday {
               "textAlign": "left",
             }
           },
-          {
-            "type": "text",
-            "text":obj.recomment,
-            "css": {
-              "color": "#000000",
-              "background": "rgba(0,0,0,0)",
-              "width": "57px",
-              "height": "40.04px",
-              "top": "41px",
-              "left": `${obj.renamewidth}px`,
-              "rotate": "0",
-              "borderRadius": "",
-              "borderWidth": "",
-              "borderColor": "#000000",
-              "shadow": "",
-              "padding": "0px",
-              "fontSize": "28px",
-              "fontWeight": "400",
-              "maxLines": "1",
-              "lineHeight": "40.40400000000001px",
-              "textStyle": "fill",
-              "textDecoration": "none",
-              "fontFamily": "",
-              "textAlign": "left"
-            }
-          },
+          // {
+          //   "type": "text",
+          //   "text":obj.recomment,
+          //   "css": {
+          //     "color": "#000000",
+          //     "background": "rgba(0,0,0,0)",
+          //     "width": "57px",
+          //     "height": "40.04px",
+          //     "top": "41px",
+          //     "left": `${obj.renamewidth}px`,
+          //     "rotate": "0",
+          //     "borderRadius": "",
+          //     "borderWidth": "",
+          //     "borderColor": "#000000",
+          //     "shadow": "",
+          //     "padding": "0px",
+          //     "fontSize": "28px",
+          //     "fontWeight": "400",
+          //     "maxLines": "1",
+          //     "lineHeight": "40.40400000000001px",
+          //     "textStyle": "fill",
+          //     "textDecoration": "none",
+          //     "fontFamily": "",
+          //     "textAlign": "left"
+          //   }
+          // },
           {
             "type": "text",
             "text": obj.username + obj.stay + obj.useratttype + obj.published+obj.contents,
             "css": {
               "color": "#333333",
               "background": "rgba(0,0,0,0)",
-              "width": "555px",
+              "width": "535px",
               "height": "34.32px",
               "top": "88px",
               "left": "140px",
@@ -92,7 +92,7 @@ export default class LastMayday {
               "padding": "0px",
               "fontSize": "24px",
               "fontWeight": "400",
-              "maxLines": "1",
+              "maxLines": "2",
               "lineHeight": "34.632000000000005px",
               "textStyle": "fill",
               "textDecoration": "none",
@@ -106,7 +106,7 @@ export default class LastMayday {
               "background": "#F7F7F7",
               "width":`${obj.marglength}px`,
               "height": "50px",
-              "top": "757px",
+              "top": `${757+obj.heightdefill}px`,
               "left": "40px",
               "rotate": "0",
               "borderRadius": "6px",
@@ -122,7 +122,7 @@ export default class LastMayday {
               "background": "rgba(0,0,0,0)",
               "width": `${obj.attachlength}px`,
               "height": "27.119999999999997px",
-              "top": "769px",
+              "top": `${769+obj.heightdefill}px`,
               "left": "60px",
               "rotate": "0",
               "borderRadius": "",
@@ -146,7 +146,7 @@ export default class LastMayday {
               "background": "#F9FAFC",
               "width": "700px",
               "height": "200px",
-              "top": "900px",
+              "top": `${900+obj.heightdefill}px`,
               "left": "0px",
               "rotate": "0",
               "borderRadius": "",
@@ -160,7 +160,7 @@ export default class LastMayday {
             "css": {
               "min-width": "140px",
               "height": "140px",
-              "top": "930px",
+              "top": `${930+obj.heightdefill}px`,
               "left": "40px",
               "rotate": "0",
               "borderRadius": "",
@@ -178,7 +178,7 @@ export default class LastMayday {
               "background": "rgba(0,0,0,0)",
               "width": "337px",
               "height": "31.639999999999997px",
-              "top": "960px",
+              "top": `${960+obj.heightdefill}px`,
               "left": "210px",
               "rotate": "0",
               "borderRadius": "",
@@ -204,7 +204,7 @@ export default class LastMayday {
               "background": "rgba(0,0,0,0)",
               "width": "450px",
               "height": "27.119999999999997px",
-              "top": "1006px",
+              "top": `${1006+obj.heightdefill}px`,
               "left": "210px",
               "rotate": "0",
               "borderRadius": "",
@@ -253,7 +253,7 @@ export default class LastMayday {
             "url": obj.usercontimg[0],
             "css": {
               "width": "620px",
-              "height": "402px",
+              // "height": "402px",
               "top": `${240-obj.imgtop}px`,
               "left": "40px",
               "rotate": "0",
@@ -261,7 +261,7 @@ export default class LastMayday {
               "borderWidth": "",
               "borderColor": "#000000",
               "shadow": "",
-              "mode": "scaleToFill"
+              "mode": "aspectFill"
             }
           },
           {
@@ -272,7 +272,7 @@ export default class LastMayday {
               "background": "rgba(0,0,0,0)",
               "width": "616px",
               "height": "81.172px",
-              "top": `${672-obj.imgtop}px`,
+              "top": `${672-obj.imgtop+obj.heightdefill}px`,
               "left": "40px",
               "rotate": "0",
               "borderRadius": "",
