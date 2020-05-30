@@ -17,7 +17,7 @@
           @error="imageError"
           v-if="imageStatus"
         ></image>
-        <image v-else src="/static/noavatar.gif"></image>
+        <image v-else src="/static/noavatar.gif" class="det-per-head"></image>
       </view>
     </view>
     <view class="fold-box" :style="{ transform: transform }" v-if="personNum > limitCount">
@@ -113,7 +113,6 @@ export default {
         this.personList = newVal;
         // this.personRes = newVal;
         this.personRes = this.limitArray(newVal, this.limitCount);
-        // console.log(this.personRes, '0000');
       },
       deep: true,
       immediate: true,
@@ -138,7 +137,6 @@ export default {
     foldClick() {
       this.foldStatus = !this.foldStatus;
       // this.$emit('btnClick', param);
-      console.log(this.personRes);
       if (this.foldStatus) {
         this.transform = 'rotate(180deg)';
         this.personRes = this.limitArray(this.personList, this.personNum);
@@ -148,7 +146,6 @@ export default {
       }
     },
     personJump(param) {
-      console.log(param, '参数');
       this.$emit('personJump', param);
     },
     btnClick(param) {

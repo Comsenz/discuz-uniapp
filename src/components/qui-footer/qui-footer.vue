@@ -222,8 +222,10 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .ft {
+  // position: absolute;
   position: fixed;
   bottom: 0;
+  z-index: 1;
   display: flex;
   width: 100%;
   height: 119rpx;
@@ -241,13 +243,13 @@ export default {
   align-content: center;
 }
 .ft-box-icon {
-  display: flex;
-  height: 46rpx;
-  justify-content: center;
+  align-self: center;
+  height: 50rpx;
   // background: #c33;
 }
 .ft-box-content {
-  padding-top: 10rpx;
+  align-self: center;
+  margin-top: 10rpx;
   font-size: 20rpx;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
@@ -271,7 +273,7 @@ export default {
 }
 .red-circle {
   position: absolute;
-  top: -3rpx;
-  left: 302rpx;
+  top: -10rpx;
+  left: 310rpx;
 }
 </style>

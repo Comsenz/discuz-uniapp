@@ -572,6 +572,7 @@ export default {
     inviteyouas: '邀请您，作为',
     join: '加入',
     accepttheinvitationandbecome: '接受邀请，成为',
+    permanent: '永久有效',
   },
   // 搜索
   search: {

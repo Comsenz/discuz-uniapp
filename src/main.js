@@ -26,6 +26,7 @@ const $u = {
   light: () => THEME_DEFAULT,
   dark: () => THEME_DARK,
   host: () => DISCUZ_REQUEST_HOST,
+  event: new Vue(),
 };
 Vue.prototype.$u = $u;
 Vue.mixin(mixin);

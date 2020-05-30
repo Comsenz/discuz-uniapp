@@ -29,12 +29,12 @@
         v-if="show"
       >
         <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}123
+          {{ message.btnTxt }}
         </qui-button>
       </navigator>
 
       <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
-        {{ i18n.t('core.admin_login') }}456
+        {{ i18n.t('core.admin_login') }}
       </qui-button>
     </view>
   </view>

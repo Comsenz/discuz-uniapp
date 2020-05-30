@@ -4,6 +4,7 @@ module.exports = {
   data() {
     return {
       theme: this.$u.currentTheme,
+      loaded: false,
     };
   },
   onLoad() {

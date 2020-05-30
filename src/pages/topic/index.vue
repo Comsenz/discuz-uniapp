@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="content">
+  <qui-page :data-qui-theme="theme" class="content" v-if="loaded">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -118,7 +118,7 @@
                 :comment-avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-liked="post.isLiked"
-                :user-role="post.user.groups"
+                user-role="管理员"
                 :comment-time="post.createdAt"
                 :comment-status="post.isApproved"
                 :comment-content="post.summary"
@@ -333,6 +333,7 @@
               :placeholder="t.writeComments"
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
+              :show-confirm-bar="false"
               v-show="!emojiShow"
               v-model="textAreaValue"
               @blur="contBlur"
@@ -360,6 +361,9 @@
       </view>
     </uni-popup>
   </qui-page>
+  <view v-else class="loading">
+    <u-loading :size="60"></u-loading>
+  </view>
 </template>
 
 <script>
@@ -538,7 +542,6 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.user, '这是用户信息');
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -576,8 +579,9 @@ export default {
   methods: {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
+      setCategoryId: 'session/SET_CATEGORYID',
+      setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
-
     callMember(id) {
       uni.navigateTo({
         url: `/pages/my/index?userId=${id}`,
@@ -662,6 +666,8 @@ export default {
         } else {
           this.likedStatus = true;
         }
+
+        this.loaded = true;
       });
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
@@ -688,12 +694,12 @@ export default {
         if (this.isLiked) {
           // 未点赞时，点击点赞'
           post.likedUsers.unshift(this.user);
-          // post.likeCount++;
+          post.likeCount++;
         } else {
           post.likedUsers.forEach((value, key) => {
             value.id === this.user.id && post.likedUsers.splice(key, 1);
           });
-          // post.likeCount--;
+          post.likeCount--;
         }
 
         jvObj.relationships = {
@@ -1108,18 +1114,8 @@ export default {
         success: function(res) {
           console.log('微信支付成功');
           console.log('success:' + JSON.stringify(res));
-          // console.log(_this.payTypeVal, '支付类型');
-          _this.payShowStatus = false;
-          _this.coverLoading = false;
-          if (_this.payTypeVal == 0) {
-            // 这是主题支付，支付完成刷新详情页，重新请求数据
-            _this.loadThread();
-          } else if (_this.payTypeVal == 1) {
-            // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-            _this.rewardArr = _this.rewardArr.concat([_this.user]);
-            _this.thread.rewardedUsers = _this.rewardArr;
-          }
           _this.$refs.toast.show({ message: _this.p.paySuccess });
+          _this.loadThread();
         },
         fail: function(err) {
           console.log('微信支付失败');
@@ -1269,10 +1265,7 @@ export default {
       this.customAmountStatus = false;
       this.payShowStatus = true;
       // this.$refs.payShow.payClickShow();
-      // this.$refs.payShow.payClickShow(this.payTypeVal);
-      this.$nextTick(() => {
-        this.$refs.payShow.payClickShow(this.payTypeVal);
-      });
+      this.$refs.payShow.payClickShow(this.payTypeVal);
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
@@ -1367,10 +1360,18 @@ export default {
     },
     // 点击分类标签
     tagClick(tagId) {
-      console.log(tagId, '这是分类id');
-      uni.navigateTo({
-        url: `/pages/home/index?id=${tagId}`,
-      });
+      this.$u.event.$emit('tagClick', tagId);
+      const pages = getCurrentPages();
+      const delta = pages.indexOf(pages[pages.length - 1]);
+      if (pages.length === 1) {
+        uni.redirectTo({
+          url: '/pages/home/index',
+        });
+      } else {
+        uni.navigateBack({
+          delta,
+        });
+      }
     },
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {

@@ -51,7 +51,9 @@ export default {
             };
             const userId = data._jv.id;
             this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
+            this.$store.dispatch('forum/setError', { loading: false });
             this.$emit('login', { res, data });
+            this.$u.event.$emit('logind', data);
           })
           .catch(err => {
             console.log(err);

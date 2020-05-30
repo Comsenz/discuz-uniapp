@@ -41,6 +41,7 @@
             </view>
           </view>
         </view>
+        <view style="height: 10rpx;"></view>
       </scroll-view>
 
       <!-- 底部 -->
@@ -89,7 +90,7 @@ export default {
       dialogId: 0, // 会话id
       height: 0,
       scv: 0,
-      pageSize: 5, // 每页10条数据
+      pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       navbarHeight: 0,
     };
