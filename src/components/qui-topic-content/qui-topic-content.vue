@@ -9,10 +9,10 @@
           @error="imageError"
           v-if="imageStatus"
         ></image>
-        <image v-else src="/static/noavatar.gif" class="det-per-head"></image>
+        <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
       </view>
       <view class="themeItem__header__title">
-        <view class="themeItem__header__title__top">
+        <view class="themeItem__header__title__top" @click="personJump">
           <span class="themeItem__header__title__username">{{ userName }}</span>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
@@ -317,7 +317,7 @@ export default {
     },
     // 点击用户头像以及用户名事件
     personJump() {
-      this.$emit('personJume', this.userId);
+      this.$emit('personJump', this.userId);
     },
     // 点击视频封面图事件
     videocoverClick() {

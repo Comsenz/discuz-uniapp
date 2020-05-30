@@ -150,7 +150,7 @@ export default {
             uni.getImageInfo({
               src: that.contentImg[0],
               success(image) {
-                const num = image.height * (290 / image.width);
+                const num = image.height * (310 / image.width);
                 if (num > 201) {
                   that.picutre = num - 201;
                 } else {
@@ -170,10 +170,11 @@ export default {
               },
             });
             setTimeout(() => {
-              if (that.picutre > that.picutrecopy) {
-                that.heightdefill = that.picutre;
+              console.log(this.picutre, this.picutrecopy);
+              if (this.picutre > this.picutrecopy) {
+                this.heightdefill = this.picutre;
               } else {
-                that.heightdefill = that.picutre;
+                this.heightdefill = this.picutrecopy;
               }
             }, 400);
           }
