@@ -34,7 +34,6 @@
 import Cardc from '@/wxcomponents/card/cardbasemap'; // 首页海报有底图
 import Carde from '@/wxcomponents/card/cardnobasemap'; // 首页海报无底图
 import forums from '@/mixin/forums';
-import { AVATAR_ADDRESS, CODE_ADDRESS } from '@/common/const';
 
 export default {
   mixins: [forums],
@@ -56,10 +55,10 @@ export default {
       renamewidth: 400,
       openSettingBtnHidden: true,
       jurisdiction: true,
-      weixincode: CODE_ADDRESS, // 微信二维码
     };
   },
   onLoad() {
+    console.log(this.forums);
     uni.showLoading({
       title: this.i18n.t('share.generating'),
       mask: true,
@@ -96,13 +95,13 @@ export default {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.headerImg = data.avatarUrl || AVATAR_ADDRESS;
+        this.headerImg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
         this.initData();
       });
     },
     initData() {
       const obj = {
-        username: this.headerName, // 名字
+        username: this.headerName + this.i18n.t('share.recomment'), // 名字
         userheader: this.headerImg, // 头像
         slitename: this.slitename, // 站点名称
         slitelogo: this.slitelogo, // 站点logo
@@ -110,7 +109,7 @@ export default {
         themnumber: this.themnumber, // 成员人数
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 站点介绍
-        userweixincode: CODE_ADDRESS, // 微信二维码
+        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code`, // 微信二维码
         namewidth: this.themwidth,
         renamewidth: this.renamewidth,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别

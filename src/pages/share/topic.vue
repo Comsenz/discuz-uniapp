@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="quipage">
     <view class="painter">
       <view class="canvas-box" :style="{ paddingTop: paddingtop + 'rpx' }">
         <view class="cent" :style="{ height: constyle + 'rpx' }">
@@ -40,7 +40,6 @@ import Cardg from '@/wxcomponents/card/cardvideo'; // 视频海报 43
 import Cardh from '@/wxcomponents/card/card'; // 文字海报  46
 // import Cardi from '@/wxcomponents/card/cardtext';
 import forums from '@/mixin/forums';
-import { AVATAR_ADDRESS, CODE_ADDRESS } from '@/common/const';
 
 export default {
   mixins: [forums],
@@ -74,6 +73,9 @@ export default {
       that: '',
       attachlength: 97,
       marglength: 160,
+      heightdefill: '',
+      picutre: '',
+      picutrecopy: '',
     };
   },
   onLoad(arr) {
@@ -81,11 +83,13 @@ export default {
       title: this.i18n.t('share.generating'),
       mask: true,
     });
-    this.themeid = arr.id;
-    this.userid = this.usersid;
-    this.slitename = this.forums.set_site.site_name;
-    this.getusertitle();
-    this.getthemdata();
+    this.$nextTick(() => {
+      this.themeid = arr.id;
+      this.userid = this.usersid;
+      this.slitename = this.forums.set_site.site_name;
+      this.getusertitle();
+      this.getthemdata();
+    });
   },
   computed: {
     usersid() {
@@ -104,16 +108,17 @@ export default {
       };
       this.$store.dispatch('jv/get', params).then(data => {
         this.reconame = data.username;
-        this.themwidth = this.reconame.length * 28 + 3;
+        // this.themwidth = this.reconame.length * 28 + 3;
         if (this.themwidth >= 240) {
           this.themwidth = 240;
         }
         this.renamewidth = 160 + this.themwidth;
-        this.recoimg = data.avatarUrl || AVATAR_ADDRESS;
+        this.recoimg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
       });
     },
     // 获取帖子内容信息
     getthemdata() {
+      const that = this;
       this.$store
         .dispatch(
           'jv/get',
@@ -121,7 +126,7 @@ export default {
         )
         .then(data => {
           this.headerName = data.user.username;
-          this.headerImg = data.user.avatarUrl || AVATAR_ADDRESS;
+          this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
           this.postyTepy = data.type;
           this.contentTitle = data.title;
           this.content = data.firstPost.content;
@@ -129,6 +134,49 @@ export default {
           arr.forEach(value => {
             this.contentImg.push(value.thumbUrl);
           });
+          if (this.contentImg.length === 1) {
+            uni.getImageInfo({
+              src: that.contentImg[0],
+              success(image) {
+                const num = image.height * (620 / image.width);
+                if (num > 402) {
+                  that.heightdefill = num - 402;
+                } else {
+                  that.heightdefill = 0;
+                }
+              },
+            });
+          } else if (this.contentImg.length > 1) {
+            uni.getImageInfo({
+              src: that.contentImg[0],
+              success(image) {
+                const num = image.height * (290 / image.width);
+                if (num > 201) {
+                  that.picutre = num - 201;
+                } else {
+                  that.picutre = 0;
+                }
+              },
+            });
+            uni.getImageInfo({
+              src: that.contentImg[1],
+              success(image) {
+                const num = image.height * (290 / image.width);
+                if (num > 201) {
+                  that.picutrecopy = num - 201;
+                } else {
+                  that.picutrecopy = 0;
+                }
+              },
+            });
+            setTimeout(() => {
+              if (that.picutre > that.picutrecopy) {
+                that.heightdefill = that.picutre;
+              } else {
+                that.heightdefill = that.picutre;
+              }
+            }, 400);
+          }
           this.attachmentsType = data.category.name;
           this.attachlength = this.attachmentsType.length * 24 + 3;
           this.marglength = this.attachlength + 40;
@@ -136,7 +184,9 @@ export default {
             this.video = data.threadVideo.cover_url;
             this.videoduc = data.threadVideo.file_name;
           }
-          this.initData();
+          setTimeout(() => {
+            this.initData();
+          }, 500);
         });
     },
     initData() {
@@ -151,17 +201,18 @@ export default {
         usercontimg: this.contentImg, // 内容图片
         userattname: this.attachmentsName, // 帖子内容名称
         useratttype: this.attachmentsType, // 帖子分类
-        userweixincode: CODE_ADDRESS, // 微信二维码
+        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code`, // 微信二维码
         slitename: this.slitename, // 站点名称
         uservideo: this.video,
         uservideoduc: this.videoduc,
         namewidth: this.themwidth,
         renamewidth: this.renamewidth,
-        reconame: this.reconame,
+        reconame: this.reconame + this.i18n.t('share.recomment'),
         recoimg: this.recoimg,
         imgtop: this.imgtop,
         attachlength: this.attachlength,
         marglength: this.marglength,
+        heightdefill: this.heightdefill,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
         recomment: this.i18n.t('share.recomment'),
         goddessvideo: this.attachmentsType,
@@ -173,12 +224,12 @@ export default {
       if (this.contentTitle) {
         // 有标题有图片海报
         if (this.contentImg.length === 1) {
-          this.constyle = 1100;
+          this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
           // 多图片海报
         } else if (this.contentImg.length > 1) {
-          this.constyle = 1084;
+          this.constyle = 1084 + this.heightdefill;
           this.paddingtop = 41;
           this.template = new Cardf().palette(obj);
           // 只有标题文字的海报
@@ -195,7 +246,7 @@ export default {
         // 没有标题的海报
       } else if (!this.contentTitle) {
         if (this.content && this.contentImg.length === 1) {
-          this.constyle = 1100;
+          this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
           // 只有一张图片
@@ -205,7 +256,7 @@ export default {
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {
-          this.constyle = 1100;
+          this.constyle = 1084 + this.heightdefill;
           this.paddingtop = 41;
           this.template = new Cardf().palette(obj);
         } else if (this.postyTepy === 2) {
@@ -298,6 +349,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+.quipage {
+  width: 100vw;
+  height: 100vh;
+}
 .painter {
   display: flex;
   flex-direction: column;
@@ -307,8 +362,8 @@ export default {
   background-color: --color(--qui-BG-2);
 }
 .canvas-box {
-  width: 100%;
-  height: 100%;
+  // width: 100%;
+  // height: 100vh;
   margin-bottom: 155rpx;
 }
 .cent {
