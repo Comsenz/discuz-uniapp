@@ -1366,7 +1366,7 @@ export default {
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
       if (pages.length === 1) {
-        uni.redirectTo({
+        uni.navigateTo({
           url: '/pages/home/index',
         });
       } else {

@@ -276,7 +276,13 @@ export default {
     });
 
     this.$u.event.$on('tagClick', tagId => {
+      this.isResetList = true;
+      this.setCategoryId(tagId);
       this.setCategoryIndex(this.getCategorieIndex(tagId));
+      // 首页主题置顶列表
+      this.loadThreadsSticky();
+      // 首页主题内容列表
+      this.loadThreads();
     });
   },
   methods: {
@@ -374,11 +380,14 @@ export default {
       this.$refs.popupHead.open();
       // 付费模式下不显示微信分享
       if (this.forums.set_site.site_mode === 'pay') {
-        // eslint-disable-next-line
-        this.bottomData.map((value, key, bottomData) => {
-          // eslint-disable-next-line
-          value.name === 'wxFriends' && bottomData.splice(key, 1);
-        });
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+            id: 1,
+          },
+        ];
       }
     },
     // 头部分享海报
@@ -450,11 +459,14 @@ export default {
       this.$refs.popupContent.open();
       // 付费模式下不显示微信分享
       if (this.forums.set_site.site_mode === 'pay') {
-        // eslint-disable-next-line
-        this.bottomData.map((value, key, bottomData) => {
-          // eslint-disable-next-line
-          value.name === 'wxFriends' && bottomData.splice(key, 1);
-        });
+        this.bottomData = [
+          {
+            text: this.i18n.t('home.generatePoster'),
+            icon: 'icon-poster',
+            name: 'wx',
+            id: 1,
+          },
+        ];
       }
     },
     // 内容部分分享海报,跳到分享海报页面
@@ -467,8 +479,8 @@ export default {
       this.cancel();
     },
     // 首页导航栏分类列表数据
-    async loadCategories() {
-      await this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+    loadCategories() {
+      this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
         const resData = [...data] || [];
         this.categories = [
           {
@@ -585,10 +597,10 @@ export default {
       this.playIndex = index;
     },
     // 组件初始化请求接口
-    async ontrueGetList() {
+    ontrueGetList() {
       // 首页导航栏分类列表
-      await this.loadCategories();
-      // this.initCategoryInfo();
+      this.loadCategories();
+      // this.getCategorieIndex();
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
