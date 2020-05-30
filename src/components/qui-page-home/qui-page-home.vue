@@ -186,12 +186,11 @@ import { mapMutations, mapState } from 'vuex';
 
 export default {
   mixins: [forums, user],
-  props: ['tagId', 'navTheme'],
+  props: ['navTheme'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
       checkoutTheme: false, // 切换主题  搭配是否吸顶使用
-      // categoryId: 0, // 主题分类 ID
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
       threadFollow: 0, // 关注的主题 传当前用户 ID
@@ -241,7 +240,20 @@ export default {
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       isResetList: false, // 是否重置列表
-      bottomData: [],
+      bottomData: [
+        {
+          text: this.i18n.t('home.generatePoster'),
+          icon: 'icon-poster',
+          name: 'wx',
+          id: 1,
+        },
+        {
+          text: this.i18n.t('home.wxShare'),
+          icon: 'icon-wx-friends',
+          name: 'wx',
+          id: 2,
+        },
+      ],
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
@@ -264,7 +276,13 @@ export default {
     });
 
     this.$u.event.$on('tagClick', tagId => {
+      this.isResetList = true;
+      this.setCategoryId(tagId);
       this.setCategoryIndex(this.getCategorieIndex(tagId));
+      // 首页主题置顶列表
+      this.loadThreadsSticky();
+      // 首页主题内容列表
+      this.loadThreads();
     });
   },
   methods: {
@@ -303,16 +321,13 @@ export default {
 
     // 切换选项卡
     async toggleTab(dataInfo) {
-      console.log(dataInfo, '切换选项啦');
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
       this.checkoutTheme = true;
       this.threadEssence = '';
       this.threadFollow = 0;
-      // this.currentIndex = dataInfo.index;
       this.setCategoryId(dataInfo.id);
-      // this.categoryIndex = dataInfo.index;
       this.setCategoryIndex(dataInfo.index);
       // 切换筛选框选中分类
       // eslint-disable-next-line
@@ -340,9 +355,8 @@ export default {
       });
     },
     // 点击筛选下拉框里的按钮
-    changeSelected(item, dataIndex, filterIndex) {
-      console.log(item, dataIndex, filterIndex);
-    },
+    // changeSelected(item, dataIndex, filterIndex) {
+    // },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
       uni.navigateTo({
@@ -375,20 +389,6 @@ export default {
           },
         ];
       }
-      this.bottomData = [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-          id: 1,
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-          id: 2,
-        },
-      ];
     },
     // 头部分享海报
     shareHead(index) {
@@ -414,13 +414,12 @@ export default {
     },
     // 筛选选中确定按钮
     confirm(e) {
-      // console.log(this.user, '重置');
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
       const filterSelected = { ...e };
-      this.categoryId = filterSelected[0].data.value;
-      this.currentIndex = filterSelected[0].data.index;
+      this.setCategoryId(filterSelected[0].data.value);
+      this.setCategoryIndex(filterSelected[0].data.index);
       this.threadType = filterSelected[1].data.value;
 
       switch (filterSelected[2].data.value) {
@@ -469,18 +468,6 @@ export default {
           },
         ];
       }
-      this.bottomData = [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-        },
-      ];
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
@@ -492,8 +479,8 @@ export default {
       this.cancel();
     },
     // 首页导航栏分类列表数据
-    async loadCategories() {
-      await this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
+    loadCategories() {
+      this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
         const resData = [...data] || [];
         this.categories = [
           {
@@ -575,7 +562,6 @@ export default {
           this.threads = [...this.threads, ...res];
         }
         this.isResetList = false;
-        // console.log(this.navShow, this.isTop, 'isTop navShow');
       });
     },
     // 内容部分点赞按钮点击事件
@@ -593,16 +579,7 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params).then(data => {
-        console.log('data', data);
-        const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
-        console.log('likedPost', likedPost);
-        // if (data.isLiked) {
-        //   likedPost.likeCount += 1;
-        // } else {
-        //   likedPost.likeCount -= 1;
-        // }
-      });
+      this.$store.dispatch('jv/patch', params);
     },
     // 上拉加载
     pullDown() {
@@ -620,10 +597,10 @@ export default {
       this.playIndex = index;
     },
     // 组件初始化请求接口
-    async ontrueGetList() {
+    ontrueGetList() {
       // 首页导航栏分类列表
-      await this.loadCategories();
-      // this.initCategoryInfo();
+      this.loadCategories();
+      // this.getCategorieIndex();
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
