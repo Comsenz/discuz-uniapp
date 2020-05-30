@@ -64,6 +64,7 @@ export default {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
         title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+        path: `/pages/topic/index?id=${this.nowThreadId}`,
       };
     }
     return {
