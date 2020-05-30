@@ -409,7 +409,6 @@ export default {
 
             mediaName: res.name,
             success(result) {
-              console.log('success');
               console.log(result);
             },
             error(result) {
@@ -423,10 +422,8 @@ export default {
               _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
             },
             progress(result) {
-              console.log('progress');
               console.log(result);
               _this.percent = result.percent;
-              console.log(result, '视频上传进度');
               if (result.percent === 1) {
                 _this.$refs.toast.hideLoading();
               }
@@ -493,7 +490,6 @@ export default {
       this.uploadStatus = e;
     },
     uploadChange(e, status) {
-      console.log(e, status);
       this.uploadFile = e;
       this.uploadStatus = status;
     },
@@ -551,7 +547,6 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       if (!this.categoryId) {
-        console.log('分类为空', this.i18n.t('discuzq.post.theclassifyCanNotBeBlank'));
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
       }
@@ -573,7 +568,6 @@ export default {
             this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
             status = false;
           } else if (!this.uploadStatus) {
-            console.log(this.uploadStatus, '这是类型1的上传状态');
             this.$refs.toast.show({
               message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
             });
@@ -793,14 +787,12 @@ export default {
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
-        console.log(res, '这是当前主题的数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
-        console.log(this.checkClassData, '这是从接口拿到的分类数据');
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
@@ -828,7 +820,6 @@ export default {
     },
     // 编辑帖子接口
     async editThread() {
-      console.log(this.checkClassData, '这是选中的分类');
       let state = 0;
       const posts = {
         _jv: {
