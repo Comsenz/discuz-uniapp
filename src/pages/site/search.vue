@@ -260,6 +260,7 @@ export default {
 /deep/ .themeCount .themeItem {
   padding-left: 0;
   margin: 0;
+  box-shadow: none;
 }
 /deep/ .themeCount .themeItem__footer {
   display: none;

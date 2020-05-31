@@ -192,8 +192,9 @@ export default {
   position: absolute;
   top: 0;
   width: 100%;
+  max-height: 1000rpx;
   padding: 30rpx;
-  overflow: hidden;
+  overflow-y: auto;
   background: --color(--qui-BG-2);
   box-sizing: border-box;
   animation: fadeZoom 0.15s linear;

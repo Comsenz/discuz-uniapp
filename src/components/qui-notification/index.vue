@@ -94,7 +94,7 @@
         </view>
       </view>
       <!-- 系统通知 -->
-      <view class="list-box__system-notice" v-else>
+      <view class="list-box__system-notice" @click="jumpOtherTopic(item.raw.thread_id)" v-else>
         <view class="list-box__system-notice__h">
           <view>
             <view class="list-box__system-notice__hl__title">{{ item.title }}</view>

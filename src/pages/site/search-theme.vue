@@ -164,6 +164,7 @@ export default {
   padding-right: 40rpx;
   padding-left: 0;
   margin: 0;
+  box-shadow: none;
 }
 /deep/ .themeCount .themeItem__footer {
   display: none;
