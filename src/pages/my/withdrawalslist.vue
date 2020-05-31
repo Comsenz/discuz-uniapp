@@ -46,7 +46,7 @@
             item.cash_status == 3 ? 'fail' : item.cash_status == 4 ? 'success' : 'normal'
           "
         ></qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>
