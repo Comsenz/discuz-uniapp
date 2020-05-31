@@ -92,7 +92,7 @@ export default {
     });
     setTimeout(() => {
       this.initData();
-    }, 5000);
+    }, 1000);
   },
   computed: {
     usersid() {
