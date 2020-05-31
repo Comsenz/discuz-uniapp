@@ -250,7 +250,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url":"https://discuzq-1251099537.cos.ap-shanghai.myqcloud.com/public/attachments/2020/05/29//UbBrY6FaEqD2lvEQZGA9PqEnt2yLTMCM5fQ01uw0.jpeg?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDjNmKJ3tqtiJeZFS4DG4cvymKcfTCdvvh%26q-sign-time%3D1590917004%3B1590917364%26q-key-time%3D1590917004%3B1590917364%26q-header-list%3Dhost%26q-url-param-list%3D%26q-signature%3Dba4730f11bbbc6cd603c498175c24718be11ed1c&imageMogr2/thumbnail/500x500",
+                "url":obj.uservideo,
                 "css": {
                   "width": "620px",
                   "height": "402px",
@@ -306,7 +306,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": "https://discuzq-1251099537.cos.ap-shanghai.myqcloud.com/public/attachments/2020/05/29//UbBrY6FaEqD2lvEQZGA9PqEnt2yLTMCM5fQ01uw0.jpeg?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDjNmKJ3tqtiJeZFS4DG4cvymKcfTCdvvh%26q-sign-time%3D1590917004%3B1590917364%26q-key-time%3D1590917004%3B1590917364%26q-header-list%3Dhost%26q-url-param-list%3D%26q-signature%3Dba4730f11bbbc6cd603c498175c24718be11ed1c&imageMogr2/thumbnail/500x500",
+                "url": "",
                 "css": {
                   "width": "30px",
                   "height": "30px",
