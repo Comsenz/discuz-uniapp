@@ -44,7 +44,7 @@
           :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
-      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>
   </qui-page>
 </template>

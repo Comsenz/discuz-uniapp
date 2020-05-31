@@ -44,7 +44,7 @@
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
           @click="toTopic(item)"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>

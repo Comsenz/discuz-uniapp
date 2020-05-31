@@ -49,7 +49,7 @@
           </view>
         </qui-cell-item>
       </view>
-      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </view>
   </view>
 </template>

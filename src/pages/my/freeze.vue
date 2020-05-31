@@ -27,7 +27,7 @@
           :addon="`¥${freezeItem.change_freeze_amount}`"
           :brief-right="timeHandle(freezeItem.created_at)"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
       </scroll-view>
     </view>
   </qui-page>

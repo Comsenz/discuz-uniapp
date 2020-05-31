@@ -50,7 +50,7 @@
         ></qui-content>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
-      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>
   </qui-page>
 </template>

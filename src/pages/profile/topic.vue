@@ -34,7 +34,7 @@
       @headClick="headClick(item.user._jv.id)"
       @videoPlay="handleVideoPlay"
     ></qui-content>
-    <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+    <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">

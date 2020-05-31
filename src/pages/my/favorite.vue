@@ -55,7 +55,7 @@
           @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
       </scroll-view>
-      <qui-load-more :status="loadingType" :show-icon="false"></qui-load-more>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </view>
     <uni-popup ref="popupContent" type="bottom">
       <view class="popup-share">
