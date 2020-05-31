@@ -306,7 +306,7 @@ export default class LastMayday {
               },
               {
                 "type": "image",
-                "url": "http://img0.imgtn.bdimg.com/it/u=1714427989,423307097&fm=26&gp=0.jpg",
+                "url": obj.userweixincode,
                 "css": {
                   "width": "30px",
                   "height": "30px",
