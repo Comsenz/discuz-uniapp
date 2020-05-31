@@ -83,13 +83,16 @@ export default {
       title: this.i18n.t('share.generating'),
       mask: true,
     });
+    this.themeid = arr.id;
+    this.userid = this.usersid;
+    this.slitename = this.forums.set_site.site_name;
     this.$nextTick(() => {
-      this.themeid = arr.id;
-      this.userid = this.usersid;
-      this.slitename = this.forums.set_site.site_name;
       this.getusertitle();
       this.getthemdata();
     });
+    setTimeout(() => {
+      this.initData();
+    }, 5000);
   },
   computed: {
     usersid() {
@@ -114,84 +117,90 @@ export default {
         }
         this.renamewidth = 160 + this.themwidth;
         this.recoimg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+        console.log(this.recoimg);
       });
     },
     // 获取帖子内容信息
     getthemdata() {
       const that = this;
-      this.$store
-        .dispatch(
-          'jv/get',
-          `threads/${this.themeid}?include=user,firstPost,firstPost.images,category,threadVideo,category`,
-        )
-        .then(data => {
-          this.headerName = data.user.username;
-          this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          this.postyTepy = data.type;
-          this.contentTitle = data.title;
-          this.content = data.firstPost.content;
-          const arr = Object.values(data.firstPost.images);
-          arr.forEach(value => {
-            this.contentImg.push(value.thumbUrl);
-          });
-          if (this.contentImg) {
-            uni.getImageInfo({
-              src: that.contentImg[0],
-              success(image) {
-                const num = image.height * (620 / image.width);
-                if (num > 402) {
-                  that.heightdefill = num - 402;
-                } else {
-                  that.heightdefill = 0;
-                }
-              },
-            });
-          }
-          // else if (this.contentImg.length > 1) {
-          //   uni.getImageInfo({
-          //     src: that.contentImg[0],
-          //     success(image) {
-          //       const num = image.height * (310 / image.width);
-          //       if (num > 201) {
-          //         that.picutre = num - 201;
-          //       } else {
-          //         that.picutre = 0;
-          //       }
-          //     },
-          //   });
-          //   uni.getImageInfo({
-          //     src: that.contentImg[1],
-          //     success(image) {
-          //       const num = image.height * (290 / image.width);
-          //       if (num > 201) {
-          //         that.picutrecopy = num - 201;
-          //       } else {
-          //         that.picutrecopy = 0;
-          //       }
-          //     },
-          //   });
-          //   setTimeout(() => {
-          //     console.log(this.picutre, this.picutrecopy);
-          //     if (this.picutre > this.picutrecopy) {
-          //       this.heightdefill = this.picutre;
-          //     } else {
-          //       this.heightdefill = this.picutrecopy;
-          //     }
-          //   }, 400);
-          // }
-          this.attachmentsType = data.category.name;
-          this.attachlength = this.attachmentsType.length * 24 + 3;
-          this.marglength = this.attachlength + 40;
-          if (this.postyTepy === 2) {
-            this.video = data.threadVideo.cover_url;
-            this.videoduc = data.threadVideo.file_name;
-          }
-          setTimeout(() => {
-            this.initData();
-          }, 500);
+      const params = {
+        _jv: {
+          type: 'threads',
+          id: this.themeid,
+        },
+        include: ['user', 'firstPost', 'firstPost.images', 'threadVideo', 'category'],
+      };
+      this.$store.dispatch('jv/get', params).then(data => {
+        console.log(data);
+        this.headerName = data.user.username;
+        this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+        this.postyTepy = data.type;
+        this.contentTitle = data.title;
+        this.content = data.firstPost.content;
+        const arr = Object.values(data.firstPost.images);
+        arr.forEach(value => {
+          this.contentImg.push(value.thumbUrl || value.url);
         });
+        if (this.contentImg) {
+          uni.getImageInfo({
+            src: that.contentImg[0],
+            success(image) {
+              console.log(image.width);
+              console.log(image.height);
+              const num = image.height * (620 / image.width);
+              if (num > 402) {
+                that.heightdefill = num - 402;
+              } else {
+                that.heightdefill = 0;
+              }
+            },
+          });
+          console.log(this.heightdefill);
+        }
+        // else if (this.contentImg.length > 1) {
+        //   uni.getImageInfo({
+        //     src: that.contentImg[0],
+        //     success(image) {
+        //       const num = image.height * (310 / image.width);
+        //       if (num > 201) {
+        //         that.picutre = num - 201;
+        //       } else {
+        //         that.picutre = 0;
+        //       }
+        //     },
+        //   });
+        //   uni.getImageInfo({
+        //     src: that.contentImg[1],
+        //     success(image) {
+        //       const num = image.height * (290 / image.width);
+        //       if (num > 201) {
+        //         that.picutrecopy = num - 201;
+        //       } else {
+        //         that.picutrecopy = 0;
+        //       }
+        //     },
+        //   });
+        //   setTimeout(() => {
+        //     console.log(this.picutre, this.picutrecopy);
+        //     if (this.picutre > this.picutrecopy) {
+        //       this.heightdefill = this.picutre;
+        //     } else {
+        //       this.heightdefill = this.picutrecopy;
+        //     }
+        //   }, 400);
+        // }
+        // this.attachmentsType = data.category.name;
+        // this.attachlength = this.attachmentsType.length * 24 + 3;
+        // this.marglength = this.attachlength + 40;
+        if (this.postyTepy === 2) {
+          this.video = data.threadVideo.cover_url;
+          this.videoduc = data.threadVideo.file_name;
+        }
+        console.log(this.contentImg);
+      });
     },
     initData() {
+      console.log(this.contentImg, this.recoimg);
       if (!this.contentTitle) {
         this.imgtop = 80;
       }
@@ -226,11 +235,13 @@ export default {
       if (this.contentTitle) {
         // 有标题有图片海报
         if (this.contentImg.length === 1) {
+          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
           // 多图片海报
         } else if (this.contentImg.length > 1) {
+          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
@@ -248,6 +259,7 @@ export default {
         // 没有标题的海报
       } else if (!this.contentTitle) {
         if (this.content && this.contentImg.length === 1) {
+          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
@@ -258,6 +270,7 @@ export default {
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {
+          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
@@ -375,7 +388,6 @@ export default {
   border-radius: 7rpx;
   box-shadow: 0 3rpx 6rpx rgba(0, 0, 0, 0.16);
   .cent-image {
-    display: block;
     width: 100%;
     height: 100%;
   }
