@@ -195,9 +195,6 @@ export default {
 .withdrawalslist-head /deep/ .cell-item__body {
   height: 78rpx;
 }
-/deep/ .filter-modal {
-  top: 118rpx;
-}
 /deep/ .cell-item.fail .cell-item__body__content-title {
   color: --color(--qui-RED);
 }
