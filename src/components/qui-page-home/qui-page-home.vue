@@ -97,6 +97,7 @@
           :video-height="item.threadVideo.height"
           :video-id="item.threadVideo._jv.id"
           :cover-image="item.threadVideo.cover_url"
+          :is-deleted="item.isDeleted"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -372,9 +373,6 @@ export default {
         url: `/pages/topic/index?id=${id}`,
       });
     },
-    // 点击筛选下拉框里的按钮
-    // changeSelected(item, dataIndex, filterIndex) {
-    // },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
       uni.navigateTo({
@@ -470,7 +468,12 @@ export default {
       query
         .select('#navId')
         .boundingClientRect(data => {
+          setTimeout(() => {
+          console.log(data, '看看页面高度在哪里了');
           this.filterTop = data.top * 2 + 100;
+          console.log(data.top, 'data.bottom');
+          console.log(this.filterTop, 'this.filterTop');
+          },500)
         })
         .exec();
       this.show = !this.show;
