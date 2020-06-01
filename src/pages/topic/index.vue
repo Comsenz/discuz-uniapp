@@ -877,7 +877,7 @@ export default {
             // if (data.isDeleted) {
             // console.log('删除成功，跳转到首页');
             this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateTo({
+            uni.navigateBack({
               url: `/pages/home/index`,
             });
             // }
@@ -1127,7 +1127,7 @@ export default {
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
               });
-              this.thread.rewardedUsers.push(this.user);
+              this.thread.rewardedUsers.unshift(this.user);
             }
           }
         })
@@ -1154,29 +1154,20 @@ export default {
           // console.log(_this.payTypeVal, '支付类型');
           _this.payShowStatus = false;
           _this.coverLoading = false;
+
+          _this.$refs.toast.show({ message: _this.p.paySuccess });
           if (_this.payTypeVal == 0) {
             // 这是主题支付，支付完成刷新详情页，重新请求数据
+            console.log('这是主题支付');
             _this.loadThread();
           } else if (_this.payTypeVal == 1) {
             // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-            _this.rewardArr = _this.rewardArr.concat([_this.user]);
-            _this.thread.rewardedUsers = _this.rewardArr;
+            _this.thread._jv.relationships.rewardedUsers.data.push({
+              type: _this.user._jv.type,
+              id: _this.user.id.toString(),
+            });
+            _this.thread.rewardedUsers.unshift(_this.user);
           }
-          _this.$refs.toast.show({ message: _this.p.paySuccess });
-          // console.log('微信支付成功');
-          console.log('success:' + JSON.stringify(res));
-          // console.log(_this.payTypeVal, '支付类型');
-          _this.payShowStatus = false;
-          _this.coverLoading = false;
-          if (_this.payTypeVal === 0) {
-            // 这是主题支付，支付完成刷新详情页，重新请求数据
-            _this.loadThread();
-          } else if (_this.payTypeVal === 1) {
-            // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-            _this.rewardArr = _this.rewardArr.concat([_this.user]);
-            _this.thread.rewardedUsers = _this.rewardArr;
-          }
-          _this.$refs.toast.show({ message: _this.p.paySuccess });
         },
         fail: function(err) {
           console.log('微信支付失败');
@@ -1327,7 +1318,9 @@ export default {
       this.customAmountStatus = false;
       this.payShowStatus = true;
       // this.$refs.payShow.payClickShow();
-      this.$refs.payShow.payClickShow(this.payTypeVal);
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
