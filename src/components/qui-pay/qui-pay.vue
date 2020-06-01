@@ -31,7 +31,7 @@
     <uni-popup ref="payTypePopup" type="bottom">
       <view class="popup-pay-type">
         <view class="pay-title">{{ payType }}</view>
-        <view class="money--box">
+        <view class="money-box">
           ￥
           <view class="money-num">{{ money }}</view>
         </view>
@@ -72,7 +72,7 @@
                     color="#2699fb"
                     :disabled="
                       (descriptionShow && !walletStatus && item.name === p.walletPay) ||
-                        (descriptionShow && !(money < balance) && item.name === p.walletPay)
+                        (descriptionShow && !(money <= balance) && item.name === p.walletPay)
                     "
                   />
                 </view>
@@ -384,7 +384,7 @@ export default {
   justify-content: center;
   background: --color(--qui-BG-2);
 }
-.money--box {
+.money-box {
   display: flex;
   flex-direction: row;
   justify-content: center;

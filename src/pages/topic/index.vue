@@ -10,7 +10,12 @@
     >
       <view class="ft-gap">
         <view class="bg-white">
-          <view class="detail-tip" v-if="topicStatus == 0">{{ t.examineTip }}</view>
+          <view class="detail-tip" v-if="thread.type != 2 && topicStatus == 0">
+            {{ t.examineTip }}
+          </view>
+          <view class="detail-tip" v-if="thread.type == 2 && topicStatus == 0">
+            {{ t.transcodingTip }}
+          </view>
           <qui-topic-content
             :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
             :avatar-url="thread.user.avatarUrl"

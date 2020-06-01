@@ -194,10 +194,12 @@ export default {
     },
     // 跳转至 聊天页面
     jumpMsglistPage(dialogInfo) {
-      console.log('会话信息', dialogInfo);
-      uni.navigateTo({
-        url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
-      });
+      if (dialogInfo) {
+        console.log('会话信息', dialogInfo);
+        uni.navigateTo({
+          url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
+        });
+      }
     },
     // 上拉加载
     pullDown() {
