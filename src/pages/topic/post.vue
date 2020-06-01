@@ -1,6 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <view class="post-box">
+    <view class="post-box" v-if="loadStatus">
       <view class="post-box__title" v-if="type === 1">
         <input
           class="post-box__title-input"
@@ -248,6 +248,7 @@ export default {
   name: 'Post',
   data() {
     return {
+      loadStatus: '',
       textAreaValue: '', // 输入框内容
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
@@ -643,7 +644,7 @@ export default {
         case 'img':
           data.firstPost.images.map(item => {
             this.filePreview.push({
-              path: item.url,
+              path: item.thumbUrl,
               id: item._jv.id,
             });
             return item;
@@ -787,12 +788,14 @@ export default {
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        console.log(res, '这是编辑的主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
+        this.loadStatus = true;
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
@@ -902,7 +905,10 @@ export default {
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
 
     if (this.operating === 'edit') {
+      this.loadStatus = false;
       this.getPostThread();
+    } else {
+      this.loadStatus = true;
     }
   },
   onShow() {
