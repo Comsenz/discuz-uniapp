@@ -112,6 +112,7 @@ export default {
         // 一定要等视图更新完再调用方法
         this.$refs.home.ontrueGetList();
       });
+      console.log(this.showHome);
     },
   },
 };
