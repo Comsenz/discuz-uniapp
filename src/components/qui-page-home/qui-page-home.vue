@@ -44,20 +44,6 @@
             @tap="showFilter"
           ></qui-icon>
         </view>
-        <qui-filter-modal
-          v-model="show"
-          @confirm="confirm"
-          @changeSelected="changeSelected"
-          @change="changeType"
-          :confirm-text="i18n.t('home.confirmText')"
-          :if-need-confirm="ifNeedConfirm"
-          :filter-list="filterList"
-          :show-search="showSearch"
-          @searchClick="searchClick"
-          posi-type="absolute"
-          top="102"
-          ref="filter"
-        ></qui-filter-modal>
         <u-tabs
           class="scroll-tab"
           :list="categories"
@@ -111,6 +97,7 @@
           :video-height="item.threadVideo.height"
           :video-id="item.threadVideo._jv.id"
           :cover-image="item.threadVideo.cover_url"
+          :is-deleted="item.isDeleted"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -129,6 +116,19 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
     </scroll-view>
+    <qui-filter-modal
+      v-model="show"
+      @confirm="confirm"
+      @changeSelected="changeSelected"
+      @change="changeType"
+      :confirm-text="i18n.t('home.confirmText')"
+      :if-need-confirm="ifNeedConfirm"
+      :filter-list="filterList"
+      :show-search="showSearch"
+      @searchClick="searchClick"
+      :content-top="filterTop"
+      ref="filter"
+    ></qui-filter-modal>
     <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -186,7 +186,13 @@ import { mapMutations, mapState } from 'vuex';
 
 export default {
   mixins: [forums, user],
-  props: ['navTheme'],
+  props: {
+    navTheme: {
+      type: String,
+      default: '',
+    },
+  },
+  // props: ['navTheme'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
@@ -236,7 +242,7 @@ export default {
         },
       ],
       threads: [],
-      sticky: {}, // 置顶帖子内容
+      sticky: [], // 置顶帖子内容
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       isResetList: false, // 是否重置列表
@@ -266,6 +272,9 @@ export default {
       categoryId: state => state.session.categoryId,
       categoryIndex: state => state.session.categoryIndex,
     }),
+  },
+  created() {
+    this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
   },
   mounted() {
     uni.getSystemInfo({
@@ -367,9 +376,6 @@ export default {
         url: `/pages/topic/index?id=${id}`,
       });
     },
-    // 点击筛选下拉框里的按钮
-    // changeSelected(item, dataIndex, filterIndex) {
-    // },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
       uni.navigateTo({
@@ -461,6 +467,18 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
+      const query = uni.createSelectorQuery().in(this);
+      query
+        .select('#navId')
+        .boundingClientRect(data => {
+          setTimeout(() => {
+            console.log(data, '看看页面高度在哪里了');
+            this.filterTop = data.top * 2 + 100;
+            console.log(data.top, 'data.bottom');
+            console.log(this.filterTop, 'this.filterTop');
+          }, 500);
+        })
+        .exec();
       this.show = !this.show;
       this.$refs.filter.setData();
       // this.navShow = true;
@@ -611,9 +629,9 @@ export default {
     },
     // 组件初始化请求接口
     ontrueGetList() {
+      this.isResetList = true;
       // 首页导航栏分类列表
       this.loadCategories();
-      // this.getCategorieIndex();
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表

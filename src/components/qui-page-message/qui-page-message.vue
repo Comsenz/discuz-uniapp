@@ -48,6 +48,7 @@ const TYPE_404 = '404';
 const TYPE_CLOSED = 'site_closed';
 const NOT_INSTALL = 'not_install';
 const BAN_USER = 'ban_user';
+const THREAD_DELETED = 'thread_deleted';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -73,6 +74,12 @@ const message = {
     btnTxt: i18n.t('core.close'),
     icon: '@/static/msg-warning.svg',
   },
+  [THREAD_DELETED]: {
+    title: i18n.t('core.thread_deleted'),
+    subtitle: '', // 从接口读取主题被删除时主题详情页的提示语
+    btnTxt: i18n.t('core.back_home'),
+    icon: '@/static/msg-warning.svg',
+  },
 };
 export default {
   filters: {
@@ -89,14 +96,16 @@ export default {
       return message[this.forumError.code] || {};
     },
     show() {
-      return [TYPE_CLOSED, NOT_INSTALL, BAN_USER].indexOf(this.forumError.code) >= 0;
+      return (
+        [TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED].indexOf(this.forumError.code) >= 0
+      );
     },
   },
   methods: {
     handleClick() {
       console.log(111);
       // 404
-      if (this.forumError.code === TYPE_404) {
+      if (this.forumError.code === TYPE_404 || this.forumError.code === THREAD_DELETED) {
         uni.redirectTo({
           url: '/pages/home/index',
         });

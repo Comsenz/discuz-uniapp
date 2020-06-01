@@ -1,5 +1,5 @@
 <template>
-  <view class="themeCount">
+  <view class="themeCount" v-if="!isDeleted">
     <image
       class="addFine"
       src="@/static/essence.png"
@@ -357,6 +357,11 @@ export default {
     payStatus: {
       type: Boolean,
       default: true,
+    },
+    // 是否删除
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => {
