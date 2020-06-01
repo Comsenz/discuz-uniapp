@@ -44,20 +44,6 @@
             @tap="showFilter"
           ></qui-icon>
         </view>
-        <qui-filter-modal
-          v-model="show"
-          @confirm="confirm"
-          @changeSelected="changeSelected"
-          @change="changeType"
-          :confirm-text="i18n.t('home.confirmText')"
-          :if-need-confirm="ifNeedConfirm"
-          :filter-list="filterList"
-          :show-search="showSearch"
-          @searchClick="searchClick"
-          posi-type="absolute"
-          top="102"
-          ref="filter"
-        ></qui-filter-modal>
         <u-tabs
           class="scroll-tab"
           :list="categories"
@@ -129,6 +115,19 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
     </scroll-view>
+    <qui-filter-modal
+      v-model="show"
+      @confirm="confirm"
+      @changeSelected="changeSelected"
+      @change="changeType"
+      :confirm-text="i18n.t('home.confirmText')"
+      :if-need-confirm="ifNeedConfirm"
+      :filter-list="filterList"
+      :show-search="showSearch"
+      @searchClick="searchClick"
+      :content-top="filterTop"
+      ref="filter"
+    ></qui-filter-modal>
     <uni-popup ref="popupHead" type="bottom">
       <view class="popup-share">
         <view class="popup-share-content">
@@ -467,6 +466,13 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
+      const query = uni.createSelectorQuery().in(this);
+      query
+        .select('#navId')
+        .boundingClientRect(data => {
+          this.filterTop = data.top * 2 + 100;
+        })
+        .exec();
       this.show = !this.show;
       this.$refs.filter.setData();
       // this.navShow = true;

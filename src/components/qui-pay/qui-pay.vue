@@ -52,7 +52,7 @@
                 </view>
                 <view
                   class="check-tip"
-                  v-else-if="descriptionShow && item.name === p.walletPay && money < balance"
+                  v-else-if="descriptionShow && item.name === p.walletPay && money <= balance"
                 >
                   {{ p.walletBalance }}，￥{{ balance }}
                 </view>
