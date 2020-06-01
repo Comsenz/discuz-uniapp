@@ -132,7 +132,6 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
-          delete res._jv;
           this.userTotal = res.length;
           this.userList = res;
         });
@@ -159,7 +158,6 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
-          delete res._jv;
           this.themeTotal = res.length;
           this.themeList = res;
         });
