@@ -94,7 +94,7 @@
         </view>
       </view>
       <!-- 系统通知 -->
-      <view class="list-box__system-notice" @click="jumpOtherTopic(item.raw.thread_id)" v-else>
+      <view class="list-box__system-notice" @click="jumpNotice(item.raw)" v-else>
         <view class="list-box__system-notice__h">
           <view>
             <view class="list-box__system-notice__hl__title">{{ item.title }}</view>
@@ -159,6 +159,14 @@ export default {
         console.log('跳转到帖子详情页面：', topicId);
         uni.navigateTo({
           url: `/pages/topic/index?id=${topicId}`,
+        });
+      }
+    },
+    jumpNotice(item) {
+      if (item && item.tpl_id !== 6 && item.thread_id) {
+        console.log('跳转到帖子详情页面：', item.thread_id);
+        uni.navigateTo({
+          url: `/pages/topic/index?id=${item.thread_id}`,
         });
       }
     },
