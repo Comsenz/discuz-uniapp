@@ -186,7 +186,13 @@ import { mapMutations, mapState } from 'vuex';
 
 export default {
   mixins: [forums, user],
-  props: ['navTheme'],
+  props: {
+    navTheme: {
+      type: String,
+      default: '',
+    },
+  },
+  // props: ['navTheme'],
   data() {
     return {
       suspended: false, // 是否吸顶状态
@@ -613,7 +619,6 @@ export default {
     ontrueGetList() {
       // 首页导航栏分类列表
       this.loadCategories();
-      // this.getCategorieIndex();
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
