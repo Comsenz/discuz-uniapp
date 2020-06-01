@@ -67,7 +67,11 @@
           class="theme__content__videocover"
           v-if="threadType == 2 && !payStatus && coverImage != null"
         >
-          <image class="themeItem__content__coverimg" mode="widthFix" :src="coverImage" alt></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+          ></image>
         </view>
         <view class="content__video" v-if="threadType === 2 && payStatus">
           <video
@@ -87,7 +91,7 @@
             :vslide-gesture="false"
             :vslide-gesture-in-fullscreen="false"
             object-fit="cover"
-            direction="90"
+            :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             :src="mediaUrl"
             :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
@@ -679,7 +683,4 @@ export default {
 .theme__content__videocover {
   width: 100%;
 }
-// .content__video {
-
-// }
 </style>

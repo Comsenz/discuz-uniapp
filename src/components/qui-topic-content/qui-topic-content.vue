@@ -59,7 +59,11 @@
           v-if="themeType == 2 && !payStatus && coverImage != null"
           @click="videocoverClick"
         >
-          <image class="themeItem__content__coverimg" mode="widthFix" :src="coverImage" alt></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+          ></image>
         </view>
         <video
           v-if="themeType == 2 && payStatus"
