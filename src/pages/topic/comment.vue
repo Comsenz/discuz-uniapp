@@ -360,7 +360,7 @@ export default {
       authorization: `Bearer ${token}`,
     };
     this.formData = {
-      isGallery: 1,
+      type: 1,
     };
   },
   onShow() {

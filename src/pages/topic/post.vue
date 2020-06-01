@@ -890,7 +890,7 @@ export default {
       authorization: `Bearer ${token}`,
     };
     this.formData = {
-      isGallery: 1,
+      type: 1,
     };
     this.getCategories();
     if (Object.keys(this.allEmoji).length < 1) {

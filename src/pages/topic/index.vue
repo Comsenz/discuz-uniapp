@@ -561,7 +561,7 @@ export default {
       authorization: `Bearer ${token}`,
     };
     this.formData = {
-      isGallery: 1,
+      type: 1,
     };
   },
   // 唤起小程序原声分享
@@ -644,13 +644,8 @@ export default {
         } else {
           this.loaded = true;
         }
-        const contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
-        console.log(contentStr, '!!~~~');
-        // console.log(
-        //   contentStr,
-        //   contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'),
-        //   '~~~~~~~~~~~~~~~~~',
-        // );
+        // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
+        // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
         // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
         // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
         // data.firstPost.contentHtml = contengS.replace(
