@@ -554,6 +554,12 @@ export default {
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
+    this.url = DISCUZ_REQUEST_HOST;
+    const token = uni.getStorageSync('access_token');
+
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
     this.formData = {
       isGallery: 1,
     };
@@ -638,6 +644,28 @@ export default {
         } else {
           this.loaded = true;
         }
+        const contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
+        console.log(contentStr, '!!~~~');
+        // console.log(
+        //   contentStr,
+        //   contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'),
+        //   '~~~~~~~~~~~~~~~~~',
+        // );
+        // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
+        // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
+        // data.firstPost.contentHtml = contengS.replace(
+        //   /<h1>(.*?)<\/h1>/g,
+        //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
+        // );
+        // console.log(data.firstPost.contentHtml, '这是标题');
+        // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
+
+        // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
+
+        // str.match(/<h1>(.*?)<\/h1>/g)
+
+        // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
+
         // 追加管理菜单权限字段
         this.selectList[0].canOpera = this.thread.firstPost.canEdit;
         this.selectList[1].canOpera = this.thread.canEssence;
