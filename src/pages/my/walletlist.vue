@@ -40,7 +40,11 @@
           :key="index"
           :title="item.change_desc"
           :brief="timeHandle(item.created_at)"
-          :addon="item.change_available_amount"
+          :addon="
+            item.change_available_amount > 0
+              ? `+￥${item.change_available_amount}`
+              : `-￥${item.change_available_amount.substr(1)}`
+          "
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
           @click="toTopic(item)"
         ></qui-cell-item>
@@ -227,7 +231,7 @@ export default {
     height: auto;
     padding: 35rpx 0;
   }
-  .walletlist-items .cell-item__body {
+  .walletlist-items /deep/ .cell-item__body {
     align-items: flex-start;
   }
   /deep/ .cell-item__body__right-text {

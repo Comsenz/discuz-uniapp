@@ -242,7 +242,7 @@ export default {
         },
       ],
       threads: [],
-      sticky: {}, // 置顶帖子内容
+      sticky: [], // 置顶帖子内容
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       isResetList: false, // 是否重置列表
@@ -272,6 +272,9 @@ export default {
       categoryId: state => state.session.categoryId,
       categoryIndex: state => state.session.categoryIndex,
     }),
+  },
+  created() {
+    this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
   },
   mounted() {
     uni.getSystemInfo({

@@ -554,8 +554,14 @@ export default {
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
     }
+    this.url = DISCUZ_REQUEST_HOST;
+    const token = uni.getStorageSync('access_token');
+
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
     this.formData = {
-      isGallery: 1,
+      type: 1,
     };
   },
   // 唤起小程序原声分享
@@ -638,6 +644,23 @@ export default {
         } else {
           this.loaded = true;
         }
+        // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
+        // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
+        // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
+        // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
+        // data.firstPost.contentHtml = contengS.replace(
+        //   /<h1>(.*?)<\/h1>/g,
+        //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
+        // );
+        // console.log(data.firstPost.contentHtml, '这是标题');
+        // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
+
+        // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
+
+        // str.match(/<h1>(.*?)<\/h1>/g)
+
+        // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
+
         // 追加管理菜单权限字段
         this.selectList[0].canOpera = this.thread.firstPost.canEdit;
         this.selectList[1].canOpera = this.thread.canEssence;
@@ -854,7 +877,7 @@ export default {
             // if (data.isDeleted) {
             // console.log('删除成功，跳转到首页');
             this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateTo({
+            uni.navigateBack({
               url: `/pages/home/index`,
             });
             // }
@@ -1104,7 +1127,7 @@ export default {
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
               });
-              this.thread.rewardedUsers.push(this.user);
+              this.thread.rewardedUsers.unshift(this.user);
             }
           }
         })
@@ -1131,29 +1154,20 @@ export default {
           // console.log(_this.payTypeVal, '支付类型');
           _this.payShowStatus = false;
           _this.coverLoading = false;
+
+          _this.$refs.toast.show({ message: _this.p.paySuccess });
           if (_this.payTypeVal == 0) {
             // 这是主题支付，支付完成刷新详情页，重新请求数据
+            console.log('这是主题支付');
             _this.loadThread();
           } else if (_this.payTypeVal == 1) {
             // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-            _this.rewardArr = _this.rewardArr.concat([_this.user]);
-            _this.thread.rewardedUsers = _this.rewardArr;
+            _this.thread._jv.relationships.rewardedUsers.data.push({
+              type: _this.user._jv.type,
+              id: _this.user.id.toString(),
+            });
+            _this.thread.rewardedUsers.unshift(_this.user);
           }
-          _this.$refs.toast.show({ message: _this.p.paySuccess });
-          // console.log('微信支付成功');
-          console.log('success:' + JSON.stringify(res));
-          // console.log(_this.payTypeVal, '支付类型');
-          _this.payShowStatus = false;
-          _this.coverLoading = false;
-          if (_this.payTypeVal === 0) {
-            // 这是主题支付，支付完成刷新详情页，重新请求数据
-            _this.loadThread();
-          } else if (_this.payTypeVal === 1) {
-            // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-            _this.rewardArr = _this.rewardArr.concat([_this.user]);
-            _this.thread.rewardedUsers = _this.rewardArr;
-          }
-          _this.$refs.toast.show({ message: _this.p.paySuccess });
         },
         fail: function(err) {
           console.log('微信支付失败');
@@ -1304,7 +1318,9 @@ export default {
       this.customAmountStatus = false;
       this.payShowStatus = true;
       // this.$refs.payShow.payClickShow();
-      this.$refs.payShow.payClickShow(this.payTypeVal);
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
