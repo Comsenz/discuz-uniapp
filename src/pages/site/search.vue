@@ -22,7 +22,11 @@
     <view class="search-item" v-if="searchValue">
       <view class="search-item__head">
         <view class="search-item__head-title">{{ i18n.t('search.users') }}</view>
-        <view class="search-item__head-more" @tap="searchUser" v-if="userList.length > 0">
+        <view
+          class="search-item__head-more"
+          @tap="searchUser"
+          v-if="Object.keys(userList).length > 0"
+        >
           {{ i18n.t('search.searchmoreusers') }}
         </view>
       </view>
@@ -42,7 +46,7 @@
           :title="item.username"
           arrow
           :border="index == userList.length - 1 ? false : true"
-          :addon="item.groups ? item.groups[0].name : ''"
+          :addon="item.groups ? Object.values(item.groups)[0].name : ''"
         ></qui-cell-item>
       </view>
       <qui-no-data
@@ -53,7 +57,11 @@
     <view class="search-item search-item--themes" v-if="searchValue">
       <view class="search-item__head">
         <view class="search-item__head-title">{{ i18n.t('search.themes') }}</view>
-        <view class="search-item__head-more" @tap="searchTheme" v-if="themeList.length > 0">
+        <view
+          class="search-item__head-more"
+          @tap="searchTheme"
+          v-if="Object.keys(themeList).length > 0"
+        >
           {{ i18n.t('search.searchmorethemes') }}
         </view>
       </view>
