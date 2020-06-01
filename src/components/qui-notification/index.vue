@@ -136,25 +136,31 @@ export default {
 
   methods: {
     jumpUserPage(id) {
-      console.log('跳转到个人主页', id);
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${id}`,
-      });
+      if (id) {
+        console.log('跳转到个人主页', id);
+        uni.navigateTo({
+          url: `/pages/profile/index?userId=${id}`,
+        });
+      }
     },
     deleteNotification(id) {
       this.$emit('deleteNotice', id);
     },
     jumpMyComment(item) {
-      console.log('跳转到评论页面：', item);
-      uni.navigateTo({
-        url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.post_id}`,
-      });
+      if (item) {
+        console.log('跳转到评论页面：', item);
+        uni.navigateTo({
+          url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.post_id}`,
+        });
+      }
     },
     jumpOtherTopic(topicId) {
-      console.log('跳转到帖子详情页面：', topicId);
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${topicId}`,
-      });
+      if (topicId) {
+        console.log('跳转到帖子详情页面：', topicId);
+        uni.navigateTo({
+          url: `/pages/topic/index?id=${topicId}`,
+        });
+      }
     },
   },
 };
