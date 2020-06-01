@@ -1,14 +1,11 @@
 <template>
-  <view
-    class="filter-modal"
-    :class="{ show: showValue }"
-    @tap.stop="cancel"
-    :style="{
-      position: posiType,
-      top: top + 'rpx',
-    }"
-  >
-    <view class="filter-modal__content" v-if="showValue" @tap.stop>
+  <view class="filter-modal" :class="{ show: showValue }" @tap.stop="cancel">
+    <view
+      class="filter-modal__content"
+      v-if="showValue"
+      @tap.stop
+      :style="{ top: contentTop + 'rpx' }"
+    >
       <view class="filter-modal__content__search" v-if="showSearch" @click="searchClick">
         <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
         {{ i18n.t('search.search') }}
@@ -58,11 +55,7 @@ export default {
         return [];
       },
     },
-    posiType: {
-      type: String,
-      default: 'fixed',
-    },
-    top: {
+    contentTop: {
       type: Number,
       default: 0,
     },
@@ -160,13 +153,15 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .filter-modal {
+  position: fixed;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 999;
   display: flex;
   width: 100%;
-  height: 500vh;
+  height: 100%;
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
   visibility: hidden;
@@ -190,7 +185,6 @@ export default {
 }
 .filter-modal__content {
   position: absolute;
-  top: 0;
   width: 100%;
   max-height: 1000rpx;
   padding: 30rpx;

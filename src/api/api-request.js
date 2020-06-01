@@ -77,12 +77,22 @@ http.interceptor.response(
               },
             });
             break;
+          case 'not_install':
+          case 'site_closed':
+          case 'ban_user':
+            break;
           default:
             clearTimeout(tostTimeout);
             tostTimeout = setTimeout(() => {
+              // eslint-disable-next-line no-nested-ternary
+              const title = error.detail
+                ? Array.isArray(error.detail)
+                  ? error.detail[0]
+                  : error.detail
+                : i18n.t(`core.${error.code}`);
               uni.showToast({
                 icon: 'none',
-                title: error.detail ? error.detail[0] : i18n.t(`core.${error.code}`),
+                title,
               });
             });
         }
