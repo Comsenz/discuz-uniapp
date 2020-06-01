@@ -137,6 +137,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
+          if (res._jv) {
+            delete res._jv;
+          }
+          delete res._jv;
           this.userTotal = res.length;
           this.userList = res;
         });
@@ -160,6 +164,10 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
+          if (res._jv) {
+            delete res._jv;
+          }
+          delete res._jv;
           this.themeTotal = res.length;
           this.themeList = res;
         });
