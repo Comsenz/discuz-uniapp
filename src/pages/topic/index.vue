@@ -367,6 +367,7 @@
       </view>
     </uni-popup>
   </qui-page>
+  <qui-page-message v-else-if="thread.isDeleted"></qui-page-message>
   <view v-else class="loading">
     <u-loading :size="60"></u-loading>
   </view>
@@ -630,6 +631,15 @@ export default {
       threadAction.then(data => {
         console.log(data, '~~~~~~~~~~~~~~~~~~~');
         // this.thread = data;
+        if (data.isDeleted) {
+          this.$store.dispatch('forum/setError', {
+            code: 'thread_deleted',
+            status: 500,
+          });
+          this.loaded = false;
+        } else {
+          this.loaded = true;
+        }
         // 追加管理菜单权限字段
         this.selectList[0].canOpera = this.thread.firstPost.canEdit;
         this.selectList[1].canOpera = this.thread.canEssence;
@@ -673,8 +683,6 @@ export default {
         } else {
           this.likedStatus = true;
         }
-
-        this.loaded = true;
       });
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
