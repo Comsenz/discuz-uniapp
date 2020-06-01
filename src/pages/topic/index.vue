@@ -432,7 +432,6 @@ export default {
       paidStatus: false, // 是否有已支付数据
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
-      rewardArr: [], // 打赏数据保存
       commentStatus: {}, //回复状态
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
@@ -524,8 +523,7 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     thread() {
-      const threadId = this.threadId;
-      return utils.deepCopy(this.$store.getters['jv/get'](`threads/${threadId}`));
+      return this.$store.getters['jv/get'](`threads/${this.threadId}`);
     },
 
     allEmoji() {
@@ -662,7 +660,6 @@ export default {
         } else if (data.type == 1) {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
         }
-        this.rewardArr = data.rewardedUsers;
         if (data.price <= 0) {
           this.rewardStatus = true;
         } else {
@@ -1095,9 +1092,11 @@ export default {
             } else if (this.payTypeVal == 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               // console.log('这是主题打赏1111', this.thread.rewardedUsers);
-              this.rewardArr = this.rewardArr.concat([this.user]);
-              this.thread.rewardedUsers = this.rewardArr;
-              // console.log('这是主题打赏，追加之后的数据', this.thread.rewardedUsers);
+              this.thread._jv.relationships.rewardedUsers.data.push({
+                type: this.user._jv.type,
+                id: this.user.id.toString(),
+              });
+              this.thread.rewardedUsers.push(this.user);
             }
           }
         })
