@@ -79,6 +79,7 @@ export default {
     };
   },
   onLoad(arr) {
+    // console.log(this.themedata);
     uni.showLoading({
       title: this.i18n.t('share.generating'),
       mask: true,
@@ -90,13 +91,29 @@ export default {
       this.getusertitle();
       this.getthemdata();
     });
-    setTimeout(() => {
-      this.initData();
-    }, 1000);
   },
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
+    },
+    themedata() {
+      return this.$store.getters['session/get']('threads/1');
+    },
+  },
+  watch: {
+    heightdefill: {
+      handler(newValue) {
+        console.log(newValue);
+        this.initData();
+      },
+      deep: true,
+    },
+    content: {
+      handler(newValue) {
+        console.log(newValue);
+        this.initData();
+      },
+      deep: true,
     },
   },
   methods: {
@@ -111,7 +128,6 @@ export default {
       };
       this.$store.dispatch('jv/get', params).then(data => {
         this.reconame = data.username;
-        // this.themwidth = this.reconame.length * 28 + 3;
         if (this.themwidth >= 240) {
           this.themwidth = 240;
         }
@@ -123,81 +139,103 @@ export default {
     // 获取帖子内容信息
     getthemdata() {
       const that = this;
-      const params = {
-        _jv: {
-          type: 'threads',
-          id: this.themeid,
-        },
-        include: ['user', 'firstPost', 'firstPost.images', 'threadVideo', 'category'],
-      };
-      this.$store.dispatch('jv/get', params).then(data => {
-        console.log(data);
-        this.headerName = data.user.username;
-        this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-        this.postyTepy = data.type;
-        this.contentTitle = data.title;
-        this.content = data.firstPost.content;
-        const arr = Object.values(data.firstPost.images);
-        arr.forEach(value => {
-          this.contentImg.push(value.thumbUrl || value.url);
-        });
-        if (this.contentImg) {
-          uni.getImageInfo({
-            src: that.contentImg[0],
-            success(image) {
-              console.log(image.width);
-              console.log(image.height);
-              const num = image.height * (620 / image.width);
-              if (num > 402) {
-                that.heightdefill = num - 402;
-              } else {
-                that.heightdefill = 0;
-              }
-            },
+      this.$store
+        .dispatch(
+          'jv/get',
+          `threads/${this.themeid}?include=user,firstPost,firstPost.images,threadVideo,category`,
+        )
+        .then(data => {
+          console.log(data);
+          this.headerName = data.user.username;
+          this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+          this.postyTepy = data.type;
+          this.contentTitle = data.title;
+          this.content = data.firstPost.content;
+          const arr = Object.values(data.firstPost.images);
+          arr.forEach(value => {
+            this.contentImg.push(value.thumbUrl || value.url);
           });
-          console.log(this.heightdefill);
-        }
-        // else if (this.contentImg.length > 1) {
-        //   uni.getImageInfo({
-        //     src: that.contentImg[0],
-        //     success(image) {
-        //       const num = image.height * (310 / image.width);
-        //       if (num > 201) {
-        //         that.picutre = num - 201;
-        //       } else {
-        //         that.picutre = 0;
-        //       }
-        //     },
-        //   });
-        //   uni.getImageInfo({
-        //     src: that.contentImg[1],
-        //     success(image) {
-        //       const num = image.height * (290 / image.width);
-        //       if (num > 201) {
-        //         that.picutrecopy = num - 201;
-        //       } else {
-        //         that.picutrecopy = 0;
-        //       }
-        //     },
-        //   });
-        //   setTimeout(() => {
-        //     console.log(this.picutre, this.picutrecopy);
-        //     if (this.picutre > this.picutrecopy) {
-        //       this.heightdefill = this.picutre;
-        //     } else {
-        //       this.heightdefill = this.picutrecopy;
-        //     }
-        //   }, 400);
-        // }
-        // this.attachmentsType = data.category.name;
-        // this.attachlength = this.attachmentsType.length * 24 + 3;
-        // this.marglength = this.attachlength + 40;
-        if (this.postyTepy === 2) {
-          this.video = data.threadVideo.cover_url;
-          this.videoduc = data.threadVideo.file_name;
-        }
-        console.log(this.contentImg);
-      });
+          if (this.contentImg) {
+            uni.getImageInfo({
+              src: that.contentImg[0],
+              success(image) {
+                console.log(image.width);
+                console.log(image.height);
+                const num = image.height * (620 / image.width);
+                if (num > 402) {
+                  that.heightdefill = num - 402;
+                } else {
+                  that.heightdefill = 0;
+                }
+              },
+            });
+            console.log(this.heightdefill);
+          }
+          // else if (this.contentImg.length > 1) {
+          //   uni.getImageInfo({
+          //     src: that.contentImg[0],
+          //     success(image) {
+          //       const num = image.height * (310 / image.width);
+          //       if (num > 201) {
+          //         that.picutre = num - 201;
+          //       } else {
+          //         that.picutre = 0;
+          //       }
+          //     },
+          //   });
+          //   uni.getImageInfo({
+          //     src: that.contentImg[1],
+          //     success(image) {
+          //       const num = image.height * (290 / image.width);
+          //       if (num > 201) {
+          //         that.picutrecopy = num - 201;
+          //       } else {
+          //         that.picutrecopy = 0;
+          //       }
+          //     },
+          //   });
+          //   setTimeout(() => {
+          //     console.log(this.picutre, this.picutrecopy);
+          //     if (this.picutre > this.picutrecopy) {
+          //       this.heightdefill = this.picutre;
+          //     } else {
+          //       this.heightdefill = this.picutrecopy;
+          //     }
+          //   }, 400);
+          // }
+          this.attachmentsType = data.category.name;
+          this.attachlength = this.attachmentsType.length * 24 + 3;
+          this.marglength = this.attachlength + 40;
+          if (this.postyTepy === 2) {
+            this.video = data.threadVideo.cover_url;
+            this.videoduc = data.threadVideo.file_name;
+            uni.getImageInfo({
+              src: that.video,
+              success(image) {
+                console.log(image.width);
+                console.log(image.height);
+                const num = image.height * (620 / image.width);
+                if (num > 402) {
+                  that.heightdefill = num - 402;
+                } else {
+                  that.heightdefill = 0;
+                }
+              },
+            });
+            console.log(this.heightdefill);
+          }
+          // if (this.contentImg.length >= 1 || this.video) {
+          //   setTimeout(() => {
+          //     console.log('这里是图片贴');
+          //     this.initData();
+          //   }, 2000);
+          // } else {
+          //   setTimeout(() => {
+          //     console.log('这里是文字贴');
+          //     this.initData();
+          //   }, 300);
+          // }
+        });
     },
     initData() {
       console.log(this.contentImg, this.recoimg);
@@ -252,7 +290,7 @@ export default {
           this.template = new Cardk().palette(obj);
           // 视频贴
         } else if (this.postyTepy === 2) {
-          this.constyle = 1100;
+          this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardg().palette(obj);
         }
@@ -275,7 +313,7 @@ export default {
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
         } else if (this.postyTepy === 2) {
-          this.constyle = 1100;
+          this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardg().palette(obj);
         } else {

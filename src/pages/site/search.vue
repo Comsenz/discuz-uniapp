@@ -45,10 +45,7 @@
           :addon="item.groups ? item.groups[0].name : ''"
         ></qui-cell-item>
       </view>
-      <qui-no-data
-        :tips="i18n.t('search.norelatedusersfound')"
-        v-if="userTotal === 0"
-      ></qui-no-data>
+      <qui-no-data :tips="i18n.t('search.norelatedusersfound')" v-if="userTotal == 0"></qui-no-data>
     </view>
     <view class="search-item search-item--themes" v-if="searchValue">
       <view class="search-item__head">
@@ -88,7 +85,7 @@
       </view>
       <qui-no-data
         :tips="i18n.t('search.norelatedthemesfound')"
-        v-if="themeTotal === 0"
+        v-if="themeTotal == 0"
       ></qui-no-data>
     </view>
   </qui-page>
@@ -103,8 +100,8 @@ export default {
       searchValue: '',
       userList: [],
       themeList: [],
-      userTotal: '',
-      themeTotal: '',
+      userTotal: null,
+      themeTotal: null,
       pageNum: 1, // 当前页数
     };
   },
