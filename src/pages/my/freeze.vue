@@ -24,7 +24,11 @@
           :key="index"
           :title="`${i18n.t('profile.freezingreason')} : ${freezeItem.change_desc}`"
           :brief="`ID:${freezeItem.id}`"
-          :addon="`¥${freezeItem.change_freeze_amount}`"
+          :addon="
+            freezeItem.change_freeze_amount > 0
+              ? `￥${freezeItem.change_freeze_amount}`
+              : `-￥${freezeItem.change_freeze_amount.substr(1)}`
+          "
           :brief-right="timeHandle(freezeItem.created_at)"
         ></qui-cell-item>
         <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
