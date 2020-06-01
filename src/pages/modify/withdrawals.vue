@@ -177,27 +177,40 @@ export default {
       this.verifytitle();
     },
     settlement() {
-      this.cashmany = this.cashmany.replace(/[^\d.]/g, '');
-      this.cashmany = this.cashmany.replace(/\.{2,}/g, '.');
-      if (this.cashmany.length > 0) {
-        // this.cashmany = this.cashmany
+      setTimeout(() => {
         if (this.cashmany[0] === '.') {
           const num = 0;
           const cun = '.';
           this.cashmany = num + cun;
         }
+        this.cashmany = this.cashmany
+          .replace(/[^\d.]/g, '')
+          .replace(/\.{2,}/g, '.')
+          .replace('.', '$#$')
+          .replace(/\./g, '')
+          .replace('$#$', '.')
+          .replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3')
+          .replace(/^\./g, '');
+        // this.cashmany = this.cashmany.replace(/[^\d.]/g, '');
+        // this.cashmany = this.cashmany.replace(/\.{2,}/g, '.');
+      }, 5);
+      if (this.cashmany.length > 0) {
         this.length = true;
         const number = this.cashmany - this.cashmany * this.cost;
-        this.contint = `¥${number.toFixed(2)}`;
-        const casnumber = this.cashmany * this.cost;
-        this.procedures = casnumber.toFixed(2);
+        if (number) {
+          this.contint = `¥${number.toFixed(2)}`;
+          const casnumber = this.cashmany * this.cost;
+          this.procedures = casnumber.toFixed(2);
+        } else {
+          this.contint = '';
+          this.procedures = '';
+        }
       } else if (this.cashmany.length <= 0) {
         // this.length = false;
         this.contint = '';
         const casnumber = this.cashmany * this.cost;
         this.procedures = casnumber.toFixed(2);
       }
-      return this.cashmany;
     },
     // 点击获取验证码计时开始
     btnButton() {

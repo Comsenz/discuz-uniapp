@@ -81,10 +81,9 @@ export default {
   },
   methods: {
     changeinput() {
-      // if (this.newphon.length === 3 || this.newphon.length === 8) {
-      //   this.newphon += ' ';
-      // }
-      this.newphon = this.newphon.replace(/[^\d.]/g, '');
+      setTimeout(() => {
+        this.newphon = this.newphon.replace(/[^\d]/g, '');
+      }, 30);
       if (this.newphon.length < 11) {
         this.disabtype = true;
       } else if (this.newphon.length === 11) {
