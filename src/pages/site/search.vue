@@ -47,7 +47,7 @@
       </view>
       <qui-no-data
         :tips="i18n.t('search.norelatedusersfound')"
-        v-if="userList.length === 0"
+        v-if="userTotal === 0"
       ></qui-no-data>
     </view>
     <view class="search-item search-item--themes" v-if="searchValue">
@@ -88,7 +88,7 @@
       </view>
       <qui-no-data
         :tips="i18n.t('search.norelatedthemesfound')"
-        v-if="themeList.length === 0"
+        v-if="themeTotal === 0"
       ></qui-no-data>
     </view>
   </qui-page>
@@ -103,6 +103,8 @@ export default {
       searchValue: '',
       userList: [],
       themeList: [],
+      userTotal: '',
+      themeTotal: '',
       pageNum: 1, // 当前页数
     };
   },
@@ -127,6 +129,8 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['users', { params }]))
         .then(res => {
+          this.userTotal = res._jv.json.meta.total;
+          delete res._jv;
           this.userList = res;
         });
     },
@@ -149,6 +153,8 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
         .then(res => {
+          this.themeTotal = res._jv.json.meta.threadCount;
+          delete res._jv;
           this.themeList = res;
         });
     },
