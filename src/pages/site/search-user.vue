@@ -41,7 +41,7 @@
         <qui-cell-item
           :title="item.username"
           arrow
-          :addon="item.groups ? Object.values(item.groups)[0].name : ''"
+          :addon="item.groups ? item.groups[0].name : ''"
         ></qui-cell-item>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
