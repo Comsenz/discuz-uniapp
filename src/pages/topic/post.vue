@@ -628,6 +628,7 @@ export default {
           this.postThread().then(res => {
             this.postLoading = false;
             uni.hideLoading();
+            this.$u.event.$emit('addThread', res);
             if (res && res._jv.json.data.id) {
               uni.redirectTo({
                 url: `/pages/topic/index?id=${res._jv.json.data.id}`,
