@@ -330,10 +330,12 @@ export default {
       console.log('msg', this.msg);
     },
     jumpUserPage(id) {
-      console.log('跳转到个人主页', id);
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${id}`,
-      });
+      if (id) {
+        console.log('跳转到个人主页', id);
+        uni.navigateTo({
+          url: `/pages/profile/index?userId=${id}`,
+        });
+      }
     },
   },
 };

@@ -87,10 +87,12 @@ export default {
   methods: {
     // 跳转到个人主页
     jumpUserPage(userId) {
-      console.log('点击头像到个人主页', userId);
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${userId}`,
-      });
+      if (userId) {
+        console.log('点击头像到个人主页', userId);
+        uni.navigateTo({
+          url: `/pages/profile/index?userId=${userId}`,
+        });
+      }
     },
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
