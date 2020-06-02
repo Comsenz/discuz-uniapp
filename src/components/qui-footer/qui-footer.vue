@@ -106,7 +106,7 @@ export default {
     const len = getCurrentPages().length;
     if (len > 0) {
       const currentRout = getCurrentPages()[len - 1].is;
-      const str = currentRout.split('pages/')[1];
+      const str = currentRout && currentRout.split('pages/')[1];
       if (str) {
         this.tabs = this.tabs.map(tab => {
           const tabsName = this.i18n.t(tab.tabsName);

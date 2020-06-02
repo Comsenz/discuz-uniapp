@@ -7,7 +7,7 @@
       <image
         class="auth__content__image"
         mode="widthFix"
-        :src="forums.set_site.site_logo || '/static/logo.png'"
+        :src="(forums && forums.set_site && forums.set_site.site_logo) || '/static/logo.png'"
       ></image>
 
       <qui-button
@@ -24,7 +24,10 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
+  mixins: [forums],
   computed: {
     t() {
       return this.i18n.t('auth');

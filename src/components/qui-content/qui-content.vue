@@ -341,7 +341,7 @@ export default {
       default: 0,
     },
     videoId: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     currentindex: {

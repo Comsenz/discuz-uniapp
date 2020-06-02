@@ -55,7 +55,7 @@ export default {
   props: {
     // 导航菜单是否需要滚动，如只有2或者3个的时候，就不需要滚动了，此时使用flex平分tab的宽度
     isScroll: {
-      type: Boolean,
+      type: [Boolean, String],
       default: true,
     },
     // 需循环的标签列表
