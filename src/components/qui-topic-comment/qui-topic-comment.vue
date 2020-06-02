@@ -342,9 +342,8 @@ export default {
       &__username {
         display: flex;
         height: 37rpx;
-        max-width: 336rpx;
+        max-width: 326rpx;
         overflow: hidden;
-
         font-weight: bold;
         line-height: 37rpx;
         color: --color(--qui-FC-000);
