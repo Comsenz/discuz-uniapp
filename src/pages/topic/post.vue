@@ -52,6 +52,9 @@
           placeholder-class="textarea-placeholder"
           v-model="textAreaValue"
           auto-height="true"
+          :show-confirm-bar="barStatus"
+          adjust-position="true"
+          cursor-spacing="50"
           :maxlength="-1"
           :focus="type !== 1"
           v-if="!emojiShow"
@@ -250,6 +253,7 @@ export default {
     return {
       loadStatus: '',
       textAreaValue: '', // 输入框内容
+      barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
@@ -260,7 +264,10 @@ export default {
       operating: '', // 编辑或发布类型
       emojiShow: false, // 表情是否显示
       header: {}, // 图片请求头部
-      formData: {}, // 图片请求data
+      formData: {
+        type: '',
+        order: '',
+      }, // 图片请求data
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -491,7 +498,15 @@ export default {
       this.uploadStatus = e;
     },
     uploadChange(e, status) {
+      console.log(e, '这是文件');
       this.uploadFile = e;
+      e.map((file, index) => {
+        this.formData = {
+          type: 1,
+          order: index,
+        };
+      });
+      console.log(this.formData, '这是formData');
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
@@ -892,7 +907,9 @@ export default {
     };
     this.formData = {
       type: 1,
+      order: '',
     };
+    console.log(this.formData, '这是输出');
     this.getCategories();
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();

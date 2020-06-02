@@ -77,6 +77,11 @@ export default {
         this.$refs[this.currentTab].getUnreadNoticeNum();
       });
     }
+    if (this.currentTab === 'quimy') {
+      this.$nextTick(() => {
+        this.$refs[this.currentTab].refreshNum();
+      });
+    }
   },
   methods: {
     // 切换组件
@@ -134,7 +139,7 @@ export default {
   border: 0;
 }
 /deep/ .my-info__box__detail .cell-item__body {
-  height: 80rpx;
+  height: auto;
   align-items: flex-start;
 }
 /deep/ .my-tabs .qui-tabs__item--active {

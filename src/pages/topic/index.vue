@@ -20,6 +20,7 @@
             :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
             :avatar-url="thread.user.avatarUrl"
             :user-name="thread.user.username"
+            :user-role="thread.user.groups"
             :theme-type="thread.type"
             :theme-time="thread.createdAt"
             :management-show="
@@ -306,12 +307,12 @@
                 @click="emojiShow = !emojiShow"
               ></qui-icon>
               <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
-              <qui-icon
+              <!--<qui-icon
                 name="icon-image"
                 :size="40"
                 class="comm-icon"
                 @click="imageUploader"
-              ></qui-icon>
+              ></qui-icon>-->
             </view>
             <view class="text-word-tip">
               {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
@@ -348,7 +349,6 @@
                 {{ textAreaValue }}
               </view>-->
             <qui-uploader
-              v-if="uploaderShow"
               :url="`${url}api/attachments`"
               :header="header"
               :form-data="formData"
@@ -436,11 +436,14 @@ export default {
       commentStatus: {}, //回复状态
       commentReply: false, //发布的是否是回复的回复
       emojiShow: false, //表情组件显示状态
-      uploaderShow: false, //图片上传组件显示状态
+      // uploaderShow: false, //图片上传组件显示状态
       publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
-      formData: {}, //请求头部
+      formData: {
+        type: '',
+        order: '',
+      }, // 图片请求data
       commentId: '', //评论id
       postIndex: '', //点击时当前评论Index
       isAnonymous: '0', //支付时是否显示头像，默认不显示
@@ -562,6 +565,7 @@ export default {
     };
     this.formData = {
       type: 1,
+      order: '',
     };
   },
   // 唤起小程序原声分享
@@ -1340,20 +1344,28 @@ export default {
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
     },
+    // // 上传图片
+    // imageUploader() {
+    //   // this.uploaderShow = true;
+    //   // if (this.uploadFile.length == 3) {
+    //   //   this.$refs.toast.show({ message: this.t.imageNumLimit });
+    //   //   return;
+    //   // }
+    //   this.$nextTick(() => {
+    //     this.$refs.upload.uploadClick();
+    //   });
+    // },
     // 上传图片
-    imageUploader() {
-      this.uploaderShow = true;
-      if (this.uploadFile.length == 3) {
-        this.$refs.toast.show({ message: this.t.imageNumLimit });
-        return;
-      }
-      this.$nextTick(() => {
-        this.$refs.upload.uploadClick();
-      });
-    },
     uploadChange(e) {
       this.uploadFile = e;
+      e.map((file, index) => {
+        this.formData = {
+          type: 1,
+          order: index,
+        };
+      });
     },
+    // 删除图片
     uploadClear(list, del) {
       this.delAttachments(list.data.id).then(() => {
         this.$refs.upload.clear(del);
@@ -1383,7 +1395,7 @@ export default {
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
-      uni.navigateTo({
+      uni.redirectTo({
         url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
       });
     },

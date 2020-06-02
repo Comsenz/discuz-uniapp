@@ -13,7 +13,14 @@
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
-          <span class="themeItem__header__title__username">{{ userName }}</span>
+          <text class="themeItem__header__title__username">{{ userName }}</text>
+          <text
+            class="themeItem__header__title__isAdmin"
+            v-for="(group, index) in userRole"
+            :key="index"
+          >
+            {{ group.isDisplay ? `（${group.name}）` : '' }}
+          </text>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
@@ -202,6 +209,13 @@ export default {
     //   type: [Number, String],
     //   default: 0,
     // },
+    // 主题的用户的角色
+    userRole: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
     userId: {
       type: [Number, String],
       default: '',
@@ -390,10 +404,11 @@ export default {
     }
 
     &__title {
-      width: 400rpx;
-      // padding-left: 20rpx;
-
+      flex: 1;
       &__top {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
@@ -402,12 +417,14 @@ export default {
       }
 
       &__username {
-        width: 100%;
+        display: flex;
         height: 37rpx;
+        max-width: 326rpx;
         overflow: hidden;
         font-weight: bold;
         line-height: 37rpx;
         color: --color(--qui-FC-000);
+        text-overflow: ellipsis;
         white-space: nowrap;
       }
 
@@ -425,7 +442,7 @@ export default {
     }
     &__opera {
       align-self: flex-start;
-      flex: 1;
+      width: 100rpx;
       text-align: right;
       flex-shrink: 0;
 
@@ -451,7 +468,7 @@ export default {
         padding-bottom: 40rpx;
         font-size: 30rpx;
         font-weight: 600;
-        line-height: 40rpx;
+        line-height: 160%;
         text-align: left;
         word-break: break-all;
       }
@@ -480,7 +497,7 @@ export default {
       overflow: hidden;
       font-size: $fg-f28;
       font-weight: 400;
-      line-height: 45rpx;
+      line-height: 160%;
       word-break: break-all;
       img {
         display: inline-block;
