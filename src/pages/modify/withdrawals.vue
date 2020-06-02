@@ -32,6 +32,7 @@
             <input
               class="cash-content-input"
               type="digit"
+              maxlength="10"
               v-model="cashmany"
               @input="settlement"
               :placeholder="i18n.t('modify.enteramount')"
@@ -191,26 +192,32 @@ export default {
           .replace('$#$', '.')
           .replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3')
           .replace(/^\./g, '');
-        // this.cashmany = this.cashmany.replace(/[^\d.]/g, '');
-        // this.cashmany = this.cashmany.replace(/\.{2,}/g, '.');
-      }, 5);
-      if (this.cashmany.length > 0) {
-        this.length = true;
-        const number = this.cashmany - this.cashmany * this.cost;
-        if (number) {
-          this.contint = `¥${number.toFixed(2)}`;
+        if (Number(this.cashmany) > Number(this.balance)) {
+          this.cashmany = this.cashmany.slice(0, this.cashmany.length - 1);
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.greaterthan'),
+            duration: 2000,
+          });
+        }
+        if (this.cashmany.length > 0) {
+          this.length = true;
+          const number = this.cashmany - this.cashmany * this.cost;
+          if (number) {
+            this.contint = `¥${number.toFixed(2)}`;
+            const casnumber = this.cashmany * this.cost;
+            this.procedures = casnumber.toFixed(2);
+          } else {
+            this.contint = '';
+            this.procedures = '';
+          }
+        } else if (this.cashmany.length <= 0) {
+          // this.length = false;
+          this.contint = '';
           const casnumber = this.cashmany * this.cost;
           this.procedures = casnumber.toFixed(2);
-        } else {
-          this.contint = '';
-          this.procedures = '';
         }
-      } else if (this.cashmany.length <= 0) {
-        // this.length = false;
-        this.contint = '';
-        const casnumber = this.cashmany * this.cost;
-        this.procedures = casnumber.toFixed(2);
-      }
+      }, 5);
     },
     // 点击获取验证码计时开始
     btnButton() {
@@ -327,8 +334,7 @@ export default {
               duration: 2000,
             });
             setTimeout(() => {
-              uni.redirectTo({
-                url: '/pages/my/wallet',
+              uni.navigateBack({
                 success() {
                   const pages = getCurrentPages();
                   pages[1].onLoad();

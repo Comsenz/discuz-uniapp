@@ -77,6 +77,7 @@ export default {
       picutre: '',
       picutrecopy: '',
       contentheight: '',
+      implement: '',
     };
   },
   onLoad(arr) {
@@ -88,6 +89,7 @@ export default {
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
     this.getusertitle();
+    console.log(this.forums);
   },
   computed: {
     usersid() {
@@ -100,7 +102,7 @@ export default {
   watch: {
     heightdefill: {
       handler(newValue) {
-        if (newValue) {
+        if (newValue || newValue === 0) {
           console.log(2);
           this.initData();
         }
@@ -110,7 +112,7 @@ export default {
     content: {
       handler(newValue) {
         if (newValue) {
-          if (!this.heightdefill && this.heightdefill !== 0) {
+          if (this.implement) {
             this.initData();
             console.log(1);
           }
@@ -153,6 +155,11 @@ export default {
           console.log(data);
           this.headerName = data.user.username;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+          if (data.firstPost.images.length < 1) {
+            this.implement = true;
+          } else {
+            this.implement = false;
+          }
           const arr = Object.values(data.firstPost.images);
           arr.forEach(value => {
             this.contentImg.push(value.thumbUrl || value.url);

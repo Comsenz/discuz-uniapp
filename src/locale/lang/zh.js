@@ -366,6 +366,7 @@ export default {
     siteintroduction: '站点介绍',
     member: '成员',
     confirm: '确定保存到相册吗',
+    nothing: '无',
   },
   // 信息修改页
   modify: {
@@ -431,6 +432,7 @@ export default {
     idtitl: '非法身份证号（长度、校验位等不正确）',
     nametitl2: '非法姓名（长度、格式等不正确）',
     verifyoldphon: '验证旧手机',
+    greaterthan: '提现金额不能大于可提现余额',
   },
   permission: {
     viewThreads: '查看主题列表',
