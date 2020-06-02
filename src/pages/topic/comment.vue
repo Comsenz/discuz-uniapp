@@ -19,7 +19,7 @@
               :images-list="post.images"
               @personJump="personJump(post.user._jv.id)"
             ></qui-topic-content>
-            <view class="thread-box" v-if="loadDetailStatus">
+            <view class="thread-box" v-if="status">
               <view class="thread">
                 <view class="thread__header">
                   <view class="thread__header__img">
@@ -70,7 +70,8 @@
 
                 <view class="thread__content" @click="contentClick">
                   <view class="thread__content__text">
-                    <rich-text :nodes="thread.firstPost.contentHtml.slice(0, 38)"></rich-text>
+                    <rich-text :nodes="thread.title" v-if="thread.type == 1"></rich-text>
+                    <rich-text :nodes="thread.firstPost.summary" v-else></rich-text>
                   </view>
                 </view>
               </view>
@@ -409,6 +410,7 @@ export default {
       };
       this.loadDetailStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
+          console.log(data, '88888888888');
           this.thread = data;
           this.status = true;
         }),
