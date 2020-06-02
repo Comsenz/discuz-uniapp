@@ -66,7 +66,8 @@ export default {
     this.$nextTick(() => {
       this.userid = this.usersid;
       this.slitename = this.forums.set_site.site_name;
-      this.slitelogo = this.forums.set_site.site_header_logo || '@/static/logo.png';
+      this.slitelogo =
+        this.forums.set_site.site_header_logo || `${this.$u.host()}static/images/logo.png`;
       this.sliteback = this.forums.set_site.site_background_image;
       this.themnumber = this.forums.other.count_users;
       this.contdata = this.forums.other.count_threads;

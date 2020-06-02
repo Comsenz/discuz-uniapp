@@ -89,7 +89,6 @@ export default {
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
     this.getusertitle();
-    console.log(this.forums);
   },
   computed: {
     usersid() {
@@ -103,7 +102,6 @@ export default {
     heightdefill: {
       handler(newValue) {
         if (newValue || newValue === 0) {
-          console.log(2);
           this.initData();
         }
       },
@@ -114,7 +112,6 @@ export default {
         if (newValue) {
           if (this.implement) {
             this.initData();
-            console.log(1);
           }
         }
       },
@@ -152,13 +149,12 @@ export default {
           `threads/${this.themeid}?include=user,firstPost,firstPost.images,threadVideo,category`,
         )
         .then(data => {
-          console.log(data);
           this.headerName = data.user.username;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          if (data.firstPost.images.length < 1) {
-            this.implement = true;
-          } else {
+          if (data.firstPost.images.length >= 1 || data.threadVideo.cover_url) {
             this.implement = false;
+          } else {
+            this.implement = true;
           }
           const arr = Object.values(data.firstPost.images);
           arr.forEach(value => {
