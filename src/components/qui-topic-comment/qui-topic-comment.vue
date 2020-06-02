@@ -18,17 +18,17 @@
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
-            <span class="themeItem__header__title__username" @click="personJump">
+            <text class="themeItem__header__title__username" @click="personJump">
               {{ userName }}
-            </span>
+            </text>
 
-            <span
+            <text
               class="themeItem__header__title__isAdmin"
               v-for="(group, index) in userRole"
               :key="index"
             >
               {{ group.isDisplay ? `（${group.name}）` : '' }}
-            </span>
+            </text>
           </view>
           <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
@@ -340,6 +340,7 @@ export default {
       }
 
       &__username {
+        display: flex;
         height: 37rpx;
         max-width: 336rpx;
         overflow: hidden;

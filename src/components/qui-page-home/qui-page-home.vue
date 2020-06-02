@@ -472,11 +472,8 @@ export default {
         .select('#navId')
         .boundingClientRect(data => {
           setTimeout(() => {
-          console.log(data, '看看页面高度在哪里了');
-          this.filterTop = data.top * 2 + 100;
-          console.log(data.top, 'data.bottom');
-          console.log(this.filterTop, 'this.filterTop');
-          },500)
+            this.filterTop = data.top * 2 + 100;
+          }, 500);
         })
         .exec();
       this.show = !this.show;

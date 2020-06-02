@@ -361,8 +361,8 @@ export default {
     // 是否删除
     isDeleted: {
       type: Boolean,
-      default: false, 
-    }
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -508,6 +508,7 @@ export default {
       flex: 1;
 
       &__top {
+        display: flex;
         height: 37rpx;
         margin-left: 2rpx;
         font-family: $font-family;
@@ -516,9 +517,14 @@ export default {
       }
 
       &__username {
+        display: flex;
+        max-width: 336rpx;
+        overflow: hidden;
         font-weight: bold;
         line-height: 37rpx;
         color: --color(--qui-FC-333);
+        text-overflow: ellipsis;
+        white-space: nowrap;
         transition: $switch-theme-time;
       }
 
