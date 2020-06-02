@@ -468,7 +468,7 @@ export default {
         padding-bottom: 40rpx;
         font-size: 30rpx;
         font-weight: 600;
-        line-height: 40rpx;
+        line-height: 160%;
         text-align: left;
         word-break: break-all;
       }
@@ -497,7 +497,7 @@ export default {
       overflow: hidden;
       font-size: $fg-f28;
       font-weight: 400;
-      line-height: 45rpx;
+      line-height: 160%;
       word-break: break-all;
       img {
         display: inline-block;

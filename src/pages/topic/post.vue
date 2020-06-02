@@ -264,7 +264,10 @@ export default {
       operating: '', // 编辑或发布类型
       emojiShow: false, // 表情是否显示
       header: {}, // 图片请求头部
-      formData: {}, // 图片请求data
+      formData: {
+        type: '',
+        order: '',
+      }, // 图片请求data
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -495,7 +498,15 @@ export default {
       this.uploadStatus = e;
     },
     uploadChange(e, status) {
+      console.log(e, '这是文件');
       this.uploadFile = e;
+      e.map((file, index) => {
+        this.formData = {
+          type: 1,
+          order: index,
+        };
+      });
+      console.log(this.formData, '这是formData');
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
@@ -896,7 +907,9 @@ export default {
     };
     this.formData = {
       type: 1,
+      order: '',
     };
+    console.log(this.formData, '这是输出');
     this.getCategories();
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();

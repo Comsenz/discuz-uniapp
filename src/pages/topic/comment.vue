@@ -281,7 +281,10 @@ export default {
       publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
-      formData: {}, //请求头部
+      formData: {
+        type: '',
+        order: '',
+      }, // 图片请求data
       placeholderColor: 'color:#b5b5b5', // 默认textarea的placeholder颜色
       isLiked: false, // 主题点赞状态
       role: '管理员',
@@ -363,6 +366,7 @@ export default {
     };
     this.formData = {
       type: 1,
+      order: '',
     };
   },
   onShow() {
@@ -625,6 +629,12 @@ export default {
     },
     uploadChange(e) {
       this.uploadFile = e;
+      e.map((file, index) => {
+        this.formData = {
+          type: 1,
+          order: index,
+        };
+      });
       console.log(this.uploadFile, '这是上传的');
     },
     uploadClear(list, del) {
@@ -1107,6 +1117,9 @@ page {
       flex: 1;
 
       &__top {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
@@ -1115,12 +1128,22 @@ page {
       }
 
       &__username {
+        display: flex;
+        height: 37rpx;
+        max-width: 326rpx;
+        overflow: hidden;
         font-weight: bold;
+        line-height: 37rpx;
         color: rgba(51, 51, 51, 1);
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       &__isAdmin {
+        display: inline-block;
+        height: 37rpx;
         font-weight: 400;
+        line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
       }
 
