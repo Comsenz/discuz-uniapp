@@ -281,10 +281,7 @@ export default {
       publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
-      formData: {
-        type: '',
-        order: '',
-      }, // 图片请求data
+      formData: {}, // 图片请求data
       placeholderColor: 'color:#b5b5b5', // 默认textarea的placeholder颜色
       isLiked: false, // 主题点赞状态
       role: '管理员',
@@ -366,7 +363,6 @@ export default {
     };
     this.formData = {
       type: 1,
-      order: '',
     };
   },
   onShow() {
@@ -629,13 +625,6 @@ export default {
     },
     uploadChange(e) {
       this.uploadFile = e;
-      e.map((file, index) => {
-        this.formData = {
-          type: 1,
-          order: index,
-        };
-      });
-      console.log(this.uploadFile, '这是上传的');
     },
     uploadClear(list, del) {
       this.delAttachments(list.data.id).then(() => {

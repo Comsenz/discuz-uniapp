@@ -440,10 +440,7 @@ export default {
       publishClickStatus: true, //发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
-      formData: {
-        type: '',
-        order: '',
-      }, // 图片请求data
+      formData: {}, // 图片请求data
       commentId: '', //评论id
       postIndex: '', //点击时当前评论Index
       isAnonymous: '0', //支付时是否显示头像，默认不显示
@@ -565,7 +562,6 @@ export default {
     };
     this.formData = {
       type: 1,
-      order: '',
     };
   },
   // 唤起小程序原声分享
@@ -1358,12 +1354,6 @@ export default {
     // 上传图片
     uploadChange(e) {
       this.uploadFile = e;
-      e.map((file, index) => {
-        this.formData = {
-          type: 1,
-          order: index,
-        };
-      });
     },
     // 删除图片
     uploadClear(list, del) {
