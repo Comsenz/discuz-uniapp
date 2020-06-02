@@ -87,7 +87,20 @@ export default {
       uploadBeforeList: [],
       uploadList: [],
       uploadIndex: '',
+      formDataAppend: {},
     };
+  },
+  watch: {
+    // 监听得到的数据
+    formData: {
+      handler(newVal) {
+        this.formData = newVal;
+        console.log(this.formData, '这是监听');
+        this.uploadStatus = true;
+      },
+      deep: true,
+      immediate: true,
+    },
   },
   async created() {
     setTimeout(() => {
@@ -171,14 +184,17 @@ export default {
     // 上传图片到服务器
     upload(pathUrl, index, length, resolve, reject) {
       const _this = this;
-
+      _this.formDataAppend = {
+        order: index,
+      };
+      const formdataObj = Object.assign(_this.formData, _this.formDataAppend);
       const uploadTask = uni.uploadFile({
         url: _this.url,
         fileType: _this.type,
         filePath: pathUrl,
         header: _this.header,
         name: _this.name,
-        formData: _this.formData,
+        formData: formdataObj,
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
