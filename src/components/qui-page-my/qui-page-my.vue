@@ -100,12 +100,17 @@ export default {
       ],
       current: 0,
       checked: false,
-      userInfo: {},
     };
   },
   computed: {
     userId() {
       return this.$store.getters['session/get']('userId');
+    },
+    userInfo() {
+      const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
+      userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
+      this.setNum(userInfo);
+      return userInfo;
     },
   },
   methods: {
@@ -127,10 +132,14 @@ export default {
     // 组件初始化数据
     ontrueGetList() {
       this.checked = this.theme !== THEME_DEFAULT;
-      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-      data.groupsName = data.groups ? data.groups[0].name : '';
-      this.setNum(data);
-      this.userInfo = data;
+    },
+    // 获取最新主题数那些
+    refreshNum() {
+      const userId = this.$store.getters['session/get']('userId');
+      const params = {
+        include: 'groups,wechat',
+      };
+      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
     },
   },
 };

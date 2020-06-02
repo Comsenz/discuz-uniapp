@@ -77,6 +77,11 @@ export default {
         this.$refs[this.currentTab].getUnreadNoticeNum();
       });
     }
+    if (this.currentTab === 'quimy') {
+      this.$nextTick(() => {
+        this.$refs[this.currentTab].refreshNum();
+      });
+    }
   },
   methods: {
     // 切换组件
