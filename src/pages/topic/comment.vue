@@ -70,7 +70,8 @@
 
                 <view class="thread__content" @click="contentClick">
                   <view class="thread__content__text">
-                    <rich-text :nodes="thread.firstPost.contentHtml.slice(0, 38)"></rich-text>
+                    <rich-text :nodes="thread.title" v-if="thread.type == 1"></rich-text>
+                    <rich-text :nodes="thread.firstPost.summary" v-else></rich-text>
                   </view>
                 </view>
               </view>
@@ -356,6 +357,7 @@ export default {
     this.loadPostComments();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
+
     this.header = {
       authorization: `Bearer ${token}`,
     };
@@ -409,6 +411,7 @@ export default {
       };
       this.loadDetailStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
+          console.log(data, '88888888888');
           this.thread = data;
           this.status = true;
         }),
@@ -468,7 +471,7 @@ export default {
             }
           } else if (type == '2') {
             if (data.isDeleted) {
-              uni.navigateTo({
+              uni.redirectTo({
                 url: '/pages/topic/index?id=' + this.threadId,
               });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
@@ -541,6 +544,8 @@ export default {
           this.publishClickStatus = true;
           this.postComments.push(res);
           this.post.postCount++;
+          this.textAreaValue = '';
+          this.uploadFile = '';
         })
         .catch(err => {
           this.publishClickStatus = true;
@@ -620,6 +625,7 @@ export default {
     },
     uploadChange(e) {
       this.uploadFile = e;
+      console.log(this.uploadFile, '这是上传的');
     },
     uploadClear(list, del) {
       this.delAttachments(list.data.id).then(() => {
@@ -672,7 +678,7 @@ export default {
     },
     // 跳回到主题详情页
     contentClick() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: `/pages/topic/index?id=${this.threadId}`,
       });
     },

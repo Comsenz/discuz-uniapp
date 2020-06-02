@@ -1383,7 +1383,7 @@ export default {
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
-      uni.navigateTo({
+      uni.redirectTo({
         url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
       });
     },

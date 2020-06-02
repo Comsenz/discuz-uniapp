@@ -52,6 +52,9 @@
           placeholder-class="textarea-placeholder"
           v-model="textAreaValue"
           auto-height="true"
+          :show-confirm-bar="barStatus"
+          adjust-position="true"
+          cursor-spacing="50"
           :maxlength="-1"
           :focus="type !== 1"
           v-if="!emojiShow"
@@ -250,6 +253,7 @@ export default {
     return {
       loadStatus: '',
       textAreaValue: '', // 输入框内容
+      barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],

@@ -76,10 +76,10 @@ export default {
       heightdefill: '',
       picutre: '',
       picutrecopy: '',
+      contentheight: '',
     };
   },
   onLoad(arr) {
-    // console.log(this.themedata);
     uni.showLoading({
       title: this.i18n.t('share.generating'),
       mask: true,
@@ -87,31 +87,34 @@ export default {
     this.themeid = arr.id;
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
-    this.$nextTick(() => {
-      this.getusertitle();
-      this.getthemdata();
-    });
+    this.getusertitle();
   },
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
-    themedata() {
-      return this.$store.getters['session/get']('threads/1');
-    },
+    // themedata() {
+    //   return this.$store.getters['jv/get'](`/threads/${this.themeid}`);
+    // },
   },
   watch: {
     heightdefill: {
       handler(newValue) {
-        console.log(newValue);
-        this.initData();
+        if (newValue) {
+          console.log(2);
+          this.initData();
+        }
       },
       deep: true,
     },
     content: {
       handler(newValue) {
-        console.log(newValue);
-        this.initData();
+        if (newValue) {
+          if (!this.heightdefill && this.heightdefill !== 0) {
+            this.initData();
+            console.log(1);
+          }
+        }
       },
       deep: true,
     },
@@ -133,7 +136,9 @@ export default {
         }
         this.renamewidth = 160 + this.themwidth;
         this.recoimg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-        console.log(this.recoimg);
+        if (this.reconame && this.recoimg) {
+          this.getthemdata();
+        }
       });
     },
     // 获取帖子内容信息
@@ -148,9 +153,6 @@ export default {
           console.log(data);
           this.headerName = data.user.username;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          this.postyTepy = data.type;
-          this.contentTitle = data.title;
-          this.content = data.firstPost.content;
           const arr = Object.values(data.firstPost.images);
           arr.forEach(value => {
             this.contentImg.push(value.thumbUrl || value.url);
@@ -159,8 +161,6 @@ export default {
             uni.getImageInfo({
               src: that.contentImg[0],
               success(image) {
-                console.log(image.width);
-                console.log(image.height);
                 const num = image.height * (620 / image.width);
                 if (num > 402) {
                   that.heightdefill = num - 402;
@@ -169,7 +169,17 @@ export default {
                 }
               },
             });
-            console.log(this.heightdefill);
+          }
+          this.postyTepy = data.type;
+          this.contentTitle = data.title;
+          this.content = data.firstPost.content;
+          if (this.content) {
+            const num = Math.ceil(this.content.length / 23);
+            if (num >= 11) {
+              this.contentheight = 0;
+            } else {
+              this.contentheight = 472 - num * 42;
+            }
           }
           // else if (this.contentImg.length > 1) {
           //   uni.getImageInfo({
@@ -212,8 +222,6 @@ export default {
             uni.getImageInfo({
               src: that.video,
               success(image) {
-                console.log(image.width);
-                console.log(image.height);
                 const num = image.height * (620 / image.width);
                 if (num > 402) {
                   that.heightdefill = num - 402;
@@ -222,23 +230,10 @@ export default {
                 }
               },
             });
-            console.log(this.heightdefill);
           }
-          // if (this.contentImg.length >= 1 || this.video) {
-          //   setTimeout(() => {
-          //     console.log('这里是图片贴');
-          //     this.initData();
-          //   }, 2000);
-          // } else {
-          //   setTimeout(() => {
-          //     console.log('这里是文字贴');
-          //     this.initData();
-          //   }, 300);
-          // }
         });
     },
     initData() {
-      console.log(this.contentImg, this.recoimg);
       if (!this.contentTitle) {
         this.imgtop = 80;
       }
@@ -262,6 +257,7 @@ export default {
         attachlength: this.attachlength,
         marglength: this.marglength,
         heightdefill: this.heightdefill,
+        contentheight: this.contentheight,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
         recomment: this.i18n.t('share.recomment'),
         goddessvideo: this.attachmentsType,
@@ -273,19 +269,17 @@ export default {
       if (this.contentTitle) {
         // 有标题有图片海报
         if (this.contentImg.length === 1) {
-          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
           // 多图片海报
         } else if (this.contentImg.length > 1) {
-          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
           // 只有标题文字的海报
         } else if (this.contentImg.length === 0 && this.content) {
-          this.constyle = 1083;
+          this.constyle = 1083 - this.contentheight;
           this.paddingtop = 41;
           this.template = new Cardk().palette(obj);
           // 视频贴
@@ -297,7 +291,6 @@ export default {
         // 没有标题的海报
       } else if (!this.contentTitle) {
         if (this.content && this.contentImg.length === 1) {
-          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
@@ -308,7 +301,6 @@ export default {
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {
-          console.log(this.heightdefill);
           this.constyle = 1100 + this.heightdefill;
           this.paddingtop = 43;
           this.template = new Cardb().palette(obj);
@@ -317,13 +309,13 @@ export default {
           this.paddingtop = 43;
           this.template = new Cardg().palette(obj);
         } else {
-          this.constyle = 1082;
+          this.constyle = 1082 - this.contentheight;
           this.paddingtop = 46;
           // this.template = new Cardh().palette(obj);
           this.template = new Cardh().palette(obj);
         }
       } else {
-        this.constyle = 1082;
+        this.constyle = 1082 - this.contentheight;
         this.paddingtop = 46;
         // this.template = new Cardh().palette();
         this.template = new Cardh().palette(obj);

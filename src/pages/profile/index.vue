@@ -24,7 +24,12 @@
             >
               <view v-if="userId != currentLoginId">
                 <view class="profile-info__box__detail-operate" @tap="chat">
-                  <qui-icon class="text" name="icon-message1" size="22" color="#333"></qui-icon>
+                  <qui-icon
+                    class="text"
+                    name="icon-message1"
+                    size="22"
+                    :color="themeColor"
+                  ></qui-icon>
                   <text>{{ i18n.t('profile.privateMessage') }}</text>
                 </view>
                 <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
@@ -35,9 +40,9 @@
                   <qui-icon
                     class="text"
                     :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                    size="22"
+                    size="26"
                     :color="
-                      userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? '#333' : '#ff8888'
+                      userInfo.follow == 0 ? '#777' : userInfo.follow == 1 ? themeColor : '#ff8888'
                     "
                   ></qui-icon>
                   <text>
@@ -124,6 +129,9 @@ export default {
       userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
       this.setNum(userInfo);
       return userInfo;
+    },
+    themeColor() {
+      return this.theme === this.$u.light() ? '#333' : '#fff'; // 用于图标色
     },
   },
   onLoad(params) {
@@ -246,7 +254,7 @@ export default {
   box-sizing: border-box;
 }
 .profile-info__box__detail /deep/ .cell-item__body {
-  height: 80rpx;
+  height: auto;
   align-items: flex-start;
 }
 .profile-info__box__detail /deep/ .cell-item__body__content-title {

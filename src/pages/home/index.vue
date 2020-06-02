@@ -134,7 +134,7 @@ export default {
   border: 0;
 }
 /deep/ .my-info__box__detail .cell-item__body {
-  height: 80rpx;
+  height: auto;
   align-items: flex-start;
 }
 /deep/ .my-tabs .qui-tabs__item--active {

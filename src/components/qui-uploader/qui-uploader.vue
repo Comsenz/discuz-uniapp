@@ -133,38 +133,39 @@ export default {
       const _this = this;
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
-
-      // 上传图片到本地
-      uni.chooseImage({
-        count: _this.count - _this.uploadBeforeList.length,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
-        success(res) {
-          // 上传图片后返回false状态
-          _this.$emit('uploadClick', false);
-          // 自定义开始上传的效果和回调
-          _this.$emit('chooseSuccess');
-          const promise = res.tempFiles.map((item, index) => {
-            return new Promise((resolve, reject) => {
-              res.tempFiles[index].uploadPercent = 0;
-              res.tempFiles[index].uploadStatus = false;
-              _this.uploadBeforeList.push(res.tempFiles[index]);
-              _this.upload(
-                res.tempFilePaths[index],
-                _this.uploadBeforeList.length - 1,
-                beforeUploadFile,
-                resolve,
-                reject,
-              );
+      if (_this.uploadList.length < _this.count) {
+        // 上传图片到本地
+        uni.chooseImage({
+          count: _this.count - _this.uploadBeforeList.length,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success(res) {
+            // 上传图片后返回false状态
+            _this.$emit('uploadClick', false);
+            // 自定义开始上传的效果和回调
+            _this.$emit('chooseSuccess');
+            const promise = res.tempFiles.map((item, index) => {
+              return new Promise((resolve, reject) => {
+                res.tempFiles[index].uploadPercent = 0;
+                res.tempFiles[index].uploadStatus = false;
+                _this.uploadBeforeList.push(res.tempFiles[index]);
+                _this.upload(
+                  res.tempFilePaths[index],
+                  _this.uploadBeforeList.length - 1,
+                  beforeUploadFile,
+                  resolve,
+                  reject,
+                );
+              });
             });
-          });
 
-          Promise.allSettled(promise).then(() => {
-            // 返回上传成功列表和成功状态值
-            _this.$emit('change', _this.uploadList, true);
-          });
-        },
-      });
+            Promise.allSettled(promise).then(() => {
+              // 返回上传成功列表和成功状态值
+              _this.$emit('change', _this.uploadList, true);
+            });
+          },
+        });
+      }
     },
 
     // 上传图片到服务器

@@ -12,7 +12,13 @@
               @click="jumpUserPage(item.user_id)"
             ></image>
             <view class="list-box__notice__hl-info">
-              <view class="list-box__notice__hl-info-con">
+              <view
+                :class="[
+                  item.type === 'rewarded' || item.type === 'rewarded'
+                    ? 'list-box__notice__hl-info-con'
+                    : '',
+                ]"
+              >
                 <text
                   :class="[
                     item.thread_user_groups ? '' : 'list-box__notice__hl-info-username-space',
@@ -21,9 +27,9 @@
                 >
                   {{ item.user_name }}
                 </text>
-                <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
-                  （{{ i18n.t(item.thread_user_groups) }}）
-                </text>
+                <!-- <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
+                  （{{ item.thread_user_groups }}）
+                </text> -->
                 <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
                   {{ i18n.t('notice.relatedMe') }}
                 </text>
