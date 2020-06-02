@@ -19,7 +19,7 @@
               :images-list="post.images"
               @personJump="personJump(post.user._jv.id)"
             ></qui-topic-content>
-            <view class="thread-box" v-if="status">
+            <view class="thread-box" v-if="loadDetailStatus">
               <view class="thread">
                 <view class="thread__header">
                   <view class="thread__header__img">
@@ -357,6 +357,7 @@ export default {
     this.loadPostComments();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
+
     this.header = {
       authorization: `Bearer ${token}`,
     };
@@ -470,7 +471,7 @@ export default {
             }
           } else if (type == '2') {
             if (data.isDeleted) {
-              uni.navigateTo({
+              uni.redirectTo({
                 url: '/pages/topic/index?id=' + this.threadId,
               });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
@@ -543,6 +544,8 @@ export default {
           this.publishClickStatus = true;
           this.postComments.push(res);
           this.post.postCount++;
+          this.textAreaValue = '';
+          this.uploadFile = '';
         })
         .catch(err => {
           this.publishClickStatus = true;
@@ -622,6 +625,7 @@ export default {
     },
     uploadChange(e) {
       this.uploadFile = e;
+      console.log(this.uploadFile, '这是上传的');
     },
     uploadClear(list, del) {
       this.delAttachments(list.data.id).then(() => {
@@ -674,7 +678,7 @@ export default {
     },
     // 跳回到主题详情页
     contentClick() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: `/pages/topic/index?id=${this.threadId}`,
       });
     },

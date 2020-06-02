@@ -52,6 +52,7 @@
           placeholder-class="textarea-placeholder"
           v-model="textAreaValue"
           auto-height="true"
+          cursor-spacing="100"
           :maxlength="-1"
           :focus="type !== 1"
           v-if="!emojiShow"
