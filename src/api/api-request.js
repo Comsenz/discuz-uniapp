@@ -5,8 +5,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
 
 const http = new Request();
-const token =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIiLCJqdGkiOiI0ZDY0ODg0ZmI3YmI2ZDdlNTQ3OWI1NzdmZDYyMjQyMmM1MTg4YjI2NTYzZmE0NzFlNmM4ZWI2ZjQ5Zjk3MjVjZDczMjcyNDU0NGFkZDY0NyIsImlhdCI6MTU4NzYxMDE3OSwibmJmIjoxNTg3NjEwMTc5LCJleHAiOjE1OTAyMDIxNzksInN1YiI6IjEiLCJzY29wZXMiOltudWxsXX0.e9hEqDkZYBWpwwdagQfp5d65FgvCgAVJyooyIT8AJMj9_e1SE_xS7rFblqkl8nDhoGbXH6HdGmmFThj7BTbrcjOYxSv8WcvfyW-dx-SwDTJIQMX4LmlNeZ5c5LxXWwyZmgKv9Ts3ncBgbXvnTkkZ1yOy5bvXs9OL4DL63sRh4opWtWSsfr5gAj2a6btHWDnQhEGxG4dMcFzRgCQ_xSE0hyQMK4Du_mVr5c_--boY4HO2cw9eZtwBGlubfPZUGvgRUXcPv8Vlbpe98LUhcqmqyatn7Ap3Yt7ShtQVAkvti1CbZFAgvvRhf4rOZNkQ-6dCQVpKqWchhi-evQV9TEFjHA';
+let tostTimeout;
 
 /**
  * @description 修改全局默认配置
@@ -17,16 +16,17 @@ http.setConfig(config => {
   return {
     ...config,
     ...{
-      baseUrl: DISCUZ_REQUEST_HOST,
+      baseUrl: `${DISCUZ_REQUEST_HOST}api/`,
       header: {
         'Content-Type': 'application/vnd.api+json',
         Accept: 'application/vnd.api+json',
-        authorization: `Bearer  ${token}`,
       },
     },
   };
 });
-
+http.validateStatus = statusCode => {
+  return statusCode >= 200 && statusCode < 300;
+};
 /**
  * @param { Function} cancel - 取消请求,调用cancel 会取消本次请求，但是该函数的catch() 仍会执行; 不会进入响应拦截器
  *
@@ -35,7 +35,10 @@ http.setConfig(config => {
  * function cancel(text, config) {}
  */
 http.interceptor.request(config => {
-  uni.showLoading();
+  uni.showLoading({
+    title: i18n.t('core.loading'),
+    mask: true,
+  });
   // cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config
   try {
     const accessToken = uni.getStorageSync('access_token');
@@ -55,17 +58,14 @@ http.interceptor.response(
   response => {
     uni.hideLoading();
     // 状态码 >= 200 < 300 会走这里
-    // if (response.config.custom.verification) {
-    //   // 演示自定义参数的作用
-    //   return response.data;
-    // }
+    response.status = response.statusCode;
     return response;
   },
   response => {
     uni.hideLoading();
     // 对响应错误做点什么 （statusCode !== 200），必须return response
     if (response && response.data && response.data.errors) {
-      response.data.errors.map(error => {
+      response.data.errors.forEach(error => {
         switch (error.code) {
           case 'access_denied':
             // token 无效 重新请求
@@ -77,10 +77,25 @@ http.interceptor.response(
               },
             });
             break;
+          case 'not_install':
+          case 'site_closed':
+          case 'ban_user':
+            break;
           default:
-            uni.showToast({ title: error.detail ? error.detail : i18n.t(`core.${error.code}`) });
+            clearTimeout(tostTimeout);
+            tostTimeout = setTimeout(() => {
+              // eslint-disable-next-line no-nested-ternary
+              const title = error.detail
+                ? Array.isArray(error.detail)
+                  ? error.detail[0]
+                  : error.detail
+                : i18n.t(`core.${error.code}`);
+              uni.showToast({
+                icon: 'none',
+                title,
+              });
+            });
         }
-        return error;
       });
     } else {
       uni.showToast({ title: response.errMsg });

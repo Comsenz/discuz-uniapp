@@ -24,7 +24,7 @@
             <qui-avatar-cell
               :mark="item.toUser.id"
               :title="item.toUser.username"
-              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '@/assets/noavatar.gif'"
+              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
               :value="getGroups(item.toUser.groups)"
               :label="item.toUser.label"
             >
@@ -37,7 +37,7 @@
             <qui-avatar-cell
               :mark="item.id"
               :title="item.username"
-              :icon="item.avatarUrl ? item.avatarUrl : '@/assets/noavatar.gif'"
+              :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
               :value="getGroups(item.groups)"
               :label="item.label"
             >
@@ -46,7 +46,13 @@
           </label>
         </checkbox-group>
         <view class="loading-text">
-          <text>{{ i18n.t(loadingText) }}</text>
+          <qui-icon
+            v-if="
+              loadingText === 'search.norelatedusersfound' || loadingText === 'search.noFollowers'
+            "
+            name="icon-noData"
+          ></qui-icon>
+          <text class="loading-text__cont">{{ i18n.t(loadingText) }}</text>
         </view>
       </scroll-view>
     </view>
@@ -58,9 +64,9 @@
         @click="getCheckMember"
       >
         {{
-          checkAvatar.length &lt; 1
-            ? i18n.t('discuzq.atMember.notSelected')
-            : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
+        checkAvatar.length &lt; 1
+        ? i18n.t('discuzq.atMember.notSelected')
+        : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
         }}
       </qui-button>
     </view>
@@ -74,28 +80,32 @@ export default {
   name: 'QuiAtMemberPage',
   data() {
     return {
-      allSiteUser: [],
+      allSiteUser: [], // 所有站点成员
+      allFollow: [], // 所有关注成员
       followStatus: true, // 第一次进来显示follow列表
-      checkAvatar: [],
+      checkAvatar: [], // 选择人员列表
       loadingText: 'discuzq.list.loading',
-      searchValue: '',
-      pageNum: 1,
-      meta: {},
+      searchValue: '', // 搜索值
+      pageNum: 1, // 页面
+      meta: {}, // 接口返回meta值
     };
   },
   computed: {
-    allFollow() {
-      return this.$store.getters['jv/get']('follow');
-    },
+    // 处理角色名称
     getGroups() {
       const that = this;
+      let name = '';
       return data => {
-        Object.keys(data).forEach((item, index) => {
-          if (item[index]) {
-            return item[index].name;
-          }
-          return that.i18n.t('discuzq.role.noRole');
-        });
+        if (data) {
+          Object.keys(data).forEach(item => {
+            if (data[item]) {
+              name = data[item].name;
+            } else {
+              name = that.i18n.t('discuzq.role.noRole');
+            }
+          });
+        }
+        return name;
       };
     },
   },
@@ -104,10 +114,15 @@ export default {
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
 
+    // 多选人员
     changeCheck(e) {
       this.checkAvatar = [];
       e.detail.value.forEach(item => {
-        this.checkAvatar.push(JSON.parse(item));
+        if (this.followStatus) {
+          this.checkAvatar.push(JSON.parse(item).toUser);
+        } else {
+          this.checkAvatar.push(JSON.parse(item));
+        }
       });
     },
     getCheckMember() {
@@ -116,34 +131,42 @@ export default {
         delta: 1,
       });
     },
+    // 人员搜索
     searchInput(e) {
       this.followStatus = false;
       this.searchValue = e.detail.value;
+      this.checkAvatar = [];
 
       if (this.pageNum !== 1) {
         this.pageNum = 1;
       }
 
+      this.loadingText = 'discuzq.list.loading';
+
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
+        this.allSiteUser = [];
         this.getSiteMember(1);
       }, 250);
     },
+    // 上划加载更多
     lower() {
       if (this.followStatus) {
-        if (this.meta.total > Object.keys(this.allFollow).nv_length) {
+        if (this.meta.total > this.allFollow.length) {
           this.pageNum += 1;
           this.getFollowMember(this.pageNum);
         } else {
           this.loadingText = 'discuzq.list.noMoreData';
         }
-      } else if (this.meta.total > Object.keys(this.allSiteUser).nv_length) {
+      } else if (this.meta.total > this.allSiteUser.length) {
         this.pageNum += 1;
         this.getSiteMember(this.pageNum);
       } else {
         this.loadingText = 'discuzq.list.noMoreData';
       }
     },
+
+    // 接口请求
     getFollowMember(number) {
       const params = {
         include: ['toUser', 'toUser.groups'],
@@ -153,11 +176,12 @@ export default {
       this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
-        if (Object.keys(res) === 0) {
-          this.loadingText = 'discuzq.list.noData';
-        }
-        if (res._jv.json.meta.total <= 20) {
-          this.loadingText = 'discuzq.list.noData';
+        this.allFollow = [...this.allFollow, ...res];
+
+        if (Object.keys(res).nv_length - 1 === 0) {
+          this.loadingText = 'search.noFollowers';
+        } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
+          this.loadingText = 'discuzq.list.noMoreData';
         }
       });
     },
@@ -170,16 +194,12 @@ export default {
       };
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         this.meta = res._jv.json.meta;
+        this.allSiteUser = [...this.allSiteUser, ...res];
 
-        const data = JSON.parse(JSON.stringify(res));
-        delete data._jv;
-        this.allSiteUser = data;
-
-        if (Object.keys(res) === 0) {
-          this.loadingText = 'discuzq.list.noData';
-        }
-        if (res._jv.json.meta.total <= 20) {
-          this.loadingText = 'discuzq.list.noData';
+        if (Object.keys(res).nv_length - 1 === 0) {
+          this.loadingText = 'search.norelatedusersfound';
+        } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
+          this.loadingText = 'discuzq.list.noMoreData';
         }
       });
     },
@@ -189,6 +209,7 @@ export default {
       title: this.i18n.t('discuzq.atMember.atTitle'),
     });
     this.getFollowMember(1);
+    this.setAtMember([]);
   },
 };
 </script>
@@ -200,6 +221,8 @@ export default {
 $otherHeight: 292rpx;
 .qui-at-member-page-box {
   width: 100%;
+  height: 100%;
+  background-color: --color(--qui-BG-2);
   &__hd {
     display: flex;
     align-items: center;
@@ -213,7 +236,7 @@ $otherHeight: 292rpx;
       height: 100%;
       padding: 0 10rpx;
       background-color: --color(--qui-BG-IT);
-      border-radius: 10rpx;
+      border-radius: 7rpx;
 
       .icon-search {
         margin: 0 10rpx;
@@ -236,7 +259,11 @@ $otherHeight: 292rpx;
         height: 100rpx;
         font-size: 28rpx;
         line-height: 100rpx;
+        color: --color(--qui-FC-AAA);
         text-align: center;
+      }
+      .loading-text__cont {
+        margin-left: 20rpx;
       }
     }
   }
@@ -245,7 +272,15 @@ $otherHeight: 292rpx;
     bottom: 0;
     width: 100%;
     padding: 40rpx;
+    background-color: --color(--qui-BG-2);
     box-sizing: border-box;
+    /deep/ .qui-button--button[size='large'] {
+      border-radius: 5rpx;
+    }
+    /deep/ .qui-button--button[disabled] {
+      color: #7d7979;
+      background-color: #fff;
+    }
   }
 }
 </style>

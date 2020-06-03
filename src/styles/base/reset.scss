@@ -6,8 +6,19 @@
 page,
 body {
   font: $fg-f28 $font-family 1.6;
+  color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-2);
 }
+// .qq-emotion {
+//   display: inline-block;
+//   width: 28rpx;
+//   height: 28rpx;
+// max-width: 100%;
+// max-height: 100%;
+// vertical-align: middle;
+// height: auto!important;
+// width: auto!important;
+// }
 
 //小程序原生组件--修改
 //多选框
@@ -22,4 +33,195 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked {
 }
 checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
   color: --color(--qui-FC-FFF);
+}
+
+//日历控件修改
+page {
+  .uni-picker-container .uni-picker-header {
+    position: absolute;
+    bottom: 0;
+    z-index: 100;
+    height: 100rpx;
+    background: --color(--qui-BG-2);
+  }
+  .uni-picker-container .uni-picker-action {
+    width: 50%;
+    line-height: 100rpx;
+    text-align: center;
+  }
+  .uni-picker-action-cancel {
+    color: #aaa;
+    border-right: 2rpx solid --color(--qui-BG-ED);
+  }
+  .uni-picker-container .uni-picker-action.uni-picker-action-confirm {
+    color: --color(--qui-FC-333);
+  }
+  .uni-picker-container .uni-picker-item,
+  .uni-picker-container .uni-picker-view-indicator {
+    height: 100rpx;
+    font-size: 32rpx;
+    line-height: 100rpx;
+  }
+  .uni-picker-container .uni-picker-item {
+    background: --color(--qui-BG-BTN-GRAY-1);
+  }
+  .uni-picker-container .uni-picker-content {
+    height: 300rpx;
+  }
+  .uni-picker-container .uni-picker {
+    padding-bottom: 110rpx;
+    background-color: --color(--qui-BG-BTN-GRAY-1);
+  }
+  .uni-mask {
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+// 分享弹框
+.popup-share {
+  /* #ifndef APP-NVUE */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* #endif */
+  background: --color(--qui-BG-2);
+}
+.popup-share-content {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  height: 250rpx;
+  padding-top: 40rpx;
+  padding-right: 97rpx;
+  padding-left: 98rpx;
+  background: --color(--qui-BG-BTN-GRAY-1);
+}
+.popup-share-box {
+  width: 120rpx;
+  height: 120rpx;
+  line-height: 120rpx;
+  background: --color(--qui-BG-40);
+  border-radius: 10px;
+}
+.popup-share-content-box {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: column;
+  align-items: center;
+  width: 120rpx;
+  // height: 164rpx;
+  // background: --color(--qui-BG-2);
+}
+.popup-share-content-image {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: center;
+  // align-items: center;
+  width: 120rpx;
+  height: 120rpx;
+  overflow: hidden;
+  border-radius: 7rpx;
+}
+.content-image {
+  width: 60rpx;
+  height: 60rpx;
+  margin: 35rpx;
+  line-height: 129rpx;
+}
+.popup-share-content-text {
+  margin-top: 13rpx;
+  font-size: $fg-f28;
+  color: --color(--qui-FC-TAG);
+}
+.popup-share-btn {
+  height: 100rpx;
+  font-size: $fg-f28;
+  line-height: 100rpx;
+  color: --color(--qui-FC-333);
+  text-align: center;
+}
+.popup-share-content-space {
+  width: 100%;
+  height: 10rpx;
+  background: --color(--qui-BG-ED);
+}
+.popup-share-button {
+  position: absolute;
+  top: 43 rpx;
+  left: 455rpx;
+  z-index: 10;
+  width: 120rpx;
+  height: 120rpx;
+  background: --color(--qui-BG-2);
+  opacity: 0;
+}
+.popup-share-button__center {
+  position: absolute;
+  top: 43 rpx;
+  z-index: 10;
+  width: 120rpx;
+  height: 120rpx;
+  background: --color(--qui-BG-2);
+  opacity: 0;
+}
+.popup-share-button[plain] {
+  border: 0;
+}
+
+//公共搜索头样式
+.search {
+  /deep/ input .input-placeholder {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-C6);
+  }
+  .icon-content-search {
+    position: absolute;
+    top: 18rpx;
+    left: 20rpx;
+  }
+  .icon-close {
+    position: absolute;
+    top: -3rpx;
+    left: 2rpx;
+  }
+  .search-box {
+    display: flex;
+    padding: 30rpx 40rpx 20rpx;
+  }
+  .search-box__content {
+    position: relative;
+    flex: 1 1 0%;
+  }
+  .search-box__cancel {
+    padding-left: 24rpx;
+    font-size: $fg-f28;
+    line-height: 80rpx;
+    justify-content: flex-end;
+    color: --color(--qui-FC-CCC);
+  }
+  .search-box__content-input {
+    height: 80rpx;
+    padding: 0 60rpx;
+    line-height: 80rpx;
+    background: --color(--qui-BG-IT);
+    border: none;
+    border-radius: 7rpx;
+  }
+  .search-box__content-delete {
+    position: absolute;
+    top: 18rpx;
+    right: 20rpx;
+  }
+}
+
+.loading {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  margin-left: -30rpx;
 }

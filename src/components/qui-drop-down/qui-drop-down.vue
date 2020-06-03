@@ -13,10 +13,16 @@
       }"
     >
       <view class="select-content">
-        <view class="jt-bg" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
+        <view class="jt-bg" :style="{ right: jtRight + 'rpx' }"></view>
         <view class="jt-con" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
-        <view class="select-child" v-for="(child, index) in list" :key="index" @click="handleClick">
-          {{ child.text }}
+        <view class="select-con" v-for="(child, index) in list" :key="index">
+          <view
+            class="select-child"
+            v-if="child.canOpera"
+            @click="handleClick(child.canOpera, child.isStatus, child.type)"
+          >
+            {{ child.text }}
+          </view>
         </view>
       </view>
     </view>
@@ -77,8 +83,8 @@ export default {
     return {};
   },
   methods: {
-    handleClick(param) {
-      this.$emit('click', param);
+    handleClick(canOpera, status, type) {
+      this.$emit('click', { canOpera, status, type });
     },
   },
 };
@@ -86,12 +92,13 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
-@import '@/styles/base/reset.scss';
+@import '@/styles/base/theme/fn.scss';
 
 .select-box {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.16);
+  border: 1px solid --color(--qui-BOR-ED);
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.16);
 }
 .select-content {
   position: relative;
@@ -102,6 +109,7 @@ export default {
     top: -10rpx;
     width: 16rpx;
     height: 16rpx;
+    background: --color(--qui-BOR-ED);
     transform: rotate(45deg);
   }
   .jt-con {
@@ -117,9 +125,9 @@ export default {
     color: #6d6d6d;
     text-align: center;
     border-bottom: 1px solid --color(--qui-BOR-ED);
-    &:last-child {
-      border-bottom: 1px solid transparent;
-    }
   }
+}
+.select-con:last-child .select-child {
+  border-bottom: 1px solid transparent;
 }
 </style>

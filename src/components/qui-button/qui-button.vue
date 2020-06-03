@@ -115,19 +115,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 // css
-$default-bg-color: rgba(249, 250, 252, 1);
+$default-bg-color: --color(--qui-BG-F9F);
 $primary-bg-color: rgba(24, 120, 243, 1);
 $success-bg-color: #07c160;
 $danger-bg-color: #ee0a24;
 $plain-bg-color: #fff;
 
-$txt-color-grey: rgba(119, 119, 119, 1);
+$txt-color-grey: --color(--qui-FC-TAG);
 $txt-color-white: #fff;
+$text-color-333: #333;
 
 $font-size-sm: 24rpx;
 $font-size-md: 26rpx;
 $font-size-lg: 28rpx;
+$font-size-post: 40rpx;
 
 .qui-button--button {
   display: inline-flex;
@@ -135,7 +139,7 @@ $font-size-lg: 28rpx;
   justify-content: center;
   color: $txt-color-grey;
   background-color: $default-bg-color;
-  border-radius: 10rpx;
+  border-radius: 7rpx;
   &[type='primary'] {
     color: $txt-color-white;
     background-color: $primary-bg-color;
@@ -152,6 +156,12 @@ $font-size-lg: 28rpx;
     width: 670rpx;
     height: 90rpx;
     font-size: $font-size-lg;
+    border-radius: 0;
+  }
+  &[size='max'] {
+    width: 100%;
+    height: 90rpx;
+    font-size: $font-size-lg;
   }
   &[size='medium'] {
     width: 510rpx;
@@ -162,6 +172,11 @@ $font-size-lg: 28rpx;
     height: 70rpx;
     padding: 18rpx 20rpx;
     font-size: $font-size-sm;
+  }
+  &[size='post'] {
+    width: 200rpx;
+    height: 100rpx;
+    font-size: $font-size-post;
   }
   &[plain][type='primary'] {
     color: $primary-bg-color;
@@ -177,6 +192,13 @@ $font-size-lg: 28rpx;
     color: $success-bg-color;
     background-color: $plain-bg-color;
     border-color: currentColor;
+  }
+  &[plain][type='post'] {
+    color: $text-color-333;
+    background-color: $plain-bg-color;
+    border: none;
+    border-radius: 7rpx;
+    box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
   }
   &[disabled] {
     cursor: not-allowed;

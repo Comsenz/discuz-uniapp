@@ -7,30 +7,34 @@
         src="@/static/msg-404.svg"
         mode="aspectFit"
         lazy-load
-        v-if="status === '404'"
+        v-if="forumError.code === '404'"
       ></image>
       <image
         class="page-message--icon"
         src="@/static/msg-warning.svg"
         mode="aspectFit"
         lazy-load
-        v-if="status === 'closed'"
+        v-if="show"
       ></image>
       <view class="page-message--title" v-if="message.title">{{ message.title }}</view>
-      <view class="page-message--subtitle" v-if="message.subtitle || status === 'closed'">
-        {{ message.subtitle | closedError(forumError, status) }}
+      <view class="page-message--subtitle" v-if="show">
+        {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
-        class="page-message--exit"
+        class="out page-message--exit"
         open-type="exit"
+        hover-class="none"
         target="miniProgram"
-        v-if="status === 'closed'"
+        v-if="show"
       >
-        {{ message.btnTxt }}
+        <qui-button size="medium" @click="handleClick" class="out-btn">
+          {{ message.btnTxt }}
+        </qui-button>
       </navigator>
-      <qui-button size="medium" @click="handleClick">
-        {{ message.btnTxt }}
+
+      <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
+        {{ i18n.t('core.admin_login') }}
       </qui-button>
     </view>
   </view>
@@ -38,56 +42,77 @@
 
 <script>
 import { mapState } from 'vuex';
+import { i18n } from '@/locale';
 
 const TYPE_404 = '404';
-const TYPE_CLOSED = 'closed';
+const TYPE_CLOSED = 'site_closed';
+const NOT_INSTALL = 'not_install';
+const BAN_USER = 'ban_user';
+const THREAD_DELETED = 'thread_deleted';
 const message = {
   [TYPE_404]: {
-    title: '页面没有找到',
-    subtitle: '您要访问的页面可能已被删除，已更改名称或者暂时不可用',
-    btnTxt: '返回首页',
+    title: i18n.t('core.page_not_found'),
+    subtitle: i18n.t('core.page_not_found_detail'),
+    btnTxt: i18n.t('core.back_home'),
     icon: '@/static/msg-404.svg',
   },
   [TYPE_CLOSED]: {
-    title: '站点已关闭',
+    title: i18n.t('core.site_closed'),
     subtitle: '', // 从接口读取站点关闭后的提示语
-    btnTxt: '点击关闭',
+    btnTxt: i18n.t('core.close'),
+    icon: '@/static/msg-warning.svg',
+  },
+  [NOT_INSTALL]: {
+    title: i18n.t('core.not_install'),
+    subtitle: '', // 从接口读取站点关闭后的提示语
+    btnTxt: i18n.t('core.close'),
+    icon: '@/static/msg-warning.svg',
+  },
+  [BAN_USER]: {
+    title: i18n.t('core.ban_user'),
+    subtitle: '', // 从接口读取站点关闭后的提示语
+    btnTxt: i18n.t('core.close'),
+    icon: '@/static/msg-warning.svg',
+  },
+  [THREAD_DELETED]: {
+    title: i18n.t('core.thread_deleted'),
+    subtitle: '', // 从接口读取主题被删除时主题详情页的提示语
+    btnTxt: i18n.t('core.back_home'),
     icon: '@/static/msg-warning.svg',
   },
 };
 export default {
   filters: {
-    closedError(subtitle, err, status) {
-      if (err && err.detail && status === TYPE_CLOSED) return err.detail[0];
+    closedError(subtitle, err, code) {
+      if (err && err.detail && code === TYPE_CLOSED) return err.detail[0];
       return subtitle;
-    },
-  },
-  props: {
-    type: {
-      type: String,
-      default: '404',
     },
   },
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
     }),
-    status() {
-      if (this.forumError.status === '401') return TYPE_CLOSED;
-      return this.type;
-    },
     message() {
-      return message[this.status] || {};
+      return message[this.forumError.code] || {};
+    },
+    show() {
+      return (
+        [TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED].indexOf(this.forumError.code) >= 0
+      );
     },
   },
   methods: {
     handleClick() {
+      console.log(111);
       // 404
-      if (this.status === TYPE_404) {
+      if (this.forumError.code === TYPE_404 || this.forumError.code === THREAD_DELETED) {
         uni.redirectTo({
           url: '/pages/home/index',
         });
       }
+    },
+    handleLoginClick() {
+      this.$store.getters['session/get']('auth').open();
     },
   },
 };
@@ -106,6 +131,7 @@ export default {
   }
   &--inner {
     position: relative;
+    padding-bottom: 20rpx;
     margin-top: 140rpx;
     text-align: center;
   }
@@ -125,7 +151,11 @@ export default {
     line-height: 37rpx;
     color: rgba(170, 170, 170, 1);
   }
-  &--exit {
+}
+.out {
+  height: 90rpx;
+  margin-bottom: 40rpx;
+  .page-message--exit {
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -136,5 +166,8 @@ export default {
     opacity: 0;
     transform: translateX(-50%);
   }
+}
+.navigator-hover {
+  background-color: rgba(0, 0, 0, 0);
 }
 </style>

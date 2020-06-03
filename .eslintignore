@@ -14,3 +14,7 @@ vue.config.js
 commitlint.congig.js
 stylelint.config.js
 src/library
+src/wxcomponents
+src/components/uni-popup
+src/common/
+src/library/jsonapi-vuex

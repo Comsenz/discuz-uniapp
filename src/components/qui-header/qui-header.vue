@@ -1,21 +1,26 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
     <view class="logoBox">
-      <image class="logo" :src="headImg"></image>
+      <image
+        class="logo"
+        :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
+        mode="aspectFit"
+      ></image>
     </view>
     <view class="circleDet">
       <text>
-        {{ theme }}
+        <text class="circleDet-txt">{{ t.theme }}</text>
         <text class="circleDet-num">{{ themeNum }}</text>
       </text>
       <text>
-        {{ post }}
+        <text class="circleDet-txt">{{ t.homecontent }}</text>
         <text class="circleDet-num">{{ postNum }}</text>
       </text>
-      <text class="circleDet-share" @click="open">
-        <qui-icon :name="iconShare" size="28" color="#fff"></qui-icon>
-        {{ share }}
-      </text>
+
+      <view class="circleDet-share" @click="open">
+        <qui-icon class="qui-icon" name="icon-share1" size="26" :color="iconcolor"></qui-icon>
+        {{ t.share }}
+      </view>
     </view>
   </view>
 </template>
@@ -31,17 +36,17 @@ export default {
       type: String,
       default: '',
     },
-    theme: {
-      type: String,
-      default: '',
-    },
     themeNum: {
       type: Number,
       default: 0,
     },
-    post: {
+    homecontent: {
       type: String,
       default: '',
+    },
+    iconcolor: {
+      type: String,
+      default: '#fff',
     },
     postNum: {
       type: Number,
@@ -51,13 +56,23 @@ export default {
       type: String,
       default: '',
     },
-    iconShare: {
+    shareBtn: {
       type: String,
       default: '',
     },
   },
   data: () => {
-    return {};
+    return {
+      // navigationBarStyle: {
+      //   iconText: '类目', // 导航栏文字
+      // },
+    };
+  },
+  computed: {
+    // 语言包
+    t() {
+      return this.i18n.t('home');
+    },
   },
   onLond() {},
   methods: {
@@ -67,17 +82,17 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .header {
+  position: relative;
   width: 100%;
   height: 400rpx;
-  background-image: url('https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/shuijiao.jpg');
-  // background: #1878f3;
+  background: #1878f3;
   .logo {
     display: block;
-    width: 400rpx;
+    // width: 100%;
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
@@ -85,26 +100,38 @@ export default {
   .circleDet {
     display: flex;
     justify-content: space-between;
-    padding-top: 69rpx;
-    padding-right: 20rpx;
-    padding-bottom: 47rpx;
-    padding-left: 20rpx;
+    padding: 69rpx 20rpx 47rpx;
     line-height: 37rpx;
-    color: --color(--qui-FC-AAA);
     text-align: center;
-    // border-bottom: 1rpx solid #ccc;
     text {
-      padding: 0 14rpx;
-      font-size: $fg-f26;
+      // padding: 0 15rpx;
+      // font-size: $fg-f26;
       line-height: 37rpx;
       text-align: center;
     }
-    .circleDet-num {
-      color: --color(--qui-BG-2);
-    }
-    .circleDet-share {
-      color: --color(--qui-BG-2);
-    }
+  }
+  .circleDet-txt {
+    font-size: $fg-f26;
+    color: --color(--qui-FC-FFF);
+    opacity: 0.5;
+  }
+  .circleDet-num {
+    padding-left: 15rpx;
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+  }
+  .circleDet-share {
+    font-size: $fg-f26;
+    color: --color(--qui-FC-FFF);
+  }
+  .qui-icon {
+    padding-right: 18rpx;
+  }
+  .bar-sticky {
+    position: sticky;
+    // position: -webkit-sticky;
+    top: 0;
+    z-index: 101;
   }
 }
 </style>

@@ -8,6 +8,7 @@ function resolve(dir) {
 
 const isPro = process.env.NODE_ENV === 'production';
 const isH5Compiler = process.env.UNI_PLATFORM === 'h5';
+const isWXCompiler = process.env.UNI_PLATFORM === 'mp-weixin';
 
 module.exports = {
   assetsDir: 'assets',
@@ -60,6 +61,14 @@ module.exports = {
         },
       };
     }
+    // 微信小程序在开发阶段也压缩代码，减少代码大小，争取在开发调试阶段可直接预览
+    if (isWXCompiler && !isPro) {
+      return {
+        optimization: {
+          minimize: true,
+        },
+      };
+    }
   },
   // https://webpack.docschina.org/configuration/dev-server
   devServer: {
@@ -68,7 +77,7 @@ module.exports = {
     // 更多代理设置请看：https://github.com/chimurai/http-proxy-middleware#options
     proxy: {
       '/api': {
-        target: 'https://discuz.chat',
+        target: 'https://dq.comsenz-service.com',
         changeOrigin: true,
         ws: true,
         pathRewrite: {

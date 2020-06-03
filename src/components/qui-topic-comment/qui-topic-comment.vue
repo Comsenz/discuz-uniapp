@@ -7,60 +7,83 @@
             :src="
               commentAvatarUrl != '' && commentAvatarUrl != null
                 ? commentAvatarUrl
-                : 'https://discuz.chat/static/images/noavatar.gif'
+                : '/static/noavatar.gif'
             "
             class="det-per-head"
             @click="personJump"
+            @error="imageError"
+            v-if="imageStatus"
           ></image>
+          <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
-            <span class="themeItem__header__title__username">{{ userName }}</span>
-
-            <span class="themeItem__header__title__isAdmin">
-              {{ userRole }}
+            <span class="themeItem__header__title__username" @click="personJump">
+              {{ userName }}
             </span>
-            <view class="themeItem__header__title__jumpBtn">></view>
+
+            <span
+              class="themeItem__header__title__isAdmin"
+              v-for="(group, index) in userRole"
+              :key="index"
+            >
+              {{ group.isDisplay ? `（${group.name}）` : '' }}
+            </span>
           </view>
-          <view class="themeItem__header__title__time">{{ commentTime }}</view>
+          <view class="themeItem__header__title__time">{{ localTime }}</view>
+        </view>
+        <view class="themeItem__header__r">
+          <view v-if="commentStatus == 0" class="comment-status">{{ t.inReview }}</view>
+          <view v-else @click="commentLikeClick" class="comment-like">
+            <qui-icon v-if="isLiked" name="icon-liked" class="like"></qui-icon>
+            <qui-icon v-else name="icon-like" class="like" size="30"></qui-icon>
+            <view class="comment-like-count">
+              {{ commentLikeCount == 0 ? t.like : commentLikeCount }}
+            </view>
+          </view>
         </view>
       </view>
 
       <view class="themeItem__content">
-        <view class="themeItem__content__text">
+        <view class="themeItem__content__text" @click="commentJump">
           <rich-text :nodes="commentContent"></rich-text>
         </view>
-
-        <view v-if="imagesList.length == 1">
+        <view v-if="imagesList.length > 0 && imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length == 2">
+        <view v-if="imagesList.length > 0 && imagesList.length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
+              @click="previewPicture(index)"
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length >= 3">
+        <view v-if="imagesList.length > 0 && imagesList.length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
               v-for="(image, index) in imagesList"
               :key="index"
-              :src="image"
+              :mode="modeVal"
+              :src="image.thumbUrl"
               alt
+              @click="previewPicture(index)"
             ></image>
             <image
               class="themeItem__content__imgmore__item"
@@ -68,21 +91,36 @@
             ></image>
           </view>
         </view>
+        <qui-reply
+          v-if="replyList.length > 0"
+          :reply-list="replyList"
+          @commentJump="commentJump"
+        ></qui-reply>
       </view>
 
       <view class="themeItem__comment"></view>
-
-      <view class="themeItem__footer">
-        <view class="themeItem__footer__themeType2">
-          <view class="themeItem__footer__themeType2__item">
-            <qui-icon
-              class="text"
-              name="icon-delete"
-              size="18"
-              color="#AAA"
-              @click="handleClick"
-            ></qui-icon>
-            删除
+      <view
+        class="themeItem__footer"
+        :style="{ justifyContent: replyCount > 0 ? 'space-between' : 'flex-end' }"
+      >
+        <view class="themeItem__footer__l" v-if="replyCount > 3" @click="commentJump">
+          <view class="themeItem__footer__con">{{ replyCount }}{{ t.item }}{{ t.reply }}</view>
+          <qui-icon
+            class="count-jt"
+            name="icon-folding-r"
+            size="22"
+            @click="handleClick"
+          ></qui-icon>
+        </view>
+        <view v-else></view>
+        <view class="themeItem__footer__r">
+          <view class="footer__r__child" v-if="canDelete" @click="deleteComment">
+            <qui-icon class="icon" name="icon-delete" size="26" color="#AAA"></qui-icon>
+            <view class="themeItem__footer__con">{{ t.delete }}</view>
+          </view>
+          <view class="footer__r__child" @click="replyComment" v-if="commentShow">
+            <qui-icon class="icon" name="icon-comments" size="26" color="#AAA"></qui-icon>
+            <view class="themeItem__footer__con">{{ t.reply }}</view>
           </view>
         </view>
       </view>
@@ -91,11 +129,18 @@
 </template>
 
 <script>
+import { time2MorningOrAfternoon } from '@/utils/time';
+
 export default {
   props: {
     // 回复的用户头像
     commentAvatarUrl: {
       type: String,
+      default: '',
+    },
+    // 回复的id
+    postId: {
+      type: [Number, String],
       default: '',
     },
     // 回复的用户名
@@ -105,13 +150,36 @@ export default {
     },
     // 回复的用户的角色
     userRole: {
-      type: String,
-      default: '',
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+    // 回复的审核状态
+    commentStatus: {
+      type: [String, Number],
+      default: '1',
+    },
+    isLiked: {
+      type: Boolean,
+      default: false,
     },
     // 回复的内容
     commentContent: {
       type: String,
       default: '',
+    },
+    // 回复的评论
+    replyList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+    // 评论的回复数
+    replyCount: {
+      type: Number,
+      default: 0,
     },
     // 回复的时间
     commentTime: {
@@ -120,26 +188,99 @@ export default {
     },
     // 回复的图片
     imagesList: {
-      type: Object,
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
+    },
+    // 图片裁剪、缩放的模式
+    modeVal: {
+      type: String,
+      default: 'aspectFill',
+    },
+    // 是否显示评论的回复按钮
+    commentShow: {
+      type: Boolean,
+      default: false,
     },
     // 回复的点赞数
     commentLikeCount: {
-      type: [Number, String],
-      default: '0',
+      type: Number,
+      default: 0,
+    },
+    // 是否显示删除
+    canDelete: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => {
     return {
       isAdmin: true,
       isGreat: false,
+      imageStatus: true,
     };
   },
+  computed: {
+    t() {
+      return this.i18n.t('topic');
+    },
+    // 时间转化
+    localTime() {
+      return time2MorningOrAfternoon(this.commentTime);
+    },
+  },
+  watch: {
+    // 监听得到的数据
+    commentLikeCount: {
+      handler(newVal) {
+        this.commentLikeCount = newVal;
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   methods: {
-    handleClick() {
-      console.log('是分享哦');
+    // 点击内容事件
+    commentJump() {
+      this.$emit('commentJump');
+    },
+    // 点击头像以及用户名事件
+    personJump() {
+      this.$emit('personJump');
+    },
+    // 评论点赞
+    commentLikeClick(evt) {
+      this.$emit('commentLikeClick', evt);
+    },
+    // 删除事件
+    deleteComment() {
+      this.$emit('deleteComment');
+    },
+    // 回复事件
+    replyComment() {
+      this.$emit('replyComment');
+    },
+    // 点击图片事件(默认参数图片id)
+    // imageClick(imageId) {
+    //   this.$emit('imageClick', imageId);
+    // },
+    // 预览图片
+    previewPicture(index) {
+      const _this = this;
+      const preview = [];
+      for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
+        preview.push(_this.imagesList[i].url);
+      }
+      uni.previewImage({
+        current: index,
+        urls: preview,
+        indicator: 'number',
+      });
+    },
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.imageStatus = false;
     },
   },
 };
@@ -160,13 +301,16 @@ export default {
 }
 .themeItem {
   width: 100%;
-  padding: 30rpx 0;
+  padding: 30rpx 40rpx;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
+  box-sizing: border-box;
 
   &__header {
     display: flex;
+    justify-content: space-between;
     width: 100%;
     height: 80rpx;
-    margin-bottom: 12rpx;
+    margin-bottom: 20rpx;
 
     &__img {
       width: 80rpx;
@@ -184,30 +328,42 @@ export default {
 
     &__title {
       flex: 1;
-
       &__top {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
         height: 37rpx;
+        margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-family: $font-family;
         font-size: 28rpx;
         line-height: 37rpx;
       }
 
       &__username {
+        height: 37rpx;
+        max-width: 336rpx;
+        overflow: hidden;
+
         font-weight: bold;
-        color: rgba(51, 51, 51, 1);
+        line-height: 37rpx;
+        color: --color(--qui-FC-000);
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       &__isAdmin {
+        display: inline-block;
+        height: 37rpx;
         font-weight: 400;
-        color: rgba(170, 170, 170, 1);
+        line-height: 37rpx;
+        color: --color(--qui-FC-AAA);
       }
 
       &__time {
         font-size: 24rpx;
         font-weight: 400;
         line-height: 31rpx;
-        color: rgba(170, 170, 170, 1);
+        color: --color(--qui-FC-AAA);
       }
 
       &__jumpBtn {
@@ -219,16 +375,24 @@ export default {
         color: #ddd;
       }
     }
+    &__r {
+      width: 100rpx;
+      .comment-status {
+        font-size: 26rpx;
+        color: --color(--qui-RED);
+        text-align: right;
+      }
+    }
   }
 
   &__content {
     &__text {
-      margin-bottom: 12rpx;
-      font-family: $font-family;
+      overflow: hidden;
       font-size: 28rpx;
       font-weight: 400;
       line-height: 45rpx;
-      color: rgba(51, 51, 51, 1);
+      color: --color(--qui-FC-333);
+      word-break: break-all;
     }
 
     &__imgone {
@@ -237,9 +401,8 @@ export default {
       margin-top: 30rpx;
       line-height: 0;
       &__item {
-        max-width: 100%;
+        width: 100%;
         max-height: 100%;
-        border-radius: 100%;
       }
     }
     &__imgtwo {
@@ -293,43 +456,66 @@ export default {
       }
     }
   }
-
-  &__footer {
-    &__themeType1 {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 60rpx;
-
-      &__item {
-        font-family: $font-family;
-        font-size: 28rpx;
-        font-weight: 400;
-        line-height: 37rpx;
-        color: rgba(170, 170, 170, 1);
-      }
-
-      text {
-        margin-right: 15rpx;
-      }
-
-      &__greated {
-        color: rgba(221, 221, 221, 1);
-      }
+}
+.themeItem__footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 20rpx;
+  .themeItem__footer__con {
+    font-size: $fg-f26;
+    line-height: 37rpx;
+  }
+  &__l {
+    display: flex;
+    flex-direction: row;
+    line-height: 37rpx;
+    color: --color(--qui-LINK);
+    text-align: left;
+    align-items: center;
+    .count-jt {
+      padding-left: 6rpx;
+      line-height: 34rpx;
+      color: --color(--qui-LINK);
     }
-
-    &__themeType2 {
-      &__item {
-        font-family: $font-family;
-        font-size: 28rpx;
-        font-weight: 400;
-        line-height: 37rpx;
-        color: rgba(170, 170, 170, 1);
-        text-align: right;
-      }
-      text {
-        margin-right: 15rpx;
-      }
-    }
+  }
+  &__r {
+    display: flex;
+    flex-direction: row;
+    line-height: 37rpx;
+    color: rgba(170, 170, 170, 1);
+    text-align: right;
+    align-items: center;
+  }
+}
+.footer__r__child {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 120rpx;
+  text-align: right;
+  .icon {
+    padding-right: 10rpx;
+    font-size: $fg-f28;
+    line-height: 37rpx;
+    color: rgba(170, 170, 170, 1);
+  }
+}
+.comment-like {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  .like {
+    margin-right: 15rpx;
+    font-size: 30rpx;
+    line-height: 37rpx;
+    color: --color(--qui-FC-777);
+  }
+  .comment-like-count {
+    font-size: $fg-f28;
+    line-height: 37rpx;
+    color: --color(--qui-FC-777);
   }
 }
 </style>

@@ -1,13 +1,12 @@
 @font-face {
   font-family: 'quiicons'; /* project id 1741858 */
-  src: url('//at.alicdn.com/t/font_1741858_9l9gp781hem.eot');
-  src: url('//at.alicdn.com/t/font_1741858_9l9gp781hem.eot?#iefix') format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1741858_9l9gp781hem.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1741858_9l9gp781hem.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1741858_9l9gp781hem.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1741858_9l9gp781hem.svg#quiicons') format('svg');
+  src: url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.eot');
+  src: url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.svg#quiicons') format('svg');
 }
-
 .qui-icon {
   position: relative;
   /* stylelint-disable-next-line */
@@ -30,13 +29,15 @@
 }
 
 .icon-loading1:before {
-  content: '\e688';
+  content: '\e687';
 }
 
 .icon-loading:before {
   content: '\e687';
 }
-
+.icon-load:before {
+  content: '\e697';
+}
 .icon-rmb:before {
   content: '\e684';
 }
@@ -100,6 +101,9 @@
 .icon-collection:before {
   content: '\e66a';
 }
+.icon-collectioned:before {
+  content: '\e68f';
+}
 
 .icon-waring:before {
   content: '\e669';
@@ -110,7 +114,7 @@
 }
 
 .icon-each-follow:before {
-  content: '\e662';
+  content: '\e603';
 }
 
 .icon-cancel-follow:before {
@@ -185,12 +189,19 @@
   content: '\e64e';
 }
 
+.icon-message1:before {
+  content: '\e68d';
+}
+
 .icon-link:before {
   content: '\e64c';
 }
 
 .icon-like:before {
   content: '\e64b';
+}
+.icon-liked:before {
+  content: '\e68e';
 }
 
 .icon-img:before {
@@ -199,4 +210,38 @@
 
 .icon-home:before {
   content: '\e647';
+}
+
+.icon-close:before {
+  content: '\e601';
+}
+
+.icon-wxPay:before {
+  content: '\e691';
+}
+
+.icon-walletPay:before {
+  content: '\e690';
+}
+
+.icon-message-n:before {
+  content: '\e606';
+}
+
+.icon-noData:before {
+  content: '\e602';
+}
+
+.icon-circle:before {
+  content: '\e65c';
+}
+
+.icon-back:before {
+  content: '\e604';
+}
+.icon-close1:before {
+  content: '\e605';
+}
+.icon-wei:before {
+  content: '\e696';
 }

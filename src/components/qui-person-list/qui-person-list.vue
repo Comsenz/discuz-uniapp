@@ -1,17 +1,21 @@
 <template>
   <!-- 列表 -->
-  <view class="det-person-box" v-if="showStatus">
+  <view class="det-person-box" :style="{ paddingBottom: btnShow ? '80rpx' : '50rpx' }">
     <view class="det-per-number" v-if="personNum != 0">
       {{ personNum }}{{ t.persenUnit }}{{ type }}
     </view>
-    <view class="det-per-list">
+    <view class="det-per-list" v-if="personRes.length > 0">
       <view class="det-person" v-for="(person, index) in personRes" :key="index">
         <image
-          :src="
-            person.avatarUrl != '' && person.avatarUrl != null
-              ? person.avatarUrl
-              : 'https://discuz.chat/static/images/noavatar.gif'
-          "
+          :src="person.avatarUrl ? person.avatarUrl : '/static/noavatar.gif'"
+          class="det-per-head"
+          v-if="person.showAvatar"
+          @click="personJump(person.id)"
+          @error="imageError(person)"
+        ></image>
+        <image
+          v-else
+          src="/static/noavatar.gif"
           class="det-per-head"
           @click="personJump(person.id)"
         ></image>
@@ -36,11 +40,6 @@
 <script>
 export default {
   props: {
-    // 是否显示
-    showStatus: {
-      default: true,
-      type: Boolean,
-    },
     // 类型
     type: {
       default: '类型',
@@ -59,9 +58,9 @@ export default {
     // list列表
     personList: {
       default: () => {
-        return {};
+        return [];
       },
-      type: Object,
+      type: Array,
     },
     // 是否显示按钮
     btnShow: {
@@ -111,16 +110,16 @@ export default {
     // 监听得到的数据
     personList: {
       handler(newVal) {
-        this.personList = newVal;
-        this.personRes = this.limitArray(newVal, this.limitCount);
-        // console.log(this.personRes, '0000');
+        newVal.map(item => {
+          const person = item;
+          person.showAvatar = true;
+          return person;
+        });
+        this.personRes = newVal;
       },
       deep: true,
       immediate: true,
     },
-
-    deep: true,
-    immediate: true,
   },
   methods: {
     // 数组取前几条数据
@@ -138,7 +137,6 @@ export default {
     foldClick() {
       this.foldStatus = !this.foldStatus;
       // this.$emit('btnClick', param);
-      console.log(this.personRes);
       if (this.foldStatus) {
         this.transform = 'rotate(180deg)';
         this.personRes = this.limitArray(this.personList, this.personNum);
@@ -148,11 +146,16 @@ export default {
       }
     },
     personJump(param) {
-      console.log(param, '参数');
       this.$emit('personJump', param);
     },
     btnClick(param) {
       this.$emit('btnClick', param);
+    },
+    // 头像失效
+    imageError(person) {
+      const item = person;
+      item.showAvatar = false;
+      return item;
     },
   },
 };
@@ -164,8 +167,9 @@ export default {
 .det-person-box {
   display: flex;
   flex-direction: column;
-  padding: 0 0 40px;
+  padding: 0 0 80rpx;
   text-align: center;
+  background: --color(--qui-BG-2);
   .det-per-number {
     font-size: $fg-f28;
     color: --color(--qui-FC-AAA);

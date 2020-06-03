@@ -1,9 +1,16 @@
 <template>
   <view
     class="emoji-box"
-    :style="{ position: position, top: top, left: left, right: right, bottom: bottom }"
+    :style="{
+      position: position,
+      top: top,
+      left: left,
+      right: right,
+      bottom: bottom,
+      'border-radius': borderRadius,
+    }"
   >
-    <swiper indicator-dots="true">
+    <swiper indicator-dots="true" class="uni-swiper">
       <swiper-item v-for="index of getSwiperItem" :key="index">
         <view class="emoji-box__item">
           <view
@@ -12,7 +19,7 @@
             :key="j"
             @click="getEmojiClick(index * 35 + j + 1)"
           >
-            <image class="emoji" :src="data[index * 35 + j + 1].url"></image>
+            <image class="emoji" :src="list[index * 35 + j + 1].url"></image>
           </view>
         </view>
       </swiper-item>
@@ -24,7 +31,7 @@
 export default {
   name: 'QuiEmoji',
   props: {
-    data: {
+    list: {
       default: Object,
       type: Object,
     },
@@ -48,10 +55,14 @@ export default {
       default: '',
       type: String,
     },
+    borderRadius: {
+      default: '0rpx',
+      type: String,
+    },
   },
   computed: {
     getSwiperItem() {
-      return Math.ceil(Object.keys(this.data).nv_length / 35);
+      return Math.ceil(Object.keys(this.list).nv_length / 35);
     },
   },
   methods: {
@@ -63,13 +74,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/base/variable/global.scss';
+@import '@/styles/base/theme/fn.scss';
 .emoji-box {
   z-index: 1500;
   width: 100%;
   padding: 10rpx 0;
-  background-color: #fff;
-  border: 1rpx solid #ddd;
-  border-radius: 10rpx;
+  background-color: --color(--qui-BG-2);
+  border: 1rpx solid --color(--qui-BOR-DDD);
+  border-radius: 7rpx;
+  box-sizing: border-box;
 
   &__item {
     display: flex;
@@ -86,5 +100,9 @@ export default {
       height: 58rpx;
     }
   }
+}
+
+/deep/ .uni-swiper {
+  height: 350rpx;
 }
 </style>

@@ -1,5 +1,7 @@
 <template>
-  <qui-page-message :type="status"></qui-page-message>
+  <qui-page :data-qui-theme="theme">
+    <qui-page-message :type="status"></qui-page-message>
+  </qui-page>
 </template>
 
 <script>
@@ -11,6 +13,7 @@ export default {
     };
   },
   onLoad(params) {
+    uni.hideHomeButton();
     const { status } = params;
     if (!status) this.status = TYPE_404;
     else this.status = status;
