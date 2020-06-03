@@ -517,6 +517,9 @@ export default {
       url: '',
       customAmountStatus: false, // 自定义价格弹框初始化状态
       windowHeight: '', //设备高度
+      system: '', // 设备系统
+      detectionmodel: '', // 站点模式
+      paymentmodel: '', // 是否付费
     };
   },
   computed: {
@@ -563,6 +566,14 @@ export default {
     this.formData = {
       type: 1,
     };
+    try {
+      const res = uni.getSystemInfoSync();
+      this.system = res.platform;
+      this.detectionmodel = this.forums.set_site.site_mode;
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    } catch (e) {
+        // error
+    }
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -682,7 +693,13 @@ export default {
         this.isLiked = data.firstPost.isLiked;
         this.topicStatus = data.isApproved;
         if (!data.paid || data.paidUsers.length > 0) {
-          this.paidStatus = true;
+          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+            this.paidStatus = false;
+          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
+            this.paidStatus = true;
+          } else {
+            this.paidStatus = true;
+          }
         } else {
           this.paidStatus = false;
         }
@@ -694,7 +711,13 @@ export default {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
         }
         if (data.price <= 0) {
-          this.rewardStatus = true;
+          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+            this.rewardStatus = false;
+          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
+            this.rewardStatus = true;
+          } else {
+            this.rewardStatus = true;
+          }
         } else {
           this.rewardStatus = false;
         }
