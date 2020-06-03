@@ -992,7 +992,7 @@ export default function() {
     } else {
       const Vue = require('vue');
       (Vue.default || Vue).mixin(lifecycle);
-      oldrpt = uni.report;
+      const oldrpt = uni.report;
       uni.report = function(type, options) {
         stat.sendEvent(type, options);
         if (oldrpt) {
