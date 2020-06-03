@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/Comsenz/discuz-uniapp/compare/v1.0.0...v1.0.1) (2020-06-03)
+
+
+### Features
+
+* BUG修改 ([9cb598f](https://github.com/Comsenz/discuz-uniapp/commit/9cb598f1b001f4974621dae2c357ce1efaf14c8b))
+* BUG修改 ([89a15ef](https://github.com/Comsenz/discuz-uniapp/commit/89a15ef25ff67cca57693e60c5647610b0556e40))
+* topic ([af1e602](https://github.com/Comsenz/discuz-uniapp/commit/af1e602bace266ea782b9150c6e7c9dd9bd7f377))
+* topic ([3ae09fc](https://github.com/Comsenz/discuz-uniapp/commit/3ae09fc54e0e29675a5850476e5658f06d0ed242))
+* topic ([82d7899](https://github.com/Comsenz/discuz-uniapp/commit/82d7899c54c07da14e3c33c3eee331b3f7a01da6))
+* topic ([56538fc](https://github.com/Comsenz/discuz-uniapp/commit/56538fc5cd7c93f5c653df9d7e538ac57914aaf9))
+* uploader ([6f43193](https://github.com/Comsenz/discuz-uniapp/commit/6f4319385a59dc2c4925ce48db4b946a18383a59))
+* 海报修改 ([912dd95](https://github.com/Comsenz/discuz-uniapp/commit/912dd959dc89054eb8dfbe25ec8c6447160c4bc2))
+
+
+### Bug Fixes
+
+* like, add header, pay mode ([e3c13a8](https://github.com/Comsenz/discuz-uniapp/commit/e3c13a80e472186b9ff9e1d8e94831540517a3ef))
+* liked ([5e4a02a](https://github.com/Comsenz/discuz-uniapp/commit/5e4a02a17a15493b262c93e5e7aaebc0697ef25b))
+* topic num refresh ([32884fe](https://github.com/Comsenz/discuz-uniapp/commit/32884fedb19289003fde515ceab4180ee865a8b9))
+* 首页用户名 ([dc39e6d](https://github.com/Comsenz/discuz-uniapp/commit/dc39e6d17cee6987652930219bb853f767b68a6f))
+* 首页用户名过长 ([89945fa](https://github.com/Comsenz/discuz-uniapp/commit/89945fabf26a37d7536b895168dca56087f5c0c3))
+
 ## 1.0.0 (2020-06-03)
 
 
