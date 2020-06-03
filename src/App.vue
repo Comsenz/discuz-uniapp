@@ -1,4 +1,5 @@
 <script>
+import stat from '@/common/stat';
 import { SITE_PAY, STORGE_GET_USER_TIME } from '@/common/const';
 import Vue from 'vue';
 
@@ -29,6 +30,7 @@ export default {
     },
   },
   async onLaunch() {
+    stat();
     try {
       const forums = await this.$store.dispatch('jv/get', [
         'forum',
