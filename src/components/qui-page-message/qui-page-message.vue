@@ -23,7 +23,7 @@
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
         class="out page-message--exit"
-        open-type="exit"
+        :open-type="message.btnclickType === 'toHome' ? 'redirect' : 'exit'"
         hover-class="none"
         target="miniProgram"
         v-if="show"
@@ -33,9 +33,9 @@
         </qui-button>
       </navigator>
 
-      <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
+      <!--<qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
         {{ i18n.t('core.admin_login') }}
-      </qui-button>
+      </qui-button>-->
     </view>
   </view>
 </template>
@@ -55,30 +55,35 @@ const message = {
     subtitle: i18n.t('core.page_not_found_detail'),
     btnTxt: i18n.t('core.back_home'),
     icon: '@/static/msg-404.svg',
+    btnclickType: 'toHome', //点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
   [TYPE_CLOSED]: {
     title: i18n.t('core.site_closed'),
     subtitle: '', // 从接口读取站点关闭后的提示语
     btnTxt: i18n.t('core.close'),
     icon: '@/static/msg-warning.svg',
+    btnclickType: 'siteClose',
   },
   [NOT_INSTALL]: {
     title: i18n.t('core.not_install'),
     subtitle: '', // 从接口读取站点关闭后的提示语
     btnTxt: i18n.t('core.close'),
     icon: '@/static/msg-warning.svg',
+    btnclickType: 'siteClose',
   },
   [BAN_USER]: {
     title: i18n.t('core.ban_user'),
     subtitle: '', // 从接口读取站点关闭后的提示语
     btnTxt: i18n.t('core.close'),
     icon: '@/static/msg-warning.svg',
+    btnclickType: 'siteClose',
   },
   [THREAD_DELETED]: {
     title: i18n.t('core.thread_deleted'),
     subtitle: '', // 从接口读取主题被删除时主题详情页的提示语
     btnTxt: i18n.t('core.back_home'),
     icon: '@/static/msg-warning.svg',
+    btnclickType: 'toHome',
   },
 };
 export default {
@@ -106,6 +111,7 @@ export default {
       console.log(111);
       // 404
       if (this.forumError.code === TYPE_404 || this.forumError.code === THREAD_DELETED) {
+        console.log('这是返回首页呢');
         uni.redirectTo({
           url: '/pages/home/index',
         });

@@ -1763,7 +1763,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 285rpx;
+    width: 195rpx;
   }
   .text-word-tip {
     font-size: $fg-f24;
