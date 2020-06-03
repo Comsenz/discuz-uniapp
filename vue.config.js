@@ -67,6 +67,8 @@ module.exports = {
         optimization: {
           minimize: true,
         },
+        // https://webpack.docschina.org/configuration/devtool/ 避免开发环境打包出来eval在微信小程序中无法运行
+        devtool: 'source-map',
       };
     }
   },

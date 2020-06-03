@@ -10,11 +10,14 @@
     >
       <view class="ft-gap">
         <view class="bg-white">
-          <view class="detail-tip" v-if="thread.type != 2 && topicStatus == 0">
-            {{ t.examineTip }}
-          </view>
-          <view class="detail-tip" v-if="thread.type == 2 && topicStatus == 0">
+          <view class="detail-tip" v-if="thread.type == 2 && thread.threadVideo.status == 0">
             {{ t.transcodingTip }}
+          </view>
+          <view class="detail-tip" v-else-if="thread.type == 2 && thread.threadVideo.status == 2">
+            {{ t.transcodingFailedTip }}
+          </view>
+          <view class="detail-tip" v-else-if="topicStatus == 0">
+            {{ t.examineTip }}
           </view>
           <qui-topic-content
             :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
@@ -643,50 +646,52 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
       console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
-      threadAction.then(data => {
-        console.log(data, '~~~~~~~~~~~~~~~~~~~');
-        // this.thread = data;
-        if (data.isDeleted) {
-          this.$store.dispatch('forum/setError', {
-            code: 'thread_deleted',
-            status: 500,
-          });
-          this.loaded = false;
-        } else {
-          this.loaded = true;
-        }
-        // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
-        // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
-        // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
-        // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
-        // data.firstPost.contentHtml = contengS.replace(
-        //   /<h1>(.*?)<\/h1>/g,
-        //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
-        // );
-        // console.log(data.firstPost.contentHtml, '这是标题');
-        // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
+      threadAction
+        .then(data => {
+          console.log(data, '~~~~~~~~~~~~~~~~~~~');
+          // this.thread = data;
+          if (data.isDeleted) {
+            console.log('走了333');
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+          }
+          // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
+          // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
+          // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
+          // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
+          // data.firstPost.contentHtml = contengS.replace(
+          //   /<h1>(.*?)<\/h1>/g,
+          //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
+          // );
+          // console.log(data.firstPost.contentHtml, '这是标题');
+          // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
 
-        // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
+          // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
 
-        // str.match(/<h1>(.*?)<\/h1>/g)
+          // str.match(/<h1>(.*?)<\/h1>/g)
 
-        // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
+          // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
 
-        // 追加管理菜单权限字段
-        this.selectList[0].canOpera = this.thread.firstPost.canEdit;
-        this.selectList[1].canOpera = this.thread.canEssence;
-        this.selectList[2].canOpera = this.thread.canSticky;
-        this.selectList[3].canOpera = this.thread.canHide;
-        // this.selectList[0].isStatus = true;
-        this.selectList[1].isStatus = this.thread.isEssence;
-        this.selectList[2].isStatus = this.thread.isSticky;
-        this.selectList[3].isStatus = false;
-        if (data.isEssence) {
-          //如果初始化状态为true
-          this.selectList[1].text = this.t.cancelEssence;
-        }
-        if (data.isSticky) {
-          //如果初始化状态为true
+          // 追加管理菜单权限字段
+          this.selectList[0].canOpera = this.thread.firstPost.canEdit;
+          this.selectList[1].canOpera = this.thread.canEssence;
+          this.selectList[2].canOpera = this.thread.canSticky;
+          this.selectList[3].canOpera = this.thread.canHide;
+          // this.selectList[0].isStatus = true;
+          this.selectList[1].isStatus = this.thread.isEssence;
+          this.selectList[2].isStatus = this.thread.isSticky;
+          this.selectList[3].isStatus = false;
+          if (data.isEssence) {
+            //如果初始化状态为true
+            this.selectList[1].text = this.t.cancelEssence;
+          }
+          if (data.isSticky) {
+            //如果初始化状态为true
 
           this.selectList[2].text = this.t.cancelSticky;
         }
@@ -745,29 +750,6 @@ export default {
       };
       let params = {};
       if (type == '1') {
-        const post = this.$store.getters['jv/get'](`posts/${id}`);
-
-        // 主题点赞
-        this.isLiked = !this.isLiked;
-        if (this.isLiked) {
-          // 未点赞时，点击点赞'
-          post.likedUsers.unshift(this.user);
-          post.likeCount++;
-        } else {
-          post.likedUsers.forEach((value, key) => {
-            value.id === this.user.id && post.likedUsers.splice(key, 1);
-          });
-          post.likeCount--;
-        }
-
-        jvObj.relationships = {
-          likedUsers: {
-            data: post.likedUsers.map(item => {
-              return { type: item._jv.type, id: item._jv.id };
-            }),
-          },
-        };
-
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
@@ -786,29 +768,24 @@ export default {
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          console.log(data, 'wwwwwwwwwwwwwwwwwwww');
           if (type == '1') {
+            const post = this.$store.getters['jv/get'](`posts/${id}`);
             // 主题点赞
-            // this.isLiked = data.isLiked;
-            // if (data.isLiked) {  `
-            //   // 未点赞时，点击点赞'
-            //   console.log('主题未点赞时，点击点赞123');
-            //   console.log(this.thread.firstPost.likedUsers);
-            //   this.thread.firstPost.likedUsers.unshift(this.user);
-            //   this.thread.firstPost.likeCount++;
-            // } else {
-            //   console.log('主题已点赞时，取消点赞456', this.user.id);
-            //   console.log(this.thread.firstPost.likedUsers, '@@@~~~');
-            //   // this.thread.firstPost.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-            //   // this.thread.firstPost.likedUsers.map((value, key, likedUsers) => {
-            //   //   value.id === this.user.id && likedUsers.splice(key, 1);
-            //   // });
-            //   this.thread.firstPost.likedUsers.forEach((value, key) => {
-            //     value.id === this.user.id && this.thread.firstPost.likedUsers.splice(key, 1);
-            //   });
-            //   console.log(this.thread.firstPost.likedUsers);
-            //   this.thread.firstPost.likeCount--;
-            // }
+            this.isLiked = data.isLiked;
+            if (this.isLiked) {
+              this.thread.firstPost.likedUsers.unshift(this.user);
+              post._jv.relationships.likedUsers.data.unshift({
+                type: this.user._jv.type,
+                id: this.user._jv.id,
+              });
+            } else {
+              this.thread.firstPost.likedUsers.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
+              post._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
+            }
           } else if (type == '2') {
             if (data.isDeleted) {
               uni.navigateTo({
@@ -883,12 +860,14 @@ export default {
             console.log(this.thread);
             this.thread.isFavorite = data.isFavorite;
           } else if (type == '2') {
+            console.log(data, '这是精华操作');
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
-              this.selectList[1].text = this.t.essence;
-            } else {
               this.selectList[1].text = this.t.cancelEssence;
+            } else {
+              this.selectList[1].text = this.t.essence;
             }
+            console.log(this.selectList, '这是管理列表');
           } else if (type == '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
@@ -1815,7 +1794,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 285rpx;
+    width: 195rpx;
   }
   .text-word-tip {
     font-size: $fg-f24;

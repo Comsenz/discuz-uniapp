@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="content bg" v-if="loaded">
+  <qui-page :data-qui-theme="theme" class="content bg" v-if="loaded || status">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -16,6 +16,7 @@
               :user-name="post.user.username"
               :theme-time="post.createdAt"
               :theme-content="post.contentHtml"
+              :user-role="post.user.groups"
               :images-list="post.images"
               @personJump="personJump(post.user._jv.id)"
             ></qui-topic-content>
@@ -184,12 +185,6 @@
                 @click="expressionClick"
               ></qui-icon>
               <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
-              <qui-icon
-                name="icon-image"
-                :size="40"
-                class="comm-icon"
-                @click="imageUploader"
-              ></qui-icon>
             </view>
             <view class="text-word-tip">
               {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
@@ -223,7 +218,6 @@
               @blur="contBlur"
             />
             <qui-uploader
-              v-if="uploaderShow"
               :url="`${url}api/attachments`"
               :header="header"
               :form-data="formData"
@@ -242,6 +236,7 @@
       </view>
     </uni-popup>
   </qui-page>
+  <qui-page-message v-else-if="thread.isDeleted || post.isDeleted"></qui-page-message>
   <view v-else class="loading">
     <u-loading :size="60"></u-loading>
   </view>
@@ -274,7 +269,6 @@ export default {
       commentShow: false, // 显示评论
       commentPopupStatus: false, //回复弹框内容状态是否显示
       emojiShow: false, //表情组件显示状态
-      uploaderShow: false, //图片上传组件显示状态
       textAreaValue: '', // 评论输入框
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       uploadFile: [], //上传的文件
@@ -399,7 +393,16 @@ export default {
       };
       this.loadPostStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
-          this.loaded = true;
+          if (data.isDeleted) {
+            console.log('走了111');
+            this.$store.dispatch('forum/setError', {
+              code: 'post_deleted',
+              status: 500,
+            });
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+          }
         }),
       );
     },
@@ -412,8 +415,17 @@ export default {
       this.loadDetailStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
           console.log(data, '88888888888');
+          if (data.isDeleted) {
+            console.log('走了222');
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+            this.status = false;
+          } else {
+            this.status = true;
+          }
           this.thread = data;
-          this.status = true;
         }),
       );
     },
@@ -611,17 +623,6 @@ export default {
     // 点击@跳转到@页
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
-    },
-    // 上传图片
-    imageUploader() {
-      this.uploaderShow = true;
-      if (this.uploadFile.length == 3) {
-        this.$refs.toast.show({ message: this.t.imageNumLimit });
-        return;
-      }
-      this.$nextTick(() => {
-        this.$refs.upload.uploadClick();
-      });
     },
     uploadChange(e) {
       this.uploadFile = e;
@@ -986,7 +987,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 285rpx;
+    width: 195rpx;
   }
   .comm-icon {
     flex: 1;
