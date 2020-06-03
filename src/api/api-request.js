@@ -13,16 +13,19 @@ let tostTimeout;
  */
 http.setConfig(config => {
   /* config 为默认全局配置 */
-  return {
-    ...config,
-    ...{
-      baseUrl: `${DISCUZ_REQUEST_HOST}api/`,
-      header: {
-        'Content-Type': 'application/vnd.api+json',
-        Accept: 'application/vnd.api+json',
-      },
+  Object.assign(config, {
+    baseUrl: `${DISCUZ_REQUEST_HOST}api/`,
+    header: {
+      'Content-Type': 'application/vnd.api+json',
+      Accept: 'application/vnd.api+json',
     },
-  };
+  });
+  // #ifdef MP-WEIXIN
+  Object.assign(config.header, {
+    'X-App-Platform': 'wx_miniprogram',
+  });
+  // #endif
+  return config;
 });
 http.validateStatus = statusCode => {
   return statusCode >= 200 && statusCode < 300;
