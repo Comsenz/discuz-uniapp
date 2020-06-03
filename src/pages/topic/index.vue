@@ -847,12 +847,14 @@ export default {
             console.log(this.thread);
             this.thread.isFavorite = data.isFavorite;
           } else if (type == '2') {
+            console.log(data, '这是精华操作');
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
-              this.selectList[1].text = this.t.essence;
-            } else {
               this.selectList[1].text = this.t.cancelEssence;
+            } else {
+              this.selectList[1].text = this.t.essence;
             }
+            console.log(this.selectList, '这是管理列表');
           } else if (type == '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
