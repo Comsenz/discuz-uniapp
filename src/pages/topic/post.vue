@@ -656,12 +656,14 @@ export default {
 
     // 编辑回显主题，处理附件
     setAnnex(type, data) {
+      console.log(data.firstPost.images, '这是编辑是获取到的');
       switch (type) {
         case 'img':
           data.firstPost.images.map(item => {
             this.filePreview.push({
               path: item.thumbUrl,
               id: item._jv.id,
+              order: item.order,
             });
             return item;
           });
