@@ -104,6 +104,7 @@ export default {
           },
         ];
       }
+      this.$emit('handleClickShare', id);
       this.nowThreadId = id;
       this.$refs.popupContent.open();
     },
@@ -113,17 +114,6 @@ export default {
         uni.navigateTo({
           url: `/pages/share/topic?id=${this.nowThreadId}`,
         });
-      }
-    },
-    // 唤起小程序原声分享（微信）
-    onShareAppMessage(res) {
-      // 来自页面内分享按钮
-      if (res.from === 'button') {
-        const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
-        return {
-          title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
-          path: `/pages/topic/index?id=${this.nowThreadId}`,
-        };
       }
     },
     // 取消按钮
