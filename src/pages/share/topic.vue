@@ -149,10 +149,16 @@ export default {
           `threads/${this.themeid}?include=user,firstPost,firstPost.images,threadVideo,category`,
         )
         .then(data => {
+          console.log(data);
           this.headerName = data.user.username;
+          this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          if (data.firstPost.images.length >= 1 || data.threadVideo.cover_url) {
-            this.implement = false;
+          if (data.firstPost.images.length >= 1) {
+            if (this.postyTepy === 2 && data.threadVideo.cover_url) {
+              this.implement = false;
+            } else {
+              this.implement = false;
+            }
           } else {
             this.implement = true;
           }
@@ -173,7 +179,6 @@ export default {
               },
             });
           }
-          this.postyTepy = data.type;
           this.contentTitle = data.title;
           this.content = data.firstPost.content;
           if (this.content) {
