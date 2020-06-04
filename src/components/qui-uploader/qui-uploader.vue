@@ -213,19 +213,19 @@ export default {
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
           console.log(_this.uploadList, '这是请求接口之后');
-          const arr = [];
-          _this.uploadList.map(item => {
-            arr.push(item.data.attributes.order);
-            console.log(arr, '~~~~');
-            return arr;
-          });
+          // const arr = [];
+          // _this.uploadList.map(item => {
+          //   // arr.push(item.data.attributes.order);
+          //   console.log(arr, '~~~~');
+          //   return arr;
+          // });
 
-          _this.uploadBeforeList.map((item, key) => {
-            const ite = item;
-            ite.order = arr[key];
-            return ite;
-          });
-          console.log(_this.uploadBeforeList, '这是请求接口合并之后');
+          // _this.uploadBeforeList.map((item, key) => {
+          //   const ite = item;
+          //   ite.order = arr[key];
+          //   return ite;
+          // });
+          // console.log(_this.uploadBeforeList, '这是请求接口合并之后');
           return resolve(_this.uploadList);
         },
         fail(res) {
