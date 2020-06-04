@@ -130,7 +130,7 @@ export default {
 }
 .content {
   position: fixed;
-  top: 15%;
+  top: 12%;
   left: 40rpx;
   z-index: 9;
   display: flex;

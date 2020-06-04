@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="content bg" v-if="loaded || status">
+  <qui-page :data-qui-theme="theme" class="content bg" v-if="loaded && status">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -152,7 +152,15 @@
                 "
                 @commentJump="commentJump(commentPost._jv.id)"
                 @imageClick="imageClick"
-                @deleteComment="deleteComment(commentPost._jv.id)"
+                @deleteComment="
+                  deleteComment(
+                    commentPost._jv.id,
+                    '3',
+                    commentPost.canHide,
+                    commentPost.isDeleted,
+                    commentPost,
+                  )
+                "
               ></qui-topic-comment>
             </view>
           </view>
@@ -239,7 +247,7 @@
   <qui-page-message
     v-else-if="thread.isDeleted || post.isDeleted || !loaded || !status"
   ></qui-page-message>
-  <view v-else class="loading">
+  <view v-else-if="(loadingStatus && !loaded) || (loadingStatus && !statuas)" class="loading">
     <u-loading :size="60"></u-loading>
   </view>
 </template>
@@ -261,7 +269,9 @@ export default {
       thread: {},
       // post: {},
       loadDetailStatus: {},
+      loaded: false,
       status: false,
+      loadingStatus: true,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       posts: [],
       commentIndex: '', //当前回复的index
@@ -407,9 +417,11 @@ export default {
             } else {
               this.loaded = true;
             }
+            this.loadingStatus = false;
           })
           .catch(err => {
             this.loaded = false;
+            this.loadingStatus = false;
             console.log(err);
           }),
       );
@@ -436,17 +448,19 @@ export default {
               this.status = true;
             }
             this.thread = data;
+            this.loadingStatus = false;
           })
           .catch(err => {
             this.status = false;
+            this.loadingStatus = false;
             console.log(err);
           }),
       );
     },
 
     // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
-    postOpera(id, type, canStatus, isStatus) {
-      // console.log(id, type, canStatus, isStatus);
+    postOpera(id, type, canStatus, isStatus, post = {}) {
+      console.log(id, type, canStatus, isStatus, (post = {}), '这是调用接口时');
       if (type == '1' && !canStatus) {
         this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
@@ -505,6 +519,8 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '3') {
+            // post.isDeleted = data.isDeleted;
+            this.postComments[this.commentIndex].isDeleted = data.isDeleted;
             if (data.isDeleted) {
               // 回复的评论删除成功
               this.$refs.toast.show({ message: this.t.deleteSuccess });
@@ -678,8 +694,9 @@ export default {
       this.postOpera(postId, '2');
     },
     // 删除回复的评论
-    deleteComment(postId) {
-      this.postOpera(postId, '3');
+    deleteComment(postId, type, canStatus, isStatus, post) {
+      console.log(post, '这是点击时');
+      this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复
     replyComment(postId, canStatus) {

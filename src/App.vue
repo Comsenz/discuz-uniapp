@@ -51,13 +51,13 @@ export default {
       }
       const pages = getCurrentPages();
       const res = uni.getSystemInfoSync();
-      const iosplat = res.platform;
+      const code = 'dataerro';
+      const status = 500;
       if (forums.set_site.site_mode === SITE_PAY) {
         let currentPage = {};
-        if (iosplat === 'ios') {
-          uni.redirectTo({
-            url: '/pages/home/title',
-          });
+        if (res.platform === 'ios') {
+          this.$store.dispatch('forum/setError', { loading: false, code, status });
+          return;
         }
         if (pages.length > 0) {
           currentPage = pages[pages.length - 1];
