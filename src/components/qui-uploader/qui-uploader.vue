@@ -107,7 +107,11 @@ export default {
       this.uploadBeforeList = this.uploadBeforeList.concat(this.filePreview);
       this.uploadList = this.uploadList.concat(this.filePreview);
     }, this.delayTime);
-    this.lastOrder = this.filePreview[this.filePreview.length - 1].order;
+    if (this.filePreview.length) {
+      this.lastOrder = this.filePreview[this.filePreview.length - 1].order;
+    } else {
+      this.lastOrder = 0;
+    }
   },
   methods: {
     uploadDelete(index) {

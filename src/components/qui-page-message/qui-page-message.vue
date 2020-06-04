@@ -45,7 +45,7 @@
         target="miniProgram"
       >
         <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}
+          {{ message.btnTxt }}11111跳转
         </qui-button>
       </navigator>
       <navigator
@@ -56,7 +56,7 @@
         target="miniProgram"
       >
         <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}
+          {{ message.btnTxt }}22222回退
         </qui-button>
       </navigator>
 
@@ -172,17 +172,17 @@ export default {
         console.log('这是Message里的404，走返回');
         console.log(getCurrentPages());
         this.page = getCurrentPages().length;
-        // if (getCurrentPages().length < 2) {
-        //   this.message.btnclickType == 'toHome';
-        //   uni.redirectTo({
-        //     url: '/pages/home/index',
-        //   });
-        // } else {
-        //   this.message.btnclickType == 'toBack';
-        //   uni.navigateBack({
-        //     delta: 1,
-        //   });
-        // }
+        if (getCurrentPages().length < 2) {
+          this.message.btnclickType == 'toHome';
+          uni.redirectTo({
+            url: '/pages/home/index',
+          });
+        } else {
+          this.message.btnclickType == 'toBack';
+          uni.navigateBack({
+            delta: 1,
+          });
+        }
       }
     },
     handleLoginClick() {

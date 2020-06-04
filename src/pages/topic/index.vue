@@ -139,7 +139,7 @@
                 :comment-show="true"
                 @personJump="personJump(post.user.id)"
                 @commentLikeClick="
-                  commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index)
+                  commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index, post)
                 "
                 @commentJump="commentJump(threadId, post._jv.id)"
                 @imageClick="imageClick"
@@ -820,13 +820,14 @@ export default {
             }
           } else if (type == '3') {
             post.isDeleted = data.isDeleted;
-            console.log(post,'这是修改完');
+            console.log(post, '这是修改完');
             if (data.isDeleted) {
               console.log('回复删除成功');
             } else {
               console.log('回复删除失败');
             }
           } else if (type == '4') {
+            post.isLiked = data.isLiked;
             // 评论点赞
             // post.isLiked = data.isLiked;
             if (data.isLiked) {
@@ -1440,9 +1441,9 @@ export default {
       });
     },
     // 评论点赞
-    commentLikeClick(postId, type, canStatus, isStatus, index) {
+    commentLikeClick(postId, type, canStatus, isStatus, index, post) {
       this.postIndex = index;
-      this.postOpera(postId, type, canStatus, isStatus);
+      this.postOpera(postId, type, canStatus, isStatus, post);
     },
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
