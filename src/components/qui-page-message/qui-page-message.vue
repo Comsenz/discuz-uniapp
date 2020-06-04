@@ -24,6 +24,7 @@
       <view class="page-message--subtitle" v-if="show">
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
+      <view>这是路由测试呢{{ page }}</view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
         v-if="show && message.btnclickType == 'siteClose'"
@@ -135,6 +136,11 @@ export default {
       return subtitle;
     },
   },
+  data() {
+    return {
+      page: '',
+    };
+  },
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -165,15 +171,18 @@ export default {
       } else if (this.forumError.code === TYPE_404 || this.forumError.code === POST_DELETED) {
         console.log('这是Message里的404，走返回');
         console.log(getCurrentPages());
-        if (etCurrentPages() < 2) {
-          uni.redirectTo({
-            url: '/pages/home/index',
-          });
-        } else {
-          uni.navigateBack({
-            delta: 1,
-          });
-        }
+        this.page = getCurrentPages().length;
+        // if (getCurrentPages().length < 2) {
+        //   this.message.btnclickType == 'toHome';
+        //   uni.redirectTo({
+        //     url: '/pages/home/index',
+        //   });
+        // } else {
+        //   this.message.btnclickType == 'toBack';
+        //   uni.navigateBack({
+        //     delta: 1,
+        //   });
+        // }
       }
     },
     handleLoginClick() {

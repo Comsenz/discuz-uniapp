@@ -420,7 +420,6 @@ export default {
               console.log(result);
             },
             error(result) {
-              console.log('error');
               console.log(result);
               // uni.showModal({
               //   title: _this.i18n.t('uploader.uploadFailed'),
@@ -430,7 +429,6 @@ export default {
               _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
             },
             progress(result) {
-              console.log(result);
               _this.percent = result.percent;
               if (result.percent === 1) {
                 _this.$refs.toast.hideLoading();
@@ -498,7 +496,6 @@ export default {
       this.uploadStatus = e;
     },
     uploadChange(e, status) {
-      console.log(e, '这是文件');
       this.uploadFile = e;
       // e.map((file, index) => {
       //   this.formData = {
@@ -506,11 +503,9 @@ export default {
       //     order: index,
       //   };
       // });
-      // console.log(this.formData, '这是formData');
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
-      console.log(list, del, 'uploadClear')
       const id = this.operating === 'edit' ? list.id : list.data.id;
       this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
@@ -642,7 +637,6 @@ export default {
           });
         } else {
           this.postThread().then(res => {
-            console.log(res, '发布帖子接口')
             this.postLoading = false;
             uni.hideLoading();
             if (res.isApproved === 1) {
@@ -660,7 +654,6 @@ export default {
 
     // 编辑回显主题，处理附件
     setAnnex(type, data) {
-      console.log(data.firstPost.images, '这是编辑是获取到的');
       switch (type) {
         case 'img':
           data.firstPost.images.map(item => {
@@ -779,11 +772,11 @@ export default {
 
       return this.$store
         .dispatch('jv/delete', params)
-        .then(res => { 
-        // 当编辑帖子时删除图片后传参给首页  
+        .then(res => {
+          // 当编辑帖子时删除图片后传参给首页
           this.$u.event.$emit('deleteImg', {
             threadId: this.postDetails._jv.id,
-            index
+            index,
           });
           const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
           post.images.splice(index, 1);
@@ -819,7 +812,6 @@ export default {
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
-        console.log(res, '这是编辑的主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -923,7 +915,6 @@ export default {
     this.formData = {
       type: 1,
     };
-    console.log(this.formData, '这是输出');
     this.getCategories();
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
@@ -945,7 +936,6 @@ export default {
 
     try {
       const res = uni.getSystemInfoSync();
-      console.log(res.platform);
       if (
         res.platform === 'ios' &&
         this.forums.set_site.site_mode === 'public' &&

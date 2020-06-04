@@ -72,7 +72,12 @@
         ></qui-tabs>
         <view class="profile-tabs__content">
           <view v-if="current == 0" class="items">
-            <topic :user-id="userId" @changeFollow="changeFollow" ref="topic"></topic>
+            <topic
+              :user-id="userId"
+              @changeFollow="changeFollow"
+              ref="topic"
+              @handleClickShare="handleClickShare"
+            ></topic>
           </view>
           <view v-else-if="current == 1" class="items">
             <following :user-id="userId" @changeFollow="changeFollow" ref="following"></following>
@@ -81,7 +86,12 @@
             <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
           </view>
           <view v-else class="items">
-            <like :user-id="userId" @changeFollow="changeFollow" ref="like"></like>
+            <like
+              :user-id="userId"
+              @changeFollow="changeFollow"
+              ref="like"
+              @handleClickShare="handleClickShare"
+            ></like>
           </view>
         </view>
       </view>
@@ -117,9 +127,10 @@ export default {
         { title: this.i18n.t('profile.followers'), brief: '0' },
         { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
-      userId: '',
+      userId: 0,
       currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
+      nowThreadId: '',
       dialogId: 0, // 会话id
     };
   },
@@ -194,6 +205,21 @@ export default {
       const { current } = this;
       const item = ['topic', 'following', 'followers', 'like'];
       this.$refs[item[current]].pullDown();
+    },
+    // 点击分享事件
+    handleClickShare(e) {
+      this.nowThreadId = e;
+    },
+    // 唤起小程序原声分享（微信）
+    onShareAppMessage(res) {
+      // 来自页面内分享按钮
+      if (res.from === 'button') {
+        const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
+        return {
+          title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+          path: `/pages/topic/index?id=${this.nowThreadId}`,
+        };
+      }
     },
     // 私信
     chat() {

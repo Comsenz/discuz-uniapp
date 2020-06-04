@@ -459,8 +459,8 @@ export default {
     },
 
     // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
-    postOpera(id, type, canStatus, isStatus, post = {}) {
-      console.log(id, type, canStatus, isStatus, (post = {}), '这是调用接口时');
+    postOpera(id, type, canStatus, isStatus, commentPost = {}) {
+      console.log(id, type, canStatus, isStatus, (commentPost = {}), '这是调用接口时');
       if (type == '1' && !canStatus) {
         this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
@@ -519,8 +519,9 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '3') {
-            // post.isDeleted = data.isDeleted;
-            this.postComments[this.commentIndex].isDeleted = data.isDeleted;
+            commentPost.isDeleted = data.isDeleted;
+            console.log(commentPost, '这是修改完');
+            // this.postComments[this.commentIndex].isDeleted = data.isDeleted;
             if (data.isDeleted) {
               // 回复的评论删除成功
               this.$refs.toast.show({ message: this.t.deleteSuccess });
@@ -694,9 +695,9 @@ export default {
       this.postOpera(postId, '2');
     },
     // 删除回复的评论
-    deleteComment(postId, type, canStatus, isStatus, post) {
-      console.log(post, '这是点击时');
-      this.postOpera(postId, '3', canStatus, isStatus, post);
+    deleteComment(postId, type, canStatus, isStatus, commentPost) {
+      console.log(commentPost, '这是点击时');
+      this.postOpera(postId, '3', canStatus, isStatus, commentPost);
     },
     // 评论的回复
     replyComment(postId, canStatus) {

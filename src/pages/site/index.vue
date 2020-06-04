@@ -3,9 +3,9 @@
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
-      :theme-num="siteInfo.other.count_users"
+      :theme-num="siteInfo.count_users"
       :post="i18n.t('home.homecontent')"
-      :post-num="siteInfo.other.count_threads"
+      :post-num="siteInfo.count_threads"
       :share="i18n.t('home.share')"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
@@ -17,7 +17,7 @@
           <button
             class="popup-share-button"
             open-type="share"
-            v-if="siteInfo.set_site.site_mode !== 'pay'"
+            v-if="siteInfo.set_site && siteInfo.set_site.site_mode !== 'pay'"
           ></button>
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
@@ -42,16 +42,16 @@
       <qui-cell-item
         class="cell-item--left cell-item--auto"
         :title="i18n.t('manage.siteintroduction')"
-        :addon="siteInfo.set_site.site_introduction"
+        :addon="siteInfo.site_introduction"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.creationtime')"
-        :addon="siteInfo.set_site.createdAt"
+        :addon="siteInfo.createdAt"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.circlemode')"
         :addon="
-          siteInfo.set_site.site_mode === 'public'
+          siteInfo.set_site && siteInfo.set_site.site_mode === 'public'
             ? i18n.t('manage.publicmode')
             : i18n.t('manage.paymentmode')
         "
@@ -60,11 +60,11 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="siteInfo.set_site.site_author.avatar || '/static/noavatar.gif'"
+            :src="siteInfo.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="jumpUserPage(siteInfo.set_site.site_author.id)"
+            @tap="jumpUserPage(siteInfo.userId)"
           ></image>
-          <text class="site-item__owner-name">{{ siteInfo.set_site.site_author.username }}</text>
+          <text class="site-item__owner-name">{{ siteInfo.username }}</text>
         </view>
       </qui-cell-item>
       <navigator url="/pages/manage/users" hover-class="none">
@@ -84,19 +84,16 @@
           </view>
         </qui-cell-item>
       </navigator>
-      <qui-cell-item
-        :title="i18n.t('manage.myRole')"
-        :addon="userInfo.groups[0].name"
-      ></qui-cell-item>
+      <qui-cell-item :title="i18n.t('manage.myRole')" :addon="userInfo.groupName"></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.joinedTime')"
         :addon="userInfo.joinedTime"
-        v-if="siteInfo.set_site.site_mode === 'pay' && userInfo.joinedAt"
+        v-if="siteInfo.set_site && siteInfo.set_site.site_mode === 'pay' && userInfo.joinedAt"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('manage.periodvalidity')"
         :addon="userInfo.expiredTime"
-        v-if="siteInfo.set_site.site_mode === 'pay'"
+        v-if="siteInfo.set_site && siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.myauthority')"
@@ -134,7 +131,7 @@ export default {
     };
   },
   onLoad() {
-    uni.hideHomeButton();
+    // uni.hideHomeButton();
     this.getSiteInfo();
     this.getPermissions();
   },
@@ -159,8 +156,20 @@ export default {
     // 获取 站点信息
     siteInfo() {
       const info = this.$store.getters['jv/get']('forums/1');
-      if (info && info.set_site && info.set_site.site_install) {
-        info.set_site.createdAt = info.set_site.site_install.slice(0, 10);
+      if (info && info.other) {
+        info.count_users = info.other.count_users;
+        info.count_threads = info.other.count_threads;
+      }
+      if (info && info.set_site) {
+        info.site_introduction = info.set_site.site_introduction;
+        if (info.set_site.site_install) {
+          info.createdAt = info.set_site.site_install.slice(0, 10);
+        }
+      }
+      if (info && info.set_site && info.set_site.site_author) {
+        info.avatar = info.set_site.site_author.avatar;
+        info.username = info.set_site.site_author.username;
+        info.userId = info.set_site.site_author.id;
       }
       console.log('站点信息：', info);
       return info;
@@ -176,6 +185,9 @@ export default {
       } else {
         info.expiredTime = '永久有效';
       }
+      if (info && info.groups && info.groups.length > 0) {
+        info.groupName = info.groups[0].name;
+      }
       console.log('用户信息：', info);
       return info;
     },
@@ -189,7 +201,7 @@ export default {
         for (let i = 0; i < keys.length; i += 1) {
           const value = list[keys[i]];
           if (info && info.groups && Object.keys(info.groups)) {
-            if (value._jv && info.groups.length > 0) {
+            if (value._jv && info.groups && info.groups.length > 0) {
               if (value._jv.id === info.groups[0]._jv.id) {
                 if (value.permission) {
                   permissionList = Object.keys(value.permission).map(key => {

@@ -759,7 +759,7 @@ export default {
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus, post = {}) {
-      console.log(id, type, canStatus, isStatus);
+      console.log(id, type, canStatus, isStatus, (post = {}), '这是调用接口时');
       if (type == '1' && !canStatus) {
         console.log('没有主题点赞权限');
         return;
@@ -820,6 +820,7 @@ export default {
             }
           } else if (type == '3') {
             post.isDeleted = data.isDeleted;
+            console.log(post,'这是修改完');
             if (data.isDeleted) {
               console.log('回复删除成功');
             } else {
@@ -1445,6 +1446,7 @@ export default {
     },
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
+      console.log(post, '点击时');
       this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复

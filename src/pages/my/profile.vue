@@ -61,7 +61,7 @@
       </navigator>
       <qui-cell-item
         :title="i18n.t('profile.wechat')"
-        :addon="profile.wechat.nickname"
+        :addon="profile.wechat && profile.wechat.nickname"
         arrow
         class="no-arrow"
       ></qui-cell-item>
