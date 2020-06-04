@@ -50,8 +50,15 @@ export default {
         uni.setStorageSync(STORGE_GET_USER_TIME, new Date().getTime());
       }
       const pages = getCurrentPages();
+      const res = uni.getSystemInfoSync();
+      const iosplat = res.platform;
       if (forums.set_site.site_mode === SITE_PAY) {
         let currentPage = {};
+        if (iosplat === 'ios') {
+          uni.redirectTo({
+            url: '/pages/home/title',
+          });
+        }
         if (pages.length > 0) {
           currentPage = pages[pages.length - 1];
           if (!user.paid && currentPage.route !== 'pages/site/info') {
