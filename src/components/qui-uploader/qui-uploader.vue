@@ -167,7 +167,7 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 const imgOrder =
                   _this.uploadBeforeList[_this.uploadBeforeList.length - 1].order + 1;
-                console.log(_this.uploadBeforeList, '这是上传完成之前');
+                console.log(_this.uploadBeforeList, imgOrder, '这是上传完成之前');
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,
