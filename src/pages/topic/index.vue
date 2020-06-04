@@ -1383,7 +1383,8 @@ export default {
     delAttachments(id) {
       const params = {
         _jv: {
-          type: `attachments/${id}`,
+          type: 'attachments',
+          id,
         },
       };
 
