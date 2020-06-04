@@ -24,7 +24,6 @@
       <view class="page-message--subtitle" v-if="show">
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
-      <view>这是路由测试呢二次修改{{ page }}</view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
         v-if="show && message.btnclickType == 'siteClose'"
@@ -45,7 +44,7 @@
         target="miniProgram"
       >
         <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}11111跳转
+          {{ message.btnTxt }}
         </qui-button>
       </navigator>
       <navigator
@@ -56,7 +55,7 @@
         target="miniProgram"
       >
         <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}22222回退
+          {{ message.btnTxt }}
         </qui-button>
       </navigator>
 
@@ -136,11 +135,6 @@ export default {
       return subtitle;
     },
   },
-  data() {
-    return {
-      page: '',
-    };
-  },
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -170,8 +164,6 @@ export default {
         });
       } else if (this.forumError.code === TYPE_404 || this.forumError.code === POST_DELETED) {
         console.log('这是Message里的404，走返回');
-        console.log(getCurrentPages());
-        this.page = getCurrentPages().length;
         if (getCurrentPages().length < 2) {
           this.message.btnclickType == 'toHome';
           uni.redirectTo({
