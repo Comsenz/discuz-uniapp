@@ -8,23 +8,23 @@
       :pay-status="(item.price > 0 && item.paid) || item.price == 0"
       :user-name="item.user.username"
       :theme-image="item.user.avatarUrl"
-      :theme-btn="item.canHide"
-      :theme-reply-btn="item.canReply"
-      :user-groups="item.user.groups"
+      :theme-btn="item.canHide || ''"
+      :theme-reply-btn="item.canReply || ''"
+      :user-groups="item.user && item.user.groups"
       :theme-time="item.createdAt"
       :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
       :thread-type="item.type"
       :tags="[item.category]"
-      :media-url="item.threadVideo.media_url"
+      :media-url="item.threadVideo && item.threadVideo.media_url"
       :is-great="item.firstPost.isLiked"
       :theme-like="item.firstPost.likeCount"
       :theme-comment="item.postCount - 1"
       :images-list="item.firstPost.images"
       :theme-essence="item.isEssence"
-      :video-width="item.threadVideo.width"
-      :video-height="item.threadVideo.height"
-      :video-id="item.threadVideo._jv.id"
-      :cover-image="item.threadVideo.cover_url"
+      :video-width="item.threadVideo && item.threadVideo.width"
+      :video-height="item.threadVideo && item.threadVideo.height"
+      :video-id="item.threadVideo && item.threadVideo._jv.id"
+      :cover-image="item.threadVideo && item.threadVideo.cover_url"
       @click="handleClickShare(item._jv.id)"
       @handleIsGreat="
         handleIsGreat(item.firstPost._jv.id, item.firstPost.canLike, item.firstPost.isLiked, index)
@@ -63,8 +63,8 @@ export default {
   mixins: [forums],
   props: {
     userId: {
-      type: String,
-      default: '',
+      type: Number,
+      default: 0,
     },
   },
   data() {
