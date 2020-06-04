@@ -1,1009 +1,807 @@
+"use strict";
+
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 
-export default function() {
-  const STAT_VERSION = 'dzq-modified-version';
-  const STAT_URL = 'https://tongji.dcloud.io/uni/stat';
-  const STAT_H5_URL = 'https://tongji.dcloud.io/uni/stat.gif';
-  const PAGE_PVER_TIME = 1800;
-  const APP_PVER_TIME = 300;
-  const OPERATING_TIME = 10;
-  const DIFF_TIME = 60 * 1000 * 60 * 24;
-
-  const UUID_KEY = '__DQ_STAT_UUID';
-  const UUID_VALUE = '__DQ_UUID_VALUE';
-  const statConfig = {
-    appid: '__UNI__250240F',
-    getLocation: false,
+let customConf = {};
+customConf.config = {
+  appkey: '179E80BB32C54EA58539924926EFB3A6',
+  appName: 'dzq',
+  versionName: '1.0',
+  versionCode: '20200522',
+  wxAppid: 'wxbf0fc4ac9d6a2171',
+  getLocation: false, // 默认不获取用户位置
+};
+const THIS_SITE_HOST = getLocation(DISCUZ_REQUEST_HOST).hostname.replace(/\./g, '_'); 
+function getLocation(href) {
+  const match = href.match(
+    /^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([\/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
+  );
+  return (
+    match && {
+      href,
+      protocol: match[1],
+      host: match[2],
+      hostname: match[3],
+      port: match[4],
+      pathname: match[5],
+      search: match[6],
+      hash: match[7],
+    }
+  );
+}
+function resetFn() {
+  var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+    t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "",
+    n =
+      arguments.length > 2 && void 0 !== arguments[2]
+        ? arguments[2]
+        : function () {},
+    i = e[t];
+  e[t] = function (e) {
+    i && i.call(this, e), n.call(this, e);
   };
-  const CHANNEL = getLocation(DISCUZ_REQUEST_HOST).hostname.replace(/\./g, '_');
-
-  function getLocation(href) {
-    const match = href.match(
-      /^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([\/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
-    );
-    return (
-      match && {
-        href,
-        protocol: match[1],
-        host: match[2],
-        hostname: match[3],
-        port: match[4],
-        pathname: match[5],
-        search: match[6],
-        hash: match[7],
-      }
-    );
-  }
-
-  function getUuid() {
-    let uuid = '';
-    if (getPlatformName() === 'n') {
-      try {
-        uuid = plus.runtime.getDCloudId();
-      } catch (e) {
-        uuid = '';
-      }
-      return uuid;
-    }
-
-    try {
-      uuid = uni.getStorageSync(UUID_KEY);
-    } catch (e) {
-      uuid = UUID_VALUE;
-    }
-
-    if (!uuid) {
-      uuid = `${Date.now()}${Math.floor(Math.random() * 1e7)}`;
-      try {
-        uni.setStorageSync(UUID_KEY, uuid);
-      } catch (e) {
-        uni.setStorageSync(UUID_KEY, UUID_VALUE);
-      }
-    }
-    return uuid;
-  }
-
-  const getSgin = statData => {
-    const arr = Object.keys(statData);
-    const sortArr = arr.sort();
-    const sgin = {};
-    let sginStr = '';
-    for (const i in sortArr) {
-      sgin[sortArr[i]] = statData[sortArr[i]];
-      sginStr += `${sortArr[i]}=${statData[sortArr[i]]}&`;
-    }
-    // const options = sginStr.substr(0, sginStr.length - 1)
-    // sginStr = sginStr.substr(0, sginStr.length - 1) + '&key=' + STAT_KEY;
-    // const si = crypto.createHash('md5').update(sginStr).digest('hex');
-    return {
-      sign: '',
-      options: sginStr.substr(0, sginStr.length - 1),
-    };
-  };
-
-  const getSplicing = data => {
-    let str = '';
-    for (const i in data) {
-      str += `${i}=${data[i]}&`;
-    }
-    return str.substr(0, str.length - 1);
-  };
-
-  const getTime = () => {
-    return parseInt(new Date().getTime() / 1000);
-  };
-
-  const getPlatformName = () => {
-    const platformList = {
-      'app-plus': 'n',
-      h5: 'h5',
-      'mp-weixin': 'wx',
-      'mp-alipay': 'ali',
-      'mp-baidu': 'bd',
-      'mp-toutiao': 'tt',
-      'mp-qq': 'qq',
-    };
-    return platformList[process.env.VUE_APP_PLATFORM];
-  };
-
-  const getPackName = () => {
-    let packName = '';
-    if (getPlatformName() === 'wx' || getPlatformName() === 'qq') {
-      // 兼容微信小程序低版本基础库
-      if (uni.canIUse('getAccountInfoSync')) {
-        packName = uni.getAccountInfoSync().miniProgram.appId || '';
-      }
-    }
-    return packName;
-  };
-
-  const getVersion = () => {
-    return getPlatformName() === 'n' ? plus.runtime.version : '';
-  };
-
-  const getChannel = () => {
-    return CHANNEL;
-  };
-
-  const getScene = options => {
-    const platformName = getPlatformName();
-    let scene = '';
-    if (options) {
-      return options;
-    }
-    if (platformName === 'wx') {
-      scene = uni.getLaunchOptionsSync().scene;
-    }
-    return scene;
-  };
-  const First__Visit__Time__KEY = 'First__Visit__Time';
-  const Last__Visit__Time__KEY = 'Last__Visit__Time';
-
-  const getFirstVisitTime = () => {
-    const timeStorge = uni.getStorageSync(First__Visit__Time__KEY);
-    let time = 0;
-    if (timeStorge) {
-      time = timeStorge;
-    } else {
-      time = getTime();
-      uni.setStorageSync(First__Visit__Time__KEY, time);
-      uni.removeStorageSync(Last__Visit__Time__KEY);
-    }
-    return time;
-  };
-
-  const getLastVisitTime = () => {
-    const timeStorge = uni.getStorageSync(Last__Visit__Time__KEY);
-    let time = 0;
-    if (timeStorge) {
-      time = timeStorge;
-    } else {
-      time = '';
-    }
-    uni.setStorageSync(Last__Visit__Time__KEY, getTime());
-    return time;
-  };
-
-  const PAGE_RESIDENCE_TIME = '__page__residence__time';
-  let First_Page_residence_time = 0;
-  let Last_Page_residence_time = 0;
-
-  const setPageResidenceTime = () => {
-    First_Page_residence_time = getTime();
-    if (getPlatformName() === 'n') {
-      uni.setStorageSync(PAGE_RESIDENCE_TIME, getTime());
-    }
-    return First_Page_residence_time;
-  };
-
-  const getPageResidenceTime = () => {
-    Last_Page_residence_time = getTime();
-    if (getPlatformName() === 'n') {
-      First_Page_residence_time = uni.getStorageSync(PAGE_RESIDENCE_TIME);
-    }
-    return Last_Page_residence_time - First_Page_residence_time;
-  };
-  const TOTAL__VISIT__COUNT = 'Total__Visit__Count';
-  const getTotalVisitCount = () => {
-    const timeStorge = uni.getStorageSync(TOTAL__VISIT__COUNT);
-    let count = 1;
-    if (timeStorge) {
-      count = timeStorge;
-      count++;
-    }
-    uni.setStorageSync(TOTAL__VISIT__COUNT, count);
-    return count;
-  };
-
-  const GetEncodeURIComponentOptions = statData => {
-    const data = {};
-    for (const prop in statData) {
-      data[prop] = encodeURIComponent(statData[prop]);
-    }
-    return data;
-  };
-
-  let Set__First__Time = 0;
-  let Set__Last__Time = 0;
-
-  const getFirstTime = () => {
-    const time = new Date().getTime();
-    Set__First__Time = time;
-    Set__Last__Time = 0;
-    return time;
-  };
-
-  const getLastTime = () => {
-    const time = new Date().getTime();
-    Set__Last__Time = time;
-    return time;
-  };
-
-  const getResidenceTime = type => {
-    let residenceTime = 0;
-    if (Set__First__Time !== 0) {
-      residenceTime = Set__Last__Time - Set__First__Time;
-    }
-
-    residenceTime = parseInt(residenceTime / 1000);
-    residenceTime = residenceTime < 1 ? 1 : residenceTime;
-    if (type === 'app') {
-      const overtime = residenceTime > APP_PVER_TIME;
-      return {
-        residenceTime,
-        overtime,
-      };
-    }
-    if (type === 'page') {
-      const overtime = residenceTime > PAGE_PVER_TIME;
-      return {
-        residenceTime,
-        overtime,
-      };
-    }
-
-    return {
-      residenceTime,
-    };
-  };
-
-  const getRoute = () => {
-    const pages = getCurrentPages();
-    const page = pages[pages.length - 1];
-    const _self = page.$vm;
-
-    if (getPlatformName() === 'bd') {
-      return _self.$mp && _self.$mp.page.is;
-    }
-    return (_self.$scope && _self.$scope.route) || (_self.$mp && _self.$mp.page.route);
-  };
-
-  const getPageRoute = self => {
-    const pages = getCurrentPages();
-    const page = pages[pages.length - 1];
-    const _self = page.$vm;
-    const query = self._query;
-    const str = query && JSON.stringify(query) !== '{}' ? `?${JSON.stringify(query)}` : '';
-    // clear
-    self._query = '';
-    if (getPlatformName() === 'bd') {
-      return _self.$mp && _self.$mp.page.is + str;
-    }
-    return (_self.$scope && _self.$scope.route + str) || (_self.$mp && _self.$mp.page.route + str);
-  };
-
-  const getPageTypes = self => {
-    if (
-      self.mpType === 'page' ||
-      (self.$mp && self.$mp.mpType === 'page') ||
-      self.$options.mpType === 'page'
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  const calibration = (eventName, options) => {
-    //  login 、 share 、pay_success 、pay_fail 、register 、title
-    if (!eventName) {
-      console.error(`uni.report 缺少 [eventName] 参数`);
-      return true;
-    }
-    if (typeof eventName !== 'string') {
-      console.error(`uni.report [eventName] 参数类型错误,只能为 String 类型`);
-      return true;
-    }
-    if (eventName.length > 255) {
-      console.error(`uni.report [eventName] 参数长度不能大于 255`);
-      return true;
-    }
-
-    if (typeof options !== 'string' && typeof options !== 'object') {
-      console.error(`uni.report [options] 参数类型错误,只能为 String 或 Object 类型`);
-      return true;
-    }
-
-    if (typeof options === 'string' && options.length > 255) {
-      console.error(`uni.report [options] 参数长度不能大于 255`);
-      return true;
-    }
-
-    if (eventName === 'title' && typeof options !== 'string') {
-      console.error('uni.report [eventName] 参数为 title 时，[options] 参数只能为 String 类型');
-      return true;
-    }
-  };
-
-  const Report_Data_Time = 'Report_Data_Time';
-  const Report_Status = 'Report_Status';
-  const isReportData = () => {
-    return new Promise((resolve, reject) => {
-      let start_time = '';
-      const end_time = new Date().getTime();
-      const diff_time = DIFF_TIME;
-      let report_status = 1;
-      try {
-        start_time = uni.getStorageSync(Report_Data_Time);
-        report_status = uni.getStorageSync(Report_Status);
-      } catch (e) {
-        start_time = '';
-        report_status = 1;
-      }
-
-      if (report_status === '') {
-        requestData(({ enable }) => {
-          uni.setStorageSync(Report_Data_Time, end_time);
-          uni.setStorageSync(Report_Status, enable);
-          if (enable === 1) {
-            resolve();
-          }
-        });
-        return;
-      }
-
-      if (report_status === 1) {
-        resolve();
-      }
-
-      if (!start_time) {
-        uni.setStorageSync(Report_Data_Time, end_time);
-        start_time = end_time;
-      }
-
-      if (end_time - start_time > diff_time) {
-        requestData(({ enable }) => {
-          uni.setStorageSync(Report_Data_Time, end_time);
-          uni.setStorageSync(Report_Status, enable);
-        });
-      }
-    });
-  };
-
-  const requestData = done => {
-    const formData = {
-      usv: STAT_VERSION,
-      conf: JSON.stringify({
-        ak: statConfig.appid,
-      }),
-    };
-    uni.request({
-      url: STAT_URL,
-      method: 'GET',
-      data: formData,
-      success: res => {
-        const { data } = res;
-        if (data.ret === 0) {
-          typeof done === 'function' &&
-            done({
-              enable: data.enable,
-            });
+}
+var _typeof =
+    "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
+      ? function (e) {
+          return typeof e;
         }
-      },
-      fail: e => {
-        let report_status_code = 1;
+      : function (e) {
+          return e &&
+            "function" == typeof Symbol &&
+            e.constructor === Symbol &&
+            e !== Symbol.prototype
+            ? "symbol"
+            : typeof e;
+        },
+  _requestUrl = "https://h5.udrig.com/app/wx/v1",
+  _version = ["3", "0", "7"],
+  waitFlag = { device: !0, network: !0, uid: !0 },
+  appInfo = {
+    sdk: {
+      version: _version[0],
+      minorVersion: _version[1],
+      build: _version[2],
+      platform: "Weapp",
+      partner: "",
+    },
+    app: {
+      versionCode: customConf.config.versionCode || "1",
+      versionName: customConf.config.versionName || "1.0.0",
+      installTime: 0,
+      displayName: customConf.config.appName,
+      appKey: customConf.config.appkey,
+      uniqueId: customConf.config.wxAppid,
+      channel: "",
+    },
+    device: {
+      type: "mobile",
+      softwareConfig: {},
+      hardwareConfig: {},
+      deviceId: {},
+    },
+    networks: [
+      { type: "wifi", available: !1, connected: !1 },
+      { type: "cellular", available: !1, connected: !1, current: [] },
+      { type: "unknown", available: !1, connected: !1 },
+    ],
+    locations: [{}],
+    appContext: {},
+  },
+  Util = {
+    firstInit: !1,
+    initTime: 0,
+    sessionId: "",
+    sessionStartTime: 0,
+    appLaunchInfo: {},
+    sendFailTimes: 0,
+    bakData: {},
+    Store: {
+      set: function (e, t) {
         try {
-          report_status_code = uni.getStorageSync(Report_Status);
-        } catch (e) {
-          report_status_code = 1;
-        }
-        if (report_status_code === '') {
-          report_status_code = 1;
-        }
-        if (report_status_code === 1) {
-          typeof done === 'function' &&
-            done({
-              enable: res.enable,
-            });
-        }
-        // console.error('统计请求错误');
+          uni.setStorageSync("TDSDK_" + e, t);
+        } catch (e) {}
+        Util.bakData["TDSDK_" + e] = t;
       },
-    });
-  };
-
-  const PagesJson = require('uni-pages?{"type":"style"}').default;
-
-  const resultOptions = uni.getSystemInfoSync();
-
-  class Util {
-    constructor() {
-      this.self = '';
-      this._retry = 0;
-      this._platform = '';
-      this._query = {};
-      this._navigationBarTitle = {
-        config: '',
-        page: '',
-        report: '',
-        lt: '',
-      };
-      this._operatingTime = 0;
-      this._reportingRequestData = {
-        '1': [],
-        '11': [],
-      };
-      this.__prevent_triggering = false;
-
-      this.__licationHide = false;
-      this.__licationShow = false;
-      this._lastPageRoute = '';
-      this.statData = {
-        uuid: getUuid(),
-        ut: getPlatformName(),
-        mpn: getPackName(),
-        ak: statConfig.appid,
-        usv: STAT_VERSION,
-        v: getVersion(),
-        ch: getChannel(),
-        cn: '',
-        pn: '',
-        ct: '',
-        t: getTime(),
-        tt: '',
-        p: resultOptions.platform === 'android' ? 'a' : 'i',
-        brand: resultOptions.brand || '',
-        md: resultOptions.model,
-        sv: resultOptions.system.replace(/(Android|iOS)\s/, ''),
-        mpsdk: resultOptions.SDKVersion || '',
-        mpv: resultOptions.version || '',
-        lang: resultOptions.language,
-        pr: resultOptions.pixelRatio,
-        ww: resultOptions.windowWidth,
-        wh: resultOptions.windowHeight,
-        sw: resultOptions.screenWidth,
-        sh: resultOptions.screenHeight,
-      };
-    }
-
-    getIsReportData() {
-      return isReportData();
-    }
-
-    _applicationShow() {
-      if (this.__licationHide) {
-        getLastTime();
-        const time = getResidenceTime('app');
-        if (time.overtime) {
-          const options = {
-            path: this._lastPageRoute,
-            scene: this.statData.sc,
+      get: function (e) {
+        var t = null;
+        try {
+          t = uni.getStorageSync("TDSDK_" + e);
+        } catch (e) {}
+        return t || (t = Util.bakData["TDSDK_" + e] || null), t;
+      },
+      remove: function (e) {
+        try {
+          uni.removeStorageSync("TDSDK_" + e);
+        } catch (e) {}
+        delete Util.bakData["TDSDK_" + e];
+      },
+    },
+    random: function () {
+      for (
+        var e =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+          t = e.length,
+          n = "",
+          i = 0;
+        i < 12;
+        i++
+      )
+        n += e.charAt(Math.floor(Math.random() * t));
+      return n;
+    },
+    timestamp: function () {
+      return new Date().getTime();
+    },
+    deviceId: function () {
+      return "weapp-" + this.timestamp() + "-" + this.random();
+    },
+    getEventId: function (e) {
+      if (!e && !/0{1}/.test(e)) return "";
+      var t = "";
+      try {
+        t = e.toString();
+      } catch (n) {
+        try {
+          t = JSON.stringify(e);
+        } catch (e) {}
+      }
+      return t.split(" ")[0].slice(0, 64);
+    },
+    addStoreData: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [],
+        t = "EVENT_" + Util.sessionId,
+        n = Util.Store.get(t);
+      (n = n && n.length ? n.concat(e) : e),
+        Util.Store.set(t, n),
+        n.length >= 30 &&
+          (onLaunchFn.sessionContinue(), onLaunchFn.startLoop());
+    },
+    eventHandle: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
+        t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
+      if (e) {
+        var n = getCurrentPages(),
+          i = n[n.length - 1],
+          a = {
+            eventId: e,
+            label: i.__route__,
+            count: 1,
+            startTime: Util.timestamp(),
           };
-          this._sendReportRequest(options);
+        if ("WeappShare" === e) {
+          a.shareTickets = t.shareTickets;
+          var o = JSON.parse(JSON.stringify(i.options || {}));
+          (o.user = Util.deviceId),
+            (o.title = t.title),
+            (o.desc = t.desc),
+            (o.path = t.path),
+            (a.params = o);
         }
-        this.__licationHide = false;
+        Util.addStoreData([a]);
       }
-    }
-
-    _applicationHide(self, type) {
-      this.__licationHide = true;
-      getLastTime();
-      const time = getResidenceTime();
-      getFirstTime();
-      const route = getPageRoute(this);
-      this._sendHideRequest(
-        {
-          urlref: route,
-          urlref_ts: time.residenceTime,
-        },
-        type,
+    },
+    getCacheData: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+        t = Object.keys(e),
+        n = [],
+        i = [];
+      return (
+        t.length &&
+          t.forEach(function (t) {
+            var a = e[t];
+            a && a.sendFail && a.data && ((n = n.concat(a.data)), i.push(t));
+          }),
+        { data: n, keys: i }
       );
-    }
-
-    _pageShow() {
-      const route = getPageRoute(this);
-      const routepath = getRoute();
-      this._navigationBarTitle.config =
-        (PagesJson &&
-          PagesJson.pages[routepath] &&
-          PagesJson.pages[routepath].titleNView &&
-          PagesJson.pages[routepath].titleNView.titleText) ||
-        (PagesJson &&
-          PagesJson.pages[routepath] &&
-          PagesJson.pages[routepath].navigationBarTitleText) ||
-        '';
-
-      if (this.__licationShow) {
-        getFirstTime();
-        this.__licationShow = false;
-        // console.log('这是 onLauch 之后执行的第一次 pageShow ，为下次记录时间做准备');
-        this._lastPageRoute = route;
-        return;
-      }
-
-      getLastTime();
-      this._lastPageRoute = route;
-      const time = getResidenceTime('page');
-      if (time.overtime) {
-        const options = {
-          path: this._lastPageRoute,
-          scene: this.statData.sc,
-        };
-        this._sendReportRequest(options);
-      }
-      getFirstTime();
-    }
-
-    _pageHide() {
-      if (!this.__licationHide) {
-        getLastTime();
-        const time = getResidenceTime('page');
-        this._sendPageRequest({
-          url: this._lastPageRoute,
-          urlref: this._lastPageRoute,
-          urlref_ts: time.residenceTime,
-        });
-        this._navigationBarTitle = {
-          config: '',
-          page: '',
-          report: '',
-          lt: '',
-        };
-      }
-    }
-
-    _login() {
-      this._sendEventRequest(
-        {
-          key: 'login',
-        },
-        0,
-      );
-    }
-
-    _share() {
-      this._sendEventRequest(
-        {
-          key: 'share',
-        },
-        0,
-      );
-    }
-
-    _payment(key) {
-      this._sendEventRequest(
-        {
-          key,
-        },
-        0,
-      );
-    }
-
-    _sendReportRequest(options) {
-      this._navigationBarTitle.lt = '1';
-      const query =
-        options.query && JSON.stringify(options.query) !== '{}'
-          ? `?${JSON.stringify(options.query)}`
-          : '';
-      this.statData.lt = '1';
-      this.statData.url = options.path + query || '';
-      this.statData.t = getTime();
-      this.statData.sc = getScene(options.scene);
-      this.statData.fvts = getFirstVisitTime();
-      this.statData.lvts = getLastVisitTime();
-      this.statData.tvc = getTotalVisitCount();
-      if (getPlatformName() === 'n') {
-        this.getProperty();
-      } else {
-        this.getNetworkInfo();
-      }
-    }
-
-    _sendPageRequest(opt) {
-      const { url, urlref, urlref_ts } = opt;
-      this._navigationBarTitle.lt = '11';
-      const options = {
-        ak: this.statData.ak,
-        uuid: this.statData.uuid,
-        lt: '11',
-        ut: this.statData.ut,
-        url,
-        tt: this.statData.tt,
-        urlref,
-        urlref_ts,
-        ch: this.statData.ch,
-        usv: this.statData.usv,
-        t: getTime(),
-        p: this.statData.p,
-      };
-      this.request(options);
-    }
-
-    _sendHideRequest(opt, type) {
-      const { urlref, urlref_ts } = opt;
-      const options = {
-        ak: this.statData.ak,
-        uuid: this.statData.uuid,
-        lt: '3',
-        ut: this.statData.ut,
-        urlref,
-        urlref_ts,
-        ch: this.statData.ch,
-        usv: this.statData.usv,
-        t: getTime(),
-        p: this.statData.p,
-      };
-      this.request(options, type);
-    }
-
-    _sendEventRequest({ key = '', value = '' } = {}) {
-      const route = this._lastPageRoute;
-      const options = {
-        ak: this.statData.ak,
-        uuid: this.statData.uuid,
-        lt: '21',
-        ut: this.statData.ut,
-        url: route,
-        ch: this.statData.ch,
-        e_n: key,
-        e_v: typeof value === 'object' ? JSON.stringify(value) : value.toString(),
-        usv: this.statData.usv,
-        t: getTime(),
-        p: this.statData.p,
-      };
-      this.request(options);
-    }
-
-    getNetworkInfo() {
-      uni.getNetworkType({
-        success: result => {
-          this.statData.net = result.networkType;
-          this.getLocation();
-        },
-      });
-    }
-
-    getProperty() {
-      plus.runtime.getProperty(plus.runtime.appid, wgtinfo => {
-        this.statData.v = wgtinfo.version || '';
-        this.getNetworkInfo();
-      });
-    }
-
-    getLocation() {
-      if (statConfig.getLocation) {
-        uni.getLocation({
-          type: 'wgs84',
-          geocode: true,
-          success: result => {
-            if (result.address) {
-              this.statData.cn = result.address.country;
-              this.statData.pn = result.address.province;
-              this.statData.ct = result.address.city;
+    },
+    sendCacheList: {},
+    updateSendTime: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [],
+        t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0,
+        n = appInfo.device.deviceId,
+        i = Util.Store.get("uid"),
+        a = Util.Store.get("deviceId");
+      return (
+        e.forEach(function (o, s) {
+          if (!o.device.deviceId.tid && !o.device.deviceId.uid)
+            if (n.tid) {
+              if (((o.device.deviceId.tid = n.tid), n.uid))
+                return (o.device.deviceId.uid = n.uid), !0;
+            } else {
+              if (n.uid)
+                return (
+                  (o.device.deviceId.uid = n.uid),
+                  (o.device.deviceId.tid = n.uid),
+                  !0
+                );
+              if (TDID.isWaitingForOpenid) {
+                if (i)
+                  return (
+                    (o.device.deviceId.uid = i),
+                    (o.device.deviceId.tid = i),
+                    (n.uid = i),
+                    (n.tid = i),
+                    !0
+                  );
+                if (a)
+                  (o.device.deviceId.tid = a), (o.device.deviceId.uid = "");
+                else {
+                  var r = Util.deviceId();
+                  (n.tid = r),
+                    (n.uid = ""),
+                    Util.Store.set("deviceId", r),
+                    (o.device.deviceId.tid = r),
+                    (o.device.deviceId.uid = ""),
+                    (TDID.shouldOverwriteTid = !1);
+                }
+              } else
+                (o.device.deviceId.tid = n.tid),
+                  (o.device.deviceId.uid = n.uid);
             }
-
-            this.statData.lat = result.latitude;
-            this.statData.lng = result.longitude;
-            this.request(this.statData);
-          },
+          o.action && o.action.data && (e[s].action.data.start = t);
+        }),
+        e
+      );
+    },
+    getRequestData: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [],
+        t = JSON.parse(JSON.stringify(e)),
+        n = Util.sendCacheList;
+      if (Object.keys(n).length) {
+        var i = Util.getCacheData(n);
+        (t = t.concat(i.data)),
+          i.keys.forEach(function (e) {
+            return delete n[e];
+          });
+      }
+      var a = t.length;
+      if (a) {
+        var o = [];
+        if (a >= 30) {
+          JSON.stringify(t).length > 61440 && o.push(t.splice(0, a / 2)),
+            o.push(t);
+        } else o.push(t);
+        o.forEach(function (e) {
+          var t = Util.timestamp();
+          n[t] = { data: e, sendFail: !1 };
+          var i = Util.updateSendTime(e, Util.timestamp());
+          Util.request(t, i);
         });
+      }
+    },
+    request: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0,
+        t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [];
+      uni.request({
+        url: _requestUrl,
+        data: JSON.stringify(t),
+        method: "POST",
+        success: function (t) {
+          200 === t.statusCode &&
+            (delete Util.sendCacheList[e],
+            (Util.sendFailTimes = 0),
+            appHandle.appIsHide ||
+              (clearTimeout(onLaunchFn.timeout),
+              (onLaunchFn.timeout = null),
+              onLaunchFn.startLoop()));
+        },
+        fail: function () {
+          appHandle.appIsHide
+            ? (Util.Store.set("RESEND_" + e, t), delete Util.sendCacheList[e])
+            : ((Util.sendCacheList[e].sendFail = !0),
+              Util.sendFailTimes < 5 && Util.sendFailTimes++);
+        },
+      });
+    },
+  },
+  TDID = {
+    shouldOverwriteTid: !0,
+    isWaitingForOpenid: !0,
+    isFirst: !0,
+    init: function () {
+      var e = this,
+        t = Util.Store.get("deviceId"),
+        n = Util.Store.get("uid");
+      if (n) {
+        var i = t || n;
+        e.setData(i, n);
       } else {
-        this.statData.lat = 0;
-        this.statData.lng = 0;
-        this.request(this.statData);
+        var i = void 0;
+        (i = t || Util.deviceId()),
+          e.setData(i, ""),
+          TDID.shouldOverwriteTid && Util.Store.set("deviceId", i),
+          (TDID.isWaitingForOpenid = !1);
       }
-    }
-
-    request(data, type) {
-      const time = getTime();
-      const title = this._navigationBarTitle;
-      data.ttn = title.page;
-      data.ttpj = title.config;
-      data.ttc = title.report;
-
-      let requestData = this._reportingRequestData;
-      if (getPlatformName() === 'n') {
-        requestData = uni.getStorageSync('__UNI__STAT__DATA') || {};
+    },
+    setData: function (e, t) {
+      TDID.shouldOverwriteTid
+        ? (appInfo.device.deviceId = { tid: e, uid: t })
+        : (appInfo.device.deviceId.uid = t),
+        (waitFlag.uid = !1),
+        onLaunchFn.getAppProfile();
+    },
+  },
+  request = {
+    sendTime: 0,
+    statusType: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+        t = [],
+        n = JSON.parse(JSON.stringify(appInfo)),
+        i = { domain: e.domain, name: e.name, data: e.data };
+      (n.ts = e.data.start || Util.timestamp()),
+        (n.action = i),
+        t.push(n),
+        Util.getRequestData(t);
+    },
+    dataType: function (e, t) {
+      var n = this.getStoreList(e, t);
+      Util.getRequestData(n);
+    },
+    getEventType: function () {
+      var e =
+        arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      if (e.pageEvent) return { domain: "page", name: "leave" };
+      if (e.eventId) {
+        var t = e.eventId,
+          n = {};
+        switch (t) {
+          case "WeappShare":
+            n = { domain: "user", name: "share" };
+            break;
+          case "WeappPullDownRefresh":
+            n = { domain: "page", name: "pullDownRefresh" };
+            break;
+          case "WeappReachBottom":
+            n = { domain: "page", name: "reachBottom" };
+            break;
+          default:
+            n = { domain: "appEvent", name: "" };
+        }
+        return n;
       }
-      if (!requestData[data.lt]) {
-        requestData[data.lt] = [];
+    },
+    getStoreList: function (e, t) {
+      var n = this,
+        i = [],
+        a = e || Util.sessionId,
+        o = JSON.stringify(appInfo),
+        s = Util.Store.get("EVENT_" + a);
+      return (
+        s &&
+          s.length &&
+          (s.forEach(function (e) {
+            var a = n.getEventType(e),
+              s = JSON.parse(o);
+            t && s.appContext && (s.appContext.sessionStartTime = t);
+            var r = JSON.parse(JSON.stringify(e)),
+              c = r.pageEvent ? r.leaveTime : r.startTime;
+            r.pageEvent && delete r.pageEvent,
+              r.leaveTime && delete r.leaveTime,
+              (r.status = 2);
+            var d = { domain: a.domain, name: a.name, data: r };
+            (s.ts = c || Util.timestamp()), (s.action = d), i.push(s);
+          }),
+          Util.Store.remove("EVENT_" + a)),
+        i
+      );
+    },
+  },
+  Account = {
+    setAccountInfo: function (e) {
+      var t = Util.Store.get(e);
+      t &&
+        ("wxUserInfo" === e
+          ? this.assignUserInfo(t)
+          : "account" === e && this.assignAccount(t));
+    },
+    updateAccountInfo: function (e, t) {
+      Util.Store.set(e, t),
+        "wxUserInfo" === e
+          ? this.assignUserInfo(t)
+          : "account" === e && this.assignAccount(t);
+    },
+    assignUserInfo: function () {
+      var e =
+        arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      appInfo.user = {
+        accounts: [{ type: "wechat", name: e.nickName || "", extra: [e] }],
+      };
+    },
+    assignAccount: function (e) {
+      appInfo.appContext.account = e;
+    },
+  },
+  hasDataFlag = !1,
+  onLaunchFn = {
+    timeout: null,
+    init: function () {
+      var e =
+        arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      (Util.appLaunchInfo = JSON.parse(JSON.stringify(e))),
+        (Util.appLaunchInfo.scene = e.scene ? e.scene.toString() : ""),
+        TDID.init(),
+        onLaunchFn.judgeRequireData(),
+        onLaunchFn.getLocalParams(),
+        customConf.config.getLocation && onLaunchFn.getLocation(),
+        onLaunchFn.getSystemInfo(),
+        onLaunchFn.getNetwork();
+    },
+    launchRequest: function () {
+      var e = { first: !0 };
+      request.statusType({ domain: "app", name: "init", data: e });
+    },
+    sessionStart: function (e) {
+      var t = Util.appLaunchInfo || {},
+        n = {
+          status: 1,
+          duration: 0,
+          name: t.path,
+          scene: t.scene,
+          query: t.query || {},
+          shareTicket: t.shareTicket,
+          referrerInfo: t.referrerInfo,
+        };
+      e && onLaunchFn.setNewSession(),
+        (n.start = Util.Store.get("session_time") || Util.timestamp()),
+        (n.url = onLaunchFn.getUrl(n.name, n.query)),
+        request.statusType({ domain: "session", name: "begin", data: n });
+    },
+    getUrl: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
+        t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
+        n = Object.keys(t),
+        i =
+          n.sort(function (e, t) {
+            return e > t;
+          }) || [],
+        a = i.length ? e + "?" : e;
+      return (
+        i.forEach(function (e, n) {
+          0 !== n && (a += "&"), (a += e + "=" + t[e]);
+        }),
+        a
+      );
+    },
+    sessionContinue: function () {
+      request.dataType();
+    },
+    sessionEnd: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+        t = { status: 3, start: e.startTime, duration: e.duration };
+      request.statusType({ domain: "session", name: "end", data: t });
+    },
+    sendTmpSession: function () {
+      onLaunchFn.sessionContinue(), onLaunchFn.startLoop();
+    },
+    startLoop: function () {
+      onLaunchFn.timeout &&
+        (clearTimeout(onLaunchFn.timeout), (onLaunchFn.timeout = null));
+      var e = 3e3 * (Util.sendFailTimes + 1);
+      onLaunchFn.timeout = setTimeout(function () {
+        onLaunchFn.sendTmpSession();
+      }, e);
+    },
+    judgeRequireData: function () {
+      appInfo.app.appKey ||
+        ((appInfo.app.appKey = ""),
+        console.error("请填写您在TalkingData申请的App ID")),
+        appInfo.app.displayName ||
+          ((appInfo.app.displayName = "appname"),
+          console.error("请填写您的小程序名称"));
+    },
+    getLocalParams: function () {
+      var e = Util.Store.get("initTime");
+      e
+        ? (Util.initTime = e)
+        : ((Util.initTime = Util.timestamp()),
+          Util.Store.set("initTime", Util.initTime),
+          (Util.firstInit = !0)),
+        (appInfo.app.installTime = Util.initTime);
+      var t = Util.appLaunchInfo.query || {},
+        n = THIS_SITE_HOST;
+      (appInfo.app.channel = n),
+        Account.setAccountInfo("wxUserInfo"),
+        Account.setAccountInfo("account"),
+        onLaunchFn.setNewSession();
+    },
+    setNewSession: function () {
+      (Util.sessionId = Util.deviceId()),
+        (Util.sessionStartTime = Util.timestamp()),
+        Util.Store.set("session_time", Util.sessionStartTime),
+        (appInfo.appContext.sessionId = Util.sessionId),
+        (appInfo.appContext.sessionStartTime = Util.sessionStartTime);
+    },
+    getLaunchInfo: function () {
+      var e = JSON.parse(JSON.stringify(onLaunchFn.launchOptions));
+      return (e.type = "appLaunch"), e;
+    },
+    getAppProfile: function () {
+      if (!hasDataFlag) {
+        var e = ["device", "network", "uid"],
+          t = !0;
+        e.forEach(function (e) {
+          waitFlag[e] && (t = !1);
+        }),
+          t && ((hasDataFlag = !0), this.startRequest());
       }
-      requestData[data.lt].push(data);
-
-      if (getPlatformName() === 'n') {
-        uni.setStorageSync('__UNI__STAT__DATA', requestData);
-      }
-      if (getPageResidenceTime() < OPERATING_TIME && !type) {
-        return;
-      }
-      let uniStatData = this._reportingRequestData;
-      if (getPlatformName() === 'n') {
-        uniStatData = uni.getStorageSync('__UNI__STAT__DATA');
-      }
-      // 时间超过，重新获取时间戳
-      setPageResidenceTime();
-      const firstArr = [];
-      const contentArr = [];
-      const lastArr = [];
-
-      for (const i in uniStatData) {
-        const rd = uniStatData[i];
-        rd.forEach(elm => {
-          const newData = getSplicing(elm);
-          if (i === 0) {
-            firstArr.push(newData);
-          } else if (i === 3) {
-            lastArr.push(newData);
-          } else {
-            contentArr.push(newData);
+    },
+    startRequest: function () {
+      Util.firstInit && onLaunchFn.launchRequest(),
+        this.sessionStart(),
+        this.startLoop();
+    },
+    getLocation: function () {
+      uni.getLocation({
+        type: "wgs84",
+        complete: function (e) {
+          if (
+            e.longitude ||
+            e.latitude ||
+            e.horizontalAccuracy ||
+            e.verticalAccuracy
+          ) {
+            var t = appInfo.locations[0];
+            (t.lng = e.longitude),
+              (t.lat = e.latitude),
+              (t.hAccuracy = e.horizontalAccuracy),
+              (t.vAccuracy = e.verticalAccuracy),
+              (t.speed = e.speed),
+              (t.altitude = e.altitude),
+              (t.ts = new Date().getTime());
           }
-        });
+        },
+      });
+    },
+    getNetwork: function () {
+      uni.getNetworkType({
+        complete: function (e) {
+          var t = appInfo.networks,
+            n = e.networkType;
+          "wifi" === n
+            ? ((t[0].available = !0), (t[0].connected = !0))
+            : "unknown" === n
+            ? ((t[2].available = !0), (t[2].connected = !0))
+            : "none" !== n &&
+              ((t[1].available = !0),
+              (t[1].connected = !0),
+              t[1].current.push({ type: n })),
+            (waitFlag.network = !1),
+            onLaunchFn.getAppProfile();
+        },
+      });
+    },
+    getSystemInfo: function () {
+      uni.getSystemInfo({
+        complete: function (e) {
+          if (e.model || e.system || e.SDKVersion) {
+            var t = {
+                model: e.model,
+                pixel:
+                  e.screenWidth + "*" + e.screenHeight + "*" + e.pixelRatio,
+                densityDpi: e.pixelRatio,
+                brand: e.brand,
+              },
+              n = {
+                os: e.system,
+                local: e.language,
+                language: "zh_CN",
+                osVersionCode: e.version,
+                timezone: -new Date().getTimezoneOffset() / 60,
+                mpVersion: e.SDKVersion,
+              };
+            (appInfo.device.hardwareConfig = t),
+              (appInfo.device.softwareConfig = n);
+          }
+          (waitFlag.device = !1), onLaunchFn.getAppProfile();
+        },
+      });
+    },
+  },
+  eventHandle = {
+    event: function () {
+      var e =
+          arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+        t = Util.getEventId(e.id);
+      if (t) {
+        var n = {};
+        (n.eventId = t),
+          (n.label = Util.getEventId(e.label)),
+          (n.count = e.count || 1),
+          (n.params = e.params),
+          (n.startTime = Util.timestamp()),
+          Util.addStoreData([n]);
       }
-
-      firstArr.push(...contentArr, ...lastArr);
-      const optionsData = {
-        usv: STAT_VERSION, // 统计 SDK 版本号
-        t: time, // 发送请求时的时间戮
-        requests: JSON.stringify(firstArr),
+    },
+    share: function () {
+      var e =
+        arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      Util.eventHandle("WeappShare", e);
+    },
+    pullDownRefresh: function () {
+      customConf.config.autoOnPullDownRefresh ||
+        Util.eventHandle("WeappPullDownRefresh");
+    },
+    reachBottom: function () {
+      customConf.config.autoOnReachBottom ||
+        Util.eventHandle("WeappReachBottom");
+    },
+    setAccount: function () {
+      var e =
+        arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      return e.accountId || /0{1}/.test(e.accountId)
+        ? e.accountType || /0{1}/.test(e.accountType)
+          ? void Account.updateAccountInfo("account", e)
+          : void console.warn("accountType为必填字段！")
+        : void console.warn("accountId为必填字段！");
+    },
+    setWXUserInfo: function (e) {
+      "object" !== (void 0 === e ? "undefined" : _typeof(e)) ||
+      e instanceof Array
+        ? console.warn("setUserInfo接口只接受json对象作为参数")
+        : Account.updateAccountInfo("wxUserInfo", e);
+    },
+  },
+  appHandle = {
+    isHide2Show: !1,
+    appIsHide: !1,
+    lastHideTime: 0,
+    show: function () {
+      var e =
+        arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      if (
+        ((appHandle.appIsHide = !1),
+        appHandle.getlastTmpData(),
+        appHandle.isHide2Show)
+      ) {
+        var t = Util.Store.get("TMP_time_end_" + Util.sessionId),
+          n = e.scene ? e.scene.toString() : "";
+        if (e.scene && n === Util.appLaunchInfo.scene) {
+          Util.timestamp() - t > 3e4
+            ? appHandle.sessionRestart(t)
+            : ((appHandle.lastHideTime = t),
+              Util.Store.remove("TMP_time_end_" + Util.sessionId));
+        } else
+          (Util.appLaunchInfo = JSON.parse(JSON.stringify(e))),
+            (Util.appLaunchInfo.scene = n),
+            appHandle.sessionRestart(t);
+        (appHandle.isHide2Show = !1), onLaunchFn.startLoop();
+      }
+    },
+    sessionRestart: function (e) {
+      var t = Util.Store.get("TMP_time_start_" + Util.sessionId),
+        n = { startTime: t, duration: parseInt((e - t) / 1e3) };
+      onLaunchFn.sessionEnd(n),
+        Util.Store.remove("TMP_time_start_" + Util.sessionId),
+        Util.Store.remove("TMP_time_end_" + Util.sessionId),
+        Util.Store.remove("session_time"),
+        onLaunchFn.sessionStart(!0),
+        (appHandle.lastHideTime = 0);
+    },
+    hide: function () {
+      (appHandle.appIsHide = !0),
+        clearTimeout(onLaunchFn.timeout),
+        (onLaunchFn.timeout = null),
+        onLaunchFn.sessionContinue(),
+        (appHandle.isHide2Show = !0);
+      var e = Util.Store.get("session_time"),
+        t = Util.timestamp(),
+        n = appHandle.lastHideTime ? t - appHandle.lastHideTime : t - e;
+      Util.Store.set("TMP_time_start_" + Util.sessionId, e),
+        Util.Store.set("TMP_time_end_" + Util.sessionId, t);
+      var i = {
+        start: t,
+        duration: parseInt((t - e) / 1e3),
+        durationHide: parseInt(n / 1e3),
       };
-
-      this._reportingRequestData = {};
-      if (getPlatformName() === 'n') {
-        uni.removeStorageSync('__UNI__STAT__DATA');
-      }
-
-      if (data.ut === 'h5') {
-        this.imageRequest(optionsData);
-        return;
-      }
-
-      if (getPlatformName() === 'n' && this.statData.p === 'a') {
-        setTimeout(() => {
-          this._sendRequest(optionsData);
-        }, 200);
-        return;
-      }
-      this._sendRequest(optionsData);
-    }
-
-    _sendRequest(optionsData) {
-      this.getIsReportData().then(() => {
-        uni.request({
-          url: STAT_URL,
-          method: 'POST',
-          // header: {
-          //   'content-type': 'application/json' // 默认值
-          // },
-          data: optionsData,
-          success: () => {
-            // if (process.env.NODE_ENV === 'development') {
-            //   console.log('stat request success');
-            // }
+      request.statusType({ domain: "session", name: "hide", data: i });
+    },
+    getlastTmpData: function () {
+      var e = [],
+        t = uni.getStorageInfoSync().keys || [],
+        n = void 0,
+        i = void 0;
+      t &&
+        t.length &&
+        ((n = t.filter(function (e) {
+          return e.indexOf("TDSDK_EVENT") > -1;
+        })),
+        (i = t.filter(function (e) {
+          return e.indexOf("TDSDK_RESEND") > -1;
+        }))),
+        n &&
+          n.length &&
+          (n.forEach(function (t) {
+            var n = {};
+            t.split("_")[2];
+            (n.id = t.split("_")[2]), (n.time = n.id.split("-")[1]), e.push(n);
+          }),
+          appHandle.sendLastTmpData(e)),
+        i &&
+          i.length &&
+          i.forEach(function (e) {
+            uni.getStorage({
+              key: e,
+              success: function (t) {
+                Util.getRequestData(t.data),
+                  uni.removeStorage({ key: e, success: function (e) {} });
+              },
+            });
+          });
+    },
+    sendLastTmpData: function () {
+      (arguments.length > 0 && void 0 !== arguments[0]
+        ? arguments[0]
+        : []
+      ).forEach(function (e) {
+        request.dataType(e.id, e.time);
+      });
+    },
+  },
+  pageHandle = {
+    curPagePath: "",
+    refer: "",
+    pageTime: 0,
+    pageQuery: {},
+    show: function () {
+      var e = getCurrentPages(),
+        t = e[e.length - 1];
+      "" !== pageHandle.curPagePath &&
+        (pageHandle.refer = pageHandle.curPagePath),
+        (pageHandle.curPagePath = t ? t.__route__ : ''),
+        (pageHandle.pageTime = Util.timestamp()),
+        (pageHandle.pageQuery = t ? t.options : '');
+    },
+    hide: function () {
+      var e = Util.timestamp(),
+        t = [
+          {
+            name: pageHandle.curPagePath,
+            from: pageHandle.refer || "",
+            query: pageHandle.pageQuery,
+            scene: Util.appLaunchInfo.scene,
+            duration: parseInt((e - pageHandle.pageTime) / 1e3),
+            startTime: pageHandle.pageTime,
+            pageEvent: !0,
+            leaveTime: e,
           },
-          fail: e => {
-            if (++this._retry < 3) {
-              setTimeout(() => {
-                this._sendRequest(optionsData);
-              }, 1000);
-            }
-          },
-        });
-      });
-    }
-
-    /**
-     * h5 请求
-     */
-    imageRequest(data) {
-      this.getIsReportData().then(() => {
-        const image = new Image();
-        const { options } = getSgin(GetEncodeURIComponentOptions(data));
-        image.src = `${STAT_H5_URL}?${options}`;
-      });
-    }
-
-    sendEvent(key, value) {
-      // 校验 type 参数
-      if (calibration(key, value)) return;
-
-      if (key === 'title') {
-        this._navigationBarTitle.report = value;
-        return;
-      }
-      this._sendEventRequest(
-        {
-          key,
-          value: typeof value === 'object' ? JSON.stringify(value) : value,
-        },
-        1,
-      );
-    }
-  }
-
-  class Stat extends Util {
-    static getInstance() {
-      if (!this.instance) {
-        this.instance = new Stat();
-      }
-      return this.instance;
-    }
-
-    constructor() {
-      super();
-      this.instance = null;
-      // 注册拦截器
-      if (typeof uni.addInterceptor === 'function' && process.env.NODE_ENV !== 'development') {
-        this.addInterceptorInit();
-        this.interceptLogin();
-        this.interceptShare(true);
-        this.interceptRequestPayment();
-      }
-    }
-
-    addInterceptorInit() {
-      const self = this;
-      uni.addInterceptor('setNavigationBarTitle', {
-        invoke(args) {
-          self._navigationBarTitle.page = args.title;
-        },
-      });
-    }
-
-    interceptLogin() {
-      const self = this;
-      uni.addInterceptor('login', {
-        complete() {
-          self._login();
-        },
-      });
-    }
-
-    interceptShare(type) {
-      const self = this;
-      if (!type) {
-        self._share();
-        return;
-      }
-      uni.addInterceptor('share', {
-        success() {
-          self._share();
-        },
-        fail() {
-          self._share();
-        },
-      });
-    }
-
-    interceptRequestPayment() {
-      const self = this;
-      uni.addInterceptor('requestPayment', {
-        success() {
-          self._payment('pay_success');
-        },
-        fail() {
-          self._payment('pay_fail');
-        },
-      });
-    }
-
-    report(options, self) {
-      this.self = self;
-      // if (process.env.NODE_ENV === 'development') {
-      //   console.log('report init');
-      // }
-      setPageResidenceTime();
-      this.__licationShow = true;
-      this._sendReportRequest(options, true);
-    }
-
-    load(options, self) {
-      if (!self.$scope && !self.$mp) {
-        const page = getCurrentPages();
-        self.$scope = page[page.length - 1];
-      }
-      this.self = self;
-      this._query = options;
-    }
-
-    show(self) {
-      this.self = self;
-      if (getPageTypes(self)) {
-        this._pageShow(self);
-      } else {
-        this._applicationShow(self);
-      }
-    }
-
-    ready(self) {
-      // this.self = self;
-      // if (getPageTypes(self)) {
-      //   this._pageShow(self);
-      // }
-    }
-
-    hide(self) {
-      this.self = self;
-      if (getPageTypes(self)) {
-        this._pageHide(self);
-      } else {
-        this._applicationHide(self, true);
-      }
-    }
-
-    error(em) {
-      if (this._platform === 'devtools') {
-        if (process.env.NODE_ENV === 'development') {
-          console.info('当前运行环境为开发者工具，不上报数据。');
-        }
-        // return;
-      }
-      let emVal = '';
-      if (!em.message) {
-        emVal = JSON.stringify(em);
-      } else {
-        emVal = em.stack;
-      }
-      const options = {
-        ak: this.statData.ak,
-        uuid: this.statData.uuid,
-        lt: '31',
-        ut: this.statData.ut,
-        ch: this.statData.ch,
-        mpsdk: this.statData.mpsdk,
-        mpv: this.statData.mpv,
-        v: this.statData.v,
-        em: emVal,
-        usv: this.statData.usv,
-        t: getTime(),
-        p: this.statData.p,
-      };
-      this.request(options);
-    }
-  }
-
-  const stat = Stat.getInstance();
-  let isHide = false;
-  const lifecycle = {
-    onLaunch(options) {
-      stat.report(options, this);
+        ];
+      Util.addStoreData(t);
     },
-    onReady() {
-      stat.ready(this);
-    },
-    onLoad(options) {
-      stat.load(options, this);
-      // 重写分享，获取分享上报事件
-      if (this.$scope && this.$scope.onShareAppMessage) {
-        const oldShareAppMessage = this.$scope.onShareAppMessage;
-        this.$scope.onShareAppMessage = function(options) {
-          stat.interceptShare(false);
-          return oldShareAppMessage.call(this, options);
-        };
-      }
-    },
+  },
+  lifecycle = {
     onShow() {
-      isHide = false;
-      stat.show(this);
+      pageHandle.show();
     },
     onHide() {
-      isHide = true;
-      stat.hide(this);
+      pageHandle.hide();
     },
     onUnload() {
-      if (isHide) {
-        isHide = false;
-        return;
-      }
-      stat.hide(this);
+      pageHandle.hide();
     },
-    onError(e) {
-      stat.error(e);
-    },
+  },
+  appBak = App;
+(App = function (e) {
+  var t = {
+    onLaunch: onLaunchFn.init,
+    onShow: appHandle.show,
+    onHide: appHandle.hide,
   };
+  Object.keys(t).forEach(function (n) {
+    resetFn(e, n, t[n]);
+  }),
+    (e.td_app_sdk = eventHandle),
+    appBak(e);
+});
 
-  function main() {
-    if (process.env.NODE_ENV === 'development-disable') {
-      uni.report = function(type, options) {};
-    } else {
-      const Vue = require('vue');
-      (Vue.default || Vue).mixin(lifecycle);
-      const oldrpt = uni.report;
-      uni.report = function(type, options) {
-        stat.sendEvent(type, options);
-        if (oldrpt) {
-          oldrpt(type, options);
-        }
-      };
-    }
-  }
-
-  main();
-}
+const Vue = require('vue');
+(Vue.default || Vue).mixin(lifecycle);
