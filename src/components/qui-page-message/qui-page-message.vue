@@ -164,9 +164,17 @@ export default {
         });
       } else if (this.forumError.code === TYPE_404 || this.forumError.code === POST_DELETED) {
         console.log('这是Message里的404，走返回');
-        uni.navigateBack({
-          delta: 1,
-        });
+        if (getCurrentPages().length < 2) {
+          this.message.btnclickType = 'toHome';
+          uni.redirectTo({
+            url: '/pages/home/index',
+          });
+        } else {
+          this.message.btnclickType = 'toBack';
+          uni.navigateBack({
+            delta: 1,
+          });
+        }
       }
     },
     handleLoginClick() {

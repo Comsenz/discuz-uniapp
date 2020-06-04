@@ -16,15 +16,7 @@
         </view>
       </qui-cell-item>
     </view>
-    <picker
-      mode="date"
-      :value="date"
-      :start="startDate"
-      :end="endDate"
-      @change="bindDateChange"
-      fields="month"
-      class="date-picker"
-    >
+    <picker mode="date" :value="date" @change="bindDateChange" fields="month" class="date-picker">
       <view class="uni-input">{{ `${i18n.t('profile.time')} ：${date}` }}</view>
     </picker>
     <view class="orderlist-items">

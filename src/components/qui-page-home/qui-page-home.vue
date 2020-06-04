@@ -494,9 +494,9 @@ export default {
       query
         .select('#navId')
         .boundingClientRect(data => {
-          setTimeout(() => {
-            this.filterTop = data.top * 2 + 100;
-          }, 500);
+          // setTimeout(() => {
+          this.filterTop = data.top * 2 + 100;
+          // }, 500);
         })
         .exec();
       this.show = !this.show;
