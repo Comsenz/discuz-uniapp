@@ -371,7 +371,7 @@
     </uni-popup>
   </qui-page>
   <qui-page-message v-else-if="thread.isDeleted || !loaded"></qui-page-message>
-  <view v-else class="loading">
+  <view v-else-if="loadingStatus && !loaded" class="loading">
     <u-loading :size="60"></u-loading>
   </view>
 </template>
@@ -523,6 +523,8 @@ export default {
       system: '', // 设备系统
       detectionmodel: '', // 站点模式
       paymentmodel: '', // 是否付费
+      loaded: false,
+      loadingStatus: true,
     };
   },
   computed: {
@@ -659,6 +661,7 @@ export default {
             this.loaded = false;
           } else {
             this.loaded = true;
+            this.loadingStatus = false;
           }
           // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
           // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
@@ -750,6 +753,7 @@ export default {
         })
         .catch(err => {
           this.loaded = false;
+          this.loadingStatus = false;
           console.log(err);
         });
     },
@@ -1186,7 +1190,7 @@ export default {
             }
             _this.getOrderStatus(_this.orderSn);
           }, 3000);
-          
+
           // console.log(_this.payTypeVal, '支付类型');
           // _this.payShowStatus = false;
           // _this.coverLoading = false;
@@ -1353,7 +1357,7 @@ export default {
     },
     // 自定义付费金额弹框点击确定时
     diaLogOk() {
-      if(this.inputPrice <= 0){
+      if (this.inputPrice <= 0) {
         this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
       } else {
         this.price = this.inputPrice;
@@ -1365,7 +1369,6 @@ export default {
           this.$refs.payShow.payClickShow(this.payTypeVal);
         });
       }
-      
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
