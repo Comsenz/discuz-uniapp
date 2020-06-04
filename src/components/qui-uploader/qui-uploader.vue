@@ -107,6 +107,7 @@ export default {
       this.uploadBeforeList = this.uploadBeforeList.concat(this.filePreview);
       this.uploadList = this.uploadList.concat(this.filePreview);
     }, this.delayTime);
+    console.log(this.uploadBeforeList, '这是初始化');
   },
   methods: {
     uploadDelete(index) {
@@ -115,9 +116,11 @@ export default {
         this.uploadBeforeList.splice(index, 1);
         this.uploadList.splice(index, 1);
         this.$emit('clear', this.uploadList, beforeUpload);
+        console.log(this.uploadBeforeList, '这是删除时返回的1111');
       } else {
         // 开启异步删除图片后，返回删除图片的数据和下标，调用clear()需要把下标传进去
         this.$emit('clear', beforeUpload, index);
+        console.log(this.uploadBeforeList, '这是删除时返回的2222');
       }
     },
     clear(index) {
@@ -162,10 +165,14 @@ export default {
                 res.tempFiles[index].uploadPercent = 0;
                 res.tempFiles[index].uploadStatus = false;
                 _this.uploadBeforeList.push(res.tempFiles[index]);
+                const imgOrder =
+                  _this.uploadBeforeList[_this.uploadBeforeList.length - 1].order + 1;
+                console.log(_this.uploadBeforeList, '这是上传完成之前');
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,
                   beforeUploadFile,
+                  imgOrder,
                   resolve,
                   reject,
                 );
@@ -182,10 +189,11 @@ export default {
     },
 
     // 上传图片到服务器
-    upload(pathUrl, index, length, resolve, reject) {
+    upload(pathUrl, index, length, imgOrder, resolve, reject) {
+      console.log(index, '这是上传的index');
       const _this = this;
       _this.formDataAppend = {
-        order: index,
+        order: imgOrder,
       };
       const formdataObj = Object.assign(_this.formData, _this.formDataAppend);
       const uploadTask = uni.uploadFile({
@@ -204,6 +212,20 @@ export default {
           }
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
+          console.log(_this.uploadList, '这是请求接口之后');
+          const arr = [];
+          _this.uploadList.map(item => {
+            arr.push(item.data.attributes.order);
+            console.log(arr, '~~~~');
+            return arr;
+          });
+
+          _this.uploadBeforeList.map((item, key) => {
+            const ite = item;
+            ite.order = arr[key];
+            return ite;
+          });
+          console.log(_this.uploadBeforeList, '这是请求接口合并之后');
           return resolve(_this.uploadList);
         },
         fail(res) {

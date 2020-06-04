@@ -22,20 +22,42 @@
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
+        v-if="show && message.btnclickType == 'siteClose'"
         class="out page-message--exit"
-        :open-type="message.btnclickType === 'toHome' ? 'redirect' : 'exit'"
+        open-type="exit"
         hover-class="none"
         target="miniProgram"
-        v-if="show"
+      >
+        <qui-button size="medium" @click="handleClick" class="out-btn">
+          {{ message.btnTxt }}
+        </qui-button>
+      </navigator>
+      <navigator
+        v-else-if="show && message.btnclickType == 'toHome'"
+        class="out page-message--exit"
+        open-type="redirect"
+        hover-class="none"
+        target="miniProgram"
+      >
+        <qui-button size="medium" @click="handleClick" class="out-btn">
+          {{ message.btnTxt }}
+        </qui-button>
+      </navigator>
+      <navigator
+        v-else-if="show && message.btnclickType == 'toBack'"
+        class="out page-message--exit"
+        open-type="navigateBack"
+        hover-class="none"
+        target="miniProgram"
       >
         <qui-button size="medium" @click="handleClick" class="out-btn">
           {{ message.btnTxt }}
         </qui-button>
       </navigator>
 
-      <!--<qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
+      <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
         {{ i18n.t('core.admin_login') }}
-      </qui-button>-->
+      </qui-button>
     </view>
   </view>
 </template>
@@ -49,6 +71,7 @@ const TYPE_CLOSED = 'site_closed';
 const NOT_INSTALL = 'not_install';
 const BAN_USER = 'ban_user';
 const THREAD_DELETED = 'thread_deleted';
+const POST_DELETED = 'post_deleted';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -80,10 +103,17 @@ const message = {
   },
   [THREAD_DELETED]: {
     title: i18n.t('core.thread_deleted'),
-    subtitle: '', // 从接口读取主题被删除时主题详情页的提示语
+    subtitle: i18n.t('core.page_not_found_detail'), // 从接口读取主题被删除时主题详情页的提示语
     btnTxt: i18n.t('core.back_home'),
     icon: '@/static/msg-warning.svg',
     btnclickType: 'toHome',
+  },
+  [POST_DELETED]: {
+    title: i18n.t('core.post_deleted'),
+    subtitle: i18n.t('core.page_not_found_detail'), // 从接口读取主题被删除时主题详情页的提示语
+    btnTxt: i18n.t('core.back_history'),
+    icon: '@/static/msg-warning.svg',
+    btnclickType: 'toBack',
   },
 };
 export default {
@@ -102,7 +132,9 @@ export default {
     },
     show() {
       return (
-        [TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED].indexOf(this.forumError.code) >= 0
+        [TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED, POST_DELETED].indexOf(
+          this.forumError.code,
+        ) >= 0
       );
     },
   },
@@ -114,6 +146,10 @@ export default {
         console.log('这是返回首页呢');
         uni.redirectTo({
           url: '/pages/home/index',
+        });
+      } else if (this.forumError.code === POST_DELETED) {
+        uni.navigateBack({
+          delta: 1,
         });
       }
     },

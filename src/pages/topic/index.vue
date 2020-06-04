@@ -10,11 +10,14 @@
     >
       <view class="ft-gap">
         <view class="bg-white">
-          <view class="detail-tip" v-if="thread.type != 2 && topicStatus == 0">
-            {{ t.examineTip }}
-          </view>
-          <view class="detail-tip" v-if="thread.type == 2 && topicStatus == 0">
+          <view class="detail-tip" v-if="thread.type == 2 && thread.threadVideo.status == 0">
             {{ t.transcodingTip }}
+          </view>
+          <view class="detail-tip" v-else-if="thread.type == 2 && thread.threadVideo.status == 2">
+            {{ t.transcodingFailedTip }}
+          </view>
+          <view class="detail-tip" v-else-if="topicStatus == 0">
+            {{ t.examineTip }}
           </view>
           <qui-topic-content
             :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
@@ -517,6 +520,9 @@ export default {
       url: '',
       customAmountStatus: false, // 自定义价格弹框初始化状态
       windowHeight: '', //设备高度
+      system: '', // 设备系统
+      detectionmodel: '', // 站点模式
+      paymentmodel: '', // 是否付费
     };
   },
   computed: {
@@ -563,6 +569,14 @@ export default {
     this.formData = {
       type: 1,
     };
+    try {
+      const res = uni.getSystemInfoSync();
+      this.system = res.platform;
+      this.detectionmodel = this.forums.set_site.site_mode;
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    } catch (e) {
+        // error
+    }
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -632,57 +646,65 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
       console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
-      threadAction.then(data => {
-        console.log(data, '~~~~~~~~~~~~~~~~~~~');
-        // this.thread = data;
-        if (data.isDeleted) {
-          this.$store.dispatch('forum/setError', {
-            code: 'thread_deleted',
-            status: 500,
-          });
-          this.loaded = false;
-        } else {
-          this.loaded = true;
-        }
-        // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
-        // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
-        // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
-        // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
-        // data.firstPost.contentHtml = contengS.replace(
-        //   /<h1>(.*?)<\/h1>/g,
-        //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
-        // );
-        // console.log(data.firstPost.contentHtml, '这是标题');
-        // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
+      threadAction
+        .then(data => {
+          console.log(data, '~~~~~~~~~~~~~~~~~~~');
+          // this.thread = data;
+          if (data.isDeleted) {
+            console.log('走了333');
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+          }
+          // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
+          // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
+          // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
+          // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
+          // data.firstPost.contentHtml = contengS.replace(
+          //   /<h1>(.*?)<\/h1>/g,
+          //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
+          // );
+          // console.log(data.firstPost.contentHtml, '这是标题');
+          // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
 
-        // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
+          // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
 
-        // str.match(/<h1>(.*?)<\/h1>/g)
+          // str.match(/<h1>(.*?)<\/h1>/g)
 
-        // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
+          // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
 
-        // 追加管理菜单权限字段
-        this.selectList[0].canOpera = this.thread.firstPost.canEdit;
-        this.selectList[1].canOpera = this.thread.canEssence;
-        this.selectList[2].canOpera = this.thread.canSticky;
-        this.selectList[3].canOpera = this.thread.canHide;
-        // this.selectList[0].isStatus = true;
-        this.selectList[1].isStatus = this.thread.isEssence;
-        this.selectList[2].isStatus = this.thread.isSticky;
-        this.selectList[3].isStatus = false;
-        if (data.isEssence) {
-          //如果初始化状态为true
-          this.selectList[1].text = this.t.cancelEssence;
-        }
-        if (data.isSticky) {
-          //如果初始化状态为true
+          // 追加管理菜单权限字段
+          this.selectList[0].canOpera = this.thread.firstPost.canEdit;
+          this.selectList[1].canOpera = this.thread.canEssence;
+          this.selectList[2].canOpera = this.thread.canSticky;
+          this.selectList[3].canOpera = this.thread.canHide;
+          // this.selectList[0].isStatus = true;
+          this.selectList[1].isStatus = this.thread.isEssence;
+          this.selectList[2].isStatus = this.thread.isSticky;
+          this.selectList[3].isStatus = false;
+          if (data.isEssence) {
+            //如果初始化状态为true
+            this.selectList[1].text = this.t.cancelEssence;
+          }
+          if (data.isSticky) {
+            //如果初始化状态为true
 
           this.selectList[2].text = this.t.cancelSticky;
         }
         this.isLiked = data.firstPost.isLiked;
         this.topicStatus = data.isApproved;
         if (!data.paid || data.paidUsers.length > 0) {
-          this.paidStatus = true;
+          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+            this.paidStatus = false;
+          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
+            this.paidStatus = true;
+          } else {
+            this.paidStatus = true;
+          }
         } else {
           this.paidStatus = false;
         }
@@ -694,7 +716,13 @@ export default {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
         }
         if (data.price <= 0) {
-          this.rewardStatus = true;
+          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+            this.rewardStatus = false;
+          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
+            this.rewardStatus = true;
+          } else {
+            this.rewardStatus = true;
+          }
         } else {
           this.rewardStatus = false;
         }
@@ -832,12 +860,14 @@ export default {
             console.log(this.thread);
             this.thread.isFavorite = data.isFavorite;
           } else if (type == '2') {
+            console.log(data, '这是精华操作');
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
-              this.selectList[1].text = this.t.essence;
-            } else {
               this.selectList[1].text = this.t.cancelEssence;
+            } else {
+              this.selectList[1].text = this.t.essence;
             }
+            console.log(this.selectList, '这是管理列表');
           } else if (type == '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
