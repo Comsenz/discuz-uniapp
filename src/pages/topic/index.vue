@@ -784,12 +784,12 @@ export default {
         .dispatch('jv/patch', params)
         .then(data => {
           if (type == '1') {
-            // const post = this.$store.getters['jv/get'](`posts/${id}`);
+            const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
             // 主题点赞
             this.isLiked = data.isLiked;
             if (this.isLiked) {
               this.thread.firstPost.likedUsers.unshift(this.user);
-              post._jv.relationships.likedUsers.data.unshift({
+              orgignPost._jv.relationships.likedUsers.data.unshift({
                 type: this.user._jv.type,
                 id: this.user._jv.id,
               });
@@ -797,7 +797,7 @@ export default {
               this.thread.firstPost.likedUsers.forEach((value, key, item) => {
                 value.id == this.user.id && item.splice(key, 1);
               });
-              post._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+              orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
                 value.id == this.user.id && item.splice(key, 1);
               });
             }
