@@ -29,7 +29,7 @@ export default {
     },
     showMessage() {
       return (
-        ['not_install', 'site_closed', 'ban_user', 'model_not_found'].indexOf(
+        ['not_install', 'site_closed', 'ban_user', 'model_not_found', 'dataerro'].indexOf(
           this.forumError.code,
         ) !== -1
       );

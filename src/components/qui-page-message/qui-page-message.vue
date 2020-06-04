@@ -14,9 +14,13 @@
         src="@/static/msg-warning.svg"
         mode="aspectFit"
         lazy-load
-        v-if="show"
+        v-if="show || inshow"
       ></image>
       <view class="page-message--title" v-if="message.title">{{ message.title }}</view>
+      <view class="page-message--subtitle" v-if="inshow">{{ message.subtitle }}</view>
+      <navigator v-if="inshow" open-type="exit" target="miniProgram" class="close-btn">
+        {{ message.btnTxt }}
+      </navigator>
       <view class="page-message--subtitle" v-if="show">
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
@@ -72,6 +76,7 @@ const NOT_INSTALL = 'not_install';
 const BAN_USER = 'ban_user';
 const THREAD_DELETED = 'thread_deleted';
 const POST_DELETED = 'post_deleted';
+const IOS_DISPLAY = 'dataerro';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -115,6 +120,13 @@ const message = {
     icon: '@/static/msg-warning.svg',
     btnclickType: 'toBack',
   },
+  [IOS_DISPLAY]: {
+    title: i18n.t('home.ioschoicetitle'),
+    subtitle: i18n.t('home.ioschoicecontent'), // 从接口读取主题被删除时主题详情页的提示语
+    btnTxt: i18n.t('discuzq.pageHeader.title'),
+    icon: '@/static/msg-warning.svg',
+    btnclickType: 'toBack',
+  },
 };
 export default {
   filters: {
@@ -136,6 +148,9 @@ export default {
           this.forumError.code,
         ) >= 0
       );
+    },
+    inshow() {
+      return [IOS_DISPLAY].indexOf(this.forumError.code) >= 0;
     },
   },
   methods: {
@@ -212,5 +227,17 @@ export default {
 }
 .navigator-hover {
   background-color: rgba(0, 0, 0, 0);
+}
+.close-btn {
+  width: 510rpx;
+  height: 90rpx;
+  margin: 50rpx auto 0;
+  font-size: 28rpx;
+  font-weight: 400;
+  line-height: 90rpx;
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  background: rgba(24, 120, 243, 1);
+  border: 2rpx solid 2px rgba(237, 237, 237, 1);
 }
 </style>
