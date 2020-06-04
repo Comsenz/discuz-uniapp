@@ -656,12 +656,14 @@ export default {
 
     // 编辑回显主题，处理附件
     setAnnex(type, data) {
+      console.log(data.firstPost.images, '这是编辑是获取到的');
       switch (type) {
         case 'img':
           data.firstPost.images.map(item => {
             this.filePreview.push({
               path: item.thumbUrl,
               id: item._jv.id,
+              order: item.order,
             });
             return item;
           });
@@ -766,7 +768,8 @@ export default {
     delAttachments(id) {
       const params = {
         _jv: {
-          type: `attachments/${id}`,
+          type: 'attachments',
+          id,
         },
       };
 
@@ -931,15 +934,23 @@ export default {
     try {
       const res = uni.getSystemInfoSync();
       console.log(res.platform);
-      if (res.platform === 'ios' && this.forums.set_site.site_mode === 'public' && this.forums.paycenter.wxpay_ios === false) {
+      if (
+        res.platform === 'ios' &&
+        this.forums.set_site.site_mode === 'public' &&
+        this.forums.paycenter.wxpay_ios === false
+      ) {
         this.showHidden = false;
-      } else if (res.platform === 'ios' &&  this.forums.set_site.site_mode === 'public' && this.forums.paycenter.wxpay_ios === true) {
+      } else if (
+        res.platform === 'ios' &&
+        this.forums.set_site.site_mode === 'public' &&
+        this.forums.paycenter.wxpay_ios === true
+      ) {
         this.showHidden = true;
       } else {
         this.showHidden = true;
       }
     } catch (e) {
-        // error
+      // error
     }
   },
   onShow() {
