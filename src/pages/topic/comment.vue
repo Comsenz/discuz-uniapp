@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="content bg" v-if="loaded && status">
+  <qui-page :data-qui-theme="theme" class="content bg" v-if="loaded || status">
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -16,6 +16,7 @@
               :user-name="post.user.username"
               :theme-time="post.createdAt"
               :theme-content="post.contentHtml"
+              :user-role="post.user.groups"
               :images-list="post.images"
               @personJump="personJump(post.user._jv.id)"
             ></qui-topic-content>
@@ -235,7 +236,7 @@
       </view>
     </uni-popup>
   </qui-page>
-  <qui-page-message v-else-if="thread.isDeleted"></qui-page-message>
+  <qui-page-message v-else-if="thread.isDeleted || post.isDeleted"></qui-page-message>
   <view v-else class="loading">
     <u-loading :size="60"></u-loading>
   </view>
@@ -392,7 +393,16 @@ export default {
       };
       this.loadPostStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
-          this.loaded = true;
+          if (data.isDeleted) {
+            console.log('走了111');
+            this.$store.dispatch('forum/setError', {
+              code: 'post_deleted',
+              status: 500,
+            });
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+          }
         }),
       );
     },
@@ -406,6 +416,7 @@ export default {
         this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
           console.log(data, '88888888888');
           if (data.isDeleted) {
+            console.log('走了222');
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
               status: 500,
