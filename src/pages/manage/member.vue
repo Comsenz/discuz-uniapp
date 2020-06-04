@@ -50,6 +50,7 @@
               <checkbox
                 slot="rightIcon"
                 :value="JSON.stringify(item)"
+                :disabled="item.id === currentLoginId ? true : false"
                 :checked="checkAvatar.find(value => value.id === item.id)"
               ></checkbox>
             </qui-avatar-cell>
@@ -116,6 +117,12 @@ export default {
     });
   },
   computed: {
+    // 获取当前登录的id
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', userId);
+      return parseInt(userId, 10);
+    },
     userListShow() {
       return this.isSearch ? this.searchUserList : this.userList;
     },
@@ -230,6 +237,8 @@ export default {
       });
     },
     getList() {
+      this.searchText = '';
+      this.isSearch = false;
       const params = {
         include: 'groups',
         'page[number]': this.pageNum,

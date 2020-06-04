@@ -1,6 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
-    <view class="content" v-if="iosdisplay">
+    <view class="content">
       <view class="view-content">
         <qui-page-home
           v-if="showHome"
@@ -24,20 +24,6 @@
         <qui-footer @click="cut_index"></qui-footer>
       </view>
     </view>
-    <view class="ioschoice" v-else>
-      <view class="ioschoice-img">
-        <image class="ioschoice-img-icon" src="@/static/msg-warning.svg"></image>
-      </view>
-      <view class="ioschoice-title">
-        {{ i18n.t('home.ioschoicetitle') }}
-      </view>
-      <view class="ioschoice-content">
-        {{ i18n.t('home.ioschoicecontent') }}
-      </view>
-      <navigator open-type="exit" target="miniProgram" class="close-btn complete">
-        {{ i18n.t('discuzq.pageHeader.title') }}
-      </navigator>
-    </view>
   </qui-page>
 </template>
 
@@ -55,8 +41,6 @@ export default {
       showHome: false,
       tagId: 0, // 标签ID
       currentTab: 'home',
-      iosdisplay: false,
-      sitemodel: '', // 站点模式
     };
   },
   computed: {
@@ -68,21 +52,9 @@ export default {
     },
   },
   onLoad() {
-    setTimeout(() => {
-      try {
-        const res = uni.getSystemInfoSync();
-        if (res.platform === 'ios' && this.forums.set_site.site_mode === 'pay') {
-          this.iosdisplay = false;
-        } else {
-          this.iosdisplay = true;
-        }
-      } catch (e) {
-        // error
-      }
-      if (!this.loading && !this.showHome) {
-        this.handlePageLoaded();
-      }
-    }, 500);
+    if (!this.loading && !this.showHome) {
+      this.handlePageLoaded();
+    }
   },
 
   // 唤起小程序原声分享
@@ -100,7 +72,6 @@ export default {
     };
   },
   onShow() {
-    console.log(1);
     if (this.currentTab === 'quinotice') {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();
