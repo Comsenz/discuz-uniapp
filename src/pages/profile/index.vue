@@ -117,7 +117,7 @@ export default {
         { title: this.i18n.t('profile.followers'), brief: '0' },
         { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
-      userId: '',
+      userId: 0,
       currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
       dialogId: 0, // 会话id
