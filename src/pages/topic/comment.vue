@@ -236,7 +236,9 @@
       </view>
     </uni-popup>
   </qui-page>
-  <qui-page-message v-else-if="thread.isDeleted || post.isDeleted"></qui-page-message>
+  <qui-page-message
+    v-else-if="thread.isDeleted || post.isDeleted || !loaded || !status"
+  ></qui-page-message>
   <view v-else class="loading">
     <u-loading :size="60"></u-loading>
   </view>
@@ -392,18 +394,24 @@ export default {
         ],
       };
       this.loadPostStatus = status.run(() =>
-        this.$store.dispatch('jv/get', ['posts/' + this.commentId, { params }]).then(data => {
-          if (data.isDeleted) {
-            console.log('走了111');
-            this.$store.dispatch('forum/setError', {
-              code: 'post_deleted',
-              status: 500,
-            });
+        this.$store
+          .dispatch('jv/get', ['posts/' + this.commentId, { params }])
+          .then(data => {
+            if (data.isDeleted) {
+              console.log('走了111');
+              this.$store.dispatch('forum/setError', {
+                code: 'post_deleted',
+                status: 500,
+              });
+              this.loaded = false;
+            } else {
+              this.loaded = true;
+            }
+          })
+          .catch(err => {
             this.loaded = false;
-          } else {
-            this.loaded = true;
-          }
-        }),
+            console.log(err);
+          }),
       );
     },
     // 加载当前回复的主题数据
@@ -413,20 +421,26 @@ export default {
         include: ['user.groups', 'user', 'firstPost'],
       };
       this.loadDetailStatus = status.run(() =>
-        this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]).then(data => {
-          console.log(data, '88888888888');
-          if (data.isDeleted) {
-            console.log('走了222');
-            this.$store.dispatch('forum/setError', {
-              code: 'thread_deleted',
-              status: 500,
-            });
+        this.$store
+          .dispatch('jv/get', ['threads/' + this.threadId, { params }])
+          .then(data => {
+            console.log(data, '88888888888');
+            if (data.isDeleted) {
+              console.log('走了222');
+              this.$store.dispatch('forum/setError', {
+                code: 'thread_deleted',
+                status: 500,
+              });
+              this.status = false;
+            } else {
+              this.status = true;
+            }
+            this.thread = data;
+          })
+          .catch(err => {
             this.status = false;
-          } else {
-            this.status = true;
-          }
-          this.thread = data;
-        }),
+            console.log(err);
+          }),
       );
     },
 

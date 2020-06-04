@@ -370,7 +370,7 @@
       </view>
     </uni-popup>
   </qui-page>
-  <qui-page-message v-else-if="thread.isDeleted"></qui-page-message>
+  <qui-page-message v-else-if="thread.isDeleted || !loaded"></qui-page-message>
   <view v-else class="loading">
     <u-loading :size="60"></u-loading>
   </view>
@@ -646,107 +646,112 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
       console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
-      threadAction.then(data => {
-        console.log(data, '~~~~~~~~~~~~~~~~~~~');
-        // this.thread = data;
-        if (data.isDeleted) {
-          console.log('走了333');
-          this.$store.dispatch('forum/setError', {
-            code: 'thread_deleted',
-            status: 500,
-          });
-          this.loaded = false;
-        } else {
-          this.loaded = true;
-        }
-        // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
-        // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
-        // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
-        // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
-        // data.firstPost.contentHtml = contengS.replace(
-        //   /<h1>(.*?)<\/h1>/g,
-        //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
-        // );
-        // console.log(data.firstPost.contentHtml, '这是标题');
-        // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
+      threadAction
+        .then(data => {
+          console.log(data, '~~~~~~~~~~~~~~~~~~~');
+          // this.thread = data;
+          if (data.isDeleted) {
+            console.log('走了333');
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+          }
+          // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
+          // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
+          // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
+          // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
+          // data.firstPost.contentHtml = contengS.replace(
+          //   /<h1>(.*?)<\/h1>/g,
+          //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
+          // );
+          // console.log(data.firstPost.contentHtml, '这是标题');
+          // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
 
-        // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
+          // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
 
-        // str.match(/<h1>(.*?)<\/h1>/g)
+          // str.match(/<h1>(.*?)<\/h1>/g)
 
-        // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
+          // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
 
-        // 追加管理菜单权限字段
-        this.selectList[0].canOpera = this.thread.firstPost.canEdit;
-        this.selectList[1].canOpera = this.thread.canEssence;
-        this.selectList[2].canOpera = this.thread.canSticky;
-        this.selectList[3].canOpera = this.thread.canHide;
-        // this.selectList[0].isStatus = true;
-        this.selectList[1].isStatus = this.thread.isEssence;
-        this.selectList[2].isStatus = this.thread.isSticky;
-        this.selectList[3].isStatus = false;
-        if (data.isEssence) {
-          //如果初始化状态为true
-          this.selectList[1].text = this.t.cancelEssence;
-        }
-        if (data.isSticky) {
-          //如果初始化状态为true
+          // 追加管理菜单权限字段
+          this.selectList[0].canOpera = this.thread.firstPost.canEdit;
+          this.selectList[1].canOpera = this.thread.canEssence;
+          this.selectList[2].canOpera = this.thread.canSticky;
+          this.selectList[3].canOpera = this.thread.canHide;
+          // this.selectList[0].isStatus = true;
+          this.selectList[1].isStatus = this.thread.isEssence;
+          this.selectList[2].isStatus = this.thread.isSticky;
+          this.selectList[3].isStatus = false;
+          if (data.isEssence) {
+            //如果初始化状态为true
+            this.selectList[1].text = this.t.cancelEssence;
+          }
+          if (data.isSticky) {
+            //如果初始化状态为true
 
-          this.selectList[2].text = this.t.cancelSticky;
-        }
-        this.isLiked = data.firstPost.isLiked;
-        this.topicStatus = data.isApproved;
-        if (!data.paid || data.paidUsers.length > 0) {
-          if (
-            this.system === 'ios' &&
-            this.detectionmodel === 'public' &&
-            this.paymentmodel === false
-          ) {
+            this.selectList[2].text = this.t.cancelSticky;
+          }
+          this.isLiked = data.firstPost.isLiked;
+          this.topicStatus = data.isApproved;
+          if (!data.paid || data.paidUsers.length > 0) {
+            if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === false
+            ) {
+              this.paidStatus = false;
+            } else if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === true
+            ) {
+              this.paidStatus = true;
+            } else {
+              this.paidStatus = true;
+            }
+          } else {
             this.paidStatus = false;
-          } else if (
-            this.system === 'ios' &&
-            this.detectionmodel === 'public' &&
-            this.paymentmodel === true
-          ) {
-            this.paidStatus = true;
-          } else {
-            this.paidStatus = true;
           }
-        } else {
-          this.paidStatus = false;
-        }
-        if (data.type == 3) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
-        } else if (data.type == 2) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
-        } else if (data.type == 1) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-        }
-        if (data.price <= 0) {
-          if (
-            this.system === 'ios' &&
-            this.detectionmodel === 'public' &&
-            this.paymentmodel === false
-          ) {
+          if (data.type == 3) {
+            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
+          } else if (data.type == 2) {
+            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
+          } else if (data.type == 1) {
+            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+          }
+          if (data.price <= 0) {
+            if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === false
+            ) {
+              this.rewardStatus = false;
+            } else if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === true
+            ) {
+              this.rewardStatus = true;
+            } else {
+              this.rewardStatus = true;
+            }
+          } else {
             this.rewardStatus = false;
-          } else if (
-            this.system === 'ios' &&
-            this.detectionmodel === 'public' &&
-            this.paymentmodel === true
-          ) {
-            this.rewardStatus = true;
-          } else {
-            this.rewardStatus = true;
           }
-        } else {
-          this.rewardStatus = false;
-        }
-        if (data.firstPost.likedUsers.length < 1) {
-          this.likedStatus = false;
-        } else {
-          this.likedStatus = true;
-        }
-      });
+          if (data.firstPost.likedUsers.length < 1) {
+            this.likedStatus = false;
+          } else {
+            this.likedStatus = true;
+          }
+        })
+        .catch(err => {
+          this.loaded = false;
+          console.log(err);
+        });
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus, post = {}) {

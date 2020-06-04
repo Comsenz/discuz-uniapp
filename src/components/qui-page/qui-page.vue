@@ -28,7 +28,11 @@ export default {
       return this.forumError.loading;
     },
     showMessage() {
-      return ['not_install', 'site_closed', 'ban_user'].indexOf(this.forumError.code) !== -1;
+      return (
+        ['not_install', 'site_closed', 'ban_user', 'model_not_found'].indexOf(
+          this.forumError.code,
+        ) !== -1
+      );
     },
   },
   watch: {

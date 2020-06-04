@@ -66,7 +66,7 @@
 import { mapState } from 'vuex';
 import { i18n } from '@/locale';
 
-const TYPE_404 = '404';
+const TYPE_404 = 'type_404';
 const TYPE_CLOSED = 'site_closed';
 const NOT_INSTALL = 'not_install';
 const BAN_USER = 'ban_user';
@@ -76,9 +76,9 @@ const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
     subtitle: i18n.t('core.page_not_found_detail'),
-    btnTxt: i18n.t('core.back_home'),
+    btnTxt: i18n.t('core.back_history'),
     icon: '@/static/msg-404.svg',
-    btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
+    btnclickType: 'toBack', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
   [TYPE_CLOSED]: {
     title: i18n.t('core.site_closed'),
@@ -132,7 +132,7 @@ export default {
     },
     show() {
       return (
-        [TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED, POST_DELETED].indexOf(
+        [TYPE_404, TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED, POST_DELETED].indexOf(
           this.forumError.code,
         ) >= 0
       );
@@ -142,12 +142,13 @@ export default {
     handleClick() {
       console.log(111);
       // 404
-      if (this.forumError.code === TYPE_404 || this.forumError.code === THREAD_DELETED) {
+      if (this.forumError.code === THREAD_DELETED) {
         console.log('这是返回首页呢');
         uni.redirectTo({
           url: '/pages/home/index',
         });
-      } else if (this.forumError.code === POST_DELETED) {
+      } else if (this.forumError.code === TYPE_404 || this.forumError.code === POST_DELETED) {
+        console.log('这是Message里的404，走返回');
         uni.navigateBack({
           delta: 1,
         });
