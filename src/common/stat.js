@@ -1,5 +1,5 @@
 "use strict";
-
+// #ifndef H5
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 
 let customConf = {};
@@ -805,3 +805,5 @@ var _typeof =
 
 const Vue = require('vue');
 (Vue.default || Vue).mixin(lifecycle);
+
+// #endif
