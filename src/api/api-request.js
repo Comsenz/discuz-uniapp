@@ -3,6 +3,7 @@
 import Request from '@/utils/request';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
+import Vue from 'vue';
 
 const http = new Request();
 let tostTimeout;
@@ -80,10 +81,22 @@ http.interceptor.response(
               },
             });
             break;
+          case 'model_not_found':
+            console.log('模型未找到');
+            Vue.prototype.$store.dispatch('forum/setError', {
+              code: 'type_404',
+              status: 500,
+            });
+            // uni.showToast({ title: i18n.t('core.page_not_found_detail') });
+            // uni.navigateBack({
+            //   delta: 1,
+            // });
+            break;
           case 'not_install':
           case 'site_closed':
           case 'ban_user':
             break;
+
           default:
             clearTimeout(tostTimeout);
             tostTimeout = setTimeout(() => {

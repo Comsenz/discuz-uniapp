@@ -1,5 +1,14 @@
 <template>
   <view class="home">
+    <uni-nav-bar
+      class="status-bar"
+      :style="'transform:' + navBarTransform"
+      :title="forums.set_site.site_name"
+      fixed="true"
+      :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
+      :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
+      status-bar
+    ></uni-nav-bar>
     <scroll-view
       :scroll-y="scrollable"
       scroll-with-animation="true"
@@ -9,16 +18,7 @@
       @scrolltolower="pullDown"
       @scrolltoupper="toUpper"
     >
-      <uni-nav-bar
-        v-if="navbarShow"
-        :title="forums.set_site.site_name"
-        fixed="true"
-        :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
-        :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
-        status-bar
-      ></uni-nav-bar>
       <qui-header
-        v-if="headerShow"
         :head-img="forums.set_site.site_header_logo"
         :background-head-full-img="forums.set_site.site_background_image"
         :theme="theme"
@@ -30,7 +30,7 @@
       <view
         class="nav"
         id="navId"
-        :style="headerShow ? '' : 'width:100%;position:fixed;z-index:9;'"
+        :style="headerShow ? '' : 'width:100%;position:fixed;z-index:9;top:' + navbarHeight + 'px;'"
       >
         <view class="nav__box">
           <qui-icon
@@ -50,7 +50,7 @@
           active-color="#1878F3"
         ></u-tabs>
       </view>
-      <view class="sticky" :style="headerShow ? 'margin-top:30rpx' : topMargin()">
+      <view class="sticky" :style="headerShow ? 'margin-top:30rpx' : 'margin-top:130rpx'">
         <view
           class="sticky__isSticky"
           v-for="(item, index) in sticky"
@@ -181,6 +181,12 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapMutations, mapState } from 'vuex';
 
+const sysInfo = uni.getSystemInfoSync();
+
+const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
+const mainBottom = sysInfo.screenHeight - 119 /* qui-footer的高度 */ * (sysInfo.screenWidth / 750);
+const navBarTransform = `translate3d(0, -${navbarHeight}px, 0)`;
+
 export default {
   mixins: [forums, user],
   props: {
@@ -192,6 +198,7 @@ export default {
   // props: ['navTheme'],
   data() {
     return {
+      navBarTransform,
       suspended: false, // 是否吸顶状态
       checkoutTheme: false, // 切换主题  搭配是否吸顶使用
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
@@ -207,8 +214,7 @@ export default {
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
-      navbarShow: false, // 是否显示顶部导航栏
-      navbarHeight: 0, // 顶部导航栏的高度
+      navbarHeight, // 顶部导航栏的高度
       headerShow: true, // 是否显示标题图(背景+logo)，不显示标题图时，分类切换栏需要固定顶部
       navTop: 0, // 切换分类导航的top
       navHeight: 0, // 切换分类导航的高度
@@ -261,7 +267,7 @@ export default {
       categories: [],
       playIndex: null,
       scrollable: true, // scroll-view是否可滚动的开关
-      mainBottom: 0, // 正文区域的底部，整个屏幕高度减qui-bottom的高度
+      mainBottom, // 正文区域的底部，整个屏幕高度减qui-bottom的高度
     };
   },
   computed: {
@@ -271,19 +277,35 @@ export default {
     }),
   },
   created() {
+    // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
+    // 编辑删除图片后首页删除图片
+    this.$u.event.$on('deleteImg', res => {
+      this.threads.forEach(item => {
+        if (item._jv.id === res.threadId) {
+          item.firstPost.images.splice(res.index, 1);
+        }
+      });
+    });
+    // 置顶列表添加数据当详情页置顶时
+    this.$u.event.$on('stickyThread', data => {
+      this.sticky.unshift(data);
+      this.threads.forEach((item, index) => {
+        if (item._jv.id === data._jv.id) {
+          this.threads.splice(index, 1);
+        }
+      });
+    });
+    // 详情页取消置顶时置顶列表中删除该置顶
+    this.$u.event.$on('cancelSticky', data => {
+      this.sticky.forEach((item, index) => {
+        if (item._jv.id === data._jv.id) {
+          this.sticky.splice(index, 1);
+        }
+      });
+    });
   },
   mounted() {
-    uni.getSystemInfo({
-      success: res => {
-        const rpx = res.screenWidth / 750;
-        this.navTop = 400 /* qui-header 的高度 */ * rpx;
-        this.navHeight = 102 /* nav的高度 */ * rpx;
-        this.navbarHeight = res.statusBarHeight + 44 /* uni-nav-bar的高度 */;
-        this.mainBottom = res.screenHeight - 119 /* qui-footer的高度 */ * rpx;
-      },
-    });
-
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
       this.setCategoryId(tagId);
@@ -303,6 +325,11 @@ export default {
         }
       });
     }, 200);
+
+    this.$uGetRect('#navId').then(rect => {
+      this.navTop = rect.top;
+      this.navHeight = rect.height;
+    });
   },
   methods: {
     ...mapMutations({
@@ -310,23 +337,22 @@ export default {
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
     topMargin() {
-      return `margin-top: calc(${this.navTop - this.navbarHeight + this.navHeight}px + 30rpx)`;
+      return ';';
     },
     scroll(event) {
       if (!this.navbarHeight) {
         return;
       }
-      if (this.navTop - event.detail.scrollTop <= this.navbarHeight) {
-        this.navbarShow = true;
+      if (event.detail.scrollTop + this.navbarHeight >= this.navTop) {
         this.headerShow = false;
+        this.navBarTransform = 'none';
       } else {
-        this.navbarShow = false;
         this.headerShow = true;
+        this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
     },
     // 滑动到顶部
     toUpper() {
-      this.navbarShow = false;
       this.headerShow = true;
     },
     // 初始化选中的选项卡
@@ -594,9 +620,6 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
-      // if (!canLike) {
-      //   console.log('没有点赞权限');
-      // }
       const params = {
         _jv: {
           type: 'posts',
@@ -641,6 +664,11 @@ export default {
   min-height: 100vh;
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
+}
+.status-bar {
+  position: fixed;
+  z-index: 1;
+  transition: 0.2s;
 }
 .nav {
   position: relative;
