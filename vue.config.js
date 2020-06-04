@@ -82,9 +82,9 @@ module.exports = {
         target: 'https://dq.comsenz-service.com',
         changeOrigin: true,
         ws: true,
-        pathRewrite: {
-          '^/api': '',
-        },
+        // pathRewrite: {
+        //   '^/api': '',
+        // },
       },
     },
   },
