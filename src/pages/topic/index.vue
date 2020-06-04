@@ -906,7 +906,7 @@ export default {
             // if (data.isDeleted) {
             // console.log('删除成功，跳转到首页');
             this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateBack({
+            uni.navigateTo({
               url: `/pages/home/index`,
             });
             // }
