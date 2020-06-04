@@ -18,12 +18,12 @@ export default function() {
   const CHANNEL = getLocation(DISCUZ_REQUEST_HOST).hostname.replace(/\./g, '_');
 
   function getLocation(href) {
-    var match = href.match(
+    const match = href.match(
       /^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([\/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
     );
     return (
       match && {
-        href: href,
+        href,
         protocol: match[1],
         host: match[2],
         hostname: match[3],
@@ -53,7 +53,7 @@ export default function() {
     }
 
     if (!uuid) {
-      uuid = Date.now() + '' + Math.floor(Math.random() * 1e7);
+      uuid = `${Date.now()}${Math.floor(Math.random() * 1e7)}`;
       try {
         uni.setStorageSync(UUID_KEY, uuid);
       } catch (e) {
@@ -64,13 +64,13 @@ export default function() {
   }
 
   const getSgin = statData => {
-    let arr = Object.keys(statData);
-    let sortArr = arr.sort();
-    let sgin = {};
+    const arr = Object.keys(statData);
+    const sortArr = arr.sort();
+    const sgin = {};
     let sginStr = '';
-    for (var i in sortArr) {
+    for (const i in sortArr) {
       sgin[sortArr[i]] = statData[sortArr[i]];
-      sginStr += sortArr[i] + '=' + statData[sortArr[i]] + '&';
+      sginStr += `${sortArr[i]}=${statData[sortArr[i]]}&`;
     }
     // const options = sginStr.substr(0, sginStr.length - 1)
     // sginStr = sginStr.substr(0, sginStr.length - 1) + '&key=' + STAT_KEY;
@@ -83,8 +83,8 @@ export default function() {
 
   const getSplicing = data => {
     let str = '';
-    for (var i in data) {
-      str += i + '=' + data[i] + '&';
+    for (const i in data) {
+      str += `${i}=${data[i]}&`;
     }
     return str.substr(0, str.length - 1);
   };
@@ -196,8 +196,8 @@ export default function() {
   };
 
   const GetEncodeURIComponentOptions = statData => {
-    let data = {};
-    for (let prop in statData) {
+    const data = {};
+    for (const prop in statData) {
       data[prop] = encodeURIComponent(statData[prop]);
     }
     return data;
@@ -207,14 +207,14 @@ export default function() {
   let Set__Last__Time = 0;
 
   const getFirstTime = () => {
-    let time = new Date().getTime();
+    const time = new Date().getTime();
     Set__First__Time = time;
     Set__Last__Time = 0;
     return time;
   };
 
   const getLastTime = () => {
-    let time = new Date().getTime();
+    const time = new Date().getTime();
     Set__Last__Time = time;
     return time;
   };
@@ -228,14 +228,14 @@ export default function() {
     residenceTime = parseInt(residenceTime / 1000);
     residenceTime = residenceTime < 1 ? 1 : residenceTime;
     if (type === 'app') {
-      let overtime = residenceTime > APP_PVER_TIME ? true : false;
+      const overtime = residenceTime > APP_PVER_TIME;
       return {
         residenceTime,
         overtime,
       };
     }
     if (type === 'page') {
-      let overtime = residenceTime > PAGE_PVER_TIME ? true : false;
+      const overtime = residenceTime > PAGE_PVER_TIME;
       return {
         residenceTime,
         overtime,
@@ -248,32 +248,28 @@ export default function() {
   };
 
   const getRoute = () => {
-    var pages = getCurrentPages();
-    var page = pages[pages.length - 1];
-    let _self = page.$vm;
+    const pages = getCurrentPages();
+    const page = pages[pages.length - 1];
+    const _self = page.$vm;
 
     if (getPlatformName() === 'bd') {
       return _self.$mp && _self.$mp.page.is;
-    } else {
-      return (_self.$scope && _self.$scope.route) || (_self.$mp && _self.$mp.page.route);
     }
+    return (_self.$scope && _self.$scope.route) || (_self.$mp && _self.$mp.page.route);
   };
 
   const getPageRoute = self => {
-    var pages = getCurrentPages();
-    var page = pages[pages.length - 1];
-    let _self = page.$vm;
-    let query = self._query;
-    let str = query && JSON.stringify(query) !== '{}' ? '?' + JSON.stringify(query) : '';
+    const pages = getCurrentPages();
+    const page = pages[pages.length - 1];
+    const _self = page.$vm;
+    const query = self._query;
+    const str = query && JSON.stringify(query) !== '{}' ? `?${JSON.stringify(query)}` : '';
     // clear
     self._query = '';
     if (getPlatformName() === 'bd') {
       return _self.$mp && _self.$mp.page.is + str;
-    } else {
-      return (
-        (_self.$scope && _self.$scope.route + str) || (_self.$mp && _self.$mp.page.route + str)
-      );
     }
+    return (_self.$scope && _self.$scope.route + str) || (_self.$mp && _self.$mp.page.route + str);
   };
 
   const getPageTypes = self => {
@@ -323,8 +319,8 @@ export default function() {
   const isReportData = () => {
     return new Promise((resolve, reject) => {
       let start_time = '';
-      let end_time = new Date().getTime();
-      let diff_time = DIFF_TIME;
+      const end_time = new Date().getTime();
+      const diff_time = DIFF_TIME;
       let report_status = 1;
       try {
         start_time = uni.getStorageSync(Report_Data_Time);
@@ -364,7 +360,7 @@ export default function() {
   };
 
   const requestData = done => {
-    let formData = {
+    const formData = {
       usv: STAT_VERSION,
       conf: JSON.stringify({
         ak: statConfig.appid,
@@ -467,7 +463,7 @@ export default function() {
         getLastTime();
         const time = getResidenceTime('app');
         if (time.overtime) {
-          let options = {
+          const options = {
             path: this._lastPageRoute,
             scene: this.statData.sc,
           };
@@ -517,7 +513,7 @@ export default function() {
       this._lastPageRoute = route;
       const time = getResidenceTime('page');
       if (time.overtime) {
-        let options = {
+        const options = {
           path: this._lastPageRoute,
           scene: this.statData.sc,
         };
@@ -541,7 +537,6 @@ export default function() {
           report: '',
           lt: '',
         };
-        return;
       }
     }
 
@@ -562,6 +557,7 @@ export default function() {
         0,
       );
     }
+
     _payment(key) {
       this._sendEventRequest(
         {
@@ -570,11 +566,12 @@ export default function() {
         0,
       );
     }
+
     _sendReportRequest(options) {
       this._navigationBarTitle.lt = '1';
-      let query =
+      const query =
         options.query && JSON.stringify(options.query) !== '{}'
-          ? '?' + JSON.stringify(options.query)
+          ? `?${JSON.stringify(options.query)}`
           : '';
       this.statData.lt = '1';
       this.statData.url = options.path + query || '';
@@ -591,9 +588,9 @@ export default function() {
     }
 
     _sendPageRequest(opt) {
-      let { url, urlref, urlref_ts } = opt;
+      const { url, urlref, urlref_ts } = opt;
       this._navigationBarTitle.lt = '11';
-      let options = {
+      const options = {
         ak: this.statData.ak,
         uuid: this.statData.uuid,
         lt: '11',
@@ -611,8 +608,8 @@ export default function() {
     }
 
     _sendHideRequest(opt, type) {
-      let { urlref, urlref_ts } = opt;
-      let options = {
+      const { urlref, urlref_ts } = opt;
+      const options = {
         ak: this.statData.ak,
         uuid: this.statData.uuid,
         lt: '3',
@@ -626,9 +623,10 @@ export default function() {
       };
       this.request(options, type);
     }
+
     _sendEventRequest({ key = '', value = '' } = {}) {
       const route = this._lastPageRoute;
-      let options = {
+      const options = {
         ak: this.statData.ak,
         uuid: this.statData.uuid,
         lt: '21',
@@ -685,7 +683,7 @@ export default function() {
     }
 
     request(data, type) {
-      let time = getTime();
+      const time = getTime();
       const title = this._navigationBarTitle;
       data.ttn = title.page;
       data.ttpj = title.config;
@@ -712,11 +710,11 @@ export default function() {
       }
       // 时间超过，重新获取时间戳
       setPageResidenceTime();
-      let firstArr = [];
-      let contentArr = [];
-      let lastArr = [];
+      const firstArr = [];
+      const contentArr = [];
+      const lastArr = [];
 
-      for (let i in uniStatData) {
+      for (const i in uniStatData) {
         const rd = uniStatData[i];
         rd.forEach(elm => {
           const newData = getSplicing(elm);
@@ -731,9 +729,9 @@ export default function() {
       }
 
       firstArr.push(...contentArr, ...lastArr);
-      let optionsData = {
-        usv: STAT_VERSION, //统计 SDK 版本号
-        t: time, //发送请求时的时间戮
+      const optionsData = {
+        usv: STAT_VERSION, // 统计 SDK 版本号
+        t: time, // 发送请求时的时间戮
         requests: JSON.stringify(firstArr),
       };
 
@@ -755,6 +753,7 @@ export default function() {
       }
       this._sendRequest(optionsData);
     }
+
     _sendRequest(optionsData) {
       this.getIsReportData().then(() => {
         uni.request({
@@ -779,14 +778,15 @@ export default function() {
         });
       });
     }
+
     /**
      * h5 请求
      */
     imageRequest(data) {
       this.getIsReportData().then(() => {
-        let image = new Image();
-        let options = getSgin(GetEncodeURIComponentOptions(data)).options;
-        image.src = STAT_H5_URL + '?' + options;
+        const image = new Image();
+        const { options } = getSgin(GetEncodeURIComponentOptions(data));
+        image.src = `${STAT_H5_URL}?${options}`;
       });
     }
 
@@ -815,6 +815,7 @@ export default function() {
       }
       return this.instance;
     }
+
     constructor() {
       super();
       this.instance = null;
@@ -828,7 +829,7 @@ export default function() {
     }
 
     addInterceptorInit() {
-      let self = this;
+      const self = this;
       uni.addInterceptor('setNavigationBarTitle', {
         invoke(args) {
           self._navigationBarTitle.page = args.title;
@@ -837,7 +838,7 @@ export default function() {
     }
 
     interceptLogin() {
-      let self = this;
+      const self = this;
       uni.addInterceptor('login', {
         complete() {
           self._login();
@@ -846,7 +847,7 @@ export default function() {
     }
 
     interceptShare(type) {
-      let self = this;
+      const self = this;
       if (!type) {
         self._share();
         return;
@@ -862,7 +863,7 @@ export default function() {
     }
 
     interceptRequestPayment() {
-      let self = this;
+      const self = this;
       uni.addInterceptor('requestPayment', {
         success() {
           self._payment('pay_success');
@@ -907,6 +908,7 @@ export default function() {
       //   this._pageShow(self);
       // }
     }
+
     hide(self) {
       this.self = self;
       if (getPageTypes(self)) {
@@ -915,6 +917,7 @@ export default function() {
         this._applicationHide(self, true);
       }
     }
+
     error(em) {
       if (this._platform === 'devtools') {
         if (process.env.NODE_ENV === 'development') {
@@ -928,7 +931,7 @@ export default function() {
       } else {
         emVal = em.stack;
       }
-      let options = {
+      const options = {
         ak: this.statData.ak,
         uuid: this.statData.uuid,
         lt: '31',
@@ -959,7 +962,7 @@ export default function() {
       stat.load(options, this);
       // 重写分享，获取分享上报事件
       if (this.$scope && this.$scope.onShareAppMessage) {
-        let oldShareAppMessage = this.$scope.onShareAppMessage;
+        const oldShareAppMessage = this.$scope.onShareAppMessage;
         this.$scope.onShareAppMessage = function(options) {
           stat.interceptShare(false);
           return oldShareAppMessage.call(this, options);
@@ -992,7 +995,7 @@ export default function() {
     } else {
       const Vue = require('vue');
       (Vue.default || Vue).mixin(lifecycle);
-      oldrpt = uni.report;
+      const oldrpt = uni.report;
       uni.report = function(type, options) {
         stat.sendEvent(type, options);
         if (oldrpt) {

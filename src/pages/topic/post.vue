@@ -507,8 +507,9 @@ export default {
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
+      console.log(list, del, 'uploadClear')
       const id = this.operating === 'edit' ? list.id : list.data.id;
-      this.delAttachments(id).then(() => {
+      this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
     },
@@ -760,7 +761,7 @@ export default {
           });
       });
     },
-    delAttachments(id) {
+    delAttachments(id, index) {
       const params = {
         _jv: {
           type: `attachments/${id}`,
@@ -769,11 +770,16 @@ export default {
 
       return this.$store
         .dispatch('jv/delete', params)
-        .then(res => {
+        .then(res => {        
           return res;
         })
         .catch(err => {
-          console.log(err);
+          const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
+          // const thread = this.$store.getters['jv/get'](`threads/${this.postDetails._jv.id}`);
+          console.log(post, '123')
+          post.images.splice(index, 1);
+          post._jv.relationships.images.data.splice(index, 1);
+          console.log(post, '456')
         });
     },
     getSignature(callback) {

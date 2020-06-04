@@ -55,7 +55,7 @@ const message = {
     subtitle: i18n.t('core.page_not_found_detail'),
     btnTxt: i18n.t('core.back_home'),
     icon: '@/static/msg-404.svg',
-    btnclickType: 'toHome', //点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
+    btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
   [TYPE_CLOSED]: {
     title: i18n.t('core.site_closed'),
