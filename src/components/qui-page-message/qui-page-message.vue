@@ -130,16 +130,16 @@ const message = {
   },
 };
 export default {
-  data() {
-    return {
-      page: '',
-    };
-  },
   filters: {
     closedError(subtitle, err, code) {
       if (err && err.detail && code === TYPE_CLOSED) return err.detail[0];
       return subtitle;
     },
+  },
+  data() {
+    return {
+      page: '',
+    };
   },
   computed: {
     ...mapState({
