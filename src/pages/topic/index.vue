@@ -294,7 +294,7 @@
       ></qui-pay>
     </view>
     <!--遮罩层组件-->
-    <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
+    <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
     <!--轻提示-->
     <qui-toast ref="toast" :type="loading"></qui-toast>
     <!--回复弹框-->
@@ -1103,7 +1103,7 @@ export default {
               res.wechat_js.paySign,
             );
           } else if (payType == 1) {
-            this.getOrderStatus(orderSn);
+            // this.getOrderStatus(orderSn);
             const payWechat = setInterval(() => {
               if (this.payStatus == '1' || this.payStatusNum > 10) {
                 clearInterval(payWechat);
@@ -1155,7 +1155,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err, '123这是catch');
+          console.log(err);
           this.coverLoading = false;
           this.$refs.toast.show({ message: this.p.payFail });
         });
@@ -1174,23 +1174,34 @@ export default {
         success: function(res) {
           // console.log('微信支付成功');
           console.log('success:' + JSON.stringify(res));
+          _this.coverLoading = true;
+          // _this.getOrderStatus(_this.orderSn);
+          const payWechat = setInterval(() => {
+            console.log('定时器');
+            if (_this.payStatus == '1' || _this.payStatusNum > 10) {
+              clearInterval(payWechat);
+              return;
+            }
+            _this.getOrderStatus(_this.orderSn);
+          }, 3000);
+          
           // console.log(_this.payTypeVal, '支付类型');
-          _this.payShowStatus = false;
-          _this.coverLoading = false;
+          // _this.payShowStatus = false;
+          // _this.coverLoading = false;
 
-          _this.$refs.toast.show({ message: _this.p.paySuccess });
-          if (_this.payTypeVal == 0) {
-            // 这是主题支付，支付完成刷新详情页，重新请求数据
-            console.log('这是主题支付');
-            _this.loadThread();
-          } else if (_this.payTypeVal == 1) {
-            // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-            _this.thread._jv.relationships.rewardedUsers.data.push({
-              type: _this.user._jv.type,
-              id: _this.user.id.toString(),
-            });
-            _this.thread.rewardedUsers.unshift(_this.user);
-          }
+          // _this.$refs.toast.show({ message: _this.p.paySuccess });
+          // if (_this.payTypeVal == 0) {
+          //   // 这是主题支付，支付完成刷新详情页，重新请求数据
+          //   console.log('这是主题支付');
+          //   _this.loadThread();
+          // } else if (_this.payTypeVal == 1) {
+          //   // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+          //   _this.thread._jv.relationships.rewardedUsers.data.push({
+          //     type: _this.user._jv.type,
+          //     id: _this.user.id.toString(),
+          //   });
+          //   _this.thread.rewardedUsers.unshift(_this.user);
+          // }
         },
         fail: function(err) {
           console.log('微信支付失败');
@@ -1265,6 +1276,8 @@ export default {
     // 主题支付
     payClickShow() {
       console.log('主题支付');
+      this.payStatus = false;
+      this.payStatusNum = 0;
       this.payShowStatus = true;
       this.payTypeVal = 0;
       console.log(this.payTypeVal, '这是类型，0为主题支付，1为主题打赏');
@@ -1293,6 +1306,8 @@ export default {
     // 打赏
     rewardClick() {
       console.log('这是打赏');
+      this.payStatus = false;
+      this.payStatusNum = 0;
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
@@ -1336,14 +1351,19 @@ export default {
     },
     // 自定义付费金额弹框点击确定时
     diaLogOk() {
-      this.price = this.inputPrice;
-      this.$refs.customAmountPopup.close();
-      this.customAmountStatus = false;
-      this.payShowStatus = true;
-      // this.$refs.payShow.payClickShow();
-      this.$nextTick(() => {
-        this.$refs.payShow.payClickShow(this.payTypeVal);
-      });
+      if(this.inputPrice <= 0){
+        this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
+      } else {
+        this.price = this.inputPrice;
+        this.$refs.customAmountPopup.close();
+        this.customAmountStatus = false;
+        this.payShowStatus = true;
+        // this.$refs.payShow.payClickShow();
+        this.$nextTick(() => {
+          this.$refs.payShow.payClickShow(this.payTypeVal);
+        });
+      }
+      
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
