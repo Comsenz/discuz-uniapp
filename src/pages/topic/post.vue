@@ -769,7 +769,8 @@ export default {
     delAttachments(id, index) {
       const params = {
         _jv: {
-          type: `attachments/${id}`,
+          type: 'attachments',
+          id,
         },
       };
 
@@ -939,15 +940,23 @@ export default {
     try {
       const res = uni.getSystemInfoSync();
       console.log(res.platform);
-      if (res.platform === 'ios' && this.forums.set_site.site_mode === 'public' && this.forums.paycenter.wxpay_ios === false) {
+      if (
+        res.platform === 'ios' &&
+        this.forums.set_site.site_mode === 'public' &&
+        this.forums.paycenter.wxpay_ios === false
+      ) {
         this.showHidden = false;
-      } else if (res.platform === 'ios' &&  this.forums.set_site.site_mode === 'public' && this.forums.paycenter.wxpay_ios === true) {
+      } else if (
+        res.platform === 'ios' &&
+        this.forums.set_site.site_mode === 'public' &&
+        this.forums.paycenter.wxpay_ios === true
+      ) {
         this.showHidden = true;
       } else {
         this.showHidden = true;
       }
     } catch (e) {
-        // error
+      // error
     }
   },
   onShow() {
