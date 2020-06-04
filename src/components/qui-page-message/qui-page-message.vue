@@ -24,7 +24,7 @@
       <view class="page-message--subtitle" v-if="show">
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
-      <view>这是路由测试呢{{ page }}</view>
+      <view>这是路由测试呢二次修改{{ page }}</view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
         v-if="show && message.btnclickType == 'siteClose'"
