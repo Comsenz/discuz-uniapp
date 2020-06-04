@@ -143,7 +143,7 @@
                 "
                 @commentJump="commentJump(threadId, post._jv.id)"
                 @imageClick="imageClick"
-                @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted)"
+                @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted, post)"
                 @replyComment="replyComment(post._jv.id, index)"
               ></qui-topic-comment>
             </view>
@@ -575,7 +575,7 @@ export default {
       this.detectionmodel = this.forums.set_site.site_mode;
       this.paymentmodel = this.forums.paycenter.wxpay_ios;
     } catch (e) {
-        // error
+      // error
     }
   },
   // 唤起小程序原声分享
@@ -646,61 +646,68 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
       console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
-      threadAction
-        .then(data => {
-          console.log(data, '~~~~~~~~~~~~~~~~~~~');
-          // this.thread = data;
-          if (data.isDeleted) {
-            console.log('走了333');
-            this.$store.dispatch('forum/setError', {
-              code: 'thread_deleted',
-              status: 500,
-            });
-            this.loaded = false;
-          } else {
-            this.loaded = true;
-          }
-          // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
-          // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
-          // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
-          // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
-          // data.firstPost.contentHtml = contengS.replace(
-          //   /<h1>(.*?)<\/h1>/g,
-          //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
-          // );
-          // console.log(data.firstPost.contentHtml, '这是标题');
-          // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
+      threadAction.then(data => {
+        console.log(data, '~~~~~~~~~~~~~~~~~~~');
+        // this.thread = data;
+        if (data.isDeleted) {
+          console.log('走了333');
+          this.$store.dispatch('forum/setError', {
+            code: 'thread_deleted',
+            status: 500,
+          });
+          this.loaded = false;
+        } else {
+          this.loaded = true;
+        }
+        // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
+        // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
+        // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
+        // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
+        // data.firstPost.contentHtml = contengS.replace(
+        //   /<h1>(.*?)<\/h1>/g,
+        //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
+        // );
+        // console.log(data.firstPost.contentHtml, '这是标题');
+        // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
 
-          // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
+        // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
 
-          // str.match(/<h1>(.*?)<\/h1>/g)
+        // str.match(/<h1>(.*?)<\/h1>/g)
 
-          // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
+        // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
 
-          // 追加管理菜单权限字段
-          this.selectList[0].canOpera = this.thread.firstPost.canEdit;
-          this.selectList[1].canOpera = this.thread.canEssence;
-          this.selectList[2].canOpera = this.thread.canSticky;
-          this.selectList[3].canOpera = this.thread.canHide;
-          // this.selectList[0].isStatus = true;
-          this.selectList[1].isStatus = this.thread.isEssence;
-          this.selectList[2].isStatus = this.thread.isSticky;
-          this.selectList[3].isStatus = false;
-          if (data.isEssence) {
-            //如果初始化状态为true
-            this.selectList[1].text = this.t.cancelEssence;
-          }
-          if (data.isSticky) {
-            //如果初始化状态为true
+        // 追加管理菜单权限字段
+        this.selectList[0].canOpera = this.thread.firstPost.canEdit;
+        this.selectList[1].canOpera = this.thread.canEssence;
+        this.selectList[2].canOpera = this.thread.canSticky;
+        this.selectList[3].canOpera = this.thread.canHide;
+        // this.selectList[0].isStatus = true;
+        this.selectList[1].isStatus = this.thread.isEssence;
+        this.selectList[2].isStatus = this.thread.isSticky;
+        this.selectList[3].isStatus = false;
+        if (data.isEssence) {
+          //如果初始化状态为true
+          this.selectList[1].text = this.t.cancelEssence;
+        }
+        if (data.isSticky) {
+          //如果初始化状态为true
 
           this.selectList[2].text = this.t.cancelSticky;
         }
         this.isLiked = data.firstPost.isLiked;
         this.topicStatus = data.isApproved;
         if (!data.paid || data.paidUsers.length > 0) {
-          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+          if (
+            this.system === 'ios' &&
+            this.detectionmodel === 'public' &&
+            this.paymentmodel === false
+          ) {
             this.paidStatus = false;
-          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
+          } else if (
+            this.system === 'ios' &&
+            this.detectionmodel === 'public' &&
+            this.paymentmodel === true
+          ) {
             this.paidStatus = true;
           } else {
             this.paidStatus = true;
@@ -716,9 +723,17 @@ export default {
           this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
         }
         if (data.price <= 0) {
-          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+          if (
+            this.system === 'ios' &&
+            this.detectionmodel === 'public' &&
+            this.paymentmodel === false
+          ) {
             this.rewardStatus = false;
-          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
+          } else if (
+            this.system === 'ios' &&
+            this.detectionmodel === 'public' &&
+            this.paymentmodel === true
+          ) {
             this.rewardStatus = true;
           } else {
             this.rewardStatus = true;
@@ -734,7 +749,7 @@ export default {
       });
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
-    postOpera(id, type, canStatus, isStatus) {
+    postOpera(id, type, canStatus, isStatus, post = {}) {
       console.log(id, type, canStatus, isStatus);
       if (type == '1' && !canStatus) {
         console.log('没有主题点赞权限');
@@ -769,7 +784,7 @@ export default {
         .dispatch('jv/patch', params)
         .then(data => {
           if (type == '1') {
-            const post = this.$store.getters['jv/get'](`posts/${id}`);
+            // const post = this.$store.getters['jv/get'](`posts/${id}`);
             // 主题点赞
             this.isLiked = data.isLiked;
             if (this.isLiked) {
@@ -795,6 +810,7 @@ export default {
               console.log('主题删除失败');
             }
           } else if (type == '3') {
+            post.isDeleted = data.isDeleted;
             if (data.isDeleted) {
               console.log('回复删除成功');
             } else {
@@ -802,7 +818,7 @@ export default {
             }
           } else if (type == '4') {
             // 评论点赞
-            this.posts[this.postIndex].isLiked = data.isLiked;
+            // post.isLiked = data.isLiked;
             if (data.isLiked) {
               // this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
@@ -1397,8 +1413,8 @@ export default {
       this.postOpera(postId, type, canStatus, isStatus);
     },
     // 删除评论
-    deleteComment(postId, type, canStatus, isStatus) {
-      this.postOpera(postId, '3', canStatus, isStatus);
+    deleteComment(postId, type, canStatus, isStatus, post) {
+      this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复
     replyComment(postId, postIndex) {
