@@ -869,8 +869,6 @@ export default {
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          console.log(data);
-          console.log('请求主题操作接口成功');
           if (type == '1') {
             console.log('收藏');
             console.log(this.thread);
@@ -888,8 +886,12 @@ export default {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
               this.selectList[2].text = this.t.cancelSticky;
+              // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
+              this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
+              // 详情页取消置顶,将首页置顶数据移除
+              this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type == '4') {
             // if (data.isDeleted) {

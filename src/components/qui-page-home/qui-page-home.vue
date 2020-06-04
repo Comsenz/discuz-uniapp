@@ -271,7 +271,33 @@ export default {
     }),
   },
   created() {
+    // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
+    // 编辑删除图片后首页删除图片
+    this.$u.event.$on('deleteImg', res => {
+      this.threads.forEach(item => {
+        if (item._jv.id === res.threadId) {
+          item.firstPost.images.splice(res.index, 1);
+        }
+      });
+    });
+    // 置顶列表添加数据当详情页置顶时
+    this.$u.event.$on('stickyThread', data => {
+      this.sticky.unshift(data);
+      this.threads.forEach((item, index) => {
+        if (item._jv.id === data._jv.id) {
+          this.threads.splice(index, 1);
+        }
+      });
+    });
+    // 详情页取消置顶时置顶列表中删除该置顶
+    this.$u.event.$on('cancelSticky', data => {
+      this.sticky.forEach((item, index) => {
+        if (item._jv.id === data._jv.id) {
+          this.sticky.splice(index, 1);
+        }
+      });
+    });
   },
   mounted() {
     uni.getSystemInfo({

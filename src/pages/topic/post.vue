@@ -642,9 +642,12 @@ export default {
           });
         } else {
           this.postThread().then(res => {
+            console.log(res, '发布帖子接口')
             this.postLoading = false;
             uni.hideLoading();
-            this.$u.event.$emit('addThread', res);
+            if (res.isApproved === 1) {
+              this.$u.event.$emit('addThread', res);
+            }
             if (res && res._jv.json.data.id) {
               uni.redirectTo({
                 url: `/pages/topic/index?id=${res._jv.json.data.id}`,
@@ -776,16 +779,19 @@ export default {
 
       return this.$store
         .dispatch('jv/delete', params)
-        .then(res => {        
+        .then(res => { 
+        // 当编辑帖子时删除图片后传参给首页  
+          this.$u.event.$emit('deleteImg', {
+            threadId: this.postDetails._jv.id,
+            index
+          });
+          const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
+          post.images.splice(index, 1);
+          post._jv.relationships.images.data.splice(index, 1);
           return res;
         })
         .catch(err => {
-          const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
-          // const thread = this.$store.getters['jv/get'](`threads/${this.postDetails._jv.id}`);
-          console.log(post, '123')
-          post.images.splice(index, 1);
-          post._jv.relationships.images.data.splice(index, 1);
-          console.log(post, '456')
+          console.log(err);
         });
     },
     getSignature(callback) {
