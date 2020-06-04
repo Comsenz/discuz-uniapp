@@ -110,7 +110,7 @@
         :title="i18n.t('discuzq.post.paymentAmount')"
         :addon="showPrice"
         arrow
-        v-if="type !== 0"
+        v-if="type !== 0 && showHidden"
         @click="cellClick('pay')"
       ></qui-cell-item>
       <qui-cell-item
@@ -246,9 +246,11 @@
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
+import forums from '@/mixin/forums';
 
 export default {
   name: 'Post',
+  mixins: [forums],
   data() {
     return {
       loadStatus: '',
@@ -335,6 +337,7 @@ export default {
       postDetails: {}, // 编辑时帖子详情
       filePreview: [], // 服务器上传
       uploadStatus: true, // 图片上传状态
+      showHidden: true, // 付费金额的显示隐藏
     };
   },
   computed: {
@@ -925,6 +928,20 @@ export default {
       this.getPostThread();
     } else {
       this.loadStatus = true;
+    }
+
+    try {
+      const res = uni.getSystemInfoSync();
+      console.log(res.platform);
+      if (res.platform === 'ios' && this.forums.set_site.site_mode === 'public' && this.forums.paycenter.wxpay_ios === false) {
+        this.showHidden = false;
+      } else if (res.platform === 'ios' &&  this.forums.set_site.site_mode === 'public' && this.forums.paycenter.wxpay_ios === true) {
+        this.showHidden = true;
+      } else {
+        this.showHidden = true;
+      }
+    } catch (e) {
+        // error
     }
   },
   onShow() {

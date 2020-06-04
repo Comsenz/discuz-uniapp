@@ -520,6 +520,9 @@ export default {
       url: '',
       customAmountStatus: false, // 自定义价格弹框初始化状态
       windowHeight: '', //设备高度
+      system: '', // 设备系统
+      detectionmodel: '', // 站点模式
+      paymentmodel: '', // 是否付费
     };
   },
   computed: {
@@ -566,6 +569,14 @@ export default {
     this.formData = {
       type: 1,
     };
+    try {
+      const res = uni.getSystemInfoSync();
+      this.system = res.platform;
+      this.detectionmodel = this.forums.set_site.site_mode;
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    } catch (e) {
+        // error
+    }
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -682,44 +693,45 @@ export default {
           if (data.isSticky) {
             //如果初始化状态为true
 
-            this.selectList[2].text = this.t.cancelSticky;
-          }
-          this.isLiked = data.firstPost.isLiked;
-          this.topicStatus = data.isApproved;
-          if (!data.paid || data.paidUsers.length > 0) {
+          this.selectList[2].text = this.t.cancelSticky;
+        }
+        this.isLiked = data.firstPost.isLiked;
+        this.topicStatus = data.isApproved;
+        if (!data.paid || data.paidUsers.length > 0) {
+          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+            this.paidStatus = false;
+          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
             this.paidStatus = true;
           } else {
-            this.paidStatus = false;
+            this.paidStatus = true;
           }
-          if (data.type == 3) {
-            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
-          } else if (data.type == 2) {
-            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
-          } else if (data.type == 1) {
-            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-          }
-          if (data.price <= 0) {
+        } else {
+          this.paidStatus = false;
+        }
+        if (data.type == 3) {
+          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
+        } else if (data.type == 2) {
+          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
+        } else if (data.type == 1) {
+          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+        }
+        if (data.price <= 0) {
+          if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === false) {
+            this.rewardStatus = false;
+          } else if (this.system === 'ios' && this.detectionmodel === 'public' && this.paymentmodel === true) {
             this.rewardStatus = true;
           } else {
-            this.rewardStatus = false;
+            this.rewardStatus = true;
           }
-          if (data.firstPost.likedUsers.length < 1) {
-            this.likedStatus = false;
-          } else {
-            this.likedStatus = true;
-          }
-        })
-        .catch(err => {
-          // if (err.statusCode == 404) {
-          //   console.log('走了333');
-          //   this.$store.dispatch('forum/setError', {
-          //     code: 'thread_deleted',
-          //     status: 500,
-          //   });
-          //   this.loaded = false;
-          // }
-          console.log(err);
-        });
+        } else {
+          this.rewardStatus = false;
+        }
+        if (data.firstPost.likedUsers.length < 1) {
+          this.likedStatus = false;
+        } else {
+          this.likedStatus = true;
+        }
+      });
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus) {
