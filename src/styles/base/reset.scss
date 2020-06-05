@@ -183,7 +183,9 @@ page {
     position: absolute;
     top: 18rpx;
     left: 20rpx;
+    /* #ifndef MP-WEIXIN */
     line-height: 1;
+    /* #endif */
   }
   .icon-close {
     position: absolute;
@@ -217,7 +219,9 @@ page {
     position: absolute;
     top: 18rpx;
     right: 20rpx;
+    /* #ifndef MP-WEIXIN */
     line-height: 1;
+    /* #endif */
   }
 }
 

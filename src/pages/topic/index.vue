@@ -130,7 +130,7 @@
                 :user-role="post.user.groups"
                 :comment-time="post.createdAt"
                 :comment-status="post.isApproved"
-                :comment-content="post.summary"
+                :comment-content="post.contentHtml"
                 :reply-list="post.lastThreeComments"
                 :comment-like-count="post.likeCount"
                 :images-list="post.images"
