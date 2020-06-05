@@ -1519,6 +1519,7 @@ export default {
     shareClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.$refs.sharePopup.open();
       console.log(this.forums, '!!~~~~~');
