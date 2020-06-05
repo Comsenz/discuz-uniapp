@@ -210,9 +210,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-/deep/ .themeItem {
-  margin-right: 0;
-  margin-left: 0;
-}
-</style>
