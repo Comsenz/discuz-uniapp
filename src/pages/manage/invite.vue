@@ -1,6 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <view class="invite">
+    <scroll-view scroll-y show-scrollbar="false" show-icon class="invite">
       <!-- 标签栏 -->
       <view class="invite-tabs">
         <qui-tabs
@@ -21,12 +21,6 @@
               @share="share"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">
-                {{ i18n.t('manage.generateInvitationUrl') }}
-              </button>
-            </view>
           </view>
           <view v-if="current === 1" class="items">
             <qui-invite
@@ -57,47 +51,48 @@
           </view>
         </view>
       </view>
-      <!-- 邀请链接弹窗 -->
-      <uni-popup ref="popup" type="bottom">
-        <scroll-view style="height: 968rpx;" scroll-y="true">
-          <view class="popup-wrap">
-            <view class="popup-wrap-con">
-              <view v-for="item in groupList" :key="item._jv.id">
-                <view class="popup-wrap-con-text" @click="generateUrl(item)">{{ item.name }}</view>
-                <view class="popup-wrap-con-line"></view>
-              </view>
-            </view>
-            <view class="popup-wrap-space"></view>
-            <text class="popup-wrap-btn" @click="cancelModify">{{ i18n.t('home.cancel') }}</text>
-          </view>
-        </scroll-view>
-      </uni-popup>
-      <!-- 分享弹窗 -->
-      <uni-popup ref="popupShare" type="bottom">
-        <view class="popup-share">
-          <view class="popup-share-content" style="box-sizing: border-box;">
-            <button class="popup-share-button__center" open-type="share"></button>
-            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-              <view class="popup-share-content-image">
-                <view class="popup-share-box">
-                  <qui-icon
-                    class="content-image"
-                    :name="item.icon"
-                    size="46"
-                    color="#777"
-                  ></qui-icon>
-                </view>
-              </view>
-              <text class="popup-share-content-text">{{ item.text }}</text>
-            </view>
-          </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancelShare('share')">
-            {{ i18n.t('home.cancel') }}
-          </text>
-        </view>
-      </uni-popup>
+    </scroll-view>
+    <!-- 邀请链接按钮 -->
+    <view class="invite-button">
+      <button class="btn" @click="generate">
+        {{ i18n.t('manage.generateInvitationUrl') }}
+      </button>
     </view>
+    <!-- 邀请链接弹窗 -->
+    <uni-popup ref="popup" type="bottom">
+      <scroll-view scroll-y style="max-height: 968rpx;">
+        <view class="popup-wrap">
+          <view class="popup-wrap-con">
+            <view v-for="item in groupList" :key="item._jv.id">
+              <view class="popup-wrap-con-text" @click="generateUrl(item)">{{ item.name }}</view>
+              <view class="popup-wrap-con-line"></view>
+            </view>
+          </view>
+          <view class="popup-wrap-space"></view>
+          <text class="popup-wrap-btn" @click="cancelModify">{{ i18n.t('home.cancel') }}</text>
+        </view>
+      </scroll-view>
+    </uni-popup>
+    <!-- 分享弹窗 -->
+    <uni-popup ref="popupShare" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content" style="box-sizing: border-box;">
+          <button class="popup-share-button__center" open-type="share"></button>
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box">
+                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
+              </view>
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancelShare('share')">
+          {{ i18n.t('home.cancel') }}
+        </text>
+      </view>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -128,6 +123,7 @@ export default {
           name: 'wx',
         },
       ],
+      navbarHeight: 0,
     };
   },
   onLoad() {
@@ -321,15 +317,14 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .invite {
+  position: fixed;
+  top: 0rpx;
+  right: 0rpx;
+  bottom: 150rpx;
+  left: 0rpx;
   font-size: $fg-f28;
 
   &-tabs {
-    // &-h {
-    //   position: fixed;
-    //   top: 0rpx;
-    //   width: 100%;
-    // }
-
     /deep/ .qui-tabs__item--active .qui-tabs__item__title {
       font-size: $fg-f28;
     }
@@ -347,57 +342,57 @@ export default {
     margin: 15rpx 20rpx;
     border-radius: 50%;
   }
+}
 
-  .invite-button {
-    position: fixed;
-    right: 0;
-    bottom: 40rpx;
-    left: 0;
-    width: 670rpx;
-    height: 90rpx;
-    margin: auto;
+.invite-button {
+  position: fixed;
+  right: 0;
+  bottom: 40rpx;
+  left: 0;
+  width: 670rpx;
+  height: 90rpx;
+  margin: auto;
 
-    .btn {
-      font-size: $fg-f28;
-      line-height: 90rpx;
-      color: --color(--qui-FC-333);
-      background: --color(--qui-BG-2);
-    }
-  }
-
-  .popup-wrap {
-    display: flex;
-    flex-direction: column;
+  .btn {
+    font-size: $fg-f28;
+    line-height: 90rpx;
+    color: --color(--qui-FC-333);
     background: --color(--qui-BG-2);
+  }
+}
+
+.popup-wrap {
+  display: flex;
+  flex-direction: column;
+  background: --color(--qui-BG-2);
+  border-radius: 10rpx 10rpx 0rpx 0rpx;
+
+  &-con {
     border-radius: 10rpx 10rpx 0rpx 0rpx;
 
-    &-con {
-      border-radius: 10rpx 10rpx 0rpx 0rpx;
-
-      &-text {
-        width: 100%;
-        height: 100rpx;
-        font-size: $fg-f34;
-        line-height: 100rpx;
-        text-align: center;
-      }
-
-      &-line {
-        border: 2rpx solid --color(--qui-BG-ED);
-      }
-    }
-
-    &-space {
-      border: 8rpx solid --color(--qui-BG-ED);
-    }
-
-    &-btn {
+    &-text {
       width: 100%;
       height: 100rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f34;
       line-height: 100rpx;
       text-align: center;
     }
+
+    &-line {
+      border: 2rpx solid --color(--qui-BG-ED);
+    }
+  }
+
+  &-space {
+    border: 8rpx solid --color(--qui-BG-ED);
+  }
+
+  &-btn {
+    width: 100%;
+    height: 100rpx;
+    font-size: $fg-f28;
+    line-height: 100rpx;
+    text-align: center;
   }
 }
 </style>
