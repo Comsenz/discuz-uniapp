@@ -358,7 +358,7 @@
             ></qui-uploader>
           </view>
         </view>
-        <button class="publishBtn" @click="publishClickStatus && publishClick()">
+        <button class="publish-btn" @click="publishClickStatus && publishClick()">
           {{ t.publish }}
         </button>
       </view>
@@ -813,9 +813,9 @@ export default {
               console.log('主题删除失败');
             }
           } else if (type == '3') {
-            let postArr = commentPost;
+            let postArr = post;
             postArr.isDeleted = data.isDeleted;
-            commentPost = postArr;
+            post = postArr;
             if (data.isDeleted) {
               console.log('回复删除成功');
             } else {
@@ -1856,7 +1856,7 @@ page {
     font-size: 28rpx;
   }
 }
-.publishBtn {
+.publish-btn {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;

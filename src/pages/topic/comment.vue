@@ -220,6 +220,7 @@
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
               :show-confirm-bar="barStatus"
+              adjust-position="true"
               cursor-spacing="100"
               v-show="!emojiShow"
               v-model="textAreaValue"
@@ -238,7 +239,7 @@
             ></qui-uploader>
           </view>
         </view>
-        <button class="publishBtn" @click="publishClick()">
+        <button class="publish-btn" @click="publishClick()">
           {{ t.publish }}
         </button>
       </view>
@@ -1104,26 +1105,8 @@ page {
     font-size: 28rpx;
   }
 }
-// .comment-content-box {
-//   padding: 0 40rpx 30rpx;
-//   .comment-content {
-//     width: 100%;
-//     height: 400rpx;
-//     padding: 20rpx;
-//     background: --color(--qui-FC-GRAY);
-//     border: 1px solid --color(--qui-FC-DDD);
-//     border-radius: 7rpx;
-//     box-sizing: border-box;
-//   }
-//   .comment-textarea {
-//     width: 100%;
-//     height: 94rpx;
-//     min-height: 70rpx;
-//     font-size: $fg-f28;
-//     line-height: 37rpx;
-//   }
-// }
-.publishBtn {
+
+.publish-btn {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;
