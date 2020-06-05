@@ -128,7 +128,6 @@
                 <qui-topic-comment
                   v-if="!commentPost.isDeleted"
                   :post-id="commentPost._jv.id"
-                  :comment-status="commentPost.isDeleted"
                   :comment-avatar-url="commentPost.user.avatarUrl"
                   :user-name="commentPost.user.username"
                   :is-liked="commentPost.isLiked"
