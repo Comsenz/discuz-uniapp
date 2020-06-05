@@ -410,6 +410,7 @@ export default {
         this.$store
           .dispatch('jv/get', ['posts/' + this.commentId, { params }])
           .then(data => {
+            console.log(data, '这是当前评论接口返回的数据');
             if (data.isDeleted) {
               console.log('走了111');
               this.$store.dispatch('forum/setError', {
@@ -502,16 +503,33 @@ export default {
         .dispatch('jv/patch', params)
         .then(data => {
           if (type == '1') {
+            const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
+            // 当前评论点赞
             this.isLiked = data.isLiked;
-            if (data.isLiked) {
-              // 未点赞时，点击点赞
+            if (this.isLiked) {
               this.post.likedUsers.unshift(this.user);
-              // this.post.likeCount++;
+              orgignPost._jv.relationships.likedUsers.data.unshift({
+                type: this.user._jv.type,
+                id: this.user._jv.id,
+              });
             } else {
-              // 已点赞时，取消点赞
-              this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              // this.post.firstPost.likeCount--;
+              this.post.likedUsers.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
+              orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
             }
+
+            // if (data.isLiked) {
+            //   // 未点赞时，点击点赞
+            //   this.post.likedUsers.unshift(this.user);
+            //   // this.post.likeCount++;
+            // } else {
+            //   // 已点赞时，取消点赞
+            //   this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
+            //   // this.post.firstPost.likeCount--;
+            // }
           } else if (type == '2') {
             if (data.isDeleted) {
               uni.redirectTo({

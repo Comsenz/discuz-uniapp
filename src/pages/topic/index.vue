@@ -1188,24 +1188,6 @@ export default {
             }
             _this.getOrderStatus(_this.orderSn);
           }, 3000);
-
-          // console.log(_this.payTypeVal, '支付类型');
-          // _this.payShowStatus = false;
-          // _this.coverLoading = false;
-
-          // _this.$refs.toast.show({ message: _this.p.paySuccess });
-          // if (_this.payTypeVal == 0) {
-          //   // 这是主题支付，支付完成刷新详情页，重新请求数据
-          //   console.log('这是主题支付');
-          //   _this.loadThread();
-          // } else if (_this.payTypeVal == 1) {
-          //   // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-          //   _this.thread._jv.relationships.rewardedUsers.data.push({
-          //     type: _this.user._jv.type,
-          //     id: _this.user.id.toString(),
-          //   });
-          //   _this.thread.rewardedUsers.unshift(_this.user);
-          // }
         },
         fail: function(err) {
           console.log('微信支付失败');
