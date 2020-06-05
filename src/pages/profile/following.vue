@@ -9,21 +9,25 @@
       >
         <image
           class="follow-content__items__avatar"
-          :src="followingItem.toUser.avatarUrl || '/static/noavatar.gif'"
+          :src="(followingItem.toUser && followingItem.toUser.avatarUrl) || '/static/noavatar.gif'"
           alt="avatarUrl"
           mode="aspectFill"
         ></image>
         <qui-cell-item
-          :title="followingItem.toUser.username"
+          :title="(followingItem.toUser && followingItem.toUser.username) || ''"
           slot-right
-          :brief="followingItem.toUser.groups ? followingItem.toUser.groups[0].name : ''"
+          :brief="
+            followingItem.toUser && followingItem.toUser.groups
+              ? followingItem.toUser.groups[0].name
+              : ''
+          "
         >
           <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
           <view
             class="follow-content__items__operate"
             @tap="addFollow(followingItem.toUser, index)"
             @tap.stop
-            v-if="followingItem.toUser.id != currentLoginId"
+            v-if="followingItem.toUser && followingItem.toUser.id != currentLoginId"
           >
             <text>
               {{

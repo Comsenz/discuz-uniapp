@@ -12,12 +12,12 @@
           <view class="profile-info__box__detail">
             <image
               class="profile-info__box__detail-avatar"
-              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
+              :src="userInfo.avatarUrl"
               alt="avatarUrl"
               mode="aspectFill"
             ></image>
             <qui-cell-item
-              :title="userInfo.username"
+              :title="userInfo.username || ''"
               slot-right
               :brief="userInfo.groupsName"
               :border="false"
@@ -138,6 +138,7 @@ export default {
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
       userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
+      userInfo.avatarUrl = userInfo.avatarUrl || '/static/noavatar.gif';
       this.setNum(userInfo);
       return userInfo;
     },
@@ -148,7 +149,7 @@ export default {
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
     const { userId, current } = params;
-    this.userId = userId || this.currentLoginId;
+    this.userId = parseInt(userId, 10) || this.currentLoginId;
     this.current = current || 0;
   },
   // 解决左上角返回数据不刷新情况
