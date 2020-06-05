@@ -150,7 +150,7 @@ export default {
     // 区分是自己的主页还是别人的主页
     const { userId, current } = params;
     this.userId = parseInt(userId, 10) || this.currentLoginId;
-    this.current = current || 0;
+    this.current = parseInt(current, 10) || 0;
   },
   // 解决左上角返回数据不刷新情况
   onShow() {

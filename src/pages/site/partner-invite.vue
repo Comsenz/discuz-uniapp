@@ -243,8 +243,8 @@ export default {
     color: --color(--qui-FC-777);
   }
 }
-.header .circleDet .circleDet-num,
-.header .circleDet .circleDet-share {
+.header /deep/ .circleDet-num,
+.header /deep/ .circleDet-share {
   color: --color(--qui-FC-333);
 }
 //下面部分样式
