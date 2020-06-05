@@ -391,7 +391,7 @@ export default {
       posts: [], //评论列表数据
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
-      pageSize: 5, //这是主题回复每页数据条数
+      pageSize: 20, //这是主题回复每页数据条数
       payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
       loadDetailCommnetStatusId: 0,
       postIndex: '', //点击主题评论时的index
@@ -1244,6 +1244,9 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (param.type == '0') {
         uni.redirectTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
@@ -1254,6 +1257,9 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log(id, '这是当前主题用户Id');
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1261,6 +1267,9 @@ export default {
     },
     // 主题支付
     payClickShow() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log('主题支付');
       this.payStatus = false;
       this.payStatusNum = 0;
@@ -1291,6 +1300,9 @@ export default {
     },
     // 打赏
     rewardClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log('这是打赏');
       this.payStatus = false;
       this.payStatusNum = 0;
@@ -1414,22 +1426,34 @@ export default {
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       uni.navigateTo({
         url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
       });
     },
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus, post);
     },
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log(post, '点击时');
       this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复
     replyComment(postId, postIndex) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (!this.thread.canReply) {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
@@ -1443,6 +1467,9 @@ export default {
     },
     // 点击图片
     imageClick(imageId) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.previewImg();
     },
     // 点击分类标签
@@ -1462,14 +1489,23 @@ export default {
     },
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.postOpera(postId, '1', canLike, isLiked);
     },
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment(threadId) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;
         this.$refs.commentPopup.open();
@@ -1481,6 +1517,9 @@ export default {
     },
     // 分享
     shareClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.$refs.sharePopup.open();
       console.log(this.forums, '!!~~~~~');
       if (this.forums.set_site.site_mode == 'pay') {

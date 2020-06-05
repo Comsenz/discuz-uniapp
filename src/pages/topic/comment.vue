@@ -342,7 +342,7 @@ export default {
       commentId: '', //当前评论的Id
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
-      pageSize: 5, //这是主题回复每页数据条数
+      pageSize: 20, //这是主题回复每页数据条数
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
       imageStatus: true, // 头像地址错误时显示默认头像
@@ -373,7 +373,9 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2MorningOrAfternoon(this.thread.createdAt);
+      if (this.thread.createdAt) {
+        return time2MorningOrAfternoon(this.thread.createdAt);
+      }
     },
   },
   onLoad(option) {
@@ -442,6 +444,7 @@ export default {
             this.loadingStatus = false;
           })
           .catch(err => {
+            console.log('这是评论404');
             this.loaded = false;
             this.loadingStatus = false;
             console.log(err);
@@ -470,9 +473,11 @@ export default {
               this.status = true;
             }
             this.thread = data;
+            console.log('这是主题数据');
             this.loadingStatus = false;
           })
           .catch(err => {
+            console.log('这是主题404');
             this.status = false;
             this.loadingStatus = false;
             console.log(err);
@@ -538,19 +543,22 @@ export default {
                 value.id == this.user.id && item.splice(key, 1);
               });
             }
-
-            // if (data.isLiked) {
-            //   // 未点赞时，点击点赞
-            //   this.post.likedUsers.unshift(this.user);
-            //   // this.post.likeCount++;
-            // } else {
-            //   // 已点赞时，取消点赞
-            //   this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-            //   // this.post.firstPost.likeCount--;
-            // }
           } else if (type == '2') {
             if (data.isDeleted) {
-              uni.redirectTo({
+              // const pages = getCurrentPages();
+              // const delta = pages.indexOf(pages[pages.length - 1]);
+              // console.log(pages, pages[delta - 1].route, '~~~~~');
+              // if (pages[delta - 1].route == 'pages/topic/index') {
+              //   uni.navigateBack({
+              //     delta: 1,
+              //   });
+              // } else {
+              //   uni.redirectTo({
+              //     url: `/pages/topic/index?id=${this.threadId}`,
+              //   });
+              // }
+
+              uni.navigateBack({
                 url: '/pages/topic/index?id=' + this.threadId,
               });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
@@ -561,6 +569,9 @@ export default {
             let postArr = commentPost;
             postArr.isDeleted = data.isDeleted;
             commentPost = postArr;
+            // this.post.replyCount--;
+            const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+            orgignPost.replyCount -= 1;
             if (data.isDeleted) {
               // 回复的评论删除成功
               this.$refs.toast.show({ message: this.t.deleteSuccess });
@@ -622,11 +633,15 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
+          console.log(res, '这是发布后');
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
           this.postComments.push(res);
-          this.post.replyCount++;
+          // this.post.replyCount += 1;
+          const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+          console.log(orgignPost, '获取呀');
+          orgignPost.replyCount += 1;
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -759,7 +774,7 @@ export default {
           delta: 1,
         });
       } else {
-        uni.redirectTo({
+        uni.navigateTo({
           url: `/pages/topic/index?id=${this.threadId}`,
         });
       }

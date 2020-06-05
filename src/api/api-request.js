@@ -92,6 +92,17 @@ http.interceptor.response(
             //   delta: 1,
             // });
             break;
+          case 'permission_denied':
+            console.log('没有查看权限');
+            Vue.prototype.$store.dispatch('forum/setError', {
+              code: 'type_401',
+              status: 500,
+            });
+            // uni.showToast({ title: i18n.t('core.page_not_found_detail') });
+            // uni.navigateBack({
+            //   delta: 1,
+            // });
+            break;
           case 'not_install':
           case 'site_closed':
           case 'ban_user':
