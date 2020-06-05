@@ -178,6 +178,24 @@
         }"
       ></qui-load-more>
     </scroll-view>
+    <!--<view class="det-ft" v-if="footerShow">
+      <view class="det-ft-con">
+        <view class="det-ft-child flex">
+          <qui-icon :name="icon - liked" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">
+            abc
+          </view>
+        </view>
+        <view class="det-ft-child flex">
+          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.writeComment }}</view>
+        </view>
+        <view class="det-ft-child flex">
+          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.share }}</view>
+        </view>
+      </view>
+    </view>-->
     <!--轻提示-->
     <qui-toast ref="toast"></qui-toast>
     <!--回复弹框-->
@@ -220,7 +238,6 @@
               placeholder-style="color:#b5b5b5;font-size: 28rpx;"
               placeholder-class="text-placeholder"
               :show-confirm-bar="barStatus"
-              adjust-position="true"
               cursor-spacing="100"
               v-show="!emojiShow"
               v-model="textAreaValue"
@@ -609,7 +626,7 @@ export default {
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
           this.postComments.push(res);
-          this.post.postCount++;
+          this.post.replyCount++;
           this.textAreaValue = '';
           this.uploadFile = '';
         })
