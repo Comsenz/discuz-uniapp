@@ -33,21 +33,25 @@
           >
             <text>
               {{
-                followerItem.fromUser.follow == 0
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
                   ? i18n.t('profile.following')
-                  : followerItem.fromUser.follow == 1
+                  : (followerItem.fromUser && followerItem.fromUser.follow) == 1
                   ? i18n.t('profile.followed')
                   : i18n.t('profile.mutualfollow')
               }}
             </text>
             <qui-icon
               class="text"
-              :name="followerItem.fromUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
+              :name="
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
+                  ? 'icon-follow'
+                  : 'icon-each-follow'
+              "
               size="22"
               :color="
-                followerItem.fromUser.follow == 0
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
                   ? '#777'
-                  : followerItem.fromUser.follow == 1
+                  : (followerItem.fromUser && followerItem.fromUser.follow) == 1
                   ? '#ddd'
                   : '#ff8888'
               "
