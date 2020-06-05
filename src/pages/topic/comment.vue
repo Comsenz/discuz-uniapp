@@ -124,48 +124,49 @@
               {{ post.replyCount }}{{ t.item }}{{ t.comment }}
             </view>
             <view v-if="postComments.length > 0">
-              <qui-topic-comment
-                v-for="(commentPost, index) in postComments"
-                :key="index"
-                :post-id="commentPost._jv.id"
-                :comment-avatar-url="commentPost.user.avatarUrl"
-                :user-name="commentPost.user.username"
-                :is-liked="commentPost.isLiked"
-                :user-role="commentPost.user.groups"
-                :comment-time="commentPost.createdAt"
-                :comment-status="commentPost.isApproved"
-                :comment-content="commentPost.contentHtml"
-                :comment-like-count="commentPost.likeCount"
-                :images-list="commentPost.images"
-                :reply-count="commentPost.replyCount"
-                :can-delete="commentPost.canHide"
-                :comment-show="false"
-                @personJump="personJump(commentPost.user.id)"
-                @commentLikeClick="
-                  commentLikeClick(
-                    commentPost._jv.id,
-                    '4',
-                    commentPost.canLike,
-                    commentPost.isLiked,
-                    index,
-                  )
-                "
-                @commentJump="commentJump(commentPost._jv.id)"
-                @imageClick="imageClick"
-                @deleteComment="
-                  deleteComment(
-                    commentPost._jv.id,
-                    '3',
-                    commentPost.canHide,
-                    commentPost.isDeleted,
-                    commentPost,
-                  )
-                "
-              ></qui-topic-comment>
+              <view v-for="(commentPost, index) in postComments" :key="index">
+                <qui-topic-comment
+                  v-if="!commentPost.isDeleted"
+                  :post-id="commentPost._jv.id"
+                  :comment-status="commentPost.isDeleted"
+                  :comment-avatar-url="commentPost.user.avatarUrl"
+                  :user-name="commentPost.user.username"
+                  :is-liked="commentPost.isLiked"
+                  :user-role="commentPost.user.groups"
+                  :comment-time="commentPost.createdAt"
+                  :comment-status="commentPost.isApproved"
+                  :comment-content="commentPost.contentHtml"
+                  :comment-like-count="commentPost.likeCount"
+                  :images-list="commentPost.images"
+                  :reply-count="commentPost.replyCount"
+                  :can-delete="commentPost.canHide"
+                  :comment-show="false"
+                  @personJump="personJump(commentPost.user.id)"
+                  @commentLikeClick="
+                    commentLikeClick(
+                      commentPost._jv.id,
+                      '4',
+                      commentPost.canLike,
+                      commentPost.isLiked,
+                      index,
+                      commentPost,
+                    )
+                  "
+                  @commentJump="commentJump(commentPost._jv.id)"
+                  @imageClick="imageClick"
+                  @deleteComment="
+                    deleteComment(
+                      commentPost._jv.id,
+                      '3',
+                      commentPost.canHide,
+                      commentPost.isDeleted,
+                      commentPost,
+                    )
+                  "
+                ></qui-topic-comment>
+              </view>
             </view>
           </view>
-
-          <!-- <view>{{ forums.set_site.site_name }}</view> -->
         </view>
       </view>
 
@@ -244,12 +245,15 @@
       </view>
     </uni-popup>
   </qui-page>
+  <view
+    v-else-if="(loadingStatus && !loaded && !thread.isDeleted) || (loadingStatus && !status)"
+    class="loading"
+  >
+    <u-loading :size="60"></u-loading>
+  </view>
   <qui-page-message
     v-else-if="thread.isDeleted || post.isDeleted || !loaded || !status"
   ></qui-page-message>
-  <view v-else-if="(loadingStatus && !loaded) || (loadingStatus && !statuas)" class="loading">
-    <u-loading :size="60"></u-loading>
-  </view>
 </template>
 
 <script>
@@ -459,8 +463,8 @@ export default {
     },
 
     // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
-    postOpera(id, type, canStatus, isStatus, commentPost = {}) {
-      console.log(id, type, canStatus, isStatus, (commentPost = {}), '这是调用接口时');
+    postOpera(id, type, canStatus, isStatus, commentPost) {
+      console.log(id, type, canStatus, isStatus, commentPost, '这是调用接口时');
       if (type == '1' && !canStatus) {
         this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
@@ -519,9 +523,9 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '3') {
-            commentPost.isDeleted = data.isDeleted;
-            console.log(commentPost, '这是修改完');
-            // this.postComments[this.commentIndex].isDeleted = data.isDeleted;
+            let postArr = commentPost;
+            postArr.isDeleted = data.isDeleted;
+            commentPost = postArr;
             if (data.isDeleted) {
               // 回复的评论删除成功
               this.$refs.toast.show({ message: this.t.deleteSuccess });
@@ -530,13 +534,14 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '4') {
-            this.postComments[this.commentIndex].isLiked = data.isLiked;
+            let postArr = commentPost;
+            postArr.isLiked = data.isLiked;
+            postArr.likeCount = data.likeCount;
+            commentPost = postArr;
             if (data.isLiked) {
               // 评论点赞成功
-              // this.postComments[this.commentIndex].likeCount++;
             } else {
               // 评论点赞失败
-              // this.postComments[this.commentIndex].likeCount--;
             }
           }
         })
@@ -705,20 +710,42 @@ export default {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
         // this.commentId = postId;
-        this.commentPopupStatus = true;
         this.$refs.commentPopup.open();
+        this.commentPopupStatus = true;
       }
     },
     // 跳回到主题详情页
     contentClick() {
-      uni.redirectTo({
-        url: `/pages/topic/index?id=${this.threadId}`,
-      });
+      const pages = getCurrentPages();
+      const delta = pages.indexOf(pages[pages.length - 1]);
+      console.log(pages, pages[delta - 1].route, '~~~~~');
+      if (pages[delta - 1].route == 'pages/topic/index') {
+        uni.navigateBack({
+          delta: 1,
+        });
+      } else {
+        uni.redirectTo({
+          url: `/pages/topic/index?id=${this.threadId}`,
+        });
+      }
+
+      // if (pages.length === 1) {
+      //   // uni.navigateTo({
+      //   //   url: '/pages/home/index',
+      //   // });
+      // } else {
+      //   // uni.navigateBack({
+      //   //   delta,
+      //   // });
+      // }
+      // uni.redirectTo({
+      //   url: `/pages/topic/index?id=${this.threadId}`,
+      // });
     },
     // 当前回复点赞
-    commentLikeClick(postId, type, canLike, isLiked, commentIndex) {
+    commentLikeClick(postId, type, canLike, isLiked, commentIndex, commentPost) {
       this.commentIndex = commentIndex;
-      this.postOpera(postId, '4', canLike, isLiked);
+      this.postOpera(postId, '4', canLike, isLiked, commentPost);
     },
     // 下拉加载
     pullDown() {
@@ -1011,16 +1038,27 @@ page {
   border-top-left-radius: 10rpx;
   box-sizing: border-box;
 }
+.comment-popup-topbox {
+  position: relative;
+  padding: 40rpx 0 20rpx;
+  margin: 0 40rpx;
+}
 .comment-popup-top {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 40rpx 40rpx 20rpx;
+
   .comment-popup-top-l {
+    // flex: 1;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     width: 195rpx;
+  }
+  .text-word-tip {
+    font-size: $fg-f24;
+    line-height: 1;
+    color: --color(--qui-FC-777);
   }
   .comm-icon {
     flex: 1;
@@ -1031,7 +1069,7 @@ page {
   padding: 0 40rpx 30rpx;
   .comment-content {
     width: 100%;
-    height: 400rpx;
+    height: 420rpx;
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
@@ -1045,7 +1083,29 @@ page {
     font-size: $fg-f28;
     line-height: 37rpx;
   }
+  .text-placeholder {
+    font-size: 28rpx;
+  }
 }
+// .comment-content-box {
+//   padding: 0 40rpx 30rpx;
+//   .comment-content {
+//     width: 100%;
+//     height: 400rpx;
+//     padding: 20rpx;
+//     background: --color(--qui-FC-GRAY);
+//     border: 1px solid --color(--qui-FC-DDD);
+//     border-radius: 7rpx;
+//     box-sizing: border-box;
+//   }
+//   .comment-textarea {
+//     width: 100%;
+//     height: 94rpx;
+//     min-height: 70rpx;
+//     font-size: $fg-f28;
+//     line-height: 37rpx;
+//   }
+// }
 .publishBtn {
   width: 100%;
   height: 100rpx;

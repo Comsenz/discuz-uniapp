@@ -310,12 +310,6 @@
                 @click="emojiShow = !emojiShow"
               ></qui-icon>
               <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
-              <!--<qui-icon
-                name="icon-image"
-                :size="40"
-                class="comm-icon"
-                @click="imageUploader"
-              ></qui-icon>-->
             </view>
             <view class="text-word-tip">
               {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
@@ -370,10 +364,10 @@
       </view>
     </uni-popup>
   </qui-page>
-  <qui-page-message v-else-if="thread.isDeleted || !loaded"></qui-page-message>
-  <view v-else-if="loadingStatus && !loaded" class="loading">
+  <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
     <u-loading :size="60"></u-loading>
   </view>
+  <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
 </template>
 
 <script>
@@ -758,8 +752,8 @@ export default {
         });
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
-    postOpera(id, type, canStatus, isStatus, post = {}) {
-      console.log(id, type, canStatus, isStatus, (post = {}), '这是调用接口时');
+    postOpera(id, type, canStatus, isStatus, post) {
+      console.log(id, type, canStatus, isStatus, post, '这是调用接口时传的参数');
       if (type == '1' && !canStatus) {
         console.log('没有主题点赞权限');
         return;
@@ -819,17 +813,19 @@ export default {
               console.log('主题删除失败');
             }
           } else if (type == '3') {
-            post.isDeleted = data.isDeleted;
-            console.log(post, '这是修改完');
+            let postArr = commentPost;
+            postArr.isDeleted = data.isDeleted;
+            commentPost = postArr;
             if (data.isDeleted) {
               console.log('回复删除成功');
             } else {
               console.log('回复删除失败');
             }
           } else if (type == '4') {
-            post.isLiked = data.isLiked;
+            let postArr = post;
+            postArr.isLiked = data.isLiked;
+            post = postArr;
             // 评论点赞
-            // post.isLiked = data.isLiked;
             if (data.isLiked) {
               // this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
@@ -1436,7 +1432,7 @@ export default {
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
-      uni.redirectTo({
+      uni.navigateTo({
         url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
       });
     },
