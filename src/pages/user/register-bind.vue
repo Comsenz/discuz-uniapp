@@ -20,6 +20,9 @@
       <view class="register-bind-box-btn" @click="register">
         {{ i18n.t('user.registerBindId') }}
       </view>
+      <view class="register-bind-box-login" @click="jump2LoginBind">
+        {{ i18n.t('user.loginBindId') }}
+      </view>
     </view>
   </qui-page>
 </template>
@@ -30,7 +33,12 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
+      url: '', // 上一个页面的路径
     };
+  },
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
   },
   methods: {
     register() {
@@ -52,6 +60,12 @@ export default {
         icon: 'none',
         title,
         duration: 2000,
+      });
+    },
+    jump2LoginBind() {
+      console.log('登录并绑定页');
+      uni.navigateTo({
+        url: `/pages/user/login-bind?url=${this.url}`,
       });
     },
   },
@@ -95,6 +109,12 @@ export default {
     text-align: center;
     background-color: #1878f3;
     border-radius: 5rpx;
+  }
+
+  &-login {
+    margin: 20rpx 0rpx 0rpx 40rpx;
+    font-size: $fg-f28;
+    color: --color(--qui-LINK);
   }
 }
 </style>

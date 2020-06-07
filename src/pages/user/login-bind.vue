@@ -20,6 +20,9 @@
       <view class="login-bind-box-btn" @click="login">
         {{ i18n.t('user.loginBindId') }}
       </view>
+      <view class="login-bind-box-register" @click="jump2RegisterBind">
+        {{ i18n.t('user.registerBindId') }}
+      </view>
     </view>
   </qui-page>
 </template>
@@ -28,9 +31,14 @@
 export default {
   data() {
     return {
-      username: '', // 用户名
-      password: '', // 密码
+      username: 'admin', // 用户名
+      password: 'Admin123', // 密码
+      url: '', // 上一个页面的路径
     };
+  },
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
   },
   methods: {
     login() {
@@ -39,6 +47,27 @@ export default {
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+        // eslint-disable-next-line no-unused-vars
+        this.$store
+          .dispatch('session/h5Login', params)
+          .then(res => {
+            console.log('登录绑定成功', res);
+            uni.navigateTo({
+              url: this.url,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        this.clear();
         this.clear();
         console.log('登录绑定成功');
       }
@@ -52,6 +81,12 @@ export default {
         icon: 'none',
         title,
         duration: 2000,
+      });
+    },
+    jump2RegisterBind() {
+      console.log('注册并绑定页');
+      uni.navigateTo({
+        url: `/pages/user/register-bind?url=${this.url}`,
       });
     },
   },
@@ -95,6 +130,12 @@ export default {
     text-align: center;
     background-color: #1878f3;
     border-radius: 5rpx;
+  }
+
+  &-register {
+    margin: 20rpx 0rpx 0rpx 40rpx;
+    font-size: $fg-f28;
+    color: --color(--qui-LINK);
   }
 }
 </style>

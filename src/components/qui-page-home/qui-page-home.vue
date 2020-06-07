@@ -605,7 +605,16 @@ export default {
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        console.log('注册并绑定页');
+        const url = '/pages/home/index';
+        uni.navigateTo({
+          url: `/pages/user/register-bind?url=${url}`,
+        });
+        // #endif
       }
       const params = {
         _jv: {

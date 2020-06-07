@@ -3,6 +3,13 @@
   // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
   "pages": [
     {
+      "path": "pages/home/index",
+      "style": {
+        "navigationStyle": "custom"
+        // "onReachBottomDistance":126  //距离底部多远时触发 单位px
+      }
+    },
+    {
       "path": "pages/user/phone-number-login",
       "style": {
         "navigationBarTitleText": "手机号码登录"
@@ -17,7 +24,7 @@
     {
       "path": "pages/user/login-bind",
       "style": {
-        "navigationBarTitleText": "注册并绑定"
+        "navigationBarTitleText": "登录并绑定"
       }
     },
     {
@@ -39,13 +46,7 @@
       }
     },
    
-    {
-      "path": "pages/home/index",
-      "style": {
-        "navigationStyle": "custom"
-        // "onReachBottomDistance":126  //距离底部多远时触发 单位px
-      }
-    },
+    
     {
       "path": "pages/topic/index",
       "style": {
