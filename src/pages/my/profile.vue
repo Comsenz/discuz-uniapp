@@ -185,8 +185,12 @@ export default {
     position: relative;
     padding-top: 40rpx;
     padding-left: 40rpx;
+    /* #ifdef H5 */
+    margin-top: 50rpx;
+    /* #endif */
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-sizing: border-box;
   }
   .cell-item {
     padding-right: 40rpx;

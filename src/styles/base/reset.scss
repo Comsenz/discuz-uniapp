@@ -219,7 +219,7 @@ page {
     position: absolute;
     top: 18rpx;
     right: 20rpx;
-    /* #ifndef MP-WEIXIN */
+    /* #ifdef H5 */
     line-height: 1;
     /* #endif */
   }
