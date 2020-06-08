@@ -1,14 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
-    <!-- #ifndef MP-WEIXIN -->
-    <!-- <uni-nav-bar
-      title="我的资料"
-      fixed="true"
-      :color="theme == $u.light() ? '#000' : '#fff'"
-      :background-color="theme === $u.light() ? '#fff' : '#2e2f30'"
-      left-icon="arrowleft"
-      @click-left="back"
-    ></uni-nav-bar> -->
+    <!-- #ifdef H5-->
+    <qui-header-back title="我的资料"></qui-header-back>
     <!-- #endif -->
     <view class="my-profile">
       <!-- canEditUsername 是否允许修改用户名-->
@@ -46,7 +39,7 @@
             : `/pages/modify/setphon?id=${userId}`
         "
         hover-class="none"
-        v-if="forums.qcloud.qcloud_sms"
+        v-if="forums.qcloud && forums.qcloud.qcloud_sms"
       >
         <qui-cell-item
           :title="i18n.t('profile.mobile')"
@@ -77,7 +70,7 @@
       ></qui-cell-item>
       <!-- qcloud_faceid 是否开启实名认证 -->
       <qui-cell-item
-        v-if="profile.realname && forums.qcloud.qcloud_faceid"
+        v-if="profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"
         :title="i18n.t('profile.certification')"
         :addon="profile.realname"
         arrow
@@ -86,7 +79,7 @@
       <navigator
         :url="`/pages/modify/realname?id=${userId}`"
         hover-class="none"
-        v-if="!profile.realname && forums.qcloud.qcloud_faceid"
+        v-if="!profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"
       >
         <qui-cell-item
           :title="i18n.t('profile.certification')"
@@ -179,9 +172,6 @@ export default {
     },
     chooseSuccess() {
       uni.showLoading();
-    },
-    back() {
-      uni.navigateBack();
     },
   },
 };
