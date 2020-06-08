@@ -172,6 +172,9 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    post: 'Post',
+    notice: 'Notice',
+    mine: 'Mine',
     myprofile: 'My profile',
     mywallet: 'My wallet',
     myfavorite: 'My favorite',
