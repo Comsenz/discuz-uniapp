@@ -82,7 +82,22 @@ export default {
       }
     }
   },
-  onShow() {},
+  onShow(options) {
+    // 解决各类回调的兼容问题,验证码捕获captchaResult
+    if (!this.captchaTicketExpire) this.captchaTicketExpire = {};
+    if (options.scene === 1038 && options.referrerInfo.appId === 'wx5a3a7366fd07e119') {
+      const result = options.referrerInfo.extraData;
+      if (result && result.ret === 0) {
+        const theTicket = result.ticket;
+        if (!this.captchaTicketExpire[theTicket]) {
+          this.captchaTicketExpire[theTicket] = true;
+          this.$u.event.$emit('captchaResult', result);
+        }
+      } else {
+        // 用户关闭了验证码
+      }
+    }
+  },
   onHide() {},
 };
 </script>
