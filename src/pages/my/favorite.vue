@@ -20,9 +20,8 @@
           :key="index"
           :currentindex="index"
           :pay-status="(item.price > 0 && item.paid) || item.price == 0"
-          :user-name="item.user.username"
-          :theme-image="item.user.avatarUrl"
-          :theme-reply-btn="item.canReply || ''"
+          :user-name="item.user && item.user.username"
+          :theme-image="item.user && item.user.avatarUrl"
           :user-groups="item.user && item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
@@ -258,25 +257,28 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.favorite-head {
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  margin-bottom: 30rpx;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.favorite-head /deep/ .cell-item__body {
-  height: 78rpx;
-}
+
 .scroll-y {
   max-height: calc(100vh - 148rpx);
 }
-/deep/ .themeCount .addFine {
-  display: none;
-}
-/deep/ .themeCount .icon-delete {
-  position: absolute;
-  top: 35rpx;
-  right: 40rpx;
+.favorite /deep/ {
+  .favorite-head {
+    padding-top: 40rpx;
+    padding-left: 40rpx;
+    margin-bottom: 30rpx;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .cell-item__body {
+    height: 78rpx;
+  }
+  .themeCount .addFine {
+    display: none;
+  }
+  .themeCount .icon-delete {
+    position: absolute;
+    top: 35rpx;
+    right: 40rpx;
+  }
 }
 </style>

@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
+    <!-- #ifdef H5-->
+    <qui-header-back title="我的资料"></qui-header-back>
+    <!-- #endif -->
     <view class="my-profile">
       <!-- canEditUsername 是否允许修改用户名-->
       <navigator
@@ -36,7 +39,7 @@
             : `/pages/modify/setphon?id=${userId}`
         "
         hover-class="none"
-        v-if="forums.qcloud.qcloud_sms"
+        v-if="forums.qcloud && forums.qcloud.qcloud_sms"
       >
         <qui-cell-item
           :title="i18n.t('profile.mobile')"
@@ -67,7 +70,7 @@
       ></qui-cell-item>
       <!-- qcloud_faceid 是否开启实名认证 -->
       <qui-cell-item
-        v-if="profile.realname && forums.qcloud.qcloud_faceid"
+        v-if="profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"
         :title="i18n.t('profile.certification')"
         :addon="profile.realname"
         arrow
@@ -76,7 +79,7 @@
       <navigator
         :url="`/pages/modify/realname?id=${userId}`"
         hover-class="none"
-        v-if="!profile.realname && forums.qcloud.qcloud_faceid"
+        v-if="!profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"
       >
         <qui-cell-item
           :title="i18n.t('profile.certification')"
@@ -177,25 +180,31 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.my-profile {
-  position: relative;
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+.profile /deep/ {
+  .my-profile {
+    position: relative;
+    padding-top: 40rpx;
+    padding-left: 40rpx;
+    /* #ifdef H5 */
+    margin-top: 50rpx;
+    /* #endif */
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-sizing: border-box;
+  }
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body__content-title {
+  .cell-item__body__content-title {
     color: --color(--qui-FC-777);
   }
   .cell-item__body__right {
     color: --color(--qui-FC-333);
   }
-  /deep/ .qui-uploader-box {
+  .qui-uploader-box {
     display: none;
   }
-  /deep/ .no-arrow .arrow {
+  .no-arrow .arrow {
     visibility: hidden;
   }
 }

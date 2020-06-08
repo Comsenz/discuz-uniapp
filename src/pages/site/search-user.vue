@@ -2,7 +2,9 @@
   <qui-page :data-qui-theme="theme" class="search">
     <view class="search-box">
       <view class="search-box__content">
-        <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
+        <view class="icon-content-search">
+          <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+        </view>
         <input
           type="text"
           class="search-box__content-input"
@@ -125,10 +127,16 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-.search-item {
-  background-color: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+.search /deep/ {
+  .search-item {
+    background-color: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .search-box {
+    background: --color(--qui-BG-2);
+  }
 }
+
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
@@ -146,9 +154,6 @@ export default {
 .search-item__users {
   position: relative;
   padding-left: 130rpx;
-}
-.search .search-box {
-  background: --color(--qui-BG-2);
 }
 .scroll-y {
   max-height: calc(100vh - 110rpx);

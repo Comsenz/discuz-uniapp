@@ -2,14 +2,14 @@
 @import './var/dark.scss';
 @import './fn.scss';
 
-page,
-[data-qui-theme='light'] {
+
+[data-qui-theme='light'],page {
   @each $name, $color in $light {
     #{$name}: #{$color};
   }
 }
 
-[data-qui-theme='dark'] {
+[data-qui-theme='dark'],page {
   @each $name, $color in $dark {
     #{$name}: #{$color};
   }

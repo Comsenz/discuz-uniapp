@@ -64,7 +64,12 @@ export default {
         if (res && res._jv) {
           delete res._jv;
           for (let i = 0; i < res.length; i += 1) {
-            res[i].time = time2MorningOrAfternoon(res[i].created_at);
+            if (res[i].created_at) {
+              res[i].time = time2MorningOrAfternoon(res[i].created_at);
+            }
+            if (res[i].thread_created_at) {
+              res[i].thread_time = time2MorningOrAfternoon(res[i].thread_created_at);
+            }
             if (res[i].type === 'rewarded' && res[i].amount) {
               res[i].money = `￥${res[i].amount}`;
             }

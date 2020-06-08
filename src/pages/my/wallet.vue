@@ -76,15 +76,17 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.wallet {
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+.wallet-page /deep/ {
+  .wallet {
+    padding-top: 40rpx;
+    padding-left: 40rpx;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body__content-title {
+  .cell-item__body__content-title {
     color: --color(--qui-FC-777);
   }
   .cell-item__body__right {

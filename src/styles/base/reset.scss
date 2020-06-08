@@ -5,20 +5,11 @@
 
 page,
 body {
+  width: 100%;
   font: $fg-f28 $font-family 1.6;
   color: --color(--qui-FC-333);
-  background-color: --color(--qui-BG-2);
+  background-color: --color(--qui-BG-1);
 }
-// .qq-emotion {
-//   display: inline-block;
-//   width: 28rpx;
-//   height: 28rpx;
-// max-width: 100%;
-// max-height: 100%;
-// vertical-align: middle;
-// height: auto!important;
-// width: auto!important;
-// }
 
 //小程序原生组件--修改
 //多选框
@@ -183,6 +174,9 @@ page {
     position: absolute;
     top: 18rpx;
     left: 20rpx;
+    /* #ifndef MP-WEIXIN */
+    line-height: 1;
+    /* #endif */
   }
   .icon-close {
     position: absolute;
@@ -216,6 +210,9 @@ page {
     position: absolute;
     top: 18rpx;
     right: 20rpx;
+    /* #ifdef H5 */
+    line-height: 1;
+    /* #endif */
   }
 }
 

@@ -2,7 +2,9 @@
   <qui-page :data-qui-theme="theme" class="search">
     <view class="search-box">
       <view class="search-box__content">
-        <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
+        <view class="icon-content-search">
+          <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+        </view>
         <input
           type="text"
           class="search-box__content-input"
@@ -32,7 +34,6 @@
           :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
-          :theme-btn="item.canHide || ''"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
@@ -149,16 +150,22 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
-.search-item {
-  padding-top: 15rpx;
-  background-color: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
 // 主题
-.search /deep/ .themeCount {
-  padding-left: 40rpx;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  box-shadow: none;
+.search /deep/ {
+  .themeCount {
+    padding-left: 40rpx;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-shadow: none;
+  }
+  .search-item {
+    padding-top: 15rpx;
+    background-color: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .search-box {
+    padding: 30rpx 40rpx 0;
+    background: --color(--qui-BG-2);
+  }
 }
 /deep/ .themeCount .themeItem {
   padding-right: 40rpx;
@@ -172,10 +179,6 @@ export default {
 .search-item__theme {
   position: relative;
   padding-left: 130rpx;
-}
-.search .search-box {
-  padding: 30rpx 40rpx 0;
-  background: --color(--qui-BG-2);
 }
 .scroll-y {
   max-height: calc(100vh - 110rpx);

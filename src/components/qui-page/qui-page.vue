@@ -10,9 +10,11 @@
     <qui-page-message v-else-if="showMessage"></qui-page-message>
     <slot v-else />
 
+    <!-- #ifdef MP-WEIXIN -->
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
+    <!-- #endif -->
   </view>
 </template>
 
@@ -29,9 +31,14 @@ export default {
     },
     showMessage() {
       return (
-        ['not_install', 'site_closed', 'ban_user', 'model_not_found', 'dataerro'].indexOf(
-          this.forumError.code,
-        ) !== -1
+        [
+          'not_install',
+          'site_closed',
+          'ban_user',
+          'model_not_found',
+          'dataerro',
+          'permission_denied',
+        ].indexOf(this.forumError.code) !== -1
       );
     },
   },
@@ -43,20 +50,24 @@ export default {
     },
   },
   mounted() {
+    // #ifdef MP-WEIXIN
     this.$store.dispatch('session/setAuth', this.$refs.auth);
     if (!this.loading && !this.showMessage) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
     }
+    // #endif
   },
   methods: {
+    // #ifdef MP-WEIXIN
     close() {
       this.$refs.auth.close();
     },
     login() {
       this.$refs.auth.close();
     },
+    // #endif
   },
 };
 </script>

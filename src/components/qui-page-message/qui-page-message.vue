@@ -77,6 +77,7 @@ const BAN_USER = 'ban_user';
 const THREAD_DELETED = 'thread_deleted';
 const POST_DELETED = 'post_deleted';
 const IOS_DISPLAY = 'dataerro';
+const TYPE_401 = 'type_401';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -127,6 +128,13 @@ const message = {
     icon: '@/static/msg-warning.svg',
     btnclickType: 'toBack',
   },
+  [TYPE_401]: {
+    title: i18n.t('core.noViewPermission'),
+    subtitle: '',
+    btnTxt: i18n.t('core.back_home'),
+    icon: '@/static/msg-404.svg',
+    btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
+  },
 };
 export default {
   filters: {
@@ -144,9 +152,15 @@ export default {
     },
     show() {
       return (
-        [TYPE_404, TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED, POST_DELETED].indexOf(
-          this.forumError.code,
-        ) >= 0
+        [
+          TYPE_404,
+          TYPE_CLOSED,
+          NOT_INSTALL,
+          BAN_USER,
+          THREAD_DELETED,
+          POST_DELETED,
+          TYPE_401,
+        ].indexOf(this.forumError.code) >= 0
       );
     },
     inshow() {
@@ -157,7 +171,7 @@ export default {
     handleClick() {
       console.log(111);
       // 404
-      if (this.forumError.code === THREAD_DELETED) {
+      if (this.forumError.code === THREAD_DELETED || this.forumError.code === TYPE_401) {
         console.log('这是返回首页呢');
         uni.redirectTo({
           url: '/pages/home/index',

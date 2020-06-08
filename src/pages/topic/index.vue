@@ -130,7 +130,7 @@
                 :user-role="post.user.groups"
                 :comment-time="post.createdAt"
                 :comment-status="post.isApproved"
-                :comment-content="post.summary"
+                :comment-content="post.contentHtml"
                 :reply-list="post.lastThreeComments"
                 :comment-like-count="post.likeCount"
                 :images-list="post.images"
@@ -310,12 +310,6 @@
                 @click="emojiShow = !emojiShow"
               ></qui-icon>
               <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
-              <!--<qui-icon
-                name="icon-image"
-                :size="40"
-                class="comm-icon"
-                @click="imageUploader"
-              ></qui-icon>-->
             </view>
             <view class="text-word-tip">
               {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
@@ -364,16 +358,16 @@
             ></qui-uploader>
           </view>
         </view>
-        <button class="publishBtn" @click="publishClickStatus && publishClick()">
+        <button class="publish-btn" @click="publishClickStatus && publishClick()">
           {{ t.publish }}
         </button>
       </view>
     </uni-popup>
   </qui-page>
-  <qui-page-message v-else-if="thread.isDeleted || !loaded"></qui-page-message>
-  <view v-else-if="loadingStatus && !loaded" class="loading">
+  <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
     <u-loading :size="60"></u-loading>
   </view>
+  <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
 </template>
 
 <script>
@@ -397,7 +391,7 @@ export default {
       posts: [], //评论列表数据
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
-      pageSize: 5, //这是主题回复每页数据条数
+      pageSize: 20, //这是主题回复每页数据条数
       payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
       loadDetailCommnetStatusId: 0,
       postIndex: '', //点击主题评论时的index
@@ -758,8 +752,8 @@ export default {
         });
     },
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
-    postOpera(id, type, canStatus, isStatus, post = {}) {
-      console.log(id, type, canStatus, isStatus, (post = {}), '这是调用接口时');
+    postOpera(id, type, canStatus, isStatus, post) {
+      console.log(id, type, canStatus, isStatus, post, '这是调用接口时传的参数');
       if (type == '1' && !canStatus) {
         console.log('没有主题点赞权限');
         return;
@@ -819,17 +813,19 @@ export default {
               console.log('主题删除失败');
             }
           } else if (type == '3') {
-            post.isDeleted = data.isDeleted;
-            console.log(post, '这是修改完');
+            let postArr = post;
+            postArr.isDeleted = data.isDeleted;
+            post = postArr;
             if (data.isDeleted) {
               console.log('回复删除成功');
             } else {
               console.log('回复删除失败');
             }
           } else if (type == '4') {
-            post.isLiked = data.isLiked;
+            let postArr = post;
+            postArr.isLiked = data.isLiked;
+            post = postArr;
             // 评论点赞
-            // post.isLiked = data.isLiked;
             if (data.isLiked) {
               // this.posts[this.postIndex].likeCount++;
               console.log('点赞数加1');
@@ -1192,24 +1188,6 @@ export default {
             }
             _this.getOrderStatus(_this.orderSn);
           }, 3000);
-
-          // console.log(_this.payTypeVal, '支付类型');
-          // _this.payShowStatus = false;
-          // _this.coverLoading = false;
-
-          // _this.$refs.toast.show({ message: _this.p.paySuccess });
-          // if (_this.payTypeVal == 0) {
-          //   // 这是主题支付，支付完成刷新详情页，重新请求数据
-          //   console.log('这是主题支付');
-          //   _this.loadThread();
-          // } else if (_this.payTypeVal == 1) {
-          //   // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-          //   _this.thread._jv.relationships.rewardedUsers.data.push({
-          //     type: _this.user._jv.type,
-          //     id: _this.user.id.toString(),
-          //   });
-          //   _this.thread.rewardedUsers.unshift(_this.user);
-          // }
         },
         fail: function(err) {
           console.log('微信支付失败');
@@ -1266,6 +1244,9 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (param.type == '0') {
         uni.redirectTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
@@ -1276,6 +1257,9 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log(id, '这是当前主题用户Id');
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1283,6 +1267,9 @@ export default {
     },
     // 主题支付
     payClickShow() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log('主题支付');
       this.payStatus = false;
       this.payStatusNum = 0;
@@ -1313,6 +1300,9 @@ export default {
     },
     // 打赏
     rewardClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log('这是打赏');
       this.payStatus = false;
       this.payStatusNum = 0;
@@ -1436,22 +1426,34 @@ export default {
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
-      uni.redirectTo({
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      uni.navigateTo({
         url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
       });
     },
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus, post);
     },
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log(post, '点击时');
       this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复
     replyComment(postId, postIndex) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (!this.thread.canReply) {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
@@ -1465,6 +1467,9 @@ export default {
     },
     // 点击图片
     imageClick(imageId) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.previewImg();
     },
     // 点击分类标签
@@ -1484,14 +1489,23 @@ export default {
     },
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.postOpera(postId, '1', canLike, isLiked);
     },
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment(threadId) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;
         this.$refs.commentPopup.open();
@@ -1503,6 +1517,10 @@ export default {
     },
     // 分享
     shareClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+        return;
+      }
       this.$refs.sharePopup.open();
       console.log(this.forums, '!!~~~~~');
       if (this.forums.set_site.site_mode == 'pay') {
@@ -1878,7 +1896,7 @@ page {
     font-size: 28rpx;
   }
 }
-.publishBtn {
+.publish-btn {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;
