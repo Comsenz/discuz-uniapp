@@ -111,8 +111,10 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       userid: '',
@@ -139,38 +141,49 @@ export default {
       disabtype: false,
       percentage: 0,
       cost: 0,
+      interval: '',
     };
   },
   onLoad() {
-    this.userid = this.usersid;
+    // this.userid = this.usersid;
+    // console.log(this.forums);
+    this.userid = 116;
     this.setmydata();
-    this.$nextTick(() => {
-      this.cost = this.forums.set_cash.cash_rate;
-      this.percentage = this.forums.set_cash.cash_rate * 100;
-    });
+    // this.$nextTick(() => {
+    //   console.log(this.forums);
+    //   this.cost = this.forums.set_cash.cash_rate;
+    //   this.percentage = this.forums.set_cash.cash_rate * 100;
+    // });
   },
   computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
     usersid() {
       return this.$store.getters['session/get']('userId');
+    },
+  },
+  watch: {
+    forums: {
+      handler(newValue) {
+        console.log(newValue);
+        this.cost = newValue.set_cash.cash_rate;
+        this.percentage = newValue.set_cash.cash_rate * 100;
+      },
+      deep: true,
     },
   },
   methods: {
     fourse() {
       this.inshow = true;
     },
-    getCode() {
-      this.showText = false;
-      const interval = setInterval(() => {
-        this.second -= 1;
-      }, 1000);
-      setTimeout(() => {
-        clearInterval(interval);
-        this.showText = true;
-      }, 60000);
-    },
+    // getCode() {
+    //   this.showText = false;
+    //   this.interval = setInterval(() => {
+    //     this.second -= 1;
+    //   }, 1000);
+    //   setTimeout(() => {
+    //     clearInterval(this.interval);
+    //     this.showText = true;
+    //   }, 60000);
+    // },
     btndata(num) {
       this.code = num;
     },
@@ -221,6 +234,7 @@ export default {
     },
     // 点击获取验证码计时开始
     btnButton() {
+      console.log(this.second);
       if (!this.usertestphon) {
         uni.showToast({
           icon: 'none',
@@ -229,18 +243,19 @@ export default {
         });
         return;
       }
-      this.sun = !this.sun;
-      this.showText = false;
-      const interval = setInterval(() => {
+      this.posttitle();
+      clearInterval(this.interval);
+      this.sun = false;
+      this.interval = setInterval(() => {
         this.second -= 1;
+        console.log(this.second);
       }, 1000);
       setTimeout(() => {
-        clearInterval(interval);
-        this.showText = true;
-        this.sun = !this.sun;
+        console.log(11111);
+        clearInterval(this.interval);
+        this.sun = true;
         this.second = 60;
       }, 60000);
-      this.posttitle();
     },
     // 获取个人信息
     setmydata() {
@@ -271,6 +286,7 @@ export default {
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon.then(res => {
+        console.log(res);
         this.num -= 1;
         this.second = res._jv.json.data.attributes.interval;
       });
@@ -329,6 +345,7 @@ export default {
             this.setmydata();
             this.sun = true;
             this.second = 60;
+            clearInterval(this.interval);
             uni.showToast({
               title: this.i18n.t('modify.withdrawal'),
               duration: 2000,
