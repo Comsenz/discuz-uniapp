@@ -95,47 +95,47 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.freeze {
+.freeze /deep/ {
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body {
+  .cell-item__body {
     height: 150rpx;
   }
   .freeze-head__num__detail,
   .freeze-head__money__detail,
-  /deep/ .cell-item__body__right-text {
+  .cell-item__body__right-text {
     font-weight: bold;
+  }
+  .freeze-head {
+    display: flex;
+    height: 78rpx;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40rpx;
+    padding-top: 40rpx;
+    margin-bottom: 30rpx;
+    font-size: $fg-f24;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .freeze-head__num {
+    justify-content: flex-start;
+  }
+  .freeze-head__money {
+    justify-content: flex-end;
+  }
+  .freeze-head__num__detail {
+    margin: 0 5rpx;
+  }
+  .freeze-head__money__detail {
+    margin-left: 10rpx;
   }
 }
 .freeze-items {
   padding-left: 40rpx;
   background: --color(--qui-BG-2);
-}
-.freeze-head__num__detail {
-  margin: 0 5rpx;
-}
-.freeze-head__money__detail {
-  margin-left: 10rpx;
-}
-.freeze-head {
-  display: flex;
-  height: 78rpx;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40rpx;
-  padding-top: 40rpx;
-  margin-bottom: 30rpx;
-  font-size: $fg-f24;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.freeze-head__num {
-  justify-content: flex-start;
-}
-.freeze-head__money {
-  justify-content: flex-end;
 }
 .scroll-y {
   max-height: calc(100vh - 148rpx);

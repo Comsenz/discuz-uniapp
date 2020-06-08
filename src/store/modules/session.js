@@ -35,6 +35,7 @@ const actions = {
   setAuth: (context, payload) => {
     context.commit(SET_AUTH, payload);
   },
+  // #ifdef MP-WEIXIN
   login: (context, payload = {}) => {
     return new Promise((resolve, reject) => {
       uni.login({
@@ -80,6 +81,8 @@ const actions = {
       });
     });
   },
+  // #endif
+  // #ifdef H5
   h5Login: (context, payload = {}) => {
     console.log('payload', payload);
     return new Promise(resolve => {
@@ -95,6 +98,7 @@ const actions = {
       });
     });
   },
+  // #endif
 };
 
 const mutations = {

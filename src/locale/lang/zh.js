@@ -495,6 +495,9 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    post: '发帖',
+    notice: '消息',
+    mine: '我的',
     myprofile: '我的资料',
     mywallet: '我的钱包',
     myfavorite: '我的收藏',

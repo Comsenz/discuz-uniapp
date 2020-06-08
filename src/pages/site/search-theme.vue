@@ -150,16 +150,22 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
-.search-item {
-  padding-top: 15rpx;
-  background-color: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
 // 主题
-.search /deep/ .themeCount {
-  padding-left: 40rpx;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  box-shadow: none;
+.search /deep/ {
+  .themeCount {
+    padding-left: 40rpx;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-shadow: none;
+  }
+  .search-item {
+    padding-top: 15rpx;
+    background-color: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .search-box {
+    padding: 30rpx 40rpx 0;
+    background: --color(--qui-BG-2);
+  }
 }
 /deep/ .themeCount .themeItem {
   padding-right: 40rpx;
@@ -173,10 +179,6 @@ export default {
 .search-item__theme {
   position: relative;
   padding-left: 130rpx;
-}
-.search .search-box {
-  padding: 30rpx 40rpx 0;
-  background: --color(--qui-BG-2);
 }
 .scroll-y {
   max-height: calc(100vh - 110rpx);
