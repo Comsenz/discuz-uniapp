@@ -9,39 +9,49 @@
       >
         <image
           class="follow-content__items__avatar"
-          :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
+          :src="
+            (followerItem.fromUser && followerItem.fromUser.avatarUrl) || '/static/noavatar.gif'
+          "
           alt="avatarUrl"
           mode="aspectFill"
         ></image>
         <qui-cell-item
-          :title="followerItem.fromUser.username"
+          :title="(followerItem.fromUser && followerItem.fromUser.username) || ''"
           slot-right
-          :brief="followerItem.fromUser.groups ? followerItem.fromUser.groups[0].name : ''"
+          :brief="
+            followerItem.fromUser && followerItem.fromUser.groups
+              ? followerItem.fromUser.groups[0].name
+              : ''
+          "
         >
           <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
           <view
             class="follow-content__items__operate"
             @tap="addFollow(followerItem.fromUser, index)"
             @tap.stop
-            v-if="followerItem.fromUser.id != currentLoginId"
+            v-if="(followerItem.fromUser && followerItem.fromUser.id) != currentLoginId"
           >
             <text>
               {{
-                followerItem.fromUser.follow == 0
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
                   ? i18n.t('profile.following')
-                  : followerItem.fromUser.follow == 1
+                  : (followerItem.fromUser && followerItem.fromUser.follow) == 1
                   ? i18n.t('profile.followed')
                   : i18n.t('profile.mutualfollow')
               }}
             </text>
             <qui-icon
               class="text"
-              :name="followerItem.fromUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
+              :name="
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
+                  ? 'icon-follow'
+                  : 'icon-each-follow'
+              "
               size="22"
               :color="
-                followerItem.fromUser.follow == 0
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
                   ? '#777'
-                  : followerItem.fromUser.follow == 1
+                  : (followerItem.fromUser && followerItem.fromUser.follow) == 1
                   ? '#ddd'
                   : '#ff8888'
               "

@@ -124,48 +124,48 @@
               {{ post.replyCount }}{{ t.item }}{{ t.comment }}
             </view>
             <view v-if="postComments.length > 0">
-              <qui-topic-comment
-                v-for="(commentPost, index) in postComments"
-                :key="index"
-                :post-id="commentPost._jv.id"
-                :comment-avatar-url="commentPost.user.avatarUrl"
-                :user-name="commentPost.user.username"
-                :is-liked="commentPost.isLiked"
-                :user-role="commentPost.user.groups"
-                :comment-time="commentPost.createdAt"
-                :comment-status="commentPost.isApproved"
-                :comment-content="commentPost.contentHtml"
-                :comment-like-count="commentPost.likeCount"
-                :images-list="commentPost.images"
-                :reply-count="commentPost.replyCount"
-                :can-delete="commentPost.canHide"
-                :comment-show="false"
-                @personJump="personJump(commentPost.user.id)"
-                @commentLikeClick="
-                  commentLikeClick(
-                    commentPost._jv.id,
-                    '4',
-                    commentPost.canLike,
-                    commentPost.isLiked,
-                    index,
-                  )
-                "
-                @commentJump="commentJump(commentPost._jv.id)"
-                @imageClick="imageClick"
-                @deleteComment="
-                  deleteComment(
-                    commentPost._jv.id,
-                    '3',
-                    commentPost.canHide,
-                    commentPost.isDeleted,
-                    commentPost,
-                  )
-                "
-              ></qui-topic-comment>
+              <view v-for="(commentPost, index) in postComments" :key="index">
+                <qui-topic-comment
+                  v-if="!commentPost.isDeleted"
+                  :post-id="commentPost._jv.id"
+                  :comment-avatar-url="commentPost.user.avatarUrl"
+                  :user-name="commentPost.user.username"
+                  :is-liked="commentPost.isLiked"
+                  :user-role="commentPost.user.groups"
+                  :comment-time="commentPost.createdAt"
+                  :comment-status="commentPost.isApproved"
+                  :comment-content="commentPost.contentHtml"
+                  :comment-like-count="commentPost.likeCount"
+                  :images-list="commentPost.images"
+                  :reply-count="commentPost.replyCount"
+                  :can-delete="commentPost.canHide"
+                  :comment-show="false"
+                  @personJump="personJump(commentPost.user.id)"
+                  @commentLikeClick="
+                    commentLikeClick(
+                      commentPost._jv.id,
+                      '4',
+                      commentPost.canLike,
+                      commentPost.isLiked,
+                      index,
+                      commentPost,
+                    )
+                  "
+                  @commentJump="commentJump(commentPost._jv.id)"
+                  @imageClick="imageClick"
+                  @deleteComment="
+                    deleteComment(
+                      commentPost._jv.id,
+                      '3',
+                      commentPost.canHide,
+                      commentPost.isDeleted,
+                      commentPost,
+                    )
+                  "
+                ></qui-topic-comment>
+              </view>
             </view>
           </view>
-
-          <!-- <view>{{ forums.set_site.site_name }}</view> -->
         </view>
       </view>
 
@@ -178,6 +178,24 @@
         }"
       ></qui-load-more>
     </scroll-view>
+    <!--<view class="det-ft" v-if="footerShow">
+      <view class="det-ft-con">
+        <view class="det-ft-child flex">
+          <qui-icon :name="icon - liked" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">
+            abc
+          </view>
+        </view>
+        <view class="det-ft-child flex">
+          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.writeComment }}</view>
+        </view>
+        <view class="det-ft-child flex">
+          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.share }}</view>
+        </view>
+      </view>
+    </view>-->
     <!--轻提示-->
     <qui-toast ref="toast"></qui-toast>
     <!--回复弹框-->
@@ -238,18 +256,21 @@
             ></qui-uploader>
           </view>
         </view>
-        <button class="publishBtn" @click="publishClick()">
+        <button class="publish-btn" @click="publishClick()">
           {{ t.publish }}
         </button>
       </view>
     </uni-popup>
   </qui-page>
+  <view
+    v-else-if="(loadingStatus && !loaded && !thread.isDeleted) || (loadingStatus && !status)"
+    class="loading"
+  >
+    <u-loading :size="60"></u-loading>
+  </view>
   <qui-page-message
     v-else-if="thread.isDeleted || post.isDeleted || !loaded || !status"
   ></qui-page-message>
-  <view v-else-if="(loadingStatus && !loaded) || (loadingStatus && !statuas)" class="loading">
-    <u-loading :size="60"></u-loading>
-  </view>
 </template>
 
 <script>
@@ -321,7 +342,7 @@ export default {
       commentId: '', //当前评论的Id
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
-      pageSize: 5, //这是主题回复每页数据条数
+      pageSize: 20, //这是主题回复每页数据条数
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
       imageStatus: true, // 头像地址错误时显示默认头像
@@ -352,7 +373,9 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2MorningOrAfternoon(this.thread.createdAt);
+      if (this.thread.createdAt) {
+        return time2MorningOrAfternoon(this.thread.createdAt);
+      }
     },
   },
   onLoad(option) {
@@ -407,6 +430,7 @@ export default {
         this.$store
           .dispatch('jv/get', ['posts/' + this.commentId, { params }])
           .then(data => {
+            console.log(data, '这是当前评论接口返回的数据');
             if (data.isDeleted) {
               console.log('走了111');
               this.$store.dispatch('forum/setError', {
@@ -420,6 +444,7 @@ export default {
             this.loadingStatus = false;
           })
           .catch(err => {
+            console.log('这是评论404');
             this.loaded = false;
             this.loadingStatus = false;
             console.log(err);
@@ -448,9 +473,11 @@ export default {
               this.status = true;
             }
             this.thread = data;
+            console.log('这是主题数据');
             this.loadingStatus = false;
           })
           .catch(err => {
+            console.log('这是主题404');
             this.status = false;
             this.loadingStatus = false;
             console.log(err);
@@ -459,8 +486,8 @@ export default {
     },
 
     // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
-    postOpera(id, type, canStatus, isStatus, commentPost = {}) {
-      console.log(id, type, canStatus, isStatus, (commentPost = {}), '这是调用接口时');
+    postOpera(id, type, canStatus, isStatus, commentPost) {
+      console.log(id, type, canStatus, isStatus, commentPost, '这是调用接口时');
       if (type == '1' && !canStatus) {
         this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
@@ -499,19 +526,39 @@ export default {
         .dispatch('jv/patch', params)
         .then(data => {
           if (type == '1') {
+            const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
+            // 当前评论点赞
             this.isLiked = data.isLiked;
-            if (data.isLiked) {
-              // 未点赞时，点击点赞
+            if (this.isLiked) {
               this.post.likedUsers.unshift(this.user);
-              // this.post.likeCount++;
+              orgignPost._jv.relationships.likedUsers.data.unshift({
+                type: this.user._jv.type,
+                id: this.user._jv.id,
+              });
             } else {
-              // 已点赞时，取消点赞
-              this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              // this.post.firstPost.likeCount--;
+              this.post.likedUsers.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
+              orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
             }
           } else if (type == '2') {
             if (data.isDeleted) {
-              uni.redirectTo({
+              // const pages = getCurrentPages();
+              // const delta = pages.indexOf(pages[pages.length - 1]);
+              // console.log(pages, pages[delta - 1].route, '~~~~~');
+              // if (pages[delta - 1].route == 'pages/topic/index') {
+              //   uni.navigateBack({
+              //     delta: 1,
+              //   });
+              // } else {
+              //   uni.redirectTo({
+              //     url: `/pages/topic/index?id=${this.threadId}`,
+              //   });
+              // }
+
+              uni.navigateBack({
                 url: '/pages/topic/index?id=' + this.threadId,
               });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
@@ -519,9 +566,12 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '3') {
-            commentPost.isDeleted = data.isDeleted;
-            console.log(commentPost, '这是修改完');
-            // this.postComments[this.commentIndex].isDeleted = data.isDeleted;
+            let postArr = commentPost;
+            postArr.isDeleted = data.isDeleted;
+            commentPost = postArr;
+            // this.post.replyCount--;
+            const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+            orgignPost.replyCount -= 1;
             if (data.isDeleted) {
               // 回复的评论删除成功
               this.$refs.toast.show({ message: this.t.deleteSuccess });
@@ -530,13 +580,14 @@ export default {
               this.$refs.toast.show({ message: this.t.deleteFailed });
             }
           } else if (type == '4') {
-            this.postComments[this.commentIndex].isLiked = data.isLiked;
+            let postArr = commentPost;
+            postArr.isLiked = data.isLiked;
+            postArr.likeCount = data.likeCount;
+            commentPost = postArr;
             if (data.isLiked) {
               // 评论点赞成功
-              // this.postComments[this.commentIndex].likeCount++;
             } else {
               // 评论点赞失败
-              // this.postComments[this.commentIndex].likeCount--;
             }
           }
         })
@@ -582,11 +633,15 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
+          console.log(res, '这是发布后');
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
           this.postComments.push(res);
-          this.post.postCount++;
+          // this.post.replyCount += 1;
+          const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+          console.log(orgignPost, '获取呀');
+          orgignPost.replyCount += 1;
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -705,20 +760,42 @@ export default {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
         // this.commentId = postId;
-        this.commentPopupStatus = true;
         this.$refs.commentPopup.open();
+        this.commentPopupStatus = true;
       }
     },
     // 跳回到主题详情页
     contentClick() {
-      uni.redirectTo({
-        url: `/pages/topic/index?id=${this.threadId}`,
-      });
+      const pages = getCurrentPages();
+      const delta = pages.indexOf(pages[pages.length - 1]);
+      console.log(pages, pages[delta - 1].route, '~~~~~');
+      if (pages[delta - 1].route == 'pages/topic/index') {
+        uni.navigateBack({
+          delta: 1,
+        });
+      } else {
+        uni.navigateTo({
+          url: `/pages/topic/index?id=${this.threadId}`,
+        });
+      }
+
+      // if (pages.length === 1) {
+      //   // uni.navigateTo({
+      //   //   url: '/pages/home/index',
+      //   // });
+      // } else {
+      //   // uni.navigateBack({
+      //   //   delta,
+      //   // });
+      // }
+      // uni.redirectTo({
+      //   url: `/pages/topic/index?id=${this.threadId}`,
+      // });
     },
     // 当前回复点赞
-    commentLikeClick(postId, type, canLike, isLiked, commentIndex) {
+    commentLikeClick(postId, type, canLike, isLiked, commentIndex, commentPost) {
       this.commentIndex = commentIndex;
-      this.postOpera(postId, '4', canLike, isLiked);
+      this.postOpera(postId, '4', canLike, isLiked, commentPost);
     },
     // 下拉加载
     pullDown() {
@@ -1011,16 +1088,27 @@ page {
   border-top-left-radius: 10rpx;
   box-sizing: border-box;
 }
+.comment-popup-topbox {
+  position: relative;
+  padding: 40rpx 0 20rpx;
+  margin: 0 40rpx;
+}
 .comment-popup-top {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 40rpx 40rpx 20rpx;
+
   .comment-popup-top-l {
+    // flex: 1;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     width: 195rpx;
+  }
+  .text-word-tip {
+    font-size: $fg-f24;
+    line-height: 1;
+    color: --color(--qui-FC-777);
   }
   .comm-icon {
     flex: 1;
@@ -1031,7 +1119,7 @@ page {
   padding: 0 40rpx 30rpx;
   .comment-content {
     width: 100%;
-    height: 400rpx;
+    height: 420rpx;
     padding: 20rpx;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
@@ -1045,8 +1133,12 @@ page {
     font-size: $fg-f28;
     line-height: 37rpx;
   }
+  .text-placeholder {
+    font-size: 28rpx;
+  }
 }
-.publishBtn {
+
+.publish-btn {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;

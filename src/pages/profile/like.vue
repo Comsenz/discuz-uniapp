@@ -6,10 +6,8 @@
       :key="index"
       :currentindex="index"
       :pay-status="(item.price > 0 && item.paid) || item.price == 0"
-      :user-name="item.user.username"
-      :theme-image="item.user.avatarUrl"
-      :theme-btn="item.canHide || ''"
-      :theme-reply-btn="item.canReply || ''"
+      :user-name="item.user ? item.user.username : ''"
+      :theme-image="item.user && item.user.avatarUrl"
       :user-groups="item.user && item.user.groups"
       :theme-time="item.createdAt"
       :tags="[item.category]"
@@ -212,9 +210,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-/deep/ .themeItem {
-  margin-right: 0;
-  margin-left: 0;
-}
-</style>

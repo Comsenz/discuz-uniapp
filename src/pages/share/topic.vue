@@ -153,12 +153,8 @@ export default {
           this.headerName = data.user.username;
           this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          if (data.firstPost.images.length >= 1) {
-            if (this.postyTepy === 2 && data.threadVideo.cover_url) {
-              this.implement = false;
-            } else {
-              this.implement = false;
-            }
+          if (data.firstPost.images.length >= 1 || this.postyTepy === 2) {
+            this.implement = false;
           } else {
             this.implement = true;
           }

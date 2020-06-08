@@ -10,7 +10,7 @@
       status-bar
     ></uni-nav-bar>
     <scroll-view
-      :scroll-y="scrollable"
+      scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
       class="scroll-y"
@@ -184,7 +184,6 @@ import { mapMutations, mapState } from 'vuex';
 const sysInfo = uni.getSystemInfoSync();
 
 const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
-const mainBottom = sysInfo.screenHeight - 119 /* qui-footer的高度 */ * (sysInfo.screenWidth / 750);
 const navBarTransform = `translate3d(0, -${navbarHeight}px, 0)`;
 
 export default {
@@ -266,8 +265,6 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
-      scrollable: true, // scroll-view是否可滚动的开关
-      mainBottom, // 正文区域的底部，整个屏幕高度减qui-bottom的高度
     };
   },
   computed: {
@@ -325,16 +322,6 @@ export default {
       // 首页主题内容列表
       this.loadThreads();
     });
-
-    setInterval(() => {
-      this.$uGetRect('#main').then(rect => {
-        if (rect.top >= 0 && rect.bottom < this.mainBottom) {
-          this.scrollable = false;
-        } else {
-          this.scrollable = true;
-        }
-      });
-    }, 200);
 
     this.$uGetRect('#navId').then(rect => {
       this.navTop = rect.top;
@@ -628,7 +615,16 @@ export default {
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        console.log('注册并绑定页');
+        const url = '/pages/home/index';
+        uni.navigateTo({
+          url: `/pages/user/register-bind?url=${url}`,
+        });
+        // #endif
       }
       const params = {
         _jv: {

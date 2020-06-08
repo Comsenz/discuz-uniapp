@@ -24,7 +24,6 @@
       <view class="page-message--subtitle" v-if="show">
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
-      <view>这是路由测试呢{{ page }}</view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
         v-if="show && message.btnclickType == 'siteClose'"
@@ -78,6 +77,7 @@ const BAN_USER = 'ban_user';
 const THREAD_DELETED = 'thread_deleted';
 const POST_DELETED = 'post_deleted';
 const IOS_DISPLAY = 'dataerro';
+const TYPE_401 = 'type_401';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -128,6 +128,13 @@ const message = {
     icon: '@/static/msg-warning.svg',
     btnclickType: 'toBack',
   },
+  [TYPE_401]: {
+    title: i18n.t('core.noViewPermission'),
+    subtitle: '',
+    btnTxt: i18n.t('core.back_home'),
+    icon: '@/static/msg-404.svg',
+    btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
+  },
 };
 export default {
   filters: {
@@ -135,11 +142,6 @@ export default {
       if (err && err.detail && code === TYPE_CLOSED) return err.detail[0];
       return subtitle;
     },
-  },
-  data() {
-    return {
-      page: '',
-    };
   },
   computed: {
     ...mapState({
@@ -150,9 +152,15 @@ export default {
     },
     show() {
       return (
-        [TYPE_404, TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED, POST_DELETED].indexOf(
-          this.forumError.code,
-        ) >= 0
+        [
+          TYPE_404,
+          TYPE_CLOSED,
+          NOT_INSTALL,
+          BAN_USER,
+          THREAD_DELETED,
+          POST_DELETED,
+          TYPE_401,
+        ].indexOf(this.forumError.code) >= 0
       );
     },
     inshow() {
@@ -163,26 +171,24 @@ export default {
     handleClick() {
       console.log(111);
       // 404
-      if (this.forumError.code === THREAD_DELETED) {
+      if (this.forumError.code === THREAD_DELETED || this.forumError.code === TYPE_401) {
         console.log('这是返回首页呢');
         uni.redirectTo({
           url: '/pages/home/index',
         });
       } else if (this.forumError.code === TYPE_404 || this.forumError.code === POST_DELETED) {
         console.log('这是Message里的404，走返回');
-        console.log(getCurrentPages());
-        this.page = getCurrentPages().length;
-        // if (getCurrentPages().length < 2) {
-        //   this.message.btnclickType == 'toHome';
-        //   uni.redirectTo({
-        //     url: '/pages/home/index',
-        //   });
-        // } else {
-        //   this.message.btnclickType == 'toBack';
-        //   uni.navigateBack({
-        //     delta: 1,
-        //   });
-        // }
+        if (getCurrentPages().length < 2) {
+          this.message.btnclickType = 'toHome';
+          uni.redirectTo({
+            url: '/pages/home/index',
+          });
+        } else {
+          this.message.btnclickType = 'toBack';
+          uni.navigateBack({
+            delta: 1,
+          });
+        }
       }
     },
     handleLoginClick() {

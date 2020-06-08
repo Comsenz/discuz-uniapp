@@ -314,8 +314,8 @@ export default {
     color: --color(--qui-FC-777);
   }
 }
-.header .circleDet .circleDet-num,
-.header .circleDet .circleDet-share {
+.header /deep/ .circleDet-num,
+.header /deep/ .circleDet-share {
   color: --color(--qui-FC-333);
 }
 //下面部分样式
@@ -326,6 +326,9 @@ export default {
 }
 .site .cell-item {
   padding-right: 40rpx;
+}
+.site-invite {
+  text-align: center;
 }
 .cell-item--auto .cell-item__body {
   height: auto;
@@ -341,10 +344,6 @@ export default {
   padding: 0 20rpx;
   margin: 50rpx auto 30rpx;
   font-size: 28rpx;
-}
-.site-invite {
-  padding-bottom: 20rpx;
-  text-align: center;
 }
 .site-item__pay .cell-item__body__right-text {
   color: --color(--qui-RED);

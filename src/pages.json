@@ -10,11 +10,43 @@
       }
     },
     {
-      "path": "pages/home/title",
+      "path": "pages/user/phone-number-login",
       "style": {
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "手机号码登录"
       }
     },
+    {
+      "path": "pages/user/verification-code-login",
+      "style": {
+        "navigationBarTitleText": "手机号码登录"
+      }
+    },
+    {
+      "path": "pages/user/login-bind",
+      "style": {
+        "navigationBarTitleText": "登录并绑定"
+      }
+    },
+    {
+      "path": "pages/user/register-bind",
+      "style": {
+        "navigationBarTitleText": "注册并绑定"
+      }
+    },
+    {
+      "path": "pages/user/login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/user/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+   
+    
     {
       "path": "pages/topic/index",
       "style": {
@@ -79,7 +111,13 @@
     {
       "path": "pages/site/index",
       "style": {
-        "navigationBarTitleText": "站点信息"
+        "navigationBarTitleText": "站点信息",
+        "app-plus": {
+					"titleNView": {
+            "titleText": "站点信息",
+            "titleSize": "30rpx"
+					}
+				}
       }
     },
     {
@@ -123,14 +161,26 @@
     {
       "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {
-        "navigationBarTitleText": "通知"
+        "navigationBarTitleText": "通知",
+        "app-plus": {
+					"titleNView": {
+            "titleText": "通知",
+            "titleSize": "30rpx"
+					}
+				}
       }
     },
     {
       "path": "pages/notice/msglist",
       "style": {
         "navigationBarTitleText": "来往记录",
-        "enablePullDownRefresh": true
+        "enablePullDownRefresh": true,
+        "app-plus": {
+					"titleNView": {
+            "titleText": "来往记录",
+            "titleSize": "30rpx"
+					}
+				}
       }
     },
 
@@ -138,25 +188,49 @@
     {
       "path": "pages/manage/index",
       "style": {
-        "navigationBarTitleText": "站点管理"
+        "navigationBarTitleText": "站点管理",
+        "app-plus": {
+					"titleNView": {
+            "titleText": "站点管理",
+            "titleSize": "30rpx"
+					}
+				}
       }
     },
     {
       "path": "pages/manage/member",
       "style": {
-        "navigationBarTitleText": "成员管理"
+        "navigationBarTitleText": "成员管理",
+        "app-plus": {
+					"titleNView": {
+            "titleText": "成员管理",
+            "titleSize": "30rpx"
+					}
+				}
       }
     },
     {
       "path": "pages/manage/users",
       "style": {
-        "navigationBarTitleText": "站点成员"
+        "navigationBarTitleText": "站点成员",
+        "app-plus": {
+					"titleNView": {
+            "titleText": "站点成员",
+            "titleSize": "30rpx"
+					}
+				}
       }
     },
     {
       "path": "pages/manage/invite",
       "style": {
-        "navigationBarTitleText": "邀请成员"
+        "navigationBarTitleText": "邀请成员",
+        "app-plus": {
+					"titleNView": {
+            "titleText": "邀请成员",
+            "titleSize": "30rpx"
+					}
+				}
       }
     },
 
