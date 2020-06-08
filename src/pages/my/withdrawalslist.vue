@@ -158,34 +158,34 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 
-.withdrawalslist {
+.withdrawalslist /deep/ {
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body {
+  .cell-item__body {
     height: 150rpx;
   }
-  /deep/ .cell-item__body__right-text {
+  .cell-item__body__right-text {
     font-weight: bold;
   }
-  /deep/ .icon-screen {
+  .icon-screen {
     margin-left: 20rpx;
+  }
+  .withdrawalslist-head {
+    padding-top: 40rpx;
+    padding-left: 40rpx;
+    margin-bottom: 30rpx;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .withdrawalslist-head .cell-item__body {
+    height: 78rpx;
   }
 }
 .withdrawalslist-items {
   padding-left: 40rpx;
   background: --color(--qui-BG-2);
-}
-.withdrawalslist-head {
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  margin-bottom: 30rpx;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.withdrawalslist-head /deep/ .cell-item__body {
-  height: 78rpx;
 }
 /deep/ .cell-item.fail .cell-item__body__content-title {
   color: --color(--qui-RED);

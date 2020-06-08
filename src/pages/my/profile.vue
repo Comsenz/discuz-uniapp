@@ -180,25 +180,27 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.my-profile {
-  position: relative;
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+.profile /deep/ {
+  .my-profile {
+    position: relative;
+    padding-top: 40rpx;
+    padding-left: 40rpx;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body__content-title {
+  .cell-item__body__content-title {
     color: --color(--qui-FC-777);
   }
   .cell-item__body__right {
     color: --color(--qui-FC-333);
   }
-  /deep/ .qui-uploader-box {
+  .qui-uploader-box {
     display: none;
   }
-  /deep/ .no-arrow .arrow {
+  .no-arrow .arrow {
     visibility: hidden;
   }
 }
