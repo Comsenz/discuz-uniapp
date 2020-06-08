@@ -5,10 +5,10 @@
 
 page,
 body {
+  width: 100%;
   font: $fg-f28 $font-family 1.6;
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
-  width: 100%;
 }
 
 //小程序原生组件--修改
