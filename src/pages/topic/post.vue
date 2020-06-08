@@ -894,6 +894,12 @@ export default {
 
       await this.$store.dispatch('jv/patch', posts).then(res => {
         if (res._jv.json.data.id) state += 1;
+        if (res._jv.json.data.attributes.isApproved === 1) {
+          this.$u.event.$emit('refreshImg', {
+            id: res._jv.json.data.relationships.thread.data.id,
+            images: res.images
+          });
+        }
       });
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;

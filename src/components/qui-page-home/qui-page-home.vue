@@ -304,6 +304,16 @@ export default {
         }
       });
     });
+    // 详情页编辑增加图片时首页增加图片
+    // this.$u.event.$on('refreshImg', res => {
+    //   this.threads.forEach((item, index) => {
+    //     if (item._jv.id === res.id) {
+    //       console.log(res.images, this.threads[index], 123);
+    //       this.threads[index].firstPost.images = res.images;
+    //       item.firstPost.images = res.images;
+    //     }
+    //   });
+    // });
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
