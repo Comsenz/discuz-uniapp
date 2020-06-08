@@ -2,7 +2,9 @@
   <qui-page :data-qui-theme="theme" class="search">
     <view class="search-box">
       <view class="search-box__content">
-        <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
+        <view class="icon-content-search">
+          <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+        </view>
         <input
           type="text"
           class="search-box__content-input"

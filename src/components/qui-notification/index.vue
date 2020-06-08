@@ -65,6 +65,10 @@
             v-html="item.post_content"
             @click="jumpMyComment(item)"
           ></view>
+          <view
+            class="list-box__notice__con__space"
+            v-if="item.post_content && item.thread_id"
+          ></view>
           <view class="list-box__notice__con__wrap" v-if="item.type === 'withdrawal'">
             <view v-if="item.cash_status === 2">
               {{ i18n.t('notice.approved') }}
@@ -93,7 +97,7 @@
                 style="display: inline-block;"
               ></view>
               <view class="list-box__notice__con__wrap-info-time">
-                {{ item.thread_created_at }}
+                {{ item.thread_time }}
               </view>
             </view>
           </view>
@@ -257,8 +261,11 @@ export default {
 
     &__con {
       &__text {
-        margin: 0rpx 0rpx 40rpx;
         color: --color(--qui-FC-333);
+      }
+
+      &__space {
+        padding: 20rpx 0rpx;
       }
 
       &__wrap {

@@ -178,6 +178,24 @@
         }"
       ></qui-load-more>
     </scroll-view>
+    <!--<view class="det-ft" v-if="footerShow">
+      <view class="det-ft-con">
+        <view class="det-ft-child flex">
+          <qui-icon :name="icon - liked" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">
+            abc
+          </view>
+        </view>
+        <view class="det-ft-child flex">
+          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.writeComment }}</view>
+        </view>
+        <view class="det-ft-child flex">
+          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+          <view class="ft-child-word">{{ t.share }}</view>
+        </view>
+      </view>
+    </view>-->
     <!--轻提示-->
     <qui-toast ref="toast"></qui-toast>
     <!--回复弹框-->
@@ -238,7 +256,7 @@
             ></qui-uploader>
           </view>
         </view>
-        <button class="publishBtn" @click="publishClick()">
+        <button class="publish-btn" @click="publishClick()">
           {{ t.publish }}
         </button>
       </view>
@@ -324,7 +342,7 @@ export default {
       commentId: '', //当前评论的Id
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, //这是主题回复当前页数
-      pageSize: 5, //这是主题回复每页数据条数
+      pageSize: 20, //这是主题回复每页数据条数
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
       imageStatus: true, // 头像地址错误时显示默认头像
@@ -355,7 +373,9 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2MorningOrAfternoon(this.thread.createdAt);
+      if (this.thread.createdAt) {
+        return time2MorningOrAfternoon(this.thread.createdAt);
+      }
     },
   },
   onLoad(option) {
@@ -410,6 +430,7 @@ export default {
         this.$store
           .dispatch('jv/get', ['posts/' + this.commentId, { params }])
           .then(data => {
+            console.log(data, '这是当前评论接口返回的数据');
             if (data.isDeleted) {
               console.log('走了111');
               this.$store.dispatch('forum/setError', {
@@ -423,6 +444,7 @@ export default {
             this.loadingStatus = false;
           })
           .catch(err => {
+            console.log('这是评论404');
             this.loaded = false;
             this.loadingStatus = false;
             console.log(err);
@@ -451,9 +473,11 @@ export default {
               this.status = true;
             }
             this.thread = data;
+            console.log('这是主题数据');
             this.loadingStatus = false;
           })
           .catch(err => {
+            console.log('这是主题404');
             this.status = false;
             this.loadingStatus = false;
             console.log(err);
@@ -502,19 +526,39 @@ export default {
         .dispatch('jv/patch', params)
         .then(data => {
           if (type == '1') {
+            const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
+            // 当前评论点赞
             this.isLiked = data.isLiked;
-            if (data.isLiked) {
-              // 未点赞时，点击点赞
+            if (this.isLiked) {
               this.post.likedUsers.unshift(this.user);
-              // this.post.likeCount++;
+              orgignPost._jv.relationships.likedUsers.data.unshift({
+                type: this.user._jv.type,
+                id: this.user._jv.id,
+              });
             } else {
-              // 已点赞时，取消点赞
-              this.post.likedUsers.splice(likedUsers.indexOf(this.user), 1);
-              // this.post.firstPost.likeCount--;
+              this.post.likedUsers.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
+              orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+                value.id == this.user.id && item.splice(key, 1);
+              });
             }
           } else if (type == '2') {
             if (data.isDeleted) {
-              uni.redirectTo({
+              // const pages = getCurrentPages();
+              // const delta = pages.indexOf(pages[pages.length - 1]);
+              // console.log(pages, pages[delta - 1].route, '~~~~~');
+              // if (pages[delta - 1].route == 'pages/topic/index') {
+              //   uni.navigateBack({
+              //     delta: 1,
+              //   });
+              // } else {
+              //   uni.redirectTo({
+              //     url: `/pages/topic/index?id=${this.threadId}`,
+              //   });
+              // }
+
+              uni.navigateBack({
                 url: '/pages/topic/index?id=' + this.threadId,
               });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
@@ -525,6 +569,9 @@ export default {
             let postArr = commentPost;
             postArr.isDeleted = data.isDeleted;
             commentPost = postArr;
+            // this.post.replyCount--;
+            const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+            orgignPost.replyCount -= 1;
             if (data.isDeleted) {
               // 回复的评论删除成功
               this.$refs.toast.show({ message: this.t.deleteSuccess });
@@ -586,11 +633,15 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
+          console.log(res, '这是发布后');
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
           this.postComments.push(res);
-          this.post.postCount++;
+          // this.post.replyCount += 1;
+          const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+          console.log(orgignPost, '获取呀');
+          orgignPost.replyCount += 1;
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -723,7 +774,7 @@ export default {
           delta: 1,
         });
       } else {
-        uni.redirectTo({
+        uni.navigateTo({
           url: `/pages/topic/index?id=${this.threadId}`,
         });
       }
@@ -1086,26 +1137,8 @@ page {
     font-size: 28rpx;
   }
 }
-// .comment-content-box {
-//   padding: 0 40rpx 30rpx;
-//   .comment-content {
-//     width: 100%;
-//     height: 400rpx;
-//     padding: 20rpx;
-//     background: --color(--qui-FC-GRAY);
-//     border: 1px solid --color(--qui-FC-DDD);
-//     border-radius: 7rpx;
-//     box-sizing: border-box;
-//   }
-//   .comment-textarea {
-//     width: 100%;
-//     height: 94rpx;
-//     min-height: 70rpx;
-//     font-size: $fg-f28;
-//     line-height: 37rpx;
-//   }
-// }
-.publishBtn {
+
+.publish-btn {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;

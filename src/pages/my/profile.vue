@@ -1,5 +1,15 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
+    <!-- #ifndef MP-WEIXIN -->
+    <!-- <uni-nav-bar
+      title="我的资料"
+      fixed="true"
+      :color="theme == $u.light() ? '#000' : '#fff'"
+      :background-color="theme === $u.light() ? '#fff' : '#2e2f30'"
+      left-icon="arrowleft"
+      @click-left="back"
+    ></uni-nav-bar> -->
+    <!-- #endif -->
     <view class="my-profile">
       <!-- canEditUsername 是否允许修改用户名-->
       <navigator
@@ -169,6 +179,9 @@ export default {
     },
     chooseSuccess() {
       uni.showLoading();
+    },
+    back() {
+      uni.navigateBack();
     },
   },
 };
