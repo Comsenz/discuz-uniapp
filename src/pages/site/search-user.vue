@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('search.searchusers')"></qui-header-back>
+    <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
         <view class="icon-content-search">
@@ -133,6 +136,9 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .search-box {
+    /* #ifdef H5 */
+    margin-top: 80rpx;
+    /* #endif */
     background: --color(--qui-BG-2);
   }
 }

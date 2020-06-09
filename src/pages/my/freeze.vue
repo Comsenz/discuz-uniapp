@@ -98,7 +98,15 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 190rpx);
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 150rpx);
+/* #endif */
 .freeze /deep/ {
+  min-height: auto;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
@@ -143,6 +151,6 @@ export default {
   }
 }
 .scroll-y {
-  max-height: calc(100vh - 160rpx);
+  max-height: $height;
 }
 </style>

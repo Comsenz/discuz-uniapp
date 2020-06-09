@@ -3,20 +3,20 @@
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('profile.myfavorite')"></qui-header-back>
     <!-- #endif -->
-    <view class="favorite-head">
-      <qui-cell-item
-        :title="`${totalData}${i18n.t('profile.item')}${i18n.t('profile.collection')}`"
-        :border="false"
-      ></qui-cell-item>
-    </view>
-    <view class="favorite-content">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        class="scroll-y"
-      >
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      @scrolltolower="pullDown"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <view class="favorite-head">
+        <qui-cell-item
+          :title="`${totalData}${i18n.t('profile.item')}${i18n.t('profile.collection')}`"
+          :border="false"
+        ></qui-cell-item>
+      </view>
+      <view class="favorite-content">
         <qui-content
           v-for="(item, index) in data"
           :ref="'myVideo' + index"
@@ -56,26 +56,31 @@
           @videoPlay="handleVideoPlay"
           @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
         ></qui-content>
-      </scroll-view>
-      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
-    </view>
-    <uni-popup ref="popupContent" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent(index)">
-                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
-              </view>
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
       </view>
-    </uni-popup>
+      <uni-popup ref="popupContent" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content">
+            <button class="popup-share-button" open-type="share"></button>
+            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box" @click="shareContent(index)">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="46"
+                    color="#777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+        </view>
+      </uni-popup>
+    </scroll-view>
   </qui-page>
 </template>
 
@@ -262,14 +267,14 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .scroll-y {
-  max-height: calc(100vh - 148rpx);
+  max-height: 100vh;
 }
 .favorite /deep/ {
   .favorite-head {
-    padding-top: 40rpx;
+    padding-top: 20rpx;
     padding-left: 40rpx;
     /* #ifdef H5 */
-    margin-top: 50rpx;
+    margin-top: 60rpx;
     /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);

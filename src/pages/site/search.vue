@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('search.search')"></qui-header-back>
+    <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
         <view class="icon-content-search">
@@ -202,9 +205,15 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .search /deep/ {
+  overflow: hidden;
   .search-item,
   .search-box {
     background-color: --color(--qui-BG-2);
+  }
+  .search-box {
+    /* #ifdef H5 */
+    margin-top: 80rpx;
+    /* #endif */
   }
 }
 .search-item {

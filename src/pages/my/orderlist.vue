@@ -204,8 +204,15 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 190rpx);
+/* #endif */
 
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 150rpx);
+/* #endif */
 .orderlist /deep/ {
+  min-height: auto;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
@@ -231,10 +238,9 @@ export default {
     margin-left: 20rpx;
   }
   .orderlist-wrap {
-    padding-top: 40rpx;
-    padding-left: 40rpx;
+    padding: 40rpx 0 0 40rpx;
     /* #ifdef H5 */
-    margin-top: 60rpx;
+    padding-top: 90rpx;
     /* #endif */
     margin-bottom: 30rpx;
     color: --color(--qui-FC-333);
@@ -244,10 +250,10 @@ export default {
   .orderlist-wrap .cell-item__body {
     height: 78rpx;
   }
-}
-.orderlist-items {
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
+  .orderlist-items {
+    padding-left: 40rpx;
+    background: --color(--qui-BG-2);
+  }
 }
 .date-picker {
   position: absolute;
@@ -256,6 +262,9 @@ export default {
   z-index: 10;
   width: 50%;
   height: 78rpx;
+  /* #ifdef H5 */
+  margin-top: 50rpx;
+  /* #endif */
 }
 .date-picker .uni-input {
   width: 100%;
@@ -264,7 +273,7 @@ export default {
   line-height: 78rpx;
 }
 .scroll-y {
-  max-height: calc(100vh - 148rpx);
+  max-height: $height;
 }
 .cell-item__body__right {
   padding-left: 59rpx;
