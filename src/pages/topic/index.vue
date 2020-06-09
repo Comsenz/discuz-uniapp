@@ -1303,6 +1303,10 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
+      if (this.user._jv.id == this.thread.user._jv.id) {
+        this.$refs.toast.show({ message: this.t.iCantRewardMyself });
+        return false;
+      }
       console.log('这是打赏');
       this.payStatus = false;
       this.payStatusNum = 0;
