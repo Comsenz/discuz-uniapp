@@ -3,6 +3,9 @@
 import Request from '@/utils/request';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
+// #ifdef MP-WEIXIN
+import Vue from 'vue';
+// #endif
 
 const http = new Request();
 let tostTimeout;
@@ -46,7 +49,7 @@ http.interceptor.request(conf => {
   });
 
   // #ifdef MP-WEIXIN
-  app = getApp().$vm;
+  app = Vue.prototype;
   // #endif
 
   // #ifdef H5
@@ -57,7 +60,6 @@ http.interceptor.request(conf => {
   try {
     const accessToken = app.$store.getters['session/get']('accessToken');
 
-    // delete config.header.Authorization;
     if (accessToken) {
       // eslint-disable-next-line no-param-reassign
       config.header.Authorization = `Bearer ${accessToken}`;
