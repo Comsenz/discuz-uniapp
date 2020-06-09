@@ -9,6 +9,8 @@
         // "onReachBottomDistance":126  //距离底部多远时触发 单位px
       }
     },
+    
+    // 登录注册
     {
       "path": "pages/user/phone-number-login",
       "style": {
@@ -45,8 +47,7 @@
         "navigationBarTitleText": "注册"
       }
     },
-   
-    
+
     {
       "path": "pages/topic/index",
       "style": {
@@ -151,36 +152,17 @@
       }
     },
 
-    // 消息页面
-    // {
-    //   "path": "pages/notice/index",
-    //   "style": {
-    //     "navigationBarTitleText": "消息"
-    //   }
-    // },
     {
       "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {
-        "navigationBarTitleText": "通知",
-        "app-plus": {
-					"titleNView": {
-            "titleText": "通知",
-            "titleSize": "30rpx"
-					}
-				}
+        "navigationBarTitleText": "通知"
       }
     },
     {
       "path": "pages/notice/msglist",
       "style": {
         "navigationBarTitleText": "来往记录",
-        "enablePullDownRefresh": true,
-        "app-plus": {
-					"titleNView": {
-            "titleText": "来往记录",
-            "titleSize": "30rpx"
-					}
-				}
+        "enablePullDownRefresh": true
       }
     },
 
@@ -188,49 +170,25 @@
     {
       "path": "pages/manage/index",
       "style": {
-        "navigationBarTitleText": "站点管理",
-        "app-plus": {
-					"titleNView": {
-            "titleText": "站点管理",
-            "titleSize": "30rpx"
-					}
-				}
+        "navigationBarTitleText": "站点管理"
       }
     },
     {
       "path": "pages/manage/member",
       "style": {
-        "navigationBarTitleText": "成员管理",
-        "app-plus": {
-					"titleNView": {
-            "titleText": "成员管理",
-            "titleSize": "30rpx"
-					}
-				}
+        "navigationBarTitleText": "成员管理"
       }
     },
     {
       "path": "pages/manage/users",
       "style": {
-        "navigationBarTitleText": "站点成员",
-        "app-plus": {
-					"titleNView": {
-            "titleText": "站点成员",
-            "titleSize": "30rpx"
-					}
-				}
+        "navigationBarTitleText": "站点成员"
       }
     },
     {
       "path": "pages/manage/invite",
       "style": {
-        "navigationBarTitleText": "邀请成员",
-        "app-plus": {
-					"titleNView": {
-            "titleText": "邀请成员",
-            "titleSize": "30rpx"
-					}
-				}
+        "navigationBarTitleText": "邀请成员"
       }
     },
 

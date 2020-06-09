@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
     <view class="notification-box">
       <!-- 通知信息 -->
       <scroll-view
@@ -30,6 +33,7 @@ export default {
   },
   data() {
     return {
+      navTitle: '', // 导航栏标题
       loadingType: 'more', // 上拉加载状态
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
@@ -41,12 +45,12 @@ export default {
     console.log('通知列表的params：', params);
     const { title, type, unReadNum } = params;
     this.type = type;
-    let navTitle = title;
+    this.navTitle = title;
     if (parseInt(unReadNum, 10) > 0) {
-      navTitle = `${title}(${unReadNum}条)`;
+      this.navTitle = `${title}(${unReadNum}条)`;
     }
     uni.setNavigationBarTitle({
-      title: navTitle,
+      title: this.navTitle,
     });
     this.getNotices(type);
   },
@@ -116,6 +120,9 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .notification-box {
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;
