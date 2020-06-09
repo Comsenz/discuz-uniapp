@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="favorite">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.myfavorite')"></qui-header-back>
+    <!-- #endif -->
     <view class="favorite-head">
       <qui-cell-item
         :title="`${totalData}${i18n.t('profile.item')}${i18n.t('profile.collection')}`"
