@@ -130,7 +130,20 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 200rpx);
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 110rpx);
+/* #endif */
+
 .search /deep/ {
+  /* #ifdef H5 */
+  height: 100vh;
+  min-height: auto;
+  overflow: hidden;
+  /* #endif */
   .search-item {
     background-color: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
@@ -162,6 +175,6 @@ export default {
   padding-left: 130rpx;
 }
 .scroll-y {
-  max-height: calc(100vh - 110rpx);
+  max-height: $height;
 }
 </style>
