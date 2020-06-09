@@ -4,7 +4,6 @@
       scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
-      :scroll-top="scrollTopNum"
       class="scroll-y"
       @scrolltolower="pullDown"
     >
@@ -39,10 +38,10 @@
             :tags="[thread.category]"
             :thread-price="thread.price"
             :thread-is-essence="thread.isEssence"
-            :media-url="thread.threadVideo.media_url"
-            :video-width="thread.threadVideo.width"
-            :video-height="thread.threadVideo.height"
-            :cover-image="thread.threadVideo.cover_url"
+            :media-url="thread.type == 1 ? thread.threadVideo.media_url : ''"
+            :video-width="thread.type == 1 ? thread.threadVideo.width : 0"
+            :video-height="thread.type == 1 ? thread.threadVideo.height : 0"
+            :cover-image="thread.type == 1 ? thread.threadVideo.cover_url : ''"
             @personJump="personJump(thread.user._jv.id)"
             @selectChoice="selectChoice"
             @videocoverClick="payClickShow"
@@ -549,7 +548,18 @@ export default {
       return status.status;
     },
   },
+  // created() {},
   onLoad(option) {
+    // 删除评论的回复后清除当前列表评论的这条回复
+    this.$u.event.$on('deleteComment', data => {
+      console.log(data, '~~~~~~~~~~~~~~~~~');
+      this.posts.forEach(item => {
+        if (item._jv.id === data.commentId) {
+          item.lastThreeComments = data;
+          return item;
+        }
+      });
+    });
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
