@@ -957,19 +957,18 @@ export default {
           },
           content: this.textAreaValue,
         };
-        params._jv.relationships.attachments = {
-          data: [],
-        };
-        if (this.uploadFile) {
-          this.uploadFile.forEach(item => {
-            params._jv.relationships.attachments.data.push({
-              type: 'attachments',
-              id: item.data.id,
-            });
-          });
-        }
       }
-
+      params._jv.relationships.attachments = {
+        data: [],
+      };
+      if (this.uploadFile) {
+        this.uploadFile.forEach(item => {
+          params._jv.relationships.attachments.data.push({
+            type: 'attachments',
+            id: item.data.id,
+          });
+        });
+      }
       console.log(params, '传给接口的参数');
       this.$store
         .dispatch('jv/post', params)
