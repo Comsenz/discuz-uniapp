@@ -30,7 +30,7 @@ export default {
     },
   },
   async onLaunch() {
-    try {
+    const init = async () => {
       const forums = await this.$store.dispatch('jv/get', [
         'forum',
         {
@@ -73,12 +73,19 @@ export default {
       }
 
       this.$store.dispatch('forum/setError', { loading: false });
+    };
+    try {
+      await init();
     } catch (errs) {
       if (errs && errs.data && errs.data.errors) {
-        this.$store.dispatch('forum/setError', {
-          loading: false,
-          ...errs.data.errors[0],
-        });
+        if (errs.data.errors[0].code === 'access_denied') {
+          this.$store.dispatch('session/logout').then(init);
+        } else {
+          this.$store.dispatch('forum/setError', {
+            loading: false,
+            ...errs.data.errors[0],
+          });
+        }
       }
     }
   },
