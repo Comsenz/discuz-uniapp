@@ -243,6 +243,7 @@ export default {
     deleteSuccessAndJumpToTopic: '删除成功，跳转到主题详情页',
     deleteFailed: '删除失败',
     deleteSuccess: '删除成功',
+    iCantRewardMyself: '自己不能打赏自己哦',
   },
   pay: {
     passwordTip: '请输入支付密码',
