@@ -634,8 +634,8 @@ export default {
           this.editThread().then(() => {
             this.postLoading = false;
             uni.hideLoading();
-            uni.redirectTo({
-              url: `/pages/topic/index?id=${this.threadId}`,
+            uni.navigateBack({
+              delta: 1,
             });
           });
         } else {
@@ -907,8 +907,8 @@ export default {
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
           this.$u.event.$emit('refreshImg', {
-            id: res._jv.json.data.relationships.thread.data.id,
-            images: res.images
+            id: this.threadId,
+            images: this.addImg(),
           });
         }
       });

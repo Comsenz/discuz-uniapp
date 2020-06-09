@@ -13,7 +13,9 @@ export default {
     };
   },
   onLoad(params) {
+    // #ifdef MP-WEIXIN
     uni.hideHomeButton();
+    // #endif
     const { status } = params;
     if (!status) this.status = TYPE_404;
     else this.status = status;
