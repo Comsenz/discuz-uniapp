@@ -233,7 +233,10 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .qui-back {
-  position: relative;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
   padding: 0 40rpx;
   background: --color(--qui-BG-2);
   box-sizing: border-box;
