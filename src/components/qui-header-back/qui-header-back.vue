@@ -5,6 +5,7 @@
         <view class="qui-back__body__content-title">
           <qui-icon
             :name="iconLeft"
+            class="icon-back"
             size="32"
             :color="theme === $u.light() ? '#333' : '#fff'"
             @tap="back"
@@ -291,6 +292,9 @@ export default {
 }
 .red-circle {
   position: absolute;
+}
+.icon-back {
+  margin-left: -10rpx;
 }
 .qui-back__body__right-pop-item:last-child {
   border: none;
