@@ -71,8 +71,6 @@ export default {
             console.log(err);
           });
         this.clear();
-        this.clear();
-        console.log('登录绑定成功');
       }
     },
     clear() {

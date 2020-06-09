@@ -98,6 +98,21 @@ const actions = {
     });
   },
   // #endif
+  // #ifdef H5
+  h5Register: (context, payload = {}) => {
+    console.log('payload', payload);
+    return new Promise(resolve => {
+      console.log('http', http);
+      return http.post('register', payload).then(results => {
+        const resData = utils.jsonapiToNorm(results.data.data);
+        context.commit(SET_USER_ID, resData._jv.id);
+        context.commit(CHECK_SESSION, true);
+        context.commit(SET_ACCESS_TOKEN, resData.access_token);
+        resolve(resData);
+      });
+    });
+  },
+  // #endif
   logout: context => {
     return new Promise(resolve => {
       context.commit(DELETE_USER_ID);
