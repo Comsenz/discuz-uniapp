@@ -30,7 +30,7 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -86,10 +86,12 @@ export default {
   },
   onShow() {
     if (
-      !this.$store.getters['session/get']('isLogin') &&
+      !this.$store.getters['session/get']('h5Login') &&
       ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
     ) {
-      this.$store.getters['session/get']('auth').open();
+      uni.navigateTo({
+        url: 'pages/home/index',
+      });
       return;
     }
     if (this.currentTab === 'quinotice') {
@@ -104,6 +106,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
     // 切换组件
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy'];
@@ -117,6 +122,7 @@ export default {
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         this.$store.getters['session/get']('auth').open();
+        this.setFooterIndex(0);
         return;
       }
 

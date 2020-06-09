@@ -108,11 +108,7 @@ export default {
     const len = getCurrentPages().length;
     if (len > 0) {
       // #ifdef MP-WEIXIN
-      // const currentRout = getCurrentPages()[len - 1].is;
-      // #endif
-      // #ifdef H5
-      const currentRout = getCurrentPages()[len - 1].route;
-      // #endif
+      const currentRout = getCurrentPages()[len - 1].is;
       const str = currentRout && currentRout.split('pages/')[1];
       if (str) {
         this.tabs = this.tabs.map(tab => {
@@ -124,6 +120,21 @@ export default {
           return newTab;
         });
       }
+      // #endif
+      // #ifdef H5
+      const currentRouts = getCurrentPages()[len - 1].route;
+      const strs = currentRouts && currentRouts.split('pages/')[1];
+      if (strs) {
+        this.tabs = this.tabs.map(tab => {
+          const tabsName = this.i18n.t(tab.tabsName);
+          if (tab.url && tab.url.includes(strs)) {
+            this.sel = tab.id;
+          }
+          const newTab = { ...tab, tabsName };
+          return newTab;
+        });
+      }
+      // #endif
     }
   },
   methods: {
