@@ -61,8 +61,10 @@ export default {
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {
+        console.log('注册并绑定页');
+        const url = '/pages/home/index';
         uni.navigateTo({
-          url: '/pages/user/login',
+          url: `/pages/user/register-bind?url=${url}`,
         });
       },
     });

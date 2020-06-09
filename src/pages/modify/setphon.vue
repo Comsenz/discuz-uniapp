@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="设置手机号"></qui-header-back>
+    <!-- #endif -->
     <view class="new" @click.stop="toggleBox">
       <view class="new-phon" v-if="phon">
         <view class="new-phon-test">
@@ -259,7 +262,9 @@ export default {
 .new {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }

@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="提现"></qui-header-back>
+    <!-- #endif -->
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
@@ -145,31 +148,31 @@ export default {
     };
   },
   onLoad() {
-    // this.userid = this.usersid;
+    this.userid = this.usersid;
     // console.log(this.forums);
-    this.userid = 116;
+    // this.userid = 116;
     this.setmydata();
-    // this.$nextTick(() => {
-    //   console.log(this.forums);
-    //   this.cost = this.forums.set_cash.cash_rate;
-    //   this.percentage = this.forums.set_cash.cash_rate * 100;
-    // });
+    this.$nextTick(() => {
+      console.log(this.forums);
+      this.cost = this.forums.set_cash.cash_rate;
+      this.percentage = this.forums.set_cash.cash_rate * 100;
+    });
   },
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
   },
-  watch: {
-    forums: {
-      handler(newValue) {
-        console.log(newValue);
-        this.cost = newValue.set_cash.cash_rate;
-        this.percentage = newValue.set_cash.cash_rate * 100;
-      },
-      deep: true,
-    },
-  },
+  // watch: {
+  //   forums: {
+  //     handler(newValue) {
+  //       console.log(newValue);
+  //       this.cost = newValue.set_cash.cash_rate;
+  //       this.percentage = newValue.set_cash.cash_rate * 100;
+  //     },
+  //     deep: true,
+  //   },
+  // },
   methods: {
     fourse() {
       this.inshow = true;
@@ -395,12 +398,15 @@ export default {
 .cash {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .cash-content {
-  padding-left: 40rpx;
+  padding: 31rpx 0 0 40rpx;
+  box-sizing: border-box;
 }
 .cash-content-tab {
   padding: 0 40rpx 0 0;
