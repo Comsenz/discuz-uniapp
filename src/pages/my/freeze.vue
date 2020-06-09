@@ -116,8 +116,10 @@ export default {
     height: 78rpx;
     align-items: center;
     justify-content: space-between;
-    padding: 0 40rpx;
-    padding-top: 40rpx;
+    padding: 40rpx 40rpx 0;
+    /* #ifdef H5 */
+    padding-top: 90rpx;
+    /* #endif */
     margin-bottom: 30rpx;
     font-size: $fg-f24;
     background: --color(--qui-BG-2);
@@ -135,12 +137,12 @@ export default {
   .freeze-head__money__detail {
     margin-left: 10rpx;
   }
-}
-.freeze-items {
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
+  .freeze-items {
+    padding-left: 40rpx;
+    background: --color(--qui-BG-2);
+  }
 }
 .scroll-y {
-  max-height: calc(100vh - 148rpx);
+  max-height: calc(100vh - 160rpx);
 }
 </style>

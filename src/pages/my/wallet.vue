@@ -80,9 +80,13 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .wallet-page /deep/ {
+  overflow: hidden;
   .wallet {
     padding-top: 40rpx;
     padding-left: 40rpx;
+    /* #ifdef H5 */
+    margin-top: 50rpx;
+    /* #endif */
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
