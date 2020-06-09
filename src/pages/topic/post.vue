@@ -922,7 +922,8 @@ export default {
       throw new Error('出错了');
     },
     // 发布按钮验证码验证
-    toTCaptcha(){
+    toTCaptcha() {
+      let _this = this;
       wx.navigateToMiniProgram({
       appId: 'wx5a3a7366fd07e119',
       path: '/pages/captcha/index',
@@ -930,10 +931,14 @@ export default {
       extraData: {
         appId: this.forums.qcloud.qcloud_captcha_app_id,//您申请的验证码的 appId
       },
-      success(res){
+      success(res) {
         console.log('验证码成功打开');
-      }
-    })
+      },
+      fail(err) {
+        uni.hideLoading();
+        _this.postLoading = false;
+      },
+    });
   }
 
   },
@@ -1001,8 +1006,14 @@ export default {
 
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => this.captchaResult = result);
+    this.$u.event.$on('closeChaReault', result => this.captchaResult = result);
     const captchaResult = this.captchaResult;
     this.captchaResult = null;
+    // 验证码页面点击返回时，发布取消loading
+    if (captchaResult.ret !== 0) {
+      this.postLoading = false;
+      return;
+    }
     if (captchaResult && captchaResult.ret === 0) {
       // 将验证码的结果返回至服务端校验
       this.ticket = captchaResult.ticket;
