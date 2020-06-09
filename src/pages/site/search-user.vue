@@ -127,10 +127,16 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-.search-item {
-  background-color: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+.search /deep/ {
+  .search-item {
+    background-color: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .search-box {
+    background: --color(--qui-BG-2);
+  }
 }
+
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
@@ -148,9 +154,6 @@ export default {
 .search-item__users {
   position: relative;
   padding-left: 130rpx;
-}
-.search .search-box {
-  background: --color(--qui-BG-2);
 }
 .scroll-y {
   max-height: calc(100vh - 110rpx);

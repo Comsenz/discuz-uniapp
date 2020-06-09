@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="站点管理"></qui-header-back>
+    <!-- #endif -->
     <view class="manage-items">
       <navigator url="./member" hover-class="none">
         <qui-cell-item :title="i18n.t('manage.manageMembers')" arrow slot-right>
@@ -20,6 +23,9 @@
 .manage-items {
   height: 100vh;
   padding: 0rpx 0rpx 0rpx 40rpx;
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   background: --color(--qui-BG-2);
 
   .cell-item {

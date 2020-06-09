@@ -243,6 +243,7 @@ export default {
     deleteSuccessAndJumpToTopic: '删除成功，跳转到主题详情页',
     deleteFailed: '删除失败',
     deleteSuccess: '删除成功',
+    iCantRewardMyself: '自己不能打赏自己哦',
   },
   pay: {
     passwordTip: '请输入支付密码',
@@ -495,6 +496,9 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    post: '发帖',
+    notice: '消息',
+    mine: '我的',
     myprofile: '我的资料',
     mywallet: '我的钱包',
     myfavorite: '我的收藏',

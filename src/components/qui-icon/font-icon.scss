@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'quiicons'; /* project id 1741858 */
-  src: url('//at.alicdn.com/t/font_1741858_3y3qhit6nrq.eot');
-  src: url('//at.alicdn.com/t/font_1741858_3y3qhit6nrq.eot?#iefix') format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1741858_3y3qhit6nrq.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1741858_3y3qhit6nrq.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1741858_3y3qhit6nrq.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1741858_3y3qhit6nrq.svg#quiicons') format('svg');
+  src: url('//at.alicdn.com/t/font_1741858_l8fy2z00q5.eot');
+  src: url('//at.alicdn.com/t/font_1741858_l8fy2z00q5.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_1741858_l8fy2z00q5.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1741858_l8fy2z00q5.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1741858_l8fy2z00q5.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1741858_l8fy2z00q5.svg#quiicons') format('svg');
 }
 .qui-icon {
   position: relative;
@@ -247,4 +247,83 @@
 }
 .icon-more:before {
   content: '\e698';
+}
+.icon-resources:before {
+  content: '\e6ae';
+}
+
+.icon-ZIP:before {
+  content: '\e6ad';
+}
+
+.icon-XLS:before {
+  content: '\e6ac';
+}
+
+.icon-TXT:before {
+  content: '\e6ab';
+}
+
+.icon-RAR:before {
+  content: '\e6a9';
+}
+
+.icon-PSD:before {
+  content: '\e6a8';
+}
+
+.icon-PPT:before {
+  content: '\e6a7';
+}
+
+.icon-PDF:before {
+  content: '\e6a6';
+}
+
+.icon-MP4:before {
+  content: '\e6a5';
+}
+
+.icon-MP3:before {
+  content: '\e6a4';
+}
+
+.icon-LINK:before {
+  content: '\e6a3';
+}
+
+.icon-IPA:before {
+  content: '\e6a1';
+}
+
+.icon-EXE:before {
+  content: '\e6a0';
+}
+
+.icon-EPS:before {
+  content: '\e69f';
+}
+
+.icon-DOC:before {
+  content: '\e69e';
+}
+
+.icon-CDR:before {
+  content: '\e69d';
+}
+
+.icon-CAD:before {
+  content: '\e69c';
+}
+
+.icon-APK:before {
+  content: '\e69b';
+}
+
+.icon-AI:before {
+  content: '\e69a';
+}
+
+.icon-7ZIP:before {
+  content: '\e699';
 }

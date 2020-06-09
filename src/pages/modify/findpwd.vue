@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="找回密码"></qui-header-back>
+    <!-- #endif -->
     <view class="retireve" @click.stop="toggleBox">
       <view class="retireve-tab">
         <view class="retireve-titel">
@@ -231,12 +234,14 @@ export default {
 .retireve {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .retireve-tab {
-  padding-left: 40rpx;
+  padding: 31rpx 0 0 40rpx;
   box-sizing: border-box;
 }
 .retireve-titel {

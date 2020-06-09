@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="邀请成员"></qui-header-back>
+    <!-- #endif -->
     <scroll-view scroll-y show-scrollbar="false" show-icon class="invite">
       <!-- 标签栏 -->
       <view class="invite-tabs">
@@ -322,6 +325,9 @@ export default {
   right: 0rpx;
   bottom: 150rpx;
   left: 0rpx;
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   font-size: $fg-f28;
 
   &-tabs {

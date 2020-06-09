@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="修改手机号"></qui-header-back>
+    <!-- #endif -->
     <view class="input" @click.stop="toggleBox">
       <view class="mobile-titel">
         {{ i18n.t('modify.verifyoldphon') }}
@@ -207,17 +210,19 @@ export default {
 .input {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .mobile-titel {
-  margin-left: 40rpx;
+  margin: 31rpx 0 0 40rpx;
   font-size: $fg-f50;
   font-weight: bold;
   line-height: 60rpx;
   color: --color(--qui-FC-333);
-  opacity: 1;
+  box-sizing: border-box;
 }
 .modify-phon {
   display: flex;

@@ -904,7 +904,7 @@ export default {
             // if (data.isDeleted) {
             // console.log('删除成功，跳转到首页');
             this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateBack({
+            uni.navigateTo({
               url: `/pages/home/index`,
             });
             // }
@@ -957,19 +957,18 @@ export default {
           },
           content: this.textAreaValue,
         };
-        params._jv.relationships.attachments = {
-          data: [],
-        };
-        if (this.uploadFile) {
-          this.uploadFile.forEach(item => {
-            params._jv.relationships.attachments.data.push({
-              type: 'attachments',
-              id: item.data.id,
-            });
-          });
-        }
       }
-
+      params._jv.relationships.attachments = {
+        data: [],
+      };
+      if (this.uploadFile) {
+        this.uploadFile.forEach(item => {
+          params._jv.relationships.attachments.data.push({
+            type: 'attachments',
+            id: item.data.id,
+          });
+        });
+      }
       console.log(params, '传给接口的参数');
       this.$store
         .dispatch('jv/post', params)
@@ -1248,7 +1247,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
       }
       if (param.type == '0') {
-        uni.redirectTo({
+        uni.navigateTo({
           url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
         });
       } else {
@@ -1302,6 +1301,10 @@ export default {
     rewardClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+      }
+      if (this.user._jv.id == this.thread.user._jv.id) {
+        this.$refs.toast.show({ message: this.t.iCantRewardMyself });
+        return false;
       }
       console.log('这是打赏');
       this.payStatus = false;

@@ -201,7 +201,7 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.search {
+.search /deep/ {
   .search-item,
   .search-box {
     background-color: --color(--qui-BG-2);

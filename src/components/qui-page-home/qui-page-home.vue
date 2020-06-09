@@ -301,6 +301,22 @@ export default {
         }
       });
     });
+    // 详情页编辑增加图片时首页增加图片
+    this.$u.event.$on('refreshImg', res => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const index in this.threads) {
+        if (this.threads[index]._jv.id === res.id) {
+          if (res.images.data) {
+            res.images.data.forEach(item => {
+              this.threads[index].firstPost.images.push(
+                this.$store.getters['jv/get'](`${item.type}/${item.id}`),
+              );
+            });
+          }
+          break;
+        }
+      }
+    });
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {

@@ -72,7 +72,7 @@
             </view>
             <view class="dialog-box__con">
               <rich-text
-                :nodes="dialog.dialogMessage.message_text_html"
+                :nodes="dialog.dialogMessage ? dialog.dialogMessage.message_text_html : ''"
                 style="word-break: break-all;"
               ></rich-text>
             </view>
@@ -172,17 +172,19 @@ export default {
     getUnreadNoticeNum() {
       if (this.user && this.user.typeUnreadNotifications) {
         console.log('this.user', this.user);
-        this.list[0].unReadNum = this.user.typeUnreadNotifications.related;
-        this.list[1].unReadNum = this.user.typeUnreadNotifications.replied;
-        this.list[2].unReadNum = this.user.typeUnreadNotifications.liked;
+        this.list[0].unReadNum = this.user.typeUnreadNotifications.related || '';
+        this.list[1].unReadNum = this.user.typeUnreadNotifications.replied || '';
+        this.list[2].unReadNum = this.user.typeUnreadNotifications.liked || '';
         this.list[3].unReadNum =
           this.user.typeUnreadNotifications.rewarded ||
-          this.user.typeUnreadNotifications.withdrawal;
-        this.list[4].unReadNum = this.user.typeUnreadNotifications.system;
+          this.user.typeUnreadNotifications.withdrawal ||
+          '';
+        this.list[4].unReadNum = this.user.typeUnreadNotifications.system || '';
       }
     },
     // 跳转至 @我的/回复我的/点赞我的/财务通知/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
+      console.log('item', item);
       // 如果有未读消息，点击时请求并更新消息信息
       if (item.unReadNum) this.getUserInfo(true);
       uni.navigateTo({

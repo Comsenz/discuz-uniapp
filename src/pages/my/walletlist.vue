@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="walletlist">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.walletlist')"></qui-header-back>
+    <!-- #endif -->
     <view class="walletlist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -214,23 +217,35 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 
-.walletlist {
+.walletlist /deep/ {
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body {
+  .cell-item__body {
     height: auto;
     padding: 35rpx 0;
   }
   .walletlist-items /deep/ .cell-item__body {
     align-items: flex-start;
   }
-  /deep/ .cell-item__body__right-text {
+  .cell-item__body__right-text {
     font-weight: bold;
   }
-  /deep/ .icon-screen {
+  .icon-screen {
     margin-left: 20rpx;
+  }
+  .walletlist-head {
+    padding-top: 40rpx;
+    padding-left: 40rpx;
+    /* #ifdef H5 */
+    margin-top: 60rpx;
+    /* #endif */
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .walletlist-head .cell-item__body {
+    height: 78rpx;
   }
 }
 /deep/ .cell-item.fail .cell-item__body__right-text {
@@ -243,16 +258,6 @@ export default {
   padding-left: 40rpx;
   margin-top: 30rpx;
   background: --color(--qui-BG-2);
-}
-
-.walletlist-head {
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.walletlist-head /deep/ .cell-item__body {
-  height: 78rpx;
 }
 .date-picker {
   position: absolute;

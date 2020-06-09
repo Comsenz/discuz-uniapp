@@ -35,6 +35,7 @@ const actions = {
   setAuth: (context, payload) => {
     context.commit(SET_AUTH, payload);
   },
+  // #ifdef MP-WEIXIN
   login: (context, payload = {}) => {
     return new Promise((resolve, reject) => {
       uni.login({
@@ -80,11 +81,13 @@ const actions = {
       });
     });
   },
+  // #endif
+  // #ifdef H5
   h5Login: (context, payload = {}) => {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('login', JSON.stringify(payload)).then(results => {
+      return http.post('login', payload).then(results => {
         const resData = utils.jsonapiToNorm(results.data.data);
         uni.setStorageSync('user_id', resData._jv.id);
         uni.setStorageSync('access_token', resData.access_token);
@@ -95,6 +98,7 @@ const actions = {
       });
     });
   },
+  // #endif
 };
 
 const mutations = {

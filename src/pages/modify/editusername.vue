@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="profile">
+    <!-- #ifdef H5-->
+    <qui-header-back title="修改用户名"></qui-header-back>
+    <!-- #endif -->
     <view class="chagepas">
       <view class="chagepas-pas">
         <input
@@ -15,7 +18,7 @@
         </view>
       </view>
       <view class="chagepas-pas-btn">
-        <qui-button type="primary" size="large" :disabled="disab" @click="submission">
+        <qui-button type="primary" size="large" @click="submission">
           {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
@@ -41,11 +44,9 @@ export default {
   },
   onLoad() {
     this.userid = this.usersid;
+    console.log(this.userid);
   },
   computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
@@ -70,6 +71,7 @@ export default {
         },
         username: this.sername,
       };
+      console.log(params);
       const patchname = status.run(() => this.$store.dispatch('jv/patch', params));
       patchname
         .then(res => {
@@ -82,6 +84,7 @@ export default {
               delta: 1,
               success() {
                 const pages = getCurrentPages();
+                console.log(pages);
                 pages[1].onLoad();
               },
             });
@@ -114,7 +117,11 @@ export default {
 .chagepas {
   width: 100vw;
   height: 100vh;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .chagepas-pas {
   width: 100%;

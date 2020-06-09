@@ -10,9 +10,11 @@
     <qui-page-message v-else-if="showMessage"></qui-page-message>
     <slot v-else />
 
+    <!-- #ifdef MP-WEIXIN -->
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
+    <!-- #endif -->
   </view>
 </template>
 
@@ -48,20 +50,35 @@ export default {
     },
   },
   mounted() {
+    // #ifdef MP-WEIXIN
     this.$store.dispatch('session/setAuth', this.$refs.auth);
     if (!this.loading && !this.showMessage) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
     }
+    // #endif
+    // #ifdef H5
+    this.$store.dispatch('session/setAuth', {
+      open: () => {
+        console.log('注册并绑定页');
+        const url = '/pages/home/index';
+        uni.navigateTo({
+          url: `/pages/user/register-bind?url=${url}`,
+        });
+      },
+    });
+    // #endif
   },
   methods: {
+    // #ifdef MP-WEIXIN
     close() {
       this.$refs.auth.close();
     },
     login() {
       this.$refs.auth.close();
     },
+    // #endif
   },
 };
 </script>

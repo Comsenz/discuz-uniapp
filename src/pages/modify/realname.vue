@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="实名认证"></qui-header-back>
+    <!-- #endif -->
     <view class="tica">
       <view class="tica-name">
         <input
@@ -149,13 +152,16 @@ export default {
 .tica {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .tica-name {
   width: 100%;
-  padding: 0 0 0 40rpx;
+  padding: 31rpx 0 0 40rpx;
+  box-sizing: border-box;
 }
 .tica-name-inpa {
   width: 100%;
