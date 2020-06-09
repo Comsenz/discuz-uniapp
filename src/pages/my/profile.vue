@@ -181,6 +181,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .profile /deep/ {
+  overflow: hidden;
   .my-profile {
     position: relative;
     padding-top: 40rpx;

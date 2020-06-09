@@ -58,6 +58,15 @@ export default {
       }
     }
     // #endif
+    // #ifdef H5
+    this.$store.dispatch('session/setAuth', {
+      open: () => {
+        uni.navigateTo({
+          url: '/pages/user/login',
+        });
+      },
+    });
+    // #endif
   },
   methods: {
     // #ifdef MP-WEIXIN

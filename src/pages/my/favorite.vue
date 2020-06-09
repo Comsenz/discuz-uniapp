@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="favorite">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.myfavorite')"></qui-header-back>
+    <!-- #endif -->
     <view class="favorite-head">
       <qui-cell-item
         :title="`${totalData}${i18n.t('profile.item')}${i18n.t('profile.collection')}`"
@@ -265,6 +268,9 @@ export default {
   .favorite-head {
     padding-top: 40rpx;
     padding-left: 40rpx;
+    /* #ifdef H5 */
+    margin-top: 50rpx;
+    /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);

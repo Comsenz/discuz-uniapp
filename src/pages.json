@@ -112,13 +112,7 @@
     {
       "path": "pages/site/index",
       "style": {
-        "navigationBarTitleText": "站点信息",
-        "app-plus": {
-					"titleNView": {
-            "titleText": "站点信息",
-            "titleSize": "30rpx"
-					}
-				}
+        "navigationBarTitleText": "站点信息"
       }
     },
     {

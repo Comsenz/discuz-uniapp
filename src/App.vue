@@ -94,6 +94,8 @@ export default {
           this.$u.event.$emit('captchaResult', result);
         }
       } else {
+        console.log(result, '用户关闭了验证码');
+        this.$u.event.$emit('closeChaReault', result);
         // 用户关闭了验证码
       }
     }
