@@ -41,6 +41,7 @@
             <view class="dialog-box__header">
               <view class="dialog-box__header__info">
                 <image
+                  lazy-load
                   class="dialog-box__header__info__user-avatar"
                   :src="dialog.avatar || '/static/noavatar.gif'"
                 ></image>
@@ -273,6 +274,7 @@ export default {
         height: 80rpx;
         margin: 20rpx 20rpx 20rpx 40rpx;
         border-radius: 100rpx;
+        will-change: transform;
       }
 
       &__box {
