@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('search.searchthemes')"></qui-header-back>
+    <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
         <view class="icon-content-search">
@@ -149,9 +152,21 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 200rpx);
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 110rpx);
+/* #endif */
 
 // 主题
 .search /deep/ {
+  /* #ifdef H5 */
+  height: 100vh;
+  min-height: auto;
+  overflow: hidden;
+  /* #endif */
   .themeCount {
     padding-left: 40rpx;
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
@@ -164,6 +179,9 @@ export default {
   }
   .search-box {
     padding: 30rpx 40rpx 0;
+    /* #ifdef H5 */
+    margin-top: 80rpx;
+    /* #endif */
     background: --color(--qui-BG-2);
   }
 }
@@ -181,7 +199,7 @@ export default {
   padding-left: 130rpx;
 }
 .scroll-y {
-  max-height: calc(100vh - 110rpx);
+  max-height: $height;
 }
 .search-item__content {
   position: relative;

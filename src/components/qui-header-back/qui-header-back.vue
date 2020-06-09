@@ -127,7 +127,8 @@ export default {
   },
   methods: {
     back() {
-      uni.navigateBack();
+      // uni.navigateBack();
+      window.history.back(-1);
     },
     backPage(pageUrl, index) {
       this.ifShowMenu = false;

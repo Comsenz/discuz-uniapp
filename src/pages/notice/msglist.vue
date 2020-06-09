@@ -22,12 +22,14 @@
             ]"
           >
             <image
+              lazy-load
               v-if="item.user_id === currentLoginId"
               class="chat-box__con__msg__mine__img"
               :src="userInfo.avatarUrl"
               @click="jumpUserPage(item.user_id)"
             ></image>
             <image
+              lazy-load
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
               :src="item.user.avatarUrl || '/static/noavatar.gif'"
@@ -390,6 +392,7 @@ export default {
         height: 80rpx;
         margin: 0 20rpx 0 10rpx;
         border-radius: 100rpx;
+        will-change: transform;
       }
 
       &__box {
@@ -443,6 +446,7 @@ export default {
         height: 80rpx;
         margin: 0 10rpx 0 20rpx;
         border-radius: 100rpx;
+        will-change: transform;
       }
 
       &__box {

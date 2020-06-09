@@ -59,6 +59,7 @@
       <qui-cell-item :title="i18n.t('manage.circlemaster')" slot-right>
         <view class="site-item__owner">
           <image
+            lazy-load
             class="site-item__owner-avatar"
             :src="siteInfo.avatar || '/static/noavatar.gif'"
             alt="avatarUrl"
@@ -75,6 +76,7 @@
             class="site-item__person__content"
           >
             <image
+              lazy-load
               class="site-item__person__content-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
               alt="avatarUrl"
@@ -353,6 +355,7 @@ export default {
   height: 60rpx;
   margin-left: 8rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .site-item__owner {
   display: flex;

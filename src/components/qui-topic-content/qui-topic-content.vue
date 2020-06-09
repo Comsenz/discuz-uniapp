@@ -27,12 +27,8 @@
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
-            <qui-icon
-              name="icon-management"
-              class="icon-management"
-              :style="{ color: selectActive }"
-            ></qui-icon>
-            <view :style="{ color: selectActive }">{{ t.management }}</view>
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>{{ t.management }}</view>
           </view>
           <view>
             <qui-drop-down
@@ -356,13 +352,13 @@ export default {
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
-      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
+      // this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 管理菜单选中事件
     selectChoice(param) {
       this.$emit('selectChoice', param);
       this.seleShow = false;
-      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
+      // this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 点击用户头像以及用户名事件
     personJump() {
