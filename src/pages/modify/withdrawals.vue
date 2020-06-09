@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="提现"></qui-header-back>
+    <!-- #endif -->
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
@@ -395,12 +398,15 @@ export default {
 .cash {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .cash-content {
-  padding-left: 40rpx;
+  padding: 31rpx 0 0 40rpx;
+  box-sizing: border-box;
 }
 .cash-content-tab {
   padding: 0 40rpx 0 0;

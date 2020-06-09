@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="设置支付密码"></qui-header-back>
+    <!-- #endif -->
     <view class="setpw" @click.stop="toggleBox">
       <view class="setpw-input" v-if="pas" @click.stop="fourse">
         <view class="setpw-tit">
@@ -162,16 +165,18 @@ export default {
 .setpw {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .setpw-input {
   width: 710rpx;
   height: 200rpx;
-  padding: 0 0 0 40rpx;
+  padding: 31rpx 0 0 40rpx;
   background: --color(--qui-BG-2);
-  opacity: 1;
+  box-sizing: border-box;
 }
 .setpw-tit {
   font-size: $fg-f28;

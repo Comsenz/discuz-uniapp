@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="签名"></qui-header-back>
+    <!-- #endif -->
     <view class="aogph">
       <view class="aogph-tab">
         <view class="aogph-tab-ao">
@@ -118,10 +121,14 @@ export default {
 .aogph {
   width: 100vw;
   height: 100vh;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
 }
 .aogph-tab {
   padding: 36rpx 40rpx 0;
+  box-sizing: border-box;
 }
 .aogph-tab-ao {
   display: flex;

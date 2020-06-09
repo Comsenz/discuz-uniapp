@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="验证身份"></qui-header-back>
+    <!-- #endif -->
     <view class="authen" @click.stop="toggleBox">
       <view class="authen-input" @click.stop="fourse">
         <view class="authen-tit">
@@ -125,14 +128,17 @@ export default {
 .authen {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding-top: 100rpx;
+  /* #endif */
   background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
 .authen-input {
   width: 710rpx;
-  padding: 0 0 0 40rpx;
+  padding: 31rpx 0 0 40rpx;
   background: --color(--qui-BG-2);
+  box-sizing: border-box;
 }
 .authen-tit {
   font-size: $fg-f28;
