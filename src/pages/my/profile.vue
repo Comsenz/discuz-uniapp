@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
     <!-- #ifdef H5-->
-    <qui-header-back title="我的资料"></qui-header-back>
+    <qui-header-back :title="i18n.t('profile.myprofile')"></qui-header-back>
     <!-- #endif -->
     <view class="my-profile">
       <!-- canEditUsername 是否允许修改用户名-->
@@ -181,6 +181,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .profile /deep/ {
+  overflow: hidden;
   .my-profile {
     position: relative;
     padding-top: 40rpx;

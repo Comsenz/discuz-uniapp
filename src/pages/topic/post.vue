@@ -338,6 +338,9 @@ export default {
       filePreview: [], // 服务器上传
       uploadStatus: true, // 图片上传状态
       showHidden: true, // 付费金额的显示隐藏
+      ticket: '',
+      randstr: '',
+      captchaResult: {},
     };
   },
   computed: {
@@ -631,11 +634,17 @@ export default {
           this.editThread().then(() => {
             this.postLoading = false;
             uni.hideLoading();
-            uni.redirectTo({
-              url: `/pages/topic/index?id=${this.threadId}`,
+            uni.navigateBack({
+              delta: 1,
             });
           });
         } else {
+          if (this.forums.qcloud.qcloud_captcha && this.forums.other.create_thread_with_captcha) {
+            if (!this.ticket || !this.randstr) {
+              this.toTCaptcha();
+              return false;
+            }
+          }
           this.postThread().then(res => {
             this.postLoading = false;
             uni.hideLoading();
@@ -724,6 +733,8 @@ export default {
         type: this.type,
         price: this.price,
         free_words: this.word,
+        captcha_ticket: this.ticket,
+        captcha_rand_str: this.randstr,
       };
 
       const postPromise = new Promise((resolve, reject) => {
@@ -894,6 +905,12 @@ export default {
 
       await this.$store.dispatch('jv/patch', posts).then(res => {
         if (res._jv.json.data.id) state += 1;
+        if (res._jv.json.data.attributes.isApproved === 1) {
+          this.$u.event.$emit('refreshImg', {
+            id: this.threadId,
+            images: this.addImg(),
+          });
+        }
       });
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
@@ -904,6 +921,26 @@ export default {
       }
       throw new Error('出错了');
     },
+    // 发布按钮验证码验证
+    toTCaptcha() {
+      let _this = this;
+      wx.navigateToMiniProgram({
+      appId: 'wx5a3a7366fd07e119',
+      path: '/pages/captcha/index',
+      envVersion: 'release',
+      extraData: {
+        appId: this.forums.qcloud.qcloud_captcha_app_id,//您申请的验证码的 appId
+      },
+      success(res) {
+        console.log('验证码成功打开');
+      },
+      fail(err) {
+        uni.hideLoading();
+        _this.postLoading = false;
+      },
+    });
+  }
+
   },
   onLoad(option) {
     this.url = DISCUZ_REQUEST_HOST;
@@ -966,6 +1003,23 @@ export default {
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
+
+    // 接受验证码captchaResult
+    this.$u.event.$on('captchaResult', result => this.captchaResult = result);
+    this.$u.event.$on('closeChaReault', result => this.captchaResult = result);
+    const captchaResult = this.captchaResult;
+    this.captchaResult = null;
+    // 验证码页面点击返回时，发布取消loading
+    if (captchaResult.ret !== 0) {
+      this.postLoading = false;
+      return;
+    }
+    if (captchaResult && captchaResult.ret === 0) {
+      // 将验证码的结果返回至服务端校验
+      this.ticket = captchaResult.ticket;
+      this.randstr = captchaResult.randstr;
+      this.postClick();
+    }
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');

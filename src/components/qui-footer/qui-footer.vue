@@ -3,7 +3,7 @@
     <view class="ft">
       <view
         class="ft-box "
-        :class="{ select: true, active: item.id === sel }"
+        :class="{ select: true, active: index === footerIndex }"
         v-for="(item, index) in tabs"
         :key="index"
         @click="select(item, index)"
@@ -12,9 +12,9 @@
           class="ft-box-icon"
           :name="item.tabsIcon"
           size="48"
-          :class="{ select: true, active: item.id === sel }"
+          :class="{ select: true, active: index === footerIndex }"
         ></qui-icon>
-        <text class="ft-box-content" :class="{ select: true, active: item.id === sel }">
+        <text class="ft-box-content" :class="{ select: true, active: index === footerIndex }">
           {{ item.tabsName }}
         </text>
       </view>
@@ -58,7 +58,7 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -97,6 +97,8 @@ export default {
     ...mapState({
       getCategoryId: state => state.session.categoryId,
       getCategoryIndex: state => state.session.categoryIndex,
+      footerIndex: state =>
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) - 1 : 0,
     }),
     redCircle() {
       return this.user.unreadNotifications;
@@ -121,6 +123,7 @@ export default {
   },
   methods: {
     select(item, index) {
+      this.setFooterIndex(parseInt(index, 10) + 1);
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
       if (!item.url) {
@@ -137,6 +140,9 @@ export default {
         });
       }
     },
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
     // 首页底部发帖按钮弹窗
     footerOpen() {
       if (!this.$store.getters['session/get']('isLogin')) {

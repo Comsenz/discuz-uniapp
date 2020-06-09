@@ -36,7 +36,6 @@ export default {
   mixins: [forums, user],
   data() {
     return {
-      show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
       showHome: false,
       tagId: 0, // 标签ID
@@ -49,6 +48,15 @@ export default {
     }),
     loading() {
       return this.forumError.loading;
+    },
+    show_index: {
+      get() {
+        const index = this.$store.state.footerTab.footerIndex;
+        return index ? parseInt(index, 10) - 1 : 0;
+      },
+      set() {
+        // console.log(val);
+      },
     },
   },
   onLoad() {

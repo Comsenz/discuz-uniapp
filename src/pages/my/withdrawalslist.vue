@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="withdrawalslist">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.withdrawalslist')"></qui-header-back>
+    <!-- #endif -->
     <view class="withdrawalslist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -175,6 +178,9 @@ export default {
   .withdrawalslist-head {
     padding-top: 40rpx;
     padding-left: 40rpx;
+    /* #ifdef H5 */
+    margin-top: 60rpx;
+    /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
@@ -182,17 +188,18 @@ export default {
   .withdrawalslist-head .cell-item__body {
     height: 78rpx;
   }
+  .withdrawalslist-items {
+    padding-left: 40rpx;
+    background: --color(--qui-BG-2);
+  }
+  .cell-item.fail .cell-item__body__content-title {
+    color: --color(--qui-RED);
+  }
+  .cell-item.success .cell-item__body__content-title {
+    color: #189a00;
+  }
 }
-.withdrawalslist-items {
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
-}
-/deep/ .cell-item.fail .cell-item__body__content-title {
-  color: --color(--qui-RED);
-}
-/deep/ .cell-item.success .cell-item__body__content-title {
-  color: #189a00;
-}
+
 .date-picker {
   position: absolute;
   top: 40rpx;

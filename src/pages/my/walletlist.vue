@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="walletlist">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.walletlist')"></qui-header-back>
+    <!-- #endif -->
     <view class="walletlist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -235,6 +238,9 @@ export default {
   .walletlist-head {
     padding-top: 40rpx;
     padding-left: 40rpx;
+    /* #ifdef H5 */
+    margin-top: 60rpx;
+    /* #endif */
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
