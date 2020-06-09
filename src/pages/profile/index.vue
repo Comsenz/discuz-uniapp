@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.personalhomepage')"></qui-header-back>
+    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -260,6 +263,9 @@ export default {
 .profile-info {
   padding: 40rpx;
   padding-top: 30rpx;
+  /* #ifdef H5 */
+  margin-top: 90rpx;
+  /* #endif */
   font-size: $fg-f28;
   background: --color(--qui-BG-2);
 }
