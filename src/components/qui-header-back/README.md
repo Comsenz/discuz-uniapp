@@ -14,3 +14,4 @@
 | title | 标题 | string | '' |
 | iconLeft | 返回按钮 | string| icon-back|
 | slotRight | 右插槽 | Boolean | false|
+| isShowMore | 更多按钮 | Boolean | true|
