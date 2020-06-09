@@ -148,31 +148,31 @@ export default {
     };
   },
   onLoad() {
-    // this.userid = this.usersid;
+    this.userid = this.usersid;
     // console.log(this.forums);
-    this.userid = 116;
+    // this.userid = 116;
     this.setmydata();
-    // this.$nextTick(() => {
-    //   console.log(this.forums);
-    //   this.cost = this.forums.set_cash.cash_rate;
-    //   this.percentage = this.forums.set_cash.cash_rate * 100;
-    // });
+    this.$nextTick(() => {
+      console.log(this.forums);
+      this.cost = this.forums.set_cash.cash_rate;
+      this.percentage = this.forums.set_cash.cash_rate * 100;
+    });
   },
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
   },
-  watch: {
-    forums: {
-      handler(newValue) {
-        console.log(newValue);
-        this.cost = newValue.set_cash.cash_rate;
-        this.percentage = newValue.set_cash.cash_rate * 100;
-      },
-      deep: true,
-    },
-  },
+  // watch: {
+  //   forums: {
+  //     handler(newValue) {
+  //       console.log(newValue);
+  //       this.cost = newValue.set_cash.cash_rate;
+  //       this.percentage = newValue.set_cash.cash_rate * 100;
+  //     },
+  //     deep: true,
+  //   },
+  // },
   methods: {
     fourse() {
       this.inshow = true;
