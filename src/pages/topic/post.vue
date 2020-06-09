@@ -53,7 +53,7 @@
           v-model="textAreaValue"
           auto-height="true"
           :show-confirm-bar="barStatus"
-          adjust-position="true"
+          :adjust-position="true"
           cursor-spacing="50"
           :maxlength="-1"
           :focus="type !== 1"

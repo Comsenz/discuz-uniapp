@@ -107,7 +107,12 @@ export default {
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {
-      const currentRout = getCurrentPages()[len - 1].is;
+      // #ifdef MP-WEIXIN
+      // const currentRout = getCurrentPages()[len - 1].is;
+      // #endif
+      // #ifdef H5
+      const currentRout = getCurrentPages()[len - 1].route;
+      // #endif
       const str = currentRout && currentRout.split('pages/')[1];
       if (str) {
         this.tabs = this.tabs.map(tab => {

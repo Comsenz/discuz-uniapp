@@ -84,6 +84,7 @@ export default {
   },
   onShow(options) {
     // 解决各类回调的兼容问题,验证码捕获captchaResult
+    // #ifdef MP-WEIXIN
     if (!this.captchaTicketExpire) this.captchaTicketExpire = {};
     if (options.scene === 1038 && options.referrerInfo.appId === 'wx5a3a7366fd07e119') {
       const result = options.referrerInfo.extraData;
@@ -99,6 +100,7 @@ export default {
         // 用户关闭了验证码
       }
     }
+    // #endif
   },
   onHide() {},
 };

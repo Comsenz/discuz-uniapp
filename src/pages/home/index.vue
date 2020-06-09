@@ -63,6 +63,11 @@ export default {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
+    // let modelmes = wx.getStorageSync('modelmes');
+    // let isIphoneX = app.globalData.isIphoneX;
+    // this.setData({
+    //   isIphoneX: isIphoneX
+    // });
   },
 
   // 唤起小程序原声分享
@@ -80,6 +85,13 @@ export default {
     };
   },
   onShow() {
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+    ) {
+      this.$store.getters['session/get']('auth').open();
+      return;
+    }
     if (this.currentTab === 'quinotice') {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();
