@@ -118,9 +118,6 @@ export default {
     justify-content: space-between;
     padding: 0 40rpx;
     padding-top: 40rpx;
-    /* #ifdef H5 */
-    margin-top: 60rpx;
-    /* #endif */
     margin-bottom: 30rpx;
     font-size: $fg-f24;
     background: --color(--qui-BG-2);
