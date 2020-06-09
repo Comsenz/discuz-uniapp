@@ -404,10 +404,9 @@ export default {
 }
 .painter {
   display: flex;
+  min-height: 100vh;
   flex-direction: column;
   justify-content: space-between;
-  width: 100vw;
-  height: 100vh;
   background-color: --color(--qui-BG-2);
 }
 .canvas-box {

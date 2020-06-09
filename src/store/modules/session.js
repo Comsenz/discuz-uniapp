@@ -87,7 +87,7 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('login', JSON.stringify(payload)).then(results => {
+      return http.post('login', payload).then(results => {
         const resData = utils.jsonapiToNorm(results.data.data);
         uni.setStorageSync('user_id', resData._jv.id);
         uni.setStorageSync('access_token', resData.access_token);
