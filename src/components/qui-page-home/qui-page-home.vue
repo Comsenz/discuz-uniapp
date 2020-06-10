@@ -25,7 +25,9 @@
         :theme-num="forums.other.count_users"
         :post-num="forums.other.count_threads"
         :share-btn="shareBtn"
+        :share-show="shareShow"
         @click="open"
+        @closeShare="closeShare"
       ></qui-header>
       <view
         class="nav"
@@ -219,6 +221,7 @@ export default {
       navHeight: 0, // 切换分类导航的高度
       nowThreadId: '', // 当前点击主题ID
       filterTop: 450, // 筛选弹窗的位置
+      shareShow: false, // h5内分享提示信息
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -422,6 +425,7 @@ export default {
     },
     // 首页头部分享按钮弹窗
     open() {
+      // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
       // 付费模式下不显示微信分享
       if (this.forums.set_site.site_mode === 'pay') {
@@ -434,7 +438,19 @@ export default {
           },
         ];
       }
+      // #endif
+
+      // #ifdef H5
+      this.shareShow = true;
+      // #endif
     },
+    // #ifdef H5
+    closeShare() {
+      console.log('关闭微信');
+      this.shareShow = false;
+      console.log(this.shareShow, '8888');
+    },
+    // #endif
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {

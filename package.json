@@ -75,6 +75,7 @@
     "core-js": "^3.6.4",
     "flyio": "^0.6.2",
     "jsonpath-plus": "^3.0.0",
+    "jweixin-module": "^1.6.0",
     "lodash": "^4.17.15",
     "lodash.get": "^4.4.2",
     "lodash.isequal": "^4.5.0",

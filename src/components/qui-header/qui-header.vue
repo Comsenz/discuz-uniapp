@@ -21,6 +21,12 @@
         <qui-icon class="qui-icon" name="icon-share1" size="26" :color="iconcolor"></qui-icon>
         {{ t.share }}
       </view>
+      <view class="mask" v-if="shareShow" @click="closeShare">
+        <view class="wxShareTip">
+          <img src="/static/sharePoint.png" alt class="sharePoint" />
+          <img src="/static/shareKnow.png" alt class="shareKnow" />
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -60,6 +66,10 @@ export default {
       type: String,
       default: '',
     },
+    shareShow: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -78,6 +88,9 @@ export default {
   methods: {
     open(evt) {
       this.$emit('click', evt);
+    },
+    closeShare(evt) {
+      this.$emit('closeShare', evt);
     },
   },
 };
@@ -132,6 +145,35 @@ export default {
     // position: -webkit-sticky;
     top: 0;
     z-index: 101;
+  }
+  .mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 17;
+    width: 100%;
+    height: 100%;
+    background: rgba(#000, 0.6);
+  }
+  .wxShareTip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2222222222222;
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    .sharePoint {
+      display: inline-block;
+      width: 70%;
+      margin-top: 10rpx;
+      margin-right: 30rpx;
+    }
+    .shareKnow {
+      display: block;
+      width: 35%;
+      margin: 20vh auto 30rpx;
+    }
   }
 }
 </style>

@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="" :is-show-more="false"></qui-header-back>
+    <!-- #endif -->
     <view class="login-box">
       <view class="login-box-h">{{ i18n.t('user.login') }}</view>
       <view class="login-box-con">
@@ -85,11 +88,14 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .login-box {
   height: 100vh;
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 
   &-h {
-    margin: 60rpx 0rpx 80rpx 40rpx;
+    padding: 60rpx 0rpx 80rpx 40rpx;
     font-size: 50rpx;
     font-weight: bold;
     color: #333;

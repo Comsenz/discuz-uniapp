@@ -28,6 +28,7 @@
           size="32"
           :color="theme === $u.light() ? '#000' : '#fff'"
           @tap="showMore"
+          v-if="isShowMore"
         ></qui-icon>
         <view class="qui-back__body__right-pop" v-if="ifShowMenu">
           <view class="qui-back__body__right-pop-item" @tap="footerOpen">
@@ -99,6 +100,10 @@ export default {
     slotRight: {
       type: Boolean,
       default: false,
+    },
+    isShowMore: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => {
@@ -267,8 +272,8 @@ export default {
   font-size: $fg-f28;
   text-align: right;
 }
-.icon-home {
-  margin-right: 32rpx;
+.icon-more {
+  margin-left: 32rpx;
 }
 .qui-back__body__right-pop {
   position: absolute;
