@@ -222,10 +222,9 @@
               </view>
             </view>
             <qui-emoji
-              :list="allEmoji"
+              v-if="emojiShow"
               position="absolute"
               top="104rpx"
-              v-if="emojiShow"
               border-radius="10rpx"
               :color="emojiShow ? '#1878F3' : '#777'"
               @click="getEmojiClick"
@@ -362,9 +361,9 @@ export default {
       const commentId = this.commentId;
       return utils.deepCopy(this.$store.getters['jv/get'](`posts/${commentId}`));
     },
-    allEmoji() {
-      return this.$store.getters['jv/get']('emoji');
-    },
+    // allEmoji() {
+    //   return this.$store.getters['jv/get']('emoji');
+    // },
     // postList() {
     //   // console.log(this.$store.getters['jv/get']('posts'));
     //   return this.$store.getters['jv/get']('posts');
@@ -646,6 +645,8 @@ export default {
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
           this.postComments.push(res);
+          console.log(res, '!!!!!!!!!!!!!!!!!!!');
+          this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
           // this.post.replyCount += 1;
           const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
           console.log(orgignPost, '获取呀');
@@ -702,10 +703,10 @@ export default {
       this.cursor = e.detail.cursor;
     },
     // 点击表情插入到文本域
-    getEmojiClick(num) {
+    getEmojiClick(code) {
       let text = '';
       text = `${this.textAreaValue.slice(0, this.cursor) +
-        this.allEmoji[num].code +
+        code +
         this.textAreaValue.slice(this.cursor)}`;
 
       this.textAreaValue = text;

@@ -1,5 +1,6 @@
 <template>
   <view
+    v-if="list.length > 0"
     class="emoji-box"
     :style="{
       position: position,
@@ -33,11 +34,12 @@
 <script>
 export default {
   name: 'QuiEmoji',
+
   props: {
-    list: {
-      default: Object,
-      type: Object,
-    },
+    // list: {
+    //   default: Object,
+    //   type: Object,
+    // },
     position: {
       default: 'absolute',
       type: String,
@@ -63,14 +65,35 @@ export default {
       type: String,
     },
   },
+  data() {
+    return {
+      list: [],
+      code: '',
+    };
+  },
+
   computed: {
     getSwiperItem() {
-      return Math.ceil(Object.keys(this.list).length / 35);
+      return Math.ceil(this.list.length / 35);
     },
   },
+
+  mounted() {
+    // 获取表情数据
+    this.getEmoji();
+  },
   methods: {
+    // 表情接口请求
+    getEmoji() {
+      this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
+        this.list = data;
+        delete this.list._jv;
+        console.log(this.list, '这是接口拿到的');
+      });
+    },
     getEmojiClick(num) {
-      this.$emit('click', num);
+      this.code = this.list[num].code;
+      this.$emit('click', this.code);
     },
   },
 };
@@ -82,6 +105,7 @@ export default {
 .emoji-box {
   z-index: 1500;
   width: 100%;
+  height: 370rpx;
   padding: 10rpx 0;
   background-color: --color(--qui-BG-2);
   border: 1rpx solid --color(--qui-BOR-DDD);

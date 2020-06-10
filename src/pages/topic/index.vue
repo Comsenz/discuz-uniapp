@@ -328,10 +328,9 @@
               </view>
             </view>
             <qui-emoji
-              :list="allEmoji"
+              v-if="emojiShow"
               position="absolute"
               top="104rpx"
-              v-if="emojiShow"
               border-radius="10rpx"
               :color="emojiShow ? '#1878F3' : '#777'"
               @click="getEmojiClick"
@@ -459,39 +458,39 @@ export default {
       payNum: [
         {
           name: '￥1',
-          pay: 1.0,
+          pay: '1.0',
         },
         {
           name: '￥2',
-          pay: 2.0,
+          pay: '2.0',
         },
         {
           name: '￥5',
-          pay: 5.0,
+          pay: '5.0',
         },
         {
           name: '￥10',
-          pay: 10.0,
+          pay: '10.0',
         },
         {
           name: '￥20',
-          pay: 20.0,
+          pay: '20.0',
         },
         {
           name: '￥50',
-          pay: 50.0,
+          pay: '50.0',
         },
         {
           name: '￥88',
-          pay: 88.0,
+          pay: '88.0',
         },
         {
           name: '￥128',
-          pay: 128.0,
+          pay: '128.0',
         },
         {
           name: this.i18n.t('discuzq.post.customize'),
-          pay: 0,
+          pay: '0',
         },
       ], // 打赏金额数组列表
       payNumCheck: [
@@ -500,7 +499,7 @@ export default {
           pay: '',
         },
       ],
-      price: 0.0, //需要支付的金额
+      price: '0.0', //需要支付的金额
       inputPrice: '', //自定义金额输入框的值
       payShowStatus: true, //是否显示支付
       pwdVal: '', //支付密码
@@ -542,9 +541,9 @@ export default {
       return this.$store.getters['jv/get'](`threads/${this.threadId}`);
     },
 
-    allEmoji() {
-      return this.$store.getters['jv/get']('emoji');
-    },
+    // allEmoji() {
+    //   return this.$store.getters['jv/get']('emoji');
+    // },
     // 语言包
     // topic详情页语言包
     t() {
@@ -564,6 +563,20 @@ export default {
   },
   // created() {},
   onLoad(option) {
+    // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
+    this.$u.event.$on('addComment', data => {
+      for (const index in this.posts) {
+        if (this.posts[index]._jv.id === data.commentId) {
+          if (this.posts[index].lastThreeComments.length >= 3) {
+            this.posts[index].lastThreeComments.pop();
+          }
+          if (data.data) {
+            this.posts[index].lastThreeComments.unshift(data.data);
+          }
+          break;
+        }
+      }
+    });
     // 删除评论的回复后清除当前列表评论的这条回复
     this.$u.event.$on('deleteComment', data => {
       for (const index in this.posts) {
@@ -583,9 +596,7 @@ export default {
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
-    if (Object.keys(this.allEmoji).length < 1) {
-      this.getEmoji();
-    }
+
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -641,9 +652,11 @@ export default {
     },
 
     // 表情接口请求
-    getEmoji() {
-      this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {});
-    },
+    // getEmoji() {
+    //   this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
+    //     this.allEmoji = data;
+    //   });
+    // },
     // 加载当前主题数据
     loadThread() {
       const params = {
@@ -1342,7 +1355,12 @@ export default {
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
-      this.payNumCheck = [];
+      this.payNumCheck = [
+        {
+          name: '',
+          pay: '',
+        },
+      ];
       this.$refs.rewardPopup.open();
     },
     // 取消打赏
@@ -1400,15 +1418,15 @@ export default {
       this.cursor = e.detail.cursor;
     },
     // 点击表情插入到文本域
-    getEmojiClick(num) {
+    getEmojiClick(code) {
       let text = '';
       text = `${this.textAreaValue.slice(0, this.cursor) +
-        this.allEmoji[num].code +
+        code +
         this.textAreaValue.slice(this.cursor)}`;
-
       this.textAreaValue = text;
       this.emojiShow = false;
     },
+
     // 点击@跳转到@页
     callClick() {
       uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
