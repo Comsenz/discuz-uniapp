@@ -3,9 +3,9 @@
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
-      :theme-num="forums.other.count_users"
+      :theme-num="forums.other && forums.other.count_users"
       :post="i18n.t('home.homecontent')"
-      :post-num="forums.other.count_threads"
+      :post-num="forums.other && forums.other.count_threads"
       :share="i18n.t('home.share')"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
@@ -31,22 +31,22 @@
       <qui-cell-item
         class="cell-item--left cell-item--auto"
         :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site.site_introduction"
+        :addon="forums.set_site && forums.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site.site_install"
+        :addon="forums.set_site && forums.set_site.site_install"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="'¥' + (forums.set_site.site_price || 0)"
+        :addon="'¥' + ((forums.set_site && forums.set_site.site_price) || 0)"
         class="site-item__pay"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.periodvalidity')"
         :addon="
-          forums.set_site.site_expire
-            ? forums.set_site.site_expire + i18n.t('site.day')
+          forums.set_site && forums.set_site.site_expire
+            ? (forums.set_site && forums.set_site.site_expire) + i18n.t('site.day')
             : i18n.t('site.permanent')
         "
       ></qui-cell-item>
@@ -54,12 +54,14 @@
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="forums.set_site.site_author.avatar || '/static/noavatar.gif'"
+            :src="(forums.set_site && forums.set_site.site_author.avatar) || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(forums.set_site.site_author.id)"
+            @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
             mode="aspectFill"
           ></image>
-          <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
+          <text class="site-item__owner-name">
+            {{ forums.set_site && forums.set_site.site_author.username }}
+          </text>
         </view>
       </qui-cell-item>
       <qui-cell-item :title="i18n.t('home.theme')" slot-right :border="false">
@@ -88,12 +90,11 @@
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.paynow') }}，¥{{ forums.set_site.site_price || 0 }}
+          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
           {{
-            forums.set_site.site_expire
-              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site.site_expire}${i18n.t(
-                  'site.day',
-                )}`
+            forums.set_site && forums.set_site.site_expire
+              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
+                  forums.set_site.site_expire}${i18n.t('site.day')}`
               : ` / ${i18n.t('site.permanent')}`
           }}
         </qui-button>
@@ -101,9 +102,9 @@
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
-          :money="forums.set_site.site_price"
+          :money="forums.set_site && forums.set_site.site_price"
           :wallet-status="true"
-          balance="10"
+          :balance="10"
           :pay-type-data="payTypeData"
           @radioMyHead="radioMyHead"
           @onInput="onInput"
@@ -147,7 +148,9 @@ export default {
     };
   },
   onLoad() {
+    // #ifdef MP-WEIXIN
     uni.hideHomeButton();
+    // #endif
     this.$u.event.$on('logind', data => {
       if (data.paid) {
         uni.redirectTo({
@@ -289,18 +292,18 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.site {
-  /deep/ .header {
+.site /deep/ {
+  .header {
     height: auto;
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
-  .header /deep/ .circleDet {
+  .header .circleDet {
     padding: 60rpx 40rpx 50rpx;
     opacity: 1;
   }
-  .header /deep/ .circleDet-txt {
+  .header .circleDet-txt {
     color: --color(--qui-FC-333);
     opacity: 1;
   }
@@ -308,15 +311,18 @@ export default {
     height: 75rpx;
     padding-top: 71rpx;
   }
-  /deep/ .cell-item__body__content-title {
+  .cell-item__body__content-title {
     width: 112rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
-}
-.header /deep/ .circleDet-num,
-.header /deep/ .circleDet-share {
-  color: --color(--qui-FC-333);
+  .header .circleDet-num,
+  .header .circleDet-share {
+    color: --color(--qui-FC-333);
+  }
+  .site-invite {
+    text-align: center;
+  }
 }
 //下面部分样式
 .site-item {
@@ -326,9 +332,6 @@ export default {
 }
 .site .cell-item {
   padding-right: 40rpx;
-}
-.site-invite {
-  text-align: center;
 }
 .cell-item--auto .cell-item__body {
   height: auto;

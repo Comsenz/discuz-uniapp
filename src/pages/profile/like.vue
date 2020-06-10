@@ -61,8 +61,8 @@ export default {
   mixins: [forums],
   props: {
     userId: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   data() {
