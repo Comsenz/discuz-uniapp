@@ -27,7 +27,8 @@
         <view @click="jump2Register">
           {{ i18n.t('user.noexist') }}
         </view>
-        <view @click="jump2findPassword">
+        <!-- 开启短信功能才显示 -->
+        <view @click="jump2findPassword" v-if="forums.qcloud.qcloud_sms">
           {{ i18n.t('user.forgetPassword') }}
         </view>
       </view>
@@ -36,12 +37,21 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
+  mixins: [forums],
   data() {
     return {
-      username: '', // 用户名
-      password: '', // 密码
+      username: 'admin', // 用户名
+      password: 'Admin123', // 密码
+      url: '', // 上一个页面的路径
     };
+  },
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
+    console.log('是否开启短信功能', this.forums.qcloud.qcloud_sms);
   },
   methods: {
     login() {
@@ -50,15 +60,34 @@ export default {
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+        // eslint-disable-next-line no-unused-vars
+        this.$store
+          .dispatch('session/h5Login', params)
+          .then(res => {
+            console.log('登录成功', res);
+            uni.navigateTo({
+              url: this.url,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
         this.clear();
-        console.log('登录成功');
       }
     },
     jump2Register() {
       this.clear();
       console.log('跳转到注册页面');
       uni.navigateTo({
-        url: '/pages/user/register',
+        url: `/pages/user/register?url=${this.url}`,
       });
     },
     jump2findPassword() {
