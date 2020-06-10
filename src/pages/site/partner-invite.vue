@@ -3,9 +3,9 @@
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
-      :theme-num="forums.other.count_users"
+      :theme-num="forums.other && forums.other.count_users"
       :post="i18n.t('home.homecontent')"
-      :post-num="forums.other.count_threads"
+      :post-num="forums.other && forums.other.count_threads"
       :share="i18n.t('home.share')"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
@@ -31,23 +31,25 @@
       <qui-cell-item
         class="cell-item--auto cell-item--left"
         :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site.site_introduction"
+        :addon="forums.set_site && forums.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site.site_install"
+        :addon="forums.set_site && forums.set_site.site_install"
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemode')" :addon="handleMode()"></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
           <image
             class="site-item__owner-avatar"
-            :src="forums.set_site.site_author.avatar || '/static/noavatar.gif'"
+            :src="(forums.set_site && forums.set_site.site_author.avatar) || '/static/noavatar.gif'"
             alt="avatarUrl"
-            @tap="toProfile(forums.set_site.site_author.id)"
+            @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
             mode="aspectFill"
           ></image>
-          <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
+          <text class="site-item__owner-name">
+            {{ forums.set_site && forums.set_site.site_author.username }}
+          </text>
         </view>
       </qui-cell-item>
       <qui-cell-item :title="i18n.t('home.theme')" slot-right>
@@ -80,16 +82,23 @@
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
-        <text class="site-invite__detail__bold">{{ inviteData.user.username }}</text>
+        <text class="site-invite__detail__bold">
+          {{ inviteData.user && inviteData.user.username }}
+        </text>
         <text>{{ i18n.t('site.inviteyouas') }}</text>
-        <text class="site-invite__detail__bold">{{ `[ ${inviteData.group.name} ]` }}</text>
+        <text class="site-invite__detail__bold">
+          {{ `[ ${inviteData.group && inviteData.group.name} ]` }}
+        </text>
         <text>{{ i18n.t('site.join') }}</text>
-        <text class="site-invite__detail__bold">{{ forums.set_site.site_name }}</text>
+        <text class="site-invite__detail__bold">
+          {{ forums.set_site && forums.set_site.site_name }}
+        </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.accepttheinvitationandbecome') }} {{ inviteData.group.name }}
+          {{ i18n.t('site.accepttheinvitationandbecome') }}
+          {{ inviteData.group && inviteData.group.name }}
         </qui-button>
       </view>
     </view>
@@ -218,18 +227,18 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.site {
-  /deep/ .header {
+.site /deep/ {
+  .header {
     height: auto;
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
-  .header /deep/ .circleDet {
+  .header .circleDet {
     padding: 60rpx 40rpx 50rpx;
     opacity: 1;
   }
-  .header /deep/ .circleDet-txt {
+  .header .circleDet-txt {
     color: --color(--qui-FC-333);
     opacity: 1;
   }
@@ -237,15 +246,24 @@ export default {
     height: 75rpx;
     padding-top: 71rpx;
   }
-  /deep/ .cell-item__body__content-title {
+  .cell-item__body__content-title {
     width: 112rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
-}
-.header /deep/ .circleDet-num,
-.header /deep/ .circleDet-share {
-  color: --color(--qui-FC-333);
+  .header .circleDet-num,
+  .header .circleDet-share {
+    color: --color(--qui-FC-333);
+  }
+  .site-invite {
+    padding-bottom: 20rpx;
+    text-align: center;
+  }
+  .cell-item--auto .cell-item__body {
+    height: auto;
+    padding: 35rpx 0;
+    align-items: flex-start;
+  }
 }
 //下面部分样式
 .site-item {
@@ -256,11 +274,6 @@ export default {
 .site .cell-item {
   padding-right: 40rpx;
 }
-.cell-item--auto .cell-item__body {
-  height: auto;
-  padding: 35rpx 0;
-  align-items: flex-start;
-}
 .site-invite__detail__bold {
   margin: 0 5rpx;
   font-weight: bold;
@@ -270,10 +283,6 @@ export default {
   padding: 0 20rpx;
   margin: 50rpx auto 30rpx;
   font-size: 28rpx;
-}
-.site-invite {
-  padding-bottom: 20rpx;
-  text-align: center;
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
