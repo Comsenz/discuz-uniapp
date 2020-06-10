@@ -1,19 +1,11 @@
 import { THEME_DEFAULT } from '@/common/const';
 
-// #ifdef H5
-const whitelistPage = [
-  'pages/home/index',
-  'pages/topic/index',
-  'pages/topic/comment',
-  'pages/profile/index',
-];
-// #endif
-
 module.exports = {
   data() {
     return {
       theme: this.$u.currentTheme,
       loaded: false,
+      appLoadedStatus: false,
     };
   },
   onLoad() {
@@ -25,33 +17,8 @@ module.exports = {
     this.$u.getRect = this.$uGetRect;
 
     // #ifdef H5
-    const pages = getCurrentPages();
-    const currentPage = pages[pages.length - 1];
-    const isLogin = this.$store.getters['session/get']('isLogin');
-    console.log(whitelistPage.indexOf(currentPage.route), !isLogin);
-    if (whitelistPage.indexOf(currentPage.route) === -1 && !isLogin) {
-      let homePageIndex;
-      try {
-        pages.forEach((page, index) => {
-          if (page.route === 'pages/home/index') {
-            throw new Error(pages.length - index);
-          }
-        });
-      } catch (e) {
-        homePageIndex = e;
-      }
-
-      if (homePageIndex) {
-        uni.navigateBack({
-          delta: homePageIndex,
-        });
-      } else {
-        uni.navigateTo({
-          url: '/pages/home/index',
-        });
-      }
-      // eslint-disable-next-line no-useless-return
-      return;
+    if (app.globalData.appLoadedStatus) {
+      uni.$emit('apploaded');
     }
     // #endif
   },
