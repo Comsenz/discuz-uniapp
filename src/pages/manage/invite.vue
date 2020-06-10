@@ -3,7 +3,13 @@
     <!-- #ifdef H5-->
     <qui-header-back title="邀请成员"></qui-header-back>
     <!-- #endif -->
-    <scroll-view scroll-y show-scrollbar="false" show-icon class="invite">
+    <scroll-view
+      scroll-y
+      show-scrollbar="false"
+      show-icon
+      class="invite"
+      :style="current === 0 ? 'bottom: 150rpx;' : 'bottom: 0rpx;'"
+    >
       <!-- 标签栏 -->
       <view class="invite-tabs">
         <qui-tabs
@@ -12,8 +18,8 @@
           :values="tabList"
           @clickItem="onClickItem"
         ></qui-tabs>
-        <view class="">{{ role }}</view>
-        <view class="profile-tabs__content">
+        <view>{{ role }}</view>
+        <view>
           <view v-if="current === 0" class="items">
             <qui-invite
               :total="total"
@@ -56,7 +62,7 @@
       </view>
     </scroll-view>
     <!-- 邀请链接按钮 -->
-    <view class="invite-button">
+    <view class="invite-button" v-if="current === 0">
       <button class="btn" @click="generate">
         {{ i18n.t('manage.generateInvitationUrl') }}
       </button>
@@ -185,14 +191,20 @@ export default {
           list.push(inviteListValue);
         }
       }
-      console.log('list', list);
+      console.log('allInviteList', list);
       return list;
     },
     // 获取用户组列表
     groupList() {
       const groups = this.$store.getters['jv/get']('groups');
       console.log('groups', groups);
-      return groups;
+      const list = [];
+      const array = Object.keys(groups);
+      for (let i = 0; i < array.length; i += 1) {
+        list.push(groups[array[i]]);
+      }
+      console.log('groupList', list);
+      return list;
     },
     // 获取用户角色
     userInfos() {
@@ -234,14 +246,14 @@ export default {
       this.$refs.popup.open();
     },
     // 生成 合伙人/嘉宾/成员 邀请链接
-    generateUrl(key) {
-      console.log('生成邀请链接的key：', key);
+    generateUrl(item) {
+      console.log('生成邀请链接：', item);
       const adminParams = {
         _jv: {
           type: 'invite',
         },
         type: 'invite',
-        group_id: parseInt(this.groupList[key]._jv.id, 10),
+        group_id: parseInt(item._jv.id, 10),
       };
       const userParams = {
         _jv: {
@@ -323,7 +335,6 @@ export default {
   position: fixed;
   top: 0rpx;
   right: 0rpx;
-  bottom: 150rpx;
   left: 0rpx;
   /* #ifdef H5 */
   margin: 44px 0rpx 0rpx;
@@ -334,19 +345,6 @@ export default {
     /deep/ .qui-tabs__item--active .qui-tabs__item__title {
       font-size: $fg-f28;
     }
-  }
-
-  .left-text {
-    min-width: 250rpx;
-    font-weight: bold;
-    color: --color(--qui-FC-34);
-  }
-
-  .user-avatar {
-    width: 70rpx;
-    height: 70rpx;
-    margin: 15rpx 20rpx;
-    border-radius: 50%;
   }
 }
 

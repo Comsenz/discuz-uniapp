@@ -5,7 +5,62 @@ import { i18n, localeUse } from './locale';
 import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
-import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST } from './common/const';
+import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './common/const';
+
+// #ifdef H5
+const publicWhitelistPage = [
+  '/pages/home/index',
+  '/pages/topic/index',
+  '/pages/topic/comment',
+  '/pages/profile/index',
+  '/pages/user/login',
+  '/pages/user/login-bind',
+  '/pages/user/register-bind',
+  '/pages/user/register',
+  '/pages/user/phone-number-login',
+  '/pages/user/verification-code-login',
+];
+const payWhiteListPage = [
+  '/pages/site/info',
+  '/pages/user/login',
+  '/pages/user/login-bind',
+  '/pages/user/register-bind',
+  '/pages/user/register',
+  '/pages/user/phone-number-login',
+  '/pages/user/verification-code-login',
+];
+const apploaded = () => {
+  const app = getApp();
+  const forums = app.$store.getters['jv/get']('forums/1');
+  if (forums.set_site) {
+    const isLogin = app.$store.getters['session/get']('isLogin');
+    if (forums.set_site.site_mode === SITE_PAY) {
+      if (payWhiteListPage.indexOf(app._route.path) === -1 && !isLogin) {
+        uni.redirectTo({
+          url: '/pages/site/info',
+        });
+        return;
+      }
+      const userId = app.$store.getters['session/get']('userId');
+      let user = {};
+      if (userId) {
+        user = app.$store.getters['jv/get'](`users/${userId}`);
+      }
+      if (!user.id) return;
+      if (payWhiteListPage.indexOf(app._route.path) === -1 && !user.paid) {
+        uni.redirectTo({
+          url: '/pages/site/info',
+        });
+      }
+    } else if (publicWhitelistPage.indexOf(app._route.path) === -1 && !isLogin) {
+      uni.redirectTo({
+        url: '/pages/home/index',
+      });
+    }
+  }
+};
+uni.$on('apploaded', apploaded);
+// #endif
 
 // 兼容 allSettled 方法处理：https://www.npmjs.com/package/promise.allsettled
 const allSettled = require('promise.allsettled');

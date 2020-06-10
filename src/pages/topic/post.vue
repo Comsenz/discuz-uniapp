@@ -26,6 +26,13 @@
             color="#777"
             @click="callClick"
           ></qui-icon>
+          <qui-icon
+            class="post-box__hd-l__icon"
+            name="icon-wei"
+            size="40"
+            color="#777"
+            @click="topicPage"
+          ></qui-icon>
         </view>
         <text class="post-box__hd-r">
           {{
@@ -529,6 +536,22 @@ export default {
     callClick() {
       uni.navigateTo({ url: '/pages/user/at-member' });
     },
+    topicPage() {
+      uni.navigateTo({ url: '/components/qui-topic-page/qui-topic-page' });
+    },
+    hasStorage(){
+       const that=this
+       uni.getStorage({
+        key:'topicMsg',
+        success(e){
+          if(e.data.keywords) that.textAreaValue=`#${e.data.keywords}#`
+          uni.setStorage({
+            key:'topicMsg',
+            data:''
+          })
+        }
+      })
+    },
     // 分类点击
     checkClass(e, index) {
       // 单选功能
@@ -920,6 +943,7 @@ export default {
     },
   },
   onLoad(option) {
+    this.hasStorage();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 

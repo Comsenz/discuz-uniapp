@@ -7,6 +7,9 @@ const themeListeners = [];
 
 export default {
   globalData: {
+    // #ifdef H5
+    appLoadedStatus: false,
+    // #endif
     themeChanged(theme) {
       Vue.prototype.$u.currentTheme = theme;
       themeListeners.forEach(listener => {
@@ -48,30 +51,32 @@ export default {
         user = await this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
         uni.setStorageSync(STORGE_GET_USER_TIME, new Date().getTime());
       }
-      const pages = getCurrentPages();
-      const res = uni.getSystemInfoSync();
-      const code = 'dataerro';
-      const status = 500;
+
       if (forums.set_site.site_mode === SITE_PAY) {
-        let currentPage = {};
+        const res = uni.getSystemInfoSync();
         if (res.platform === 'ios') {
-          this.$store.dispatch('forum/setError', { loading: false, code, status });
-          return;
-        }
-        if (pages.length > 0) {
-          currentPage = pages[pages.length - 1];
-          if (!user.paid && currentPage.route !== 'pages/site/info') {
+          this.$store.dispatch('forum/setError', { loading: false, code: 500, status: 'dataerro' });
+        } else {
+          let currentPage = {};
+          const pages = getCurrentPages();
+          if (pages.length > 0) {
+            currentPage = pages[pages.length - 1];
+            if (!user.paid && currentPage.route !== 'pages/site/info') {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
+          } else if (!user.paid) {
             uni.redirectTo({
               url: '/pages/site/info',
             });
           }
-        } else if (!user.paid) {
-          uni.redirectTo({
-            url: '/pages/site/info',
-          });
         }
       }
-
+      // #ifdef H5
+      this.globalData.appLoadedStatus = true;
+      uni.$emit('apploaded');
+      // #endif
       this.$store.dispatch('forum/setError', { loading: false });
     };
     try {

@@ -32,7 +32,7 @@
               lazy-load
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
-              :src="item.user.avatarUrl || '/static/noavatar.gif'"
+              :src="item.user ? item.user.avatarUrl : '/static/noavatar.gif'"
               @click="jumpUserPage(item.user_id)"
             ></image>
             <view

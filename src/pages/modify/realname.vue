@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back title="实名认证"></qui-header-back>
+    <qui-header-back :title="i18n.t('modify.realnametitle')"></qui-header-back>
     <!-- #endif -->
     <view class="tica">
       <view class="tica-name">
