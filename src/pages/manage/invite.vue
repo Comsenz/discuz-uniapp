@@ -3,7 +3,13 @@
     <!-- #ifdef H5-->
     <qui-header-back title="邀请成员"></qui-header-back>
     <!-- #endif -->
-    <scroll-view scroll-y show-scrollbar="false" show-icon class="invite">
+    <scroll-view
+      scroll-y
+      show-scrollbar="false"
+      show-icon
+      class="invite"
+      :style="current === 0 ? 'bottom: 150rpx;' : 'bottom: 0rpx;'"
+    >
       <!-- 标签栏 -->
       <view class="invite-tabs">
         <qui-tabs
@@ -56,7 +62,7 @@
       </view>
     </scroll-view>
     <!-- 邀请链接按钮 -->
-    <view class="invite-button">
+    <view class="invite-button" v-if="current === 0">
       <button class="btn" @click="generate">
         {{ i18n.t('manage.generateInvitationUrl') }}
       </button>
@@ -329,7 +335,6 @@ export default {
   position: fixed;
   top: 0rpx;
   right: 0rpx;
-  bottom: 150rpx;
   left: 0rpx;
   /* #ifdef H5 */
   margin: 44px 0rpx 0rpx;
