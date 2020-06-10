@@ -30,7 +30,7 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
@@ -63,6 +63,11 @@ export default {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
+    // let modelmes = wx.getStorageSync('modelmes');
+    // let isIphoneX = app.globalData.isIphoneX;
+    // this.setData({
+    //   isIphoneX: isIphoneX
+    // });
   },
 
   // 唤起小程序原声分享
@@ -80,6 +85,15 @@ export default {
     };
   },
   onShow() {
+    if (
+      !this.$store.getters['session/get']('h5Login') &&
+      ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+    ) {
+      uni.navigateTo({
+        url: 'pages/home/index',
+      });
+      return;
+    }
     if (this.currentTab === 'quinotice') {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();
@@ -92,6 +106,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
     // 切换组件
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy'];
@@ -105,6 +122,7 @@ export default {
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         this.$store.getters['session/get']('auth').open();
+        this.setFooterIndex(0);
         return;
       }
 

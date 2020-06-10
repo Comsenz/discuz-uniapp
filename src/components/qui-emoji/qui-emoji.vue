@@ -11,15 +11,18 @@
     }"
   >
     <swiper indicator-dots="true" class="uni-swiper">
-      <swiper-item v-for="index of getSwiperItem" :key="index">
+      <swiper-item v-for="(emo, index) of getSwiperItem" :key="index">
         <view class="emoji-box__item">
           <view
             class="emoji-box__item__view"
-            v-for="j of 35"
+            v-for="(chi, j) of 35"
             :key="j"
             @click="getEmojiClick(index * 35 + j + 1)"
           >
-            <image class="emoji" :src="list[index * 35 + j + 1].url"></image>
+            <image
+              class="emoji"
+              :src="list[index * 35 + j + 1] ? list[index * 35 + j + 1].url : ''"
+            ></image>
           </view>
         </view>
       </swiper-item>
@@ -62,7 +65,7 @@ export default {
   },
   computed: {
     getSwiperItem() {
-      return Math.ceil(Object.keys(this.list).nv_length / 35);
+      return Math.ceil(Object.keys(this.list).length / 35);
     },
   },
   methods: {
@@ -103,6 +106,7 @@ export default {
 }
 
 /deep/ .uni-swiper {
+  position: install;
   height: 350rpx;
 }
 </style>

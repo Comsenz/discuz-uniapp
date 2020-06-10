@@ -27,12 +27,8 @@
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
-            <qui-icon
-              name="icon-management"
-              class="icon-management"
-              :style="{ color: selectActive }"
-            ></qui-icon>
-            <view :style="{ color: selectActive }">{{ t.management }}</view>
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>{{ t.management }}</view>
           </view>
           <view>
             <qui-drop-down
@@ -59,7 +55,7 @@
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
-          <rich-text :nodes="themeContent"></rich-text>
+          <rich-text :nodes="themeContent | formatRichText"></rich-text>
         </view>
         <view
           class="theme__content__videocover"
@@ -172,6 +168,47 @@
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
+  filters: {
+    // 处理富文本里的图片宽度自适应
+    // 1.去掉img标签里的style、width、height属性
+    // 2.img标签添加style属性：max-width:100%;height:auto
+    // 3.修改所有style里的width属性为max-width:100%
+    // 4.去掉<br/>标签			 * @param html			 * @returns {void|string|*}
+
+    formatRichText(html) {
+      if (html.indexOf('qq-emotion') !== -1) {
+        return html;
+      }
+
+      // 控制小程序中图片大小
+      let newContent = html.replace(/<img[^>]*>/gi, match => {
+        let matchRes = match;
+        matchRes = matchRes.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+        matchRes = matchRes.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+        matchRes = matchRes.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
+        return matchRes;
+      });
+      newContent = newContent.replace(/style="[^"]+"/gi, match => {
+        let matchRes = match;
+        matchRes = matchRes
+          .replace(/width:[^;]+;/gi, 'max-width:100%;')
+          .replace(/width:[^;]+;/gi, 'max-width:100%;');
+        return matchRes;
+      });
+      newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+      newContent = newContent.replace(
+        /<img/gi,
+        '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"',
+      );
+      // newContent = newContent.replace(/<h1="[^"]+"/gi, match => {
+      //   let matchRes = match;
+      //   matchRes = matchRes
+      //     .replace(/<h1:[^;]+;/gi, 'max-width:100%;')
+      //   return matchRes;
+      // });
+      return newContent;
+    },
+  },
   props: {
     // 类型
     themeParts: {
@@ -201,7 +238,7 @@ export default {
     },
     // 当前主题价格
     threadPrice: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     // 需要支付查看的内容所占的比例
@@ -325,13 +362,13 @@ export default {
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
-      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
+      // this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 管理菜单选中事件
     selectChoice(param) {
       this.$emit('selectChoice', param);
       this.seleShow = false;
-      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
+      // this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 点击用户头像以及用户名事件
     personJump() {
@@ -373,35 +410,6 @@ export default {
       this.imageStatus = false;
     },
   },
-  // filters: {
-  //   // 处理富文本里的图片宽度自适应
-  //   // 1.去掉img标签里的style、width、height属性
-  //   // 2.img标签添加style属性：max-width:100%;height:auto
-  //   // 3.修改所有style里的width属性为max-width:100%
-  //   // 4.去掉<br/>标签			 * @param html			 * @returns {void|string|*}
-
-  //   formatRichText(html) {
-  //     //控制小程序中图片大小
-  //     let newContent = html.replace(/<img[^>]*>/gi, function(match)=> {
-  //       match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
-  //       match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
-  //       match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
-  //       return match;
-  //     });
-  //     newContent = newContent.replace(/style="[^"]+"/gi, function(match, capture) {
-  //       match = match
-  //         .replace(/width:[^;]+;/gi, 'max-width:100%;')
-  //         .replace(/width:[^;]+;/gi, 'max-width:100%;');
-  //       return match;
-  //     });
-  //     newContent = newContent.replace(/<br[^>]*\/>/gi, '');
-  //     newContent = newContent.replace(
-  //       /\<img/gi,
-  //       '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"',
-  //     );
-  //     return newContent;
-  //   },
-  // },
 };
 </script>
 

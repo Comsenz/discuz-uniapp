@@ -2,7 +2,7 @@
 
 ## 使用
 
-在 `template` 中使用图标组件
+在 `template` 中使用组件
 ```html
 <qui-no-data name="icon-unfold" tips="提示信息"></qui-no-data>
 ```

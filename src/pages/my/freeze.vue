@@ -3,25 +3,25 @@
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('profile.freezeamount')"></qui-header-back>
     <!-- #endif -->
-    <view class="freeze-head">
-      <view class="freeze-head__num">
-        <text>{{ i18n.t('profile.total') }}</text>
-        <text class="freeze-head__num__detail">{{ totalData }}</text>
-        <text>{{ `${i18n.t('profile.item')}${i18n.t('profile.records')}` }}</text>
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      @scrolltolower="pullDown"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <view class="freeze-head">
+        <view class="freeze-head__num">
+          <text>{{ i18n.t('profile.total') }}</text>
+          <text class="freeze-head__num__detail">{{ totalData }}</text>
+          <text>{{ `${i18n.t('profile.item')}${i18n.t('profile.records')}` }}</text>
+        </view>
+        <view class="freeze-head__money">
+          <text>{{ i18n.t('profile.amountinvolved') }}</text>
+          <text class="freeze-head__money__detail">¥{{ userInfo.walletFreeze }}</text>
+        </view>
       </view>
-      <view class="freeze-head__money">
-        <text>{{ i18n.t('profile.amountinvolved') }}</text>
-        <text class="freeze-head__money__detail">¥{{ userInfo.walletFreeze }}</text>
-      </view>
-    </view>
-    <view class="freeze-items">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        class="scroll-y"
-      >
+      <view class="freeze-items">
         <qui-cell-item
           v-for="(freezeItem, index) in freezelist"
           :key="index"
@@ -35,8 +35,8 @@
           :brief-right="timeHandle(freezeItem.created_at)"
         ></qui-cell-item>
         <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
-      </scroll-view>
-    </view>
+      </view>
+    </scroll-view>
   </qui-page>
 </template>
 
@@ -99,6 +99,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .freeze /deep/ {
+  min-height: auto;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
@@ -143,6 +144,6 @@ export default {
   }
 }
 .scroll-y {
-  max-height: calc(100vh - 160rpx);
+  max-height: 100vh;
 }
 </style>

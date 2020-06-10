@@ -18,10 +18,10 @@
           ></qui-filter-modal>
         </view>
       </qui-cell-item>
+      <picker mode="date" :value="date" @change="bindDateChange" fields="month" class="date-picker">
+        <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
+      </picker>
     </view>
-    <picker mode="date" :value="date" @change="bindDateChange" fields="month" class="date-picker">
-      <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
-    </picker>
     <view class="walletlist-items">
       <scroll-view
         scroll-y="true"
@@ -216,8 +216,16 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 190rpx);
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 150rpx);
+/* #endif */
 
 .walletlist /deep/ {
+  min-height: auto;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
@@ -236,10 +244,10 @@ export default {
     margin-left: 20rpx;
   }
   .walletlist-head {
-    padding-top: 40rpx;
-    padding-left: 40rpx;
+    position: relative;
+    padding: 40rpx 0 0 40rpx;
     /* #ifdef H5 */
-    margin-top: 60rpx;
+    padding-top: 90rpx;
     /* #endif */
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
@@ -247,18 +255,19 @@ export default {
   .walletlist-head .cell-item__body {
     height: 78rpx;
   }
+  .cell-item.fail .cell-item__body__right-text {
+    color: --color(--qui-RED);
+  }
+  .cell-item.success .cell-item__body__right-text {
+    color: #189a00;
+  }
+  .walletlist-items {
+    padding-left: 40rpx;
+    margin-top: 30rpx;
+    background: --color(--qui-BG-2);
+  }
 }
-/deep/ .cell-item.fail .cell-item__body__right-text {
-  color: --color(--qui-RED);
-}
-/deep/ .cell-item.success .cell-item__body__right-text {
-  color: #189a00;
-}
-.walletlist-items {
-  padding-left: 40rpx;
-  margin-top: 30rpx;
-  background: --color(--qui-BG-2);
-}
+
 .date-picker {
   position: absolute;
   top: 40rpx;
@@ -266,6 +275,9 @@ export default {
   z-index: 10;
   width: 50%;
   height: 78rpx;
+  /* #ifdef H5 */
+  margin-top: 50rpx;
+  /* #endif */
 }
 .date-picker .uni-input {
   width: 100%;
@@ -274,7 +286,7 @@ export default {
   line-height: 78rpx;
 }
 .scroll-y {
-  max-height: calc(100vh - 148rpx);
+  max-height: $height;
 }
 .cell-item__body__right {
   padding-left: 59rpx;

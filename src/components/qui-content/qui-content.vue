@@ -243,12 +243,12 @@ export default {
     },
     // icon图标
     themeBtn: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
     // 回复的图标
     themeReplyBtn: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
     // 删除的图标

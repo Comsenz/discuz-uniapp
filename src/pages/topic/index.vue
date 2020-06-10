@@ -1,373 +1,386 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="content" v-if="loaded">
-    <scroll-view
-      scroll-y="true"
-      scroll-with-animation="true"
-      show-scrollbar="false"
-      :scroll-top="scrollTopNum"
-      class="scroll-y"
-      @scrolltolower="pullDown"
-    >
-      <view class="ft-gap">
-        <view class="bg-white">
-          <view class="detail-tip" v-if="thread.type == 2 && thread.threadVideo.status == 0">
-            {{ t.transcodingTip }}
-          </view>
-          <view class="detail-tip" v-else-if="thread.type == 2 && thread.threadVideo.status == 2">
-            {{ t.transcodingFailedTip }}
-          </view>
-          <view class="detail-tip" v-else-if="topicStatus == 0">
-            {{ t.examineTip }}
-          </view>
-          <qui-topic-content
-            :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
-            :avatar-url="thread.user.avatarUrl"
-            :user-name="thread.user.username"
-            :user-role="thread.user.groups"
-            :theme-type="thread.type"
-            :theme-time="thread.createdAt"
-            :management-show="
-              selectList[0].canOpera ||
-                selectList[1].canOpera ||
-                selectList[2].canOpera ||
-                selectList[3].canOpera
-            "
-            :theme-title="thread.type == 1 ? thread.title : ''"
-            :theme-content="thread.firstPost.contentHtml"
-            :images-list="thread.firstPost.images"
-            :select-list="selectList"
-            :tags="[thread.category]"
-            :thread-price="thread.price"
-            :thread-is-essence="thread.isEssence"
-            :media-url="thread.threadVideo.media_url"
-            :video-width="thread.threadVideo.width"
-            :video-height="thread.threadVideo.height"
-            :cover-image="thread.threadVideo.cover_url"
-            @personJump="personJump(thread.user._jv.id)"
-            @selectChoice="selectChoice"
-            @videocoverClick="payClickShow"
-            @previewPicture="payClickShow"
-            @tagClick="tagClick"
-          ></qui-topic-content>
-          <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
-          {{ p.pay }}
-        </qui-button> -->
-          <!-- 已支付用户列表 -->
-          <view v-if="paidStatus">
-            <qui-person-list
-              :type="t.pay"
-              :person-num="thread.paidCount"
-              :limit-count="limitShowNum"
-              :person-list="thread.paidUsers"
-              :btn-show="thread.price > 0 && !thread.paid"
-              :btn-icon-show="true"
-              btn-icon-name="rmb"
-              :btn-text="payThreadTypeText"
-              @personJump="personJump"
-              @btnClick="payClickShow"
-            ></qui-person-list>
-          </view>
-          <!-- 打赏用户列表 -->
-          <view v-if="rewardStatus">
-            <qui-person-list
-              :type="t.reward"
-              :person-num="thread.rewardedCount"
-              :limit-count="limitShowNum"
-              :person-list="thread.rewardedUsers"
-              :btn-show="true"
-              :btn-icon-show="true"
-              btn-icon-name="reward"
-              :btn-text="t.reward"
-              @personJump="personJump"
-              @btnClick="rewardClick"
-            ></qui-person-list>
-          </view>
-          <view v-if="thread.firstPost.likeCount > 0">
-            <!-- 点赞用户列表 -->
-            <qui-person-list
-              :type="t.giveLike"
-              :person-num="thread.firstPost.likeCount"
-              :limit-count="limitShowNum"
-              :person-list="thread.firstPost.likedUsers"
-              :btn-show="false"
-              @personJump="personJump"
-            ></qui-person-list>
-          </view>
-          <view class="det-con-ft">
-            <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
-            <view
-              class="det-con-ft-child"
-              @click="
-                threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1')
+  <qui-page :data-qui-theme="theme" class="content">
+    <view v-if="loaded">
+      <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        show-scrollbar="false"
+        class="scroll-y"
+        @scrolltolower="pullDown"
+      >
+        <view class="ft-gap">
+          <view class="bg-white">
+            <view class="detail-tip" v-if="thread.type == 2 && thread.threadVideo.status == 0">
+              {{ t.transcodingTip }}
+            </view>
+
+            <view class="detail-tip" v-else-if="thread.type == 2 && thread.threadVideo.status == 2">
+              {{ t.transcodingFailedTip }}
+            </view>
+            <view class="detail-tip" v-else-if="topicStatus == 0">
+              {{ t.examineTip }}
+            </view>
+            <qui-topic-content
+              :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
+              :avatar-url="thread.user.avatarUrl"
+              :user-name="thread.user.username"
+              :user-role="thread.user.groups"
+              :theme-type="thread.type"
+              :theme-time="thread.createdAt"
+              :management-show="
+                selectList[0].canOpera ||
+                  selectList[1].canOpera ||
+                  selectList[2].canOpera ||
+                  selectList[3].canOpera
               "
-            >
-              <qui-icon
-                v-if="thread.isFavorite"
-                name="icon-collectioned"
-                class="qui-icon"
-              ></qui-icon>
-
-              <qui-icon v-else name="icon-collection" class="qui-icon"></qui-icon>
-              <view v-if="thread.isFavorite">{{ t.collectionAlready }}</view>
-              <view v-else>{{ t.collection }}</view>
+              :theme-title="thread.type == 1 ? thread.title : ''"
+              :theme-content="thread.firstPost.contentHtml"
+              :images-list="thread.firstPost.images"
+              :select-list="selectList"
+              :tags="[thread.category]"
+              :thread-price="thread.price"
+              :thread-is-essence="thread.isEssence"
+              :media-url="thread.type == 2 ? thread.threadVideo.media_url : ''"
+              :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
+              :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
+              :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
+              @personJump="personJump(thread.user._jv.id)"
+              @selectChoice="selectChoice"
+              @videocoverClick="payClickShow"
+              @previewPicture="payClickShow"
+              @tagClick="tagClick"
+            ></qui-topic-content>
+            <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
+            {{ p.pay }}
+          </qui-button> -->
+            <!-- 已支付用户列表 -->
+            <view v-if="paidStatus">
+              <qui-person-list
+                :type="t.pay"
+                :person-num="thread.paidCount"
+                :limit-count="limitShowNum"
+                :person-list="thread.paidUsers"
+                :btn-show="thread.price > 0 && !thread.paid"
+                :btn-icon-show="true"
+                btn-icon-name="rmb"
+                :btn-text="payThreadTypeText"
+                @personJump="personJump"
+                @btnClick="payClickShow"
+              ></qui-person-list>
             </view>
-          </view>
-        </view>
-        <!-- 评论 -->
-        <view class="comment">
-          <view class="comment-num" :style="{ paddingBottom: post.postCount > 1 ? '0' : '40rpx' }">
-            {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
-          </view>
-
-          <view v-if="posts.length > 0">
-            <view v-for="(post, index) in posts" :key="index">
-              <qui-topic-comment
-                v-if="!post.isDeleted"
-                :post-id="post._jv.id"
-                :comment-avatar-url="post.user.avatarUrl"
-                :user-name="post.user.username"
-                :is-liked="post.isLiked"
-                :user-role="post.user.groups"
-                :comment-time="post.createdAt"
-                :comment-status="post.isApproved"
-                :comment-content="post.contentHtml"
-                :reply-list="post.lastThreeComments"
-                :comment-like-count="post.likeCount"
-                :images-list="post.images"
-                :reply-count="post.replyCount"
-                :can-delete="post.canHide"
-                :comment-show="true"
-                @personJump="personJump(post.user.id)"
-                @commentLikeClick="
-                  commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index, post)
+            <!-- 打赏用户列表 -->
+            <view v-if="rewardStatus">
+              <qui-person-list
+                :type="t.reward"
+                :person-num="thread.rewardedCount"
+                :limit-count="limitShowNum"
+                :person-list="thread.rewardedUsers"
+                :btn-show="true"
+                :btn-icon-show="true"
+                btn-icon-name="reward"
+                :btn-text="t.reward"
+                @personJump="personJump"
+                @btnClick="rewardClick"
+              ></qui-person-list>
+            </view>
+            <view v-if="thread.firstPost.likeCount > 0">
+              <!-- 点赞用户列表 -->
+              <qui-person-list
+                :type="t.giveLike"
+                :person-num="thread.firstPost.likeCount"
+                :limit-count="limitShowNum"
+                :person-list="thread.firstPost.likedUsers"
+                :btn-show="false"
+                @personJump="personJump"
+              ></qui-person-list>
+            </view>
+            <view class="det-con-ft">
+              <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
+              <view
+                class="det-con-ft-child"
+                @click="
+                  threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1')
                 "
-                @commentJump="commentJump(threadId, post._jv.id)"
-                @imageClick="imageClick"
-                @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted, post)"
-                @replyComment="replyComment(post._jv.id, index)"
-              ></qui-topic-comment>
-            </view>
-            <!--<view v-for="(post, index) in posts" :key="index">
-            {{ post.likeCount }}
-            <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
-          </view>-->
-          </view>
-        </view>
-      </view>
-
-      <qui-load-more
-        :status="loadingType"
-        :content-text="{
-          contentdown: c.contentdown,
-          contentrefresh: c.contentrefresh,
-          contentnomore: contentnomoreVal,
-        }"
-      ></qui-load-more>
-    </scroll-view>
-    <!--详情页底部-->
-    <view class="det-ft" v-if="footerShow">
-      <view class="det-ft-con">
-        <view
-          class="det-ft-child flex"
-          @click="
-            threadLikeClick(
-              thread.firstPost._jv.id,
-              thread.firstPost.canLike,
-              thread.firstPost.isLiked,
-            )
-          "
-        >
-          <qui-icon
-            :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
-            class="qui-icon"
-          ></qui-icon>
-          <view class="ft-child-word">
-            {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
-          </view>
-        </view>
-        <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
-          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.writeComment }}</view>
-        </view>
-        <view class="det-ft-child flex" @click="shareClick">
-          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.share }}</view>
-        </view>
-      </view>
-    </view>
-    <!--分享弹框-->
-    <uni-popup ref="sharePopup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent(index)">
+              >
                 <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="46"
-                  color="#777777"
+                  v-if="thread.isFavorite"
+                  name="icon-collectioned"
+                  class="qui-icon"
                 ></qui-icon>
+
+                <qui-icon v-else name="icon-collection" class="qui-icon"></qui-icon>
+                <view v-if="thread.isFavorite">{{ t.collectionAlready }}</view>
+                <view v-else>{{ t.collection }}</view>
               </view>
             </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
-      </view>
-    </uni-popup>
-    <!--打赏选择金额弹框-->
-    <uni-popup ref="rewardPopup" type="bottom">
-      <view class="popup-box">
-        <view class="popup-reward-content">
-          <text class="popup-title">
-            {{ t.supportTheAuthorToCreate }}
-          </text>
-          <view class="popup-content-btn">
-            <qui-button
-              class="popup-btn"
-              v-for="(item, index) in payNum"
-              :key="index"
-              :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
-              plain
-              size="post"
-              @click="moneyClick(index)"
+          <!-- 评论 -->
+          <view class="comment">
+            <view
+              class="comment-num"
+              :style="{ paddingBottom: thread.postCount > 1 ? '0' : '40rpx' }"
             >
-              {{ item.name }}
-            </qui-button>
-          </view>
-        </view>
-        <view class="popup-content-space"></view>
-        <text class="popup-cancel-btn" @click="cancelReward()">
-          {{ i18n.t('discuzq.post.cancel') }}
-        </text>
-      </view>
-    </uni-popup>
-    <!--自定义打赏金额弹框-->
-    <uni-popup ref="customAmountPopup" type="center">
-      <view v-if="customAmountStatus">
-        <view class="popup-dialog">
-          <view class="popup-dialog__top">
-            <text>
-              {{ t.enterTheRewardPaymeAmount }}
-            </text>
-          </view>
-          <view class="popup-dialog__cont">
-            <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
-            <input
-              class="popup-dialog__cont-input"
-              v-model="inputPrice"
-              type="digit"
-              placeholder="0.0"
-              focus
-            />
-          </view>
-          <view class="popup-dialog__ft">
-            <button class="popup-btn--close" @click="diaLogClose">
-              {{ i18n.t('discuzq.close') }}
-            </button>
-            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
-          </view>
-        </view>
-      </view>
-    </uni-popup>
-    <!--支付组件-->
-    <view v-if="payShowStatus">
-      <qui-pay
-        ref="payShow"
-        :pay-type-val="payTypeVal"
-        :thread-id="thread._jv.id"
-        :money="price"
-        :wallet-status="user.canWalletPay"
-        :pay-password="pwdVal"
-        :balance="user.walletBalance"
-        :pay-type-data="payTypeData"
-        :to-name="thread.user.username"
-        :pay-type="payTypeText"
-        @radioMyHead="radioMyHead"
-        @radioChange="radioChange"
-        @onInput="onInput"
-        @close="close"
-        @paysureShow="paysureShow"
-      ></qui-pay>
-    </view>
-    <!--遮罩层组件-->
-    <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
-    <!--轻提示-->
-    <qui-toast ref="toast" :type="loading"></qui-toast>
-    <!--回复弹框-->
-    <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
-      <view class="comment-popup" v-if="commentPopupStatus">
-        <view class="comment-popup-topbox">
-          <view class="comment-popup-top">
-            <view class="comment-popup-top-l">
-              <qui-icon
-                name="icon-expression"
-                class="comm-icon"
-                :size="40"
-                @click="emojiShow = !emojiShow"
-              ></qui-icon>
-              <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
+              {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
             </view>
-            <view class="text-word-tip">
-              {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+
+            <view v-if="posts.length > 0">
+              <view v-for="(post, index) in posts" :key="index">
+                <qui-topic-comment
+                  v-if="!post.isDeleted"
+                  :post-id="post._jv.id"
+                  :comment-avatar-url="post.user.avatarUrl"
+                  :user-name="post.user.username"
+                  :is-liked="post.isLiked"
+                  :user-role="post.user.groups"
+                  :comment-time="post.createdAt"
+                  :comment-status="post.isApproved"
+                  :comment-content="post.contentHtml"
+                  :reply-list="post.lastThreeComments"
+                  :comment-like-count="post.likeCount"
+                  :images-list="post.images"
+                  :reply-count="post.replyCount"
+                  :can-delete="post.canHide"
+                  :comment-show="true"
+                  @personJump="personJump(post.user.id)"
+                  @commentLikeClick="
+                    commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index, post)
+                  "
+                  @commentJump="commentJump(threadId, post._jv.id)"
+                  @imageClick="imageClick"
+                  @deleteComment="
+                    deleteComment(post._jv.id, '3', post.canHide, post.isDeleted, post)
+                  "
+                  @replyComment="replyComment(post._jv.id, index)"
+                ></qui-topic-comment>
+              </view>
+              <!--<view v-for="(post, index) in posts" :key="index">
+              {{ post.likeCount }}
+              <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
+            </view>-->
             </view>
           </view>
-          <qui-emoji
-            :list="allEmoji"
-            position="absolute"
-            top="104rpx"
-            v-if="emojiShow"
-            border-radius="10rpx"
-            :color="emojiShow ? '#1878F3' : '#777'"
-            @click="getEmojiClick"
-          ></qui-emoji>
         </view>
 
-        <view class="comment-content-box">
-          <view class="comment-content">
-            <textarea
-              ref="commentText"
-              :focus="focusVal"
-              :maxlength="450"
-              class="comment-textarea"
-              :placeholder="t.writeComments"
-              placeholder-style="color:#b5b5b5;font-size: 28rpx;"
-              placeholder-class="text-placeholder"
-              :show-confirm-bar="barStatus"
-              cursor-spacing="100"
-              v-show="!emojiShow"
-              v-model="textAreaValue"
-              @blur="contBlur"
-            />
-            <!--<view class="comment-textarea" v-show="emojiShow">
-                {{ textAreaValue }}
-              </view>-->
-            <qui-uploader
-              :url="`${url}api/attachments`"
-              :header="header"
-              :form-data="formData"
-              :count="3"
-              name="file"
-              async-clear
-              ref="upload"
-              @change="uploadChange"
-              @clear="uploadClear"
-            ></qui-uploader>
+        <qui-load-more
+          :status="loadingType"
+          :content-text="{
+            contentdown: c.contentdown,
+            contentrefresh: c.contentrefresh,
+            contentnomore: contentnomoreVal,
+          }"
+        ></qui-load-more>
+      </scroll-view>
+      <!--详情页底部-->
+      <view class="det-ft" v-if="footerShow">
+        <view class="det-ft-con">
+          <view
+            class="det-ft-child flex"
+            @click="
+              threadLikeClick(
+                thread.firstPost._jv.id,
+                thread.firstPost.canLike,
+                thread.firstPost.isLiked,
+              )
+            "
+          >
+            <qui-icon
+              :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
+              class="qui-icon"
+            ></qui-icon>
+            <view class="ft-child-word">
+              {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
+            </view>
+          </view>
+          <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
+            <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+            <view class="ft-child-word">{{ t.writeComment }}</view>
+          </view>
+          <view class="det-ft-child flex" @click="shareClick">
+            <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+            <view class="ft-child-word">{{ t.share }}</view>
           </view>
         </view>
-        <button class="publish-btn" @click="publishClickStatus && publishClick()">
-          {{ t.publish }}
-        </button>
       </view>
-    </uni-popup>
+      <!--分享弹框-->
+      <uni-popup ref="sharePopup" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content">
+            <button class="popup-share-button" open-type="share"></button>
+            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box" @click="shareContent(index)">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
+        </view>
+      </uni-popup>
+      <!--打赏选择金额弹框-->
+      <uni-popup ref="rewardPopup" type="bottom">
+        <view class="popup-box">
+          <view class="popup-reward-content">
+            <text class="popup-title">
+              {{ t.supportTheAuthorToCreate }}
+            </text>
+            <view class="popup-content-btn">
+              <qui-button
+                class="popup-btn"
+                v-for="(item, index) in payNum"
+                :key="index"
+                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+                plain
+                size="post"
+                @click="moneyClick(index)"
+              >
+                {{ item.name }}
+              </qui-button>
+            </view>
+          </view>
+          <view class="popup-content-space"></view>
+          <text class="popup-cancel-btn" @click="cancelReward()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
+        </view>
+      </uni-popup>
+      <!--自定义打赏金额弹框-->
+      <uni-popup ref="customAmountPopup" type="center">
+        <view v-if="customAmountStatus">
+          <view class="popup-dialog">
+            <view class="popup-dialog__top">
+              <text>
+                {{ t.enterTheRewardPaymeAmount }}
+              </text>
+            </view>
+            <view class="popup-dialog__cont">
+              <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+              <input
+                class="popup-dialog__cont-input"
+                v-model="inputPrice"
+                type="digit"
+                placeholder="0.0"
+                focus
+              />
+            </view>
+            <view class="popup-dialog__ft">
+              <button class="popup-btn--close" @click="diaLogClose">
+                {{ i18n.t('discuzq.close') }}
+              </button>
+              <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+            </view>
+          </view>
+        </view>
+      </uni-popup>
+
+      <!--支付组件-->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type-val="payTypeVal"
+          :thread-id="thread._jv.id"
+          :money="price"
+          :wallet-status="user.canWalletPay"
+          :pay-password="pwdVal"
+          :balance="user.walletBalance"
+          :pay-type-data="payTypeData"
+          :to-name="thread.user.username"
+          :pay-type="payTypeText"
+          @radioMyHead="radioMyHead"
+          @radioChange="radioChange"
+          @onInput="onInput"
+          @close="close"
+          @paysureShow="paysureShow"
+        ></qui-pay>
+      </view>
+      <!--遮罩层组件-->
+      <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
+      <!--轻提示-->
+      <qui-toast ref="toast"></qui-toast>
+      <!--回复弹框-->
+      <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+        <view class="comment-popup" v-if="commentPopupStatus">
+          <view class="comment-popup-topbox">
+            <view class="comment-popup-top">
+              <view class="comment-popup-top-l">
+                <qui-icon
+                  name="icon-expression"
+                  class="comm-icon"
+                  :size="40"
+                  @click="emojiShow = !emojiShow"
+                ></qui-icon>
+                <qui-icon
+                  name="icon-call"
+                  :size="40"
+                  class="comm-icon"
+                  @click="callClick"
+                ></qui-icon>
+              </view>
+              <view class="text-word-tip">
+                {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+              </view>
+            </view>
+            <qui-emoji
+              :list="allEmoji"
+              position="absolute"
+              top="104rpx"
+              v-if="emojiShow"
+              border-radius="10rpx"
+              :color="emojiShow ? '#1878F3' : '#777'"
+              @click="getEmojiClick"
+            ></qui-emoji>
+          </view>
+
+          <view class="comment-content-box">
+            <view class="comment-content">
+              <textarea
+                ref="commentText"
+                :focus="focusVal"
+                :maxlength="450"
+                class="comment-textarea"
+                :placeholder="t.writeComments"
+                placeholder-style="color:#b5b5b5;font-size: 28rpx;"
+                placeholder-class="text-placeholder"
+                :show-confirm-bar="barStatus"
+                cursor-spacing="100"
+                v-show="!emojiShow"
+                v-model="textAreaValue"
+                @blur="contBlur"
+              />
+              <!--<view class="comment-textarea" v-show="emojiShow">
+                  {{ textAreaValue }}
+                </view>-->
+              <qui-uploader
+                :url="`${url}api/attachments`"
+                :header="header"
+                :form-data="formData"
+                :count="3"
+                name="file"
+                async-clear
+                ref="upload"
+                @change="uploadChange"
+                @clear="uploadClear"
+              ></qui-uploader>
+            </view>
+          </view>
+          <button class="publish-btn" @click="publishClickStatus && publishClick()">
+            {{ t.publish }}
+          </button>
+        </view>
+      </uni-popup>
+    </view>
+    <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
+      <u-loading :size="60"></u-loading>
+    </view>
+    <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
   </qui-page>
-  <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
-    <u-loading :size="60"></u-loading>
-  </view>
-  <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
 </template>
 
 <script>
@@ -549,7 +562,24 @@ export default {
       return status.status;
     },
   },
+  // created() {},
   onLoad(option) {
+    // 删除评论的回复后清除当前列表评论的这条回复
+    this.$u.event.$on('deleteComment', data => {
+      for (const index in this.posts) {
+        if (this.posts[index]._jv.id === data.commentId) {
+          this.posts[index].lastThreeComments = [];
+          if (data.data._jv.json.data.relationships.lastThreeComments.data) {
+            data.data._jv.json.data.relationships.lastThreeComments.data.forEach(item => {
+              this.posts[index].lastThreeComments.push(
+                this.$store.getters['jv/get'](`${item.type}/${item.id}`),
+              );
+            });
+          }
+          break;
+        }
+      }
+    });
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -612,7 +642,7 @@ export default {
 
     // 表情接口请求
     getEmoji() {
-      this.$store.dispatch('jv/get', ['emoji', {}]);
+      this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {});
     },
     // 加载当前主题数据
     loadThread() {

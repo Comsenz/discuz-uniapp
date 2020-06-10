@@ -580,6 +580,7 @@ export default {
     orderexpired: '订单过期',
     payfail: '支付失败',
     cancelorder: '取消订单',
+    personalhomepage: '个人主页',
   },
   site: {
     circleintroduction: '站点介绍',
@@ -604,6 +605,8 @@ export default {
   search: {
     filter: '筛选',
     search: '搜索',
+    searchusers: '用户搜索',
+    searchthemes: '主题搜索',
     searchkeywords: '搜索关键字',
     cancel: '取消',
     users: '用户',

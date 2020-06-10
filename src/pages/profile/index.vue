@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.personalhomepage')"></qui-header-back>
+    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -149,12 +152,23 @@ export default {
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
     const { userId, current } = params;
-    this.userId = parseInt(userId, 10) || this.currentLoginId;
+    this.userId = userId || this.currentLoginId;
     this.current = parseInt(current, 10) || 0;
   },
   // 解决左上角返回数据不刷新情况
   onShow() {
     this.getUserInfo(this.userId);
+  },
+  // 唤起小程序原声分享（微信）
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
+      return {
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+        path: `/pages/topic/index?id=${this.nowThreadId}`,
+      };
+    }
   },
   methods: {
     onClickItem(e) {
@@ -211,17 +225,6 @@ export default {
     handleClickShare(e) {
       this.nowThreadId = e;
     },
-    // 唤起小程序原声分享（微信）
-    onShareAppMessage(res) {
-      // 来自页面内分享按钮
-      if (res.from === 'button') {
-        const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
-        return {
-          title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
-          path: `/pages/topic/index?id=${this.nowThreadId}`,
-        };
-      }
-    },
     // 私信
     chat() {
       const params = {
@@ -260,6 +263,9 @@ export default {
 .profile-info {
   padding: 40rpx;
   padding-top: 30rpx;
+  /* #ifdef H5 */
+  margin-top: 90rpx;
+  /* #endif */
   font-size: $fg-f28;
   background: --color(--qui-BG-2);
 }

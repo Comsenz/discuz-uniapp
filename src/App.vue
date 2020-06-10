@@ -7,6 +7,9 @@ const themeListeners = [];
 
 export default {
   globalData: {
+    // #ifdef H5
+    appLoadedStatus: false,
+    // #endif
     themeChanged(theme) {
       Vue.prototype.$u.currentTheme = theme;
       themeListeners.forEach(listener => {
@@ -30,7 +33,7 @@ export default {
     },
   },
   async onLaunch() {
-    try {
+    const init = async () => {
       const forums = await this.$store.dispatch('jv/get', [
         'forum',
         {
@@ -48,42 +51,52 @@ export default {
         user = await this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
         uni.setStorageSync(STORGE_GET_USER_TIME, new Date().getTime());
       }
-      const pages = getCurrentPages();
-      const res = uni.getSystemInfoSync();
-      const code = 'dataerro';
-      const status = 500;
+
       if (forums.set_site.site_mode === SITE_PAY) {
-        let currentPage = {};
+        const res = uni.getSystemInfoSync();
         if (res.platform === 'ios') {
-          this.$store.dispatch('forum/setError', { loading: false, code, status });
-          return;
-        }
-        if (pages.length > 0) {
-          currentPage = pages[pages.length - 1];
-          if (!user.paid && currentPage.route !== 'pages/site/info') {
+          this.$store.dispatch('forum/setError', { loading: false, code: 500, status: 'dataerro' });
+        } else {
+          let currentPage = {};
+          const pages = getCurrentPages();
+          if (pages.length > 0) {
+            currentPage = pages[pages.length - 1];
+            if (!user.paid && currentPage.route !== 'pages/site/info') {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
+          } else if (!user.paid) {
             uni.redirectTo({
               url: '/pages/site/info',
             });
           }
-        } else if (!user.paid) {
-          uni.redirectTo({
-            url: '/pages/site/info',
-          });
         }
       }
-
+      // #ifdef H5
+      this.globalData.appLoadedStatus = true;
+      uni.$emit('apploaded');
+      // #endif
       this.$store.dispatch('forum/setError', { loading: false });
+    };
+    try {
+      await init();
     } catch (errs) {
       if (errs && errs.data && errs.data.errors) {
-        this.$store.dispatch('forum/setError', {
-          loading: false,
-          ...errs.data.errors[0],
-        });
+        if (errs.data.errors[0].code === 'access_denied') {
+          this.$store.dispatch('session/logout').then(init);
+        } else {
+          this.$store.dispatch('forum/setError', {
+            loading: false,
+            ...errs.data.errors[0],
+          });
+        }
       }
     }
   },
   onShow(options) {
     // 解决各类回调的兼容问题,验证码捕获captchaResult
+    // #ifdef MP-WEIXIN
     if (!this.captchaTicketExpire) this.captchaTicketExpire = {};
     if (options.scene === 1038 && options.referrerInfo.appId === 'wx5a3a7366fd07e119') {
       const result = options.referrerInfo.extraData;
@@ -99,6 +112,7 @@ export default {
         // 用户关闭了验证码
       }
     }
+    // #endif
   },
   onHide() {},
 };

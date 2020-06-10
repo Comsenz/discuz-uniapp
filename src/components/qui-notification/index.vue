@@ -7,6 +7,7 @@
         <view class="list-box__notice__h">
           <view class="list-box__notice__hl">
             <image
+              lazy-load
               class="list-box__notice__hl-avatar"
               :src="item.user_avatar || '/static/noavatar.gif'"
               @click="jumpUserPage(item.user_id)"
@@ -211,6 +212,7 @@ export default {
         width: 80rpx;
         height: 80rpx;
         border-radius: 100rpx;
+        will-change: transform;
       }
 
       &-info {

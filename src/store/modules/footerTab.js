@@ -9,7 +9,7 @@ const actions = {};
 
 const mutations = {
   [SET_FOOTERINDEX](state, payload) {
-    if (payload) state.footerIndex = payload;
+    if (payload !== '') state.footerIndex = payload;
   },
 };
 

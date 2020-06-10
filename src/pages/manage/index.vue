@@ -4,12 +4,12 @@
     <qui-header-back title="站点管理"></qui-header-back>
     <!-- #endif -->
     <view class="manage-items">
-      <navigator url="./member" hover-class="none">
+      <navigator url="/pages/manage/member" hover-class="none">
         <qui-cell-item :title="i18n.t('manage.manageMembers')" arrow slot-right>
           <text>{{ i18n.t('manage.setting') }}</text>
         </qui-cell-item>
       </navigator>
-      <navigator url="./invite" hover-class="none">
+      <navigator url="/pages/manage/invite" hover-class="none">
         <qui-cell-item :title="i18n.t('manage.inviteMembers')" arrow></qui-cell-item>
       </navigator>
     </view>

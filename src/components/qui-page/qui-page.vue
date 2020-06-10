@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-page">
+  <view class="qui-page" :data-qui-theme="theme">
     <!--
       放在这里是因为数据是异步请求的，然后判断论坛的显示状态。
       这样每个页面还是需要引入这个组件，一个是和主题相关，一个是和站点显示状态有关
@@ -61,8 +61,10 @@ export default {
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {
+        console.log('注册并绑定页');
+        const url = '/pages/home/index';
         uni.navigateTo({
-          url: '/pages/user/login',
+          url: `/pages/user/register-bind?url=${url}`,
         });
       },
     });
@@ -87,7 +89,7 @@ export default {
 
 .qui-page {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;

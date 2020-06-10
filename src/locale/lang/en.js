@@ -245,6 +245,7 @@ export default {
     payfail: 'Pay fail',
     cancelorder: 'Cancel order',
     permanent: 'Permanent',
+    personalhomepage: 'Personal homepage',
   },
   site: {
     circleintroduction: 'Circle introduction',
@@ -267,7 +268,9 @@ export default {
   search: {
     filter: 'Filter',
     search: 'Search',
-    searchkeywords: 'Search eywords',
+    searchusers: 'Search users',
+    searchthemes: 'Search themes',
+    searchkeywords: 'Search keywords',
     cancel: 'Cancel',
     users: 'Users',
     searchmoreusers: 'Search more users',

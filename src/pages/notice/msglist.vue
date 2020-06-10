@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="title"></qui-header-back>
+    <!-- #endif -->
     <view class="chat-box">
       <!-- 消息内容 -->
       <scroll-view
@@ -19,15 +22,17 @@
             ]"
           >
             <image
+              lazy-load
               v-if="item.user_id === currentLoginId"
               class="chat-box__con__msg__mine__img"
               :src="userInfo.avatarUrl"
               @click="jumpUserPage(item.user_id)"
             ></image>
             <image
+              lazy-load
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
-              :src="item.user.avatarUrl || '/static/noavatar.gif'"
+              :src="item.user ? item.user.avatarUrl : '/static/noavatar.gif'"
               @click="jumpUserPage(item.user_id)"
             ></image>
             <view
@@ -81,6 +86,7 @@ export default {
 
   data() {
     return {
+      title: '', // 导航栏标题
       scrollTop: 0,
       old: {
         scrollTop: 0,
@@ -169,6 +175,7 @@ export default {
     console.log('-----navbarHeight-------', this.navbarHeight);
     console.log('params', params);
     const { username, dialogId } = params;
+    this.title = username;
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -347,6 +354,9 @@ export default {
 
 .chat-box {
   height: 100%;
+  /* #ifdef H5 */
+  padding: 44px 0rpx 0rpx;
+  /* #endif */
   margin: 0rpx 0rpx 140rpx;
   background: --color(--qui-BG-ED);
 
@@ -382,6 +392,7 @@ export default {
         height: 80rpx;
         margin: 0 20rpx 0 10rpx;
         border-radius: 100rpx;
+        will-change: transform;
       }
 
       &__box {
@@ -435,6 +446,7 @@ export default {
         height: 80rpx;
         margin: 0 10rpx 0 20rpx;
         border-radius: 100rpx;
+        will-change: transform;
       }
 
       &__box {

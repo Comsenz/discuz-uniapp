@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="" :is-show-more="false"></qui-header-back>
+    <!-- #endif -->
     <view class="register-box">
       <view class="register-box-h">{{ i18n.t('user.register') }}</view>
       <view class="register-box-con">
@@ -33,7 +36,12 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
+      url: '', // 上一个页面的路径
     };
+  },
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
   },
   methods: {
     register() {
@@ -42,15 +50,34 @@ export default {
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+        // eslint-disable-next-line no-unused-vars
+        this.$store
+          .dispatch('session/h5Register', params)
+          .then(res => {
+            console.log('注册成功', res);
+            uni.navigateTo({
+              url: this.url,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
         this.clear();
-        console.log('注册成功');
       }
     },
     jump2Login() {
       this.clear();
       console.log('跳转到登录页面');
       uni.navigateTo({
-        url: '/pages/user/login',
+        url: `/pages/user/login?url=${this.url}`,
       });
     },
     clear() {
@@ -73,11 +100,14 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .register-box {
   height: 100vh;
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 
   &-h {
-    margin: 60rpx 0rpx 80rpx 40rpx;
+    padding: 60rpx 0rpx 80rpx 40rpx;
     font-size: 50rpx;
     font-weight: bold;
     color: #333;

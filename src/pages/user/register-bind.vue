@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="" :is-show-more="false"></qui-header-back>
+    <!-- #endif -->
     <view class="register-bind-box">
       <view class="register-bind-box-h">{{ i18n.t('user.registerBind') }}</view>
       <view class="register-bind-box-con">
@@ -47,8 +50,27 @@ export default {
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+        // eslint-disable-next-line no-unused-vars
+        this.$store
+          .dispatch('session/h5Register', params)
+          .then(res => {
+            console.log('注册绑定成功', res);
+            uni.navigateTo({
+              url: this.url,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
         this.clear();
-        console.log('注册绑定成功');
       }
     },
     clear() {
@@ -77,11 +99,14 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .register-bind-box {
   height: 100vh;
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 
   &-h {
-    margin: 60rpx 0rpx 80rpx 40rpx;
+    padding: 60rpx 0rpx 80rpx 40rpx;
     font-size: 50rpx;
     font-weight: bold;
     color: #333;
