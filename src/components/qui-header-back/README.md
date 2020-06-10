@@ -1,8 +1,8 @@
-# qui-header-back 无数据
+# qui-header-back h5头部返回
 
 ## 使用
 
-在 `template` 中使用图标组件
+在 `template` 中使用组件
 ```html
 <qui-header-back  title="标题"></qui-header-back>
 ```

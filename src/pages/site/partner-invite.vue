@@ -11,21 +11,7 @@
       @click="open"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
-              </view>
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
+      <qui-share @close="cancel"></qui-share>
     </uni-popup>
     <view class="site-item">
       <qui-cell-item
@@ -113,18 +99,6 @@ export default {
   mixins: [forums],
   data() {
     return {
-      bottomData: [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-        },
-      ],
       code: '', // 邀请码
       permission: [],
       inviteData: {}, // 邀请的相关信息
@@ -153,15 +127,6 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-          },
-        ];
-      }
       this.$refs.popupHead.open();
     },
     handleMode() {
@@ -187,18 +152,6 @@ export default {
       uni.navigateTo({
         url: `/pages/profile/index?userId=${userId}`,
       });
-    },
-    // 头部分享海报
-    shareHead(index) {
-      if (index === 0) {
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$store.getters['session/get']('auth').open();
-          return;
-        }
-        uni.navigateTo({
-          url: '/pages/share/site',
-        });
-      }
     },
     // 调取用户信息取消弹框
     close() {
