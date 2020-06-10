@@ -196,7 +196,7 @@
       }
     },
     {
-      "path": "components/qui-at-member-page/qui-at-member-page",
+      "path": "pages/user/at-member",
       "style": {
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTextStyle": "black",
