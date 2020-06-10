@@ -517,22 +517,6 @@ export default {
 
     // 表情点击事件
     getEmojiClick(num) {
-      // const query = uni
-      //   .createSelectorQuery()
-      //   .in(this)
-      //   .select('#textarea');
-      // query
-      //   .fields(
-      //     {
-      //       size: true,
-      //       scrollOffset: true,
-      //     },
-      //     data => {
-      //       console.log(data);
-      //     },
-      //   )
-      //   .exec();
-
       let text = '';
       text = `${this.textAreaValue.slice(0, this.cursor) +
         this.allEmoji[num].code +
@@ -543,7 +527,7 @@ export default {
     },
     // @人员跳转
     callClick() {
-      uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
+      uni.navigateTo({ url: '/pages/user/at-member' });
     },
     // 分类点击
     checkClass(e, index) {
@@ -552,12 +536,6 @@ export default {
       this.categoryId = e._jv.id;
       this.checkClassData = [];
       this.checkClassData.push(this.allCategories[index]);
-      // 多选功能
-      /* if (!this.checkClassData[index]) {
-        this.$set(this.checkClassData, index, e);
-      } else {
-        this.$delete(this.checkClassData, index);
-      } */
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
@@ -1080,14 +1058,8 @@ export default {
     width: 100%;
     max-height: 900rpx;
     min-height: 400rpx;
-    // padding: 20rpx;
-    // margin-top: 20rpx;
     overflow: hidden;
     line-height: 20px;
-    // background-color: --color(--qui-BG-1);
-    // border: 1rpx solid --color(--qui-BOR-DDD);
-    // border-radius: 7rpx;
-    // box-sizing: border-box;
 
     &--static {
       overflow: auto;
