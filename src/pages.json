@@ -9,7 +9,32 @@
         // "onReachBottomDistance":126  //距离底部多远时触发 单位px
       }
     },
-    
+    {
+      "path": "pages/topic/content",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationStyle": "default"
+      }
+    }, 
+    {
+      "path": "pages/topic/list",
+      "style": {
+        "navigationBarTitleText": "话题列表",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationStyle": "default"
+      }
+    }, 
+    {
+      "path": "components/qui-topic-page/qui-topic-page",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "   "
+      }
+    },
     // 登录注册
     {
       "path": "pages/user/phone-number-login",
