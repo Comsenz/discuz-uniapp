@@ -17,45 +17,49 @@
         ></qui-cell-item>
       </view>
       <view class="favorite-content">
-        <qui-content
-          v-for="(item, index) in data"
-          :ref="'myVideo' + index"
-          :key="index"
-          :currentindex="index"
-          :pay-status="(item.price > 0 && item.paid) || item.price == 0"
-          :user-name="item.user && item.user.username"
-          :theme-image="item.user && item.user.avatarUrl"
-          :user-groups="item.user && item.user.groups"
-          :theme-time="item.createdAt"
-          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-          :thread-type="item.type"
-          :tags="[item.category]"
-          :media-url="item.threadVideo && item.threadVideo.media_url"
-          :is-great="item.firstPost.isLiked"
-          :theme-like="item.firstPost.likeCount"
-          :theme-comment="item.postCount - 1"
-          :images-list="item.firstPost.images"
-          :theme-essence="item.isEssence"
-          theme-btn="icon-delete"
-          :video-width="item.threadVideo && item.threadVideo.width"
-          :video-height="item.threadVideo && item.threadVideo.height"
-          :video-id="item.threadVideo && item.threadVideo._jv.id"
-          :cover-image="item.threadVideo && item.threadVideo.cover_url"
-          @click="handleClickShare(item._jv.id)"
-          @handleIsGreat="
-            handleIsGreat(
-              item.firstPost._jv.id,
-              item.firstPost.canLike,
-              item.firstPost.isLiked,
-              index,
-            )
-          "
-          @commentClick="commentClick(item._jv.id)"
-          @contentClick="contentClick(item._jv.id)"
-          @headClick="headClick(item.user._jv.id)"
-          @videoPlay="handleVideoPlay"
-          @deleteClick="itemDelete(item._jv.id, item.isFavorite, index)"
-        ></qui-content>
+        <view v-for="(item, index) in data" :key="index" class="favorite-content__item">
+          <qui-content
+            :ref="'myVideo' + index"
+            :currentindex="index"
+            :pay-status="(item.price > 0 && item.paid) || item.price == 0"
+            :user-name="item.user && item.user.username"
+            :theme-image="item.user && item.user.avatarUrl"
+            :user-groups="item.user && item.user.groups"
+            :theme-time="item.createdAt"
+            :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+            :thread-type="item.type"
+            :tags="[item.category]"
+            :media-url="item.threadVideo && item.threadVideo.media_url"
+            :is-great="item.firstPost.isLiked"
+            :theme-like="item.firstPost.likeCount"
+            :theme-comment="item.postCount - 1"
+            :images-list="item.firstPost.images"
+            :theme-essence="item.isEssence"
+            :video-width="item.threadVideo && item.threadVideo.width"
+            :video-height="item.threadVideo && item.threadVideo.height"
+            :video-id="item.threadVideo && item.threadVideo._jv.id"
+            :cover-image="item.threadVideo && item.threadVideo.cover_url"
+            @click="handleClickShare(item._jv.id)"
+            @handleIsGreat="
+              handleIsGreat(
+                item.firstPost._jv.id,
+                item.firstPost.canLike,
+                item.firstPost.isLiked,
+                index,
+              )
+            "
+            @commentClick="commentClick(item._jv.id)"
+            @contentClick="contentClick(item._jv.id)"
+            @headClick="headClick(item.user._jv.id)"
+            @videoPlay="handleVideoPlay"
+          ></qui-content>
+          <qui-icon
+            name="icon-delete"
+            size="28"
+            color="#aaa"
+            @tap="itemDelete(item._jv.id, item.isFavorite, index)"
+          ></qui-icon>
+        </view>
         <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
       </view>
       <uni-popup ref="popupContent" type="bottom">
@@ -290,6 +294,14 @@ export default {
     position: absolute;
     top: 35rpx;
     right: 40rpx;
+  }
+  .favorite-content__item {
+    position: relative;
+  }
+  .icon-delete {
+    position: absolute;
+    top: 15px;
+    right: 20px;
   }
 }
 </style>
