@@ -63,11 +63,6 @@ export default {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
-    // let modelmes = wx.getStorageSync('modelmes');
-    // let isIphoneX = app.globalData.isIphoneX;
-    // this.setData({
-    //   isIphoneX: isIphoneX
-    // });
   },
 
   // 唤起小程序原声分享

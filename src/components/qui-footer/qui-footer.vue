@@ -104,6 +104,14 @@ export default {
       return this.user.unreadNotifications;
     },
   },
+  // onLoad(options) {
+  //   console.log(options, 'options');
+  //   let modelmes = wx.getStorageSync('modelmes');
+  //   let isiphonex = app.globalData.isIphoneX;
+  //   this.setData({
+  //     isiphonex: isIphoneX
+  //   })
+  // },
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {

@@ -31,6 +31,19 @@ export default {
   },
   async onLaunch() {
     try {
+      // let _this = this;
+      // wx.getSystemInfo({
+      //   success: res => {
+      //     console.log(res, '刘海平res');
+      //     let modelmes = res.model;
+      //     if (modelmes.search('iPhone X') != -1) {
+      //       this.globalData.isIphoneX = true;
+      //       this.$u.event.$emit('isIphone', this.globalData.isIphoneX);
+      //       console.log(this.globalData, this.globalData.isIphoneX);
+      //     }
+      //     wx.setStorageSync('modelmes', modelmes);
+      //   }
+      // })
       const forums = await this.$store.dispatch('jv/get', [
         'forum',
         {
