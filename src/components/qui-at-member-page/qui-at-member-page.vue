@@ -22,6 +22,7 @@
         <checkbox-group @change="changeCheck" v-if="followStatus">
           <label v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
+              v-if="item.toUser"
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
