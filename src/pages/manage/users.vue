@@ -1,17 +1,17 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <view class="manage-users">
+      <!-- #ifdef H5-->
+      <qui-header-back title="站点成员"></qui-header-back>
+      <!-- #endif -->
       <!-- 搜索成员 -->
       <view class="manage-users-search">
         <view class="search">
           <view class="search-box">
             <view class="search-box__content">
-              <qui-icon
-                class="icon-content-search"
-                name="icon-search"
-                size="30"
-                color="#bbb"
-              ></qui-icon>
+              <view class="icon-content-search">
+                <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+              </view>
               <input
                 type="text"
                 class="search-box__content-input"
@@ -25,7 +25,7 @@
               </view>
             </view>
             <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
-              <text>{{ i18n.t('home.cancel') }}</text>
+              <text>{{ i18n.t('search.cancel') }}</text>
             </view>
           </view>
         </view>
