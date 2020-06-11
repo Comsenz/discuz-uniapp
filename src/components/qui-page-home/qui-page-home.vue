@@ -181,6 +181,7 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import wxshare from '@/mixin/wxshare-h5';
 import { mapMutations, mapState } from 'vuex';
 
 const sysInfo = uni.getSystemInfoSync();
@@ -189,7 +190,7 @@ const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
 const navBarTransform = `translate3d(0, -${navbarHeight}px, 0)`;
 
 export default {
-  mixins: [forums, user],
+  mixins: [forums, user, wxshare],
   props: {
     navTheme: {
       type: String,
@@ -319,6 +320,12 @@ export default {
           break;
         }
       }
+    });
+    // h5微信分享
+    this.wxShare({
+      title: this.forums.set_site.site_name,
+      desc: this.forums.set_site.site_introduction,
+      logo: this.forums.set_site.site_logo,
     });
   },
   mounted() {

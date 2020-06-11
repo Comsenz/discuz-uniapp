@@ -5,6 +5,7 @@
         class="logo"
         :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
         mode="aspectFit"
+        lazy-load
       ></image>
     </view>
     <view class="circleDet">
