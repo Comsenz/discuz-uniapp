@@ -9,13 +9,10 @@ module.exports = {
     wxShare(shareData) {
       // 这里使用 urlencode 编码下
       const url = this.getUrl();
-      console.log(encodeURIComponent(url), 'url');
       this.$store
         .dispatch('jv/get', [`offiaccount/jssdk?url=${encodeURIComponent(url)}`, {}])
         .then(data => {
-          console.log(data, 'data分享');
           const { appId, nonceStr, signature, timestamp } = data;
-          console.log(appId, nonceStr, signature, timestamp, '数据');
           wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId, // 必填，公众号的唯一标识
@@ -46,17 +43,20 @@ module.exports = {
      * @description h5分享复制链接
      * @param {string} title 主题title
      */
+    // #ifdef H5
     h5Share(title) {
+      console.log(title, 'title');
       let themeTitle = title || 'Discuz!Q';
+      console.log(themeTitle, 'title');
       const url = this.getUrl();
       const oInput = document.createElement('input');
       const reTag = /<img(?:.|\s)*?>/g;
       const reTag2 = /(<\/?br.*?>)/gi;
       const reTag3 = /(<\/?p.*?>)/gi;
-      themeTitle = themeTitle.replace(reTag, '');
-      themeTitle = themeTitle.replace(reTag2, '');
-      themeTitle = themeTitle.replace(reTag3, '');
-      themeTitle = themeTitle.replace(/\s+/g, '');
+      themeTitle = themeTitle.toString().replace(reTag, '');
+      themeTitle = themeTitle.toString().replace(reTag2, '');
+      themeTitle = themeTitle.toString().replace(reTag3, '');
+      themeTitle = themeTitle.toString().replace(/\s+/g, '');
       themeTitle = `${themeTitle.substring(0, 17)}...`;
       oInput.value = `${themeTitle}  ${url}`;
       document.body.appendChild(oInput);
@@ -70,8 +70,12 @@ module.exports = {
       oInput.style.display = 'none';
 
       // this.$toast.success('分享链接已复成功');
-
-      document.body.removeChild(oInput);
+      console.log('分享链接已复成功');
+      uni.showToast({
+        icon: 'none',
+        title: '分享链接已复成功',
+      });
+      // document.body.removeChild(oInput);
     },
     copyFocus(obj) {
       obj.blur();
@@ -86,5 +90,6 @@ module.exports = {
       }
       return url;
     },
+    // #endif
   },
 };

@@ -181,7 +181,9 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+// #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
+// #endif
 import { mapMutations, mapState } from 'vuex';
 
 const sysInfo = uni.getSystemInfoSync();
@@ -190,7 +192,14 @@ const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
 const navBarTransform = `translate3d(0, -${navbarHeight}px, 0)`;
 
 export default {
-  mixins: [forums, user, wxshare],
+  mixins: [
+    forums,
+    user,
+    // #ifdef  H5
+    wxshare,
+    // #endif
+  ],
+
   props: {
     navTheme: {
       type: String,
@@ -322,11 +331,13 @@ export default {
       }
     });
     // h5微信分享
+    // #ifdef H5
     this.wxShare({
       title: this.forums.set_site.site_name,
       desc: this.forums.set_site.site_introduction,
       logo: this.forums.set_site.site_logo,
     });
+    // #endif
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
@@ -531,6 +542,7 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
       this.$refs.popupContent.open();
@@ -545,6 +557,19 @@ export default {
           },
         ];
       }
+      // #endif
+      // #ifdef H5
+      // this.$store.dispatch('jv/get', ['threads', { id }]).then(res => {
+      //   console.log(res, 'res');
+      //   let title;
+      //   if (res.type === 1) {
+      //     title = res.title;
+      //   }
+      // });
+      this.h5Share({
+        title: 'aaaaa',
+      });
+      // #endif
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
