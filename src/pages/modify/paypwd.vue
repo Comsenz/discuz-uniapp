@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back title="设置支付密码"></qui-header-back>
+    <qui-header-back :title="i18n.t('modify.paypwdtitle')"></qui-header-back>
     <!-- #endif -->
     <view class="setpw" @click.stop="toggleBox">
       <view class="setpw-input" v-if="pas" @click.stop="fourse">
@@ -15,6 +15,7 @@
           :show="inshow"
           :isiphonex="inisIphone"
           :number="types"
+          ref="quiinput"
         ></qui-input-code>
       </view>
       <view class="setpw-input" v-else @click.stop="fourse">
@@ -83,6 +84,7 @@ export default {
       if (num.length >= 6) {
         this.inputpas = num;
         this.pas = false;
+        this.empty();
       }
     },
     btndata2(sum) {

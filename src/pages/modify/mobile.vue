@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back title="修改手机号"></qui-header-back>
+    <qui-header-back :title="i18n.t('modify.mobiletitle')"></qui-header-back>
     <!-- #endif -->
     <view class="input" @click.stop="toggleBox">
       <view class="mobile-titel">
@@ -217,7 +217,7 @@ export default {
   box-sizing: border-box;
 }
 .mobile-titel {
-  margin: 31rpx 0 0 40rpx;
+  padding: 31rpx 0 0 40rpx;
   font-size: $fg-f50;
   font-weight: bold;
   line-height: 60rpx;

@@ -180,6 +180,10 @@ export default {
     // 4.去掉<br/>标签			 * @param html			 * @returns {void|string|*}
 
     formatRichText(html) {
+      if (html.indexOf('qq-emotion') !== -1) {
+        return html;
+      }
+
       // 控制小程序中图片大小
       let newContent = html.replace(/<img[^>]*>/gi, match => {
         let matchRes = match;
@@ -200,6 +204,12 @@ export default {
         /<img/gi,
         '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"',
       );
+      // newContent = newContent.replace(/<h1="[^"]+"/gi, match => {
+      //   let matchRes = match;
+      //   matchRes = matchRes
+      //     .replace(/<h1:[^;]+;/gi, 'max-width:100%;')
+      //   return matchRes;
+      // });
       return newContent;
     },
   },
@@ -232,7 +242,7 @@ export default {
     },
     // 当前主题价格
     threadPrice: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     // 需要支付查看的内容所占的比例

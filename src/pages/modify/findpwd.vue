@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back title="找回密码"></qui-header-back>
+    <qui-header-back :title="i18n.t('modify.findpawdtitle')"></qui-header-back>
     <!-- #endif -->
     <view class="retireve" @click.stop="toggleBox">
       <view class="retireve-tab">
@@ -13,9 +13,19 @@
           <view class="retireve-phon-test">
             {{ i18n.t('modify.phonnumber') }}
           </view>
-          <view :class="disphon ? 'retireve-phon-num' : 'retireve-phon-num1'">
+          <view :class="disphon ? 'retireve-phon-num' : 'retireve-phon-num1'" v-if="inptdisplay">
             {{ disphon ? disphon : i18n.t('modify.phonnumberempty') }}
           </view>
+          <input
+            class="new-phon-num"
+            type="number"
+            v-model="newphon"
+            :focus="true"
+            :cursor="1"
+            @input="changeinput"
+            maxlength="11"
+            v-else
+          />
           <button class="retireve-phon-send" v-if="sun" @click="btnButton" :disabled="disabletype">
             {{ i18n.t('modify.sendverificode') }}
           </button>
@@ -82,16 +92,35 @@ export default {
       inisIphone: false,
       disabletype: false,
       interval: '',
+      inptdisplay: true,
+      newphon: '',
     };
   },
   onLoad(sing) {
     this.sendtype = sing.pas;
-    this.userid = Number(sing.user);
+    this.userid = Number(sing.user) || '';
+    if (this.userid) {
+      this.inptdisplay = true;
+    } else {
+      this.inptdisplay = false;
+    }
     this.personaldata();
   },
   methods: {
     fourse() {
       this.inshow = true;
+    },
+    changeinput() {
+      setTimeout(() => {
+        this.newphon = this.newphon.replace(/[^\d]/g, '');
+      }, 30);
+      if (this.newphon.length < 11) {
+        this.sun = true;
+        this.disabletype = true;
+      } else if (this.newphon.length === 11) {
+        this.sun = true;
+        this.disabletype = false;
+      }
     },
     getCode() {
       this.showText = false;
@@ -148,7 +177,7 @@ export default {
         _jv: {
           type: 'sms/send',
         },
-        mobile: this.phonnumber,
+        mobile: this.phonnumber || this.newphon,
         type: this.sendtype,
       };
       const sendphon = status.run(() => this.$store.dispatch('jv/post', params));
@@ -164,7 +193,7 @@ export default {
         _jv: {
           type: 'sms/verify',
         },
-        mobile: this.phonnumber,
+        mobile: this.phonnumber || this.newphon,
         code: this.codepass,
         type: this.sendtype,
         password: this.newpassword,
@@ -259,6 +288,15 @@ export default {
   margin: 80rpx 0 0;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
+}
+.new-phon-num {
+  width: 280rpx;
+  height: 100rpx;
+  margin-left: 50rpx;
+  font-size: $fg-f40;
+  font-weight: bold;
+  line-height: 100rpx;
+  color: --color(--qui-FC-333);
 }
 .retireve-phon-test {
   font-size: $fg-f28;

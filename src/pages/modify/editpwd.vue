@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back title="修改密码"></qui-header-back>
+    <qui-header-back :title="i18n.t('modify.edipwdtitle')"></qui-header-back>
     <!-- #endif -->
     <view class="chagepas">
       <view class="chagepas-pas">

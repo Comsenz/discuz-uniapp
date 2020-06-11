@@ -36,7 +36,12 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
+      url: '', // 上一个页面的路径
     };
+  },
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
   },
   methods: {
     register() {
@@ -45,15 +50,34 @@ export default {
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+        // eslint-disable-next-line no-unused-vars
+        this.$store
+          .dispatch('session/h5Register', params)
+          .then(res => {
+            console.log('注册成功', res);
+            uni.navigateTo({
+              url: this.url,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
         this.clear();
-        console.log('注册成功');
       }
     },
     jump2Login() {
       this.clear();
       console.log('跳转到登录页面');
       uni.navigateTo({
-        url: '/pages/user/login',
+        url: `/pages/user/login?url=${this.url}`,
       });
     },
     clear() {

@@ -26,6 +26,13 @@
             color="#777"
             @click="callClick"
           ></qui-icon>
+          <qui-icon
+            class="post-box__hd-l__icon"
+            name="icon-wei"
+            size="40"
+            color="#777"
+            @click="topicPage"
+          ></qui-icon>
         </view>
         <text class="post-box__hd-r">
           {{
@@ -37,7 +44,7 @@
       </view>
       <view class="emoji-bd" v-show="emojiShow">
         <qui-emoji
-          :list="allEmoji"
+          v-if="emojiShow"
           position="absolute"
           top="20rpx"
           border-radius="10rpx"
@@ -347,9 +354,9 @@ export default {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
     }),
-    allEmoji() {
-      return this.$store.getters['jv/get']('emoji');
-    },
+    // allEmoji() {
+    //   return this.$store.getters['jv/get']('emoji');
+    // },
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
 
@@ -516,10 +523,10 @@ export default {
     },
 
     // 表情点击事件
-    getEmojiClick(num) {
+    getEmojiClick(code) {
       let text = '';
       text = `${this.textAreaValue.slice(0, this.cursor) +
-        this.allEmoji[num].code +
+        code +
         this.textAreaValue.slice(this.cursor)}`;
 
       this.textAreaValue = text;
@@ -528,6 +535,22 @@ export default {
     // @人员跳转
     callClick() {
       uni.navigateTo({ url: '/pages/user/at-member' });
+    },
+    topicPage() {
+      uni.navigateTo({ url: '/components/qui-topic-page/qui-topic-page' });
+    },
+    hasStorage() {
+      const that = this;
+      uni.getStorage({
+        key: 'topicMsg',
+        success(e) {
+          if (e.data.keywords) that.textAreaValue = `#${e.data.keywords}#`;
+          uni.setStorage({
+            key: 'topicMsg',
+            data: '',
+          });
+        },
+      });
     },
     // 分类点击
     checkClass(e, index) {
@@ -691,9 +714,9 @@ export default {
         });
       });
     },
-    getEmoji() {
-      this.$store.dispatch('jv/get', ['emoji', {}]);
-    },
+    // getEmoji() {
+    //   this.$store.dispatch('jv/get', ['emoji', {}]);
+    // },
     postThread() {
       const params = {
         _jv: {
@@ -903,24 +926,24 @@ export default {
     toTCaptcha() {
       let _this = this;
       wx.navigateToMiniProgram({
-      appId: 'wx5a3a7366fd07e119',
-      path: '/pages/captcha/index',
-      envVersion: 'release',
-      extraData: {
-        appId: this.forums.qcloud.qcloud_captcha_app_id,//您申请的验证码的 appId
-      },
-      success(res) {
-        console.log('验证码成功打开');
-      },
-      fail(err) {
-        uni.hideLoading();
-        _this.postLoading = false;
-      },
-    });
-  }
-
+        appId: 'wx5a3a7366fd07e119',
+        path: '/pages/captcha/index',
+        envVersion: 'release',
+        extraData: {
+          appId: this.forums.qcloud.qcloud_captcha_app_id, //您申请的验证码的 appId
+        },
+        success(res) {
+          console.log('验证码成功打开');
+        },
+        fail(err) {
+          uni.hideLoading();
+          _this.postLoading = false;
+        },
+      });
+    },
   },
   onLoad(option) {
+    this.hasStorage();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -931,9 +954,6 @@ export default {
       type: 1,
     };
     this.getCategories();
-    if (Object.keys(this.allEmoji).length < 1) {
-      this.getEmoji();
-    }
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
@@ -983,8 +1003,8 @@ export default {
     this.setAtMember([]);
 
     // 接受验证码captchaResult
-    this.$u.event.$on('captchaResult', result => this.captchaResult = result);
-    this.$u.event.$on('closeChaReault', result => this.captchaResult = result);
+    this.$u.event.$on('captchaResult', result => (this.captchaResult = result));
+    this.$u.event.$on('closeChaReault', result => (this.captchaResult = result));
     const captchaResult = this.captchaResult;
     this.captchaResult = null;
     // 验证码页面点击返回时，发布取消loading

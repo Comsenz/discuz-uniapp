@@ -378,6 +378,17 @@ export default {
   },
   // 信息修改页
   modify: {
+    nametitle: '修改用户名',
+    mobiletitle: '修改手机号',
+    newpwdtitle: '设置新密码',
+    setphontitle: '设置手机号',
+    paypwdtitle: '设置支付密码',
+    withdratitle: '提现',
+    edipwdtitle: '修改密码',
+    signaturetitle: '签名',
+    realnametitle: '实名认证',
+    findpawdtitle: '找回密码',
+    authontitle: '验证身份',
     numbermodifitions: '用户名只可修改一次',
     submission: '提交',
     emptyname: '名字不能为空',

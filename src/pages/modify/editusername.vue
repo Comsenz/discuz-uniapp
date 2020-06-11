@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
     <!-- #ifdef H5-->
-    <qui-header-back title="修改用户名"></qui-header-back>
+    <qui-header-back :title="i18n.t('modify.nametitle')"></qui-header-back>
     <!-- #endif -->
     <view class="chagepas">
       <view class="chagepas-pas">
@@ -44,6 +44,8 @@ export default {
   },
   onLoad() {
     this.userid = this.usersid;
+    const pages = getCurrentPages();
+    console.log(pages);
     console.log(this.userid);
   },
   computed: {
@@ -85,6 +87,9 @@ export default {
               success() {
                 const pages = getCurrentPages();
                 console.log(pages);
+                /* #ifdef H5 */
+                pages[pages.length - 2].onLoad();
+                /* #endif */
                 pages[1].onLoad();
               },
             });

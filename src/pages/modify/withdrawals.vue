@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back title="提现"></qui-header-back>
+    <qui-header-back :title="i18n.t('modify.withdratitle')"></qui-header-back>
     <!-- #endif -->
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
@@ -153,7 +153,6 @@ export default {
     // this.userid = 116;
     this.setmydata();
     this.$nextTick(() => {
-      console.log(this.forums);
       this.cost = this.forums.set_cash.cash_rate;
       this.percentage = this.forums.set_cash.cash_rate * 100;
     });
@@ -177,16 +176,6 @@ export default {
     fourse() {
       this.inshow = true;
     },
-    // getCode() {
-    //   this.showText = false;
-    //   this.interval = setInterval(() => {
-    //     this.second -= 1;
-    //   }, 1000);
-    //   setTimeout(() => {
-    //     clearInterval(this.interval);
-    //     this.showText = true;
-    //   }, 60000);
-    // },
     btndata(num) {
       this.code = num;
     },
@@ -237,7 +226,6 @@ export default {
     },
     // 点击获取验证码计时开始
     btnButton() {
-      console.log(this.second);
       if (!this.usertestphon) {
         uni.showToast({
           icon: 'none',
@@ -251,10 +239,8 @@ export default {
       this.sun = false;
       this.interval = setInterval(() => {
         this.second -= 1;
-        console.log(this.second);
       }, 1000);
       setTimeout(() => {
-        console.log(11111);
         clearInterval(this.interval);
         this.sun = true;
         this.second = 60;

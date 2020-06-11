@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-at-member-page-box">
+  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
     <view class="qui-at-member-page-box__hd">
       <view class="qui-at-member-page-box__hd__sc">
         <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
@@ -22,6 +22,7 @@
         <checkbox-group @change="changeCheck" v-if="followStatus">
           <label v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
+              v-if="item.toUser"
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
@@ -70,7 +71,7 @@
         }}
       </qui-button>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

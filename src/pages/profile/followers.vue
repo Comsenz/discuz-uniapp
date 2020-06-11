@@ -70,8 +70,8 @@ import { status } from '@/library/jsonapi-vuex/index';
 export default {
   props: {
     userId: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   data() {
