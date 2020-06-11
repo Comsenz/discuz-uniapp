@@ -44,11 +44,20 @@ module.exports = {
      * @param {string} title 主题title
      */
     // #ifdef H5
-    h5Share(title) {
-      console.log(title, 'title');
-      let themeTitle = title || 'Discuz!Q';
-      console.log(themeTitle, 'title');
-      const url = this.getUrl();
+    h5Share(shareInfo) {
+      console.log(shareInfo.title, 'title');
+      let themeTitle = '';
+      switch (typeof shareInfo) {
+        case 'undefined':
+          themeTitle = 'Discuz!Q';
+          break;
+        case 'string':
+          themeTitle = shareInfo;
+          break;
+        default:
+          themeTitle = shareInfo.title || 'Discuz!Q';
+      }
+      const url = `${this.getUrl()}/pages/topic/index?id=${shareInfo.id}`;
       const oInput = document.createElement('input');
       const reTag = /<img(?:.|\s)*?>/g;
       const reTag2 = /(<\/?br.*?>)/gi;
@@ -68,9 +77,6 @@ module.exports = {
       // 执行浏览器复制命令
       oInput.className = 'oInput';
       oInput.style.display = 'none';
-
-      // this.$toast.success('分享链接已复成功');
-      console.log('分享链接已复成功');
       uni.showToast({
         icon: 'none',
         title: '分享链接已复成功',
@@ -83,7 +89,7 @@ module.exports = {
     },
     getUrl() {
       const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      let url = window.location.href.split('#')[0];
+      let url = window.location.origin;
       if (isiOS && window.entryUrl && !/wechatdevtools/.test(navigator.userAgent)) {
         // iOS下，URL必须设置为整个SPA的入口URL
         url = window.entryUrl;

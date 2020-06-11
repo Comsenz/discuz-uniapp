@@ -232,6 +232,7 @@ export default {
       nowThreadId: '', // 当前点击主题ID
       filterTop: 450, // 筛选弹窗的位置
       shareShow: false, // h5内分享提示信息
+      shareTitle: '', // h5内分享复制链接
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -559,15 +560,15 @@ export default {
       }
       // #endif
       // #ifdef H5
-      // this.$store.dispatch('jv/get', ['threads', { id }]).then(res => {
-      //   console.log(res, 'res');
-      //   let title;
-      //   if (res.type === 1) {
-      //     title = res.title;
-      //   }
-      // });
+      const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
+      if (shareThread.type === 1) {
+        this.shareTitle = shareThread.title;
+      } else {
+        this.shareTitle = shareThread.firstPost.summary;
+      }
       this.h5Share({
-        title: 'aaaaa',
+        title: this.shareTitle,
+        id,
       });
       // #endif
     },
