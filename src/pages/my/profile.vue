@@ -27,9 +27,12 @@
         <image
           class="my-profile__avatar"
           :src="profile.avatarUrl || '/static/noavatar.gif'"
-          alt="avatarUrl"
           mode="widthFix"
+          @error="imageError"
+          v-if="imageStatus"
+          lazy-load
         ></image>
+        <image v-else src="/static/noavatar.gif"></image>
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
@@ -124,6 +127,7 @@ export default {
       header: {},
       formData: {},
       show: false,
+      imageStatus: true,
       host: DISCUZ_REQUEST_HOST,
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
     };
@@ -169,6 +173,10 @@ export default {
     },
     changeAvatar() {
       this.$refs.upload.uploadClick();
+    },
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.imageStatus = false;
     },
     chooseSuccess() {
       uni.showLoading();
@@ -217,5 +225,6 @@ export default {
   width: 75rpx;
   height: 75rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 </style>

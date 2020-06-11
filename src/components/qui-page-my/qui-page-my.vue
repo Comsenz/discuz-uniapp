@@ -19,9 +19,11 @@
             <image
               class="my-info__box__detail-avatar"
               :src="userInfo.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
-              mode="aspectFill"
+              @error="imageError"
+              v-if="imageStatus"
+              lazy-load
             ></image>
+            <image v-else src="/static/noavatar.gif"></image>
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"
@@ -99,6 +101,7 @@ export default {
         { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
       current: 0,
+      imageStatus: true,
       checked: false,
     };
   },
@@ -132,6 +135,10 @@ export default {
     // 组件初始化数据
     ontrueGetList() {
       this.checked = this.theme !== THEME_DEFAULT;
+    },
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.imageStatus = false;
     },
     // 获取最新主题数那些
     refreshNum() {
@@ -186,6 +193,7 @@ export default {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .my-tabs {
   background: --color(--qui-BG-2);

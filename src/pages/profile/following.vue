@@ -10,8 +10,7 @@
         <image
           class="follow-content__items__avatar"
           :src="(followingItem.toUser && followingItem.toUser.avatarUrl) || '/static/noavatar.gif'"
-          alt="avatarUrl"
-          mode="aspectFill"
+          lazy-load
         ></image>
         <qui-cell-item
           :title="(followingItem.toUser && followingItem.toUser.username) || ''"
@@ -192,6 +191,7 @@ export default {
   width: 70rpx;
   height: 70rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .text {
   margin-left: 12rpx;
