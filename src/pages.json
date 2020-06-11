@@ -220,14 +220,14 @@
         "navigationStyle": "default"
       }
     },
-    // {
-    //   "path": "pages/user/at-member",
-    //   "style": {
-    //     "navigationBarBackgroundColor": "#fff",
-    //     "navigationBarTextStyle": "black",
-    //     "navigationBarTitleText": ""
-    //   }
-    // },
+    {
+      "path": "pages/user/at-member",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": ""
+      }
+    },
     {
       "path": "pages/common/message",
       "style": {

@@ -645,11 +645,6 @@ export default {
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
-    callMember(id) {
-      uni.navigateTo({
-        url: `/pages/my/index?userId=${id}`,
-      });
-    },
 
     // 表情接口请求
     // getEmoji() {
@@ -1429,7 +1424,7 @@ export default {
 
     // 点击@跳转到@页
     callClick() {
-      uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
+      uni.navigateTo({ url: '/pages/user/at-member' });
     },
     // // 上传图片
     // imageUploader() {
@@ -1636,10 +1631,10 @@ page {
   max-height: calc(100vh - 80rpx);
 }
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
 }
 .bg-white {
   background-color: --color(--qui-BG-2);

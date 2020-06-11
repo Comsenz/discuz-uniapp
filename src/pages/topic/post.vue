@@ -539,18 +539,18 @@ export default {
     topicPage() {
       uni.navigateTo({ url: '/components/qui-topic-page/qui-topic-page' });
     },
-    hasStorage(){
-       const that=this
-       uni.getStorage({
-        key:'topicMsg',
-        success(e){
-          if(e.data.keywords) that.textAreaValue=`#${e.data.keywords}#`
+    hasStorage() {
+      const that = this;
+      uni.getStorage({
+        key: 'topicMsg',
+        success(e) {
+          if (e.data.keywords) that.textAreaValue = `#${e.data.keywords}#`;
           uni.setStorage({
-            key:'topicMsg',
-            data:''
-          })
-        }
-      })
+            key: 'topicMsg',
+            data: '',
+          });
+        },
+      });
     },
     // 分类点击
     checkClass(e, index) {
