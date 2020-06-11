@@ -89,53 +89,7 @@
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
-        <view v-if="imagesList.length == 1">
-          <view class="themeItem__content__imgone">
-            <image
-              class="themeItem__content__imgone__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(payStatus, index)"
-              lazy-load
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length == 2">
-          <view class="themeItem__content__imgtwo">
-            <image
-              class="themeItem__content__imgtwo__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(payStatus, index)"
-              lazy-load
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length >= 3">
-          <view class="themeItem__content__imgmore">
-            <image
-              class="themeItem__content__imgmore__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(payStatus, index)"
-              lazy-load
-            ></image>
-            <image
-              class="themeItem__content__imgmore__item"
-              v-if="imagesList.length % 3 != 0"
-              lazy-load
-            ></image>
-          </view>
-        </view>
+        <qui-image :images-list="imagesList" :preview-status="payStatus"></qui-image>
         <view
           v-if="!payStatus && threadPrice > 0 && themeType == 1"
           class="themeItem__content__con__cover"
@@ -309,11 +263,11 @@ export default {
         return [];
       },
     },
-    // 图片裁剪、缩放的模式
-    modeVal: {
-      type: String,
-      default: 'aspectFill',
-    },
+    // // 图片裁剪、缩放的模式
+    // modeVal: {
+    //   type: String,
+    //   default: 'aspectFill',
+    // },
     // 视频宽度
     videoWidth: {
       type: Number,
@@ -382,29 +336,7 @@ export default {
     videocoverClick() {
       this.$emit('videocoverClick');
     },
-    // 点击图片事件(默认参数图片id)
-    // imageClick(imageId) {
-    //   this.$emit('imageClick', imageId);
-    // },
-    // 预览图片
-    previewPicture(payStatus, index) {
-      if (payStatus) {
-        // 如果对当前主题已支付
-        const _this = this;
-        const preview = [];
-        for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
-          preview.push(_this.imagesList[i].url);
-        }
-        uni.previewImage({
-          current: index,
-          urls: preview,
-          indicator: 'number',
-        });
-      } else {
-        // 如果未支付当前主题
-        this.$emit('previewPicture');
-      }
-    },
+
     // 点击分类标签
     tagClick(tagId) {
       this.$emit('tagClick', tagId);
@@ -548,46 +480,6 @@ export default {
       }
     }
 
-    &__imgone {
-      display: flex;
-      justify-content: flex-start;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        max-width: 100%;
-        max-height: 100%;
-      }
-    }
-    &__imgtwo {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 48%;
-        height: 211rpx;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
-    }
-    &__imgmore {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-content: flex-start;
-      flex-wrap: wrap;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 30%;
-        height: 211rpx;
-        margin-right: 3.33%;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
-    }
     &__tags {
       display: flex;
       flex-wrap: wrap;
