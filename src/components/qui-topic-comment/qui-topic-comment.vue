@@ -13,6 +13,7 @@
             @click="personJump"
             @error="imageError"
             v-if="imageStatus"
+            lazy-load
           ></image>
           <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
         </view>
@@ -58,6 +59,7 @@
               :src="image.thumbUrl"
               alt
               @click="previewPicture(index)"
+              lazy-load
             ></image>
           </view>
         </view>
@@ -71,6 +73,7 @@
               :src="image.thumbUrl"
               alt
               @click="previewPicture(index)"
+              lazy-load
             ></image>
           </view>
         </view>
@@ -84,10 +87,12 @@
               :src="image.thumbUrl"
               alt
               @click="previewPicture(index)"
+              lazy-load
             ></image>
             <image
               class="themeItem__content__imgmore__item"
               v-if="imagesList.length % 3 != 0"
+              lazy-load
             ></image>
           </view>
         </view>
@@ -318,6 +323,7 @@ export default {
       margin-right: 18rpx;
       background: #ccc;
       border-radius: 100%;
+      will-change: transform;
 
       image {
         width: 100%;

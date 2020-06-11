@@ -29,9 +29,8 @@
           <image
             class="site-item__owner-avatar"
             :src="(forums.set_site && forums.set_site.site_author.avatar) || '/static/noavatar.gif'"
-            alt="avatarUrl"
             @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
-            mode="aspectFill"
+            lazy-load
           ></image>
           <text class="site-item__owner-name">
             {{ forums.set_site && forums.set_site.site_author.username }}
@@ -48,9 +47,8 @@
             <image
               class="site-item__person__content-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
+              lazy-load
               @tap="toProfile(item.id)"
-              mode="aspectFill"
             ></image>
           </view>
         </view>
@@ -243,6 +241,7 @@ export default {
   height: 60rpx;
   margin-left: 8rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .site-item__person__content-avatar {
   margin-left: 8rpx;

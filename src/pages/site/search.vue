@@ -40,8 +40,7 @@
         <image
           class="search-item__users__avatar"
           :src="item.avatarUrl || '/static/noavatar.gif'"
-          alt="avatarUrl"
-          mode="aspectFill"
+          lazy-load
         ></image>
         <qui-cell-item
           :title="item.username"
@@ -249,6 +248,7 @@ export default {
   width: 70rpx;
   height: 70rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .search-item__users {
   position: relative;
