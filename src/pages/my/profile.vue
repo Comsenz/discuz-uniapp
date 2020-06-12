@@ -27,12 +27,11 @@
         <image
           class="my-profile__avatar"
           :src="profile.avatarUrl || '/static/noavatar.gif'"
-          mode="widthFix"
           @error="imageError"
           v-if="imageStatus"
           lazy-load
         ></image>
-        <image v-else src="/static/noavatar.gif"></image>
+        <image class="my-profile__avatar" v-else src="/static/noavatar.gif"></image>
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
