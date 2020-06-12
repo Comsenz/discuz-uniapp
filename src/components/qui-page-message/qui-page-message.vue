@@ -169,7 +169,6 @@ export default {
   },
   methods: {
     handleClick() {
-      console.log(111);
       // 404
       if (this.forumError.code === THREAD_DELETED || this.forumError.code === TYPE_401) {
         console.log('这是返回首页呢');

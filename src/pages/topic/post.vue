@@ -537,7 +537,7 @@ export default {
       uni.navigateTo({ url: '/pages/user/at-member' });
     },
     topicPage() {
-      uni.navigateTo({ url: '/components/qui-topic-page/qui-topic-page' });
+      uni.navigateTo({ url: '/pages/topic/topic' });
     },
     hasStorage() {
       const that = this;

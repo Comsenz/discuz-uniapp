@@ -129,6 +129,8 @@ export default {
     videoUploading: '视频上传中...',
   },
   core: {
+    thousand: '万',
+    content: '内容',
     not_authenticated: '请登录',
     admin_login: '管理员登录',
     back_home: '返回首页',
@@ -193,8 +195,13 @@ export default {
     contentrefresh: '正在加载...',
     noMoreData: '没有更多数据了',
     loading: '加载中...',
+    sort: '排序',
+    loadMore: '上拉加载更多',
   },
   topic: {
+    allTopics: '全部话题',
+    contents: '内容数',
+    topicList: '话题列表',
     persenUnit: '人',
     delete: '删除',
     management: '管理',
@@ -244,6 +251,8 @@ export default {
     deleteFailed: '删除失败',
     deleteSuccess: '删除成功',
     iCantRewardMyself: '自己不能打赏自己哦',
+    searchTopic: '搜索话题',
+    hot: '热度',
   },
   pay: {
     passwordTip: '请输入支付密码',
