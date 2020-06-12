@@ -23,7 +23,7 @@
               v-if="imageStatus"
               lazy-load
             ></image>
-            <image v-else src="/static/noavatar.gif"></image>
+            <image class="my-info__box__detail-avatar" v-else src="/static/noavatar.gif"></image>
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"
