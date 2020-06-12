@@ -4,11 +4,12 @@
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
       :theme-num="forums.other && forums.other.count_users"
-      :post="i18n.t('home.homecontent')"
       :post-num="forums.other && forums.other.count_threads"
-      :share="i18n.t('home.share')"
+      :share-btn="shareBtn"
+      :share-show="shareShow"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
+      @closeShare="closeShare"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
       <qui-share @close="cancel"></qui-share>
@@ -88,7 +89,7 @@
           ref="payShow"
           :money="forums.set_site && forums.set_site.site_price"
           :wallet-status="true"
-          :balance="10"
+          balance="10"
           :pay-type-data="payTypeData"
           @radioMyHead="radioMyHead"
           @onInput="onInput"
@@ -108,6 +109,8 @@ export default {
   data() {
     return {
       payShowStatus: true, // 是否显示支付
+      shareBtn: 'icon-share1',
+      shareShow: false, // h5内分享提示信息
       isAnonymous: '0',
       payTypeData: [
         {
@@ -146,7 +149,19 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
+      // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
+      // #endif
+      // #ifdef H5
+      this.shareShow = true;
+      // #endif
+    },
+    closeShare() {
+      this.shareShow = false;
+    },
+    // 取消按钮
+    cancel() {
+      this.$refs.popupHead.close();
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
@@ -214,10 +229,6 @@ export default {
           console.log(`fail:${JSON.stringify(err)}`);
         },
       });
-    },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupHead.close();
     },
     // 点击头像到个人主页
     toProfile(userId) {

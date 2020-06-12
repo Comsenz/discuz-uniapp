@@ -32,6 +32,8 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 
+const wx = require('@/library/jssdk/jweixin-1.6.0');
+
 export default {
   mixins: [forums, user],
   data() {
@@ -63,6 +65,8 @@ export default {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
+
+    console.log(wx);
   },
 
   // 唤起小程序原声分享

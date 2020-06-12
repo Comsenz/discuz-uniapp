@@ -41,8 +41,16 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+// #endif
 
 export default {
+  mixins: [
+    // #ifdef  H5
+    wxshare,
+    // #endif
+  ],
   props: {
     userId: {
       type: String,
@@ -57,6 +65,7 @@ export default {
       pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
+      shareTitle: '', // h5内分享复制链接
       currentLoginId: this.$store.getters['session/get']('userId'),
     };
   },
@@ -65,9 +74,23 @@ export default {
   },
   methods: {
     handleClickShare(id) {
+      // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
       this.$refs.popupContent.open();
+      // #endif
+      // #ifdef H5
+      const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
+      if (shareThread.type === 1) {
+        this.shareTitle = shareThread.title;
+      } else {
+        this.shareTitle = shareThread.firstPost.summary;
+      }
+      this.h5Share({
+        title: this.shareTitle,
+        id,
+      });
+      // #endif
     },
     // 取消按钮
     cancel() {

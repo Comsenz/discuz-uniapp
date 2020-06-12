@@ -9,12 +9,10 @@
       >
         <image
           class="follow-content__items__avatar"
-          :src="(followingItem.toUser && followingItem.toUser.avatarUrl) || '/static/noavatar.gif'"
+          :src="followingItem.avatarUrl"
           lazy-load
           @error="imageError(index)"
-          v-if="followingItem.imageStatus"
         ></image>
-        <image class="follow-content__items__avatar" v-else src="/static/noavatar.gif"></image>
         <qui-cell-item
           :title="(followingItem.toUser && followingItem.toUser.username) || ''"
           slot-right
@@ -101,7 +99,7 @@ export default {
             delete res._jv;
           }
           res.forEach((v, i) => {
-            res[i].imageStatus = true;
+            res[i].avatarUrl = (v.toUser && v.toUser.avatarUrl) || '/static/noavatar.gif';
           });
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           if (type === 'change') {
@@ -113,7 +111,7 @@ export default {
     },
     // 头像加载失败,显示默认头像
     imageError(index) {
-      this.followingList[index].imageStatus = false;
+      this.followingList[index].avatarUrl = '/static/noavatar.gif';
     },
     // 点击头像到个人主页
     toProfile(userId) {

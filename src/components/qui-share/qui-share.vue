@@ -49,7 +49,7 @@ export default {
   },
   mounted() {
     // 付费圈子只显示海报分享
-    if (this.forums.set_site.site_mode === 'pay') {
+    if (this.forums.set_site && this.forums.set_site.site_mode === 'pay') {
       this.bottomData = [
         {
           text: this.i18n.t('home.generatePoster'),

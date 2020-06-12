@@ -1,5 +1,5 @@
 <template>
-  <qui-page>
+  <qui-page :data-qui-theme="theme">
     <view class="qui-topic-page-box">
       <view class="qui-topic-page-box__hd">
         <view class="qui-topic-page-box__hd__sc">
@@ -9,140 +9,130 @@
             type="text"
             placeholder-class="input-placeholder"
             confirm-type="search"
-            placeholder="搜索话题"
+            :placeholder="i18n.t('topic.searchTopic')"
+            v-model="keyword"
             @input="searchInput"
           />
         </view>
       </view>
     </view>
     <view class="topic-list-page">
-      <view class="topic-list-page-header" v-show="anaData.length > 0">
-        <view class="topic-list-page-header_title">话题列表</view>
+      <view class="topic-list-page-header">
+        <view class="topic-list-page-header_title">{{ i18n.t('topic.topicList') }}</view>
         <!-- 排序功能后续补上完善 -->
         <view class="topic-list-page-header_sortBox" @click="toggleDropDown">
           <view>
             <qui-icon class="icon-wei" name="icon-wei" size="30"></qui-icon>
-            <text>排序</text>
+            <text>{{ i18n.t('core.sort') }}</text>
           </view>
           <view class="dropDownBox" v-show="dropDownShow">
-            <view @click="switchSort(0)">热度</view>
-            <view @click="switchSort(1)">内容数</view>
+            <view @click="switchSort('-viewCount')">{{ i18n.t('topic.hot') }}</view>
+            <view @click="switchSort('-threadCount')">{{ i18n.t('topic.contents') }}</view>
           </view>
         </view>
       </view>
       <view style="clear: both;"></view>
       <view class="topic-page-list-item" v-for="(item, i) in topicData" :key="i">
-        <view class="topic-page-list-item_title">#{{ item.content }}#</view>
+        <navigator :url="'/pages/topic/content?id=' + item._jv.id">
+          <view class="topic-page-list-item_title">#{{ item.content }}#</view>
+        </navigator>
         <view class="topic-page-list-item_details">
-          <view class="topic-page-list-item_details_text">{{ item.detailsText }}</view>
-          <image class="topic-page-list-item_details_image" :src="item.detailsImages"></image>
+          <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
+            <rich-text
+              class="topic-page-list-item_details_text"
+              :nodes="item.lastThread[0].firstPost.summary"
+            ></rich-text>
+          </navigator>
+          <!-- <image class="topic-page-list-item_details_image" :src="item.detailsImages"></image> -->
         </view>
-        <text class="topic-page-list-item_heat">
-          热度 {{ item.heatNum > 10000 ? Number(item.heatNum / 10000) + '万' : item.heatNum }}
-        </text>
-        <text class="topic-page-list-item_content">
-          内容 {{ item.contentNum > 1000 ? Number(item.contentNum / 1000) + 'k' : item.contentNum }}
-        </text>
+        <view class="topic-page-list-item_heat">
+          {{ i18n.t('topic.hot') }}
+          <text>
+            {{
+              item.view_count > 10000
+                ? Number(item.view_count / 10000) + i18n.t('core.thousand')
+                : item.view_count
+            }}
+          </text>
+        </view>
+        <view class="topic-page-list-item_content">
+          {{ i18n.t('core.content') }}
+          <text>
+            {{
+              item.thread_count > 1000 ? Number(item.thread_count / 1000) + 'k' : item.thread_count
+            }}
+          </text>
+        </view>
       </view>
     </view>
-    <qui-load-more v-show="anaData.length > 0"></qui-load-more>
+    <qui-load-more :content-text="contentText"></qui-load-more>
   </qui-page>
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+let timer = null;
+let currentPage = 1;
 
 export default {
   data() {
     return {
       dropDownShow: false,
       topicData: [],
-      anaData: [
-        {
-          title: '测试话题数据1',
-          detailsText:
-            '    Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta atque dignissimos a suscipit? Quo consequuntur rem accusamus asperiores labore dolorum hic laborum quas quibusdam in. Aliquid ducimus ex vitae voluptas!',
-          detailsImages:
-            'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4190106429,4270721657&fm=11&gp=0.jpg',
-          heatNum: '42000',
-          contentNum: '8300',
-        },
-        {
-          title: '测试话题数据2',
-          detailsText:
-            '    Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta atque dignissimos a suscipit? Quo consequuntur rem accusamus asperiores labore dolorum hic laborum quas quibusdam in. Aliquid ducimus ex vitae voluptas!',
-          detailsImages:
-            'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4190106429,4270721657&fm=11&gp=0.jpg',
-          heatNum: '54000',
-          contentNum: '8300',
-        },
-        {
-          title: '测试话题数据3',
-          detailsText:
-            '    Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta atque dignissimos a suscipit? Quo consequuntur rem accusamus asperiores labore dolorum hic laborum quas quibusdam in. Aliquid ducimus ex vitae voluptas!',
-          detailsImages:
-            'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4190106429,4270721657&fm=11&gp=0.jpg',
-          heatNum: '44000',
-          contentNum: '800',
-        },
-        {
-          title: '测试话题数据4',
-          detailsText:
-            '    Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta atque dignissimos a suscipit? Quo consequuntur rem accusamus asperiores labore dolorum hic laborum quas quibusdam in. Aliquid ducimus ex vitae voluptas!',
-          detailsImages:
-            'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4190106429,4270721657&fm=11&gp=0.jpg',
-          heatNum: '96000',
-          contentNum: '8000',
-        },
-      ],
-      newTopic: '',
-      topicMsg: [], // 返回的话题信息
-      loadingText: 'discuzq.list.loading',
-      searchValue: '', // 搜索值
-      pageNum: 1, // 页面
       meta: {}, // 接口返回meta值
+      contentText: {
+        contentdown: this.i18n.t('topic.noMoreData'),
+      },
+      keyword: '',
+      sort: '-viewCount',
     };
   },
   methods: {
-    ...mapMutations({
-      setAtMember: 'atMember/SET_ATMEMBER',
-    }),
     toggleDropDown() {
       this.dropDownShow = !this.dropDownShow;
     },
-    searchInput(e) {
-      this.anaData = [];
-      this.anaData = [].concat(this.anaData);
-      let timer = null;
-      this.newTopic = e.detail.value;
-      this.shouldShow = false;
-      // 去模糊查询输入的话题
+    searchInput() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        // 为发送请求添加防抖处理
+        this.topics();
+      }, 300);
+    },
+    switchSort(sort) {
+      this.sort = sort;
+      this.topics();
+    },
+    topics(page = 1, limit = 20) {
       const params = {
-        'filter[content]': e.detail.value.trim(),
-        'page[number]': '1',
-        'page[limit]': '20',
-        sort: '-viewCount',
+        include: 'user,lastThread,lastThread.firstPost,lastThread.firstPost.images',
+        'page[number]': page,
+        'page[limit]': limit,
+        sort: this.sort,
       };
-      if (this.pageNum !== 1) {
-        this.pageNum = 1;
+      if (this.keyword) {
+        params['filter[content]'] = this.keyword;
       }
-      this.loadingText = 'discuzq.list.loading';
-      return (() => {
-        if (timer) clearTimeout(this.timer);
-        timer = setTimeout(() => {
-          // 为发送请求添加防抖处理
-          this.$store.dispatch('jv/get', ['topics', { params }]).then(res => {
-            console.log(res);
-          });
-        }, 600);
-      })();
+
+      return this.$store.dispatch('jv/get', ['topics', { params }]).then(data => {
+        this.meta = data._jv.json.links;
+        data.pop();
+        if (page > 1) {
+          this.topicData = this.topicData.concat(data);
+        } else {
+          this.topicData = data;
+        }
+        if (this.meta.next) {
+          this.contentText.contentdown = this.i18n.t('core.loadMore');
+        }
+      });
     },
   },
   onLoad() {
-    this.$store.dispatch('jv/get', ['threads']).then(res => {
-      this.topicData = res;
-      console.log(res);
-    });
+    this.topics();
+  },
+  onReachBottom() {
+    if (this.meta.next) {
+      this.topics('', (currentPage += 1));
+    }
   },
 };
 </script>
@@ -231,6 +221,7 @@ $otherHeight: 292rpx;
   &_title {
     position: absolute;
     left: 0;
+    padding-bottom: 34rpx;
     font-size: 30rpx;
     font-weight: 600;
     color: #333;
