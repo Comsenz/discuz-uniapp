@@ -13,7 +13,10 @@
             (followerItem.fromUser && followerItem.fromUser.avatarUrl) || '/static/noavatar.gif'
           "
           lazy-load
+          @error="imageError(index)"
+          v-if="followerItem.imageStatus"
         ></image>
+        <image v-else src="/static/noavatar.gif" class="follow-content__items__avatar"></image>
         <qui-cell-item
           :title="(followerItem.fromUser && followerItem.fromUser.username) || ''"
           slot-right
@@ -102,6 +105,9 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
+          res.forEach((v, i) => {
+            res[i].imageStatus = true;
+          });
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           if (type === 'change') {
             this.followerList = res;
@@ -123,6 +129,10 @@ export default {
       }
       this.pageNum += 1;
       this.getFollowerList();
+    },
+    // 头像加载失败,显示默认头像
+    imageError(index) {
+      this.followerList[index].imageStatus = false;
     },
     // 添加关注
     addFollow(userInfo, index) {
