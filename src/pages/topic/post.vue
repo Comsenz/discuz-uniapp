@@ -85,14 +85,6 @@
         @clear="uploadClear"
         @uploadClick="uploadClick"
       ></qui-uploader>
-      <!-- #ifdef H5-->
-      <!-- <qui-upload-file
-        :url="`${url}api/attachments`"
-        ref="uploadFile"
-        v-if="type === 1"
-        @uploadClick="uploadFileClick"
-      ></qui-upload-file> -->
-      <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
           <video
@@ -355,8 +347,6 @@ export default {
       showHidden: true, // 付费金额的显示隐藏
       ticket: '',
       randstr: '',
-      captchaResult: {},
-      platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
     };
   },
   computed: {
@@ -513,9 +503,6 @@ export default {
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
-    },
-    uploadFileClick() {
-      //
     },
     uploadChange(e, status) {
       this.uploadFile = e;
@@ -955,7 +942,6 @@ export default {
     },
   },
   onLoad(option) {
-    this.hasStorage();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -1001,8 +987,20 @@ export default {
     } catch (e) {
       // error
     }
+
+    // 接受验证码captchaResult
+    this.$u.event.$on('captchaResult', result => {
+      this.ticket = result.ticket;
+      this.randstr = result.randstr;
+      this.postClick();
+    });
+    this.$u.event.$on('closeChaReault', () => {
+      this.postLoading = false;
+      uni.hideLoading();
+    });    
   },
   onShow() {
+    this.hasStorage();
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1013,26 +1011,13 @@ export default {
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
-
-    // 接受验证码captchaResult
-    this.$u.event.$on('captchaResult', result => (this.captchaResult = result));
-    this.$u.event.$on('closeChaReault', result => (this.captchaResult = result));
-    const captchaResult = this.captchaResult;
-    this.captchaResult = null;
-    // 验证码页面点击返回时，发布取消loading
-    if (captchaResult.ret !== 0) {
-      this.postLoading = false;
-      return;
-    }
-    if (captchaResult && captchaResult.ret === 0) {
-      // 将验证码的结果返回至服务端校验
-      this.ticket = captchaResult.ticket;
-      this.randstr = captchaResult.randstr;
-      this.postClick();
-    }
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');
+  },
+  onUnload() {
+    this.$u.event.$off('captchaResult');
+    this.$u.event.$off('closeChaReault');
   },
 };
 </script>

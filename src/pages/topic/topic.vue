@@ -22,11 +22,8 @@
     <view class="topic-content-item" v-for="(item, i) in topics" :key="i" @tap="returnToPost(i)">
       <view class="topic-content-item_title">#{{ item.content }}#</view>
       <view class="topic-content-item_heat">
-        {{
-          item.view_count / 10000 >= 1
-            ? (item.view_count / 10000).toFixed(1) + i18n.t('core.thousand') + i18n.t('topic.hot')
-            : item.view_count + i18n.t('topic.hot')
-        }}
+        {{ item.view_count }}
+        <text>{{ i18n.t('topic.hot') }}</text>
       </view>
     </view>
   </qui-page>
@@ -50,6 +47,7 @@ export default {
     searchInput() {
       clearTimeout(timer);
       timer = setTimeout(() => {
+        this.pageNum = 1;
         this.loadTopics();
       }, 300);
     },
@@ -62,7 +60,7 @@ export default {
         data: topicMsg,
       });
 
-      uni.navigateTo({ url: '/pages/topic/post' });
+      uni.navigateBack();
     },
     loadTopics() {
       const params = {
@@ -74,6 +72,9 @@ export default {
         params['filter[content]'] = this.searchValue;
       }
       this.$store.dispatch('jv/get', ['topics', { params }]).then(data => {
+        this.meta = data._jv.json.links;
+        // eslint-disable-next-line no-param-reassign
+        delete data._jv;
         if (this.pageNum > 1) {
           this.topics = this.topic.concat(data);
         } else {
@@ -85,7 +86,6 @@ export default {
         } else {
           this.shouldShow = false;
         }
-        this.meta = data._jv.json.links;
       });
     },
   },
@@ -109,21 +109,21 @@ $otherHeight: 292rpx;
 .topic-content-item {
   position: relative;
   height: 99.5rpx;
-  margin-left: 40rpx;
+  margin: 0 40rpx;
   line-height: 99.5rpx;
-  border-bottom: 0.5rpx solid #dedede;
+  border-bottom: 0.5rpx solid --color(--qui-BOR-ED);
   &_title {
     position: absolute;
     left: 0;
     font-size: 30rpx;
     font-weight: 600;
-    color: #333;
+    color: --color(--qui-FC-333);
   }
   &_heat {
     position: absolute;
     right: 15rpx;
     font-size: 24rpx;
-    color: #aaa;
+    color: --color(--qui-BOR-AAA);
   }
 }
 .qui-topic-page-box {
