@@ -85,6 +85,14 @@
         @clear="uploadClear"
         @uploadClick="uploadClick"
       ></qui-uploader>
+      <!-- #ifdef H5-->
+      <!-- <qui-upload-file
+        :url="`${url}api/attachments`"
+        ref="uploadFile"
+        v-if="type === 1"
+        @uploadClick="uploadFileClick"
+      ></qui-upload-file> -->
+      <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
           <video
@@ -348,6 +356,7 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
+      platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
     };
   },
   computed: {
@@ -504,6 +513,9 @@ export default {
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
+    },
+    uploadFileClick() {
+      //
     },
     uploadChange(e, status) {
       this.uploadFile = e;
