@@ -39,8 +39,9 @@
       >
         <image
           class="search-item__users__avatar"
-          :src="item.avatarUrl || '/static/noavatar.gif'"
+          :src="item.avatarUrl"
           lazy-load
+          @error="imageError(index)"
         ></image>
         <qui-cell-item
           :title="item.username"
@@ -117,6 +118,10 @@ export default {
         this.getThemeList(e.target.value);
       }, 250);
     },
+    // 头像加载失败,显示默认头像
+    imageError(index) {
+      this.userList[index].avatarUrl = '/static/noavatar.gif';
+    },
     // 获取用户列表
     getUserList(key) {
       const params = {
@@ -132,6 +137,9 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
+          res.forEach((v, i) => {
+            res[i].avatarUrl = v.avatarUrl || '/static/noavatar.gif';
+          });
           this.userTotal = res.length;
           this.userList = res;
         });
