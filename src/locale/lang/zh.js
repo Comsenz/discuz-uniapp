@@ -199,6 +199,7 @@ export default {
     loadMore: '上拉加载更多',
   },
   topic: {
+    newTopic: '新话题',
     allTopics: '全部话题',
     contents: '内容数',
     topicList: '话题列表',

@@ -8,23 +8,24 @@
             type="text"
             placeholder-class="input-placeholder"
             confirm-type="search"
-            placeholder="搜索话题"
+            :placeholder="i18n.t('topic.searchTopic')"
+            v-model="searchValue"
             @input="searchInput"
           />
         </view>
       </view>
     </view>
-    <view class="topic-content-item" @tap="returnToPost(-1)" v-show="shouldShow">
-      <view class="topic-content-item_title">#{{ newTopic }}#</view>
-      <view class="topic-content-item_heat">新话题</view>
+    <view class="topic-content-item" @tap="returnToPost()" v-if="shouldShow">
+      <view class="topic-content-item_title">#{{ searchValue }}#</view>
+      <view class="topic-content-item_heat">{{ i18n.t('topic.newTopic') }}</view>
     </view>
-    <view class="topic-content-item" v-for="(item, i) in topicMsg" :key="i" @tap="returnToPost(i)">
-      <view class="topic-content-item_title">#{{ topicMsg ? item.content : '' }}#</view>
+    <view class="topic-content-item" v-for="(item, i) in topics" :key="i" @tap="returnToPost(i)">
+      <view class="topic-content-item_title">#{{ item.content }}#</view>
       <view class="topic-content-item_heat">
         {{
           item.view_count / 10000 >= 1
-            ? (item.view_count / 10000).toFixed(1) + '万热度'
-            : item.view_count + ' 热度'
+            ? (item.view_count / 10000).toFixed(1) + i18n.t('core.thousand') + i18n.t('topic.hot')
+            : item.view_count + i18n.t('topic.hot')
         }}
       </view>
     </view>
@@ -32,114 +33,69 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
-
+let timer = null;
 export default {
   data() {
     return {
       shouldShow: false,
-      newTopic: '',
-      topicMsg: [], // 返回的话题信息
-      loadingText: 'discuzq.list.loading',
+      topics: [], // 返回的话题信息
       searchValue: '', // 搜索值
       pageNum: 1, // 页面
+      pageSize: 20,
       meta: {}, // 接口返回meta值
     };
   },
-  computed: {
-    // 处理角色名称
-    getGroups() {
-      const that = this;
-      let name = '';
-      return data => {
-        if (data) {
-          Object.keys(data).forEach(item => {
-            if (data[item]) {
-              name = data[item].name;
-            } else {
-              name = that.i18n.t('discuzq.role.noRole');
-            }
-          });
-        }
-        return name;
-      };
-    },
-  },
   methods: {
-    ...mapMutations({
-      setAtMember: 'atMember/SET_ATMEMBER',
-    }),
-
     // 话题搜索
-    searchInput(e) {
-      let timer = null;
-      this.newTopic = e.detail.value;
-      this.shouldShow = false;
-      // 去模糊查询输入的话题
-      const params = {
-        'filter[content]': e.detail.value.trim(),
-        'page[number]': '1',
-        'page[limit]': '20',
-        sort: '-viewCount',
-      };
-      if (this.pageNum !== 1) {
-        this.pageNum = 1;
-      }
-      this.loadingText = 'discuzq.list.loading';
-      return (() => {
-        if (timer) clearTimeout(this.timer);
-        timer = setTimeout(() => {
-          // 为发送请求添加防抖处理
-          this.$store.dispatch('jv/get', ['topics', { params }]).then(res => {
-            // eslint-disable-next-line no-unused-expressions
-            res.length > 0 ? (this.topicMsg = res) : (this.shouldShow = true);
-            // eslint-disable-next-line no-unused-expressions
-            this.newTopic.length === 0 ? (this.shouldShow = false) : null;
-          });
-        }, 600);
-      })();
+    searchInput() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        this.shouldShow = false;
+        this.loadTopics();
+      }, 300);
     },
-    returnToPost(index) {
-      // 在跳转之前使用localStorage存储输入的话题关键字
+    returnToPost(index = 0) {
       const topicMsg = {};
-      // eslint-disable-next-line eqeqeq
-      topicMsg.keywords = index == -1 ? this.newTopic : this.topicMsg[index].content;
+      topicMsg.keywords = index === 0 ? this.searchValue : this.topics[index].content;
 
       uni.setStorage({
         key: 'topicMsg',
         data: topicMsg,
       });
 
-      uni.navigateTo({ url: '../../pages/topic/post' });
+      uni.navigateTo({ url: '/pages/topic/post' });
     },
-    // 上划加载更多
-    lower() {
-      if (this.followStatus) {
-        if (this.meta.total > this.allFollow.length) {
-          this.pageNum += 1;
-          this.getFollowMember(this.pageNum);
-        } else {
-          this.loadingText = 'discuzq.list.noMoreData';
-        }
-      } else if (this.meta.total > this.allSiteUser.length) {
-        this.pageNum += 1;
-        this.getSiteMember(this.pageNum);
-      } else {
-        this.loadingText = 'discuzq.list.noMoreData';
+    loadTopics() {
+      const params = {
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
+        sort: '-viewCount',
+      };
+      if (this.searchValue) {
+        params['filter[content]'] = this.searchValue;
       }
+      this.$store.dispatch('jv/get', ['topics', { params }]).then(data => {
+        if (this.pageNum > 1) {
+          this.topics = this.topic.concat(data);
+        } else {
+          this.topics = data;
+        }
+
+        if (!data.length) {
+          this.shouldShow = true;
+        }
+        this.meta = data._jv.json.links;
+      });
     },
   },
   onLoad() {
-    // 请求话题数据
-    const params = {
-      include: 'user',
-      'page[number]': '1',
-      'page[limit]': '20',
-      sort: '-viewCount',
-    };
-    this.$store.dispatch('jv/get', ['topics', { params }]).then(res => {
-      this.topicMsg = res;
-    });
+    this.loadTopics();
+  },
+  onReachBottom() {
+    if (this.meta.next) {
+      this.pageNum += 1;
+      this.loadTopics();
+    }
   },
 };
 </script>
