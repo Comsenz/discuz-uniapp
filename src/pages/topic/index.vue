@@ -349,13 +349,13 @@
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
                 cursor-spacing="100"
-                v-show="!emojiShow"
+                v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
               />
-              <!--<view class="comment-textarea" v-show="emojiShow">
-                  {{ textAreaValue }}
-                </view>-->
+              <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
+                <text>{{ textAreaValue }}</text>
+              </view>
               <qui-uploader
                 :url="`${url}api/attachments`"
                 :header="header"

@@ -57,7 +57,7 @@ module.exports = {
         default:
           themeTitle = shareInfo.title || 'Discuz!Q';
       }
-      const url = `${this.getUrl()}/pages/topic/index?id=${shareInfo.id}`;
+      const url = `${this.getUrl()}${shareInfo.url}?id=${shareInfo.id}`;
       const oInput = document.createElement('input');
       const reTag = /<img(?:.|\s)*?>/g;
       const reTag2 = /(<\/?br.*?>)/gi;
@@ -89,7 +89,7 @@ module.exports = {
     },
     getUrl() {
       const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      let url = window.location.origin;
+      let url = window.location.href.split('#')[0];
       if (isiOS && window.entryUrl && !/wechatdevtools/.test(navigator.userAgent)) {
         // iOS下，URL必须设置为整个SPA的入口URL
         url = window.entryUrl;

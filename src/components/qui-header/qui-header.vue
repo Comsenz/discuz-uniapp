@@ -1,5 +1,12 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
+    <!-- #ifdef H5-->
+    <qui-header-back
+      :title="i18n.t('home.siteName')"
+      :is-show-home="false"
+      :is-show-back="false"
+    ></qui-header-back>
+    <!-- #endif -->
     <view class="logoBox">
       <image
         class="logo"
@@ -73,11 +80,7 @@ export default {
     },
   },
   data: () => {
-    return {
-      // navigationBarStyle: {
-      //   iconText: '类目', // 导航栏文字
-      // },
-    };
+    return {};
   },
   computed: {
     // 语言包
@@ -110,6 +113,9 @@ export default {
     max-height: 88rpx;
     padding-top: 159rpx;
     margin: 0 auto;
+  }
+  /deep/ .qui-back {
+    background: transparent;
   }
   .circleDet {
     display: flex;

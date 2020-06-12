@@ -63,6 +63,8 @@ export default {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
+
+    console.log(wx);
   },
 
   // 唤起小程序原声分享
