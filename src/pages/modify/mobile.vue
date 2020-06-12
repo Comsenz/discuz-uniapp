@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-mobile">
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('modify.mobiletitle')"></qui-header-back>
     <!-- #endif -->
@@ -207,75 +207,77 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.input {
-  width: 100vw;
-  height: 100vh;
-  /* #ifdef H5 */
-  padding-top: 100rpx;
-  /* #endif */
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.mobile-titel {
-  padding: 31rpx 0 0 40rpx;
-  font-size: $fg-f50;
-  font-weight: bold;
-  line-height: 60rpx;
-  color: --color(--qui-FC-333);
-  box-sizing: border-box;
-}
-.modify-phon {
-  display: flex;
-  height: 100rpx;
-  justify-content: space-between;
-  margin-left: 40rpx;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.modify-phon-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.modify-phon-sun {
-  margin-left: 90rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-00);
-  opacity: 1;
-}
-.modify-phon-sun1 {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.modify-phon-send {
-  display: block;
-  height: 70rpx;
-  min-width: 180rpx;
-  margin: 15rpx 40rpx 0;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 70rpx;
-  color: --color(--qui-FC-FFF);
-  background-color: --color(--qui-BG-BTN);
-  border-radius: 5rpx;
-}
-.modify-input {
-  width: 710rpx;
-  margin: 0 0 0 40rpx;
-}
-.modify-input-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-  opacity: 1;
-}
-.modify-button {
-  width: 670rpx;
-  margin: 52rpx auto 0;
+.page-mobile /deep/ {
+  .input {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .mobile-titel {
+    padding: 31rpx 0 0 40rpx;
+    font-size: $fg-f50;
+    font-weight: bold;
+    line-height: 60rpx;
+    color: --color(--qui-FC-333);
+    box-sizing: border-box;
+  }
+  .modify-phon {
+    display: flex;
+    height: 100rpx;
+    justify-content: space-between;
+    margin-left: 40rpx;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .modify-phon-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .modify-phon-sun {
+    margin-left: 90rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-00);
+    opacity: 1;
+  }
+  .modify-phon-sun1 {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .modify-phon-send {
+    display: block;
+    height: 70rpx;
+    min-width: 180rpx;
+    margin: 15rpx 40rpx 0;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 70rpx;
+    color: --color(--qui-FC-FFF);
+    background-color: --color(--qui-BG-BTN);
+    border-radius: 5rpx;
+  }
+  .modify-input {
+    width: 710rpx;
+    margin: 0 0 0 40rpx;
+  }
+  .modify-input-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+    opacity: 1;
+  }
+  .modify-button {
+    width: 670rpx;
+    margin: 52rpx auto 0;
+  }
 }
 </style>
