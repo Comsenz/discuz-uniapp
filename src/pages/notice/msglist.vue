@@ -327,13 +327,10 @@ export default {
       this.emojiShow = !this.emojiShow;
     },
     // 获取表情
-    getEmojiClick(key) {
+    getEmojiClick(code) {
       let text = '';
-      text = `${this.msg.slice(0, this.cursor) +
-        this.allEmoji[key].code +
-        this.msg.slice(this.cursor)}`;
+      text = `${this.msg.slice(0, this.cursor) + code + this.msg.slice(this.cursor)}`;
       this.msg = text;
-      console.log('表情', this.allEmoji[key]);
       console.log('msg', this.msg);
     },
     jumpUserPage(id) {

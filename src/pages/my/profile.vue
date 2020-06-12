@@ -26,13 +26,11 @@
       <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow @tap="changeAvatar">
         <image
           class="my-profile__avatar"
-          :src="profile.avatarUrl || '/static/noavatar.gif'"
-          mode="widthFix"
+          :src="profile.avatarUrl"
           @error="imageError"
-          v-if="imageStatus"
+          mode="widthFix"
           lazy-load
         ></image>
-        <image v-else src="/static/noavatar.gif"></image>
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
@@ -127,14 +125,15 @@ export default {
       header: {},
       formData: {},
       show: false,
-      imageStatus: true,
       host: DISCUZ_REQUEST_HOST,
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
     };
   },
   computed: {
     profile() {
-      return this.$store.getters['jv/get'](`users/${this.userId}`);
+      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
+      data.avatarUrl = data.avatarUrl || '/static/noavatar.gif';
+      return data;
     },
   },
   // 解决左上角返回数据不刷新情况
@@ -176,7 +175,7 @@ export default {
     },
     // 头像加载失败,显示默认头像
     imageError() {
-      this.imageStatus = false;
+      this.profile.avatarUrl = '/static/noavatar.gif';
     },
     chooseSuccess() {
       uni.showLoading();

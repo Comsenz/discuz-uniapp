@@ -477,6 +477,8 @@ export default {
       view: ['查看附件', '查看图片'],
       delete: '删除附件',
     },
+    createthreadwithcaptcha: '发帖需要验证码',
+    deleteposts: '删除回复',
     viewUserList: '站点会员列表',
     cash: {
       create: '申请提现',

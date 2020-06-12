@@ -39,8 +39,9 @@
       >
         <image
           class="search-item__users__avatar"
-          :src="item.avatarUrl || '/static/noavatar.gif'"
+          :src="item.avatarUrl"
           lazy-load
+          @error="imageError(index)"
         ></image>
         <qui-cell-item
           :title="item.username"
@@ -69,6 +70,10 @@ export default {
     this.getUserList(params.value);
   },
   methods: {
+    // 头像加载失败,显示默认头像
+    imageError(index) {
+      this.data[index].avatarUrl = '/static/noavatar.gif';
+    },
     searchInput(e) {
       this.searchValue = e.target.value;
       if (this.timeout) clearTimeout(this.timeout);
@@ -92,6 +97,9 @@ export default {
         if (res._jv) {
           delete res._jv;
         }
+        res.forEach((v, i) => {
+          res[i].avatarUrl = v.avatarUrl || '/static/noavatar.gif';
+        });
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;

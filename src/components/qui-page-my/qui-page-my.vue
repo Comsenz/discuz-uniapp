@@ -18,12 +18,10 @@
           <view class="my-info__box__detail">
             <image
               class="my-info__box__detail-avatar"
-              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
+              :src="userInfo.avatarUrl"
               @error="imageError"
-              v-if="imageStatus"
               lazy-load
             ></image>
-            <image v-else src="/static/noavatar.gif"></image>
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"
@@ -101,7 +99,6 @@ export default {
         { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
       current: 0,
-      imageStatus: true,
       checked: false,
     };
   },
@@ -112,6 +109,7 @@ export default {
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
       userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
+      userInfo.avatarUrl = userInfo.avatarUrl || '/static/noavatar.gif';
       this.setNum(userInfo);
       return userInfo;
     },
@@ -138,7 +136,7 @@ export default {
     },
     // 头像加载失败,显示默认头像
     imageError() {
-      this.imageStatus = false;
+      this.userInfo.avatarUrl = '/static/noavatar.gif';
     },
     // 获取最新主题数那些
     refreshNum() {
