@@ -88,7 +88,7 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
         this.list = data;
         delete this.list._jv;
-        console.log(this.list, '这是接口拿到的');
+        // console.log(this.list, '这是接口拿到的');
       });
     },
     getEmojiClick(num) {
