@@ -25,6 +25,7 @@
             :user-name="item.user && item.user.username"
             :theme-image="item.user && item.user.avatarUrl"
             :user-groups="item.user && item.user.groups"
+            :theme-reply-btn="item.canReply || ''"
             :theme-time="item.createdAt"
             :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
             :thread-type="item.type"

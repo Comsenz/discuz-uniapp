@@ -7,6 +7,7 @@
       :currentindex="index"
       :pay-status="(item.price > 0 && item.paid) || item.price == 0"
       :user-name="item.user ? item.user.username : ''"
+      :theme-reply-btn="item.canReply || ''"
       :theme-image="item.user && item.user.avatarUrl"
       :user-groups="item.user && item.user.groups"
       :theme-time="item.createdAt"
@@ -61,7 +62,6 @@ export default {
     return {
       loadingType: '',
       data: [],
-      flag: true, // 滚动节流
       pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
