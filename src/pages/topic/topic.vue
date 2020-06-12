@@ -50,7 +50,6 @@ export default {
     searchInput() {
       clearTimeout(timer);
       timer = setTimeout(() => {
-        this.shouldShow = false;
         this.loadTopics();
       }, 300);
     },
@@ -83,6 +82,8 @@ export default {
 
         if (!data.length) {
           this.shouldShow = true;
+        } else {
+          this.shouldShow = false;
         }
         this.meta = data._jv.json.links;
       });
