@@ -32,8 +32,6 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 
-const wx = require('@/library/jssdk/jweixin-1.6.0');
-
 export default {
   mixins: [forums, user],
   data() {
