@@ -477,7 +477,7 @@ export default {
       editPosts: '编辑',
       essence: '加精',
       sticky: '置顶',
-      deleteposts: '删除回复',
+      deletePosts: '删除回复',
     },
     createThreadImage: '发布图片',
     createThread: '发布文本',
