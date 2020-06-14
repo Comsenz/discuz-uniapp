@@ -477,6 +477,7 @@ export default {
       editPosts: '编辑',
       essence: '加精',
       sticky: '置顶',
+      deleteposts: '删除回复',
     },
     createThreadImage: '发布图片',
     createThread: '发布文本',
@@ -487,8 +488,7 @@ export default {
       view: ['查看附件', '查看图片'],
       delete: '删除附件',
     },
-    createthreadwithcaptcha: '发帖需要验证码',
-    deleteposts: '删除回复',
+    createThreadWithCaptcha: '发帖需要验证码',
     viewUserList: '站点会员列表',
     cash: {
       create: '申请提现',
