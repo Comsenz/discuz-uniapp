@@ -55,7 +55,8 @@
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
-          <rich-text :nodes="themeContent | formatRichText"></rich-text>
+          <!--<rich-text :nodes="themeContent | formatRichText"></rich-text>-->
+          <u-parse :content="themeContent" @navigate="navigate">fgfdgfg</u-parse>
         </view>
         <view
           class="theme__content__videocover"
@@ -124,8 +125,12 @@
 
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
+import uParse from '@/components/feng-parse/parse';
 
 export default {
+  components: {
+    uParse,
+  },
   filters: {
     // 处理富文本里的图片宽度自适应
     // 1.去掉img标签里的style、width、height属性
@@ -317,6 +322,11 @@ export default {
     },
   },
   methods: {
+    navigate(e) {
+      uni.navigateTo({
+        url: e,
+      });
+    },
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
