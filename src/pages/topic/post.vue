@@ -17,7 +17,7 @@
             name="icon-expression"
             size="40"
             :color="emojiShow ? '#1878F3' : '#777'"
-            @click="emojiShow = !emojiShow"
+            @click="emojiclick"
           ></qui-icon>
           <qui-icon
             class="post-box__hd-l__icon"
@@ -64,10 +64,10 @@
           cursor-spacing="50"
           :maxlength="-1"
           :focus="type !== 1"
-          v-if="!emojiShow"
+          v-if="textShow"
           @blur="contBlur"
         ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
+        <view class="post-box__con-text post-box__con-text--static" v-if="!textShow">
           <text>{{ textAreaValue }}</text>
         </view>
       </view>
@@ -85,6 +85,14 @@
         @clear="uploadClear"
         @uploadClick="uploadClick"
       ></qui-uploader>
+      <!-- #ifdef H5-->
+      <!-- <qui-upload-file
+        :url="`${url}api/attachments`"
+        ref="uploadFile"
+        v-if="type === 1 && platform !== 'ios'"
+        @uploadClick="uploadFileClick"
+      ></qui-upload-file> -->
+      <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
           <video
@@ -144,6 +152,8 @@
           :loading="postLoading"
           type="primary"
           size="large"
+          id="TencentCaptcha"
+          :data-appid="forums.qcloud.qcloud_captcha_app_id"
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
@@ -254,10 +264,18 @@ import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
+// #ifdef  H5
+import tcaptchs from '@/utils/tcaptcha';
+// #endif
 
 export default {
   name: 'Post',
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef  H5
+    tcaptchs,
+    // #endif
+  ],
   data() {
     return {
       loadStatus: '',
@@ -272,8 +290,12 @@ export default {
       inputWord: '', // 查看字数输入框
       operating: '', // 编辑或发布类型
       emojiShow: false, // 表情是否显示
+      textShow: true, // 文本域是否显示
       header: {}, // 图片请求头部
       formData: {}, // 图片请求data
+      captcha: null, // 腾讯云验证码实例
+      captcha_ticket: '', // 腾讯云验证码返回票据
+      captcha_rand_str: '', // 腾讯云验证码返回随机字符串
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -347,6 +369,8 @@ export default {
       showHidden: true, // 付费金额的显示隐藏
       ticket: '',
       randstr: '',
+      captchaResult: {},
+      platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
     };
   },
   computed: {
@@ -455,12 +479,18 @@ export default {
       });
     },
 
+    // 点击表情
+    emojiclick() {
+      this.emojiShow = !this.emojiShow;
+      this.textShow = !this.textShow;
+    },
     // 弹框相关方法
     contBlur(e) {
       this.cursor = e.detail.cursor;
     },
     diaLogClose() {
       this.$refs.popup.close();
+      this.textShow = true;
     },
     diaLogOk() {
       if (this.setType === 'pay') {
@@ -470,6 +500,7 @@ export default {
       }
 
       this.$refs.popup.close();
+      this.textShow = true;
     },
 
     moneyClick(index) {
@@ -478,14 +509,18 @@ export default {
       this.payNumCheck.push(this.payNum[index]);
 
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
+        this.textShow = false;
         this.$refs.popupBtm.close();
+
         this.$nextTick(() => {
           this.inputPrice = '';
           this.$refs.popup.open();
+          this.textShow = false;
         });
       } else {
         this.price = this.payNumCheck[0].pay;
         this.$refs.popupBtm.close();
+        this.textShow = true;
       }
     },
     cellClick(type) {
@@ -495,14 +530,19 @@ export default {
       } else {
         this.$refs.popupBtm.open();
       }
+      this.textShow = false;
     },
     cancel() {
       this.$refs.popupBtm.close();
+      this.textShow = true;
     },
 
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
+    },
+    uploadFileClick() {
+      //
     },
     uploadChange(e, status) {
       this.uploadFile = e;
@@ -537,19 +577,6 @@ export default {
     },
     topicPage() {
       uni.navigateTo({ url: '/pages/topic/topic' });
-    },
-    hasStorage() {
-      const that = this;
-      uni.getStorage({
-        key: 'topicMsg',
-        success(e) {
-          if (e.data.keywords) that.textAreaValue = `#${e.data.keywords}#`;
-          uni.setStorage({
-            key: 'topicMsg',
-            data: '',
-          });
-        },
-      });
     },
     // 分类点击
     checkClass(e, index) {
@@ -648,7 +675,7 @@ export default {
           this.postThread().then(res => {
             this.postLoading = false;
             uni.hideLoading();
-            if (res.isApproved === 1) {
+            if (res && res.isApproved === 1) {
               this.$u.event.$emit('addThread', res);
             }
             if (res && res._jv.json.data.id) {
@@ -921,8 +948,10 @@ export default {
       }
       throw new Error('出错了');
     },
-    // 发布按钮验证码验证
+    // 小程序内发布按钮验证码验证
     toTCaptcha() {
+      console.log('h5验证码');
+      // #ifdef MP-WEIXIN
       let _this = this;
       wx.navigateToMiniProgram({
         appId: 'wx5a3a7366fd07e119',
@@ -939,6 +968,26 @@ export default {
           _this.postLoading = false;
         },
       });
+      // #endif
+      // h5内发布按钮验证码验证
+      // #ifdef H5 
+
+      this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
+        console.log(res, 'h5验证1111');
+        if (res.ret === 0) {
+          this.ticket = res.ticket;
+          this.randstr = res.randstr;
+          //验证通过后发布
+          this.postClick();
+        }
+        if (res.ret === 2) {
+          this.postLoading = false;
+          uni.hideLoading();
+        }
+      });
+      // 显示验证码
+      this.captcha.show();
+      // #endif
     },
   },
   onLoad(option) {
@@ -997,10 +1046,13 @@ export default {
     this.$u.event.$on('closeChaReault', () => {
       this.postLoading = false;
       uni.hideLoading();
-    });    
+    });
+
+    uni.$on('clickTopic', data => {
+      if (data.keywords) this.textAreaValue += `#${data.keywords}#`;
+    });
   },
   onShow() {
-    this.hasStorage();
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1018,6 +1070,11 @@ export default {
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    uni.$off('clickTopic');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
   },
 };
 </script>

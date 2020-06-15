@@ -54,7 +54,7 @@
                           v-for="(group, gindex) in thread.user.groups"
                           :key="gindex"
                         >
-                          （{{ group.name }}）
+                          {{ group.isDisplay ? `（${group.name}）` : '' }}
                         </span>
                       </view>
                       <view class="thread__header__title__time">
@@ -1091,7 +1091,6 @@ page {
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
-  background: --color(--qui-FC-FFF);
 }
 .comment-popup {
   width: 100%;

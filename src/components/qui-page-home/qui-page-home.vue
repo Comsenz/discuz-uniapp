@@ -107,8 +107,8 @@
             )
           "
           @commentClick="commentClick(item._jv.id)"
-          @contentClick="contentClick(item._jv.id)"
-          @backgroundClick="contentClick(item._jv.id)"
+          @contentClick="contentClick(item)"
+          @backgroundClick="contentClick(item)"
           @headClick="headClick(item.user._jv.id)"
           @videoPlay="handleVideoPlay"
         ></qui-content>
@@ -174,6 +174,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
@@ -431,10 +432,15 @@ export default {
       });
     },
     // 内容部分点击跳转到详情页
-    contentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
+    contentClick(thread) {
+      if (thread.canViewPosts) {
+        uni.navigateTo({
+          url: `/pages/topic/index?id=${thread._jv.id}`,
+        });
+      } else {
+        this.$store.getters['session/get']('auth').open();
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+      }
     },
     // 点击头像调转到个人主页
     headClick(id) {

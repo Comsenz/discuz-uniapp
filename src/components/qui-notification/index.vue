@@ -1,7 +1,7 @@
 <template>
   <view>
     <qui-no-data :tips="i18n.t('manage.noContent')" v-if="!list || list.length <= 0"></qui-no-data>
-    <view class="list-box" v-for="item in list" :key="item.id" v-else>
+    <view class="list-box" v-for="(item, index) in list" :key="item.id" v-else>
       <!-- 除系统通知以外的通知 -->
       <view class="list-box__notice" v-if="item.type !== 'system'">
         <view class="list-box__notice__h">
@@ -9,8 +9,9 @@
             <image
               lazy-load
               class="list-box__notice__hl-avatar"
-              :src="item.user_avatar || '/static/noavatar.gif'"
+              :src="item.user_avatar"
               @click="jumpUserPage(item.user_id)"
+              @error="imageError(index)"
             ></image>
             <view class="list-box__notice__hl-info">
               <view
@@ -146,6 +147,10 @@ export default {
   },
 
   methods: {
+    // 头像加载失败,显示默认头像
+    imageError(index) {
+      this.list[index].user_avatar = '/static/noavatar.gif';
+    },
     jumpUserPage(id) {
       if (id) {
         console.log('跳转到个人主页', id);

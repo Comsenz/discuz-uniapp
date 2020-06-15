@@ -21,7 +21,7 @@
       </view>
 
       <view class="tabBar">
-        <qui-footer @click="cut_index"></qui-footer>
+        <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
       </view>
     </view>
   </qui-page>
@@ -31,9 +31,10 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
+import detectionModel from '@/mixin/detectionModel';
 
 export default {
-  mixins: [forums, user],
+  mixins: [forums, user, detectionModel],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
@@ -83,7 +84,14 @@ export default {
   },
   onShow() {
     if (
+      // #ifdef H5
+      console.log('h5h5h5h5h') &&
       !this.$store.getters['session/get']('h5Login') &&
+      // #endif
+      // #ifdef MP-WEIXIN
+      console.log('h5h5h5h5h') &&
+      !this.$store.getters['session/get']('isLogin') &&
+      // #endif
       ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
     ) {
       uni.navigateTo({
@@ -115,7 +123,14 @@ export default {
         this.getUserInfo();
       }
       if (
+        // #ifdef H5
+        console.log('h5h5h5h5h') &&
+        !this.$store.getters['session/get']('h5Login') &&
+        // #endif
+        // #ifdef MP-WEIXIN
+        console.log('h5h5h5h5h') &&
         !this.$store.getters['session/get']('isLogin') &&
+        // #endif
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         this.$store.getters['session/get']('auth').open();

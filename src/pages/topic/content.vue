@@ -99,7 +99,7 @@ export default {
         'filter[isSticky]': 'no',
         'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
-        'filter[topic_id]': this.query.id,
+        'filter[topicId]': this.query.id,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         include: [
@@ -149,12 +149,11 @@ export default {
 @import '@/styles/base/variable/global.scss';
 
 $otherHeight: 292rpx;
-$toAllBlue: #1450a0;
 .topic-content-header {
   padding: 15rpx;
   margin-bottom: 10rpx;
   font-size: 40rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
   &_title {
     margin: 20rpx;
@@ -167,20 +166,37 @@ $toAllBlue: #1450a0;
     margin-bottom: 15rpx;
     margin-left: 36rpx;
     font-size: 28rpx;
-    color: $toAllBlue;
+    color: --color(--qui-LINK);
   }
 }
 .details_title {
+  display: flex;
+  flex-direction: row;
   width: 33.3%;
   margin-top: 10rpx;
   margin-left: 40rpx;
   font-size: 28rpx;
   font-weight: 600;
-  color: #aaa;
+  color: --color(--qui-FC-AAA);
   text {
     font-size: 24rpx;
-    color: #343434;
+    color: --color(--qui-FC-34);
   }
+}
+
+.shareBtn {
+  width: 100rpx;
+  height: 40rpx;
+  padding: 0;
+  margin: 0;
+  font-size: 24rpx;
+  // font-weight: normal;
+  line-height: 30rpx;
+  background: --color(--qui-BG-2);
+  // opacity: 0;
+}
+.shareBtn[plain] {
+  border: 0;
 }
 
 .mask {
@@ -212,13 +228,4 @@ $toAllBlue: #1450a0;
     margin: 20vh auto 30rpx;
   }
 }
-// .shareBtn {
-//   width: 120rpx;
-//   height: 120rpx;
-//   background: #c33;
-//   opacity: 0;
-// }
-// .shareBtn[plain] {
-//   border: 0;
-// }
 </style>

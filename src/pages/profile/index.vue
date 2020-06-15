@@ -32,7 +32,11 @@
               :border="false"
             >
               <view v-if="userId != currentLoginId">
-                <view class="profile-info__box__detail-operate" @tap="chat">
+                <view
+                  class="profile-info__box__detail-operate"
+                  @tap="chat"
+                  v-if="forums.other.can_create_dialog"
+                >
                   <qui-icon
                     class="text"
                     name="icon-message1"
@@ -110,6 +114,7 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -122,6 +127,7 @@ export default {
     followers,
     like,
   },
+  mixins: [forums],
   props: {
     type: {
       type: String,

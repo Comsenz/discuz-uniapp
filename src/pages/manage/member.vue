@@ -1,16 +1,16 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
+  <qui-page :data-qui-theme="theme" class="member-box">
+    <!-- #ifdef H5-->
+    <qui-header-back title="成员管理"></qui-header-back>
+    <!-- #endif -->
     <!-- 搜索成员 -->
-    <view class="manage-users-search">
+    <view class="member-box-search">
       <view class="search">
         <view class="search-box">
           <view class="search-box__content">
-            <qui-icon
-              class="icon-content-search"
-              name="icon-search"
-              size="30"
-              color="#bbb"
-            ></qui-icon>
+            <view class="icon-content-search">
+              <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+            </view>
             <input
               type="text"
               class="search-box__content-input"
@@ -24,13 +24,13 @@
             </view>
           </view>
           <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
-            <text>{{ i18n.t('home.cancel') }}</text>
+            <text>{{ i18n.t('search.cancel') }}</text>
           </view>
         </view>
       </view>
     </view>
     <!-- 成员列表 -->
-    <view class="qui-at-member-page-box__lst">
+    <view class="member-box__list">
       <scroll-view
         class="scroll-Y"
         scroll-y="true"
@@ -59,7 +59,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
     </view>
-    <view class="qui-at-member-page-box__ft">
+    <view class="member-box__ft">
       <qui-button
         size="large"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
@@ -278,7 +278,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
-.mamage-users-search {
+.member-box-search {
   .search {
     position: fixed;
     top: 0rpx;
@@ -287,17 +287,21 @@ export default {
   }
 
   .search-box {
+    /* #ifdef H5 */
+    margin: 44px 0rpx 0rpx;
+    /* #endif */
     background-color: --color(--qui-BG-2);
   }
 }
 
 $otherHeight: 292rpx;
-.qui-at-member-page-box {
+.member-box {
   width: 100%;
 
-  &__lst {
+  &__list {
     .scroll-Y {
       height: calc(100vh - #{$otherHeight});
+      background-color: --color(--qui-BG-2);
       .loading-text {
         height: 100rpx;
         font-size: 28rpx;
@@ -311,6 +315,7 @@ $otherHeight: 292rpx;
     bottom: 0;
     width: 100%;
     padding: 40rpx;
+    background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
 }
