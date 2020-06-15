@@ -88,9 +88,10 @@
             :page-gesture="false"
             show-fullscreen-btn="true"
             :show-play-btn="true"
-            auto-pause-if-open-native="true"
-            auto-pause-if-navigate="true"
-            enable-play-gesture="false"
+            :autoplay="false"
+            auto-pause-if-open-native
+            auto-pause-if-navigate
+            :enable-play-gesture="false"
             :vslide-gesture="false"
             :vslide-gesture-in-fullscreen="false"
             object-fit="cover"
