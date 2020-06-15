@@ -19,7 +19,7 @@
           <view class="details_title">
             <qui-icon
               class="post-box__hd-l__icon"
-              name="icon-sort"
+              name="icon-share"
               size="30"
               color="#777"
             ></qui-icon>
@@ -99,7 +99,7 @@ export default {
         'filter[isSticky]': 'no',
         'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
-        'filter[topic_id]': this.query.id,
+        'filter[topicId]': this.query.id,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         include: [

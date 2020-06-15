@@ -3,7 +3,7 @@
     <view class="qui-topic-page-box">
       <view class="qui-topic-page-box__hd">
         <view class="qui-topic-page-box__hd__sc">
-          <qui-icon class="icon-sort" name="icon-sort" size="30"></qui-icon>
+          <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
           <input
             class="topicSearchInput"
             type="text"
@@ -22,7 +22,7 @@
         <!-- 排序功能后续补上完善 -->
         <view class="topic-list-page-header_sortBox" @click="toggleDropDown">
           <view>
-            <qui-icon class="icon-wei" name="icon-wei" size="30"></qui-icon>
+            <qui-icon class="icon-sort" name="icon-sort" size="30"></qui-icon>
             <text>{{ i18n.t('core.sort') }}</text>
           </view>
           <view class="dropDownBox" v-show="dropDownShow">
@@ -264,7 +264,7 @@ $otherHeight: 292rpx;
       background-color: --color(--qui-BG-IT);
       border-radius: 7rpx;
 
-      .icon-sort {
+      .icon-search {
         margin: 0 10rpx;
         color: #bbb;
       }

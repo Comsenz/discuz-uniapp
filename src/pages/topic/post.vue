@@ -153,7 +153,7 @@
           type="primary"
           size="large"
           id="TencentCaptcha"
-          data-appid="appID"
+          :data-appid="forums.qcloud.qcloud_captcha_app_id"
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
@@ -293,7 +293,6 @@ export default {
       textShow: true, // 文本域是否显示
       header: {}, // 图片请求头部
       formData: {}, // 图片请求data
-      appID: '', // 腾讯云验证码场景 id
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
@@ -971,9 +970,9 @@ export default {
       });
       // #endif
       // h5内发布按钮验证码验证
-      // #ifdef H5
+      // #ifdef H5 
 
-      this.captcha = new TencentCaptcha(this.appID, res => {
+      this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         console.log(res, 'h5验证1111');
         if (res.ret === 0) {
           this.ticket = res.ticket;
@@ -982,7 +981,8 @@ export default {
           this.postClick();
         }
         if (res.ret === 2) {
-          this.btnLoading = false;
+          this.postLoading = false;
+          uni.hideLoading();
         }
       });
       // 显示验证码
@@ -1071,6 +1071,10 @@ export default {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
     uni.$off('clickTopic');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
   },
 };
 </script>
