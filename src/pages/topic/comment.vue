@@ -54,7 +54,7 @@
                           v-for="(group, gindex) in thread.user.groups"
                           :key="gindex"
                         >
-                          （{{ group.isDisplay ? `（${group.name}）` : '' }}）
+                          {{ group.isDisplay ? `（${group.name}）` : '' }}
                         </span>
                       </view>
                       <view class="thread__header__title__time">

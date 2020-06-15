@@ -10,17 +10,14 @@
           <input
             class="new-phon-num"
             type="number"
-            v-model="newphon"
+            v-model="phoneNumber"
             :focus="true"
             :cursor="1"
             @input="changeinput"
             maxlength="11"
           />
-          <button class="new-phon-send" v-if="sun" @click="btnButton" :disabled="disabtype">
-            {{ i18n.t('user.sendVerificationCode') }}
-          </button>
-          <button class="new-phon-send" disabled v-else>
-            {{ second + i18n.t('modify.retransmission') }}
+          <button class="new-phon-send" @click="sendVerificationCode" :disabled="disabled">
+            {{ btnContent }}
           </button>
         </view>
       </view>
@@ -41,7 +38,7 @@
           ref="quiinput"
         ></qui-input-code>
       </view>
-      <view class="verification-code-login-box-btn" @click="dingphon">
+      <view class="verification-code-login-box-btn" @click="login">
         {{ i18n.t('user.login') }}
       </view>
       <view class="verification-code-login-box-pwdlogin" @click="jump2PhoneNumberLogin">
@@ -52,8 +49,6 @@
 </template>
 
 <script>
-import { status } from '@/library/jsonapi-vuex/index';
-
 export default {
   data() {
     return {
@@ -76,6 +71,12 @@ export default {
       formeerro: '',
       novice: '',
       interval: '',
+      btnContent: '发送验证码',
+      time: 0, // 倒计时
+      timer: '', // 定时器
+      disabled: true, // 发送验证码按钮的状态
+      phoneNumber: '', // 手机号
+      verificationCode: '', // 验证码
     };
   },
   onLoad(arr) {
@@ -84,158 +85,110 @@ export default {
   methods: {
     changeinput() {
       setTimeout(() => {
-        this.newphon = this.newphon.replace(/[^\d]/g, '');
+        this.phoneNumber = this.phoneNumber.replace(/[^\d]/g, '');
       }, 30);
-      if (this.newphon.length < 11) {
-        this.disabtype = true;
-      } else if (this.newphon.length === 11) {
-        this.disabtype = false;
-        this.novice = this.newphon.replace(/\s+/g, '');
+      if (this.phoneNumber.length === 11) {
+        this.disabled = false;
       }
     },
     fourse() {
       this.inshow = true;
     },
     btndata(num) {
-      this.setnum = num;
+      this.verificationCode = num;
     },
-    // 点击获取验证码计时开始
-    btnButton() {
-      this.setphon();
-      const num = 1;
-      clearInterval(this.interval);
-      this.interval = setInterval(() => {
-        this.second -= num;
-      }, 1000);
-      setTimeout(() => {
-        clearInterval(this.interval);
-        this.sun = true;
-      }, 60000);
+    // 发送验证码
+    sendVerificationCode() {
+      this.time = 60;
+      this.countdown();
+      this.sendSMS();
+      // this.setphon();
+      // const num = 1;
+      // clearInterval(this.interval);
+      // this.interval = setInterval(() => {
+      //   this.second -= num;
+      // }, 1000);
+      // setTimeout(() => {
+      //   clearInterval(this.interval);
+      //   this.sun = true;
+      // }, 60000);
     },
-    dingphon() {
-      this.bindphon();
+    // 60s倒计时
+    countdown() {
+      if (this.time > 1) {
+        this.time -= 1;
+        this.btnContent = `${this.time}秒后重发`;
+        this.disabled = true;
+        this.timer = setTimeout(this.countdown, 1000);
+        this.isGray = true;
+      } else if (this.time === 1) {
+        this.btnContent = '获取验证码';
+        clearTimeout(this.timer);
+        this.disabled = false;
+        this.isGray = false;
+      }
     },
-    // 新手机号发送验证码
-    setphon() {
+    // 发送短信
+    sendSMS() {
       const params = {
         _jv: {
           type: 'sms/send',
         },
-        mobile: this.novice,
-        type: this.typebind,
+        mobile: this.phoneNumber,
+        type: 'login',
       };
-      const postphon = status.run(() => this.$store.dispatch('jv/post', params));
-      postphon
+      this.$store
+        .dispatch('jv/post', params)
         .then(res => {
-          this.num -= 1;
-          this.second = res._jv.json.data.attributes.interval;
-          this.sun = false;
+          if (res) {
+            console.log('短信发送成功', res);
+          }
         })
         .catch(err => {
-          if (err.statusCode === 500) {
-            const [
-              {
-                detail: [sun],
-              },
-            ] = err.data.errors;
-            this.formeerro = sun;
-            this.sun = true;
-            uni.showToast({
-              icon: this.icon,
-              title: sun,
-              duration: this.duration,
-            });
-          } else if (err.statusCode === 422) {
-            uni.showToast({
-              icon: this.icon,
-              title: err.data.errors[0].detail[0],
-              duration: this.duration,
-            });
-            const [
-              {
-                detail: [sun],
-              },
-            ] = err.data.errors;
-            this.formeerro = sun;
-            this.sun = true;
-          }
+          console.log(err);
         });
     },
+    login() {
+      if (this.phoneNumber === '') {
+        this.showDialog('手机号不能为空');
+      } else if (this.verificationCode === '') {
+        this.showDialog('验证码不能为空');
+      } else {
+        this.verifyPhoneNumber();
+      }
+    },
     // 验证手机号
-    bindphon() {
+    verifyPhoneNumber() {
       const params = {
         _jv: {
           type: 'sms/verify',
         },
-        mobile: this.newphon,
-        code: this.setnum,
-        type: this.typebind,
+        mobile: this.phoneNumber,
+        code: this.verificationCode,
+        type: 'login',
       };
-      const postphon = status.run(() => this.$store.dispatch('jv/post', params));
-      postphon
+      this.$store
+        .dispatch('jv/post', params)
         .then(res => {
           if (res) {
-            uni.showToast({
-              title: this.i18n.t('modify.phontitle'),
-              duration: 1000,
-            });
-            if (this.typebind === 'bind') {
-              uni.navigateBack({
-                delta: 1,
-                success() {
-                  const pages = getCurrentPages();
-                  pages[1].onLoad();
-                },
-              });
-            } else {
-              uni.navigateBack({
-                delta: 2,
-                success() {
-                  const pages = getCurrentPages();
-                  pages[1].onLoad();
-                },
-              });
-            }
+            console.log('手机号验证成功', res);
+            this.clear();
           }
         })
         .catch(err => {
-          uni.showToast({
-            icon: this.icon,
-            title: this.i18n.t('modify.valifailed'),
-            duration: 2000,
-          });
-          if (err.statusCode === 422) {
-            this.tit = true;
-            if (err.data.errors.length > 1) {
-              const [
-                {
-                  detail: [arr],
-                },
-                {
-                  detail: [sun],
-                },
-              ] = err.data.errors;
-              this.formeerro = arr;
-              this.test = sun;
-            } else {
-              const [
-                {
-                  detail: [sun],
-                },
-              ] = err.data.errors;
-              this.test = sun;
-            }
-          } else if (err.statusCode === 500) {
-            this.test =
-              this.i18n.t('modify.validionerro') + this.num + this.i18n.t('modify.frequency');
-            this.tit = true;
-            this.empty();
-            if (this.num < 0) {
-              this.test = this.i18n.t('modify.lateron');
-              this.empty();
-            }
-          }
+          console.log(err);
         });
+    },
+    clear() {
+      this.phoneNumber = '';
+      this.verificationCode = '';
+    },
+    showDialog(title) {
+      uni.showToast({
+        icon: 'none',
+        title,
+        duration: 2000,
+      });
     },
     toggleBox() {
       this.inshow = false;
@@ -245,9 +198,10 @@ export default {
       empty.deleat();
     },
     jump2PhoneNumberLogin() {
+      this.clear();
       console.log('跳转到密码登录页面');
       uni.navigateTo({
-        url: '/pages/user/verification-code-login',
+        url: '/pages/user/phone-number-login',
       });
     },
   },

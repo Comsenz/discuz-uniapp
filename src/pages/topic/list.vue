@@ -22,7 +22,7 @@
         <!-- 排序功能后续补上完善 -->
         <view class="topic-list-page-header_sortBox" @click="toggleDropDown">
           <view>
-            <qui-icon class="icon-wei" name="icon-wei" size="30"></qui-icon>
+            <qui-icon class="icon-sort" name="icon-sort" size="30"></qui-icon>
             <text>{{ i18n.t('core.sort') }}</text>
           </view>
           <view class="dropDownBox" v-show="dropDownShow">
@@ -36,32 +36,40 @@
         <navigator :url="'/pages/topic/content?id=' + item._jv.id">
           <view class="topic-page-list-item_title">#{{ item.content }}#</view>
         </navigator>
-        <view class="topic-page-list-item_details">
+        <view class="topic-page-list-item_details" v-if="item.lastThread.length">
           <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
             <rich-text
               class="topic-page-list-item_details_text"
               :nodes="item.lastThread[0].firstPost.summary"
             ></rich-text>
           </navigator>
-          <!-- <image class="topic-page-list-item_details_image" :src="item.detailsImages"></image> -->
+          <qui-image
+            class="topic-page-list-item_details_image"
+            :images-list="item.lastThread[0].firstPost.images"
+            v-if="item.lastThread[0].firstPost.images.length"
+          ></qui-image>
         </view>
-        <view class="topic-page-list-item_heat">
-          {{ i18n.t('topic.hot') }}
-          <text>
-            {{
-              item.view_count > 10000
-                ? Number(item.view_count / 10000) + i18n.t('core.thousand')
-                : item.view_count
-            }}
-          </text>
-        </view>
-        <view class="topic-page-list-item_content">
-          {{ i18n.t('core.content') }}
-          <text>
-            {{
-              item.thread_count > 1000 ? Number(item.thread_count / 1000) + 'k' : item.thread_count
-            }}
-          </text>
+        <view class="topic-page-list-item_other">
+          <view class="topic-page-list-item_heat">
+            {{ i18n.t('topic.hot') }}
+            <text>
+              {{
+                item.view_count > 10000
+                  ? Number(item.view_count / 10000) + i18n.t('core.thousand')
+                  : item.view_count
+              }}
+            </text>
+          </view>
+          <view class="topic-page-list-item_content">
+            {{ i18n.t('core.content') }}
+            <text>
+              {{
+                item.thread_count > 1000
+                  ? Number(item.thread_count / 1000) + 'k'
+                  : item.thread_count
+              }}
+            </text>
+          </view>
         </view>
       </view>
     </view>
@@ -114,7 +122,8 @@ export default {
 
       return this.$store.dispatch('jv/get', ['topics', { params }]).then(data => {
         this.meta = data._jv.json.links;
-        data.pop();
+        // eslint-disable-next-line no-param-reassign
+        // delete data._jv;
         if (page > 1) {
           this.topicData = this.topicData.concat(data);
         } else {
@@ -185,18 +194,18 @@ $otherHeight: 292rpx;
 .topic-page-list-item {
   padding: 15rpx;
   margin: 20rpx;
-  background: #fff;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
   &_title {
     font-size: 35rpx;
     font-weight: 700;
   }
   &_details {
+    margin: 20rpx 0;
     &_text {
-      margin: 20rpx 0;
       overflow: hidden;
-      font-size: 32rpx;
-      color: #333;
+      font-size: 30rpx;
+      color: --color(--qui-FC-333);
       text-overflow: ellipsis;
       -webkit-line-clamp: 2;
     }
@@ -209,7 +218,10 @@ $otherHeight: 292rpx;
   &_content {
     margin-right: 37rpx;
     font-size: 28rpx;
-    color: #aaa;
+    color: --color(--qui-FC-AAA);
+  }
+  &_other {
+    display: flex;
   }
 }
 .topic-content-item {
