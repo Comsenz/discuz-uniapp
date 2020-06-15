@@ -56,7 +56,7 @@
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
           <!--<rich-text :nodes="themeContent | formatRichText"></rich-text>-->
-          <u-parse :content="themeContent" @navigate="navigate">fgfdgfg</u-parse>
+          <u-parse :content="themeContent | formatRichText" @navigate="navigate"></u-parse>
         </view>
         <view
           class="theme__content__videocover"
@@ -126,6 +126,7 @@
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
 import uParse from '@/components/feng-parse/parse';
+import s9e from '@/utils/s9e';
 
 export default {
   components: {
@@ -139,37 +140,39 @@ export default {
     // 4.去掉<br/>标签			 * @param html			 * @returns {void|string|*}
 
     formatRichText(html) {
-      if (html.indexOf('qq-emotion') !== -1) {
-        return html;
-      }
+      // eslint-disable-next-line no-param-reassign
+      return s9e.parse(html);
+      // if (html.indexOf('qq-emotion') !== -1) {
+      //   return html;
+      // }
 
-      // 控制小程序中图片大小
-      let newContent = html.replace(/<img[^>]*>/gi, match => {
-        let matchRes = match;
-        matchRes = matchRes.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
-        matchRes = matchRes.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
-        matchRes = matchRes.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
-        return matchRes;
-      });
-      newContent = newContent.replace(/style="[^"]+"/gi, match => {
-        let matchRes = match;
-        matchRes = matchRes
-          .replace(/width:[^;]+;/gi, 'max-width:100%;')
-          .replace(/width:[^;]+;/gi, 'max-width:100%;');
-        return matchRes;
-      });
-      newContent = newContent.replace(/<br[^>]*\/>/gi, '');
-      newContent = newContent.replace(
-        /<img/gi,
-        '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"',
-      );
-      // newContent = newContent.replace(/<h1="[^"]+"/gi, match => {
+      // // 控制小程序中图片大小
+      // let newContent = html.replace(/<img[^>]*>/gi, match => {
       //   let matchRes = match;
-      //   matchRes = matchRes
-      //     .replace(/<h1:[^;]+;/gi, 'max-width:100%;')
+      //   matchRes = matchRes.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+      //   matchRes = matchRes.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+      //   matchRes = matchRes.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
       //   return matchRes;
       // });
-      return newContent;
+      // newContent = newContent.replace(/style="[^"]+"/gi, match => {
+      //   let matchRes = match;
+      //   matchRes = matchRes
+      //     .replace(/width:[^;]+;/gi, 'max-width:100%;')
+      //     .replace(/width:[^;]+;/gi, 'max-width:100%;');
+      //   return matchRes;
+      // });
+      // newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+      // newContent = newContent.replace(
+      //   /<img/gi,
+      //   '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"',
+      // );
+      // // newContent = newContent.replace(/<h1="[^"]+"/gi, match => {
+      // //   let matchRes = match;
+      // //   matchRes = matchRes
+      // //     .replace(/<h1:[^;]+;/gi, 'max-width:100%;')
+      // //   return matchRes;
+      // // });
+      // return newContent;
     },
   },
   props: {
