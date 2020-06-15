@@ -86,12 +86,12 @@
         @uploadClick="uploadClick"
       ></qui-uploader>
       <!-- #ifdef H5-->
-      <qui-upload-file
+      <!-- <qui-upload-file
         :url="`${url}api/attachments`"
         ref="uploadFile"
         v-if="type === 1 && platform !== 'ios'"
         @uploadClick="uploadFileClick"
-      ></qui-upload-file>
+      ></qui-upload-file> -->
       <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
