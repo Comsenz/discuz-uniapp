@@ -239,7 +239,7 @@ export default {
     color: --color(--qui-FC-777);
   }
   .modify-phon-sun {
-    margin-left: 90rpx;
+    margin-left: 80rpx;
     font-size: $fg-f34;
     font-weight: 400;
     line-height: 100rpx;
