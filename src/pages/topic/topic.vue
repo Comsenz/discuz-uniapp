@@ -3,7 +3,7 @@
     <view class="qui-topic-page-box">
       <view class="qui-topic-page-box__hd">
         <view class="qui-topic-page-box__hd__sc">
-          <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
+          <qui-icon class="icon-search" name="icon-sort" size="30"></qui-icon>
           <input
             type="text"
             placeholder-class="input-placeholder"
@@ -15,7 +15,7 @@
         </view>
       </view>
     </view>
-    <view class="topic-content-item" @tap="returnToPost()" v-if="shouldShow">
+    <view class="topic-content-item" @tap="returnToPost(-1)" v-if="shouldShow">
       <view class="topic-content-item_title">#{{ searchValue }}#</view>
       <view class="topic-content-item_heat">{{ i18n.t('topic.newTopic') }}</view>
     </view>
@@ -53,12 +53,9 @@ export default {
     },
     returnToPost(index = 0) {
       const topicMsg = {};
-      topicMsg.keywords = index === 0 ? this.searchValue : this.topics[index].content;
-
-      uni.setStorage({
-        key: 'topicMsg',
-        data: topicMsg,
-      });
+      topicMsg.keywords = index === -1 ? this.searchValue : this.topics[index].content;
+      console.log(topicMsg, index, this.topics);
+      uni.$emit('clickTopic', topicMsg);
 
       uni.navigateBack();
     },
@@ -145,7 +142,7 @@ $otherHeight: 292rpx;
       background-color: --color(--qui-BG-IT);
       border-radius: 7rpx;
 
-      .icon-search {
+      .icon-sort {
         margin: 0 10rpx;
         color: #bbb;
       }

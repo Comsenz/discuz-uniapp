@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
+    <!-- #ifdef H5-->
+    <qui-header-back title="站点信息"></qui-header-back>
+    <!-- #endif -->
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
@@ -298,14 +301,21 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 
-.site {
-  /deep/ .header {
+.site /deep/ {
+  .header {
     height: auto;
+    /* #ifdef H5 */
+    margin: 44px 0rpx 0rpx;
+    /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
-  .header /deep/ .circleDet-txt {
+  .header .circleDet {
+    padding: 60rpx 40rpx 50rpx;
+    opacity: 1;
+  }
+  .header .circleDet-txt {
     color: --color(--qui-FC-333);
     opacity: 1;
   }
@@ -313,18 +323,24 @@ export default {
     height: 75rpx;
     padding-top: 71rpx;
   }
-  /deep/ .icon-share1 {
-    color: --color(--qui-FC-333);
-  }
-  /deep/ .cell-item__body__content-title {
+  .cell-item__body__content-title {
     width: 112rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
-}
-.header .circleDet .circleDet-num,
-.header .circleDet .circleDet-share {
-  color: --color(--qui-FC-333);
+  .header .circleDet-num,
+  .header .circleDet-share {
+    color: --color(--qui-FC-333);
+  }
+  .site-invite {
+    padding-bottom: 20rpx;
+    text-align: center;
+  }
+  .cell-item--auto .cell-item__body {
+    height: auto;
+    padding: 35rpx 0;
+    align-items: flex-start;
+  }
 }
 
 //下面部分样式
@@ -335,19 +351,6 @@ export default {
 }
 .site .cell-item {
   padding-right: 40rpx;
-}
-.cell-item--auto .cell-item__body {
-  height: auto;
-  padding: 35rpx 0;
-  align-items: flex-start;
-}
-.cell-item__body__content-title {
-  width: 112rpx;
-  margin-right: 40rpx;
-  color: --color(--qui-FC-777);
-}
-.site-item__pay .cell-item__body__right-text {
-  color: --color(--qui-RED);
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
