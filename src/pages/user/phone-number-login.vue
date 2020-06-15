@@ -53,9 +53,14 @@
 export default {
   data() {
     return {
-      phoneNumber: '',
-      password: '',
+      phoneNumber: '', // 手机号
+      password: '', // 密码
+      url: '', // 上一个页面的路径
     };
+  },
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
   },
   methods: {
     login() {
@@ -72,7 +77,7 @@ export default {
       this.clear();
       console.log('跳转到验证码登录页面');
       uni.navigateTo({
-        url: '/pages/user/verification-code-login',
+        url: `/pages/user/verification-code-login?url=${this.url}`,
       });
     },
     jump2findPassword() {

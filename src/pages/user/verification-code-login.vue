@@ -49,6 +49,8 @@
 </template>
 
 <script>
+// import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN } from '@/store/types/session';
+
 export default {
   data() {
     return {
@@ -77,10 +79,12 @@ export default {
       disabled: true, // 发送验证码按钮的状态
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
+      url: '', // 上一个页面的路径
     };
   },
-  onLoad(arr) {
-    this.typebind = arr.type || 'bind';
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
   },
   methods: {
     changeinput() {
@@ -160,28 +164,43 @@ export default {
     // 验证手机号
     verifyPhoneNumber() {
       const params = {
-        _jv: {
-          type: 'sms/verify',
-        },
         mobile: this.phoneNumber,
         code: this.verificationCode,
         type: 'login',
       };
+      // eslint-disable-next-line no-unused-vars
       this.$store
-        .dispatch('jv/post', params)
+        .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
-          if (res) {
-            console.log('手机号验证成功', res);
-            this.clear();
-          }
+          console.log('手机号验证成功', res);
+          uni.navigateTo({
+            url: this.url,
+          });
         })
         .catch(err => {
           console.log(err);
         });
+      // this.$store
+      //   .dispatch('jv/post', params)
+      //   .then(res => {
+      //     if (res) {
+      //       console.log('手机号验证成功', res);
+      //       context.commit(SET_USER_ID, res._jv.id);
+      //       context.commit(CHECK_SESSION, true);
+      //       context.commit(SET_ACCESS_TOKEN, res.access_token);
+      //       uni.navigateTo({
+      //         url: this.url,
+      //       });
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
+      this.clear();
     },
     clear() {
       this.phoneNumber = '';
-      this.verificationCode = '';
+      this.$refs.quiinput.deleat();
     },
     showDialog(title) {
       uni.showToast({
@@ -193,15 +212,11 @@ export default {
     toggleBox() {
       this.inshow = false;
     },
-    empty() {
-      const empty = this.$refs.quiinput;
-      empty.deleat();
-    },
     jump2PhoneNumberLogin() {
       this.clear();
       console.log('跳转到密码登录页面');
       uni.navigateTo({
-        url: '/pages/user/phone-number-login',
+        url: `/pages/user/phone-number-login?url=${this.url}`,
       });
     },
   },

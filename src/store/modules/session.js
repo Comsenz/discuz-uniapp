@@ -101,11 +101,28 @@ const actions = {
   },
   // #endif
   // #ifdef H5
+  verificationCodeh5Login: (context, payload = {}) => {
+    console.log('payload', payload);
+    return new Promise(resolve => {
+      console.log('http', http);
+      return http.post('sms/verify', payload).then(results => {
+        console.log('results', results);
+        const resData = utils.jsonapiToNorm(results.data.data);
+        context.commit(SET_USER_ID, resData._jv.id);
+        context.commit(CHECK_SESSION, true);
+        context.commit(SET_ACCESS_TOKEN, resData.access_token);
+        resolve(resData);
+      });
+    });
+  },
+  // #endif
+  // #ifdef H5
   h5Login: (context, payload = {}) => {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
       return http.post('login', payload).then(results => {
+        console.log('results', results);
         const resData = utils.jsonapiToNorm(results.data.data);
         context.commit(SET_USER_ID, resData._jv.id);
         context.commit(CHECK_SESSION, true);

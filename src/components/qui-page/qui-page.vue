@@ -64,7 +64,8 @@ export default {
         console.log('注册并绑定页');
         const url = '/pages/home/index';
         uni.navigateTo({
-          url: `/pages/user/register-bind?url=${url}`,
+          // url: `/pages/user/register-bind?url=${url}`,
+          url: `/pages/user/verification-code-login?url=${url}`,
         });
       },
     });
