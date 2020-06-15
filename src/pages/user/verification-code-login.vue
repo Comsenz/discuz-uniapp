@@ -164,9 +164,13 @@ export default {
     // 验证手机号
     verifyPhoneNumber() {
       const params = {
-        mobile: this.phoneNumber,
-        code: this.verificationCode,
-        type: 'login',
+        data: {
+          attributes: {
+            mobile: this.phoneNumber,
+            code: this.verificationCode,
+            type: 'login',
+          },
+        },
       };
       // eslint-disable-next-line no-unused-vars
       this.$store
@@ -180,22 +184,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-      // this.$store
-      //   .dispatch('jv/post', params)
-      //   .then(res => {
-      //     if (res) {
-      //       console.log('手机号验证成功', res);
-      //       context.commit(SET_USER_ID, res._jv.id);
-      //       context.commit(CHECK_SESSION, true);
-      //       context.commit(SET_ACCESS_TOKEN, res.access_token);
-      //       uni.navigateTo({
-      //         url: this.url,
-      //       });
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
       this.clear();
     },
     clear() {

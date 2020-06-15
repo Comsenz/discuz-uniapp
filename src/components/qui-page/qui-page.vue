@@ -20,8 +20,15 @@
 
 <script>
 import { mapState } from 'vuex';
+// #ifdef H5
+import forums from '@/mixin/forums';
+import isWeiXinBrowser from '@/utils/platform';
+// #endif
 
 export default {
+  // #ifdef H5
+  mixins: [forums],
+  // #endif
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -63,10 +70,29 @@ export default {
       open: () => {
         console.log('注册并绑定页');
         const url = '/pages/home/index';
-        uni.navigateTo({
-          // url: `/pages/user/register-bind?url=${url}`,
-          url: `/pages/user/verification-code-login?url=${url}`,
-        });
+        console.log('forums', this.forums);
+        console.log('isWeiXinBrowser', isWeiXinBrowser);
+        if (this.forums && this.forums.set_reg) {
+          if (isWeiXinBrowser) {
+            if (this.forums.set_reg.register_type === 0) {
+              uni.navigateTo({
+                url: `/pages/user/register-bind?url=${url}`,
+              });
+            } else if (this.forums.set_reg.register_type === 1) {
+              uni.navigateTo({
+                url: `/pages/user/verification-code-login?url=${url}`,
+              });
+            }
+          } else if (this.forums.qcloud.qcloud_sms) {
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}`,
+            });
+          } else {
+            uni.navigateTo({
+              url: `/pages/user/register-bind?url=${url}`,
+            });
+          }
+        }
       },
     });
     // #endif
