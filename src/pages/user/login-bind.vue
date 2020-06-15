@@ -60,7 +60,7 @@ export default {
         };
         // eslint-disable-next-line no-unused-vars
         this.$store
-          .dispatch('session/wxh5Login', params)
+          .dispatch('session/h5Login', params)
           .then(res => {
             console.log('登录绑定成功', res);
             uni.navigateTo({
