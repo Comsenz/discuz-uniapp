@@ -84,7 +84,14 @@ export default {
   },
   onShow() {
     if (
+      // #ifdef H5
+      console.log('h5h5h5h5h') &&
       !this.$store.getters['session/get']('h5Login') &&
+      // #endif
+      // #ifdef MP-WEIXIN
+      console.log('h5h5h5h5h') &&
+      !this.$store.getters['session/get']('isLogin') &&
+      // #endif
       ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
     ) {
       uni.navigateTo({
@@ -116,7 +123,14 @@ export default {
         this.getUserInfo();
       }
       if (
+        // #ifdef H5
+        console.log('h5h5h5h5h') &&
+        !this.$store.getters['session/get']('h5Login') &&
+        // #endif
+        // #ifdef MP-WEIXIN
+        console.log('h5h5h5h5h') &&
         !this.$store.getters['session/get']('isLogin') &&
+        // #endif
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         this.$store.getters['session/get']('auth').open();

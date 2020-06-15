@@ -170,6 +170,8 @@ $otherHeight: 292rpx;
   }
 }
 .details_title {
+  display: flex;
+  flex-direction: row;
   width: 33.3%;
   margin-top: 10rpx;
   margin-left: 40rpx;
@@ -180,6 +182,21 @@ $otherHeight: 292rpx;
     font-size: 24rpx;
     color: --color(--qui-FC-34);
   }
+}
+
+.shareBtn {
+  width: 100rpx;
+  height: 40rpx;
+  padding: 0;
+  margin: 0;
+  font-size: 24rpx;
+  // font-weight: normal;
+  line-height: 30rpx;
+  background: --color(--qui-BG-2);
+  // opacity: 0;
+}
+.shareBtn[plain] {
+  border: 0;
 }
 
 .mask {
