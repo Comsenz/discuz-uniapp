@@ -1,5 +1,5 @@
 @font-face {
-  font-family: 'quiicons';  /* project id 1741858 */
+  font-family: 'quiicons'; /* project id 1741858 */
   src: url('//at.alicdn.com/t/font_1741858_0kj2mwv5yq4.eot');
   src: url('//at.alicdn.com/t/font_1741858_0kj2mwv5yq4.eot?#iefix') format('embedded-opentype'),
     url('//at.alicdn.com/t/font_1741858_0kj2mwv5yq4.woff2') format('woff2'),
@@ -326,6 +326,9 @@
 
 .icon-7ZIP:before {
   content: '\e699';
+}
+.icon-sort:before {
+  content: '\e6b9';
 }
 
 .icon-fujian:before {
