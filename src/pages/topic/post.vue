@@ -17,7 +17,7 @@
             name="icon-expression"
             size="40"
             :color="emojiShow ? '#1878F3' : '#777'"
-            @click="emojiShow = !emojiShow"
+            @click="emojiclick"
           ></qui-icon>
           <qui-icon
             class="post-box__hd-l__icon"
@@ -64,10 +64,10 @@
           cursor-spacing="50"
           :maxlength="-1"
           :focus="type !== 1"
-          v-if="!emojiShow"
+          v-if="textShow"
           @blur="contBlur"
         ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
+        <view class="post-box__con-text post-box__con-text--static" v-if="!textShow">
           <text>{{ textAreaValue }}</text>
         </view>
       </view>
@@ -85,6 +85,14 @@
         @clear="uploadClear"
         @uploadClick="uploadClick"
       ></qui-uploader>
+      <!-- #ifdef H5-->
+      <!-- <qui-upload-file
+        :url="`${url}api/attachments`"
+        ref="uploadFile"
+        v-if="type === 1 && platform !== 'ios'"
+        @uploadClick="uploadFileClick"
+      ></qui-upload-file> -->
+      <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
           <video
@@ -282,6 +290,7 @@ export default {
       inputWord: '', // 查看字数输入框
       operating: '', // 编辑或发布类型
       emojiShow: false, // 表情是否显示
+      textShow: true, // 文本域是否显示
       header: {}, // 图片请求头部
       formData: {}, // 图片请求data
       appID: '', // 腾讯云验证码场景 id
@@ -361,6 +370,8 @@ export default {
       showHidden: true, // 付费金额的显示隐藏
       ticket: '',
       randstr: '',
+      captchaResult: {},
+      platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
     };
   },
   computed: {
@@ -469,12 +480,18 @@ export default {
       });
     },
 
+    // 点击表情
+    emojiclick() {
+      this.emojiShow = !this.emojiShow;
+      this.textShow = !this.textShow;
+    },
     // 弹框相关方法
     contBlur(e) {
       this.cursor = e.detail.cursor;
     },
     diaLogClose() {
       this.$refs.popup.close();
+      this.textShow = true;
     },
     diaLogOk() {
       if (this.setType === 'pay') {
@@ -484,6 +501,7 @@ export default {
       }
 
       this.$refs.popup.close();
+      this.textShow = true;
     },
 
     moneyClick(index) {
@@ -492,14 +510,18 @@ export default {
       this.payNumCheck.push(this.payNum[index]);
 
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
+        this.textShow = false;
         this.$refs.popupBtm.close();
+
         this.$nextTick(() => {
           this.inputPrice = '';
           this.$refs.popup.open();
+          this.textShow = false;
         });
       } else {
         this.price = this.payNumCheck[0].pay;
         this.$refs.popupBtm.close();
+        this.textShow = true;
       }
     },
     cellClick(type) {
@@ -509,14 +531,19 @@ export default {
       } else {
         this.$refs.popupBtm.open();
       }
+      this.textShow = false;
     },
     cancel() {
       this.$refs.popupBtm.close();
+      this.textShow = true;
     },
 
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
+    },
+    uploadFileClick() {
+      //
     },
     uploadChange(e, status) {
       this.uploadFile = e;
@@ -977,6 +1004,7 @@ export default {
     },
   },
   onLoad(option) {
+    this.hasStorage();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -1022,20 +1050,8 @@ export default {
     } catch (e) {
       // error
     }
-
-    // 接受验证码captchaResult
-    this.$u.event.$on('captchaResult', result => {
-      this.ticket = result.ticket;
-      this.randstr = result.randstr;
-      this.postClick();
-    });
-    this.$u.event.$on('closeChaReault', () => {
-      this.postLoading = false;
-      uni.hideLoading();
-    });    
   },
   onShow() {
-    this.hasStorage();
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1046,13 +1062,26 @@ export default {
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
+
+    // 接受验证码captchaResult
+    this.$u.event.$on('captchaResult', result => (this.captchaResult = result));
+    this.$u.event.$on('closeChaReault', result => (this.captchaResult = result));
+    const captchaResult = this.captchaResult;
+    this.captchaResult = null;
+    // 验证码页面点击返回时，发布取消loading
+    if (captchaResult.ret !== 0) {
+      this.postLoading = false;
+      return;
+    }
+    if (captchaResult && captchaResult.ret === 0) {
+      // 将验证码的结果返回至服务端校验
+      this.ticket = captchaResult.ticket;
+      this.randstr = captchaResult.randstr;
+      this.postClick();
+    }
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');
-  },
-  onUnload() {
-    this.$u.event.$off('captchaResult');
-    this.$u.event.$off('closeChaReault');
   },
 };
 </script>
