@@ -16,8 +16,14 @@
             <image
               class="profile-info__box__detail-avatar"
               :src="userInfo.avatarUrl"
-              alt="avatarUrl"
-              mode="aspectFill"
+              @error="imageError"
+              v-if="imageStatus"
+              lazy-load
+            ></image>
+            <image
+              class="profile-info__box__detail-avatar"
+              v-else
+              src="/static/noavatar.gif"
             ></image>
             <qui-cell-item
               :title="userInfo.username || ''"
@@ -26,7 +32,11 @@
               :border="false"
             >
               <view v-if="userId != currentLoginId">
-                <view class="profile-info__box__detail-operate" @tap="chat">
+                <view
+                  class="profile-info__box__detail-operate"
+                  @tap="chat"
+                  v-if="forums.other.can_create_dialog"
+                >
                   <qui-icon
                     class="text"
                     name="icon-message1"
@@ -104,6 +114,7 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -116,6 +127,7 @@ export default {
     followers,
     like,
   },
+  mixins: [forums],
   props: {
     type: {
       type: String,
@@ -134,6 +146,7 @@ export default {
       currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
       nowThreadId: '',
+      imageStatus: true,
       dialogId: 0, // 会话id
     };
   },
@@ -225,6 +238,10 @@ export default {
     handleClickShare(e) {
       this.nowThreadId = e;
     },
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.imageStatus = false;
+    },
     // 私信
     chat() {
       const params = {
@@ -305,6 +322,7 @@ export default {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .profile-tabs__content {
   padding-top: 30rpx;

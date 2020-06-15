@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-paypwd">
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('modify.paypwdtitle')"></qui-header-back>
     <!-- #endif -->
@@ -164,27 +164,29 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.setpw {
-  width: 100vw;
-  height: 100vh;
-  /* #ifdef H5 */
-  padding-top: 100rpx;
-  /* #endif */
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.setpw-input {
-  width: 710rpx;
-  height: 200rpx;
-  padding: 31rpx 0 0 40rpx;
-  background: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.setpw-tit {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-  opacity: 1;
+.page-paypwd /deep/ {
+  .setpw {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .setpw-input {
+    width: 710rpx;
+    height: 200rpx;
+    padding: 31rpx 0 0 40rpx;
+    background: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .setpw-tit {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+    opacity: 1;
+  }
 }
 </style>

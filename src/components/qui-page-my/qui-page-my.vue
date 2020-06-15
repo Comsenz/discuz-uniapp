@@ -18,9 +18,9 @@
           <view class="my-info__box__detail">
             <image
               class="my-info__box__detail-avatar"
-              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
-              mode="aspectFill"
+              :src="userInfo.avatarUrl"
+              @error="imageError"
+              lazy-load
             ></image>
             <qui-cell-item
               :title="userInfo.username || ''"
@@ -109,6 +109,7 @@ export default {
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
       userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
+      userInfo.avatarUrl = userInfo.avatarUrl || '/static/noavatar.gif';
       this.setNum(userInfo);
       return userInfo;
     },
@@ -132,6 +133,10 @@ export default {
     // 组件初始化数据
     ontrueGetList() {
       this.checked = this.theme !== THEME_DEFAULT;
+    },
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.userInfo.avatarUrl = '/static/noavatar.gif';
     },
     // 获取最新主题数那些
     refreshNum() {
@@ -186,6 +191,7 @@ export default {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .my-tabs {
   background: --color(--qui-BG-2);

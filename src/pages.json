@@ -28,11 +28,11 @@
       }
     }, 
     {
-      "path": "components/qui-topic-page/qui-topic-page",
+      "path": "pages/topic/topic",
       "style": {
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "   "
+        "navigationBarTitleText": "#话题#"
       }
     },
     // 登录注册
@@ -220,14 +220,14 @@
         "navigationStyle": "default"
       }
     },
-    // {
-    //   "path": "pages/user/at-member",
-    //   "style": {
-    //     "navigationBarBackgroundColor": "#fff",
-    //     "navigationBarTextStyle": "black",
-    //     "navigationBarTitleText": ""
-    //   }
-    // },
+    {
+      "path": "pages/user/at-member",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": ""
+      }
+    },
     {
       "path": "pages/common/message",
       "style": {

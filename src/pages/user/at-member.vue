@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-at-member-page-box">
+  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
     <view class="qui-at-member-page-box__hd">
       <view class="qui-at-member-page-box__hd__sc">
         <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
@@ -71,7 +71,7 @@
         }}
       </qui-button>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>

@@ -1,110 +1,145 @@
-/* eslint-disable vue/no-parsing-error */
 <template>
-  <qui-page>
-    <view class="topic-content-header">
-      <view class="topic-content-header_title">#{{ anncData[0].title }}#</view>
-      <view class="topic-content-header_toAll" @click="toAllTopic">全部话题 ></view>
-      <view class="topic-content-header_details">
-        <view class="details_title">
-          热度：
-          <text>{{ anncTopicData.heat }}</text>
-        </view>
-        <view class="details_title">
-          内容：
-          <text>{{ anncTopicData.content }}</text>
-        </view>
-        <view class="details_title">
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-share"
-            size="30"
-            color="#777"
-            @click="topicPage"
-          ></qui-icon>
-          <text>{{ '  分享' }}</text>
+  <qui-page :data-qui-theme="theme">
+    <qui-page-message v-if="!query.id"></qui-page-message>
+    <view v-else>
+      <view class="topic-content-header">
+        <view class="topic-content-header_title">#{{ topic.content }}#</view>
+        <navigator url="/pages/topic/list">
+          <view class="topic-content-header_toAll">{{ i18n.t('topic.allTopics') }} ></view>
+        </navigator>
+        <view class="topic-content-header_details">
+          <view class="details_title">
+            {{ i18n.t('topic.hot') }}：
+            <text>{{ topic.thread_count }}</text>
+          </view>
+          <view class="details_title">
+            {{ i18n.t('topic.contents') }}：
+            <text>{{ topic.view_count }}</text>
+          </view>
+          <view class="details_title">
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-share"
+              size="30"
+              color="#777"
+            ></qui-icon>
+            <button open-type="share" plain="true" @click="triggerShare" class="shareBtn">
+              {{ i18n.t('topic.share') }}
+            </button>
+            <view class="mask" v-if="shareShow" @click="triggerShare">
+              <view class="wxShareTip">
+                <img src="/static/sharePoint.png" alt class="sharePoint" />
+                <img src="/static/shareKnow.png" alt class="shareKnow" />
+              </view>
+            </view>
+          </view>
         </view>
       </view>
+      <qui-thread-item
+        :thread="item"
+        v-for="(item, index) in topicData"
+        :key="index"
+        :currentindex="index"
+      ></qui-thread-item>
+      <qui-load-more></qui-load-more>
     </view>
-    <qui-content
-      v-for="(item, i) in topicData"
-      :key="i"
-      topic-name=""
-      :user-name="item.user.username"
-      :theme-image="item.user.avatarUrl"
-      :images-list="item.images"
-      :theme-time="item.user.createdAt"
-      :theme-like="item.user.likedcount"
-      :theme-comment="item.commit"
-      :tags="item.keywords"
-      :theme-content="item.title"
-      theme-type="1"
-      :theme-essence="item.isEssence"
-      :is-great="isGreat"
-    ></qui-content>
-    <qui-load-more></qui-load-more>
   </qui-page>
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
-import quiContent from '../../components/qui-content/qui-content';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+// #endif
 
 export default {
-  components: {
-    quiContent,
-  },
+  mixins: [
+    // #ifdef  H5
+    wxshare,
+    // #endif
+  ],
   data() {
     return {
+      shareShow: false,
       topicData: [],
+      query: {},
       isGreat: false,
+      pageNum: 1,
+      pageSize: 20,
     };
   },
-  methods: {
-    ...mapMutations({
-      setAtMember: 'atMember/SET_ATMEMBER',
-    }),
-    toAllTopic() {
-      uni.navigateTo({
-        url: '/pages/topic/list',
-      });
-    },
-    handleIsGreat(e) {
-      if (e) {
-        console.log(e);
-      } else {
-        console.log(`e is not defined`);
+  computed: {
+    topic() {
+      if (this.query.id) {
+        return this.$store.getters['jv/get'](`topics/${this.query.id}`);
       }
-      // this.isGreat = !this.isGreat;
-      // this.$store.dispatch('session/setAuth', this.$refs.auth);
-      // if (!this.$store.getters['session/get']('isLogin')) {
-      //   this.$refs.auth.open();
-      // }
-      // // if (!canLike) {
-      // //   console.log('没有点赞权限');
-      // // }
-      // const params = {
-      //   _jv: {
-      //     type: 'posts',
-      //     id,
-      //   },
-      //   isLiked: isLiked !== true,
-      // };
-      // this.$store.dispatch('jv/patch', params).then(data => {
-      //   const likedPost = this.$store.getters['jv/get'](`/posts/${id}`);
-      //   if (data.isLiked) {
-      //     likedPost.likeCount += 1;
-      //   } else {
-      //     likedPost.likeCount -= 1;
-      //   }
-      // });
+      return {};
     },
   },
-  onLoad() {
-    // 请求话题数据
-    this.$store.dispatch('jv/get', ['threads', { params: {} }]).then(res => {
-      this.topicData = res;
-      console.log(res);
+  onLoad(query) {
+    this.query = query;
+    if (!query.id) {
+      this.$store.dispatch('forum/setError', {
+        code: 'type_404',
+        status: 500,
+      });
+    } else {
+      this.loadThreads();
+      this.$store.dispatch('jv/get', `topics/${query.id}`);
+    }
+
+    // #ifdef H5
+    this.wxShare({
+      title: this.topic.content,
     });
+    // #endif
+  },
+  methods: {
+    loadThreads() {
+      const params = {
+        'filter[isSticky]': 'no',
+        'filter[isApproved]': 1,
+        'filter[isDeleted]': 'no',
+        'filter[topic_id]': this.query.id,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
+        include: [
+          'user',
+          'user.groups',
+          'firstPost',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
+      };
+
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+        if (this.pageNum > 1) {
+          this.topicData = this.topicData.concat(data);
+        } else {
+          this.topicData = data;
+        }
+      });
+    },
+    // #ifdef H5
+    triggerShare() {
+      this.shareShow = !this.shareShow;
+    },
+    // #endif
+  },
+  // #ifdef MP-WEIXIN
+  // 唤起小程序原声分享
+  onShareAppMessage() {
+    return {
+      title: this.topic.content,
+      path: `/pages/topic/content?id=${this.topic}`,
+    };
+  },
+  // #endif
+  onReachBottom() {
+    if (this.meta.next) {
+      this.pageNum += 1;
+      this.loadThreads();
+    }
   },
 };
 </script>
@@ -147,4 +182,43 @@ $toAllBlue: #1450a0;
     color: #343434;
   }
 }
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 17;
+  width: 100%;
+  height: 100%;
+  background: rgba(#000, 0.6);
+}
+.wxShareTip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2222222222222;
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  .sharePoint {
+    display: inline-block;
+    width: 70%;
+    margin-top: 10rpx;
+    margin-right: 30rpx;
+  }
+  .shareKnow {
+    display: block;
+    width: 35%;
+    margin: 20vh auto 30rpx;
+  }
+}
+// .shareBtn {
+//   width: 120rpx;
+//   height: 120rpx;
+//   background: #c33;
+//   opacity: 0;
+// }
+// .shareBtn[plain] {
+//   border: 0;
+// }
 </style>

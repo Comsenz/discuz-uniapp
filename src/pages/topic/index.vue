@@ -349,13 +349,13 @@
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
                 cursor-spacing="100"
-                v-show="!emojiShow"
+                v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
               />
-              <!--<view class="comment-textarea" v-show="emojiShow">
-                  {{ textAreaValue }}
-                </view>-->
+              <view class="comment-textarea" v-show="emojiShow">
+                {{ textAreaValue }}
+              </view>
               <qui-uploader
                 :url="`${url}api/attachments`"
                 :header="header"
@@ -374,6 +374,29 @@
           </button>
         </view>
       </uni-popup>
+      <uni-popup ref="codePopup" type="center" class="code-popup-box">
+        <view class="code-content" v-if="qrcodeShow">
+          <view class="code-title">立即支付</view>
+          <view class="code-pay-money">
+            <view class="code-yuan">￥</view>
+            {{ price }}
+          </view>
+          <view class="code-type-box">
+            <view class="code-type-tit">支付方式</view>
+            <view class="code-type">
+              <qui-icon
+                class="code-type-icon"
+                name="icon-wxPay"
+                size="36"
+                color="#09bb07"
+              ></qui-icon>
+              <view class="code-type-text">微信支付</view>
+            </view>
+          </view>
+          <image :src="codeUrl" class="code-img"></image>
+          <view class="code-tip">微信识别二维码</view>
+        </view>
+      </uni-popup>
     </view>
     <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
       <u-loading :size="60"></u-loading>
@@ -389,9 +412,14 @@ import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
-
+// #ifndef MP-WEIXIN
+import appCommonH from '@/utils/commonHelper';
+// #endif
 export default {
   mixins: [user, forums],
+  // #ifndef MP-WEIXIN
+  utils: [appCommonH],
+  // #endif
   data() {
     return {
       threadId: '', //主题id
@@ -531,6 +559,11 @@ export default {
       paymentmodel: '', // 是否付费
       loaded: false,
       loadingStatus: true,
+      isWeixin: false,
+      isPhone: false,
+      qrcodeShow: false, // 二维码弹框
+      codeUrl: '', //二维码支付url，base64
+      browser: 0, // 0为小程序，1为除小程序之外的设备
     };
   },
   computed: {
@@ -563,6 +596,14 @@ export default {
   },
   // created() {},
   onLoad(option) {
+    // #ifndef MP-WEIXIN
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone;
+    console.log(this.isWeixin, '这是微信网页');
+    console.log(this.isPhone, '这是h5');
+    this.browser = 1;
+    // #endif
+    console.log(this.browser, '这是浏览器');
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
     this.$u.event.$on('addComment', data => {
       for (const index in this.posts) {
@@ -645,11 +686,6 @@ export default {
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
-    callMember(id) {
-      uni.navigateTo({
-        url: `/pages/my/index?userId=${id}`,
-      });
-    },
 
     // 表情接口请求
     // getEmoji() {
@@ -1079,7 +1115,38 @@ export default {
         console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
     },
+    // 非小程序内微信支付
+    onBridgeReady(data) {
+      let that = this;
+      WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        {
+          appId: data.attributes.wechat_js.appId, //公众号名称，由商户传入
+          timeStamp: data.attributes.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
+          nonceStr: data.attributes.wechat_js.nonceStr, //随机串
+          package: data.attributes.wechat_js.package,
+          signType: 'MD5', //微信签名方式：
+          paySign: data.attributes.wechat_js.paySign, //微信签名
+        },
+        function(data) {
+          // alert('支付唤醒');
 
+          if (data.err_msg == 'get_brand_wcpay_request:cancel') {
+            resolve;
+          } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
+            resolve;
+          }
+        },
+      );
+
+      const payWechat = setInterval(() => {
+        if (this.payStatus == '1' || this.payStatusNum > 10) {
+          clearInterval(payWechat);
+          return;
+        }
+        this.getOrderStatus(this.orderSn);
+      }, 3000);
+    },
     // 创建订单
     creatOrder(amount, type, value, payType) {
       console.log('创建订单', '这是参数', payType);
@@ -1096,11 +1163,25 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '成功创建订单', typeof payType, '这是支付类型');
+          console.log(res, '成功创建订单', payType, '这是支付类型');
           this.orderSn = res.order_sn;
           if (payType == 0) {
-            // 微信支付
-            this.orderPay(13, value, this.orderSn, payType);
+            console.log('微信支付');
+            if (this.browser == 0) {
+              console.log('这是微信小程序内的支付');
+              this.orderPay(13, value, this.orderSn, payType, '0');
+            } else {
+              console.log('这是除微信小程序之外', this.isWeixin, this.isPhone);
+              if (this.isWeixin && this.isPhone) {
+                console.log('这是微信浏览器');
+                this.orderPay(12, value, this.orderSn, payType, '1');
+              } else if (this.isPhone) {
+                this.orderPay(11, value, this.orderSn, payType, '2');
+              } else {
+                console.log('这是pc，没调接口之前');
+                this.orderPay(10, value, this.orderSn, payType, '3');
+              }
+            }
           } else if (payType == 1) {
             // 钱包支付
             console.log(type, value, this.orderSn, '这是参数');
@@ -1113,9 +1194,9 @@ export default {
         });
     },
 
-    // 订单支付
-    orderPay(type, value, orderSn, payType) {
-      console.log('订单支付');
+    // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    orderPay(type, value, orderSn, payType, broswerType) {
+      console.log('订单支付---broswerType', broswerType);
       let params = {};
       if (payType == 0) {
         console.log('这是微信支付时触发');
@@ -1140,16 +1221,52 @@ export default {
         .then(res => {
           console.log(res, '订单支付接口请求成功');
           if (payType == 0) {
-            console.log('这是微信支付时触发');
-            this.wechatPay(
-              res.wechat_js.timeStamp,
-              res.wechat_js.nonceStr,
-              res.wechat_js.package,
-              res.wechat_js.signType,
-              res.wechat_js.paySign,
-            );
+            if (broswerType === '0') {
+              this.wechatPay(
+                res.wechat_js.timeStamp,
+                res.wechat_js.nonceStr,
+                res.wechat_js.package,
+                res.wechat_js.signType,
+                res.wechat_js.paySign,
+              );
+            } else if (broswerType === '1') {
+              if (typeof WeixinJSBridge == 'undefined') {
+                if (document.addEventListener) {
+                  document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
+                } else if (document.attachEvent) {
+                  document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
+                  document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
+                }
+              } else {
+                this.onBridgeReady(res);
+              }
+            } else if (broswerType === '2') {
+              console.log('这是h5');
+              window.location.href = res.wechat_h5_link;
+              const payPhone = setInterval(() => {
+                if (this.payStatus && this.payStatusNum > 10) {
+                  clearInterval(payPhone);
+                  return;
+                }
+                this.getOrderStatus(orderSn, broswerType);
+              }, 3000);
+            } else if (broswerType === '3') {
+              console.log('这是pc', res);
+              if (res) {
+                this.codeUrl = res.wechat_qrcode;
+                this.payShowStatus = false;
+                this.$refs.codePopup.open();
+                this.qrcodeShow = true;
+                const payWechat = setInterval(() => {
+                  if (this.payStatus == '1' || this.payStatusNum > 10) {
+                    clearInterval(payWechat);
+                    return;
+                  }
+                  this.getOrderStatus(this.orderSn, broswerType);
+                }, 3000);
+              }
+            }
           } else if (payType == 1) {
-            // this.getOrderStatus(orderSn);
             const payWechat = setInterval(() => {
               if (this.payStatus == '1' || this.payStatusNum > 10) {
                 clearInterval(payWechat);
@@ -1162,12 +1279,12 @@ export default {
         })
         .catch(err => {
           // 清空支付的密码
-          this.$refs['payShow'].clear();
           console.log(err);
+          this.$refs['payShow'].clear();
         });
     },
     // 查询订单支状
-    getOrderStatus(orderSn) {
+    getOrderStatus(orderSn, broswerType) {
       const params = {
         _jv: {
           type: 'orders/' + orderSn,
@@ -1176,22 +1293,30 @@ export default {
       this.$store
         .dispatch('jv/get', params)
         .then(res => {
-          console.log(res.status, '订单支付状态接口查询');
+          console.log(res, '订单支付状态接口查询');
+
           this.payStatus = res.status;
           this.payStatusNum++;
+          return false;
           if (this.payStatus == '1' || this.payStatusNum > 10) {
-            console.log('支付成功');
             // this.payShow = false;
             this.payShowStatus = false;
             this.coverLoading = false;
+            if (broswerType === '2') {
+              return false;
+            } else if (broswerType === '3') {
+              // 这是pc扫码支付完成
+              this.$refs.codePopup.close();
+              this.qrcodeShow = false;
+            }
             this.$refs.toast.show({ message: this.p.paySuccess });
             if (this.payTypeVal == 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               console.log('这是主题支付');
               this.loadThread();
             } else if (this.payTypeVal == 1) {
+              console.log('追加');
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              // console.log('这是主题打赏1111', this.thread.rewardedUsers);
               this.thread._jv.relationships.rewardedUsers.data.push({
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
@@ -1223,7 +1348,7 @@ export default {
           _this.coverLoading = true;
           // _this.getOrderStatus(_this.orderSn);
           const payWechat = setInterval(() => {
-            console.log('定时器');
+            console.log('定时器，小程序支付');
             if (_this.payStatus == '1' || _this.payStatusNum > 10) {
               clearInterval(payWechat);
               return;
@@ -1429,7 +1554,7 @@ export default {
 
     // 点击@跳转到@页
     callClick() {
-      uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
+      uni.navigateTo({ url: '/pages/user/at-member' });
     },
     // // 上传图片
     // imageUploader() {
@@ -1636,10 +1761,10 @@ page {
   max-height: calc(100vh - 80rpx);
 }
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
 }
 .bg-white {
   background-color: --color(--qui-BG-2);
@@ -2063,5 +2188,66 @@ page {
 }
 .popup-share-content {
   box-sizing: border-box;
+}
+
+// 微信二维码弹框
+
+.code-content {
+  position: fixed;
+  top: 10%;
+  left: 11%;
+  z-index: 22;
+  display: flex;
+  flex-direction: column;
+  width: 78%;
+  padding: 40rpx;
+  background: --color(--qui-BG-FFF);
+  border-radius: 16rpx;
+  box-sizing: border-box;
+  .code-title {
+    text-align: center;
+  }
+  .code-pay-money {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 36rpx;
+    padding-bottom: 36rpx;
+    font-size: 70rpx;
+    .code-yuan {
+      font-size: 48rpx;
+      line-height: 66rpx;
+    }
+  }
+}
+
+.code-type-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 24rpx 0 34rpx;
+  line-height: 36rpx;
+  border-top: 1px solid --color(--qui-BG-ED);
+  .code-type-tit {
+    color: --color(--qui-FC-AAA);
+  }
+  .code-type {
+    display: flex;
+    flex-direction: row;
+    .code-type-icon {
+      font-size: 36rpx;
+    }
+    .code-type-text {
+      padding-left: 12rpx;
+    }
+  }
+}
+.code-img {
+  align-self: center;
+  width: 380rpx;
+  height: 380rpx;
+}
+.code-tip {
+  padding: 14rpx 0 20rpx;
 }
 </style>

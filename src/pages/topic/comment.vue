@@ -54,7 +54,7 @@
                           v-for="(group, gindex) in thread.user.groups"
                           :key="gindex"
                         >
-                          （{{ group.name }}）
+                          （{{ group.isDisplay ? `（${group.name}）` : '' }}）
                         </span>
                       </view>
                       <view class="thread__header__title__time">
@@ -717,8 +717,11 @@ export default {
     },
     // 点击@跳转到@页
     callClick() {
-      uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
+      uni.navigateTo({
+        url: `/pages/user/at-member`,
+      });
     },
+
     uploadChange(e) {
       this.uploadFile = e;
     },
@@ -841,10 +844,10 @@ page {
   display: flex;
 }
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
 }
 .bg-white {
   background-color: --color(--qui-BG-2);

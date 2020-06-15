@@ -5,6 +5,7 @@
       src="@/static/essence.png"
       alt
       v-if="themeEssence && themeType == '1'"
+      lazy-load
     ></image>
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
@@ -13,6 +14,7 @@
             :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
             @error="imageError"
             v-if="imageStatus"
+            lazy-load
           ></image>
           <image v-else src="/static/noavatar.gif"></image>
         </view>
@@ -71,6 +73,7 @@
             class="themeItem__content__coverimg"
             :src="coverImage"
             :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+            lazy-load
           ></image>
         </view>
         <view class="content__video" v-if="threadType === 2 && payStatus">
@@ -85,9 +88,10 @@
             :page-gesture="false"
             show-fullscreen-btn="true"
             :show-play-btn="true"
-            auto-pause-if-open-native="true"
-            auto-pause-if-navigate="true"
-            enable-play-gesture="false"
+            :autoplay="false"
+            auto-pause-if-open-native
+            auto-pause-if-navigate
+            :enable-play-gesture="false"
             :vslide-gesture="false"
             :vslide-gesture-in-fullscreen="false"
             object-fit="cover"
@@ -111,6 +115,7 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
+              lazy-load
               alt
             ></image>
           </view>
@@ -125,6 +130,7 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
+              lazy-load
               alt
             ></image>
           </view>
@@ -139,12 +145,14 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
+              lazy-load
               alt
             ></image>
             <image
               class="themeItem__content__imgmore__item"
               v-if="imagesList.length % 3 != 0"
               @click.stop=""
+              lazy-load
             ></image>
           </view>
         </view>
@@ -496,11 +504,13 @@ export default {
       margin-right: 18rpx;
       // background: #ccc;
       border-radius: 100%;
+      will-change: transform;
 
       image {
         width: 100%;
         height: 100%;
         border-radius: 100%;
+        will-change: transform;
       }
     }
 

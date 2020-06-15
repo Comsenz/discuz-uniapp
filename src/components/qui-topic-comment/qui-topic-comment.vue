@@ -13,6 +13,7 @@
             @click="personJump"
             @error="imageError"
             v-if="imageStatus"
+            lazy-load
           ></image>
           <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
         </view>
@@ -48,49 +49,8 @@
         <view class="themeItem__content__text" @click="commentJump">
           <rich-text :nodes="commentContent"></rich-text>
         </view>
-        <view v-if="imagesList.length > 0 && imagesList.length == 1">
-          <view class="themeItem__content__imgone">
-            <image
-              class="themeItem__content__imgone__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(index)"
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length > 0 && imagesList.length == 2">
-          <view class="themeItem__content__imgtwo">
-            <image
-              class="themeItem__content__imgtwo__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(index)"
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length > 0 && imagesList.length >= 3">
-          <view class="themeItem__content__imgmore">
-            <image
-              class="themeItem__content__imgmore__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(index)"
-            ></image>
-            <image
-              class="themeItem__content__imgmore__item"
-              v-if="imagesList.length % 3 != 0"
-            ></image>
-          </view>
-        </view>
+
+        <qui-image :images-list="imagesList"></qui-image>
         <qui-reply
           v-if="replyList.length > 0"
           :reply-list="replyList"
@@ -318,6 +278,7 @@ export default {
       margin-right: 18rpx;
       background: #ccc;
       border-radius: 100%;
+      will-change: transform;
 
       image {
         width: 100%;
@@ -393,47 +354,6 @@ export default {
       line-height: 45rpx;
       color: --color(--qui-FC-333);
       word-break: break-all;
-    }
-
-    &__imgone {
-      display: flex;
-      justify-content: flex-start;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        width: 100%;
-        max-height: 100%;
-      }
-    }
-    &__imgtwo {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 48%;
-        height: 211rpx;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
-    }
-    &__imgmore {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-content: flex-start;
-      flex-wrap: wrap;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 30%;
-        height: 211rpx;
-        margin-right: 3.33%;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
     }
 
     &__tags {

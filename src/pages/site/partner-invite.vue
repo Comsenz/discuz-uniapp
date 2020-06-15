@@ -4,11 +4,12 @@
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
       :theme-num="forums.other && forums.other.count_users"
-      :post="i18n.t('home.homecontent')"
       :post-num="forums.other && forums.other.count_threads"
-      :share="i18n.t('home.share')"
+      :share-btn="shareBtn"
+      :share-show="shareShow"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
+      @closeShare="closeShare"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
       <qui-share @close="cancel"></qui-share>
@@ -29,9 +30,8 @@
           <image
             class="site-item__owner-avatar"
             :src="(forums.set_site && forums.set_site.site_author.avatar) || '/static/noavatar.gif'"
-            alt="avatarUrl"
             @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
-            mode="aspectFill"
+            lazy-load
           ></image>
           <text class="site-item__owner-name">
             {{ forums.set_site && forums.set_site.site_author.username }}
@@ -48,9 +48,8 @@
             <image
               class="site-item__person__content-avatar"
               :src="item.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
+              lazy-load
               @tap="toProfile(item.id)"
-              mode="aspectFill"
             ></image>
           </view>
         </view>
@@ -101,6 +100,8 @@ export default {
     return {
       code: '', // 邀请码
       permission: [],
+      shareBtn: 'icon-share1',
+      shareShow: false, // h5内分享提示信息
       inviteData: {}, // 邀请的相关信息
     };
   },
@@ -127,7 +128,19 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
+      // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
+      // #endif
+      // #ifdef H5
+      this.shareShow = true;
+      // #endif
+    },
+    closeShare() {
+      this.shareShow = false;
+    },
+    // 取消按钮
+    cancel() {
+      this.$refs.popupHead.close();
     },
     handleMode() {
       if (!this.forums.set_site) {
@@ -156,10 +169,6 @@ export default {
     // 调取用户信息取消弹框
     close() {
       this.$refs.auth.close();
-    },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupHead.close();
     },
     submit() {
       uni.navigateTo({
@@ -243,6 +252,7 @@ export default {
   height: 60rpx;
   margin-left: 8rpx;
   border-radius: 50%;
+  will-change: transform;
 }
 .site-item__person__content-avatar {
   margin-left: 8rpx;

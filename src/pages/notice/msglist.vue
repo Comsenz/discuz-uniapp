@@ -52,7 +52,14 @@
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
-          <input class="uni-input" :maxlength="451" v-model="msg" @blur="contBlur" />
+          <input
+            class="uni-input"
+            :maxlength="451"
+            :cursor="cursor"
+            :focus="focus"
+            v-model="msg"
+            @blur="contBlur"
+          />
           <qui-icon
             name="icon-expression chat-box__footer__msg__icon"
             size="40"
@@ -99,6 +106,8 @@ export default {
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       navbarHeight: 0,
+      cursor: 0, // 光标位置
+      focus: true, // 获取焦点
     };
   },
 
@@ -327,13 +336,15 @@ export default {
       this.emojiShow = !this.emojiShow;
     },
     // 获取表情
-    getEmojiClick(key) {
+    getEmojiClick(code) {
+      this.focus = false;
       let text = '';
-      text = `${this.msg.slice(0, this.cursor) +
-        this.allEmoji[key].code +
-        this.msg.slice(this.cursor)}`;
+      text = `${this.msg.slice(0, this.cursor) + code + this.msg.slice(this.cursor)}`;
       this.msg = text;
-      console.log('表情', this.allEmoji[key]);
+      this.cursor += code.length;
+      this.$nextTick(() => {
+        this.focus = true;
+      });
       console.log('msg', this.msg);
     },
     jumpUserPage(id) {

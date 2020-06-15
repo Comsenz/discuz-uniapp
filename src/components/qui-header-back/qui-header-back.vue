@@ -9,6 +9,7 @@
             size="32"
             :color="theme === $u.light() ? '#333' : '#fff'"
             @tap="back"
+            v-if="isShowBack"
           ></qui-icon>
           <text @tap="back">{{ title }}</text>
         </view>
@@ -22,6 +23,7 @@
           size="32"
           :color="theme === $u.light() ? '#777' : '#fff'"
           @tap="backPage('/pages/home/index', 1)"
+          v-if="isShowHome"
         ></qui-icon>
         <qui-icon
           name="icon-more"
@@ -102,6 +104,14 @@ export default {
       default: false,
     },
     isShowMore: {
+      type: Boolean,
+      default: true,
+    },
+    isShowHome: {
+      type: Boolean,
+      default: true,
+    },
+    isShowBack: {
       type: Boolean,
       default: true,
     },

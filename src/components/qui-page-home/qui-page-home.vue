@@ -25,7 +25,9 @@
         :theme-num="forums.other.count_users"
         :post-num="forums.other.count_threads"
         :share-btn="shareBtn"
+        :share-show="shareShow"
         @click="open"
+        @closeShare="closeShare"
       ></qui-header>
       <view
         class="nav"
@@ -179,6 +181,9 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+// #endif
 import { mapMutations, mapState } from 'vuex';
 
 const sysInfo = uni.getSystemInfoSync();
@@ -187,7 +192,14 @@ const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
 const navBarTransform = `translate3d(0, -${navbarHeight}px, 0)`;
 
 export default {
-  mixins: [forums, user],
+  mixins: [
+    forums,
+    user,
+    // #ifdef  H5
+    wxshare,
+    // #endif
+  ],
+
   props: {
     navTheme: {
       type: String,
@@ -219,6 +231,8 @@ export default {
       navHeight: 0, // 切换分类导航的高度
       nowThreadId: '', // 当前点击主题ID
       filterTop: 450, // 筛选弹窗的位置
+      shareShow: false, // h5内分享提示信息
+      shareTitle: '', // h5内分享复制链接
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -317,6 +331,14 @@ export default {
         }
       }
     });
+    // h5微信分享
+    // #ifdef H5
+    this.wxShare({
+      title: this.forums.set_site.site_name,
+      desc: this.forums.set_site.site_introduction,
+      logo: this.forums.set_site.site_logo,
+    });
+    // #endif
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
@@ -422,6 +444,7 @@ export default {
     },
     // 首页头部分享按钮弹窗
     open() {
+      // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
       // 付费模式下不显示微信分享
       if (this.forums.set_site.site_mode === 'pay') {
@@ -434,7 +457,19 @@ export default {
           },
         ];
       }
+      // #endif
+
+      // #ifdef H5
+      this.shareShow = true;
+      // #endif
     },
+    // #ifdef H5
+    closeShare() {
+      console.log('关闭微信');
+      this.shareShow = false;
+      console.log(this.shareShow, '8888');
+    },
+    // #endif
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
@@ -508,6 +543,7 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
       this.$refs.popupContent.open();
@@ -522,6 +558,20 @@ export default {
           },
         ];
       }
+      // #endif
+      // #ifdef H5
+      const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
+      if (shareThread.type === 1) {
+        this.shareTitle = shareThread.title;
+      } else {
+        this.shareTitle = shareThread.firstPost.summary;
+      }
+      this.h5Share({
+        title: this.shareTitle,
+        id,
+        url: '/pages/topic/index',
+      });
+      // #endif
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {

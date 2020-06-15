@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-edipwd">
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('modify.edipwdtitle')"></qui-header-back>
     <!-- #endif -->
@@ -204,53 +204,55 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.chagepas {
-  width: 100vw;
-  height: 100vh;
-  /* #ifdef H5 */
-  padding-top: 100rpx;
-  /* #endif */
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.chagepas-pas {
-  width: 100%;
-  padding: 31rpx 0 0 40rpx;
-  box-sizing: border-box;
-}
-.chagepas-pas-inpa {
-  width: 100%;
-  height: 100rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  text-align: left;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.chagepas-pas-inpa2 {
-  width: 100%;
-  height: 100rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-RED);
-  text-align: left;
-  border-bottom: 2rpx solid --color(--qui-RED);
-}
-.chagepas-pas-btn {
-  margin: 50rpx auto 0;
-}
-.chagepas-erro-messag1 {
-  margin-top: 20rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-RED);
-}
-.chagepas-erro-forget {
-  margin: 30rpx 0 0;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 37rpx;
-  color: --color(--qui-LINK);
+.page-edipwd /deep/ {
+  .chagepas {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .chagepas-pas {
+    width: 100%;
+    padding: 31rpx 0 0 40rpx;
+    box-sizing: border-box;
+  }
+  .chagepas-pas-inpa {
+    width: 100%;
+    height: 100rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    text-align: left;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .chagepas-pas-inpa2 {
+    width: 100%;
+    height: 100rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-RED);
+    text-align: left;
+    border-bottom: 2rpx solid --color(--qui-RED);
+  }
+  .chagepas-pas-btn {
+    margin: 50rpx auto 0;
+  }
+  .chagepas-erro-messag1 {
+    margin-top: 20rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-RED);
+  }
+  .chagepas-erro-forget {
+    margin: 30rpx 0 0;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 37rpx;
+    color: --color(--qui-LINK);
+  }
 }
 </style>

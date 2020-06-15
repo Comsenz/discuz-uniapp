@@ -56,21 +56,22 @@ export default {
         const res = uni.getSystemInfoSync();
         if (res.platform === 'ios') {
           this.$store.dispatch('forum/setError', { loading: false, code: 500, status: 'dataerro' });
-        } else {
-          let currentPage = {};
-          const pages = getCurrentPages();
-          if (pages.length > 0) {
-            currentPage = pages[pages.length - 1];
-            if (!user.paid && currentPage.route !== 'pages/site/info') {
-              uni.redirectTo({
-                url: '/pages/site/info',
-              });
-            }
-          } else if (!user.paid) {
+          return;
+        }
+
+        let currentPage = {};
+        const pages = getCurrentPages();
+        if (pages.length > 0) {
+          currentPage = pages[pages.length - 1];
+          if (!user.paid && currentPage.route !== 'pages/site/info') {
             uni.redirectTo({
               url: '/pages/site/info',
             });
           }
+        } else if (!user.paid) {
+          uni.redirectTo({
+            url: '/pages/site/info',
+          });
         }
       }
       // #ifdef H5

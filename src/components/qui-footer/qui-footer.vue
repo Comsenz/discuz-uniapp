@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view class="ft">
+    <view class="ft" :style="{ bottom: bottom + 'rpx' }">
       <view
         class="ft-box "
         :class="{ select: true, active: index === footerIndex }"
@@ -62,6 +62,12 @@ import { mapState, mapMutations } from 'vuex';
 
 export default {
   mixins: [forums, user],
+  props: {
+    bottom: {
+      type: Number,
+      default: 0,
+    },
+  },
   data: () => {
     return {
       sel: 1,
@@ -104,6 +110,14 @@ export default {
       return this.user.unreadNotifications;
     },
   },
+  // onLoad(options) {
+  //   console.log(options, 'options');
+  //   let modelmes = wx.getStorageSync('modelmes');
+  //   let isiphonex = app.globalData.isIphoneX;
+  //   this.setData({
+  //     isiphonex: isIphoneX
+  //   })
+  // },
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {
@@ -295,7 +309,7 @@ export default {
 }
 .red-circle {
   position: absolute;
-  top: -10rpx;
-  left: 310rpx;
+  // top: -10rpx;
+  left: 41%;
 }
 </style>
