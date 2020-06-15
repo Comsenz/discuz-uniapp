@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-findpwd">
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('modify.findpawdtitle')"></qui-header-back>
     <!-- #endif -->
@@ -260,120 +260,122 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.retireve {
-  width: 100vw;
-  height: 100vh;
-  /* #ifdef H5 */
-  padding-top: 100rpx;
-  /* #endif */
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.retireve-tab {
-  padding: 31rpx 0 0 40rpx;
-  box-sizing: border-box;
-}
-.retireve-titel {
-  font-size: $fg-f50;
-  font-weight: bold;
-  line-height: 60rpx;
-  color: --color(--qui-FC-333);
-  opacity: 1;
-}
-.retireve-phon {
-  display: flex;
-  width: 710rpx;
-  height: 100rpx;
-  justify-content: space-between;
-  margin: 80rpx 0 0;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  box-sizing: border-box;
-}
-.new-phon-num {
-  width: 280rpx;
-  height: 100rpx;
-  margin-left: 50rpx;
-  font-size: $fg-f40;
-  font-weight: bold;
-  line-height: 100rpx;
-  color: --color(--qui-FC-333);
-}
-.retireve-phon-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.retireve-phon-num {
-  margin: 0 0 0 109rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: rgba(0, 0, 0, 1);
-  opacity: 1;
-}
-.retireve-phon-num1 {
-  margin-left: 80rpx;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.retireve-phon-send {
-  display: block;
-  height: 70rpx;
-  min-width: 180rpx;
-  margin: 15rpx 40rpx 0;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 70rpx;
-  color: --color(--qui-FC-FFF);
-  text-align: center;
-  background-color: --color(--qui-MAIN);
-  border-radius: 5rpx;
-}
-.retireve-pas {
-  display: flex;
-  width: 100%;
-  height: 100rpx;
-  padding: 0 40rpx 0 0;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  box-sizing: border-box;
-  justify-content: space-between;
-}
-.retireve-pas-title {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-  opacity: 1;
-}
-.retireve-input {
-  width: 710rpx;
-}
-.retireve-input-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.retireve-vftion-input {
-  display: flex;
-  width: 100%;
-  height: 100rpx;
-}
-.retireve-pas-input-i {
-  height: 100rpx;
-  line-height: 100rpx;
-  text-align: right;
-}
-.retireve-button {
-  margin: 52rpx 0 0;
-}
-.retireve-pass {
-  font-size: $fg-f24;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-RED);
+.page-findpwd /deep/ {
+  .retireve {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .retireve-tab {
+    padding: 31rpx 0 0 40rpx;
+    box-sizing: border-box;
+  }
+  .retireve-titel {
+    font-size: $fg-f50;
+    font-weight: bold;
+    line-height: 60rpx;
+    color: --color(--qui-FC-333);
+    opacity: 1;
+  }
+  .retireve-phon {
+    display: flex;
+    width: 710rpx;
+    height: 100rpx;
+    justify-content: space-between;
+    margin: 80rpx 0 0;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-sizing: border-box;
+  }
+  .new-phon-num {
+    width: 280rpx;
+    height: 100rpx;
+    margin-left: 50rpx;
+    font-size: $fg-f40;
+    font-weight: bold;
+    line-height: 100rpx;
+    color: --color(--qui-FC-333);
+  }
+  .retireve-phon-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .retireve-phon-num {
+    margin: 0 0 0 109rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: rgba(0, 0, 0, 1);
+    opacity: 1;
+  }
+  .retireve-phon-num1 {
+    margin-left: 80rpx;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .retireve-phon-send {
+    display: block;
+    height: 70rpx;
+    min-width: 180rpx;
+    margin: 15rpx 40rpx 0;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 70rpx;
+    color: --color(--qui-FC-FFF);
+    text-align: center;
+    background-color: --color(--qui-MAIN);
+    border-radius: 5rpx;
+  }
+  .retireve-pas {
+    display: flex;
+    width: 100%;
+    height: 100rpx;
+    padding: 0 40rpx 0 0;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-sizing: border-box;
+    justify-content: space-between;
+  }
+  .retireve-pas-title {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+    opacity: 1;
+  }
+  .retireve-input {
+    width: 710rpx;
+  }
+  .retireve-input-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .retireve-vftion-input {
+    display: flex;
+    width: 100%;
+    height: 100rpx;
+  }
+  .retireve-pas-input-i {
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: right;
+  }
+  .retireve-button {
+    margin: 52rpx 0 0;
+  }
+  .retireve-pass {
+    font-size: $fg-f24;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-RED);
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-authen">
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('modify.authontitle')"></qui-header-back>
     <!-- #endif -->
@@ -125,38 +125,40 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.authen {
-  width: 100vw;
-  height: 100vh;
-  /* #ifdef H5 */
-  padding-top: 100rpx;
-  /* #endif */
-  background: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.authen-input {
-  width: 710rpx;
-  padding: 31rpx 0 0 40rpx;
-  background: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.authen-tit {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.authen-forget {
-  margin: 30rpx 0 0 40rpx;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 37rpx;
-  color: --color(--qui-LINK);
-}
-.authen-erro-messag1 {
-  font-size: $fg-f24;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-RED);
+.page-authen /deep/ {
+  .authen {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .authen-input {
+    width: 710rpx;
+    padding: 31rpx 0 0 40rpx;
+    background: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .authen-tit {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .authen-forget {
+    margin: 30rpx 0 0 40rpx;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 37rpx;
+    color: --color(--qui-LINK);
+  }
+  .authen-erro-messag1 {
+    font-size: $fg-f24;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-RED);
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-withdra">
     <!-- #ifdef H5-->
     <qui-header-back :title="i18n.t('modify.withdratitle')"></qui-header-back>
     <!-- #endif -->
@@ -381,127 +381,129 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.cash {
-  width: 100vw;
-  height: 100vh;
-  /* #ifdef H5 */
-  padding-top: 100rpx;
-  /* #endif */
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.cash-content {
-  padding: 31rpx 0 0 40rpx;
-  box-sizing: border-box;
-}
-.cash-content-tab {
-  padding: 0 40rpx 0 0;
-  justify-content: space-between;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-/deep/.cell-item__body__content-title {
-  color: --color(--qui-FC-777);
-}
-.cash-content-name {
-  font-size: $fg-f34;
-  font-weight: 400;
-  color: --color(--qui-FC-333);
-}
-.cash-content-input {
-  width: 238rpx;
-  height: 100%;
-  font-size: $fg-f34;
-  font-weight: bold;
-  line-height: 100rpx;
-  color: --color(--qui-FC-333);
-  text-align: right;
-}
-.cash-content-actual {
-  line-height: 50rpx;
-}
-.cash-content-ellipsis {
-  height: 50rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  line-height: 50rpx;
-  color: --color(--qui-FC-333);
-  text-align: right;
-}
-.cash-content-ellipsis2 {
-  height: 50rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 50rpx;
-  color: --color(--qui-RED);
-  text-align: bold;
-}
-.cash-content-proced {
-  height: 50rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-FC-777);
-}
-.cash-phon {
-  display: flex;
-  width: 710rpx;
-  height: 100rpx;
-  justify-content: space-between;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.cash-phon-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.cash-phon-num {
-  margin: 0 0 0 100rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-000);
-}
-.cash-phon-num1 {
-  margin: 0 0 0 10rpx;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.cash-phon-send {
-  display: block;
-  height: 70rpx;
-  min-width: 180rpx;
-  margin: 15rpx 40rpx 0;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 70rpx;
-  color: --color(--qui-FC-FFF);
-  text-align: center;
-  background-color: --color(--qui-MAIN);
-  border-radius: 5rpx;
-}
-.cash-erro {
-  margin-top: 20rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-RED);
-}
-.cash-input {
-  width: 710rpx;
-}
-.cash-input-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.cash-vftion-input {
-  display: flex;
-  width: 100%;
-  height: 100rpx;
-}
-.cash-button {
-  margin: 52rpx 0 0;
+.page-withdra /deep/ {
+  .cash {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .cash-content {
+    padding: 31rpx 0 0 40rpx;
+    box-sizing: border-box;
+  }
+  .cash-content-tab {
+    padding: 0 40rpx 0 0;
+    justify-content: space-between;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  /deep/.cell-item__body__content-title {
+    color: --color(--qui-FC-777);
+  }
+  .cash-content-name {
+    font-size: $fg-f34;
+    font-weight: 400;
+    color: --color(--qui-FC-333);
+  }
+  .cash-content-input {
+    width: 238rpx;
+    height: 100%;
+    font-size: $fg-f34;
+    font-weight: bold;
+    line-height: 100rpx;
+    color: --color(--qui-FC-333);
+    text-align: right;
+  }
+  .cash-content-actual {
+    line-height: 50rpx;
+  }
+  .cash-content-ellipsis {
+    height: 50rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    line-height: 50rpx;
+    color: --color(--qui-FC-333);
+    text-align: right;
+  }
+  .cash-content-ellipsis2 {
+    height: 50rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 50rpx;
+    color: --color(--qui-RED);
+    text-align: bold;
+  }
+  .cash-content-proced {
+    height: 50rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-FC-777);
+  }
+  .cash-phon {
+    display: flex;
+    width: 710rpx;
+    height: 100rpx;
+    justify-content: space-between;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .cash-phon-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .cash-phon-num {
+    margin: 0 0 0 100rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-000);
+  }
+  .cash-phon-num1 {
+    margin: 0 0 0 10rpx;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .cash-phon-send {
+    display: block;
+    height: 70rpx;
+    min-width: 180rpx;
+    margin: 15rpx 40rpx 0;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 70rpx;
+    color: --color(--qui-FC-FFF);
+    text-align: center;
+    background-color: --color(--qui-MAIN);
+    border-radius: 5rpx;
+  }
+  .cash-erro {
+    margin-top: 20rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-RED);
+  }
+  .cash-input {
+    width: 710rpx;
+  }
+  .cash-input-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .cash-vftion-input {
+    display: flex;
+    width: 100%;
+    height: 100rpx;
+  }
+  .cash-button {
+    margin: 52rpx 0 0;
+  }
 }
 </style>
