@@ -3,7 +3,7 @@
     <view class="qui-topic-page-box">
       <view class="qui-topic-page-box__hd">
         <view class="qui-topic-page-box__hd__sc">
-          <qui-icon class="icon-search" name="icon-sort" size="30"></qui-icon>
+          <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
           <input
             type="text"
             placeholder-class="input-placeholder"
@@ -142,7 +142,7 @@ $otherHeight: 292rpx;
       background-color: --color(--qui-BG-IT);
       border-radius: 7rpx;
 
-      .icon-sort {
+      .icon-search {
         margin: 0 10rpx;
         color: #bbb;
       }
