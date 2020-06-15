@@ -1071,6 +1071,10 @@ export default {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
     uni.$off('clickTopic');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
   },
 };
 </script>
