@@ -1091,7 +1091,6 @@ page {
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
-  background: --color(--qui-FC-FFF);
 }
 .comment-popup {
   width: 100%;
