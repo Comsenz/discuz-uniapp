@@ -2014,7 +2014,6 @@ page {
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
-  background: --color(--qui-BG-2);
 }
 .comment-popup {
   width: 100%;
