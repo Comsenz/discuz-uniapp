@@ -99,7 +99,7 @@ export default {
         'filter[isSticky]': 'no',
         'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
-        'filter[topic_id]': this.query.id,
+        'filter[topicId]': this.query.id,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         include: [
