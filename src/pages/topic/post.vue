@@ -144,6 +144,8 @@
           :loading="postLoading"
           type="primary"
           size="large"
+          id="TencentCaptcha"
+          data-appid="appID"
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
@@ -254,10 +256,18 @@ import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
+// #ifdef  H5
+import tcaptchs from '@/utils/tcaptcha';
+// #endif
 
 export default {
   name: 'Post',
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef  H5
+    tcaptchs,
+    // #endif
+  ],
   data() {
     return {
       loadStatus: '',
@@ -274,6 +284,10 @@ export default {
       emojiShow: false, // 表情是否显示
       header: {}, // 图片请求头部
       formData: {}, // 图片请求data
+      appID: '', // 腾讯云验证码场景 id
+      captcha: null, // 腾讯云验证码实例
+      captcha_ticket: '', // 腾讯云验证码返回票据
+      captcha_rand_str: '', // 腾讯云验证码返回随机字符串
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -648,7 +662,7 @@ export default {
           this.postThread().then(res => {
             this.postLoading = false;
             uni.hideLoading();
-            if (res.isApproved === 1) {
+            if (res && res.isApproved === 1) {
               this.$u.event.$emit('addThread', res);
             }
             if (res && res._jv.json.data.id) {
@@ -921,8 +935,10 @@ export default {
       }
       throw new Error('出错了');
     },
-    // 发布按钮验证码验证
+    // 小程序内发布按钮验证码验证
     toTCaptcha() {
+      console.log('h5验证码');
+      // #ifdef MP-WEIXIN
       let _this = this;
       wx.navigateToMiniProgram({
         appId: 'wx5a3a7366fd07e119',
@@ -939,6 +955,25 @@ export default {
           _this.postLoading = false;
         },
       });
+      // #endif
+      // h5内发布按钮验证码验证
+      // #ifdef H5
+
+      this.captcha = new TencentCaptcha(this.appID, res => {
+        console.log(res, 'h5验证1111');
+        if (res.ret === 0) {
+          this.ticket = res.ticket;
+          this.randstr = res.randstr;
+          //验证通过后发布
+          this.postClick();
+        }
+        if (res.ret === 2) {
+          this.btnLoading = false;
+        }
+      });
+      // 显示验证码
+      this.captcha.show();
+      // #endif
     },
   },
   onLoad(option) {
