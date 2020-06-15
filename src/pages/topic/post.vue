@@ -17,7 +17,7 @@
             name="icon-expression"
             size="40"
             :color="emojiShow ? '#1878F3' : '#777'"
-            @click="emojiShow = !emojiShow"
+            @click="emojiclick"
           ></qui-icon>
           <qui-icon
             class="post-box__hd-l__icon"
@@ -64,10 +64,10 @@
           cursor-spacing="50"
           :maxlength="-1"
           :focus="type !== 1"
-          v-if="!emojiShow"
+          v-if="textShow"
           @blur="contBlur"
         ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-if="emojiShow">
+        <view class="post-box__con-text post-box__con-text--static" v-if="!textShow">
           <text>{{ textAreaValue }}</text>
         </view>
       </view>
@@ -272,6 +272,7 @@ export default {
       inputWord: '', // 查看字数输入框
       operating: '', // 编辑或发布类型
       emojiShow: false, // 表情是否显示
+      textShow: true, // 文本域是否显示
       header: {}, // 图片请求头部
       formData: {}, // 图片请求data
       payNum: [
@@ -455,12 +456,18 @@ export default {
       });
     },
 
+    // 点击表情
+    emojiclick() {
+      this.emojiShow = !this.emojiShow;
+      this.textShow = !this.textShow;
+    },
     // 弹框相关方法
     contBlur(e) {
       this.cursor = e.detail.cursor;
     },
     diaLogClose() {
       this.$refs.popup.close();
+      this.textShow = true;
     },
     diaLogOk() {
       if (this.setType === 'pay') {
@@ -470,6 +477,7 @@ export default {
       }
 
       this.$refs.popup.close();
+      this.textShow = true;
     },
 
     moneyClick(index) {
@@ -478,14 +486,18 @@ export default {
       this.payNumCheck.push(this.payNum[index]);
 
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
+        this.textShow = false;
         this.$refs.popupBtm.close();
+
         this.$nextTick(() => {
           this.inputPrice = '';
           this.$refs.popup.open();
+          this.textShow = false;
         });
       } else {
         this.price = this.payNumCheck[0].pay;
         this.$refs.popupBtm.close();
+        this.textShow = true;
       }
     },
     cellClick(type) {
@@ -495,9 +507,11 @@ export default {
       } else {
         this.$refs.popupBtm.open();
       }
+      this.textShow = false;
     },
     cancel() {
       this.$refs.popupBtm.close();
+      this.textShow = true;
     },
 
     // 图片上传相关方法
@@ -997,7 +1011,7 @@ export default {
     this.$u.event.$on('closeChaReault', () => {
       this.postLoading = false;
       uni.hideLoading();
-    });    
+    });
   },
   onShow() {
     this.hasStorage();
