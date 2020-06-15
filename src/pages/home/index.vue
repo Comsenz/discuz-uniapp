@@ -21,7 +21,7 @@
       </view>
 
       <view class="tabBar">
-        <qui-footer @click="cut_index"></qui-footer>
+        <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
       </view>
     </view>
   </qui-page>
@@ -31,9 +31,10 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
+import detectionModel from '@/mixin/detectionModel';
 
 export default {
-  mixins: [forums, user],
+  mixins: [forums, user, detectionModel],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
