@@ -74,8 +74,8 @@
 
                   <view class="thread__content" @click="contentClick">
                     <view class="thread__content__text">
-                      <rich-text :nodes="thread.title" v-if="thread.type == 1"></rich-text>
-                      <rich-text :nodes="thread.firstPost.summary" v-else></rich-text>
+                      <qui-uparse :content="thread.title" v-if="thread.type == 1"></qui-uparse>
+                      <qui-uparse :content="thread.firstPost.summary" v-else></qui-uparse>
                     </view>
                   </view>
                 </view>
