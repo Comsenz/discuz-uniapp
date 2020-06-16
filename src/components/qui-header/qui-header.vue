@@ -1,7 +1,12 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
     <!-- #ifdef H5-->
-    <qui-header-back :title="title" :is-show-home="false" :is-show-back="false"></qui-header-back>
+    <qui-header-back
+      :title="title"
+      :is-show-home="false"
+      :is-show-back="false"
+      :is-show-more="isShowMore"
+    ></qui-header-back>
     <!-- #endif -->
     <view class="logoBox">
       <image
@@ -77,6 +82,10 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+    isShowMore: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => {

@@ -696,7 +696,7 @@ export default {
   display: inline;
 }
 .navPost {
-  display: inline;
+  display: inline-block;
   padding-left: 8rpx;
   color: --color(--qui-LINK);
 }

@@ -148,19 +148,19 @@ export default {
       this.setFooterIndex(parseInt(index, 10) + 1);
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
-      if (!item.url) {
-        return;
-      }
-      const currentPage = getCurrentPages();
-      if (
-        item.tabsName === this.i18n.t('home.tabsCircle') &&
-        currentPage[0].route === 'pages/home/index'
-      ) {
-        const len = currentPage.length;
-        uni.navigateBack({
-          delta: len,
-        });
-      }
+      // if (!item.url) {
+      //   return;
+      // }
+      // const currentPage = getCurrentPages();
+      // if (
+      //   item.tabsName === this.i18n.t('home.tabsCircle') &&
+      //   currentPage[0].route === 'pages/home/index'
+      // ) {
+      //   const len = currentPage.length;
+      //   uni.navigateBack({
+      //     delta: len,
+      //   });
+      // }
     },
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
