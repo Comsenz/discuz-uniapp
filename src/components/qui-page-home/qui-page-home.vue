@@ -26,6 +26,7 @@
         :post-num="forums.other.count_threads"
         :share-btn="shareBtn"
         :share-show="shareShow"
+        :title="i18n.t('home.siteName')"
         @click="open"
         @closeShare="closeShare"
       ></qui-header>
