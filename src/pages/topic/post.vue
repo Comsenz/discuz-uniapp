@@ -1,5 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
+    <!-- #ifdef H5-->
+    <view class="head-gap"></view>
+    <!-- #endif -->
     <view class="post-box" v-if="loadStatus">
       <view class="post-box__title" v-if="type === 1">
         <input
@@ -89,8 +95,10 @@
       <!-- <qui-upload-file
         :url="`${url}api/attachments`"
         ref="uploadFile"
+        :header="header"
+        :file-format="forums.set_attach.support_file_ext"
+        :file-size="forums.set_attach.support_max_size"
         v-if="type === 1 && platform !== 'ios'"
-        @uploadClick="uploadFileClick"
       ></qui-upload-file> -->
       <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
@@ -278,6 +286,7 @@ export default {
   ],
   data() {
     return {
+      navTitle: '内容详情页', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
@@ -540,9 +549,6 @@ export default {
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
-    },
-    uploadFileClick() {
-      //
     },
     uploadChange(e, status) {
       this.uploadFile = e;
@@ -970,7 +976,7 @@ export default {
       });
       // #endif
       // h5内发布按钮验证码验证
-      // #ifdef H5 
+      // #ifdef H5
 
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         console.log(res, 'h5验证1111');
@@ -1082,6 +1088,9 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
+.head-gap {
+  height: 88rpx;
+}
 .post-box {
   width: 100vw;
   height: 100%;

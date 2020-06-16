@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
     <view v-if="loaded">
       <scroll-view
         scroll-y="true"
@@ -20,6 +23,7 @@
             <view class="detail-tip" v-else-if="topicStatus == 0">
               {{ t.examineTip }}
             </view>
+            <view>{{ wxRes }}</view>
             <qui-topic-content
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
@@ -199,6 +203,12 @@
             <qui-icon name="icon-share" class="qui-icon"></qui-icon>
             <view class="ft-child-word">{{ t.share }}</view>
           </view>
+          <view class="mask" v-if="shareShow" @click="closeShare">
+            <view class="wxShareTip">
+              <img src="/static/sharePoint.png" alt class="sharePoint" />
+              <img src="/static/shareKnow.png" alt class="shareKnow" />
+            </view>
+          </view>
         </view>
       </view>
       <!--分享弹框-->
@@ -376,13 +386,13 @@
       </uni-popup>
       <uni-popup ref="codePopup" type="center" class="code-popup-box">
         <view class="code-content" v-if="qrcodeShow">
-          <view class="code-title">立即支付</view>
+          <view class="code-title">{{ p.payNow }}</view>
           <view class="code-pay-money">
             <view class="code-yuan">￥</view>
             {{ price }}
           </view>
           <view class="code-type-box">
-            <view class="code-type-tit">支付方式</view>
+            <view class="code-type-tit">{{ p.payType }}</view>
             <view class="code-type">
               <qui-icon
                 class="code-type-icon"
@@ -390,11 +400,11 @@
                 size="36"
                 color="#09bb07"
               ></qui-icon>
-              <view class="code-type-text">微信支付</view>
+              <view class="code-type-text">{{ p.wxPay }}</view>
             </view>
           </view>
           <image :src="codeUrl" class="code-img"></image>
-          <view class="code-tip">微信识别二维码</view>
+          <view class="code-tip">{{ p.wechatIdentificationQRcode }}</view>
         </view>
       </uni-popup>
     </view>
@@ -412,16 +422,26 @@ import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+// #endif
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
 export default {
-  mixins: [user, forums],
+  mixins: [
+    user,
+    forums,
+    // #ifdef H5
+    wxshare,
+    // #endif
+  ],
   // #ifndef MP-WEIXIN
   utils: [appCommonH],
   // #endif
   data() {
     return {
+      navTitle: '内容详情页', // 导航栏标题
       threadId: '', //主题id
       // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
@@ -445,6 +465,7 @@ export default {
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
+      shareShow: false, // h5微信分享
       bottomData: [
         {
           text: this.i18n.t('core.generatePoster'),
@@ -564,6 +585,7 @@ export default {
       qrcodeShow: false, // 二维码弹框
       codeUrl: '', //二维码支付url，base64
       browser: 0, // 0为小程序，1为除小程序之外的设备
+      wxRes: '',
     };
   },
   computed: {
@@ -655,6 +677,14 @@ export default {
     } catch (e) {
       // error
     }
+    // h5微信分享
+    // #ifdef H5
+    this.wxShare({
+      title: this.forums.set_site.site_name,
+      desc: this.forums.set_site.site_introduction,
+      logo: this.forums.set_site.site_logo,
+    });
+    // #endif
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -1121,15 +1151,15 @@ export default {
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
         {
-          appId: data.attributes.wechat_js.appId, //公众号名称，由商户传入
-          timeStamp: data.attributes.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
-          nonceStr: data.attributes.wechat_js.nonceStr, //随机串
-          package: data.attributes.wechat_js.package,
+          appId: data.wechat_js.appId, //公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, //随机串
+          package: data.wechat_js.package,
           signType: 'MD5', //微信签名方式：
-          paySign: data.attributes.wechat_js.paySign, //微信签名
+          paySign: data.wechat_js.paySign, //微信签名
         },
         function(data) {
-          // alert('支付唤醒');
+          alert('支付唤醒');
 
           if (data.err_msg == 'get_brand_wcpay_request:cancel') {
             resolve;
@@ -1184,7 +1214,7 @@ export default {
             }
           } else if (payType == 1) {
             // 钱包支付
-            console.log(type, value, this.orderSn, '这是参数');
+            console.log(type, value, this.orderSn, '这是钱包支付的参数');
 
             this.orderPay(20, value, this.orderSn, payType);
           }
@@ -1220,6 +1250,7 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           console.log(res, '订单支付接口请求成功');
+          this.wxRes = res;
           if (payType == 0) {
             if (broswerType === '0') {
               this.wechatPay(
@@ -1244,7 +1275,7 @@ export default {
               console.log('这是h5');
               window.location.href = res.wechat_h5_link;
               const payPhone = setInterval(() => {
-                if (this.payStatus && this.payStatusNum > 10) {
+                if (this.payStatus == '1' && this.payStatusNum > 10) {
                   clearInterval(payPhone);
                   return;
                 }
@@ -1267,6 +1298,7 @@ export default {
               }
             }
           } else if (payType == 1) {
+            console.log('请求状态');
             const payWechat = setInterval(() => {
               if (this.payStatus == '1' || this.payStatusNum > 10) {
                 clearInterval(payWechat);
@@ -1283,7 +1315,7 @@ export default {
           this.$refs['payShow'].clear();
         });
     },
-    // 查询订单支状
+    // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, broswerType) {
       const params = {
         _jv: {
@@ -1297,13 +1329,12 @@ export default {
 
           this.payStatus = res.status;
           this.payStatusNum++;
-          return false;
           if (this.payStatus == '1' || this.payStatusNum > 10) {
             // this.payShow = false;
             this.payShowStatus = false;
             this.coverLoading = false;
             if (broswerType === '2') {
-              return false;
+              // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
@@ -1693,18 +1724,39 @@ export default {
     },
     // 分享
     shareClick() {
+      console.log('分享哈');
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
         return;
       }
+      // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
-      console.log(this.forums, '!!~~~~~');
       if (this.forums.set_site.site_mode == 'pay') {
         this.bottomData.map((value, key, bottomData) => {
           value.name === 'wxFriends' && bottomData.splice(key, 1);
         });
       }
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        console.log(this.isWeixin, '微信内');
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          // id:
+          url: 'pages/topic/index',
+        });
+      }
+      // #endif
     },
+    // #ifdef H5
+    closeShare() {
+      console.log('关闭微信');
+      this.shareShow = false;
+      console.log(this.shareShow, '8888');
+    },
+    // #endif
     // 取消分享
     cancel() {
       this.$refs.sharePopup.close();
@@ -1828,6 +1880,7 @@ page {
   .det-hd-management {
     display: flex;
     flex-direction: row;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: 26rpx;
@@ -1974,6 +2027,9 @@ page {
 }
 .ft-gap {
   width: 100%;
+  /* #ifdef H5 */
+  margin-top: 88rpx;
+  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {
@@ -2248,5 +2304,34 @@ page {
 }
 .code-tip {
   padding: 14rpx 0 20rpx;
+}
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 17;
+  width: 100%;
+  height: 100%;
+  background: rgba(#000, 0.6);
+}
+.wxShareTip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2222222222222;
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  .sharePoint {
+    display: inline-block;
+    width: 70%;
+    margin-top: 10rpx;
+    margin-right: 30rpx;
+  }
+  .shareKnow {
+    display: block;
+    width: 35%;
+    margin: 20vh auto 30rpx;
+  }
 }
 </style>

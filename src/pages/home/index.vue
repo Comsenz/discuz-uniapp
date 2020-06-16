@@ -84,14 +84,7 @@ export default {
   },
   onShow() {
     if (
-      // #ifdef H5
-      console.log('h5h5h5h5h') &&
-      !this.$store.getters['session/get']('h5Login') &&
-      // #endif
-      // #ifdef MP-WEIXIN
-      console.log('h5h5h5h5h') &&
       !this.$store.getters['session/get']('isLogin') &&
-      // #endif
       ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
     ) {
       uni.navigateTo({
@@ -99,12 +92,17 @@ export default {
       });
       return;
     }
-    if (this.currentTab === 'quinotice') {
+    if (this.currentTab === 'home' && this.$refs[this.currentTab]) {
+      this.$nextTick(() => {
+        this.$refs[this.currentTab].ontrueGetList();
+      });
+    }
+    if (this.currentTab === 'quinotice' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();
       });
     }
-    if (this.currentTab === 'quimy') {
+    if (this.currentTab === 'quimy' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].refreshNum();
       });
@@ -122,18 +120,13 @@ export default {
       if (this.currentTab === 'quinotice') {
         this.getUserInfo();
       }
+
       if (
-        // #ifdef H5
-        console.log('h5h5h5h5h') &&
-        !this.$store.getters['session/get']('h5Login') &&
-        // #endif
-        // #ifdef MP-WEIXIN
-        console.log('h5h5h5h5h') &&
         !this.$store.getters['session/get']('isLogin') &&
-        // #endif
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         this.$store.getters['session/get']('auth').open();
+        this.currentTab = 'home';
         this.setFooterIndex(0);
         return;
       }
