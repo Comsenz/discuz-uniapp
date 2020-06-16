@@ -22,7 +22,6 @@
 import { mapState } from 'vuex';
 // #ifdef H5
 import forums from '@/mixin/forums';
-import isWeiXinBrowser from '@/utils/platform';
 // #endif
 
 export default {
@@ -68,26 +67,41 @@ export default {
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {
-        console.log('注册并绑定页');
         const url = '/pages/home/index';
         console.log('forums', this.forums);
-        console.log('isWeiXinBrowser', isWeiXinBrowser);
-        if (this.forums && this.forums.set_reg) {
-          if (isWeiXinBrowser) {
-            if (this.forums.set_reg.register_type === 0) {
-              uni.navigateTo({
-                url: `/pages/user/register-bind?url=${url}`,
-              });
-            } else if (this.forums.set_reg.register_type === 1) {
-              uni.navigateTo({
-                url: `/pages/user/verification-code-login?url=${url}`,
-              });
-            }
-          } else if (this.forums.qcloud.qcloud_sms) {
+        const ua = window.navigator.userAgent.toLowerCase(); // window.navigator.userAgent中包含浏览器类型、版本、操作系统类型、浏览器引擎类型等信息
+        console.log('微信浏览器：', ua.match(/MicroMessenger/i) === 'micromessenger');
+        if (ua.match(/MicroMessenger/i) === 'micromessenger') {
+          // 微信浏览器
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+            // 用户名模式
+            console.log('用户名模式跳转到注册并绑定页');
+            uni.navigateTo({
+              url: `/pages/user/register-bind?url=${url}`,
+            });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+            console.log('手机号模式跳转到手机号+验证码登陆页');
+            // 手机号模式
             uni.navigateTo({
               url: `/pages/user/verification-code-login?url=${url}`,
             });
-          } else {
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            // 无感模式
+            console.log('无感模式');
+          }
+        } else {
+          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+            // 手机号模式
+            console.log('手机号模式跳转到手机号+验证码登陆页');
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}`,
+            });
+          }
+          if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
+            // 用户名模式
+            console.log('用户名模式跳转到注册并绑定页');
             uni.navigateTo({
               url: `/pages/user/register-bind?url=${url}`,
             });
