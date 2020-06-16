@@ -13,7 +13,8 @@
           :src="item.path"
           @click="previewPicture(index)"
         ></image>
-        <view class="qui-uploader-box__uploader-file--load" v-if="item.uploadPercent < 100">
+        <view>{{ item.uploadPercent }}</view>
+        <view class="qui-uploader-box__uploader-file--load" v-if="numberdata[index].state < 100">
           <view class="qui-uploader-box__uploader-file--load__mask"></view>
           <text class="qui-uploader-box__uploader-file--load__text">
             {{ i18n.t('discuzq.image.imageUploading') }}
@@ -89,6 +90,7 @@ export default {
       uploadIndex: '',
       formDataAppend: {},
       lastOrder: 0,
+      numberdata: [],
     };
   },
   watch: {
@@ -166,6 +168,7 @@ export default {
               _this.lastOrder += 1;
               return new Promise((resolve, reject) => {
                 res.tempFiles[index].uploadPercent = 0;
+                _this.numberdata.push({ state: res.tempFiles[index].uploadPercent });
                 res.tempFiles[index].uploadStatus = false;
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.upload(
@@ -205,6 +208,7 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
+            _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
             _this.uploadList.push(JSON.parse(res.data));
           } else {
             _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
@@ -227,8 +231,10 @@ export default {
         for (let i = length; i < _this.uploadBeforeList.length; i += 1) {
           if (progress < 100) {
             _this.uploadBeforeList[i].uploadPercent = progress;
+            _this.numberdata[i].state = _this.uploadBeforeList[i].uploadPercent;
           } else if (progress === 100) {
             _this.uploadBeforeList[i].uploadPercent = 90;
+            _this.numberdata[i].state = _this.uploadBeforeList[i].uploadPercent;
           }
         }
       });

@@ -88,16 +88,15 @@ export default {
     this.themeid = arr.id;
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
-    console.log(this.themedata);
     this.getusertitle();
   },
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
-    themedata() {
-      return this.$store.getters['jv/get'](`threads/${this.themeid}`);
-    },
+    // themedata() {
+    //   return this.$store.getters['jv/get'](`threads/${this.themeid}`);
+    // },
     userInfo() {
       return this.$store.getters['jv/get'](`users/${this.userid}`);
     },
@@ -138,7 +137,6 @@ export default {
           `threads/${this.themeid}?include=user,firstPost,firstPost.images,threadVideo,category`,
         )
         .then(data => {
-          console.log(data);
           this.headerName = data.user.username;
           this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
