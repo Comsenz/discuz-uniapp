@@ -510,6 +510,7 @@ export default {
     flex-direction: row;
     justify-content: flex-end;
     font-size: $fg-f28;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: $fg-f26;
