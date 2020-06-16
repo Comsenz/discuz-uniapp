@@ -55,7 +55,7 @@
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
-          <qui-uparse :content="themeContent" @navigate="navigate"></qui-uparse>
+          <qui-uparse :content="themeContent"></qui-uparse>
         </view>
         <view
           class="theme__content__videocover"
@@ -276,11 +276,6 @@ export default {
     },
   },
   methods: {
-    navigate(e) {
-      uni.navigateTo({
-        url: e,
-      });
-    },
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;

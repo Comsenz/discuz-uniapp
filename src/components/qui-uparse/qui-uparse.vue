@@ -62,7 +62,12 @@ export default {
   },
   methods: {
     navigate(e) {
-      this.$emit('navigate', e);
+      // #ifdef  H5
+
+      // #endif
+      uni.navigateTo({
+        url: e,
+      });
     },
   },
 };
