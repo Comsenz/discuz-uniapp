@@ -47,7 +47,7 @@
 
       <view class="themeItem__content">
         <view class="themeItem__content__text" @click="commentJump">
-          <rich-text :nodes="commentContent"></rich-text>
+          <qui-uparse :content="commentContent"></qui-uparse>
         </view>
 
         <qui-image :images-list="imagesList"></qui-image>
