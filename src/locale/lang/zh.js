@@ -281,6 +281,7 @@ export default {
     payFail: '支付失败',
     payType: '支付方式',
     payPassword: '支付密码',
+    wechatIdentificationQRcode: '微信识别二维码',
   },
   auth: {
     userinfo: '获取头像和昵称',

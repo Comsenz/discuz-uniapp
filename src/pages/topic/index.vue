@@ -386,13 +386,13 @@
       </uni-popup>
       <uni-popup ref="codePopup" type="center" class="code-popup-box">
         <view class="code-content" v-if="qrcodeShow">
-          <view class="code-title">立即支付</view>
+          <view class="code-title">{{ p.payNow }}</view>
           <view class="code-pay-money">
             <view class="code-yuan">￥</view>
             {{ price }}
           </view>
           <view class="code-type-box">
-            <view class="code-type-tit">支付方式</view>
+            <view class="code-type-tit">{{ p.payType }}</view>
             <view class="code-type">
               <qui-icon
                 class="code-type-icon"
@@ -400,11 +400,11 @@
                 size="36"
                 color="#09bb07"
               ></qui-icon>
-              <view class="code-type-text">微信支付</view>
+              <view class="code-type-text">{{ p.wxPay }}</view>
             </view>
           </view>
           <image :src="codeUrl" class="code-img"></image>
-          <view class="code-tip">微信识别二维码</view>
+          <view class="code-tip">{{ p.wechatIdentificationQRcode }}</view>
         </view>
       </uni-popup>
     </view>
@@ -429,12 +429,13 @@ import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 // #endif
 export default {
-  mixins: [user,
-  forums,
-  // #ifdef H5
-  wxshare,
-  // #endif
-   ],
+  mixins: [
+    user,
+    forums,
+    // #ifdef H5
+    wxshare,
+    // #endif
+  ],
   // #ifndef MP-WEIXIN
   utils: [appCommonH],
   // #endif
@@ -1748,8 +1749,6 @@ export default {
         });
       }
       // #endif
-
-
     },
     // #ifdef H5
     closeShare() {
