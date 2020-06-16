@@ -89,8 +89,10 @@
       <!-- <qui-upload-file
         :url="`${url}api/attachments`"
         ref="uploadFile"
+        :header="header"
+        :file-format="forums.set_attach.support_file_ext"
+        :file-size="forums.set_attach.support_max_size"
         v-if="type === 1 && platform !== 'ios'"
-        @uploadClick="uploadFileClick"
       ></qui-upload-file> -->
       <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
@@ -513,9 +515,6 @@ export default {
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
-    },
-    uploadFileClick() {
-      //
     },
     uploadChange(e, status) {
       this.uploadFile = e;
