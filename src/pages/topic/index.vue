@@ -23,6 +23,7 @@
             <view class="detail-tip" v-else-if="topicStatus == 0">
               {{ t.examineTip }}
             </view>
+            <view>{{ wxRes }}</view>
             <qui-topic-content
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
@@ -568,6 +569,7 @@ export default {
       qrcodeShow: false, // 二维码弹框
       codeUrl: '', //二维码支付url，base64
       browser: 0, // 0为小程序，1为除小程序之外的设备
+      wxRes: '',
     };
   },
   computed: {
@@ -1125,15 +1127,15 @@ export default {
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
         {
-          appId: data.attributes.wechat_js.appId, //公众号名称，由商户传入
-          timeStamp: data.attributes.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
-          nonceStr: data.attributes.wechat_js.nonceStr, //随机串
-          package: data.attributes.wechat_js.package,
+          appId: data.wechat_js.appId, //公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, //随机串
+          package: data.wechat_js.package,
           signType: 'MD5', //微信签名方式：
-          paySign: data.attributes.wechat_js.paySign, //微信签名
+          paySign: data.wechat_js.paySign, //微信签名
         },
         function(data) {
-          // alert('支付唤醒');
+          alert('支付唤醒');
 
           if (data.err_msg == 'get_brand_wcpay_request:cancel') {
             resolve;
@@ -1224,6 +1226,7 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           console.log(res, '订单支付接口请求成功');
+          this.wxRes = res;
           if (payType == 0) {
             if (broswerType === '0') {
               this.wechatPay(
@@ -1248,7 +1251,7 @@ export default {
               console.log('这是h5');
               window.location.href = res.wechat_h5_link;
               const payPhone = setInterval(() => {
-                if (this.payStatus && this.payStatusNum > 10) {
+                if (this.payStatus == '1' && this.payStatusNum > 10) {
                   clearInterval(payPhone);
                   return;
                 }
