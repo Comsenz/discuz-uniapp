@@ -1288,7 +1288,7 @@ export default {
           this.$refs['payShow'].clear();
         });
     },
-    // 查询订单支状
+    // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, broswerType) {
       const params = {
         _jv: {
@@ -1302,13 +1302,12 @@ export default {
 
           this.payStatus = res.status;
           this.payStatusNum++;
-          return false;
           if (this.payStatus == '1' || this.payStatusNum > 10) {
             // this.payShow = false;
             this.payShowStatus = false;
             this.coverLoading = false;
             if (broswerType === '2') {
-              return false;
+              // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
