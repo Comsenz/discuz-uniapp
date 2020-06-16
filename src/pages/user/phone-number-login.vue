@@ -10,7 +10,7 @@
           <input
             class="new-phon-num"
             type="number"
-            v-model="phoneNumber"
+            v-model="username"
             :focus="true"
             :cursor="1"
             @input="changeinput"
@@ -53,7 +53,7 @@
 export default {
   data() {
     return {
-      phoneNumber: '', // 手机号
+      username: '', // 手机号
       password: '', // 密码
       url: '', // 上一个页面的路径
     };
@@ -64,13 +64,32 @@ export default {
   },
   methods: {
     login() {
-      if (this.phoneNumber === '') {
+      if (this.username === '') {
         this.showDialog('手机号码不能为空');
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+        // eslint-disable-next-line no-unused-vars
+        this.$store
+          .dispatch('session/h5Login', params)
+          .then(res => {
+            console.log('手机号密码登录绑定成功', res);
+            uni.navigateTo({
+              url: this.url,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
         this.clear();
-        console.log('登录成功');
       }
     },
     jump2VerificationCodeLogin() {
@@ -84,7 +103,7 @@ export default {
       this.clear();
       console.log('跳转到找回密码页面');
       uni.navigateTo({
-        url: '/pages/modify/findpwd',
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
     clear() {
