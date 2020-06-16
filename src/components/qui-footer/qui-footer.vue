@@ -110,14 +110,6 @@ export default {
       return this.user.unreadNotifications;
     },
   },
-  // onLoad(options) {
-  //   console.log(options, 'options');
-  //   let modelmes = wx.getStorageSync('modelmes');
-  //   let isiphonex = app.globalData.isIphoneX;
-  //   this.setData({
-  //     isiphonex: isIphoneX
-  //   })
-  // },
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {
@@ -177,6 +169,14 @@ export default {
     footerOpen() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
+      }
+      if (!this.forums.other.publish_need_real_name) {
+        this.$refs.toast.show({ message: this.i18n.t('home.needRealname') });
+        return;
+      }
+      if (!this.forums.other.publish_need_bind_phone) {
+        this.$refs.toast.show({ message: this.i18n.t('home.needPhone') });
         return;
       }
 

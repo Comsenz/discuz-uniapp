@@ -57,7 +57,8 @@ module.exports = {
         default:
           themeTitle = shareInfo.title || 'Discuz!Q';
       }
-      const url = `${this.getUrl()}${shareInfo.url}?id=${shareInfo.id}`;
+      const id = shareInfo.id ? `?id=${shareInfo.id}` : '';
+      const url = `${this.getUrl()}${shareInfo.url}${id}`;
       const oInput = document.createElement('input');
       const reTag = /<img(?:.|\s)*?>/g;
       const reTag2 = /(<\/?br.*?>)/gi;

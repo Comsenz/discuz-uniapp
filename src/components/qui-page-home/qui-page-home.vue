@@ -185,6 +185,7 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
 // #endif
 import { mapMutations, mapState } from 'vuex';
 
@@ -199,6 +200,7 @@ export default {
     user,
     // #ifdef  H5
     wxshare,
+    appCommonH,
     // #endif
   ],
 
@@ -235,6 +237,7 @@ export default {
       filterTop: 450, // 筛选弹窗的位置
       shareShow: false, // h5内分享提示信息
       shareTitle: '', // h5内分享复制链接
+      isWeixin: '', // 是否是微信浏览器内
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -290,6 +293,10 @@ export default {
     }),
   },
   created() {
+    // #ifdef  H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone;
+    // #endif
     // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
     // 编辑删除图片后首页删除图片
@@ -467,7 +474,15 @@ export default {
       // #endif
 
       // #ifdef H5
-      this.shareShow = true;
+      if (this.isWeixin === true) {
+        console.log(this.isWeixin, '微信内');
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: 'pages/home/index',
+        });
+      }
       // #endif
     },
     // #ifdef H5
