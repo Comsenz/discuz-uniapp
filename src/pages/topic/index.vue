@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
     <view v-if="loaded">
       <scroll-view
         scroll-y="true"
@@ -20,6 +23,7 @@
             <view class="detail-tip" v-else-if="topicStatus == 0">
               {{ t.examineTip }}
             </view>
+            <view>{{ wxRes }}</view>
             <qui-topic-content
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
@@ -422,6 +426,7 @@ export default {
   // #endif
   data() {
     return {
+      navTitle: '内容详情页', // 导航栏标题
       threadId: '', //主题id
       // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
@@ -564,6 +569,7 @@ export default {
       qrcodeShow: false, // 二维码弹框
       codeUrl: '', //二维码支付url，base64
       browser: 0, // 0为小程序，1为除小程序之外的设备
+      wxRes: '',
     };
   },
   computed: {
@@ -1121,15 +1127,15 @@ export default {
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
         {
-          appId: data.attributes.wechat_js.appId, //公众号名称，由商户传入
-          timeStamp: data.attributes.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
-          nonceStr: data.attributes.wechat_js.nonceStr, //随机串
-          package: data.attributes.wechat_js.package,
+          appId: data.wechat_js.appId, //公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, //随机串
+          package: data.wechat_js.package,
           signType: 'MD5', //微信签名方式：
-          paySign: data.attributes.wechat_js.paySign, //微信签名
+          paySign: data.wechat_js.paySign, //微信签名
         },
         function(data) {
-          // alert('支付唤醒');
+          alert('支付唤醒');
 
           if (data.err_msg == 'get_brand_wcpay_request:cancel') {
             resolve;
@@ -1184,7 +1190,7 @@ export default {
             }
           } else if (payType == 1) {
             // 钱包支付
-            console.log(type, value, this.orderSn, '这是参数');
+            console.log(type, value, this.orderSn, '这是钱包支付的参数');
 
             this.orderPay(20, value, this.orderSn, payType);
           }
@@ -1220,6 +1226,7 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           console.log(res, '订单支付接口请求成功');
+          this.wxRes = res;
           if (payType == 0) {
             if (broswerType === '0') {
               this.wechatPay(
@@ -1244,7 +1251,7 @@ export default {
               console.log('这是h5');
               window.location.href = res.wechat_h5_link;
               const payPhone = setInterval(() => {
-                if (this.payStatus && this.payStatusNum > 10) {
+                if (this.payStatus == '1' && this.payStatusNum > 10) {
                   clearInterval(payPhone);
                   return;
                 }
@@ -1267,6 +1274,7 @@ export default {
               }
             }
           } else if (payType == 1) {
+            console.log('请求状态');
             const payWechat = setInterval(() => {
               if (this.payStatus == '1' || this.payStatusNum > 10) {
                 clearInterval(payWechat);
@@ -1283,7 +1291,7 @@ export default {
           this.$refs['payShow'].clear();
         });
     },
-    // 查询订单支状
+    // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, broswerType) {
       const params = {
         _jv: {
@@ -1297,13 +1305,12 @@ export default {
 
           this.payStatus = res.status;
           this.payStatusNum++;
-          return false;
           if (this.payStatus == '1' || this.payStatusNum > 10) {
             // this.payShow = false;
             this.payShowStatus = false;
             this.coverLoading = false;
             if (broswerType === '2') {
-              return false;
+              // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
@@ -1974,6 +1981,9 @@ page {
 }
 .ft-gap {
   width: 100%;
+  /* #ifdef H5 */
+  margin-top: 88rpx;
+  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {
