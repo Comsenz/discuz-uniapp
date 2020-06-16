@@ -915,6 +915,7 @@ page {
   .det-hd-management {
     display: flex;
     flex-direction: row;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: 26rpx;

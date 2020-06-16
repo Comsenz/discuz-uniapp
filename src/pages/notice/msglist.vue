@@ -42,7 +42,10 @@
                   : 'chat-box__con__msg__other__box',
               ]"
             >
-              <rich-text :nodes="item.message_text_html" style="word-break: break-all;"></rich-text>
+              <qui-uparse
+                :content="item.message_text_html"
+                style="word-break: break-all;"
+              ></qui-uparse>
             </view>
           </view>
         </view>

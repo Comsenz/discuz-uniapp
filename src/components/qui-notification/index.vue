@@ -285,6 +285,7 @@ export default {
 
       &__wrap-info-username {
         font-weight: bold;
+        vertical-align: top;
       }
 
       &__wrap-info-time {

@@ -203,6 +203,12 @@
             <qui-icon name="icon-share" class="qui-icon"></qui-icon>
             <view class="ft-child-word">{{ t.share }}</view>
           </view>
+          <view class="mask" v-if="shareShow" @click="closeShare">
+            <view class="wxShareTip">
+              <img src="/static/sharePoint.png" alt class="sharePoint" />
+              <img src="/static/shareKnow.png" alt class="shareKnow" />
+            </view>
+          </view>
         </view>
       </view>
       <!--分享弹框-->
@@ -416,11 +422,19 @@ import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+// #endif
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
 export default {
-  mixins: [user, forums],
+  mixins: [user,
+  forums,
+  // #ifdef H5
+  wxshare,
+  // #endif
+   ],
   // #ifndef MP-WEIXIN
   utils: [appCommonH],
   // #endif
@@ -450,6 +464,7 @@ export default {
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
+      shareShow: false, // h5微信分享
       bottomData: [
         {
           text: this.i18n.t('core.generatePoster'),
@@ -661,6 +676,14 @@ export default {
     } catch (e) {
       // error
     }
+    // h5微信分享
+    // #ifdef H5
+    this.wxShare({
+      title: this.forums.set_site.site_name,
+      desc: this.forums.set_site.site_introduction,
+      logo: this.forums.set_site.site_logo,
+    });
+    // #endif
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -1700,18 +1723,41 @@ export default {
     },
     // 分享
     shareClick() {
+      console.log('分享哈');
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
         return;
       }
+      // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
-      console.log(this.forums, '!!~~~~~');
       if (this.forums.set_site.site_mode == 'pay') {
         this.bottomData.map((value, key, bottomData) => {
           value.name === 'wxFriends' && bottomData.splice(key, 1);
         });
       }
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        console.log(this.isWeixin, '微信内');
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          // id:
+          url: 'pages/topic/index',
+        });
+      }
+      // #endif
+
+
     },
+    // #ifdef H5
+    closeShare() {
+      console.log('关闭微信');
+      this.shareShow = false;
+      console.log(this.shareShow, '8888');
+    },
+    // #endif
     // 取消分享
     cancel() {
       this.$refs.sharePopup.close();
@@ -1835,6 +1881,7 @@ page {
   .det-hd-management {
     display: flex;
     flex-direction: row;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: 26rpx;
@@ -2258,5 +2305,34 @@ page {
 }
 .code-tip {
   padding: 14rpx 0 20rpx;
+}
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 17;
+  width: 100%;
+  height: 100%;
+  background: rgba(#000, 0.6);
+}
+.wxShareTip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2222222222222;
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  .sharePoint {
+    display: inline-block;
+    width: 70%;
+    margin-top: 10rpx;
+    margin-right: 30rpx;
+  }
+  .shareKnow {
+    display: block;
+    width: 35%;
+    margin: 20vh auto 30rpx;
+  }
 }
 </style>
