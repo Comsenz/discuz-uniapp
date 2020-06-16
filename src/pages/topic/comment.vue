@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content bg">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
     <view v-if="loaded && status">
       <scroll-view
         scroll-y="true"
@@ -290,6 +293,7 @@ export default {
   mixins: [user],
   data() {
     return {
+      navTitle: '评论详情页', // 导航栏标题
       threadId: '',
       commentId: '',
       thread: {},
@@ -1056,6 +1060,9 @@ page {
 }
 .ft-gap {
   width: 100%;
+  /* #ifdef H5 */
+  margin-top: 88rpx;
+  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {

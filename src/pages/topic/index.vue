@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
     <view v-if="loaded">
       <scroll-view
         scroll-y="true"
@@ -422,6 +425,7 @@ export default {
   // #endif
   data() {
     return {
+      navTitle: '内容详情页', // 导航栏标题
       threadId: '', //主题id
       // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
@@ -1184,7 +1188,7 @@ export default {
             }
           } else if (payType == 1) {
             // 钱包支付
-            console.log(type, value, this.orderSn, '这是参数');
+            console.log(type, value, this.orderSn, '这是钱包支付的参数');
 
             this.orderPay(20, value, this.orderSn, payType);
           }
@@ -1267,6 +1271,7 @@ export default {
               }
             }
           } else if (payType == 1) {
+            console.log('请求状态');
             const payWechat = setInterval(() => {
               if (this.payStatus == '1' || this.payStatusNum > 10) {
                 clearInterval(payWechat);
@@ -1974,6 +1979,9 @@ page {
 }
 .ft-gap {
   width: 100%;
+  /* #ifdef H5 */
+  margin-top: 88rpx;
+  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {
