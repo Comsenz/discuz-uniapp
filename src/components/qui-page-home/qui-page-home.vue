@@ -834,7 +834,7 @@ export default {
   height: 100rpx;
   text-align: center;
   white-space: nowrap;
-  border-bottom: 1rpx solid #eee;
+  border-bottom: 1rpx solid --color(--qui-BOR-EEE);
 }
 .scroll-tab-item {
   z-index: 1;

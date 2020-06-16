@@ -20,7 +20,7 @@
       :class="node.classStr"
       :data-href="node.attr.href"
       :style="node.styleStr"
-      style="display: inline; border-bottom: 1px solid #555;"
+      style="display: inline; "
     >
       <block v-for="(node, index) of node.nodes" :key="index">
         <wx-parse-template :node="node" />
