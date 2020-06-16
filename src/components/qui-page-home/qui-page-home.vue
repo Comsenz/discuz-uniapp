@@ -763,12 +763,12 @@ export default {
 
   &__box {
     position: absolute;
-    right: 2rpx;
+    right: 0;
     z-index: 2;
     display: block;
     float: right;
     width: 80rpx;
-    height: 100rpx;
+    height: 98rpx;
     background: --color(--qui-BG-2);
     &__icon {
       margin-left: 24rpx;

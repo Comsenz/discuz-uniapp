@@ -3,6 +3,7 @@ module.exports = {
     detectionModel() {
       const modelmes = uni.getSystemInfoSync().model;
       let tempMoble = false;
+      if (!modelmes) return tempMoble;
       const bangsList = [
         'iPhone X',
         'iPhone XR',
