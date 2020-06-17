@@ -127,7 +127,23 @@
               @click="toolBarClick('link')"
             ></qui-icon>
           </view>
-          <md-unordered-list>
+          <view>
+            <qui-icon
+              name="icon-code"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('undeline')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-link"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('strikethrough')"
+            ></qui-icon>
+          </view>
+          <!--<md-unordered-list>
             <qui-icon
               name="icon-unordered-list"
               size="30"
@@ -142,13 +158,8 @@
               class="qui-icon"
               @click="toolBarClick('ordered')"
             ></qui-icon>
-          </md-ordered-list>
+          </md-ordered-list>-->
         </view>
-        <!--<qui-markdown
-          :show-preview="false"
-          :textarea-data.sync="textAreaValue"
-          textarea-html.sync=""
-        ></qui-markdown>-->
       </view>
 
       <qui-uploader
@@ -342,19 +353,7 @@
     </view>
   </qui-page>
 </template>
-<script>
-// const script = document.createElement('script');
-// if (
-//   window.location.hostname.endsWith('github.io') ||
-//   window.location.hostname.endsWith('github.com')
-// ) {
-//   script.src = 'https://unpkg.com/@github/markdown-toolbar-element@latest/dist/index.js';
-// } else {
-//   script.src = '../dist/index.js';
-// }
-// script.type = 'module';
-// document.body.appendChild(script);
-</script>
+
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -362,7 +361,6 @@ import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 // #ifdef  H5
 import tcaptchs from '@/utils/tcaptcha';
-import '@github/markdown-toolbar-element';
 import TcVod from 'vod-js-sdk-v6';
 // #endif
 
@@ -475,12 +473,12 @@ export default {
       signatureVal: '',
     };
   },
-  watch: {
-    textareaValue: function() {
-      console.log('markdown:' + this.textareaValue);
-      // console.log("html:"+this.textareaHtml)
-    },
-  },
+  // watch: {
+  //   textareaValue: function() {
+  //     console.log('markdown:' + this.textareaValue);
+  //     // console.log("html:"+this.textareaHtml)
+  //   },
+  // },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
@@ -506,59 +504,72 @@ export default {
     toolBarClick(type) {
       console.log(type);
       let text = '';
-      if (type == 'bold') {
+      if (type === 'bold') {
         console.log('加粗');
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '**粗体文字**' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 2;
+        text = `${`${this.textAreaValue.slice(
+          0,
+          this.cursor,
+        )}**粗体文字**${this.textAreaValue.slice(this.cursor)}`}`;
+        this.cursor += 2;
         this.focusEvent(this.cursor);
         console.log(this.textareaValue);
-      } else if (type == 'italic') {
+      } else if (type === 'italic') {
         // this.textareaValue += '*斜体* ';
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '__' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 1;
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}__${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
         this.focusEvent(this.cursor);
-      } else if (type == 'title') {
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '\n### ' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 4;
+      } else if (type === 'title') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}\n### ${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 4;
         this.focusEvent(this.cursor);
-      } else if (type == 'quote') {
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '\n> ' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 1;
+      } else if (type === 'quote') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}\n> ${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
         this.focusEvent(this.cursor);
-      } else if (type == 'link') {
-        // this.textareaValue += '[在此输入网址描述](在此输入网址) ';
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '- [](url)' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 1;
+      } else if (type === 'link') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}- [](url)${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
         this.focusEvent(this.cursor);
-      } else if (type == 'code') {
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '``' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 1;
+      } else if (type === 'code') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}\`\`${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
         this.focusEvent(this.cursor);
-      } else if (type == 'unordered') {
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '\n- ' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 1;
+      } else if (type === 'undeline') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 2;
         this.focusEvent(this.cursor);
-      } else if (type == 'ordered') {
-        text = `${this.textAreaValue.slice(0, this.cursor) +
-          '\n1. ' +
-          this.textAreaValue.slice(this.cursor)}`;
-        this.cursor = this.cursor + 1;
+      } else if (type === 'strikethrough') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 2;
         this.focusEvent(this.cursor);
       }
+      //  else if (type == 'unordered') {
+      //   text = `${this.textAreaValue.slice(0, this.cursor) +
+      //     '\n- ' +
+      //     this.textAreaValue.slice(this.cursor)}`;
+      //   this.cursor = this.cursor + 1;
+      //   this.focusEvent(this.cursor);
+      // } else if (type == 'ordered') {
+      //   text = `${this.textAreaValue.slice(0, this.cursor) +
+      //     '\n1. ' +
+      //     this.textAreaValue.slice(this.cursor)}`;
+      //   this.cursor = this.cursor + 1;
+      //   this.focusEvent(this.cursor);
+      // }
       this.textAreaValue = text;
     },
     ...mapMutations({
