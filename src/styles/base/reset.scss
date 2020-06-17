@@ -233,4 +233,7 @@ page {
 .content-member,.content-topic {
   padding: 0 3px;
   color: --color(--qui-LINK);
+  /* #ifdef H5 */
+  cursor: pointer;
+  /* #endif */
 }

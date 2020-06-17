@@ -260,7 +260,7 @@ export default {
 .qui-back__body {
   position: relative;
   display: flex;
-  height: 100rpx;
+  height: 44px;
   align-items: center;
   justify-content: space-between;
 }
