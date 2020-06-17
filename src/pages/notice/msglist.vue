@@ -321,6 +321,11 @@ export default {
             })
             .catch(err => {
               console.log(err);
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.permission_denied'),
+                duration: 2000,
+              });
             });
         } else {
           const params = {
@@ -341,6 +346,11 @@ export default {
             })
             .catch(err => {
               console.log(err);
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.permission_denied'),
+                duration: 2000,
+              });
             });
         }
         this.msg = '';
