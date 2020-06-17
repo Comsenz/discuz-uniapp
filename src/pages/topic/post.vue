@@ -656,21 +656,17 @@ export default {
           });
           // #endif
           // #ifndef  MP-WEIXIN
-          _this.getSignature(signature => {
-            _this.tcVod = new TcVod({
-              getSignature: () => {
-                return signature;
-              }
-            });
-            const uploader = _this.tcVod.upload({
+          _this.getSignature(getSignature => {
+            (new TcVod({
+              getSignature
+            })).upload({
               mediaFile: res.tempFile,
+            }).on('media_progress', info => {
+              console.log(info.percent) // 进度处理
+            }).done().then(doneResult => {
+              _this.fileId = doneResult.fileId;
+              _this.postVideo(doneResult.fileId);
             });
-            uploader
-              .done()
-              .then(doneResult => {
-                _this.fileId = doneResult.fileId;
-                _this.postVideo(doneResult.fileId);
-              })
           });
           // #endif
         },
@@ -1045,7 +1041,7 @@ export default {
     getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
         // #ifndef MP-WEIXIN
-        callBack(res.signature);
+        callBack(() => res.signature);
         // #endif
         if (res.signature) {
           return res.signature;
