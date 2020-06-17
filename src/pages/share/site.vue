@@ -117,7 +117,7 @@ export default {
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 站点介绍
         leftwidth: this.leftwidth,
-        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code`, // 微信二维码
+        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code?path=/pages/home/index`, // 微信二维码
         namewidth: this.themwidth,
         renamewidth: this.renamewidth,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别
