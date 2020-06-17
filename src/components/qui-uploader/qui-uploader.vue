@@ -14,7 +14,10 @@
           @click="previewPicture(index)"
         ></image>
         <view>{{ item.uploadPercent }}</view>
-        <view class="qui-uploader-box__uploader-file--load" v-if="numberdata[index].state < 100">
+        <view
+          class="qui-uploader-box__uploader-file--load"
+          v-if="numberdata[index] && numberdata[index].state < 100"
+        >
           <view class="qui-uploader-box__uploader-file--load__mask"></view>
           <text class="qui-uploader-box__uploader-file--load__text">
             {{ i18n.t('discuzq.image.imageUploading') }}
