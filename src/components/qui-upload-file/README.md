@@ -16,6 +16,7 @@
 | file-format | 支持的文件类型 | string | 空 |
 | file-size | 支持的文件大小 | string| 空 |
 | maxLength | 文件最大长度 | Number| 3 |
+| showAdd | 是否显示上传按钮 | Boolean | true |
 
 ### 事件说明
 

@@ -165,14 +165,17 @@
         @uploadClick="uploadClick"
       ></qui-uploader>
       <!-- #ifdef H5-->
-      <!-- <qui-upload-file
+      <qui-upload-file
         :url="`${url}api/attachments`"
-        ref="uploadFile"
+        ref="uploadFiles"
         :header="header"
-        :file-format="forums.set_attach.support_file_ext"
-        :file-size="forums.set_attach.support_max_size"
-        v-if="type === 1 && platform !== 'ios'"
-      ></qui-upload-file> -->
+        :attachment-list="attachmentList"
+        :file-format="forums.set_attach && forums.set_attach.support_file_ext"
+        :file-size="forums.set_attach && forums.set_attach.support_max_size"
+        v-if="type === 1"
+        @deleteItem="deleteFile"
+        :show-add="platform === 'ios' ? false : true"
+      ></qui-upload-file>
       <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
@@ -467,6 +470,7 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
+      attachmentList: [], // 附件列表
       platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
       signatureVal: '',
     };
@@ -922,7 +926,6 @@ export default {
     addImg() {
       const attachments = {};
       attachments.data = [];
-
       this.uploadFile.forEach(item => {
         if (item.data) {
           attachments.data.push({
@@ -931,8 +934,30 @@ export default {
           });
         }
       });
-
+      // 附件
+      if (this.type === 1 && this.$refs.uploadFiles) {
+        const fileList = this.$refs.uploadFiles.getValue();
+        fileList.forEach(item => {
+          if (item.id) {
+            attachments.data.push({
+              type: 'attachments',
+              id: item.id,
+            });
+          }
+        });
+      }
       return attachments;
+    },
+    deleteFile(id) {
+      const params = {
+        _jv: {
+          type: 'attachments',
+          id,
+        },
+      };
+      this.$store.dispatch('jv/delete', params).then(res => {
+        console.log(res);
+      });
     },
 
     // 接口请求
@@ -1054,7 +1079,13 @@ export default {
     // 获取当前编辑的主题数据
     getPostThread() {
       const params = {
-        include: ['firstPost', 'firstPost.images', 'threadVideo', 'category'],
+        include: [
+          'firstPost',
+          'firstPost.images',
+          'threadVideo',
+          'category',
+          'firstPost.attachments',
+        ],
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
@@ -1067,6 +1098,7 @@ export default {
         }
         // #endif
         console.log(this.type, '这是编辑时Type');
+        this.attachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
@@ -1076,7 +1108,6 @@ export default {
           this.word = res.freeWords;
         }
         this.textAreaLength = this.type === 1 ? 10000 : 450;
-
         switch (Number(res.type)) {
           case 0:
             break;
