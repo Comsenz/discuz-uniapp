@@ -660,17 +660,18 @@ export default {
             _this.tcVod = new TcVod({
               getSignature: () => {
                 return signature;
-              }
+              },
             });
             const uploader = _this.tcVod.upload({
               mediaFile: res.tempFile,
             });
-            uploader
-              .done()
-              .then(doneResult => {
-                _this.fileId = doneResult.fileId;
-                _this.postVideo(doneResult.fileId);
-              })
+            uploader.on('media_progress', function(info) {
+              _this.percent = info.percent;
+            });
+            uploader.done().then(doneResult => {
+              _this.fileId = doneResult.fileId;
+              _this.postVideo(doneResult.fileId);
+            });
           });
           // #endif
         },
