@@ -244,28 +244,30 @@ export default {
     },
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
-      uni.showNavigationBarLoading();
-      const params = {
-        'filter[dialog_id]': dialogId || this.dialogId,
-        include: ['user', 'user.groups'],
-        'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
-        sort: '-createdAt',
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
-      this.$store
-        .dispatch('jv/get', ['dialog/message', { params }])
-        .then(res => {
-          console.log('会话消息列表res：', res);
-          if (res) {
-            console.log('停止手动刷新');
-            uni.hideNavigationBarLoading();
-            uni.stopPullDownRefresh();
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      if (dialogId !== '0') {
+        uni.showNavigationBarLoading();
+        const params = {
+          'filter[dialog_id]': dialogId || this.dialogId,
+          include: ['user', 'user.groups'],
+          'page[number]': this.pageNum,
+          'page[limit]': this.pageSize,
+          sort: '-createdAt',
+        };
+        this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
+        this.$store
+          .dispatch('jv/get', ['dialog/message', { params }])
+          .then(res => {
+            console.log('会话消息列表res：', res);
+            if (res) {
+              console.log('停止手动刷新');
+              uni.hideNavigationBarLoading();
+              uni.stopPullDownRefresh();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     // 调用 表情 的接口
     getEmoji() {
@@ -299,24 +301,48 @@ export default {
           duration: 2000,
         });
       } else {
-        const params = {
-          _jv: {
-            type: 'dialog/message',
-          },
-          dialog_id: this.dialogId,
-          message_text: this.msg,
-        };
-        this.$store
-          .dispatch('jv/post', params)
-          .then(res => {
-            if (res) {
-              console.log('发送消息res：', res);
-              this.scrollToBottom();
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        if (this.dialogId === '0') {
+          const params = {
+            _jv: {
+              type: 'dialog',
+            },
+            recipient_username: this.title,
+            message_text: this.msg,
+          };
+          // 调用创建会话接口
+          this.$store
+            .dispatch('jv/post', params)
+            .then(res => {
+              if (res) {
+                console.log('创建会话res：', res);
+                this.dialogId = res._jv.id;
+                this.getChatRecord(res._jv.id);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        } else {
+          const params = {
+            _jv: {
+              type: 'dialog/message',
+            },
+            dialog_id: this.dialogId,
+            message_text: this.msg,
+          };
+          // 调用发送消息接口
+          this.$store
+            .dispatch('jv/post', params)
+            .then(res => {
+              if (res) {
+                console.log('发送消息res：', res);
+                this.scrollToBottom();
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
         this.msg = '';
         this.emojiShow = false;
       }
