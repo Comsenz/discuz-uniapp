@@ -656,18 +656,21 @@ export default {
           });
           // #endif
           // #ifndef  MP-WEIXIN
-          _this.getSignature(signature => {
-            _this.tcVod = new TcVod({
-              getSignature: () => {
-                return signature;
-              },
-            });
-            const uploader = _this.tcVod.upload({
-              mediaFile: res.tempFile,
-            });
-            uploader.on('media_progress', function(info) {
-              _this.percent = info.percent;
-            });
+          _this.getSignature(getSignature => {
+            new TcVod({
+              getSignature,
+            })
+              .upload({
+                mediaFile: res.tempFile,
+              })
+              .on('media_progress', info => {
+                _this.percent = info.percent; // 进度处理
+              })
+              .done()
+              .then(doneResult => {
+                _this.fileId = doneResult.fileId;
+                _this.postVideo(doneResult.fileId);
+              });
             uploader.done().then(doneResult => {
               _this.fileId = doneResult.fileId;
               _this.postVideo(doneResult.fileId);
@@ -1046,7 +1049,7 @@ export default {
     getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
         // #ifndef MP-WEIXIN
-        callBack(res.signature);
+        callBack(() => res.signature);
         // #endif
         if (res.signature) {
           return res.signature;
