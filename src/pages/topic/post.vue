@@ -68,14 +68,87 @@
           :show-confirm-bar="barStatus"
           :adjust-position="true"
           cursor-spacing="50"
+          cursor="cursor"
           :maxlength="-1"
           :focus="type !== 1"
           v-if="textShow"
           @blur="contBlur"
+          @focus="focusEvent"
         ></textarea>
         <view class="post-box__con-text post-box__con-text--static" v-if="!textShow">
           <text>{{ textAreaValue }}</text>
         </view>
+        <view class="markdown-box" v-if="markdodwShow">
+          <view>
+            <qui-icon
+              name="icon-bold"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('bold')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-title"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('title')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-italic"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('italic')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-quote"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('quote')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-code"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('code')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-link"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('link')"
+            ></qui-icon>
+          </view>
+          <md-unordered-list>
+            <qui-icon
+              name="icon-unordered-list"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('unordered')"
+            ></qui-icon>
+          </md-unordered-list>
+          <md-ordered-list>
+            <qui-icon
+              name="icon-ordered-list"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('ordered')"
+            ></qui-icon>
+          </md-ordered-list>
+        </view>
+        <!--<qui-markdown
+          :show-preview="false"
+          :textarea-data.sync="textAreaValue"
+          textarea-html.sync=""
+        ></qui-markdown>-->
       </view>
 
       <qui-uploader
@@ -266,7 +339,19 @@
     </view>
   </qui-page>
 </template>
-
+<script>
+// const script = document.createElement('script');
+// if (
+//   window.location.hostname.endsWith('github.io') ||
+//   window.location.hostname.endsWith('github.com')
+// ) {
+//   script.src = 'https://unpkg.com/@github/markdown-toolbar-element@latest/dist/index.js';
+// } else {
+//   script.src = '../dist/index.js';
+// }
+// script.type = 'module';
+// document.body.appendChild(script);
+</script>
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -274,6 +359,8 @@ import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 // #ifdef  H5
 import tcaptchs from '@/utils/tcaptcha';
+import '@github/markdown-toolbar-element';
+import TcVod from 'vod-js-sdk-v6';
 // #endif
 
 export default {
@@ -286,9 +373,10 @@ export default {
   ],
   data() {
     return {
-      navTitle: '内容详情页', // 导航栏标题
+      navTitle: '发布', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
+      markdodwShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
@@ -380,7 +468,14 @@ export default {
       randstr: '',
       captchaResult: {},
       platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
+      signatureVal: '',
     };
+  },
+  watch: {
+    textareaValue: function() {
+      console.log('markdown:' + this.textareaValue);
+      // console.log("html:"+this.textareaHtml)
+    },
   },
   computed: {
     ...mapState({
@@ -401,6 +496,67 @@ export default {
     },
   },
   methods: {
+    focusEvent(e) {
+      console.log(e, '这是获取焦点是');
+    },
+    toolBarClick(type) {
+      console.log(type);
+      let text = '';
+      if (type == 'bold') {
+        console.log('加粗');
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '**粗体文字**' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 2;
+        this.focusEvent(this.cursor);
+        console.log(this.textareaValue);
+      } else if (type == 'italic') {
+        // this.textareaValue += '*斜体* ';
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '__' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 1;
+        this.focusEvent(this.cursor);
+      } else if (type == 'title') {
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '\n### ' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 4;
+        this.focusEvent(this.cursor);
+      } else if (type == 'quote') {
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '\n> ' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 1;
+        this.focusEvent(this.cursor);
+      } else if (type == 'link') {
+        // this.textareaValue += '[在此输入网址描述](在此输入网址) ';
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '- [](url)' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 1;
+        this.focusEvent(this.cursor);
+      } else if (type == 'code') {
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '``' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 1;
+        this.focusEvent(this.cursor);
+      } else if (type == 'unordered') {
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '\n- ' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 1;
+        this.focusEvent(this.cursor);
+      } else if (type == 'ordered') {
+        text = `${this.textAreaValue.slice(0, this.cursor) +
+          '\n1. ' +
+          this.textAreaValue.slice(this.cursor)}`;
+        this.cursor = this.cursor + 1;
+        this.focusEvent(this.cursor);
+      }
+      this.textAreaValue = text;
+    },
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
@@ -420,7 +576,6 @@ export default {
         }
       });
     },
-
     // video相关方法
     videoDel() {
       this.videoBeforeList = [];
@@ -452,7 +607,7 @@ export default {
           _this.videoBeforeList.push({
             path: res.tempFilePath,
           });
-
+          // #ifdef  MP-WEIXIN
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
@@ -484,6 +639,51 @@ export default {
               // });
             },
           });
+          // #endif
+          // #ifndef  MP-WEIXIN
+          console.log(res.tempFile, '这是开始呀');
+          _this.tcVod = new TcVod({
+            getSignature: _this.getSignature,
+          });
+          console.log(_this.tcVod, '这是~~~~');
+          const uploader = _this.tcVod.upload({
+            mediaFile: res.tempFile,
+            // coverFile: coverFile,
+          });
+
+          const uploaderInfo = {
+            videoInfo: uploader.videoInfo,
+            isVideoUploadSuccess: false,
+            isVideoUploadCancel: false,
+            progress: 0,
+            fileId: '',
+            videoUrl: '',
+            cancel: function() {
+              uploaderInfo.isVideoUploadCancel = true;
+              uploader.cancel();
+            },
+          };
+
+          uploader
+            .done()
+            .then(doneResult => {
+              uploaderInfo.fileId = doneResult.fileId;
+              _this.videoUp = false;
+              _this.fileId = doneResult.fileId;
+
+              params = {
+                _jv: {
+                  type: 'thread/video',
+                },
+                type: 'thread-video',
+                file_id: _this.fileId,
+              };
+            })
+            .then(function(videoUrl) {
+              uploaderInfo.videoUrl = videoUrl;
+              // self.$refs.vExample.reset();
+            });
+          // #endif
         },
       });
     },
@@ -576,6 +776,7 @@ export default {
 
       this.textAreaValue = text;
       this.emojiShow = false;
+      this.textShow = true;
     },
     // @人员跳转
     callClick() {
@@ -831,10 +1032,11 @@ export default {
           console.log(err);
         });
     },
-    getSignature(callback) {
+    getSignature() {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
+        console.log(res, '^^^^^^^^^^^^^');
         if (res.signature) {
-          callback(res.signature);
+          return res.signature;
         } else {
           return this.i18n.t('discuzq.post.failedToObtainSignature');
         }
@@ -859,6 +1061,12 @@ export default {
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
+        // #ifdef H5
+        if (this.type === 1) {
+          this.markdodwShow = true;
+        }
+        // #endif
+        console.log(this.type, '这是编辑时Type');
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
@@ -1042,7 +1250,11 @@ export default {
     } catch (e) {
       // error
     }
-
+    // #ifdef H5
+    if (this.type === 1) {
+      this.markdodwShow = true;
+    }
+    // #endif
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
       this.ticket = result.ticket;
@@ -1059,6 +1271,11 @@ export default {
     });
   },
   onShow() {
+    // #ifndef  MP-WEIXIN
+    // this.tcVod = new TcVod({
+    //   getSignature: this.getSignature,
+    // });
+    // #endif
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1128,7 +1345,7 @@ export default {
   }
   &__con {
     width: 100%;
-    padding: 20rpx;
+    padding: 20rpx 0 0;
     margin-top: 20rpx;
     overflow: hidden;
     background-color: --color(--qui-BG-1);
@@ -1141,9 +1358,10 @@ export default {
     width: 100%;
     max-height: 900rpx;
     min-height: 400rpx;
+    padding: 0 20rpx 20rpx;
     overflow: hidden;
     line-height: 20px;
-
+    box-sizing: border-box;
     &--static {
       overflow: auto;
     }
@@ -1348,5 +1566,15 @@ export default {
 
 /deep/ .uni-video-cover {
   display: none;
+}
+.markdown-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  height: 60rpx;
+  line-height: 60rpx;
+  background: --color(--qui-BG-FFF);
+  border-top: 1px solid --color(--qui-BOR-DDD);
 }
 </style>
