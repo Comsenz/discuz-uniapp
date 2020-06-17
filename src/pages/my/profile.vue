@@ -100,7 +100,6 @@
         :url="`${host}api/users/${userId}/avatar`"
         :header="header"
         :form-data="formData"
-        :count="1"
         async-clear
         ref="upload"
         name="avatar"
