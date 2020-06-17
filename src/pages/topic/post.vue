@@ -656,48 +656,22 @@ export default {
           });
           // #endif
           // #ifndef  MP-WEIXIN
-          console.log(res.tempFile, '这是开始呀');
-          _this.tcVod = new TcVod({
-            getSignature: _this.getSignature,
-          });
-          console.log(_this.tcVod, '这是~~~~');
-          const uploader = _this.tcVod.upload({
-            mediaFile: res.tempFile,
-            // coverFile: coverFile,
-          });
-
-          const uploaderInfo = {
-            videoInfo: uploader.videoInfo,
-            isVideoUploadSuccess: false,
-            isVideoUploadCancel: false,
-            progress: 0,
-            fileId: '',
-            videoUrl: '',
-            cancel: function() {
-              uploaderInfo.isVideoUploadCancel = true;
-              uploader.cancel();
-            },
-          };
-
-          uploader
-            .done()
-            .then(doneResult => {
-              uploaderInfo.fileId = doneResult.fileId;
-              _this.videoUp = false;
-              _this.fileId = doneResult.fileId;
-
-              params = {
-                _jv: {
-                  type: 'thread/video',
-                },
-                type: 'thread-video',
-                file_id: _this.fileId,
-              };
-            })
-            .then(function(videoUrl) {
-              uploaderInfo.videoUrl = videoUrl;
-              // self.$refs.vExample.reset();
+          _this.getSignature(signature => {
+            _this.tcVod = new TcVod({
+              getSignature: () => {
+                return signature;
+              }
             });
+            const uploader = _this.tcVod.upload({
+              mediaFile: res.tempFile,
+            });
+            uploader
+              .done()
+              .then(doneResult => {
+                _this.fileId = doneResult.fileId;
+                _this.postVideo(doneResult.fileId);
+              })
+          });
           // #endif
         },
       });
@@ -1068,9 +1042,11 @@ export default {
           console.log(err);
         });
     },
-    getSignature() {
+    getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
-        console.log(res, '^^^^^^^^^^^^^');
+        // #ifndef MP-WEIXIN
+        callBack(res.signature);
+        // #endif
         if (res.signature) {
           return res.signature;
         } else {
