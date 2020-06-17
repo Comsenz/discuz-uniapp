@@ -93,11 +93,6 @@ const actions = {
         console.log('results', results);
         const url = encodeURIComponent(`https://dq.comsenz-service.com/pages/home/index`);
         window.location.href = `https://dq.comsenz-service.com/api/oauth/wechat?redirect=${url}`;
-        // const resData = utils.jsonapiToNorm(results.data.data);
-        // context.commit(SET_USER_ID, resData._jv.id);
-        // context.commit(CHECK_SESSION, true);
-        // context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        // resolve(resData);
       });
     });
   },
