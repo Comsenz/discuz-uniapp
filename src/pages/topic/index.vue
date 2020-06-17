@@ -48,6 +48,7 @@
               :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
               :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
               :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
+              :file-list="thread.firstPost.attachments || []"
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
@@ -577,6 +578,7 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     thread() {
+      console.log(this.$store.getters['jv/get'](`threads/${this.threadId}`));
       return this.$store.getters['jv/get'](`threads/${this.threadId}`);
     },
 

@@ -107,6 +107,25 @@
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
+      <!-- 附件 -->
+      <view class="themeItem__content__attachment" v-if="fileList.length > 0">
+        <view class="themeItem__content__attachment-title">
+          {{ i18n.t('profile.attachment') }}
+        </view>
+        <view
+          class="themeItem__content__attachment-item"
+          v-for="(item, index) in fileList"
+          :key="index"
+        >
+          <qui-icon
+            class="icon-attachment"
+            :name="item.extension ? `icon-${item.extension.toUpperCase()}` : `icon-resources`"
+            color="#aaa"
+            size="17"
+          ></qui-icon>
+          <text>{{ item.fileName }}</text>
+        </view>
+      </view>
 
       <view class="themeItem__content__tags" v-if="tags.length > 0">
         <view
@@ -251,6 +270,12 @@ export default {
     mediaUrl: {
       type: String,
       default: '',
+    },
+    fileList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
     },
   },
   data: () => {
@@ -458,6 +483,29 @@ export default {
         background: --color(--qui-BG-F7);
         border-radius: 6rpx;
         transition: $switch-theme-time;
+      }
+    }
+    &__attachment {
+      margin-top: 60rpx;
+      margin-bottom: 20rpx;
+      &-title {
+        margin-bottom: 20rpx;
+        font-size: 24rpx;
+        font-weight: bold;
+        color: --color(--qui-FC-777);
+      }
+      &-item {
+        height: 60rpx;
+        padding: 0 20rpx;
+        margin-bottom: 10rpx;
+        font-size: 24rpx;
+        line-height: 60rpx;
+        border: 2rpx solid --color(--qui-BOR-ED);
+        border-radius: 5rpx;
+        box-sizing: border-box;
+      }
+      .icon-attachment {
+        margin-right: 10rpx;
       }
     }
   }

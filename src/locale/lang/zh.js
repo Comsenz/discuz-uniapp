@@ -522,6 +522,7 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    attachment: '附件',
     post: '发帖',
     notice: '消息',
     mine: '我的',
