@@ -116,6 +116,7 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in fileList"
           :key="index"
+          @tap="download(item.url)"
         >
           <qui-icon
             class="icon-attachment"
@@ -138,6 +139,7 @@
         </view>
       </view>
     </view>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
@@ -328,6 +330,19 @@ export default {
     // 头像失效
     imageError() {
       this.imageStatus = false;
+    },
+    // 附件下载
+    download(url) {
+      // #ifdef H5
+      const { platform } = uni.getSystemInfoSync();
+      if (platform === 'ios') {
+        this.$refs.toast.show({
+          message: this.i18n.t('profile.filedownloadtips'),
+        });
+      } else {
+        window.location.href = url;
+      }
+      // #endif
     },
   },
 };
