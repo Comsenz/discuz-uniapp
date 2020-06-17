@@ -50,7 +50,6 @@
       </view>
       <view class="emoji-bd" v-show="emojiShow">
         <qui-emoji
-          v-if="emojiShow"
           position="absolute"
           top="20rpx"
           border-radius="10rpx"
@@ -71,14 +70,14 @@
           cursor="cursor"
           :maxlength="-1"
           :focus="type !== 1"
-          v-if="textShow"
+          v-show="textShow"
           @blur="contBlur"
           @focus="focusEvent"
         ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-if="!textShow">
+        <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
           <text>{{ textAreaValue }}</text>
         </view>
-        <view class="markdown-box" v-if="markdodwShow">
+        <view class="markdown-box" v-show="markdodwShow">
           <view>
             <qui-icon
               name="icon-bold"
