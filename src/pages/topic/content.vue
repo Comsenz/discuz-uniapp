@@ -10,11 +10,11 @@
         <view class="topic-content-header_details">
           <view class="details_title">
             {{ i18n.t('topic.hot') }}：
-            <text>{{ topic.thread_count }}</text>
+            <text>{{ topic.view_count }}</text>
           </view>
           <view class="details_title">
             {{ i18n.t('topic.contents') }}：
-            <text>{{ topic.view_count }}</text>
+            <text>{{ topic.thread_count }}</text>
           </view>
           <view class="details_title">
             <qui-icon

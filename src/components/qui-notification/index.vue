@@ -297,7 +297,7 @@ export default {
   }
 
   &__system-notice {
-    padding: 25rpx 40rpx 20rpx;
+    padding: 88rpx 40rpx 20rpx;
 
     &__h {
       display: flex;

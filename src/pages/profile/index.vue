@@ -192,9 +192,11 @@ export default {
     // 获取用户信息
     getUserInfo(userId) {
       const params = {
-        include: 'groups',
+        include: ['groups', 'dialog'],
       };
-      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
+      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(res => {
+        this.dialogId = res.dialog._jv.id || 0;
+      });
     },
     // 设置粉丝点赞那些数字
     setNum(res) {
@@ -242,22 +244,8 @@ export default {
     imageError() {
       this.imageStatus = false;
     },
-    // 私信
+    // 私信跳转到聊天页面（传入用户名和会话id）
     chat() {
-      const params = {
-        _jv: {
-          type: 'dialog',
-        },
-        recipient_username: this.userInfo.username,
-      };
-      // 调用创建会话接口
-      this.$store.dispatch('jv/post', params).then(res => {
-        this.dialogId = res._jv.json.data.id;
-        this.jumpChatPage();
-      });
-    },
-    // 跳转到聊天页面（传入用户名和会话id）
-    jumpChatPage() {
       uni.navigateTo({
         url: `/pages/notice/msglist?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
       });

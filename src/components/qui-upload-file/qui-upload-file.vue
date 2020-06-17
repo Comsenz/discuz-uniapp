@@ -4,11 +4,15 @@
       <view class="qui-uploader-box__item__fonts">
         <view class="qui-uploader-box__item__fonts-detail">{{ item.attributes.fileName }}</view>
       </view>
-      <view class="qui-uploader-box__item__delete" @tap="deleteItem(index)">
+      <view class="qui-uploader-box__item__delete" @tap="deleteItem(index, item.id)">
         <qui-icon class="icon-delete" name="icon-delete" color="#fff" size="17"></qui-icon>
       </view>
     </view>
-    <view class="qui-uploader-box__add" @tap="uploadBtn" v-if="fileList.length < maxLength">
+    <view
+      class="qui-uploader-box__add"
+      @tap="uploadBtn"
+      v-if="fileList.length < maxLength && showAdd"
+    >
       <view>
         <qui-icon name="icon-fujian" color="#aaa" size="40"></qui-icon>
       </view>
@@ -42,6 +46,16 @@ export default {
       default: 3,
       type: Number,
     },
+    showAdd: {
+      default: true,
+      type: Boolean,
+    },
+    attachmentList: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
     header: {
       type: Object,
       default: () => {
@@ -65,7 +79,18 @@ export default {
     },
     fileSize: {
       handler(newVal) {
-        this.fileSize = newVal;
+        this.fileList = newVal;
+      },
+      deep: true,
+      immediate: true,
+    },
+    attachmentList: {
+      handler(newVal) {
+        const list = [];
+        newVal.forEach(v => {
+          list.push({ attributes: { fileName: v.fileName }, id: v._jv.id });
+        });
+        this.fileList = list;
       },
       deep: true,
       immediate: true,
@@ -104,8 +129,9 @@ export default {
     uploadBtn() {
       document.getElementById('file').click();
     },
-    deleteItem(index) {
+    deleteItem(index, id) {
       this.fileList.splice(index, 1);
+      this.$emit('deleteItem', id);
     },
     getValue() {
       return this.fileList;

@@ -172,6 +172,7 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    attachment: 'Attachment',
     post: 'Post',
     notice: 'Notice',
     mine: 'Mine',

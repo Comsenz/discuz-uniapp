@@ -768,7 +768,7 @@ export default {
     display: block;
     float: right;
     width: 80rpx;
-    height: 98rpx;
+    height: 97rpx;
     background: --color(--qui-BG-2);
     &__icon {
       margin-left: 24rpx;
