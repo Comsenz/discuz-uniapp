@@ -15,7 +15,7 @@
         </view>
       </view>
     </view>
-    <view class="topic-content-item" @tap="returnToPost()" v-if="shouldShow">
+    <view class="topic-content-item" @tap="returnToPost(-1)" v-if="shouldShow">
       <view class="topic-content-item_title">#{{ searchValue }}#</view>
       <view class="topic-content-item_heat">{{ i18n.t('topic.newTopic') }}</view>
     </view>
@@ -53,12 +53,9 @@ export default {
     },
     returnToPost(index = 0) {
       const topicMsg = {};
-      topicMsg.keywords = index === 0 ? this.searchValue : this.topics[index].content;
-
-      uni.setStorage({
-        key: 'topicMsg',
-        data: topicMsg,
-      });
+      topicMsg.keywords = index === -1 ? this.searchValue : this.topics[index].content;
+      console.log(topicMsg, index, this.topics);
+      uni.$emit('clickTopic', topicMsg);
 
       uni.navigateBack();
     },

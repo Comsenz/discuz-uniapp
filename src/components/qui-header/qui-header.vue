@@ -2,9 +2,10 @@
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
     <!-- #ifdef H5-->
     <qui-header-back
-      :title="i18n.t('home.siteName')"
+      :title="title"
       :is-show-home="false"
       :is-show-back="false"
+      :is-show-more="isShowMore"
     ></qui-header-back>
     <!-- #endif -->
     <view class="logoBox">
@@ -77,6 +78,14 @@ export default {
     shareShow: {
       type: Boolean,
       default: false,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    isShowMore: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => {

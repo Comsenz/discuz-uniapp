@@ -281,6 +281,7 @@ export default {
     payFail: '支付失败',
     payType: '支付方式',
     payPassword: '支付密码',
+    wechatIdentificationQRcode: '微信识别二维码',
   },
   auth: {
     userinfo: '获取头像和昵称',
@@ -313,6 +314,8 @@ export default {
     ioschoicetitle: '受iOS限制，暂时无法提供服务',
     ioschoicecontent: '请采用Android设备访问，给您带来不便尽请原谅！',
     siteName: '站点名称',
+    needRealname: '发布内容需要实名认证',
+    needPhone: '发布内容需要绑定手机号',
   },
   // 站点管理页面
   manage: {
@@ -520,6 +523,7 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    attachment: '附件',
     post: '发帖',
     notice: '消息',
     mine: '我的',
@@ -594,6 +598,7 @@ export default {
     payfail: '支付失败',
     cancelorder: '取消订单',
     personalhomepage: '个人主页',
+    filedownloadtips: '因iPhone系统限制，您的手机无法下载文件。请使用安卓手机或电脑访问下载',
   },
   site: {
     circleintroduction: '站点介绍',

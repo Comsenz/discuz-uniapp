@@ -13,7 +13,10 @@
           :src="item.path"
           @click="previewPicture(index)"
         ></image>
-        <view class="qui-uploader-box__uploader-file--load" v-if="item.uploadPercent < 100">
+        <view
+          class="qui-uploader-box__uploader-file--load"
+          v-if="numberdata[index] && numberdata[index].state < 100"
+        >
           <view class="qui-uploader-box__uploader-file--load__mask"></view>
           <text class="qui-uploader-box__uploader-file--load__text">
             {{ i18n.t('discuzq.image.imageUploading') }}
@@ -89,6 +92,7 @@ export default {
       uploadIndex: '',
       formDataAppend: {},
       lastOrder: 0,
+      numberdata: [],
     };
   },
   watch: {
@@ -164,6 +168,8 @@ export default {
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
               _this.lastOrder += 1;
+              _this.numberdata.push({ state: item.uploadPercent });
+
               return new Promise((resolve, reject) => {
                 res.tempFiles[index].uploadPercent = 0;
                 res.tempFiles[index].uploadStatus = false;
@@ -205,6 +211,9 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
+            if (_this.numberdata[index]) {
+              _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
+            }
             _this.uploadList.push(JSON.parse(res.data));
           } else {
             _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
@@ -227,8 +236,14 @@ export default {
         for (let i = length; i < _this.uploadBeforeList.length; i += 1) {
           if (progress < 100) {
             _this.uploadBeforeList[i].uploadPercent = progress;
+            if (_this.numberdata[i]) {
+              _this.numberdata[i].state = _this.uploadBeforeList[i].uploadPercent;
+            }
           } else if (progress === 100) {
             _this.uploadBeforeList[i].uploadPercent = 90;
+            if (_this.numberdata[i]) {
+              _this.numberdata[i].state = _this.uploadBeforeList[i].uploadPercent;
+            }
           }
         }
       });

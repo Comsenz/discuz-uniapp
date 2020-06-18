@@ -78,9 +78,14 @@ export default {
     },
   },
 
-  mounted() {
+  created() {
     // 获取表情数据
-    this.getEmoji();
+    const emojis = this.$store.getters['emoji/get']('emojis');
+    if (emojis.length) {
+      this.list = emojis;
+    } else {
+      this.getEmoji();
+    }
   },
   methods: {
     // 表情接口请求
@@ -88,7 +93,7 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
         this.list = data;
         delete this.list._jv;
-        // console.log(this.list, '这是接口拿到的');
+        this.$store.commit('emoji/SET_EMOJI', this.list);
       });
     },
     getEmojiClick(num) {

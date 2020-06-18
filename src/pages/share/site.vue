@@ -79,38 +79,32 @@ export default {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
+    userInfo() {
+      return this.$store.getters['jv/get'](`users/${this.userid}`);
+    },
   },
   methods: {
     usertitle() {
       const that = this;
-      const params = {
-        _jv: {
-          type: 'users',
-          id: this.userid,
-        },
-        include: 'groups',
-      };
-      this.$store.dispatch('jv/get', params).then(data => {
-        this.headerName = data.username;
-        this.themwidth = this.headerName.length * 28 + 3;
-        if (this.themwidth >= 240) {
-          this.themwidth = 240;
-        }
-        this.renamewidth = 160 + this.themwidth;
-        this.headerImg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-        if (this.slitelogo) {
-          uni.getImageInfo({
-            src: that.slitelogo,
-            success(image) {
-              const num = image.width * (88 / image.height);
-              that.leftwidth = (700 - num) / 2;
-            },
-          });
-        }
-        setTimeout(() => {
-          this.initData();
-        }, 300);
-      });
+      this.headerName = this.userInfo.username;
+      this.themwidth = this.headerName.length * 28 + 3;
+      if (this.themwidth >= 240) {
+        this.themwidth = 240;
+      }
+      this.renamewidth = 160 + this.themwidth;
+      this.headerImg = this.userInfo.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+      if (this.slitelogo) {
+        uni.getImageInfo({
+          src: that.slitelogo,
+          success(image) {
+            const num = image.width * (88 / image.height);
+            that.leftwidth = (700 - num) / 2;
+          },
+        });
+      }
+      setTimeout(() => {
+        this.initData();
+      }, 300);
     },
     initData() {
       const obj = {
@@ -123,7 +117,7 @@ export default {
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 站点介绍
         leftwidth: this.leftwidth,
-        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code`, // 微信二维码
+        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code?path=/pages/home/index`, // 微信二维码
         namewidth: this.themwidth,
         renamewidth: this.renamewidth,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别

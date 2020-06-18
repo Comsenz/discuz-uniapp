@@ -55,7 +55,7 @@
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
-          <rich-text :nodes="themeContent | formatRichText"></rich-text>
+          <qui-uparse :content="themeContent"></qui-uparse>
         </view>
         <view
           class="theme__content__videocover"
@@ -107,6 +107,26 @@
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
+      <!-- 附件 -->
+      <view class="themeItem__content__attachment" v-if="fileList.length > 0">
+        <view class="themeItem__content__attachment-title">
+          {{ i18n.t('profile.attachment') }}
+        </view>
+        <view
+          class="themeItem__content__attachment-item"
+          v-for="(item, index) in fileList"
+          :key="index"
+          @tap="download(item.url)"
+        >
+          <qui-icon
+            class="icon-attachment"
+            :name="item.extension ? `icon-${item.extension.toUpperCase()}` : `icon-resources`"
+            color="#aaa"
+            size="17"
+          ></qui-icon>
+          <text>{{ item.fileName }}</text>
+        </view>
+      </view>
 
       <view class="themeItem__content__tags" v-if="tags.length > 0">
         <view
@@ -119,6 +139,7 @@
         </view>
       </view>
     </view>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
@@ -126,47 +147,6 @@
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
-  filters: {
-    // 处理富文本里的图片宽度自适应
-    // 1.去掉img标签里的style、width、height属性
-    // 2.img标签添加style属性：max-width:100%;height:auto
-    // 3.修改所有style里的width属性为max-width:100%
-    // 4.去掉<br/>标签			 * @param html			 * @returns {void|string|*}
-
-    formatRichText(html) {
-      if (html.indexOf('qq-emotion') !== -1) {
-        return html;
-      }
-
-      // 控制小程序中图片大小
-      let newContent = html.replace(/<img[^>]*>/gi, match => {
-        let matchRes = match;
-        matchRes = matchRes.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
-        matchRes = matchRes.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
-        matchRes = matchRes.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
-        return matchRes;
-      });
-      newContent = newContent.replace(/style="[^"]+"/gi, match => {
-        let matchRes = match;
-        matchRes = matchRes
-          .replace(/width:[^;]+;/gi, 'max-width:100%;')
-          .replace(/width:[^;]+;/gi, 'max-width:100%;');
-        return matchRes;
-      });
-      newContent = newContent.replace(/<br[^>]*\/>/gi, '');
-      newContent = newContent.replace(
-        /<img/gi,
-        '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"',
-      );
-      // newContent = newContent.replace(/<h1="[^"]+"/gi, match => {
-      //   let matchRes = match;
-      //   matchRes = matchRes
-      //     .replace(/<h1:[^;]+;/gi, 'max-width:100%;')
-      //   return matchRes;
-      // });
-      return newContent;
-    },
-  },
   props: {
     // 类型
     themeParts: {
@@ -293,6 +273,12 @@ export default {
       type: String,
       default: '',
     },
+    fileList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
   },
   data: () => {
     return {
@@ -344,6 +330,19 @@ export default {
     // 头像失效
     imageError() {
       this.imageStatus = false;
+    },
+    // 附件下载
+    download(url) {
+      // #ifdef H5
+      const { platform } = uni.getSystemInfoSync();
+      if (platform === 'ios') {
+        this.$refs.toast.show({
+          message: this.i18n.t('profile.filedownloadtips'),
+        });
+      } else {
+        window.location.href = url;
+      }
+      // #endif
     },
   },
 };
@@ -501,6 +500,29 @@ export default {
         transition: $switch-theme-time;
       }
     }
+    &__attachment {
+      margin-top: 60rpx;
+      margin-bottom: 20rpx;
+      &-title {
+        margin-bottom: 20rpx;
+        font-size: 24rpx;
+        font-weight: bold;
+        color: --color(--qui-FC-777);
+      }
+      &-item {
+        height: 60rpx;
+        padding: 0 20rpx;
+        margin-bottom: 10rpx;
+        font-size: 24rpx;
+        line-height: 60rpx;
+        border: 2rpx solid --color(--qui-BOR-ED);
+        border-radius: 5rpx;
+        box-sizing: border-box;
+      }
+      .icon-attachment {
+        margin-right: 10rpx;
+      }
+    }
   }
 
   &__footer {
@@ -551,6 +573,7 @@ export default {
     flex-direction: row;
     justify-content: flex-end;
     font-size: $fg-f28;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: $fg-f26;

@@ -26,7 +26,7 @@
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="getGroups(item.toUser.groups)"
+              :value="getGroups(item.toUser.groups[0])"
               :label="item.toUser.label"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
@@ -39,7 +39,7 @@
               :mark="item.id"
               :title="item.username"
               :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
-              :value="getGroups(item.groups)"
+              :value="getGroups(item.groups[0])"
               :label="item.label"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
@@ -178,7 +178,7 @@ export default {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
         this.allFollow = [...this.allFollow, ...res];
-
+        console.log(this.allFollow, '这是@数据');
         if (Object.keys(res).nv_length - 1 === 0) {
           this.loadingText = 'search.noFollowers';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {

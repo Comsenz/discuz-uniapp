@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content bg">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
     <view v-if="loaded && status">
       <scroll-view
         scroll-y="true"
@@ -54,7 +57,7 @@
                           v-for="(group, gindex) in thread.user.groups"
                           :key="gindex"
                         >
-                          （{{ group.isDisplay ? `（${group.name}）` : '' }}）
+                          {{ group.isDisplay ? `（${group.name}）` : '' }}
                         </span>
                       </view>
                       <view class="thread__header__title__time">
@@ -71,8 +74,8 @@
 
                   <view class="thread__content" @click="contentClick">
                     <view class="thread__content__text">
-                      <rich-text :nodes="thread.title" v-if="thread.type == 1"></rich-text>
-                      <rich-text :nodes="thread.firstPost.summary" v-else></rich-text>
+                      <qui-uparse :content="thread.title" v-if="thread.type == 1"></qui-uparse>
+                      <qui-uparse :content="thread.firstPost.summary" v-else></qui-uparse>
                     </view>
                   </view>
                 </view>
@@ -290,6 +293,7 @@ export default {
   mixins: [user],
   data() {
     return {
+      navTitle: '评论详情页', // 导航栏标题
       threadId: '',
       commentId: '',
       thread: {},
@@ -911,6 +915,7 @@ page {
   .det-hd-management {
     display: flex;
     flex-direction: row;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: 26rpx;
@@ -1056,6 +1061,9 @@ page {
 }
 .ft-gap {
   width: 100%;
+  /* #ifdef H5 */
+  margin-top: 88rpx;
+  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {
@@ -1091,7 +1099,6 @@ page {
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
-  background: --color(--qui-FC-FFF);
 }
 .comment-popup {
   width: 100%;

@@ -110,14 +110,6 @@ export default {
       return this.user.unreadNotifications;
     },
   },
-  // onLoad(options) {
-  //   console.log(options, 'options');
-  //   let modelmes = wx.getStorageSync('modelmes');
-  //   let isiphonex = app.globalData.isIphoneX;
-  //   this.setData({
-  //     isiphonex: isIphoneX
-  //   })
-  // },
   created() {
     const len = getCurrentPages().length;
     if (len > 0) {
@@ -156,19 +148,19 @@ export default {
       this.setFooterIndex(parseInt(index, 10) + 1);
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
-      if (!item.url) {
-        return;
-      }
-      const currentPage = getCurrentPages();
-      if (
-        item.tabsName === this.i18n.t('home.tabsCircle') &&
-        currentPage[0].route === 'pages/home/index'
-      ) {
-        const len = currentPage.length;
-        uni.navigateBack({
-          delta: len,
-        });
-      }
+      // if (!item.url) {
+      //   return;
+      // }
+      // const currentPage = getCurrentPages();
+      // if (
+      //   item.tabsName === this.i18n.t('home.tabsCircle') &&
+      //   currentPage[0].route === 'pages/home/index'
+      // ) {
+      //   const len = currentPage.length;
+      //   uni.navigateBack({
+      //     delta: len,
+      //   });
+      // }
     },
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
@@ -177,6 +169,14 @@ export default {
     footerOpen() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
+      }
+      if (this.forums.other.publish_need_real_name) {
+        this.$refs.toast.show({ message: this.i18n.t('home.needRealname') });
+        return;
+      }
+      if (this.forums.other.publish_need_bind_phone) {
+        this.$refs.toast.show({ message: this.i18n.t('home.needPhone') });
         return;
       }
 

@@ -1,5 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
+    <!-- #ifdef H5-->
+    <view class="head-gap"></view>
+    <!-- #endif -->
     <view class="post-box" v-if="loadStatus">
       <view class="post-box__title" v-if="type === 1">
         <input
@@ -44,7 +50,6 @@
       </view>
       <view class="emoji-bd" v-show="emojiShow">
         <qui-emoji
-          v-if="emojiShow"
           position="absolute"
           top="20rpx"
           border-radius="10rpx"
@@ -62,13 +67,97 @@
           :show-confirm-bar="barStatus"
           :adjust-position="true"
           cursor-spacing="50"
+          cursor="cursor"
           :maxlength="-1"
           :focus="type !== 1"
-          v-if="textShow"
+          v-show="textShow"
           @blur="contBlur"
+          @focus="focusEvent"
         ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-if="!textShow">
+        <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
           <text>{{ textAreaValue }}</text>
+        </view>
+        <view class="markdown-box" v-show="markdodwShow">
+          <view>
+            <qui-icon
+              name="icon-bold"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('bold')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-title"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('title')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-italic"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('italic')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-quote"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('quote')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-code"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('code')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-link"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('link')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-code"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('undeline')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-link"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('strikethrough')"
+            ></qui-icon>
+          </view>
+          <!--<md-unordered-list>
+            <qui-icon
+              name="icon-unordered-list"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('unordered')"
+            ></qui-icon>
+          </md-unordered-list>
+          <md-ordered-list>
+            <qui-icon
+              name="icon-ordered-list"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('ordered')"
+            ></qui-icon>
+          </md-ordered-list>-->
         </view>
       </view>
 
@@ -86,12 +175,17 @@
         @uploadClick="uploadClick"
       ></qui-uploader>
       <!-- #ifdef H5-->
-      <!-- <qui-upload-file
+      <qui-upload-file
         :url="`${url}api/attachments`"
-        ref="uploadFile"
-        v-if="type === 1 && platform !== 'ios'"
-        @uploadClick="uploadFileClick"
-      ></qui-upload-file> -->
+        ref="uploadFiles"
+        :header="header"
+        :attachment-list="attachmentList"
+        :file-format="forums.set_attach && forums.set_attach.support_file_ext"
+        :file-size="forums.set_attach && forums.set_attach.support_max_size"
+        v-if="type === 1"
+        @deleteItem="deleteFile"
+        :show-add="platform === 'ios' ? false : true"
+      ></qui-upload-file>
       <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
@@ -153,7 +247,7 @@
           type="primary"
           size="large"
           id="TencentCaptcha"
-          data-appid="appID"
+          :data-appid="forums.qcloud.qcloud_captcha_app_id"
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
@@ -266,6 +360,7 @@ import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 // #ifdef  H5
 import tcaptchs from '@/utils/tcaptcha';
+import TcVod from 'vod-js-sdk-v6';
 // #endif
 
 export default {
@@ -278,8 +373,10 @@ export default {
   ],
   data() {
     return {
+      navTitle: '发布', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
+      markdodwShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
@@ -293,7 +390,6 @@ export default {
       textShow: true, // 文本域是否显示
       header: {}, // 图片请求头部
       formData: {}, // 图片请求data
-      appID: '', // 腾讯云验证码场景 id
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
@@ -371,9 +467,17 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
+      attachmentList: [], // 附件列表
       platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
+      signatureVal: '',
     };
   },
+  // watch: {
+  //   textareaValue: function() {
+  //     console.log('markdown:' + this.textareaValue);
+  //     // console.log("html:"+this.textareaHtml)
+  //   },
+  // },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
@@ -393,6 +497,80 @@ export default {
     },
   },
   methods: {
+    focusEvent(e) {
+      console.log(e, '这是获取焦点是');
+    },
+    toolBarClick(type) {
+      console.log(type);
+      let text = '';
+      if (type === 'bold') {
+        console.log('加粗');
+        text = `${`${this.textAreaValue.slice(
+          0,
+          this.cursor,
+        )}**粗体文字**${this.textAreaValue.slice(this.cursor)}`}`;
+        this.cursor += 2;
+        this.focusEvent(this.cursor);
+        console.log(this.textareaValue);
+      } else if (type === 'italic') {
+        // this.textareaValue += '*斜体* ';
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}__${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
+        this.focusEvent(this.cursor);
+      } else if (type === 'title') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}\n### ${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 4;
+        this.focusEvent(this.cursor);
+      } else if (type === 'quote') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}\n> ${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
+        this.focusEvent(this.cursor);
+      } else if (type === 'link') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}- [](url)${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
+        this.focusEvent(this.cursor);
+      } else if (type === 'code') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}\`\`${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 1;
+        this.focusEvent(this.cursor);
+      } else if (type === 'undeline') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 2;
+        this.focusEvent(this.cursor);
+      } else if (type === 'strikethrough') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 2;
+        this.focusEvent(this.cursor);
+      }
+      //  else if (type == 'unordered') {
+      //   text = `${this.textAreaValue.slice(0, this.cursor) +
+      //     '\n- ' +
+      //     this.textAreaValue.slice(this.cursor)}`;
+      //   this.cursor = this.cursor + 1;
+      //   this.focusEvent(this.cursor);
+      // } else if (type == 'ordered') {
+      //   text = `${this.textAreaValue.slice(0, this.cursor) +
+      //     '\n1. ' +
+      //     this.textAreaValue.slice(this.cursor)}`;
+      //   this.cursor = this.cursor + 1;
+      //   this.focusEvent(this.cursor);
+      // }
+      this.textAreaValue = text;
+    },
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
@@ -412,7 +590,6 @@ export default {
         }
       });
     },
-
     // video相关方法
     videoDel() {
       this.videoBeforeList = [];
@@ -444,7 +621,7 @@ export default {
           _this.videoBeforeList.push({
             path: res.tempFilePath,
           });
-
+          // #ifdef  MP-WEIXIN
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
@@ -476,6 +653,25 @@ export default {
               // });
             },
           });
+          // #endif
+          // #ifndef  MP-WEIXIN
+          _this.getSignature(getSignature => {
+            new TcVod({
+              getSignature,
+            })
+              .upload({
+                mediaFile: res.tempFile,
+              })
+              .on('media_progress', info => {
+                _this.percent = info.percent; // 进度处理
+              })
+              .done()
+              .then(doneResult => {
+                _this.fileId = doneResult.fileId;
+                _this.postVideo(doneResult.fileId);
+              });
+          });
+          // #endif
         },
       });
     },
@@ -542,9 +738,6 @@ export default {
     uploadClick(e) {
       this.uploadStatus = e;
     },
-    uploadFileClick() {
-      //
-    },
     uploadChange(e, status) {
       this.uploadFile = e;
       // e.map((file, index) => {
@@ -571,6 +764,7 @@ export default {
 
       this.textAreaValue = text;
       this.emojiShow = false;
+      this.textShow = true;
     },
     // @人员跳转
     callClick() {
@@ -578,19 +772,6 @@ export default {
     },
     topicPage() {
       uni.navigateTo({ url: '/pages/topic/topic' });
-    },
-    hasStorage() {
-      const that = this;
-      uni.getStorage({
-        key: 'topicMsg',
-        success(e) {
-          if (e.data.keywords) that.textAreaValue = `#${e.data.keywords}#`;
-          uni.setStorage({
-            key: 'topicMsg',
-            data: '',
-          });
-        },
-      });
     },
     // 分类点击
     checkClass(e, index) {
@@ -729,7 +910,6 @@ export default {
     addImg() {
       const attachments = {};
       attachments.data = [];
-
       this.uploadFile.forEach(item => {
         if (item.data) {
           attachments.data.push({
@@ -738,8 +918,30 @@ export default {
           });
         }
       });
-
+      // 附件
+      if (this.type === 1 && this.$refs.uploadFiles) {
+        const fileList = this.$refs.uploadFiles.getValue();
+        fileList.forEach(item => {
+          if (item.id) {
+            attachments.data.push({
+              type: 'attachments',
+              id: item.id,
+            });
+          }
+        });
+      }
       return attachments;
+    },
+    deleteFile(id) {
+      const params = {
+        _jv: {
+          type: 'attachments',
+          id,
+        },
+      };
+      this.$store.dispatch('jv/delete', params).then(res => {
+        console.log(res);
+      });
     },
 
     // 接口请求
@@ -839,10 +1041,13 @@ export default {
           console.log(err);
         });
     },
-    getSignature(callback) {
+    getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
+        // #ifndef MP-WEIXIN
+        callBack(() => res.signature);
+        // #endif
         if (res.signature) {
-          callback(res.signature);
+          return res.signature;
         } else {
           return this.i18n.t('discuzq.post.failedToObtainSignature');
         }
@@ -860,13 +1065,26 @@ export default {
     // 获取当前编辑的主题数据
     getPostThread() {
       const params = {
-        include: ['firstPost', 'firstPost.images', 'threadVideo', 'category'],
+        include: [
+          'firstPost',
+          'firstPost.images',
+          'threadVideo',
+          'category',
+          'firstPost.attachments',
+        ],
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
+        // #ifdef H5
+        if (this.type === 1) {
+          this.markdodwShow = true;
+        }
+        // #endif
+        console.log(this.type, '这是编辑时Type');
+        this.attachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
@@ -876,7 +1094,6 @@ export default {
           this.word = res.freeWords;
         }
         this.textAreaLength = this.type === 1 ? 10000 : 450;
-
         switch (Number(res.type)) {
           case 0:
             break;
@@ -986,7 +1203,7 @@ export default {
       // h5内发布按钮验证码验证
       // #ifdef H5
 
-      this.captcha = new TencentCaptcha(this.appID, res => {
+      this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         console.log(res, 'h5验证1111');
         if (res.ret === 0) {
           this.ticket = res.ticket;
@@ -995,7 +1212,8 @@ export default {
           this.postClick();
         }
         if (res.ret === 2) {
-          this.btnLoading = false;
+          this.postLoading = false;
+          uni.hideLoading();
         }
       });
       // 显示验证码
@@ -1004,7 +1222,6 @@ export default {
     },
   },
   onLoad(option) {
-    this.hasStorage();
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -1050,8 +1267,32 @@ export default {
     } catch (e) {
       // error
     }
+    // #ifdef H5
+    if (this.type === 1) {
+      this.markdodwShow = true;
+    }
+    // #endif
+    // 接受验证码captchaResult
+    this.$u.event.$on('captchaResult', result => {
+      this.ticket = result.ticket;
+      this.randstr = result.randstr;
+      this.postClick();
+    });
+    this.$u.event.$on('closeChaReault', () => {
+      this.postLoading = false;
+      uni.hideLoading();
+    });
+
+    uni.$on('clickTopic', data => {
+      if (data.keywords) this.textAreaValue += `#${data.keywords}#`;
+    });
   },
   onShow() {
+    // #ifndef  MP-WEIXIN
+    // this.tcVod = new TcVod({
+    //   getSignature: this.getSignature,
+    // });
+    // #endif
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1062,26 +1303,18 @@ export default {
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
-
-    // 接受验证码captchaResult
-    this.$u.event.$on('captchaResult', result => (this.captchaResult = result));
-    this.$u.event.$on('closeChaReault', result => (this.captchaResult = result));
-    const captchaResult = this.captchaResult;
-    this.captchaResult = null;
-    // 验证码页面点击返回时，发布取消loading
-    if (captchaResult.ret !== 0) {
-      this.postLoading = false;
-      return;
-    }
-    if (captchaResult && captchaResult.ret === 0) {
-      // 将验证码的结果返回至服务端校验
-      this.ticket = captchaResult.ticket;
-      this.randstr = captchaResult.randstr;
-      this.postClick();
-    }
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');
+  },
+  onUnload() {
+    this.$u.event.$off('captchaResult');
+    this.$u.event.$off('closeChaReault');
+    uni.$off('clickTopic');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
   },
 };
 </script>
@@ -1089,6 +1322,9 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
+.head-gap {
+  height: 88rpx;
+}
 .post-box {
   width: 100vw;
   height: 100%;
@@ -1126,7 +1362,7 @@ export default {
   }
   &__con {
     width: 100%;
-    padding: 20rpx;
+    padding: 20rpx 0 0;
     margin-top: 20rpx;
     overflow: hidden;
     background-color: --color(--qui-BG-1);
@@ -1139,9 +1375,10 @@ export default {
     width: 100%;
     max-height: 900rpx;
     min-height: 400rpx;
+    padding: 0 20rpx 20rpx;
     overflow: hidden;
     line-height: 20px;
-
+    box-sizing: border-box;
     &--static {
       overflow: auto;
     }
@@ -1346,5 +1583,15 @@ export default {
 
 /deep/ .uni-video-cover {
   display: none;
+}
+.markdown-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  height: 60rpx;
+  line-height: 60rpx;
+  background: --color(--qui-BG-FFF);
+  border-top: 1px solid --color(--qui-BOR-DDD);
 }
 </style>

@@ -8,7 +8,7 @@
       <u-loading :size="60"></u-loading>
     </view>
     <qui-page-message v-else-if="showMessage"></qui-page-message>
-    <slot v-else />
+    <view v-else><slot /></view>
 
     <!-- #ifdef MP-WEIXIN -->
     <uni-popup ref="auth" type="bottom">

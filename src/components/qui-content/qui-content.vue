@@ -59,11 +59,13 @@
               size="28"
               style="padding-left: 8rpx;"
             ></qui-icon>
-            <navigator class="navPost">
+            <!-- <navigator class="navPost">
               {{ themeContent }}
-            </navigator>
+            </navigator> -->
+            <qui-uparse class="navPost" :content="themeContent"></qui-uparse>
           </view>
-          <rich-text :nodes="themeContent" v-else></rich-text>
+          <!-- <rich-text :nodes="themeContent" v-else></rich-text> -->
+          <qui-uparse :content="themeContent" v-else></qui-uparse>
         </view>
         <view
           class="theme__content__videocover"
@@ -694,7 +696,7 @@ export default {
   display: inline;
 }
 .navPost {
-  display: inline;
+  display: inline-block;
   padding-left: 8rpx;
   color: --color(--qui-LINK);
 }

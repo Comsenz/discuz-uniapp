@@ -6,7 +6,6 @@ import Vue from 'vue';
 const appCommonH = {};
 appCommonH.isWeixin = () => {
   const u = navigator.userAgent.toLowerCase();
-  console.log(u, '这是u');
   const isAndroid = u.indexOf('android') > -1 || u.indexOf('adr') > -1;
   const isiOS = !!u.match(/\(i[^;]+;( u;)? cpu.+mac os x/);
   const isPhone = isAndroid || isiOS;
