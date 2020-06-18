@@ -1,5 +1,52 @@
 <template>
-  <view class="themeItem">
+  <view v-if="topicSTatus != 1">
+    <view class="themeItem__header">
+      <view class="themeItem__header__img">
+        <image
+          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
+          class="det-per-head"
+          @click="personJump"
+          @error="imageError"
+          v-if="imageStatus"
+        ></image>
+        <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
+      </view>
+      <view class="themeItem__header__title">
+        <view class="themeItem__header__title__top" @click="personJump">
+          <text class="themeItem__header__title__username">{{ userName }}</text>
+          <text
+            class="themeItem__header__title__isAdmin"
+            v-for="(group, index) in userRole"
+            :key="index"
+          >
+            {{ group.isDisplay ? `（${group.name}）` : '' }}
+          </text>
+        </view>
+        <view class="themeItem__header__title__time">{{ localTime }}</view>
+      </view>
+      <view class="themeItem__header__opera" v-if="managementShow">
+        <view class="det-hd-operaCli">
+          <view class="det-hd-management" @click="selectClick">
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>{{ t.management }}</view>
+          </view>
+          <view>
+            <qui-drop-down
+              posival="absolute"
+              :show="seleShow"
+              :list="selectList"
+              :top="60"
+              :right="0"
+              :width="180"
+              @click="selectChoice"
+            ></qui-drop-down>
+          </view>
+        </view>
+        <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+      </view>
+    </view>
+  </view>
+  <view class="themeItem" v-else>
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
@@ -148,6 +195,10 @@ import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   props: {
+    topicStatus: {
+      type: Number,
+      default: 0,
+    },
     // 类型
     themeParts: {
       validator: value => {

@@ -24,6 +24,7 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
+              :topic-status="topicStatus"
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
@@ -37,7 +38,7 @@
                   selectList[3].canOpera
               "
               :theme-title="thread.type == 1 ? thread.title : ''"
-              :theme-content="topicStatus == 1 ? thread.firstPost.contentHtml : ''"
+              :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
               :select-list="selectList"
               :tags="[thread.category]"
