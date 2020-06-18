@@ -598,6 +598,7 @@ export default {
     payfail: '支付失败',
     cancelorder: '取消订单',
     personalhomepage: '个人主页',
+    filedownloadtips: '因iPhone系统限制，您的手机无法下载文件。请使用安卓手机或电脑访问下载',
   },
   site: {
     circleintroduction: '站点介绍',
