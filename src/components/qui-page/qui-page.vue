@@ -22,11 +22,12 @@
 import { mapState } from 'vuex';
 // #ifdef H5
 import forums from '@/mixin/forums';
+import appCommonH from '@/utils/commonHelper';
 // #endif
 
 export default {
   // #ifdef H5
-  mixins: [forums],
+  mixins: [forums, appCommonH],
   // #endif
   computed: {
     ...mapState({
@@ -69,9 +70,8 @@ export default {
       open: () => {
         const url = '/pages/home/index';
         console.log('forums', this.forums);
-        const ua = window.navigator.userAgent.toLowerCase(); // window.navigator.userAgent中包含浏览器类型、版本、操作系统类型、浏览器引擎类型等信息
-        console.log('微信浏览器：', ua.match(/MicroMessenger/i) === 'micromessenger');
-        if (ua.match(/MicroMessenger/i) === 'micromessenger') {
+        console.log('微信浏览器：', appCommonH.isWeixin().isWeixin);
+        if (appCommonH.isWeixin().isWeixin) {
           // 微信浏览器
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式
