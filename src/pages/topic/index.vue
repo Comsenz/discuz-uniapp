@@ -48,7 +48,9 @@
               :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
               :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
               :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
-              :file-list="thread.firstPost.attachments || []"
+              :file-list="
+                thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
+              "
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
@@ -65,7 +67,7 @@
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
                 :person-list="thread.paidUsers"
-                :btn-show="thread.price > 0 && !thread.paid"
+                :btn-show="paidBtnStatus"
                 :btn-icon-show="true"
                 btn-icon-name="rmb"
                 :btn-text="payThreadTypeText"
@@ -490,6 +492,7 @@ export default {
 
       limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
+      paidBtnStatus: false, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, //回复状态
@@ -587,6 +590,8 @@ export default {
       codeUrl: '', //二维码支付url，base64
       browser: 0, // 0为小程序，1为除小程序之外的设备
       wxRes: '',
+      contentVal: '', // 这是分享需要传的标题
+      shareLogo: '', // 这是分享需要传的图片
     };
   },
   computed: {
@@ -681,12 +686,17 @@ export default {
     }
     // h5微信分享
     // #ifdef H5
+
     this.wxShare({
-      title: this.forums.set_site.site_name,
-      desc: this.forums.set_site.site_introduction,
-      logo: this.forums.set_site.site_logo,
+      title: this.contentVal,
+      desc: this.thread.summary,
+      logo: this.shareLogo,
     });
     // #endif
+    // 编辑发帖回来后更新信息
+    this.$u.event.$on('refreshFiles', () => {
+      this.loadThread();
+    });
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -758,11 +768,37 @@ export default {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
           // this.thread = data;
           if (data.isDeleted) {
-            console.log('走了333');
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
               status: 500,
             });
+            if (data.type == 1) {
+              contentVal = this.thread.title;
+            } else {
+              contentVal = this.thread.summary;
+            }
+            if (data.paice > 0) {
+              if (data.type == 2) {
+                this.shareLogo = data.threadVideo.coverUrl;
+              } else {
+                this.shareLogo = '';
+              }
+            } else {
+              if (data.type == 0) {
+                this.shareLogo = '';
+              } else if (data.type == 1) {
+                if (data.firstPost.imagelist.length > 0) {
+                  this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
+                } else {
+                  this.shareLogo = '';
+                }
+              } else if (data.type == 2) {
+                this.shareLogo = data.threadVideo.coverUrl;
+              } else if (data.type == 3) {
+                this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
+              }
+            }
+
             this.loaded = false;
           } else {
             this.loaded = true;
@@ -845,6 +881,21 @@ export default {
             ) {
               this.rewardStatus = true;
             } else {
+              if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === false
+              ) {
+                this.paidBtnStatus = false;
+              } else if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === true &&
+                data.paid === false
+              ) {
+                this.paidBtnStatus = true;
+              }
+
               this.rewardStatus = true;
             }
           } else {
@@ -1342,19 +1393,40 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
-            this.$refs.toast.show({ message: this.p.paySuccess });
+            if (this.payStatus == '1') {
+              this.$refs.toast.show({ message: this.p.paySuccess });
+            }
+
             if (this.payTypeVal == 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               console.log('这是主题支付');
               this.loadThread();
             } else if (this.payTypeVal == 1) {
-              console.log('追加');
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              this.thread._jv.relationships.rewardedUsers.data.push({
+              const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
+
+              orgignPost._jv.relationships.rewardedUsers.data.unshift({
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
               });
-              this.thread.rewardedUsers.unshift(this.user);
+
+              // this.thread._jv.relationships.rewardedUsers.data.unshift({
+              //   type: this.user._jv.type,
+              //   id: this.user.id.toString(),
+              // });
+              if (this.thread.rewardedUsers.length == 0) {
+                // #ifndef MP_WEIXIN
+                // this.thread.rewardedUsers.unshift(this.user);
+                // #endif
+                console.log('追加0000', this.thread.rewardedUsers);
+              } else {
+                console.log('追加111', this.thread.rewardedUsers);
+                // #ifdef MP_WEIXIN
+                // this.thread.rewardedUsers.unshift(this.user);
+                // #endif
+              }
+
+              console.log('追加222', this.thread.rewardedUsers);
             }
           }
         })
@@ -1746,7 +1818,7 @@ export default {
       } else {
         this.h5Share({
           title: this.forums.set_site.site_name,
-          // id:
+          id: this.threadId,
           url: 'pages/topic/index',
         });
       }

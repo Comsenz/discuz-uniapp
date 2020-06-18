@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
-    <!-- #ifdef H5-->
-    <qui-header-back title="站点信息"></qui-header-back>
-    <!-- #endif -->
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
@@ -12,6 +9,7 @@
       :share="i18n.t('home.share')"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
+      :title="title"
     ></qui-header>
     <!-- 分享弹窗 -->
     <uni-popup ref="popupHead" type="bottom">
@@ -121,6 +119,7 @@ export default {
   mixins: [forums],
   data() {
     return {
+      title: '站点信息',
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),

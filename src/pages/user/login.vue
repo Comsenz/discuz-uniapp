@@ -94,7 +94,7 @@ export default {
       this.clear();
       console.log('跳转到找回密码页面');
       uni.navigateTo({
-        url: '/pages/modify/findpwd',
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
     clear() {

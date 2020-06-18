@@ -501,7 +501,7 @@ export default {
       }
     }
     &__attachment {
-      margin-top: 60rpx;
+      margin-top: 40rpx;
       margin-bottom: 20rpx;
       &-title {
         margin-bottom: 20rpx;

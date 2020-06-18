@@ -31,7 +31,10 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
+  mixins: [forums],
   data() {
     return {
       username: '', // 用户名
@@ -49,29 +52,35 @@ export default {
         this.showDialog('用户名不能为空');
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
+      } else if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
+        // 调用校验码
+        this.registerBind();
       } else {
-        const params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-            },
-          },
-        };
-        // eslint-disable-next-line no-unused-vars
-        this.$store
-          .dispatch('session/h5Register', params)
-          .then(res => {
-            console.log('注册绑定成功', res);
-            uni.navigateTo({
-              url: this.url,
-            });
-          })
-          .catch(err => {
-            console.log(err);
-          });
-        this.clear();
+        this.registerBind();
       }
+    },
+    registerBind() {
+      const params = {
+        data: {
+          attributes: {
+            username: this.username,
+            password: this.password,
+          },
+        },
+      };
+      // eslint-disable-next-line no-unused-vars
+      this.$store
+        .dispatch('session/h5Register', params)
+        .then(res => {
+          console.log('注册绑定成功', res);
+          uni.navigateTo({
+            url: this.url,
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      this.clear();
     },
     clear() {
       this.username = '';

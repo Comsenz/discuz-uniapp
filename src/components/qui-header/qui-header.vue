@@ -3,8 +3,8 @@
     <!-- #ifdef H5-->
     <qui-header-back
       :title="title"
-      :is-show-home="false"
-      :is-show-back="false"
+      :is-show-home="isShowHome"
+      :is-show-back="isShowBack"
       :is-show-more="isShowMore"
     ></qui-header-back>
     <!-- #endif -->
@@ -82,6 +82,14 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+    isShowBack: {
+      type: Boolean,
+      default: true,
+    },
+    isShowHome: {
+      type: Boolean,
+      default: true,
     },
     isShowMore: {
       type: Boolean,

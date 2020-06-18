@@ -222,6 +222,9 @@ export default {
     margin-top: 80rpx;
     /* #endif */
   }
+  .no-data {
+    padding-top: 20rpx;
+  }
 }
 .search-item {
   padding-left: 40rpx;

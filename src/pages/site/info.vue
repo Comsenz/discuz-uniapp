@@ -7,6 +7,7 @@
       :post-num="forums.other && forums.other.count_threads"
       :share-btn="shareBtn"
       :share-show="shareShow"
+      :is-show-more="false"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
       @closeShare="closeShare"
@@ -103,15 +104,26 @@
 
 <script>
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef  H5
+    wxshare,
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       payShowStatus: true, // 是否显示支付
       shareBtn: 'icon-share1',
       shareShow: false, // h5内分享提示信息
       isAnonymous: '0',
+      isWeixin: '', // 是否是微信浏览器内
       payTypeData: [
         {
           name: '微信支付',
@@ -133,6 +145,9 @@ export default {
         });
       }
     });
+    // #ifdef  H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -153,7 +168,14 @@ export default {
       this.$refs.popupHead.open();
       // #endif
       // #ifdef H5
-      this.shareShow = true;
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: 'pages/home/index',
+        });
+      }
       // #endif
     },
     closeShare() {

@@ -151,7 +151,10 @@ export default {
         const { status } = res.target;
         const data = JSON.parse(res.target.response);
         if (status >= 200 && status < 300) {
-          this.fileList.push(data.data);
+          this.fileList.push({
+            attributes: { fileName: data.data.attributes.fileName },
+            id: data.data.id,
+          });
         } else {
           this.$refs.toast.show({ message: data.errors[0].detail[0] });
         }
