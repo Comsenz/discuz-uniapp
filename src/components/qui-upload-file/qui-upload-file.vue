@@ -46,10 +46,6 @@ export default {
       default: 3,
       type: Number,
     },
-    showAdd: {
-      default: true,
-      type: Boolean,
-    },
     attachmentList: {
       type: Array,
       default() {
@@ -64,8 +60,16 @@ export default {
     },
   },
   data() {
+    let showAdd = true;
+    // #ifdef  H5
+    if (uni.getSystemInfoSync().platform === 'ios') {
+      // h5的ios设备不能上传和下载附件
+      showAdd = false;
+    }
+    // #endif
     return {
       fileList: [],
+      showAdd,
     };
   },
   watch: {
@@ -97,6 +101,7 @@ export default {
     },
   },
   mounted() {
+    // #ifdef  H5
     const input = document.createElement('input');
     input.style.display = 'none';
     input.type = 'file';
@@ -106,14 +111,7 @@ export default {
       if (!file) {
         return;
       }
-      const fileName = file.name;
-      const fileFormat = fileName.substring(fileName.lastIndexOf('.') + 1);
-      if (this.fileFormat && this.fileFormat.indexOf(fileFormat) === -1) {
-        this.$refs.toast.show({ message: `请选择${this.fileFormat}格式的文件` });
-        return;
-      }
-      if (this.fileSize && (file.size / 1024).toFixed(0) > parseInt(this.fileSize, 10) * 1000) {
-        this.$refs.toast.show({ message: `文件大小不能超过${this.fileSize}M` });
+      if (!this.verificateFile(file, this)) {
         return;
       }
       // 上传前的其他校验
@@ -123,11 +121,82 @@ export default {
       input.value = '';
     };
     this.$refs.input.$el.appendChild(input);
+    // #endif
   },
   methods: {
     // 上传附件按钮 绑定file的点击事件
     uploadBtn() {
+      // #ifdef  H5
       document.getElementById('file').click();
+      // #endif
+
+      // #ifdef MP-WEIXIN
+      const that = this;
+      wx.chooseMessageFile({
+        count: 3, // 能选择文件的数量
+        type: 'file',
+        success(res) {
+          console.log(res);
+          const file = {
+            name: res.tempFiles[0].name,
+            size: res.tempFiles[0].size,
+          };
+          if (!that.verificateFile(file, that)) {
+            return;
+          }
+          uni.showLoading();
+          wx.uploadFile({
+            url: that.url,
+            name: 'file',
+            timeout: 30000,
+            header: that.header,
+            filePath: res.tempFiles[0].path,
+            success(data) {
+              const status = data.statusCode;
+              const response = JSON.parse(data.data).data;
+              console.log(response);
+              if (status >= 200 && status < 300) {
+                that.fileList.push({
+                  attributes: { fileName: file.name },
+                  id: response.id,
+                });
+              } else {
+                const { code } = JSON.parse(data.data).errors[0];
+                that.$refs.toast.show({ message: code });
+              }
+              uni.hideLoading();
+            },
+            fail(error) {
+              that.$refs.toast.show({ message: error });
+              uni.hideLoading();
+            },
+          });
+        },
+      });
+      // #endif
+    },
+    // 文件校验
+    verificateFile(file, el) {
+      console.log(file);
+      const fileName = file.name;
+      const fileFormat = fileName.substring(fileName.lastIndexOf('.') + 1);
+      if (el.fileFormat && this.fileFormat.indexOf(fileFormat) === -1) {
+        el.$refs.toast.show({ message: `请选择${el.fileFormat}格式的文件` });
+        return false;
+      }
+      // #ifdef  H5
+      if (el.fileSize && (file.size / 1024).toFixed(0) > parseInt(el.fileSize, 10) * 1000) {
+        el.$refs.toast.show({ message: `文件大小不能超过${el.fileSize}M` });
+        return false;
+      }
+      // #endif
+      // #ifdef MP-WEIXIN
+      if (el.fileSize && (file.size / 1024).toFixed(0) > parseInt(el.fileSize, 10)) {
+        el.$refs.toast.show({ message: `文件大小不能超过${el.fileSize}M` });
+        return false;
+      }
+      // #endif
+      return true;
     },
     deleteItem(index, id) {
       this.fileList.splice(index, 1);
@@ -139,6 +208,7 @@ export default {
     setValue(v) {
       this.fileList = v;
     },
+    // #ifdef  H5
     uploadFile(path) {
       uni.showLoading();
       const fData = new FormData();
@@ -161,19 +231,13 @@ export default {
         uni.hideLoading();
       };
       xhr.timeout = 30000; // 超时时间，单位是毫秒
-      // xhr.ontimeout = res => {
-      //   // XMLHttpRequest 超时。在此做某事。
-      //   console.log(res);
-      // };
       xhr.onerror = res => {
         uni.hideLoading();
         this.$refs.toast.show({ message: res });
       };
-      // xhr.upload.onprogress = res => {
-      //   console.log(res);
-      // };
       xhr.send(fData);
     },
+    // #endif
   },
 };
 </script>

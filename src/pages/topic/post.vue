@@ -174,7 +174,6 @@
         @clear="uploadClear"
         @uploadClick="uploadClick"
       ></qui-uploader>
-      <!-- #ifdef H5-->
       <qui-upload-file
         :url="`${url}api/attachments`"
         ref="uploadFiles"
@@ -184,9 +183,7 @@
         :file-size="forums.set_attach && forums.set_attach.support_max_size"
         v-if="type === 1"
         @deleteItem="deleteFile"
-        :show-add="platform === 'ios' ? false : true"
       ></qui-upload-file>
-      <!-- #endif -->
       <view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
           <video
@@ -469,7 +466,6 @@ export default {
       captchaResult: {},
       attachmentList: [], // 附件列表
       preAttachmentList: [], // 编辑的时候只传新增的用于比较是否是新增的
-      platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
       signatureVal: '',
     };
   },
