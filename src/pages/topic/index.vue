@@ -1819,8 +1819,8 @@ export default {
       } else {
         this.h5Share({
           title: this.contentVal,
-          id: this.threadId,
-          url: 'pages/topic/index',
+          id: '',
+          url: '',
         });
       }
       // #endif

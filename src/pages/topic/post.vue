@@ -77,7 +77,7 @@
         <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
           <text class="text-cover">{{ textAreaValue }}</text>
         </view>
-        <view class="markdown-box" v-show="markdodwShow">
+        <view class="markdown-box" v-if="markdodwShow">
           <view>
             <qui-icon
               name="icon-bold"
@@ -1081,6 +1081,10 @@ export default {
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
+
+        // #ifdef MP-WEIXIN 
+        this.markdodwShow = false;
+        // #endif
         // #ifdef H5
         if (this.type === 1) {
           this.markdodwShow = true;
@@ -1273,6 +1277,9 @@ export default {
     } catch (e) {
       // error
     }
+    // #ifdef MP-WEIXIN 
+      this.markdodwShow = false;
+    // #endif
     // #ifdef H5
     if (this.type === 1) {
       this.markdodwShow = true;
