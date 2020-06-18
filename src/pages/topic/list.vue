@@ -209,10 +209,6 @@ $otherHeight: 292rpx;
       text-overflow: ellipsis;
       -webkit-line-clamp: 2;
     }
-    &_image {
-      width: 450rpx;
-      height: 350rpx;
-    }
   }
   &_heat,
   &_content {

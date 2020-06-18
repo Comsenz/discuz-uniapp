@@ -32,9 +32,10 @@
 
 <script>
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 
 export default {
-  mixins: [forums],
+  mixins: [forums, user],
   data() {
     return {
       username: '', // 用户名
@@ -73,6 +74,7 @@ export default {
         .dispatch('session/h5Register', params)
         .then(res => {
           console.log('注册绑定成功', res);
+          this.logind();
           uni.navigateTo({
             url: this.url,
           });

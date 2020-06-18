@@ -128,7 +128,13 @@ export default {
   },
   mounted() {
     this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
-    console.log('-----navbarHeight-------', this.navbarHeight);
+    uni.$on('updateNotiNum', () => {
+      console.log('updateNode', this.user);
+      this.getUnreadNoticeNum();
+    });
+  },
+  destroyed() {
+    uni.$off('updateNotiNum');
   },
   methods: {
     // 调用 会话列表 的接口

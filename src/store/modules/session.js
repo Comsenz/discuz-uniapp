@@ -16,6 +16,14 @@ import { GetUrlParam } from '@/utils/url';
 
 const accessToken = uni.getStorageSync('access_token');
 
+const setUserInfoStore = (context, results, resolve) => {
+  const resData = utils.jsonapiToNorm(results.data.data);
+  context.commit(SET_USER_ID, resData._jv.id);
+  context.commit(CHECK_SESSION, true);
+  context.commit(SET_ACCESS_TOKEN, resData.access_token);
+  resolve(resData);
+};
+
 const state = {
   userId: 0,
   wxLogin: false,
@@ -62,13 +70,9 @@ const actions = {
                   },
                 };
                 data = Object.assign(payload, data);
-                return http.post('oauth/wechat/miniprogram', data).then(results => {
-                  const resData = utils.jsonapiToNorm(results.data.data);
-                  context.commit(SET_USER_ID, resData._jv.id);
-                  context.commit(CHECK_SESSION, true);
-                  context.commit(SET_ACCESS_TOKEN, resData.access_token);
-                  resolve(resData);
-                });
+                return http
+                  .post('oauth/wechat/miniprogram', data)
+                  .then(results => setUserInfoStore(context, results, resolve));
               },
               fail: error => {
                 console.log(error);
@@ -105,14 +109,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.get('oauth/wechat/user', payload).then(results => {
-        console.log('results', results);
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .get('oauth/wechat/user', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif
@@ -121,14 +120,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('sms/verify', payload).then(results => {
-        console.log('results', results);
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .post('sms/verify', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif
@@ -137,14 +131,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('login', payload).then(results => {
-        console.log('results', results);
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .post('login', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif
@@ -153,13 +142,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('register', payload).then(results => {
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .post('register', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif

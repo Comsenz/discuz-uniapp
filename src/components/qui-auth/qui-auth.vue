@@ -25,9 +25,10 @@
 
 <script>
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 
 export default {
-  mixins: [forums],
+  mixins: [forums, user],
   computed: {
     t() {
       return this.i18n.t('auth');
@@ -40,23 +41,7 @@ export default {
         this.$store
           .dispatch('session/login')
           .then(data => {
-            this.$store.dispatch('jv/get', [
-              'forum',
-              {
-                params: {
-                  include: 'users',
-                },
-              },
-            ]);
-
-            const params = {
-              include: 'groups,wechat',
-            };
-            const userId = data._jv.id;
-            this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(val => {
-              this.$u.event.$emit('logind', val);
-            });
-            this.$store.dispatch('forum/setError', { loading: false });
+            this.logind();
             this.$emit('login', { res, data });
           })
           .catch(err => {
