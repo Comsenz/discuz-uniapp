@@ -1168,7 +1168,7 @@ export default {
     // 加载当前主题评论的数据
     loadThreadPosts() {
       const params = {
-        'filter[isApproved]': 'yes',
+        'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[isComment]': 'no',
         'page[number]': this.pageNum,

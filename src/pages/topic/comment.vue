@@ -667,7 +667,7 @@ export default {
     // 加载当前评论的回复数据
     loadPostComments() {
       const params = {
-        'filter[isApproved]': 'yes',
+        'filter[isApproved]': 1,
         'filter[thread]': this.threadId,
         'filter[reply]': this.commentId,
         'filter[isDeleted]': 'no',
