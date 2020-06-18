@@ -1142,20 +1142,23 @@ export default {
           this.commentReply = false;
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
-          console.log('~~~~~~~~~~~~');
-          if (!res.isComment) {
-            this.posts.push(res);
-            console.log(this.posts, '#####################');
-          } else {
-            // console.log(res, '*****************');
-            if (!this.posts[this.postIndex].lastThreeComments) {
-              // console.log(this.postIndex, '走了');
-              this.posts[this.postIndex].lastThreeComments = [];
+          console.log(res, '~~~++++~~~~~~~~~');
+          if (res.isApproved == 1) {
+            if (!res.isComment) {
+              this.posts.push(res);
+              console.log(this.posts, '#####################');
+            } else {
+              // console.log(res, '*****************');
+              if (!this.posts[this.postIndex].lastThreeComments) {
+                // console.log(this.postIndex, '走了');
+                this.posts[this.postIndex].lastThreeComments = [];
+              }
+              this.posts[this.postIndex].lastThreeComments.unshift(res);
+              this.posts[this.postIndex].replyCount++;
+              // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
             }
-            this.posts[this.postIndex].lastThreeComments.unshift(res);
-            this.posts[this.postIndex].replyCount++;
-            // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
           }
+
           this.textAreaValue = '';
           this.uploadFile = '';
         })

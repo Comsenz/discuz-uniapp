@@ -851,23 +851,21 @@ export default {
 
         if (this.operating === 'edit') {
           console.log(this.uploadFile.length, '长度');
-          if (this.uploadFile.length < 1) {
-            this.$refs.toast.show({
-              message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
-            });
+          // if (this.uploadFile.length < 1) {
+          //   this.$refs.toast.show({
+          //     message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
+          //   });
+          //   uni.hideLoading();
+          // } else {
+          // console.log('22222');
+          this.editThread().then(() => {
+            this.postLoading = false;
             uni.hideLoading();
-            console.log('11111');
-            return false;
-          } else {
-            console.log('22222');
-            this.editThread().then(() => {
-              this.postLoading = false;
-              uni.hideLoading();
-              uni.navigateBack({
-                delta: 1,
-              });
+            uni.navigateBack({
+              delta: 1,
             });
-          }
+          });
+          // }
         } else {
           if (this.forums.qcloud.qcloud_captcha && this.forums.other.create_thread_with_captcha) {
             if (!this.ticket || !this.randstr) {
@@ -1100,7 +1098,7 @@ export default {
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
 
-        // #ifdef MP-WEIXIN 
+        // #ifdef MP-WEIXIN
         this.markdodwShow = false;
         // #endif
         // #ifdef H5
@@ -1296,8 +1294,8 @@ export default {
     } catch (e) {
       // error
     }
-    // #ifdef MP-WEIXIN 
-      this.markdodwShow = false;
+    // #ifdef MP-WEIXIN
+    this.markdodwShow = false;
     // #endif
     // #ifdef H5
     if (this.type === 1) {

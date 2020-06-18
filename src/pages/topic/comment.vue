@@ -15,6 +15,7 @@
           <view class="ft-gap">
             <view class="bg-white">
               <qui-topic-content
+                :topic-status="thread.isApproved"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :theme-time="post.createdAt"
@@ -645,10 +646,13 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           console.log(res, '这是发布后');
+          if (res.isApproved == 1) {
+            this.postComments.push(res);
+          }
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
-          this.postComments.push(res);
+
           console.log(res, '!!!!!!!!!!!!!!!!!!!');
           this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
           // this.post.replyCount += 1;
