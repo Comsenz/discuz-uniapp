@@ -339,6 +339,14 @@ export default {
               title: this.i18n.t('modify.withdrawal'),
               duration: 2000,
             });
+            // #ifdef H5
+            setTimeout(() => {
+              uni.navigateBack({
+                delta: 1,
+              });
+            }, 1500);
+            // #endif
+            // #ifndef H5
             setTimeout(() => {
               uni.navigateBack({
                 success() {
@@ -347,6 +355,7 @@ export default {
                 },
               });
             }, 1500);
+            // #endif
           }
         })
         .catch(err => {

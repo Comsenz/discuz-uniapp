@@ -100,6 +100,14 @@ export default {
             title: this.i18n.t('modify.modificationsucc'),
             duration: 2000,
           });
+          // #ifdef H5
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: 1,
+            });
+          }, 1000);
+          // #endif
+          // #ifndef H5
           setTimeout(() => {
             uni.navigateBack({
               success() {
@@ -108,6 +116,7 @@ export default {
               },
             });
           }, 1000);
+          // #endif
         }
       });
     },

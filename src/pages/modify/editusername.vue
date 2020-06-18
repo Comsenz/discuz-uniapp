@@ -44,9 +44,6 @@ export default {
   },
   onLoad() {
     this.userid = this.usersid;
-    const pages = getCurrentPages();
-    console.log(pages);
-    console.log(this.userid);
   },
   computed: {
     usersid() {
@@ -73,7 +70,6 @@ export default {
         },
         username: this.sername,
       };
-      console.log(params);
       const patchname = status.run(() => this.$store.dispatch('jv/patch', params));
       patchname
         .then(res => {
@@ -82,17 +78,20 @@ export default {
               title: this.i18n.t('modify.modifysucc'),
               duration: 2000,
             });
+            // #ifdef H5
+            uni.navigateBack({
+              delta: 1,
+            });
+            // #endif
+            // #ifndef H5
             uni.navigateBack({
               delta: 1,
               success() {
                 const pages = getCurrentPages();
-                console.log(pages);
-                /* #ifdef H5 */
-                pages[pages.length - 2].onLoad();
-                /* #endif */
                 pages[1].onLoad();
               },
             });
+            // #endif
           }
         })
         .catch(err => {
