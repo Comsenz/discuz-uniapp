@@ -152,6 +152,12 @@ export default {
               title: this.i18n.t('modify.titlepassword'),
               duration: 2000,
             });
+            // #ifdef H5
+            uni.navigateBack({
+              delta: 1,
+            });
+            // #endif
+            // #ifndef H5
             uni.navigateBack({
               delta: 1,
               success() {
@@ -159,6 +165,7 @@ export default {
                 pages[1].onLoad();
               },
             });
+            // #endif
           }
         })
         .catch(err => {

@@ -61,6 +61,7 @@ export default {
   },
   onLoad(arr) {
     this.userid = this.usersid;
+    console.log(this.userid);
     if (arr) {
       this.usertokenid = arr.token || '';
     }
@@ -112,24 +113,45 @@ export default {
               duration: 2000,
             });
             if (this.usertokenid) {
+              // #ifdef H5
+              uni.navigateBack({
+                delta: 2,
+              });
+              // #endif
+              // #ifndef H5
               uni.navigateBack({
                 delta: 2,
               });
               pages[2].onLoad();
+              // #endif
             } else if (pages[1].route === 'pages/topic/index') {
+              // #ifdef H5
+              uni.redirectTo({
+                url: `/pages/topic/index?id=${this.themid}`,
+              });
+              // #endif
+              // #ifndef H5
               uni.redirectTo({
                 url: `/pages/topic/index?id=${this.themid}`,
                 success() {
                   pages[1].onLoad();
                 },
               });
+              // #endif
             } else {
+              // #ifdef H5
+              uni.navigateBack({
+                delta: 1,
+              });
+              // #endif
+              // #ifndef H5
               uni.navigateBack({
                 delta: 1,
                 success() {
                   pages[1].onLoad(); // 执行前一个页面的onLoad方法
                 },
               });
+              // #endif
             }
           }
         })

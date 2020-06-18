@@ -188,6 +188,12 @@ export default {
               duration: 1000,
             });
             if (this.typebind === 'bind') {
+              // #ifdef H5
+              uni.navigateBack({
+                delta: 1,
+              });
+              // #endif
+              // #ifndef H5
               uni.navigateBack({
                 delta: 1,
                 success() {
@@ -195,7 +201,14 @@ export default {
                   pages[1].onLoad();
                 },
               });
+              // #endif
             } else {
+              // #ifdef H5
+              uni.navigateBack({
+                delta: 2,
+              });
+              // #endif
+              // #ifndef H5
               uni.navigateBack({
                 delta: 2,
                 success() {
@@ -203,6 +216,7 @@ export default {
                   pages[1].onLoad();
                 },
               });
+              // #endif
             }
           }
         })
