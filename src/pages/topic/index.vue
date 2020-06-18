@@ -130,7 +130,7 @@
               {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
             </view>
 
-            <view v-if="posts.length > 0">
+            <view v-if="posts.length > 0 && topicStatus == 1">
               <view v-for="(post, index) in posts" :key="index">
                 <qui-topic-comment
                   v-if="!post.isDeleted"

@@ -126,7 +126,7 @@
               >
                 {{ post.replyCount }}{{ t.item }}{{ t.comment }}
               </view>
-              <view v-if="postComments.length > 0">
+              <view v-if="postComments.length > 0 && thread.isApproved == 1">
                 <view v-for="(commentPost, index) in postComments" :key="index">
                   <qui-topic-comment
                     v-if="!commentPost.isDeleted"
