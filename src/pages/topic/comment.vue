@@ -25,7 +25,7 @@
                 @personJump="personJump(post.user._jv.id)"
               ></qui-topic-content>
               <view class="thread-box" v-if="loadDetailStatus">
-                <view class="thread">
+                <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img">
                       <image
@@ -648,13 +648,14 @@ export default {
           console.log(res, '这是发布后');
           if (res.isApproved == 1) {
             this.postComments.push(res);
+            this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
           }
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
 
           console.log(res, '!!!!!!!!!!!!!!!!!!!');
-          this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
+
           // this.post.replyCount += 1;
           const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
           console.log(orgignPost, '获取呀');
