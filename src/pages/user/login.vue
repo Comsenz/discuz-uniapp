@@ -38,9 +38,10 @@
 
 <script>
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 
 export default {
-  mixins: [forums],
+  mixins: [forums, user],
   data() {
     return {
       username: 'admin', // 用户名
@@ -72,6 +73,7 @@ export default {
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {
+            this.logind();
             console.log('登录成功', res);
             uni.navigateTo({
               url: this.url,

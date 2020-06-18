@@ -53,8 +53,10 @@
 
 <script>
 // import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN } from '@/store/types/session';
+import user from '@/mixin/user';
 
 export default {
+  mixins: [user],
   data() {
     return {
       iptValue: '',
@@ -180,6 +182,7 @@ export default {
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
           console.log('手机号验证成功', res);
+          this.logind();
           uni.navigateTo({
             url: this.url,
           });
