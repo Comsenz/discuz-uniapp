@@ -37,7 +37,7 @@
                   selectList[3].canOpera
               "
               :theme-title="thread.type == 1 ? thread.title : ''"
-              :theme-content="thread.firstPost.contentHtml"
+              :theme-content="topicStatus == 1 ? thread.firstPost.contentHtml : ''"
               :images-list="thread.firstPost.images"
               :select-list="selectList"
               :tags="[thread.category]"
@@ -792,6 +792,7 @@ export default {
                 this.shareLogo = '';
               } else if (data.type == 1) {
                 if (data.firstPost.images.length > 0) {
+                  console.log('类型1，大于0');
                   this.shareLogo = data.firstPost.images[0].thumbUrl;
                 } else {
                   this.shareLogo = '';
@@ -799,7 +800,8 @@ export default {
               } else if (data.type == 2) {
                 this.shareLogo = data.threadVideo.coverUrl;
               } else if (data.type == 3) {
-                this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
+                console.log('类型3，大于0');
+                this.shareLogo = data.firstPost.images[0].thumbUrl;
               }
             }
           }

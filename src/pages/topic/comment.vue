@@ -18,7 +18,7 @@
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :theme-time="post.createdAt"
-                :theme-content="post.contentHtml"
+                :theme-content="topicStatus == 1 ? post.contentHtml : ''"
                 :user-role="post.user.groups"
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
