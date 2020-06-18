@@ -1178,9 +1178,11 @@ export default {
           });
         }
         // 更新详情页的附件
-        const fileList = this.$refs.uploadFiles.getValue();
-        if(fileList.length > 0) {
-           this.$u.event.$emit('refreshFiles');
+        if (this.$refs.uploadFiles) {
+          const fileList = this.$refs.uploadFiles.getValue();
+          if (fileList.length > 0) {
+            this.$u.event.$emit('refreshFiles');
+          }
         }
       });
       await this.$store.dispatch('jv/patch', threads).then(res => {
