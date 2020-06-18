@@ -692,7 +692,7 @@ export default {
       logo: this.shareLogo,
     });
     // #endif
-     // 编辑发帖回来后更新附件
+     // 编辑发帖回来后更新信息
     this.$u.event.$on('refreshFiles', () => {
       this.loadThread()
     });
