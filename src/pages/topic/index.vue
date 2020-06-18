@@ -48,7 +48,9 @@
               :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
               :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
               :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
-              :file-list="thread.firstPost.attachments || []"
+              :file-list="
+                thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
+              "
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
