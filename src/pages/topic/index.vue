@@ -587,6 +587,8 @@ export default {
       codeUrl: '', //二维码支付url，base64
       browser: 0, // 0为小程序，1为除小程序之外的设备
       wxRes: '',
+      contentVal: '', // 这是分享需要传的标题
+      shareLogo: '', // 这是分享需要传的图片
     };
   },
   computed: {
@@ -681,10 +683,11 @@ export default {
     }
     // h5微信分享
     // #ifdef H5
+
     this.wxShare({
-      title: this.forums.set_site.site_name,
-      desc: this.forums.set_site.site_introduction,
-      logo: this.forums.set_site.site_logo,
+      title: this.contentVal,
+      desc: this.thread.summary,
+      logo: this.shareLogo,
     });
     // #endif
   },
@@ -758,11 +761,37 @@ export default {
           console.log(data, '~~~~~~~~~~~~~~~~~~~');
           // this.thread = data;
           if (data.isDeleted) {
-            console.log('走了333');
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
               status: 500,
             });
+            if (data.type == 1) {
+              contentVal = this.thread.title;
+            } else {
+              contentVal = this.thread.summary;
+            }
+            if (data.paice > 0) {
+              if (data.type == 2) {
+                this.shareLogo = data.threadVideo.coverUrl;
+              } else {
+                this.shareLogo = '';
+              }
+            } else {
+              if (data.type == 0) {
+                this.shareLogo = '';
+              } else if (data.type == 1) {
+                if (data.firstPost.imagelist.length > 0) {
+                  this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
+                } else {
+                  this.shareLogo = '';
+                }
+              } else if (data.type == 2) {
+                this.shareLogo = data.threadVideo.coverUrl;
+              } else if (data.type == 3) {
+                this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
+              }
+            }
+
             this.loaded = false;
           } else {
             this.loaded = true;
@@ -1348,13 +1377,31 @@ export default {
               console.log('这是主题支付');
               this.loadThread();
             } else if (this.payTypeVal == 1) {
-              console.log('追加');
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              this.thread._jv.relationships.rewardedUsers.data.push({
+              const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
+
+              orgignPost._jv.relationships.rewardedUsers.data.unshift({
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
               });
-              this.thread.rewardedUsers.unshift(this.user);
+
+              // this.thread._jv.relationships.rewardedUsers.data.unshift({
+              //   type: this.user._jv.type,
+              //   id: this.user.id.toString(),
+              // });
+              if (this.thread.rewardedUsers.length == 0) {
+                // #ifndef MP_WEIXIN
+                // this.thread.rewardedUsers.unshift(this.user);
+                // #endif
+                console.log('追加0000', this.thread.rewardedUsers);
+              } else {
+                console.log('追加111', this.thread.rewardedUsers);
+                // #ifdef MP_WEIXIN
+                // this.thread.rewardedUsers.unshift(this.user);
+                // #endif
+              }
+
+              console.log('追加222', this.thread.rewardedUsers);
             }
           }
         })
@@ -1746,7 +1793,7 @@ export default {
       } else {
         this.h5Share({
           title: this.forums.set_site.site_name,
-          // id:
+          id: this.threadId,
           url: 'pages/topic/index',
         });
       }
