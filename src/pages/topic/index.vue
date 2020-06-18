@@ -24,7 +24,7 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
-              :topic-status="topicStatus"
+              :topic-status="thread.isApproved"
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"

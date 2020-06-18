@@ -1,5 +1,5 @@
 <template>
-  <view v-if="topicSTatus != 1">
+  <view v-if="topicStatus != 1">
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
