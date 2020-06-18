@@ -174,6 +174,9 @@ export default {
                 res.tempFiles[index].uploadPercent = 0;
                 res.tempFiles[index].uploadStatus = false;
                 _this.uploadBeforeList.push(res.tempFiles[index]);
+                if (_this.uploadBeforeList.length > _this.count) {
+                  _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
+                }
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,
@@ -187,6 +190,9 @@ export default {
 
             Promise.allSettled(promise).then(() => {
               // 返回上传成功列表和成功状态值
+              if (_this.uploadList.length > _this.count) {
+                _this.uploadList = _this.uploadList.slice(0, _this.count);
+              }
               _this.$emit('change', _this.uploadList, true);
             });
           },

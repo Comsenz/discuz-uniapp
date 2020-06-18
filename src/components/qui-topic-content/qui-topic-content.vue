@@ -1,5 +1,52 @@
 <template>
-  <view class="themeItem">
+  <view v-if="topicSTatus != 1">
+    <view class="themeItem__header">
+      <view class="themeItem__header__img">
+        <image
+          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
+          class="det-per-head"
+          @click="personJump"
+          @error="imageError"
+          v-if="imageStatus"
+        ></image>
+        <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
+      </view>
+      <view class="themeItem__header__title">
+        <view class="themeItem__header__title__top" @click="personJump">
+          <text class="themeItem__header__title__username">{{ userName }}</text>
+          <text
+            class="themeItem__header__title__isAdmin"
+            v-for="(group, index) in userRole"
+            :key="index"
+          >
+            {{ group.isDisplay ? `（${group.name}）` : '' }}
+          </text>
+        </view>
+        <view class="themeItem__header__title__time">{{ localTime }}</view>
+      </view>
+      <view class="themeItem__header__opera" v-if="managementShow">
+        <view class="det-hd-operaCli">
+          <view class="det-hd-management" @click="selectClick">
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>{{ t.management }}</view>
+          </view>
+          <view>
+            <qui-drop-down
+              posival="absolute"
+              :show="seleShow"
+              :list="selectList"
+              :top="60"
+              :right="0"
+              :width="180"
+              @click="selectChoice"
+            ></qui-drop-down>
+          </view>
+        </view>
+        <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+      </view>
+    </view>
+  </view>
+  <view class="themeItem" v-else>
     <view class="themeItem__header">
       <view class="themeItem__header__img">
         <image
@@ -116,13 +163,13 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in fileList"
           :key="index"
-          @tap="download(item.url)"
+          @tap="download(item)"
         >
           <qui-icon
             class="icon-attachment"
             :name="item.extension ? `icon-${item.extension.toUpperCase()}` : `icon-resources`"
             color="#aaa"
-            size="17"
+            size="22"
           ></qui-icon>
           <text>{{ item.fileName }}</text>
         </view>
@@ -148,6 +195,10 @@ import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   props: {
+    topicStatus: {
+      type: Number,
+      default: 0,
+    },
     // 类型
     themeParts: {
       validator: value => {
@@ -332,7 +383,7 @@ export default {
       this.imageStatus = false;
     },
     // 附件下载
-    download(url) {
+    download(item) {
       // #ifdef H5
       const { platform } = uni.getSystemInfoSync();
       if (platform === 'ios') {
@@ -340,8 +391,32 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        window.location.href = url;
+        window.location.href = item.url;
       }
+      // #endif
+      // #ifdef MP-WEIXIN
+      const that = this;
+      wx.downloadFile({
+        url: item.url,
+        success(res) {
+          if (res.statusCode === 200) {
+            console.log(res.tempFilePath);
+            that.$refs.toast.show({
+              message: that.i18n.t('profile.downloadSuccess'),
+            });
+            // that.$refs.toast.show({
+            //   message: `${that.i18n.t('profile.downloadSuccess')},${that.i18n.t(
+            //     'profile.thetemporarypathis',
+            //   )}${res.tempFilePath}`,
+            // });
+          }
+        },
+        error() {
+          that.$refs.toast.show({
+            message: that.i18n.t('profile.downloadError'),
+          });
+        },
+      });
       // #endif
     },
   },
@@ -513,6 +588,7 @@ export default {
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;
+        overflow: hidden;
         font-size: 24rpx;
         line-height: 60rpx;
         border: 2rpx solid --color(--qui-BOR-ED);

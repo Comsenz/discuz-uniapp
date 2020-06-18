@@ -23,8 +23,8 @@
             <view class="detail-tip" v-else-if="topicStatus == 0">
               {{ t.examineTip }}
             </view>
-            <view>{{ wxRes }}</view>
             <qui-topic-content
+              :topic-status="topicStatus"
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
@@ -793,6 +793,7 @@ export default {
                 this.shareLogo = '';
               } else if (data.type == 1) {
                 if (data.firstPost.images.length > 0) {
+                  console.log('类型1，大于0');
                   this.shareLogo = data.firstPost.images[0].thumbUrl;
                 } else {
                   this.shareLogo = '';
@@ -800,7 +801,8 @@ export default {
               } else if (data.type == 2) {
                 this.shareLogo = data.threadVideo.coverUrl;
               } else if (data.type == 3) {
-                this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
+                console.log('类型3，大于0');
+                this.shareLogo = data.firstPost.images[0].thumbUrl;
               }
             }
           }
@@ -1410,7 +1412,7 @@ export default {
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
               });
-
+              this.thread.rewardedUsers.unshift(this.user);
               // this.thread._jv.relationships.rewardedUsers.data.unshift({
               //   type: this.user._jv.type,
               //   id: this.user.id.toString(),

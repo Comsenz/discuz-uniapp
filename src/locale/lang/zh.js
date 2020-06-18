@@ -523,6 +523,9 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    downloadSuccess: '下载成功',
+    downloadError: '下载失败',
+    thetemporarypathis: '临时路径为',
     attachment: '附件',
     post: '发帖',
     notice: '消息',

@@ -136,7 +136,6 @@ export default {
         count: 3, // 能选择文件的数量
         type: 'file',
         success(res) {
-          console.log(res);
           const file = {
             name: res.tempFiles[0].name,
             size: res.tempFiles[0].size,
@@ -150,11 +149,14 @@ export default {
             name: 'file',
             timeout: 30000,
             header: that.header,
+            formData: {
+              name: file.name,
+              type: 0,
+            },
             filePath: res.tempFiles[0].path,
             success(data) {
               const status = data.statusCode;
               const response = JSON.parse(data.data).data;
-              console.log(response);
               if (status >= 200 && status < 300) {
                 that.fileList.push({
                   attributes: { fileName: file.name },
@@ -184,18 +186,10 @@ export default {
         el.$refs.toast.show({ message: `请选择${el.fileFormat}格式的文件` });
         return false;
       }
-      // #ifdef  H5
       if (el.fileSize && (file.size / 1024).toFixed(0) > parseInt(el.fileSize, 10) * 1000) {
         el.$refs.toast.show({ message: `文件大小不能超过${el.fileSize}M` });
         return false;
       }
-      // #endif
-      // #ifdef MP-WEIXIN
-      if (el.fileSize && (file.size / 1024).toFixed(0) > parseInt(el.fileSize, 10)) {
-        el.$refs.toast.show({ message: `文件大小不能超过${el.fileSize}M` });
-        return false;
-      }
-      // #endif
       return true;
     },
     deleteItem(index, id) {
