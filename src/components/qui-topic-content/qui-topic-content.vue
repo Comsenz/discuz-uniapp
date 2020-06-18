@@ -116,13 +116,13 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in fileList"
           :key="index"
-          @tap="download(item.url)"
+          @tap="download(item)"
         >
           <qui-icon
             class="icon-attachment"
             :name="item.extension ? `icon-${item.extension.toUpperCase()}` : `icon-resources`"
             color="#aaa"
-            size="17"
+            size="22"
           ></qui-icon>
           <text>{{ item.fileName }}</text>
         </view>
@@ -332,7 +332,7 @@ export default {
       this.imageStatus = false;
     },
     // 附件下载
-    download(url) {
+    download(item) {
       // #ifdef H5
       const { platform } = uni.getSystemInfoSync();
       if (platform === 'ios') {
@@ -340,8 +340,32 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        window.location.href = url;
+        window.location.href = item.url;
       }
+      // #endif
+      // #ifdef MP-WEIXIN
+      const that = this;
+      wx.downloadFile({
+        url: item.url,
+        success(res) {
+          if (res.statusCode === 200) {
+            console.log(res.tempFilePath);
+            that.$refs.toast.show({
+              message: that.i18n.t('profile.downloadSuccess'),
+            });
+            // that.$refs.toast.show({
+            //   message: `${that.i18n.t('profile.downloadSuccess')},${that.i18n.t(
+            //     'profile.thetemporarypathis',
+            //   )}${res.tempFilePath}`,
+            // });
+          }
+        },
+        error() {
+          that.$refs.toast.show({
+            message: that.i18n.t('profile.downloadError'),
+          });
+        },
+      });
       // #endif
     },
   },
@@ -513,6 +537,7 @@ export default {
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;
+        overflow: hidden;
         font-size: 24rpx;
         line-height: 60rpx;
         border: 2rpx solid --color(--qui-BOR-ED);
