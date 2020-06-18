@@ -23,7 +23,6 @@
             <view class="detail-tip" v-else-if="topicStatus == 0">
               {{ t.examineTip }}
             </view>
-            <view>{{ wxRes }}</view>
             <qui-topic-content
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
@@ -1410,7 +1409,7 @@ export default {
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
               });
-
+              this.thread.rewardedUsers.unshift(this.user);
               // this.thread._jv.relationships.rewardedUsers.data.unshift({
               //   type: this.user._jv.type,
               //   id: this.user.id.toString(),
