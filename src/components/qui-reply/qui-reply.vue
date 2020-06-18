@@ -17,6 +17,11 @@
       <text class="reply-content">
         {{ reply.content }}
       </text>
+      <!--<qui-uparse
+        :content="reply.contentHtml"
+        class="reply-content"
+        style="display: inline;"
+      ></qui-uparse>-->
     </view>
   </view>
 </template>
