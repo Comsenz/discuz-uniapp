@@ -27,6 +27,8 @@
         :share-btn="shareBtn"
         :share-show="shareShow"
         :is-show-more="false"
+        :is-show-back="false"
+        :is-show-home="false"
         @click="open"
         @closeShare="closeShare"
       ></qui-header>
@@ -591,7 +593,7 @@ export default {
       this.h5Share({
         title: this.shareTitle,
         id,
-        url: '/pages/topic/index',
+        url: 'pages/topic/index',
       });
       // #endif
     },
