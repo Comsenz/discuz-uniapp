@@ -63,6 +63,7 @@ export default {
           .dispatch('session/wxh5Login', params)
           .then(res => {
             console.log('登录绑定成功', res);
+            this.logind();
             uni.navigateTo({
               url: this.url,
             });

@@ -84,6 +84,7 @@ export default {
           this.noticeList = [...this.noticeList, ...res];
           console.log('this.noticeList', this.noticeList);
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          uni.$emit('notiRead');
         }
       });
     },

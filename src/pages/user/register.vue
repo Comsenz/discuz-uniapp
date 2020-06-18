@@ -63,6 +63,7 @@ export default {
           .dispatch('session/h5Register', params)
           .then(res => {
             console.log('注册成功', res);
+            this.logind();
             uni.navigateTo({
               url: this.url,
             });

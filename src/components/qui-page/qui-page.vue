@@ -21,13 +21,14 @@
 <script>
 import { mapState } from 'vuex';
 // #ifdef H5
+import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
 // #endif
 
 export default {
   // #ifdef H5
-  mixins: [forums, appCommonH],
+  mixins: [forums, appCommonH, user],
   // #endif
   computed: {
     ...mapState({
@@ -80,6 +81,7 @@ export default {
               .dispatch('session/wxh5Login')
               .then(res => {
                 console.log('校验成功', res);
+                this.logind();
                 uni.navigateTo({
                   url: '/pages/home/index',
                 });
@@ -98,6 +100,7 @@ export default {
               .dispatch('session/wxh5Login')
               .then(res => {
                 console.log('校验成功', res);
+                this.logind();
                 uni.navigateTo({
                   url: '/pages/home/index',
                 });
@@ -116,6 +119,7 @@ export default {
               .dispatch('session/wxh5Login')
               .then(res => {
                 console.log('校验成功', res);
+                this.logind();
                 uni.navigateTo({
                   url: '/pages/home/index',
                 });
