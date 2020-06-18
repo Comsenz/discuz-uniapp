@@ -692,6 +692,10 @@ export default {
       logo: this.shareLogo,
     });
     // #endif
+     // 编辑发帖回来后更新附件
+    this.$u.event.$on('refreshFiles', () => {
+      this.loadThread()
+    });
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
