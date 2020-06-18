@@ -128,7 +128,7 @@
           </view>
           <view>
             <qui-icon
-              name="icon-code"
+              name="icon-undeline"
               size="30"
               class="qui-icon"
               @click="toolBarClick('undeline')"
@@ -136,7 +136,7 @@
           </view>
           <view>
             <qui-icon
-              name="icon-link"
+              name="icon-strikethrough"
               size="30"
               class="qui-icon"
               @click="toolBarClick('strikethrough')"
@@ -498,7 +498,7 @@ export default {
   },
   methods: {
     focusEvent(e) {
-      console.log(e, '这是获取焦点是');
+      // console.log(e, '这是获取焦点是');
     },
     toolBarClick(type) {
       console.log(type);
