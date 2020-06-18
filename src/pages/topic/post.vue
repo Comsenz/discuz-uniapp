@@ -75,7 +75,7 @@
           @focus="focusEvent"
         ></textarea>
         <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
-          <text>{{ textAreaValue }}</text>
+          <text class="text-cover">{{ textAreaValue }}</text>
         </view>
         <view class="markdown-box" v-show="markdodwShow">
           <view>
@@ -1387,8 +1387,13 @@ export default {
     min-height: 400rpx;
     padding: 0 20rpx 20rpx;
     overflow: hidden;
+    font-size: $fg-f28;
     line-height: 20px;
     box-sizing: border-box;
+    .text-cover {
+      font-size: $fg-f28;
+      line-height: 20px;
+    }
     &--static {
       overflow: auto;
     }
