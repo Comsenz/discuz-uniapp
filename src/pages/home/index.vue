@@ -65,7 +65,9 @@ export default {
       this.handlePageLoaded();
     }
 
-    console.log(wx);
+    uni.$on('notiRead', () => {
+      this.getUserInfo(true);
+    });
   },
 
   // 唤起小程序原声分享
@@ -117,10 +119,6 @@ export default {
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
 
-      if (this.currentTab === 'quinotice') {
-        this.getUserInfo();
-      }
-
       if (
         !this.$store.getters['session/get']('isLogin') &&
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
@@ -150,6 +148,9 @@ export default {
       });
       console.log(this.showHome);
     },
+  },
+  onUnload() {
+    uni.$off('notiRead');
   },
 };
 </script>

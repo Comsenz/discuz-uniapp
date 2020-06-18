@@ -343,7 +343,7 @@ export default {
         { text: '删除', type: '4' },
       ], // 管理菜单
 
-      limitShowNum: 2,
+      limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据

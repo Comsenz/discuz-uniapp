@@ -53,7 +53,10 @@
 </template>
 
 <script>
+import user from '@/mixin/user';
+
 export default {
+  mixins: [user],
   data() {
     return {
       username: '', // 手机号
@@ -85,6 +88,7 @@ export default {
           .dispatch('session/h5Login', params)
           .then(res => {
             console.log('手机号密码登录绑定成功', res);
+            this.logind();
             uni.navigateTo({
               url: this.url,
             });

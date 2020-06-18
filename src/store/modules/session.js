@@ -12,7 +12,17 @@ import {
   DELETE_ACCESS_TOKEN,
 } from '@/store/types/session';
 
+import { GetUrlParam } from '@/utils/url';
+
 const accessToken = uni.getStorageSync('access_token');
+
+const setUserInfoStore = (context, results, resolve) => {
+  const resData = utils.jsonapiToNorm(results.data.data);
+  context.commit(SET_USER_ID, resData._jv.id);
+  context.commit(CHECK_SESSION, true);
+  context.commit(SET_ACCESS_TOKEN, resData.access_token);
+  resolve(resData);
+};
 
 const state = {
   userId: 0,
@@ -60,13 +70,9 @@ const actions = {
                   },
                 };
                 data = Object.assign(payload, data);
-                return http.post('oauth/wechat/miniprogram', data).then(results => {
-                  const resData = utils.jsonapiToNorm(results.data.data);
-                  context.commit(SET_USER_ID, resData._jv.id);
-                  context.commit(CHECK_SESSION, true);
-                  context.commit(SET_ACCESS_TOKEN, resData.access_token);
-                  resolve(resData);
-                });
+                return http
+                  .post('oauth/wechat/miniprogram', data)
+                  .then(results => setUserInfoStore(context, results, resolve));
               },
               fail: error => {
                 console.log(error);
@@ -89,11 +95,12 @@ const actions = {
     return new Promise(resolve => {
       console.log('http', http);
       console.log('resolve', resolve);
-      return http.get('oauth/wechat', payload).then(results => {
-        console.log('results', results);
-        const url = encodeURIComponent(`https://dq.comsenz-service.com/pages/home/index`);
-        window.location.href = `https://dq.comsenz-service.com/api/oauth/wechat?redirect=${url}`;
-      });
+      const url = encodeURIComponent(`https://dq.comsenz-service.com/pages/home/index`);
+      window.location.href = `https://dq.comsenz-service.com/api/oauth/wechat?redirect=${url}`;
+      const code = GetUrlParam(window.location.href);
+      console.log('-----code-------', code);
+      // uni.setStorageSync('code', results.data.code);
+      // uni.setStorageSync('sessionId', results.data.sessionId);
     });
   },
   // #endif
@@ -102,14 +109,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.get('oauth/wechat/user', payload).then(results => {
-        console.log('results', results);
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .get('oauth/wechat/user', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif
@@ -118,14 +120,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('sms/verify', payload).then(results => {
-        console.log('results', results);
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .post('sms/verify', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif
@@ -134,14 +131,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('login', payload).then(results => {
-        console.log('results', results);
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .post('login', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif
@@ -150,13 +142,9 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
-      return http.post('register', payload).then(results => {
-        const resData = utils.jsonapiToNorm(results.data.data);
-        context.commit(SET_USER_ID, resData._jv.id);
-        context.commit(CHECK_SESSION, true);
-        context.commit(SET_ACCESS_TOKEN, resData.access_token);
-        resolve(resData);
-      });
+      return http
+        .post('register', payload)
+        .then(results => setUserInfoStore(context, results, resolve));
     });
   },
   // #endif

@@ -23,7 +23,6 @@
             <view class="detail-tip" v-else-if="topicStatus == 0">
               {{ t.examineTip }}
             </view>
-            <view>{{ wxRes }}</view>
             <qui-topic-content
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
@@ -772,10 +771,15 @@ export default {
               code: 'thread_deleted',
               status: 500,
             });
+
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+            this.loadingStatus = false;
             if (data.type == 1) {
-              contentVal = this.thread.title;
+              this.contentVal = this.thread.title;
             } else {
-              contentVal = this.thread.summary;
+              this.contentVal = this.thread.summary;
             }
             if (data.paice > 0) {
               if (data.type == 2) {
@@ -787,8 +791,8 @@ export default {
               if (data.type == 0) {
                 this.shareLogo = '';
               } else if (data.type == 1) {
-                if (data.firstPost.imagelist.length > 0) {
-                  this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
+                if (data.firstPost.images.length > 0) {
+                  this.shareLogo = data.firstPost.images[0].thumbUrl;
                 } else {
                   this.shareLogo = '';
                 }
@@ -798,12 +802,8 @@ export default {
                 this.shareLogo = data.firstPost.imagelist[0].thumbUrl;
               }
             }
-
-            this.loaded = false;
-          } else {
-            this.loaded = true;
-            this.loadingStatus = false;
           }
+
           // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
           // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
           // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
@@ -1409,7 +1409,7 @@ export default {
                 type: this.user._jv.type,
                 id: this.user.id.toString(),
               });
-
+              this.thread.rewardedUsers.unshift(this.user);
               // this.thread._jv.relationships.rewardedUsers.data.unshift({
               //   type: this.user._jv.type,
               //   id: this.user.id.toString(),
@@ -1817,7 +1817,7 @@ export default {
         this.shareShow = true;
       } else {
         this.h5Share({
-          title: this.forums.set_site.site_name,
+          title: this.contentVal,
           id: this.threadId,
           url: 'pages/topic/index',
         });
