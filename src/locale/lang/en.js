@@ -172,6 +172,9 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    downloadSuccess: 'Download success',
+    downloadError: 'download error',
+    thetemporarypathis: 'The temporary path is',
     attachment: 'Attachment',
     post: 'Post',
     notice: 'Notice',
