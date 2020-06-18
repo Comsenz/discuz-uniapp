@@ -692,9 +692,9 @@ export default {
       logo: this.shareLogo,
     });
     // #endif
-     // 编辑发帖回来后更新信息
+    // 编辑发帖回来后更新信息
     this.$u.event.$on('refreshFiles', () => {
-      this.loadThread()
+      this.loadThread();
     });
   },
   // 唤起小程序原声分享
@@ -1377,7 +1377,10 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
-            this.$refs.toast.show({ message: this.p.paySuccess });
+            if (this.payStatus == '1') {
+              this.$refs.toast.show({ message: this.p.paySuccess });
+            }
+
             if (this.payTypeVal == 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               console.log('这是主题支付');
