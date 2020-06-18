@@ -645,8 +645,9 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '这是发布后');
+          console.log(res.isApproved, '这是发布后');
           if (res.isApproved == 1) {
+            console.log('Hefa');
             this.postComments.push(res);
             this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
           }

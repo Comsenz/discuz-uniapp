@@ -635,6 +635,7 @@ export default {
     console.log(this.browser, '这是浏览器');
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
     this.$u.event.$on('addComment', data => {
+      console.log('123');
       for (const index in this.posts) {
         if (this.posts[index]._jv.id === data.commentId) {
           if (this.posts[index].lastThreeComments.length >= 3) {
