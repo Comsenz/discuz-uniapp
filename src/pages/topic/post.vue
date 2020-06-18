@@ -498,7 +498,7 @@ export default {
     },
   },
   methods: {
-    focusEvent(e) {
+    focusEvent() {
       // console.log(e, '这是获取焦点是');
     },
     toolBarClick(type) {

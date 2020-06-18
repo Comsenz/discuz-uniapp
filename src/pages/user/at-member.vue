@@ -26,7 +26,7 @@
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="getGroups(item.toUser.groups[0])"
+              :value="item.toUser.groups[0].name"
               :label="item.toUser.label"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
@@ -39,7 +39,7 @@
               :mark="item.id"
               :title="item.username"
               :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
-              :value="getGroups(item.groups[0])"
+              :value="item.groups[0].name"
               :label="item.label"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
@@ -93,22 +93,22 @@ export default {
   },
   computed: {
     // 处理角色名称
-    getGroups() {
-      const that = this;
-      let name = '';
-      return data => {
-        if (data) {
-          Object.keys(data).forEach(item => {
-            if (data[item]) {
-              name = data[item].name;
-            } else {
-              name = that.i18n.t('discuzq.role.noRole');
-            }
-          });
-        }
-        return name;
-      };
-    },
+    // getGroups() {
+    //   const that = this;
+    //   let name = '';
+    //   return data => {
+    //     if (data) {
+    //       Object.keys(data).forEach(item => {
+    //         if (data[item]) {
+    //           name = data[item].name;
+    //         } else {
+    //           name = that.i18n.t('discuzq.role.noRole');
+    //         }
+    //       });
+    //     }
+    //     return name;
+    //   };
+    // },
   },
   methods: {
     ...mapMutations({
