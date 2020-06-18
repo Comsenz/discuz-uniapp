@@ -68,7 +68,7 @@
           :adjust-position="true"
           cursor-spacing="50"
           cursor="cursor"
-          :maxlength="-1"
+          :maxlength="450"
           :focus="type !== 1"
           v-show="textShow"
           @blur="contBlur"
