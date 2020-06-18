@@ -1177,6 +1177,11 @@ export default {
             images: this.addImg(),
           });
         }
+        // 更新详情页的附件
+        const fileList = this.$refs.uploadFiles.getValue();
+        if(fileList.length > 0) {
+           this.$u.event.$emit('refreshFiles');
+        }
       });
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
