@@ -650,6 +650,8 @@ export default {
             console.log('Hefa');
             this.postComments.push(res);
             this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
+          } else {
+            this.$refs.toast.show({ message: '您发布的内容正在审核中哦' });
           }
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;

@@ -1158,6 +1158,8 @@ export default {
               this.posts[this.postIndex].replyCount++;
               // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
             }
+          } else {
+            this.$refs.toast.show({ message: '您发布的内容正在审核中哦' });
           }
 
           this.textAreaValue = '';
