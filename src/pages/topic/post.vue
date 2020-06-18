@@ -671,10 +671,6 @@ export default {
                 _this.fileId = doneResult.fileId;
                 _this.postVideo(doneResult.fileId);
               });
-            uploader.done().then(doneResult => {
-              _this.fileId = doneResult.fileId;
-              _this.postVideo(doneResult.fileId);
-            });
           });
           // #endif
         },
