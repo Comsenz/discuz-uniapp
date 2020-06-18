@@ -130,7 +130,7 @@
               {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
             </view>
 
-            <view v-if="posts.length > 0 && topicStatus == 1">
+            <view v-if="posts.length > 0">
               <view v-for="(post, index) in posts" :key="index">
                 <qui-topic-comment
                   v-if="!post.isDeleted"
@@ -1168,6 +1168,7 @@ export default {
     // 加载当前主题评论的数据
     loadThreadPosts() {
       const params = {
+        'filter[isApproved]': 'yes',
         'filter[isDeleted]': 'no',
         'filter[isComment]': 'no',
         'page[number]': this.pageNum,

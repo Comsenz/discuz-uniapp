@@ -126,7 +126,7 @@
               >
                 {{ post.replyCount }}{{ t.item }}{{ t.comment }}
               </view>
-              <view v-if="postComments.length > 0 && thread.isApproved == 1">
+              <view v-if="postComments.length > 0">
                 <view v-for="(commentPost, index) in postComments" :key="index">
                   <qui-topic-comment
                     v-if="!commentPost.isDeleted"
@@ -667,6 +667,7 @@ export default {
     // 加载当前评论的回复数据
     loadPostComments() {
       const params = {
+        'filter[isApproved]': 'yes',
         'filter[thread]': this.threadId,
         'filter[reply]': this.commentId,
         'filter[isDeleted]': 'no',
