@@ -67,7 +67,7 @@
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
                 :person-list="thread.paidUsers"
-                :btn-show="thread.price > 0 && !thread.paid"
+                :btn-show="paidBtnStatus"
                 :btn-icon-show="true"
                 btn-icon-name="rmb"
                 :btn-text="payThreadTypeText"
@@ -492,6 +492,7 @@ export default {
 
       limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
+      paidBtnStatus: false, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, //回复状态
@@ -880,6 +881,21 @@ export default {
             ) {
               this.rewardStatus = true;
             } else {
+              if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === false
+              ) {
+                this.paidBtnStatus = false;
+              } else if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === true &&
+                data.paid === false
+              ) {
+                this.paidBtnStatus = true;
+              }
+
               this.rewardStatus = true;
             }
           } else {

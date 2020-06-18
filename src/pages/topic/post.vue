@@ -1333,7 +1333,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 .head-gap {
-  height: 88rpx;
+  height: 44px;
 }
 .post-box {
   width: 100vw;
