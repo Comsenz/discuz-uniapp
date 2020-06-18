@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back title="" :is-show-more="false"></qui-header-back>
+    <!-- #endif -->
     <view class="new" @click.stop="toggleBox">
       <view class="phone-number-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
       <view class="new-phon">
@@ -10,7 +13,7 @@
           <input
             class="new-phon-num"
             type="number"
-            v-model="phoneNumber"
+            v-model="username"
             :focus="true"
             :cursor="1"
             @input="changeinput"
@@ -53,33 +56,57 @@
 export default {
   data() {
     return {
-      phoneNumber: '',
-      password: '',
+      username: '', // 手机号
+      password: '', // 密码
+      url: '', // 上一个页面的路径
     };
+  },
+  onLoad(params) {
+    console.log('params', params);
+    this.url = params.url;
   },
   methods: {
     login() {
-      if (this.phoneNumber === '') {
+      if (this.username === '') {
         this.showDialog('手机号码不能为空');
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+        // eslint-disable-next-line no-unused-vars
+        this.$store
+          .dispatch('session/h5Login', params)
+          .then(res => {
+            console.log('手机号密码登录绑定成功', res);
+            uni.navigateTo({
+              url: this.url,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
         this.clear();
-        console.log('登录成功');
       }
     },
     jump2VerificationCodeLogin() {
       this.clear();
       console.log('跳转到验证码登录页面');
       uni.navigateTo({
-        url: '/pages/user/verification-code-login',
+        url: `/pages/user/verification-code-login?url=${this.url}`,
       });
     },
     jump2findPassword() {
       this.clear();
       console.log('跳转到找回密码页面');
       uni.navigateTo({
-        url: '/pages/modify/findpwd',
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
     clear() {
@@ -110,7 +137,9 @@ export default {
 .new {
   width: 100vw;
   height: 100vh;
-  padding-top: 31rpx;
+  /* #ifdef H5 */
+  padding: 44px 0rpx 0rpx;
+  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }

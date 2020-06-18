@@ -7,6 +7,7 @@
       :post-num="forums.other && forums.other.count_threads"
       :share-btn="shareBtn"
       :share-show="shareShow"
+      :is-show-more="false"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
       @closeShare="closeShare"
@@ -93,21 +94,35 @@
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef  H5
+    wxshare,
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       code: '', // 邀请码
       permission: [],
       shareBtn: 'icon-share1',
       shareShow: false, // h5内分享提示信息
+      isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
     };
   },
   onLoad(params) {
     this.code = params.code;
     this.getInviteInfo(params.code);
+    // #ifdef  H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
   },
   onReady() {
     // 处理站点模式
@@ -132,7 +147,14 @@ export default {
       this.$refs.popupHead.open();
       // #endif
       // #ifdef H5
-      this.shareShow = true;
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: 'pages/home/index',
+        });
+      }
       // #endif
     },
     closeShare() {

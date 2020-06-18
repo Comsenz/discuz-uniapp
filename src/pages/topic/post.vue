@@ -468,6 +468,7 @@ export default {
       randstr: '',
       captchaResult: {},
       attachmentList: [], // 附件列表
+      preAttachmentList: [], // 编辑的时候只传新增的用于比较是否是新增的
       platform: uni.getSystemInfoSync().platform, // 附件只有h5的非ios设备显示
       signatureVal: '',
     };
@@ -921,7 +922,13 @@ export default {
       // 附件
       if (this.type === 1 && this.$refs.uploadFiles) {
         const fileList = this.$refs.uploadFiles.getValue();
+        const preAttachmentList = this.preAttachmentList;
         fileList.forEach(item => {
+          for (let i = 0; i < preAttachmentList.length; i += 1) {
+            if (preAttachmentList[i]._jv.id === item.id) {
+              return;
+            }
+          }
           if (item.id) {
             attachments.data.push({
               type: 'attachments',
@@ -1085,6 +1092,7 @@ export default {
         // #endif
         console.log(this.type, '这是编辑时Type');
         this.attachmentList = res.firstPost.attachments || [];
+        this.preAttachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
@@ -1169,6 +1177,8 @@ export default {
             images: this.addImg(),
           });
         }
+        // 更新详情页的信息
+        this.$u.event.$emit('refreshFiles');
       });
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;

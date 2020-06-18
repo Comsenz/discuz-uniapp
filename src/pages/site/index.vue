@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
-    <!-- #ifdef H5-->
-    <qui-header-back title="站点信息"></qui-header-back>
-    <!-- #endif -->
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
