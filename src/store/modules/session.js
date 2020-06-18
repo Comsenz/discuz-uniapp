@@ -12,6 +12,8 @@ import {
   DELETE_ACCESS_TOKEN,
 } from '@/store/types/session';
 
+import { GetUrlParam } from '@/utils/url';
+
 const accessToken = uni.getStorageSync('access_token');
 
 const state = {
@@ -89,11 +91,12 @@ const actions = {
     return new Promise(resolve => {
       console.log('http', http);
       console.log('resolve', resolve);
-      return http.get('oauth/wechat', payload).then(results => {
-        console.log('results', results);
-        const url = encodeURIComponent(`https://dq.comsenz-service.com/pages/home/index`);
-        window.location.href = `https://dq.comsenz-service.com/api/oauth/wechat?redirect=${url}`;
-      });
+      const url = encodeURIComponent(`https://dq.comsenz-service.com/pages/home/index`);
+      window.location.href = `https://dq.comsenz-service.com/api/oauth/wechat?redirect=${url}`;
+      const code = GetUrlParam(window.location.href);
+      console.log('-----code-------', code);
+      // uni.setStorageSync('code', results.data.code);
+      // uni.setStorageSync('sessionId', results.data.sessionId);
     });
   },
   // #endif
