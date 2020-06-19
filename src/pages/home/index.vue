@@ -60,10 +60,17 @@ export default {
       },
     },
   },
-  onLoad() {
+  onLoad(params) {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
+
+    // #ifdef H5
+    if (!this.$store.getters['session/get']('isLogin')) {
+      console.log('--params---', params);
+      this.login(params);
+    }
+    // #endif
 
     uni.$on('notiRead', () => {
       this.getUserInfo(true);
@@ -114,6 +121,19 @@ export default {
     }
   },
   methods: {
+    // #ifdef H5
+    login(params = {}) {
+      this.$store
+        .dispatch('session/noSenseh5Login', params)
+        .then(res => {
+          console.log('登录绑定成功', res);
+          this.logind();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // #endif
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
