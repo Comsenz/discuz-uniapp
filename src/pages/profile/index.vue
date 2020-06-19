@@ -195,7 +195,7 @@ export default {
         include: ['groups', 'dialog'],
       };
       this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(res => {
-        this.dialogId = res.dialog._jv.id || 0;
+        this.dialogId = res.dialog ? res.dialog._jv.id : 0;
       });
     },
     // 设置粉丝点赞那些数字
