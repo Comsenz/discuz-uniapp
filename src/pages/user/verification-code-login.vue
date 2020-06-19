@@ -52,7 +52,6 @@
 </template>
 
 <script>
-// import { SET_USER_ID, CHECK_SESSION, SET_ACCESS_TOKEN } from '@/store/types/session';
 import user from '@/mixin/user';
 
 export default {
@@ -98,6 +97,8 @@ export default {
       }, 30);
       if (this.phoneNumber.length === 11) {
         this.disabled = false;
+      } else {
+        this.disabled = true;
       }
     },
     fourse() {

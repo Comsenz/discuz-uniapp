@@ -3,7 +3,7 @@
     <!-- #ifdef H5-->
     <qui-header-back title="" :is-show-more="false"></qui-header-back>
     <!-- #endif -->
-    <view class="new" @click.stop="toggleBox">
+    <view class="new">
       <view class="phone-number-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
       <view class="new-phon">
         <view class="new-phon-test">
@@ -16,7 +16,6 @@
             v-model="username"
             :focus="true"
             :cursor="1"
-            @input="changeinput"
             maxlength="11"
           />
         </view>
@@ -26,15 +25,7 @@
           {{ i18n.t('user.pwd') }}
         </view>
         <view class="new-phon-number">
-          <input
-            class="new-phon-num"
-            type="password"
-            v-model="password"
-            :focus="true"
-            :cursor="1"
-            @input="changeinput"
-            maxlength="11"
-          />
+          <input class="new-phon-num" type="password" v-model="password" />
         </view>
       </view>
       <view class="phone-number-login-box-btn" @click="login">

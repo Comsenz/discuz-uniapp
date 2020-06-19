@@ -115,6 +115,9 @@
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
+// #ifdef H5
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -127,7 +130,12 @@ export default {
     followers,
     like,
   },
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef H5
+    loginAuth,
+    // #endif
+  ],
   props: {
     type: {
       type: String,
@@ -207,6 +215,11 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
+      // #ifdef H5
+      if (!this.handleLogin()) {
+        return;
+      }
+      // #endif
       const params = {
         _jv: {
           type: 'follow',
@@ -223,6 +236,11 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
+      // #ifdef H5
+      if (!this.handleLogin()) {
+        return;
+      }
+      // #endif
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.getUserInfo(this.userId);
         if (this.$refs.followers) this.$refs.followers.getFollowerList('change');

@@ -60,23 +60,13 @@ export default {
       },
     },
   },
-  onLoad(params) {
+  onLoad() {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
 
-    // #ifdef H5
-    if (!this.$store.getters['session/get']('isLogin')) {
-      console.log('--params---', params);
-      this.login(params);
-    }
-    // #endif
-
     uni.$on('notiRead', () => {
       this.getUserInfo(true);
-    });
-    uni.$on('logind', () => {
-      this.home.ontrueGetList();
     });
   },
 
@@ -104,11 +94,7 @@ export default {
       });
       return;
     }
-    // if (this.currentTab === 'home' && this.$refs[this.currentTab]) {
-    //   this.$nextTick(() => {
-    //     this.$refs[this.currentTab].ontrueGetList();
-    //   });
-    // }
+
     if (this.currentTab === 'quinotice' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();
@@ -121,19 +107,6 @@ export default {
     }
   },
   methods: {
-    // #ifdef H5
-    login(params = {}) {
-      this.$store
-        .dispatch('session/noSenseh5Login', params)
-        .then(res => {
-          console.log('登录绑定成功', res);
-          this.logind();
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    // #endif
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
@@ -164,17 +137,16 @@ export default {
     },
     handlePageLoaded() {
       this.showHome = true;
-      this.$nextTick(() => {
-        console.log('nextTick。。。');
-        // 一定要等视图更新完再调用方法
-        this.$refs.home.ontrueGetList();
-      });
+      // this.$nextTick(() => {
+      //   console.log('nextTick。。。');
+      //   // 一定要等视图更新完再调用方法
+      //   this.$refs.home.ontrueGetList();
+      // });
       console.log(this.showHome);
     },
   },
   onUnload() {
     uni.$off('notiRead');
-    uni.$off('logind');
   },
 };
 </script>
