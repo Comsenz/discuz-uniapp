@@ -445,26 +445,26 @@ export default {
   data() {
     return {
       navTitle: '内容详情页', // 导航栏标题
-      threadId: '', //主题id
+      threadId: '', // 主题id
       // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
       topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
-      posts: [], //评论列表数据
+      posts: [], // 评论列表数据
       loadingType: 'more', // 上拉加载状态
-      pageNum: 1, //这是主题回复当前页数
-      pageSize: 20, //这是主题回复每页数据条数
+      pageNum: 1, // 这是主题回复当前页数
+      pageSize: 20, // 这是主题回复每页数据条数
       payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
       loadDetailCommnetStatusId: 0,
-      postIndex: '', //点击主题评论时的index
+      postIndex: '', // 点击主题评论时的index
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
-      commentPopupStatus: false, //回复弹框内容状态是否显示
+      commentPopupStatus: false, // 回复弹框内容状态是否显示
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
-      uploadFile: [], //上传的文件
+      uploadFile: [], // 上传的文件
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
@@ -480,7 +480,7 @@ export default {
           icon: 'icon-wx-friends',
           name: 'wxFriends',
         },
-      ], //分享方式
+      ], // 分享方式
 
       seleShow: false, // 默认收起管理菜单
       selectList: [
@@ -495,19 +495,18 @@ export default {
       paidBtnStatus: false, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
-      commentStatus: {}, //回复状态
-      commentReply: false, //发布的是否是回复的回复
-      emojiShow: false, //表情组件显示状态
+      commentStatus: {}, // 回复状态
+      commentReply: false, // 发布的是否是回复的回复
+      emojiShow: false, // 表情组件显示状态
       // uploaderShow: false, //图片上传组件显示状态
-      publishClickStatus: true, //发布按钮点击状态
+      publishClickStatus: true, // 发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
       formData: {}, // 图片请求data
-      commentId: '', //评论id
-      postIndex: '', //点击时当前评论Index
-      isAnonymous: '0', //支付时是否显示头像，默认不显示
+      commentId: '', // 评论id
+      isAnonymous: '0', // 支付时是否显示头像，默认不显示
       payTypeText: '',
-      payTypeVal: '', //点击的支付类型， 0主题支付  1主题打赏
+      payTypeVal: '', // 点击的支付类型， 0主题支付  1主题打赏
       payNum: [
         {
           name: '￥1',
@@ -552,12 +551,12 @@ export default {
           pay: '',
         },
       ],
-      price: '0.0', //需要支付的金额
-      inputPrice: '', //自定义金额输入框的值
-      payShowStatus: true, //是否显示支付
-      pwdVal: '', //支付密码
-      orderSn: '', //订单编号
-      payStatus: false, //订单支付状态
+      price: '0.0', // 需要支付的金额
+      inputPrice: '', // 自定义金额输入框的值
+      payShowStatus: true, // 是否显示支付
+      pwdVal: '', // 支付密码
+      orderSn: '', // 订单编号
+      payStatus: false, // 订单支付状态
       payStatusNum: 0, // 订单支付状态查询最大次数
       coverLoading: false, // loading显示状态
       payTypeData: [
@@ -573,12 +572,12 @@ export default {
           color: '#1878f3',
           value: '1',
         },
-      ], //支付方式
+      ], // 支付方式
       currentReplyPost: {},
       contentnomoreVal: '',
       url: '',
       customAmountStatus: false, // 自定义价格弹框初始化状态
-      windowHeight: '', //设备高度
+      windowHeight: '', // 设备高度
       system: '', // 设备系统
       detectionmodel: '', // 站点模式
       paymentmodel: '', // 是否付费
@@ -587,7 +586,7 @@ export default {
       isWeixin: false,
       isPhone: false,
       qrcodeShow: false, // 二维码弹框
-      codeUrl: '', //二维码支付url，base64
+      codeUrl: '', // 二维码支付url，base64
       browser: 0, // 0为小程序，1为除小程序之外的设备
       wxRes: '',
       contentVal: '', // 这是分享需要传的标题
@@ -637,6 +636,7 @@ export default {
     // #endif
     console.log(this.browser, '这是浏览器');
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
+
     this.$u.event.$on('addComment', data => {
       console.log('123');
       for (const index in this.posts) {
@@ -753,7 +753,7 @@ export default {
         ],
       };
       const threadAction = status.run(() =>
-        this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]),
+        this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]),
       );
 
       this.loadDetailStatusId = threadAction._statusID;
@@ -789,9 +789,8 @@ export default {
                   this.shareLogo = '';
                 } else {
                   this.desc = data.firstPost.summary;
-                  this.shareLogo = data.firstPost.images.length > 0
-                    ? data.firstPost.images[0].thumbUrl
-                    : '';
+                  this.shareLogo =
+                    data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
                 }
                 break;
               case 2:
@@ -804,9 +803,10 @@ export default {
                 // 图片帖
                 this.contentVal = data.firstPost.summary;
                 this.desc = data.firstPost.summary;
-                this.shareLogo = data.price > 0 && data.firstPost.images.length > 0
-                  ? data.firstPost.images[0].thumbUrl
-                  : '';
+                this.shareLogo =
+                  data.price > 0 && data.firstPost.images.length > 0
+                    ? data.firstPost.images[0].thumbUrl
+                    : '';
                 break;
             }
           }
@@ -816,7 +816,7 @@ export default {
             desc: this.desc,
             logo: this.shareLogo,
           });
-           // #endif
+          // #endif
 
           // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
           // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
@@ -845,11 +845,11 @@ export default {
           this.selectList[2].isStatus = this.thread.isSticky;
           this.selectList[3].isStatus = false;
           if (data.isEssence) {
-            //如果初始化状态为true
+            // 如果初始化状态为true
             this.selectList[1].text = this.t.cancelEssence;
           }
           if (data.isSticky) {
-            //如果初始化状态为true
+            // 如果初始化状态为true
 
             this.selectList[2].text = this.t.cancelSticky;
           }
@@ -930,11 +930,11 @@ export default {
     // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus, post) {
       console.log(id, type, canStatus, isStatus, post, '这是调用接口时传的参数');
-      if (type == '1' && !canStatus) {
+      if (type === '1' && !canStatus) {
         console.log('没有主题点赞权限');
         return;
       }
-      if (type == '4' && !canStatus) {
+      if (type === '4' && !canStatus) {
         console.log('没有评论点赞权限');
         return;
       }
@@ -943,17 +943,17 @@ export default {
         id: id,
       };
       let params = {};
-      if (type == '1') {
+      if (type === '1') {
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
         };
-      } else if (type == '3') {
+      } else if (type === '3') {
         params = {
           _jv: jvObj,
           isDeleted: !isStatus,
         };
-      } else if (type == '4') {
+      } else if (type === '4') {
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
@@ -962,7 +962,7 @@ export default {
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          if (type == '1') {
+          if (type === '1') {
             const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
             // 主题点赞
             this.isLiked = data.isLiked;
@@ -974,13 +974,13 @@ export default {
               });
             } else {
               this.thread.firstPost.likedUsers.forEach((value, key, item) => {
-                value.id == this.user.id && item.splice(key, 1);
+                value.id = this.user.id && item.splice(key, 1);
               });
               orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
-                value.id == this.user.id && item.splice(key, 1);
+                value.id = this.user.id && item.splice(key, 1);
               });
             }
-          } else if (type == '2') {
+          } else if (type === '2') {
             if (data.isDeleted) {
               uni.navigateTo({
                 url: `/pages/home/index`,
@@ -988,8 +988,8 @@ export default {
             } else {
               console.log('主题删除失败');
             }
-          } else if (type == '3') {
-            let postArr = post;
+          } else if (type === '3') {
+            const postArr = post;
             postArr.isDeleted = data.isDeleted;
             post = postArr;
             if (data.isDeleted) {
@@ -997,8 +997,8 @@ export default {
             } else {
               console.log('回复删除失败');
             }
-          } else if (type == '4') {
-            let postArr = post;
+          } else if (type === '4') {
+            const postArr = post;
             postArr.isLiked = data.isLiked;
             post = postArr;
             // 评论点赞
@@ -1154,7 +1154,7 @@ export default {
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
           console.log(res, '~~~++++~~~~~~~~~');
-          if (res.isApproved == 1) {
+          if (res.isApproved === 1) {
             if (!res.isComment) {
               this.posts.push(res);
               console.log(this.posts, '#####################');
@@ -1200,7 +1200,7 @@ export default {
           'lastThreeComments.replyUser',
         ],
       };
-      let loadDetailCommnetAction = status.run(() =>
+      const loadDetailCommnetAction = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]),
       );
 
@@ -1423,7 +1423,7 @@ export default {
               this.loadThread();
             } else if (this.payTypeVal == 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
+              const orgignPost = this.$store.getters['jv/get'](`thread/${this.threadId}`);
 
               orgignPost._jv.relationships.rewardedUsers.data.unshift({
                 type: this.user._jv.type,
@@ -1434,7 +1434,7 @@ export default {
               //   type: this.user._jv.type,
               //   id: this.user.id.toString(),
               // });
-              if (this.thread.rewardedUsers.length == 0) {
+              if (this.thread.rewardedUsers.length === 0) {
                 // #ifndef MP_WEIXIN
                 // this.thread.rewardedUsers.unshift(this.user);
                 // #endif
