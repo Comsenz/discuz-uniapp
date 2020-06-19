@@ -123,7 +123,7 @@ import appCommonH from '@/utils/commonHelper';
 export default {
   mixins: [
     forums,
-    // #ifdef  H5
+    // #ifdef H5
     wxshare,
     appCommonH,
     // #endif
@@ -152,9 +152,9 @@ export default {
     // uni.hideHomeButton();
     this.getSiteInfo();
     this.getPermissions();
-    // #ifdef  H5
+    // #ifdef H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
-    // #endi
+    // #endif
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
