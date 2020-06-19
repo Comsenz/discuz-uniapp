@@ -302,12 +302,13 @@ export default {
     // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
     // 编辑删除图片后首页删除图片
-    this.$u.event.$on('deleteImg', res => {
-      this.threads.forEach(item => {
-        if (item._jv.id === res.threadId) {
-          item.firstPost.images.splice(res.index, 1);
-        }
-      });
+    this.$u.event.$on('refreshImg', res => {
+      console.log(res, 'res');
+      // this.threads.forEach(item => {
+      //   if (item._jv.id === res.threadId) {
+      //     item.firstPost.images.splice(res.index, 1);
+      //   }
+      // });
     });
     // 置顶列表添加数据当详情页置顶时
     this.$u.event.$on('stickyThread', data => {
@@ -328,17 +329,23 @@ export default {
     });
     // 详情页编辑增加图片时首页增加图片
     this.$u.event.$on('refreshImg', res => {
+      console.log(res, '888888888');
       // eslint-disable-next-line no-restricted-syntax
       for (const index in this.threads) {
         if (this.threads[index]._jv.id === res.id) {
           if (res.images.data) {
             res.images.data.forEach(item => {
-              this.threads[index].firstPost.images.push(
-                this.$store.getters['jv/get'](`${item.type}/${item.id}`),
+              console.log(item, this.$store.getters['jv/get']('attachments'), 'item');
+              this.threads[index].firstPost.images = this.$store.getters['jv/get'](
+                `${item.type}/${item.id}`,
+              );
+              console.log(
+                this.threads[index].firstPost.images,
+                'this.threads[index].firstPost.images',
               );
             });
           }
-          break;
+          // break;
         }
       }
     });

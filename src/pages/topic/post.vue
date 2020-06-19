@@ -1043,9 +1043,13 @@ export default {
         .dispatch('jv/delete', params)
         .then(res => {
           // 当编辑帖子时删除图片后传参给首页
-          this.$u.event.$emit('deleteImg', {
-            threadId: this.postDetails._jv.id,
-            index,
+          // this.$u.event.$emit('deleteImg', {
+          //   threadId: this.postDetails._jv.id,
+          //   index,
+          // });
+          this.$u.event.$emit('refreshImg', {
+            id: this.threadId,
+            images: this.addImg(),
           });
           const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
           post.images.splice(index, 1);

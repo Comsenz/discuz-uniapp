@@ -336,6 +336,7 @@ export default {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
+      topicStatus: '',
     };
   },
   onLoad() {
