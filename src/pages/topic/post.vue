@@ -77,7 +77,7 @@
         <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
           <text class="text-cover">{{ textAreaValue }}</text>
         </view>
-        <view class="markdown-box" v-if="markdodwShow">
+        <view class="markdown-box" v-if="markdownShow">
           <view>
             <qui-icon
               name="icon-bold"
@@ -373,7 +373,7 @@ export default {
       navTitle: '发布', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
-      markdodwShow: false, // 是否显示markdown菜单
+      markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
@@ -623,9 +623,11 @@ export default {
             mediaFile: res,
             getSignature: () => {
               return new Promise((resolve, reject) => {
-                resolve("UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0");
+                resolve(
+                  'UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0',
+                );
               });
-            },//_this.getSignature,
+            }, //_this.getSignature,
 
             mediaName: res.name,
             success(result) {
@@ -1136,11 +1138,11 @@ export default {
         this.type = res.type;
 
         // #ifdef MP-WEIXIN
-        this.markdodwShow = false;
+        this.markdownShow = false;
         // #endif
         // #ifdef H5
         if (this.type === 1) {
-          // this.markdodwShow = true;
+          this.markdownShow = true;
         }
         // #endif
         console.log(res, '这是编辑时Type');
@@ -1332,11 +1334,11 @@ export default {
       // error
     }
     // #ifdef MP-WEIXIN
-    this.markdodwShow = false;
+    this.markdownShow = false;
     // #endif
     // #ifdef H5
     if (this.type === 1) {
-      // this.markdodwShow = true;
+      this.markdownShow = true;
     }
     // #endif
     // 接受验证码captchaResult
@@ -1351,7 +1353,10 @@ export default {
     });
 
     uni.$on('clickTopic', data => {
-      if (data.keywords) this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}#${data.keywords}#${this.textAreaValue.slice(this.cursor)}`;
+      if (data.keywords)
+        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}#${
+          data.keywords
+        }#${this.textAreaValue.slice(this.cursor)}`;
     });
   },
   onShow() {
