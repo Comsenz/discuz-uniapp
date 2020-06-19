@@ -60,13 +60,23 @@ export default {
       },
     },
   },
-  onLoad() {
+  onLoad(params) {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
 
+    // #ifdef H5
+    if (!this.$store.getters['session/get']('isLogin')) {
+      console.log('--params---', params);
+      this.login(params);
+    }
+    // #endif
+
     uni.$on('notiRead', () => {
       this.getUserInfo(true);
+    });
+    uni.$on('logind', () => {
+      this.home.ontrueGetList();
     });
   },
 
@@ -94,11 +104,11 @@ export default {
       });
       return;
     }
-    if (this.currentTab === 'home' && this.$refs[this.currentTab]) {
-      this.$nextTick(() => {
-        this.$refs[this.currentTab].ontrueGetList();
-      });
-    }
+    // if (this.currentTab === 'home' && this.$refs[this.currentTab]) {
+    //   this.$nextTick(() => {
+    //     this.$refs[this.currentTab].ontrueGetList();
+    //   });
+    // }
     if (this.currentTab === 'quinotice' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();
@@ -111,6 +121,19 @@ export default {
     }
   },
   methods: {
+    // #ifdef H5
+    login(params = {}) {
+      this.$store
+        .dispatch('session/noSenseh5Login', params)
+        .then(res => {
+          console.log('登录绑定成功', res);
+          this.logind();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // #endif
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
@@ -151,6 +174,7 @@ export default {
   },
   onUnload() {
     uni.$off('notiRead');
+    uni.$off('logind');
   },
 };
 </script>

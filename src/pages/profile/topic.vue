@@ -115,6 +115,7 @@ export default {
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        'filter[isApproved]': 1,
         'filter[userId]': this.userId,
       };
       status

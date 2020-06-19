@@ -157,6 +157,7 @@ export default {
           'category',
           'threadVideo',
         ],
+        'filter[isApproved]': 1,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
       };
