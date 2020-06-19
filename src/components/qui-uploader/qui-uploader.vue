@@ -193,6 +193,7 @@ export default {
               if (_this.uploadList.length > _this.count) {
                 _this.uploadList = _this.uploadList.slice(0, _this.count);
               }
+              // console.log(_this.uploadList, '这是组件内');
               _this.$emit('change', _this.uploadList, true);
             });
           },
@@ -220,7 +221,15 @@ export default {
             if (_this.numberdata[index]) {
               _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
             }
-            _this.uploadList.push(JSON.parse(res.data));
+            // console.log(JSON.parse(res.data), '~~~~~~~~~');
+            const resObj = {
+              id: JSON.parse(res.data).data.id,
+              type: JSON.parse(res.data).data.type,
+              order: _this.lastOrder,
+            };
+            // console.log(resObj, '这是新增的对象');
+            _this.uploadList.push(resObj);
+            // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
             _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
           }

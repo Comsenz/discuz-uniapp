@@ -177,7 +177,6 @@ export default {
           },
         },
       };
-      // eslint-disable-next-line no-unused-vars
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {

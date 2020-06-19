@@ -8,6 +8,8 @@
       :share-btn="shareBtn"
       :share-show="shareShow"
       :is-show-more="false"
+      :is-show-back="false"
+      :is-show-home="false"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
       @closeShare="closeShare"

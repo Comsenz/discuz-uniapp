@@ -746,7 +746,9 @@ export default {
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
+      console.log(list, '这是删除时');
       const id = this.operating === 'edit' ? list.id : list.data.id;
+      console.log(id, '这是Id');
       this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
@@ -851,21 +853,21 @@ export default {
 
         if (this.operating === 'edit') {
           console.log(this.uploadFile.length, '长度');
-          // if (this.uploadFile.length < 1) {
-          //   this.$refs.toast.show({
-          //     message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
-          //   });
-          //   uni.hideLoading();
-          // } else {
-          // console.log('22222');
-          this.editThread().then(() => {
-            this.postLoading = false;
-            uni.hideLoading();
-            uni.navigateBack({
-              delta: 1,
+          if (this.uploadFile.length < 1) {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
             });
-          });
-          // }
+            uni.hideLoading();
+          } else {
+            // console.log('22222');
+            this.editThread().then(() => {
+              this.postLoading = false;
+              uni.hideLoading();
+              uni.navigateBack({
+                delta: 1,
+              });
+            });
+          }
         } else {
           if (this.forums.qcloud.qcloud_captcha && this.forums.other.create_thread_with_captcha) {
             if (!this.ticket || !this.randstr) {
@@ -917,10 +919,10 @@ export default {
       const attachments = {};
       attachments.data = [];
       this.uploadFile.forEach(item => {
-        if (item.data) {
+        if (item) {
           attachments.data.push({
             type: 'attachments',
-            id: item.data.id,
+            id: item.id,
           });
         }
       });
@@ -1051,7 +1053,7 @@ export default {
           console.log('删除图片', id);
           console.log(this.uploadFile, '~~~~~~~~~~');
           this.uploadFile.forEach((value, key, item) => {
-            value._jv.id == id && item.splice(key, 1);
+            value.id == id && item.splice(key, 1);
           });
           console.log(this.uploadFile, '+++++++++');
           return res;
