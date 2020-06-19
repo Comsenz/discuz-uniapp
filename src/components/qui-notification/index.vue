@@ -110,7 +110,7 @@
           >
             <view class="list-box__notice__con__wrap-info">
               <text class="list-box__notice__con__wrap-info-username">我</text>
-              <text class="list-box__notice__con__wrap-info-text">回复了</text>
+              <text class="list-box__notice__con__wrap-info-text">&nbsp;回复了&nbsp;</text>
               <text class="list-box__notice__con__wrap-info-username">
                 {{ item.thread_username }}：
               </text>
@@ -311,6 +311,11 @@ export default {
 
       &__wrap-info-username {
         font-weight: bold;
+        vertical-align: top;
+      }
+
+      &__wrap-info-text {
+        color: --color(--qui-FC-AAA);
         vertical-align: top;
       }
 
