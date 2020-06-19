@@ -709,7 +709,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(this.isWeixin)) {
           return;
         }
         // #endif
