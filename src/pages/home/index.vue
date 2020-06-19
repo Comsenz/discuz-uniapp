@@ -68,6 +68,9 @@ export default {
     uni.$on('notiRead', () => {
       this.getUserInfo(true);
     });
+    uni.$on('logind', () => {
+      this.home.ontrueGetList();
+    });
   },
 
   // 唤起小程序原声分享
@@ -151,6 +154,7 @@ export default {
   },
   onUnload() {
     uni.$off('notiRead');
+    uni.$off('logind');
   },
 };
 </script>
