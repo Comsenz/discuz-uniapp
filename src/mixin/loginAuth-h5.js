@@ -1,10 +1,12 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import appCommonH from '@/utils/commonHelper';
 
 module.exports = {
-  mixins: [forums, user],
+  mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin(isWeixin) {
+    handleLogin() {
+      const { isWeixin } = appCommonH.isWeixin();
       const url = '/pages/home/index';
       if (isWeixin) {
         // 微信内
