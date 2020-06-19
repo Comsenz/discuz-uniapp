@@ -813,7 +813,7 @@ export default {
           // #ifdef H5
           this.wxShare({
             title: this.contentVal,
-            desc: this.thread.summary,
+            desc: this.desc,
             logo: this.shareLogo,
           });
            // #endif
