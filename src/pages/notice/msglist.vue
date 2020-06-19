@@ -450,6 +450,7 @@ export default {
         max-width: 550rpx;
         padding: 25rpx 20rpx;
         margin-right: 20rpx;
+        color: --color(--qui-FC-34);
         background: --color(--qui-BG-D1E0FF);
         border: 1rpx solid --color(--qui-BG-A3CAFF);
         border-radius: 10rpx;
