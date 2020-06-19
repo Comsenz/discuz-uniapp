@@ -97,6 +97,7 @@ export default {
           'threadVideo',
         ],
         'filter[isDeleted]': 'no',
+        'filter[isApproved]': 1,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[q]': key,
