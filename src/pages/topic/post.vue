@@ -244,7 +244,7 @@
           type="primary"
           size="large"
           id="TencentCaptcha"
-          :data-appid="forums.qcloud.qcloud_captcha_app_id"
+          :data-appid="forums.qcloud.qcloud_captcha_app_id || ''"
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >

@@ -94,11 +94,11 @@ export default {
       });
       return;
     }
-    if (this.currentTab === 'home' && this.$refs[this.currentTab]) {
-      this.$nextTick(() => {
-        this.$refs[this.currentTab].ontrueGetList();
-      });
-    }
+    // if (this.currentTab === 'home' && this.$refs[this.currentTab]) {
+    //   this.$nextTick(() => {
+    //     this.$refs[this.currentTab].ontrueGetList();
+    //   });
+    // }
     if (this.currentTab === 'quinotice' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();

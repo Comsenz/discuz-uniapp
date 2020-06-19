@@ -1,3 +1,5 @@
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
+
 const wx = require('jweixin-module');
 
 module.exports = {
@@ -28,13 +30,12 @@ module.exports = {
             ],
           });
           wx.ready(() => {
-            const forum = this.$store.getters['jv/get']('forums/1');
             // 需在用户可能点击分享按钮前就先调用
             const dataInfo = {
               title: shareData.title || 'Discuz!Q', // 分享标题
               desc: shareData.desc || '', // 分享描述
               link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: shareData.logo || forum.set_site.site_logo, // 分享图标
+              imgUrl: shareData.logo || `${DISCUZ_REQUEST_HOST}/static/admin-logo-x2.png`, // 分享图标
             };
             wx.updateAppMessageShareData(dataInfo); // 分享给朋友
             wx.updateTimelineShareData(dataInfo); // 分享到朋友圈

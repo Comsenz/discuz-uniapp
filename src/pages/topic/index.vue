@@ -592,6 +592,7 @@ export default {
       wxRes: '',
       contentVal: '', // 这是分享需要传的标题
       shareLogo: '', // 这是分享需要传的图片
+      desc: '', // 这是分享需要传的描述
     };
   },
   computed: {
@@ -777,12 +778,18 @@ export default {
           } else {
             this.loaded = true;
             this.loadingStatus = false;
+            // 帖子
             if (data.type == 1) {
-              this.contentVal = this.thread.title;
+              this.contentVal = data.title;
+              this.desc = data.firstPost.summary;
             } else {
-              this.contentVal = this.thread.summary;
+              this.contentVal = data.firstPost.summary;
+              this.desc = data.firstPost.summary;
             }
-            if (data.paice > 0) {
+            if (data.price > 0) {
+              if (data.type == 1) {
+                this.desc = data.title; 
+              }
               if (data.type == 2) {
                 this.shareLogo = data.threadVideo.coverUrl;
               } else {
