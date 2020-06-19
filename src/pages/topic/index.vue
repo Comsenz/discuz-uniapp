@@ -24,7 +24,7 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
-              :topic-status="topicStatus"
+              :topic-status="thread.isApproved"
               :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
@@ -636,6 +636,7 @@ export default {
     console.log(this.browser, '这是浏览器');
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
     this.$u.event.$on('addComment', data => {
+      console.log('123');
       for (const index in this.posts) {
         if (this.posts[index]._jv.id === data.commentId) {
           if (this.posts[index].lastThreeComments.length >= 3) {
@@ -1149,20 +1150,25 @@ export default {
           this.commentReply = false;
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
-          console.log('~~~~~~~~~~~~');
-          if (!res.isComment) {
-            this.posts.push(res);
-            console.log(this.posts, '#####################');
-          } else {
-            // console.log(res, '*****************');
-            if (!this.posts[this.postIndex].lastThreeComments) {
-              // console.log(this.postIndex, '走了');
-              this.posts[this.postIndex].lastThreeComments = [];
+          console.log(res, '~~~++++~~~~~~~~~');
+          if (res.isApproved == 1) {
+            if (!res.isComment) {
+              this.posts.push(res);
+              console.log(this.posts, '#####################');
+            } else {
+              // console.log(res, '*****************');
+              if (!this.posts[this.postIndex].lastThreeComments) {
+                // console.log(this.postIndex, '走了');
+                this.posts[this.postIndex].lastThreeComments = [];
+              }
+              this.posts[this.postIndex].lastThreeComments.unshift(res);
+              this.posts[this.postIndex].replyCount++;
+              // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
             }
-            this.posts[this.postIndex].lastThreeComments.unshift(res);
-            this.posts[this.postIndex].replyCount++;
-            // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
+          } else {
+            this.$refs.toast.show({ message: '您发布的内容正在审核中哦' });
           }
+
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -1175,6 +1181,7 @@ export default {
     // 加载当前主题评论的数据
     loadThreadPosts() {
       const params = {
+        'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[isComment]': 'no',
         'page[number]': this.pageNum,

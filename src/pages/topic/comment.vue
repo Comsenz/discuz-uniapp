@@ -15,6 +15,7 @@
           <view class="ft-gap">
             <view class="bg-white">
               <qui-topic-content
+                :topic-status="thread.isApproved"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :theme-time="post.createdAt"
@@ -24,7 +25,7 @@
                 @personJump="personJump(post.user._jv.id)"
               ></qui-topic-content>
               <view class="thread-box" v-if="loadDetailStatus">
-                <view class="thread">
+                <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img">
                       <image
@@ -644,13 +645,20 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '这是发布后');
+          console.log(res.isApproved, '这是发布后');
+          if (res.isApproved == 1) {
+            console.log('Hefa');
+            this.postComments.push(res);
+            this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
+          } else {
+            this.$refs.toast.show({ message: '您发布的内容正在审核中哦' });
+          }
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
-          this.postComments.push(res);
+
           console.log(res, '!!!!!!!!!!!!!!!!!!!');
-          this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
+
           // this.post.replyCount += 1;
           const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
           console.log(orgignPost, '获取呀');
@@ -667,6 +675,7 @@ export default {
     // 加载当前评论的回复数据
     loadPostComments() {
       const params = {
+        'filter[isApproved]': 1,
         'filter[thread]': this.threadId,
         'filter[reply]': this.commentId,
         'filter[isDeleted]': 'no',

@@ -850,6 +850,14 @@ export default {
         uni.showLoading();
 
         if (this.operating === 'edit') {
+          console.log(this.uploadFile.length, '长度');
+          // if (this.uploadFile.length < 1) {
+          //   this.$refs.toast.show({
+          //     message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
+          //   });
+          //   uni.hideLoading();
+          // } else {
+          // console.log('22222');
           this.editThread().then(() => {
             this.postLoading = false;
             uni.hideLoading();
@@ -857,6 +865,7 @@ export default {
               delta: 1,
             });
           });
+          // }
         } else {
           if (this.forums.qcloud.qcloud_captcha && this.forums.other.create_thread_with_captcha) {
             if (!this.ticket || !this.randstr) {
@@ -1020,6 +1029,7 @@ export default {
       });
     },
     delAttachments(id, index) {
+      console.log(id, '&&***********');
       const params = {
         _jv: {
           type: 'attachments',
@@ -1038,6 +1048,12 @@ export default {
           const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
           post.images.splice(index, 1);
           post._jv.relationships.images.data.splice(index, 1);
+          console.log('删除图片', id);
+          console.log(this.uploadFile, '~~~~~~~~~~');
+          this.uploadFile.forEach((value, key, item) => {
+            value._jv.id == id && item.splice(key, 1);
+          });
+          console.log(this.uploadFile, '+++++++++');
           return res;
         })
         .catch(err => {
@@ -1082,20 +1098,21 @@ export default {
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
 
-        // #ifdef MP-WEIXIN 
+        // #ifdef MP-WEIXIN
         this.markdodwShow = false;
         // #endif
         // #ifdef H5
         if (this.type === 1) {
-          this.markdodwShow = true;
+          // this.markdodwShow = true;
         }
         // #endif
-        console.log(this.type, '这是编辑时Type');
+        console.log(res, '这是编辑时Type');
         this.attachmentList = res.firstPost.attachments || [];
         this.preAttachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
+        this.uploadFile = res.firstPost.images;
         this.loadStatus = true;
         if (Number(res.price) > 0) {
           this.price = res.price;
@@ -1277,12 +1294,12 @@ export default {
     } catch (e) {
       // error
     }
-    // #ifdef MP-WEIXIN 
-      this.markdodwShow = false;
+    // #ifdef MP-WEIXIN
+    this.markdodwShow = false;
     // #endif
     // #ifdef H5
     if (this.type === 1) {
-      this.markdodwShow = true;
+      // this.markdodwShow = true;
     }
     // #endif
     // 接受验证码captchaResult
