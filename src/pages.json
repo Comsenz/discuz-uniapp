@@ -316,6 +316,12 @@
       "style": {
         "navigationBarTitleText": "验证身份"
       }
+    },
+    {
+      "path": "pages/user/wechat",
+      "style": {
+        "navigationBarTitleText": "微信授权"
+      }
     }
   ],
   "globalStyle": {

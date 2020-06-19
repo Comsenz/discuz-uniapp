@@ -1,6 +1,7 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
 import { http } from '@/api/api-request';
 import { utils } from '@/library/jsonapi-vuex/index';
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import {
   SET_USER_ID,
   CHECK_SESSION,
@@ -89,14 +90,9 @@ const actions = {
   },
   // #endif
   // #ifdef H5
-  wxh5Login: (context, payload = {}) => {
-    console.log('payload', payload);
-    return new Promise(resolve => {
-      console.log('http', http);
-      console.log('resolve', resolve);
-      const url = encodeURIComponent(`https://dq.comsenz-service.com/pages/home/index`);
-      window.location.href = `https://dq.comsenz-service.com/api/oauth/wechat?redirect=${url}`;
-    });
+  wxh5Login: () => {
+    const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
+    window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
   // #endif
   // #ifdef H5

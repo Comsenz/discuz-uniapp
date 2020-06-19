@@ -32,6 +32,8 @@ module.exports = {
       }
     },
     logind() {
+      const userId = this.$store.getters['session/get']('userId');
+      if (!userId) return;
       this.$store.dispatch('jv/get', [
         'forum',
         {
@@ -44,7 +46,7 @@ module.exports = {
       const params = {
         include: 'groups,wechat',
       };
-      const userId = this.$store.getters['session/get']('userId');
+
       this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(val => {
         this.$u.event.$emit('logind', val);
       });

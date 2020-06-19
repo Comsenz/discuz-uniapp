@@ -14,6 +14,7 @@ const publicWhitelistPage = [
   '/pages/topic/comment',
   '/pages/profile/index',
   '/pages/user/login',
+  '/pages/user/weichat',
   '/pages/user/login-bind',
   '/pages/user/register-bind',
   '/pages/user/register',
@@ -23,6 +24,7 @@ const publicWhitelistPage = [
 const payWhiteListPage = [
   '/pages/site/info',
   '/pages/user/login',
+  '/pages/user/weichat',
   '/pages/user/login-bind',
   '/pages/user/register-bind',
   '/pages/user/register',

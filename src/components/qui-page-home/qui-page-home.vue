@@ -350,6 +350,14 @@ export default {
       logo: this.forums.set_site.site_logo,
     });
     // #endif
+    this.ontrueGetList();
+    uni.$on('logind', () => {
+      console.log(this, 'lakjsdflkjsdklfjlk');
+      this.ontrueGetList();
+    });
+  },
+  destroyed() {
+    uni.$off('logind');
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
