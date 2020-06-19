@@ -101,6 +101,7 @@
         :header="header"
         :form-data="formData"
         async-clear
+        count="1"
         ref="upload"
         name="avatar"
         @uploadSuccess="uploadSuccess"
@@ -152,11 +153,11 @@ export default {
     };
   },
   methods: {
-    uploadSuccess(res, fileList) {
+    uploadSuccess(res) {
       uni.hideLoading();
       if (res.statusCode >= 200 && res.statusCode < 300) {
         this.$refs.toast.show({ message: '头像上传成功' });
-        const newAvatar = fileList[fileList.length - 1].data.attributes.avatarUrl;
+        const newAvatar = JSON.parse(res.data).data.attributes.avatarUrl;
         this.profile.avatarUrl = newAvatar;
       } else {
         const { code } = JSON.parse(res.data).errors[0];

@@ -155,7 +155,7 @@ export default {
       const _this = this;
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
-      if (_this.uploadList.length < _this.count) {
+      if (_this.uploadList.length < _this.count || _this.name === 'avatar') {
         // 上传图片到本地
         uni.chooseImage({
           count: _this.count - _this.uploadBeforeList.length,
