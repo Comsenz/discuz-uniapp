@@ -188,6 +188,7 @@ import user from '@/mixin/user';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
+import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import { mapMutations, mapState } from 'vuex';
 
@@ -203,6 +204,7 @@ export default {
     // #ifdef  H5
     wxshare,
     appCommonH,
+    loginAuth,
     // #endif
   ],
 
@@ -707,36 +709,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        const url = '/pages/home/index';
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
-          // 用户名模式
-          console.log('用户名模式跳转到注册并绑定页');
-          uni.navigateTo({
-            url: `/pages/user/register-bind?url=${url}`,
-          });
-        }
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
-          // 手机号模式
-          console.log('手机号模式跳转到手机号+验证码登陆页');
-          uni.navigateTo({
-            url: `/pages/user/verification-code-login?url=${url}`,
-          });
-        }
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-          // 无感模式
-          console.log('无感模式');
-          this.$store
-            .dispatch('session/wxh5Login')
-            .then(res => {
-              console.log('校验成功', res);
-              this.logind();
-              uni.navigateTo({
-                url,
-              });
-            })
-            .catch(err => {
-              console.log(err);
-            });
+        if (!this.handleLogin()) {
+          return;
         }
         // #endif
       }
