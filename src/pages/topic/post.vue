@@ -619,6 +619,41 @@ export default {
             path: res.tempFilePath,
           });
           // #ifdef  MP-WEIXIN
+          console.log({
+            mediaFile: res,
+            getSignature: () => {
+              return new Promise((resolve, reject) => {
+                resolve("UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0");
+              });
+            },//_this.getSignature,
+
+            mediaName: res.name,
+            success(result) {
+              console.log(result);
+            },
+            error(result) {
+              console.log(result);
+              // uni.showModal({
+              //   title: _this.i18n.t('uploader.uploadFailed'),
+              //   content: JSON.stringify(result),
+              //   showCancel: false,
+              // });
+              _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
+            },
+            progress(result) {
+              _this.percent = result.percent;
+              if (result.percent === 1) {
+                _this.$refs.toast.hideLoading();
+              }
+            },
+            finish(result) {
+              _this.fileId = result.fileId;
+              _this.postVideo(result.fileId);
+              // _this.$refs.toast.show({
+              //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
+              // });
+            },
+          });
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
@@ -1067,11 +1102,7 @@ export default {
         // #ifndef MP-WEIXIN
         callBack(() => res.signature);
         // #endif
-        if (res.signature) {
-          return res.signature;
-        } else {
-          return this.i18n.t('discuzq.post.failedToObtainSignature');
-        }
+        callBack(res.signature);
       });
     },
     postVideo(fileId) {
