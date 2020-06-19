@@ -336,7 +336,7 @@ export default {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
-      topicStatus: '',
+      // topicStatus: '',
     };
   },
   onLoad() {
@@ -396,27 +396,31 @@ export default {
       }
       // #endif
       // #ifdef MP-WEIXIN
-      const that = this;
-      wx.downloadFile({
-        url: item.url,
-        success(res) {
-          if (res.statusCode === 200) {
-            console.log(res.tempFilePath);
-            that.$refs.toast.show({
-              message: that.i18n.t('profile.downloadSuccess'),
-            });
-            // that.$refs.toast.show({
-            //   message: `${that.i18n.t('profile.downloadSuccess')},${that.i18n.t(
-            //     'profile.thetemporarypathis',
-            //   )}${res.tempFilePath}`,
-            // });
-          }
-        },
-        error() {
-          that.$refs.toast.show({
-            message: that.i18n.t('profile.downloadError'),
-          });
-        },
+      // const that = this;
+      // wx.downloadFile({
+      //   url: item.url,
+      //   success(res) {
+      //     if (res.statusCode === 200) {
+      //       console.log(res.tempFilePath);
+      //       that.$refs.toast.show({
+      //         message: that.i18n.t('profile.downloadSuccess'),
+      //       });
+      //       wx.openDocument({
+      //         filePath: res.tempFilePath,
+      //         success() {
+      //           console.log('打开文档成功');
+      //         },
+      //       });
+      //     }
+      //   },
+      //   error() {
+      //     that.$refs.toast.show({
+      //       message: that.i18n.t('profile.downloadError'),
+      //     });
+      //   },
+      // });
+      this.$refs.toast.show({
+        message: this.i18n.t('profile.filedownloadtipswx'),
       });
       // #endif
     },

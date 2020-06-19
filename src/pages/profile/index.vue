@@ -216,8 +216,10 @@ export default {
     // 添加关注
     addFollow(userInfo) {
       // #ifdef H5
-      if (!this.handleLogin()) {
-        return;
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
       }
       // #endif
       const params = {
@@ -237,8 +239,10 @@ export default {
     // 取消关注
     deleteFollow(userInfo) {
       // #ifdef H5
-      if (!this.handleLogin()) {
-        return;
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
       }
       // #endif
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {

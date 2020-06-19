@@ -133,8 +133,10 @@ export default {
     // 内容部分点击跳转到详情页
     contentClick(id) {
       // #ifdef H5
-      if (!this.handleLogin()) {
-        return;
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
       }
       // #endif
       uni.navigateTo({
@@ -144,8 +146,10 @@ export default {
     // 评论部分点击评论跳到详情页
     commentClick(id) {
       // #ifdef H5
-      if (!this.handleLogin()) {
-        return;
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
       }
       // #endif
       uni.navigateTo({
@@ -160,11 +164,16 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
-      // #ifdef H5
-      if (!this.handleLogin()) {
-        return;
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
       }
-      // #endif
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
