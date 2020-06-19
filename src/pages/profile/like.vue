@@ -44,12 +44,14 @@
 import { status } from '@/library/jsonapi-vuex/index';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
+import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 
 export default {
   mixins: [
     // #ifdef  H5
     wxshare,
+    loginAuth,
     // #endif
   ],
   props: {
@@ -129,12 +131,22 @@ export default {
     },
     // 评论部分点击评论跳到详情页
     commentClick(id) {
+      // #ifdef H5
+      if (!this.handleLogin()) {
+        return;
+      }
+      // #endif
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
+      // #ifdef H5
+      if (!this.handleLogin()) {
+        return;
+      }
+      // #endif
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -147,6 +159,11 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
+      // #ifdef H5
+      if (!this.handleLogin()) {
+        return;
+      }
+      // #endif
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
