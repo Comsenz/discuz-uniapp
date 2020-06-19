@@ -21,6 +21,7 @@ const setUserInfoStore = (context, results, resolve) => {
   context.commit(SET_USER_ID, resData._jv.id);
   context.commit(CHECK_SESSION, true);
   context.commit(SET_ACCESS_TOKEN, resData.access_token);
+  uni.$emit('logind');
   resolve(resData);
 };
 
