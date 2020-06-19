@@ -74,6 +74,9 @@ export default {
             if (res[i].thread_created_at) {
               res[i].thread_time = time2MorningOrAfternoon(res[i].thread_created_at);
             }
+            if (res[i].reply_post_created_at) {
+              res[i].reply_time = time2MorningOrAfternoon(res[i].reply_post_created_at);
+            }
             if (res[i].type === 'rewarded' && res[i].amount) {
               res[i].money = `￥${res[i].amount}`;
             }

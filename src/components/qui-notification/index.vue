@@ -81,7 +81,7 @@
           </view>
           <view
             class="list-box__notice__con__wrap"
-            v-if="item.thread_id"
+            v-if="item.thread_id && item.reply_post_id === 0"
             @click="jumpOtherTopic(item.thread_id)"
           >
             <view class="list-box__notice__con__wrap-info">
@@ -100,6 +100,32 @@
               ></view>
               <view class="list-box__notice__con__wrap-info-time">
                 {{ item.thread_time }}
+              </view>
+            </view>
+          </view>
+          <view
+            class="list-box__notice__con__wrap"
+            v-if="item.thread_id && item.reply_post_id !== 0"
+            @click="jumpMyComment(item)"
+          >
+            <view class="list-box__notice__con__wrap-info">
+              <text class="list-box__notice__con__wrap-info-username">我</text>
+              <text class="list-box__notice__con__wrap-info-text">&nbsp;回复了&nbsp;</text>
+              <text class="list-box__notice__con__wrap-info-username">
+                {{ item.thread_username }}：
+              </text>
+              <view
+                v-if="item.type !== 'rewarded' && item.type !== 'system'"
+                v-html="item.reply_post_content"
+                style="display: inline-block;"
+              ></view>
+              <view
+                v-if="item.type === 'rewarded'"
+                v-html="item.content"
+                style="display: inline-block;"
+              ></view>
+              <view class="list-box__notice__con__wrap-info-time">
+                {{ item.reply_time }}
               </view>
             </view>
           </view>
@@ -285,6 +311,11 @@ export default {
 
       &__wrap-info-username {
         font-weight: bold;
+        vertical-align: top;
+      }
+
+      &__wrap-info-text {
+        color: --color(--qui-FC-AAA);
         vertical-align: top;
       }
 
