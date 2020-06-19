@@ -624,7 +624,9 @@ export default {
       return status.status;
     },
   },
-  // created() {},
+  // created() {
+
+  // },
   onLoad(option) {
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin;
@@ -686,15 +688,7 @@ export default {
     } catch (e) {
       // error
     }
-    // h5微信分享
-    // #ifdef H5
 
-    this.wxShare({
-      title: this.contentVal,
-      desc: this.thread.summary,
-      logo: this.shareLogo,
-    });
-    // #endif
     // 编辑发帖回来后更新信息
     this.$u.event.$on('refreshFiles', () => {
       this.loadThread();
@@ -779,41 +773,50 @@ export default {
           } else {
             this.loaded = true;
             this.loadingStatus = false;
-            // 帖子
-            if (data.type == 1) {
-              this.contentVal = data.title;
-              this.desc = data.firstPost.summary;
-            } else {
-              this.contentVal = data.firstPost.summary;
-              this.desc = data.firstPost.summary;
-            }
-            if (data.price > 0) {
-              if (data.type == 1) {
-                this.desc = data.title; 
-              }
-              if (data.type == 2) {
-                this.shareLogo = data.threadVideo.coverUrl;
-              } else {
-                this.shareLogo = '';
-              }
-            } else {
-              if (data.type == 0) {
-                this.shareLogo = '';
-              } else if (data.type == 1) {
-                if (data.firstPost.images.length > 0) {
-                  console.log('类型1，大于0');
-                  this.shareLogo = data.firstPost.images[0].thumbUrl;
-                } else {
+            // 分享数据
+            switch (data.type) {
+              case 0:
+                // 文字帖
+                this.contentVal = data.firstPost.summary;
+                this.desc = data.firstPost.summary;
+                this.logo = '';
+                break;
+              case 1:
+                // 长文帖
+                this.contentVal = data.title;
+                if (data.price > 0) {
+                  this.desc = data.title;
                   this.shareLogo = '';
+                } else {
+                  this.desc = data.firstPost.summary;
+                  this.shareLogo = data.firstPost.images.length > 0
+                    ? data.firstPost.images[0].thumbUrl
+                    : '';
                 }
-              } else if (data.type == 2) {
+                break;
+              case 2:
+                // 视频帖
+                this.contentVal = data.firstPost.summary;
+                this.desc = data.firstPost.summary;
                 this.shareLogo = data.threadVideo.coverUrl;
-              } else if (data.type == 3) {
-                console.log('类型3，大于0');
-                this.shareLogo = data.firstPost.images[0].thumbUrl;
-              }
+                break;
+              case 3:
+                // 图片帖
+                this.contentVal = data.firstPost.summary;
+                this.desc = data.firstPost.summary;
+                this.shareLogo = data.price > 0 && data.firstPost.images.length > 0
+                  ? data.firstPost.images[0].thumbUrl
+                  : '';
+                break;
             }
           }
+          // #ifdef H5
+          this.wxShare({
+            title: this.contentVal,
+            desc: this.thread.summary,
+            logo: this.shareLogo,
+          });
+           // #endif
 
           // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
           // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
