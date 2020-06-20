@@ -14,20 +14,24 @@ const publicWhitelistPage = [
   '/pages/topic/comment',
   '/pages/profile/index',
   '/pages/user/login',
+  '/pages/user/weichat',
   '/pages/user/login-bind',
   '/pages/user/register-bind',
   '/pages/user/register',
   '/pages/user/phone-number-login',
   '/pages/user/verification-code-login',
+  '/pages/modify/findpwd',
 ];
 const payWhiteListPage = [
   '/pages/site/info',
   '/pages/user/login',
+  '/pages/user/weichat',
   '/pages/user/login-bind',
   '/pages/user/register-bind',
   '/pages/user/register',
   '/pages/user/phone-number-login',
   '/pages/user/verification-code-login',
+  '/pages/modify/findpwd',
 ];
 const apploaded = () => {
   const app = getApp();

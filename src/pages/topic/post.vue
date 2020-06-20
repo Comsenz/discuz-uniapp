@@ -77,7 +77,7 @@
         <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
           <text class="text-cover">{{ textAreaValue }}</text>
         </view>
-        <view class="markdown-box" v-if="markdodwShow">
+        <view class="markdown-box" v-if="markdownShow">
           <view>
             <qui-icon
               name="icon-bold"
@@ -373,7 +373,7 @@ export default {
       navTitle: '发布', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
-      markdodwShow: false, // 是否显示markdown菜单
+      markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
@@ -619,6 +619,43 @@ export default {
             path: res.tempFilePath,
           });
           // #ifdef  MP-WEIXIN
+          console.log({
+            mediaFile: res,
+            getSignature: () => {
+              return new Promise((resolve, reject) => {
+                resolve(
+                  'UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0',
+                );
+              });
+            }, //_this.getSignature,
+
+            mediaName: res.name,
+            success(result) {
+              console.log(result);
+            },
+            error(result) {
+              console.log(result);
+              // uni.showModal({
+              //   title: _this.i18n.t('uploader.uploadFailed'),
+              //   content: JSON.stringify(result),
+              //   showCancel: false,
+              // });
+              _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
+            },
+            progress(result) {
+              _this.percent = result.percent;
+              if (result.percent === 1) {
+                _this.$refs.toast.hideLoading();
+              }
+            },
+            finish(result) {
+              _this.fileId = result.fileId;
+              _this.postVideo(result.fileId);
+              // _this.$refs.toast.show({
+              //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
+              // });
+            },
+          });
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
@@ -1043,9 +1080,13 @@ export default {
         .dispatch('jv/delete', params)
         .then(res => {
           // 当编辑帖子时删除图片后传参给首页
-          this.$u.event.$emit('deleteImg', {
-            threadId: this.postDetails._jv.id,
-            index,
+          // this.$u.event.$emit('deleteImg', {
+          //   threadId: this.postDetails._jv.id,
+          //   index,
+          // });
+          this.$u.event.$emit('refreshImg', {
+            id: this.threadId,
+            images: this.addImg(),
           });
           const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
           post.images.splice(index, 1);
@@ -1067,11 +1108,7 @@ export default {
         // #ifndef MP-WEIXIN
         callBack(() => res.signature);
         // #endif
-        if (res.signature) {
-          return res.signature;
-        } else {
-          return this.i18n.t('discuzq.post.failedToObtainSignature');
-        }
+        callBack(res.signature);
       });
     },
     postVideo(fileId) {
@@ -1101,11 +1138,11 @@ export default {
         this.type = res.type;
 
         // #ifdef MP-WEIXIN
-        this.markdodwShow = false;
+        this.markdownShow = false;
         // #endif
         // #ifdef H5
         if (this.type === 1) {
-          // this.markdodwShow = true;
+          this.markdownShow = true;
         }
         // #endif
         console.log(res, '这是编辑时Type');
@@ -1297,11 +1334,11 @@ export default {
       // error
     }
     // #ifdef MP-WEIXIN
-    this.markdodwShow = false;
+    this.markdownShow = false;
     // #endif
     // #ifdef H5
     if (this.type === 1) {
-      // this.markdodwShow = true;
+      this.markdownShow = true;
     }
     // #endif
     // 接受验证码captchaResult
@@ -1316,7 +1353,10 @@ export default {
     });
 
     uni.$on('clickTopic', data => {
-      if (data.keywords) this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}#${data.keywords}#${this.textAreaValue.slice(this.cursor)}`;
+      if (data.keywords)
+        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}#${
+          data.keywords
+        }#${this.textAreaValue.slice(this.cursor)}`;
     });
   },
   onShow() {

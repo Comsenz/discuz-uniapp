@@ -4,12 +4,13 @@
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
       :theme-num="siteInfo.count_users"
-      :post="i18n.t('home.homecontent')"
       :post-num="siteInfo.count_threads"
-      :share="i18n.t('home.share')"
+      :share-btn="shareBtn"
+      :share-show="shareShow"
+      :title="title"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
-      :title="title"
+      @closeShare="closeShare"
     ></qui-header>
     <!-- 分享弹窗 -->
     <uni-popup ref="popupHead" type="bottom">
@@ -114,9 +115,19 @@
 
 <script>
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef H5
+    wxshare,
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       title: '站点信息',
@@ -132,12 +143,18 @@ export default {
           name: 'wx',
         },
       ],
+      shareBtn: 'icon-share1',
+      isWeixin: '', // 是否是微信浏览器
+      shareShow: false, // h5内分享提示信息
     };
   },
   onLoad() {
     // uni.hideHomeButton();
     this.getSiteInfo();
     this.getPermissions();
+    // #ifdef H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -245,6 +262,8 @@ export default {
     },
     // 首页头部分享按钮弹窗
     open() {
+      // #ifdef MP-WEIXIN
+      this.$refs.popupHead.open();
       if (this.forums.set_site.site_mode === 'pay') {
         this.bottomData = [
           {
@@ -254,7 +273,20 @@ export default {
           },
         ];
       }
-      this.$refs.popupHead.open();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: 'pages/home/index',
+        });
+      }
+      // #endif
+    },
+    closeShare() {
+      this.shareShow = false;
     },
     // 头部分享海报
     shareHead(index) {
