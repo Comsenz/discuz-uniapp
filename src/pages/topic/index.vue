@@ -492,7 +492,7 @@ export default {
 
       limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
-      paidBtnStatus: false, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
+      paidBtnStatus: true, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, //回复状态
@@ -895,24 +895,26 @@ export default {
             ) {
               this.rewardStatus = true;
             } else {
-              if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === false
-              ) {
-                this.paidBtnStatus = false;
-              } else if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === true &&
-                data.paid === false
-              ) {
-                this.paidBtnStatus = true;
-              }
-
+              this.paidBtnStatus = false;
               this.rewardStatus = true;
             }
           } else {
+            if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === false
+            ) {
+              this.paidBtnStatus = false;
+            } else if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === true &&
+              data.paid === false
+            ) {
+              this.paidBtnStatus = true;
+            } else if (data.paid === true) {
+              this.paidBtnStatus = false;
+            }
             this.rewardStatus = false;
           }
           if (data.firstPost.likedUsers.length < 1) {
