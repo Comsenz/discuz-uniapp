@@ -109,10 +109,20 @@
 import { timestamp2day } from '@/utils/time';
 import quiInvite from '@/components/qui-invite';
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
   components: { quiInvite },
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef H5
+    wxshare,
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       current: 0, // 当前标签页
@@ -133,11 +143,15 @@ export default {
         },
       ],
       navbarHeight: 0,
+      isWeixin: '', // 是否是微信浏览器
     };
   },
   onLoad() {
     this.getInviteList(1);
     this.getGroupList();
+    // #ifdef H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
   },
   // 唤起小程序原生分享
   onShareAppMessage(res) {
@@ -311,7 +325,19 @@ export default {
     share(code) {
       this.code = code;
       console.log('分享');
+      // #ifdef MP-WEIXIN
       this.$refs.popupShare.open();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: 'pages/home/index',
+        });
+      }
+      // #endif
     },
     // 取消分享
     cancelShare() {
