@@ -67,6 +67,7 @@ export default {
       pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
+      editThreadId: '',
       shareTitle: '', // h5内分享复制链接
       currentLoginId: this.$store.getters['session/get']('userId'),
     };
@@ -138,6 +139,7 @@ export default {
         }
       }
       // #endif
+      this.editThreadId = id;
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -151,6 +153,7 @@ export default {
         }
       }
       // #endif
+      this.editThreadId = id;
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -211,6 +214,18 @@ export default {
       }
       this.pageNum += 1;
       this.loadlikes();
+    },
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
+      }
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      this.data.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(this.data, index, item);
+        }
+      });
     },
   },
 };

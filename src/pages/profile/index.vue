@@ -179,6 +179,8 @@ export default {
   // 解决左上角返回数据不刷新情况
   onShow() {
     this.getUserInfo(this.userId);
+    if (this.$refs.topic) this.$refs.topic.uploadItem();
+    if (this.$refs.like) this.$refs.like.uploadItem();
   },
   // 唤起小程序原声分享（微信）
   onShareAppMessage(res) {
