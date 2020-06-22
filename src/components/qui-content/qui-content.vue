@@ -290,7 +290,7 @@ export default {
     },
     // 内容区域图片
     imagesList: {
-      type: Array,
+      type: [Array, Object],
       default: () => {
         return [];
       },

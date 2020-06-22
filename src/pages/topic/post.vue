@@ -937,6 +937,7 @@ export default {
             }
           }
           this.postThread().then(res => {
+            console.log(res, 'postREs');
             this.postLoading = false;
             uni.hideLoading();
             if (res && res.isApproved === 1) {
@@ -1110,6 +1111,7 @@ export default {
           //   threadId: this.postDetails._jv.id,
           //   index,
           // });
+          console.log(res, '发布页的数据呢');
           this.$u.event.$emit('refreshImg', {
             id: this.threadId,
             images: this.addImg(),
@@ -1222,6 +1224,7 @@ export default {
       const posts = {
         _jv: {
           type: 'posts',
+          // id: `${this.firstPostId}?include=user,thread,images`,
           id: this.firstPostId,
           relationships: {},
         },
@@ -1265,6 +1268,7 @@ export default {
       }
 
       await this.$store.dispatch('jv/patch', posts).then(res => {
+        console.log(res, '发布页的增加数据');
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
           this.$u.event.$emit('refreshImg', {

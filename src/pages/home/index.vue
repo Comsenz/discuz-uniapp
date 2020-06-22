@@ -136,6 +136,7 @@ export default {
       this.nowThreadId = e;
     },
     handlePageLoaded() {
+      console.log('2312321klj3kl12j3lk1j23');
       this.showHome = true;
       // this.$nextTick(() => {
       //   console.log('nextTick。。。');
