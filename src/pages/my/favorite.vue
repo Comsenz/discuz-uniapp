@@ -118,6 +118,7 @@ export default {
       this.h5Share({
         title: this.shareTitle,
         id,
+        url: 'pages/topic/index',
       });
       // #endif
     },
