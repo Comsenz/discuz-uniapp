@@ -171,7 +171,7 @@
             color="#aaa"
             size="22"
           ></qui-icon>
-          <text>{{ item.fileName }}</text>
+          <text class="attachment-name">{{ item.fileName }}</text>
         </view>
       </view>
 
@@ -590,6 +590,9 @@ export default {
         color: --color(--qui-FC-777);
       }
       &-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;
@@ -643,6 +646,14 @@ export default {
       }
     }
   }
+}
+.attachment-name {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: $fg-f24;
+  line-height: 31rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .det-hd-operaCli {
   position: relative;

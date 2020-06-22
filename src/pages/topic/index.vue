@@ -724,6 +724,7 @@ export default {
       setAtMember: 'atMember/SET_ATMEMBER',
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
 
     // 表情接口请求
@@ -991,7 +992,7 @@ export default {
             }
           } else if (type === '2') {
             if (data.isDeleted) {
-              uni.navigateTo({
+              uni.navigateBack({
                 url: `/pages/home/index`,
               });
             } else {
@@ -1086,13 +1087,16 @@ export default {
               this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type === '4') {
-            // if (data.isDeleted) {
-            // console.log('删除成功，跳转到首页');
-            this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateTo({
-              url: `/pages/home/index`,
-            });
-            // }
+            if (data.isDeleted) {
+              // console.log('删除成功，跳转到首页');
+              this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
+              const pages = getCurrentPages();
+              const delta = pages.indexOf(pages[pages.length - 1]);
+              uni.navigateBack({
+                delta,
+              });
+              this.$u.event.$emit('deleteThread', this.threadId);
+            }
           }
         })
         .catch(err => {
@@ -1150,7 +1154,7 @@ export default {
         this.uploadFile.forEach(item => {
           params._jv.relationships.attachments.data.push({
             type: 'attachments',
-            id: item.data.id,
+            id: item.id,
           });
         });
       }
@@ -1562,6 +1566,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log(id, '这是当前主题用户Id');
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1569,6 +1576,9 @@ export default {
     },
     // 主题支付
     payClickShow() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
@@ -1788,14 +1798,17 @@ export default {
       this.$u.event.$emit('tagClick', tagId);
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      if (pages.length === 1) {
-        uni.navigateTo({
-          url: '/pages/home/index',
-        });
-      } else {
+      console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
+      // console.log('pages', pages);
+      if (pages[delta - 1].route && pages[delta - 1].route === 'pages/home/index') {
         uni.navigateBack({
           delta,
         });
+      } else {
+        uni.navigateTo({
+          url: '/pages/home/index',
+        });
+        this.setFooterIndex(0);
       }
     },
     // 主题点赞

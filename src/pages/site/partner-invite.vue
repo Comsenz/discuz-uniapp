@@ -233,7 +233,7 @@ export default {
     padding-top: 71rpx;
   }
   .cell-item__body__content-title {
-    width: 112rpx;
+    width: 120rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }

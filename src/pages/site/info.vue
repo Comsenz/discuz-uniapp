@@ -99,6 +99,29 @@
           @paysureShow="paysureShow"
         ></qui-pay>
       </view>
+      <uni-popup ref="codePopup" type="center" class="code-popup-box">
+        <view class="code-content" v-if="qrcodeShow">
+          <view class="code-title">{{ pay.payNow }}</view>
+          <view class="code-pay-money">
+            <view class="code-yuan">￥</view>
+            {{ forums.set_site && forums.set_site.site_price }}
+          </view>
+          <view class="code-type-box">
+            <view class="code-type-tit">{{ pay.payType }}</view>
+            <view class="code-type">
+              <qui-icon
+                class="code-type-icon"
+                name="icon-wxPay"
+                size="36"
+                color="#09bb07"
+              ></qui-icon>
+              <view class="code-type-text">{{ pay.wxPay }}</view>
+            </view>
+          </view>
+          <image :src="codeUrl" class="code-img"></image>
+          <view class="code-tip">{{ pay.wechatIdentificationQRcode }}</view>
+        </view>
+      </uni-popup>
       <qui-toast ref="toast"></qui-toast>
     </view>
   </qui-page>
@@ -109,6 +132,7 @@ import forums from '@/mixin/forums';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
+import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 
 export default {
@@ -117,15 +141,24 @@ export default {
     // #ifdef  H5
     wxshare,
     appCommonH,
+    loginAuth,
     // #endif
   ],
   data() {
     return {
       payShowStatus: true, // 是否显示支付
+      codeUrl: '', // 二维码支付url，base64
       shareBtn: 'icon-share1',
       shareShow: false, // h5内分享提示信息
       isAnonymous: '0',
+      qrcodeShow: false, // 二维码弹框
       isWeixin: '', // 是否是微信浏览器内
+      isPhone: false,
+      wxRes: '',
+      browser: 0, // 0为小程序，1为除小程序之外的设备
+      payStatus: false, // 订单支付状态
+      payStatusNum: 0, // 订单支付状态查询最大次数
+      orderSn: '', // 订单编号
       payTypeData: [
         {
           name: '微信支付',
@@ -136,9 +169,20 @@ export default {
       ],
     };
   },
+  computed: {
+    // pay支付语言包
+    pay() {
+      return this.i18n.t('pay');
+    },
+  },
   onLoad() {
     // #ifdef MP-WEIXIN
     uni.hideHomeButton();
+    // #endif
+    // #ifndef MP-WEIXIN
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone;
+    this.browser = 1;
     // #endif
     this.$u.event.$on('logind', data => {
       if (data.paid) {
@@ -212,12 +256,19 @@ export default {
       };
       this.$store.dispatch('jv/post', params).then(res => {
         this.orderSn = res.order_sn;
-        // 微信支付
-        this.orderPay(13, value, this.orderSn);
+        if (this.browser === 0) {
+          this.orderPay(13, value, this.orderSn, '0'); // 微信小程序
+        } else if (this.isWeixin && this.isPhone) {
+          this.orderPay(12, value, this.orderSn, '1'); // 微信浏览器
+        } else if (this.isPhone) {
+          this.orderPay(11, value, this.orderSn, '2'); // 手机浏览器
+        } else {
+          this.orderPay(10, value, this.orderSn, '3'); // pc浏览器
+        }
       });
     },
     // 订单支付
-    orderPay(type, value, orderSn) {
+    orderPay(type, value, orderSn, browserType) {
       let params = {};
       params = {
         _jv: {
@@ -225,15 +276,110 @@ export default {
         },
         payment_type: type,
       };
-      this.$store.dispatch('jv/post', params).then(res => {
-        this.wechatPay(
-          res.wechat_js.timeStamp,
-          res.wechat_js.nonceStr,
-          res.wechat_js.package,
-          res.wechat_js.signType,
-          res.wechat_js.paySign,
-        );
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.wxRes = res;
+          if (browserType === '0') {
+            this.wechatPay(
+              res.wechat_js.timeStamp,
+              res.wechat_js.nonceStr,
+              res.wechat_js.package,
+              res.wechat_js.signType,
+              res.wechat_js.paySign,
+            );
+          } else if (browserType === '1') {
+            if (typeof WeixinJSBridge === 'undefined') {
+              if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
+              } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
+                document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
+              }
+            } else {
+              this.onBridgeReady(res);
+            }
+          } else if (browserType === '2') {
+            window.location.href = res.wechat_h5_link;
+            const payPhone = setInterval(() => {
+              if (this.payStatus === '1' && this.payStatusNum > 10) {
+                clearInterval(payPhone);
+                return;
+              }
+              this.getOrderStatus(orderSn, browserType);
+            }, 3000);
+          } else if (browserType === '3') {
+            if (res) {
+              this.codeUrl = res.wechat_qrcode;
+              this.payShowStatus = false;
+              this.$refs.codePopup.open();
+              this.qrcodeShow = true;
+              const payWechat = setInterval(() => {
+                if (this.payStatus === '1' || this.payStatusNum > 10) {
+                  clearInterval(payWechat);
+                  return;
+                }
+                this.getOrderStatus(this.orderSn, browserType);
+              }, 3000);
+            }
+          }
+        })
+        .catch(() => {
+          // 清空支付的密码
+          this.$refs.payShow.clear();
+        });
+    },
+    // 查询订单支状 browserType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    getOrderStatus(orderSn, browserType) {
+      const params = {
+        _jv: {
+          type: `orders/${orderSn}`,
+        },
+      };
+      this.$store
+        .dispatch('jv/get', params)
+        .then(res => {
+          this.payStatus = res.status;
+          this.payStatusNum += 1;
+          if (this.payStatus === '1' || this.payStatusNum > 10) {
+            this.payShowStatus = false;
+            this.coverLoading = false;
+            if (browserType === '2') {
+              // return false;
+            } else if (browserType === '3') {
+              // 这是pc扫码支付完成
+              this.$refs.codePopup.close();
+              this.qrcodeShow = false;
+            }
+            if (this.payStatus === '1') {
+              this.$refs.toast.show({ message: this.p.paySuccess });
+            }
+          }
+        })
+        .catch(() => {
+          this.coverLoading = false;
+          this.$refs.toast.show({ message: this.pay.payFail });
+        });
+    },
+    // 非小程序内微信支付
+    onBridgeReady(data) {
+      // eslint-disable-next-line no-undef
+      WeixinJSBridge.invoke('getBrandWCPayRequest', {
+        appId: data.wechat_js.appId, // 公众号名称，由商户传入
+        timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
+        nonceStr: data.wechat_js.nonceStr, // 随机串
+        package: data.wechat_js.package,
+        signType: 'MD5', // 微信签名方式：
+        paySign: data.wechat_js.paySign, // 微信签名
       });
+
+      const payWechat = setInterval(() => {
+        if (this.payStatus === '1' || this.payStatusNum > 10) {
+          clearInterval(payWechat);
+          return;
+        }
+        this.getOrderStatus(this.orderSn);
+      }, 3000);
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
@@ -263,10 +409,21 @@ export default {
     // 跳支付页面
     submit() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
       }
-      this.$refs.payShow.payClickShow();
+      this.payStatus = false;
+      this.payStatusNum = 0;
+      this.payShowStatus = true;
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow();
+      });
     },
     // 调取用户信息取消弹框
     close() {
@@ -298,7 +455,7 @@ export default {
     padding-top: 71rpx;
   }
   .cell-item__body__content-title {
-    width: 112rpx;
+    width: 120rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
@@ -309,6 +466,66 @@ export default {
   .site-invite {
     text-align: center;
   }
+}
+// 微信二维码弹框
+
+.code-content {
+  position: fixed;
+  top: 10%;
+  left: 11%;
+  z-index: 22;
+  display: flex;
+  flex-direction: column;
+  width: 78%;
+  padding: 40rpx;
+  background: --color(--qui-BG-FFF);
+  border-radius: 16rpx;
+  box-sizing: border-box;
+  .code-title {
+    text-align: center;
+  }
+  .code-pay-money {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 36rpx;
+    padding-bottom: 36rpx;
+    font-size: 70rpx;
+    .code-yuan {
+      font-size: 48rpx;
+      line-height: 66rpx;
+    }
+  }
+}
+
+.code-type-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 24rpx 0 34rpx;
+  line-height: 36rpx;
+  border-top: 1px solid --color(--qui-BG-ED);
+  .code-type-tit {
+    color: --color(--qui-FC-AAA);
+  }
+  .code-type {
+    display: flex;
+    flex-direction: row;
+    .code-type-icon {
+      font-size: 36rpx;
+    }
+    .code-type-text {
+      padding-left: 12rpx;
+    }
+  }
+}
+.code-img {
+  align-self: center;
+  width: 380rpx;
+  height: 380rpx;
+}
+.code-tip {
+  padding: 14rpx 0 20rpx;
 }
 //下面部分样式
 .site-item {

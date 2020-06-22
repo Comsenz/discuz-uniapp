@@ -638,7 +638,7 @@ export default {
         this.uploadFile.forEach(item => {
           params._jv.relationships.attachments.data.push({
             type: 'attachments',
-            id: item.data.id,
+            id: item.id,
           });
         });
       }
