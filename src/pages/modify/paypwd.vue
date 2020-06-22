@@ -61,7 +61,6 @@ export default {
   },
   onLoad(arr) {
     this.userid = this.usersid;
-    console.log(this.userid);
     if (arr) {
       this.usertokenid = arr.token || '';
     }

@@ -6,57 +6,67 @@
       <view class="list-box__notice" v-if="item.type !== 'system'">
         <view class="list-box__notice__h">
           <view class="list-box__notice__hl">
-            <image
-              lazy-load
-              class="list-box__notice__hl-avatar"
-              :src="item.user_avatar"
-              @click="jumpUserPage(item.user_id)"
-              @error="imageError(index)"
-            ></image>
-            <view class="list-box__notice__hl-info">
-              <view
-                :class="[
-                  item.type === 'rewarded' || item.type === 'rewarded'
-                    ? 'list-box__notice__hl-info-con'
-                    : '',
-                ]"
-              >
-                <text
-                  :class="[
-                    item.thread_user_groups ? '' : 'list-box__notice__hl-info-username-space',
-                    'list-box__notice__hl-info-username',
-                  ]"
-                >
-                  {{ item.user_name }}
-                </text>
-                <!-- <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
+            <view class="list-box__notice__hl-image">
+              <image
+                lazy-load
+                class="list-box__notice__hl-avatar"
+                :src="item.user_avatar"
+                @click="jumpUserPage(item.user_id)"
+                @error="imageError(index)"
+              ></image>
+            </view>
+            <view class="list-box__notice__hl-box">
+              <view>
+                <view class="list-box__notice__hl-info">
+                  <view
+                    :class="[
+                      item.type === 'rewarded' || item.type === 'rewarded'
+                        ? 'list-box__notice__hl-info-con'
+                        : '',
+                    ]"
+                  >
+                    <text
+                      :class="[
+                        item.thread_user_groups ? '' : 'list-box__notice__hl-info-username-space',
+                        'list-box__notice__hl-info-username',
+                      ]"
+                    >
+                      {{ item.user_name }}
+                    </text>
+                    <!-- <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
                   （{{ item.thread_user_groups }}）
                 </text> -->
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
-                  {{ i18n.t('notice.relatedMe') }}
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
+                      {{ i18n.t('notice.relatedMe') }}
+                    </text>
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'replied'">
+                      {{ i18n.t('notice.repliedMe') }}
+                    </text>
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
+                      {{ i18n.t('notice.likedMe') }}
+                    </text>
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
+                      {{
+                        item.order_type === 3
+                          ? i18n.t('notice.payedMe')
+                          : i18n.t('notice.rewardedMe')
+                      }}
+                    </text>
+                  </view>
+                  <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
+                </view>
+              </view>
+              <view class="">
+                <text class="list-box__notice__hl__amount" v-if="item.type === 'rewarded'">
+                  {{ item.money }}
                 </text>
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'replied'">
-                  {{ i18n.t('notice.repliedMe') }}
-                </text>
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
-                  {{ i18n.t('notice.likedMe') }}
-                </text>
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
-                  {{
-                    item.order_type === 3 ? i18n.t('notice.payedMe') : i18n.t('notice.rewardedMe')
-                  }}
+                <text class="list-box__notice__hl__cash-amount" v-if="item.type === 'withdrawal'">
+                  {{ item.money }}
                 </text>
               </view>
-              <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
             </view>
           </view>
           <view class="list-box__notice__hr">
-            <text class="list-box__notice__hr__amount" v-if="item.type === 'rewarded'">
-              {{ item.money }}
-            </text>
-            <text class="list-box__notice__hr__cash-amount" v-if="item.type === 'withdrawal'">
-              {{ item.money }}
-            </text>
             <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
           </view>
         </view>
@@ -110,7 +120,7 @@
           >
             <view class="list-box__notice__con__wrap-info">
               <text class="list-box__notice__con__wrap-info-username">我</text>
-              <text class="list-box__notice__con__wrap-info-text">&nbsp;回复了&nbsp;</text>
+              <text class="list-box__notice__con__wrap-info-text" decode>{{ reply }}</text>
               <text class="list-box__notice__con__wrap-info-username">
                 {{ item.thread_username }}：
               </text>
@@ -170,6 +180,12 @@ export default {
         return [];
       },
     },
+  },
+
+  data() {
+    return {
+      reply: '&nbsp;回复了&nbsp;',
+    };
   },
 
   methods: {
@@ -236,7 +252,8 @@ export default {
 
     &__hl {
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      width: 300px;
       margin: 0rpx 0rpx 20rpx;
 
       &-avatar {
@@ -246,12 +263,16 @@ export default {
         will-change: transform;
       }
 
-      &-info {
-        margin: 0rpx 0rpx 0rpx 20rpx;
+      &-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 300px;
       }
 
-      &-info-con {
-        width: 380rpx;
+      &-info {
+        margin: 0rpx 0rpx 0rpx 20rpx;
       }
 
       &-info-username {
@@ -272,12 +293,6 @@ export default {
         font-size: 24rpx;
         color: --color(--qui-FC-AAA);
       }
-    }
-
-    &__hr {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
 
       &__amount {
         margin-right: 20rpx;
@@ -290,6 +305,11 @@ export default {
         font-weight: bold;
         color: --color(--qui-GREEN);
       }
+    }
+
+    &__hr {
+      display: flex;
+      align-items: center;
     }
 
     &__con {
