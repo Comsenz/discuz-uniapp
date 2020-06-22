@@ -16,7 +16,7 @@
     <!--a类型-->
     <view
       v-else-if="node.tag == 'a'"
-      @click="wxParseATap(node.attr, $event)"
+      @click.stop="wxParseATap(node.attr, $event)"
       :class="node.classStr"
       :data-href="node.attr.href"
       :style="node.styleStr"

@@ -332,24 +332,25 @@ export default {
     // 详情页编辑增加图片时首页增加图片
     this.$u.event.$on('refreshImg', res => {
       console.log(res, '888888888');
+      this.$forceUpdate();
       // eslint-disable-next-line no-restricted-syntax
-      for (const index in this.threads) {
-        if (this.threads[index]._jv.id === res.id) {
-          if (res.images.data) {
-            res.images.data.forEach(item => {
-              console.log(item, this.$store.getters['jv/get']('attachments'), 'item');
-              this.threads[index].firstPost.images = this.$store.getters['jv/get'](
-                `${item.type}/${item.id}`,
-              );
-              console.log(
-                this.threads[index].firstPost.images,
-                'this.threads[index].firstPost.images',
-              );
-            });
-          }
-          // break;
-        }
-      }
+      // for (const index in this.threads) {
+      //   if (this.threads[index]._jv.id === res.id) {
+      //     if (res.images.data) {
+      //       res.images.data.forEach(item => {
+      //         console.log(item, this.$store.getters['jv/get']('attachments'), 'item');
+      //         this.threads[index].firstPost.images = this.$store.getters['jv/get'](
+      //           `${item.type}/${item.id}`,
+      //         );
+      //         console.log(
+      //           this.threads[index].firstPost.images,
+      //           'this.threads[index].firstPost.images',
+      //         );
+      //       });
+      //     }
+      //     // break;
+      //   }
+      // }
     });
     // h5微信分享
     // #ifdef H5
@@ -605,7 +606,7 @@ export default {
       if (shareThread.type === 1) {
         this.shareTitle = shareThread.title;
       } else {
-        this.shareTitle = shareThread.firstPost.summary;
+        this.shareTitle = shareThread.firstPost.summary_text;
       }
       this.h5Share({
         title: this.shareTitle,

@@ -899,19 +899,43 @@ export default {
 
         if (this.operating === 'edit') {
           console.log(this.uploadFile.length, '长度');
-          if (this.uploadFile.length < 1) {
-            this.$refs.toast.show({
-              message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
-            });
-            uni.hideLoading();
+          if (this.type === 3) {
+            console.log('类型为图片时');
+            if (this.uploadFile.length < 1) {
+              console.log('图片为空');
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
+              });
+              uni.hideLoading();
+              this.postLoading = false;
+            } else {
+              console.log('111111');
+              this.editThread().then(res => {
+                this.postLoading = false;
+                uni.hideLoading();
+                // uni.navigateBack({
+                //   delta: 1,
+                // });
+                if (res && this.threadId) {
+                  uni.redirectTo({
+                    url: `/pages/topic/index?id=${this.threadId}`,
+                  });
+                }
+              });
+            }
           } else {
-            // console.log('22222');
-            this.editThread().then(() => {
+            console.log('22222');
+            this.editThread().then(res => {
               this.postLoading = false;
               uni.hideLoading();
-              uni.navigateBack({
-                delta: 1,
-              });
+              // uni.navigateBack({
+              //   delta: 1,
+              // });
+              if (res && this.threadId) {
+                uni.redirectTo({
+                  url: `/pages/topic/index?id=${this.threadId}`,
+                });
+              }
             });
           }
         } else {
@@ -922,6 +946,7 @@ export default {
             }
           }
           this.postThread().then(res => {
+            console.log(res, 'postREs');
             this.postLoading = false;
             uni.hideLoading();
             if (res && res.isApproved === 1) {
@@ -964,6 +989,7 @@ export default {
     addImg() {
       const attachments = {};
       attachments.data = [];
+      console.log(this.uploadFile, '这是处理前');
       this.uploadFile.forEach(item => {
         if (item) {
           attachments.data.push({
@@ -990,6 +1016,7 @@ export default {
           }
         });
       }
+      console.log('这是提交给接口的', attachments);
       return attachments;
     },
     deleteFile(id) {
@@ -1093,6 +1120,7 @@ export default {
           //   threadId: this.postDetails._jv.id,
           //   index,
           // });
+          console.log(res, '发布页的数据呢');
           this.$u.event.$emit('refreshImg', {
             id: this.threadId,
             images: this.addImg(),
@@ -1160,7 +1188,20 @@ export default {
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
-        this.uploadFile = res.firstPost.images;
+        // this.uploadFile = res.firstPost.images;
+        if (res.firstPost.images) {
+          res.firstPost.images.forEach(item => {
+            if (item) {
+              this.uploadFile.push({
+                type: 'attachments',
+                id: item._jv.id,
+                order: item.order,
+              });
+            }
+          });
+          console.log(this.uploadFile, '这是编辑初始化获取');
+        }
+
         this.loadStatus = true;
         if (Number(res.price) > 0) {
           this.price = res.price;
@@ -1192,6 +1233,7 @@ export default {
       const posts = {
         _jv: {
           type: 'posts',
+          // id: `${this.firstPostId}?include=user,thread,images`,
           id: this.firstPostId,
           relationships: {},
         },
@@ -1235,6 +1277,7 @@ export default {
       }
 
       await this.$store.dispatch('jv/patch', posts).then(res => {
+        console.log(res, '发布页的增加数据');
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
           this.$u.event.$emit('refreshImg', {
@@ -1244,6 +1287,7 @@ export default {
         }
         // 更新详情页的信息
         this.$u.event.$emit('refreshFiles');
+        return res;
       });
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
@@ -1363,9 +1407,9 @@ export default {
 
     uni.$on('clickTopic', data => {
       if (data.keywords)
-        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}#${
+        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${
           data.keywords
-        }#${this.textAreaValue.slice(this.cursor)}`;
+        }#${this.textAreaValue.slice(this.cursor)}  `;
     });
   },
   onShow() {

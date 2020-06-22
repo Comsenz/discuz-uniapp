@@ -779,8 +779,8 @@ export default {
             switch (data.type) {
               case 0:
                 // 文字帖
-                this.contentVal = data.firstPost.summary;
-                this.desc = data.firstPost.summary;
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
                 this.logo = '';
                 break;
               case 1:
@@ -790,21 +790,21 @@ export default {
                   this.desc = data.title;
                   this.shareLogo = '';
                 } else {
-                  this.desc = data.firstPost.summary;
+                  this.desc = data.firstPost.summary_text;
                   this.shareLogo =
                     data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
                 }
                 break;
               case 2:
                 // 视频帖
-                this.contentVal = data.firstPost.summary;
-                this.desc = data.firstPost.summary;
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
                 this.shareLogo = data.threadVideo.coverUrl;
                 break;
               case 3:
                 // 图片帖
-                this.contentVal = data.firstPost.summary;
-                this.desc = data.firstPost.summary;
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
                 this.shareLogo =
                   data.price > 0 && data.firstPost.images.length > 0
                     ? data.firstPost.images[0].thumbUrl
@@ -990,14 +990,6 @@ export default {
               //   val.id = this.user.id && item.splice(key, 1);
               // });
             }
-          } else if (type === '2') {
-            if (data.isDeleted) {
-              uni.navigateTo({
-                url: `/pages/home/index`,
-              });
-            } else {
-              console.log('主题删除失败');
-            }
           } else if (type === '3') {
             const postArr = post;
             postArr.isDeleted = data.isDeleted;
@@ -1087,13 +1079,16 @@ export default {
               this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type === '4') {
-            // if (data.isDeleted) {
-            // console.log('删除成功，跳转到首页');
-            this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateTo({
-              url: `/pages/home/index`,
-            });
-            // }
+            if (data.isDeleted) {
+              // console.log('删除成功，跳转到首页');
+              this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
+              const pages = getCurrentPages();
+              const delta = pages.indexOf(pages[pages.length - 1]);
+              uni.navigateBack({
+                delta,
+              });
+              this.$u.event.$emit('deleteThread', this.threadId);
+            }
           }
         })
         .catch(err => {
@@ -1151,7 +1146,7 @@ export default {
         this.uploadFile.forEach(item => {
           params._jv.relationships.attachments.data.push({
             type: 'attachments',
-            id: item.data.id,
+            id: item.id,
           });
         });
       }
@@ -1563,6 +1558,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       console.log(id, '这是当前主题用户Id');
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1570,6 +1568,9 @@ export default {
     },
     // 主题支付
     payClickShow() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
@@ -1789,8 +1790,7 @@ export default {
       this.$u.event.$emit('tagClick', tagId);
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
-      console.log('pages', pages);
+      // console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
       if (pages[delta - 1].route && pages[delta - 1].route === 'pages/home/index') {
         uni.navigateBack({
           delta,

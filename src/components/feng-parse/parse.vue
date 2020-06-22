@@ -228,3 +228,6 @@ export default {
   },
 };
 </script>
+<style lang="css">
+@import '../feng-parse/parse.css';
+</style>
