@@ -992,7 +992,7 @@ export default {
             }
           } else if (type === '2') {
             if (data.isDeleted) {
-              uni.navigateTo({
+              uni.navigateBack({
                 url: `/pages/home/index`,
               });
             } else {
@@ -1087,13 +1087,16 @@ export default {
               this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type === '4') {
-            // if (data.isDeleted) {
-            // console.log('删除成功，跳转到首页');
-            this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateTo({
-              url: `/pages/home/index`,
-            });
-            // }
+            if (data.isDeleted) {
+              // console.log('删除成功，跳转到首页');
+              this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
+              const pages = getCurrentPages();
+              const delta = pages.indexOf(pages[pages.length - 1]);
+              uni.navigateBack({
+                delta,
+              });
+              this.$u.event.$emit('deleteThread', this.threadId);
+            }
           }
         })
         .catch(err => {
@@ -1790,7 +1793,7 @@ export default {
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
       console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
-      console.log('pages', pages);
+      // console.log('pages', pages);
       if (pages[delta - 1].route && pages[delta - 1].route === 'pages/home/index') {
         uni.navigateBack({
           delta,
