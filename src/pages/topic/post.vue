@@ -68,7 +68,7 @@
           :adjust-position="true"
           cursor-spacing="50"
           cursor="cursor"
-          :maxlength="450"
+          :maxlength="10000"
           :focus="type !== 1"
           v-show="textShow"
           @blur="contBlur"
@@ -575,10 +575,19 @@ export default {
     // 处理金额
     /* eslint-disable */
     checkNum(e) {
+      // #ifndef H5
       const value = e.target.value.match(/^\d*(\.?\d{0,2})/g)[0];
+      // #endif
       this.$nextTick(function() {
         try {
+          // #ifdef H5
+          setTimeout(() => {
+            this.inputPrice = this.inputPrice.match(/^\d*(\.?\d{0,2})/g)[0];
+          }, 5);
+          // #endif
+          // #ifndef H5
           this.inputPrice = Number(value);
+          // #endif
         } catch (e) {
           uni.showToast({
             title: '金额输入不正确！',
