@@ -890,21 +890,43 @@ export default {
 
         if (this.operating === 'edit') {
           console.log(this.uploadFile.length, '长度');
-          if (this.type == 3) {
+          if (this.type === 3) {
+            console.log('类型为图片时');
             if (this.uploadFile.length < 1) {
+              console.log('图片为空');
               this.$refs.toast.show({
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
               });
               uni.hideLoading();
+              this.postLoading = false;
+            } else {
+              console.log('111111');
+              this.editThread().then(res => {
+                this.postLoading = false;
+                uni.hideLoading();
+                // uni.navigateBack({
+                //   delta: 1,
+                // });
+                if (res && this.threadId) {
+                  uni.redirectTo({
+                    url: `/pages/topic/index?id=${this.threadId}`,
+                  });
+                }
+              });
             }
           } else {
-            // console.log('22222');
-            this.editThread().then(() => {
+            console.log('22222');
+            this.editThread().then(res => {
               this.postLoading = false;
               uni.hideLoading();
-              uni.navigateBack({
-                delta: 1,
-              });
+              // uni.navigateBack({
+              //   delta: 1,
+              // });
+              if (res && this.threadId) {
+                uni.redirectTo({
+                  url: `/pages/topic/index?id=${this.threadId}`,
+                });
+              }
             });
           }
         } else {
@@ -957,6 +979,7 @@ export default {
     addImg() {
       const attachments = {};
       attachments.data = [];
+      console.log(this.uploadFile, '这是处理前');
       this.uploadFile.forEach(item => {
         if (item) {
           attachments.data.push({
@@ -983,6 +1006,7 @@ export default {
           }
         });
       }
+      console.log('这是提交给接口的', attachments);
       return attachments;
     },
     deleteFile(id) {
@@ -1153,7 +1177,20 @@ export default {
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
-        this.uploadFile = res.firstPost.images;
+        // this.uploadFile = res.firstPost.images;
+        if (res.firstPost.images) {
+          res.firstPost.images.forEach(item => {
+            if (item) {
+              this.uploadFile.push({
+                type: 'attachments',
+                id: item._jv.id,
+                order: item.order,
+              });
+            }
+          });
+          console.log(this.uploadFile, '这是编辑初始化获取');
+        }
+
         this.loadStatus = true;
         if (Number(res.price) > 0) {
           this.price = res.price;
@@ -1237,6 +1274,7 @@ export default {
         }
         // 更新详情页的信息
         this.$u.event.$emit('refreshFiles');
+        return res;
       });
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
