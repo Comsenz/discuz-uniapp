@@ -71,6 +71,16 @@ export default {
       currentLoginId: this.$store.getters['session/get']('userId'),
     };
   },
+  created() {
+    // 详情页删除主题时
+    this.$u.event.$on('deleteThread', data => {
+      this.data.forEach((item, index) => {
+        if (item._jv.id === data) {
+          this.data.splice(index, 1);
+        }
+      });
+    });
+  },
   mounted() {
     this.loadThreads();
   },
