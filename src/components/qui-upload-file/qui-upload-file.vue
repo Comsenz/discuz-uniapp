@@ -133,7 +133,7 @@ export default {
       // #ifdef MP-WEIXIN
       const that = this;
       wx.chooseMessageFile({
-        count: 3, // 能选择文件的数量
+        count: 1, // 能选择文件的数量
         type: 'file',
         success(res) {
           const file = {
