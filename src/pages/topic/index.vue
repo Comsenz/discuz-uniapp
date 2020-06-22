@@ -20,7 +20,7 @@
             <view class="detail-tip" v-else-if="thread.type == 2 && thread.threadVideo.status == 2">
               {{ t.transcodingFailedTip }}
             </view>
-            <view class="detail-tip" v-else-if="topicStatus == 0">
+            <view class="detail-tip" v-else-if="thread.isApproved == 0">
               {{ t.examineTip }}
             </view>
             <qui-topic-content
@@ -420,7 +420,8 @@
 
 <script>
 /* eslint-disable */
-import { status, utils } from '@/library/jsonapi-vuex/index';
+// import { status, utils } from '@/library/jsonapi-vuex/index';
+import { status } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
@@ -450,7 +451,7 @@ export default {
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
-      topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
+      // topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
       posts: [], // 评论列表数据
       loadingType: 'more', // 上拉加载状态
       pageNum: 1, // 这是主题回复当前页数
@@ -634,12 +635,11 @@ export default {
     console.log(this.isPhone, '这是h5');
     this.browser = 1;
     // #endif
-    console.log(this.browser, '这是浏览器');
+    // console.log(this.browser, '这是浏览器');
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
-
     this.$u.event.$on('addComment', data => {
-      console.log('123');
-      for (const index in this.posts) {
+      // for (const index in this.posts) {
+      Object.keys(this.posts).forEach(index => {
         if (this.posts[index]._jv.id === data.commentId) {
           if (this.posts[index].lastThreeComments.length >= 3) {
             this.posts[index].lastThreeComments.pop();
@@ -647,13 +647,14 @@ export default {
           if (data.data) {
             this.posts[index].lastThreeComments.unshift(data.data);
           }
-          break;
+          // break;
         }
-      }
+      });
     });
     // 删除评论的回复后清除当前列表评论的这条回复
     this.$u.event.$on('deleteComment', data => {
-      for (const index in this.posts) {
+      Object.keys(this.posts).forEach(index => {
+        // for (const index in this.posts) {
         if (this.posts[index]._jv.id === data.commentId) {
           this.posts[index].lastThreeComments = [];
           if (data.data._jv.json.data.relationships.lastThreeComments.data) {
@@ -663,9 +664,9 @@ export default {
               );
             });
           }
-          break;
+          // break;
         }
-      }
+      });
     });
     this.threadId = option.id;
     this.loadThread();
@@ -808,6 +809,7 @@ export default {
                     ? data.firstPost.images[0].thumbUrl
                     : '';
                 break;
+              default:
             }
           }
           // #ifdef H5
@@ -854,7 +856,7 @@ export default {
             this.selectList[2].text = this.t.cancelSticky;
           }
           this.isLiked = data.firstPost.isLiked;
-          this.topicStatus = data.isApproved;
+          // this.topicStatus = data.isApproved;
           if (!data.paid || data.paidUsers.length > 0) {
             if (
               this.system === 'ios' &&
@@ -874,11 +876,11 @@ export default {
           } else {
             this.paidStatus = false;
           }
-          if (data.type == 3) {
+          if (data.type === 3) {
             this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
-          } else if (data.type == 2) {
+          } else if (data.type === 2) {
             this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
-          } else if (data.type == 1) {
+          } else if (data.type === 1) {
             this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
           }
           if (data.price <= 0) {
@@ -927,7 +929,7 @@ export default {
           console.log(err);
         });
     },
-    // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
+    // post操作调用接口（包括type 1主题点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus, post) {
       console.log(id, type, canStatus, isStatus, post, '这是调用接口时传的参数');
       if (type === '1' && !canStatus) {
@@ -940,7 +942,7 @@ export default {
       }
       const jvObj = {
         type: 'posts',
-        id: id,
+        id,
       };
       let params = {};
       if (type === '1') {
@@ -963,22 +965,27 @@ export default {
         .dispatch('jv/patch', params)
         .then(data => {
           if (type === '1') {
-            const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
+            // const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
             // 主题点赞
             this.isLiked = data.isLiked;
             if (this.isLiked) {
               this.thread.firstPost.likedUsers.unshift(this.user);
-              orgignPost._jv.relationships.likedUsers.data.unshift({
-                type: this.user._jv.type,
-                id: this.user._jv.id,
-              });
+              console.log(this.thread.firstPost.likedUsers, '这是点赞列表');
+              // orgignPost._jv.relationships.likedUsers.data.unshift({
+              //   type: this.user._jv.type,
+              //   id: this.user._jv.id,
+              // });
             } else {
+              console.log(this.thread.firstPost.likedUsers, '这是取消前点赞列表');
               this.thread.firstPost.likedUsers.forEach((value, key, item) => {
-                value.id = this.user.id && item.splice(key, 1);
+                const val = value;
+                val.id = this.user.id && item.splice(key, 1);
               });
-              orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
-                value.id = this.user.id && item.splice(key, 1);
-              });
+              console.log(this.thread.firstPost.likedUsers, '这是取消后点赞列表');
+              // orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+              //   const val = value;
+              //   val.id = this.user.id && item.splice(key, 1);
+              // });
             }
           } else if (type === '2') {
             if (data.isDeleted) {
@@ -1020,22 +1027,22 @@ export default {
       console.log(id, canStatus, isStatus, type);
       const jvObj = {
         type: 'threads',
-        id: id,
+        id,
       };
       let params = {};
-      if (type == '1') {
+      if (type === '1') {
         // 主题收藏
         params = {
           _jv: jvObj,
           isFavorite: !isStatus,
         };
-      } else if (type == '2') {
+      } else if (type === '2') {
         // 主题加精
         params = {
           _jv: jvObj,
           isEssence: !isStatus,
         };
-      } else if (type == '3') {
+      } else if (type === '3') {
         // 主题置顶
         params = {
           _jv: jvObj,
@@ -1052,11 +1059,11 @@ export default {
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          if (type == '1') {
+          if (type === '1') {
             console.log('收藏');
             console.log(this.thread);
             this.thread.isFavorite = data.isFavorite;
-          } else if (type == '2') {
+          } else if (type === '2') {
             console.log(data, '这是精华操作');
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
@@ -1065,7 +1072,7 @@ export default {
               this.selectList[1].text = this.t.essence;
             }
             console.log(this.selectList, '这是管理列表');
-          } else if (type == '3') {
+          } else if (type === '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
               this.selectList[2].text = this.t.cancelSticky;
@@ -1076,7 +1083,7 @@ export default {
               // 详情页取消置顶,将首页置顶数据移除
               this.$u.event.$emit('cancelSticky', data);
             }
-          } else if (type == '4') {
+          } else if (type === '4') {
             // if (data.isDeleted) {
             // console.log('删除成功，跳转到首页');
             this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
@@ -1165,7 +1172,7 @@ export default {
                 this.posts[this.postIndex].lastThreeComments = [];
               }
               this.posts[this.postIndex].lastThreeComments.unshift(res);
-              this.posts[this.postIndex].replyCount++;
+              this.posts[this.postIndex].replyCount += 1;
               // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
             }
           } else {
@@ -1206,10 +1213,11 @@ export default {
 
       this.loadDetailCommnetStatusId = loadDetailCommnetAction._statusID;
       loadDetailCommnetAction.then(data => {
+        /* eslint-disable */
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
-        if (data.length == 0) {
+        if (data.length === 0) {
           this.contentnomoreVal = this.t.noComment;
         } else {
           this.contentnomoreVal = this.t.noMoreData;
@@ -1220,30 +1228,30 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
-      let that = this;
+      // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
         {
-          appId: data.wechat_js.appId, //公众号名称，由商户传入
-          timeStamp: data.wechat_js.timeStamp, //时间戳，自1970年以来的秒数
-          nonceStr: data.wechat_js.nonceStr, //随机串
+          appId: data.wechat_js.appId, // 公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, // 随机串
           package: data.wechat_js.package,
-          signType: 'MD5', //微信签名方式：
-          paySign: data.wechat_js.paySign, //微信签名
+          signType: 'MD5', // 微信签名方式：
+          paySign: data.wechat_js.paySign, // 微信签名
         },
-        function(data) {
-          alert('支付唤醒');
+        // function(data) {
+        //   alert('支付唤醒');
 
-          if (data.err_msg == 'get_brand_wcpay_request:cancel') {
-            resolve;
-          } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
-            resolve;
-          }
-        },
+        //   if (data.err_msg == 'get_brand_wcpay_request:cancel') {
+        //     resolve;
+        //   } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
+        //     resolve;
+        //   }
+        // },
       );
 
       const payWechat = setInterval(() => {
-        if (this.payStatus == '1' || this.payStatusNum > 10) {
+        if (this.payStatus === '1' || this.payStatusNum > 10) {
           clearInterval(payWechat);
           return;
         }
@@ -1257,9 +1265,9 @@ export default {
         _jv: {
           type: 'orders',
         },
-        type: type,
+        type,
         thread_id: this.threadId,
-        amount: amount,
+        amount,
         is_anonymous: this.isAnonymous,
       };
       console.log(params, '传给接口的参数');
@@ -1268,7 +1276,7 @@ export default {
         .then(res => {
           console.log(res, '成功创建订单', payType, '这是支付类型');
           this.orderSn = res.order_sn;
-          if (payType == 0) {
+          if (payType === 0) {
             console.log('微信支付');
             if (this.browser == 0) {
               console.log('这是微信小程序内的支付');
@@ -1285,7 +1293,7 @@ export default {
                 this.orderPay(10, value, this.orderSn, payType, '3');
               }
             }
-          } else if (payType == 1) {
+          } else if (payType === 1) {
             // 钱包支付
             console.log(type, value, this.orderSn, '这是钱包支付的参数');
 
@@ -1301,18 +1309,18 @@ export default {
     orderPay(type, value, orderSn, payType, broswerType) {
       console.log('订单支付---broswerType', broswerType);
       let params = {};
-      if (payType == 0) {
+      if (payType === 0) {
         console.log('这是微信支付时触发');
         params = {
           _jv: {
-            type: 'trade/pay/order/' + orderSn,
+            type: `trade/pay/order/${orderSn}`,
           },
           payment_type: type,
         };
-      } else if (payType == 1) {
+      } else if (payType === 1) {
         params = {
           _jv: {
-            type: 'trade/pay/order/' + orderSn,
+            type: `trade/pay/order/${orderSn}`,
           },
           payment_type: type,
           pay_password: value,
@@ -1324,7 +1332,7 @@ export default {
         .then(res => {
           console.log(res, '订单支付接口请求成功');
           this.wxRes = res;
-          if (payType == 0) {
+          if (payType === 0) {
             if (broswerType === '0') {
               this.wechatPay(
                 res.wechat_js.timeStamp,
@@ -1334,7 +1342,7 @@ export default {
                 res.wechat_js.paySign,
               );
             } else if (broswerType === '1') {
-              if (typeof WeixinJSBridge == 'undefined') {
+              if (typeof WeixinJSBridge === 'undefined') {
                 if (document.addEventListener) {
                   document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
                 } else if (document.attachEvent) {
@@ -1348,7 +1356,7 @@ export default {
               console.log('这是h5');
               window.location.href = res.wechat_h5_link;
               const payPhone = setInterval(() => {
-                if (this.payStatus == '1' && this.payStatusNum > 10) {
+                if (this.payStatus === '1' && this.payStatusNum > 10) {
                   clearInterval(payPhone);
                   return;
                 }
@@ -1362,7 +1370,7 @@ export default {
                 this.$refs.codePopup.open();
                 this.qrcodeShow = true;
                 const payWechat = setInterval(() => {
-                  if (this.payStatus == '1' || this.payStatusNum > 10) {
+                  if (this.payStatus === '1' || this.payStatusNum > 10) {
                     clearInterval(payWechat);
                     return;
                   }
@@ -1370,10 +1378,10 @@ export default {
                 }, 3000);
               }
             }
-          } else if (payType == 1) {
+          } else if (payType === 1) {
             console.log('请求状态');
             const payWechat = setInterval(() => {
-              if (this.payStatus == '1' || this.payStatusNum > 10) {
+              if (this.payStatus === '1' || this.payStatusNum > 10) {
                 clearInterval(payWechat);
                 return;
               }
@@ -1385,14 +1393,14 @@ export default {
         .catch(err => {
           // 清空支付的密码
           console.log(err);
-          this.$refs['payShow'].clear();
+          this.$refs.payShow.clear();
         });
     },
     // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, broswerType) {
       const params = {
         _jv: {
-          type: 'orders/' + orderSn,
+          type: `orders/${orderSn}`,
         },
       };
       this.$store
@@ -1401,8 +1409,8 @@ export default {
           console.log(res, '订单支付状态接口查询');
 
           this.payStatus = res.status;
-          this.payStatusNum++;
-          if (this.payStatus == '1' || this.payStatusNum > 10) {
+          this.payStatusNum += 1;
+          if (this.payStatus === '1' || this.payStatusNum > 10) {
             // this.payShow = false;
             this.payShowStatus = false;
             this.coverLoading = false;
@@ -1413,15 +1421,15 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
-            if (this.payStatus == '1') {
+            if (this.payStatus === '1') {
               this.$refs.toast.show({ message: this.p.paySuccess });
             }
 
-            if (this.payTypeVal == 0) {
+            if (this.payTypeVal === 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               console.log('这是主题支付');
               this.loadThread();
-            } else if (this.payTypeVal == 1) {
+            } else if (this.payTypeVal === 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               const orgignPost = this.$store.getters['jv/get'](`thread/${this.threadId}`);
 
@@ -1462,45 +1470,45 @@ export default {
       const _this = this;
       uni.requestPayment({
         provider: 'wxpay',
-        timeStamp: timeStamp,
-        nonceStr: nonceStr,
+        timeStamp,
+        nonceStr,
         package: packageVal,
-        signType: signType,
-        paySign: paySign,
-        success: function(res) {
+        signType,
+        paySign,
+        success(res) {
           // console.log('微信支付成功');
-          console.log('success:' + JSON.stringify(res));
+          console.log(`success:${JSON.stringify(res)}`);
           _this.coverLoading = true;
           // _this.getOrderStatus(_this.orderSn);
           const payWechat = setInterval(() => {
             console.log('定时器，小程序支付');
-            if (_this.payStatus == '1' || _this.payStatusNum > 10) {
+            if (_this.payStatus === '1' || _this.payStatusNum > 10) {
               clearInterval(payWechat);
               return;
             }
             _this.getOrderStatus(_this.orderSn);
           }, 3000);
         },
-        fail: function(err) {
+        fail(err) {
           console.log('微信支付失败');
-          console.log('fail:' + JSON.stringify(err));
+          console.log(`fail:${JSON.stringify(err)}`);
           _this.payShowStatus = false;
           _this.coverLoading = false;
           _this.$refs.toast.show({ message: _this.p.payFail });
         },
       });
     },
-    //输入密码完成时
+    // 输入密码完成时
     onInput(val) {
       console.log(val, '这是详情页输出的密码');
       console.log('详情页监听到密码输入完成');
       console.log(this.thread.price, '这是价格');
       this.value = val;
-      if (this.payTypeVal == 0) {
+      if (this.payTypeVal === 0) {
         // 这是主题支付
         console.log('这是主题支付调接口');
         this.creatOrder(this.thread.price, 3, val, '1');
-      } else if (this.payTypeVal == 1) {
+      } else if (this.payTypeVal === 1) {
         // 这是主题打赏
         console.log('这是主题打赏调接口~~~~~');
         this.creatOrder(this.price, 2, val, '1');
@@ -1511,10 +1519,10 @@ export default {
       if (payType === 0) {
         console.log('这是详情页获取到的支付方式---微信');
         console.log(this.value, this.orderSn, '这是密码和订单号');
-        if (this.payTypeVal == 0) {
+        if (this.payTypeVal === 0) {
           // 这是主题支付
           this.creatOrder(this.thread.price, 3, this.value, payType);
-        } else if (this.payTypeVal == 1) {
+        } else if (this.payTypeVal === 1) {
           // 这是主题打赏
           this.creatOrder(this.price, 2, this.value, payType);
         }
@@ -1539,9 +1547,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
-      if (param.type == '0') {
+      if (param.type === '0') {
         uni.navigateTo({
-          url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
+          url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
         });
       } else {
         this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
@@ -1568,9 +1576,9 @@ export default {
       this.payShowStatus = true;
       this.payTypeVal = 0;
       console.log(this.payTypeVal, '这是类型，0为主题支付，1为主题打赏');
-      if (this.thread.type == 3) {
+      if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
-      } else if (this.thread.type == 2) {
+      } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewRemainingContent;
       } else {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
@@ -1586,7 +1594,7 @@ export default {
       this.isAnonymous = val;
     },
 
-    //选择支付方式，获取值
+    // 选择支付方式，获取值
     radioChange(val) {
       console.log(val, '这是父级得到的');
     },
@@ -1595,7 +1603,7 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
-      if (this.user._jv.id == this.thread.user._jv.id) {
+      if (this.user._jv.id === this.thread.user._jv.id) {
         this.$refs.toast.show({ message: this.t.iCantRewardMyself });
         return false;
       }
@@ -1731,7 +1739,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
       }
       uni.navigateTo({
-        url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
+        url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
       });
     },
     // 评论点赞
@@ -1767,11 +1775,11 @@ export default {
       }
     },
     // 点击图片
-    imageClick(imageId) {
+    imageClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
-      this.previewImg();
+      // this.previewImg();
     },
     // 点击分类标签
     tagClick(tagId) {
@@ -1825,8 +1833,9 @@ export default {
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
-      if (this.forums.set_site.site_mode == 'pay') {
-        this.bottomData.map((value, key, bottomData) => {
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData.forEach((value, key, bottomData) => {
+          // this.bottomData.map((value, key, bottomData) => {
           value.name === 'wxFriends' && bottomData.splice(key, 1);
         });
       }
