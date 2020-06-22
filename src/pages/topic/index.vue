@@ -778,8 +778,8 @@ export default {
             switch (data.type) {
               case 0:
                 // 文字帖
-                this.contentVal = data.firstPost.summary;
-                this.desc = data.firstPost.summary;
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
                 this.logo = '';
                 break;
               case 1:
@@ -789,21 +789,21 @@ export default {
                   this.desc = data.title;
                   this.shareLogo = '';
                 } else {
-                  this.desc = data.firstPost.summary;
+                  this.desc = data.firstPost.summary_text;
                   this.shareLogo =
                     data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
                 }
                 break;
               case 2:
                 // 视频帖
-                this.contentVal = data.firstPost.summary;
-                this.desc = data.firstPost.summary;
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
                 this.shareLogo = data.threadVideo.coverUrl;
                 break;
               case 3:
                 // 图片帖
-                this.contentVal = data.firstPost.summary;
-                this.desc = data.firstPost.summary;
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
                 this.shareLogo =
                   data.price > 0 && data.firstPost.images.length > 0
                     ? data.firstPost.images[0].thumbUrl

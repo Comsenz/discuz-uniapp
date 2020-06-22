@@ -61,7 +61,7 @@ module.exports = {
           themeTitle = shareInfo.title || 'Discuz!Q';
       }
       const id = shareInfo.id ? `?id=${shareInfo.id}` : '';
-      const url = `${this.getUrl()}${shareInfo.url}${id}`;
+      const url = `${DISCUZ_REQUEST_HOST}${shareInfo.url}${id}`;
       const oInput = document.createElement('input');
       const reTag = /<img(?:.|\s)*?>/g;
       const reTag2 = /(<\/?br.*?>)/gi;
@@ -83,7 +83,7 @@ module.exports = {
       oInput.style.display = 'none';
       uni.showToast({
         icon: 'none',
-        title: '分享链接已复成功',
+        title: '分享链接已复制成功',
       });
       // document.body.removeChild(oInput);
     },
