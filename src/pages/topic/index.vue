@@ -724,6 +724,7 @@ export default {
       setAtMember: 'atMember/SET_ATMEMBER',
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
 
     // 表情接口请求
@@ -1788,14 +1789,17 @@ export default {
       this.$u.event.$emit('tagClick', tagId);
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      if (pages.length === 1) {
-        uni.navigateTo({
-          url: '/pages/home/index',
-        });
-      } else {
+      console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
+      console.log('pages', pages);
+      if (pages[delta - 1].route && pages[delta - 1].route === 'pages/home/index') {
         uni.navigateBack({
           delta,
         });
+      } else {
+        uni.navigateTo({
+          url: '/pages/home/index',
+        });
+        this.setFooterIndex(0);
       }
     },
     // 主题点赞
