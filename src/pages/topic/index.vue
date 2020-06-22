@@ -990,14 +990,6 @@ export default {
               //   val.id = this.user.id && item.splice(key, 1);
               // });
             }
-          } else if (type === '2') {
-            if (data.isDeleted) {
-              uni.navigateBack({
-                url: `/pages/home/index`,
-              });
-            } else {
-              console.log('主题删除失败');
-            }
           } else if (type === '3') {
             const postArr = post;
             postArr.isDeleted = data.isDeleted;
@@ -1798,8 +1790,7 @@ export default {
       this.$u.event.$emit('tagClick', tagId);
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
-      // console.log('pages', pages);
+      // console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
       if (pages[delta - 1].route && pages[delta - 1].route === 'pages/home/index') {
         uni.navigateBack({
           delta,
