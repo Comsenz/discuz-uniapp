@@ -890,11 +890,13 @@ export default {
 
         if (this.operating === 'edit') {
           console.log(this.uploadFile.length, '长度');
-          if (this.uploadFile.length < 1) {
-            this.$refs.toast.show({
-              message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
-            });
-            uni.hideLoading();
+          if (this.type == 3) {
+            if (this.uploadFile.length < 1) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
+              });
+              uni.hideLoading();
+            }
           } else {
             // console.log('22222');
             this.editThread().then(() => {
@@ -1354,9 +1356,9 @@ export default {
 
     uni.$on('clickTopic', data => {
       if (data.keywords)
-        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}#${
+        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${
           data.keywords
-        }#${this.textAreaValue.slice(this.cursor)}`;
+        }#${this.textAreaValue.slice(this.cursor)}  `;
     });
   },
   onShow() {
