@@ -316,6 +316,7 @@ export default {
 }
 .red-circle {
   position: absolute;
+  top: -14rpx;
 }
 .icon-back {
   margin-left: -10rpx;

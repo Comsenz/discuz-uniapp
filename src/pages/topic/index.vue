@@ -1084,6 +1084,7 @@ export default {
                 });
               }, 1000);
               // window.clearTimeout(naviBack);
+              console.log('详情页删除成功');
               this.$u.event.$emit('deleteThread', this.threadId);
             }
           }
