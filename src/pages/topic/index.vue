@@ -1923,7 +1923,7 @@ export default {
       this.$forceUpdate();
     },
     _updateRewardUsers(payType = 0) {
-      if (payType === 1) {
+      if (this.payTypeVal === 1) {
         this.thread.rewardedCount++;
         if (!this.rewardStatus) {
           this.rewardStatus = true;
