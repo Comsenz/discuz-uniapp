@@ -1074,12 +1074,15 @@ export default {
           } else if (type === '4') {
             if (data.isDeleted) {
               // console.log('删除成功，跳转到首页');
-              this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
+              this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToBack });
               const pages = getCurrentPages();
               const delta = pages.indexOf(pages[pages.length - 1]);
-              uni.navigateBack({
-                delta,
-              });
+              const naviBack = setTimeout(() => {
+                uni.navigateBack({
+                  delta,
+                });
+              }, 1000);
+              window.clearTimeout(naviBack);
               this.$u.event.$emit('deleteThread', this.threadId);
             }
           }
@@ -1406,7 +1409,7 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
-            
+
             if (this.payTypeVal === 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               console.log('这是主题支付');
@@ -1626,7 +1629,7 @@ export default {
         if (price.length > 6) {
           price = price.substring(0, price.length - 1);
           uni.showToast({
-            title: '金额最高不能超过100万元',
+            title: that.c.TheAmountCannotExceedOneMillion,
             icon: 'none',
           });
         } else {
@@ -1880,7 +1883,7 @@ export default {
       this.loadThreadPosts();
     },
     codeImgChange(params) {
-      if(!params.show) {
+      if (!params.show) {
         clearInterval(payWechat);
       }
     },
@@ -1906,9 +1909,9 @@ export default {
       this.$forceUpdate();
     },
     _updateRewardUsers(payType = 0) {
-      if(payType === 1) {
+      if (payType === 1) {
         this.thread.rewardedCount++;
-        if(!this.rewardStatus) {
+        if (!this.rewardStatus) {
           this.rewardStatus = true;
         }
       }
