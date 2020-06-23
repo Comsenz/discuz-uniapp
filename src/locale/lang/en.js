@@ -289,6 +289,7 @@ export default {
     register: 'Register',
     username: 'Please input username',
     password: 'Please input password',
+    reason: 'Please input reason',
     phoneNumber: 'Please input phoneNumber',
     pwd: 'Please input password',
     verificationCode: 'Please input verificationCode',
