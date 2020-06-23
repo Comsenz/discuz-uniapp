@@ -197,6 +197,7 @@ export default {
     loading: '加载中...',
     sort: '排序',
     loadMore: '上拉加载更多',
+    TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
   },
   topic: {
     newTopic: '新话题',
@@ -244,6 +245,7 @@ export default {
     sticky: '置顶',
     cancelSticky: '取消置顶',
     deleteSuccessAndJumpToHome: '删除成功，跳转到首页',
+    deleteSuccessAndJumpToBack: '删除成功，跳转到上一级',
     imageNumLimit: '评论只允许上传3张图片',
     noReplyPermission: '没有回复权限',
     noReplyLikePermission: '没有评论点赞权限',
@@ -645,6 +647,7 @@ export default {
     register: '注册',
     username: '请输入用户名',
     password: '请输入密码',
+    reason: '注册原因',
     phoneNumber: '输入手机号码',
     pwd: '请输密码',
     verificationCode: '请输验证码',

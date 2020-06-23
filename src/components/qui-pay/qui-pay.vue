@@ -103,7 +103,6 @@
         :password="payPassword"
         @onInput="onInput"
         @close="close"
-        @clear="clear"
       ></qui-pay-keyboard>
     </uni-popup>
   </view>
@@ -305,7 +304,7 @@ export default {
       this.$emit('close');
     },
     // 清空密码输入框
-    clear() {
+    clearPassword() {
       this.$refs.keyboard.clear();
       console.log('清空');
     },

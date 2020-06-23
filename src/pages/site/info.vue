@@ -73,7 +73,9 @@
     <view class="site-invite">
       <view class="site-invite__detail">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
-        <text class="site-invite__detail__bold">DISCUZQ</text>
+        <text class="site-invite__detail__bold">
+          {{ forums.set_site && forums.set_site.site_name }}
+        </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
@@ -157,7 +159,6 @@ export default {
       wxRes: '',
       browser: 0, // 0为小程序，1为除小程序之外的设备
       payStatus: false, // 订单支付状态
-      payStatusNum: 0, // 订单支付状态查询最大次数
       orderSn: '', // 订单编号
       payTypeData: [
         {
@@ -219,7 +220,7 @@ export default {
       } else {
         this.h5Share({
           title: this.forums.set_site.site_name,
-          url: 'pages/home/index',
+          url: 'pages/site/info',
         });
       }
       // #endif
@@ -238,7 +239,7 @@ export default {
     // 输入密码完成时
     onInput(val) {
       this.value = val;
-      this.creatOrder(this.forums.set_site.site_price, '1', val);
+      this.creatOrder(this.forums.set_site.site_price, 1, val);
     },
     // 支付方式选择完成点击确定时
     paysureShow() {
@@ -276,58 +277,52 @@ export default {
         },
         payment_type: type,
       };
-      this.$store
-        .dispatch('jv/post', params)
-        .then(res => {
-          this.wxRes = res;
-          if (browserType === '0') {
-            this.wechatPay(
-              res.wechat_js.timeStamp,
-              res.wechat_js.nonceStr,
-              res.wechat_js.package,
-              res.wechat_js.signType,
-              res.wechat_js.paySign,
-            );
-          } else if (browserType === '1') {
-            if (typeof WeixinJSBridge === 'undefined') {
-              if (document.addEventListener) {
-                document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
-              } else if (document.attachEvent) {
-                document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
-                document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
-              }
-            } else {
-              this.onBridgeReady(res);
+      this.$store.dispatch('jv/post', params).then(res => {
+        this.wxRes = res;
+        if (browserType === '0') {
+          this.wechatPay(
+            res.wechat_js.timeStamp,
+            res.wechat_js.nonceStr,
+            res.wechat_js.package,
+            res.wechat_js.signType,
+            res.wechat_js.paySign,
+          );
+        } else if (browserType === '1') {
+          if (typeof WeixinJSBridge === 'undefined') {
+            if (document.addEventListener) {
+              document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
+            } else if (document.attachEvent) {
+              document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
+              document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
             }
-          } else if (browserType === '2') {
-            window.location.href = res.wechat_h5_link;
-            const payPhone = setInterval(() => {
-              if (this.payStatus === '1' && this.payStatusNum > 10) {
-                clearInterval(payPhone);
+          } else {
+            this.onBridgeReady(res);
+          }
+        } else if (browserType === '2') {
+          const payPhone = setInterval(() => {
+            if (this.payStatus === '1') {
+              clearInterval(payPhone);
+              return;
+            }
+            this.getOrderStatus(orderSn, browserType);
+          }, 3000);
+          window.location.href = res.wechat_h5_link;
+        } else if (browserType === '3') {
+          if (res) {
+            this.codeUrl = res.wechat_qrcode;
+            this.payShowStatus = false;
+            this.$refs.codePopup.open();
+            this.qrcodeShow = true;
+            const payWechat = setInterval(() => {
+              if (this.payStatus === '1') {
+                clearInterval(payWechat);
                 return;
               }
-              this.getOrderStatus(orderSn, browserType);
+              this.getOrderStatus(this.orderSn, browserType);
             }, 3000);
-          } else if (browserType === '3') {
-            if (res) {
-              this.codeUrl = res.wechat_qrcode;
-              this.payShowStatus = false;
-              this.$refs.codePopup.open();
-              this.qrcodeShow = true;
-              const payWechat = setInterval(() => {
-                if (this.payStatus === '1' || this.payStatusNum > 10) {
-                  clearInterval(payWechat);
-                  return;
-                }
-                this.getOrderStatus(this.orderSn, browserType);
-              }, 3000);
-            }
           }
-        })
-        .catch(() => {
-          // 清空支付的密码
-          this.$refs.payShow.clear();
-        });
+        }
+      });
     },
     // 查询订单支状 browserType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, browserType) {
@@ -341,7 +336,7 @@ export default {
         .then(res => {
           this.payStatus = res.status;
           this.payStatusNum += 1;
-          if (this.payStatus === '1' || this.payStatusNum > 10) {
+          if (this.payStatus === '1') {
             this.payShowStatus = false;
             this.coverLoading = false;
             if (browserType === '2') {
@@ -351,9 +346,7 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
-            if (this.payStatus === '1') {
-              this.$refs.toast.show({ message: this.p.paySuccess });
-            }
+            this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
         .catch(() => {
@@ -374,7 +367,7 @@ export default {
       });
 
       const payWechat = setInterval(() => {
-        if (this.payStatus === '1' || this.payStatusNum > 10) {
+        if (this.payStatus === '1') {
           clearInterval(payWechat);
           return;
         }

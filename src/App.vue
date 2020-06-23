@@ -55,7 +55,7 @@ export default {
       if (forums.set_site.site_mode === SITE_PAY) {
         const res = uni.getSystemInfoSync();
         if (res.platform === 'ios') {
-          this.$store.dispatch('forum/setError', { loading: false, code: 500, status: 'dataerro' });
+          this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
           return;
         }
 
