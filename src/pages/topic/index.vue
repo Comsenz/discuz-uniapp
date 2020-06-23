@@ -1076,10 +1076,11 @@ export default {
               // console.log('删除成功，跳转到首页');
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToBack });
               const pages = getCurrentPages();
-              const delta = pages.indexOf(pages[pages.length - 1]);
+              // const delta = pages.indexOf(pages[pages.length - 1]);
+              // console.log(delta, '~~~~~~~');
               const naviBack = setTimeout(() => {
                 uni.navigateBack({
-                  delta,
+                  delta: 1,
                 });
               }, 1000);
               // window.clearTimeout(naviBack);
