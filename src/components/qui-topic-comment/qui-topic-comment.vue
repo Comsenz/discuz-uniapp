@@ -303,7 +303,7 @@ export default {
       &__username {
         display: flex;
         height: 37rpx;
-        max-width: 326rpx;
+        max-width: 286rpx;
         overflow: hidden;
         font-weight: bold;
         line-height: 37rpx;

@@ -306,7 +306,7 @@
               v-model="inputPrice"
               type="digit"
               placeholder="0.0"
-              :maxlength="8"
+              :maxlength="maxLength"
               :focus="setType === 'pay'"
               @input="checkNum"
             />
@@ -381,6 +381,7 @@ export default {
       type: 0, // 帖子类型
       price: 0, // 付费金额
       inputPrice: '', // 付费金额输入框
+      maxLength: 7, // 输入框长度
       inputWord: '', // 查看字数输入框
       operating: '', // 编辑或发布类型
       emojiShow: false, // 表情是否显示
@@ -575,18 +576,36 @@ export default {
     // 处理金额
     /* eslint-disable */
     checkNum(e) {
-      const value = e.target.value.match(/^\d*(\.?\d{0,2})/g)[0];
-      this.$nextTick(function() {
-        try {
-          this.inputPrice = Number(value);
-        } catch (e) {
+      let that = this;
+      let price = e.target.value;
+      let maxLength = price.indexOf('.');
+
+      if (price.indexOf('.') < 0 && price != '') {
+        //('超过4位则大于1万元');
+        if (price.length > 6) {
+          price = price.substring(0, price.length - 1);
           uni.showToast({
-            title: '金额输入不正确！',
+            title: '金额最高不能超过100万元',
             icon: 'none',
           });
+        } else {
+          price = parseFloat(price);
         }
+      } else if (price.indexOf('.') == 0) {
+        //'首位小数点情况'
+        price = price.replace(/[^$#$]/g, '0.');
+        price = price.replace(/\.{2,}/g, '.');
+      } else if (!/^(\d?)+(\.\d{0,2})?$/.test(price)) {
+        //去掉最后一位
+        price = price.substring(0, price.length - 1);
+      }
+      that.$nextTick(function() {
+        //'有小数点时，最大长度为9位，没有则是7位'
+        that.maxLength = maxLength == -1 ? 7 : 10;
+        that.inputPrice = price;
       });
     },
+
     // video相关方法
     videoDel() {
       this.videoBeforeList = [];

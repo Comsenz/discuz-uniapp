@@ -281,6 +281,8 @@
                 type="digit"
                 placeholder="0.0"
                 focus
+                :maxlength="maxLength"
+                @input="checkNum"
               />
             </view>
             <view class="popup-dialog__ft">
@@ -554,6 +556,7 @@ export default {
       ],
       price: '0.0', // 需要支付的金额
       inputPrice: '', // 自定义金额输入框的值
+      maxLength: 7, //输入框最大长度
       payShowStatus: true, // 是否显示支付
       pwdVal: '', // 支付密码
       orderSn: '', // 订单编号
@@ -1654,6 +1657,37 @@ export default {
           this.$refs.payShow.payClickShow(this.payTypeVal);
         });
       }
+    },
+    // 处理金额
+    checkNum(e) {
+      let that = this;
+      let price = e.target.value;
+      let maxLength = price.indexOf('.');
+
+      if (price.indexOf('.') < 0 && price != '') {
+        //('超过4位则大于1万元');
+        if (price.length > 6) {
+          price = price.substring(0, price.length - 1);
+          uni.showToast({
+            title: '金额最高不能超过100万元',
+            icon: 'none',
+          });
+        } else {
+          price = parseFloat(price);
+        }
+      } else if (price.indexOf('.') == 0) {
+        //'首位小数点情况'
+        price = price.replace(/[^$#$]/g, '0.');
+        price = price.replace(/\.{2,}/g, '.');
+      } else if (!/^(\d?)+(\.\d{0,2})?$/.test(price)) {
+        //去掉最后一位
+        price = price.substring(0, price.length - 1);
+      }
+      that.$nextTick(function() {
+        //'有小数点时，最大长度为9位，没有则是7位'
+        that.maxLength = maxLength == -1 ? 7 : 10;
+        that.inputPrice = price;
+      });
     },
     // 自定义付费金额弹框点击关闭时
     diaLogClose() {
