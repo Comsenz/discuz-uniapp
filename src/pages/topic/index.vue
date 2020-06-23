@@ -1375,9 +1375,17 @@ export default {
             }
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
+              if (this.payTypeVal === 0) {
+                // 这是主题支付，支付完成刷新详情页，重新请求数据
+                console.log('这是主题支付123');
+                this.loadThread();
+              } else if (this.payTypeVal === 1) {
+                console.log('这是主题打赏456');
+                // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+                this._updateRewardUsers();
+              }
               this.payShowStatus = false;
               this.coverLoading = false;
-              this._updateRewardUsers(payType);
             }
             this.coverLoading = false;
           }
