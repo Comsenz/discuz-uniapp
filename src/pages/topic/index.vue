@@ -862,6 +862,7 @@ export default {
           }
           this.isLiked = data.firstPost.isLiked;
           // this.topicStatus = data.isApproved;
+          console.log(data.paid, '这是付费状态');
           if (!data.paid || data.paidUsers.length > 0) {
             if (
               this.system === 'ios' &&
@@ -1246,7 +1247,7 @@ export default {
       );
 
       payWechat = setInterval(() => {
-        if (this.payStatus === '1') {
+        if (this.payStatus === 1) {
           clearInterval(payWechat);
           return;
         }
@@ -1349,7 +1350,7 @@ export default {
               }
             } else if (broswerType === '2') {
               payPhone = setInterval(() => {
-                if (this.payStatus === '1') {
+                if (this.payStatus === 1) {
                   clearInterval(payPhone);
                   return;
                 }
@@ -1364,7 +1365,7 @@ export default {
                 this.$refs.codePopup.open();
                 this.qrcodeShow = true;
                 payWechat = setInterval(() => {
-                  if (this.payStatus === '1') {
+                  if (this.payStatus === 1) {
                     clearInterval(payWechat);
                     return;
                   }
@@ -1400,7 +1401,7 @@ export default {
           console.log(res, '订单支付状态接口查询');
 
           this.payStatus = res.status;
-          if (this.payStatus === '1') {
+          if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
             if (broswerType === '2') {
@@ -1409,6 +1410,7 @@ export default {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
+              this.loadThread();
             }
 
             if (this.payTypeVal === 0) {
@@ -1446,7 +1448,7 @@ export default {
           // _this.getOrderStatus(_this.orderSn);
           payWechat = setInterval(() => {
             console.log('定时器，小程序支付');
-            if (_this.payStatus === '1') {
+            if (_this.payStatus === 1) {
               clearInterval(payWechat);
               return;
             }
@@ -1547,9 +1549,9 @@ export default {
       console.log(this.payTypeVal, '这是类型，0为主题支付，1为主题打赏');
       if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
-      } else if (this.thread.type === 2) {
+      } else if (this.thread.type === 1) {
         this.payTypeText = this.t.pay + this.t.paymentViewRemainingContent;
-      } else {
+      } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
       }
       this.price = this.thread.price;
