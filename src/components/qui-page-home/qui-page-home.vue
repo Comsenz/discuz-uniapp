@@ -303,6 +303,14 @@ export default {
     // #endif
     // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
+    // 详情页删除帖子后在首页删除
+    this.$u.event.$on('deleteThread', thread =>
+      this.threads.forEach((item, index) => {
+        if (item._jv.id === thread) {
+          this.threads.splice(index, 1);
+        }
+      }),
+    );
     // 编辑删除图片后首页删除图片
     this.$u.event.$on('refreshImg', res => {
       console.log(res, 'res');
