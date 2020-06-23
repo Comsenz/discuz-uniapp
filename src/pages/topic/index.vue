@@ -81,7 +81,7 @@
                 :type="t.reward"
                 :person-num="thread.rewardedCount"
                 :limit-count="limitShowNum"
-                :person-list="thread.rewardedUsers"
+                :person-list="rewardedUsers"
                 :btn-show="true"
                 :btn-icon-show="true"
                 btn-icon-name="reward"
@@ -598,6 +598,7 @@ export default {
       contentVal: '', // 这是分享需要传的标题
       shareLogo: '', // 这是分享需要传的图片
       desc: '', // 这是分享需要传的描述
+      rewardedUsers: [],
     };
   },
   computed: {
@@ -605,8 +606,9 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     thread() {
-      console.log(this.$store.getters['jv/get'](`threads/${this.threadId}`));
-      return this.$store.getters['jv/get'](`threads/${this.threadId}`);
+      const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+      this.rewardedUsers = thread.rewardedUsers;
+      return thread;
     },
 
     // allEmoji() {
@@ -629,9 +631,6 @@ export default {
       return status.status;
     },
   },
-  // created() {
-
-  // },
   onLoad(option) {
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin;
@@ -1590,7 +1589,10 @@ export default {
     },
     // 取消打赏
     cancelReward() {
-      this.payNumCheck = [];
+      this.payNumCheck = [{
+        name: '',
+        pay: '',
+      }];
       this.$refs.rewardPopup.close();
     },
     // 打赏选择付费金额
@@ -1898,12 +1900,10 @@ export default {
         });
       } else {
         this.thread.firstPost.likedUsers.forEach((value, key, item) => {
-          const val = value;
-          val.id = this.user.id && item.splice(key, 1);
+          value.id == this.user.id && item.splice(key, 1);
         });
         this.thread.firstPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
-          const val = value;
-          val.id = this.user.id && item.splice(key, 1);
+          value.id == this.user.id && item.splice(key, 1);
         });
       }
       this.$forceUpdate();
@@ -1915,7 +1915,8 @@ export default {
           this.rewardStatus = true;
         }
       }
-      this.thread.rewardedUsers.unshift(this.user);
+      
+      this.rewardedUsers.unshift(this.user);
       this.thread._jv.relationships.rewardedUsers.data.unshift({
         type: this.user._jv.type,
         id: this.user._jv.id,
