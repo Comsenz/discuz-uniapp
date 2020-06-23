@@ -602,6 +602,7 @@ export default {
     orderexpired: '订单过期',
     payfail: '支付失败',
     cancelorder: '取消订单',
+    personalhomepage: '个人主页',
     successfullyuploadedtheavatar: '头像上传成功',
     uploadtimenotup: '上传头像频繁，一天仅允许上传一次头像',
     validationerror: '验证错误',
