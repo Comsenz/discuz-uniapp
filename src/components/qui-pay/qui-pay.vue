@@ -285,10 +285,10 @@ export default {
       // this.$store.commit('setRouter', curRoute);
       if (this.payUrl) {
         console.log(1);
-        uni.navigateTo({ url: this.payUrl });
+        uni.redirectTo({ url: this.payUrl });
       }
       console.log(2);
-      uni.navigateTo({ url: '/pages/modify/paypwd' });
+      uni.redirectTo({ url: '/pages/modify/paypwd' });
     },
     // 输入密码完成
     onInput(val) {
