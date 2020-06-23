@@ -5,7 +5,7 @@
     <!-- #endif -->
     <view class="new" @click.stop="toggleBox">
       <view class="verification-code-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
-      <view class="new-phon" v-if="phon">
+      <view class="new-phon">
         <view class="new-phon-test">
           {{ i18n.t('user.phoneNumber') }}
         </view>
@@ -58,25 +58,11 @@ export default {
   mixins: [user],
   data() {
     return {
-      iptValue: '',
-      isFocus: false,
-      second: 60,
-      num: 5,
       tit: false,
       test: '',
-      sun: true,
-      phon: true,
-      newphon: '',
-      setnum: '',
-      icon: 'none',
-      duration: 2000,
       inshow: false,
       inisIphone: false,
-      typebind: 'bind',
-      disabtype: true,
       formeerro: '',
-      novice: '',
-      interval: '',
       btnContent: '发送验证码',
       time: 0, // 倒计时
       timer: '', // 定时器
@@ -112,16 +98,6 @@ export default {
       this.time = 60;
       this.countdown();
       this.sendSMS();
-      // this.setphon();
-      // const num = 1;
-      // clearInterval(this.interval);
-      // this.interval = setInterval(() => {
-      //   this.second -= num;
-      // }, 1000);
-      // setTimeout(() => {
-      //   clearInterval(this.interval);
-      //   this.sun = true;
-      // }, 60000);
     },
     // 60s倒计时
     countdown() {
