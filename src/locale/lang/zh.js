@@ -647,6 +647,7 @@ export default {
     register: '注册',
     username: '请输入用户名',
     password: '请输入密码',
+    reason: '注册原因',
     phoneNumber: '输入手机号码',
     pwd: '请输密码',
     verificationCode: '请输验证码',

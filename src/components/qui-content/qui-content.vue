@@ -587,6 +587,7 @@ export default {
       color: --color(--qui-FC-333);
       word-wrap: break-word;
       &__longessay {
+        display: flex;
         word-break: break-all;
       }
     }
@@ -692,11 +693,13 @@ export default {
     }
   }
 }
+
 .themeItem__content__text__longessay__publish {
   display: inline;
 }
 .navPost {
   display: inline-block;
+  max-width: 75%;
   padding-left: 8rpx;
   color: --color(--qui-LINK);
 }

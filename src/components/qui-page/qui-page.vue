@@ -89,7 +89,7 @@ export default {
               .catch(err => {
                 console.log(err);
                 uni.navigateTo({
-                  url: `/pages/user/register-bind?url=${url}`,
+                  url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
                 });
               });
           }
@@ -140,7 +140,7 @@ export default {
             // 用户名模式
             console.log('用户名模式跳转到注册并绑定页');
             uni.navigateTo({
-              url: `/pages/user/register?url=${url}`,
+              url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}`,
             });
           }
         }
