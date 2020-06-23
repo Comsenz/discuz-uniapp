@@ -123,7 +123,7 @@ export default {
               });
               pages[2].onLoad();
               // #endif
-            } else if (pages[1].route === 'pages/topic/index') {
+            } else if (this.themid) {
               // #ifdef H5
               uni.redirectTo({
                 url: `/pages/topic/index?id=${this.themid}`,

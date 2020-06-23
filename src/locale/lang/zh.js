@@ -648,9 +648,11 @@ export default {
   user: {
     login: '登录',
     register: '注册',
+    registerReason: '注册原因',
+    submit: '提交',
     username: '请输入用户名',
     password: '请输入密码',
-    reason: '注册原因',
+    reason: '请输入注册原因',
     phoneNumber: '输入手机号码',
     pwd: '请输密码',
     verificationCode: '请输验证码',

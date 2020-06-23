@@ -21,6 +21,7 @@ const publicWhitelistPage = [
   '/pages/user/phone-number-login',
   '/pages/user/verification-code-login',
   '/pages/modify/findpwd',
+  '/pages/user/phone-register-reason',
 ];
 const payWhiteListPage = [
   '/pages/site/info',
@@ -32,6 +33,7 @@ const payWhiteListPage = [
   '/pages/user/phone-number-login',
   '/pages/user/verification-code-login',
   '/pages/modify/findpwd',
+  '/pages/user/phone-register-reason',
 ];
 const apploaded = () => {
   const app = getApp();
