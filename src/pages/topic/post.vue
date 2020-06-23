@@ -68,7 +68,7 @@
           :adjust-position="true"
           cursor-spacing="50"
           cursor="cursor"
-          :maxlength="450"
+          :maxlength="10000"
           :focus="type !== 1"
           v-show="textShow"
           @blur="contBlur"
@@ -585,7 +585,7 @@ export default {
         if (price.length > 6) {
           price = price.substring(0, price.length - 1);
           uni.showToast({
-            title: '金额最高不能超过100万元',
+            title: that.c.TheAmountCannotExceedOneMillion,
             icon: 'none',
           });
         } else {

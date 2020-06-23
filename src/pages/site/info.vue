@@ -238,7 +238,7 @@ export default {
     // 输入密码完成时
     onInput(val) {
       this.value = val;
-      this.creatOrder(this.forums.set_site.site_price, '1', val);
+      this.creatOrder(this.forums.set_site.site_price, 1, val);
     },
     // 支付方式选择完成点击确定时
     paysureShow() {
