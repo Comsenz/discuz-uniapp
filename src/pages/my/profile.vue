@@ -156,15 +156,15 @@ export default {
     uploadSuccess(res) {
       uni.hideLoading();
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        this.$refs.toast.show({ message: '头像上传成功' });
+        this.$refs.toast.show({ message: this.i18n.t('profile.successfullyuploadedtheavatar') });
         const newAvatar = JSON.parse(res.data).data.attributes.avatarUrl;
         this.profile.avatarUrl = newAvatar;
       } else {
         const { code } = JSON.parse(res.data).errors[0];
         if (code === 'upload_time_not_up') {
-          this.$refs.toast.show({ message: '上传头像频繁，一天仅允许上传一次头像' });
+          this.$refs.toast.show({ message: this.i18n.t('profile.uploadtimenotup') });
         } else if (code === 'validation_error') {
-          this.$refs.toast.show({ message: '验证错误' });
+          this.$refs.toast.show({ message: this.i18n.t('profile.validationerror') });
         } else {
           this.$refs.toast.show({ message: code });
         }

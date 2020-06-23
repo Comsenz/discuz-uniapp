@@ -23,7 +23,7 @@
         </view>
       </view>
       <view class="filter-modal__content__confirm" @tap.stop="confirm" v-if="ifNeedConfirm">
-        {{ confirmText }}
+        {{ confirmText || i18n.t('search.filter') }}
       </view>
     </view>
   </view>
@@ -35,7 +35,7 @@ export default {
   props: {
     confirmText: {
       type: String,
-      default: '筛选',
+      default: '',
     },
     ifNeedConfirm: {
       type: Boolean,
