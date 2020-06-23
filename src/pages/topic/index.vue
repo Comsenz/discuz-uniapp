@@ -1082,7 +1082,7 @@ export default {
                   delta,
                 });
               }, 1000);
-              window.clearTimeout(naviBack);
+              // window.clearTimeout(naviBack);
               this.$u.event.$emit('deleteThread', this.threadId);
             }
           }
