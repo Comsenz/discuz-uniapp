@@ -250,6 +250,9 @@ export default {
     cancelorder: 'Cancel order',
     permanent: 'Permanent',
     personalhomepage: 'Personal homepage',
+    successfullyuploadedtheavatar: 'Successfully uploaded the Avatar',
+    validationerror: 'Validation error',
+    uploadtimenotup: 'Upload time not up',
   },
   site: {
     circleintroduction: 'Circle introduction',

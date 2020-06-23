@@ -162,7 +162,7 @@ export default {
       orderSn: '', // 订单编号
       payTypeData: [
         {
-          name: '微信支付',
+          name: this.i18n.t('pay.wxPay'),
           icon: 'icon-wxPay',
           color: '#09bb07',
           value: '0',
