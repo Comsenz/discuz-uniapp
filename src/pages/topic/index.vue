@@ -25,7 +25,7 @@
             </view>
             <qui-topic-content
               :topic-status="thread.isApproved"
-              :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
+              :pay-status="thread.price > 0 && thread.paid"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
               :user-role="thread.user.groups"
@@ -1590,10 +1590,12 @@ export default {
     },
     // 取消打赏
     cancelReward() {
-      this.payNumCheck = [{
-        name: '',
-        pay: '',
-      }];
+      this.payNumCheck = [
+        {
+          name: '',
+          pay: '',
+        },
+      ];
       this.$refs.rewardPopup.close();
     },
     // 打赏选择付费金额
@@ -1916,7 +1918,7 @@ export default {
           this.rewardStatus = true;
         }
       }
-      
+
       this.rewardedUsers.unshift(this.user);
       this.thread._jv.relationships.rewardedUsers.data.unshift({
         type: this.user._jv.type,
