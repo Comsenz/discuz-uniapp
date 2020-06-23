@@ -154,7 +154,7 @@ export default {
       } else {
         this.h5Share({
           title: this.forums.set_site.site_name,
-          url: 'pages/home/index',
+          url: 'pages/site/partner-invite',
         });
       }
       // #endif

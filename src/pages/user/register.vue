@@ -19,6 +19,13 @@
           placeholder-style="color: #ddd"
           v-model="password"
         />
+        <input
+          v-if="validate"
+          class="input"
+          :placeholder="i18n.t('user.reason')"
+          placeholder-style="color: #ddd"
+          v-model="reason"
+        />
       </view>
       <view class="register-box-btn" @click="register">
         {{ i18n.t('user.register') }}
@@ -36,12 +43,15 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
+      reason: '', // 注册原因
       url: '', // 上一个页面的路径
+      validate: false, // 开启注册审核
     };
   },
   onLoad(params) {
     console.log('params', params);
     this.url = params.url;
+    this.validate = params.validate;
   },
   methods: {
     register() {
@@ -50,14 +60,27 @@ export default {
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
       } else {
-        const params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
+        let params = {};
+        if (this.validate) {
+          params = {
+            data: {
+              attributes: {
+                username: this.username,
+                password: this.password,
+                register_reason: this.reason,
+              },
             },
-          },
-        };
+          };
+        } else {
+          params = {
+            data: {
+              attributes: {
+                username: this.username,
+                password: this.password,
+              },
+            },
+          };
+        }
         this.$store
           .dispatch('session/h5Register', params)
           .then(res => {
