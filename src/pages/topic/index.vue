@@ -90,7 +90,7 @@
                 @btnClick="rewardClick"
               ></qui-person-list>
             </view>
-            <view v-if="thread.firstPost.likeCount > 0">
+            <view v-if="thread.firstPost.likedUsers.length > 0">
               <!-- 点赞用户列表 -->
               <qui-person-list
                 :type="t.giveLike"
@@ -309,7 +309,6 @@
           @radioMyHead="radioMyHead"
           @radioChange="radioChange"
           @onInput="onInput"
-          @close="close"
           @paysureShow="paysureShow"
         ></qui-pay>
       </view>
@@ -387,7 +386,7 @@
           </button>
         </view>
       </uni-popup>
-      <uni-popup ref="codePopup" type="center" class="code-popup-box">
+      <uni-popup ref="codePopup" type="center" class="code-popup-box" @change="codeImgChange">
         <view class="code-content" v-if="qrcodeShow">
           <view class="code-title">{{ p.payNow }}</view>
           <view class="code-pay-money">
@@ -432,6 +431,10 @@ import wxshare from '@/mixin/wxshare-h5';
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
+
+let payWechat = null;
+let payPhone = null;
+
 export default {
   mixins: [
     user,
@@ -507,7 +510,7 @@ export default {
       commentId: '', // 评论id
       isAnonymous: '0', // 支付时是否显示头像，默认不显示
       payTypeText: '',
-      payTypeVal: '', // 点击的支付类型， 0主题支付  1主题打赏
+      payTypeVal: 0, // 点击的支付类型， 0主题支付  1主题打赏
       payNum: [
         {
           name: '￥1',
@@ -558,7 +561,6 @@ export default {
       pwdVal: '', // 支付密码
       orderSn: '', // 订单编号
       payStatus: false, // 订单支付状态
-      payStatusNum: 0, // 订单支付状态查询最大次数
       coverLoading: false, // loading显示状态
       payTypeData: [
         {
@@ -968,27 +970,15 @@ export default {
         .dispatch('jv/patch', params)
         .then(data => {
           if (type === '1') {
-            // const orgignPost = this.$store.getters['jv/get'](`posts/${id}`);
             // 主题点赞
-            this.isLiked = data.isLiked;
-            if (this.isLiked) {
-              this.thread.firstPost.likedUsers.unshift(this.user);
-              console.log(this.thread.firstPost.likedUsers, '这是点赞列表');
-              // orgignPost._jv.relationships.likedUsers.data.unshift({
-              //   type: this.user._jv.type,
-              //   id: this.user._jv.id,
-              // });
-            } else {
-              console.log(this.thread.firstPost.likedUsers, '这是取消前点赞列表');
-              this.thread.firstPost.likedUsers.forEach((value, key, item) => {
-                const val = value;
-                val.id = this.user.id && item.splice(key, 1);
+            this._updateLikedUsers(data.isLiked);
+          } else if (type === '2') {
+            if (data.isDeleted) {
+              uni.navigateBack({
+                url: `/pages/home/index`,
               });
-              console.log(this.thread.firstPost.likedUsers, '这是取消后点赞列表');
-              // orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
-              //   const val = value;
-              //   val.id = this.user.id && item.splice(key, 1);
-              // });
+            } else {
+              console.log('主题删除失败');
             }
           } else if (type === '3') {
             const postArr = post;
@@ -1248,8 +1238,8 @@ export default {
         // },
       );
 
-      const payWechat = setInterval(() => {
-        if (this.payStatus === '1' || this.payStatusNum > 10) {
+      payWechat = setInterval(() => {
+        if (this.payStatus === '1') {
           clearInterval(payWechat);
           return;
         }
@@ -1351,15 +1341,14 @@ export default {
                 this.onBridgeReady(res);
               }
             } else if (broswerType === '2') {
-              console.log('这是h5');
-              window.location.href = res.wechat_h5_link;
-              const payPhone = setInterval(() => {
-                if (this.payStatus === '1' && this.payStatusNum > 10) {
+              payPhone = setInterval(() => {
+                if (this.payStatus === '1') {
                   clearInterval(payPhone);
                   return;
                 }
                 this.getOrderStatus(orderSn, broswerType);
               }, 3000);
+              window.location.href = res.wechat_h5_link;
             } else if (broswerType === '3') {
               console.log('这是pc', res);
               if (res) {
@@ -1367,8 +1356,8 @@ export default {
                 this.payShowStatus = false;
                 this.$refs.codePopup.open();
                 this.qrcodeShow = true;
-                const payWechat = setInterval(() => {
-                  if (this.payStatus === '1' || this.payStatusNum > 10) {
+                payWechat = setInterval(() => {
+                  if (this.payStatus === '1') {
                     clearInterval(payWechat);
                     return;
                   }
@@ -1377,21 +1366,18 @@ export default {
               }
             }
           } else if (payType === 1) {
-            console.log('请求状态');
-            const payWechat = setInterval(() => {
-              if (this.payStatus === '1' || this.payStatusNum > 10) {
-                clearInterval(payWechat);
-                return;
-              }
-              this.getOrderStatus(orderSn);
-            }, 3000);
-            this.coverLoading = true;
+            if (res.wallet_pay.result === 'success') {
+              this.payShowStatus = false;
+              this.coverLoading = false;
+              this._updateRewardUsers(payType);
+            }
+            this.coverLoading = false;
           }
         })
         .catch(err => {
           // 清空支付的密码
           console.log(err);
-          this.$refs.payShow.clear();
+          this.$refs.payShow.clearPassword();
         });
     },
     // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
@@ -1407,9 +1393,7 @@ export default {
           console.log(res, '订单支付状态接口查询');
 
           this.payStatus = res.status;
-          this.payStatusNum += 1;
-          if (this.payStatus === '1' || this.payStatusNum > 10) {
-            // this.payShow = false;
+          if (this.payStatus === '1') {
             this.payShowStatus = false;
             this.coverLoading = false;
             if (broswerType === '2') {
@@ -1419,41 +1403,16 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
-            if (this.payStatus === '1') {
-              this.$refs.toast.show({ message: this.p.paySuccess });
-            }
-
+            
             if (this.payTypeVal === 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               console.log('这是主题支付');
               this.loadThread();
             } else if (this.payTypeVal === 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              const orgignPost = this.$store.getters['jv/get'](`thread/${this.threadId}`);
-
-              orgignPost._jv.relationships.rewardedUsers.data.unshift({
-                type: this.user._jv.type,
-                id: this.user.id.toString(),
-              });
-              this.thread.rewardedUsers.unshift(this.user);
-              // this.thread._jv.relationships.rewardedUsers.data.unshift({
-              //   type: this.user._jv.type,
-              //   id: this.user.id.toString(),
-              // });
-              if (this.thread.rewardedUsers.length === 0) {
-                // #ifndef MP_WEIXIN
-                // this.thread.rewardedUsers.unshift(this.user);
-                // #endif
-                console.log('追加0000', this.thread.rewardedUsers);
-              } else {
-                console.log('追加111', this.thread.rewardedUsers);
-                // #ifdef MP_WEIXIN
-                // this.thread.rewardedUsers.unshift(this.user);
-                // #endif
-              }
-
-              console.log('追加222', this.thread.rewardedUsers);
+              this._updateRewardUsers();
             }
+            this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
         .catch(err => {
@@ -1478,9 +1437,9 @@ export default {
           console.log(`success:${JSON.stringify(res)}`);
           _this.coverLoading = true;
           // _this.getOrderStatus(_this.orderSn);
-          const payWechat = setInterval(() => {
+          payWechat = setInterval(() => {
             console.log('定时器，小程序支付');
-            if (_this.payStatus === '1' || _this.payStatusNum > 10) {
+            if (_this.payStatus === '1') {
               clearInterval(payWechat);
               return;
             }
@@ -1505,11 +1464,11 @@ export default {
       if (this.payTypeVal === 0) {
         // 这是主题支付
         console.log('这是主题支付调接口');
-        this.creatOrder(this.thread.price, 3, val, '1');
+        this.creatOrder(this.thread.price, 3, val, 1);
       } else if (this.payTypeVal === 1) {
         // 这是主题打赏
         console.log('这是主题打赏调接口~~~~~');
-        this.creatOrder(this.price, 2, val, '1');
+        this.creatOrder(this.price, 2, val, 1);
       }
     },
     // 支付方式选择完成点击确定时
@@ -1576,7 +1535,6 @@ export default {
       }
       console.log('主题支付');
       this.payStatus = false;
-      this.payStatusNum = 0;
       this.payShowStatus = true;
       this.payTypeVal = 0;
       console.log(this.payTypeVal, '这是类型，0为主题支付，1为主题打赏');
@@ -1613,7 +1571,6 @@ export default {
       }
       console.log('这是打赏');
       this.payStatus = false;
-      this.payStatusNum = 0;
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
@@ -1886,8 +1843,51 @@ export default {
         return;
       }
       this.pageNum += 1;
-      // this.loadThread();
       this.loadThreadPosts();
+    },
+    codeImgChange(params) {
+      if(!params.show) {
+        clearInterval(payWechat);
+      }
+    },
+    _updateLikedUsers(liked = true) {
+      this.isLiked = liked;
+      // 主题点赞
+      if (this.isLiked) {
+        this.thread.firstPost.likedUsers.unshift(this.user);
+        this.thread.firstPost._jv.relationships.likedUsers.data.unshift({
+          type: this.user._jv.type,
+          id: this.user._jv.id,
+        });
+      } else {
+        this.thread.firstPost.likedUsers.forEach((value, key, item) => {
+          const val = value;
+          val.id = this.user.id && item.splice(key, 1);
+        });
+        this.thread.firstPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+          const val = value;
+          val.id = this.user.id && item.splice(key, 1);
+        });
+      }
+      this.$forceUpdate();
+    },
+    _updateRewardUsers(payType = 0) {
+      if(payType === 1) {
+        this.thread.rewardedCount++;
+        if(!this.rewardStatus) {
+          this.rewardStatus = true;
+        }
+      }
+      this.thread.rewardedUsers.unshift(this.user);
+      this.thread._jv.relationships.rewardedUsers.data.unshift({
+        type: this.user._jv.type,
+        id: this.user._jv.id,
+      });
+      this.$forceUpdate();
+    },
+    onUnload() {
+      clearInterval(payWechat);
+      clearInterval(payPhone);
     },
   },
 };
