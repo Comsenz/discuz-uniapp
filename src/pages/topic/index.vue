@@ -289,7 +289,14 @@
               <button class="popup-btn--close" @click="diaLogClose">
                 {{ i18n.t('discuzq.close') }}
               </button>
-              <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
+              <button
+                class="popup-btn--ok"
+                :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
+                :disabled="inputPrice === ''"
+                @click="diaLogOk"
+              >
+                {{ i18n.t('discuzq.ok') }}
+              </button>
             </view>
           </view>
         </view>
@@ -1800,8 +1807,12 @@ export default {
       this.$u.event.$emit('tagClick', tagId);
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      // console.log(delta, '~~~~~~~~', pages[delta - 1].route == 'pages/home/index');
-      if (pages[delta - 1].route && pages[delta - 1].route === 'pages/home/index') {
+      console.log(pages, '~~~~~~~~');
+      if (
+        pages.length > 1 &&
+        pages[delta - 1].route &&
+        pages[delta - 1].route === 'pages/home/index'
+      ) {
         uni.navigateBack({
           delta,
         });
@@ -1957,7 +1968,7 @@ page {
 * {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  // font-size: $fg-f28;
   color: --color(--qui-FC-333);
   word-break: break-all;
 }
@@ -2399,6 +2410,9 @@ page {
       &:first-of-type {
         border-bottom-left-radius: 10rpx;
       }
+    }
+    .popup-btn--ok--blue {
+      color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
 }
