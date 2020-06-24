@@ -156,7 +156,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .view-content {
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 98rpx);
 }
 .ioschoice {
