@@ -129,6 +129,7 @@ export default {
     videoUploading: '视频上传中...',
   },
   core: {
+    noavatar: '无',
     thousand: '万',
     content: '内容',
     not_authenticated: '请登录',

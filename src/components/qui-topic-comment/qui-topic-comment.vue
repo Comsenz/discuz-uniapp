@@ -3,19 +3,10 @@
     <view class="themeItem">
       <view class="themeItem__header">
         <view class="themeItem__header__img">
-          <image
-            :src="
-              commentAvatarUrl != '' && commentAvatarUrl != null
-                ? commentAvatarUrl
-                : '/static/noavatar.gif'
-            "
-            class="det-per-head"
+          <qui-avatar
+            :user="{ username: userName, avatarUrl: commentAvatarUrl }"
             @click="personJump"
-            @error="imageError"
-            v-if="imageStatus"
-            lazy-load
-          ></image>
-          <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
+          />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -278,7 +269,6 @@ export default {
       margin-right: 18rpx;
       background: #ccc;
       border-radius: 100%;
-      will-change: transform;
 
       image {
         width: 100%;

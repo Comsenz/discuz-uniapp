@@ -60,13 +60,12 @@
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('manage.circlemaster')" slot-right>
         <view class="site-item__owner">
-          <image
-            lazy-load
+          <qui-avatar
             class="site-item__owner-avatar"
-            :src="siteInfo.avatar || '/static/noavatar.gif'"
-            alt="avatarUrl"
+            :user="{ username: siteInfo.username, avatarUrl: siteInfo.avatar }"
+            size="60"
             @tap="jumpUserPage(siteInfo.userId)"
-          ></image>
+          />
           <text class="site-item__owner-name">{{ siteInfo.username }}</text>
         </view>
       </qui-cell-item>
@@ -77,14 +76,12 @@
             :key="index"
             class="site-item__person__content"
           >
-            <image
-              lazy-load
+            <qui-avatar
               class="site-item__person__content-avatar"
-              :src="item.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
+              :user="item"
+              size="60"
               @tap="jumpUserPage(item.id)"
-              @tap.stop
-            ></image>
+            />
           </view>
         </qui-cell-item>
       </navigator>
@@ -388,11 +385,7 @@ export default {
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
-  width: 60rpx;
-  height: 60rpx;
   margin-left: 8rpx;
-  border-radius: 50%;
-  will-change: transform;
 }
 .site-item__owner {
   display: flex;

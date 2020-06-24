@@ -242,3 +242,6 @@ page {
 .uni-input-input {
   color: #555;
 }
+image, img {
+  will-change: transform;
+}

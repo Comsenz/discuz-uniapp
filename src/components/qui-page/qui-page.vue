@@ -1,5 +1,8 @@
 <template>
-  <view class="qui-page">
+  <view
+    class="qui-page"
+    :style="{ width: pcStatus ? '640px' : '100%', margin: pcStatus ? '0 auto' : '' }"
+  >
     <!--
       放在这里是因为数据是异步请求的，然后判断论坛的显示状态。
       这样每个页面还是需要引入这个组件，一个是和主题相关，一个是和站点显示状态有关
@@ -23,13 +26,20 @@ import { mapState } from 'vuex';
 // #ifdef H5
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+
+// #endif
+// #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
-
 export default {
   // #ifdef H5
   mixins: [forums, appCommonH, user],
   // #endif
+  data() {
+    return {
+      pcStatus: false, // 是否是pc浏览器状态
+    };
+  },
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -56,6 +66,14 @@ export default {
         this.$emit('pageLoaded');
       }
     },
+  },
+  created() {
+    // #ifndef MP-WEIXIN
+    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
+      // console.log('这是pc');
+      this.pcStatus = true;
+    }
+    // #endif
   },
   mounted() {
     // #ifdef MP-WEIXIN
@@ -129,18 +147,34 @@ export default {
               });
           }
         } else {
-          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
-            // 手机号模式
-            console.log('手机号模式跳转到手机号+验证码登陆页');
-            uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}`,
-            });
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+              // 手机号模式
+              console.log('手机号模式跳转到手机号+验证码登陆页');
+              uni.navigateTo({
+                url: `/pages/user/verification-code-login?url=${url}`,
+              });
+            }
+            if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
+              // 用户名模式
+              console.log('用户名模式跳转到注册并绑定页');
+              uni.navigateTo({
+                url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+              });
+            }
           }
-          if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式
             console.log('用户名模式跳转到注册并绑定页');
             uni.navigateTo({
               url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+            // 手机号模式
+            console.log('手机号模式跳转到手机号+验证码登陆页');
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}`,
             });
           }
         }

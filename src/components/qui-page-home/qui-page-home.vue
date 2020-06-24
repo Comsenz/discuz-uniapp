@@ -35,7 +35,12 @@
       <view
         class="nav"
         id="navId"
-        :style="headerShow ? '' : 'width:100%;position:fixed;z-index:9;top:' + navbarHeight + 'px;'"
+        :style="{
+          position: !headerShow ? 'fixed' : '',
+          zIndex: !headerShow ? '9' : '',
+          top: !headerShow ? navbarHeight + 'px' : '',
+          width: pcStatus ? '640px' : '100%',
+        }"
       >
         <view class="nav__box">
           <qui-icon
@@ -195,7 +200,7 @@ import { mapMutations, mapState } from 'vuex';
 const sysInfo = uni.getSystemInfoSync();
 
 const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
-const navBarTransform = `translate3d(0, -${navbarHeight}px, 0)`;
+const navBarTransform = `translateY(-${navbarHeight}px)`;
 
 export default {
   mixins: [
@@ -288,6 +293,8 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
+      pcStatus: false, // 是否是pc浏览器状态
+      viewportWidth: '', // 设备宽度
     };
   },
   computed: {
@@ -297,6 +304,13 @@ export default {
     }),
   },
   created() {
+    this.viewportWidth = window.innerWidth;
+    // #ifndef MP-WEIXIN
+    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
+      // console.log('这是pc');
+      this.pcStatus = true;
+    }
+    // #endif
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
@@ -406,9 +420,11 @@ export default {
         return;
       }
       if (event.detail.scrollTop + this.navbarHeight >= this.navTop) {
+        console.log('此时为false');
         this.headerShow = false;
         this.navBarTransform = 'none';
       } else {
+        console.log('此时为true');
         this.headerShow = true;
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
@@ -788,6 +804,7 @@ export default {
 .nav {
   position: relative;
   z-index: 1;
+  overflow: hidden;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: box-shadow 0.2s, -webkit-transform 0.2s;

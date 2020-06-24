@@ -178,7 +178,15 @@
         ></qui-load-more>
       </scroll-view>
       <!--详情页底部-->
-      <view class="det-ft" :style="{ bottom: detectionModel() ? '20rpx' : 0 }" v-if="footerShow">
+      <view
+        class="det-ft"
+        :style="{
+          bottom: detectionModel() ? '20rpx' : 0,
+          width: pcStatus ? '640px' : '100%',
+          left: pcStatus ? (viewportWidth - 640) / 2 + 'px' : 0,
+        }"
+        v-if="footerShow"
+      >
         <view class="det-ft-con">
           <view
             class="det-ft-child flex"
@@ -608,6 +616,8 @@ export default {
       shareLogo: '', // 这是分享需要传的图片
       desc: '', // 这是分享需要传的描述
       rewardedUsers: [],
+      pcStatus: false, // 是否是pc浏览器状态
+      viewportWidth: '', // 设备宽度
     };
   },
   computed: {
@@ -619,10 +629,6 @@ export default {
       this.rewardedUsers = thread.rewardedUsers;
       return thread;
     },
-
-    // allEmoji() {
-    //   return this.$store.getters['jv/get']('emoji');
-    // },
     // 语言包
     // topic详情页语言包
     t() {
@@ -641,11 +647,16 @@ export default {
     },
   },
   onLoad(option) {
+    this.viewportWidth = window.innerWidth;
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
     console.log(this.isWeixin, '这是微信网页');
     console.log(this.isPhone, '这是h5');
+    if (!this.isWeixin && !this.isPhone) {
+      // console.log('这是pc');
+      this.pcStatus = true;
+    }
     this.browser = 1;
     // #endif
     // console.log(this.browser, '这是浏览器');
@@ -2202,7 +2213,7 @@ page {
 .ft-gap {
   width: 100%;
   /* #ifdef H5 */
-  margin-top: 88rpx;
+  margin-top: 44px;
   /* #endif */
   margin-bottom: 80rpx;
 }

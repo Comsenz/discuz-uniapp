@@ -6,7 +6,11 @@
         'uni-navbar--shadow': shadow,
         'uni-navbar--border': border,
       }"
-      :style="{ 'background-color': backgroundColor }"
+      :style="{
+        'background-color': backgroundColor,
+        width: pcStatus ? '640px' : '100%',
+        left: pcStatus ? (viewportWidth - 640) / 2 + 'px' : 0,
+      }"
       class="uni-navbar__content"
     >
       <uni-status-bar v-if="statusBar" />
@@ -28,7 +32,7 @@
           >
             <text :style="{ color: color, fontSize: '14px' }">{{ leftText }}</text>
           </view>
-          <slot name="left" />
+          <slot name="center" />
         </view>
         <view class="uni-navbar__header-container uni-navbar__content_view">
           <view
@@ -70,6 +74,9 @@
 /* eslint-disable */
 import uniStatusBar from '../uni-status-bar/uni-status-bar.vue';
 import uniIcons from '../uni-icons/uni-icons.vue';
+// #ifndef MP-WEIXIN
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
   name: 'UniNavBar',
@@ -123,6 +130,21 @@ export default {
       default: true,
     },
   },
+  data: () => {
+    return {
+      pcStatus: false, // 是否是pc浏览器状态
+      viewportWidth: '', // 设备宽度
+    };
+  },
+  created() {
+    this.viewportWidth = window.innerWidth;
+    // #ifndef MP-WEIXIN
+    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
+      // console.log('这是pc');
+      this.pcStatus = true;
+    }
+    // #endif
+  },
   mounted() {
     if (uni.report && this.title !== '') {
       uni.report('title', this.title);
@@ -154,12 +176,12 @@ $nav-height: 44px;
 }
 
 .uni-navbar {
-  width: 750rpx;
+  width: 100%;
 }
 
 .uni-navbar__content {
   position: relative;
-  width: 750rpx;
+  width: 100%;
   overflow: hidden;
   background-color: $uni-bg-color;
 }
@@ -178,7 +200,7 @@ $nav-height: 44px;
   display: flex;
   /* #endif */
   flex-direction: row;
-  width: 750rpx;
+  width: 100%;
   height: $nav-height;
   font-size: 16px;
   line-height: $nav-height;
@@ -214,7 +236,8 @@ $nav-height: 44px;
 }
 
 .uni-navbar__header-container {
-  flex: 1;
+  flex: 2;
+  min-width: 320rpx;
 }
 
 .uni-navbar__header-container-inner {

@@ -40,15 +40,11 @@
           >
             <view class="dialog-box__header">
               <view class="dialog-box__header__info">
-                <image
-                  lazy-load
-                  class="dialog-box__header__info__user-avatar"
-                  :src="dialog.avatar || '/static/noavatar.gif'"
-                ></image>
+                <qui-avatar class="dialog-box__header__info__user-avatar" :user="dialog" />
                 <view>
                   <view class="dialog-box__header__info__box">
                     <text class="dialog-box__header__info__username">
-                      {{ dialog.name }}
+                      {{ dialog.username }}
                     </text>
                     <text
                       class="dialog-box__header__info__groupname"
@@ -155,19 +151,19 @@ export default {
             }
             if (list[i] && list[i].recipient && list[i].sender) {
               if (list[i].recipient.id === this.currentLoginId) {
-                list[i].name = list[i].sender.username;
-                list[i].avatar = list[i].sender.avatarUrl;
+                list[i].username = list[i].sender.username;
+                list[i].avatarUrl = list[i].sender.avatarUrl;
                 list[i].groupname = list[i].sender.groups;
                 list[i].readAt = list[i].recipient_read_at;
               } else if (list[i].sender.id === this.currentLoginId) {
-                list[i].name = list[i].recipient.username;
-                list[i].avatar = list[i].recipient.avatarUrl;
+                list[i].username = list[i].recipient.username;
+                list[i].avatarUrl = list[i].recipient.avatarUrl;
                 list[i].groupname = list[i].recipient.groups;
                 list[i].readAt = list[i].sender_read_at;
               }
             } else {
-              list[i].name = '该用户已被删除';
-              list[i].avatar = '';
+              list[i].username = '该用户已被删除';
+              list[i].avatarUrl = '';
             }
           }
           this.dialogList = [...this.dialogList, ...list];
@@ -206,7 +202,7 @@ export default {
       if (dialogInfo) {
         console.log('会话信息', dialogInfo);
         uni.navigateTo({
-          url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
+          url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.username}`,
         });
       }
     },
@@ -276,11 +272,7 @@ export default {
       justify-content: space-between;
 
       &__user-avatar {
-        width: 80rpx;
-        height: 80rpx;
         margin: 20rpx 20rpx 20rpx 40rpx;
-        border-radius: 100rpx;
-        will-change: transform;
       }
 
       &__box {

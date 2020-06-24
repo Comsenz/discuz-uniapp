@@ -1,6 +1,13 @@
 <template>
   <view>
-    <view class="ft" :style="{ bottom: bottom + 'rpx' }">
+    <view
+      class="ft"
+      :style="{
+        bottom: bottom + 'rpx',
+        width: pcStatus ? '640px' : '100%',
+        left: pcStatus ? (viewportWidth - 640) / 2 + 'px' : 0,
+      }"
+    >
       <view
         class="ft-box "
         :class="{ select: true, active: index === footerIndex }"
@@ -59,6 +66,9 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
+// #ifndef MP-WEIXIN
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
   mixins: [forums, user],
@@ -97,6 +107,8 @@ export default {
       ],
       bottomData: [],
       isTabBar: [0], // 禁止页面第二次加载
+      pcStatus: false, // 是否是pc浏览器状态
+      viewportWidth: '', // 设备宽度
     };
   },
   computed: {
@@ -111,6 +123,13 @@ export default {
     },
   },
   created() {
+    this.viewportWidth = window.innerWidth;
+    // #ifndef MP-WEIXIN
+    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
+      // console.log('这是pc');
+      this.pcStatus = true;
+    }
+    // #endif
     const len = getCurrentPages().length;
     if (len > 0) {
       // #ifdef MP-WEIXIN

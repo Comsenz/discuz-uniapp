@@ -42,12 +42,15 @@
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
-          <image
+          <qui-avatar
             class="site-item__owner-avatar"
-            :src="(forums.set_site && forums.set_site.site_author.avatar) || '/static/noavatar.gif'"
+            :user="{
+              username: forums.set_site.site_author.username,
+              avatarUrl: forums.set_site.site_author.avatar,
+            }"
+            size="60"
             @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
-            lazy-load
-          ></image>
+          />
           <text class="site-item__owner-name">
             {{ forums.set_site && forums.set_site.site_author.username }}
           </text>
@@ -60,12 +63,12 @@
             :key="index"
             class="site-item__person__content"
           >
-            <image
+            <qui-avatar
               class="site-item__person__content-avatar"
-              :src="item.avatarUrl || '/static/noavatar.gif'"
+              :user="item"
+              size="60"
               @tap="toProfile(item.id)"
-              lazy-load
-            ></image>
+            />
           </view>
         </view>
       </qui-cell-item>
@@ -550,11 +553,7 @@ export default {
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
-  width: 60rpx;
-  height: 60rpx;
   margin-left: 8rpx;
-  border-radius: 50%;
-  will-change: transform;
 }
 .site-item__person__content-avatar {
   margin-left: 8rpx;
@@ -567,6 +566,7 @@ export default {
   margin-right: 20rpx;
 }
 .site-item__person {
+  display: flex;
   height: 60rpx;
   overflow: hidden;
   font-size: 0;
