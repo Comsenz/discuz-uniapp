@@ -410,6 +410,7 @@ export default {
           return;
         }
         // #endif
+        return;
       }
       this.payStatus = false;
       this.payStatusNum = 0;

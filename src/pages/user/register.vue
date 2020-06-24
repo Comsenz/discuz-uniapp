@@ -89,8 +89,16 @@ export default {
           .then(res => {
             console.log('注册成功', res);
             this.logind();
-            uni.navigateTo({
-              url: this.url,
+            uni.showToast({
+              title: '注册成功',
+              duration: 2000,
+              success() {
+                setTimeout(() => {
+                  uni.navigateTo({
+                    url: '/pages/home/index',
+                  });
+                }, 1000);
+              },
             });
           })
           .catch(err => {

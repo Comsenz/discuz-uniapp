@@ -179,7 +179,7 @@ export default {
     },
     // 文件校验
     verificateFile(file, el) {
-      console.log(file);
+      // console.log(file);
       const fileName = file.name;
       const fileFormat = fileName.substring(fileName.lastIndexOf('.') + 1);
       if (el.fileFormat && this.fileFormat.indexOf(fileFormat) === -1) {
