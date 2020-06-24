@@ -205,10 +205,14 @@ export default {
       this.$emit('deleteNotice', id);
     },
     jumpMyComment(item) {
-      if (item) {
-        console.log('跳转到评论页面：', item);
+      console.log('跳转到评论页面：', item);
+      if (item && item.reply_post_id !== 0) {
         uni.navigateTo({
           url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.reply_post_id}`,
+        });
+      } else {
+        uni.navigateTo({
+          url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.post_id}`,
         });
       }
     },
