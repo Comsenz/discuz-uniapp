@@ -40,11 +40,10 @@
           >
             <view class="dialog-box__header">
               <view class="dialog-box__header__info">
-                <image
-                  lazy-load
+                <qui-avatar
                   class="dialog-box__header__info__user-avatar"
-                  :src="dialog.avatar || '/static/noavatar.gif'"
-                ></image>
+                  :user="{ username: dialog.name, avatarUrl: dialog.avatar }"
+                />
                 <view>
                   <view class="dialog-box__header__info__box">
                     <text class="dialog-box__header__info__username">
@@ -276,11 +275,7 @@ export default {
       justify-content: space-between;
 
       &__user-avatar {
-        width: 80rpx;
-        height: 80rpx;
         margin: 20rpx 20rpx 20rpx 40rpx;
-        border-radius: 100rpx;
-        will-change: transform;
       }
 
       &__box {

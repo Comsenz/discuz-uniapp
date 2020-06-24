@@ -48,12 +48,11 @@
             :key="index"
             class="site-item__person__content"
           >
-            <image
+            <qui-avatar
               class="site-item__person__content-avatar"
-              :src="item.avatarUrl || '/static/noavatar.gif'"
-              lazy-load
+              :user="item"
               @tap="toProfile(item.id)"
-            ></image>
+            />
           </view>
         </view>
       </qui-cell-item>
@@ -272,11 +271,7 @@ export default {
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
-  width: 60rpx;
-  height: 60rpx;
   margin-left: 8rpx;
-  border-radius: 50%;
-  will-change: transform;
 }
 .site-item__person__content-avatar {
   margin-left: 8rpx;

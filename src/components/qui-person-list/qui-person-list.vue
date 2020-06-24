@@ -6,19 +6,12 @@
     </view>
     <view class="det-per-list" v-if="personRes.length > 0">
       <view class="det-person" v-for="(person, index) in personRes" :key="index">
-        <image
-          :src="person.avatarUrl ? person.avatarUrl : '/static/noavatar.gif'"
-          class="det-per-head"
+        <qui-avatar
           v-if="person.showAvatar"
+          :user="person"
+          size="50"
           @click="personJump(person.id)"
-          @error="imageError(person)"
-        ></image>
-        <image
-          v-else
-          src="/static/noavatar.gif"
-          class="det-per-head"
-          @click="personJump(person.id)"
-        ></image>
+        />
       </view>
     </view>
     <view class="fold-box" v-if="personNum > limitCount">
@@ -202,12 +195,6 @@ export default {
     height: 50rpx;
     margin: 0 3rpx 10rpx 4rpx;
     border-radius: 50%;
-    .det-per-head {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
   }
 
   .det-per-btn {

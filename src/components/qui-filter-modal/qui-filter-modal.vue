@@ -1,11 +1,6 @@
 <template>
   <view class="filter-modal" :class="{ show: showValue }" @tap.stop="cancel">
-    <view
-      class="filter-modal__content"
-      v-if="showValue"
-      @tap.stop
-      :style="{ top: contentTop + 'rpx' }"
-    >
+    <view class="filter-modal__content" v-if="showValue" @tap.stop :style="{ top: contentTop }">
       <view class="filter-modal__content__search" v-if="showSearch" @click="searchClick">
         <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
         {{ i18n.t('search.search') }}
@@ -56,8 +51,8 @@ export default {
       },
     },
     contentTop: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '0',
     },
     showSearch: {
       type: Boolean,
@@ -161,7 +156,8 @@ export default {
   z-index: 999;
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  overflow: hidden;
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
   visibility: hidden;
@@ -186,7 +182,7 @@ export default {
 .filter-modal__content {
   position: absolute;
   width: 100%;
-  max-height: 1000rpx;
+  max-height: 800rpx;
   padding: 30rpx;
   overflow-y: auto;
   background: --color(--qui-BG-2);

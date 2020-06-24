@@ -28,22 +28,7 @@
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img">
-                      <image
-                        :src="
-                          thread.user.avatarUrl != '' && thread.user.avatarUrl != null
-                            ? thread.user.avatarUrl
-                            : '/static/noavatar.gif'
-                        "
-                        alt
-                        @click="personJump(thread.user._jv.id)"
-                        @error="imageError"
-                        v-if="imageStatus"
-                      ></image>
-                      <image
-                        v-else
-                        src="/static/noavatar.gif"
-                        @click="personJump(thread.user._jv.id)"
-                      ></image>
+                      <qui-avatar :user="thread.user" @click="personJump(thread.user._jv.id)" />
                     </view>
                     <view class="thread__header__title">
                       <view class="thread__header__title__top">

@@ -24,13 +24,7 @@
         :addon="profile.username"
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('profile.avatar')" slot-right arrow @tap="changeAvatar">
-        <image
-          class="my-profile__avatar"
-          :src="profile.avatarUrl"
-          @error="imageError"
-          mode="widthFix"
-          lazy-load
-        ></image>
+        <qui-avatar class="my-profile__avatar" :user="profile" />
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
       <navigator
@@ -173,10 +167,6 @@ export default {
     changeAvatar() {
       this.$refs.upload.uploadClick();
     },
-    // 头像加载失败,显示默认头像
-    imageError() {
-      this.profile.avatarUrl = '/static/noavatar.gif';
-    },
     chooseSuccess() {
       uni.showLoading();
     },
@@ -223,7 +213,5 @@ export default {
   right: 44rpx;
   width: 75rpx;
   height: 75rpx;
-  border-radius: 50%;
-  will-change: transform;
 }
 </style>

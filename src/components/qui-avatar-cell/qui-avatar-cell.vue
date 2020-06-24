@@ -2,7 +2,7 @@
   <view>
     <label class="avatar-box" @click="getNameId(mark)">
       <view class="avatar-box__img">
-        <image :src="icon"></image>
+        <qui-avatar :user="{ username: title, avatarUrl: icon }" size="70" />
       </view>
       <view class="avatar-box__r">
         <view class="avatar-box__r__tit">
@@ -94,16 +94,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 70rpx;
-    height: 70rpx;
     margin-right: 20rpx;
-    background-color: --color(--qui-BG-2);
-    border-radius: 50rpx;
-    image {
-      width: 70rpx;
-      height: 70rpx;
-      border-radius: 50rpx;
-    }
   }
 
   &__r {

@@ -7,12 +7,7 @@
         @tap="toProfile(followingItem.toUser.id)"
         :key="index"
       >
-        <image
-          class="follow-content__items__avatar"
-          :src="followingItem.avatarUrl"
-          lazy-load
-          @error="imageError(index)"
-        ></image>
+        <qui-avatar class="follow-content__items__avatar" :user="followingItem.toUser" size="70" />
         <qui-cell-item
           :title="(followingItem.toUser && followingItem.toUser.username) || ''"
           slot-right
@@ -106,9 +101,6 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
-          res.forEach((v, i) => {
-            res[i].avatarUrl = (v.toUser && v.toUser.avatarUrl) || '/static/noavatar.gif';
-          });
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           if (type === 'change') {
             this.followingList = res;
@@ -116,10 +108,6 @@ export default {
             this.followingList = [...this.followingList, ...res];
           }
         });
-    },
-    // 头像加载失败,显示默认头像
-    imageError(index) {
-      this.followingList[index].avatarUrl = '/static/noavatar.gif';
     },
     // 点击头像到个人主页
     toProfile(userId) {
@@ -218,10 +206,6 @@ export default {
   position: absolute;
   top: 16rpx;
   left: 20rpx;
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 50%;
-  will-change: transform;
 }
 .text {
   margin-left: 12rpx;

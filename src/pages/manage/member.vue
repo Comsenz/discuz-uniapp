@@ -45,7 +45,7 @@
               :mark="item.id"
               :title="item.username"
               :value="item.groups[Object.keys(item.groups || {})[0]].name"
-              :icon="item.avatarUrl || '/static/noavatar.gif'"
+              :icon="item.avatarUrl"
             >
               <checkbox
                 slot="rightIcon"
