@@ -137,8 +137,8 @@ export default {
     };
   },
   created() {
-    this.viewportWidth = window.innerWidth;
     // #ifndef MP-WEIXIN
+    this.viewportWidth = window.innerWidth;
     if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
       // console.log('这是pc');
       this.pcStatus = true;

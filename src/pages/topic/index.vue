@@ -647,7 +647,9 @@ export default {
     },
   },
   onLoad(option) {
+    // #ifdef H5
     this.viewportWidth = window.innerWidth;
+    // #endif
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
