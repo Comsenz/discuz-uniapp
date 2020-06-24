@@ -238,7 +238,7 @@ export default {
       navTop: 0, // 切换分类导航的top
       navHeight: 0, // 切换分类导航的高度
       nowThreadId: '', // 当前点击主题ID
-      filterTop: 450, // 筛选弹窗的位置
+      filterTop: '', // 筛选弹窗的位置
       shareShow: false, // h5内分享提示信息
       shareTitle: '', // h5内分享复制链接
       isWeixin: '', // 是否是微信浏览器内
@@ -578,15 +578,20 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
-      const query = uni.createSelectorQuery().in(this);
-      query
+      // #ifdef MP-WEIXIN
+      wx.createSelectorQuery()
+        .in(this)
         .select('#navId')
-        .boundingClientRect(data => {
-          // setTimeout(() => {
-          this.filterTop = data.top * 2 + 100;
-          // }, 500);
+        .boundingClientRect(rect => {
+          this.filterTop = `${rect.bottom * 2}rpx`;
         })
         .exec();
+      // #endif
+      // #ifdef H5
+      const obj = document.querySelector('#navId');
+      const { bottom } = obj.getBoundingClientRect();
+      this.filterTop = `${bottom}px`;
+      // #endif
       this.show = !this.show;
       this.$refs.filter.setData();
       // this.navShow = true;
@@ -805,6 +810,9 @@ export default {
 
 .scrolled .nav {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.filter-modal .filter-modal__content {
+  max-height: 500rpx;
 }
 
 .sticky {
