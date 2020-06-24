@@ -38,7 +38,10 @@
 </template>
 
 <script>
+import user from '@/mixin/user';
+
 export default {
+  mixins: [user],
   data() {
     return {
       username: '', // 用户名
@@ -106,6 +109,9 @@ export default {
     clear() {
       this.username = '';
       this.password = '';
+      if (this.validate) {
+        this.reason = '';
+      }
     },
     showDialog(title) {
       uni.showToast({

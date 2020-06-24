@@ -334,7 +334,7 @@ export default {
       } else {
         this.h5Share({
           title: this.forums.set_site.site_name,
-          url: 'pages/site/partner-invite',
+          url: `pages/site/partner-invite?code=${this.code}`,
         });
       }
       // #endif

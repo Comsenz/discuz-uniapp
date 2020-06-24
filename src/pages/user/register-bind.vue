@@ -109,6 +109,9 @@ export default {
     clear() {
       this.username = '';
       this.password = '';
+      if (this.validate) {
+        this.reason = '';
+      }
     },
     showDialog(title) {
       uni.showToast({

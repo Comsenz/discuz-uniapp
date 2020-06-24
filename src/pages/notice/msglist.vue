@@ -49,7 +49,7 @@
             </view>
           </view>
         </view>
-        <view style="height: 10rpx;"></view>
+        <view :style="{ height: bottomPadding + 'px', background: '#EDEDED' }"></view>
       </scroll-view>
 
       <!-- 底部 -->
@@ -106,6 +106,7 @@ export default {
       dialogId: 0, // 会话id
       height: 0,
       scv: 0,
+      bottomPadding: 10, // 底部填充
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       navbarHeight: 0,
@@ -214,21 +215,23 @@ export default {
 
   methods: {
     scrollToBottom() {
+      console.log('滚动到底部');
       this.$nextTick(() => {
+        console.log('计算高度并滚动到底部');
         uni
           .createSelectorQuery()
           .selectAll('.chat-box__con')
           .boundingClientRect()
           .exec(data => {
+            let height = 0;
             data[0].forEach(item => {
-              this.height += item.height;
+              height += item.height;
             });
-            if (this.height > 600) {
-              this.scrollTop = this.height - 600;
+            if (height > 600) {
+              this.scrollTop = height - 658 + 10;
+              console.log('scrollTop', this.scrollTop);
+              this.old.scrollTop = height - 658 + 10;
             }
-            console.log('信息', data);
-            console.log('scrollTop', this.scrollTop);
-            console.log('height', this.height);
           });
       });
     },
@@ -239,8 +242,8 @@ export default {
       this.getChatRecord(this.dialogId);
     },
     scroll(e) {
-      console.log('this.old.scrollTop', this.old.scrollTop);
       this.old.scrollTop = e.detail.scrollTop;
+      console.log(e.detail.scrollTop);
     },
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
@@ -360,16 +363,21 @@ export default {
     // 弹出表情组件
     popEmoji() {
       if (this.emojiShow) {
+        console.log('隐藏表情组件');
         this.scrollTop = this.old.scrollTop;
         this.scrollToBottom();
-        this.$nextTick(() => {
-          this.scrollTop -= 185;
-        });
+        this.bottomPadding -= 204;
+        // this.scrollTop = this.old.scrollTop;
+        // this.$nextTick(() => {
+        //   this.scrollTop -= 204;
+        // });
       } else {
+        console.log('弹出表情组件');
         this.scrollTop = this.old.scrollTop;
-        this.scrollToBottom();
+        this.scrollToBottom(true);
+        this.bottomPadding += 204;
         this.$nextTick(() => {
-          this.scrollTop += 185;
+          this.scrollTop += 204;
         });
       }
       this.emojiShow = !this.emojiShow;

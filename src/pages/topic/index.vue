@@ -1531,7 +1531,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
       }
       if (param.type === '0') {
-        uni.navigateTo({
+        uni.redirectTo({
           url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
         });
       } else {

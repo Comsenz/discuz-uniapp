@@ -290,6 +290,8 @@ export default {
   user: {
     login: 'Login',
     register: 'Register',
+    registerReason: 'Register reason',
+    submit: 'Submit',
     username: 'Please input username',
     password: 'Please input password',
     reason: 'Please input reason',

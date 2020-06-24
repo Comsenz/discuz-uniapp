@@ -72,6 +72,12 @@
         "navigationBarTitleText": "注册"
       }
     },
+    {
+      "path": "pages/user/phone-register-reason",
+      "style": {
+        "navigationBarTitleText": "注册原因"
+      }
+    },    
 
     {
       "path": "pages/topic/index",
