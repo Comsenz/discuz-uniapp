@@ -24,13 +24,13 @@
             <qui-avatar
               v-if="item.user_id === currentLoginId"
               class="chat-box__con__msg__mine__img"
-              :src="userInfo"
+              :user="userInfo"
               @click="jumpUserPage(item.user_id)"
             />
             <qui-avatar
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
-              :src="item.user"
+              :user="item.user"
               @click="jumpUserPage(item.user_id)"
             />
             <view
