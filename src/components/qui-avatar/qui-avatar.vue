@@ -1,7 +1,9 @@
 <template>
   <view class="qui-avatar">
     <img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />
-    <view v-else :class="'avatar' + ' qui-avatar-' + size" :style="style()">{{ usernameAt }}</view>
+    <view v-else :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
+      {{ usernameAt }}
+    </view>
   </view>
 </template>
 
@@ -28,6 +30,11 @@ export default {
       default: 80,
     },
   },
+  data() {
+    return {
+      styleText: '',
+    };
+  },
   computed: {
     avatarUrl() {
       return this.user.avatarUrl && this.user.avatarUrl.indexOf('/static/noavatar.gif') !== 0;
@@ -37,6 +44,9 @@ export default {
         ? this.user.username.charAt(0).toUpperCase()
         : this.i18n.t('core.noavatar');
     },
+  },
+  created() {
+    this.styleText = this.style();
   },
   methods: {
     style() {
