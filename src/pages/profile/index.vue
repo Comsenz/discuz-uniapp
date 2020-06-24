@@ -13,23 +13,13 @@
       <view class="profile-info">
         <view class="profile-info__box">
           <view class="profile-info__box__detail">
-            <image
-              class="profile-info__box__detail-avatar"
-              :src="userInfo.avatarUrl"
-              @error="imageError"
-              v-if="imageStatus"
-              lazy-load
-            ></image>
-            <image
-              class="profile-info__box__detail-avatar"
-              v-else
-              src="/static/noavatar.gif"
-            ></image>
+            <qui-avatar :user="userInfo" />
             <qui-cell-item
               :title="userInfo.username || ''"
               slot-right
               :brief="userInfo.groupsName"
               :border="false"
+              class="my-info__box__detail-username"
             >
               <view v-if="userId != currentLoginId">
                 <view
@@ -162,7 +152,6 @@ export default {
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
       userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
-      userInfo.avatarUrl = userInfo.avatarUrl || '/static/noavatar.gif';
       this.setNum(userInfo);
       return userInfo;
     },
@@ -310,10 +299,14 @@ export default {
 }
 .profile-info__box__detail {
   position: relative;
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  padding-left: 100rpx;
   font-size: $fg-f28;
   box-sizing: border-box;
+}
+.my-info__box__detail-username {
+  padding-left: 20rpx;
 }
 .profile-info__box__detail /deep/ .cell-item__body {
   height: auto;
@@ -326,15 +319,6 @@ export default {
   display: inline-block;
   margin-left: 42rpx;
   color: --color(--qui-FC-333);
-}
-.profile-info__box__detail-avatar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  will-change: transform;
 }
 .profile-tabs__content {
   padding-top: 30rpx;

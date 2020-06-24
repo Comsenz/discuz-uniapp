@@ -21,20 +21,18 @@
                 : 'chat-box__con__msg__other',
             ]"
           >
-            <image
-              lazy-load
+            <qui-avatar
               v-if="item.user_id === currentLoginId"
               class="chat-box__con__msg__mine__img"
-              :src="userInfo.avatarUrl"
+              :src="userInfo"
               @click="jumpUserPage(item.user_id)"
-            ></image>
-            <image
-              lazy-load
+            />
+            <qui-avatar
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
-              :src="item.user ? item.user.avatarUrl : '/static/noavatar.gif'"
+              :src="item.user"
               @click="jumpUserPage(item.user_id)"
-            ></image>
+            />
             <view
               :class="[
                 item.user_id === currentLoginId
@@ -446,11 +444,7 @@ export default {
       align-items: center;
 
       &__img {
-        width: 80rpx;
-        height: 80rpx;
         margin: 0 20rpx 0 10rpx;
-        border-radius: 100rpx;
-        will-change: transform;
       }
 
       &__box {
@@ -501,11 +495,7 @@ export default {
       align-items: center;
 
       &__img {
-        width: 80rpx;
-        height: 80rpx;
         margin: 0 10rpx 0 20rpx;
-        border-radius: 100rpx;
-        will-change: transform;
       }
 
       &__box {

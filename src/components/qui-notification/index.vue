@@ -264,7 +264,6 @@ export default {
         width: 80rpx;
         height: 80rpx;
         border-radius: 100rpx;
-        will-change: transform;
       }
 
       &-box {

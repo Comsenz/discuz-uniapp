@@ -37,12 +37,7 @@
         :key="index"
         @tap="toProfile(item.id)"
       >
-        <image
-          class="search-item__users__avatar"
-          :src="item.avatarUrl"
-          lazy-load
-          @error="imageError(index)"
-        ></image>
+        <qui-avatar class="search-item__users__avatar" :user="item" size="70" />
         <qui-cell-item
           :title="item.username"
           arrow
@@ -173,10 +168,6 @@ $height: calc(100vh - 110rpx);
   position: absolute;
   top: 16rpx;
   left: 40rpx;
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 50%;
-  will-change: transform;
 }
 .search-item__users {
   position: relative;

@@ -2,14 +2,7 @@
   <view v-if="topicStatus != 1">
     <view class="themeItem__header">
       <view class="themeItem__header__img">
-        <image
-          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
-          class="det-per-head"
-          @click="personJump"
-          @error="imageError"
-          v-if="imageStatus"
-        ></image>
-        <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" @click="personJump" />
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
@@ -49,14 +42,7 @@
   <view class="themeItem" v-else>
     <view class="themeItem__header">
       <view class="themeItem__header__img">
-        <image
-          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
-          class="det-per-head"
-          @click="personJump"
-          @error="imageError"
-          v-if="imageStatus"
-        ></image>
-        <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" @click="personJump" />
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
@@ -454,7 +440,6 @@ export default {
       margin-right: 18rpx;
       background: #ccc;
       border-radius: 100%;
-      will-change: transform;
       image {
         width: 100%;
         height: 100%;

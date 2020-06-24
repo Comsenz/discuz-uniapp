@@ -38,7 +38,7 @@
               :mark="user.id"
               :title="user.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="user.avatarUrl || '/static/noavatar.gif'"
+              :icon="user.avatarUrl"
               @click="jumpUserPage(user.id)"
             ></qui-avatar-cell>
           </view>
@@ -87,7 +87,7 @@
               :mark="user.id"
               :title="user.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
-              :icon="user.avatarUrl || '/static/noavatar.gif'"
+              :icon="user.avatarUrl"
               @click="jumpUserPage(user.id)"
             ></qui-avatar-cell>
           </view>

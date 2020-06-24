@@ -96,9 +96,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-image {
-  will-change: transform;
-}
 .themeItem {
   &__content {
     &__imgone {

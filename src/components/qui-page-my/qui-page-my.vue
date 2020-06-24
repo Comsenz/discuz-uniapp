@@ -1,7 +1,7 @@
 <template>
   <view class="my">
     <uni-nav-bar
-      title="我的"
+      :title="i18n.t('profile.mine')"
       fixed="true"
       :color="checked ? '#fff' : '#000'"
       :background-color="checked ? '#2e2f30' : '#fff'"
@@ -16,16 +16,12 @@
       <view class="my-info">
         <view class="my-info__box">
           <view class="my-info__box__detail">
-            <image
-              class="my-info__box__detail-avatar"
-              :src="userInfo.avatarUrl"
-              @error="imageError"
-              lazy-load
-            ></image>
+            <qui-avatar :user="userInfo" />
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"
               :border="false"
+              class="my-info__box__detail-username"
             ></qui-cell-item>
           </view>
         </view>
@@ -109,7 +105,6 @@ export default {
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
       userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
-      userInfo.avatarUrl = userInfo.avatarUrl || '/static/noavatar.gif';
       this.setNum(userInfo);
       return userInfo;
     },
@@ -133,10 +128,6 @@ export default {
     // 组件初始化数据
     ontrueGetList() {
       this.checked = this.theme !== THEME_DEFAULT;
-    },
-    // 头像加载失败,显示默认头像
-    imageError() {
-      this.userInfo.avatarUrl = '/static/noavatar.gif';
     },
     // 获取最新主题数那些
     refreshNum() {
@@ -179,19 +170,14 @@ export default {
 }
 .my-info__box__detail {
   position: relative;
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  padding-left: 100rpx;
   font-size: $fg-f28;
   box-sizing: border-box;
 }
-.my-info__box__detail-avatar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  will-change: transform;
+.my-info__box__detail-username {
+  padding-left: 20rpx;
 }
 .my-tabs {
   background: --color(--qui-BG-2);
