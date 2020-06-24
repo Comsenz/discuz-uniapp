@@ -1,5 +1,8 @@
 <template>
-  <view class="qui-page">
+  <view
+    class="qui-page"
+    :style="{ width: pcStatus ? '640px' : '100%', margin: pcStatus ? '0 auto' : '' }"
+  >
     <!--
       放在这里是因为数据是异步请求的，然后判断论坛的显示状态。
       这样每个页面还是需要引入这个组件，一个是和主题相关，一个是和站点显示状态有关
@@ -23,13 +26,20 @@ import { mapState } from 'vuex';
 // #ifdef H5
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+
+// #endif
+// #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
-
 export default {
   // #ifdef H5
   mixins: [forums, appCommonH, user],
   // #endif
+  data() {
+    return {
+      pcStatus: false, // 是否是pc浏览器状态
+    };
+  },
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -56,6 +66,14 @@ export default {
         this.$emit('pageLoaded');
       }
     },
+  },
+  created() {
+    // #ifndef MP-WEIXIN
+    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
+      // console.log('这是pc');
+      this.pcStatus = true;
+    }
+    // #endif
   },
   mounted() {
     // #ifdef MP-WEIXIN

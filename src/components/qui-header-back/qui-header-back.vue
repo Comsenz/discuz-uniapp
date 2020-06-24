@@ -1,5 +1,11 @@
 <template>
-  <view class="qui-back">
+  <view
+    class="qui-back"
+    :style="{
+      width: pcStatus ? '640px' : '100%',
+      left: pcStatus ? (viewportWidth - 640) / 2 + 'px' : 0,
+    }"
+  >
     <view class="qui-back__body">
       <view class="qui-back__body__content">
         <view class="qui-back__body__content-title">
@@ -86,6 +92,9 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
+// #ifndef MP-WEIXIN
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
   name: 'QuiBack',
@@ -120,8 +129,11 @@ export default {
     return {
       ifShowMenu: false,
       bottomData: [],
+      pcStatus: false, // 是否是pc浏览器状态
+      viewportWidth: '', // 设备宽度
     };
   },
+
   computed: {
     userId() {
       return this.$store.getters['session/get']('userId');
@@ -139,6 +151,15 @@ export default {
       getCategoryIndex: state => state.session.categoryIndex,
       footerIndex: state => state.footerTab.footerIndex,
     }),
+  },
+  created() {
+    this.viewportWidth = window.innerWidth;
+    // #ifndef MP-WEIXIN
+    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
+      // console.log('这是pc');
+      this.pcStatus = true;
+    }
+    // #endif
   },
   methods: {
     back() {

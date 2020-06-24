@@ -182,26 +182,6 @@
           }"
         ></qui-load-more>
       </scroll-view>
-      <!--<view class="det-ft" v-if="footerShow">
-        <view class="det-ft-con">
-          <view class="det-ft-child flex">
-            <qui-icon :name="icon - liked" class="qui-icon"></qui-icon>
-            <view class="ft-child-word">
-              abc
-            </view>
-          </view>
-          <view class="det-ft-child flex">
-            <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-            <view class="ft-child-word">{{ t.writeComment }}</view>
-          </view>
-          <view class="det-ft-child flex">
-            <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-            <view class="ft-child-word">{{ t.share }}</view>
-          </view>
-        </view>
-      </view>-->
-      <!--轻提示-->
-      <qui-toast ref="toast"></qui-toast>
       <!--回复弹框-->
       <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
         <view class="comment-popup" v-if="commentPopupStatus">
@@ -247,10 +227,13 @@
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
                 cursor-spacing="100"
-                v-show="!emojiShow"
+                v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
               />
+              <view class="comment-textarea" v-show="emojiShow">
+                {{ textAreaValue }}
+              </view>
               <qui-uploader
                 :url="`${url}api/attachments`"
                 :header="header"
@@ -269,6 +252,8 @@
           </button>
         </view>
       </uni-popup>
+      <!--轻提示-->
+      <qui-toast ref="toast"></qui-toast>
     </view>
     <view
       v-else-if="(loadingStatus && !loaded && !thread.isDeleted) || (loadingStatus && !status)"
