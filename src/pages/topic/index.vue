@@ -178,7 +178,7 @@
         ></qui-load-more>
       </scroll-view>
       <!--详情页底部-->
-      <view class="det-ft" v-if="footerShow">
+      <view class="det-ft" :style="{ bottom: detectionModel() ? '20rpx' : 0 }" v-if="footerShow">
         <view class="det-ft-con">
           <view
             class="det-ft-child flex"
@@ -434,6 +434,7 @@ import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+import detectionModel from '@/mixin/detectionModel';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 // #endif
@@ -451,6 +452,7 @@ export default {
     // #ifdef H5
     wxshare,
     // #endif
+    detectionModel,
   ],
   // #ifndef MP-WEIXIN
   utils: [appCommonH],
