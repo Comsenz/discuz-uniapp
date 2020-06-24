@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-avatar">
+  <view class="qui-avatar" @click="click" @tap="click">
     <img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />
     <view v-else :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
       {{ usernameAt }}
@@ -55,6 +55,9 @@ export default {
     },
     error() {
       this.avatarUrl = false;
+    },
+    click() {
+      this.$emit('click');
     },
   },
 };
