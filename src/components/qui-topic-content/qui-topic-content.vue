@@ -167,7 +167,13 @@
         >
           <qui-icon
             class="icon-attachment"
-            :name="item.extension ? `icon-${item.extension.toUpperCase()}` : `icon-resources`"
+            :name="
+              item.fileName
+                ? `icon-${item.fileName
+                    .substring(item.fileName.lastIndexOf('.') + 1)
+                    .toUpperCase()}`
+                : `icon-resources`
+            "
             color="#aaa"
             size="22"
           ></qui-icon>
