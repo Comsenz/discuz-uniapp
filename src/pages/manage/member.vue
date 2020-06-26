@@ -31,8 +31,9 @@
     </view>
     <!-- 成员列表 -->
     <view class="member-box__list">
+      <!-- #ifdef MP-WEIXIN -->
       <scroll-view
-        class="scroll-Y"
+        class="wx-scroll"
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
@@ -58,6 +59,36 @@
         </checkbox-group>
         <qui-load-more :status="loadingType"></qui-load-more>
       </scroll-view>
+      <!-- #endif -->
+      <!-- #ifdef H5-->
+      <scroll-view
+        class="h5-scroll"
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+      >
+        <checkbox-group @change="changeCheck">
+          <label v-for="item in userListShow" :key="item.id">
+            <qui-avatar-cell
+              center
+              right-color="#aaa"
+              :mark="item.id"
+              :title="item.username"
+              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :icon="item.avatarUrl"
+            >
+              <checkbox
+                slot="rightIcon"
+                :value="JSON.stringify(item)"
+                :disabled="item.id === currentLoginId ? true : false"
+                :checked="checkAvatar.find(value => value.id === item.id)"
+              ></checkbox>
+            </qui-avatar-cell>
+          </label>
+        </checkbox-group>
+        <qui-load-more :status="loadingType"></qui-load-more>
+      </scroll-view>
+      <!-- #endif -->
     </view>
     <view class="member-box__ft">
       <qui-button
@@ -75,7 +106,7 @@
     </view>
     <!-- 成员管理弹窗 -->
     <uni-popup ref="popup" type="bottom">
-      <scroll-view style="height: 968rpx;" scroll-y="true">
+      <scroll-view scroll-y style="max-height: 968rpx;">
         <view class="popup-wrap">
           <view class="popup-wrap-con">
             <view @click="modifyGroupName(item)" v-for="item in groupList" :key="item._jv.id">
@@ -294,13 +325,32 @@ export default {
   }
 }
 
-$otherHeight: 292rpx;
 .member-box {
   width: 100%;
 
   &__list {
-    .scroll-Y {
-      height: calc(100vh - #{$otherHeight});
+    .h5-scroll {
+      position: fixed;
+      top: 210rpx;
+      right: 0rpx;
+      bottom: 160rpx;
+      left: 0rpx;
+      width: 100%;
+      background-color: --color(--qui-BG-2);
+      .loading-text {
+        height: 100rpx;
+        font-size: 28rpx;
+        line-height: 100rpx;
+        text-align: center;
+      }
+    }
+    .wx-scroll {
+      position: fixed;
+      top: 120rpx;
+      right: 0rpx;
+      bottom: 160rpx;
+      left: 0rpx;
+      width: 100%;
       background-color: --color(--qui-BG-2);
       .loading-text {
         height: 100rpx;
@@ -311,7 +361,7 @@ $otherHeight: 292rpx;
     }
   }
   &__ft {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 40rpx;
