@@ -304,8 +304,8 @@ export default {
     }),
   },
   created() {
-    this.viewportWidth = window.innerWidth;
     // #ifndef MP-WEIXIN
+    this.viewportWidth = window.innerWidth;
     if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
       // console.log('这是pc');
       this.pcStatus = true;
@@ -420,11 +420,9 @@ export default {
         return;
       }
       if (event.detail.scrollTop + this.navbarHeight >= this.navTop) {
-        console.log('此时为false');
         this.headerShow = false;
         this.navBarTransform = 'none';
       } else {
-        console.log('此时为true');
         this.headerShow = true;
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
