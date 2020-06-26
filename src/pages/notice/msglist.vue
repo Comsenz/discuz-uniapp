@@ -387,8 +387,10 @@ export default {
       text = `${this.msg.slice(0, this.cursor) + code + this.msg.slice(this.cursor)}`;
       this.msg = text;
       this.cursor += code.length;
+      console.log('点击获取表情后的光标位置', this.cursor);
+      this.focus = true;
       this.$nextTick(() => {
-        this.focus = true;
+        uni.hideKeyboard();
       });
       console.log('msg', this.msg);
     },
