@@ -53,7 +53,7 @@
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
-          <input
+          <textarea
             class="uni-input"
             :maxlength="451"
             :cursor="cursor"
@@ -275,7 +275,7 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
     contBlur(e) {
-      console.log('-----e----', e);
+      console.log('----触发失去焦点----', e);
       if (e && e.detail) {
         this.cursor = e.detail.cursor;
         if (e.detail.value.length > 450) {
