@@ -80,7 +80,7 @@
               class="site-item__person__content-avatar"
               :user="item"
               size="60"
-              @tap="jumpUserPage(item.id)"
+              @tap.stop="jumpUserPage(item.id)"
             />
           </view>
         </qui-cell-item>
