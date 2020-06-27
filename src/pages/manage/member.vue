@@ -19,11 +19,11 @@
               @input="searchInput"
               :value="searchText"
             />
-            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+            <view @tap="cancelSearch" v-if="searchText" class="search-box__content-delete">
               <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
             </view>
           </view>
-          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
+          <view class="search-box__cancel" v-if="searchText" @tap="cancelSearch">
             <text>{{ i18n.t('search.cancel') }}</text>
           </view>
         </view>
@@ -52,12 +52,12 @@
                 slot="rightIcon"
                 :value="JSON.stringify(item)"
                 :disabled="item.id === currentLoginId ? true : false"
-                :checked="checkAvatar.find(value => value.id === item.id)"
+                :checked="checkAvatar.findIndex(value => value.id === item.id) > -1"
               ></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingTypeShow"></qui-load-more>
       </scroll-view>
       <!-- #endif -->
       <!-- #ifdef H5-->
@@ -81,12 +81,12 @@
                 slot="rightIcon"
                 :value="JSON.stringify(item)"
                 :disabled="item.id === currentLoginId ? true : false"
-                :checked="checkAvatar.find(value => value.id === item.id)"
+                :checked="checkAvatar.findIndex(value => value.id === item.id) > -1"
               ></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingTypeShow"></qui-load-more>
       </scroll-view>
       <!-- #endif -->
     </view>
@@ -130,6 +130,7 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
+      searchLoadingType: 'more', // 搜索上拉加载状态
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       searchPageNum: 1, // 搜索的当前页数
@@ -157,6 +158,9 @@ export default {
     userListShow() {
       return this.isSearch ? this.searchUserList : this.userList;
     },
+    loadingTypeShow() {
+      return this.isSearch ? this.searchLoadingType : this.loadingType;
+    },
   },
   methods: {
     // eslint-disable-next-line
@@ -168,11 +172,9 @@ export default {
         this.searchUser(e.target.value);
       }
     }, 800),
-    clearSearch() {
+    cancelSearch() {
       this.isSearch = false;
       this.searchText = '';
-      this.searchUser();
-      this.checkAvatar = [];
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
@@ -213,14 +215,14 @@ export default {
           if (res && res._jv) {
             delete res._jv;
             this.searchUserList = [...this.searchUserList, ...res];
-            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+            this.searchLoadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
     },
     // 上拉加载
     pullDown() {
-      if (this.loadingType !== 'more') {
+      if (this.loadingTypeShow !== 'more') {
         return;
       }
       if (this.isSearch) {
