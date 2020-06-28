@@ -126,7 +126,7 @@
               @click="toolBarClick('link')"
             ></qui-icon>
           </view>
-          <view>
+          <!--<view>
             <qui-icon
               name="icon-undeline"
               size="30"
@@ -141,7 +141,7 @@
               class="qui-icon"
               @click="toolBarClick('strikethrough')"
             ></qui-icon>
-          </view>
+          </view>-->
           <!--<md-unordered-list>
             <qui-icon
               name="icon-unordered-list"
@@ -541,19 +541,20 @@ export default {
         )}`}`;
         this.cursor += 1;
         this.focusEvent(this.cursor);
-      } else if (type === 'undeline') {
-        text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
-          this.cursor,
-        )}`}`;
-        this.cursor += 2;
-        this.focusEvent(this.cursor);
-      } else if (type === 'strikethrough') {
-        text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
-          this.cursor,
-        )}`}`;
-        this.cursor += 2;
-        this.focusEvent(this.cursor);
       }
+      //  else if (type === 'undeline') {
+      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
+      //     this.cursor,
+      //   )}`}`;
+      //   this.cursor += 2;
+      //   this.focusEvent(this.cursor);
+      // } else if (type === 'strikethrough') {
+      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
+      //     this.cursor,
+      //   )}`}`;
+      //   this.cursor += 2;
+      //   this.focusEvent(this.cursor);
+      // }
       //  else if (type == 'unordered') {
       //   text = `${this.textAreaValue.slice(0, this.cursor) +
       //     '\n- ' +
@@ -803,8 +804,9 @@ export default {
     },
     uploadClear(list, del) {
       console.log(list, '这是删除时');
-      const id = this.operating === 'edit' ? list.id : list.data.id;
-      console.log(id, '这是Id');
+      // const id = this.operating === 'edit' ? list.id : list.data.id;
+      const id = list.id;
+      // console.log(id, '这是Id');
       this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
@@ -816,7 +818,7 @@ export default {
       text = `${this.textAreaValue.slice(0, this.cursor) +
         code +
         this.textAreaValue.slice(this.cursor)}`;
-
+      this.cursor = text.length;
       this.textAreaValue = text;
       this.emojiShow = false;
       this.textShow = true;
@@ -1420,6 +1422,7 @@ export default {
         this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${
           data.keywords
         }#${this.textAreaValue.slice(this.cursor)}  `;
+        this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
   },
   onShow() {
@@ -1438,6 +1441,7 @@ export default {
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
+    this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');

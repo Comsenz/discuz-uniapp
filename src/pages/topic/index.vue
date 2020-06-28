@@ -653,6 +653,7 @@ export default {
     // console.log(this.browser, '这是浏览器');
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
     this.$u.event.$on('addComment', data => {
+      // console.log('详情页接收');
       // for (const index in this.posts) {
       Object.keys(this.posts).forEach(index => {
         if (this.posts[index]._jv.id === data.commentId) {
@@ -1381,6 +1382,7 @@ export default {
                     return;
                   }
                   this.getOrderStatus(this.orderSn, broswerType);
+                  uni.hideLoading();
                 }, 3000);
               }
             }
@@ -1417,8 +1419,7 @@ export default {
       this.$store
         .dispatch('jv/get', params)
         .then(res => {
-          console.log(res, '订单支付状态接口查询');
-
+          // console.log(res, '订单支付状态接口查询');
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             this.payShowStatus = false;
@@ -1731,7 +1732,8 @@ export default {
     },
     // 删除图片
     uploadClear(list, del) {
-      this.delAttachments(list.data.id).then(() => {
+      const id = list.id;
+      this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
     },
