@@ -8,8 +8,6 @@
       }"
       :style="{
         'background-color': backgroundColor,
-        width: pcStatus ? '640px' : '100%',
-        left: pcStatus ? (viewportWidth - 640) / 2 + 'px' : 0,
       }"
       class="uni-navbar__content"
     >
@@ -74,9 +72,6 @@
 /* eslint-disable */
 import uniStatusBar from '../uni-status-bar/uni-status-bar.vue';
 import uniIcons from '../uni-icons/uni-icons.vue';
-// #ifndef MP-WEIXIN
-import appCommonH from '@/utils/commonHelper';
-// #endif
 
 export default {
   name: 'UniNavBar',
@@ -129,21 +124,6 @@ export default {
       type: [String, Boolean],
       default: true,
     },
-  },
-  data: () => {
-    return {
-      pcStatus: false, // 是否是pc浏览器状态
-      viewportWidth: '', // 设备宽度
-    };
-  },
-  created() {
-    // #ifndef MP-WEIXIN
-    this.viewportWidth = window.innerWidth;
-    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
-      // console.log('这是pc');
-      this.pcStatus = true;
-    }
-    // #endif
   },
   mounted() {
     if (uni.report && this.title !== '') {

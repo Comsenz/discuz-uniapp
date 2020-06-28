@@ -2,7 +2,6 @@
   <view
     v-if="showPopup"
     class="uni-popup"
-    :style="{ width: pcStatus ? '640px' : '100%', margin: pcStatus ? '0 auto' : '' }"
     @touchmove.stop.prevent="clear"
   >
     <uni-transition
@@ -29,9 +28,6 @@
 <script>
 /* eslint-disable */
 import uniTransition from '../uni-transition/uni-transition.vue';
-// #ifndef MP-WEIXIN
-import appCommonH from '@/utils/commonHelper';
-// #endif
 /**
  * PopUp 弹出层
  * @description 弹出层组件，为了解决遮罩弹层的问题
@@ -85,7 +81,6 @@ export default {
         left: 0,
         right: 0,
       },
-      pcStatus: false, // 是否是pc浏览器状态
     };
   },
   watch: {
@@ -131,12 +126,6 @@ export default {
     },
   },
   created() {
-    // #ifndef MP-WEIXIN
-    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
-      // console.log('这是pc');
-      this.pcStatus = true;
-    }
-    // #endif
     if (this.animation) {
       this.duration = 300;
     } else {

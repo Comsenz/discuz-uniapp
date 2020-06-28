@@ -816,7 +816,7 @@ export default {
       text = `${this.textAreaValue.slice(0, this.cursor) +
         code +
         this.textAreaValue.slice(this.cursor)}`;
-
+      this.cursor = text.length;
       this.textAreaValue = text;
       this.emojiShow = false;
       this.textShow = true;
@@ -1420,6 +1420,7 @@ export default {
         this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${
           data.keywords
         }#${this.textAreaValue.slice(this.cursor)}  `;
+        this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
   },
   onShow() {
@@ -1438,6 +1439,7 @@ export default {
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
+    this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');

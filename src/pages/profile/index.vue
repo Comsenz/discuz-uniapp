@@ -25,7 +25,7 @@
                 <view
                   class="profile-info__box__detail-operate"
                   @tap="chat"
-                  v-if="forums.other.can_create_dialog"
+                  v-if="forums.other && forums.other.can_create_dialog"
                 >
                   <qui-icon
                     class="text"
@@ -306,6 +306,7 @@ export default {
   box-sizing: border-box;
 }
 .my-info__box__detail-username {
+  width: 100%;
   padding-left: 20rpx;
 }
 .profile-info__box__detail /deep/ .cell-item__body {

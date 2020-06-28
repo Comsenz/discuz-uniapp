@@ -9,7 +9,6 @@ module.exports = {
      * @param {title: string, desc: string, logo: string} shareData
      */
     wxShare(shareData) {
-      console.log(shareData, 'shareData');
       // 这里使用 urlencode 编码下
       const url = this.getUrl();
       this.$store
@@ -48,7 +47,6 @@ module.exports = {
      */
     // #ifdef H5
     h5Share(shareInfo) {
-      console.log(shareInfo.title, 'title');
       let themeTitle = '';
       switch (typeof shareInfo) {
         case 'undefined':
