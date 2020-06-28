@@ -804,8 +804,9 @@ export default {
     },
     uploadClear(list, del) {
       console.log(list, '这是删除时');
-      const id = this.operating === 'edit' ? list.id : list.data.id;
-      console.log(id, '这是Id');
+      // const id = this.operating === 'edit' ? list.id : list.data.id;
+      const id = list.id;
+      // console.log(id, '这是Id');
       this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
