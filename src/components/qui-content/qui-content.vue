@@ -708,4 +708,7 @@ export default {
 .theme__content__videocover {
   width: 100%;
 }
+/deep/ .uni-video-cover {
+  z-index: 0;
+}
 </style>
