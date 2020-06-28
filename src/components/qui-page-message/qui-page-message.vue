@@ -131,7 +131,7 @@ const message = {
   [TYPE_401]: {
     title: i18n.t('core.noViewPermission'),
     subtitle: '',
-    btnTxt: i18n.t('core.back_home'),
+    btnTxt: i18n.t('core.back_history'),
     icon: '@/static/msg-404.svg',
     btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
