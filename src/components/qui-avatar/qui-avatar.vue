@@ -20,7 +20,7 @@ const sizes = {
 export default {
   props: {
     user: {
-      type: Object,
+      type: [Object, String],
       default() {
         return {};
       },
