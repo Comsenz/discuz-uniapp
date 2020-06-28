@@ -53,7 +53,7 @@
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
-          <input
+          <textarea
             class="uni-input"
             :maxlength="451"
             :cursor="cursor"
@@ -275,7 +275,7 @@ export default {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
     contBlur(e) {
-      console.log('-----e----', e);
+      console.log('----触发失去焦点----', e);
       if (e && e.detail) {
         this.cursor = e.detail.cursor;
         if (e.detail.value.length > 450) {
@@ -387,8 +387,10 @@ export default {
       text = `${this.msg.slice(0, this.cursor) + code + this.msg.slice(this.cursor)}`;
       this.msg = text;
       this.cursor += code.length;
+      console.log('点击获取表情后的光标位置', this.cursor);
+      this.focus = true;
       this.$nextTick(() => {
-        this.focus = true;
+        uni.hideKeyboard();
       });
       console.log('msg', this.msg);
     },

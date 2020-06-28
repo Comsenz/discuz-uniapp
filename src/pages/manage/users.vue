@@ -17,11 +17,11 @@
               @input="searchInput"
               :value="searchText"
             />
-            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+            <view @tap="cancelSearch" v-if="searchText" class="search-box__content-delete">
               <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
             </view>
           </view>
-          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
+          <view class="search-box__cancel" v-if="searchText" @tap="cancelSearch">
             <text>{{ i18n.t('search.cancel') }}</text>
           </view>
         </view>
@@ -42,7 +42,7 @@
               @click="jumpUserPage(user.id)"
             ></qui-avatar-cell>
           </view>
-          <qui-load-more :status="loadingType"></qui-load-more>
+          <qui-load-more :status="loadingTypeShow"></qui-load-more>
         </view>
         <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
       </view>
@@ -66,11 +66,11 @@
               @input="searchInput"
               :value="searchText"
             />
-            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+            <view @tap="cancelSearch" v-if="searchText" class="search-box__content-delete">
               <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
             </view>
           </view>
-          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
+          <view class="search-box__cancel" v-if="searchText" @tap="cancelSearch">
             <text>{{ i18n.t('search.cancel') }}</text>
           </view>
         </view>
@@ -91,7 +91,7 @@
               @click="jumpUserPage(user.id)"
             ></qui-avatar-cell>
           </view>
-          <qui-load-more :status="loadingType"></qui-load-more>
+          <qui-load-more :status="loadingTypeShow"></qui-load-more>
         </view>
         <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
       </view>
@@ -108,6 +108,7 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
+      searchLoadingType: 'more', // 搜索上拉加载状态
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       searchPageNum: 1, // 搜索的当前页数
@@ -122,6 +123,9 @@ export default {
   computed: {
     userListShow() {
       return this.isSearch ? this.searchUserList : this.userList;
+    },
+    loadingTypeShow() {
+      return this.isSearch ? this.searchLoadingType : this.loadingType;
     },
   },
   methods: {
@@ -143,10 +147,9 @@ export default {
         this.searchUser(e.target.value);
       }
     }, 800),
-    clearSearch() {
+    cancelSearch() {
       this.isSearch = false;
       this.searchText = '';
-      this.searchUser();
     },
     // 调用 搜索 接口
     searchUser(val = '') {
@@ -177,14 +180,14 @@ export default {
           if (res && res._jv) {
             delete res._jv;
             this.searchUserList = [...this.searchUserList, ...res];
-            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+            this.searchLoadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
     },
     // 上拉加载
     pullDown() {
-      if (this.loadingType !== 'more') {
+      if (this.loadingTypeShow !== 'more') {
         return;
       }
       if (this.isSearch) {

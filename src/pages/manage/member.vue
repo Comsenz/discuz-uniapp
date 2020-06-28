@@ -19,11 +19,11 @@
               @input="searchInput"
               :value="searchText"
             />
-            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+            <view @tap="cancelSearch" v-if="searchText" class="search-box__content-delete">
               <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
             </view>
           </view>
-          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
+          <view class="search-box__cancel" v-if="searchText" @tap="cancelSearch">
             <text>{{ i18n.t('search.cancel') }}</text>
           </view>
         </view>
@@ -31,8 +31,9 @@
     </view>
     <!-- 成员列表 -->
     <view class="member-box__list">
+      <!-- #ifdef MP-WEIXIN -->
       <scroll-view
-        class="scroll-Y"
+        class="wx-scroll"
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
@@ -51,13 +52,43 @@
                 slot="rightIcon"
                 :value="JSON.stringify(item)"
                 :disabled="item.id === currentLoginId ? true : false"
-                :checked="checkAvatar.find(value => value.id === item.id)"
+                :checked="checkAvatar.findIndex(value => value.id === item.id) > -1"
               ></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingTypeShow"></qui-load-more>
       </scroll-view>
+      <!-- #endif -->
+      <!-- #ifdef H5-->
+      <scroll-view
+        class="h5-scroll"
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+      >
+        <checkbox-group @change="changeCheck">
+          <label v-for="item in userListShow" :key="item.id">
+            <qui-avatar-cell
+              center
+              right-color="#aaa"
+              :mark="item.id"
+              :title="item.username"
+              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :icon="item.avatarUrl"
+            >
+              <checkbox
+                slot="rightIcon"
+                :value="JSON.stringify(item)"
+                :disabled="item.id === currentLoginId ? true : false"
+                :checked="checkAvatar.findIndex(value => value.id === item.id) > -1"
+              ></checkbox>
+            </qui-avatar-cell>
+          </label>
+        </checkbox-group>
+        <qui-load-more :status="loadingTypeShow"></qui-load-more>
+      </scroll-view>
+      <!-- #endif -->
     </view>
     <view class="member-box__ft">
       <qui-button
@@ -75,7 +106,7 @@
     </view>
     <!-- 成员管理弹窗 -->
     <uni-popup ref="popup" type="bottom">
-      <scroll-view style="height: 968rpx;" scroll-y="true">
+      <scroll-view scroll-y style="max-height: 968rpx;">
         <view class="popup-wrap">
           <view class="popup-wrap-con">
             <view @click="modifyGroupName(item)" v-for="item in groupList" :key="item._jv.id">
@@ -99,6 +130,7 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
+      searchLoadingType: 'more', // 搜索上拉加载状态
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       searchPageNum: 1, // 搜索的当前页数
@@ -126,6 +158,9 @@ export default {
     userListShow() {
       return this.isSearch ? this.searchUserList : this.userList;
     },
+    loadingTypeShow() {
+      return this.isSearch ? this.searchLoadingType : this.loadingType;
+    },
   },
   methods: {
     // eslint-disable-next-line
@@ -137,11 +172,9 @@ export default {
         this.searchUser(e.target.value);
       }
     }, 800),
-    clearSearch() {
+    cancelSearch() {
       this.isSearch = false;
       this.searchText = '';
-      this.searchUser();
-      this.checkAvatar = [];
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
@@ -182,14 +215,14 @@ export default {
           if (res && res._jv) {
             delete res._jv;
             this.searchUserList = [...this.searchUserList, ...res];
-            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+            this.searchLoadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
     },
     // 上拉加载
     pullDown() {
-      if (this.loadingType !== 'more') {
+      if (this.loadingTypeShow !== 'more') {
         return;
       }
       if (this.isSearch) {
@@ -294,13 +327,32 @@ export default {
   }
 }
 
-$otherHeight: 292rpx;
 .member-box {
   width: 100%;
 
   &__list {
-    .scroll-Y {
-      height: calc(100vh - #{$otherHeight});
+    .h5-scroll {
+      position: fixed;
+      top: 210rpx;
+      right: 0rpx;
+      bottom: 160rpx;
+      left: 0rpx;
+      width: 100%;
+      background-color: --color(--qui-BG-2);
+      .loading-text {
+        height: 100rpx;
+        font-size: 28rpx;
+        line-height: 100rpx;
+        text-align: center;
+      }
+    }
+    .wx-scroll {
+      position: fixed;
+      top: 120rpx;
+      right: 0rpx;
+      bottom: 160rpx;
+      left: 0rpx;
+      width: 100%;
       background-color: --color(--qui-BG-2);
       .loading-text {
         height: 100rpx;
@@ -311,7 +363,7 @@ $otherHeight: 292rpx;
     }
   }
   &__ft {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 40rpx;
