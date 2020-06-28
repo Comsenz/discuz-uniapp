@@ -31,7 +31,7 @@
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
               ></qui-topic-content>
-              <view class="thread-box" v-if="loadDetailStatus && !post.isApproved == 0">
+              <view class="thread-box" v-if="loadDetailStatus && !thread.isApproved == 0">
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img">

@@ -39,7 +39,6 @@
           position: !headerShow ? 'fixed' : '',
           zIndex: !headerShow ? '9' : '',
           top: !headerShow ? navbarHeight + 'px' : '',
-          width: pcStatus ? '640px' : '100%',
         }"
       >
         <view class="nav__box">
@@ -293,8 +292,6 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
-      pcStatus: false, // 是否是pc浏览器状态
-      viewportWidth: '', // 设备宽度
     };
   },
   computed: {
@@ -304,12 +301,6 @@ export default {
     }),
   },
   created() {
-    // #ifndef MP-WEIXIN
-    this.viewportWidth = window.innerWidth;
-    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
-      this.pcStatus = true;
-    }
-    // #endif
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;

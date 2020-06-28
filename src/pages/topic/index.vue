@@ -182,8 +182,6 @@
         class="det-ft"
         :style="{
           bottom: detectionModel() ? '20rpx' : 0,
-          width: pcStatus ? '640px' : '100%',
-          left: pcStatus ? (viewportWidth - 640) / 2 + 'px' : 0,
         }"
         v-if="footerShow"
       >
@@ -616,8 +614,6 @@ export default {
       shareLogo: '', // 这是分享需要传的图片
       desc: '', // 这是分享需要传的描述
       rewardedUsers: [],
-      pcStatus: false, // 是否是pc浏览器状态
-      viewportWidth: '', // 设备宽度
     };
   },
   computed: {
@@ -647,18 +643,11 @@ export default {
     },
   },
   onLoad(option) {
-    // #ifdef H5
-    this.viewportWidth = window.innerWidth;
-    // #endif
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
     console.log(this.isWeixin, '这是微信网页');
     console.log(this.isPhone, '这是h5');
-    if (!this.isWeixin && !this.isPhone) {
-      // console.log('这是pc');
-      this.pcStatus = true;
-    }
     this.browser = 1;
     // #endif
     // console.log(this.browser, '这是浏览器');
