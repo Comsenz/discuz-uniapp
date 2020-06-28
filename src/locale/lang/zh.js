@@ -229,6 +229,7 @@ export default {
     paymentViewRemainingContent: '查看剩余内容',
     paymentViewVideo: '查看视频',
     examineTip: '内容正在审核中，审核通过后才能正常显示！',
+    commentTip: '当前评论正在审核中，审核通过后才能正常显示！',
     transcodingTip: '视频正在转码中，转码成功后才能正常显示！',
     transcodingFailedTip: '视频转码失败，转码成功才能正常显示！',
     powerTip: '没有权限，请联系站点管理员',
