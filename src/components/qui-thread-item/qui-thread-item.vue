@@ -117,6 +117,7 @@ export default {
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
+      this.$emit('toTopic', id);
     },
     // 点击头像调转到个人主页
     headClick(id) {
@@ -184,6 +185,7 @@ export default {
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
+      this.$emit('toTopic', id);
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {

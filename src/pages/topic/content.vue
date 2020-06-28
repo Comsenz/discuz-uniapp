@@ -43,6 +43,7 @@
         v-for="(item, index) in topicData"
         :key="index"
         :currentindex="index"
+        @toTopic="toTopic"
       ></qui-thread-item>
       <qui-load-more></qui-load-more>
     </view>
@@ -66,6 +67,7 @@ export default {
       topicData: [],
       query: {},
       isGreat: false,
+      editThreadId: '',
       pageNum: 1,
       pageSize: 20,
     };
@@ -96,7 +98,25 @@ export default {
     });
     // #endif
   },
+  onShow() {
+    this.uploadItem();
+  },
   methods: {
+    toTopic(id) {
+      this.editThreadId = id;
+    },
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
+      }
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      this.topicData.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(this.topicData, index, item);
+        }
+      });
+    },
     loadThreads() {
       const params = {
         'filter[isSticky]': 'no',
