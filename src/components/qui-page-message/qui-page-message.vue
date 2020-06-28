@@ -110,9 +110,9 @@ const message = {
   [THREAD_DELETED]: {
     title: i18n.t('core.thread_deleted'),
     subtitle: i18n.t('core.page_not_found_detail'), // 从接口读取主题被删除时主题详情页的提示语
-    btnTxt: i18n.t('core.back_home'),
+    btnTxt: i18n.t('core.back_history'),
     icon: '@/static/msg-warning.svg',
-    btnclickType: 'toHome',
+    btnclickType: 'toBack',
   },
   [POST_DELETED]: {
     title: i18n.t('core.post_deleted'),
@@ -131,7 +131,7 @@ const message = {
   [TYPE_401]: {
     title: i18n.t('core.noViewPermission'),
     subtitle: '',
-    btnTxt: i18n.t('core.back_home'),
+    btnTxt: i18n.t('core.back_history'),
     icon: '@/static/msg-404.svg',
     btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
@@ -169,25 +169,17 @@ export default {
   },
   methods: {
     handleClick() {
-      // 404
-      if (this.forumError.code === THREAD_DELETED || this.forumError.code === TYPE_401) {
-        console.log('这是返回首页呢');
-        uni.redirectTo({
-          url: '/pages/home/index',
-        });
-      } else if (this.forumError.code === TYPE_404 || this.forumError.code === POST_DELETED) {
+      if (
+        this.forumError.code === TYPE_401 ||
+        this.forumError.code === THREAD_DELETED ||
+        this.forumError.code === TYPE_404 ||
+        this.forumError.code === POST_DELETED
+      ) {
         console.log('这是Message里的404，走返回');
-        if (getCurrentPages().length < 2) {
-          this.message.btnclickType = 'toHome';
-          uni.redirectTo({
-            url: '/pages/home/index',
-          });
-        } else {
-          this.message.btnclickType = 'toBack';
-          uni.navigateBack({
-            delta: 1,
-          });
-        }
+        this.message.btnclickType = 'toBack';
+        uni.navigateBack({
+          delta: 1,
+        });
       }
     },
     handleLoginClick() {

@@ -39,7 +39,6 @@
           position: !headerShow ? 'fixed' : '',
           zIndex: !headerShow ? '9' : '',
           top: !headerShow ? navbarHeight + 'px' : '',
-          width: pcStatus ? '640px' : '100%',
         }"
       >
         <view class="nav__box">
@@ -133,7 +132,7 @@
       :filter-list="filterList"
       :show-search="showSearch"
       @searchClick="searchClick"
-      :content-top="filterTop"
+      content-top="0"
       ref="filter"
     ></qui-filter-modal>
     <uni-popup ref="popupHead" type="bottom">
@@ -293,8 +292,6 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
-      pcStatus: false, // 是否是pc浏览器状态
-      viewportWidth: '', // 设备宽度
     };
   },
   computed: {
@@ -304,13 +301,6 @@ export default {
     }),
   },
   created() {
-    // #ifndef MP-WEIXIN
-    this.viewportWidth = window.innerWidth;
-    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
-      // console.log('这是pc');
-      this.pcStatus = true;
-    }
-    // #endif
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
@@ -384,7 +374,6 @@ export default {
     // #endif
     this.ontrueGetList();
     uni.$on('logind', () => {
-      console.log(this, 'lakjsdflkjsdklfjlk');
       this.ontrueGetList();
     });
   },
@@ -517,7 +506,6 @@ export default {
 
       // #ifdef H5
       if (this.isWeixin === true) {
-        console.log(this.isWeixin, '微信内');
         this.shareShow = true;
       } else {
         this.h5Share({
@@ -529,9 +517,7 @@ export default {
     },
     // #ifdef H5
     closeShare() {
-      console.log('关闭微信');
       this.shareShow = false;
-      console.log(this.shareShow, '8888');
     },
     // #endif
     // 头部分享海报
@@ -802,6 +788,7 @@ export default {
 .nav {
   position: relative;
   z-index: 1;
+  width: 100%;
   overflow: hidden;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);

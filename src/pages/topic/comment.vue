@@ -14,6 +14,13 @@
         <view class="content" v-if="status">
           <view class="ft-gap">
             <view class="bg-white">
+              <view class="detail-tip" v-if="thread.isApproved == 0">
+                {{ t.examineTip }}
+              </view>
+
+              <view class="detail-tip" v-else-if="post.isApproved == 0">
+                {{ t.commentTip }}
+              </view>
               <qui-topic-content
                 :topic-status="thread.isApproved"
                 :avatar-url="post.user.avatarUrl"
@@ -24,7 +31,7 @@
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
               ></qui-topic-content>
-              <view class="thread-box" v-if="loadDetailStatus">
+              <view class="thread-box" v-if="loadDetailStatus && !thread.isApproved == 0">
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img">
@@ -167,6 +174,12 @@
           }"
         ></qui-load-more>
       </scroll-view>
+      <!--#ifdef MP-WEIXIN-->
+      <!--适配小程序底部弹框-->
+      <view class="det-ft"></view>
+      <!-- #endif -->
+      <!--轻提示-->
+      <qui-toast ref="toast"></qui-toast>
       <!--回复弹框-->
       <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
         <view class="comment-popup" v-if="commentPopupStatus">
@@ -237,8 +250,6 @@
           </button>
         </view>
       </uni-popup>
-      <!--轻提示-->
-      <qui-toast ref="toast"></qui-toast>
     </view>
     <view
       v-else-if="(loadingStatus && !loaded && !thread.isDeleted) || (loadingStatus && !status)"
@@ -705,11 +716,14 @@ export default {
       });
     },
 
+    // 上传图片
     uploadChange(e) {
       this.uploadFile = e;
     },
+    // 删除图片
     uploadClear(list, del) {
-      this.delAttachments(list.data.id).then(() => {
+      const id = list.id;
+      this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
     },
@@ -731,6 +745,8 @@ export default {
           console.log(err);
         });
     },
+
+
     // 评论点回复击发布事件
     publishClick() {
       this.publishClickStatus = false;
@@ -1053,7 +1069,7 @@ page {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 80rpx;
+  height: 0;
   line-height: 80rpx;
   background: --color(--qui-FC-FFF);
   box-shadow: 0 -3rpx 6rpx rgba(0, 0, 0, 0.05);

@@ -4,8 +4,6 @@
       class="ft"
       :style="{
         bottom: bottom + 'rpx',
-        width: pcStatus ? '640px' : '100%',
-        left: pcStatus ? (viewportWidth - 640) / 2 + 'px' : 0,
       }"
     >
       <view
@@ -66,9 +64,6 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
-// #ifndef MP-WEIXIN
-import appCommonH from '@/utils/commonHelper';
-// #endif
 
 export default {
   mixins: [forums, user],
@@ -107,8 +102,6 @@ export default {
       ],
       bottomData: [],
       isTabBar: [0], // 禁止页面第二次加载
-      pcStatus: false, // 是否是pc浏览器状态
-      viewportWidth: '', // 设备宽度
     };
   },
   computed: {
@@ -123,13 +116,6 @@ export default {
     },
   },
   created() {
-    // #ifndef MP-WEIXIN
-    this.viewportWidth = window.innerWidth;
-    if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
-      // console.log('这是pc');
-      this.pcStatus = true;
-    }
-    // #endif
     const len = getCurrentPages().length;
     if (len > 0) {
       // #ifdef MP-WEIXIN
@@ -257,7 +243,6 @@ export default {
     },
     // 首页底部发帖点击事件跳转
     handleClick(item) {
-      console.log(item.type);
       uni.navigateTo({
         url: `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
       });
