@@ -182,7 +182,7 @@ export default {
 .filter-modal__content {
   position: absolute;
   width: 100%;
-  max-height: 800rpx;
+  max-height: 1600rpx;
   padding: 30rpx;
   overflow-y: auto;
   background: --color(--qui-BG-2);

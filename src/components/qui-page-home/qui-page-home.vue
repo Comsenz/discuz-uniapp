@@ -132,7 +132,7 @@
       :filter-list="filterList"
       :show-search="showSearch"
       @searchClick="searchClick"
-      :content-top="filterTop"
+      content-top="0"
       ref="filter"
     ></qui-filter-modal>
     <uni-popup ref="popupHead" type="bottom">
@@ -788,6 +788,7 @@ export default {
 .nav {
   position: relative;
   z-index: 1;
+  width: 100%;
   overflow: hidden;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
