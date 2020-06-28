@@ -126,7 +126,7 @@
               @click="toolBarClick('link')"
             ></qui-icon>
           </view>
-          <view>
+          <!--<view>
             <qui-icon
               name="icon-undeline"
               size="30"
@@ -141,7 +141,7 @@
               class="qui-icon"
               @click="toolBarClick('strikethrough')"
             ></qui-icon>
-          </view>
+          </view>-->
           <!--<md-unordered-list>
             <qui-icon
               name="icon-unordered-list"
@@ -541,19 +541,20 @@ export default {
         )}`}`;
         this.cursor += 1;
         this.focusEvent(this.cursor);
-      } else if (type === 'undeline') {
-        text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
-          this.cursor,
-        )}`}`;
-        this.cursor += 2;
-        this.focusEvent(this.cursor);
-      } else if (type === 'strikethrough') {
-        text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
-          this.cursor,
-        )}`}`;
-        this.cursor += 2;
-        this.focusEvent(this.cursor);
       }
+      //  else if (type === 'undeline') {
+      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
+      //     this.cursor,
+      //   )}`}`;
+      //   this.cursor += 2;
+      //   this.focusEvent(this.cursor);
+      // } else if (type === 'strikethrough') {
+      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
+      //     this.cursor,
+      //   )}`}`;
+      //   this.cursor += 2;
+      //   this.focusEvent(this.cursor);
+      // }
       //  else if (type == 'unordered') {
       //   text = `${this.textAreaValue.slice(0, this.cursor) +
       //     '\n- ' +
