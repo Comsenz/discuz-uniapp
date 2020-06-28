@@ -126,7 +126,6 @@ export default {
     // #ifndef MP-WEIXIN
     this.viewportWidth = window.innerWidth;
     if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
-      // console.log('这是pc');
       this.pcStatus = true;
     }
     // #endif
@@ -257,7 +256,6 @@ export default {
     },
     // 首页底部发帖点击事件跳转
     handleClick(item) {
-      console.log(item.type);
       uni.navigateTo({
         url: `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
       });

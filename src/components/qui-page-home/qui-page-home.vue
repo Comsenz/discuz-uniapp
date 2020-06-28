@@ -307,7 +307,6 @@ export default {
     // #ifndef MP-WEIXIN
     this.viewportWidth = window.innerWidth;
     if (!appCommonH.isWeixin().isWeixin && !appCommonH.isWeixin().isPhone) {
-      // console.log('这是pc');
       this.pcStatus = true;
     }
     // #endif
@@ -384,7 +383,6 @@ export default {
     // #endif
     this.ontrueGetList();
     uni.$on('logind', () => {
-      console.log(this, 'lakjsdflkjsdklfjlk');
       this.ontrueGetList();
     });
   },
@@ -517,7 +515,6 @@ export default {
 
       // #ifdef H5
       if (this.isWeixin === true) {
-        console.log(this.isWeixin, '微信内');
         this.shareShow = true;
       } else {
         this.h5Share({
@@ -529,9 +526,7 @@ export default {
     },
     // #ifdef H5
     closeShare() {
-      console.log('关闭微信');
       this.shareShow = false;
-      console.log(this.shareShow, '8888');
     },
     // #endif
     // 头部分享海报
