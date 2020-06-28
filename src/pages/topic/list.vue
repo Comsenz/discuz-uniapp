@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="pages-list">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('topic.topictitlelist')"></qui-header-back>
+    <!-- #endif -->
     <view class="qui-topic-page-box">
       <view class="qui-topic-page-box__hd">
         <view class="qui-topic-page-box__hd__sc">
@@ -38,10 +41,10 @@
         </navigator>
         <view class="topic-page-list-item_details" v-if="item.lastThread.length">
           <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
-            <rich-text
+            <qui-uparse
               class="topic-page-list-item_details_text"
-              :nodes="item.lastThread[0].firstPost.summary"
-            ></rich-text>
+              :content="item.lastThread[0].firstPost.summary"
+            ></qui-uparse>
           </navigator>
           <qui-image
             class="topic-page-list-item_details_image"
@@ -149,6 +152,12 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
+.pages-list /deep/ {
+  /* #ifdef H5 */
+  padding-top: 88rpx;
+  box-sizing: border-box;
+  /* #endif */
+}
 .dropDownBox {
   position: absolute;
   top: 60rpx;

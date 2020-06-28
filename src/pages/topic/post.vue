@@ -1418,7 +1418,7 @@ export default {
     uni.$on('clickTopic', data => {
       if (data.keywords)
         this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${
-          data.keywords
+          data.keywords.replace(/\s+/g, '')
         }#${this.textAreaValue.slice(this.cursor)}  `;
     });
   },

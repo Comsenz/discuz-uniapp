@@ -201,6 +201,8 @@ export default {
     TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
   },
   topic: {
+    topictitle: '#话题#',
+    topictitlelist: '话题列表',
     newTopic: '新话题',
     allTopics: '全部话题',
     contents: '内容数',

@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="pages-content">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('topic.topictitle')"></qui-header-back>
+    <!-- #endif -->
     <qui-page-message v-if="!query.id"></qui-page-message>
     <view v-else>
       <view class="topic-content-header">
@@ -148,6 +151,12 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
+.pages-content /deep/ {
+  /* #ifdef H5 */
+  padding-top: 88rpx;
+  box-sizing: border-box;
+  /* #endif */
+}
 $otherHeight: 292rpx;
 .topic-content-header {
   padding: 15rpx;
