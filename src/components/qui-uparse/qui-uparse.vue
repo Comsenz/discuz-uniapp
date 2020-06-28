@@ -62,6 +62,10 @@ export default {
   },
   methods: {
     navigate(e) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+        return;
+      }
       // #ifdef  H5
 
       // #endif
