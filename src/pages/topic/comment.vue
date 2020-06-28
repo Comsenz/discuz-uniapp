@@ -14,6 +14,13 @@
         <view class="content" v-if="status">
           <view class="ft-gap">
             <view class="bg-white">
+              <view class="detail-tip" v-if="thread.isApproved == 0">
+                {{ t.examineTip }}
+              </view>
+
+              <view class="detail-tip" v-else-if="post.isApproved == 0">
+                {{ t.commentTip }}
+              </view>
               <qui-topic-content
                 :topic-status="thread.isApproved"
                 :avatar-url="post.user.avatarUrl"
@@ -24,7 +31,7 @@
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
               ></qui-topic-content>
-              <view class="thread-box" v-if="loadDetailStatus">
+              <view class="thread-box" v-if="loadDetailStatus && !post.isApproved == 0">
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img">
