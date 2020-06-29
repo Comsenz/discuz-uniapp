@@ -138,6 +138,8 @@ export default {
         }
         if (this.meta.next) {
           this.contentText.contentdown = this.i18n.t('core.loadMore');
+        } else {
+          this.contentText.contentdown = this.i18n.t('topic.noMoreData');
         }
       });
     },
@@ -147,7 +149,7 @@ export default {
   },
   onReachBottom() {
     if (this.meta.next) {
-      this.topics('', (currentPage += 1));
+      this.topics((currentPage += 1));
     }
   },
 };
