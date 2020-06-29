@@ -257,9 +257,7 @@
     >
       <u-loading :size="60"></u-loading>
     </view>
-    <qui-page-message
-      v-else-if="thread.isDeleted || post.isDeleted || !loaded || !status"
-    ></qui-page-message>
+    <qui-page-message v-else-if="isDel"></qui-page-message>
   </qui-page>
 </template>
 
@@ -283,6 +281,7 @@ export default {
       loadDetailStatus: {},
       loaded: false,
       status: false,
+      isDel: false, // 当前主题或评论是否删除
       loadingStatus: true,
       topicStatus: 0, // 0 是不合法 1 是合法 2 是忽略
       posts: [],
@@ -422,6 +421,7 @@ export default {
           .dispatch('jv/get', ['posts/' + this.commentId, { params }])
           .then(data => {
             console.log(data, '这是当前评论接口返回的数据');
+            this.isDel = data.isDeleted;
             if (data.isDeleted) {
               console.log('走了111');
               this.$store.dispatch('forum/setError', {
@@ -453,6 +453,7 @@ export default {
           .dispatch('jv/get', ['threads/' + this.threadId, { params }])
           .then(data => {
             console.log(data, '88888888888');
+            this.isDel = data.isDeleted;
             if (data.isDeleted) {
               console.log('走了222');
               this.$store.dispatch('forum/setError', {
@@ -745,7 +746,6 @@ export default {
           console.log(err);
         });
     },
-
 
     // 评论点回复击发布事件
     publishClick() {
