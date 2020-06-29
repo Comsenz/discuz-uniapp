@@ -132,7 +132,7 @@
       :filter-list="filterList"
       :show-search="showSearch"
       @searchClick="searchClick"
-      content-top="0"
+      :content-top="filterTop"
       ref="filter"
     ></qui-filter-modal>
     <uni-popup ref="popupHead" type="bottom">
