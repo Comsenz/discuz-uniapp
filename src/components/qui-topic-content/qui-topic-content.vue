@@ -94,12 +94,11 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !payStatus && coverImage != null"
           @click="videocoverClick"
+          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         >
-          <image
-            class="themeItem__content__coverimg"
-            :src="coverImage"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
-          ></image>
+          <view class="theme__mark"></view>
+          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image class="themeItem__content__coverimg" :src="coverImage"></image>
         </view>
         <video
           v-if="themeType == 2 && payStatus"
@@ -662,5 +661,26 @@ export default {
       font-size: $fg-f26;
     }
   }
+}
+.theme__mark {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 0;
+}
+.theme__mark__open {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 80rpx;
+  height: 80rpx;
+  margin-top: -40rpx;
+  margin-left: -40rpx;
+}
+.theme__content__videocover {
+  position: relative;
 }
 </style>
