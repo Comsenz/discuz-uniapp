@@ -32,8 +32,8 @@
       <view class="my-tabs">
         <qui-tabs :values="items" @clickItem="onClickItem" :brief="true" :current="-1"></qui-tabs>
       </view>
-      <view>
-        <view class="my-items">
+      <view class="my-items">
+        <view class="my-items__wrap">
           <navigator url="/pages/my/profile" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
           </navigator>
@@ -48,7 +48,7 @@
             ></qui-cell-item>
           </navigator>
         </view>
-        <view class="my-items">
+        <view class="my-items__wrap">
           <navigator url="/pages/site/index" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
           </navigator>
@@ -72,7 +72,7 @@
           </navigator>
         </view>
 
-        <view class="my-items">
+        <view class="my-items__wrap">
           <qui-cell-item :title="i18n.t('profile.theme')" slot-right :border="false">
             <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
           </qui-cell-item>
@@ -144,12 +144,22 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.my-items {
+/* #ifdef H5 */
+$height: calc(100vh - 210rpx);
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 260rpx);
+/* #endif */
+.my-items__wrap {
   padding-left: 40rpx;
   margin-top: 30rpx;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: $switch-theme-time;
+}
+.my-items {
+  padding-bottom: 30rpx;
 }
 .my-info {
   padding: 40rpx;
@@ -184,6 +194,6 @@ export default {
   transition: $switch-theme-time;
 }
 .scroll-y {
-  max-height: calc(100vh - 260rpx);
+  max-height: $height;
 }
 </style>
