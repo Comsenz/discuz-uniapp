@@ -134,6 +134,10 @@ export default {
         }
         if (this.meta.next) {
           this.contentText.contentdown = this.i18n.t('core.loadMore');
+        } else if (this.meta.last && this.meta.first) {
+          this.contentText.contentdown = this.i18n.t('core.noMoreData');
+        } else {
+          this.contentText.contentdown = this.i18n.t('core.available');
         }
       });
     },

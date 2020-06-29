@@ -154,6 +154,11 @@ export default {
       this.cost = this.forums.set_cash.cash_rate;
       this.percentage = this.forums.set_cash.cash_rate * 100;
     });
+    if (this.forums.qcloud.qcloud_sms === false) {
+      this.disabtype = true;
+    } else {
+      this.disabtype = false;
+    }
   },
   computed: {
     usersid() {
