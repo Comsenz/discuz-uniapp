@@ -1418,13 +1418,8 @@ export default {
     },
     // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, broswerType) {
-      const params = {
-        _jv: {
-          type: `orders/${orderSn}`,
-        },
-      };
       this.$store
-        .dispatch('jv/get', params)
+        .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           // console.log(res, '订单支付状态接口查询');
           this.payStatus = res.status;
