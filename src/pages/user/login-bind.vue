@@ -37,11 +37,15 @@ export default {
       username: 'admin', // 用户名
       password: 'Admin123', // 密码
       url: '', // 上一个页面的路径
+      validate: false, // 开启注册审核
     };
   },
   onLoad(params) {
     console.log('params', params);
-    this.url = params.url;
+    const { url, validate } = params;
+    this.url = url;
+    this.validate = JSON.parse(validate);
+    console.log('validate', typeof this.validate);
   },
   methods: {
     login() {
@@ -87,7 +91,7 @@ export default {
     jump2RegisterBind() {
       console.log('注册并绑定页');
       uni.navigateTo({
-        url: `/pages/user/register-bind?url=${this.url}`,
+        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}`,
       });
     },
   },

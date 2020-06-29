@@ -69,7 +69,7 @@
             </view>
             <view class="dialog-box__con">
               <rich-text
-                :nodes="dialog.dialogMessage ? dialog.dialogMessage.message_text_html : ''"
+                :nodes="dialog.dialogMessage ? dialog.dialogMessage.summary : ''"
                 style="word-break: break-all;"
               ></rich-text>
             </view>

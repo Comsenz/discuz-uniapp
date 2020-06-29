@@ -53,8 +53,10 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    this.url = params.url;
-    this.validate = params.validate;
+    const { url, validate } = params;
+    this.url = url;
+    this.validate = JSON.parse(validate);
+    console.log('validate', typeof this.validate);
   },
   methods: {
     register() {
@@ -111,7 +113,7 @@ export default {
       this.clear();
       console.log('跳转到登录页面');
       uni.navigateTo({
-        url: `/pages/user/login?url=${this.url}`,
+        url: `/pages/user/login?url=${this.url}&validate=${this.validate}`,
       });
     },
     clear() {

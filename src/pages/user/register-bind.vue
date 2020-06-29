@@ -54,8 +54,10 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    this.url = params.url;
-    this.validate = params.validate;
+    const { url, validate } = params;
+    this.url = url;
+    this.validate = JSON.parse(validate);
+    console.log('validate', typeof this.validate);
   },
   methods: {
     register() {
@@ -123,7 +125,7 @@ export default {
     jump2LoginBind() {
       console.log('登录并绑定页');
       uni.navigateTo({
-        url: `/pages/user/login-bind?url=${this.url}`,
+        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}`,
       });
     },
   },
