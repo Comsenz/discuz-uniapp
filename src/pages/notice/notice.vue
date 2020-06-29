@@ -24,13 +24,9 @@
 </template>
 
 <script>
-import quiNotification from '@/components/qui-notification';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
-  components: {
-    quiNotification,
-  },
   data() {
     return {
       navTitle: '', // 导航栏标题
@@ -68,6 +64,8 @@ export default {
         if (res && res._jv) {
           delete res._jv;
           for (let i = 0; i < res.length; i += 1) {
+            res[i].username = res[i].user_name;
+            res[i].avatarUrl = res[i].user_avatar;
             if (res[i].created_at) {
               res[i].time = time2MorningOrAfternoon(res[i].created_at);
             }
