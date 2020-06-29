@@ -23,9 +23,11 @@
             <view class="detail-tip" v-else-if="thread.isApproved == 0">
               {{ t.examineTip }}
             </view>
+
             <qui-topic-content
               :topic-status="thread.isApproved"
               :pay-status="thread.price > 0 && thread.paid"
+              :video-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
               :user-role="thread.user.groups"
@@ -1247,17 +1249,22 @@ export default {
           signType: 'MD5', // 微信签名方式：
           paySign: data.wechat_js.paySign, // 微信签名
         },
-        // function(data) {
-        //   alert('支付唤醒');
-
-        //   if (data.err_msg == 'get_brand_wcpay_request:cancel') {
-        //     resolve;
-        //   } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
-        //     resolve;
-        //   }
-        // },
+        function(data) {
+          // alert('支付唤醒');
+          if (res.err_msg == 'get_brand_wcpay_request:ok') {
+            //微信支付成功，进行支付成功处理
+            console('微信支付成功...');
+          } else if (data.err_msg == 'get_brand_wcpay_request:cancel') {
+            clearInterval(payWechat);
+            console.log('取消支付');
+            resolve;
+          } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
+            clearInterval(payWechat);
+            console.log('支付失败');
+            resolve;
+          }
+        },
       );
-
       payWechat = setInterval(() => {
         if (this.payStatus === 1) {
           clearInterval(payWechat);
@@ -1543,9 +1550,6 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.getters['session/get']('auth').open();
-      }
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }

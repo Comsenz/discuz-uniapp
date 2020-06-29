@@ -9,7 +9,7 @@
             <view class="list-box__notice__hl-image">
               <qui-avatar
                 class="list-box__notice__hl-avatar"
-                :user="{ username: item.user_name, avatarUrl: item.user_avatar }"
+                :user="item"
                 @click="jumpUserPage(item.user_id)"
               />
             </view>

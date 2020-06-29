@@ -22,8 +22,8 @@
           <view class="details_title">
             <qui-icon
               class="post-box__hd-l__icon"
-              name="icon-share"
-              size="30"
+              name="icon-share1"
+              size="26"
               color="#777"
             ></qui-icon>
             <button open-type="share" plain="true" @click="triggerShare" class="shareBtn">
@@ -180,9 +180,10 @@ export default {
 $otherHeight: 292rpx;
 .topic-content-header {
   padding: 15rpx;
-  margin-bottom: 10rpx;
+  margin-bottom: 30rpx;
   font-size: 40rpx;
   background: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
   &_title {
     margin: 20rpx;
@@ -190,6 +191,8 @@ $otherHeight: 292rpx;
   }
   &_details {
     display: flex;
+    justify-content: space-between;
+    padding: 5rpx 0 10rpx 20rpx;
   }
   &_toAll {
     margin-bottom: 15rpx;
@@ -201,26 +204,21 @@ $otherHeight: 292rpx;
 .details_title {
   display: flex;
   flex-direction: row;
-  width: 33.3%;
-  margin-top: 10rpx;
-  margin-left: 40rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  color: --color(--qui-FC-AAA);
+  align-items: center;
+  font-size: 26rpx;
+  color: --color(--qui-FC-777);
   text {
-    font-size: 24rpx;
-    color: --color(--qui-FC-34);
+    font-size: 28rpx;
+    color: --color(--qui-FC-333);
   }
 }
 
 .shareBtn {
   width: 100rpx;
-  height: 40rpx;
   padding: 0;
   margin: 0;
   font-size: 24rpx;
-  // font-weight: normal;
-  line-height: 30rpx;
+  color: --color(--qui-FC-777);
   background: --color(--qui-BG-2);
   // opacity: 0;
 }

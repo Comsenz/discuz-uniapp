@@ -10,14 +10,7 @@
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
-          <!-- <image
-            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
-            @error="imageError"
-            v-if="imageStatus"
-            lazy-load
-          ></image> -->
           <qui-avatar :user="{ avatarUrl: themeImage, username: userName }" />
-          <!-- <image v-else src="/static/noavatar.gif"></image> -->
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">

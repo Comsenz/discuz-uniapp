@@ -2,7 +2,7 @@
   <view class="no-data">
     <view class="no-data__body">
       <qui-icon :name="iconName" color="#aaa" size="25"></qui-icon>
-      <text class="tips">{{ tips || i18n.t('list.noData') }}</text>
+      <text class="tips">{{ tips || i18n.t('discuzq.list.noData') }}</text>
     </view>
   </view>
 </template>

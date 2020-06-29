@@ -76,7 +76,7 @@ export default {
         // eslint-disable-next-line no-param-reassign
         delete data._jv;
         if (this.pageNum > 1) {
-          this.topics = this.topic.concat(data);
+          this.topics = this.topics.concat(data);
         } else {
           this.topics = data;
         }

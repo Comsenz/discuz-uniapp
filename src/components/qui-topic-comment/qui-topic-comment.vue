@@ -2,11 +2,8 @@
   <view class="themeCount">
     <view class="themeItem">
       <view class="themeItem__header">
-        <view class="themeItem__header__img">
-          <qui-avatar
-            :user="{ username: userName, avatarUrl: commentAvatarUrl }"
-            @click="personJump"
-          />
+        <view class="themeItem__header__img" @click="personJump">
+          <qui-avatar :user="{ username: userName, avatarUrl: commentAvatarUrl }" />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">

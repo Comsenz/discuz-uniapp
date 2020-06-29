@@ -19,7 +19,9 @@ export default class Request {
     // #ifndef MP-ALIPAY || APP-PLUS
     responseType: 'text',
     // #endif
-    custom: {},
+    custom: {
+      loading: true,
+    },
     // #ifdef MP-ALIPAY
     timeout: 30000,
     // #endif

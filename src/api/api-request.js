@@ -43,10 +43,13 @@ http.validateStatus = statusCode => {
  */
 http.interceptor.request(conf => {
   const config = conf;
-  uni.showLoading({
-    title: i18n.t('core.loading'),
-    mask: true,
-  });
+
+  if (config.custom.loading) {
+    uni.showLoading({
+      title: i18n.t('core.loading'),
+      mask: true,
+    });
+  }
 
   // #ifdef MP-WEIXIN
   app = Vue.prototype;
@@ -73,13 +76,17 @@ http.interceptor.request(conf => {
 // 在请求之后拦截
 http.interceptor.response(
   response => {
-    uni.hideLoading();
+    if (response.config.custom.loading) {
+      uni.hideLoading();
+    }
     // 状态码 >= 200 < 300 会走这里
     response.status = response.statusCode;
     return response;
   },
   response => {
-    uni.hideLoading();
+    if (response.config.custom.loading) {
+      uni.hideLoading();
+    }
 
     // #ifdef MP-WEIXIN
     app = getApp().$vm;

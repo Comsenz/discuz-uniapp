@@ -199,6 +199,7 @@ export default {
     sort: '排序',
     loadMore: '上拉加载更多',
     TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
+    available: '暂无数据',
   },
   topic: {
     topictitle: '#话题#',

@@ -6,12 +6,9 @@
     </view>
     <view class="det-per-list" v-if="personRes.length > 0">
       <view class="det-person" v-for="(person, index) in personRes" :key="index">
-        <qui-avatar
-          v-if="person.showAvatar"
-          :user="person"
-          size="50"
-          @click="personJump(person.id)"
-        />
+        <view @click="personJump(person.id)">
+          <qui-avatar v-if="person.showAvatar" :user="person" size="50" />
+        </view>
       </view>
     </view>
     <view class="fold-box" v-if="personNum > limitCount">
