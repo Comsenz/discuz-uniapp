@@ -1,7 +1,7 @@
 <template>
   <view class="qui-avatar" @click="click" @tap="click">
     <img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />
-    <view v-else :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
+    <view v-else-if="styleText" :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
       {{ usernameAt }}
     </view>
   </view>
@@ -45,7 +45,7 @@ export default {
         : this.i18n.t('core.noavatar');
     },
   },
-  created() {
+  mounted() {
     this.styleText = this.style();
   },
   methods: {
