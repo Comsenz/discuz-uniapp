@@ -114,19 +114,18 @@ export default {
 $otherHeight: 292rpx;
 .topic-content-item {
   position: relative;
-  height: 99.5rpx;
+  padding: 35rpx 0;
   margin: 0 40rpx;
-  line-height: 99.5rpx;
   border-bottom: 0.5rpx solid --color(--qui-BOR-ED);
   &_title {
-    position: absolute;
-    left: 0;
+    padding-right: 150rpx;
     font-size: 30rpx;
     font-weight: 600;
     color: --color(--qui-FC-333);
   }
   &_heat {
     position: absolute;
+    top: 35rpx;
     right: 15rpx;
     font-size: 24rpx;
     color: --color(--qui-BOR-AAA);
