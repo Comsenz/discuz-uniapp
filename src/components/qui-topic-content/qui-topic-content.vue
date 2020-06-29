@@ -92,7 +92,7 @@
         </view>
         <view
           class="theme__content__videocover"
-          v-if="themeType == 2 && !payStatus && coverImage != null"
+          v-if="themeType == 2 && !videoStatus && coverImage != null"
           @click="videocoverClick"
         >
           <image
@@ -102,7 +102,7 @@
           ></image>
         </view>
         <video
-          v-if="themeType == 2 && payStatus"
+          v-if="themeType == 2 && videoStatus"
           preload="auto"
           bindpause="handlepause"
           playsinline
@@ -214,6 +214,11 @@ export default {
     },
     // 是否支付
     payStatus: {
+      type: Boolean,
+      default: true,
+    },
+    // 视频显示状态
+    videoStatus: {
       type: Boolean,
       default: true,
     },

@@ -68,10 +68,10 @@
         >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
-            <rich-text
+            <qui-uparse
               class="sticky__isSticky__text"
-              :nodes="item.type == 1 ? item.title : item.firstPost.summary"
-            ></rich-text>
+              :content="item.type == 1 ? item.title : item.firstPost.summary"
+            ></qui-uparse>
             <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
           </view>
         </view>
@@ -132,7 +132,7 @@
       :filter-list="filterList"
       :show-search="showSearch"
       @searchClick="searchClick"
-      content-top="0"
+      :content-top="filterTop"
       ref="filter"
     ></qui-filter-modal>
     <uni-popup ref="popupHead" type="bottom">

@@ -29,8 +29,12 @@
             <text>{{ i18n.t('core.sort') }}</text>
           </view>
           <view class="dropDownBox" v-show="dropDownShow">
-            <view @click="switchSort('-viewCount')">{{ i18n.t('topic.hot') }}</view>
-            <view @click="switchSort('-threadCount')">{{ i18n.t('topic.contents') }}</view>
+            <view @click="switchSort('-viewCount')" class="dropDownBox-view">
+              {{ i18n.t('topic.hot') }}
+            </view>
+            <view @click="switchSort('-threadCount')">
+              {{ i18n.t('topic.contents') }}
+            </view>
           </view>
         </view>
       </view>
@@ -147,7 +151,7 @@ export default {
   },
   onReachBottom() {
     if (this.meta.next) {
-      this.topics('', (currentPage += 1));
+      this.topics((currentPage += 1));
     }
   },
 };
@@ -164,20 +168,47 @@ export default {
 }
 .dropDownBox {
   position: absolute;
-  top: 60rpx;
-  right: 0;
-  left: -10rpx;
+  top: 50rpx;
+  right: -20rpx;
   z-index: 10;
-  width: 150rpx;
+  width: 180rpx;
+  padding: 10rpx;
   text-align: center;
-  background: #fff;
+  background: --color(--qui-BG-2);
+  border-radius: 10rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.16);
+  box-sizing: border-box;
   view {
-    padding: 15rpx 10rpx;
-    color: #999;
-    border: 0.5rpx solid #efefef;
+    height: 70rpx;
+    font-size: $fg-f28;
+    line-height: 70rpx;
+    color: --color(--qui-FC-777);
+    text-align: center;
   }
-  view:first-child {
-    border-bottom: 0.5rpx solid #efefef;
+  &-view {
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  &:before {
+    position: absolute;
+    top: -12rpx;
+    right: 24rpx;
+    width: 0;
+    height: 0;
+    border-color: transparent transparent --color(--qui-BOR-ED);
+    border-style: solid;
+    border-width: 0 12rpx 12rpx;
+    content: '';
+  }
+  &:after {
+    position: absolute;
+    top: -10rpx;
+    right: 24rpx;
+    width: 0;
+    height: 0;
+    border-color: transparent transparent --color(--qui-BG-2);
+    border-style: solid;
+    border-width: 0 12rpx 12rpx;
+    content: '';
   }
 }
 
@@ -188,7 +219,6 @@ $otherHeight: 292rpx;
 }
 .topic-list-page-header {
   margin: 24rpx;
-  font-weight: 700;
   &_title {
     float: left;
     margin: 20rpx;
@@ -203,11 +233,16 @@ $otherHeight: 292rpx;
     font-size: 28rpx;
     color: #1878f3;
   }
+  .icon-sort {
+    margin-right: 8rpx;
+  }
 }
 .topic-page-list-item {
-  padding: 15rpx;
+  padding: 30rpx;
   margin: 20rpx;
   background: --color(--qui-BG-2);
+  border-radius: 6rpx;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
   &_title {
     font-size: 35rpx;

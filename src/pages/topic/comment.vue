@@ -257,9 +257,7 @@
     >
       <u-loading :size="60"></u-loading>
     </view>
-    <qui-page-message
-      v-else-if="thread.isDeleted || post.isDeleted || !loaded || !status"
-    ></qui-page-message>
+    <qui-page-message v-else-if="thread.isDeleted || post.isDeleted"></qui-page-message>
   </qui-page>
 </template>
 
@@ -745,7 +743,6 @@ export default {
           console.log(err);
         });
     },
-
 
     // 评论点回复击发布事件
     publishClick() {
