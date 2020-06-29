@@ -23,9 +23,11 @@
             <view class="detail-tip" v-else-if="thread.isApproved == 0">
               {{ t.examineTip }}
             </view>
+
             <qui-topic-content
               :topic-status="thread.isApproved"
               :pay-status="thread.price > 0 && thread.paid"
+              :video-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
               :user-role="thread.user.groups"
