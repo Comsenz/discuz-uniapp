@@ -51,18 +51,18 @@ module.exports = {
           }
           if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
             // 用户名模式
-            console.log('用户名模式跳转到注册并绑定页');
+            console.log('用户名模式跳转到登录页');
             uni.navigateTo({
-              url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+              url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
             });
             return false;
           }
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式
-          console.log('用户名模式跳转到注册并绑定页');
+          console.log('用户名模式跳转到登录页');
           uni.navigateTo({
-            url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
           });
           return false;
         }
