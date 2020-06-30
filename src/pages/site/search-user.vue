@@ -1,8 +1,13 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('search.searchusers')"></qui-header-back>
+    <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
-        <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
+        <view class="icon-content-search">
+          <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+        </view>
         <input
           type="text"
           class="search-box__content-input"
@@ -32,12 +37,7 @@
         :key="index"
         @tap="toProfile(item.id)"
       >
-        <image
-          class="search-item__users__avatar"
-          :src="item.avatarUrl || '/static/noavatar.gif'"
-          alt="avatarUrl"
-          mode="aspectFill"
-        ></image>
+        <qui-avatar class="search-item__users__avatar" :user="item" size="70" />
         <qui-cell-item
           :title="item.username"
           arrow
@@ -65,6 +65,10 @@ export default {
     this.getUserList(params.value);
   },
   methods: {
+    // 头像加载失败,显示默认头像
+    imageError(index) {
+      this.data[index].avatarUrl = '/static/noavatar.gif';
+    },
     searchInput(e) {
       this.searchValue = e.target.value;
       if (this.timeout) clearTimeout(this.timeout);
@@ -88,6 +92,9 @@ export default {
         if (res._jv) {
           delete res._jv;
         }
+        res.forEach((v, i) => {
+          res[i].avatarUrl = v.avatarUrl || '/static/noavatar.gif';
+        });
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;
@@ -125,10 +132,32 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-.search-item {
-  background-color: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+/* #ifdef H5 */
+$height: calc(100vh - 200rpx);
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 110rpx);
+/* #endif */
+
+.search /deep/ {
+  /* #ifdef H5 */
+  height: 100vh;
+  min-height: auto;
+  overflow: hidden;
+  /* #endif */
+  .search-item {
+    background-color: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .search-box {
+    /* #ifdef H5 */
+    margin-top: 80rpx;
+    /* #endif */
+    background: --color(--qui-BG-2);
+  }
 }
+
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
@@ -139,18 +168,12 @@ export default {
   position: absolute;
   top: 16rpx;
   left: 40rpx;
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 50%;
 }
 .search-item__users {
   position: relative;
   padding-left: 130rpx;
 }
-.search .search-box {
-  background: --color(--qui-BG-2);
-}
 .scroll-y {
-  max-height: calc(100vh - 110rpx);
+  max-height: $height;
 }
 </style>

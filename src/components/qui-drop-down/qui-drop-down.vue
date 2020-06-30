@@ -9,12 +9,11 @@
         right: right + 'rpx',
         left: left + 'rpx',
         width: width + 'rpx',
-        background: bgColor,
       }"
     >
       <view class="select-content">
         <view class="jt-bg" :style="{ right: jtRight + 'rpx' }"></view>
-        <view class="jt-con" :style="{ right: jtRight + 'rpx', background: bgColor }"></view>
+        <view class="jt-con" :style="{ right: jtRight + 'rpx' }"></view>
         <view class="select-con" v-for="(child, index) in list" :key="index">
           <view
             class="select-child"
@@ -69,10 +68,10 @@ export default {
       type: [Number, String],
     },
     // 下拉框背景色
-    bgColor: {
-      default: '#ffffff',
-      type: String,
-    },
+    // bgColor: {
+    //   default: '#ffffff',
+    //   type: String,
+    // },
     // 气泡背景箭头位置
     jtRight: {
       default: '25',
@@ -97,6 +96,7 @@ export default {
 .select-box {
   display: flex;
   flex-direction: column;
+  background: --color(--qui-BG-FFF);
   border: 1px solid --color(--qui-BOR-ED);
   box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.16);
 }
@@ -117,6 +117,7 @@ export default {
     top: -8rpx;
     width: 16rpx;
     height: 16rpx;
+    background: --color(--qui-BG-FFF);
     transform: rotate(45deg);
   }
   .select-child {

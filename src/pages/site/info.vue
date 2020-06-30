@@ -3,63 +3,57 @@
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
-      :theme-num="forums.other.count_users"
-      :post="i18n.t('home.homecontent')"
-      :post-num="forums.other.count_threads"
-      :share="i18n.t('home.share')"
+      :theme-num="forums.other && forums.other.count_users"
+      :post-num="forums.other && forums.other.count_threads"
+      :share-btn="shareBtn"
+      :share-show="shareShow"
+      :is-show-more="false"
+      :is-show-back="false"
+      :is-show-home="false"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
+      @closeShare="closeShare"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
-              </view>
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
+      <qui-share @close="cancel"></qui-share>
     </uni-popup>
     <view class="site-item">
       <qui-cell-item
         class="cell-item--left cell-item--auto"
         :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site.site_introduction"
+        :addon="forums.set_site && forums.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site.site_install"
+        :addon="forums.set_site && forums.set_site.site_install"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="'¥' + (forums.set_site.site_price || 0)"
+        :addon="'¥' + ((forums.set_site && forums.set_site.site_price) || 0)"
         class="site-item__pay"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.periodvalidity')"
         :addon="
-          forums.set_site.site_expire
-            ? forums.set_site.site_expire + i18n.t('site.day')
+          forums.set_site && forums.set_site.site_expire
+            ? (forums.set_site && forums.set_site.site_expire) + i18n.t('site.day')
             : i18n.t('site.permanent')
         "
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
-          <image
+          <qui-avatar
             class="site-item__owner-avatar"
-            :src="forums.set_site.site_author.avatar || '/static/noavatar.gif'"
-            alt="avatarUrl"
-            @tap="toProfile(forums.set_site.site_author.id)"
-            mode="aspectFill"
-          ></image>
-          <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
+            :user="{
+              username: forums.set_site && forums.set_site.site_author.username,
+              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
+            }"
+            size="60"
+            @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
+          />
+          <text class="site-item__owner-name">
+            {{ forums.set_site && forums.set_site.site_author.username }}
+          </text>
         </view>
       </qui-cell-item>
       <qui-cell-item :title="i18n.t('home.theme')" slot-right :border="false">
@@ -69,13 +63,12 @@
             :key="index"
             class="site-item__person__content"
           >
-            <image
+            <qui-avatar
               class="site-item__person__content-avatar"
-              :src="item.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
+              :user="item"
+              size="60"
               @tap="toProfile(item.id)"
-              mode="aspectFill"
-            ></image>
+            />
           </view>
         </view>
       </qui-cell-item>
@@ -83,17 +76,18 @@
     <view class="site-invite">
       <view class="site-invite__detail">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
-        <text class="site-invite__detail__bold">DISCUZQ</text>
+        <text class="site-invite__detail__bold">
+          {{ forums.set_site && forums.set_site.site_name }}
+        </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.paynow') }}，¥{{ forums.set_site.site_price || 0 }}
+          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
           {{
-            forums.set_site.site_expire
-              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site.site_expire}${i18n.t(
-                  'site.day',
-                )}`
+            forums.set_site && forums.set_site.site_expire
+              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
+                  forums.set_site.site_expire}${i18n.t('site.day')}`
               : ` / ${i18n.t('site.permanent')}`
           }}
         </qui-button>
@@ -101,15 +95,38 @@
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
-          :money="forums.set_site.site_price"
+          :money="forums.set_site && parseFloat(forums.set_site.site_price)"
           :wallet-status="true"
-          balance="10"
+          :balance="10"
           :pay-type-data="payTypeData"
           @radioMyHead="radioMyHead"
           @onInput="onInput"
           @paysureShow="paysureShow"
         ></qui-pay>
       </view>
+      <uni-popup ref="codePopup" type="center" class="code-popup-box">
+        <view class="code-content" v-if="qrcodeShow">
+          <view class="code-title">{{ pay.payNow }}</view>
+          <view class="code-pay-money">
+            <view class="code-yuan">￥</view>
+            {{ forums.set_site && forums.set_site.site_price }}
+          </view>
+          <view class="code-type-box">
+            <view class="code-type-tit">{{ pay.payType }}</view>
+            <view class="code-type">
+              <qui-icon
+                class="code-type-icon"
+                name="icon-wxPay"
+                size="36"
+                color="#09bb07"
+              ></qui-icon>
+              <view class="code-type-text">{{ pay.wxPay }}</view>
+            </view>
+          </view>
+          <image :src="codeUrl" class="code-img"></image>
+          <view class="code-tip">{{ pay.wechatIdentificationQRcode }}</view>
+        </view>
+      </uni-popup>
       <qui-toast ref="toast"></qui-toast>
     </view>
   </qui-page>
@@ -117,37 +134,63 @@
 
 <script>
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
+
+let payWechat = null;
+let payPhone = null;
 
 export default {
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef  H5
+    wxshare,
+    appCommonH,
+    loginAuth,
+    // #endif
+  ],
   data() {
     return {
       payShowStatus: true, // 是否显示支付
+      codeUrl: '', // 二维码支付url，base64
+      shareBtn: 'icon-share1',
+      shareShow: false, // h5内分享提示信息
       isAnonymous: '0',
+      qrcodeShow: false, // 二维码弹框
+      isWeixin: '', // 是否是微信浏览器内
+      isPhone: false,
+      wxRes: '',
+      browser: 0, // 0为小程序，1为除小程序之外的设备
+      payStatus: false, // 订单支付状态
+      orderSn: '', // 订单编号
       payTypeData: [
         {
-          name: '微信支付',
+          name: this.i18n.t('pay.wxPay'),
           icon: 'icon-wxPay',
           color: '#09bb07',
           value: '0',
         },
       ],
-      bottomData: [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-        },
-      ],
     };
   },
+  computed: {
+    // pay支付语言包
+    pay() {
+      return this.i18n.t('pay');
+    },
+  },
   onLoad() {
+    // #ifdef MP-WEIXIN
     uni.hideHomeButton();
+    // #endif
+    // #ifndef MP-WEIXIN
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone;
+    this.browser = 1;
+    // #endif
     this.$u.event.$on('logind', data => {
       if (data.paid) {
         uni.redirectTo({
@@ -155,6 +198,13 @@ export default {
         });
       }
     });
+    // #ifdef  H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
+  },
+  onUnload() {
+    clearInterval(payWechat);
+    clearInterval(payPhone);
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -171,28 +221,26 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-          },
-        ];
-      }
+      // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
-    },
-    // 头部分享海报
-    shareHead(index) {
-      if (index === 0) {
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$store.getters['session/get']('auth').open();
-          return;
-        }
-        uni.navigateTo({
-          url: '/pages/share/site',
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: 'pages/site/info',
         });
       }
+      // #endif
+    },
+    closeShare() {
+      this.shareShow = false;
+    },
+    // 取消按钮
+    cancel() {
+      this.$refs.popupHead.close();
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
@@ -201,7 +249,7 @@ export default {
     // 输入密码完成时
     onInput(val) {
       this.value = val;
-      this.creatOrder(this.forums.set_site.site_price, '1', val);
+      this.creatOrder(this.forums.set_site.site_price, 1, val);
     },
     // 支付方式选择完成点击确定时
     paysureShow() {
@@ -219,12 +267,19 @@ export default {
       };
       this.$store.dispatch('jv/post', params).then(res => {
         this.orderSn = res.order_sn;
-        // 微信支付
-        this.orderPay(13, value, this.orderSn);
+        if (this.browser === 0) {
+          this.orderPay(13, value, this.orderSn, '0'); // 微信小程序
+        } else if (this.isWeixin && this.isPhone) {
+          this.orderPay(12, value, this.orderSn, '1'); // 微信浏览器
+        } else if (this.isPhone) {
+          this.orderPay(11, value, this.orderSn, '2'); // 手机浏览器
+        } else {
+          this.orderPay(10, value, this.orderSn, '3'); // pc浏览器
+        }
       });
     },
     // 订单支付
-    orderPay(type, value, orderSn) {
+    orderPay(type, value, orderSn, browserType) {
       let params = {};
       params = {
         _jv: {
@@ -233,14 +288,117 @@ export default {
         payment_type: type,
       };
       this.$store.dispatch('jv/post', params).then(res => {
-        this.wechatPay(
-          res.wechat_js.timeStamp,
-          res.wechat_js.nonceStr,
-          res.wechat_js.package,
-          res.wechat_js.signType,
-          res.wechat_js.paySign,
-        );
+        this.wxRes = res;
+        if (browserType === '0') {
+          this.wechatPay(
+            res.wechat_js.timeStamp,
+            res.wechat_js.nonceStr,
+            res.wechat_js.package,
+            res.wechat_js.signType,
+            res.wechat_js.paySign,
+          );
+        } else if (browserType === '1') {
+          if (typeof WeixinJSBridge === 'undefined') {
+            if (document.addEventListener) {
+              document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
+            } else if (document.attachEvent) {
+              document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
+              document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
+            }
+          } else {
+            this.onBridgeReady(res);
+          }
+        } else if (browserType === '2') {
+          payPhone = setInterval(() => {
+            if (this.payStatus === 1) {
+              clearInterval(payPhone);
+              return;
+            }
+            this.getOrderStatus(orderSn, browserType);
+          }, 3000);
+          window.location.href = res.wechat_h5_link;
+        } else if (browserType === '3') {
+          if (res) {
+            this.codeUrl = res.wechat_qrcode;
+            this.payShowStatus = false;
+            this.$refs.codePopup.open();
+            this.qrcodeShow = true;
+            payWechat = setInterval(() => {
+              if (this.payStatus === 1) {
+                clearInterval(payWechat);
+                return;
+              }
+              this.getOrderStatus(this.orderSn, browserType);
+              uni.hideLoading();
+            }, 3000);
+          }
+        }
       });
+    },
+    // 查询订单支状 browserType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    getOrderStatus(orderSn, browserType) {
+      this.$store
+        .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
+        .then(res => {
+          this.payStatus = res.status;
+          this.payStatusNum += 1;
+          if (this.payStatus === 1) {
+            this.payShowStatus = false;
+            this.coverLoading = false;
+            uni.navigateTo({
+              url: '/pages/home/index',
+            });
+            if (browserType === '2') {
+              // return false;
+            } else if (browserType === '3') {
+              // 这是pc扫码支付完成
+              this.$refs.codePopup.close();
+              this.qrcodeShow = false;
+            }
+            this.$refs.toast.show({ message: this.p.paySuccess });
+          }
+        })
+        .catch(() => {
+          this.coverLoading = false;
+          this.$refs.toast.show({ message: this.pay.payFail });
+        });
+    },
+    // 非小程序内微信支付
+    onBridgeReady(data) {
+      // eslint-disable-next-line no-undef
+      WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        {
+          appId: data.wechat_js.appId, // 公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, // 随机串
+          package: data.wechat_js.package,
+          signType: 'MD5', // 微信签名方式：
+          paySign: data.wechat_js.paySign, // 微信签名
+        },
+        this.payCallback(),
+      );
+
+      payWechat = setInterval(() => {
+        if (this.payStatus === 1) {
+          clearInterval(payWechat);
+          return;
+        }
+        this.getOrderStatus(this.orderSn);
+      }, 3000);
+    },
+    // 支付取消失败校验
+    payCallback(data) {
+      // alert('支付唤醒');
+      if (data.err_msg === 'get_brand_wcpay_request:ok') {
+        // 微信支付成功，进行支付成功处理
+      } else if (data.err_msg === 'get_brand_wcpay_request:cancel') {
+        // 取消支付
+        clearInterval(payWechat);
+      } else if (data.err_msg === 'get_brand_wcpay_request:fail') {
+        // 支付失败
+        clearInterval(payWechat);
+      }
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
@@ -261,10 +419,6 @@ export default {
         },
       });
     },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupHead.close();
-    },
     // 点击头像到个人主页
     toProfile(userId) {
       uni.navigateTo({
@@ -274,10 +428,22 @@ export default {
     // 跳支付页面
     submit() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
         return;
       }
-      this.$refs.payShow.payClickShow();
+      this.payStatus = false;
+      this.payStatusNum = 0;
+      this.payShowStatus = true;
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow();
+      });
     },
     // 调取用户信息取消弹框
     close() {
@@ -289,18 +455,18 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.site {
-  /deep/ .header {
+.site /deep/ {
+  .header {
     height: auto;
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
-  .header /deep/ .circleDet {
+  .header .circleDet {
     padding: 60rpx 40rpx 50rpx;
     opacity: 1;
   }
-  .header /deep/ .circleDet-txt {
+  .header .circleDet-txt {
     color: --color(--qui-FC-333);
     opacity: 1;
   }
@@ -308,15 +474,100 @@ export default {
     height: 75rpx;
     padding-top: 71rpx;
   }
-  /deep/ .cell-item__body__content-title {
-    width: 112rpx;
+  .cell-item__body__content-title {
+    width: 120rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
+  .header .circleDet-num,
+  .header .circleDet-share {
+    color: --color(--qui-FC-333);
+  }
+  .site-invite {
+    text-align: center;
+  }
+  .popup-pay {
+    .pay-title,
+    .pay-radio {
+      display: none;
+    }
+    .pay-btn {
+      margin-top: 40rpx;
+      margin-bottom: 40rpx;
+    }
+  }
+  .popup-pay-type {
+    padding-top: 40rpx;
+    .pay-title {
+      display: none;
+    }
+    .pay-tip {
+      display: none;
+    }
+    .pay-type-chi {
+      margin-bottom: 40rpx;
+    }
+  }
 }
-.header .circleDet .circleDet-num,
-.header .circleDet .circleDet-share {
-  color: --color(--qui-FC-333);
+// 微信二维码弹框
+
+.code-content {
+  position: fixed;
+  top: 10%;
+  left: 11%;
+  z-index: 22;
+  display: flex;
+  flex-direction: column;
+  width: 78%;
+  padding: 40rpx;
+  background: --color(--qui-BG-FFF);
+  border-radius: 16rpx;
+  box-sizing: border-box;
+  .code-title {
+    text-align: center;
+  }
+  .code-pay-money {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 36rpx;
+    padding-bottom: 36rpx;
+    font-size: 70rpx;
+    .code-yuan {
+      font-size: 48rpx;
+      line-height: 66rpx;
+    }
+  }
+}
+
+.code-type-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 24rpx 0 34rpx;
+  line-height: 36rpx;
+  border-top: 1px solid --color(--qui-BG-ED);
+  .code-type-tit {
+    color: --color(--qui-FC-AAA);
+  }
+  .code-type {
+    display: flex;
+    flex-direction: row;
+    .code-type-icon {
+      font-size: 36rpx;
+    }
+    .code-type-text {
+      padding-left: 12rpx;
+    }
+  }
+}
+.code-img {
+  align-self: center;
+  width: 380rpx;
+  height: 380rpx;
+}
+.code-tip {
+  padding: 14rpx 0 20rpx;
 }
 //下面部分样式
 .site-item {
@@ -342,19 +593,12 @@ export default {
   margin: 50rpx auto 30rpx;
   font-size: 28rpx;
 }
-.site-invite {
-  padding-bottom: 20rpx;
-  text-align: center;
-}
 .site-item__pay .cell-item__body__right-text {
   color: --color(--qui-RED);
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
-  width: 60rpx;
-  height: 60rpx;
   margin-left: 8rpx;
-  border-radius: 50%;
 }
 .site-item__person__content-avatar {
   margin-left: 8rpx;
@@ -367,6 +611,7 @@ export default {
   margin-right: 20rpx;
 }
 .site-item__person {
+  display: flex;
   height: 60rpx;
   overflow: hidden;
   font-size: 0;
@@ -376,27 +621,5 @@ export default {
 }
 .cell-item--left .cell-item__body__right {
   text-align: left;
-}
-.popup-pay {
-  .pay-title,
-  .pay-radio {
-    display: none;
-  }
-  .pay-btn {
-    margin-top: 40rpx;
-    margin-bottom: 40rpx;
-  }
-}
-.popup-pay-type {
-  padding-top: 40rpx;
-  .pay-title {
-    display: none;
-  }
-  .pay-tip {
-    display: none;
-  }
-  .pay-type-chi {
-    margin-bottom: 40rpx;
-  }
 }
 </style>

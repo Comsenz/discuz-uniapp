@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-setphon">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('modify.setphontitle')"></qui-header-back>
+    <!-- #endif -->
     <view class="new" @click.stop="toggleBox">
       <view class="new-phon" v-if="phon">
         <view class="new-phon-test">
@@ -185,6 +188,12 @@ export default {
               duration: 1000,
             });
             if (this.typebind === 'bind') {
+              // #ifdef H5
+              uni.navigateBack({
+                delta: 1,
+              });
+              // #endif
+              // #ifndef H5
               uni.navigateBack({
                 delta: 1,
                 success() {
@@ -192,7 +201,14 @@ export default {
                   pages[1].onLoad();
                 },
               });
+              // #endif
             } else {
+              // #ifdef H5
+              uni.navigateBack({
+                delta: 2,
+              });
+              // #endif
+              // #ifndef H5
               uni.navigateBack({
                 delta: 2,
                 success() {
@@ -200,6 +216,7 @@ export default {
                   pages[1].onLoad();
                 },
               });
+              // #endif
             }
           }
         })
@@ -256,75 +273,79 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.new {
-  width: 100vw;
-  height: 100vh;
-  padding-top: 31rpx;
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.new-phon {
-  width: 710rpx;
-  margin-left: 40rpx;
-  font-size: $fg-f50;
-  font-weight: bold;
-  line-height: 100rpx;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  box-sizing: border-box;
-}
-.new-phon-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.new-phon-number {
-  display: flex;
-}
-.new-phon-num {
-  width: 399rpx;
-  height: 100rpx;
-  font-size: $fg-f50;
-  font-weight: bold;
-  line-height: 100rpx;
-  color: --color(--qui-FC-333);
-}
-.newphon-erro {
-  margin: 20rpx 0 0 40rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-RED);
-}
-.new-phon-send {
-  display: block;
-  height: 70rpx;
-  min-width: 180rpx;
-  margin: 15rpx 0 0 91rpx;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 70rpx;
-  color: --color(--qui-FC-FFF);
-  text-align: center;
-  background: --color(--qui-BG-HIGH-LIGHT);
-  border-radius: 5rpx;
-}
-.new-input {
-  width: 710rpx;
-  margin: 0 0 0 40rpx;
-}
-.new-input-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-  opacity: 1;
-}
-.new-vftion-input {
-  display: flex;
-  width: 100%;
-  height: 100rpx;
-}
-.new-button {
-  margin: 52rpx 40rpx 0;
+.page-setphon /deep/ {
+  .new {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .new-phon {
+    width: 710rpx;
+    margin-left: 40rpx;
+    font-size: $fg-f50;
+    font-weight: bold;
+    line-height: 100rpx;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-sizing: border-box;
+  }
+  .new-phon-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .new-phon-number {
+    display: flex;
+  }
+  .new-phon-num {
+    width: 399rpx;
+    height: 100rpx;
+    font-size: $fg-f50;
+    font-weight: bold;
+    line-height: 100rpx;
+    color: --color(--qui-FC-333);
+  }
+  .newphon-erro {
+    margin: 20rpx 0 0 40rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-RED);
+  }
+  .new-phon-send {
+    display: block;
+    height: 70rpx;
+    min-width: 180rpx;
+    margin: 15rpx 0 0 91rpx;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 70rpx;
+    color: --color(--qui-FC-FFF);
+    text-align: center;
+    background: --color(--qui-BG-HIGH-LIGHT);
+    border-radius: 5rpx;
+  }
+  .new-input {
+    width: 710rpx;
+    margin: 0 0 0 40rpx;
+  }
+  .new-input-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+    opacity: 1;
+  }
+  .new-vftion-input {
+    display: flex;
+    width: 100%;
+    height: 100rpx;
+  }
+  .new-button {
+    margin: 52rpx 40rpx 0;
+  }
 }
 </style>

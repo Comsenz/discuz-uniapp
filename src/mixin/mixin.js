@@ -5,6 +5,7 @@ module.exports = {
     return {
       theme: this.$u.currentTheme,
       loaded: false,
+      appLoadedStatus: false,
     };
   },
   onLoad() {
@@ -14,6 +15,12 @@ module.exports = {
 
     // getRect挂载到$u上，因为这方法需要使用in(this)，所以无法把它独立成一个单独的文件导出
     this.$u.getRect = this.$uGetRect;
+
+    // #ifdef H5
+    if (app.globalData.appLoadedStatus) {
+      uni.$emit('apploaded');
+    }
+    // #endif
   },
   methods: {
     // 查询节点信息
@@ -37,8 +44,9 @@ module.exports = {
 
     // 更改主题
     themeChanged(theme) {
-      this.theme = theme;
-
+      if (this.theme !== theme) {
+        this.theme = theme;
+      }
       uni.setNavigationBarColor({
         frontColor: theme === THEME_DEFAULT ? '#000000' : '#ffffff',
         backgroundColor: theme === THEME_DEFAULT ? '#ffffff' : '#2e2f30',

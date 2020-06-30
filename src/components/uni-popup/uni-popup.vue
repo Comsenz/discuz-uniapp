@@ -1,5 +1,9 @@
 <template>
-  <view v-if="showPopup" class="uni-popup" @touchmove.stop.prevent="clear">
+  <view
+    v-if="showPopup"
+    class="uni-popup"
+    @touchmove.stop.prevent="clear"
+  >
     <uni-transition
       :mode-class="['fade']"
       :styles="maskClass"

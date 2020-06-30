@@ -93,7 +93,6 @@ export default {
     },
     clear() {
       this.password = '';
-      this.$emit('clear');
     },
     close() {
       this.password = '';
@@ -130,7 +129,7 @@ export default {
 }
 .content {
   position: fixed;
-  top: 15%;
+  top: 12%;
   left: 40rpx;
   z-index: 9;
   display: flex;

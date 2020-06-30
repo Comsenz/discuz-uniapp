@@ -10,6 +10,76 @@
       }
     },
     {
+      "path": "pages/topic/content",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationStyle": "default"
+      }
+    }, 
+    {
+      "path": "pages/topic/list",
+      "style": {
+        "navigationBarTitleText": "话题列表",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationStyle": "default"
+      }
+    }, 
+    {
+      "path": "pages/topic/topic",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "#话题#"
+      }
+    },
+    // 登录注册
+    {
+      "path": "pages/user/phone-number-login",
+      "style": {
+        "navigationBarTitleText": "手机号码登录"
+      }
+    },
+    {
+      "path": "pages/user/verification-code-login",
+      "style": {
+        "navigationBarTitleText": "手机号码登录"
+      }
+    },
+    {
+      "path": "pages/user/login-bind",
+      "style": {
+        "navigationBarTitleText": "登录并绑定"
+      }
+    },
+    {
+      "path": "pages/user/register-bind",
+      "style": {
+        "navigationBarTitleText": "注册并绑定"
+      }
+    },
+    {
+      "path": "pages/user/login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/user/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
+      "path": "pages/user/phone-register-reason",
+      "style": {
+        "navigationBarTitleText": "注册原因"
+      }
+    },    
+
+    {
       "path": "pages/topic/index",
       "style": {
         "navigationBarTitleText": "内容详情页"
@@ -107,13 +177,6 @@
       }
     },
 
-    // 消息页面
-    // {
-    //   "path": "pages/notice/index",
-    //   "style": {
-    //     "navigationBarTitleText": "消息"
-    //   }
-    // },
     {
       "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
       "style": {
@@ -164,7 +227,7 @@
       }
     },
     {
-      "path": "components/qui-at-member-page/qui-at-member-page",
+      "path": "pages/user/at-member",
       "style": {
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTextStyle": "black",
@@ -258,6 +321,12 @@
       "path": "pages/modify/authen",
       "style": {
         "navigationBarTitleText": "验证身份"
+      }
+    },
+    {
+      "path": "pages/user/wechat",
+      "style": {
+        "navigationBarTitleText": "微信授权"
       }
     }
   ],

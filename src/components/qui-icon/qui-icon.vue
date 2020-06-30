@@ -9,7 +9,7 @@ export default {
   name: 'QuiIcon',
   props: {
     name: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
     size: {

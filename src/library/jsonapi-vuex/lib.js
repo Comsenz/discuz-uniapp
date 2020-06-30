@@ -586,10 +586,12 @@ const Utils = class {
                 }
               });
             }
+            if (data._jv.type === 'users') {
+              delete data.avatarUrl;
+            }
             data = merge(oldRecord, data);
           }
         }
-
         Vue.set(state[type], id, data);
       }
     }

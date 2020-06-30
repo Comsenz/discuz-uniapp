@@ -8,18 +8,30 @@
       <u-loading :size="60"></u-loading>
     </view>
     <qui-page-message v-else-if="showMessage"></qui-page-message>
-    <slot v-else />
+    <view v-else><slot /></view>
 
+    <!-- #ifdef MP-WEIXIN -->
     <uni-popup ref="auth" type="bottom">
       <qui-auth @login="login" @close="close"></qui-auth>
     </uni-popup>
+    <!-- #endif -->
   </view>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+// #ifdef H5
+import user from '@/mixin/user';
+import forums from '@/mixin/forums';
 
+// #endif
+// #ifndef MP-WEIXIN
+import appCommonH from '@/utils/commonHelper';
+// #endif
 export default {
+  // #ifdef H5
+  mixins: [forums, appCommonH, user],
+  // #endif
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -28,7 +40,16 @@ export default {
       return this.forumError.loading;
     },
     showMessage() {
-      return ['not_install', 'site_closed', 'ban_user'].indexOf(this.forumError.code) !== -1;
+      return (
+        [
+          'not_install',
+          'site_closed',
+          'ban_user',
+          'model_not_found',
+          'dataerro',
+          'permission_denied',
+        ].indexOf(this.forumError.code) !== -1
+      );
     },
   },
   watch: {
@@ -39,20 +60,121 @@ export default {
     },
   },
   mounted() {
+    // #ifdef MP-WEIXIN
     this.$store.dispatch('session/setAuth', this.$refs.auth);
     if (!this.loading && !this.showMessage) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$refs.auth.open();
       }
     }
+    // #endif
+    // #ifdef H5
+    this.$store.dispatch('session/setAuth', {
+      open: () => {
+        const url = '/pages/home/index';
+        console.log('forums', this.forums);
+        console.log('微信浏览器：', appCommonH.isWeixin().isWeixin);
+        if (appCommonH.isWeixin().isWeixin) {
+          // 微信浏览器
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+            // 用户名模式
+            console.log('用户名模式跳转到注册并绑定页');
+            this.$store
+              .dispatch('session/wxh5Login')
+              .then(res => {
+                console.log('校验成功', res);
+                this.logind();
+                uni.navigateTo({
+                  url: '/pages/home/index',
+                });
+              })
+              .catch(err => {
+                console.log(err);
+                uni.navigateTo({
+                  url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+                });
+              });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+            // 手机号模式
+            console.log('手机号模式跳转到手机号+验证码登陆页');
+            this.$store
+              .dispatch('session/wxh5Login')
+              .then(res => {
+                console.log('校验成功', res);
+                this.logind();
+                uni.navigateTo({
+                  url: '/pages/home/index',
+                });
+              })
+              .catch(err => {
+                console.log(err);
+                uni.navigateTo({
+                  url: `/pages/user/verification-code-login?url=${url}`,
+                });
+              });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            // 无感模式
+            console.log('无感模式');
+            this.$store
+              .dispatch('session/wxh5Login')
+              .then(res => {
+                console.log('校验成功', res);
+                this.logind();
+                uni.navigateTo({
+                  url: '/pages/home/index',
+                });
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
+        } else {
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+              // 手机号模式
+              console.log('手机号模式跳转到手机号+验证码登陆页');
+              uni.navigateTo({
+                url: `/pages/user/verification-code-login?url=${url}`,
+              });
+            }
+            if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
+              // 用户名模式
+              console.log('用户名模式跳转到登录页');
+              uni.navigateTo({
+                url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+              });
+            }
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+            // 用户名模式
+            console.log('用户名模式跳转到登录页');
+            uni.navigateTo({
+              url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+            // 手机号模式
+            console.log('手机号模式跳转到手机号+验证码登陆页');
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}`,
+            });
+          }
+        }
+      },
+    });
+    // #endif
   },
   methods: {
+    // #ifdef MP-WEIXIN
     close() {
       this.$refs.auth.close();
     },
     login() {
       this.$refs.auth.close();
     },
+    // #endif
   },
 };
 </script>
@@ -63,7 +185,7 @@ export default {
 
 .qui-page {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;

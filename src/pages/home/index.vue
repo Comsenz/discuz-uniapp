@@ -21,7 +21,7 @@
       </view>
 
       <view class="tabBar">
-        <qui-footer @click="cut_index"></qui-footer>
+        <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
       </view>
     </view>
   </qui-page>
@@ -30,13 +30,13 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
+import detectionModel from '@/mixin/detectionModel';
 
 export default {
-  mixins: [forums, user],
+  mixins: [forums, user, detectionModel],
   data() {
     return {
-      show_index: 0, // 控制显示那个组件
       nowThreadId: 0, // 点击主题ID
       showHome: false,
       tagId: 0, // 标签ID
@@ -50,11 +50,24 @@ export default {
     loading() {
       return this.forumError.loading;
     },
+    show_index: {
+      get() {
+        const index = this.$store.state.footerTab.footerIndex;
+        return index ? parseInt(index, 10) - 1 : 0;
+      },
+      set() {
+        // console.log(val);
+      },
+    },
   },
   onLoad() {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
+
+    uni.$on('notiRead', () => {
+      this.getUserInfo(true);
+    });
   },
 
   // 唤起小程序原声分享
@@ -72,31 +85,43 @@ export default {
     };
   },
   onShow() {
-    if (this.currentTab === 'quinotice') {
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+    ) {
+      uni.navigateTo({
+        url: 'pages/home/index',
+      });
+      return;
+    }
+
+    if (this.currentTab === 'quinotice' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].getUnreadNoticeNum();
       });
     }
-    if (this.currentTab === 'quimy') {
+    if (this.currentTab === 'quimy' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].refreshNum();
       });
     }
   },
   methods: {
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
     // 切换组件
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
 
-      if (this.currentTab === 'quinotice') {
-        this.getUserInfo();
-      }
       if (
         !this.$store.getters['session/get']('isLogin') &&
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         this.$store.getters['session/get']('auth').open();
+        this.currentTab = 'home';
+        this.setFooterIndex(0);
         return;
       }
 
@@ -111,14 +136,18 @@ export default {
       this.nowThreadId = e;
     },
     handlePageLoaded() {
+      console.log('2312321klj3kl12j3lk1j23');
       this.showHome = true;
-      this.$nextTick(() => {
-        console.log('nextTick。。。');
-        // 一定要等视图更新完再调用方法
-        this.$refs.home.ontrueGetList();
-      });
+      // this.$nextTick(() => {
+      //   console.log('nextTick。。。');
+      //   // 一定要等视图更新完再调用方法
+      //   this.$refs.home.ontrueGetList();
+      // });
       console.log(this.showHome);
     },
+  },
+  onUnload() {
+    uni.$off('notiRead');
   },
 };
 </script>
@@ -127,8 +156,49 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .view-content {
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 98rpx);
+}
+.ioschoice {
+  width: 100%;
+  height: 100vh;
+  padding-top: 240rpx;
+}
+.ioschoice-img {
+  width: 140rpx;
+  height: 140rpx;
+  margin: 0 auto;
+}
+.ioschoice-img-icon {
+  width: 100%;
+  height: 100%;
+}
+.ioschoice-title {
+  margin: 60rpx 0 20rpx;
+  font-size: 34rpx;
+  font-weight: bold;
+  line-height: 45rpx;
+  color: rgba(51, 51, 51, 1);
+  text-align: center;
+}
+.ioschoice-content {
+  font-size: 28rpx;
+  font-weight: 400;
+  line-height: 37rpx;
+  color: rgba(170, 170, 170, 1);
+  text-align: center;
+}
+.close-btn {
+  width: 510rpx;
+  height: 90rpx;
+  margin: 50rpx auto 0;
+  font-size: 28rpx;
+  font-weight: 400;
+  line-height: 90rpx;
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  background: rgba(24, 120, 243, 1);
+  border: 2rpx solid 2px rgba(237, 237, 237, 1);
 }
 // my页面和notice页面样式渗透不进去的问题
 /deep/ .my .cell-item,

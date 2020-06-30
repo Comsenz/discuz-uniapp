@@ -3,9 +3,13 @@
 import Request from '@/utils/request';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
+// #ifdef MP-WEIXIN
+import Vue from 'vue';
+// #endif
 
 const http = new Request();
 let tostTimeout;
+let app;
 
 /**
  * @description 修改全局默认配置
@@ -37,14 +41,28 @@ http.validateStatus = statusCode => {
  * @cancel {Object} config - catch((err) => {}) err.config === config; 非必传，默认为request拦截器修改之前的config
  * function cancel(text, config) {}
  */
-http.interceptor.request(config => {
-  uni.showLoading({
-    title: i18n.t('core.loading'),
-    mask: true,
-  });
+http.interceptor.request(conf => {
+  const config = conf;
+
+  if (config.custom.loading) {
+    uni.showLoading({
+      title: i18n.t('core.loading'),
+      mask: true,
+    });
+  }
+
+  // #ifdef MP-WEIXIN
+  app = Vue.prototype;
+  // #endif
+
+  // #ifdef H5
+  app = getApp();
+  // #endif
+
   // cancel 为函数，如果调用会取消本次请求。需要注意：调用cancel,本次请求的catch仍会执行。必须return config
   try {
-    const accessToken = uni.getStorageSync('access_token');
+    const accessToken = app.$store.getters['session/get']('accessToken');
+
     if (accessToken) {
       // eslint-disable-next-line no-param-reassign
       config.header.Authorization = `Bearer ${accessToken}`;
@@ -52,38 +70,59 @@ http.interceptor.request(config => {
   } catch (e) {
     // error
   }
-
   return config;
 });
 
 // 在请求之后拦截
 http.interceptor.response(
   response => {
-    uni.hideLoading();
+    if (response.config.custom.loading) {
+      uni.hideLoading();
+    }
     // 状态码 >= 200 < 300 会走这里
     response.status = response.statusCode;
     return response;
   },
   response => {
-    uni.hideLoading();
+    if (response.config.custom.loading) {
+      uni.hideLoading();
+    }
+
+    // #ifdef MP-WEIXIN
+    app = getApp().$vm;
+    // #endif
+
+    // #ifdef H5
+    app = getApp();
+    // #endif
+
     // 对响应错误做点什么 （statusCode !== 200），必须return response
     if (response && response.data && response.data.errors) {
       response.data.errors.forEach(error => {
         switch (error.code) {
           case 'access_denied':
             // token 无效 重新请求
-            uni.removeStorage({
-              key: 'access_token',
-              success() {
-                delete response.config.header.Authorization;
-                http.request(response.config);
-              },
+            delete response.config.header.Authorization;
+            break;
+          case 'model_not_found':
+            console.log('模型未找到');
+            app.$store.dispatch('forum/setError', {
+              code: 'type_404',
+              status: 500,
+            });
+            break;
+          case 'permission_denied':
+            console.log('没有查看权限');
+            app.$store.dispatch('forum/setError', {
+              code: 'type_401',
+              status: 500,
             });
             break;
           case 'not_install':
           case 'site_closed':
           case 'ban_user':
             break;
+
           default:
             clearTimeout(tostTimeout);
             tostTimeout = setTimeout(() => {

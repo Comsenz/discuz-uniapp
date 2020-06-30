@@ -13,7 +13,10 @@
           :src="item.path"
           @click="previewPicture(index)"
         ></image>
-        <view class="qui-uploader-box__uploader-file--load" v-if="item.uploadPercent < 100">
+        <view
+          class="qui-uploader-box__uploader-file--load"
+          v-if="numberdata[index] && numberdata[index].state < 100"
+        >
           <view class="qui-uploader-box__uploader-file--load__mask"></view>
           <text class="qui-uploader-box__uploader-file--load__text">
             {{ i18n.t('discuzq.image.imageUploading') }}
@@ -88,6 +91,8 @@ export default {
       uploadList: [],
       uploadIndex: '',
       formDataAppend: {},
+      lastOrder: 0,
+      numberdata: [],
     };
   },
   watch: {
@@ -95,7 +100,6 @@ export default {
     formData: {
       handler(newVal) {
         this.formData = newVal;
-        console.log(this.formData, '这是监听');
         this.uploadStatus = true;
       },
       deep: true,
@@ -107,6 +111,11 @@ export default {
       this.uploadBeforeList = this.uploadBeforeList.concat(this.filePreview);
       this.uploadList = this.uploadList.concat(this.filePreview);
     }, this.delayTime);
+    if (this.filePreview.length) {
+      this.lastOrder = this.filePreview[this.filePreview.length - 1].order;
+    } else {
+      this.lastOrder = 0;
+    }
   },
   methods: {
     uploadDelete(index) {
@@ -146,7 +155,7 @@ export default {
       const _this = this;
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
-      if (_this.uploadList.length < _this.count) {
+      if (_this.uploadList.length < _this.count || _this.name === 'avatar') {
         // 上传图片到本地
         uni.chooseImage({
           count: _this.count - _this.uploadBeforeList.length,
@@ -158,14 +167,21 @@ export default {
             // 自定义开始上传的效果和回调
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
+              _this.lastOrder += 1;
+              _this.numberdata.push({ state: item.uploadPercent });
+
               return new Promise((resolve, reject) => {
                 res.tempFiles[index].uploadPercent = 0;
                 res.tempFiles[index].uploadStatus = false;
                 _this.uploadBeforeList.push(res.tempFiles[index]);
+                if (_this.uploadBeforeList.length > _this.count) {
+                  _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
+                }
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,
                   beforeUploadFile,
+                  _this.lastOrder,
                   resolve,
                   reject,
                 );
@@ -174,6 +190,10 @@ export default {
 
             Promise.allSettled(promise).then(() => {
               // 返回上传成功列表和成功状态值
+              if (_this.uploadList.length > _this.count) {
+                _this.uploadList = _this.uploadList.slice(0, _this.count);
+              }
+              // console.log(_this.uploadList, '这是组件内');
               _this.$emit('change', _this.uploadList, true);
             });
           },
@@ -182,10 +202,10 @@ export default {
     },
 
     // 上传图片到服务器
-    upload(pathUrl, index, length, resolve, reject) {
+    upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
       _this.formDataAppend = {
-        order: index,
+        order: imgOrder,
       };
       const formdataObj = Object.assign(_this.formData, _this.formDataAppend);
       const uploadTask = uni.uploadFile({
@@ -198,7 +218,18 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
-            _this.uploadList.push(JSON.parse(res.data));
+            if (_this.numberdata[index]) {
+              _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
+            }
+            // console.log(JSON.parse(res.data), '~~~~~~~~~');
+            const resObj = {
+              id: JSON.parse(res.data).data.id,
+              type: JSON.parse(res.data).data.type,
+              order: _this.lastOrder,
+            };
+            // console.log(resObj, '这是新增的对象');
+            _this.uploadList.push(resObj);
+            // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
             _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
           }
@@ -207,7 +238,6 @@ export default {
           return resolve(_this.uploadList);
         },
         fail(res) {
-          console.log(res);
           _this.uploadBeforeList.splice(index, 1);
           _this.uploadList.splice(index, 1);
           // 上传失败回调
@@ -221,8 +251,14 @@ export default {
         for (let i = length; i < _this.uploadBeforeList.length; i += 1) {
           if (progress < 100) {
             _this.uploadBeforeList[i].uploadPercent = progress;
+            if (_this.numberdata[i]) {
+              _this.numberdata[i].state = _this.uploadBeforeList[i].uploadPercent;
+            }
           } else if (progress === 100) {
             _this.uploadBeforeList[i].uploadPercent = 90;
+            if (_this.numberdata[i]) {
+              _this.numberdata[i].state = _this.uploadBeforeList[i].uploadPercent;
+            }
           }
         }
       });

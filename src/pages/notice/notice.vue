@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
     <view class="notification-box">
       <!-- 通知信息 -->
       <scroll-view
@@ -21,15 +24,12 @@
 </template>
 
 <script>
-import quiNotification from '@/components/qui-notification';
 import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
-  components: {
-    quiNotification,
-  },
   data() {
     return {
+      navTitle: '', // 导航栏标题
       loadingType: 'more', // 上拉加载状态
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
@@ -41,12 +41,12 @@ export default {
     console.log('通知列表的params：', params);
     const { title, type, unReadNum } = params;
     this.type = type;
-    let navTitle = title;
+    this.navTitle = title;
     if (parseInt(unReadNum, 10) > 0) {
-      navTitle = `${title}(${unReadNum}条)`;
+      this.navTitle = `${title}(${unReadNum}条)`;
     }
     uni.setNavigationBarTitle({
-      title: navTitle,
+      title: this.navTitle,
     });
     this.getNotices(type);
   },
@@ -64,7 +64,17 @@ export default {
         if (res && res._jv) {
           delete res._jv;
           for (let i = 0; i < res.length; i += 1) {
-            res[i].time = time2MorningOrAfternoon(res[i].created_at);
+            res[i].username = res[i].user_name;
+            res[i].avatarUrl = res[i].user_avatar;
+            if (res[i].created_at) {
+              res[i].time = time2MorningOrAfternoon(res[i].created_at);
+            }
+            if (res[i].thread_created_at) {
+              res[i].thread_time = time2MorningOrAfternoon(res[i].thread_created_at);
+            }
+            if (res[i].reply_post_created_at) {
+              res[i].reply_time = time2MorningOrAfternoon(res[i].reply_post_created_at);
+            }
             if (res[i].type === 'rewarded' && res[i].amount) {
               res[i].money = `￥${res[i].amount}`;
             }
@@ -75,6 +85,7 @@ export default {
           this.noticeList = [...this.noticeList, ...res];
           console.log('this.noticeList', this.noticeList);
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          uni.$emit('notiRead');
         }
       });
     },
@@ -111,6 +122,9 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .notification-box {
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;

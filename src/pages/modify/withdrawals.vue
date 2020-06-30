@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-withdra">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('modify.withdratitle')"></qui-header-back>
+    <!-- #endif -->
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
@@ -111,8 +114,10 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       userid: '',
@@ -139,6 +144,7 @@ export default {
       disabtype: false,
       percentage: 0,
       cost: 0,
+      interval: '',
     };
   },
   onLoad() {
@@ -150,9 +156,6 @@ export default {
     });
   },
   computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
@@ -160,16 +163,6 @@ export default {
   methods: {
     fourse() {
       this.inshow = true;
-    },
-    getCode() {
-      this.showText = false;
-      const interval = setInterval(() => {
-        this.second -= 1;
-      }, 1000);
-      setTimeout(() => {
-        clearInterval(interval);
-        this.showText = true;
-      }, 60000);
     },
     btndata(num) {
       this.code = num;
@@ -221,26 +214,33 @@ export default {
     },
     // 点击获取验证码计时开始
     btnButton() {
-      if (!this.usertestphon) {
+      if (this.forums.qcloud.qcloud_sms === false) {
         uni.showToast({
           icon: 'none',
-          title: this.i18n.t('modify.nohasphon'),
+          title: this.i18n.t('modify.NoteOpen'),
           duration: 2000,
         });
-        return;
+      } else {
+        if (!this.usertestphon) {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.nohasphon'),
+            duration: 2000,
+          });
+          return;
+        }
+        this.posttitle();
+        clearInterval(this.interval);
+        this.sun = false;
+        this.interval = setInterval(() => {
+          this.second -= 1;
+        }, 1000);
+        setTimeout(() => {
+          clearInterval(this.interval);
+          this.sun = true;
+          this.second = 60;
+        }, 60000);
       }
-      this.sun = !this.sun;
-      this.showText = false;
-      const interval = setInterval(() => {
-        this.second -= 1;
-      }, 1000);
-      setTimeout(() => {
-        clearInterval(interval);
-        this.showText = true;
-        this.sun = !this.sun;
-        this.second = 60;
-      }, 60000);
-      this.posttitle();
     },
     // 获取个人信息
     setmydata() {
@@ -271,6 +271,7 @@ export default {
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon.then(res => {
+        console.log(res);
         this.num -= 1;
         this.second = res._jv.json.data.attributes.interval;
       });
@@ -329,10 +330,19 @@ export default {
             this.setmydata();
             this.sun = true;
             this.second = 60;
+            clearInterval(this.interval);
             uni.showToast({
               title: this.i18n.t('modify.withdrawal'),
               duration: 2000,
             });
+            // #ifdef H5
+            setTimeout(() => {
+              uni.navigateBack({
+                delta: 1,
+              });
+            }, 1500);
+            // #endif
+            // #ifndef H5
             setTimeout(() => {
               uni.navigateBack({
                 success() {
@@ -341,6 +351,7 @@ export default {
                 },
               });
             }, 1500);
+            // #endif
           }
         })
         .catch(err => {
@@ -375,124 +386,129 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.cash {
-  width: 100vw;
-  height: 100vh;
-  padding-top: 31rpx;
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.cash-content {
-  padding-left: 40rpx;
-}
-.cash-content-tab {
-  padding: 0 40rpx 0 0;
-  justify-content: space-between;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-/deep/.cell-item__body__content-title {
-  color: --color(--qui-FC-777);
-}
-.cash-content-name {
-  font-size: $fg-f34;
-  font-weight: 400;
-  color: --color(--qui-FC-333);
-}
-.cash-content-input {
-  width: 238rpx;
-  height: 100%;
-  font-size: $fg-f34;
-  font-weight: bold;
-  line-height: 100rpx;
-  color: --color(--qui-FC-333);
-  text-align: right;
-}
-.cash-content-actual {
-  line-height: 50rpx;
-}
-.cash-content-ellipsis {
-  height: 50rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  line-height: 50rpx;
-  color: --color(--qui-FC-333);
-  text-align: right;
-}
-.cash-content-ellipsis2 {
-  height: 50rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 50rpx;
-  color: --color(--qui-RED);
-  text-align: bold;
-}
-.cash-content-proced {
-  height: 50rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-FC-777);
-}
-.cash-phon {
-  display: flex;
-  width: 710rpx;
-  height: 100rpx;
-  justify-content: space-between;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.cash-phon-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.cash-phon-num {
-  margin: 0 0 0 100rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-000);
-}
-.cash-phon-num1 {
-  margin: 0 0 0 10rpx;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.cash-phon-send {
-  display: block;
-  height: 70rpx;
-  min-width: 180rpx;
-  margin: 15rpx 40rpx 0;
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 70rpx;
-  color: --color(--qui-FC-FFF);
-  text-align: center;
-  background-color: --color(--qui-MAIN);
-  border-radius: 5rpx;
-}
-.cash-erro {
-  margin-top: 20rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-RED);
-}
-.cash-input {
-  width: 710rpx;
-}
-.cash-input-test {
-  font-size: $fg-f28;
-  font-weight: 400;
-  line-height: 100rpx;
-  color: --color(--qui-FC-777);
-}
-.cash-vftion-input {
-  display: flex;
-  width: 100%;
-  height: 100rpx;
-}
-.cash-button {
-  margin: 52rpx 0 0;
+.page-withdra /deep/ {
+  .cash {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .cash-content {
+    padding: 31rpx 0 0 40rpx;
+    box-sizing: border-box;
+  }
+  .cash-content-tab {
+    padding: 0 40rpx 0 0;
+    justify-content: space-between;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  /deep/.cell-item__body__content-title {
+    color: --color(--qui-FC-777);
+  }
+  .cash-content-name {
+    font-size: $fg-f34;
+    font-weight: 400;
+    color: --color(--qui-FC-333);
+  }
+  .cash-content-input {
+    width: 238rpx;
+    height: 100%;
+    font-size: $fg-f34;
+    font-weight: bold;
+    line-height: 100rpx;
+    color: --color(--qui-FC-333);
+    text-align: right;
+  }
+  .cash-content-actual {
+    line-height: 50rpx;
+  }
+  .cash-content-ellipsis {
+    height: 50rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    line-height: 50rpx;
+    color: --color(--qui-FC-333);
+    text-align: right;
+  }
+  .cash-content-ellipsis2 {
+    height: 50rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 50rpx;
+    color: --color(--qui-RED);
+    text-align: bold;
+  }
+  .cash-content-proced {
+    height: 50rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-FC-777);
+  }
+  .cash-phon {
+    display: flex;
+    width: 710rpx;
+    height: 100rpx;
+    justify-content: space-between;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .cash-phon-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .cash-phon-num {
+    margin: 0 0 0 100rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-000);
+  }
+  .cash-phon-num1 {
+    margin: 0 0 0 10rpx;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .cash-phon-send {
+    display: block;
+    height: 70rpx;
+    min-width: 180rpx;
+    margin: 15rpx 40rpx 0;
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 70rpx;
+    color: --color(--qui-FC-FFF);
+    text-align: center;
+    background-color: --color(--qui-MAIN);
+    border-radius: 5rpx;
+  }
+  .cash-erro {
+    margin-top: 20rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-RED);
+  }
+  .cash-input {
+    width: 710rpx;
+  }
+  .cash-input-test {
+    font-size: $fg-f28;
+    font-weight: 400;
+    line-height: 100rpx;
+    color: --color(--qui-FC-777);
+  }
+  .cash-vftion-input {
+    display: flex;
+    width: 100%;
+    height: 100rpx;
+  }
+  .cash-button {
+    margin: 52rpx 0 0;
+  }
 }
 </style>

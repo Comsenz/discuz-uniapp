@@ -1,413 +1,497 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="content" v-if="loaded">
-    <scroll-view
-      scroll-y="true"
-      scroll-with-animation="true"
-      show-scrollbar="false"
-      :scroll-top="scrollTopNum"
-      class="scroll-y"
-      @scrolltolower="pullDown"
-    >
-      <view class="ft-gap">
-        <view class="bg-white">
-          <view class="detail-tip" v-if="thread.type != 2 && topicStatus == 0">
-            {{ t.examineTip }}
-          </view>
-          <view class="detail-tip" v-if="thread.type == 2 && topicStatus == 0">
-            {{ t.transcodingTip }}
-          </view>
-          <qui-topic-content
-            :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
-            :avatar-url="thread.user.avatarUrl"
-            :user-name="thread.user.username"
-            :user-role="thread.user.groups"
-            :theme-type="thread.type"
-            :theme-time="thread.createdAt"
-            :management-show="
-              selectList[0].canOpera ||
-                selectList[1].canOpera ||
-                selectList[2].canOpera ||
-                selectList[3].canOpera
-            "
-            :theme-title="thread.type == 1 ? thread.title : ''"
-            :theme-content="thread.firstPost.contentHtml"
-            :images-list="thread.firstPost.images"
-            :select-list="selectList"
-            :tags="[thread.category]"
-            :thread-price="thread.price"
-            :thread-is-essence="thread.isEssence"
-            :media-url="thread.threadVideo.media_url"
-            :video-width="thread.threadVideo.width"
-            :video-height="thread.threadVideo.height"
-            :cover-image="thread.threadVideo.cover_url"
-            @personJump="personJump(thread.user._jv.id)"
-            @selectChoice="selectChoice"
-            @videocoverClick="payClickShow"
-            @previewPicture="payClickShow"
-            @tagClick="tagClick"
-          ></qui-topic-content>
-          <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
-          {{ p.pay }}
-        </qui-button> -->
-          <!-- 已支付用户列表 -->
-          <view v-if="paidStatus">
-            <qui-person-list
-              :type="t.pay"
-              :person-num="thread.paidCount"
-              :limit-count="limitShowNum"
-              :person-list="thread.paidUsers"
-              :btn-show="thread.price > 0 && !thread.paid"
-              :btn-icon-show="true"
-              btn-icon-name="rmb"
-              :btn-text="payThreadTypeText"
-              @personJump="personJump"
-              @btnClick="payClickShow"
-            ></qui-person-list>
-          </view>
-          <!-- 打赏用户列表 -->
-          <view v-if="rewardStatus">
-            <qui-person-list
-              :type="t.reward"
-              :person-num="thread.rewardedCount"
-              :limit-count="limitShowNum"
-              :person-list="thread.rewardedUsers"
-              :btn-show="true"
-              :btn-icon-show="true"
-              btn-icon-name="reward"
-              :btn-text="t.reward"
-              @personJump="personJump"
-              @btnClick="rewardClick"
-            ></qui-person-list>
-          </view>
-          <view v-if="thread.firstPost.likeCount > 0">
-            <!-- 点赞用户列表 -->
-            <qui-person-list
-              :type="t.giveLike"
-              :person-num="thread.firstPost.likeCount"
-              :limit-count="limitShowNum"
-              :person-list="thread.firstPost.likedUsers"
-              :btn-show="false"
-              @personJump="personJump"
-            ></qui-person-list>
-          </view>
-          <view class="det-con-ft">
-            <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
-            <view
-              class="det-con-ft-child"
-              @click="
-                threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1')
+  <qui-page :data-qui-theme="theme" class="content">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="navTitle"></qui-header-back>
+    <!-- #endif -->
+    <view v-if="loaded">
+      <scroll-view
+        scroll-y="true"
+        scroll-with-animation="true"
+        show-scrollbar="false"
+        class="scroll-y"
+        @scrolltolower="pullDown"
+      >
+        <view class="ft-gap">
+          <view class="bg-white">
+            <view class="detail-tip" v-if="thread.type == 2 && thread.threadVideo.status == 0">
+              {{ t.transcodingTip }}
+            </view>
+
+            <view class="detail-tip" v-else-if="thread.type == 2 && thread.threadVideo.status == 2">
+              {{ t.transcodingFailedTip }}
+            </view>
+            <view class="detail-tip" v-else-if="thread.isApproved == 0">
+              {{ t.examineTip }}
+            </view>
+
+            <qui-topic-content
+              :topic-status="thread.isApproved"
+              :pay-status="thread.price > 0 && thread.paid"
+              :video-status="(thread.price > 0 && thread.paid) || thread.price == 0"
+              :avatar-url="thread.user.avatarUrl"
+              :user-name="thread.user.username"
+              :user-role="thread.user.groups"
+              :theme-type="thread.type"
+              :theme-time="thread.createdAt"
+              :management-show="
+                selectList[0].canOpera ||
+                  selectList[1].canOpera ||
+                  selectList[2].canOpera ||
+                  selectList[3].canOpera
               "
-            >
-              <qui-icon
-                v-if="thread.isFavorite"
-                name="icon-collectioned"
-                class="qui-icon"
-              ></qui-icon>
-
-              <qui-icon v-else name="icon-collection" class="qui-icon"></qui-icon>
-              <view v-if="thread.isFavorite">{{ t.collectionAlready }}</view>
-              <view v-else>{{ t.collection }}</view>
+              :theme-title="thread.type == 1 ? thread.title : ''"
+              :theme-content="thread.firstPost.contentHtml"
+              :images-list="thread.firstPost.images"
+              :select-list="selectList"
+              :tags="[thread.category]"
+              :thread-price="thread.price"
+              :thread-is-essence="thread.isEssence"
+              :media-url="thread.type == 2 ? thread.threadVideo.media_url : ''"
+              :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
+              :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
+              :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
+              :file-list="
+                thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
+              "
+              @personJump="personJump(thread.user._jv.id)"
+              @selectChoice="selectChoice"
+              @videocoverClick="payClickShow"
+              @previewPicture="payClickShow"
+              @tagClick="tagClick"
+            ></qui-topic-content>
+            <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
+            {{ p.pay }}
+          </qui-button> -->
+            <!-- 已支付用户列表 -->
+            <view v-if="paidStatus">
+              <qui-person-list
+                :type="t.pay"
+                :person-num="thread.paidCount"
+                :limit-count="limitShowNum"
+                :person-list="thread.paidUsers"
+                :btn-show="paidBtnStatus"
+                :btn-icon-show="true"
+                btn-icon-name="rmb"
+                :btn-text="payThreadTypeText"
+                @personJump="personJump"
+                @btnClick="payClickShow"
+              ></qui-person-list>
             </view>
-          </view>
-        </view>
-        <!-- 评论 -->
-        <view class="comment">
-          <view class="comment-num" :style="{ paddingBottom: post.postCount > 1 ? '0' : '40rpx' }">
-            {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
-          </view>
-
-          <view v-if="posts.length > 0">
-            <view v-for="(post, index) in posts" :key="index">
-              <qui-topic-comment
-                v-if="!post.isDeleted"
-                :post-id="post._jv.id"
-                :comment-avatar-url="post.user.avatarUrl"
-                :user-name="post.user.username"
-                :is-liked="post.isLiked"
-                :user-role="post.user.groups"
-                :comment-time="post.createdAt"
-                :comment-status="post.isApproved"
-                :comment-content="post.summary"
-                :reply-list="post.lastThreeComments"
-                :comment-like-count="post.likeCount"
-                :images-list="post.images"
-                :reply-count="post.replyCount"
-                :can-delete="post.canHide"
-                :comment-show="true"
-                @personJump="personJump(post.user.id)"
-                @commentLikeClick="
-                  commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index)
+            <!-- 打赏用户列表 -->
+            <view v-if="rewardStatus">
+              <qui-person-list
+                :type="t.reward"
+                :person-num="thread.rewardedCount"
+                :limit-count="limitShowNum"
+                :person-list="rewardedUsers"
+                :btn-show="true"
+                :btn-icon-show="true"
+                btn-icon-name="reward"
+                :btn-text="t.reward"
+                @personJump="personJump"
+                @btnClick="rewardClick"
+              ></qui-person-list>
+            </view>
+            <view v-if="thread.firstPost.likedUsers.length > 0">
+              <!-- 点赞用户列表 -->
+              <qui-person-list
+                :type="t.giveLike"
+                :person-num="thread.firstPost.likeCount"
+                :limit-count="limitShowNum"
+                :person-list="thread.firstPost.likedUsers"
+                :btn-show="false"
+                @personJump="personJump"
+              ></qui-person-list>
+            </view>
+            <view class="det-con-ft">
+              <view class="det-con-ft-child">{{ t.read }}{{ thread.viewCount }}</view>
+              <view
+                class="det-con-ft-child"
+                @click="
+                  threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1')
                 "
-                @commentJump="commentJump(threadId, post._jv.id)"
-                @imageClick="imageClick"
-                @deleteComment="deleteComment(post._jv.id, '3', post.canHide, post.isDeleted)"
-                @replyComment="replyComment(post._jv.id, index)"
-              ></qui-topic-comment>
-            </view>
-            <!--<view v-for="(post, index) in posts" :key="index">
-            {{ post.likeCount }}
-            <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
-          </view>-->
-          </view>
-        </view>
-      </view>
-
-      <qui-load-more
-        :status="loadingType"
-        :content-text="{
-          contentdown: c.contentdown,
-          contentrefresh: c.contentrefresh,
-          contentnomore: contentnomoreVal,
-        }"
-      ></qui-load-more>
-    </scroll-view>
-    <!--详情页底部-->
-    <view class="det-ft" v-if="footerShow">
-      <view class="det-ft-con">
-        <view
-          class="det-ft-child flex"
-          @click="
-            threadLikeClick(
-              thread.firstPost._jv.id,
-              thread.firstPost.canLike,
-              thread.firstPost.isLiked,
-            )
-          "
-        >
-          <qui-icon
-            :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
-            class="qui-icon"
-          ></qui-icon>
-          <view class="ft-child-word">
-            {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
-          </view>
-        </view>
-        <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
-          <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.writeComment }}</view>
-        </view>
-        <view class="det-ft-child flex" @click="shareClick">
-          <qui-icon name="icon-share" class="qui-icon"></qui-icon>
-          <view class="ft-child-word">{{ t.share }}</view>
-        </view>
-      </view>
-    </view>
-    <!--分享弹框-->
-    <uni-popup ref="sharePopup" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent(index)">
+              >
                 <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="46"
-                  color="#777777"
+                  v-if="thread.isFavorite"
+                  name="icon-collectioned"
+                  class="qui-icon"
                 ></qui-icon>
+
+                <qui-icon v-else name="icon-collection" class="qui-icon"></qui-icon>
+                <view v-if="thread.isFavorite">{{ t.collectionAlready }}</view>
+                <view v-else>{{ t.collection }}</view>
               </view>
             </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
-      </view>
-    </uni-popup>
-    <!--打赏选择金额弹框-->
-    <uni-popup ref="rewardPopup" type="bottom">
-      <view class="popup-box">
-        <view class="popup-reward-content">
-          <text class="popup-title">
-            {{ t.supportTheAuthorToCreate }}
-          </text>
-          <view class="popup-content-btn">
-            <qui-button
-              class="popup-btn"
-              v-for="(item, index) in payNum"
-              :key="index"
-              :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
-              plain
-              size="post"
-              @click="moneyClick(index)"
+          <!-- 评论 -->
+          <view class="comment">
+            <view
+              class="comment-num"
+              :style="{ paddingBottom: thread.postCount > 1 ? '0' : '40rpx' }"
             >
-              {{ item.name }}
-            </qui-button>
-          </view>
-        </view>
-        <view class="popup-content-space"></view>
-        <text class="popup-cancel-btn" @click="cancelReward()">
-          {{ i18n.t('discuzq.post.cancel') }}
-        </text>
-      </view>
-    </uni-popup>
-    <!--自定义打赏金额弹框-->
-    <uni-popup ref="customAmountPopup" type="center">
-      <view v-if="customAmountStatus">
-        <view class="popup-dialog">
-          <view class="popup-dialog__top">
-            <text>
-              {{ t.enterTheRewardPaymeAmount }}
-            </text>
-          </view>
-          <view class="popup-dialog__cont">
-            <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
-            <input
-              class="popup-dialog__cont-input"
-              v-model="inputPrice"
-              type="digit"
-              placeholder="0.0"
-              focus
-            />
-          </view>
-          <view class="popup-dialog__ft">
-            <button class="popup-btn--close" @click="diaLogClose">
-              {{ i18n.t('discuzq.close') }}
-            </button>
-            <button class="popup-btn--ok" @click="diaLogOk">{{ i18n.t('discuzq.ok') }}</button>
-          </view>
-        </view>
-      </view>
-    </uni-popup>
-    <!--支付组件-->
-    <view v-if="payShowStatus">
-      <qui-pay
-        ref="payShow"
-        :pay-type-val="payTypeVal"
-        :thread-id="thread._jv.id"
-        :money="price"
-        :wallet-status="user.canWalletPay"
-        :pay-password="pwdVal"
-        :balance="user.walletBalance"
-        :pay-type-data="payTypeData"
-        :to-name="thread.user.username"
-        :pay-type="payTypeText"
-        @radioMyHead="radioMyHead"
-        @radioChange="radioChange"
-        @onInput="onInput"
-        @close="close"
-        @paysureShow="paysureShow"
-      ></qui-pay>
-    </view>
-    <!--遮罩层组件-->
-    <qui-loading-cover v-if="coverLoading" mask-zindex="11"></qui-loading-cover>
-    <!--轻提示-->
-    <qui-toast ref="toast" :type="loading"></qui-toast>
-    <!--回复弹框-->
-    <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
-      <view class="comment-popup" v-if="commentPopupStatus">
-        <view class="comment-popup-topbox">
-          <view class="comment-popup-top">
-            <view class="comment-popup-top-l">
-              <qui-icon
-                name="icon-expression"
-                class="comm-icon"
-                :size="40"
-                @click="emojiShow = !emojiShow"
-              ></qui-icon>
-              <qui-icon name="icon-call" :size="40" class="comm-icon" @click="callClick"></qui-icon>
-              <!--<qui-icon
-                name="icon-image"
-                :size="40"
-                class="comm-icon"
-                @click="imageUploader"
-              ></qui-icon>-->
+              {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
             </view>
-            <view class="text-word-tip">
-              {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+
+            <view v-if="posts.length > 0">
+              <view v-for="(post, index) in posts" :key="index">
+                <qui-topic-comment
+                  v-if="!post.isDeleted"
+                  :post-id="post._jv.id"
+                  :comment-avatar-url="post.user.avatarUrl"
+                  :user-name="post.user.username"
+                  :is-liked="post.isLiked"
+                  :user-role="post.user.groups"
+                  :comment-time="post.createdAt"
+                  :comment-status="post.isApproved"
+                  :comment-content="post.summary"
+                  :reply-list="post.lastThreeComments"
+                  :comment-like-count="post.likeCount"
+                  :images-list="post.images"
+                  :reply-count="post.replyCount"
+                  :can-delete="post.canHide"
+                  :comment-show="true"
+                  @personJump="personJump(post.user.id)"
+                  @commentLikeClick="
+                    commentLikeClick(post._jv.id, '4', post.canLike, post.isLiked, index, post)
+                  "
+                  @commentJump="commentJump(threadId, post._jv.id)"
+                  @imageClick="imageClick"
+                  @deleteComment="
+                    deleteComment(post._jv.id, '3', post.canHide, post.isDeleted, post)
+                  "
+                  @replyComment="replyComment(post._jv.id, index)"
+                ></qui-topic-comment>
+              </view>
+              <!--<view v-for="(post, index) in posts" :key="index">
+              {{ post.likeCount }}
+              <view v-for="(group, gindex) in post.user.groups" :key="gindex">{{ group.name }}</view>
+            </view>-->
             </view>
           </view>
-          <qui-emoji
-            :list="allEmoji"
-            position="absolute"
-            top="104rpx"
-            v-if="emojiShow"
-            border-radius="10rpx"
-            :color="emojiShow ? '#1878F3' : '#777'"
-            @click="getEmojiClick"
-          ></qui-emoji>
         </view>
 
-        <view class="comment-content-box">
-          <view class="comment-content">
-            <textarea
-              ref="commentText"
-              :focus="focusVal"
-              :maxlength="450"
-              class="comment-textarea"
-              :placeholder="t.writeComments"
-              placeholder-style="color:#b5b5b5;font-size: 28rpx;"
-              placeholder-class="text-placeholder"
-              :show-confirm-bar="barStatus"
-              cursor-spacing="100"
-              v-show="!emojiShow"
-              v-model="textAreaValue"
-              @blur="contBlur"
-            />
-            <!--<view class="comment-textarea" v-show="emojiShow">
-                {{ textAreaValue }}
-              </view>-->
-            <qui-uploader
-              :url="`${url}api/attachments`"
-              :header="header"
-              :form-data="formData"
-              :count="3"
-              name="file"
-              async-clear
-              ref="upload"
-              @change="uploadChange"
-              @clear="uploadClear"
-            ></qui-uploader>
+        <qui-load-more
+          :status="loadingType"
+          :content-text="{
+            contentdown: c.contentdown,
+            contentrefresh: c.contentrefresh,
+            contentnomore: contentnomoreVal,
+          }"
+        ></qui-load-more>
+      </scroll-view>
+      <!--详情页底部-->
+      <view
+        class="det-ft"
+        :style="{
+          bottom: detectionModel() ? '20rpx' : 0,
+        }"
+        v-if="footerShow"
+      >
+        <view class="det-ft-con">
+          <view
+            class="det-ft-child flex"
+            @click="
+              threadLikeClick(
+                thread.firstPost._jv.id,
+                thread.firstPost.canLike,
+                thread.firstPost.isLiked,
+              )
+            "
+          >
+            <qui-icon
+              :name="thread.firstPost.isLiked ? 'icon-liked' : 'icon-like'"
+              class="qui-icon"
+            ></qui-icon>
+            <view class="ft-child-word">
+              {{ thread.firstPost.isLiked ? t.giveLikeAlready : t.giveLike }}
+            </view>
+          </view>
+          <view class="det-ft-child flex" @click="threadComment(thread._jv.id)">
+            <qui-icon name="icon-comments" class="qui-icon"></qui-icon>
+            <view class="ft-child-word">{{ t.writeComment }}</view>
+          </view>
+          <view class="det-ft-child flex" @click="shareClick">
+            <qui-icon name="icon-share" class="qui-icon"></qui-icon>
+            <view class="ft-child-word">{{ t.share }}</view>
+          </view>
+          <view class="mask" v-if="shareShow" @click="closeShare">
+            <view class="wxShareTip">
+              <img src="/static/sharePoint.png" alt class="sharePoint" />
+              <img src="/static/shareKnow.png" alt class="shareKnow" />
+            </view>
           </view>
         </view>
-        <button class="publishBtn" @click="publishClickStatus && publishClick()">
-          {{ t.publish }}
-        </button>
       </view>
-    </uni-popup>
+      <!--分享弹框-->
+      <uni-popup ref="sharePopup" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content">
+            <button class="popup-share-button" open-type="share"></button>
+            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box" @click="shareContent(index)">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancel('share')">{{ c.cancel }}</text>
+        </view>
+      </uni-popup>
+      <!--打赏选择金额弹框-->
+      <uni-popup ref="rewardPopup" type="bottom">
+        <view class="popup-box">
+          <view class="popup-reward-content">
+            <text class="popup-title">
+              {{ t.supportTheAuthorToCreate }}
+            </text>
+            <view class="popup-content-btn">
+              <qui-button
+                class="popup-btn"
+                v-for="(item, index) in payNum"
+                :key="index"
+                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+                plain
+                size="post"
+                @click="moneyClick(index)"
+              >
+                {{ item.name }}
+              </qui-button>
+            </view>
+          </view>
+          <view class="popup-content-space"></view>
+          <text class="popup-cancel-btn" @click="cancelReward()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
+        </view>
+      </uni-popup>
+      <!--自定义打赏金额弹框-->
+      <uni-popup ref="customAmountPopup" type="center">
+        <view v-if="customAmountStatus">
+          <view class="popup-dialog">
+            <view class="popup-dialog__top">
+              <text>
+                {{ t.enterTheRewardPaymeAmount }}
+              </text>
+            </view>
+            <view class="popup-dialog__cont">
+              <qui-icon class="popup-dialog__cont-rmb" name="icon-rmb" size="40"></qui-icon>
+              <input
+                class="popup-dialog__cont-input"
+                v-model="inputPrice"
+                type="digit"
+                placeholder="0.0"
+                focus
+                :maxlength="maxLength"
+                @input="checkNum"
+              />
+            </view>
+            <view class="popup-dialog__ft">
+              <button class="popup-btn--close" @click="diaLogClose">
+                {{ i18n.t('discuzq.close') }}
+              </button>
+              <button
+                class="popup-btn--ok"
+                :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
+                :disabled="inputPrice === ''"
+                @click="diaLogOk"
+              >
+                {{ i18n.t('discuzq.ok') }}
+              </button>
+            </view>
+          </view>
+        </view>
+      </uni-popup>
+
+      <!--支付组件-->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type-val="payTypeVal"
+          :thread-id="thread._jv.id"
+          :money="price"
+          :wallet-status="user.canWalletPay"
+          :pay-password="pwdVal"
+          :balance="Number(user.walletBalance)"
+          :pay-type-data="payTypeData"
+          :to-name="thread.user.username"
+          :pay-type="payTypeText"
+          @radioMyHead="radioMyHead"
+          @radioChange="radioChange"
+          @onInput="onInput"
+          @paysureShow="paysureShow"
+        ></qui-pay>
+      </view>
+      <!--遮罩层组件-->
+      <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
+      <!--轻提示-->
+      <qui-toast ref="toast"></qui-toast>
+      <!--回复弹框-->
+      <uni-popup ref="commentPopup" type="bottom" class="comment-popup-box">
+        <view class="comment-popup" v-if="commentPopupStatus">
+          <view class="comment-popup-topbox">
+            <view class="comment-popup-top">
+              <view class="comment-popup-top-l">
+                <qui-icon
+                  name="icon-expression"
+                  class="comm-icon"
+                  :size="40"
+                  @click="emojiShow = !emojiShow"
+                ></qui-icon>
+                <qui-icon
+                  name="icon-call"
+                  :size="40"
+                  class="comm-icon"
+                  @click="callClick"
+                ></qui-icon>
+              </view>
+              <view class="text-word-tip">
+                {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+              </view>
+            </view>
+            <qui-emoji
+              v-if="emojiShow"
+              position="absolute"
+              top="104rpx"
+              border-radius="10rpx"
+              :color="emojiShow ? '#1878F3' : '#777'"
+              @click="getEmojiClick"
+            ></qui-emoji>
+          </view>
+
+          <view class="comment-content-box">
+            <view class="comment-content">
+              <textarea
+                ref="commentText"
+                :focus="focusVal"
+                :maxlength="450"
+                class="comment-textarea"
+                :placeholder="t.writeComments"
+                placeholder-style="color:#b5b5b5;font-size: 28rpx;"
+                placeholder-class="text-placeholder"
+                :show-confirm-bar="barStatus"
+                cursor-spacing="100"
+                v-if="!emojiShow"
+                v-model="textAreaValue"
+                @blur="contBlur"
+              />
+              <view class="comment-textarea" v-show="emojiShow">
+                {{ textAreaValue }}
+              </view>
+              <qui-uploader
+                :url="`${url}api/attachments`"
+                :header="header"
+                :form-data="formData"
+                :count="3"
+                name="file"
+                async-clear
+                ref="upload"
+                @change="uploadChange"
+                @clear="uploadClear"
+              ></qui-uploader>
+            </view>
+          </view>
+          <button class="publish-btn" @click="publishClickStatus && publishClick()">
+            {{ t.publish }}
+          </button>
+        </view>
+      </uni-popup>
+      <uni-popup ref="codePopup" type="center" class="code-popup-box" @change="codeImgChange">
+        <view class="code-content" v-if="qrcodeShow">
+          <view class="code-title">{{ p.payNow }}</view>
+          <view class="code-pay-money">
+            <view class="code-yuan">￥</view>
+            {{ price }}
+          </view>
+          <view class="code-type-box">
+            <view class="code-type-tit">{{ p.payType }}</view>
+            <view class="code-type">
+              <qui-icon
+                class="code-type-icon"
+                name="icon-wxPay"
+                size="36"
+                color="#09bb07"
+              ></qui-icon>
+              <view class="code-type-text">{{ p.wxPay }}</view>
+            </view>
+          </view>
+          <image :src="codeUrl" class="code-img"></image>
+          <view class="code-tip">{{ p.wechatIdentificationQRcode }}</view>
+        </view>
+      </uni-popup>
+    </view>
+    <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
+      <u-loading :size="60"></u-loading>
+    </view>
+    <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
   </qui-page>
-  <qui-page-message v-else-if="thread.isDeleted"></qui-page-message>
-  <view v-else class="loading">
-    <u-loading :size="60"></u-loading>
-  </view>
 </template>
 
 <script>
 /* eslint-disable */
-import { status, utils } from '@/library/jsonapi-vuex/index';
+// import { status, utils } from '@/library/jsonapi-vuex/index';
+import { status } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+import detectionModel from '@/mixin/detectionModel';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+// #endif
+// #ifndef MP-WEIXIN
+import appCommonH from '@/utils/commonHelper';
+// #endif
+
+let payWechat = null;
+let payPhone = null;
 
 export default {
-  mixins: [user, forums],
+  mixins: [
+    user,
+    forums,
+    // #ifdef H5
+    wxshare,
+    // #endif
+    detectionModel,
+  ],
+  // #ifndef MP-WEIXIN
+  utils: [appCommonH],
+  // #endif
   data() {
     return {
-      threadId: '', //主题id
+      navTitle: '内容详情页', // 导航栏标题
+      threadId: '', // 主题id
       // userId: 57, //当前用户Id
       // userInfo: '', //当前用户信息
       // thread: {}, //主题数据
       loadDetailStatusId: 0, // 主题接口请求状态
-      topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
-      posts: [], //评论列表数据
+      // topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
+      posts: [], // 评论列表数据
       loadingType: 'more', // 上拉加载状态
-      pageNum: 1, //这是主题回复当前页数
-      pageSize: 5, //这是主题回复每页数据条数
+      pageNum: 1, // 这是主题回复当前页数
+      pageSize: 20, // 这是主题回复每页数据条数
       payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
       loadDetailCommnetStatusId: 0,
-      postIndex: '', //点击主题评论时的index
+      postIndex: '', // 点击主题评论时的index
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
-      commentPopupStatus: false, //回复弹框内容状态是否显示
+      commentPopupStatus: false, // 回复弹框内容状态是否显示
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
-      uploadFile: [], //上传的文件
+      uploadFile: [], // 上传的文件
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
+      shareShow: false, // h5微信分享
       bottomData: [
         {
           text: this.i18n.t('core.generatePoster'),
@@ -419,7 +503,7 @@ export default {
           icon: 'icon-wx-friends',
           name: 'wxFriends',
         },
-      ], //分享方式
+      ], // 分享方式
 
       seleShow: false, // 默认收起管理菜单
       selectList: [
@@ -431,21 +515,21 @@ export default {
 
       limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
+      paidBtnStatus: true, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
-      commentStatus: {}, //回复状态
-      commentReply: false, //发布的是否是回复的回复
-      emojiShow: false, //表情组件显示状态
+      commentStatus: {}, // 回复状态
+      commentReply: false, // 发布的是否是回复的回复
+      emojiShow: false, // 表情组件显示状态
       // uploaderShow: false, //图片上传组件显示状态
-      publishClickStatus: true, //发布按钮点击状态
+      publishClickStatus: true, // 发布按钮点击状态
       focusVal: true, // 默认输入框获取焦点状态
       header: {},
       formData: {}, // 图片请求data
-      commentId: '', //评论id
-      postIndex: '', //点击时当前评论Index
-      isAnonymous: '0', //支付时是否显示头像，默认不显示
+      commentId: '', // 评论id
+      isAnonymous: '0', // 支付时是否显示头像，默认不显示
       payTypeText: '',
-      payTypeVal: '', //点击的支付类型， 0主题支付  1主题打赏
+      payTypeVal: 0, // 点击的支付类型， 0主题支付  1主题打赏
       payNum: [
         {
           name: '￥1',
@@ -481,7 +565,7 @@ export default {
         },
         {
           name: this.i18n.t('discuzq.post.customize'),
-          pay: 0,
+          pay: '0',
         },
       ], // 打赏金额数组列表
       payNumCheck: [
@@ -490,13 +574,13 @@ export default {
           pay: '',
         },
       ],
-      price: 0.0, //需要支付的金额
-      inputPrice: '', //自定义金额输入框的值
-      payShowStatus: true, //是否显示支付
-      pwdVal: '', //支付密码
-      orderSn: '', //订单编号
-      payStatus: false, //订单支付状态
-      payStatusNum: 0, // 订单支付状态查询最大次数
+      price: 0.0, // 需要支付的金额
+      inputPrice: 0, // 自定义金额输入框的值
+      maxLength: 7, //输入框最大长度
+      payShowStatus: true, // 是否显示支付
+      pwdVal: '', // 支付密码
+      orderSn: '', // 订单编号
+      payStatus: false, // 订单支付状态
       coverLoading: false, // loading显示状态
       payTypeData: [
         {
@@ -511,12 +595,27 @@ export default {
           color: '#1878f3',
           value: '1',
         },
-      ], //支付方式
+      ], // 支付方式
       currentReplyPost: {},
       contentnomoreVal: '',
       url: '',
       customAmountStatus: false, // 自定义价格弹框初始化状态
-      windowHeight: '', //设备高度
+      windowHeight: '', // 设备高度
+      system: '', // 设备系统
+      detectionmodel: '', // 站点模式
+      paymentmodel: '', // 是否付费
+      loaded: false,
+      loadingStatus: true,
+      isWeixin: false,
+      isPhone: false,
+      qrcodeShow: false, // 二维码弹框
+      codeUrl: '', // 二维码支付url，base64
+      browser: 0, // 0为小程序，1为除小程序之外的设备
+      wxRes: '',
+      contentVal: '', // 这是分享需要传的标题
+      shareLogo: '', // 这是分享需要传的图片
+      desc: '', // 这是分享需要传的描述
+      rewardedUsers: [],
     };
   },
   computed: {
@@ -524,11 +623,9 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     thread() {
-      return this.$store.getters['jv/get'](`threads/${this.threadId}`);
-    },
-
-    allEmoji() {
-      return this.$store.getters['jv/get']('emoji');
+      const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+      this.rewardedUsers = thread.rewardedUsers;
+      return thread;
     },
     // 语言包
     // topic详情页语言包
@@ -548,12 +645,45 @@ export default {
     },
   },
   onLoad(option) {
+    // #ifndef MP-WEIXIN
+    this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
+    this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
+    this.browser = 1;
+    // #endif
+    // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
+    this.$u.event.$on('addComment', data => {
+      Object.keys(this.posts).forEach(index => {
+        if (this.posts[index]._jv.id === data.commentId) {
+          if (this.posts[index].lastThreeComments.length >= 3) {
+            this.posts[index].lastThreeComments.pop();
+          }
+          if (data.data) {
+            this.posts[index].lastThreeComments.unshift(data.data);
+          }
+        }
+      });
+    });
+    // 删除评论的回复后清除当前列表评论的这条回复
+    this.$u.event.$on('deleteComment', data => {
+      Object.keys(this.posts).forEach(index => {
+        // for (const index in this.posts) {
+        if (this.posts[index]._jv.id === data.commentId) {
+          this.posts[index].lastThreeComments = [];
+          if (data.data._jv.json.data.relationships.lastThreeComments.data) {
+            data.data._jv.json.data.relationships.lastThreeComments.data.forEach(item => {
+              this.posts[index].lastThreeComments.push(
+                this.$store.getters['jv/get'](`${item.type}/${item.id}`),
+              );
+            });
+          }
+          // break;
+        }
+      });
+    });
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
-    if (Object.keys(this.allEmoji).length < 1) {
-      this.getEmoji();
-    }
+
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -563,6 +693,19 @@ export default {
     this.formData = {
       type: 1,
     };
+    try {
+      const res = uni.getSystemInfoSync();
+      this.system = res.platform;
+      this.detectionmodel = this.forums.set_site.site_mode;
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    } catch (e) {
+      // error
+    }
+
+    // 编辑发帖回来后更新信息
+    this.$u.event.$on('refreshFiles', () => {
+      this.loadThread();
+    });
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -593,17 +736,15 @@ export default {
       setAtMember: 'atMember/SET_ATMEMBER',
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
-    callMember(id) {
-      uni.navigateTo({
-        url: `/pages/my/index?userId=${id}`,
-      });
-    },
 
     // 表情接口请求
-    getEmoji() {
-      this.$store.dispatch('jv/get', ['emoji', {}]);
-    },
+    // getEmoji() {
+    //   this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
+    //     this.allEmoji = data;
+    //   });
+    // },
     // 加载当前主题数据
     loadThread() {
       const params = {
@@ -626,112 +767,190 @@ export default {
         ],
       };
       const threadAction = status.run(() =>
-        this.$store.dispatch('jv/get', ['threads/' + this.threadId, { params }]),
+        this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]),
       );
 
       this.loadDetailStatusId = threadAction._statusID;
-      console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
-      threadAction.then(data => {
-        console.log(data, '~~~~~~~~~~~~~~~~~~~');
-        // this.thread = data;
-        if (data.isDeleted) {
-          this.$store.dispatch('forum/setError', {
-            code: 'thread_deleted',
-            status: 500,
+      threadAction
+        .then(data => {
+          if (data.isDeleted) {
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+            this.loadingStatus = false;
+            // 分享数据
+            switch (data.type) {
+              case 0:
+                // 文字帖
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
+                this.logo = '';
+                break;
+              case 1:
+                // 长文帖
+                this.contentVal = data.title;
+                if (data.price > 0) {
+                  this.desc = data.title;
+                  this.shareLogo = '';
+                } else {
+                  this.desc = data.firstPost.summary_text;
+                  this.shareLogo =
+                    data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
+                }
+                break;
+              case 2:
+                // 视频帖
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
+                this.shareLogo = data.threadVideo.coverUrl;
+                break;
+              case 3:
+                // 图片帖
+                this.contentVal = data.firstPost.summary_text;
+                this.desc = data.firstPost.summary_text;
+                this.shareLogo =
+                  data.price > 0 && data.firstPost.images.length > 0
+                    ? data.firstPost.images[0].thumbUrl
+                    : '';
+                break;
+              default:
+            }
+          }
+          // #ifdef H5
+          this.wxShare({
+            title: this.contentVal,
+            desc: this.desc,
+            logo: this.shareLogo,
           });
+          // #endif
+
+          // 追加管理菜单权限字段
+          this.selectList[0].canOpera = this.thread.firstPost.canEdit;
+          this.selectList[1].canOpera = this.thread.canEssence;
+          this.selectList[2].canOpera = this.thread.canSticky;
+          this.selectList[3].canOpera = this.thread.canHide;
+          // this.selectList[0].isStatus = true;
+          this.selectList[1].isStatus = this.thread.isEssence;
+          this.selectList[2].isStatus = this.thread.isSticky;
+          this.selectList[3].isStatus = false;
+          if (data.isEssence) {
+            // 如果初始化状态为true
+            this.selectList[1].text = this.t.cancelEssence;
+          }
+          if (data.isSticky) {
+            // 如果初始化状态为true
+
+            this.selectList[2].text = this.t.cancelSticky;
+          }
+          this.isLiked = data.firstPost.isLiked;
+          if (!data.paid || data.paidUsers.length > 0) {
+            if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === false
+            ) {
+              this.paidStatus = false;
+            } else if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === true
+            ) {
+              this.paidStatus = true;
+            } else {
+              this.paidStatus = true;
+            }
+          } else {
+            this.paidStatus = false;
+          }
+          if (data.type === 3) {
+            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
+          } else if (data.type === 2) {
+            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
+          } else if (data.type === 1) {
+            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+          }
+          if (data.price <= 0) {
+            if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === false
+            ) {
+              this.rewardStatus = false;
+            } else if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === true
+            ) {
+              this.rewardStatus = true;
+            } else {
+              this.paidBtnStatus = false;
+              this.rewardStatus = true;
+            }
+          } else {
+            if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === false
+            ) {
+              this.paidBtnStatus = false;
+            } else if (
+              this.system === 'ios' &&
+              this.detectionmodel === 'public' &&
+              this.paymentmodel === true &&
+              data.paid === false
+            ) {
+              this.paidBtnStatus = true;
+            } else if (data.paid === true) {
+              this.paidBtnStatus = false;
+            }
+            this.rewardStatus = false;
+          }
+          if (data.firstPost.likedUsers.length < 1) {
+            this.likedStatus = false;
+          } else {
+            this.likedStatus = true;
+          }
+        })
+        .catch(err => {
           this.loaded = false;
-        } else {
-          this.loaded = true;
-        }
-        // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
-        // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
-        // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
-        // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
-        // data.firstPost.contentHtml = contengS.replace(
-        //   /<h1>(.*?)<\/h1>/g,
-        //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
-        // );
-        // console.log(data.firstPost.contentHtml, '这是标题');
-        // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
-
-        // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
-
-        // str.match(/<h1>(.*?)<\/h1>/g)
-
-        // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
-
-        // 追加管理菜单权限字段
-        this.selectList[0].canOpera = this.thread.firstPost.canEdit;
-        this.selectList[1].canOpera = this.thread.canEssence;
-        this.selectList[2].canOpera = this.thread.canSticky;
-        this.selectList[3].canOpera = this.thread.canHide;
-        // this.selectList[0].isStatus = true;
-        this.selectList[1].isStatus = this.thread.isEssence;
-        this.selectList[2].isStatus = this.thread.isSticky;
-        this.selectList[3].isStatus = false;
-        if (data.isEssence) {
-          //如果初始化状态为true
-          this.selectList[1].text = this.t.cancelEssence;
-        }
-        if (data.isSticky) {
-          //如果初始化状态为true
-
-          this.selectList[2].text = this.t.cancelSticky;
-        }
-        this.isLiked = data.firstPost.isLiked;
-        this.topicStatus = data.isApproved;
-        if (!data.paid || data.paidUsers.length > 0) {
-          this.paidStatus = true;
-        } else {
-          this.paidStatus = false;
-        }
-        if (data.type == 3) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
-        } else if (data.type == 2) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
-        } else if (data.type == 1) {
-          this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-        }
-        if (data.price <= 0) {
-          this.rewardStatus = true;
-        } else {
-          this.rewardStatus = false;
-        }
-        if (data.firstPost.likedUsers.length < 1) {
-          this.likedStatus = false;
-        } else {
-          this.likedStatus = true;
-        }
-      });
+          this.loadingStatus = false;
+          console.log(err);
+        });
     },
-    // post操作调用接口（包括type 1点赞，3删除回复，4回复点赞）
-    postOpera(id, type, canStatus, isStatus) {
-      console.log(id, type, canStatus, isStatus);
-      if (type == '1' && !canStatus) {
-        console.log('没有主题点赞权限');
+    // post操作调用接口（包括type 1主题点赞，3删除回复，4回复点赞）
+    postOpera(id, type, canStatus, isStatus, post) {
+      if (type === '1' && !canStatus) {
+        // 没有主题点赞权限
+        this.$refs.toast.show({ message: this.t.noThreadLikePermission });
         return;
       }
-      if (type == '4' && !canStatus) {
-        console.log('没有评论点赞权限');
+      if (type === '4' && !canStatus) {
+        // 没有评论点赞权限
+        this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
       }
       const jvObj = {
         type: 'posts',
-        id: id,
+        id,
       };
       let params = {};
-      if (type == '1') {
+      if (type === '1') {
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
         };
-      } else if (type == '3') {
+      } else if (type === '3') {
         params = {
           _jv: jvObj,
           isDeleted: !isStatus,
         };
-      } else if (type == '4') {
+      } else if (type === '4') {
         params = {
           _jv: jvObj,
           isLiked: !isStatus,
@@ -740,48 +959,26 @@ export default {
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          if (type == '1') {
-            const post = this.$store.getters['jv/get'](`posts/${id}`);
+          if (type === '1') {
             // 主题点赞
-            this.isLiked = data.isLiked;
-            if (this.isLiked) {
-              this.thread.firstPost.likedUsers.unshift(this.user);
-              post._jv.relationships.likedUsers.data.unshift({
-                type: this.user._jv.type,
-                id: this.user._jv.id,
-              });
-            } else {
-              this.thread.firstPost.likedUsers.forEach((value, key, item) => {
-                value.id == this.user.id && item.splice(key, 1);
-              });
-              post._jv.relationships.likedUsers.data.forEach((value, key, item) => {
-                value.id == this.user.id && item.splice(key, 1);
-              });
-            }
-          } else if (type == '2') {
+            this._updateLikedUsers(data.isLiked);
+          } else if (type === '2') {
             if (data.isDeleted) {
-              uni.navigateTo({
+              uni.navigateBack({
                 url: `/pages/home/index`,
               });
             } else {
-              console.log('主题删除失败');
+              // 主题删除失败
             }
-          } else if (type == '3') {
-            if (data.isDeleted) {
-              console.log('回复删除成功');
-            } else {
-              console.log('回复删除失败');
-            }
-          } else if (type == '4') {
-            // 评论点赞
-            this.posts[this.postIndex].isLiked = data.isLiked;
-            if (data.isLiked) {
-              // this.posts[this.postIndex].likeCount++;
-              console.log('点赞数加1');
-            } else {
-              // this.posts[this.postIndex].likeCount--;
-              console.log('点赞数减1');
-            }
+          } else if (type === '3') {
+            const postArr = post;
+            postArr.isDeleted = data.isDeleted;
+            post = postArr;
+          } else if (type === '4') {
+            const postArr = post;
+            postArr.isLiked = data.isLiked;
+            postArr.likeCount = data.likeCount;
+            post = postArr;
           }
         })
         .catch(err => {
@@ -790,25 +987,24 @@ export default {
     },
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶，else删除主题）
     threadOpera(id, canStatus, isStatus, type) {
-      console.log(id, canStatus, isStatus, type);
       const jvObj = {
         type: 'threads',
-        id: id,
+        id,
       };
       let params = {};
-      if (type == '1') {
+      if (type === '1') {
         // 主题收藏
         params = {
           _jv: jvObj,
           isFavorite: !isStatus,
         };
-      } else if (type == '2') {
+      } else if (type === '2') {
         // 主题加精
         params = {
           _jv: jvObj,
           isEssence: !isStatus,
         };
-      } else if (type == '3') {
+      } else if (type === '3') {
         // 主题置顶
         params = {
           _jv: jvObj,
@@ -821,38 +1017,44 @@ export default {
           isDeleted: !isStatus,
         };
       }
-      console.log(params, '接口接收的参数');
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
-          console.log(data);
-          console.log('请求主题操作接口成功');
-          if (type == '1') {
-            console.log('收藏');
-            console.log(this.thread);
+          if (type === '1') {
+            // 收藏
             this.thread.isFavorite = data.isFavorite;
-          } else if (type == '2') {
+          } else if (type === '2') {
+            // 这是精华操作
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
-              this.selectList[1].text = this.t.essence;
-            } else {
               this.selectList[1].text = this.t.cancelEssence;
+            } else {
+              this.selectList[1].text = this.t.essence;
             }
-          } else if (type == '3') {
+          } else if (type === '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
               this.selectList[2].text = this.t.cancelSticky;
+              // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
+              this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
+              // 详情页取消置顶,将首页置顶数据移除
+              this.$u.event.$emit('cancelSticky', data);
             }
-          } else if (type == '4') {
-            // if (data.isDeleted) {
-            // console.log('删除成功，跳转到首页');
-            this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToHome });
-            uni.navigateBack({
-              url: `/pages/home/index`,
-            });
-            // }
+          } else if (type === '4') {
+            if (data.isDeleted) {
+              // 删除成功，跳转到首页
+              this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToBack });
+              const pages = getCurrentPages();
+              // const delta = pages.indexOf(pages[pages.length - 1]);
+              const naviBack = setTimeout(() => {
+                uni.navigateBack({
+                  delta: 1,
+                });
+              }, 1000);
+              this.$u.event.$emit('deleteThread', this.threadId);
+            }
           }
         })
         .catch(err => {
@@ -861,7 +1063,6 @@ export default {
     },
     // 主题回复，评论的回复调用接口
     postComment() {
-      console.log(this.commentReply, '这是用来判断的');
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
         this.publishClickStatus = true;
@@ -869,7 +1070,6 @@ export default {
       }
       let params = {};
       if (this.commentReply) {
-        console.log('这是1');
         params = {
           _jv: {
             type: 'posts',
@@ -887,7 +1087,6 @@ export default {
           replyId: this.commentId,
         };
       } else {
-        console.log('这是2');
         params = {
           _jv: {
             type: 'posts',
@@ -902,20 +1101,18 @@ export default {
           },
           content: this.textAreaValue,
         };
-        params._jv.relationships.attachments = {
-          data: [],
-        };
-        if (this.uploadFile) {
-          this.uploadFile.forEach(item => {
-            params._jv.relationships.attachments.data.push({
-              type: 'attachments',
-              id: item.data.id,
-            });
-          });
-        }
       }
-
-      console.log(params, '传给接口的参数');
+      params._jv.relationships.attachments = {
+        data: [],
+      };
+      if (this.uploadFile) {
+        this.uploadFile.forEach(item => {
+          params._jv.relationships.attachments.data.push({
+            type: 'attachments',
+            id: item.id,
+          });
+        });
+      }
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
@@ -923,20 +1120,20 @@ export default {
           this.commentReply = false;
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
-          console.log('~~~~~~~~~~~~');
-          if (!res.isComment) {
-            this.posts.push(res);
-            console.log(this.posts, '#####################');
-          } else {
-            // console.log(res, '*****************');
-            if (!this.posts[this.postIndex].lastThreeComments) {
-              // console.log(this.postIndex, '走了');
-              this.posts[this.postIndex].lastThreeComments = [];
+          if (res.isApproved === 1) {
+            if (!res.isComment) {
+              this.posts.push(res);
+            } else {
+              if (!this.posts[this.postIndex].lastThreeComments) {
+                this.posts[this.postIndex].lastThreeComments = [];
+              }
+              this.posts[this.postIndex].lastThreeComments.unshift(res);
+              this.posts[this.postIndex].replyCount += 1;
             }
-            this.posts[this.postIndex].lastThreeComments.unshift(res);
-            this.posts[this.postIndex].replyCount++;
-            // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
+          } else {
+            this.$refs.toast.show({ message: '您发布的内容正在审核中哦' });
           }
+
           this.textAreaValue = '';
           this.uploadFile = '';
         })
@@ -949,6 +1146,7 @@ export default {
     // 加载当前主题评论的数据
     loadThreadPosts() {
       const params = {
+        'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[isComment]': 'no',
         'page[number]': this.pageNum,
@@ -964,50 +1162,93 @@ export default {
           'lastThreeComments.replyUser',
         ],
       };
-      let loadDetailCommnetAction = status.run(() =>
+      const loadDetailCommnetAction = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]),
       );
 
       this.loadDetailCommnetStatusId = loadDetailCommnetAction._statusID;
       loadDetailCommnetAction.then(data => {
+        /* eslint-disable */
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
-        if (data.length == 0) {
+        if (data.length === 0) {
           this.contentnomoreVal = this.t.noComment;
         } else {
           this.contentnomoreVal = this.t.noMoreData;
         }
-        // this.posts = data;
-        console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
     },
-
+    // 非小程序内微信支付
+    onBridgeReady(data) {
+      // const that = this;
+      WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        {
+          appId: data.wechat_js.appId, // 公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, // 随机串
+          package: data.wechat_js.package,
+          signType: 'MD5', // 微信签名方式：
+          paySign: data.wechat_js.paySign, // 微信签名
+        },
+        function(data) {
+          // alert('支付唤醒');
+          if (data.err_msg == 'get_brand_wcpay_request:ok') {
+            //微信支付成功，进行支付成功处理
+          } else if (data.err_msg == 'get_brand_wcpay_request:cancel') {
+            // 取消支付
+            clearInterval(payWechat);
+            resolve;
+          } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
+            // 支付失败
+            clearInterval(payWechat);
+            resolve;
+          }
+        },
+      );
+      payWechat = setInterval(() => {
+        if (this.payStatus === 1) {
+          clearInterval(payWechat);
+          return;
+        }
+        this.getOrderStatus(this.orderSn);
+      }, 3000);
+    },
     // 创建订单
     creatOrder(amount, type, value, payType) {
-      console.log('创建订单', '这是参数', payType);
       const params = {
         _jv: {
           type: 'orders',
         },
-        type: type,
+        type,
         thread_id: this.threadId,
-        amount: amount,
+        amount,
         is_anonymous: this.isAnonymous,
       };
-      console.log(params, '传给接口的参数');
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '成功创建订单', typeof payType, '这是支付类型');
           this.orderSn = res.order_sn;
-          if (payType == 0) {
+          if (payType === 0) {
             // 微信支付
-            this.orderPay(13, value, this.orderSn, payType);
-          } else if (payType == 1) {
+            if (this.browser == 0) {
+              // 这是微信小程序内的支付
+              this.orderPay(13, value, this.orderSn, payType, '0');
+            } else {
+              // 这是除微信小程序之外, this.isWeixin, this.isPhone
+              if (this.isWeixin && this.isPhone) {
+                // 这是微信浏览器
+                this.orderPay(12, value, this.orderSn, payType, '1');
+              } else if (this.isPhone) {
+                this.orderPay(11, value, this.orderSn, payType, '2');
+              } else {
+                // 这是pc，没调接口之前
+                this.orderPay(10, value, this.orderSn, payType, '3');
+              }
+            }
+          } else if (payType === 1) {
             // 钱包支付
-            console.log(type, value, this.orderSn, '这是参数');
-
             this.orderPay(20, value, this.orderSn, payType);
           }
         })
@@ -1016,22 +1257,20 @@ export default {
         });
     },
 
-    // 订单支付
-    orderPay(type, value, orderSn, payType) {
-      console.log('订单支付');
+    // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    orderPay(type, value, orderSn, payType, broswerType) {
       let params = {};
-      if (payType == 0) {
-        console.log('这是微信支付时触发');
+      if (payType === 0) {
         params = {
           _jv: {
-            type: 'trade/pay/order/' + orderSn,
+            type: `trade/pay/order/${orderSn}`,
           },
           payment_type: type,
         };
-      } else if (payType == 1) {
+      } else if (payType === 1) {
         params = {
           _jv: {
-            type: 'trade/pay/order/' + orderSn,
+            type: `trade/pay/order/${orderSn}`,
           },
           payment_type: type,
           pay_password: value,
@@ -1041,70 +1280,103 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '订单支付接口请求成功');
-          if (payType == 0) {
-            console.log('这是微信支付时触发');
-            this.wechatPay(
-              res.wechat_js.timeStamp,
-              res.wechat_js.nonceStr,
-              res.wechat_js.package,
-              res.wechat_js.signType,
-              res.wechat_js.paySign,
-            );
-          } else if (payType == 1) {
-            this.getOrderStatus(orderSn);
-            const payWechat = setInterval(() => {
-              if (this.payStatus == '1' || this.payStatusNum > 10) {
-                clearInterval(payWechat);
-                return;
+          this.wxRes = res;
+          if (payType === 0) {
+            if (broswerType === '0') {
+              this.wechatPay(
+                res.wechat_js.timeStamp,
+                res.wechat_js.nonceStr,
+                res.wechat_js.package,
+                res.wechat_js.signType,
+                res.wechat_js.paySign,
+              );
+            } else if (broswerType === '1') {
+              if (typeof WeixinJSBridge === 'undefined') {
+                if (document.addEventListener) {
+                  document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
+                } else if (document.attachEvent) {
+                  document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
+                  document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
+                }
+              } else {
+                this.onBridgeReady(res);
               }
-              this.getOrderStatus(orderSn);
-            }, 3000);
-            this.coverLoading = true;
+            } else if (broswerType === '2') {
+              payPhone = setInterval(() => {
+                if (this.payStatus === 1) {
+                  clearInterval(payPhone);
+                  return;
+                }
+                this.getOrderStatus(orderSn, broswerType);
+              }, 3000);
+              window.location.href = res.wechat_h5_link;
+            } else if (broswerType === '3') {
+              if (res) {
+                this.codeUrl = res.wechat_qrcode;
+                this.payShowStatus = false;
+                this.$refs.codePopup.open();
+                this.qrcodeShow = true;
+                payWechat = setInterval(() => {
+                  if (this.payStatus === 1) {
+                    clearInterval(payWechat);
+                    return;
+                  }
+                  this.getOrderStatus(this.orderSn, broswerType);
+                  uni.hideLoading();
+                }, 3000);
+              }
+            }
+          } else if (payType === 1) {
+            if (res.wallet_pay.result === 'success') {
+              if (this.payTypeVal === 0) {
+                // 这是主题支付，支付完成刷新详情页，重新请求数据
+                this.loadThread();
+              } else if (this.payTypeVal === 1) {
+                // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+                this._updateRewardUsers();
+              }
+              this.payShowStatus = false;
+              this.coverLoading = false;
+            }
+            this.coverLoading = false;
           }
         })
         .catch(err => {
           // 清空支付的密码
-          this.$refs['payShow'].clear();
           console.log(err);
+          this.$refs.payShow.clearPassword();
         });
     },
-    // 查询订单支状
-    getOrderStatus(orderSn) {
-      const params = {
-        _jv: {
-          type: 'orders/' + orderSn,
-        },
-      };
+    // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    getOrderStatus(orderSn, broswerType) {
       this.$store
-        .dispatch('jv/get', params)
+        .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
-          console.log(res.status, '订单支付状态接口查询');
           this.payStatus = res.status;
-          this.payStatusNum++;
-          if (this.payStatus == '1' || this.payStatusNum > 10) {
-            console.log('支付成功');
-            // this.payShow = false;
+          if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
-            this.$refs.toast.show({ message: this.p.paySuccess });
-            if (this.payTypeVal == 0) {
-              // 这是主题支付，支付完成刷新详情页，重新请求数据
-              console.log('这是主题支付');
+            if (broswerType === '2') {
+              // return false;
+            } else if (broswerType === '3') {
+              // 这是pc扫码支付完成
+              this.$refs.codePopup.close();
+              this.qrcodeShow = false;
               this.loadThread();
-            } else if (this.payTypeVal == 1) {
-              // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              // console.log('这是主题打赏1111', this.thread.rewardedUsers);
-              this.thread._jv.relationships.rewardedUsers.data.push({
-                type: this.user._jv.type,
-                id: this.user.id.toString(),
-              });
-              this.thread.rewardedUsers.unshift(this.user);
             }
+
+            if (this.payTypeVal === 0) {
+              // 这是主题支付，支付完成刷新详情页，重新请求数据
+              this.loadThread();
+            } else if (this.payTypeVal === 1) {
+              // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+              this._updateRewardUsers();
+            }
+            this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
         .catch(err => {
-          console.log(err, '123这是catch');
+          console.log(err);
           this.coverLoading = false;
           this.$refs.toast.show({ message: this.p.payFail });
         });
@@ -1115,71 +1387,51 @@ export default {
       const _this = this;
       uni.requestPayment({
         provider: 'wxpay',
-        timeStamp: timeStamp,
-        nonceStr: nonceStr,
+        timeStamp,
+        nonceStr,
         package: packageVal,
-        signType: signType,
-        paySign: paySign,
-        success: function(res) {
-          // console.log('微信支付成功');
-          console.log('success:' + JSON.stringify(res));
-          // console.log(_this.payTypeVal, '支付类型');
-          _this.payShowStatus = false;
-          _this.coverLoading = false;
-
-          _this.$refs.toast.show({ message: _this.p.paySuccess });
-          if (_this.payTypeVal == 0) {
-            // 这是主题支付，支付完成刷新详情页，重新请求数据
-            console.log('这是主题支付');
-            _this.loadThread();
-          } else if (_this.payTypeVal == 1) {
-            // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-            _this.thread._jv.relationships.rewardedUsers.data.push({
-              type: _this.user._jv.type,
-              id: _this.user.id.toString(),
-            });
-            _this.thread.rewardedUsers.unshift(_this.user);
-          }
+        signType,
+        paySign,
+        success(res) {
+          _this.coverLoading = true;
+          payWechat = setInterval(() => {
+            if (_this.payStatus === 1) {
+              clearInterval(payWechat);
+              return;
+            }
+            _this.getOrderStatus(_this.orderSn);
+          }, 3000);
         },
-        fail: function(err) {
-          console.log('微信支付失败');
-          console.log('fail:' + JSON.stringify(err));
+        fail(err) {
           _this.payShowStatus = false;
           _this.coverLoading = false;
           _this.$refs.toast.show({ message: _this.p.payFail });
         },
       });
     },
-    //输入密码完成时
+    // 输入密码完成时
     onInput(val) {
-      console.log(val, '这是详情页输出的密码');
-      console.log('详情页监听到密码输入完成');
-      console.log(this.thread.price, '这是价格');
       this.value = val;
-      if (this.payTypeVal == 0) {
+      if (this.payTypeVal === 0) {
         // 这是主题支付
-        console.log('这是主题支付调接口');
-        this.creatOrder(this.thread.price, 3, val, '1');
-      } else if (this.payTypeVal == 1) {
+        this.creatOrder(this.thread.price, 3, val, 1);
+      } else if (this.payTypeVal === 1) {
         // 这是主题打赏
-        console.log('这是主题打赏调接口~~~~~');
-        this.creatOrder(this.price, 2, val, '1');
+        this.creatOrder(this.price, 2, val, 1);
       }
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
       if (payType === 0) {
-        console.log('这是详情页获取到的支付方式---微信');
-        console.log(this.value, this.orderSn, '这是密码和订单号');
-        if (this.payTypeVal == 0) {
+        if (this.payTypeVal === 0) {
           // 这是主题支付
           this.creatOrder(this.thread.price, 3, this.value, payType);
-        } else if (this.payTypeVal == 1) {
+        } else if (this.payTypeVal === 1) {
           // 这是主题打赏
           this.creatOrder(this.price, 2, this.value, payType);
         }
       } else if (payType === 1) {
-        console.log('这是详情页获取到的支付方式---钱包');
+        // 这是详情页获取到的支付方式---钱包
       }
     },
     // 对象转数组
@@ -1196,9 +1448,12 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
-      if (param.type == '0') {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      if (param.type === '0') {
         uni.redirectTo({
-          url: '/pages/topic/post?operating=edit&threadId=' + this.thread._jv.id,
+          url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
         });
       } else {
         this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
@@ -1206,22 +1461,29 @@ export default {
     },
     // 跳转到用户主页
     personJump(id) {
-      console.log(id, '这是当前主题用户Id');
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });
     },
     // 主题支付
     payClickShow() {
-      console.log('主题支付');
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      this.payStatus = false;
       this.payShowStatus = true;
-      this.payTypeVal = 0;
-      console.log(this.payTypeVal, '这是类型，0为主题支付，1为主题打赏');
-      if (this.thread.type == 3) {
+      this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏
+      if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
-      } else if (this.thread.type == 2) {
+      } else if (this.thread.type === 1) {
         this.payTypeText = this.t.pay + this.t.paymentViewRemainingContent;
-      } else {
+      } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
       }
       this.price = this.thread.price;
@@ -1231,26 +1493,44 @@ export default {
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
-      console.log(val, '是否显示用户头像');
+      // 是否显示用户头像
       this.isAnonymous = val;
     },
 
-    //选择支付方式，获取值
+    // 选择支付方式，获取值
     radioChange(val) {
-      console.log(val, '这是父级得到的');
+      // val, 这是父级得到的
     },
     // 打赏
     rewardClick() {
-      console.log('这是打赏');
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      if (this.user._jv.id === this.thread.user._jv.id) {
+        this.$refs.toast.show({ message: this.t.iCantRewardMyself });
+        return false;
+      }
+      // 这是打赏
+      this.payStatus = false;
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
       // this.payShowStatus = true;
-      this.payNumCheck = [];
+      this.payNumCheck = [
+        {
+          name: '',
+          pay: '',
+        },
+      ];
       this.$refs.rewardPopup.open();
     },
     // 取消打赏
     cancelReward() {
-      this.payNumCheck = [];
+      this.payNumCheck = [
+        {
+          name: '',
+          pay: '',
+        },
+      ];
       this.$refs.rewardPopup.close();
     },
     // 打赏选择付费金额
@@ -1268,7 +1548,6 @@ export default {
         });
       } else {
         this.price = this.payNumCheck[0].pay;
-        console.log(this.price, '这是选中的钱');
         this.payShowStatus = true;
         this.$refs.rewardPopup.close();
         this.payTypeVal = 1;
@@ -1278,6 +1557,37 @@ export default {
         });
       }
     },
+    // 处理金额
+    checkNum(e) {
+      let that = this;
+      let price = e.target.value;
+      let maxLength = price.indexOf('.');
+
+      if (price.indexOf('.') < 0 && price != '') {
+        // 超过4位则大于1万元
+        if (price.length > 6) {
+          price = price.substring(0, price.length - 1);
+          uni.showToast({
+            title: that.c.TheAmountCannotExceedOneMillion,
+            icon: 'none',
+          });
+        } else {
+          price = parseFloat(price);
+        }
+      } else if (price.indexOf('.') == 0) {
+        //'首位小数点情况'
+        price = price.replace(/[^$#$]/g, '0.');
+        price = price.replace(/\.{2,}/g, '.');
+      } else if (!/^(\d?)+(\.\d{0,2})?$/.test(price)) {
+        //去掉最后一位
+        price = price.substring(0, price.length - 1);
+      }
+      that.$nextTick(function() {
+        //'有小数点时，最大长度为9位，没有则是7位'
+        that.maxLength = maxLength == -1 ? 7 : 10;
+        that.inputPrice = price;
+      });
+    },
     // 自定义付费金额弹框点击关闭时
     diaLogClose() {
       this.$refs.customAmountPopup.close();
@@ -1285,32 +1595,37 @@ export default {
     },
     // 自定义付费金额弹框点击确定时
     diaLogOk() {
-      this.price = this.inputPrice;
-      this.$refs.customAmountPopup.close();
-      this.customAmountStatus = false;
-      this.payShowStatus = true;
-      // this.$refs.payShow.payClickShow();
-      this.$nextTick(() => {
-        this.$refs.payShow.payClickShow(this.payTypeVal);
-      });
+      if (this.inputPrice <= 0) {
+        this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
+      } else {
+        this.price = Number(this.inputPrice);
+        console.log(typeof this.price, '这是金额类型');
+        this.$refs.customAmountPopup.close();
+        this.customAmountStatus = false;
+        this.payShowStatus = true;
+        // this.$refs.payShow.payClickShow();
+        this.$nextTick(() => {
+          this.$refs.payShow.payClickShow(this.payTypeVal);
+        });
+      }
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
     },
     // 点击表情插入到文本域
-    getEmojiClick(num) {
+    getEmojiClick(code) {
       let text = '';
       text = `${this.textAreaValue.slice(0, this.cursor) +
-        this.allEmoji[num].code +
+        code +
         this.textAreaValue.slice(this.cursor)}`;
-
       this.textAreaValue = text;
       this.emojiShow = false;
     },
+
     // 点击@跳转到@页
     callClick() {
-      uni.navigateTo({ url: '/components/qui-at-member-page/qui-at-member-page' });
+      uni.navigateTo({ url: '/pages/user/at-member' });
     },
     // // 上传图片
     // imageUploader() {
@@ -1329,7 +1644,8 @@ export default {
     },
     // 删除图片
     uploadClear(list, del) {
-      this.delAttachments(list.data.id).then(() => {
+      const id = list.id;
+      this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
     },
@@ -1337,7 +1653,8 @@ export default {
     delAttachments(id) {
       const params = {
         _jv: {
-          type: `attachments/${id}`,
+          type: 'attachments',
+          id,
         },
       };
 
@@ -1357,21 +1674,33 @@ export default {
     },
     // 跳转到评论详情页
     commentJump(threadId, postId) {
-      uni.redirectTo({
-        url: '/pages/topic/comment?threadId=' + threadId + '&commentId=' + postId,
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      uni.navigateTo({
+        url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
       });
     },
     // 评论点赞
-    commentLikeClick(postId, type, canStatus, isStatus, index) {
+    commentLikeClick(postId, type, canStatus, isStatus, index, post) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.postIndex = index;
-      this.postOpera(postId, type, canStatus, isStatus);
+      this.postOpera(postId, type, canStatus, isStatus, post);
     },
     // 删除评论
-    deleteComment(postId, type, canStatus, isStatus) {
-      this.postOpera(postId, '3', canStatus, isStatus);
+    deleteComment(postId, type, canStatus, isStatus, post) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复
     replyComment(postId, postIndex) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (!this.thread.canReply) {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       } else {
@@ -1384,34 +1713,51 @@ export default {
       }
     },
     // 点击图片
-    imageClick(imageId) {
-      this.previewImg();
+    imageClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      // this.previewImg();
     },
     // 点击分类标签
     tagClick(tagId) {
       this.$u.event.$emit('tagClick', tagId);
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      if (pages.length === 1) {
-        uni.navigateTo({
-          url: '/pages/home/index',
-        });
-      } else {
+      if (
+        pages.length > 1 &&
+        pages[delta - 1].route &&
+        pages[delta - 1].route === 'pages/home/index'
+      ) {
         uni.navigateBack({
           delta,
         });
+      } else {
+        uni.navigateTo({
+          url: '/pages/home/index',
+        });
+        this.setFooterIndex(0);
       }
     },
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.postOpera(postId, '1', canLike, isLiked);
     },
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment(threadId) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;
         this.$refs.commentPopup.open();
@@ -1423,14 +1769,37 @@ export default {
     },
     // 分享
     shareClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+        return;
+      }
+      // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
-      console.log(this.forums, '!!~~~~~');
-      if (this.forums.set_site.site_mode == 'pay') {
-        this.bottomData.map((value, key, bottomData) => {
+      if (this.forums.set_site.site_mode === 'pay') {
+        this.bottomData.forEach((value, key, bottomData) => {
+          // this.bottomData.map((value, key, bottomData) => {
           value.name === 'wxFriends' && bottomData.splice(key, 1);
         });
       }
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        // 微信内
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.contentVal,
+          id: this.threadId,
+          url: 'pages/topic/index',
+        });
+      }
+      // #endif
     },
+    // #ifdef H5
+    closeShare() {
+      this.shareShow = false;
+    },
+    // #endif
     // 取消分享
     cancel() {
       this.$refs.sharePopup.close();
@@ -1451,8 +1820,50 @@ export default {
         return;
       }
       this.pageNum += 1;
-      // this.loadThread();
       this.loadThreadPosts();
+    },
+    codeImgChange(params) {
+      if (!params.show) {
+        clearInterval(payWechat);
+      }
+    },
+    _updateLikedUsers(liked = true) {
+      this.isLiked = liked;
+      // 主题点赞
+      if (this.isLiked) {
+        this.thread.firstPost.likedUsers.unshift(this.user);
+        this.thread.firstPost._jv.relationships.likedUsers.data.unshift({
+          type: this.user._jv.type,
+          id: this.user._jv.id,
+        });
+      } else {
+        this.thread.firstPost.likedUsers.forEach((value, key, item) => {
+          value.id == this.user.id && item.splice(key, 1);
+        });
+        this.thread.firstPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {
+          value.id == this.user.id && item.splice(key, 1);
+        });
+      }
+      this.$forceUpdate();
+    },
+    _updateRewardUsers(payType = 0) {
+      if (this.payTypeVal === 1) {
+        this.thread.rewardedCount++;
+        if (!this.rewardStatus) {
+          this.rewardStatus = true;
+        }
+      }
+
+      this.rewardedUsers.unshift(this.user);
+      this.thread._jv.relationships.rewardedUsers.data.unshift({
+        type: this.user._jv.type,
+        id: this.user._jv.id,
+      });
+      this.$forceUpdate();
+    },
+    onUnload() {
+      clearInterval(payWechat);
+      clearInterval(payPhone);
     },
   },
 };
@@ -1470,7 +1881,7 @@ page {
 * {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  // font-size: $fg-f28;
   color: --color(--qui-FC-333);
   word-break: break-all;
 }
@@ -1487,10 +1898,10 @@ page {
   max-height: calc(100vh - 80rpx);
 }
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
 }
 .bg-white {
   background-color: --color(--qui-BG-2);
@@ -1554,6 +1965,7 @@ page {
   .det-hd-management {
     display: flex;
     flex-direction: row;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: 26rpx;
@@ -1700,6 +2112,9 @@ page {
 }
 .ft-gap {
   width: 100%;
+  /* #ifdef H5 */
+  margin-top: 44px;
+  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {
@@ -1740,7 +2155,6 @@ page {
 .comment-popup-box {
   width: 100%;
   padding-top: 40rpx;
-  background: --color(--qui-BG-2);
 }
 .comment-popup {
   width: 100%;
@@ -1798,7 +2212,7 @@ page {
     font-size: 28rpx;
   }
 }
-.publishBtn {
+.publish-btn {
   width: 100%;
   height: 100rpx;
   font-size: $fg-f28;
@@ -1910,9 +2324,102 @@ page {
         border-bottom-left-radius: 10rpx;
       }
     }
+    .popup-btn--ok--blue {
+      color: --color(--qui-BG-HIGH-LIGHT);
+    }
   }
 }
 .popup-share-content {
   box-sizing: border-box;
+}
+
+// 微信二维码弹框
+
+.code-content {
+  position: fixed;
+  top: 10%;
+  left: 11%;
+  z-index: 22;
+  display: flex;
+  flex-direction: column;
+  width: 78%;
+  padding: 40rpx;
+  background: --color(--qui-BG-FFF);
+  border-radius: 16rpx;
+  box-sizing: border-box;
+  .code-title {
+    text-align: center;
+  }
+  .code-pay-money {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 36rpx;
+    padding-bottom: 36rpx;
+    font-size: 70rpx;
+    .code-yuan {
+      font-size: 48rpx;
+      line-height: 66rpx;
+    }
+  }
+}
+
+.code-type-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 24rpx 0 34rpx;
+  line-height: 36rpx;
+  border-top: 1px solid --color(--qui-BG-ED);
+  .code-type-tit {
+    color: --color(--qui-FC-AAA);
+  }
+  .code-type {
+    display: flex;
+    flex-direction: row;
+    .code-type-icon {
+      font-size: 36rpx;
+    }
+    .code-type-text {
+      padding-left: 12rpx;
+    }
+  }
+}
+.code-img {
+  align-self: center;
+  width: 380rpx;
+  height: 380rpx;
+}
+.code-tip {
+  padding: 14rpx 0 20rpx;
+}
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 17;
+  width: 100%;
+  height: 100%;
+  background: rgba(#000, 0.6);
+}
+.wxShareTip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2222222222222;
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  .sharePoint {
+    display: inline-block;
+    width: 70%;
+    margin-top: 10rpx;
+    margin-right: 30rpx;
+  }
+  .shareKnow {
+    display: block;
+    width: 35%;
+    margin: 20vh auto 30rpx;
+  }
 }
 </style>

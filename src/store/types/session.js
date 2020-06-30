@@ -10,3 +10,7 @@ export const SET_AUTH = 'SET_AUTH';
 export const SET_CATEGORYID = 'SET_CATEGORYID';
 // 设置 分类Index
 export const SET_CATEGORYINDEX = 'SET_CATEGORYINDEX';
+
+export const DELETE_USER_ID = 'DELETE_USER_ID';
+
+export const DELETE_ACCESS_TOKEN = 'DELETE_ACCESS_TOKEN';

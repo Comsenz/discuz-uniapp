@@ -1,7 +1,16 @@
 <template>
   <view class="home">
+    <uni-nav-bar
+      class="status-bar"
+      :style="'transform:' + navBarTransform"
+      :title="forums.set_site.site_name"
+      fixed="true"
+      :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
+      :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
+      status-bar
+    ></uni-nav-bar>
     <scroll-view
-      :scroll-y="scrollable"
+      scroll-y="true"
       scroll-with-animation="true"
       show-scrollbar="false"
       class="scroll-y"
@@ -9,28 +18,28 @@
       @scrolltolower="pullDown"
       @scrolltoupper="toUpper"
     >
-      <uni-nav-bar
-        v-if="navbarShow"
-        :title="forums.set_site.site_name"
-        fixed="true"
-        :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
-        :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
-        status-bar
-      ></uni-nav-bar>
       <qui-header
-        v-if="headerShow"
         :head-img="forums.set_site.site_header_logo"
         :background-head-full-img="forums.set_site.site_background_image"
         :theme="theme"
         :theme-num="forums.other.count_users"
         :post-num="forums.other.count_threads"
         :share-btn="shareBtn"
+        :share-show="shareShow"
+        :is-show-more="false"
+        :is-show-back="false"
+        :is-show-home="false"
         @click="open"
+        @closeShare="closeShare"
       ></qui-header>
       <view
         class="nav"
         id="navId"
-        :style="headerShow ? '' : 'width:100%;position:fixed;z-index:9;'"
+        :style="{
+          position: !headerShow ? 'fixed' : '',
+          zIndex: !headerShow ? '9' : '',
+          top: !headerShow ? navbarHeight + 'px' : '',
+        }"
       >
         <view class="nav__box">
           <qui-icon
@@ -50,7 +59,7 @@
           active-color="#1878F3"
         ></u-tabs>
       </view>
-      <view class="sticky" :style="headerShow ? 'margin-top:30rpx' : topMargin()">
+      <view class="sticky" :style="headerShow ? 'margin-top:30rpx' : 'margin-top:130rpx'">
         <view
           class="sticky__isSticky"
           v-for="(item, index) in sticky"
@@ -59,10 +68,10 @@
         >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
           <view class="sticky__isSticky__count">
-            <rich-text
+            <qui-uparse
               class="sticky__isSticky__text"
-              :nodes="item.type == 1 ? item.title : item.firstPost.summary"
-            ></rich-text>
+              :content="item.type == 1 ? item.title : item.firstPost.summary"
+            ></qui-uparse>
             <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
           </view>
         </view>
@@ -105,8 +114,8 @@
             )
           "
           @commentClick="commentClick(item._jv.id)"
-          @contentClick="contentClick(item._jv.id)"
-          @backgroundClick="contentClick(item._jv.id)"
+          @contentClick="contentClick(item)"
+          @backgroundClick="contentClick(item)"
           @headClick="headClick(item.user._jv.id)"
           @videoPlay="handleVideoPlay"
         ></qui-content>
@@ -172,6 +181,7 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
@@ -179,10 +189,29 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 import { mapMutations, mapState } from 'vuex';
 
+const sysInfo = uni.getSystemInfoSync();
+
+const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
+const navBarTransform = `translateY(-${navbarHeight}px)`;
+
 export default {
-  mixins: [forums, user],
+  mixins: [
+    forums,
+    user,
+    // #ifdef  H5
+    wxshare,
+    appCommonH,
+    loginAuth,
+    // #endif
+  ],
+
   props: {
     navTheme: {
       type: String,
@@ -192,6 +221,7 @@ export default {
   // props: ['navTheme'],
   data() {
     return {
+      navBarTransform,
       suspended: false, // 是否吸顶状态
       checkoutTheme: false, // 切换主题  搭配是否吸顶使用
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
@@ -207,13 +237,15 @@ export default {
       pageNum: 1, // 当前页数
       isLiked: false, // 主题点赞状态
       showSearch: true, // 筛选显示搜索
-      navbarShow: false, // 是否显示顶部导航栏
-      navbarHeight: 0, // 顶部导航栏的高度
+      navbarHeight, // 顶部导航栏的高度
       headerShow: true, // 是否显示标题图(背景+logo)，不显示标题图时，分类切换栏需要固定顶部
       navTop: 0, // 切换分类导航的top
       navHeight: 0, // 切换分类导航的高度
       nowThreadId: '', // 当前点击主题ID
-      filterTop: 450, // 筛选弹窗的位置
+      filterTop: '', // 筛选弹窗的位置
+      shareShow: false, // h5内分享提示信息
+      shareTitle: '', // h5内分享复制链接
+      isWeixin: '', // 是否是微信浏览器内
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -260,8 +292,6 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
-      scrollable: true, // scroll-view是否可滚动的开关
-      mainBottom: 0, // 正文区域的底部，整个屏幕高度减qui-bottom的高度
     };
   },
   computed: {
@@ -271,19 +301,78 @@ export default {
     }),
   },
   created() {
+    // #ifdef  H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone;
+    // #endif
+    // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
-  },
-  mounted() {
-    uni.getSystemInfo({
-      success: res => {
-        const rpx = res.screenWidth / 750;
-        this.navTop = 400 /* qui-header 的高度 */ * rpx;
-        this.navHeight = 102 /* nav的高度 */ * rpx;
-        this.navbarHeight = res.statusBarHeight + 44 /* uni-nav-bar的高度 */;
-        this.mainBottom = res.screenHeight - 119 /* qui-footer的高度 */ * rpx;
-      },
+    // 详情页删除帖子后在首页删除
+    this.$u.event.$on('deleteThread', thread =>
+      this.threads.forEach((item, index) => {
+        if (item._jv.id === thread) {
+          this.threads.splice(index, 1);
+        }
+      }),
+    );
+    // 编辑删除图片后首页删除图片
+    this.$u.event.$on('deletedImg', res => {
+      console.log(res, 'res');
+      this.threads.forEach(item => {
+        if (item._jv.id === res.threadId) {
+          item.firstPost.images.splice(res.index, 1);
+        }
+      });
+    });
+    // 置顶列表添加数据当详情页置顶时
+    this.$u.event.$on('stickyThread', data => {
+      this.sticky.unshift(data);
+      this.threads.forEach((item, index) => {
+        if (item._jv.id === data._jv.id) {
+          this.threads.splice(index, 1);
+        }
+      });
+    });
+    // 详情页取消置顶时置顶列表中删除该置顶
+    this.$u.event.$on('cancelSticky', data => {
+      this.sticky.forEach((item, index) => {
+        if (item._jv.id === data._jv.id) {
+          this.sticky.splice(index, 1);
+        }
+      });
     });
 
+    // 详情页编辑增加图片时首页增加图片
+    this.$u.event.$on('refreshImg', res => {
+      console.log(res, '888888888');
+      // eslint-disable-next-line no-restricted-syntax
+      for (const index in this.threads) {
+        if (this.threads[index]._jv.id === res.threadId) {
+          const images = this.$store.getters['jv/get'](`posts/${res.id}`);
+          this.threads[index].firstPost.images = images.attachments;
+          this.$forceUpdate();
+          console.log(this.threads[index].firstPost.images, 'this.threads[index].firstPost.images');
+          break;
+        }
+      }
+    });
+    // h5微信分享
+    // #ifdef H5
+    this.wxShare({
+      title: this.forums.set_site.site_name,
+      desc: this.forums.set_site.site_introduction,
+      logo: this.forums.set_site.site_logo,
+    });
+    // #endif
+    this.ontrueGetList();
+    uni.$on('logind', () => {
+      this.ontrueGetList();
+    });
+  },
+  destroyed() {
+    uni.$off('logind');
+  },
+  mounted() {
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
       this.setCategoryId(tagId);
@@ -294,15 +383,10 @@ export default {
       this.loadThreads();
     });
 
-    setInterval(() => {
-      this.$uGetRect('#main').then(rect => {
-        if (rect.top >= 0 && rect.bottom < this.mainBottom) {
-          this.scrollable = false;
-        } else {
-          this.scrollable = true;
-        }
-      });
-    }, 200);
+    this.$uGetRect('#navId').then(rect => {
+      this.navTop = rect.top;
+      this.navHeight = rect.height;
+    });
   },
   methods: {
     ...mapMutations({
@@ -310,23 +394,22 @@ export default {
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
     }),
     topMargin() {
-      return `margin-top: calc(${this.navTop - this.navbarHeight + this.navHeight}px + 30rpx)`;
+      return ';';
     },
     scroll(event) {
       if (!this.navbarHeight) {
         return;
       }
-      if (this.navTop - event.detail.scrollTop <= this.navbarHeight) {
-        this.navbarShow = true;
+      if (event.detail.scrollTop + this.navbarHeight >= this.navTop) {
         this.headerShow = false;
+        this.navBarTransform = 'none';
       } else {
-        this.navbarShow = false;
         this.headerShow = true;
+        this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
     },
     // 滑动到顶部
     toUpper() {
-      this.navbarShow = false;
       this.headerShow = true;
     },
     // 初始化选中的选项卡
@@ -380,10 +463,15 @@ export default {
       });
     },
     // 内容部分点击跳转到详情页
-    contentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
+    contentClick(thread) {
+      if (thread.canViewPosts) {
+        uni.navigateTo({
+          url: `/pages/topic/index?id=${thread._jv.id}`,
+        });
+      } else {
+        this.$store.getters['session/get']('auth').open();
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+      }
     },
     // 点击头像调转到个人主页
     headClick(id) {
@@ -393,6 +481,7 @@ export default {
     },
     // 首页头部分享按钮弹窗
     open() {
+      // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
       // 付费模式下不显示微信分享
       if (this.forums.set_site.site_mode === 'pay') {
@@ -405,7 +494,24 @@ export default {
           },
         ];
       }
+      // #endif
+
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: 'pages/home/index',
+        });
+      }
+      // #endif
     },
+    // #ifdef H5
+    closeShare() {
+      this.shareShow = false;
+    },
+    // #endif
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
@@ -464,21 +570,27 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
-      const query = uni.createSelectorQuery().in(this);
-      query
+      // #ifdef MP-WEIXIN
+      wx.createSelectorQuery()
+        .in(this)
         .select('#navId')
-        .boundingClientRect(data => {
-          setTimeout(() => {
-            this.filterTop = data.top * 2 + 100;
-          }, 500);
+        .boundingClientRect(rect => {
+          this.filterTop = `${rect.bottom * 2}rpx`;
         })
         .exec();
+      // #endif
+      // #ifdef H5
+      const obj = document.querySelector('#navId');
+      const { bottom } = obj.getBoundingClientRect();
+      this.filterTop = `${bottom}px`;
+      // #endif
       this.show = !this.show;
       this.$refs.filter.setData();
       // this.navShow = true;
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
       this.$refs.popupContent.open();
@@ -493,6 +605,20 @@ export default {
           },
         ];
       }
+      // #endif
+      // #ifdef H5
+      const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
+      if (shareThread.type === 1) {
+        this.shareTitle = shareThread.title;
+      } else {
+        this.shareTitle = shareThread.firstPost.summary_text;
+      }
+      this.h5Share({
+        title: this.shareTitle,
+        id,
+        url: 'pages/topic/index',
+      });
+      // #endif
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
@@ -592,11 +718,15 @@ export default {
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
       }
-      // if (!canLike) {
-      //   console.log('没有点赞权限');
-      // }
       const params = {
         _jv: {
           type: 'posts',
@@ -642,21 +772,28 @@ export default {
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
 }
+.status-bar {
+  position: fixed;
+  z-index: 1;
+  transition: 0.2s;
+}
 .nav {
   position: relative;
   z-index: 1;
+  width: 100%;
+  overflow: hidden;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: box-shadow 0.2s, -webkit-transform 0.2s;
 
   &__box {
     position: absolute;
-    right: 2rpx;
+    right: 0;
     z-index: 2;
     display: block;
     float: right;
     width: 80rpx;
-    height: 100rpx;
+    height: 97rpx;
     background: --color(--qui-BG-2);
     &__icon {
       margin-left: 24rpx;
@@ -667,6 +804,9 @@ export default {
 
 .scrolled .nav {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.filter-modal .filter-modal__content {
+  max-height: 500rpx;
 }
 
 .sticky {
@@ -722,7 +862,7 @@ export default {
   height: 100rpx;
   text-align: center;
   white-space: nowrap;
-  border-bottom: 1rpx solid #eee;
+  border-bottom: 1rpx solid --color(--qui-BOR-EEE);
 }
 .scroll-tab-item {
   z-index: 1;

@@ -14,28 +14,54 @@
         src="@/static/msg-warning.svg"
         mode="aspectFit"
         lazy-load
-        v-if="show"
+        v-if="show || inshow"
       ></image>
       <view class="page-message--title" v-if="message.title">{{ message.title }}</view>
+      <view class="page-message--subtitle" v-if="inshow">{{ message.subtitle }}</view>
+      <navigator v-if="inshow" open-type="exit" target="miniProgram" class="close-btn">
+        {{ message.btnTxt }}
+      </navigator>
       <view class="page-message--subtitle" v-if="show">
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
       <navigator
+        v-if="show && message.btnclickType == 'siteClose'"
         class="out page-message--exit"
-        :open-type="message.btnclickType === 'toHome' ? 'redirect' : 'exit'"
+        open-type="exit"
         hover-class="none"
         target="miniProgram"
-        v-if="show"
+      >
+        <qui-button size="medium" @click="handleClick" class="out-btn">
+          {{ message.btnTxt }}
+        </qui-button>
+      </navigator>
+      <navigator
+        v-else-if="show && message.btnclickType == 'toHome'"
+        class="out page-message--exit"
+        open-type="redirect"
+        hover-class="none"
+        target="miniProgram"
+      >
+        <qui-button size="medium" @click="handleClick" class="out-btn">
+          {{ message.btnTxt }}
+        </qui-button>
+      </navigator>
+      <navigator
+        v-else-if="show && message.btnclickType == 'toBack'"
+        class="out page-message--exit"
+        open-type="navigateBack"
+        hover-class="none"
+        target="miniProgram"
       >
         <qui-button size="medium" @click="handleClick" class="out-btn">
           {{ message.btnTxt }}
         </qui-button>
       </navigator>
 
-      <!--<qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
+      <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
         {{ i18n.t('core.admin_login') }}
-      </qui-button>-->
+      </qui-button>
     </view>
   </view>
 </template>
@@ -44,18 +70,21 @@
 import { mapState } from 'vuex';
 import { i18n } from '@/locale';
 
-const TYPE_404 = '404';
+const TYPE_404 = 'type_404';
 const TYPE_CLOSED = 'site_closed';
 const NOT_INSTALL = 'not_install';
 const BAN_USER = 'ban_user';
 const THREAD_DELETED = 'thread_deleted';
+const POST_DELETED = 'post_deleted';
+const IOS_DISPLAY = 'dataerro';
+const TYPE_401 = 'type_401';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
     subtitle: i18n.t('core.page_not_found_detail'),
-    btnTxt: i18n.t('core.back_home'),
+    btnTxt: i18n.t('core.back_history'),
     icon: '@/static/msg-404.svg',
-    btnclickType: 'toHome', //点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
+    btnclickType: 'toBack', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
   [TYPE_CLOSED]: {
     title: i18n.t('core.site_closed'),
@@ -80,10 +109,31 @@ const message = {
   },
   [THREAD_DELETED]: {
     title: i18n.t('core.thread_deleted'),
-    subtitle: '', // 从接口读取主题被删除时主题详情页的提示语
-    btnTxt: i18n.t('core.back_home'),
+    subtitle: i18n.t('core.page_not_found_detail'), // 从接口读取主题被删除时主题详情页的提示语
+    btnTxt: i18n.t('core.back_history'),
     icon: '@/static/msg-warning.svg',
-    btnclickType: 'toHome',
+    btnclickType: 'toBack',
+  },
+  [POST_DELETED]: {
+    title: i18n.t('core.post_deleted'),
+    subtitle: i18n.t('core.page_not_found_detail'), // 从接口读取主题被删除时主题详情页的提示语
+    btnTxt: i18n.t('core.back_history'),
+    icon: '@/static/msg-warning.svg',
+    btnclickType: 'toBack',
+  },
+  [IOS_DISPLAY]: {
+    title: i18n.t('home.ioschoicetitle'),
+    subtitle: i18n.t('home.ioschoicecontent'), // 从接口读取主题被删除时主题详情页的提示语
+    btnTxt: i18n.t('discuzq.pageHeader.title'),
+    icon: '@/static/msg-warning.svg',
+    btnclickType: 'toBack',
+  },
+  [TYPE_401]: {
+    title: i18n.t('core.noViewPermission'),
+    subtitle: '',
+    btnTxt: i18n.t('core.back_history'),
+    icon: '@/static/msg-404.svg',
+    btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
 };
 export default {
@@ -102,18 +152,33 @@ export default {
     },
     show() {
       return (
-        [TYPE_CLOSED, NOT_INSTALL, BAN_USER, THREAD_DELETED].indexOf(this.forumError.code) >= 0
+        [
+          TYPE_404,
+          TYPE_CLOSED,
+          NOT_INSTALL,
+          BAN_USER,
+          THREAD_DELETED,
+          POST_DELETED,
+          TYPE_401,
+        ].indexOf(this.forumError.code) >= 0
       );
+    },
+    inshow() {
+      return [IOS_DISPLAY].indexOf(this.forumError.code) >= 0;
     },
   },
   methods: {
     handleClick() {
-      console.log(111);
-      // 404
-      if (this.forumError.code === TYPE_404 || this.forumError.code === THREAD_DELETED) {
-        console.log('这是返回首页呢');
-        uni.redirectTo({
-          url: '/pages/home/index',
+      if (
+        this.forumError.code === TYPE_401 ||
+        this.forumError.code === THREAD_DELETED ||
+        this.forumError.code === TYPE_404 ||
+        this.forumError.code === POST_DELETED
+      ) {
+        console.log('这是Message里的404，走返回');
+        this.message.btnclickType = 'toBack';
+        uni.navigateBack({
+          delta: 1,
         });
       }
     },
@@ -175,5 +240,17 @@ export default {
 }
 .navigator-hover {
   background-color: rgba(0, 0, 0, 0);
+}
+.close-btn {
+  width: 510rpx;
+  height: 90rpx;
+  margin: 50rpx auto 0;
+  font-size: 28rpx;
+  font-weight: 400;
+  line-height: 90rpx;
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  background: rgba(24, 120, 243, 1);
+  border: 2rpx solid 2px rgba(237, 237, 237, 1);
 }
 </style>

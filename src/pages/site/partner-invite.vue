@@ -3,51 +3,45 @@
     <qui-header
       head-img="/static/logo.png"
       :theme="i18n.t('home.theme')"
-      :theme-num="forums.other.count_users"
-      :post="i18n.t('home.homecontent')"
-      :post-num="forums.other.count_threads"
-      :share="i18n.t('home.share')"
+      :theme-num="forums.other && forums.other.count_users"
+      :post-num="forums.other && forums.other.count_threads"
+      :share-btn="shareBtn"
+      :share-show="shareShow"
+      :is-show-more="false"
+      :is-show-back="false"
+      :is-show-home="false"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
+      @closeShare="closeShare"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
-              </view>
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
+      <qui-share @close="cancel"></qui-share>
     </uni-popup>
     <view class="site-item">
       <qui-cell-item
         class="cell-item--auto cell-item--left"
         :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site.site_introduction"
+        :addon="forums.set_site && forums.set_site.site_introduction"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site.site_install"
+        :addon="forums.set_site && forums.set_site.site_install"
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemode')" :addon="handleMode()"></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
-          <image
+          <qui-avatar
             class="site-item__owner-avatar"
-            :src="forums.set_site.site_author.avatar || '/static/noavatar.gif'"
-            alt="avatarUrl"
-            @tap="toProfile(forums.set_site.site_author.id)"
-            mode="aspectFill"
-          ></image>
-          <text class="site-item__owner-name">{{ forums.set_site.site_author.username }}</text>
+            :user="{
+              username: forums.set_site && forums.set_site.site_author.username,
+              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
+            }"
+            size="60"
+            @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
+          />
+          <text class="site-item__owner-name">
+            {{ forums.set_site && forums.set_site.site_author.username }}
+          </text>
         </view>
       </qui-cell-item>
       <qui-cell-item :title="i18n.t('home.theme')" slot-right>
@@ -57,13 +51,12 @@
             :key="index"
             class="site-item__person__content"
           >
-            <image
+            <qui-avatar
               class="site-item__person__content-avatar"
-              :src="item.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
+              :user="item"
+              size="60"
               @tap="toProfile(item.id)"
-              mode="aspectFill"
-            ></image>
+            />
           </view>
         </view>
       </qui-cell-item>
@@ -80,16 +73,23 @@
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
-        <text class="site-invite__detail__bold">{{ inviteData.user.username }}</text>
+        <text class="site-invite__detail__bold">
+          {{ inviteData.user && inviteData.user.username }}
+        </text>
         <text>{{ i18n.t('site.inviteyouas') }}</text>
-        <text class="site-invite__detail__bold">{{ `[ ${inviteData.group.name} ]` }}</text>
+        <text class="site-invite__detail__bold">
+          {{ `[ ${inviteData.group && inviteData.group.name} ]` }}
+        </text>
         <text>{{ i18n.t('site.join') }}</text>
-        <text class="site-invite__detail__bold">{{ forums.set_site.site_name }}</text>
+        <text class="site-invite__detail__bold">
+          {{ forums.set_site && forums.set_site.site_name }}
+        </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
         <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.accepttheinvitationandbecome') }} {{ inviteData.group.name }}
+          {{ i18n.t('site.accepttheinvitationandbecome') }}
+          {{ inviteData.group && inviteData.group.name }}
         </qui-button>
       </view>
     </view>
@@ -99,31 +99,35 @@
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef  H5
+    wxshare,
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
-      bottomData: [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-        },
-      ],
       code: '', // 邀请码
       permission: [],
+      shareBtn: 'icon-share1',
+      shareShow: false, // h5内分享提示信息
+      isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
     };
   },
   onLoad(params) {
     this.code = params.code;
     this.getInviteInfo(params.code);
+    // #ifdef  H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
   },
   onReady() {
     // 处理站点模式
@@ -144,16 +148,26 @@ export default {
   methods: {
     // 首页头部分享按钮弹窗
     open() {
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-          },
-        ];
-      }
+      // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: `pages/site/partner-invite?code=${this.code}`,
+        });
+      }
+      // #endif
+    },
+    closeShare() {
+      this.shareShow = false;
+    },
+    // 取消按钮
+    cancel() {
+      this.$refs.popupHead.close();
     },
     handleMode() {
       if (!this.forums.set_site) {
@@ -179,25 +193,9 @@ export default {
         url: `/pages/profile/index?userId=${userId}`,
       });
     },
-    // 头部分享海报
-    shareHead(index) {
-      if (index === 0) {
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$store.getters['session/get']('auth').open();
-          return;
-        }
-        uni.navigateTo({
-          url: '/pages/share/site',
-        });
-      }
-    },
     // 调取用户信息取消弹框
     close() {
       this.$refs.auth.close();
-    },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupHead.close();
     },
     submit() {
       uni.navigateTo({
@@ -218,18 +216,18 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.site {
-  /deep/ .header {
+.site /deep/ {
+  .header {
     height: auto;
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
-  .header /deep/ .circleDet {
+  .header .circleDet {
     padding: 60rpx 40rpx 50rpx;
     opacity: 1;
   }
-  .header /deep/ .circleDet-txt {
+  .header .circleDet-txt {
     color: --color(--qui-FC-333);
     opacity: 1;
   }
@@ -237,15 +235,24 @@ export default {
     height: 75rpx;
     padding-top: 71rpx;
   }
-  /deep/ .cell-item__body__content-title {
-    width: 112rpx;
+  .cell-item__body__content-title {
+    width: 120rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
-}
-.header .circleDet .circleDet-num,
-.header .circleDet .circleDet-share {
-  color: --color(--qui-FC-333);
+  .header .circleDet-num,
+  .header .circleDet-share {
+    color: --color(--qui-FC-333);
+  }
+  .site-invite {
+    padding-bottom: 20rpx;
+    text-align: center;
+  }
+  .cell-item--auto .cell-item__body {
+    height: auto;
+    padding: 35rpx 0;
+    align-items: flex-start;
+  }
 }
 //下面部分样式
 .site-item {
@@ -255,11 +262,6 @@ export default {
 }
 .site .cell-item {
   padding-right: 40rpx;
-}
-.cell-item--auto .cell-item__body {
-  height: auto;
-  padding: 35rpx 0;
-  align-items: flex-start;
 }
 .site-invite__detail__bold {
   margin: 0 5rpx;
@@ -271,16 +273,9 @@ export default {
   margin: 50rpx auto 30rpx;
   font-size: 28rpx;
 }
-.site-invite {
-  padding-bottom: 20rpx;
-  text-align: center;
-}
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
-  width: 60rpx;
-  height: 60rpx;
   margin-left: 8rpx;
-  border-radius: 50%;
 }
 .site-item__person__content-avatar {
   margin-left: 8rpx;

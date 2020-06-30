@@ -1,5 +1,8 @@
 <template>
-  <view class="qui-at-member-page-box">
+  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('discuzq.atMember.atTitle')"></qui-header-back>
+    <!-- #endif -->
     <view class="qui-at-member-page-box__hd">
       <view class="qui-at-member-page-box__hd__sc">
         <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
@@ -22,10 +25,11 @@
         <checkbox-group @change="changeCheck" v-if="followStatus">
           <label v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
+              v-if="item.toUser"
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="getGroups(item.toUser.groups)"
+              :value="item.toUser.groups[0].name"
               :label="item.toUser.label"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
@@ -38,7 +42,7 @@
               :mark="item.id"
               :title="item.username"
               :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
-              :value="getGroups(item.groups)"
+              :value="item.groups[0].name"
               :label="item.label"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
@@ -70,7 +74,7 @@
         }}
       </qui-button>
     </view>
-  </view>
+  </qui-page>
 </template>
 
 <script>
@@ -92,22 +96,22 @@ export default {
   },
   computed: {
     // 处理角色名称
-    getGroups() {
-      const that = this;
-      let name = '';
-      return data => {
-        if (data) {
-          Object.keys(data).forEach(item => {
-            if (data[item]) {
-              name = data[item].name;
-            } else {
-              name = that.i18n.t('discuzq.role.noRole');
-            }
-          });
-        }
-        return name;
-      };
-    },
+    // getGroups() {
+    //   const that = this;
+    //   let name = '';
+    //   return data => {
+    //     if (data) {
+    //       Object.keys(data).forEach(item => {
+    //         if (data[item]) {
+    //           name = data[item].name;
+    //         } else {
+    //           name = that.i18n.t('discuzq.role.noRole');
+    //         }
+    //       });
+    //     }
+    //     return name;
+    //   };
+    // },
   },
   methods: {
     ...mapMutations({
@@ -177,7 +181,7 @@ export default {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
         this.allFollow = [...this.allFollow, ...res];
-
+        console.log(this.allFollow, '这是@数据');
         if (Object.keys(res).nv_length - 1 === 0) {
           this.loadingText = 'search.noFollowers';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
@@ -228,6 +232,9 @@ $otherHeight: 292rpx;
     align-items: center;
     height: 80rpx;
     padding: 20rpx 40rpx;
+    /* #ifdef H5 */
+    margin-top: 44px;
+    /* #endif */
 
     &__sc {
       display: flex;

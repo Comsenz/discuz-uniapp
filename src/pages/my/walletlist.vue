@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="walletlist">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.walletlist')"></qui-header-back>
+    <!-- #endif -->
     <view class="walletlist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -15,18 +18,10 @@
           ></qui-filter-modal>
         </view>
       </qui-cell-item>
+      <picker mode="date" :value="date" @change="bindDateChange" fields="month" class="date-picker">
+        <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
+      </picker>
     </view>
-    <picker
-      mode="date"
-      :value="date"
-      :start="startDate"
-      :end="endDate"
-      @change="bindDateChange"
-      fields="month"
-      class="date-picker"
-    >
-      <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
-    </picker>
     <view class="walletlist-items">
       <scroll-view
         scroll-y="true"
@@ -221,47 +216,58 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 190rpx);
+/* #endif */
 
-.walletlist {
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 150rpx);
+/* #endif */
+
+.walletlist /deep/ {
+  min-height: auto;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body {
+  .cell-item__body {
     height: auto;
     padding: 35rpx 0;
   }
   .walletlist-items /deep/ .cell-item__body {
     align-items: flex-start;
   }
-  /deep/ .cell-item__body__right-text {
+  .cell-item__body__right-text {
     font-weight: bold;
   }
-  /deep/ .icon-screen {
+  .icon-screen {
     margin-left: 20rpx;
   }
-}
-/deep/ .cell-item.fail .cell-item__body__right-text {
-  color: --color(--qui-RED);
-}
-/deep/ .cell-item.success .cell-item__body__right-text {
-  color: #189a00;
-}
-.walletlist-items {
-  padding-left: 40rpx;
-  margin-top: 30rpx;
-  background: --color(--qui-BG-2);
+  .walletlist-head {
+    position: relative;
+    padding: 40rpx 0 0 40rpx;
+    /* #ifdef H5 */
+    padding-top: 90rpx;
+    /* #endif */
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .walletlist-head .cell-item__body {
+    height: 78rpx;
+  }
+  .cell-item.fail .cell-item__body__right-text {
+    color: --color(--qui-RED);
+  }
+  .cell-item.success .cell-item__body__right-text {
+    color: #189a00;
+  }
+  .walletlist-items {
+    padding-left: 40rpx;
+    margin-top: 30rpx;
+    background: --color(--qui-BG-2);
+  }
 }
 
-.walletlist-head {
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.walletlist-head /deep/ .cell-item__body {
-  height: 78rpx;
-}
 .date-picker {
   position: absolute;
   top: 40rpx;
@@ -269,6 +275,9 @@ export default {
   z-index: 10;
   width: 50%;
   height: 78rpx;
+  /* #ifdef H5 */
+  margin-top: 50rpx;
+  /* #endif */
 }
 .date-picker .uni-input {
   width: 100%;
@@ -277,7 +286,7 @@ export default {
   line-height: 78rpx;
 }
 .scroll-y {
-  max-height: calc(100vh - 148rpx);
+  max-height: $height;
 }
 .cell-item__body__right {
   padding-left: 59rpx;

@@ -1,7 +1,7 @@
 <template>
   <view class="my">
     <uni-nav-bar
-      title="我的"
+      :title="i18n.t('profile.mine')"
       fixed="true"
       :color="checked ? '#fff' : '#000'"
       :background-color="checked ? '#2e2f30' : '#fff'"
@@ -16,16 +16,12 @@
       <view class="my-info">
         <view class="my-info__box">
           <view class="my-info__box__detail">
-            <image
-              class="my-info__box__detail-avatar"
-              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
-              mode="aspectFill"
-            ></image>
+            <qui-avatar :user="userInfo" />
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"
               :border="false"
+              class="my-info__box__detail-username"
             ></qui-cell-item>
           </view>
         </view>
@@ -36,8 +32,8 @@
       <view class="my-tabs">
         <qui-tabs :values="items" @clickItem="onClickItem" :brief="true" :current="-1"></qui-tabs>
       </view>
-      <view>
-        <view class="my-items">
+      <view class="my-items">
+        <view class="my-items__wrap">
           <navigator url="/pages/my/profile" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
           </navigator>
@@ -52,7 +48,7 @@
             ></qui-cell-item>
           </navigator>
         </view>
-        <view class="my-items">
+        <view class="my-items__wrap">
           <navigator url="/pages/site/index" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
           </navigator>
@@ -76,7 +72,7 @@
           </navigator>
         </view>
 
-        <view class="my-items">
+        <view class="my-items__wrap">
           <qui-cell-item :title="i18n.t('profile.theme')" slot-right :border="false">
             <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
           </qui-cell-item>
@@ -148,12 +144,22 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.my-items {
+/* #ifdef H5 */
+$height: calc(100vh - 210rpx);
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 260rpx);
+/* #endif */
+.my-items__wrap {
   padding-left: 40rpx;
   margin-top: 30rpx;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: $switch-theme-time;
+}
+.my-items {
+  padding-bottom: 30rpx;
 }
 .my-info {
   padding: 40rpx;
@@ -174,24 +180,20 @@ export default {
 }
 .my-info__box__detail {
   position: relative;
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  padding-left: 100rpx;
   font-size: $fg-f28;
   box-sizing: border-box;
 }
-.my-info__box__detail-avatar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
+.my-info__box__detail-username {
+  padding-left: 20rpx;
 }
 .my-tabs {
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
 }
 .scroll-y {
-  max-height: calc(100vh - 260rpx);
+  max-height: $height;
 }
 </style>

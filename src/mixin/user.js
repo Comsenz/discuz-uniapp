@@ -24,9 +24,33 @@ module.exports = {
           include: 'groups,wechat',
         };
         const userId = this.$store.getters['session/get']('userId');
-        this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
+        this.$store.commit('jv/deleteRecord', { _jv: { type: 'users', id: userId } });
+        this.$store
+          .dispatch('jv/get', [`users/${userId}`, { params }])
+          .then(() => uni.$emit('updateNotiNum'));
         uni.setStorageSync(STORGE_GET_USER_TIME, new Date().getTime());
       }
+    },
+    logind() {
+      const userId = this.$store.getters['session/get']('userId');
+      if (!userId) return;
+      this.$store.dispatch('jv/get', [
+        'forum',
+        {
+          params: {
+            include: 'users',
+          },
+        },
+      ]);
+
+      const params = {
+        include: 'groups,wechat',
+      };
+
+      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(val => {
+        this.$u.event.$emit('logind', val);
+      });
+      this.$store.dispatch('forum/setError', { loading: false });
     },
   },
 };

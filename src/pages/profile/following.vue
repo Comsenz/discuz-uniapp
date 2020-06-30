@@ -7,23 +7,22 @@
         @tap="toProfile(followingItem.toUser.id)"
         :key="index"
       >
-        <image
-          class="follow-content__items__avatar"
-          :src="followingItem.toUser.avatarUrl || '/static/noavatar.gif'"
-          alt="avatarUrl"
-          mode="aspectFill"
-        ></image>
+        <qui-avatar class="follow-content__items__avatar" :user="followingItem.toUser" size="70" />
         <qui-cell-item
-          :title="followingItem.toUser.username"
+          :title="(followingItem.toUser && followingItem.toUser.username) || ''"
           slot-right
-          :brief="followingItem.toUser.groups ? followingItem.toUser.groups[0].name : ''"
+          :brief="
+            followingItem.toUser && followingItem.toUser.groups
+              ? followingItem.toUser.groups[0].name
+              : ''
+          "
         >
           <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
           <view
             class="follow-content__items__operate"
             @tap="addFollow(followingItem.toUser, index)"
             @tap.stop
-            v-if="followingItem.toUser.id != currentLoginId"
+            v-if="followingItem.toUser && followingItem.toUser.id != currentLoginId"
           >
             <text>
               {{
@@ -56,8 +55,16 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+// #ifdef H5
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 
 export default {
+  mixins: [
+    // #ifdef H5
+    loginAuth,
+    // #endif
+  ],
   props: {
     userId: {
       type: String,
@@ -118,6 +125,13 @@ export default {
     },
     // 添加关注
     addFollow(userInfo, index) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
       if (userInfo.follow !== 0) {
         this.deleteFollow(userInfo, index);
         return;
@@ -141,6 +155,13 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo, index) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         if (this.userId === this.currentLoginId) {
           // this.followingList.splice(index, 1);
@@ -185,9 +206,6 @@ export default {
   position: absolute;
   top: 16rpx;
   left: 20rpx;
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 50%;
 }
 .text {
   margin-left: 12rpx;

@@ -40,14 +40,11 @@
           >
             <view class="dialog-box__header">
               <view class="dialog-box__header__info">
-                <image
-                  class="dialog-box__header__info__user-avatar"
-                  :src="dialog.avatar || '/static/noavatar.gif'"
-                ></image>
+                <qui-avatar class="dialog-box__header__info__user-avatar" :user="dialog" />
                 <view>
                   <view class="dialog-box__header__info__box">
                     <text class="dialog-box__header__info__username">
-                      {{ dialog.name }}
+                      {{ dialog.username }}
                     </text>
                     <text
                       class="dialog-box__header__info__groupname"
@@ -72,7 +69,7 @@
             </view>
             <view class="dialog-box__con">
               <rich-text
-                :nodes="dialog.dialogMessage.message_text_html"
+                :nodes="dialog.dialogMessage ? dialog.dialogMessage.summary : ''"
                 style="word-break: break-all;"
               ></rich-text>
             </view>
@@ -127,7 +124,13 @@ export default {
   },
   mounted() {
     this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
-    console.log('-----navbarHeight-------', this.navbarHeight);
+    uni.$on('updateNotiNum', () => {
+      console.log('updateNode', this.user);
+      this.getUnreadNoticeNum();
+    });
+  },
+  destroyed() {
+    uni.$off('updateNotiNum');
   },
   methods: {
     // 调用 会话列表 的接口
@@ -148,19 +151,19 @@ export default {
             }
             if (list[i] && list[i].recipient && list[i].sender) {
               if (list[i].recipient.id === this.currentLoginId) {
-                list[i].name = list[i].sender.username;
-                list[i].avatar = list[i].sender.avatarUrl;
+                list[i].username = list[i].sender.username;
+                list[i].avatarUrl = list[i].sender.avatarUrl;
                 list[i].groupname = list[i].sender.groups;
                 list[i].readAt = list[i].recipient_read_at;
               } else if (list[i].sender.id === this.currentLoginId) {
-                list[i].name = list[i].recipient.username;
-                list[i].avatar = list[i].recipient.avatarUrl;
+                list[i].username = list[i].recipient.username;
+                list[i].avatarUrl = list[i].recipient.avatarUrl;
                 list[i].groupname = list[i].recipient.groups;
                 list[i].readAt = list[i].sender_read_at;
               }
             } else {
-              list[i].name = '该用户已被删除';
-              list[i].avatar = '';
+              list[i].username = '该用户已被删除';
+              list[i].avatarUrl = '';
             }
           }
           this.dialogList = [...this.dialogList, ...list];
@@ -172,17 +175,19 @@ export default {
     getUnreadNoticeNum() {
       if (this.user && this.user.typeUnreadNotifications) {
         console.log('this.user', this.user);
-        this.list[0].unReadNum = this.user.typeUnreadNotifications.related;
-        this.list[1].unReadNum = this.user.typeUnreadNotifications.replied;
-        this.list[2].unReadNum = this.user.typeUnreadNotifications.liked;
+        this.list[0].unReadNum = this.user.typeUnreadNotifications.related || '';
+        this.list[1].unReadNum = this.user.typeUnreadNotifications.replied || '';
+        this.list[2].unReadNum = this.user.typeUnreadNotifications.liked || '';
         this.list[3].unReadNum =
           this.user.typeUnreadNotifications.rewarded ||
-          this.user.typeUnreadNotifications.withdrawal;
-        this.list[4].unReadNum = this.user.typeUnreadNotifications.system;
+          this.user.typeUnreadNotifications.withdrawal ||
+          '';
+        this.list[4].unReadNum = this.user.typeUnreadNotifications.system || '';
       }
     },
     // 跳转至 @我的/回复我的/点赞我的/财务通知/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
+      console.log('item', item);
       // 如果有未读消息，点击时请求并更新消息信息
       if (item.unReadNum) this.getUserInfo(true);
       uni.navigateTo({
@@ -197,7 +202,7 @@ export default {
       if (dialogInfo) {
         console.log('会话信息', dialogInfo);
         uni.navigateTo({
-          url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.name}`,
+          url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.username}`,
         });
       }
     },
@@ -267,10 +272,7 @@ export default {
       justify-content: space-between;
 
       &__user-avatar {
-        width: 80rpx;
-        height: 80rpx;
         margin: 20rpx 20rpx 20rpx 40rpx;
-        border-radius: 100rpx;
       }
 
       &__box {

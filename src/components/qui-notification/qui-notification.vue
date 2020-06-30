@@ -6,55 +6,65 @@
       <view class="list-box__notice" v-if="item.type !== 'system'">
         <view class="list-box__notice__h">
           <view class="list-box__notice__hl">
-            <image
-              class="list-box__notice__hl-avatar"
-              :src="item.user_avatar || '/static/noavatar.gif'"
-              @click="jumpUserPage(item.user_id)"
-            ></image>
-            <view class="list-box__notice__hl-info">
-              <view
-                :class="[
-                  item.type === 'rewarded' || item.type === 'rewarded'
-                    ? 'list-box__notice__hl-info-con'
-                    : '',
-                ]"
-              >
-                <text
-                  :class="[
-                    item.thread_user_groups ? '' : 'list-box__notice__hl-info-username-space',
-                    'list-box__notice__hl-info-username',
-                  ]"
-                >
-                  {{ item.user_name }}
-                </text>
-                <!-- <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
+            <view class="list-box__notice__hl-image">
+              <qui-avatar
+                class="list-box__notice__hl-avatar"
+                :user="item"
+                @click="jumpUserPage(item.user_id)"
+              />
+            </view>
+            <view class="list-box__notice__hl-box">
+              <view>
+                <view class="list-box__notice__hl-info">
+                  <view
+                    :class="[
+                      item.type === 'rewarded' || item.type === 'rewarded'
+                        ? 'list-box__notice__hl-info-con'
+                        : '',
+                    ]"
+                  >
+                    <text
+                      :class="[
+                        item.thread_user_groups ? '' : 'list-box__notice__hl-info-username-space',
+                        'list-box__notice__hl-info-username',
+                      ]"
+                    >
+                      {{ item.user_name }}
+                    </text>
+                    <!-- <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
                   （{{ item.thread_user_groups }}）
                 </text> -->
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
-                  {{ i18n.t('notice.relatedMe') }}
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
+                      {{ i18n.t('notice.relatedMe') }}
+                    </text>
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'replied'">
+                      {{ i18n.t('notice.repliedMe') }}
+                    </text>
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
+                      {{ i18n.t('notice.likedMe') }}
+                    </text>
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
+                      {{
+                        item.order_type === 3
+                          ? i18n.t('notice.payedMe')
+                          : i18n.t('notice.rewardedMe')
+                      }}
+                    </text>
+                  </view>
+                  <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
+                </view>
+              </view>
+              <view class="">
+                <text class="list-box__notice__hl__amount" v-if="item.type === 'rewarded'">
+                  {{ item.money }}
                 </text>
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'replied'">
-                  {{ i18n.t('notice.repliedMe') }}
-                </text>
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
-                  {{ i18n.t('notice.likedMe') }}
-                </text>
-                <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
-                  {{
-                    item.order_type === 3 ? i18n.t('notice.payedMe') : i18n.t('notice.rewardedMe')
-                  }}
+                <text class="list-box__notice__hl__cash-amount" v-if="item.type === 'withdrawal'">
+                  {{ item.money }}
                 </text>
               </view>
-              <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
             </view>
           </view>
           <view class="list-box__notice__hr">
-            <text class="list-box__notice__hr__amount" v-if="item.type === 'rewarded'">
-              {{ item.money }}
-            </text>
-            <text class="list-box__notice__hr__cash-amount" v-if="item.type === 'withdrawal'">
-              {{ item.money }}
-            </text>
             <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
           </view>
         </view>
@@ -64,6 +74,10 @@
             v-if="item.post_content"
             v-html="item.post_content"
             @click="jumpMyComment(item)"
+          ></view>
+          <view
+            class="list-box__notice__con__space"
+            v-if="item.post_content && item.thread_id"
           ></view>
           <view class="list-box__notice__con__wrap" v-if="item.type === 'withdrawal'">
             <view v-if="item.cash_status === 2">
@@ -75,7 +89,7 @@
           </view>
           <view
             class="list-box__notice__con__wrap"
-            v-if="item.thread_id"
+            v-if="item.thread_id && item.reply_post_id === 0"
             @click="jumpOtherTopic(item.thread_id)"
           >
             <view class="list-box__notice__con__wrap-info">
@@ -93,7 +107,39 @@
                 style="display: inline-block;"
               ></view>
               <view class="list-box__notice__con__wrap-info-time">
-                {{ item.thread_created_at }}
+                {{ item.thread_time }}
+              </view>
+            </view>
+          </view>
+          <view
+            class="list-box__notice__con__wrap"
+            v-if="
+              item.thread_id &&
+                item.reply_post_id !== 0 &&
+                item.type !== 'system' &&
+                item.type !== 'rewarded' &&
+                item.type !== 'withdrawal'
+            "
+            @click="jumpMyComment(item)"
+          >
+            <view class="list-box__notice__con__wrap-info">
+              <text class="list-box__notice__con__wrap-info-username">我</text>
+              <text class="list-box__notice__con__wrap-info-text" decode>{{ reply }}</text>
+              <text class="list-box__notice__con__wrap-info-username">
+                {{ item.thread_username }}：
+              </text>
+              <view
+                v-if="item.type !== 'rewarded' && item.type !== 'system'"
+                v-html="item.reply_post_content"
+                style="display: inline-block;"
+              ></view>
+              <view
+                v-if="item.type === 'rewarded'"
+                v-html="item.content"
+                style="display: inline-block;"
+              ></view>
+              <view class="list-box__notice__con__wrap-info-time">
+                {{ item.reply_time }}
               </view>
             </view>
           </view>
@@ -140,6 +186,12 @@ export default {
     },
   },
 
+  data() {
+    return {
+      reply: '&nbsp;回复了&nbsp;',
+    };
+  },
+
   methods: {
     jumpUserPage(id) {
       if (id) {
@@ -153,8 +205,12 @@ export default {
       this.$emit('deleteNotice', id);
     },
     jumpMyComment(item) {
-      if (item) {
-        console.log('跳转到评论页面：', item);
+      console.log('跳转到评论页面：', item);
+      if (item && item.reply_post_id !== 0) {
+        uni.navigateTo({
+          url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.reply_post_id}`,
+        });
+      } else {
         uni.navigateTo({
           url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.post_id}`,
         });
@@ -196,25 +252,28 @@ export default {
     &__h {
       display: flex;
       justify-content: space-between;
+      margin: 0rpx 0rpx 20rpx;
     }
 
     &__hl {
       display: flex;
-      justify-content: space-between;
-      margin: 0rpx 0rpx 20rpx;
+      align-items: center;
+      width: 95%;
 
       &-avatar {
         width: 80rpx;
         height: 80rpx;
         border-radius: 100rpx;
+        will-change: transform;
       }
 
-      &-info {
+      &-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 95%;
         margin: 0rpx 0rpx 0rpx 20rpx;
-      }
-
-      &-info-con {
-        width: 380rpx;
       }
 
       &-info-username {
@@ -235,12 +294,6 @@ export default {
         font-size: 24rpx;
         color: --color(--qui-FC-AAA);
       }
-    }
-
-    &__hr {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
 
       &__amount {
         margin-right: 20rpx;
@@ -255,10 +308,18 @@ export default {
       }
     }
 
+    &__hr {
+      display: flex;
+      align-items: center;
+    }
+
     &__con {
       &__text {
-        margin: 0rpx 0rpx 40rpx;
         color: --color(--qui-FC-333);
+      }
+
+      &__space {
+        padding: 20rpx 0rpx;
       }
 
       &__wrap {
@@ -271,6 +332,12 @@ export default {
 
       &__wrap-info-username {
         font-weight: bold;
+        vertical-align: top;
+      }
+
+      &__wrap-info-text {
+        color: --color(--qui-FC-AAA);
+        vertical-align: top;
       }
 
       &__wrap-info-time {
@@ -282,7 +349,7 @@ export default {
   }
 
   &__system-notice {
-    padding: 25rpx 40rpx 20rpx;
+    padding: 20rpx 40rpx;
 
     &__h {
       display: flex;

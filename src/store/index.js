@@ -7,7 +7,9 @@ import { http } from '@/api/api-request';
 import atMember from '@/store/modules/atMember';
 import session from '@/store/modules/session';
 import forum from '@/store/modules/forum';
+import emoji from '@/store/modules/emoji';
 import pay from '@/store/modules/pay';
+import footerTab from '@/store/modules/footerTab';
 
 Vue.use(Vuex);
 
@@ -20,7 +22,9 @@ const store = new Vuex.Store({
     atMember,
     session,
     forum,
+    emoji,
     pay,
+    footerTab,
   },
   state: {},
   mutations: {},

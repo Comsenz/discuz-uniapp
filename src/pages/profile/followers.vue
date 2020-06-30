@@ -7,41 +7,44 @@
         @tap="toProfile(followerItem.fromUser.id)"
         :key="index"
       >
-        <image
-          class="follow-content__items__avatar"
-          :src="followerItem.fromUser.avatarUrl || '/static/noavatar.gif'"
-          alt="avatarUrl"
-          mode="aspectFill"
-        ></image>
+        <qui-avatar class="follow-content__items__avatar" :user="followerItem.fromUser" size="70" />
         <qui-cell-item
-          :title="followerItem.fromUser.username"
+          :title="(followerItem.fromUser && followerItem.fromUser.username) || ''"
           slot-right
-          :brief="followerItem.fromUser.groups ? followerItem.fromUser.groups[0].name : ''"
+          :brief="
+            followerItem.fromUser && followerItem.fromUser.groups
+              ? followerItem.fromUser.groups[0].name
+              : ''
+          "
         >
           <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
           <view
             class="follow-content__items__operate"
             @tap="addFollow(followerItem.fromUser, index)"
             @tap.stop
-            v-if="followerItem.fromUser.id != currentLoginId"
+            v-if="(followerItem.fromUser && followerItem.fromUser.id) != currentLoginId"
           >
             <text>
               {{
-                followerItem.fromUser.follow == 0
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
                   ? i18n.t('profile.following')
-                  : followerItem.fromUser.follow == 1
+                  : (followerItem.fromUser && followerItem.fromUser.follow) == 1
                   ? i18n.t('profile.followed')
                   : i18n.t('profile.mutualfollow')
               }}
             </text>
             <qui-icon
               class="text"
-              :name="followerItem.fromUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
+              :name="
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
+                  ? 'icon-follow'
+                  : 'icon-each-follow'
+              "
               size="22"
               :color="
-                followerItem.fromUser.follow == 0
+                (followerItem.fromUser && followerItem.fromUser.follow) == 0
                   ? '#777'
-                  : followerItem.fromUser.follow == 1
+                  : (followerItem.fromUser && followerItem.fromUser.follow) == 1
                   ? '#ddd'
                   : '#ff8888'
               "
@@ -56,8 +59,16 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+// #ifdef H5
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 
 export default {
+  mixins: [
+    // #ifdef H5
+    loginAuth,
+    // #endif
+  ],
   props: {
     userId: {
       type: String,
@@ -117,6 +128,13 @@ export default {
     },
     // 添加关注
     addFollow(userInfo, index) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
       if (userInfo.follow !== 0) {
         this.deleteFollow(userInfo, index);
         return;
@@ -140,6 +158,13 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo, index) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         if (this.userId === this.currentLoginId) {
           this.$emit('changeFollow', { userId: this.userId });
@@ -183,9 +208,6 @@ export default {
   position: absolute;
   top: 16rpx;
   left: 20rpx;
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 50%;
 }
 .text {
   margin-left: 12rpx;

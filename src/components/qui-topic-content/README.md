@@ -34,6 +34,7 @@
 | imagesList   | 主题发布图片          | object        | -      |
 | modeVal      | 图片裁剪模式          | string        | -      |
 | tags         | 主题标签              | object        | -      |
+| fileList     | 附件列表              | Array        | []     |
 
 ### 事件说明
 

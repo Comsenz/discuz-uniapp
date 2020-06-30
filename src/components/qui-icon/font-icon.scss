@@ -1,16 +1,17 @@
 @font-face {
   font-family: 'quiicons'; /* project id 1741858 */
-  src: url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.eot');
-  src: url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.eot?#iefix') format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1741858_2roevuq9xpu.svg#quiicons') format('svg');
+  src: url('//at.alicdn.com/t/font_1741858_fr5cus2ih8d.eot');
+  src: url('//at.alicdn.com/t/font_1741858_fr5cus2ih8d.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_1741858_fr5cus2ih8d.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1741858_fr5cus2ih8d.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1741858_fr5cus2ih8d.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1741858_fr5cus2ih8d.svg#quiicons') format('svg');
 }
 .qui-icon {
   position: relative;
   /* stylelint-disable-next-line */
-  font: 28rpx 'quiicons';
+  font-family: 'quiicons';
+  font-size: 28rpx;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -244,4 +245,131 @@
 }
 .icon-wei:before {
   content: '\e696';
+}
+.icon-more:before {
+  content: '\e698';
+}
+.icon-resources:before {
+  content: '\e6ae';
+}
+
+.icon-ZIP:before {
+  content: '\e6ad';
+}
+
+.icon-XLSX:before { 
+  content: '\e6ac';
+}
+
+.icon-XLS:before {
+  content: '\e6ac';
+}
+
+.icon-TXT:before {
+  content: '\e6ab';
+}
+
+.icon-RAR:before {
+  content: '\e6a9';
+}
+
+.icon-PSD:before {
+  content: '\e6a8';
+}
+
+.icon-PPT:before {
+  content: '\e6a7';
+}
+
+.icon-PDF:before {
+  content: '\e6a6';
+}
+
+.icon-MP4:before {
+  content: '\e6a5';
+}
+
+.icon-MP3:before {
+  content: '\e6a4';
+}
+
+.icon-LINK:before {
+  content: '\e6a3';
+}
+
+.icon-IPA:before {
+  content: '\e6a1';
+}
+
+.icon-EXE:before {
+  content: '\e6a0';
+}
+
+.icon-EPS:before {
+  content: '\e69f';
+}
+
+.icon-DOC:before {
+  content: '\e69e';
+}
+
+.icon-DOCX:before {
+  content: '\e69e';
+}
+
+.icon-CDR:before {
+  content: '\e69d';
+}
+
+.icon-CAD:before {
+  content: '\e69c';
+}
+
+.icon-APK:before {
+  content: '\e69b';
+}
+
+.icon-AI:before {
+  content: '\e69a';
+}
+
+.icon-7ZIP:before {
+  content: '\e699';
+}
+.icon-sort:before {
+  content: '\e6b9';
+}
+.icon-bold:before {
+  content: '\e6af';
+}
+
+.icon-title:before {
+  content: '\e6b0';
+}
+.icon-italic:before {
+  content: '\e6b1';
+}
+.icon-quote:before {
+  content: '\e6b4';
+}
+.icon-code:before {
+  content: '\e6b5';
+}
+.icon-link1:before {
+  content: '\e6b6';
+}
+.icon-unordered-list:before {
+  content: '\e6b7';
+}
+.icon-ordered-list:before {
+  content: '\e6b8';
+}
+.icon-fujian:before {
+  content: '\e607';
+}
+.icon-undeline:before {
+  content: '\e6bc';
+}
+.icon-strikethrough:before {
+  content: '\e6bd';
 }

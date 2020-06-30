@@ -6,25 +6,24 @@
       :key="index"
       :currentindex="index"
       :pay-status="(item.price > 0 && item.paid) || item.price == 0"
-      :user-name="item.user.username"
-      :theme-image="item.user.avatarUrl"
-      :theme-btn="item.canHide"
-      :theme-reply-btn="item.canReply"
-      :user-groups="item.user.groups"
+      :user-name="item.user ? item.user.username : ''"
+      :theme-reply-btn="item.canReply || ''"
+      :theme-image="item.user && item.user.avatarUrl"
+      :user-groups="item.user && item.user.groups"
       :theme-time="item.createdAt"
       :tags="[item.category]"
       :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
       :thread-type="item.type"
-      :media-url="item.threadVideo.media_url"
+      :media-url="item.threadVideo && item.threadVideo.media_url"
       :is-great="item.firstPost.isLiked"
       :theme-like="item.firstPost.likeCount"
       :theme-comment="item.postCount - 1"
       :images-list="item.firstPost.images"
       :theme-essence="item.isEssence"
-      :video-width="item.threadVideo.width"
-      :video-height="item.threadVideo.height"
-      :video-id="item.threadVideo._jv.id"
-      :cover-image="item.threadVideo.cover_url"
+      :video-width="item.threadVideo && item.threadVideo.width"
+      :video-height="item.threadVideo && item.threadVideo.height"
+      :video-id="item.threadVideo && item.threadVideo._jv.id"
+      :cover-image="item.threadVideo && item.threadVideo.cover_url"
       @click="handleClickShare(item._jv.id)"
       @handleIsGreat="
         handleIsGreat(item.firstPost._jv.id, item.firstPost.canLike, item.firstPost.isLiked, index)
@@ -36,31 +35,25 @@
     ></qui-content>
     <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     <uni-popup ref="popupContent" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <button class="popup-share-button" open-type="share"></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareContent(index)">
-                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
-              </view>
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
+      <qui-share :now-thread-id="nowThreadId" share-type="content" @close="cancel"></qui-share>
     </uni-popup>
   </view>
 </template>
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 
 export default {
-  mixins: [forums],
+  mixins: [
+    // #ifdef  H5
+    wxshare,
+    loginAuth,
+    // #endif
+  ],
   props: {
     userId: {
       type: String,
@@ -71,23 +64,12 @@ export default {
     return {
       loadingType: '',
       data: [],
-      flag: true, // 滚动节流
       pageSize: 20,
       pageNum: 1, // 当前页数
       nowThreadId: '',
+      editThreadId: '',
+      shareTitle: '', // h5内分享复制链接
       currentLoginId: this.$store.getters['session/get']('userId'),
-      bottomData: [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-        },
-      ],
     };
   },
   mounted() {
@@ -95,25 +77,24 @@ export default {
   },
   methods: {
     handleClickShare(id) {
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-          },
-        ];
-      }
+      // #ifdef MP-WEIXIN
+      this.$emit('handleClickShare', id);
       this.nowThreadId = id;
       this.$refs.popupContent.open();
-    },
-    // 内容部分分享海报,跳到分享海报页面
-    shareContent(index) {
-      if (index === 0) {
-        uni.navigateTo({
-          url: `/pages/share/topic?id=${this.nowThreadId}`,
-        });
+      // #endif
+      // #ifdef H5
+      const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
+      if (shareThread.type === 1) {
+        this.shareTitle = shareThread.title;
+      } else {
+        this.shareTitle = shareThread.firstPost.summary;
       }
+      this.h5Share({
+        title: this.shareTitle,
+        id,
+        url: 'pages/topic/index',
+      });
+      // #endif
     },
     // 取消按钮
     cancel() {
@@ -137,6 +118,7 @@ export default {
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        'filter[isApproved]': 1,
         'filter[user_id]': this.userId,
       };
       status
@@ -151,12 +133,28 @@ export default {
     },
     // 评论部分点击评论跳到详情页
     commentClick(id) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
+      this.editThreadId = id;
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
     },
     // 内容部分点击跳转到详情页
     contentClick(id) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
+      this.editThreadId = id;
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
@@ -169,6 +167,16 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+      }
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
@@ -208,12 +216,18 @@ export default {
       this.pageNum += 1;
       this.loadlikes();
     },
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
+      }
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      this.data.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(this.data, index, item);
+        }
+      });
+    },
   },
 };
 </script>
-<style lang="scss" scoped>
-/deep/ .themeItem {
-  margin-right: 0;
-  margin-left: 0;
-}
-</style>

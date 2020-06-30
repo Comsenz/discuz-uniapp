@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="title"></qui-header-back>
+    <!-- #endif -->
     <view class="chat-box">
       <!-- 消息内容 -->
       <scroll-view
@@ -18,18 +21,18 @@
                 : 'chat-box__con__msg__other',
             ]"
           >
-            <image
+            <qui-avatar
               v-if="item.user_id === currentLoginId"
               class="chat-box__con__msg__mine__img"
-              :src="userInfo.avatarUrl"
+              :user="userInfo"
               @click="jumpUserPage(item.user_id)"
-            ></image>
-            <image
+            />
+            <qui-avatar
               v-if="item.user_id !== currentLoginId"
               class="chat-box__con__msg__other__img"
-              :src="item.user.avatarUrl || '/static/noavatar.gif'"
+              :user="item.user"
               @click="jumpUserPage(item.user_id)"
-            ></image>
+            />
             <view
               :class="[
                 item.user_id === currentLoginId
@@ -37,17 +40,27 @@
                   : 'chat-box__con__msg__other__box',
               ]"
             >
-              <rich-text :nodes="item.message_text_html" style="word-break: break-all;"></rich-text>
+              <qui-uparse
+                :content="item.message_text_html"
+                style="word-break: break-all;"
+              ></qui-uparse>
             </view>
           </view>
         </view>
-        <view style="height: 10rpx;"></view>
+        <view :style="{ height: bottomPadding + 'px', background: '#EDEDED' }"></view>
       </scroll-view>
 
       <!-- 底部 -->
       <view class="chat-box__footer">
         <view class="chat-box__footer__msg">
-          <input class="uni-input" :maxlength="451" v-model="msg" @blur="contBlur" />
+          <textarea
+            class="uni-input"
+            :maxlength="451"
+            :cursor="cursor"
+            :focus="focus"
+            v-model="msg"
+            @blur="contBlur"
+          />
           <qui-icon
             name="icon-expression chat-box__footer__msg__icon"
             size="40"
@@ -81,18 +94,23 @@ export default {
 
   data() {
     return {
+      title: '', // 导航栏标题
       scrollTop: 0,
       old: {
         scrollTop: 0,
+        focus: false,
       },
       msg: '', // 输入框内容
       emojiShow: false, // 表情
       dialogId: 0, // 会话id
       height: 0,
       scv: 0,
+      bottomPadding: 10, // 底部填充
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       navbarHeight: 0,
+      cursor: 0, // 光标位置
+      focus: true, // 获取焦点
     };
   },
 
@@ -169,6 +187,7 @@ export default {
     console.log('-----navbarHeight-------', this.navbarHeight);
     console.log('params', params);
     const { username, dialogId } = params;
+    this.title = username;
     uni.setNavigationBarTitle({
       title: username,
     });
@@ -195,21 +214,23 @@ export default {
 
   methods: {
     scrollToBottom() {
+      console.log('滚动到底部');
       this.$nextTick(() => {
+        console.log('计算高度并滚动到底部');
         uni
           .createSelectorQuery()
           .selectAll('.chat-box__con')
           .boundingClientRect()
           .exec(data => {
+            let height = 0;
             data[0].forEach(item => {
-              this.height += item.height;
+              height += item.height;
             });
-            if (this.height > 600) {
-              this.scrollTop = this.height - 600;
+            if (height > 600) {
+              this.scrollTop = height - 658 + 10;
+              console.log('scrollTop', this.scrollTop);
+              this.old.scrollTop = height - 658 + 10;
             }
-            console.log('信息', data);
-            console.log('scrollTop', this.scrollTop);
-            console.log('height', this.height);
           });
       });
     },
@@ -220,40 +241,42 @@ export default {
       this.getChatRecord(this.dialogId);
     },
     scroll(e) {
-      console.log('this.old.scrollTop', this.old.scrollTop);
       this.old.scrollTop = e.detail.scrollTop;
+      console.log(e.detail.scrollTop);
     },
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
-      uni.showNavigationBarLoading();
-      const params = {
-        'filter[dialog_id]': dialogId || this.dialogId,
-        include: ['user', 'user.groups'],
-        'page[number]': this.pageNum,
-        'page[limit]': this.pageSize,
-        sort: '-createdAt',
-      };
-      this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
-      this.$store
-        .dispatch('jv/get', ['dialog/message', { params }])
-        .then(res => {
-          console.log('会话消息列表res：', res);
-          if (res) {
-            console.log('停止手动刷新');
-            uni.hideNavigationBarLoading();
-            uni.stopPullDownRefresh();
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      if (dialogId !== '0') {
+        uni.showNavigationBarLoading();
+        const params = {
+          'filter[dialog_id]': dialogId || this.dialogId,
+          include: ['user', 'user.groups'],
+          'page[number]': this.pageNum,
+          'page[limit]': this.pageSize,
+          sort: '-createdAt',
+        };
+        this.$store.commit('jv/clearRecords', { _jv: { type: 'dialog/message' } });
+        this.$store
+          .dispatch('jv/get', ['dialog/message', { params }])
+          .then(res => {
+            console.log('会话消息列表res：', res);
+            if (res) {
+              console.log('停止手动刷新');
+              uni.hideNavigationBarLoading();
+              uni.stopPullDownRefresh();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     // 调用 表情 的接口
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
     contBlur(e) {
-      console.log('-----e----', e);
+      console.log('----触发失去焦点----', e);
       if (e && e.detail) {
         this.cursor = e.detail.cursor;
         if (e.detail.value.length > 450) {
@@ -280,24 +303,58 @@ export default {
           duration: 2000,
         });
       } else {
-        const params = {
-          _jv: {
-            type: 'dialog/message',
-          },
-          dialog_id: this.dialogId,
-          message_text: this.msg,
-        };
-        this.$store
-          .dispatch('jv/post', params)
-          .then(res => {
-            if (res) {
-              console.log('发送消息res：', res);
-              this.scrollToBottom();
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        if (this.dialogId === '0') {
+          const params = {
+            _jv: {
+              type: 'dialog',
+            },
+            recipient_username: this.title,
+            message_text: this.msg,
+          };
+          // 调用创建会话接口
+          this.$store
+            .dispatch('jv/post', params)
+            .then(res => {
+              if (res) {
+                console.log('创建会话res：', res);
+                this.dialogId = res._jv.id;
+                this.getChatRecord(res._jv.id);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.permission_denied'),
+                duration: 2000,
+              });
+            });
+        } else {
+          const params = {
+            _jv: {
+              type: 'dialog/message',
+            },
+            dialog_id: this.dialogId,
+            message_text: this.msg,
+          };
+          // 调用发送消息接口
+          this.$store
+            .dispatch('jv/post', params)
+            .then(res => {
+              if (res) {
+                console.log('发送消息res：', res);
+                this.scrollToBottom();
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.permission_denied'),
+                duration: 2000,
+              });
+            });
+        }
         this.msg = '';
         this.emojiShow = false;
       }
@@ -305,28 +362,37 @@ export default {
     // 弹出表情组件
     popEmoji() {
       if (this.emojiShow) {
+        console.log('隐藏表情组件');
         this.scrollTop = this.old.scrollTop;
         this.scrollToBottom();
-        this.$nextTick(() => {
-          this.scrollTop -= 185;
-        });
+        this.bottomPadding -= 204;
+        // this.scrollTop = this.old.scrollTop;
+        // this.$nextTick(() => {
+        //   this.scrollTop -= 204;
+        // });
       } else {
+        console.log('弹出表情组件');
         this.scrollTop = this.old.scrollTop;
-        this.scrollToBottom();
+        this.scrollToBottom(true);
+        this.bottomPadding += 204;
         this.$nextTick(() => {
-          this.scrollTop += 185;
+          this.scrollTop += 204;
         });
       }
       this.emojiShow = !this.emojiShow;
     },
     // 获取表情
-    getEmojiClick(key) {
+    getEmojiClick(code) {
+      this.focus = this.old.focus;
       let text = '';
-      text = `${this.msg.slice(0, this.cursor) +
-        this.allEmoji[key].code +
-        this.msg.slice(this.cursor)}`;
+      text = `${this.msg.slice(0, this.cursor) + code + this.msg.slice(this.cursor)}`;
       this.msg = text;
-      console.log('表情', this.allEmoji[key]);
+      this.cursor += code.length;
+      console.log('点击获取表情后的光标位置', this.cursor);
+      this.$nextTick(() => {
+        this.focus = true;
+        uni.hideKeyboard();
+      });
       console.log('msg', this.msg);
     },
     jumpUserPage(id) {
@@ -347,6 +413,9 @@ export default {
 
 .chat-box {
   height: 100%;
+  /* #ifdef H5 */
+  padding: 44px 0rpx 0rpx;
+  /* #endif */
   margin: 0rpx 0rpx 140rpx;
   background: --color(--qui-BG-ED);
 
@@ -378,10 +447,7 @@ export default {
       align-items: center;
 
       &__img {
-        width: 80rpx;
-        height: 80rpx;
         margin: 0 20rpx 0 10rpx;
-        border-radius: 100rpx;
       }
 
       &__box {
@@ -389,6 +455,7 @@ export default {
         max-width: 550rpx;
         padding: 25rpx 20rpx;
         margin-right: 20rpx;
+        color: --color(--qui-FC-34);
         background: --color(--qui-BG-D1E0FF);
         border: 1rpx solid --color(--qui-BG-A3CAFF);
         border-radius: 10rpx;
@@ -431,10 +498,7 @@ export default {
       align-items: center;
 
       &__img {
-        width: 80rpx;
-        height: 80rpx;
         margin: 0 10rpx 0 20rpx;
-        border-radius: 100rpx;
       }
 
       &__box {
@@ -514,5 +578,8 @@ export default {
       background: --color(--qui-BG-BTN);
     }
   }
+}
+/deep/ .uni-textarea-textarea {
+  white-space: nowrap;
 }
 </style>

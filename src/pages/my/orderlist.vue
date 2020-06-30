@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="orderlist">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.orderlist')"></qui-header-back>
+    <!-- #endif -->
     <view class="orderlist-wrap">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
@@ -16,15 +19,7 @@
         </view>
       </qui-cell-item>
     </view>
-    <picker
-      mode="date"
-      :value="date"
-      :start="startDate"
-      :end="endDate"
-      @change="bindDateChange"
-      fields="month"
-      class="date-picker"
-    >
+    <picker mode="date" :value="date" @change="bindDateChange" fields="month" class="date-picker">
       <view class="uni-input">{{ `${i18n.t('profile.time')} ：${date}` }}</view>
     </picker>
     <view class="orderlist-items">
@@ -209,13 +204,20 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 190rpx);
+/* #endif */
 
-.orderlist {
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 150rpx);
+/* #endif */
+.orderlist /deep/ {
+  min-height: auto;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  /deep/ .cell-item {
+  .cell-item {
     padding-right: 40rpx;
   }
-  /deep/ .cell-item__body {
+  .cell-item__body {
     height: auto;
     padding: 35rpx 0;
   }
@@ -228,28 +230,30 @@ export default {
     bottom: 35rpx;
     width: 100rpx;
   }
-  /deep/ .cell-item__body__right-text {
+  .cell-item__body__right-text {
     font-weight: bold;
     color: #189a00;
   }
-  /deep/ .icon-screen {
+  .icon-screen {
     margin-left: 20rpx;
   }
-}
-.orderlist-items {
-  padding-left: 40rpx;
-  background: --color(--qui-BG-2);
-}
-.orderlist-wrap {
-  padding-top: 40rpx;
-  padding-left: 40rpx;
-  margin-bottom: 30rpx;
-  color: --color(--qui-FC-333);
-  background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid #ededed;
-}
-.orderlist-wrap /deep/ .cell-item__body {
-  height: 78rpx;
+  .orderlist-wrap {
+    padding: 40rpx 0 0 40rpx;
+    /* #ifdef H5 */
+    padding-top: 90rpx;
+    /* #endif */
+    margin-bottom: 30rpx;
+    color: --color(--qui-FC-333);
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid #ededed;
+  }
+  .orderlist-wrap .cell-item__body {
+    height: 78rpx;
+  }
+  .orderlist-items {
+    padding-left: 40rpx;
+    background: --color(--qui-BG-2);
+  }
 }
 .date-picker {
   position: absolute;
@@ -258,6 +262,9 @@ export default {
   z-index: 10;
   width: 50%;
   height: 78rpx;
+  /* #ifdef H5 */
+  margin-top: 50rpx;
+  /* #endif */
 }
 .date-picker .uni-input {
   width: 100%;
@@ -266,7 +273,7 @@ export default {
   line-height: 78rpx;
 }
 .scroll-y {
-  max-height: calc(100vh - 148rpx);
+  max-height: $height;
 }
 .cell-item__body__right {
   padding-left: 59rpx;

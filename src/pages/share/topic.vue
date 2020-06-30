@@ -95,8 +95,11 @@ export default {
       return this.$store.getters['session/get']('userId');
     },
     // themedata() {
-    //   return this.$store.getters['jv/get'](`/threads/${this.themeid}`);
+    //   return this.$store.getters['jv/get'](`threads/${this.themeid}`);
     // },
+    userInfo() {
+      return this.$store.getters['jv/get'](`users/${this.userid}`);
+    },
   },
   watch: {
     heightdefill: {
@@ -119,26 +122,11 @@ export default {
     },
   },
   methods: {
-    // 获取推荐用户信息
+    // 获取用户信息
     getusertitle() {
-      const params = {
-        _jv: {
-          type: 'users',
-          id: this.userid,
-        },
-        include: 'groups',
-      };
-      this.$store.dispatch('jv/get', params).then(data => {
-        this.reconame = data.username;
-        if (this.themwidth >= 240) {
-          this.themwidth = 240;
-        }
-        this.renamewidth = 160 + this.themwidth;
-        this.recoimg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-        if (this.reconame && this.recoimg) {
-          this.getthemdata();
-        }
-      });
+      this.reconame = this.userInfo.username;
+      this.recoimg = this.userInfo.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+      this.getthemdata();
     },
     // 获取帖子内容信息
     getthemdata() {
@@ -150,9 +138,14 @@ export default {
         )
         .then(data => {
           this.headerName = data.user.username;
+          this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          if (data.firstPost.images.length >= 1 || data.threadVideo.cover_url) {
-            this.implement = false;
+          if (data.firstPost.images.length >= 1) {
+            if (this.postyTepy === 2 && data.threadVideo.cover_url) {
+              this.implement = false;
+            } else {
+              this.implement = false;
+            }
           } else {
             this.implement = true;
           }
@@ -173,7 +166,6 @@ export default {
               },
             });
           }
-          this.postyTepy = data.type;
           this.contentTitle = data.title;
           this.content = data.firstPost.content;
           if (this.content) {
@@ -184,38 +176,6 @@ export default {
               this.contentheight = 472 - num * 42;
             }
           }
-          // else if (this.contentImg.length > 1) {
-          //   uni.getImageInfo({
-          //     src: that.contentImg[0],
-          //     success(image) {
-          //       const num = image.height * (310 / image.width);
-          //       if (num > 201) {
-          //         that.picutre = num - 201;
-          //       } else {
-          //         that.picutre = 0;
-          //       }
-          //     },
-          //   });
-          //   uni.getImageInfo({
-          //     src: that.contentImg[1],
-          //     success(image) {
-          //       const num = image.height * (290 / image.width);
-          //       if (num > 201) {
-          //         that.picutrecopy = num - 201;
-          //       } else {
-          //         that.picutrecopy = 0;
-          //       }
-          //     },
-          //   });
-          //   setTimeout(() => {
-          //     console.log(this.picutre, this.picutrecopy);
-          //     if (this.picutre > this.picutrecopy) {
-          //       this.heightdefill = this.picutre;
-          //     } else {
-          //       this.heightdefill = this.picutrecopy;
-          //     }
-          //   }, 400);
-          // }
           this.attachmentsType = data.category.name;
           this.attachlength = this.attachmentsType.length * 24 + 3;
           this.marglength = this.attachlength + 40;
@@ -235,6 +195,63 @@ export default {
             });
           }
         });
+      // this.headerName = this.themedata.user.username;
+      // this.postyTepy = this.themedata.type;
+      // this.headerImg =
+      //   this.themedata.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+      // if (this.themedata.firstPost.images.length >= 1 || this.postyTepy === 2) {
+      //   this.implement = false;
+      // } else {
+      //   this.implement = true;
+      // }
+      // console.log(this.implement);
+      // const arr = Object.values(this.themedata.firstPost.images);
+      // arr.forEach(value => {
+      //   this.contentImg.push(value.thumbUrl || value.url);
+      // });
+      // if (this.contentImg) {
+      //   uni.getImageInfo({
+      //     src: that.contentImg[0],
+      //     success(image) {
+      //       const num = image.height * (620 / image.width);
+      //       if (num > 402) {
+      //         that.heightdefill = num - 402;
+      //       } else {
+      //         that.heightdefill = 0;
+      //       }
+      //     },
+      //   });
+      // }
+      // this.contentTitle = this.themedata.title;
+      // this.content = this.themedata.firstPost.content;
+      // console.log(this.content);
+      // if (this.content) {
+      //   const num = Math.ceil(this.content.length / 23);
+      //   if (num >= 11) {
+      //     this.contentheight = 0;
+      //   } else {
+      //     this.contentheight = 472 - num * 42;
+      //   }
+      // }
+      // console.log(this.contentheight);
+      // this.attachmentsType = this.themedata.category.name;
+      // this.attachlength = this.attachmentsType.length * 24 + 3;
+      // this.marglength = this.attachlength + 40;
+      // if (this.postyTepy === 2) {
+      //   this.video = this.themedata.threadVideo.cover_url;
+      //   this.videoduc = this.themedata.threadVideo.file_name;
+      //   uni.getImageInfo({
+      //     src: that.video,
+      //     success(image) {
+      //       const num = image.height * (620 / image.width);
+      //       if (num > 402) {
+      //         that.heightdefill = num - 402;
+      //       } else {
+      //         that.heightdefill = 0;
+      //       }
+      //     },
+      //   });
+      // }
     },
     initData() {
       if (!this.contentTitle) {
@@ -248,7 +265,9 @@ export default {
         usercontimg: this.contentImg, // 内容图片
         userattname: this.attachmentsName, // 帖子内容名称
         useratttype: this.attachmentsType, // 帖子分类
-        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code`, // 微信二维码
+        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code?path=/pages/topic/index?id=${
+          this.themeid
+        }`, // 微信二维码
         slitename: this.slitename, // 站点名称
         uservideo: this.video,
         uservideoduc: this.videoduc,
@@ -403,10 +422,9 @@ export default {
 }
 .painter {
   display: flex;
+  min-height: 100vh;
   flex-direction: column;
   justify-content: space-between;
-  width: 100vw;
-  height: 100vh;
   background-color: --color(--qui-BG-2);
 }
 .canvas-box {
@@ -431,6 +449,6 @@ export default {
   height: 0;
 }
 .btn-box {
-  margin: 0 0 40rpx 40rpx;
+  margin: 0 auto 40rpx;
 }
 </style>

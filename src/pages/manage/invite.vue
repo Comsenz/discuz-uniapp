@@ -1,6 +1,15 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <view class="invite">
+    <!-- #ifdef H5-->
+    <qui-header-back title="邀请成员"></qui-header-back>
+    <!-- #endif -->
+    <scroll-view
+      scroll-y
+      show-scrollbar="false"
+      show-icon
+      class="invite"
+      :style="current === 0 ? 'bottom: 150rpx;' : 'bottom: 0rpx;'"
+    >
       <!-- 标签栏 -->
       <view class="invite-tabs">
         <qui-tabs
@@ -9,8 +18,8 @@
           :values="tabList"
           @clickItem="onClickItem"
         ></qui-tabs>
-        <view class="">{{ role }}</view>
-        <view class="profile-tabs__content">
+        <view>{{ role }}</view>
+        <view>
           <view v-if="current === 0" class="items">
             <qui-invite
               :total="total"
@@ -21,12 +30,6 @@
               @share="share"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
-            <!-- 邀请链接按钮 -->
-            <view class="invite-button">
-              <button class="btn" @click="generate">
-                {{ i18n.t('manage.generateInvitationUrl') }}
-              </button>
-            </view>
           </view>
           <view v-if="current === 1" class="items">
             <qui-invite
@@ -57,47 +60,48 @@
           </view>
         </view>
       </view>
-      <!-- 邀请链接弹窗 -->
-      <uni-popup ref="popup" type="bottom">
-        <scroll-view style="height: 968rpx;" scroll-y="true">
-          <view class="popup-wrap">
-            <view class="popup-wrap-con">
-              <view v-for="item in groupList" :key="item._jv.id">
-                <view class="popup-wrap-con-text" @click="generateUrl(item)">{{ item.name }}</view>
-                <view class="popup-wrap-con-line"></view>
-              </view>
-            </view>
-            <view class="popup-wrap-space"></view>
-            <text class="popup-wrap-btn" @click="cancelModify">{{ i18n.t('home.cancel') }}</text>
-          </view>
-        </scroll-view>
-      </uni-popup>
-      <!-- 分享弹窗 -->
-      <uni-popup ref="popupShare" type="bottom">
-        <view class="popup-share">
-          <view class="popup-share-content" style="box-sizing: border-box;">
-            <button class="popup-share-button__center" open-type="share"></button>
-            <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-              <view class="popup-share-content-image">
-                <view class="popup-share-box">
-                  <qui-icon
-                    class="content-image"
-                    :name="item.icon"
-                    size="46"
-                    color="#777"
-                  ></qui-icon>
-                </view>
-              </view>
-              <text class="popup-share-content-text">{{ item.text }}</text>
-            </view>
-          </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancelShare('share')">
-            {{ i18n.t('home.cancel') }}
-          </text>
-        </view>
-      </uni-popup>
+    </scroll-view>
+    <!-- 邀请链接按钮 -->
+    <view class="invite-button" v-if="current === 0">
+      <button class="btn" @click="generate">
+        {{ i18n.t('manage.generateInvitationUrl') }}
+      </button>
     </view>
+    <!-- 邀请链接弹窗 -->
+    <uni-popup ref="popup" type="bottom">
+      <scroll-view scroll-y style="max-height: 968rpx;">
+        <view class="popup-wrap">
+          <view class="popup-wrap-con">
+            <view v-for="item in groupList" :key="item._jv.id">
+              <view class="popup-wrap-con-text" @click="generateUrl(item)">{{ item.name }}</view>
+              <view class="popup-wrap-con-line"></view>
+            </view>
+          </view>
+          <view class="popup-wrap-space"></view>
+          <text class="popup-wrap-btn" @click="cancelModify">{{ i18n.t('home.cancel') }}</text>
+        </view>
+      </scroll-view>
+    </uni-popup>
+    <!-- 分享弹窗 -->
+    <uni-popup ref="popupShare" type="bottom">
+      <view class="popup-share">
+        <view class="popup-share-content" style="box-sizing: border-box;">
+          <button class="popup-share-button__center" open-type="share"></button>
+          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
+            <view class="popup-share-content-image">
+              <view class="popup-share-box">
+                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
+              </view>
+            </view>
+            <text class="popup-share-content-text">{{ item.text }}</text>
+          </view>
+        </view>
+        <view class="popup-share-content-space"></view>
+        <text class="popup-share-btn" @click="cancelShare('share')">
+          {{ i18n.t('home.cancel') }}
+        </text>
+      </view>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -105,10 +109,20 @@
 import { timestamp2day } from '@/utils/time';
 import quiInvite from '@/components/qui-invite';
 import forums from '@/mixin/forums';
+// #ifdef H5
+import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
   components: { quiInvite },
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef H5
+    wxshare,
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       current: 0, // 当前标签页
@@ -128,11 +142,16 @@ export default {
           name: 'wx',
         },
       ],
+      navbarHeight: 0,
+      isWeixin: '', // 是否是微信浏览器
     };
   },
   onLoad() {
     this.getInviteList(1);
     this.getGroupList();
+    // #ifdef H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
   },
   // 唤起小程序原生分享
   onShareAppMessage(res) {
@@ -186,14 +205,20 @@ export default {
           list.push(inviteListValue);
         }
       }
-      console.log('list', list);
+      console.log('allInviteList', list);
       return list;
     },
     // 获取用户组列表
     groupList() {
       const groups = this.$store.getters['jv/get']('groups');
       console.log('groups', groups);
-      return groups;
+      const list = [];
+      const array = Object.keys(groups);
+      for (let i = 0; i < array.length; i += 1) {
+        list.push(groups[array[i]]);
+      }
+      console.log('groupList', list);
+      return list;
     },
     // 获取用户角色
     userInfos() {
@@ -235,14 +260,14 @@ export default {
       this.$refs.popup.open();
     },
     // 生成 合伙人/嘉宾/成员 邀请链接
-    generateUrl(key) {
-      console.log('生成邀请链接的key：', key);
+    generateUrl(item) {
+      console.log('生成邀请链接：', item);
       const adminParams = {
         _jv: {
           type: 'invite',
         },
         type: 'invite',
-        group_id: parseInt(this.groupList[key]._jv.id, 10),
+        group_id: parseInt(item._jv.id, 10),
       };
       const userParams = {
         _jv: {
@@ -300,7 +325,19 @@ export default {
     share(code) {
       this.code = code;
       console.log('分享');
+      // #ifdef MP-WEIXIN
       this.$refs.popupShare.open();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.forums.set_site.site_name,
+          url: `pages/site/partner-invite?code=${this.code}`,
+        });
+      }
+      // #endif
     },
     // 取消分享
     cancelShare() {
@@ -321,83 +358,71 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .invite {
+  position: fixed;
+  top: 0rpx;
+  right: 0rpx;
+  left: 0rpx;
+  /* #ifdef H5 */
+  margin: 44px 0rpx 0rpx;
+  /* #endif */
   font-size: $fg-f28;
 
   &-tabs {
-    // &-h {
-    //   position: fixed;
-    //   top: 0rpx;
-    //   width: 100%;
-    // }
-
     /deep/ .qui-tabs__item--active .qui-tabs__item__title {
       font-size: $fg-f28;
     }
   }
+}
 
-  .left-text {
-    min-width: 250rpx;
-    font-weight: bold;
-    color: --color(--qui-FC-34);
-  }
+.invite-button {
+  position: fixed;
+  right: 0;
+  bottom: 40rpx;
+  left: 0;
+  width: 670rpx;
+  height: 90rpx;
+  margin: auto;
 
-  .user-avatar {
-    width: 70rpx;
-    height: 70rpx;
-    margin: 15rpx 20rpx;
-    border-radius: 50%;
-  }
-
-  .invite-button {
-    position: fixed;
-    right: 0;
-    bottom: 40rpx;
-    left: 0;
-    width: 670rpx;
-    height: 90rpx;
-    margin: auto;
-
-    .btn {
-      font-size: $fg-f28;
-      line-height: 90rpx;
-      color: --color(--qui-FC-333);
-      background: --color(--qui-BG-2);
-    }
-  }
-
-  .popup-wrap {
-    display: flex;
-    flex-direction: column;
+  .btn {
+    font-size: $fg-f28;
+    line-height: 90rpx;
+    color: --color(--qui-FC-333);
     background: --color(--qui-BG-2);
+  }
+}
+
+.popup-wrap {
+  display: flex;
+  flex-direction: column;
+  background: --color(--qui-BG-2);
+  border-radius: 10rpx 10rpx 0rpx 0rpx;
+
+  &-con {
     border-radius: 10rpx 10rpx 0rpx 0rpx;
 
-    &-con {
-      border-radius: 10rpx 10rpx 0rpx 0rpx;
-
-      &-text {
-        width: 100%;
-        height: 100rpx;
-        font-size: $fg-f34;
-        line-height: 100rpx;
-        text-align: center;
-      }
-
-      &-line {
-        border: 2rpx solid --color(--qui-BG-ED);
-      }
-    }
-
-    &-space {
-      border: 8rpx solid --color(--qui-BG-ED);
-    }
-
-    &-btn {
+    &-text {
       width: 100%;
       height: 100rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f34;
       line-height: 100rpx;
       text-align: center;
     }
+
+    &-line {
+      border: 2rpx solid --color(--qui-BG-ED);
+    }
+  }
+
+  &-space {
+    border: 8rpx solid --color(--qui-BG-ED);
+  }
+
+  &-btn {
+    width: 100%;
+    height: 100rpx;
+    font-size: $fg-f28;
+    line-height: 100rpx;
+    text-align: center;
   }
 }
 </style>

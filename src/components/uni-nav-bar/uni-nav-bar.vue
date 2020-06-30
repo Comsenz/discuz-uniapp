@@ -6,7 +6,9 @@
         'uni-navbar--shadow': shadow,
         'uni-navbar--border': border,
       }"
-      :style="{ 'background-color': backgroundColor }"
+      :style="{
+        'background-color': backgroundColor,
+      }"
       class="uni-navbar__content"
     >
       <uni-status-bar v-if="statusBar" />
@@ -28,7 +30,7 @@
           >
             <text :style="{ color: color, fontSize: '14px' }">{{ leftText }}</text>
           </view>
-          <slot name="left" />
+          <slot name="center" />
         </view>
         <view class="uni-navbar__header-container uni-navbar__content_view">
           <view
@@ -154,12 +156,12 @@ $nav-height: 44px;
 }
 
 .uni-navbar {
-  width: 750rpx;
+  width: 100%;
 }
 
 .uni-navbar__content {
   position: relative;
-  width: 750rpx;
+  width: 100%;
   overflow: hidden;
   background-color: $uni-bg-color;
 }
@@ -178,7 +180,7 @@ $nav-height: 44px;
   display: flex;
   /* #endif */
   flex-direction: row;
-  width: 750rpx;
+  width: 100%;
   height: $nav-height;
   font-size: 16px;
   line-height: $nav-height;
@@ -214,7 +216,8 @@ $nav-height: 44px;
 }
 
 .uni-navbar__header-container {
-  flex: 1;
+  flex: 2;
+  min-width: 320rpx;
 }
 
 .uni-navbar__header-container-inner {

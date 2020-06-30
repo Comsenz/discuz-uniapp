@@ -56,6 +56,7 @@ export default {
       openSettingBtnHidden: true,
       jurisdiction: true,
       leftwidth: 253,
+      pages: '/pages/home/index',
     };
   },
   onLoad() {
@@ -63,11 +64,15 @@ export default {
       title: this.i18n.t('share.generating'),
       mask: true,
     });
+    if (this.forums.set_site.site_mode === 'public') {
+      this.pages = '/pages/home/index';
+    } else if (this.forums.set_site.site_mode === 'pay') {
+      this.pages = '/pages/site/index';
+    }
     this.$nextTick(() => {
       this.userid = this.usersid;
       this.slitename = this.forums.set_site.site_name;
-      this.slitelogo =
-        this.forums.set_site.site_header_logo || `${this.$u.host()}static/images/logo.png`;
+      this.slitelogo = this.forums.set_site.site_header_logo || `${this.$u.host()}static/logo.png`;
       this.sliteback = this.forums.set_site.site_background_image;
       this.themnumber = this.forums.other.count_users;
       this.contdata = this.forums.other.count_threads;
@@ -79,38 +84,32 @@ export default {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
+    userInfo() {
+      return this.$store.getters['jv/get'](`users/${this.userid}`);
+    },
   },
   methods: {
     usertitle() {
       const that = this;
-      const params = {
-        _jv: {
-          type: 'users',
-          id: this.userid,
-        },
-        include: 'groups',
-      };
-      this.$store.dispatch('jv/get', params).then(data => {
-        this.headerName = data.username;
-        this.themwidth = this.headerName.length * 28 + 3;
-        if (this.themwidth >= 240) {
-          this.themwidth = 240;
-        }
-        this.renamewidth = 160 + this.themwidth;
-        this.headerImg = data.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-        if (this.slitelogo) {
-          uni.getImageInfo({
-            src: that.slitelogo,
-            success(image) {
-              const num = image.width * (88 / image.height);
-              that.leftwidth = (700 - num) / 2;
-            },
-          });
-        }
-        setTimeout(() => {
-          this.initData();
-        }, 300);
-      });
+      this.headerName = this.userInfo.username;
+      this.themwidth = this.headerName.length * 28 + 3;
+      if (this.themwidth >= 240) {
+        this.themwidth = 240;
+      }
+      this.renamewidth = 160 + this.themwidth;
+      this.headerImg = this.userInfo.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
+      if (this.slitelogo) {
+        uni.getImageInfo({
+          src: that.slitelogo,
+          success(image) {
+            const num = image.width * (88 / image.height);
+            that.leftwidth = (700 - num) / 2;
+          },
+        });
+      }
+      setTimeout(() => {
+        this.initData();
+      }, 300);
     },
     initData() {
       const obj = {
@@ -123,7 +122,7 @@ export default {
         contdata: this.contdata, // 内容大小
         introd: this.introd, // 站点介绍
         leftwidth: this.leftwidth,
-        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code`, // 微信二维码
+        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code?path=${this.pages}`, // 微信二维码
         namewidth: this.themwidth,
         renamewidth: this.renamewidth,
         longpressrecog: this.i18n.t('share.longpressrecog'), // 长按识别

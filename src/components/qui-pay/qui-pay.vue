@@ -103,7 +103,6 @@
         :password="payPassword"
         @onInput="onInput"
         @close="close"
-        @clear="clear"
       ></qui-pay-keyboard>
     </uni-popup>
   </view>
@@ -135,12 +134,12 @@ export default {
     },
     // 支付金额
     money: {
-      type: [Number],
+      type: Number,
       default: 0,
     },
     // 余额
     balance: {
-      type: [Number],
+      type: Number,
       default: 0,
     },
     // 支付主题类型
@@ -286,10 +285,10 @@ export default {
       // this.$store.commit('setRouter', curRoute);
       if (this.payUrl) {
         console.log(1);
-        uni.navigateTo({ url: this.payUrl });
+        uni.redirectTo({ url: this.payUrl });
       }
       console.log(2);
-      uni.navigateTo({ url: '/pages/modify/paypwd' });
+      uni.redirectTo({ url: '/pages/modify/paypwd' });
     },
     // 输入密码完成
     onInput(val) {
@@ -305,7 +304,7 @@ export default {
       this.$emit('close');
     },
     // 清空密码输入框
-    clear() {
+    clearPassword() {
       this.$refs.keyboard.clear();
       console.log('清空');
     },

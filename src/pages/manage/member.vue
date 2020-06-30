@@ -1,16 +1,16 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
+  <qui-page :data-qui-theme="theme" class="member-box">
+    <!-- #ifdef H5-->
+    <qui-header-back title="成员管理"></qui-header-back>
+    <!-- #endif -->
     <!-- 搜索成员 -->
-    <view class="manage-users-search">
+    <view class="member-box-search">
       <view class="search">
         <view class="search-box">
           <view class="search-box__content">
-            <qui-icon
-              class="icon-content-search"
-              name="icon-search"
-              size="30"
-              color="#bbb"
-            ></qui-icon>
+            <view class="icon-content-search">
+              <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+            </view>
             <input
               type="text"
               class="search-box__content-input"
@@ -19,20 +19,21 @@
               @input="searchInput"
               :value="searchText"
             />
-            <view @tap="clearSearch" v-if="searchText" class="search-box__content-delete">
+            <view @tap="cancelSearch" v-if="searchText" class="search-box__content-delete">
               <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
             </view>
           </view>
-          <view class="search-box__cancel" v-if="searchText" @tap="clearSearch">
-            <text>{{ i18n.t('home.cancel') }}</text>
+          <view class="search-box__cancel" v-if="searchText" @tap="cancelSearch">
+            <text>{{ i18n.t('search.cancel') }}</text>
           </view>
         </view>
       </view>
     </view>
     <!-- 成员列表 -->
-    <view class="qui-at-member-page-box__lst">
+    <view class="member-box__list">
+      <!-- #ifdef MP-WEIXIN -->
       <scroll-view
-        class="scroll-Y"
+        class="wx-scroll"
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="pullDown"
@@ -45,20 +46,51 @@
               :mark="item.id"
               :title="item.username"
               :value="item.groups[Object.keys(item.groups || {})[0]].name"
-              :icon="item.avatarUrl || '/static/noavatar.gif'"
+              :icon="item.avatarUrl"
             >
               <checkbox
                 slot="rightIcon"
                 :value="JSON.stringify(item)"
-                :checked="checkAvatar.find(value => value.id === item.id)"
+                :disabled="item.id === currentLoginId ? true : false"
+                :checked="checkAvatar.findIndex(value => value.id === item.id) > -1"
               ></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <qui-load-more :status="loadingType"></qui-load-more>
+        <qui-load-more :status="loadingTypeShow"></qui-load-more>
       </scroll-view>
+      <!-- #endif -->
+      <!-- #ifdef H5-->
+      <scroll-view
+        class="h5-scroll"
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="pullDown"
+      >
+        <checkbox-group @change="changeCheck">
+          <label v-for="item in userListShow" :key="item.id">
+            <qui-avatar-cell
+              center
+              right-color="#aaa"
+              :mark="item.id"
+              :title="item.username"
+              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :icon="item.avatarUrl"
+            >
+              <checkbox
+                slot="rightIcon"
+                :value="JSON.stringify(item)"
+                :disabled="item.id === currentLoginId ? true : false"
+                :checked="checkAvatar.findIndex(value => value.id === item.id) > -1"
+              ></checkbox>
+            </qui-avatar-cell>
+          </label>
+        </checkbox-group>
+        <qui-load-more :status="loadingTypeShow"></qui-load-more>
+      </scroll-view>
+      <!-- #endif -->
     </view>
-    <view class="qui-at-member-page-box__ft">
+    <view class="member-box__ft">
       <qui-button
         size="large"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
@@ -74,7 +106,7 @@
     </view>
     <!-- 成员管理弹窗 -->
     <uni-popup ref="popup" type="bottom">
-      <scroll-view style="height: 968rpx;" scroll-y="true">
+      <scroll-view scroll-y style="max-height: 968rpx;">
         <view class="popup-wrap">
           <view class="popup-wrap-con">
             <view @click="modifyGroupName(item)" v-for="item in groupList" :key="item._jv.id">
@@ -98,6 +130,7 @@ export default {
     return {
       searchText: '', // 输入的用户名
       loadingType: 'more', // 上拉加载状态
+      searchLoadingType: 'more', // 搜索上拉加载状态
       pageSize: 20, // 每页20条数据
       pageNum: 1, // 当前页数
       searchPageNum: 1, // 搜索的当前页数
@@ -116,8 +149,17 @@ export default {
     });
   },
   computed: {
+    // 获取当前登录的id
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', userId);
+      return parseInt(userId, 10);
+    },
     userListShow() {
       return this.isSearch ? this.searchUserList : this.userList;
+    },
+    loadingTypeShow() {
+      return this.isSearch ? this.searchLoadingType : this.loadingType;
     },
   },
   methods: {
@@ -130,11 +172,9 @@ export default {
         this.searchUser(e.target.value);
       }
     }, 800),
-    clearSearch() {
+    cancelSearch() {
       this.isSearch = false;
       this.searchText = '';
-      this.searchUser();
-      this.checkAvatar = [];
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
@@ -175,14 +215,14 @@ export default {
           if (res && res._jv) {
             delete res._jv;
             this.searchUserList = [...this.searchUserList, ...res];
-            this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+            this.searchLoadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
     },
     // 上拉加载
     pullDown() {
-      if (this.loadingType !== 'more') {
+      if (this.loadingTypeShow !== 'more') {
         return;
       }
       if (this.isSearch) {
@@ -230,6 +270,8 @@ export default {
       });
     },
     getList() {
+      this.searchText = '';
+      this.isSearch = false;
       const params = {
         include: 'groups',
         'page[number]': this.pageNum,
@@ -269,7 +311,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 
-.mamage-users-search {
+.member-box-search {
   .search {
     position: fixed;
     top: 0rpx;
@@ -278,17 +320,40 @@ export default {
   }
 
   .search-box {
+    /* #ifdef H5 */
+    margin: 44px 0rpx 0rpx;
+    /* #endif */
     background-color: --color(--qui-BG-2);
   }
 }
 
-$otherHeight: 292rpx;
-.qui-at-member-page-box {
+.member-box {
   width: 100%;
 
-  &__lst {
-    .scroll-Y {
-      height: calc(100vh - #{$otherHeight});
+  &__list {
+    .h5-scroll {
+      position: fixed;
+      top: 210rpx;
+      right: 0rpx;
+      bottom: 160rpx;
+      left: 0rpx;
+      width: 100%;
+      background-color: --color(--qui-BG-2);
+      .loading-text {
+        height: 100rpx;
+        font-size: 28rpx;
+        line-height: 100rpx;
+        text-align: center;
+      }
+    }
+    .wx-scroll {
+      position: fixed;
+      top: 120rpx;
+      right: 0rpx;
+      bottom: 160rpx;
+      left: 0rpx;
+      width: 100%;
+      background-color: --color(--qui-BG-2);
       .loading-text {
         height: 100rpx;
         font-size: 28rpx;
@@ -298,10 +363,11 @@ $otherHeight: 292rpx;
     }
   }
   &__ft {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 40rpx;
+    background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
 }

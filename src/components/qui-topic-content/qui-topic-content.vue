@@ -1,15 +1,8 @@
 <template>
-  <view class="themeItem">
+  <view v-if="topicStatus != 1">
     <view class="themeItem__header">
       <view class="themeItem__header__img">
-        <image
-          :src="avatarUrl != '' && avatarUrl != null ? avatarUrl : '/static/noavatar.gif'"
-          class="det-per-head"
-          @click="personJump"
-          @error="imageError"
-          v-if="imageStatus"
-        ></image>
-        <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" @click="personJump" />
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
@@ -27,12 +20,48 @@
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
-            <qui-icon
-              name="icon-management"
-              class="icon-management"
-              :style="{ color: selectActive }"
-            ></qui-icon>
-            <view :style="{ color: selectActive }">{{ t.management }}</view>
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>{{ t.management }}</view>
+          </view>
+          <view>
+            <qui-drop-down
+              posival="absolute"
+              :show="seleShow"
+              :list="selectList"
+              :top="60"
+              :right="0"
+              :width="180"
+              @click="selectChoice"
+            ></qui-drop-down>
+          </view>
+        </view>
+        <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+      </view>
+    </view>
+  </view>
+  <view class="themeItem" v-else>
+    <view class="themeItem__header">
+      <view class="themeItem__header__img">
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" @click="personJump" />
+      </view>
+      <view class="themeItem__header__title">
+        <view class="themeItem__header__title__top" @click="personJump">
+          <text class="themeItem__header__title__username">{{ userName }}</text>
+          <text
+            class="themeItem__header__title__isAdmin"
+            v-for="(group, index) in userRole"
+            :key="index"
+          >
+            {{ group.isDisplay ? `（${group.name}）` : '' }}
+          </text>
+        </view>
+        <view class="themeItem__header__title__time">{{ localTime }}</view>
+      </view>
+      <view class="themeItem__header__opera" v-if="managementShow">
+        <view class="det-hd-operaCli">
+          <view class="det-hd-management" @click="selectClick">
+            <qui-icon name="icon-management" class="icon-management"></qui-icon>
+            <view>{{ t.management }}</view>
           </view>
           <view>
             <qui-drop-down
@@ -59,21 +88,20 @@
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
-          <rich-text :nodes="themeContent"></rich-text>
+          <qui-uparse :content="themeContent"></qui-uparse>
         </view>
         <view
           class="theme__content__videocover"
-          v-if="themeType == 2 && !payStatus && coverImage != null"
+          v-if="themeType == 2 && !videoStatus && coverImage != null"
           @click="videocoverClick"
+          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         >
-          <image
-            class="themeItem__content__coverimg"
-            :src="coverImage"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
-          ></image>
+          <view class="theme__mark"></view>
+          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image class="themeItem__content__coverimg" :src="coverImage"></image>
         </view>
         <video
-          v-if="themeType == 2 && payStatus"
+          v-if="themeType == 2 && videoStatus"
           preload="auto"
           bindpause="handlepause"
           playsinline
@@ -93,49 +121,7 @@
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
-        <view v-if="imagesList.length == 1">
-          <view class="themeItem__content__imgone">
-            <image
-              class="themeItem__content__imgone__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(payStatus, index)"
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length == 2">
-          <view class="themeItem__content__imgtwo">
-            <image
-              class="themeItem__content__imgtwo__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(payStatus, index)"
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length >= 3">
-          <view class="themeItem__content__imgmore">
-            <image
-              class="themeItem__content__imgmore__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(payStatus, index)"
-            ></image>
-            <image
-              class="themeItem__content__imgmore__item"
-              v-if="imagesList.length % 3 != 0"
-            ></image>
-          </view>
-        </view>
+        <qui-image :images-list="imagesList" :preview-status="payStatus"></qui-image>
         <view
           v-if="!payStatus && threadPrice > 0 && themeType == 1"
           class="themeItem__content__con__cover"
@@ -153,6 +139,32 @@
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>
+      <!-- 附件 -->
+      <view class="themeItem__content__attachment" v-if="fileList.length > 0">
+        <view class="themeItem__content__attachment-title">
+          {{ i18n.t('profile.attachment') }}
+        </view>
+        <view
+          class="themeItem__content__attachment-item"
+          v-for="(item, index) in fileList"
+          :key="index"
+          @tap="download(item)"
+        >
+          <qui-icon
+            class="icon-attachment"
+            :name="
+              item.fileName
+                ? `icon-${item.fileName
+                    .substring(item.fileName.lastIndexOf('.') + 1)
+                    .toUpperCase()}`
+                : `icon-resources`
+            "
+            color="#aaa"
+            size="22"
+          ></qui-icon>
+          <text class="attachment-name">{{ item.fileName }}</text>
+        </view>
+      </view>
 
       <view class="themeItem__content__tags" v-if="tags.length > 0">
         <view
@@ -165,6 +177,7 @@
         </view>
       </view>
     </view>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
@@ -173,6 +186,10 @@ import { time2MorningOrAfternoon } from '@/utils/time';
 
 export default {
   props: {
+    topicStatus: {
+      type: Number,
+      default: 0,
+    },
     // 类型
     themeParts: {
       validator: value => {
@@ -199,9 +216,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    // 视频显示状态
+    videoStatus: {
+      type: Boolean,
+      default: true,
+    },
     // 当前主题价格
     threadPrice: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     // 需要支付查看的内容所占的比例
@@ -268,11 +290,11 @@ export default {
         return [];
       },
     },
-    // 图片裁剪、缩放的模式
-    modeVal: {
-      type: String,
-      default: 'aspectFill',
-    },
+    // // 图片裁剪、缩放的模式
+    // modeVal: {
+    //   type: String,
+    //   default: 'aspectFill',
+    // },
     // 视频宽度
     videoWidth: {
       type: Number,
@@ -298,12 +320,19 @@ export default {
       type: String,
       default: '',
     },
+    fileList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
   },
   data: () => {
     return {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
+      // topicStatus: '',
     };
   },
   onLoad() {
@@ -325,13 +354,13 @@ export default {
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
-      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
+      // this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 管理菜单选中事件
     selectChoice(param) {
       this.$emit('selectChoice', param);
       this.seleShow = false;
-      this.selectActive = this.seleShow ? '#1878F3' : '#333333';
+      // this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 点击用户头像以及用户名事件
     personJump() {
@@ -341,29 +370,7 @@ export default {
     videocoverClick() {
       this.$emit('videocoverClick');
     },
-    // 点击图片事件(默认参数图片id)
-    // imageClick(imageId) {
-    //   this.$emit('imageClick', imageId);
-    // },
-    // 预览图片
-    previewPicture(payStatus, index) {
-      if (payStatus) {
-        // 如果对当前主题已支付
-        const _this = this;
-        const preview = [];
-        for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
-          preview.push(_this.imagesList[i].url);
-        }
-        uni.previewImage({
-          current: index,
-          urls: preview,
-          indicator: 'number',
-        });
-      } else {
-        // 如果未支付当前主题
-        this.$emit('previewPicture');
-      }
-    },
+
     // 点击分类标签
     tagClick(tagId) {
       this.$emit('tagClick', tagId);
@@ -371,6 +378,47 @@ export default {
     // 头像失效
     imageError() {
       this.imageStatus = false;
+    },
+    // 附件下载
+    download(item) {
+      // #ifdef H5
+      const { platform } = uni.getSystemInfoSync();
+      if (platform === 'ios') {
+        this.$refs.toast.show({
+          message: this.i18n.t('profile.filedownloadtips'),
+        });
+      } else {
+        window.location.href = item.url;
+      }
+      // #endif
+      // #ifdef MP-WEIXIN
+      // const that = this;
+      // wx.downloadFile({
+      //   url: item.url,
+      //   success(res) {
+      //     if (res.statusCode === 200) {
+      //       console.log(res.tempFilePath);
+      //       that.$refs.toast.show({
+      //         message: that.i18n.t('profile.downloadSuccess'),
+      //       });
+      //       wx.openDocument({
+      //         filePath: res.tempFilePath,
+      //         success() {
+      //           console.log('打开文档成功');
+      //         },
+      //       });
+      //     }
+      //   },
+      //   error() {
+      //     that.$refs.toast.show({
+      //       message: that.i18n.t('profile.downloadError'),
+      //     });
+      //   },
+      // });
+      this.$refs.toast.show({
+        message: this.i18n.t('profile.filedownloadtipswx'),
+      });
+      // #endif
     },
   },
 };
@@ -506,46 +554,6 @@ export default {
       }
     }
 
-    &__imgone {
-      display: flex;
-      justify-content: flex-start;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        max-width: 100%;
-        max-height: 100%;
-      }
-    }
-    &__imgtwo {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 48%;
-        height: 211rpx;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
-    }
-    &__imgmore {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-content: flex-start;
-      flex-wrap: wrap;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 30%;
-        height: 211rpx;
-        margin-right: 3.33%;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
-    }
     &__tags {
       display: flex;
       flex-wrap: wrap;
@@ -565,6 +573,33 @@ export default {
         background: --color(--qui-BG-F7);
         border-radius: 6rpx;
         transition: $switch-theme-time;
+      }
+    }
+    &__attachment {
+      margin-top: 40rpx;
+      margin-bottom: 20rpx;
+      &-title {
+        margin-bottom: 20rpx;
+        font-size: 24rpx;
+        font-weight: bold;
+        color: --color(--qui-FC-777);
+      }
+      &-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 60rpx;
+        padding: 0 20rpx;
+        margin-bottom: 10rpx;
+        overflow: hidden;
+        font-size: 24rpx;
+        line-height: 60rpx;
+        border: 2rpx solid --color(--qui-BOR-ED);
+        border-radius: 5rpx;
+        box-sizing: border-box;
+      }
+      .icon-attachment {
+        margin-right: 10rpx;
       }
     }
   }
@@ -607,6 +642,14 @@ export default {
     }
   }
 }
+.attachment-name {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: $fg-f24;
+  line-height: 31rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .det-hd-operaCli {
   position: relative;
   z-index: 10;
@@ -617,10 +660,32 @@ export default {
     flex-direction: row;
     justify-content: flex-end;
     font-size: $fg-f28;
+    line-height: 1;
     .icon-management {
       margin-right: 7rpx;
       font-size: $fg-f26;
     }
   }
+}
+.theme__mark {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 0;
+}
+.theme__mark__open {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 80rpx;
+  height: 80rpx;
+  margin-top: -40rpx;
+  margin-left: -40rpx;
+}
+.theme__content__videocover {
+  position: relative;
 }
 </style>

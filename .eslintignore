@@ -16,5 +16,10 @@ stylelint.config.js
 src/library
 src/wxcomponents
 src/components/uni-popup
+src/components/feng-parse
 src/common/
 src/library/jsonapi-vuex
+src/components/qui-markdown
+src/components/qui-markdown
+src/components/qui-markdown/mpvue-wxparse
+src/components/qui-markdown/marked

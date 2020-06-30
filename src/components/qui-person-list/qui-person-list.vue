@@ -6,23 +6,24 @@
     </view>
     <view class="det-per-list" v-if="personRes.length > 0">
       <view class="det-person" v-for="(person, index) in personRes" :key="index">
-        <image
-          :src="person.avatarUrl ? person.avatarUrl : '/static/noavatar.gif'"
-          class="det-per-head"
-          v-if="person.showAvatar"
-          @click="personJump(person.id)"
-          @error="imageError(person)"
-        ></image>
-        <image
-          v-else
-          src="/static/noavatar.gif"
-          class="det-per-head"
-          @click="personJump(person.id)"
-        ></image>
+        <view @click="personJump(person.id)">
+          <qui-avatar v-if="person.showAvatar" :user="person" size="50" />
+        </view>
       </view>
     </view>
-    <view class="fold-box" :style="{ transform: transform }" v-if="personNum > limitCount">
-      <qui-icon name="icon-unfold" class="unfold" @click="foldClick"></qui-icon>
+    <view class="fold-box" v-if="personNum > limitCount">
+      <!--<qui-icon
+        name="icon-unfold"
+        :style="{ transform: transform }"
+        class="unfold"
+        @click="foldClick"
+      ></qui-icon>-->
+      <image
+        src="/static/unfold.svg"
+        class="unfold"
+        @click="foldClick"
+        :style="{ transform: transform }"
+      ></image>
     </view>
 
     <button class="det-per-btn" v-if="btnShow" :style="{ background: btnBg }" @click="btnClick">
@@ -115,7 +116,8 @@ export default {
           person.showAvatar = true;
           return person;
         });
-        this.personRes = newVal;
+        // this.personRes = newVal;
+        this.personRes = this.limitArray(newVal, this.limitCount);
       },
       deep: true,
       immediate: true,
@@ -136,12 +138,15 @@ export default {
     // 展开 折叠
     foldClick() {
       this.foldStatus = !this.foldStatus;
+      console.log(this.foldStatus);
       // this.$emit('btnClick', param);
       if (this.foldStatus) {
         this.transform = 'rotate(180deg)';
+        console.log(this.transform, '旋转');
         this.personRes = this.limitArray(this.personList, this.personNum);
       } else {
         this.transform = '';
+        console.log(this.transform, '回复');
         this.personRes = this.limitArray(this.personList, this.limitCount);
       }
     },
@@ -187,12 +192,6 @@ export default {
     height: 50rpx;
     margin: 0 3rpx 10rpx 4rpx;
     border-radius: 50%;
-    .det-per-head {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
   }
 
   .det-per-btn {
@@ -212,11 +211,11 @@ export default {
 }
 .fold-box {
   padding: 0 0 30rpx;
-  transition: transform 200ms;
-  transform-origin: 50% 50%;
   .unfold {
-    font-size: 34rpx;
-    color: --color(--qui-FC-B5);
+    width: 34rpx;
+    height: 34px;
+    transition: transform 200ms;
+    transform-origin: 50% 50%;
   }
 }
 </style>

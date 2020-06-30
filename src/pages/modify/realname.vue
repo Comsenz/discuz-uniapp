@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-realname">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('modify.realnametitle')"></qui-header-back>
+    <!-- #endif -->
     <view class="tica">
       <view class="tica-name">
         <input
@@ -96,6 +99,12 @@ export default {
               title: this.i18n.t('modify.nameauthensucc'),
               duration: 2000,
             });
+            // #ifdef H5
+            uni.navigateBack({
+              delta: 1,
+            });
+            // #endif
+            // #ifndef H5
             uni.redirectTo({
               url: '/pages/my/profile',
               success() {
@@ -103,6 +112,7 @@ export default {
                 pages[1].onLoad();
               },
             });
+            // #endif
           }
         })
         .catch(err => {
@@ -146,33 +156,38 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.tica {
-  width: 100vw;
-  height: 100vh;
-  padding-top: 31rpx;
-  background-color: --color(--qui-BG-2);
-  box-sizing: border-box;
-}
-.tica-name {
-  width: 100%;
-  padding: 0 0 0 40rpx;
-}
-.tica-name-inpa {
-  width: 100%;
-  height: 100rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  text-align: left;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.tica-pas-btn {
-  margin: 50rpx 0 0;
-}
-.tica-erro-messag1 {
-  margin-top: 20rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-RED);
+.page-realname /deep/ {
+  .tica {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .tica-name {
+    width: 100%;
+    padding: 31rpx 0 0 40rpx;
+    box-sizing: border-box;
+  }
+  .tica-name-inpa {
+    width: 100%;
+    height: 100rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    text-align: left;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .tica-pas-btn {
+    margin: 50rpx 0 0;
+  }
+  .tica-erro-messag1 {
+    margin-top: 20rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-RED);
+  }
 }
 </style>

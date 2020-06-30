@@ -2,19 +2,8 @@
   <view class="themeCount">
     <view class="themeItem">
       <view class="themeItem__header">
-        <view class="themeItem__header__img">
-          <image
-            :src="
-              commentAvatarUrl != '' && commentAvatarUrl != null
-                ? commentAvatarUrl
-                : '/static/noavatar.gif'
-            "
-            class="det-per-head"
-            @click="personJump"
-            @error="imageError"
-            v-if="imageStatus"
-          ></image>
-          <image v-else src="/static/noavatar.gif" class="det-per-head" @click="personJump"></image>
+        <view class="themeItem__header__img" @click="personJump">
+          <qui-avatar :user="{ username: userName, avatarUrl: commentAvatarUrl }" />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -46,51 +35,10 @@
 
       <view class="themeItem__content">
         <view class="themeItem__content__text" @click="commentJump">
-          <rich-text :nodes="commentContent"></rich-text>
+          <qui-uparse :content="commentContent"></qui-uparse>
         </view>
-        <view v-if="imagesList.length > 0 && imagesList.length == 1">
-          <view class="themeItem__content__imgone">
-            <image
-              class="themeItem__content__imgone__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(index)"
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length > 0 && imagesList.length == 2">
-          <view class="themeItem__content__imgtwo">
-            <image
-              class="themeItem__content__imgtwo__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(index)"
-            ></image>
-          </view>
-        </view>
-        <view v-if="imagesList.length > 0 && imagesList.length >= 3">
-          <view class="themeItem__content__imgmore">
-            <image
-              class="themeItem__content__imgmore__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              alt
-              @click="previewPicture(index)"
-            ></image>
-            <image
-              class="themeItem__content__imgmore__item"
-              v-if="imagesList.length % 3 != 0"
-            ></image>
-          </view>
-        </view>
+
+        <qui-image :images-list="imagesList"></qui-image>
         <qui-reply
           v-if="replyList.length > 0"
           :reply-list="replyList"
@@ -342,7 +290,7 @@ export default {
       &__username {
         display: flex;
         height: 37rpx;
-        max-width: 326rpx;
+        max-width: 286rpx;
         overflow: hidden;
         font-weight: bold;
         line-height: 37rpx;
@@ -393,47 +341,6 @@ export default {
       line-height: 45rpx;
       color: --color(--qui-FC-333);
       word-break: break-all;
-    }
-
-    &__imgone {
-      display: flex;
-      justify-content: flex-start;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        width: 100%;
-        max-height: 100%;
-      }
-    }
-    &__imgtwo {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 48%;
-        height: 211rpx;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
-    }
-    &__imgmore {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-content: flex-start;
-      flex-wrap: wrap;
-      margin-top: 30rpx;
-      line-height: 0;
-      &__item {
-        display: block;
-        width: 30%;
-        height: 211rpx;
-        margin-right: 3.33%;
-        margin-bottom: 20rpx;
-        background: #fff;
-      }
     }
 
     &__tags {

@@ -1,8 +1,13 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('search.searchthemes')"></qui-header-back>
+    <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
-        <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
+        <view class="icon-content-search">
+          <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+        </view>
         <input
           type="text"
           class="search-box__content-input"
@@ -32,18 +37,17 @@
           :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
-          :theme-btn="item.canHide"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
           :tags="[item.category]"
-          :media-url="item.threadVideo.media_url"
+          :media-url="item.threadVideo && item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          :video-width="item.threadVideo.width"
-          :video-height="item.threadVideo.height"
-          :video-id="item.threadVideo._jv.id"
+          :video-width="item.threadVideo && item.threadVideo.width"
+          :video-height="item.threadVideo && item.threadVideo.height"
+          :video-id="item.threadVideo && item.threadVideo._jv.id"
           @contentClick="contentClick(item._jv.id)"
           @headClick="headClick(item.user._jv.id)"
           @videoPlay="handleVideoPlay"
@@ -93,6 +97,7 @@ export default {
           'threadVideo',
         ],
         'filter[isDeleted]': 'no',
+        'filter[isApproved]': 1,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[q]': key,
@@ -148,17 +153,38 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
+/* #ifdef H5 */
+$height: calc(100vh - 200rpx);
+/* #endif */
 
-.search-item {
-  padding-top: 15rpx;
-  background-color: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
+/* #ifdef MP-WEIXIN */
+$height: calc(100vh - 110rpx);
+/* #endif */
+
 // 主题
-.search /deep/ .themeCount {
-  padding-left: 40rpx;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  box-shadow: none;
+.search /deep/ {
+  /* #ifdef H5 */
+  height: 100vh;
+  min-height: auto;
+  overflow: hidden;
+  /* #endif */
+  .themeCount {
+    padding-left: 40rpx;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    box-shadow: none;
+  }
+  .search-item {
+    padding-top: 15rpx;
+    background-color: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .search-box {
+    padding: 30rpx 40rpx 0;
+    /* #ifdef H5 */
+    margin-top: 80rpx;
+    /* #endif */
+    background: --color(--qui-BG-2);
+  }
 }
 /deep/ .themeCount .themeItem {
   padding-right: 40rpx;
@@ -173,12 +199,8 @@ export default {
   position: relative;
   padding-left: 130rpx;
 }
-.search .search-box {
-  padding: 30rpx 40rpx 0;
-  background: --color(--qui-BG-2);
-}
 .scroll-y {
-  max-height: calc(100vh - 110rpx);
+  max-height: $height;
 }
 .search-item__content {
   position: relative;

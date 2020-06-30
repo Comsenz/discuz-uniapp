@@ -1,5 +1,8 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('profile.personalhomepage')"></qui-header-back>
+    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -10,20 +13,20 @@
       <view class="profile-info">
         <view class="profile-info__box">
           <view class="profile-info__box__detail">
-            <image
-              class="profile-info__box__detail-avatar"
-              :src="userInfo.avatarUrl || '/static/noavatar.gif'"
-              alt="avatarUrl"
-              mode="aspectFill"
-            ></image>
+            <qui-avatar :user="userInfo" />
             <qui-cell-item
-              :title="userInfo.username"
+              :title="userInfo.username || ''"
               slot-right
               :brief="userInfo.groupsName"
               :border="false"
+              class="my-info__box__detail-username"
             >
               <view v-if="userId != currentLoginId">
-                <view class="profile-info__box__detail-operate" @tap="chat">
+                <view
+                  class="profile-info__box__detail-operate"
+                  @tap="chat"
+                  v-if="can_create_dialog"
+                >
                   <qui-icon
                     class="text"
                     name="icon-message1"
@@ -72,7 +75,12 @@
         ></qui-tabs>
         <view class="profile-tabs__content">
           <view v-if="current == 0" class="items">
-            <topic :user-id="userId" @changeFollow="changeFollow" ref="topic"></topic>
+            <topic
+              :user-id="userId"
+              @changeFollow="changeFollow"
+              ref="topic"
+              @handleClickShare="handleClickShare"
+            ></topic>
           </view>
           <view v-else-if="current == 1" class="items">
             <following :user-id="userId" @changeFollow="changeFollow" ref="following"></following>
@@ -81,7 +89,12 @@
             <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
           </view>
           <view v-else class="items">
-            <like :user-id="userId" @changeFollow="changeFollow" ref="like"></like>
+            <like
+              :user-id="userId"
+              @changeFollow="changeFollow"
+              ref="like"
+              @handleClickShare="handleClickShare"
+            ></like>
           </view>
         </view>
       </view>
@@ -91,6 +104,9 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+// #ifdef H5
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -103,6 +119,11 @@ export default {
     followers,
     like,
   },
+  mixins: [
+    // #ifdef H5
+    loginAuth,
+    // #endif
+  ],
   props: {
     type: {
       type: String,
@@ -117,9 +138,12 @@ export default {
         { title: this.i18n.t('profile.followers'), brief: '0' },
         { title: this.i18n.t('profile.likes'), brief: '0' },
       ],
-      userId: '',
+      userId: 0,
       currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
+      nowThreadId: '',
+      imageStatus: true,
+      can_create_dialog: false,
       dialogId: 0, // 会话id
     };
   },
@@ -138,11 +162,25 @@ export default {
     // 区分是自己的主页还是别人的主页
     const { userId, current } = params;
     this.userId = userId || this.currentLoginId;
-    this.current = current || 0;
+    this.current = parseInt(current, 10) || 0;
+    this.getAuth();
   },
   // 解决左上角返回数据不刷新情况
   onShow() {
     this.getUserInfo(this.userId);
+    if (this.$refs.topic) this.$refs.topic.uploadItem();
+    if (this.$refs.like) this.$refs.like.uploadItem();
+  },
+  // 唤起小程序原声分享（微信）
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
+      return {
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+        path: `/pages/topic/index?id=${this.nowThreadId}`,
+      };
+    }
   },
   methods: {
     onClickItem(e) {
@@ -150,12 +188,27 @@ export default {
         this.current = e.currentIndex;
       }
     },
+    getAuth() {
+      // 用户组等改变会改变私信权限
+      const params = {
+        include: 'users',
+      };
+      this.$store.dispatch('jv/get', [`forum`, { params }]).then(res => {
+        if (res.other && res.other.can_create_dialog) {
+          this.can_create_dialog = true;
+        } else {
+          this.can_create_dialog = false;
+        }
+      });
+    },
     // 获取用户信息
     getUserInfo(userId) {
       const params = {
-        include: 'groups',
+        include: ['groups', 'dialog'],
       };
-      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
+      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(res => {
+        this.dialogId = res.dialog ? res.dialog._jv.id : 0;
+      });
     },
     // 设置粉丝点赞那些数字
     setNum(res) {
@@ -166,6 +219,13 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
       const params = {
         _jv: {
           type: 'follow',
@@ -182,6 +242,13 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        if (!this.handleLogin()) {
+          return;
+        }
+      }
+      // #endif
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.getUserInfo(this.userId);
         if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
@@ -195,22 +262,16 @@ export default {
       const item = ['topic', 'following', 'followers', 'like'];
       this.$refs[item[current]].pullDown();
     },
-    // 私信
-    chat() {
-      const params = {
-        _jv: {
-          type: 'dialog',
-        },
-        recipient_username: this.userInfo.username,
-      };
-      // 调用创建会话接口
-      this.$store.dispatch('jv/post', params).then(res => {
-        this.dialogId = res._jv.json.data.id;
-        this.jumpChatPage();
-      });
+    // 点击分享事件
+    handleClickShare(e) {
+      this.nowThreadId = e;
     },
-    // 跳转到聊天页面（传入用户名和会话id）
-    jumpChatPage() {
+    // 头像加载失败,显示默认头像
+    imageError() {
+      this.imageStatus = false;
+    },
+    // 私信跳转到聊天页面（传入用户名和会话id）
+    chat() {
       uni.navigateTo({
         url: `/pages/notice/msglist?username=${this.userInfo.username}&dialogId=${this.dialogId}`,
       });
@@ -233,6 +294,9 @@ export default {
 .profile-info {
   padding: 40rpx;
   padding-top: 30rpx;
+  /* #ifdef H5 */
+  margin-top: 90rpx;
+  /* #endif */
   font-size: $fg-f28;
   background: --color(--qui-BG-2);
 }
@@ -248,10 +312,15 @@ export default {
 }
 .profile-info__box__detail {
   position: relative;
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  padding-left: 100rpx;
   font-size: $fg-f28;
   box-sizing: border-box;
+}
+.my-info__box__detail-username {
+  width: 100%;
+  padding-left: 20rpx;
 }
 .profile-info__box__detail /deep/ .cell-item__body {
   height: auto;
@@ -264,14 +333,6 @@ export default {
   display: inline-block;
   margin-left: 42rpx;
   color: --color(--qui-FC-333);
-}
-.profile-info__box__detail-avatar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
 }
 .profile-tabs__content {
   padding-top: 30rpx;

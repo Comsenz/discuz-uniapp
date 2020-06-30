@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-ediname">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('modify.nametitle')"></qui-header-back>
+    <!-- #endif -->
     <view class="chagepas">
       <view class="chagepas-pas">
         <input
@@ -15,7 +18,7 @@
         </view>
       </view>
       <view class="chagepas-pas-btn">
-        <qui-button type="primary" size="large" :disabled="disab" @click="submission">
+        <qui-button type="primary" size="large" @click="submission">
           {{ i18n.t('modify.submission') }}
         </qui-button>
       </view>
@@ -43,9 +46,6 @@ export default {
     this.userid = this.usersid;
   },
   computed: {
-    forums() {
-      return this.$store.getters['jv/get']('forums/1');
-    },
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
@@ -78,6 +78,12 @@ export default {
               title: this.i18n.t('modify.modifysucc'),
               duration: 2000,
             });
+            // #ifdef H5
+            uni.navigateBack({
+              delta: 1,
+            });
+            // #endif
+            // #ifndef H5
             uni.navigateBack({
               delta: 1,
               success() {
@@ -85,6 +91,7 @@ export default {
                 pages[1].onLoad();
               },
             });
+            // #endif
           }
         })
         .catch(err => {
@@ -111,33 +118,39 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.chagepas {
-  width: 100vw;
-  height: 100vh;
-  background-color: --color(--qui-BG-2);
-}
-.chagepas-pas {
-  width: 100%;
-  padding: 31rpx 0 0 40rpx;
-  box-sizing: border-box;
-}
-.chagepas-erro-test {
-  margin-top: 20rpx;
-  font-size: $fg-f24;
-  font-weight: 400;
-  color: --color(--qui-RED);
-}
-.chagepas-pas-inpa {
-  width: 100%;
-  height: 100rpx;
-  font-size: $fg-f34;
-  font-weight: 400;
-  line-height: 100rpx;
-  text-align: left;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.chagepas-pas-btn {
-  width: 670rpx;
-  margin: 50rpx auto 0;
+.page-ediname /deep/ {
+  .chagepas {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
+  }
+  .chagepas-pas {
+    width: 100%;
+    padding: 31rpx 0 0 40rpx;
+    box-sizing: border-box;
+  }
+  .chagepas-erro-test {
+    margin-top: 20rpx;
+    font-size: $fg-f24;
+    font-weight: 400;
+    color: --color(--qui-RED);
+  }
+  .chagepas-pas-inpa {
+    width: 100%;
+    height: 100rpx;
+    font-size: $fg-f34;
+    font-weight: 400;
+    line-height: 100rpx;
+    text-align: left;
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  }
+  .chagepas-pas-btn {
+    width: 670rpx;
+    margin: 50rpx auto 0;
+  }
 }
 </style>

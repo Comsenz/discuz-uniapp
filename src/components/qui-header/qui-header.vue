@@ -1,10 +1,19 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
+    <!-- #ifdef H5-->
+    <qui-header-back
+      :title="title"
+      :is-show-home="isShowHome"
+      :is-show-back="isShowBack"
+      :is-show-more="isShowMore"
+    ></qui-header-back>
+    <!-- #endif -->
     <view class="logoBox">
       <image
         class="logo"
         :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
         mode="aspectFit"
+        lazy-load
       ></image>
     </view>
     <view class="circleDet">
@@ -20,6 +29,12 @@
       <view class="circleDet-share" @click="open">
         <qui-icon class="qui-icon" name="icon-share1" size="26" :color="iconcolor"></qui-icon>
         {{ t.share }}
+      </view>
+      <view class="mask" v-if="shareShow" @click="closeShare">
+        <view class="wxShareTip">
+          <img src="/static/sharePoint.png" alt class="sharePoint" />
+          <img src="/static/shareKnow.png" alt class="shareKnow" />
+        </view>
       </view>
     </view>
   </view>
@@ -60,13 +75,29 @@ export default {
       type: String,
       default: '',
     },
+    shareShow: {
+      type: Boolean,
+      default: false,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    isShowBack: {
+      type: Boolean,
+      default: true,
+    },
+    isShowHome: {
+      type: Boolean,
+      default: true,
+    },
+    isShowMore: {
+      type: Boolean,
+      default: true,
+    },
   },
   data: () => {
-    return {
-      // navigationBarStyle: {
-      //   iconText: '类目', // 导航栏文字
-      // },
-    };
+    return {};
   },
   computed: {
     // 语言包
@@ -78,6 +109,9 @@ export default {
   methods: {
     open(evt) {
       this.$emit('click', evt);
+    },
+    closeShare(evt) {
+      this.$emit('closeShare', evt);
     },
   },
 };
@@ -97,10 +131,13 @@ export default {
     padding-top: 159rpx;
     margin: 0 auto;
   }
+  /deep/ .qui-back {
+    background: transparent;
+  }
   .circleDet {
     display: flex;
     justify-content: space-between;
-    padding: 69rpx 20rpx 47rpx;
+    padding: 69rpx 30rpx 47rpx;
     line-height: 37rpx;
     text-align: center;
     text {
@@ -132,6 +169,35 @@ export default {
     // position: -webkit-sticky;
     top: 0;
     z-index: 101;
+  }
+  .mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 17;
+    width: 100%;
+    height: 100%;
+    background: rgba(#000, 0.6);
+  }
+  .wxShareTip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2222222222222;
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    .sharePoint {
+      display: inline-block;
+      width: 70%;
+      margin-top: 10rpx;
+      margin-right: 30rpx;
+    }
+    .shareKnow {
+      display: block;
+      width: 35%;
+      margin: 20vh auto 30rpx;
+    }
   }
 }
 </style>

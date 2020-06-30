@@ -1,8 +1,13 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('search.search')"></qui-header-back>
+    <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
-        <qui-icon class="icon-content-search" name="icon-search" size="30" color="#bbb"></qui-icon>
+        <view class="icon-content-search">
+          <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
+        </view>
         <input
           type="text"
           class="search-box__content-input"
@@ -32,12 +37,7 @@
         :key="index"
         @tap="toProfile(item.id)"
       >
-        <image
-          class="search-item__users__avatar"
-          :src="item.avatarUrl || '/static/noavatar.gif'"
-          alt="avatarUrl"
-          mode="aspectFill"
-        ></image>
+        <qui-avatar class="search-item__users__avatar" :user="item" size="70" />
         <qui-cell-item
           :title="item.username"
           arrow
@@ -65,18 +65,17 @@
           :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
-          :theme-btn="item.canHide"
           :user-groups="item.user.groups"
           :theme-time="item.createdAt"
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
           :tags="[item.category]"
-          :media-url="item.threadVideo.media_url"
+          :media-url="item.threadVideo && item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
-          :video-width="item.threadVideo.width"
-          :video-height="item.threadVideo.height"
-          :video-id="item.threadVideo._jv.id"
+          :video-width="item.threadVideo && item.threadVideo.width"
+          :video-height="item.threadVideo && item.threadVideo.height"
+          :video-id="item.threadVideo && item.threadVideo._jv.id"
           @contentClick="contentClick(item._jv.id)"
           @headClick="toProfile(item.user._jv.id)"
           @videoPlay="handleVideoPlay"
@@ -114,6 +113,7 @@ export default {
         this.getThemeList(e.target.value);
       }, 250);
     },
+
     // 获取用户列表
     getUserList(key) {
       const params = {
@@ -145,6 +145,7 @@ export default {
           'threadVideo',
         ],
         'filter[isDeleted]': 'no',
+        'filter[isApproved]': 1,
         'page[number]': this.pageNum,
         'page[limit]': 2,
         'filter[q]': key,
@@ -200,10 +201,19 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.search {
+.search /deep/ {
+  overflow: hidden;
   .search-item,
   .search-box {
     background-color: --color(--qui-BG-2);
+  }
+  .search-box {
+    /* #ifdef H5 */
+    margin-top: 80rpx;
+    /* #endif */
+  }
+  .no-data {
+    padding-top: 20rpx;
   }
 }
 .search-item {
@@ -227,9 +237,6 @@ export default {
   color: --color(--qui-LINK);
 }
 // 用户
-.cell-item {
-  padding-right: 40rpx;
-}
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
   font-size: $fg-f28;
@@ -239,9 +246,6 @@ export default {
   position: absolute;
   top: 16rpx;
   left: 0;
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 50%;
 }
 .search-item__users {
   position: relative;

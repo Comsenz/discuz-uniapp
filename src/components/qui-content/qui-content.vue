@@ -5,16 +5,12 @@
       src="@/static/essence.png"
       alt
       v-if="themeEssence && themeType == '1'"
+      lazy-load
     ></image>
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
-          <image
-            :src="themeImage != '' && themeImage != null ? themeImage : '/static/noavatar.gif'"
-            @error="imageError"
-            v-if="imageStatus"
-          ></image>
-          <image v-else src="/static/noavatar.gif"></image>
+          <qui-avatar :user="{ avatarUrl: themeImage, username: userName }" />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -57,21 +53,22 @@
               size="28"
               style="padding-left: 8rpx;"
             ></qui-icon>
-            <navigator class="navPost">
+            <!-- <navigator class="navPost">
               {{ themeContent }}
-            </navigator>
+            </navigator> -->
+            <qui-uparse class="navPost" :content="themeContent"></qui-uparse>
           </view>
-          <rich-text :nodes="themeContent" v-else></rich-text>
+          <!-- <rich-text :nodes="themeContent" v-else></rich-text> -->
+          <qui-uparse :content="themeContent" v-else></qui-uparse>
         </view>
         <view
           class="theme__content__videocover"
           v-if="threadType == 2 && !payStatus && coverImage != null"
+          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         >
-          <image
-            class="themeItem__content__coverimg"
-            :src="coverImage"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
-          ></image>
+          <view class="theme__mark"></view>
+          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image class="themeItem__content__coverimg" :src="coverImage" lazy-load></image>
         </view>
         <view class="content__video" v-if="threadType === 2 && payStatus">
           <video
@@ -85,9 +82,10 @@
             :page-gesture="false"
             show-fullscreen-btn="true"
             :show-play-btn="true"
-            auto-pause-if-open-native="true"
-            auto-pause-if-navigate="true"
-            enable-play-gesture="false"
+            :autoplay="false"
+            auto-pause-if-open-native
+            auto-pause-if-navigate
+            :enable-play-gesture="false"
             :vslide-gesture="false"
             :vslide-gesture-in-fullscreen="false"
             object-fit="cover"
@@ -111,6 +109,7 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
+              lazy-load
               alt
             ></image>
           </view>
@@ -125,6 +124,7 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
+              lazy-load
               alt
             ></image>
           </view>
@@ -139,12 +139,14 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
+              lazy-load
               alt
             ></image>
             <image
               class="themeItem__content__imgmore__item"
               v-if="imagesList.length % 3 != 0"
               @click.stop=""
+              lazy-load
             ></image>
           </view>
         </view>
@@ -243,12 +245,12 @@ export default {
     },
     // icon图标
     themeBtn: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
     // 回复的图标
     themeReplyBtn: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
     // 删除的图标
@@ -280,7 +282,7 @@ export default {
     },
     // 内容区域图片
     imagesList: {
-      type: Array,
+      type: [Array, Object],
       default: () => {
         return [];
       },
@@ -465,7 +467,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .themeCount {
   position: relative;
-  box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
   .addFine {
     position: absolute;
     top: -10rpx;
@@ -575,6 +576,7 @@ export default {
       color: --color(--qui-FC-333);
       word-wrap: break-word;
       &__longessay {
+        display: flex;
         word-break: break-all;
       }
     }
@@ -592,6 +594,7 @@ export default {
       &__item {
         max-width: 80%;
         max-height: 80%;
+        border-radius: 5rpx;
       }
     }
     &__imgtwo {
@@ -601,10 +604,11 @@ export default {
       line-height: 0;
       &__item {
         display: block;
-        width: 48%;
+        width: 49.3%;
         height: 211rpx;
         margin-bottom: 20rpx;
         background: #fff;
+        border-radius: 5rpx;
       }
     }
     &__imgmore {
@@ -617,11 +621,12 @@ export default {
       line-height: 0;
       &__item {
         display: block;
-        width: 30%;
+        width: 32%;
         height: 211rpx;
-        margin-right: 3.33%;
+        margin-right: 1.33%;
         margin-bottom: 20rpx;
         background: #fff;
+        border-radius: 5rpx;
       }
     }
 
@@ -680,11 +685,13 @@ export default {
     }
   }
 }
+
 .themeItem__content__text__longessay__publish {
   display: inline;
 }
 .navPost {
-  display: inline;
+  display: inline-block;
+  max-width: 75%;
   padding-left: 8rpx;
   color: --color(--qui-LINK);
 }
@@ -692,6 +699,28 @@ export default {
   width: 100%;
 }
 .theme__content__videocover {
+  position: relative;
   width: 100%;
+}
+/deep/ .uni-video-cover {
+  z-index: 0;
+}
+.theme__mark {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 0;
+}
+.theme__mark__open {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 80rpx;
+  height: 80rpx;
+  margin-top: -40rpx;
+  margin-left: -40rpx;
 }
 </style>

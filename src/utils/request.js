@@ -19,7 +19,9 @@ export default class Request {
     // #ifndef MP-ALIPAY || APP-PLUS
     responseType: 'text',
     // #endif
-    custom: {},
+    custom: {
+      loading: true,
+    },
     // #ifdef MP-ALIPAY
     timeout: 30000,
     // #endif
@@ -156,6 +158,9 @@ export default class Request {
 
       const handleRe = { ...this.requestBeforeFun(options, cancel) };
       const _config = { ...handleRe };
+      // #ifdef H5
+      _config.data = JSON.stringify(_config.data);
+      // #endif
       if (!next) return;
       const requestTask = uni.request({
         url: Request.mergeUrl(_config.url, _config.baseUrl, _config.params),

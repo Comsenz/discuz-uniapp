@@ -1,5 +1,8 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="page-sinature">
+    <!-- #ifdef H5-->
+    <qui-header-back :title="i18n.t('modify.signaturetitle')"></qui-header-back>
+    <!-- #endif -->
     <view class="aogph">
       <view class="aogph-tab">
         <view class="aogph-tab-ao">
@@ -97,6 +100,14 @@ export default {
             title: this.i18n.t('modify.modificationsucc'),
             duration: 2000,
           });
+          // #ifdef H5
+          setTimeout(() => {
+            uni.navigateBack({
+              delta: 1,
+            });
+          }, 1000);
+          // #endif
+          // #ifndef H5
           setTimeout(() => {
             uni.navigateBack({
               success() {
@@ -105,6 +116,7 @@ export default {
               },
             });
           }, 1000);
+          // #endif
         }
       });
     },
@@ -115,37 +127,43 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.aogph {
-  width: 100vw;
-  height: 100vh;
-  background-color: --color(--qui-BG-2);
-}
-.aogph-tab {
-  padding: 36rpx 40rpx 0;
-}
-.aogph-tab-ao {
-  display: flex;
-  justify-content: space-between;
-}
-.aogph-tab-ao-my,
-.aogph-tab-ao-test {
-  font-size: $fg-f24;
-  font-weight: 400;
-  line-height: 45rpx;
-  color: --color(--qui-FC-777);
-  opacity: 1;
-}
-.aogph-tab-input-in {
-  width: 100%;
-  height: 400rpx;
-  padding: 20rpx 0 0 20rpx;
-  margin-top: 20rpx;
-  text-align: top;
-  background-color: --color(--qui-BG-1);
-  border: 1rpx solid --color(--qui-FC-DDD);
-  box-sizing: border-box;
-}
-.aogph-tab-button {
-  margin: 50rpx 0 0;
+.page-sinature /deep/ {
+  .aogph {
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 100rpx;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
+  }
+  .aogph-tab {
+    padding: 36rpx 40rpx 0;
+    box-sizing: border-box;
+  }
+  .aogph-tab-ao {
+    display: flex;
+    justify-content: space-between;
+  }
+  .aogph-tab-ao-my,
+  .aogph-tab-ao-test {
+    font-size: $fg-f24;
+    font-weight: 400;
+    line-height: 45rpx;
+    color: --color(--qui-FC-777);
+    opacity: 1;
+  }
+  .aogph-tab-input-in {
+    width: 100%;
+    height: 400rpx;
+    padding: 20rpx 0 0 20rpx;
+    margin-top: 20rpx;
+    text-align: top;
+    background-color: --color(--qui-BG-1);
+    border: 1rpx solid --color(--qui-FC-DDD);
+    box-sizing: border-box;
+  }
+  .aogph-tab-button {
+    margin: 50rpx 0 0;
+  }
 }
 </style>
