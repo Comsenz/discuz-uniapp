@@ -121,7 +121,7 @@
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
-        <qui-image :images-list="imagesList" :preview-status="payStatus"></qui-image>
+        <qui-image :images-list="imagesList" :preview-status="videoStatus"></qui-image>
         <view
           v-if="!payStatus && threadPrice > 0 && themeType == 1"
           class="themeItem__content__con__cover"
