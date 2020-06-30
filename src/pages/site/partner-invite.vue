@@ -30,12 +30,15 @@
       <qui-cell-item :title="i18n.t('site.circlemode')" :addon="handleMode()"></qui-cell-item>
       <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
         <view class="site-item__owner">
-          <image
+          <qui-avatar
             class="site-item__owner-avatar"
-            :src="(forums.set_site && forums.set_site.site_author.avatar) || '/static/noavatar.gif'"
+            :user="{
+              username: forums.set_site && forums.set_site.site_author.username,
+              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
+            }"
+            size="60"
             @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
-            lazy-load
-          ></image>
+          />
           <text class="site-item__owner-name">
             {{ forums.set_site && forums.set_site.site_author.username }}
           </text>
@@ -51,6 +54,7 @@
             <qui-avatar
               class="site-item__person__content-avatar"
               :user="item"
+              size="60"
               @tap="toProfile(item.id)"
             />
           </view>
