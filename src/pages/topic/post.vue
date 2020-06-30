@@ -470,12 +470,6 @@ export default {
       signatureVal: '',
     };
   },
-  // watch: {
-  //   textareaValue: function() {
-  //     console.log('markdown:' + this.textareaValue);
-  //     // console.log("html:"+this.textareaHtml)
-  //   },
-  // },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
@@ -496,20 +490,17 @@ export default {
   },
   methods: {
     focusEvent() {
-      // console.log(e, '这是获取焦点是');
+      // 这是获取焦点
     },
     toolBarClick(type) {
-      console.log(type);
       let text = '';
       if (type === 'bold') {
-        console.log('加粗');
         text = `${`${this.textAreaValue.slice(
           0,
           this.cursor,
         )}**粗体文字**${this.textAreaValue.slice(this.cursor)}`}`;
         this.cursor += 2;
         this.focusEvent(this.cursor);
-        console.log(this.textareaValue);
       } else if (type === 'italic') {
         // this.textareaValue += '*斜体* ';
         text = `${`${this.textAreaValue.slice(0, this.cursor)}__${this.textAreaValue.slice(
@@ -582,7 +573,7 @@ export default {
       let maxLength = price.indexOf('.');
 
       if (price.indexOf('.') < 0 && price != '') {
-        //('超过4位则大于1万元');
+        // '超过4位则大于1万元';
         if (price.length > 6) {
           price = price.substring(0, price.length - 1);
           uni.showToast({
@@ -803,10 +794,8 @@ export default {
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
-      console.log(list, '这是删除时');
       // const id = this.operating === 'edit' ? list.id : list.data.id;
       const id = list.id;
-      // console.log(id, '这是Id');
       this.delAttachments(id, del).then(() => {
         this.$refs.upload.clear(del);
       });
@@ -910,18 +899,14 @@ export default {
         uni.showLoading();
 
         if (this.operating === 'edit') {
-          console.log(this.uploadFile.length, '长度');
           if (this.type === 3) {
-            console.log('类型为图片时');
             if (this.uploadFile.length < 1) {
-              console.log('图片为空');
               this.$refs.toast.show({
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
               });
               uni.hideLoading();
               this.postLoading = false;
             } else {
-              console.log('111111');
               this.editThread().then(res => {
                 this.postLoading = false;
                 uni.hideLoading();
@@ -936,7 +921,6 @@ export default {
               });
             }
           } else {
-            console.log('22222');
             this.editThread().then(res => {
               this.postLoading = false;
               uni.hideLoading();
@@ -958,7 +942,6 @@ export default {
             }
           }
           this.postThread().then(res => {
-            console.log(res, 'postREs');
             this.postLoading = false;
             uni.hideLoading();
             if (res && res.isApproved === 1) {
@@ -1001,7 +984,6 @@ export default {
     addImg() {
       const attachments = {};
       attachments.data = [];
-      console.log(this.uploadFile, '这是处理前');
       this.uploadFile.forEach(item => {
         if (item) {
           attachments.data.push({
@@ -1028,7 +1010,6 @@ export default {
           }
         });
       }
-      console.log('这是提交给接口的', attachments);
       return attachments;
     },
     deleteFile(id) {
@@ -1116,7 +1097,6 @@ export default {
       });
     },
     delAttachments(id, index) {
-      console.log(id, '&&***********');
       const params = {
         _jv: {
           type: 'attachments',
@@ -1135,12 +1115,9 @@ export default {
           const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
           post.images.splice(index, 1);
           post._jv.relationships.images.data.splice(index, 1);
-          console.log('删除图片', id);
-          console.log(this.uploadFile, '~~~~~~~~~~');
           this.uploadFile.forEach((value, key, item) => {
             value.id == id && item.splice(key, 1);
           });
-          console.log(this.uploadFile, '+++++++++');
           return res;
         })
         .catch(err => {
@@ -1189,7 +1166,6 @@ export default {
           this.markdownShow = true;
         }
         // #endif
-        console.log(res, '这是编辑时Type');
         this.attachmentList = res.firstPost.attachments || [];
         this.preAttachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
@@ -1206,7 +1182,6 @@ export default {
               });
             }
           });
-          console.log(this.uploadFile, '这是编辑初始化获取');
         }
 
         this.loadStatus = true;
@@ -1284,7 +1259,6 @@ export default {
       }
 
       await this.$store.dispatch('jv/patch', posts).then(res => {
-        console.log(res, '发布页的增加数据');
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
           this.$u.event.$emit('refreshImg', {
@@ -1308,7 +1282,6 @@ export default {
     },
     // 小程序内发布按钮验证码验证
     toTCaptcha() {
-      console.log('h5验证码');
       // #ifdef MP-WEIXIN
       let _this = this;
       wx.navigateToMiniProgram({
@@ -1331,7 +1304,6 @@ export default {
       // #ifdef H5
 
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
-        console.log(res, 'h5验证1111');
         if (res.ret === 0) {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
@@ -1415,10 +1387,11 @@ export default {
 
     uni.$on('clickTopic', data => {
       if (data.keywords)
-        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${
-          data.keywords.replace(/\s+/g, '')
-        }#${this.textAreaValue.slice(this.cursor)}  `;
-        this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
+        this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${data.keywords.replace(
+          /\s+/g,
+          '',
+        )}#${this.textAreaValue.slice(this.cursor)}  `;
+      this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
   },
   onShow() {

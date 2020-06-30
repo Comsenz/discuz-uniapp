@@ -25,7 +25,7 @@
                 <view
                   class="profile-info__box__detail-operate"
                   @tap="chat"
-                  v-if="forums.other && forums.other.can_create_dialog"
+                  v-if="can_create_dialog"
                 >
                   <qui-icon
                     class="text"
@@ -143,6 +143,7 @@ export default {
       current: 0,
       nowThreadId: '',
       imageStatus: true,
+      can_create_dialog: false,
       dialogId: 0, // 会话id
     };
   },
@@ -162,16 +163,7 @@ export default {
     const { userId, current } = params;
     this.userId = userId || this.currentLoginId;
     this.current = parseInt(current, 10) || 0;
-    // 用户组等改变会改变私信权限
-    const forums = this.$store.dispatch('jv/get', [
-      'forum',
-      {
-        params: {
-          include: 'users',
-        },
-      },
-    ]);
-    this.forums = forums;
+    this.getAuth();
   },
   // 解决左上角返回数据不刷新情况
   onShow() {
@@ -195,6 +187,19 @@ export default {
       if (e.currentIndex !== this.current) {
         this.current = e.currentIndex;
       }
+    },
+    getAuth() {
+      // 用户组等改变会改变私信权限
+      const params = {
+        include: 'users',
+      };
+      this.$store.dispatch('jv/get', [`forum`, { params }]).then(res => {
+        if (res.other && res.other.can_create_dialog) {
+          this.can_create_dialog = true;
+        } else {
+          this.can_create_dialog = false;
+        }
+      });
     },
     // 获取用户信息
     getUserInfo(userId) {

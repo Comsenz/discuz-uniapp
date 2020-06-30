@@ -467,7 +467,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .themeCount {
   position: relative;
-  box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
   .addFine {
     position: absolute;
     top: -10rpx;
@@ -595,6 +594,7 @@ export default {
       &__item {
         max-width: 80%;
         max-height: 80%;
+        border-radius: 5rpx;
       }
     }
     &__imgtwo {
@@ -604,10 +604,11 @@ export default {
       line-height: 0;
       &__item {
         display: block;
-        width: 48%;
+        width: 49.3%;
         height: 211rpx;
         margin-bottom: 20rpx;
         background: #fff;
+        border-radius: 5rpx;
       }
     }
     &__imgmore {
@@ -620,11 +621,12 @@ export default {
       line-height: 0;
       &__item {
         display: block;
-        width: 30%;
+        width: 32%;
         height: 211rpx;
-        margin-right: 3.33%;
+        margin-right: 1.33%;
         margin-bottom: 20rpx;
         background: #fff;
+        border-radius: 5rpx;
       }
     }
 
