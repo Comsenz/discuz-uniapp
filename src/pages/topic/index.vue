@@ -1194,7 +1194,7 @@ export default {
         },
         function(data) {
           // alert('支付唤醒');
-          if (res.err_msg == 'get_brand_wcpay_request:ok') {
+          if (data.err_msg == 'get_brand_wcpay_request:ok') {
             //微信支付成功，进行支付成功处理
           } else if (data.err_msg == 'get_brand_wcpay_request:cancel') {
             // 取消支付
