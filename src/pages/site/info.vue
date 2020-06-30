@@ -310,7 +310,7 @@ export default {
           }
         } else if (browserType === '2') {
           payPhone = setInterval(() => {
-            if (this.payStatus === '1') {
+            if (this.payStatus === 1) {
               clearInterval(payPhone);
               return;
             }
@@ -324,7 +324,7 @@ export default {
             this.$refs.codePopup.open();
             this.qrcodeShow = true;
             payWechat = setInterval(() => {
-              if (this.payStatus === '1') {
+              if (this.payStatus === 1) {
                 clearInterval(payWechat);
                 return;
               }
@@ -337,19 +337,17 @@ export default {
     },
     // 查询订单支状 browserType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, browserType) {
-      const params = {
-        _jv: {
-          type: `orders/${orderSn}`,
-        },
-      };
       this.$store
-        .dispatch('jv/get', params)
+        .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
           this.payStatusNum += 1;
-          if (this.payStatus === '1') {
+          if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
+            uni.navigateTo({
+              url: '/pages/home/index',
+            });
             if (browserType === '2') {
               // return false;
             } else if (browserType === '3') {
@@ -382,7 +380,7 @@ export default {
       );
 
       payWechat = setInterval(() => {
-        if (this.payStatus === '1') {
+        if (this.payStatus === 1) {
           clearInterval(payWechat);
           return;
         }
