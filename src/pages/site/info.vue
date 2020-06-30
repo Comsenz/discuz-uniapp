@@ -45,8 +45,8 @@
           <qui-avatar
             class="site-item__owner-avatar"
             :user="{
-              username: forums.set_site.site_author.username,
-              avatarUrl: forums.set_site.site_author.avatar,
+              username: forums.set_site && forums.set_site.site_author.username,
+              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
             }"
             size="60"
             @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
@@ -95,9 +95,9 @@
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
-          :money="forums.set_site && forums.set_site.site_price"
+          :money="forums.set_site && parseFloat(forums.set_site.site_price)"
           :wallet-status="true"
-          balance="10"
+          :balance="10"
           :pay-type-data="payTypeData"
           @radioMyHead="radioMyHead"
           @onInput="onInput"
@@ -139,6 +139,9 @@ import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
+
+let payWechat = null;
+let payPhone = null;
 
 export default {
   mixins: [
@@ -198,6 +201,10 @@ export default {
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     // #endif
+  },
+  onUnload() {
+    clearInterval(payWechat);
+    clearInterval(payPhone);
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -302,7 +309,7 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          const payPhone = setInterval(() => {
+          payPhone = setInterval(() => {
             if (this.payStatus === '1') {
               clearInterval(payPhone);
               return;
@@ -316,7 +323,7 @@ export default {
             this.payShowStatus = false;
             this.$refs.codePopup.open();
             this.qrcodeShow = true;
-            const payWechat = setInterval(() => {
+            payWechat = setInterval(() => {
               if (this.payStatus === '1') {
                 clearInterval(payWechat);
                 return;
@@ -360,22 +367,39 @@ export default {
     // 非小程序内微信支付
     onBridgeReady(data) {
       // eslint-disable-next-line no-undef
-      WeixinJSBridge.invoke('getBrandWCPayRequest', {
-        appId: data.wechat_js.appId, // 公众号名称，由商户传入
-        timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
-        nonceStr: data.wechat_js.nonceStr, // 随机串
-        package: data.wechat_js.package,
-        signType: 'MD5', // 微信签名方式：
-        paySign: data.wechat_js.paySign, // 微信签名
-      });
+      WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        {
+          appId: data.wechat_js.appId, // 公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, // 随机串
+          package: data.wechat_js.package,
+          signType: 'MD5', // 微信签名方式：
+          paySign: data.wechat_js.paySign, // 微信签名
+        },
+        this.payCallback(),
+      );
 
-      const payWechat = setInterval(() => {
+      payWechat = setInterval(() => {
         if (this.payStatus === '1') {
           clearInterval(payWechat);
           return;
         }
         this.getOrderStatus(this.orderSn);
       }, 3000);
+    },
+    // 支付取消失败校验
+    payCallback(data) {
+      // alert('支付唤醒');
+      if (data.err_msg === 'get_brand_wcpay_request:ok') {
+        // 微信支付成功，进行支付成功处理
+      } else if (data.err_msg === 'get_brand_wcpay_request:cancel') {
+        // 取消支付
+        clearInterval(payWechat);
+      } else if (data.err_msg === 'get_brand_wcpay_request:fail') {
+        // 支付失败
+        clearInterval(payWechat);
+      }
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
