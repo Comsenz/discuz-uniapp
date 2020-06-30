@@ -315,6 +315,7 @@ export default {
     },
     // 跳转到个人主页
     jumpUserPage(userId) {
+      console.log(userId, 'userId');
       if (userId) {
         console.log('点击头像到个人主页', userId);
         uni.navigateTo({
