@@ -104,7 +104,6 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-import forums from '@/mixin/forums';
 // #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
@@ -121,7 +120,6 @@ export default {
     like,
   },
   mixins: [
-    forums,
     // #ifdef H5
     loginAuth,
     // #endif
@@ -164,6 +162,16 @@ export default {
     const { userId, current } = params;
     this.userId = userId || this.currentLoginId;
     this.current = parseInt(current, 10) || 0;
+    // 用户组等改变会改变私信权限
+    const forums = this.$store.dispatch('jv/get', [
+      'forum',
+      {
+        params: {
+          include: 'users',
+        },
+      },
+    ]);
+    this.forums = forums;
   },
   // 解决左上角返回数据不刷新情况
   onShow() {

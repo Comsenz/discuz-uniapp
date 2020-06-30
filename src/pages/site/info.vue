@@ -463,6 +463,28 @@ export default {
   .site-invite {
     text-align: center;
   }
+  .popup-pay {
+    .pay-title,
+    .pay-radio {
+      display: none;
+    }
+    .pay-btn {
+      margin-top: 40rpx;
+      margin-bottom: 40rpx;
+    }
+  }
+  .popup-pay-type {
+    padding-top: 40rpx;
+    .pay-title {
+      display: none;
+    }
+    .pay-tip {
+      display: none;
+    }
+    .pay-type-chi {
+      margin-bottom: 40rpx;
+    }
+  }
 }
 // 微信二维码弹框
 
@@ -576,27 +598,5 @@ export default {
 }
 .cell-item--left .cell-item__body__right {
   text-align: left;
-}
-.popup-pay {
-  .pay-title,
-  .pay-radio {
-    display: none;
-  }
-  .pay-btn {
-    margin-top: 40rpx;
-    margin-bottom: 40rpx;
-  }
-}
-.popup-pay-type {
-  padding-top: 40rpx;
-  .pay-title {
-    display: none;
-  }
-  .pay-tip {
-    display: none;
-  }
-  .pay-type-chi {
-    margin-bottom: 40rpx;
-  }
 }
 </style>
