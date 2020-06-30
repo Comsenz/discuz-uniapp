@@ -122,6 +122,7 @@ $otherHeight: 292rpx;
     font-size: 30rpx;
     font-weight: 600;
     color: --color(--qui-FC-333);
+    word-break: break-all;
   }
   &_heat {
     position: absolute;
