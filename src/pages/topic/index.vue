@@ -646,17 +646,12 @@ export default {
   },
   onLoad(option) {
     // #ifndef MP-WEIXIN
-    this.isWeixin = appCommonH.isWeixin().isWeixin;
-    this.isPhone = appCommonH.isWeixin().isPhone;
-    console.log(this.isWeixin, '这是微信网页');
-    console.log(this.isPhone, '这是h5');
+    this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
+    this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
     // #endif
-    // console.log(this.browser, '这是浏览器');
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
     this.$u.event.$on('addComment', data => {
-      // console.log('详情页接收');
-      // for (const index in this.posts) {
       Object.keys(this.posts).forEach(index => {
         if (this.posts[index]._jv.id === data.commentId) {
           if (this.posts[index].lastThreeComments.length >= 3) {
@@ -665,7 +660,6 @@ export default {
           if (data.data) {
             this.posts[index].lastThreeComments.unshift(data.data);
           }
-          // break;
         }
       });
     });
@@ -1437,7 +1431,6 @@ export default {
 
             if (this.payTypeVal === 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
-              console.log('这是主题支付');
               this.loadThread();
             } else if (this.payTypeVal === 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
@@ -1464,12 +1457,8 @@ export default {
         signType,
         paySign,
         success(res) {
-          // console.log('微信支付成功');
-          console.log(`success:${JSON.stringify(res)}`);
           _this.coverLoading = true;
-          // _this.getOrderStatus(_this.orderSn);
           payWechat = setInterval(() => {
-            console.log('定时器，小程序支付');
             if (_this.payStatus === 1) {
               clearInterval(payWechat);
               return;
@@ -1478,8 +1467,6 @@ export default {
           }, 3000);
         },
         fail(err) {
-          console.log('微信支付失败');
-          console.log(`fail:${JSON.stringify(err)}`);
           _this.payShowStatus = false;
           _this.coverLoading = false;
           _this.$refs.toast.show({ message: _this.p.payFail });
@@ -1488,25 +1475,18 @@ export default {
     },
     // 输入密码完成时
     onInput(val) {
-      console.log(val, '这是详情页输出的密码');
-      console.log('详情页监听到密码输入完成');
-      console.log(this.thread.price, '这是价格');
       this.value = val;
       if (this.payTypeVal === 0) {
         // 这是主题支付
-        console.log('这是主题支付调接口');
         this.creatOrder(this.thread.price, 3, val, 1);
       } else if (this.payTypeVal === 1) {
         // 这是主题打赏
-        console.log('这是主题打赏调接口~~~~~');
         this.creatOrder(this.price, 2, val, 1);
       }
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
       if (payType === 0) {
-        console.log('这是详情页获取到的支付方式---微信');
-        console.log(this.value, this.orderSn, '这是密码和订单号');
         if (this.payTypeVal === 0) {
           // 这是主题支付
           this.creatOrder(this.thread.price, 3, this.value, payType);
@@ -1515,7 +1495,7 @@ export default {
           this.creatOrder(this.price, 2, this.value, payType);
         }
       } else if (payType === 1) {
-        console.log('这是详情页获取到的支付方式---钱包');
+        // 这是详情页获取到的支付方式---钱包
       }
     },
     // 对象转数组
@@ -1548,7 +1528,6 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
-      console.log(id, '这是当前主题用户Id');
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });
@@ -1561,11 +1540,9 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
-      console.log('主题支付');
       this.payStatus = false;
       this.payShowStatus = true;
-      this.payTypeVal = 0;
-      console.log(this.payTypeVal, '这是类型，0为主题支付，1为主题打赏');
+      this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏
       if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
       } else if (this.thread.type === 1) {
@@ -1580,13 +1557,13 @@ export default {
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
-      console.log(val, '是否显示用户头像');
+      // 是否显示用户头像
       this.isAnonymous = val;
     },
 
     // 选择支付方式，获取值
     radioChange(val) {
-      console.log(val, '这是父级得到的');
+      // val, 这是父级得到的
     },
     // 打赏
     rewardClick() {
@@ -1597,7 +1574,7 @@ export default {
         this.$refs.toast.show({ message: this.t.iCantRewardMyself });
         return false;
       }
-      console.log('这是打赏');
+      // 这是打赏
       this.payStatus = false;
       this.payTypeVal = 1;
       this.payTypeText = this.t.supportTheAuthorToCreate;
@@ -1635,7 +1612,6 @@ export default {
         });
       } else {
         this.price = this.payNumCheck[0].pay;
-        console.log(this.price, '这是选中的钱');
         this.payShowStatus = true;
         this.$refs.rewardPopup.close();
         this.payTypeVal = 1;
@@ -1652,7 +1628,7 @@ export default {
       let maxLength = price.indexOf('.');
 
       if (price.indexOf('.') < 0 && price != '') {
-        //('超过4位则大于1万元');
+        // 超过4位则大于1万元
         if (price.length > 6) {
           price = price.substring(0, price.length - 1);
           uni.showToast({
@@ -1781,7 +1757,6 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
       }
-      console.log(post, '点击时');
       this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复
@@ -1812,7 +1787,6 @@ export default {
       this.$u.event.$emit('tagClick', tagId);
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      console.log(pages, '~~~~~~~~');
       if (
         pages.length > 1 &&
         pages[delta - 1].route &&
@@ -1858,7 +1832,6 @@ export default {
     },
     // 分享
     shareClick() {
-      console.log('分享哈');
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
         return;
@@ -1874,7 +1847,7 @@ export default {
       // #endif
       // #ifdef H5
       if (this.isWeixin === true) {
-        console.log(this.isWeixin, '微信内');
+        // 微信内
         this.shareShow = true;
       } else {
         this.h5Share({
@@ -1887,9 +1860,7 @@ export default {
     },
     // #ifdef H5
     closeShare() {
-      console.log('关闭微信');
       this.shareShow = false;
-      console.log(this.shareShow, '8888');
     },
     // #endif
     // 取消分享
