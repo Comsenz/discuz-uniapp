@@ -154,11 +154,6 @@ export default {
       this.cost = this.forums.set_cash.cash_rate;
       this.percentage = this.forums.set_cash.cash_rate * 100;
     });
-    if (this.forums.qcloud.qcloud_sms === false) {
-      this.disabtype = true;
-    } else {
-      this.disabtype = false;
-    }
   },
   computed: {
     usersid() {
@@ -219,25 +214,33 @@ export default {
     },
     // 点击获取验证码计时开始
     btnButton() {
-      if (!this.usertestphon) {
+      if (this.forums.qcloud.qcloud_sms === false) {
         uni.showToast({
           icon: 'none',
-          title: this.i18n.t('modify.nohasphon'),
+          title: this.i18n.t('modify.NoteOpen'),
           duration: 2000,
         });
-        return;
-      }
-      this.posttitle();
-      clearInterval(this.interval);
-      this.sun = false;
-      this.interval = setInterval(() => {
-        this.second -= 1;
-      }, 1000);
-      setTimeout(() => {
+      } else {
+        if (!this.usertestphon) {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.nohasphon'),
+            duration: 2000,
+          });
+          return;
+        }
+        this.posttitle();
         clearInterval(this.interval);
-        this.sun = true;
-        this.second = 60;
-      }, 60000);
+        this.sun = false;
+        this.interval = setInterval(() => {
+          this.second -= 1;
+        }, 1000);
+        setTimeout(() => {
+          clearInterval(this.interval);
+          this.sun = true;
+          this.second = 60;
+        }, 60000);
+      }
     },
     // 获取个人信息
     setmydata() {
