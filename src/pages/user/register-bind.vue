@@ -161,11 +161,11 @@ export default {
               setTimeout(() => {
                 if (this.site_mode === SITE_PAY) {
                   uni.navigateTo({
-                    url: '/pages/home/index',
+                    url: '/pages/site/info',
                   });
                 } else {
                   uni.navigateTo({
-                    url: '/pages/site/info',
+                    url: '/pages/home/index',
                   });
                 }
               }, 1000);
