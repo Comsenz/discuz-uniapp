@@ -82,6 +82,17 @@ export default {
       this.site_mode = this.forums.set_site.site_mode;
     }
     console.log('validate', typeof this.validate);
+    this.$u.event.$on('logind', () => {
+      if (this.site_mode === SITE_PAY) {
+        uni.navigateTo({
+          url: '/pages/site/info',
+        });
+      } else {
+        uni.navigateTo({
+          url: '/pages/home/index',
+        });
+      }
+    });
   },
   methods: {
     register() {
@@ -167,19 +178,6 @@ export default {
           uni.showToast({
             title: '注册绑定成功',
             duration: 2000,
-            success() {
-              setTimeout(() => {
-                if (this.site_mode === SITE_PAY) {
-                  uni.navigateTo({
-                    url: '/pages/site/info',
-                  });
-                } else {
-                  uni.navigateTo({
-                    url: '/pages/home/index',
-                  });
-                }
-              }, 1000);
-            },
           });
         })
         .catch(err => {
@@ -207,6 +205,9 @@ export default {
         url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}`,
       });
     },
+  },
+  onUnload() {
+    this.$u.event.$off('logind');
   },
 };
 </script>
