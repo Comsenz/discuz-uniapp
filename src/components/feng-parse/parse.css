@@ -15,11 +15,11 @@
 
 .wxParse {
   width: 100%;
-  font-family: Helvetica, 'PingFangSC', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;
+  /* font-family: Helvetica, 'PingFangSC', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif; */
   font-size: 1em;
   line-height: 1.5;
   /* color: #333; */
-  text-align: justify;
+  /* text-align: justify; */
   user-select: none;
 }
 /* .wxParse view,
