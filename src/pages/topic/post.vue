@@ -1215,9 +1215,12 @@ export default {
       const posts = {
         _jv: {
           type: 'posts',
-          id: `${this.firstPostId}?include=user,thread,images`,
-          // id: this.firstPostId,
+          // id: `${this.firstPostId}?include=user,thread,images`,
+          id: this.firstPostId,
           relationships: {},
+          links: {
+            self: `posts/${this.firstPostId}?include=user,thread,images`,
+          }
         },
         content: this.textAreaValue,
       };

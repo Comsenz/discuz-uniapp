@@ -351,6 +351,7 @@ export default {
           const images = this.$store.getters['jv/get'](`posts/${res.id}`);
           this.threads[index].firstPost.images = images.attachments;
           this.$forceUpdate();
+          console.log(this.threads[index].firstPost.images, 'this.threads[index].firstPost.images');
           break;
         }
       }
