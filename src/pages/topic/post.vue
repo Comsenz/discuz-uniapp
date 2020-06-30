@@ -1108,13 +1108,9 @@ export default {
         .dispatch('jv/delete', params)
         .then(res => {
           // 当编辑帖子时删除图片后传参给首页
-          // this.$u.event.$emit('deleteImg', {
-          //   threadId: this.postDetails._jv.id,
-          //   index,
-          // });
-          this.$u.event.$emit('refreshImg', {
-            id: this.threadId,
-            images: this.addImg(),
+          this.$u.event.$emit('deleteImg', {
+            threadId: this.postDetails._jv.id,
+            index,
           });
           const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
           post.images.splice(index, 1);
@@ -1219,8 +1215,8 @@ export default {
       const posts = {
         _jv: {
           type: 'posts',
-          // id: `${this.firstPostId}?include=user,thread,images`,
-          id: this.firstPostId,
+          id: `${this.firstPostId}?include=user,thread,images`,
+          // id: this.firstPostId,
           relationships: {},
         },
         content: this.textAreaValue,
@@ -1266,7 +1262,8 @@ export default {
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
           this.$u.event.$emit('refreshImg', {
-            id: this.threadId,
+            id: this.firstPostId,
+            threadId: this.threadId,
             images: this.addImg(),
           });
         }

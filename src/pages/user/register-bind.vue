@@ -27,7 +27,7 @@
           v-model="reason"
         />
       </view>
-      <view class="register-bind-box-btn" @click="register">
+      <view class="register-bind-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.registerBindId') }}
       </view>
       <view class="register-bind-box-login" @click="jump2LoginBind">
@@ -40,16 +40,26 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import tcaptchs from '@/utils/tcaptcha';
+import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [forums, user],
+  mixins: [forums, user, tcaptchs],
   data() {
     return {
       username: '', // 用户名
       password: '', // 密码
       reason: '', // 注册原因
       url: '', // 上一个页面的路径
-      validate: false, // 开启注册审核
+      validate: false, // 默认不开启注册审核
+      register_captcha: false, // 默认不开启注册验证码
+      site_mode: '', // 站点模式
+      captcha: null, // 腾讯云验证码实例
+      captcha_ticket: '', // 腾讯云验证码返回票据
+      captcha_rand_str: '', // 腾讯云验证码返回随机字符串
+      ticket: '',
+      randstr: '',
+      captchaResult: {},
     };
   },
   onLoad(params) {
@@ -57,7 +67,30 @@ export default {
     const { url, validate } = params;
     this.url = url;
     this.validate = JSON.parse(validate);
+    if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
+      this.register_captcha = this.forums.set_reg.register_captcha;
+    }
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+      this.site_mode = this.forums.set_site.site_mode;
+    }
     console.log('validate', typeof this.validate);
+    // 接受验证码captchaResult
+    this.$u.event.$on('captchaResult', result => {
+      this.ticket = result.ticket;
+      this.randstr = result.randstr;
+      this.registerBind();
+    });
+    this.$u.event.$on('closeChaReault', () => {
+      uni.hideLoading();
+    });
+  },
+  onUnload() {
+    this.$u.event.$off('captchaResult');
+    this.$u.event.$off('closeChaReault');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
   },
   methods: {
     register() {
@@ -65,22 +98,61 @@ export default {
         this.showDialog('用户名不能为空');
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
-      } else if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
-        // 调用校验码
-        this.registerBind();
+      } else if (this.register_captcha) {
+        this.toTCaptcha();
       } else {
         this.registerBind();
       }
     },
+    // 验证码
+    toTCaptcha() {
+      // eslint-disable-next-line no-undef
+      this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
+        console.log('h5验证码', res);
+        if (res.ret === 0) {
+          this.ticket = res.ticket;
+          this.randstr = res.randstr;
+          this.registerBind();
+        }
+        if (res.ret === 2) {
+          uni.hideLoading();
+        }
+      });
+      // 显示验证码
+      this.captcha.show();
+    },
     registerBind() {
       let params = {};
-      if (this.validate) {
+      if (this.register_captcha && this.validate) {
         params = {
           data: {
             attributes: {
               username: this.username,
               password: this.password,
               register_reason: this.reason,
+              captcha_ticket: this.ticket,
+              captcha_rand_str: this.randstr,
+            },
+          },
+        };
+      } else if (this.validate) {
+        params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+              register_reason: this.reason,
+            },
+          },
+        };
+      } else if (this.register_captcha) {
+        params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+              captcha_ticket: this.ticket,
+              captcha_rand_str: this.randstr,
             },
           },
         };
@@ -99,8 +171,22 @@ export default {
         .then(res => {
           console.log('注册绑定成功', res);
           this.logind();
-          uni.navigateTo({
-            url: this.url,
+          uni.showToast({
+            title: '注册绑定成功',
+            duration: 2000,
+            success() {
+              setTimeout(() => {
+                if (this.site_mode === SITE_PAY) {
+                  uni.navigateTo({
+                    url: '/pages/home/index',
+                  });
+                } else {
+                  uni.navigateTo({
+                    url: '/pages/site/info',
+                  });
+                }
+              }, 1000);
+            },
           });
         })
         .catch(err => {

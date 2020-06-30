@@ -316,13 +316,13 @@ export default {
       }),
     );
     // 编辑删除图片后首页删除图片
-    this.$u.event.$on('refreshImg', res => {
+    this.$u.event.$on('deletedImg', res => {
       console.log(res, 'res');
-      // this.threads.forEach(item => {
-      //   if (item._jv.id === res.threadId) {
-      //     item.firstPost.images.splice(res.index, 1);
-      //   }
-      // });
+      this.threads.forEach(item => {
+        if (item._jv.id === res.threadId) {
+          item.firstPost.images.splice(res.index, 1);
+        }
+      });
     });
     // 置顶列表添加数据当详情页置顶时
     this.$u.event.$on('stickyThread', data => {
@@ -341,28 +341,19 @@ export default {
         }
       });
     });
+
     // 详情页编辑增加图片时首页增加图片
     this.$u.event.$on('refreshImg', res => {
       console.log(res, '888888888');
-      this.$forceUpdate();
       // eslint-disable-next-line no-restricted-syntax
-      // for (const index in this.threads) {
-      //   if (this.threads[index]._jv.id === res.id) {
-      //     if (res.images.data) {
-      //       res.images.data.forEach(item => {
-      //         console.log(item, this.$store.getters['jv/get']('attachments'), 'item');
-      //         this.threads[index].firstPost.images = this.$store.getters['jv/get'](
-      //           `${item.type}/${item.id}`,
-      //         );
-      //         console.log(
-      //           this.threads[index].firstPost.images,
-      //           'this.threads[index].firstPost.images',
-      //         );
-      //       });
-      //     }
-      //     // break;
-      //   }
-      // }
+      for (const index in this.threads) {
+        if (this.threads[index]._jv.id === res.threadId) {
+          const images = this.$store.getters['jv/get'](`posts/${res.id}`);
+          this.threads[index].firstPost.images = images.attachments;
+          this.$forceUpdate();
+          break;
+        }
+      }
     });
     // h5微信分享
     // #ifdef H5
