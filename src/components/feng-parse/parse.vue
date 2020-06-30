@@ -132,7 +132,7 @@ export default {
         chars: charsHandler,
       };
       let results = HtmlToJson(parseData, customHandler, imageProp, this);
-
+      console.log(results, '@@@@@@@@@@@@@@@@@@@@@');
       this.imageUrls = results.imageUrls;
       // this.nodes = results.nodes;
 
