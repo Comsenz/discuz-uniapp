@@ -995,23 +995,11 @@ export default {
             const postArr = post;
             postArr.isDeleted = data.isDeleted;
             post = postArr;
-            if (data.isDeleted) {
-              console.log('回复删除成功');
-            } else {
-              console.log('回复删除失败');
-            }
           } else if (type === '4') {
             const postArr = post;
             postArr.isLiked = data.isLiked;
+            postArr.likeCount = data.likeCount;
             post = postArr;
-            // 评论点赞
-            if (data.isLiked) {
-              // this.posts[this.postIndex].likeCount++;
-              console.log('点赞数加1');
-            } else {
-              // this.posts[this.postIndex].likeCount--;
-              console.log('点赞数减1');
-            }
           }
         })
         .catch(err => {
@@ -1020,7 +1008,6 @@ export default {
     },
     // 主题其他操作调用接口（包括 type 1主题收藏，2主题加精，3主题置顶，else删除主题）
     threadOpera(id, canStatus, isStatus, type) {
-      console.log(id, canStatus, isStatus, type);
       const jvObj = {
         type: 'threads',
         id,
