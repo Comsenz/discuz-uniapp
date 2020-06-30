@@ -40,11 +40,19 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+// #ifdef H5
 import tcaptchs from '@/utils/tcaptcha';
+// #endif
 import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [forums, user, tcaptchs],
+  mixins: [
+    forums,
+    user,
+    // #ifdef H5
+    tcaptchs,
+    // #endif
+  ],
   data() {
     return {
       username: '', // 用户名
@@ -89,6 +97,7 @@ export default {
     },
     // 验证码
     toTCaptcha() {
+      // #ifdef H5
       // eslint-disable-next-line no-undef
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         console.log('h5验证码', res);
@@ -103,6 +112,7 @@ export default {
       });
       // 显示验证码
       this.captcha.show();
+      // #endif
     },
     registerBind() {
       let params = {};
