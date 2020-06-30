@@ -75,23 +75,6 @@ export default {
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
-    // 接受验证码captchaResult
-    this.$u.event.$on('captchaResult', result => {
-      this.ticket = result.ticket;
-      this.randstr = result.randstr;
-      this.registerClick();
-    });
-    this.$u.event.$on('closeChaReault', () => {
-      uni.hideLoading();
-    });
-  },
-  onUnload() {
-    this.$u.event.$off('captchaResult');
-    this.$u.event.$off('closeChaReault');
-    // 隐藏验证码
-    if (this.captcha) {
-      this.captcha.destroy();
-    }
   },
   methods: {
     register() {
