@@ -137,7 +137,7 @@ export default {
   .circleDet {
     display: flex;
     justify-content: space-between;
-    padding: 69rpx 20rpx 47rpx;
+    padding: 69rpx 30rpx 47rpx;
     line-height: 37rpx;
     text-align: center;
     text {
