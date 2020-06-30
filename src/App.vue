@@ -53,11 +53,13 @@ export default {
       }
 
       if (forums.set_site.site_mode === SITE_PAY) {
+        // #ifndef H5
         const res = uni.getSystemInfoSync();
         if (res.platform === 'ios') {
           this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
           return;
         }
+        // #endif
 
         let currentPage = {};
         const pages = getCurrentPages();

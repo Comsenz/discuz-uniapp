@@ -850,6 +850,7 @@ export default {
           }
           this.isLiked = data.firstPost.isLiked;
           if (!data.paid || data.paidUsers.length > 0) {
+            // #ifndef H5
             if (
               this.system === 'ios' &&
               this.detectionmodel === 'public' &&
@@ -865,6 +866,10 @@ export default {
             } else {
               this.paidStatus = true;
             }
+            // #endif
+            // #ifdef H5
+            this.paidStatus = true;
+            // #endif
           } else {
             this.paidStatus = false;
           }
@@ -876,6 +881,7 @@ export default {
             this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
           }
           if (data.price <= 0) {
+            // #ifndef H5
             if (
               this.system === 'ios' &&
               this.detectionmodel === 'public' &&
@@ -892,7 +898,13 @@ export default {
               this.paidBtnStatus = false;
               this.rewardStatus = true;
             }
+            // #endif
+            // #ifdef H5
+            this.paidBtnStatus = false;
+            this.rewardStatus = true;
+            // #endif
           } else {
+            // #ifndef H5
             if (
               this.system === 'ios' &&
               this.detectionmodel === 'public' &&
@@ -909,6 +921,7 @@ export default {
             } else if (data.paid === true) {
               this.paidBtnStatus = false;
             }
+            // #endif
             this.rewardStatus = false;
           }
           if (data.firstPost.likedUsers.length < 1) {
