@@ -329,6 +329,7 @@ export default {
                 return;
               }
               this.getOrderStatus(this.orderSn, browserType);
+              uni.hideLoading();
             }, 3000);
           }
         }
