@@ -473,6 +473,7 @@ export default {
     nametitl2: '非法姓名（长度、格式等不正确）',
     verifyoldphon: '验证旧手机',
     greaterthan: '提现金额不能大于可提现余额',
+    NoteOpen: '短信服务未开启',
   },
   permission: {
     viewThreads: '查看主题列表',
