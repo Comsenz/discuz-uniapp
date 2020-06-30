@@ -134,12 +134,12 @@ export default {
     },
     // 支付金额
     money: {
-      type: String,
+      type: Number,
       default: '0',
     },
     // 余额
     balance: {
-      type: String,
+      type: Number,
       default: '0',
     },
     // 支付主题类型
