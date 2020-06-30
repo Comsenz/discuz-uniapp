@@ -345,9 +345,6 @@ export default {
       const commentId = this.commentId;
       return utils.deepCopy(this.$store.getters['jv/get'](`posts/${commentId}`));
     },
-    // allEmoji() {
-    //   return this.$store.getters['jv/get']('emoji');
-    // },
     // postList() {
     //   // console.log(this.$store.getters['jv/get']('posts'));
     //   return this.$store.getters['jv/get']('posts');
@@ -419,9 +416,7 @@ export default {
         this.$store
           .dispatch('jv/get', ['posts/' + this.commentId, { params }])
           .then(data => {
-            console.log(data, '这是当前评论接口返回的数据');
             if (data.isDeleted) {
-              console.log('走了111');
               this.$store.dispatch('forum/setError', {
                 code: 'post_deleted',
                 status: 500,
@@ -433,7 +428,6 @@ export default {
             this.loadingStatus = false;
           })
           .catch(err => {
-            console.log('这是评论404');
             this.loaded = false;
             this.loadingStatus = false;
             console.log(err);
@@ -450,9 +444,7 @@ export default {
         this.$store
           .dispatch('jv/get', ['threads/' + this.threadId, { params }])
           .then(data => {
-            console.log(data, '88888888888');
             if (data.isDeleted) {
-              console.log('走了222');
               this.$store.dispatch('forum/setError', {
                 code: 'thread_deleted',
                 status: 500,
@@ -462,11 +454,9 @@ export default {
               this.status = true;
             }
             this.thread = data;
-            console.log('这是主题数据');
             this.loadingStatus = false;
           })
           .catch(err => {
-            console.log('这是主题404');
             this.status = false;
             this.loadingStatus = false;
             console.log(err);
@@ -476,7 +466,6 @@ export default {
 
     // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
     postOpera(id, type, canStatus, isStatus, commentPost) {
-      console.log(id, type, canStatus, isStatus, commentPost, '这是调用接口时');
       if (type == '1' && !canStatus) {
         this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
@@ -534,19 +523,6 @@ export default {
             }
           } else if (type == '2') {
             if (data.isDeleted) {
-              // const pages = getCurrentPages();
-              // const delta = pages.indexOf(pages[pages.length - 1]);
-              // console.log(pages, pages[delta - 1].route, '~~~~~');
-              // if (pages[delta - 1].route == 'pages/topic/index') {
-              //   uni.navigateBack({
-              //     delta: 1,
-              //   });
-              // } else {
-              //   uni.redirectTo({
-              //     url: `/pages/topic/index?id=${this.threadId}`,
-              //   });
-              // }
-
               uni.navigateBack({
                 url: '/pages/topic/index?id=' + this.threadId,
               });
@@ -562,7 +538,6 @@ export default {
             const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
             orgignPost.replyCount -= 1;
             if (data.isDeleted) {
-              console.log(data, '这是返回的');
               // 回复的评论删除成功
               this.$u.event.$emit('deleteComment', { data: data, commentId: this.commentId });
               this.$refs.toast.show({ message: this.t.deleteSuccess });
@@ -624,23 +599,16 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res.isApproved, '这是发布后');
           if (res.isApproved == 1) {
-            console.log('Hefa');
             this.postComments.push(res);
             this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
           } else {
-            this.$refs.toast.show({ message: '您发布的内容正在审核中哦' });
+            this.$refs.toast.show({ message: this.t.publishExamineTip });
           }
           this.$refs.commentPopup.close();
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
-
-          console.log(res, '!!!!!!!!!!!!!!!!!!!');
-
-          // this.post.replyCount += 1;
           const orgignPost = this.$store.getters['jv/get'](`posts/${this.commentId}`);
-          console.log(orgignPost, '获取呀');
           orgignPost.replyCount += 1;
           this.textAreaValue = '';
           this.uploadFile = '';
@@ -759,7 +727,6 @@ export default {
     },
     // 删除回复的评论
     deleteComment(postId, type, canStatus, isStatus, commentPost) {
-      console.log(commentPost, '这是点击时');
       this.postOpera(postId, '3', canStatus, isStatus, commentPost);
     },
     // 评论的回复
@@ -776,7 +743,6 @@ export default {
     contentClick() {
       const pages = getCurrentPages();
       const delta = pages.indexOf(pages[pages.length - 1]);
-      console.log(pages, pages[delta - 1].route, '~~~~~');
       if (pages[delta - 1].route == 'pages/topic/index') {
         uni.navigateBack({
           delta: 1,

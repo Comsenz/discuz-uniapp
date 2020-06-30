@@ -771,12 +771,9 @@ export default {
       );
 
       this.loadDetailStatusId = threadAction._statusID;
-      console.log(this.loadDetailStatusId, '这是状态￥￥￥￥￥￥');
 
       threadAction
         .then(data => {
-          console.log(data, '~~~~~~~~~~~~~~~~~~~');
-          // this.thread = data;
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -833,23 +830,6 @@ export default {
           });
           // #endif
 
-          // var contentStr = data.firstPost.contentHtml.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g);
-          // console.log(contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>'), '!!~~~');
-          // const contengS = contentStr.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, '<$1>');
-          // contengS = contengS.match(/<h1>(.*?)<\/h1>/g);
-          // data.firstPost.contentHtml = contengS.replace(
-          //   /<h1>(.*?)<\/h1>/g,
-          //   '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>',
-          // );
-          // console.log(data.firstPost.contentHtml, '这是标题');
-          // str2.match(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g)
-
-          // var str = str2.replace(/<([a-zA-Z1-6]+)(\s*[^>]*)?>/g, "<$1>")
-
-          // str.match(/<h1>(.*?)<\/h1>/g)
-
-          // str.replace(/<h1>(.*?)<\/h1>/g, '<h1 style="font-size:12pt;color: reb(0,0,0)">$1</h1>')
-
           // 追加管理菜单权限字段
           this.selectList[0].canOpera = this.thread.firstPost.canEdit;
           this.selectList[1].canOpera = this.thread.canEssence;
@@ -869,8 +849,6 @@ export default {
             this.selectList[2].text = this.t.cancelSticky;
           }
           this.isLiked = data.firstPost.isLiked;
-          // this.topicStatus = data.isApproved;
-          console.log(data.paid, '这是付费状态');
           if (!data.paid || data.paidUsers.length > 0) {
             if (
               this.system === 'ios' &&
@@ -947,13 +925,14 @@ export default {
     },
     // post操作调用接口（包括type 1主题点赞，3删除回复，4回复点赞）
     postOpera(id, type, canStatus, isStatus, post) {
-      console.log(id, type, canStatus, isStatus, post, '这是调用接口时传的参数');
       if (type === '1' && !canStatus) {
-        console.log('没有主题点赞权限');
+        // 没有主题点赞权限
+        this.$refs.toast.show({ message: this.t.noThreadLikePermission });
         return;
       }
       if (type === '4' && !canStatus) {
-        console.log('没有评论点赞权限');
+        // 没有评论点赞权限
+        this.$refs.toast.show({ message: this.t.noReplyLikePermission });
         return;
       }
       const jvObj = {
@@ -989,7 +968,7 @@ export default {
                 url: `/pages/home/index`,
               });
             } else {
-              console.log('主题删除失败');
+              // 主题删除失败
             }
           } else if (type === '3') {
             const postArr = post;
@@ -1038,23 +1017,20 @@ export default {
           isDeleted: !isStatus,
         };
       }
-      console.log(params, '接口接收的参数');
       this.$store
         .dispatch('jv/patch', params)
         .then(data => {
           if (type === '1') {
-            console.log('收藏');
-            console.log(this.thread);
+            // 收藏
             this.thread.isFavorite = data.isFavorite;
           } else if (type === '2') {
-            console.log(data, '这是精华操作');
+            // 这是精华操作
             this.selectList[1].isStatus = data.isEssence;
             if (data.isEssence) {
               this.selectList[1].text = this.t.cancelEssence;
             } else {
               this.selectList[1].text = this.t.essence;
             }
-            console.log(this.selectList, '这是管理列表');
           } else if (type === '3') {
             this.selectList[2].isStatus = data.isSticky;
             if (data.isSticky) {
@@ -1068,18 +1044,15 @@ export default {
             }
           } else if (type === '4') {
             if (data.isDeleted) {
-              // console.log('删除成功，跳转到首页');
+              // 删除成功，跳转到首页
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToBack });
               const pages = getCurrentPages();
               // const delta = pages.indexOf(pages[pages.length - 1]);
-              // console.log(delta, '~~~~~~~');
               const naviBack = setTimeout(() => {
                 uni.navigateBack({
                   delta: 1,
                 });
               }, 1000);
-              // window.clearTimeout(naviBack);
-              console.log('详情页删除成功');
               this.$u.event.$emit('deleteThread', this.threadId);
             }
           }
@@ -1090,7 +1063,6 @@ export default {
     },
     // 主题回复，评论的回复调用接口
     postComment() {
-      console.log(this.commentReply, '这是用来判断的');
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.replyContentCannotBeEmpty });
         this.publishClickStatus = true;
@@ -1098,7 +1070,6 @@ export default {
       }
       let params = {};
       if (this.commentReply) {
-        console.log('这是1');
         params = {
           _jv: {
             type: 'posts',
@@ -1116,7 +1087,6 @@ export default {
           replyId: this.commentId,
         };
       } else {
-        console.log('这是2');
         params = {
           _jv: {
             type: 'posts',
@@ -1143,7 +1113,6 @@ export default {
           });
         });
       }
-      console.log(params, '传给接口的参数');
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
@@ -1151,20 +1120,15 @@ export default {
           this.commentReply = false;
           this.commentPopupStatus = false;
           this.publishClickStatus = true;
-          console.log(res, '~~~++++~~~~~~~~~');
           if (res.isApproved === 1) {
             if (!res.isComment) {
               this.posts.push(res);
-              console.log(this.posts, '#####################');
             } else {
-              // console.log(res, '*****************');
               if (!this.posts[this.postIndex].lastThreeComments) {
-                // console.log(this.postIndex, '走了');
                 this.posts[this.postIndex].lastThreeComments = [];
               }
               this.posts[this.postIndex].lastThreeComments.unshift(res);
               this.posts[this.postIndex].replyCount += 1;
-              // console.log(this.posts[this.postIndex].lastThreeComments, '这是追加后的3333');
             }
           } else {
             this.$refs.toast.show({ message: '您发布的内容正在审核中哦' });
@@ -1213,8 +1177,6 @@ export default {
         } else {
           this.contentnomoreVal = this.t.noMoreData;
         }
-        // this.posts = data;
-        console.log(this.posts, '这是主题评论列表！！！@@@@@');
       });
     },
     // 非小程序内微信支付
@@ -1234,14 +1196,13 @@ export default {
           // alert('支付唤醒');
           if (res.err_msg == 'get_brand_wcpay_request:ok') {
             //微信支付成功，进行支付成功处理
-            console('微信支付成功...');
           } else if (data.err_msg == 'get_brand_wcpay_request:cancel') {
+            // 取消支付
             clearInterval(payWechat);
-            console.log('取消支付');
             resolve;
           } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
+            // 支付失败
             clearInterval(payWechat);
-            console.log('支付失败');
             resolve;
           }
         },
@@ -1256,7 +1217,6 @@ export default {
     },
     // 创建订单
     creatOrder(amount, type, value, payType) {
-      console.log('创建订单', '这是参数', payType);
       const params = {
         _jv: {
           type: 'orders',
@@ -1266,33 +1226,29 @@ export default {
         amount,
         is_anonymous: this.isAnonymous,
       };
-      console.log(params, '传给接口的参数');
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '成功创建订单', payType, '这是支付类型');
           this.orderSn = res.order_sn;
           if (payType === 0) {
-            console.log('微信支付');
+            // 微信支付
             if (this.browser == 0) {
-              console.log('这是微信小程序内的支付');
+              // 这是微信小程序内的支付
               this.orderPay(13, value, this.orderSn, payType, '0');
             } else {
-              console.log('这是除微信小程序之外', this.isWeixin, this.isPhone);
+              // 这是除微信小程序之外, this.isWeixin, this.isPhone
               if (this.isWeixin && this.isPhone) {
-                console.log('这是微信浏览器');
+                // 这是微信浏览器
                 this.orderPay(12, value, this.orderSn, payType, '1');
               } else if (this.isPhone) {
                 this.orderPay(11, value, this.orderSn, payType, '2');
               } else {
-                console.log('这是pc，没调接口之前');
+                // 这是pc，没调接口之前
                 this.orderPay(10, value, this.orderSn, payType, '3');
               }
             }
           } else if (payType === 1) {
             // 钱包支付
-            console.log(type, value, this.orderSn, '这是钱包支付的参数');
-
             this.orderPay(20, value, this.orderSn, payType);
           }
         })
@@ -1303,10 +1259,8 @@ export default {
 
     // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     orderPay(type, value, orderSn, payType, broswerType) {
-      console.log('订单支付---broswerType', broswerType);
       let params = {};
       if (payType === 0) {
-        console.log('这是微信支付时触发');
         params = {
           _jv: {
             type: `trade/pay/order/${orderSn}`,
@@ -1326,7 +1280,6 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, '订单支付接口请求成功');
           this.wxRes = res;
           if (payType === 0) {
             if (broswerType === '0') {
@@ -1358,7 +1311,6 @@ export default {
               }, 3000);
               window.location.href = res.wechat_h5_link;
             } else if (broswerType === '3') {
-              console.log('这是pc', res);
               if (res) {
                 this.codeUrl = res.wechat_qrcode;
                 this.payShowStatus = false;
@@ -1378,10 +1330,8 @@ export default {
             if (res.wallet_pay.result === 'success') {
               if (this.payTypeVal === 0) {
                 // 这是主题支付，支付完成刷新详情页，重新请求数据
-                console.log('这是主题支付123');
                 this.loadThread();
               } else if (this.payTypeVal === 1) {
-                console.log('这是主题打赏456');
                 // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
                 this._updateRewardUsers();
               }
@@ -1402,7 +1352,6 @@ export default {
       this.$store
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
-          // console.log(res, '订单支付状态接口查询');
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             this.payShowStatus = false;
