@@ -98,6 +98,7 @@ export default {
       scrollTop: 0,
       old: {
         scrollTop: 0,
+        focus: false,
       },
       msg: '', // 输入框内容
       emojiShow: false, // 表情
@@ -382,14 +383,14 @@ export default {
     },
     // 获取表情
     getEmojiClick(code) {
-      this.focus = false;
+      this.focus = this.old.focus;
       let text = '';
       text = `${this.msg.slice(0, this.cursor) + code + this.msg.slice(this.cursor)}`;
       this.msg = text;
       this.cursor += code.length;
       console.log('点击获取表情后的光标位置', this.cursor);
-      this.focus = true;
       this.$nextTick(() => {
+        this.focus = true;
         uni.hideKeyboard();
       });
       console.log('msg', this.msg);
@@ -577,5 +578,8 @@ export default {
       background: --color(--qui-BG-BTN);
     }
   }
+}
+/deep/ .uni-textarea-textarea {
+  white-space: nowrap;
 }
 </style>
