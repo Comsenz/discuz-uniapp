@@ -143,7 +143,7 @@
                   :user-role="post.user.groups"
                   :comment-time="post.createdAt"
                   :comment-status="post.isApproved"
-                  :comment-content="post.contentHtml"
+                  :comment-content="post.summary"
                   :reply-list="post.lastThreeComments"
                   :comment-like-count="post.likeCount"
                   :images-list="post.images"
@@ -319,7 +319,7 @@
           :money="price"
           :wallet-status="user.canWalletPay"
           :pay-password="pwdVal"
-          :balance="user.walletBalance"
+          :balance="Number(user.walletBalance)"
           :pay-type-data="payTypeData"
           :to-name="thread.user.username"
           :pay-type="payTypeText"
@@ -533,35 +533,35 @@ export default {
       payNum: [
         {
           name: '￥1',
-          pay: '1.0',
+          pay: 1.0,
         },
         {
           name: '￥2',
-          pay: '2.0',
+          pay: 2.0,
         },
         {
           name: '￥5',
-          pay: '5.0',
+          pay: 5.0,
         },
         {
           name: '￥10',
-          pay: '10.0',
+          pay: 10.0,
         },
         {
           name: '￥20',
-          pay: '20.0',
+          pay: 20.0,
         },
         {
           name: '￥50',
-          pay: '50.0',
+          pay: 50.0,
         },
         {
           name: '￥88',
-          pay: '88.0',
+          pay: 88.0,
         },
         {
           name: '￥128',
-          pay: '128.0',
+          pay: 128.0,
         },
         {
           name: this.i18n.t('discuzq.post.customize'),
@@ -574,8 +574,8 @@ export default {
           pay: '',
         },
       ],
-      price: '0.0', // 需要支付的金额
-      inputPrice: '', // 自定义金额输入框的值
+      price: 0.0, // 需要支付的金额
+      inputPrice: 0, // 自定义金额输入框的值
       maxLength: 7, //输入框最大长度
       payShowStatus: true, // 是否显示支付
       pwdVal: '', // 支付密码
@@ -1194,7 +1194,7 @@ export default {
         },
         function(data) {
           // alert('支付唤醒');
-          if (res.err_msg == 'get_brand_wcpay_request:ok') {
+          if (data.err_msg == 'get_brand_wcpay_request:ok') {
             //微信支付成功，进行支付成功处理
           } else if (data.err_msg == 'get_brand_wcpay_request:cancel') {
             // 取消支付
@@ -1598,7 +1598,8 @@ export default {
       if (this.inputPrice <= 0) {
         this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
       } else {
-        this.price = this.inputPrice;
+        this.price = Number(this.inputPrice);
+        console.log(typeof this.price, '这是金额类型');
         this.$refs.customAmountPopup.close();
         this.customAmountStatus = false;
         this.payShowStatus = true;

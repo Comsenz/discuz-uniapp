@@ -27,7 +27,7 @@
           v-model="reason"
         />
       </view>
-      <view class="register-box-btn" @click="register">
+      <view class="register-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.register') }}
       </view>
       <view class="register-box-exist" @click="jump2Login">
@@ -38,17 +38,28 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import tcaptchs from '@/utils/tcaptcha';
+import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [user],
+  mixins: [forums, user, tcaptchs],
   data() {
     return {
       username: '', // 用户名
       password: '', // 密码
       reason: '', // 注册原因
       url: '', // 上一个页面的路径
-      validate: false, // 开启注册审核
+      validate: false, // 默认不开启注册审核
+      register_captcha: false, // 默认不开启注册验证码
+      site_mode: '', // 站点模式
+      captcha: null, // 腾讯云验证码实例
+      captcha_ticket: '', // 腾讯云验证码返回票据
+      captcha_rand_str: '', // 腾讯云验证码返回随机字符串
+      ticket: '',
+      randstr: '',
+      captchaResult: {},
     };
   },
   onLoad(params) {
@@ -57,6 +68,13 @@ export default {
     this.url = url;
     this.validate = JSON.parse(validate);
     console.log('validate', typeof this.validate);
+    console.log('----this.forums-----', this.forums);
+    if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
+      this.register_captcha = this.forums.set_reg.register_captcha;
+    }
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+      this.site_mode = this.forums.set_site.site_mode;
+    }
   },
   methods: {
     register() {
@@ -64,50 +82,104 @@ export default {
         this.showDialog('用户名不能为空');
       } else if (this.password === '') {
         this.showDialog('密码不能为空');
+      } else if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
+        this.toTCaptcha();
       } else {
-        let params = {};
-        if (this.validate) {
-          params = {
-            data: {
-              attributes: {
-                username: this.username,
-                password: this.password,
-                register_reason: this.reason,
-              },
+        this.registerClick();
+      }
+    },
+    // 验证码
+    toTCaptcha() {
+      console.log('---------验证码-------');
+      if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_captcha_app_id) {
+        // eslint-disable-next-line no-undef
+        this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
+          console.log('h5验证码', res);
+          if (res.ret === 0) {
+            this.ticket = res.ticket;
+            this.randstr = res.randstr;
+            this.registerClick();
+          }
+          if (res.ret === 2) {
+            uni.hideLoading();
+          }
+        });
+        // 显示验证码
+        this.captcha.show();
+      }
+    },
+    registerClick() {
+      let params = {};
+      if (this.register_captcha && this.validate) {
+        params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+              register_reason: this.reason,
+              captcha_ticket: this.ticket,
+              captcha_rand_str: this.randstr,
             },
-          };
-        } else {
-          params = {
-            data: {
-              attributes: {
-                username: this.username,
-                password: this.password,
-              },
+          },
+        };
+      } else if (this.validate) {
+        params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+              register_reason: this.reason,
             },
-          };
-        }
-        this.$store
-          .dispatch('session/h5Register', params)
-          .then(res => {
-            console.log('注册成功', res);
-            this.logind();
-            uni.showToast({
-              title: '注册成功',
-              duration: 2000,
-              success() {
-                setTimeout(() => {
+          },
+        };
+      } else if (this.register_captcha) {
+        params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+              captcha_ticket: this.ticket,
+              captcha_rand_str: this.randstr,
+            },
+          },
+        };
+      } else {
+        params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
+          },
+        };
+      }
+      this.$store
+        .dispatch('session/h5Register', params)
+        .then(res => {
+          console.log('注册成功', res);
+          this.logind();
+          uni.showToast({
+            title: '注册成功',
+            duration: 2000,
+            success() {
+              setTimeout(() => {
+                if (this.site_mode === SITE_PAY) {
+                  uni.navigateTo({
+                    url: '/pages/site/info',
+                  });
+                } else {
                   uni.navigateTo({
                     url: '/pages/home/index',
                   });
-                }, 1000);
-              },
-            });
-          })
-          .catch(err => {
-            console.log(err);
+                }
+              }, 1000);
+            },
           });
-        this.clear();
-      }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      this.clear();
     },
     jump2Login() {
       this.clear();
