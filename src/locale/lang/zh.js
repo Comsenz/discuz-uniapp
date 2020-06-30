@@ -502,6 +502,8 @@ export default {
       delete: '删除附件',
     },
     createThreadWithCaptcha: '发帖需要验证码',
+    editOwnThreadOrPost: '编辑发布的主题或回复',
+    hideOwnThreadOrPost: '删除发布的主题或回复',
     viewUserList: '站点会员列表',
     cash: {
       create: '申请提现',
