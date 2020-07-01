@@ -53,12 +53,14 @@
 <script>
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
+import appCommonH from '@/utils/commonHelper';
 // #endif
 
 export default {
   mixins: [
     // #ifdef  H5
     wxshare,
+    appCommonH,
     // #endif
   ],
   data() {
@@ -79,6 +81,12 @@ export default {
       }
       return {};
     },
+  },
+  created() {
+    // #ifdef  H5
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone;
+    // #endif
   },
   onLoad(query) {
     this.query = query;
@@ -145,6 +153,7 @@ export default {
     },
     // #ifdef H5
     triggerShare() {
+      console.log('7777777');
       this.shareShow = !this.shareShow;
     },
     // #endif
