@@ -37,7 +37,6 @@
               avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
             }"
             size="60"
-            @tap="toProfile(forums.set_site && forums.set_site.site_author.id)"
           />
           <text class="site-item__owner-name">
             {{ forums.set_site && forums.set_site.site_author.username }}
@@ -51,12 +50,7 @@
             :key="index"
             class="site-item__person__content"
           >
-            <qui-avatar
-              class="site-item__person__content-avatar"
-              :user="item"
-              size="60"
-              @tap="toProfile(item.id)"
-            />
+            <qui-avatar class="site-item__person__content-avatar" :user="item" size="60" />
           </view>
         </view>
       </qui-cell-item>
@@ -186,12 +180,6 @@ export default {
       }
       const siteMode = this.i18n.t('site.publicmode');
       return siteMode;
-    },
-    // 点击头像到个人主页
-    toProfile(userId) {
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${userId}`,
-      });
     },
     // 调取用户信息取消弹框
     close() {
