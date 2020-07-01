@@ -869,6 +869,11 @@ export default {
             // #endif
             // #ifdef H5
             this.paidStatus = true;
+            if (data.paid === true) {
+              this.paidBtnStatus = false;
+            } else {
+              this.paidBtnStatus = true;
+            }
             // #endif
           } else {
             this.paidStatus = false;
