@@ -64,7 +64,7 @@
             class="site-item__owner-avatar"
             :user="{ username: siteInfo.username, avatarUrl: siteInfo.avatar }"
             size="60"
-            @tap="jumpUserPage(siteInfo.userId)"
+            @click.stop="jumpUserPage(siteInfo.userId, $event)"
           />
           <text class="site-item__owner-name">{{ siteInfo.username }}</text>
         </view>
@@ -75,13 +75,9 @@
             v-for="(item, index) in siteInfo.users"
             :key="index"
             class="site-item__person__content"
+            @click.stop="jumpUserPage(item.id)"
           >
-            <qui-avatar
-              class="site-item__person__content-avatar"
-              :user="item"
-              size="60"
-              @tap="jumpUserPage(item.id)"
-            />
+            <qui-avatar class="site-item__person__content-avatar" :user="item" size="60" />
           </view>
         </qui-cell-item>
       </navigator>
@@ -315,9 +311,8 @@ export default {
     },
     // 跳转到个人主页
     jumpUserPage(userId) {
-      console.log(userId, 'userId');
       if (userId) {
-        console.log('点击头像到个人主页', userId);
+        // console.log('点击头像到个人主页', userId);
         uni.navigateTo({
           url: `/pages/profile/index?userId=${userId}`,
         });
