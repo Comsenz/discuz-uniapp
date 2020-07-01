@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-avatar" @click.stop="click" @tap.stop="click">
+  <view class="qui-avatar" @click="click" @tap="click">
     <img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />
     <view v-else-if="styleText" :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
       {{ usernameAt }}

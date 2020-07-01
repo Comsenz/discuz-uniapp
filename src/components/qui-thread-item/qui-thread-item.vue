@@ -210,11 +210,12 @@ export default {
       if (shareThread.type === 1) {
         this.shareTitle = shareThread.title;
       } else {
-        this.shareTitle = shareThread.firstPost.summary;
+        this.shareTitle = shareThread.firstPost.summaryText;
       }
       this.h5Share({
         title: this.shareTitle,
         id,
+        url: 'pages/topic/index',
       });
       // #endif
     },
