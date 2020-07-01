@@ -869,6 +869,7 @@ export default {
             // #endif
             // #ifdef H5
             this.paidStatus = true;
+
             // #endif
           } else {
             this.paidStatus = false;
@@ -1476,6 +1477,7 @@ export default {
     personJump(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1485,9 +1487,7 @@ export default {
     payClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
-      }
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.payStatus = false;
       this.payShowStatus = true;
@@ -1518,6 +1518,7 @@ export default {
     rewardClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       if (this.user._jv.id === this.thread.user._jv.id) {
         this.$refs.toast.show({ message: this.t.iCantRewardMyself });
@@ -1689,6 +1690,7 @@ export default {
     commentJump(threadId, postId) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       uni.navigateTo({
         url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
@@ -1698,6 +1700,7 @@ export default {
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus, post);
@@ -1706,6 +1709,7 @@ export default {
     deleteComment(postId, type, canStatus, isStatus, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.postOpera(postId, '3', canStatus, isStatus, post);
     },
@@ -1713,6 +1717,7 @@ export default {
     replyComment(postId, postIndex) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       if (!this.thread.canReply) {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -1729,6 +1734,7 @@ export default {
     imageClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       // this.previewImg();
     },
@@ -1756,6 +1762,7 @@ export default {
     threadLikeClick(postId, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.postOpera(postId, '1', canLike, isLiked);
     },
@@ -1763,6 +1770,7 @@ export default {
     threadCollectionClick(id, canStatus, isStatus, type) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.threadOpera(id, canStatus, isStatus, type);
     },
@@ -1770,6 +1778,7 @@ export default {
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;
