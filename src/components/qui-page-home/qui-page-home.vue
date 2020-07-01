@@ -611,7 +611,7 @@ export default {
       if (shareThread.type === 1) {
         this.shareTitle = shareThread.title;
       } else {
-        this.shareTitle = shareThread.firstPost.summary_text;
+        this.shareTitle = shareThread.firstPost.summaryText;
       }
       this.h5Share({
         title: this.shareTitle,
