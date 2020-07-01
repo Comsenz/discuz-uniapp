@@ -22,18 +22,18 @@
         <text class="ft-box-content" :class="{ select: true, active: index === footerIndex }">
           {{ item.tabsName }}
         </text>
+        <qui-icon
+          v-if="redCircle && item.id === 2"
+          name="icon-circle"
+          class="red-circle"
+          color="red"
+          size="24"
+        ></qui-icon>
       </view>
 
       <view class="ft-box-spacal">
         <image class="ft-box-spacal-icon" src="@/static/publish.svg" @click="footerOpen"></image>
       </view>
-      <qui-icon
-        v-if="redCircle"
-        name="icon-circle"
-        class="red-circle"
-        color="red"
-        size="14"
-      ></qui-icon>
     </view>
     <uni-popup ref="popup" type="bottom">
       <view class="popup-share">
@@ -153,6 +153,7 @@ export default {
       this.setFooterIndex(parseInt(index, 10) + 1);
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
+      console.log(this.sel, 'this.sel');
       // if (!item.url) {
       //   return;
       // }
@@ -274,6 +275,7 @@ export default {
   justify-content: space-around;
 }
 .ft-box {
+  position: relative;
   display: flex;
   width: 20%;
   height: 72rpx;
@@ -314,6 +316,7 @@ export default {
 .red-circle {
   position: absolute;
   // top: -10rpx;
-  left: 41%;
+  top: -16rpx;
+  left: calc(50% + 18rpx);
 }
 </style>
