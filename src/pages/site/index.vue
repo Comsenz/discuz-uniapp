@@ -59,12 +59,11 @@
         "
       ></qui-cell-item>
       <qui-cell-item :title="i18n.t('manage.circlemaster')" slot-right>
-        <view class="site-item__owner">
+        <view class="site-item__owner" @click.stop="jumpUserPage(siteInfo.userId, $event)">
           <qui-avatar
             class="site-item__owner-avatar"
             :user="{ username: siteInfo.username, avatarUrl: siteInfo.avatar }"
             size="60"
-            @click.stop="jumpUserPage(siteInfo.userId, $event)"
           />
           <text class="site-item__owner-name">{{ siteInfo.username }}</text>
         </view>
