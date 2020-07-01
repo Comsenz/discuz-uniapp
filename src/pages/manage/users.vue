@@ -216,13 +216,15 @@ export default {
   }
 
   .search-box {
+    height: 135rpx;
     background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
   }
 }
 
 .site-users-wx-box {
   position: fixed;
-  top: 61px;
+  top: 135rpx;
   right: 0rpx;
   bottom: 0rpx;
   left: 0rpx;
@@ -243,7 +245,10 @@ export default {
   }
 
   .search-box {
+    height: 61px;
+    padding: 14px 19px 9px;
     background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
   }
 }
 
