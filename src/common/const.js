@@ -4,7 +4,14 @@
  * 正式：.env.producment
  */
 export const DISCUZ_TITLE = process.env.VUE_APP_TITLE;
-export const DISCUZ_REQUEST_HOST = process.env.VUE_APP_REQUEST_HOST ?? `${window.location.origin}/}`;
+
+let host = process.env.VUE_APP_REQUEST_HOST;
+
+// #ifdef H5
+host = '/';
+// #endif
+
+export const DISCUZ_REQUEST_HOST = host;
 
 /**
  * cookie 相关

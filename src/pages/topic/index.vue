@@ -377,7 +377,7 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                cursor-spacing="100"
+                cursor-spacing="80"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
@@ -618,6 +618,7 @@ export default {
       rewardedUsers: [],
     };
   },
+  onReady() {},
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
@@ -782,6 +783,20 @@ export default {
 
             this.loaded = false;
           } else {
+            let titleText = '';
+            if (data.type === 1) {
+              titleText = data.title;
+            } else {
+              if (data.firstPost.summaryText) {
+                titleText = data.firstPost.summaryText.slice(0, 80);
+              } else {
+                titleText = this.t.topicPageTitle;
+              }
+            }
+            uni.setNavigationBarTitle({
+              title: titleText,
+            });
+
             this.loaded = true;
             this.loadingStatus = false;
             // 分享数据
@@ -928,6 +943,13 @@ export default {
             }
             // #endif
             this.rewardStatus = false;
+            // #ifdef H5
+            if (data.paid === true) {
+              this.paidBtnStatus = false;
+            } else {
+              this.paidBtnStatus = true;
+            }
+            // #endif
           }
           if (data.firstPost.likedUsers.length < 1) {
             this.likedStatus = false;

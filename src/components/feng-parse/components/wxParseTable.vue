@@ -56,6 +56,3 @@ export default {
   },
 };
 </script>
-<style>
-@import url('../parse.css');
-</style>

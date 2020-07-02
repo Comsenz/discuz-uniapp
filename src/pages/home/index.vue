@@ -68,6 +68,10 @@ export default {
     uni.$on('notiRead', () => {
       this.getUserInfo(true);
     });
+
+    uni.setNavigationBarTitle({
+      title: this.forums.set_site.site_name,
+    });
   },
 
   // 唤起小程序原声分享
