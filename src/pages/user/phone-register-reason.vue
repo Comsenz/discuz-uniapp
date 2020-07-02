@@ -106,7 +106,7 @@ export default {
     padding: 60rpx 0rpx 80rpx 40rpx;
     font-size: 50rpx;
     font-weight: bold;
-    color: #333;
+    color: --color(--qui-FC-333);
   }
 
   &-con {
@@ -127,9 +127,9 @@ export default {
     height: 90rpx;
     margin: 50rpx auto 0rpx;
     line-height: 90rpx;
-    color: #fff;
+    color: --color(--qui-FC-FFF);
     text-align: center;
-    background-color: #1878f3;
+    background-color: --color(--qui-MAIN);
     border-radius: 5rpx;
   }
 }
