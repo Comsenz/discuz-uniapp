@@ -45,7 +45,7 @@
         :currentindex="index"
         @toTopic="toTopic"
       ></qui-thread-item>
-      <qui-load-more></qui-load-more>
+      <qui-load-more :status="loadingtype"></qui-load-more>
     </view>
   </qui-page>
 </template>
@@ -72,6 +72,7 @@ export default {
       editThreadId: '',
       pageNum: 1,
       pageSize: 20,
+      loadingtype: 'more',
     };
   },
   computed: {
@@ -89,6 +90,7 @@ export default {
     // #endif
   },
   onLoad(query) {
+    console.log(query);
     this.query = query;
     if (!query.id) {
       this.$store.dispatch('forum/setError', {
@@ -148,6 +150,7 @@ export default {
           this.topicData = this.topicData.concat(data);
         } else {
           this.topicData = data;
+          this.loadingtype = 'noMore';
         }
       });
     },
@@ -168,9 +171,14 @@ export default {
   },
   // #endif
   onReachBottom() {
-    if (this.meta.next) {
-      this.pageNum += 1;
-      this.loadThreads();
+    console.log(this.meta);
+    if (this.meta) {
+      if (this.meta.next) {
+        this.pageNum += 1;
+        this.loadThreads();
+      }
+    } else {
+      this.loadingtype = 'noMore';
     }
   },
 };
