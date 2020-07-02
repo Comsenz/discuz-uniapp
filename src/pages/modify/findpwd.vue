@@ -371,7 +371,9 @@ export default {
     height: 100rpx;
   }
   .retireve-pas-input-i {
+    width: 400rpx;
     height: 100rpx;
+    font-size: $fg-f40;
     line-height: 100rpx;
     text-align: right;
   }
