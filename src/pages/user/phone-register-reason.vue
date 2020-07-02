@@ -21,10 +21,7 @@
 </template>
 
 <script>
-import user from '@/mixin/user';
-
 export default {
-  mixins: [user],
   data() {
     return {
       reason: '', // 注册原因

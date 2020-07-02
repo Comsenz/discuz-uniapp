@@ -80,14 +80,14 @@ export default {
     console.log('params', params);
     this.url = params.url;
     console.log('----this.forums-----', this.forums);
-    console.log('----this.user-----', this.user);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
-    if (this.user && this.user.paid) {
-      this.isPaid = this.user.paid;
-    }
     this.$u.event.$on('logind', () => {
+      if (this.user && this.user.paid) {
+        this.isPaid = this.user.paid;
+      }
+      console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: '/pages/home/index',

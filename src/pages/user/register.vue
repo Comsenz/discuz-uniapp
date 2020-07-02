@@ -78,17 +78,17 @@ export default {
     this.validate = JSON.parse(validate);
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
-    console.log('----this.user-----', this.user);
     if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
       this.register_captcha = this.forums.set_reg.register_captcha;
     }
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
-    if (this.user && this.user.paid) {
-      this.isPaid = this.user.paid;
-    }
     this.$u.event.$on('logind', () => {
+      if (this.user && this.user.paid) {
+        this.isPaid = this.user.paid;
+      }
+      console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: '/pages/home/index',
