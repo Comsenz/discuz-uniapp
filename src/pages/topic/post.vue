@@ -521,7 +521,7 @@ export default {
         this.cursor += 1;
         this.focusEvent(this.cursor);
       } else if (type === 'link') {
-        text = `${`${this.textAreaValue.slice(0, this.cursor)}- [](url)${this.textAreaValue.slice(
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}[](url)${this.textAreaValue.slice(
           this.cursor,
         )}`}`;
         this.cursor += 1;
@@ -1220,7 +1220,7 @@ export default {
           relationships: {},
           links: {
             self: `posts/${this.firstPostId}?include=user,thread,images`,
-          }
+          },
         },
         content: this.textAreaValue,
       };
