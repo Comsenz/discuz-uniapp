@@ -423,6 +423,16 @@ export default {
               });
               this.loaded = false;
             } else {
+              if (data.summaryText) {
+                uni.setNavigationBarTitle({
+                  title: data.summaryText.slice(0, 80),
+                });
+              } else {
+                uni.setNavigationBarTitle({
+                  title: this.t.commentPageTitle,
+                });
+              }
+
               this.loaded = true;
             }
             this.loadingStatus = false;

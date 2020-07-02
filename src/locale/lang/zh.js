@@ -202,6 +202,8 @@ export default {
     available: '暂无数据',
   },
   topic: {
+    topicPageTitle: '内容详情页',
+    commentPageTitle: '评论详情页',
     topictitle: '#话题#',
     topictitlelist: '话题列表',
     newTopic: '新话题',
