@@ -377,7 +377,7 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                cursor-spacing="100"
+                cursor-spacing="80"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
@@ -430,7 +430,7 @@
     <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
       <u-loading :size="60"></u-loading>
     </view>
-    <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
+    <qui-page-message v-else-if="thread.isDeleted || loaded === false"></qui-page-message>
   </qui-page>
 </template>
 
@@ -618,6 +618,7 @@ export default {
       rewardedUsers: [],
     };
   },
+  onReady() {},
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
@@ -782,6 +783,20 @@ export default {
 
             this.loaded = false;
           } else {
+            let titleText = '';
+            if (data.type === 1) {
+              titleText = data.title;
+            } else {
+              if (data.firstPost.summaryText) {
+                titleText = data.firstPost.summaryText.slice(0, 80);
+              } else {
+                titleText = this.t.topicPageTitle;
+              }
+            }
+            uni.setNavigationBarTitle({
+              title: titleText,
+            });
+
             this.loaded = true;
             this.loadingStatus = false;
             // 分享数据
@@ -939,6 +954,13 @@ export default {
           this.loaded = false;
           this.loadingStatus = false;
           console.log(err);
+          if (err.statusCode === 404) {
+            console.log('没找到');
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+          }
         });
     },
     // post操作调用接口（包括type 1主题点赞，3删除回复，4回复点赞）

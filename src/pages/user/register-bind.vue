@@ -74,7 +74,9 @@ export default {
     console.log('params', params);
     const { url, validate } = params;
     this.url = url;
-    this.validate = JSON.parse(validate);
+    if (validate) {
+      this.validate = JSON.parse(validate);
+    }
     if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
       this.register_captcha = this.forums.set_reg.register_captcha;
     }

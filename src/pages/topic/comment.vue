@@ -423,6 +423,9 @@ export default {
               });
               this.loaded = false;
             } else {
+              uni.setNavigationBarTitle({
+                title: data.summaryText.slice(0, 80),
+              });
               this.loaded = true;
             }
             this.loadingStatus = false;
