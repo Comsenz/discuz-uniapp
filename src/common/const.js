@@ -4,7 +4,7 @@
  * 正式：.env.producment
  */
 export const DISCUZ_TITLE = process.env.VUE_APP_TITLE;
-export const DISCUZ_REQUEST_HOST = process.env.VUE_APP_REQUEST_HOST;
+export const DISCUZ_REQUEST_HOST = process.env.VUE_APP_REQUEST_HOST ?? `${window.location.origin}/}`;
 
 /**
  * cookie 相关
