@@ -1,13 +1,13 @@
 <template>
   <view>
-    <web-view :webview-styles="webviewStyles" :src="encodeURI(viewUrl)"></web-view>
+    <web-view :webview-styles="webviewStyles" :src="encodeURI(url)"></web-view>
   </view>
 </template>
 <script>
 export default {
   props: {
     // url
-    viewUrl: {
+    url: {
       type: String,
       default: '',
     },
