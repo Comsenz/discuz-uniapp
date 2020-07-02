@@ -131,7 +131,7 @@
               <view
                 v-if="item.type !== 'rewarded' && item.type !== 'system'"
                 v-html="item.reply_post_content"
-                style="display: inline-block;"
+                style="display: inline-block; word-break: break-all;"
               ></view>
               <view
                 v-if="item.type === 'rewarded'"

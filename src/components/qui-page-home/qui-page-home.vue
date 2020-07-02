@@ -317,7 +317,6 @@ export default {
     );
     // 编辑删除图片后首页删除图片
     this.$u.event.$on('deletedImg', res => {
-      console.log(res, 'res');
       this.threads.forEach(item => {
         if (item._jv.id === res.threadId) {
           item.firstPost.images.splice(res.index, 1);
@@ -344,14 +343,12 @@ export default {
 
     // 详情页编辑增加图片时首页增加图片
     this.$u.event.$on('refreshImg', res => {
-      console.log(res, '888888888');
       // eslint-disable-next-line no-restricted-syntax
       for (const index in this.threads) {
         if (this.threads[index]._jv.id === res.threadId) {
           const images = this.$store.getters['jv/get'](`posts/${res.id}`);
           this.threads[index].firstPost.images = images.attachments;
           this.$forceUpdate();
-          console.log(this.threads[index].firstPost.images, 'this.threads[index].firstPost.images');
           break;
         }
       }
@@ -611,7 +608,7 @@ export default {
       if (shareThread.type === 1) {
         this.shareTitle = shareThread.title;
       } else {
-        this.shareTitle = shareThread.firstPost.summary_text;
+        this.shareTitle = shareThread.firstPost.summaryText;
       }
       this.h5Share({
         title: this.shareTitle,

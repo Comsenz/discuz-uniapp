@@ -1350,6 +1350,7 @@ export default {
     }
 
     try {
+      // #ifndef H5
       const res = uni.getSystemInfoSync();
       if (
         res.platform === 'ios' &&
@@ -1366,6 +1367,10 @@ export default {
       } else {
         this.showHidden = true;
       }
+      // #endif
+      // #ifdef H5
+      this.showHidden = true;
+      // #endif
     } catch (e) {
       // error
     }

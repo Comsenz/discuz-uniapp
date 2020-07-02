@@ -430,7 +430,7 @@
     <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
       <u-loading :size="60"></u-loading>
     </view>
-    <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
+    <qui-page-message v-else-if="thread.isDeleted || loaded === false"></qui-page-message>
   </qui-page>
 </template>
 
@@ -713,7 +713,7 @@ export default {
     if (res.from === 'button') {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.threadId}`);
       return {
-        title: threadShare.type === 1 ? this.thread.title : this.thread.firstPost.summary,
+        title: threadShare.type === 1 ? this.thread.title : this.thread.firstPost.summaryText,
       };
     }
     return {
@@ -788,8 +788,8 @@ export default {
             switch (data.type) {
               case 0:
                 // 文字帖
-                this.contentVal = data.firstPost.summary_text;
-                this.desc = data.firstPost.summary_text;
+                this.contentVal = data.firstPost.summaryText;
+                this.desc = data.firstPost.summaryText;
                 this.logo = '';
                 break;
               case 1:
@@ -799,23 +799,23 @@ export default {
                   this.desc = data.title;
                   this.shareLogo = '';
                 } else {
-                  this.desc = data.firstPost.summary_text;
+                  this.desc = data.firstPost.summaryText;
                   this.shareLogo =
                     data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
                 }
                 break;
               case 2:
                 // 视频帖
-                this.contentVal = data.firstPost.summary_text;
-                this.desc = data.firstPost.summary_text;
+                this.contentVal = data.firstPost.summaryText;
+                this.desc = data.firstPost.summaryText;
                 this.shareLogo = data.threadVideo.coverUrl;
                 break;
               case 3:
                 // 图片帖
-                this.contentVal = data.firstPost.summary_text;
-                this.desc = data.firstPost.summary_text;
+                this.contentVal = data.firstPost.summaryText;
+                this.desc = data.firstPost.summaryText;
                 this.shareLogo =
-                  data.price > 0 && data.firstPost.images.length > 0
+                  data.price == 0 && data.firstPost.images.length > 0
                     ? data.firstPost.images[0].thumbUrl
                     : '';
                 break;
@@ -850,6 +850,7 @@ export default {
           }
           this.isLiked = data.firstPost.isLiked;
           if (!data.paid || data.paidUsers.length > 0) {
+            // #ifndef H5
             if (
               this.system === 'ios' &&
               this.detectionmodel === 'public' &&
@@ -865,6 +866,15 @@ export default {
             } else {
               this.paidStatus = true;
             }
+            // #endif
+            // #ifdef H5
+            this.paidStatus = true;
+            if (data.paid === true) {
+              this.paidBtnStatus = false;
+            } else {
+              this.paidBtnStatus = true;
+            }
+            // #endif
           } else {
             this.paidStatus = false;
           }
@@ -876,6 +886,7 @@ export default {
             this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
           }
           if (data.price <= 0) {
+            // #ifndef H5
             if (
               this.system === 'ios' &&
               this.detectionmodel === 'public' &&
@@ -892,7 +903,13 @@ export default {
               this.paidBtnStatus = false;
               this.rewardStatus = true;
             }
+            // #endif
+            // #ifdef H5
+            this.paidBtnStatus = false;
+            this.rewardStatus = true;
+            // #endif
           } else {
+            // #ifndef H5
             if (
               this.system === 'ios' &&
               this.detectionmodel === 'public' &&
@@ -909,6 +926,7 @@ export default {
             } else if (data.paid === true) {
               this.paidBtnStatus = false;
             }
+            // #endif
             this.rewardStatus = false;
           }
           if (data.firstPost.likedUsers.length < 1) {
@@ -921,6 +939,13 @@ export default {
           this.loaded = false;
           this.loadingStatus = false;
           console.log(err);
+          if (err.statusCode === 404) {
+            console.log('没找到');
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+          }
         });
     },
     // post操作调用接口（包括type 1主题点赞，3删除回复，4回复点赞）
@@ -1463,6 +1488,7 @@ export default {
     personJump(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1472,9 +1498,7 @@ export default {
     payClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
-      }
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.payStatus = false;
       this.payShowStatus = true;
@@ -1505,6 +1529,7 @@ export default {
     rewardClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       if (this.user._jv.id === this.thread.user._jv.id) {
         this.$refs.toast.show({ message: this.t.iCantRewardMyself });
@@ -1676,6 +1701,7 @@ export default {
     commentJump(threadId, postId) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       uni.navigateTo({
         url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
@@ -1685,6 +1711,7 @@ export default {
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus, post);
@@ -1693,6 +1720,7 @@ export default {
     deleteComment(postId, type, canStatus, isStatus, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.postOpera(postId, '3', canStatus, isStatus, post);
     },
@@ -1700,6 +1728,7 @@ export default {
     replyComment(postId, postIndex) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       if (!this.thread.canReply) {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -1716,6 +1745,7 @@ export default {
     imageClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       // this.previewImg();
     },
@@ -1743,6 +1773,7 @@ export default {
     threadLikeClick(postId, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.postOpera(postId, '1', canLike, isLiked);
     },
@@ -1750,6 +1781,7 @@ export default {
     threadCollectionClick(id, canStatus, isStatus, type) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       this.threadOpera(id, canStatus, isStatus, type);
     },
@@ -1757,6 +1789,7 @@ export default {
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
+        return;
       }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;

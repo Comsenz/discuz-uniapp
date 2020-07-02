@@ -118,7 +118,7 @@ export default {
         display: block;
         width: 49.3%;
         height: 211rpx;
-        margin-bottom: 20rpx;
+        margin-bottom: 10rpx;
         background: #fff;
         border-radius: 5rpx;
       }
