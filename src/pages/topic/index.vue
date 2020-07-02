@@ -430,7 +430,7 @@
     <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
       <u-loading :size="60"></u-loading>
     </view>
-    <qui-page-message v-else-if="thread.isDeleted || loaded == false"></qui-page-message>
+    <qui-page-message v-else-if="thread.isDeleted || loaded === false"></qui-page-message>
   </qui-page>
 </template>
 
@@ -939,6 +939,13 @@ export default {
           this.loaded = false;
           this.loadingStatus = false;
           console.log(err);
+          if (err.statusCode === 404) {
+            console.log('没找到');
+            this.$store.dispatch('forum/setError', {
+              code: 'thread_deleted',
+              status: 500,
+            });
+          }
         });
     },
     // post操作调用接口（包括type 1主题点赞，3删除回复，4回复点赞）
