@@ -136,7 +136,7 @@ export default {
         width: 32%;
         height: 211rpx;
         margin-right: 1.33%;
-        margin-bottom: 20rpx;
+        margin-bottom: 10rpx;
         background: #fff;
         border-radius: 5rpx;
       }
