@@ -61,16 +61,18 @@ export default {
     },
   },
   methods: {
-    navigate(e) {
+    navigate(url) {
       if (!this.$store.getters['session/get']('isLogin')) {
         this.$store.getters['session/get']('auth').open();
         return;
       }
-      // #ifdef  H5
-
-      // #endif
+      let toUrl = url;
+      if (url.indexOf('http') !== -1) {
+        toUrl = `/pages/common/view?url=${encodeURIComponent(toUrl)}`;
+      }
+      console.log(toUrl);
       uni.navigateTo({
-        url: e,
+        url: toUrl,
       });
     },
   },

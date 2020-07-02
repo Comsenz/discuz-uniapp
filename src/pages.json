@@ -328,6 +328,12 @@
       "style": {
         "navigationBarTitleText": "微信授权"
       }
+    },
+    {
+      "path": "pages/common/view",
+      "style": {
+        "navigationBarTitleText": ""
+      }
     }
   ],
   "globalStyle": {

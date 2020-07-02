@@ -1,25 +1,22 @@
 <template>
   <view>
-    <web-view :webview-styles="webviewStyles" :src="encodeURI(url)"></web-view>
+    <web-view :webview-styles="webviewStyles" :src="url"></web-view>
   </view>
 </template>
 <script>
 export default {
-  props: {
-    // url
-    url: {
-      type: String,
-      default: '',
-    },
-  },
   data() {
     return {
+      url: '',
       webviewStyles: {
         progress: {
           color: '#FF3333',
         },
       },
     };
+  },
+  onLoad(params) {
+    this.url = params.url ? decodeURIComponent(params.url) : '';
   },
 };
 </script>
