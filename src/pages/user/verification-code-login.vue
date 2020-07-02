@@ -84,19 +84,25 @@ export default {
       this.site_mode = this.forums.set_site.site_mode;
     }
     this.$u.event.$on('logind', () => {
-      if (this.user && this.user.paid) {
-        this.isPaid = this.user.paid;
-      }
-      console.log('----this.user-----', this.user);
-      if (this.site_mode !== SITE_PAY || this.isPaid) {
+      if (this.user && this.user.status === 2 && this.user.registerReason === '') {
         uni.navigateTo({
-          url: '/pages/home/index',
+          url: '/pages/user/phone-register-reason',
         });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.navigateTo({
-          url: '/pages/site/info',
-        });
+      } else {
+        if (this.user && this.user.paid) {
+          this.isPaid = this.user.paid;
+        }
+        console.log('----this.user-----', this.user);
+        if (this.site_mode !== SITE_PAY || this.isPaid) {
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        }
+        if (this.site_mode === SITE_PAY && !this.isPaid) {
+          uni.navigateTo({
+            url: '/pages/site/info',
+          });
+        }
       }
     });
   },
