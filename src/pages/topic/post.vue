@@ -126,6 +126,14 @@
               @click="toolBarClick('link')"
             ></qui-icon>
           </view>
+          <view>
+            <qui-icon
+              name="icon-strikethrough"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('strikethrough')"
+            ></qui-icon>
+          </view>
           <!--<view>
             <qui-icon
               name="icon-undeline"
@@ -531,6 +539,12 @@ export default {
           this.cursor,
         )}`}`;
         this.cursor += 1;
+        this.focusEvent(this.cursor);
+      } else if (type === 'strikethrough') {
+        text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
+          this.cursor,
+        )}`}`;
+        this.cursor += 2;
         this.focusEvent(this.cursor);
       }
       //  else if (type === 'undeline') {
