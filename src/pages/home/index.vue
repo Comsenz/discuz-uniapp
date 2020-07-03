@@ -54,6 +54,9 @@ export default {
       get() {
         const index = this.$store.state.footerTab.footerIndex;
         const newIndex = index ? parseInt(index, 10) - 1 : 0;
+        return newIndex;
+      },
+      set(index) {
         if (this.forums.set_site) {
           const title = [
             this.forums.set_site.site_name,
@@ -61,13 +64,9 @@ export default {
             this.i18n.t('profile.mine'),
           ];
           uni.setNavigationBarTitle({
-            title: title[newIndex],
+            title: title[index],
           });
         }
-        return newIndex;
-      },
-      set(index) {
-        console.log(index);
       },
     },
   },
