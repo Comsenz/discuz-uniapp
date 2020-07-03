@@ -53,10 +53,21 @@ export default {
     show_index: {
       get() {
         const index = this.$store.state.footerTab.footerIndex;
-        return index ? parseInt(index, 10) - 1 : 0;
+        const newIndex = index ? parseInt(index, 10) - 1 : 0;
+        if (this.forums.set_site) {
+          const title = [
+            this.forums.set_site.site_name,
+            this.i18n.t('notice.notice'),
+            this.i18n.t('profile.mine'),
+          ];
+          uni.setNavigationBarTitle({
+            title: title[newIndex],
+          });
+        }
+        return newIndex;
       },
-      set() {
-        // console.log(val);
+      set(index) {
+        console.log(index);
       },
     },
   },
@@ -69,9 +80,6 @@ export default {
       this.getUserInfo(true);
     });
   },
-  // created() {
-
-  // },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮

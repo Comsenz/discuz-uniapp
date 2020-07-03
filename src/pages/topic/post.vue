@@ -66,7 +66,7 @@
           auto-height="true"
           :show-confirm-bar="barStatus"
           :adjust-position="true"
-          cursor-spacing="50"
+          cursor-spacing="30"
           cursor="cursor"
           :maxlength="10000"
           :focus="type !== 1"
@@ -1492,7 +1492,7 @@ export default {
   }
   &__con {
     width: 100%;
-    padding: 20rpx 0 0;
+    padding: 10rpx 0 0;
     margin-top: 20rpx;
     overflow: hidden;
     background-color: --color(--qui-BG-1);
@@ -1505,14 +1505,14 @@ export default {
     width: 100%;
     max-height: 900rpx;
     min-height: 400rpx;
-    padding: 0 20rpx 20rpx;
+    padding: 10rpx 20rpx 20rpx;
     overflow: hidden;
     font-size: $fg-f28;
-    line-height: 20px;
+    line-height: 40rpx;
     box-sizing: border-box;
     .text-cover {
       font-size: $fg-f28;
-      line-height: 20px;
+      line-height: 40rpx;
     }
     &--static {
       overflow: auto;
