@@ -72,14 +72,14 @@
         "navigationBarTitleText": "注册"
       }
     },
-    {
-      "path": "pages/user/message",
-      "style": {
-        "navigationBarBackgroundColor": "#fff",
-        "navigationBarTitleText": "信息提示",
-        "disableScroll": true
-      }
-    },
+    // {
+    //   "path": "pages/user/message",
+    //   "style": {
+    //     "navigationBarBackgroundColor": "#fff",
+    //     "navigationBarTitleText": "信息提示",
+    //     "disableScroll": true
+    //   }
+    // },
 
     {
       "path": "pages/topic/index",
