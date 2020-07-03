@@ -69,12 +69,9 @@ export default {
       this.getUserInfo(true);
     });
   },
-  mounted() {
-    uni.setNavigationBarTitle({
-      title: this.forums.set_site.site_name,
-    });
-  },
+  // created() {
 
+  // },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -141,7 +138,6 @@ export default {
       this.nowThreadId = e;
     },
     handlePageLoaded() {
-      console.log('2312321klj3kl12j3lk1j23');
       this.showHome = true;
       // this.$nextTick(() => {
       //   console.log('nextTick。。。');

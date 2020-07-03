@@ -153,7 +153,7 @@ export default {
       this.setFooterIndex(parseInt(index, 10) + 1);
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
-      console.log(this.sel, 'this.sel');
+      // console.log(this.sel, 'this.sel');
       // if (!item.url) {
       //   return;
       // }

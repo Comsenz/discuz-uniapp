@@ -299,8 +299,16 @@ export default {
       categoryId: state => state.session.categoryId,
       categoryIndex: state => state.session.categoryIndex,
     }),
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
   },
   created() {
+    if (this.forums.set_site.site_name) {
+      uni.setNavigationBarTitle({
+        title: this.forums.set_site.site_name,
+      });
+    }
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
