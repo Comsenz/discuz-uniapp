@@ -8,7 +8,9 @@ export const DISCUZ_TITLE = process.env.VUE_APP_TITLE;
 let host = process.env.VUE_APP_REQUEST_HOST;
 
 // #ifdef H5
-host = '/';
+if(process.env.NODE_ENV !== 'development'){
+    host = '/';
+}
 // #endif
 
 export const DISCUZ_REQUEST_HOST = host;

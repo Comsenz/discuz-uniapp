@@ -22,7 +22,7 @@
           name="icon-home"
           size="32"
           :color="theme === $u.light() ? '#777' : '#fff'"
-          @tap="backPage('/pages/home/index', 1)"
+          @tap="backPage('/pages/home/index', '0')"
           v-if="isShowHome"
         ></qui-icon>
         <qui-icon
@@ -36,7 +36,7 @@
           <view class="qui-back__body__right-pop-item" @tap="footerOpen">
             {{ i18n.t('profile.post') }}
           </view>
-          <view class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', 2)">
+          <view class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '1')">
             {{ i18n.t('profile.notice') }}
             <qui-icon
               name="icon-oval"
@@ -46,7 +46,7 @@
               v-if="redCircle"
             ></qui-icon>
           </view>
-          <view class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', 3)">
+          <view class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '2')">
             {{ i18n.t('profile.mine') }}
           </view>
           <!-- 管理员才显示站点管理 -->
@@ -149,7 +149,7 @@ export default {
     backPage(pageUrl, index) {
       this.ifShowMenu = false;
       if (index) {
-        this.setFooterIndex(index);
+        this.setFooterIndex(parseInt(index, 10));
       }
       uni.navigateTo({
         url: pageUrl,

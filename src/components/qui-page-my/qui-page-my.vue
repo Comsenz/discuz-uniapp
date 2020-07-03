@@ -77,6 +77,14 @@
             <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
           </qui-cell-item>
         </view>
+
+        <!-- #ifdef H5-->
+        <view class="logout">
+          <qui-button size="large" type="warn" @click="handleClick">
+            {{ i18n.t('user.logout') }}
+          </qui-button>
+        </view>
+        <!-- #endif -->
       </view>
     </scroll-view>
   </view>
@@ -118,6 +126,11 @@ export default {
         url: `/pages/profile/index?current=${e.currentIndex}`,
       });
     },
+    // #ifdef  H5
+    handleClick() {
+      this.$store.dispatch('session/logout').then(() => window.location.reload());
+    },
+    // #endif
     // 设置粉丝点赞那些数字
     setNum(res) {
       this.items[0].brief = res.threadCount || 0;
@@ -195,5 +208,10 @@ $height: calc(100vh - 260rpx);
 }
 .scroll-y {
   max-height: $height;
+}
+.logout {
+  margin: 30rpx;
+  text-align: center;
+  border-radius: 7rpx;
 }
 </style>

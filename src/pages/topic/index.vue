@@ -783,6 +783,7 @@ export default {
 
             this.loaded = false;
           } else {
+            // #ifndef MP-WEIXIN
             let titleText = '';
             if (data.type === 1) {
               titleText = data.title;
@@ -796,7 +797,7 @@ export default {
             uni.setNavigationBarTitle({
               title: titleText,
             });
-
+            // #endif
             this.loaded = true;
             this.loadingStatus = false;
             // 分享数据

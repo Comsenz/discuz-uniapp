@@ -110,7 +110,7 @@ export default {
               .catch(err => {
                 console.log(err);
                 uni.navigateTo({
-                  url: `/pages/user/verification-code-login?url=${url}`,
+                  url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
                 });
               });
           }
@@ -136,7 +136,7 @@ export default {
               // 手机号模式
               console.log('手机号模式跳转到手机号+验证码登陆页');
               uni.navigateTo({
-                url: `/pages/user/verification-code-login?url=${url}`,
+                url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
               });
             }
             if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
@@ -158,7 +158,7 @@ export default {
             // 手机号模式
             console.log('手机号模式跳转到手机号+验证码登陆页');
             uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}`,
+              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
             });
           }
         }

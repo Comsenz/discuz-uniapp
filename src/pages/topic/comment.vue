@@ -34,8 +34,8 @@
               <view class="thread-box" v-if="loadDetailStatus && !thread.isApproved == 0">
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
-                    <view class="thread__header__img">
-                      <qui-avatar :user="thread.user" @click="personJump(thread.user._jv.id)" />
+                    <view class="thread__header__img" @click="personJump(thread.user._jv.id)">
+                      <qui-avatar :user="thread.user" />
                     </view>
                     <view class="thread__header__title">
                       <view class="thread__header__title__top">
@@ -224,7 +224,7 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                cursor-spacing="100"
+                cursor-spacing="80"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
@@ -423,6 +423,7 @@ export default {
               });
               this.loaded = false;
             } else {
+              // #ifndef MP-WEIXIN
               if (data.summaryText) {
                 uni.setNavigationBarTitle({
                   title: data.summaryText.slice(0, 80),
@@ -432,7 +433,7 @@ export default {
                   title: this.t.commentPageTitle,
                 });
               }
-
+              // #endif
               this.loaded = true;
             }
             this.loadingStatus = false;

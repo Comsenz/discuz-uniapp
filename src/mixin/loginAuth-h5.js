@@ -13,14 +13,14 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式 跳转到注册并绑定页
           uni.navigateTo({
-            url: `/pages/user/register-bind?url=${url}`,
+            url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
           });
           return false;
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式 跳转到手机号+验证码登陆页
           uni.navigateTo({
-            url: `/pages/user/verification-code-login?url=${url}`,
+            url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
           });
           return false;
         }
@@ -45,7 +45,7 @@ module.exports = {
             // 手机号模式
             console.log('手机号模式跳转到手机号+验证码登陆页');
             uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}`,
+              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
             });
             return false;
           }
@@ -70,7 +70,7 @@ module.exports = {
           // 手机号模式
           console.log('手机号模式跳转到手机号+验证码登陆页');
           uni.navigateTo({
-            url: `/pages/user/verification-code-login?url=${url}`,
+            url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
           });
           return false;
         }

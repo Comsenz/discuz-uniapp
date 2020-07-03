@@ -181,6 +181,8 @@ export default {
     thread_deleted: '当前主题已被删除',
     post_deleted: '当前评论已被删除',
     register_validate: '帐号审核中,请审核通过尝试',
+    validate_reject: '您的注册申请未通过,无法登录',
+    validate_ignore: '您的注册申请还未处理,请稍后尝试',
     mobile_is_already_bind: '手机已经绑定',
     setting_fill_register_reason: '注册时的注册原因必须必填',
     faceid_error: '身份信息验证不通过',
@@ -679,5 +681,6 @@ export default {
     registerBind: '注册并绑定微信',
     loginBindId: '登录，并绑定微信号',
     loginBind: '登录并绑定微信',
+    logout: '退出登录',
   },
 };

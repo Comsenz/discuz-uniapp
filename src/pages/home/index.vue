@@ -53,10 +53,20 @@ export default {
     show_index: {
       get() {
         const index = this.$store.state.footerTab.footerIndex;
-        return index ? parseInt(index, 10) - 1 : 0;
+        console.log(index, 'index');
+        return index;
       },
-      set() {
-        // console.log(val);
+      set(index) {
+        if (this.forums.set_site) {
+          const title = [
+            this.forums.set_site.site_name,
+            this.i18n.t('notice.notice'),
+            this.i18n.t('profile.mine'),
+          ];
+          uni.setNavigationBarTitle({
+            title: title[index],
+          });
+        }
       },
     },
   },
@@ -68,12 +78,7 @@ export default {
     uni.$on('notiRead', () => {
       this.getUserInfo(true);
     });
-
-    uni.setNavigationBarTitle({
-      title: this.forums.set_site.site_name,
-    });
   },
-
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -109,6 +114,17 @@ export default {
         this.$refs[this.currentTab].refreshNum();
       });
     }
+    // 其他页面返回
+    if (this.forums.set_site) {
+      const title = [
+        this.forums.set_site.site_name,
+        this.i18n.t('notice.notice'),
+        this.i18n.t('profile.mine'),
+      ];
+      uni.setNavigationBarTitle({
+        title: title[this.show_index],
+      });
+    }
   },
   methods: {
     ...mapMutations({
@@ -140,7 +156,6 @@ export default {
       this.nowThreadId = e;
     },
     handlePageLoaded() {
-      console.log('2312321klj3kl12j3lk1j23');
       this.showHome = true;
       // this.$nextTick(() => {
       //   console.log('nextTick。。。');
