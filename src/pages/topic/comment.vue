@@ -34,8 +34,8 @@
               <view class="thread-box" v-if="loadDetailStatus && !thread.isApproved == 0">
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
-                    <view class="thread__header__img">
-                      <qui-avatar :user="thread.user" @click="personJump(thread.user._jv.id)" />
+                    <view class="thread__header__img" @click="personJump(thread.user._jv.id)">
+                      <qui-avatar :user="thread.user" />
                     </view>
                     <view class="thread__header__title">
                       <view class="thread__header__title__top">
