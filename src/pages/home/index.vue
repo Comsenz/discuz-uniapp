@@ -53,8 +53,7 @@ export default {
     show_index: {
       get() {
         const index = this.$store.state.footerTab.footerIndex;
-        const newIndex = index ? parseInt(index, 10) : 0;
-        return newIndex;
+        return index;
       },
       set(index) {
         if (this.forums.set_site) {
