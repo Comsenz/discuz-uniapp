@@ -59,6 +59,7 @@
       <view class="post-box__con">
         <textarea
           id="textarea"
+          ref="textarea"
           class="post-box__con-text"
           :placeholder="i18n.t('discuzq.post.placeholder')"
           placeholder-class="textarea-placeholder"
@@ -383,7 +384,7 @@ export default {
       textAreaValue: '', // 输入框内容
       markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
-      textAreaLength: 450, // 输入框可输入字
+      textAreaLength: 10000, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
       type: 0, // 帖子类型
@@ -495,6 +496,13 @@ export default {
       }
       return pay;
     },
+  },
+  mounted() {
+    // #ifndef MP-WEIXIN
+    this.$nextTick(() => {
+      this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
+    });
+    // #endif
   },
   methods: {
     focusEvent() {
@@ -1492,9 +1500,10 @@ export default {
   }
   &__con {
     width: 100%;
+    // max-height: 900rpx;
     padding: 10rpx 0 0;
     margin-top: 20rpx;
-    overflow: hidden;
+    overflow-y: scroll;
     background-color: --color(--qui-BG-1);
     border: 1rpx solid --color(--qui-BOR-DDD);
     border-radius: 7rpx;
@@ -1506,7 +1515,6 @@ export default {
     max-height: 900rpx;
     min-height: 400rpx;
     padding: 10rpx 20rpx 20rpx;
-    overflow: hidden;
     font-size: $fg-f28;
     line-height: 40rpx;
     box-sizing: border-box;
