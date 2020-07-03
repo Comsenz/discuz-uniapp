@@ -52,10 +52,12 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [user],
+  mixins: [forums, user],
   data() {
     return {
       tit: false,
@@ -70,11 +72,39 @@ export default {
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
       url: '', // 上一个页面的路径
+      site_mode: '', // 站点模式
+      isPaid: false, // 是否付费
     };
   },
   onLoad(params) {
     console.log('params', params);
     this.url = params.url;
+    console.log('----this.forums-----', this.forums);
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+      this.site_mode = this.forums.set_site.site_mode;
+    }
+    this.$u.event.$on('logind', () => {
+      if (this.user && this.user.status === 2 && this.user.registerReason === '') {
+        uni.navigateTo({
+          url: '/pages/user/phone-register-reason',
+        });
+      } else {
+        if (this.user && this.user.paid) {
+          this.isPaid = this.user.paid;
+        }
+        console.log('----this.user-----', this.user);
+        if (this.site_mode !== SITE_PAY || this.isPaid) {
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        }
+        if (this.site_mode === SITE_PAY && !this.isPaid) {
+          uni.navigateTo({
+            url: '/pages/site/info',
+          });
+        }
+      }
+    });
   },
   methods: {
     changeinput() {
@@ -159,8 +189,9 @@ export default {
         .then(res => {
           console.log('手机号验证成功', res);
           this.logind();
-          uni.navigateTo({
-            url: this.url,
+          uni.showToast({
+            title: '登录成功',
+            duration: 2000,
           });
         })
         .catch(err => {
@@ -201,7 +232,7 @@ export default {
   margin: 60rpx 0rpx 80rpx 40rpx;
   font-size: 50rpx;
   font-weight: bold;
-  color: #333;
+  color: --color(--qui-FC-333);
 }
 .new {
   width: 100vw;
@@ -281,9 +312,9 @@ export default {
   height: 90rpx;
   margin: 50rpx auto 0rpx;
   line-height: 90rpx;
-  color: #fff;
+  color: --color(--qui-FC-FFF);
   text-align: center;
-  background-color: #1878f3;
+  background-color: --color(--qui-MAIN);
   border-radius: 5rpx;
 }
 .verification-code-login-box-pwdlogin {
