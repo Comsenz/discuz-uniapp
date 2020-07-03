@@ -11,6 +11,10 @@ module.exports = {
     wxShare(shareData) {
       // 这里使用 urlencode 编码下
       const url = this.getUrl();
+      const forums = this.$store.getters['jv/get']('forums/1');
+      if (!forums.passport.offiaccount_close) {
+        return;
+      }
       this.$store
         .dispatch('jv/get', [`offiaccount/jssdk?url=${encodeURIComponent(url)}`, {}])
         .then(data => {
