@@ -68,7 +68,8 @@ export default {
     uni.$on('notiRead', () => {
       this.getUserInfo(true);
     });
-
+  },
+  mounted() {
     uni.setNavigationBarTitle({
       title: this.forums.set_site.site_name,
     });
