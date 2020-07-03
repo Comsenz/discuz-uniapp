@@ -1,8 +1,8 @@
 <template>
   <view v-if="topicStatus != 1">
     <view class="themeItem__header">
-      <view class="themeItem__header__img">
-        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" @click="personJump" />
+      <view class="themeItem__header__img" @click="personJump">
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" />
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
@@ -41,8 +41,8 @@
   </view>
   <view class="themeItem" v-else>
     <view class="themeItem__header">
-      <view class="themeItem__header__img">
-        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" @click="personJump" />
+      <view class="themeItem__header__img" @click="personJump">
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" />
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
