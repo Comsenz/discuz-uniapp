@@ -128,17 +128,7 @@ export default {
     },
     // #ifdef  H5
     handleClick() {
-      this.$store.dispatch('session/logout').then(() => {
-        this.$store.dispatch('jv/get', [
-          'forum',
-          {
-            params: {
-              include: 'users',
-            },
-          },
-        ]);
-        window.location.reload();
-      });
+      this.$store.dispatch('session/logout').then(() => window.location.reload());
     },
     // #endif
     // 设置粉丝点赞那些数字
