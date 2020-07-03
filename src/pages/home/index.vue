@@ -3,7 +3,7 @@
     <view class="content">
       <view class="view-content">
         <qui-page-home
-          v-if="showHome"
+          v-show="showHome"
           ref="home"
           :nav-theme="theme"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"

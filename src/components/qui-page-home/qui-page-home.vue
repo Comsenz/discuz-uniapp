@@ -304,11 +304,6 @@ export default {
     }),
   },
   created() {
-    if (this.forums.set_site.site_name) {
-      uni.setNavigationBarTitle({
-        title: this.forums.set_site.site_name,
-      });
-    }
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
@@ -392,9 +387,11 @@ export default {
       this.navTop = rect.top;
       this.navHeight = rect.height;
     });
-    uni.setNavigationBarTitle({
-      title: this.forums.set_site.site_name,
-    });
+    if (this.forums.set_site) {
+      uni.setNavigationBarTitle({
+        title: this.forums.set_site.site_name,
+      });
+    }
   },
   methods: {
     ...mapMutations({
