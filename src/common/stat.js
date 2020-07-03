@@ -741,3 +741,14 @@ const Vue = require('vue');
 (Vue.default || Vue).mixin(lifecycle);
 
 // #endif
+
+// #ifdef H5
+
+window.sessionStorage.setItem('__TD_td_channel', window.location.hostname.replace(/\./g, "_"));
+var tdjs = document.createElement("script");
+tdjs.type = "text/javascript";
+tdjs.async = true;
+tdjs.src = "https://jic.talkingdata.com/app/h5/v1?appid=86697ADBE1104854B72523C08FFB688B";
+document.getElementsByTagName("body")[0].appendChild(tdjs);
+
+// #endif
