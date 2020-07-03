@@ -384,7 +384,7 @@ export default {
       textAreaValue: '', // 输入框内容
       markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
-      textAreaLength: 10000, // 输入框可输入字
+      textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
       type: 0, // 帖子类型
@@ -497,10 +497,13 @@ export default {
       return pay;
     },
   },
-  mounted() {
+  updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
-      this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
+      if (this.$refs.textarea) {
+        // console.log(this.$refs.textarea, '·~~~~~~~~~~~~~~');
+        this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
+      }
     });
     // #endif
   },
@@ -1503,7 +1506,7 @@ export default {
     // max-height: 900rpx;
     padding: 10rpx 0 0;
     margin-top: 20rpx;
-    overflow-y: scroll;
+    overflow: hidden;
     background-color: --color(--qui-BG-1);
     border: 1rpx solid --color(--qui-BOR-DDD);
     border-radius: 7rpx;
