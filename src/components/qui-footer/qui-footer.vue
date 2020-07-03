@@ -109,7 +109,7 @@ export default {
       getCategoryId: state => state.session.categoryId,
       getCategoryIndex: state => state.session.categoryIndex,
       footerIndex: state =>
-        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) - 1 : 0,
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) : 0,
     }),
     redCircle() {
       return this.user.unreadNotifications;
@@ -150,7 +150,7 @@ export default {
   },
   methods: {
     select(item, index) {
-      this.setFooterIndex(parseInt(index, 10) + 1);
+      this.setFooterIndex(parseInt(index, 10));
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
       // console.log(this.sel, 'this.sel');
