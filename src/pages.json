@@ -73,11 +73,13 @@
       }
     },
     {
-      "path": "pages/user/phone-register-reason",
+      "path": "pages/user/message",
       "style": {
-        "navigationBarTitleText": "注册原因"
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "信息提示",
+        "disableScroll": true
       }
-    },    
+    },
 
     {
       "path": "pages/topic/index",

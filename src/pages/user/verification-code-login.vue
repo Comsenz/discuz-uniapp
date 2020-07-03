@@ -88,19 +88,11 @@ export default {
       this.site_mode = this.forums.set_site.site_mode;
     }
     this.$u.event.$on('logind', () => {
-      if (this.validate) {
-        if (this.user && this.user.status === 2) {
-          if (this.user.registerReason === '') {
-            uni.navigateTo({
-              url: '/pages/user/phone-register-reason',
-            });
-          } else {
-            // TODO 跳转到提示页
-            uni.navigateTo({
-              url: '/pages/user/phone-register-reason',
-            });
-          }
-        }
+      if (this.validate && this.user && this.user.status === 2) {
+        // TODO 跳转到提示页
+        uni.navigateTo({
+          url: '/pages/user/message',
+        });
       } else {
         if (this.user && this.user.paid) {
           this.isPaid = this.user.paid;
