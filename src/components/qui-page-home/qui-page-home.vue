@@ -299,9 +299,6 @@ export default {
       categoryId: state => state.session.categoryId,
       categoryIndex: state => state.session.categoryIndex,
     }),
-    ...mapMutations({
-      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
-    }),
   },
   created() {
     // #ifdef  H5

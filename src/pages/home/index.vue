@@ -53,6 +53,7 @@ export default {
     show_index: {
       get() {
         const index = this.$store.state.footerTab.footerIndex;
+        console.log(index, 'index');
         return index;
       },
       set(index) {
