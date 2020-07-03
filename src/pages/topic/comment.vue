@@ -423,6 +423,7 @@ export default {
               });
               this.loaded = false;
             } else {
+              // #ifndef MP-WEIXIN
               if (data.summaryText) {
                 uni.setNavigationBarTitle({
                   title: data.summaryText.slice(0, 80),
@@ -432,7 +433,7 @@ export default {
                   title: this.t.commentPageTitle,
                 });
               }
-
+              // #endif
               this.loaded = true;
             }
             this.loadingStatus = false;
