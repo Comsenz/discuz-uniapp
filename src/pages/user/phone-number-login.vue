@@ -71,34 +71,19 @@ export default {
       this.site_mode = this.forums.set_site.site_mode;
     }
     this.$u.event.$on('logind', () => {
-      if (this.validate) {
-        if (this.user && this.user.status === 2) {
-          if (this.user.registerReason === '') {
-            uni.navigateTo({
-              url: '/pages/user/phone-register-reason',
-            });
-          } else {
-            // TODO 跳转到提示页
-            uni.navigateTo({
-              url: '/pages/user/phone-register-reason',
-            });
-          }
-        }
-      } else {
-        if (this.user && this.user.paid) {
-          this.isPaid = this.user.paid;
-        }
-        console.log('----this.user-----', this.user);
-        if (this.site_mode !== SITE_PAY || this.isPaid) {
-          uni.navigateTo({
-            url: '/pages/home/index',
-          });
-        }
-        if (this.site_mode === SITE_PAY && !this.isPaid) {
-          uni.navigateTo({
-            url: '/pages/site/info',
-          });
-        }
+      if (this.user && this.user.paid) {
+        this.isPaid = this.user.paid;
+      }
+      console.log('----this.user-----', this.user);
+      if (this.site_mode !== SITE_PAY || this.isPaid) {
+        uni.navigateTo({
+          url: '/pages/home/index',
+        });
+      }
+      if (this.site_mode === SITE_PAY && !this.isPaid) {
+        uni.navigateTo({
+          url: '/pages/site/info',
+        });
       }
     });
   },
