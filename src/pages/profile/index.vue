@@ -208,6 +208,9 @@ export default {
       };
       this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(res => {
         this.dialogId = res.dialog ? res.dialog._jv.id : 0;
+        uni.setNavigationBarTitle({
+          title: `${res.username}的 ${this.i18n.t('profile.personalhomepage')}`,
+        });
       });
     },
     // 设置粉丝点赞那些数字

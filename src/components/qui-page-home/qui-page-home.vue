@@ -384,6 +384,9 @@ export default {
       this.navTop = rect.top;
       this.navHeight = rect.height;
     });
+    uni.setNavigationBarTitle({
+      title: this.forums.set_site.site_name,
+    });
   },
   methods: {
     ...mapMutations({

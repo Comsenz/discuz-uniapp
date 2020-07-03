@@ -53,7 +53,7 @@ export default {
     show_index: {
       get() {
         const index = this.$store.state.footerTab.footerIndex;
-        const newIndex = index ? parseInt(index, 10) - 1 : 0;
+        const newIndex = index ? parseInt(index, 10) : 0;
         return newIndex;
       },
       set(index) {
@@ -113,6 +113,17 @@ export default {
     if (this.currentTab === 'quimy' && this.$refs[this.currentTab]) {
       this.$nextTick(() => {
         this.$refs[this.currentTab].refreshNum();
+      });
+    }
+    // 其他页面返回
+    if (this.forums.set_site) {
+      const title = [
+        this.forums.set_site.site_name,
+        this.i18n.t('notice.notice'),
+        this.i18n.t('profile.mine'),
+      ];
+      uni.setNavigationBarTitle({
+        title: title[this.show_index],
       });
     }
   },
