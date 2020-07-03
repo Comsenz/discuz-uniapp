@@ -59,7 +59,8 @@
               </view>
               <view class="dialog-box__header__r">
                 <qui-icon
-                  name="icon-circle red-circle"
+                  name="icon-circle"
+                  class="red-circle"
                   v-if="dialog.readAt === null"
                   color="red"
                   size="14"

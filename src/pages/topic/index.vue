@@ -943,6 +943,13 @@ export default {
             }
             // #endif
             this.rewardStatus = false;
+            // #ifdef H5
+            if (data.paid === true) {
+              this.paidBtnStatus = false;
+            } else {
+              this.paidBtnStatus = true;
+            }
+            // #endif
           }
           if (data.firstPost.likedUsers.length < 1) {
             this.likedStatus = false;

@@ -39,6 +39,7 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [forums, user],
@@ -48,6 +49,8 @@ export default {
       password: '', // 密码
       url: '', // 上一个页面的路径
       validate: false, // 开启注册审核
+      site_mode: '', // 站点模式
+      isPaid: false, // 是否付费
     };
   },
   onLoad(params) {
@@ -57,6 +60,26 @@ export default {
     this.validate = JSON.parse(validate);
     console.log('validate', typeof this.validate);
     console.log('是否开启短信功能', this.forums.qcloud.qcloud_sms);
+    console.log('----this.forums-----', this.forums);
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+      this.site_mode = this.forums.set_site.site_mode;
+    }
+    this.$u.event.$on('logind', () => {
+      if (this.user && this.user.paid) {
+        this.isPaid = this.user.paid;
+      }
+      console.log('----this.user-----', this.user);
+      if (this.site_mode !== SITE_PAY || this.isPaid) {
+        uni.navigateTo({
+          url: '/pages/home/index',
+        });
+      }
+      if (this.site_mode === SITE_PAY && !this.isPaid) {
+        uni.navigateTo({
+          url: '/pages/site/info',
+        });
+      }
+    });
   },
   methods: {
     login() {
@@ -76,10 +99,11 @@ export default {
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {
-            this.logind();
             console.log('登录成功', res);
-            uni.navigateTo({
-              url: this.url,
+            this.logind();
+            uni.showToast({
+              title: '登录成功',
+              duration: 2000,
             });
           })
           .catch(err => {
@@ -132,7 +156,7 @@ export default {
     padding: 60rpx 0rpx 80rpx 40rpx;
     font-size: 50rpx;
     font-weight: bold;
-    color: #333;
+    color: --color(--qui-FC-333);
   }
 
   &-con {
@@ -153,9 +177,9 @@ export default {
     height: 90rpx;
     margin: 50rpx auto 0rpx;
     line-height: 90rpx;
-    color: #fff;
+    color: --color(--qui-FC-FFF);
     text-align: center;
-    background-color: #1878f3;
+    background-color: --color(--qui-MAIN);
     border-radius: 5rpx;
   }
 

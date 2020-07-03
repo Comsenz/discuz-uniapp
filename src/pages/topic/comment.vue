@@ -224,7 +224,7 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                cursor-spacing="100"
+                cursor-spacing="80"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
@@ -423,9 +423,16 @@ export default {
               });
               this.loaded = false;
             } else {
-              uni.setNavigationBarTitle({
-                title: data.summaryText.slice(0, 80),
-              });
+              if (data.summaryText) {
+                uni.setNavigationBarTitle({
+                  title: data.summaryText.slice(0, 80),
+                });
+              } else {
+                uni.setNavigationBarTitle({
+                  title: this.t.commentPageTitle,
+                });
+              }
+
               this.loaded = true;
             }
             this.loadingStatus = false;

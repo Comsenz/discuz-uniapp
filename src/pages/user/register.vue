@@ -62,6 +62,7 @@ export default {
       validate: false, // 默认不开启注册审核
       register_captcha: false, // 默认不开启注册验证码
       site_mode: '', // 站点模式
+      isPaid: false, // 是否付费
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
@@ -84,13 +85,18 @@ export default {
       this.site_mode = this.forums.set_site.site_mode;
     }
     this.$u.event.$on('logind', () => {
-      if (this.site_mode === SITE_PAY) {
-        uni.navigateTo({
-          url: '/pages/site/info',
-        });
-      } else {
+      if (this.user && this.user.paid) {
+        this.isPaid = this.user.paid;
+      }
+      console.log('----this.user-----', this.user);
+      if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: '/pages/home/index',
+        });
+      }
+      if (this.site_mode === SITE_PAY && !this.isPaid) {
+        uni.navigateTo({
+          url: '/pages/site/info',
         });
       }
     });
@@ -232,7 +238,7 @@ export default {
     padding: 60rpx 0rpx 80rpx 40rpx;
     font-size: 50rpx;
     font-weight: bold;
-    color: #333;
+    color: --color(--qui-FC-333);
   }
 
   &-con {
@@ -253,9 +259,9 @@ export default {
     height: 90rpx;
     margin: 50rpx auto 0rpx;
     line-height: 90rpx;
-    color: #fff;
+    color: --color(--qui-FC-FFF);
     text-align: center;
-    background-color: #1878f3;
+    background-color: --color(--qui-MAIN);
     border-radius: 5rpx;
   }
 
