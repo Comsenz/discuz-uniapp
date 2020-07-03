@@ -55,22 +55,35 @@ export default {
       username: '', // 手机号
       password: '', // 密码
       url: '', // 上一个页面的路径
+      validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
     };
   },
   onLoad(params) {
     console.log('params', params);
-    this.url = params.url;
+    const { url, validate } = params;
+    this.url = url;
+    this.validate = JSON.parse(validate);
+    console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
     this.$u.event.$on('logind', () => {
-      if (this.user && this.user.status === 2 && this.user.registerReason === '') {
-        uni.navigateTo({
-          url: '/pages/user/phone-register-reason',
-        });
+      if (this.validate) {
+        if (this.user && this.user.status === 2) {
+          if (this.user.registerReason === '') {
+            uni.navigateTo({
+              url: '/pages/user/phone-register-reason',
+            });
+          } else {
+            // TODO 跳转到提示页
+            uni.navigateTo({
+              url: '/pages/user/phone-register-reason',
+            });
+          }
+        }
       } else {
         if (this.user && this.user.paid) {
           this.isPaid = this.user.paid;
@@ -124,7 +137,7 @@ export default {
       this.clear();
       console.log('跳转到验证码登录页面');
       uni.navigateTo({
-        url: `/pages/user/verification-code-login?url=${this.url}`,
+        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}`,
       });
     },
     jump2findPassword() {
