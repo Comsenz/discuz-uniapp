@@ -16,7 +16,8 @@ export default {
           this.logind();
         })
         .catch(err => {
-          console.log(err);
+          console.log('shiabai');
+          console.log('shibai', err);
         });
     };
     if (!this.$store.getters['session/get']('isLogin')) {
