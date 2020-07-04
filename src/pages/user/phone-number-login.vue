@@ -103,6 +103,7 @@ export default {
             attributes: {
               username: this.username,
               password: this.password,
+              token: this.token,
             },
           },
         };
