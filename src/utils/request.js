@@ -184,6 +184,7 @@ export default class Request {
             response = this.requestComFun(response);
             resolve(response);
           } else {
+            console.log('response1', response);
             response = this.requestComFail(response);
             reject(response);
           }
@@ -369,6 +370,7 @@ export default class Request {
             response = this.requestComFun(response);
             resolve(response);
           } else {
+            console.log('response2', response);
             response = this.requestComFail(response);
             reject(response);
           }
@@ -420,6 +422,7 @@ export default class Request {
             response = this.requestComFun(response);
             resolve(response);
           } else {
+            console.log('response3', response);
             response = this.requestComFail(response);
             reject(response);
           }
