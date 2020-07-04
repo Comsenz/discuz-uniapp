@@ -217,7 +217,7 @@ export default {
     jump2LoginBind() {
       console.log('登录并绑定页');
       uni.navigateTo({
-        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}token=${this.token}`,
+        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
       });
     },
   },
