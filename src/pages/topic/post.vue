@@ -243,6 +243,7 @@
             :key="item._jv.id"
             :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
             :plain="Number(item._jv.id) === Number(categoryId)"
+            :class="categoryIndex === index ? 'cateActive' : ''"
             @click="checkClass(item, index)"
           >
             {{ item.name }}
@@ -1597,12 +1598,23 @@ export default {
     }
     &-categories {
       margin-bottom: 40rpx;
-      /deep/ .qui-button--button {
-        margin-top: 10rpx;
-        margin-right: 20rpx;
-        margin-bottom: 10rpx;
-      }
     }
+  }
+}
+.post-box__ft-categories /deep/ .qui-button--button {
+  margin-top: 10rpx;
+  margin-right: 20rpx;
+  margin-bottom: 10rpx;
+  &[size='default'] {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+}
+.post-box__ft-categories /deep/ .qui-button--button:after {
+  border: none;
+}
+.post-box__ft-categories /deep/ .cateActive {
+  &[size='default'] {
+    border: 1px solid #1878f3;
   }
 }
 
