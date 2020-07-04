@@ -23,6 +23,7 @@ import { mapState } from 'vuex';
 // #ifdef H5
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+import loginAuth from '@/mixin/loginAuth-h5';
 
 // #endif
 // #ifndef MP-WEIXIN
@@ -30,7 +31,7 @@ import appCommonH from '@/utils/commonHelper';
 // #endif
 export default {
   // #ifdef H5
-  mixins: [forums, appCommonH, user],
+  mixins: [forums, appCommonH, user, loginAuth],
   // #endif
   computed: {
     ...mapState({
@@ -71,73 +72,9 @@ export default {
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {
-        const url = '/pages/home/index';
-        console.log('forums', this.forums);
-        console.log('微信浏览器：', appCommonH.isWeixin().isWeixin);
-        if (appCommonH.isWeixin().isWeixin) {
-          // 微信浏览器
-          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
-            // 用户名模式
-            console.log('用户名模式跳转到注册并绑定页');
-            uni.navigateTo({
-              url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-            });
-          }
-          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
-            // 手机号模式
-            console.log('手机号模式跳转到手机号+验证码登陆页');
-            uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-            });
-          }
-          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-            // 无感模式
-            console.log('无感模式');
-            this.$store
-              .dispatch('session/wxNoSenseh5Login')
-              .then(res => {
-                console.log('校验成功', res);
-                this.logind();
-                uni.navigateTo({
-                  url: '/pages/home/index',
-                });
-              })
-              .catch(err => {
-                console.log(err);
-              });
-          }
-        } else {
-          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-            if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
-              // 手机号模式
-              console.log('手机号模式跳转到手机号+验证码登陆页');
-              uni.navigateTo({
-                url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-              });
-            }
-            if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
-              // 用户名模式
-              console.log('用户名模式跳转到登录页');
-              uni.navigateTo({
-                url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-              });
-            }
-          }
-          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
-            // 用户名模式
-            console.log('用户名模式跳转到登录页');
-            uni.navigateTo({
-              url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-            });
-          }
-          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
-            // 手机号模式
-            console.log('手机号模式跳转到手机号+验证码登陆页');
-            uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-            });
-          }
-        }
+        // #ifdef H5
+        this.$store.dispatch('session/wxh5Login');
+        // #endif
       },
     });
     // #endif

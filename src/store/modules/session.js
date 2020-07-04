@@ -12,7 +12,6 @@ import {
   DELETE_USER_ID,
   DELETE_ACCESS_TOKEN,
 } from '@/store/types/session';
-import { getRandomChars } from '@/utils/getRandomChars';
 
 const accessToken = uni.getStorageSync('access_token');
 
@@ -91,7 +90,7 @@ const actions = {
   },
   // #endif
   // #ifdef H5
-  wxNoSenseh5Login: () => {
+  wxh5Login: () => {
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
@@ -108,53 +107,13 @@ const actions = {
           payload,
         )
         .then(results => {
+          resolve(results);
           setUserInfoStore(context, results, resolve);
         })
         .catch(error => {
-          if (!error || !error.data) {
-            return;
-          }
-          const err = error.data;
-          if (err.errors) {
-            const wxtoken = err.errors[0].token;
-            if (err.errors[0].code === 'no_bind_user') {
-              this.noSenseh5Register(wxtoken);
-            }
-          }
+          resolve(error);
         });
     });
-  },
-  // #endif
-  // #ifdef H5
-  noSenseh5Register(wxtoken) {
-    this.$store
-      .dispatch('session/h5Register', {
-        data: {
-          attributes: {
-            username: `网友${getRandomChars(6)}`,
-            password: '',
-            token: wxtoken,
-          },
-        },
-      })
-      .then(success => {
-        console.log('注册成功', success);
-        this.logind();
-        uni.showToast({
-          title: '注册成功',
-          duration: 2000,
-        });
-      })
-      .catch(registerErr => {
-        if (!registerErr || !registerErr.data) {
-          return;
-        }
-        const err = registerErr.data;
-        if (err.errors && err.errors[0].code === 'validation_error') {
-          this.noSenseh5Register(wxtoken);
-        }
-        console.log(registerErr);
-      });
   },
   // #endif
   // #ifdef H5
