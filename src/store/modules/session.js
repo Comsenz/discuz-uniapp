@@ -97,12 +97,6 @@ const actions = {
   },
   // #endif
   // #ifdef H5
-  wxh5Login: () => {
-    const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/home/index`);
-    window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
-  },
-  // #endif
-  // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
     console.log('payload', payload);
     return new Promise(resolve => {
