@@ -60,6 +60,7 @@ export default {
       reason: '', // 注册原因
       url: '', // 上一个页面的路径
       validate: false, // 默认不开启注册审核
+      token: '', // token
       register_captcha: false, // 默认不开启注册验证码
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
@@ -73,11 +74,12 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    const { url, validate } = params;
+    const { url, validate, token } = params;
     this.url = url;
     if (validate) {
       this.validate = JSON.parse(validate);
     }
+    this.token = token;
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
@@ -142,6 +144,7 @@ export default {
             attributes: {
               username: this.username,
               password: this.password,
+              token: this.token,
               register_reason: this.reason,
               captcha_ticket: this.ticket,
               captcha_rand_str: this.randstr,
@@ -154,6 +157,7 @@ export default {
             attributes: {
               username: this.username,
               password: this.password,
+              token: this.token,
               register_reason: this.reason,
             },
           },
@@ -164,6 +168,7 @@ export default {
             attributes: {
               username: this.username,
               password: this.password,
+              token: this.token,
               captcha_ticket: this.ticket,
               captcha_rand_str: this.randstr,
             },
@@ -175,6 +180,7 @@ export default {
             attributes: {
               username: this.username,
               password: this.password,
+              token: this.token,
             },
           },
         };
@@ -211,7 +217,7 @@ export default {
     jump2LoginBind() {
       console.log('登录并绑定页');
       uni.navigateTo({
-        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}`,
+        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
       });
     },
   },
