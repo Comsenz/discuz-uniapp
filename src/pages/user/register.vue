@@ -193,7 +193,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-      this.clear();
     },
     jump2Login() {
       this.clear();
@@ -201,13 +200,6 @@ export default {
       uni.navigateTo({
         url: `/pages/user/login?url=${this.url}&validate=${this.validate}`,
       });
-    },
-    clear() {
-      this.username = '';
-      this.password = '';
-      if (this.validate) {
-        this.reason = '';
-      }
     },
     showDialog(title) {
       uni.showToast({

@@ -195,11 +195,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-      this.clear();
-    },
-    clear() {
-      this.phoneNumber = '';
-      this.$refs.quiinput.deleat();
     },
     showDialog(title) {
       uni.showToast({

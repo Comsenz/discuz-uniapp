@@ -198,14 +198,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-      this.clear();
-    },
-    clear() {
-      this.username = '';
-      this.password = '';
-      if (this.validate) {
-        this.reason = '';
-      }
     },
     showDialog(title) {
       uni.showToast({
