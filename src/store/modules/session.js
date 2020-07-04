@@ -96,18 +96,6 @@ const actions = {
   },
   // #endif
   // #ifdef H5
-  getRandomChars(len) {
-    const s = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    return Array(len)
-      .join()
-      .split(',')
-      .map(() => {
-        return s.charAt(Math.floor(Math.random() * s.length));
-      })
-      .join('');
-  },
-  // #endif
-  // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
     console.log('payload', payload);
     return new Promise(resolve => {
@@ -119,39 +107,7 @@ const actions = {
           payload,
         )
         .then(results => {
-          if (!results || !results.data) {
-            return;
-          }
-          const res = results.data;
-          if (res.errors) {
-            const wxtoken = res.errors[0].token;
-            if (res.errors[0].code === 'no_bind_user') {
-              const params = {
-                data: {
-                  attributes: {
-                    username: `网友${this.getRandomChars(6)}`,
-                    password: '',
-                    token: wxtoken,
-                  },
-                },
-              };
-              this.$store
-                .dispatch('session/h5Register', params)
-                .then(success => {
-                  console.log('注册成功', success);
-                  this.logind();
-                  uni.showToast({
-                    title: '注册成功',
-                    duration: 2000,
-                  });
-                })
-                .catch(err => {
-                  console.log(err);
-                });
-            }
-          } else {
-            setUserInfoStore(context, results, resolve);
-          }
+          setUserInfoStore(context, results, resolve);
         })
         .catch(err => console.log('err', err));
     });
