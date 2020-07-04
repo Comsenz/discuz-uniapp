@@ -1934,13 +1934,6 @@ page {
   font-size: $fg-f28;
   color: --color(--qui-FC-333);
 }
-* {
-  padding: 0;
-  margin: 0;
-  // font-size: $fg-f28;
-  color: --color(--qui-FC-333);
-  word-break: break-all;
-}
 .flex {
   display: flex;
 }
