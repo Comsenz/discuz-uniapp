@@ -27,7 +27,7 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 无感模式
           this.$store
-            .dispatch('session/wxh5Login')
+            .dispatch('session/wxNoSenseh5Login')
             .then(() => {
               this.logind();
               uni.navigateTo({

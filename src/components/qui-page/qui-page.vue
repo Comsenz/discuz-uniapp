@@ -118,7 +118,7 @@ export default {
             // 无感模式
             console.log('无感模式');
             this.$store
-              .dispatch('session/wxh5Login')
+              .dispatch('session/wxNoSenseh5Login')
               .then(res => {
                 console.log('校验成功', res);
                 this.logind();
