@@ -79,40 +79,16 @@ export default {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式
             console.log('用户名模式跳转到注册并绑定页');
-            this.$store
-              .dispatch('session/wxh5Login')
-              .then(res => {
-                console.log('校验成功', res);
-                this.logind();
-                uni.navigateTo({
-                  url: '/pages/home/index',
-                });
-              })
-              .catch(err => {
-                console.log(err);
-                uni.navigateTo({
-                  url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-                });
-              });
+            uni.navigateTo({
+              url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
           }
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
             // 手机号模式
             console.log('手机号模式跳转到手机号+验证码登陆页');
-            this.$store
-              .dispatch('session/wxh5Login')
-              .then(res => {
-                console.log('校验成功', res);
-                this.logind();
-                uni.navigateTo({
-                  url: '/pages/home/index',
-                });
-              })
-              .catch(err => {
-                console.log(err);
-                uni.navigateTo({
-                  url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
-                });
-              });
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
           }
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
             // 无感模式
