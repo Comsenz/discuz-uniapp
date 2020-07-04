@@ -109,7 +109,6 @@ export default {
           .catch(err => {
             console.log(err);
           });
-        this.clear();
       }
     },
     jump2Register() {
@@ -125,10 +124,6 @@ export default {
       uni.navigateTo({
         url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
-    },
-    clear() {
-      this.username = '';
-      this.password = '';
     },
     showDialog(title) {
       uni.showToast({

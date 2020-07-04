@@ -107,12 +107,7 @@ export default {
           .catch(err => {
             console.log(err);
           });
-        this.clear();
       }
-    },
-    clear() {
-      this.username = '';
-      this.password = '';
     },
     showDialog(title) {
       uni.showToast({
