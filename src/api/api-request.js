@@ -3,6 +3,7 @@
 import Request from '@/utils/request';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { i18n } from '@/locale';
+import { getRandomChars } from '@/utils/getRandomChars';
 // #ifdef MP-WEIXIN
 import Vue from 'vue';
 // #endif
@@ -100,6 +101,29 @@ http.interceptor.response(
     if (response && response.data && response.data.errors) {
       response.data.errors.forEach(error => {
         switch (error.code) {
+          case 'no_bind_user':
+            app.$store
+              .dispatch('session/h5Register', {
+                data: {
+                  attributes: {
+                    username: `网友${getRandomChars(6)}`,
+                    password: '',
+                    token: error.token,
+                  },
+                },
+              })
+              .then(success => {
+                console.log('注册成功', success);
+                this.logind();
+                uni.showToast({
+                  title: '注册成功',
+                  duration: 2000,
+                });
+              })
+              .catch(err => {
+                console.log(err);
+              });
+            break;
           case 'access_denied':
             // token 无效 重新请求
             delete response.config.header.Authorization;
