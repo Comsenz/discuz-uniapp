@@ -12,6 +12,7 @@ import {
   DELETE_USER_ID,
   DELETE_ACCESS_TOKEN,
 } from '@/store/types/session';
+import { getRandomChars } from '@/utils/getRandomChars';
 
 const accessToken = uni.getStorageSync('access_token');
 
@@ -109,7 +110,38 @@ const actions = {
         .then(results => {
           setUserInfoStore(context, results, resolve);
         })
-        .catch(err => console.log('err', err));
+        .catch(error => {
+          if (!error || !error.data) {
+            return;
+          }
+          const err = error.data;
+          if (err.errors) {
+            const wxtoken = err.errors[0].token;
+            if (err.errors[0].code === 'no_bind_user') {
+              this.$store
+                .dispatch('session/h5Register', {
+                  data: {
+                    attributes: {
+                      username: `网友${getRandomChars(6)}`,
+                      password: '',
+                      token: wxtoken,
+                    },
+                  },
+                })
+                .then(success => {
+                  console.log('注册成功', success);
+                  this.logind();
+                  uni.showToast({
+                    title: '注册成功',
+                    duration: 2000,
+                  });
+                })
+                .catch(registerErr => {
+                  console.log(registerErr);
+                });
+            }
+          }
+        });
     });
   },
   // #endif
