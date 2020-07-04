@@ -243,7 +243,7 @@
             :key="item._jv.id"
             :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
             :plain="Number(item._jv.id) === Number(categoryId)"
-            :class="categoryIndex === index ? 'cateActive' : ''"
+            :class="Number(item._jv.id) === Number(categoryId) ? 'cateActive' : ''"
             @click="checkClass(item, index)"
           >
             {{ item.name }}
@@ -464,7 +464,7 @@ export default {
       url: '', // 视频url
       postLoading: false, // 发布按钮loading状态
       allCategories: [], // 所有分类
-      categoryIndex: 0, // 分类下标
+      categoryIndex: '', // 分类下标
       categoryId: '', // 分类id
       threadId: '', // 编辑时主题id
       firstPostId: '', // 编辑时帖子id
@@ -1363,7 +1363,14 @@ export default {
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
-    if (option.categoryIndex) this.categoryIndex = Number(option.categoryIndex);
+
+    if (option.categoryIndex) {
+      if (option.categoryIndex === '0') {
+        this.categoryIndex = '';
+      } else {
+        this.categoryIndex = Number(option.categoryIndex);
+      }
+    }
     if (option.categoryId)
       this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
