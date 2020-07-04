@@ -9,6 +9,11 @@ import { getRandomChars } from '@/utils/getRandomChars';
 
 export default {
   mixins: [user, forums, appCommonH],
+  data() {
+    return {
+      state: true,
+    };
+  },
   onLoad(params) {
     // #ifdef H5
     const login = data => {
@@ -26,6 +31,7 @@ export default {
           const err = res.data;
           if (err.errors) {
             const wxtoken = err.errors[0].token;
+            const { nickname } = err.errors[0].user;
             if (err.errors[0].code === 'no_bind_user') {
               const { isWeixin } = appCommonH.isWeixin();
               const url = '/pages/home/index';
@@ -47,7 +53,7 @@ export default {
                 }
                 if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
                   // 无感模式
-                  this.noSenseh5Register(wxtoken);
+                  this.noSenseh5Register(wxtoken, nickname);
                 }
               } else {
                 if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
@@ -98,18 +104,25 @@ export default {
     // #endif
   },
   methods: {
-    noSenseh5Register(wxtoken) {
+    noSenseh5Register(wxtoken, nickname) {
+      let username = '';
+      if (this.state) {
+        username = nickname;
+      } else {
+        username = `${nickname}${getRandomChars(6)}`;
+      }
       this.$store
         .dispatch('session/h5Register', {
           data: {
             attributes: {
-              username: `网友${getRandomChars(6)}`,
+              username,
               password: '',
               token: wxtoken,
             },
           },
         })
         .then(success => {
+          this.state = true;
           console.log('注册成功', success);
           this.logind();
           uni.showToast({
@@ -118,12 +131,13 @@ export default {
           });
         })
         .catch(registerErr => {
+          this.state = false;
           if (!registerErr || !registerErr.data) {
             return;
           }
           const err = registerErr.data;
           if (err.errors && err.errors[0].code === 'validation_error') {
-            this.noSenseh5Register(wxtoken);
+            this.noSenseh5Register(wxtoken, nickname);
           }
           console.log(registerErr);
         });
