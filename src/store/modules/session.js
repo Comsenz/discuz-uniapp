@@ -118,31 +118,43 @@ const actions = {
           if (err.errors) {
             const wxtoken = err.errors[0].token;
             if (err.errors[0].code === 'no_bind_user') {
-              this.$store
-                .dispatch('session/h5Register', {
-                  data: {
-                    attributes: {
-                      username: `网友${getRandomChars(6)}`,
-                      password: '',
-                      token: wxtoken,
-                    },
-                  },
-                })
-                .then(success => {
-                  console.log('注册成功', success);
-                  this.logind();
-                  uni.showToast({
-                    title: '注册成功',
-                    duration: 2000,
-                  });
-                })
-                .catch(registerErr => {
-                  console.log(registerErr);
-                });
+              this.noSenseh5Register(wxtoken);
             }
           }
         });
     });
+  },
+  // #endif
+  // #ifdef H5
+  noSenseh5Register(wxtoken) {
+    this.$store
+      .dispatch('session/h5Register', {
+        data: {
+          attributes: {
+            username: `网友${getRandomChars(6)}`,
+            password: '',
+            token: wxtoken,
+          },
+        },
+      })
+      .then(success => {
+        console.log('注册成功', success);
+        this.logind();
+        uni.showToast({
+          title: '注册成功',
+          duration: 2000,
+        });
+      })
+      .catch(registerErr => {
+        if (!registerErr || !registerErr.data) {
+          return;
+        }
+        const err = registerErr.data;
+        if (err.errors && err.errors[0].code === 'validation_error') {
+          this.noSenseh5Register(wxtoken);
+        }
+        console.log(registerErr);
+      });
   },
   // #endif
   // #ifdef H5
