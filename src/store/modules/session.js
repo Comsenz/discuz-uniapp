@@ -149,6 +149,8 @@ const actions = {
                   console.log(err);
                 });
             }
+          } else {
+            setUserInfoStore(context, results, resolve);
           }
         })
         .catch(err => console.log('err', err));
