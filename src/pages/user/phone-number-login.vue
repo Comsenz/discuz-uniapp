@@ -55,6 +55,7 @@ export default {
       username: '', // 手机号
       password: '', // 密码
       url: '', // 上一个页面的路径
+      token: '', // token
       validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
@@ -62,9 +63,12 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    const { url, validate } = params;
+    const { url, validate, token } = params;
     this.url = url;
-    this.validate = JSON.parse(validate);
+    if (validate) {
+      this.validate = JSON.parse(validate);
+    }
+    this.token = token;
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
@@ -121,7 +125,7 @@ export default {
       this.clear();
       console.log('跳转到验证码登录页面');
       uni.navigateTo({
-        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}`,
+        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
       });
     },
     jump2findPassword() {

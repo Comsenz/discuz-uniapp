@@ -47,7 +47,7 @@ export default {
                 if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
                   // 手机号模式 跳转到手机号+验证码登陆页
                   uni.navigateTo({
-                    url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+                    url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
                   });
                   return;
                 }
@@ -61,7 +61,7 @@ export default {
                     // 手机号模式
                     console.log('手机号模式跳转到手机号+验证码登陆页');
                     uni.navigateTo({
-                      url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+                      url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
                     });
                     return;
                   }
@@ -86,7 +86,7 @@ export default {
                   // 手机号模式
                   console.log('手机号模式跳转到手机号+验证码登陆页');
                   uni.navigateTo({
-                    url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+                    url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
                   });
                 }
               }
