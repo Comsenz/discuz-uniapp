@@ -72,7 +72,7 @@ export default {
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {
-        // #ifdef
+        // ifdef H5
         const { isWeixin } = appCommonH.isWeixin();
         if (isWeixin) {
           this.$store.dispatch('session/wxh5Login');
