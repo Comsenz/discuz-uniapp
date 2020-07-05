@@ -682,5 +682,6 @@ export default {
     loginBindId: '登录，并绑定微信号',
     loginBind: '登录并绑定微信',
     logout: '退出登录',
+    noBind: '退出并解绑',
   },
 };
