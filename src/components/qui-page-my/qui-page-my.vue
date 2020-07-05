@@ -172,7 +172,7 @@ $height: calc(100vh - 260rpx);
   transition: $switch-theme-time;
 }
 .my-items {
-  padding-bottom: 30rpx;
+  padding-bottom: 60rpx;
 }
 .my-info {
   padding: 40rpx;
@@ -210,7 +210,7 @@ $height: calc(100vh - 260rpx);
   max-height: $height;
 }
 .logout {
-  margin: 30rpx;
+  margin: 30rpx 30rpx 0;
   text-align: center;
   border-radius: 7rpx;
 }

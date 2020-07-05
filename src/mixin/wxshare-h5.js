@@ -12,7 +12,7 @@ module.exports = {
       // 这里使用 urlencode 编码下
       const url = this.getUrl();
       const forums = this.$store.getters['jv/get']('forums/1');
-      if (!forums.passport.offiaccount_close) {
+      if (forums.passport && !forums.passport.offiaccount_close) {
         return;
       }
       this.$store

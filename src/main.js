@@ -11,6 +11,8 @@ import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './comm
 const publicWhitelistPage = [
   '/pages/home/index',
   '/pages/topic/index',
+  '/pages/topic/list',
+  '/pages/topic/content',
   '/pages/topic/comment',
   '/pages/profile/index',
   '/pages/user/login',
@@ -21,6 +23,7 @@ const publicWhitelistPage = [
   '/pages/user/phone-number-login',
   '/pages/user/verification-code-login',
   '/pages/modify/findpwd',
+  '/preview-image',
 ];
 const payWhiteListPage = [
   '/pages/site/info',

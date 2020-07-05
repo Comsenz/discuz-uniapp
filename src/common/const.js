@@ -9,7 +9,7 @@ let host = process.env.VUE_APP_REQUEST_HOST;
 
 // #ifdef H5
 if(process.env.NODE_ENV !== 'development'){
-    host = '/';
+    host = `${window.location.origin}/`;
 }
 // #endif
 

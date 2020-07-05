@@ -243,6 +243,7 @@
             :key="item._jv.id"
             :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
             :plain="Number(item._jv.id) === Number(categoryId)"
+            :class="Number(item._jv.id) === Number(categoryId) ? 'cateActive' : ''"
             @click="checkClass(item, index)"
           >
             {{ item.name }}
@@ -384,7 +385,7 @@ export default {
       textAreaValue: '', // 输入框内容
       markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
-      textAreaLength: 10000, // 输入框可输入字
+      textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
       type: 0, // 帖子类型
@@ -463,7 +464,7 @@ export default {
       url: '', // 视频url
       postLoading: false, // 发布按钮loading状态
       allCategories: [], // 所有分类
-      categoryIndex: 0, // 分类下标
+      categoryIndex: '', // 分类下标
       categoryId: '', // 分类id
       threadId: '', // 编辑时主题id
       firstPostId: '', // 编辑时帖子id
@@ -497,10 +498,13 @@ export default {
       return pay;
     },
   },
-  mounted() {
+  updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
-      this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
+      if (this.$refs.textarea) {
+        // console.log(this.$refs.textarea, '·~~~~~~~~~~~~~~');
+        this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
+      }
     });
     // #endif
   },
@@ -1359,7 +1363,14 @@ export default {
     if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
-    if (option.categoryIndex) this.categoryIndex = Number(option.categoryIndex);
+
+    if (option.categoryIndex) {
+      if (option.categoryIndex === '0') {
+        this.categoryIndex = '';
+      } else {
+        this.categoryIndex = Number(option.categoryIndex);
+      }
+    }
     if (option.categoryId)
       this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
@@ -1503,7 +1514,7 @@ export default {
     // max-height: 900rpx;
     padding: 10rpx 0 0;
     margin-top: 20rpx;
-    overflow-y: scroll;
+    overflow: hidden;
     background-color: --color(--qui-BG-1);
     border: 1rpx solid --color(--qui-BOR-DDD);
     border-radius: 7rpx;
@@ -1594,12 +1605,23 @@ export default {
     }
     &-categories {
       margin-bottom: 40rpx;
-      /deep/ .qui-button--button {
-        margin-top: 10rpx;
-        margin-right: 20rpx;
-        margin-bottom: 10rpx;
-      }
     }
+  }
+}
+.post-box__ft-categories /deep/ .qui-button--button {
+  margin-top: 10rpx;
+  margin-right: 20rpx;
+  margin-bottom: 10rpx;
+  &[size='default'] {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+}
+.post-box__ft-categories /deep/ .qui-button--button:after {
+  border: none;
+}
+.post-box__ft-categories /deep/ .cateActive {
+  &[size='default'] {
+    border: 1px solid #1878f3;
   }
 }
 
