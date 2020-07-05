@@ -123,14 +123,12 @@ export default {
       }
     },
     jump2VerificationCodeLogin() {
-      this.clear();
       console.log('跳转到验证码登录页面');
       uni.navigateTo({
         url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
       });
     },
     jump2findPassword() {
-      this.clear();
       console.log('跳转到找回密码页面');
       uni.navigateTo({
         url: `/pages/modify/findpwd?pas=reset_pwd`,

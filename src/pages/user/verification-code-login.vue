@@ -183,6 +183,7 @@ export default {
             mobile: this.phoneNumber,
             code: this.verificationCode,
             type: 'login',
+            token: this.token,
           },
         },
       };
@@ -211,7 +212,6 @@ export default {
       this.inshow = false;
     },
     jump2PhoneNumberLogin() {
-      this.clear();
       console.log('跳转到密码登录页面');
       uni.navigateTo({
         url: `/pages/user/phone-number-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
