@@ -103,10 +103,12 @@ export default {
             attributes: {
               username: this.username,
               password: this.password,
-              token: this.token,
             },
           },
         };
+        if (this.token && this.token !== '') {
+          params.data.attributes.token = this.token;
+        }
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {

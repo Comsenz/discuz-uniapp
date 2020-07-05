@@ -6,8 +6,72 @@ module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
     handleLogin() {
-      this.$store.dispatch('session/wxh5Login');
+      const { isWeixin } = appCommonH.isWeixin();
+      if (isWeixin) {
+        this.$store.dispatch('session/wxh5Login');
+      } else {
+        this.login();
+      }
       return false;
+    },
+    login(nickname, wxtoken) {
+      const { isWeixin } = appCommonH.isWeixin();
+      const url = '/pages/home/index';
+      if (isWeixin) {
+        // 微信内
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 用户名模式 跳转到注册并绑定页
+          uni.navigateTo({
+            url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
+          });
+          return;
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 手机号模式 跳转到手机号+验证码登陆页
+          uni.navigateTo({
+            url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
+          });
+          return;
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          // 无感模式
+          this.noSenseh5Register(wxtoken, nickname);
+        }
+      } else {
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+            // 手机号模式
+            console.log('手机号模式跳转到手机号+验证码登陆页');
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+            return;
+          }
+          if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
+            // 用户名模式
+            console.log('用户名模式跳转到登录页');
+            uni.navigateTo({
+              url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+            return;
+          }
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 用户名模式
+          console.log('用户名模式跳转到登录页');
+          uni.navigateTo({
+            url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+          });
+          return;
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 手机号模式
+          console.log('手机号模式跳转到手机号+验证码登陆页');
+          uni.navigateTo({
+            url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+          });
+        }
+      }
     },
   },
 };

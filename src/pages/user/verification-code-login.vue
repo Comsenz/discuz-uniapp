@@ -183,10 +183,12 @@ export default {
             mobile: this.phoneNumber,
             code: this.verificationCode,
             type: 'login',
-            token: this.token,
           },
         },
       };
+      if (this.token && this.token !== '') {
+        params.data.attributes.token = this.token;
+      }
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
