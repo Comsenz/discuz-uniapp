@@ -512,6 +512,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   .site-invite {
+    padding-bottom: 50rpx;
     text-align: center;
   }
   .site-invite__join {
