@@ -86,7 +86,7 @@
       :class="['keyboard', show ? (dun ? '' : 'active') : 'active', isiphonex ? 'isIphone' : '']"
     >
       <view class="keyboard-dow" @click="btndun">
-        <qui-icon class="keyboard-dow-img" name="icon-unfold" size="10" color="#ddd"></qui-icon>
+        <qui-icon class="keyboard-dow-img" name="icon-unfold" size="20" color="#ddd"></qui-icon>
       </view>
       <block v-for="(item, index) in 9" :key="index">
         <view class="keyboard-item" @tap="key(index + 1)">{{ index + 1 }}</view>

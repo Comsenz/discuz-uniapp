@@ -262,4 +262,11 @@ export default {
     color: --color(--qui-LINK);
   }
 }
+.chagepas-pas-btn /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
+  }
+}
 </style>

@@ -54,8 +54,10 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       iptValue: '',
@@ -187,6 +189,7 @@ export default {
               title: this.i18n.t('modify.phontitle'),
               duration: 1000,
             });
+            this.forums();
             if (this.typebind === 'bind') {
               // #ifdef H5
               uni.navigateBack({
@@ -346,6 +349,13 @@ export default {
   }
   .new-button {
     margin: 52rpx 40rpx 0;
+  }
+}
+.new-button /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
   }
 }
 </style>
