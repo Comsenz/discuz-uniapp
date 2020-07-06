@@ -352,6 +352,10 @@ export default {
               clearInterval(payPhone);
               return;
             }
+            uni.showToast({
+              title: `h5支付状态`,
+              duration: 5000,
+            });
             this.getOrderStatus(this.orderSn, browserType);
           }, 3000);
           window.location.href = res.wechat_h5_link;
@@ -379,6 +383,11 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
+          const that = this;
+          uni.showToast({
+            title: `支付状态${that.payStatus}`,
+            duration: 10000,
+          });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
