@@ -233,7 +233,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   .site-invite {
-    padding-bottom: 20rpx;
+    padding-bottom: 50rpx;
     text-align: center;
   }
   .cell-item--auto .cell-item__body {
