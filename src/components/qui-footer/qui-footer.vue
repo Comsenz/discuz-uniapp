@@ -27,7 +27,7 @@
           name="icon-circle"
           class="red-circle"
           color="red"
-          size="24"
+          size="14"
         ></qui-icon>
       </view>
 

@@ -181,9 +181,11 @@ export default class Request {
           response.config = handleRe;
           if (this.validateStatus(response.statusCode)) {
             // 成功
+            console.log('成功response', response);
             response = this.requestComFun(response);
             resolve(response);
           } else {
+            console.log('失败response1', response);
             response = this.requestComFail(response);
             reject(response);
           }
@@ -369,6 +371,7 @@ export default class Request {
             response = this.requestComFun(response);
             resolve(response);
           } else {
+            console.log('response2', response);
             response = this.requestComFail(response);
             reject(response);
           }
@@ -420,6 +423,7 @@ export default class Request {
             response = this.requestComFun(response);
             resolve(response);
           } else {
+            console.log('response3', response);
             response = this.requestComFail(response);
             reject(response);
           }

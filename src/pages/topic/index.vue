@@ -214,12 +214,12 @@
             <qui-icon name="icon-share" class="qui-icon"></qui-icon>
             <view class="ft-child-word">{{ t.share }}</view>
           </view>
-          <view class="mask" v-if="shareShow" @click="closeShare">
-            <view class="wxShareTip">
-              <img src="/static/sharePoint.png" alt class="sharePoint" />
-              <img src="/static/shareKnow.png" alt class="shareKnow" />
-            </view>
-          </view>
+        </view>
+      </view>
+      <view class="mask" v-if="shareShow" @click="closeShare">
+        <view class="wxShareTip">
+          <img src="/static/sharePoint.png" alt class="sharePoint" />
+          <img src="/static/shareKnow.png" alt class="shareKnow" />
         </view>
       </view>
       <!--分享弹框-->
@@ -1934,13 +1934,6 @@ page {
   font-size: $fg-f28;
   color: --color(--qui-FC-333);
 }
-* {
-  padding: 0;
-  margin: 0;
-  // font-size: $fg-f28;
-  color: --color(--qui-FC-333);
-  word-break: break-all;
-}
 .flex {
   display: flex;
 }
@@ -2453,7 +2446,7 @@ page {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 17;
+  z-index: 170;
   width: 100%;
   height: 100%;
   background: rgba(#000, 0.6);

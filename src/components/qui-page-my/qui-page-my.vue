@@ -79,21 +79,34 @@
         </view>
 
         <!-- #ifdef H5-->
-        <view class="logout">
-          <qui-button size="large" type="warn" @click="handleClick">
+        <view class="logout" v-if="register_type !== 2">
+          <qui-button size="large" type="warn" @click="handleClick" v-if="isWeixin">
+            {{ i18n.t('user.noBind') }}
+          </qui-button>
+          <qui-button size="large" type="warn" @click="handleClick" v-else>
             {{ i18n.t('user.logout') }}
           </qui-button>
         </view>
         <!-- #endif -->
       </view>
     </scroll-view>
+    <uni-popup ref="popupTip" type="message">
+      <uni-popup-message type="success" message="成功消息" :duration="2000"></uni-popup-message>
+    </uni-popup>
   </view>
 </template>
 
 <script>
 import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
+import forums from '@/mixin/forums';
+import appCommonH from '@/utils/commonHelper';
+import uniPopupMessage from '@/components/uni-popup/uni-popup-message';
 
 export default {
+  components: {
+    uniPopupMessage,
+  },
+  mixins: [forums, appCommonH],
   data() {
     return {
       items: [
@@ -104,6 +117,8 @@ export default {
       ],
       current: 0,
       checked: false,
+      isWeixin: false, // 默认不是微信浏览器
+      register_type: 0, // 注册模式
     };
   },
   computed: {
@@ -117,6 +132,14 @@ export default {
       return userInfo;
     },
   },
+  onLoad() {
+    if (this.forums && this.forums.set_reg) {
+      console.log('this.forums', this.forums);
+      this.register_type = this.forums.set_reg.register_type;
+    }
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+  },
   methods: {
     changeCheck(e) {
       getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
@@ -126,9 +149,28 @@ export default {
         url: `/pages/profile/index?current=${e.currentIndex}`,
       });
     },
-    // #ifdef  H5
+    // #ifdef H5
     handleClick() {
-      this.$store.dispatch('session/logout').then(() => window.location.reload());
+      this.$refs.popupTip.open();
+      // if (this.isWeixin) {
+      //   // 微信内
+      //   if (this.register_type === 0) {
+      //     console.log('');
+      //   }
+      //   if (this.register_type === 1) {
+      //     console.log('');
+      //   }
+      // } else {
+      //   this.$store.dispatch('session/logout').then(() => window.location.reload());
+      // }
+    },
+    // #endif
+    // #ifdef H5
+    handleClickOk() {},
+    // #endif
+    // #ifdef H5
+    handleClickCancel() {
+      // this.$refs.popupTip.close();
     },
     // #endif
     // 设置粉丝点赞那些数字
@@ -172,7 +214,7 @@ $height: calc(100vh - 260rpx);
   transition: $switch-theme-time;
 }
 .my-items {
-  padding-bottom: 30rpx;
+  padding-bottom: 60rpx;
 }
 .my-info {
   padding: 40rpx;
@@ -210,7 +252,7 @@ $height: calc(100vh - 260rpx);
   max-height: $height;
 }
 .logout {
-  margin: 30rpx;
+  margin: 30rpx 30rpx 0;
   text-align: center;
   border-radius: 7rpx;
 }

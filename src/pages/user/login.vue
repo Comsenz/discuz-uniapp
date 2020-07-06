@@ -109,26 +109,19 @@ export default {
           .catch(err => {
             console.log(err);
           });
-        this.clear();
       }
     },
     jump2Register() {
-      this.clear();
       console.log('跳转到注册页面');
       uni.navigateTo({
         url: `/pages/user/register?url=${this.url}&validate=${this.validate}`,
       });
     },
     jump2findPassword() {
-      this.clear();
       console.log('跳转到找回密码页面');
       uni.navigateTo({
         url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
-    },
-    clear() {
-      this.username = '';
-      this.password = '';
     },
     showDialog(title) {
       uni.showToast({

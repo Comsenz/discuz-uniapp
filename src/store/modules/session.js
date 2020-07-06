@@ -100,12 +100,19 @@ const actions = {
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
+      console.log('resolve', resolve);
       return http
         .get(
           `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}`,
           payload,
         )
-        .then(results => setUserInfoStore(context, results, resolve));
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(error => {
+          resolve(error);
+        });
     });
   },
   // #endif

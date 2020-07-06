@@ -16,6 +16,7 @@ stylelint.config.js
 src/library
 src/wxcomponents
 src/components/uni-popup
+src/components/uni-popup-message
 src/components/feng-parse
 src/common/
 src/library/jsonapi-vuex

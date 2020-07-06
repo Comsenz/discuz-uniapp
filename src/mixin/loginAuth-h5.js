@@ -7,37 +7,35 @@ module.exports = {
   methods: {
     handleLogin() {
       const { isWeixin } = appCommonH.isWeixin();
+      if (isWeixin) {
+        this.$store.dispatch('session/wxh5Login');
+      } else {
+        this.login();
+      }
+      return false;
+    },
+    login(nickname, wxtoken) {
+      const { isWeixin } = appCommonH.isWeixin();
       const url = '/pages/home/index';
       if (isWeixin) {
         // 微信内
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式 跳转到注册并绑定页
           uni.navigateTo({
-            url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
           });
-          return false;
+          return;
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式 跳转到手机号+验证码登陆页
           uni.navigateTo({
-            url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
           });
-          return false;
+          return;
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 无感模式
-          this.$store
-            .dispatch('session/wxh5Login')
-            .then(() => {
-              this.logind();
-              uni.navigateTo({
-                url,
-              });
-            })
-            .catch(err => {
-              console.log(err);
-            });
-          return false;
+          this.noSenseh5Register(wxtoken, nickname);
         }
       } else {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
@@ -47,7 +45,7 @@ module.exports = {
             uni.navigateTo({
               url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
             });
-            return false;
+            return;
           }
           if (this.forums && this.forums.qcloud && !this.forums.qcloud.qcloud_sms) {
             // 用户名模式
@@ -55,7 +53,7 @@ module.exports = {
             uni.navigateTo({
               url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
             });
-            return false;
+            return;
           }
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
@@ -64,7 +62,7 @@ module.exports = {
           uni.navigateTo({
             url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
           });
-          return false;
+          return;
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式
@@ -72,10 +70,8 @@ module.exports = {
           uni.navigateTo({
             url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
           });
-          return false;
         }
       }
-      return true;
     },
   },
 };
