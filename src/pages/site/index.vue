@@ -367,6 +367,9 @@ export default {
     padding: 35rpx 0;
     align-items: flex-start;
   }
+  .cell-item--left .cell-item__body__right {
+    text-align: left;
+  }
 }
 
 //下面部分样式
@@ -397,9 +400,6 @@ export default {
   height: 60rpx;
   overflow: hidden;
   font-size: 0;
-}
-.cell-item--left .cell-item__body__right {
-  text-align: left;
 }
 .site-item__permission {
   display: inline-block;
