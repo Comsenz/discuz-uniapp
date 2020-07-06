@@ -508,6 +508,7 @@ export default {
     createThreadWithCaptcha: '发帖需要验证码',
     editOwnThreadOrPost: '编辑发布的主题或回复',
     hideOwnThreadOrPost: '删除发布的主题或回复',
+    publishNeedBindPhone: '发布内容需要绑定手机号',
     viewUserList: '站点会员列表',
     cash: {
       create: '申请提现',
