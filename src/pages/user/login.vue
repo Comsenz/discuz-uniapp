@@ -28,7 +28,7 @@
           {{ i18n.t('user.noexist') }}
         </view>
         <!-- 开启短信功能才显示 -->
-        <view @click="jump2findPassword" v-if="forums.qcloud.qcloud_sms">
+        <view @click="jump2findPassword" v-if="qcloud_sms">
           {{ i18n.t('user.forgetPassword') }}
         </view>
       </view>
@@ -51,6 +51,7 @@ export default {
       validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
+      qcloud_sms: false, // 默认不开启短信功能
     };
   },
   onLoad(params) {
@@ -59,10 +60,12 @@ export default {
     this.url = url;
     this.validate = JSON.parse(validate);
     console.log('validate', typeof this.validate);
-    console.log('是否开启短信功能', this.forums.qcloud.qcloud_sms);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
+    }
+    if (this.forums && this.forums.qcloud) {
+      this.qcloud_sms = this.forums.qcloud.qcloud_sms;
     }
     this.$u.event.$on('logind', () => {
       if (this.user && this.user.paid) {

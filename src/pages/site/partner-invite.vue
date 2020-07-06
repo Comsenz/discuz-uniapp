@@ -58,7 +58,7 @@
         :title="i18n.t('site.myauthority')"
         slot-right
         :border="false"
-        class="cell-item--auto cell-item--left "
+        class="cell-item--auto cell-item--left"
       >
         <view v-for="(item, index) in permission" :key="index" class="site-item__permission">
           <text>{{ i18n.t(`permission.${item.permission}`) }}</text>
@@ -233,13 +233,16 @@ export default {
     color: --color(--qui-FC-333);
   }
   .site-invite {
-    padding-bottom: 20rpx;
+    padding-bottom: 50rpx;
     text-align: center;
   }
   .cell-item--auto .cell-item__body {
     height: auto;
     padding: 35rpx 0;
     align-items: flex-start;
+  }
+  .cell-item--left .cell-item__body__right {
+    text-align: left;
   }
 }
 //下面部分样式
@@ -294,8 +297,5 @@ export default {
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
   border-radius: 7rpx;
-}
-.cell-item--left .cell-item__body__right {
-  text-align: left;
 }
 </style>

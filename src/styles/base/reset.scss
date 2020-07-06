@@ -231,7 +231,8 @@ page {
   height: 40rpx;
 }
 
-.content-member,.content-topic {
+.content-member,
+.content-topic {
   padding: 0 3px;
   color: --color(--qui-LINK);
   /* #ifdef H5 */
@@ -242,10 +243,10 @@ page {
 .uni-input-input {
   color: #555;
 }
-image, img {
+image,
+img {
   will-change: transform;
 }
-
 
 .wxParse {
   width: 100%;
@@ -413,8 +414,8 @@ image, img {
   list-style-type: disc;
 }
 
-.wxParse .ol > .li,
-.wxParse .ul > .li {
+.wxParse .ol .li,
+.wxParse .ul .li {
   display: list-item;
   align-items: baseline;
   text-align: match-parent;

@@ -35,11 +35,7 @@
       <view
         class="nav"
         id="navId"
-        :style="{
-          position: !headerShow ? 'fixed' : '',
-          zIndex: !headerShow ? '9' : '',
-          top: !headerShow ? navbarHeight + 'px' : '',
-        }"
+        :style="headerShow ? '' : 'width:100%;position:fixed;z-index:9;top:' + navbarHeight + 'px;'"
       >
         <view class="nav__box">
           <qui-icon
@@ -453,10 +449,10 @@ export default {
     },
     // 筛选分类里的搜索
     searchClick() {
-      console.log('999999');
       uni.navigateTo({
         url: '/pages/site/search',
       });
+      this.show = false;
     },
     // 点击置顶跳转到详情页
     stickyClick(id) {
