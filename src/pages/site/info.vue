@@ -228,16 +228,16 @@ export default {
   },
   onShow() {
     // #ifdef  H5
-    uni.showLoading({
-      title: this.payStatus,
-      mask: true,
+    const that = this;
+    uni.showToast({
+      title: `支付状态${that.payStatus}`,
+      duration: 10000,
     });
     if (this.payStatus) {
       uni.navigateTo({
         url: '/pages/home/index',
       });
     }
-    uni.hideLoading();
     // #endif
   },
   onUnload() {
