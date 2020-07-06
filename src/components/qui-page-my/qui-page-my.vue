@@ -79,11 +79,17 @@
         </view>
 
         <!-- #ifdef H5-->
-        <view class="logout" v-if="register_type !== 2">
-          <qui-button size="large" type="warn" @click="handleClick" v-if="isWeixin">
+        <!-- 微信内：无感模式不展示按钮，其他模式展示退出并解绑按钮，微信外：任何模式都展示退出登录按钮 -->
+        <view class="logout">
+          <qui-button
+            size="large"
+            type="warn"
+            @click="handleClick"
+            v-if="isWeixin && register_type !== 2"
+          >
             {{ i18n.t('user.noBind') }}
           </qui-button>
-          <qui-button size="large" type="warn" @click="handleClick" v-else>
+          <qui-button size="large" type="warn" @click="handleClick" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
           </qui-button>
         </view>
