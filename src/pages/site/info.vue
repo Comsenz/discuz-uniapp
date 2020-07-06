@@ -231,6 +231,10 @@ export default {
     uni.getStorage({
       key: 'orderSn',
       success(res) {
+        uni.showToast({
+          title: `支付号${res}`,
+          duration: 10000,
+        });
         if (res.data) {
           that.getOrderStatus(res.data, '2');
         }
@@ -374,6 +378,10 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
+          uni.showToast({
+            title: `支付号${this.payStatus}`,
+            duration: 10000,
+          });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
