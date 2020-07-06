@@ -78,7 +78,6 @@
           </qui-cell-item>
         </view>
 
-        <!-- #ifdef H5-->
         <view class="logout" v-if="register_type !== 2">
           <qui-button size="large" type="warn" @click="handleClick" v-if="isWeixin">
             {{ i18n.t('user.noBind') }}
@@ -87,7 +86,6 @@
             {{ i18n.t('user.logout') }}
           </qui-button>
         </view>
-        <!-- #endif -->
       </view>
     </scroll-view>
     <uni-popup ref="popupTip" type="center">
