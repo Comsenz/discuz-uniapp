@@ -400,7 +400,18 @@ export default {
           signType: 'MD5', // 微信签名方式：
           paySign: data.wechat_js.paySign, // 微信签名
         },
-        this.payCallback(),
+        res => {
+          // alert('支付唤醒');
+          if (res.err_msg === 'get_brand_wcpay_request:ok') {
+            // 微信支付成功，进行支付成功处理
+          } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+            // 取消支付
+            clearInterval(payWechat);
+          } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+            // 支付失败
+            clearInterval(payWechat);
+          }
+        },
       );
 
       payWechat = setInterval(() => {
@@ -410,19 +421,6 @@ export default {
         }
         this.getOrderStatus(this.orderSn);
       }, 3000);
-    },
-    // 支付取消失败校验
-    payCallback(data) {
-      // alert('支付唤醒');
-      if (data.err_msg === 'get_brand_wcpay_request:ok') {
-        // 微信支付成功，进行支付成功处理
-      } else if (data.err_msg === 'get_brand_wcpay_request:cancel') {
-        // 取消支付
-        clearInterval(payWechat);
-      } else if (data.err_msg === 'get_brand_wcpay_request:fail') {
-        // 支付失败
-        clearInterval(payWechat);
-      }
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
