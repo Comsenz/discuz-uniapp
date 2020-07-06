@@ -68,6 +68,7 @@
       </qui-cell-item>
     </view>
     <view class="site-invite">
+      <!-- #ifdef MP-WEIXIN -->
       <view class="site-invite__detail">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
         <text class="site-invite__detail__bold">
@@ -86,6 +87,34 @@
           }}
         </qui-button>
       </view>
+      <!-- #endif -->
+
+      <!-- #ifdef H5 -->
+      <view class="site-invite__detail" v-if="isLogin">
+        <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
+        <text class="site-invite__detail__bold">
+          {{ forums.set_site && forums.set_site.site_name }}
+        </text>
+        <text>{{ i18n.t('site.site') }}</text>
+      </view>
+      <view class="site-invite__button" v-if="isLogin">
+        <qui-button type="primary" size="large" @click="submit">
+          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
+          {{
+            forums.set_site && forums.set_site.site_expire
+              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
+                  forums.set_site.site_expire}${i18n.t('site.day')}`
+              : ` / ${i18n.t('site.permanent')}`
+          }}
+        </qui-button>
+      </view>
+      <view class="site-invite__join" v-if="!isLogin">
+        <qui-button type="primary" size="large" @click="toLogin">
+          {{ i18n.t('site.join') }}{{ i18n.t('site.site') }}
+        </qui-button>
+      </view>
+      <!-- #endif -->
+
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
@@ -160,6 +189,7 @@ export default {
       browser: 0, // 0为小程序，1为除小程序之外的设备
       payStatus: false, // 订单支付状态
       orderSn: '', // 订单编号
+      isLogin: this.$store.getters['session/get']('isLogin'),
       payTypeData: [
         {
           name: this.i18n.t('pay.wxPay'),
@@ -433,6 +463,9 @@ export default {
         this.$refs.payShow.payClickShow();
       });
     },
+    toLogin() {
+      this.handleLogin();
+    },
     // 调取用户信息取消弹框
     close() {
       this.$refs.auth.close();
@@ -473,6 +506,14 @@ export default {
   }
   .site-invite {
     text-align: center;
+  }
+  .site-invite__join {
+    margin-top: 50rpx;
+  }
+  .cell-item--auto .cell-item__body {
+    height: auto;
+    padding: 35rpx 0;
+    align-items: flex-start;
   }
   .popup-pay {
     .pay-title,
@@ -565,11 +606,6 @@ export default {
 }
 .site .cell-item {
   padding-right: 40rpx;
-}
-.cell-item--auto .cell-item__body {
-  height: auto;
-  padding: 35rpx 0;
-  align-items: flex-start;
 }
 .site-invite__detail__bold {
   margin: 0 5rpx;

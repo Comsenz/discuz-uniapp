@@ -276,6 +276,7 @@ export default {
   margin-right: 20rpx;
 }
 .site-item__person {
+  display: flex;
   height: 60rpx;
   overflow: hidden;
   font-size: 0;
