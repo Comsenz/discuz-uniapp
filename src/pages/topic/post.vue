@@ -504,6 +504,7 @@ export default {
       if (this.$refs.textarea) {
         // console.log(this.$refs.textarea, '·~~~~~~~~~~~~~~');
         this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
+        this.$refs.textarea.$refs.textarea.style.paddingRight = '10px';
       }
     });
     // #endif
@@ -1529,6 +1530,7 @@ export default {
     font-size: $fg-f28;
     line-height: 40rpx;
     box-sizing: border-box;
+
     .text-cover {
       font-size: $fg-f28;
       line-height: 40rpx;

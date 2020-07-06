@@ -68,6 +68,7 @@
       </qui-cell-item>
     </view>
     <view class="site-invite">
+      <!-- #ifdef MP-WEIXIN -->
       <view class="site-invite__detail">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
         <text class="site-invite__detail__bold">
@@ -86,6 +87,34 @@
           }}
         </qui-button>
       </view>
+      <!-- #endif -->
+
+      <!-- #ifdef H5 -->
+      <view class="site-invite__detail" v-if="isLogin">
+        <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
+        <text class="site-invite__detail__bold">
+          {{ forums.set_site && forums.set_site.site_name }}
+        </text>
+        <text>{{ i18n.t('site.site') }}</text>
+      </view>
+      <view class="site-invite__button" v-if="isLogin">
+        <qui-button type="primary" size="large" @click="submit">
+          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
+          {{
+            forums.set_site && forums.set_site.site_expire
+              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
+                  forums.set_site.site_expire}${i18n.t('site.day')}`
+              : ` / ${i18n.t('site.permanent')}`
+          }}
+        </qui-button>
+      </view>
+      <view class="site-invite__join" v-if="!isLogin">
+        <qui-button type="primary" size="large" @click="toLogin">
+          {{ i18n.t('site.join') }}{{ i18n.t('site.site') }}
+        </qui-button>
+      </view>
+      <!-- #endif -->
+
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
@@ -160,6 +189,7 @@ export default {
       browser: 0, // 0为小程序，1为除小程序之外的设备
       payStatus: false, // 订单支付状态
       orderSn: '', // 订单编号
+      isLogin: this.$store.getters['session/get']('isLogin'),
       payTypeData: [
         {
           name: this.i18n.t('pay.wxPay'),
@@ -194,6 +224,15 @@ export default {
     });
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
+  },
+  onShow() {
+    // #ifdef  H5
+    if (this.payStatus === 1) {
+      uni.redirectTo({
+        url: '/pages/home/index',
+      });
+    }
     // #endif
   },
   onUnload() {
@@ -370,7 +409,18 @@ export default {
           signType: 'MD5', // 微信签名方式：
           paySign: data.wechat_js.paySign, // 微信签名
         },
-        this.payCallback(),
+        res => {
+          // alert('支付唤醒');
+          if (res.err_msg === 'get_brand_wcpay_request:ok') {
+            // 微信支付成功，进行支付成功处理
+          } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+            // 取消支付
+            clearInterval(payWechat);
+          } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+            // 支付失败
+            clearInterval(payWechat);
+          }
+        },
       );
 
       payWechat = setInterval(() => {
@@ -380,19 +430,6 @@ export default {
         }
         this.getOrderStatus(this.orderSn);
       }, 3000);
-    },
-    // 支付取消失败校验
-    payCallback(data) {
-      // alert('支付唤醒');
-      if (data.err_msg === 'get_brand_wcpay_request:ok') {
-        // 微信支付成功，进行支付成功处理
-      } else if (data.err_msg === 'get_brand_wcpay_request:cancel') {
-        // 取消支付
-        clearInterval(payWechat);
-      } else if (data.err_msg === 'get_brand_wcpay_request:fail') {
-        // 支付失败
-        clearInterval(payWechat);
-      }
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
@@ -432,6 +469,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow();
       });
+    },
+    toLogin() {
+      this.handleLogin();
     },
     // 调取用户信息取消弹框
     close() {
@@ -473,6 +513,14 @@ export default {
   }
   .site-invite {
     text-align: center;
+  }
+  .site-invite__join {
+    margin-top: 50rpx;
+  }
+  .cell-item--auto .cell-item__body {
+    height: auto;
+    padding: 35rpx 0;
+    align-items: flex-start;
   }
   .popup-pay {
     .pay-title,
@@ -565,11 +613,6 @@ export default {
 }
 .site .cell-item {
   padding-right: 40rpx;
-}
-.cell-item--auto .cell-item__body {
-  height: auto;
-  padding: 35rpx 0;
-  align-items: flex-start;
 }
 .site-invite__detail__bold {
   margin: 0 5rpx;

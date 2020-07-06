@@ -200,7 +200,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 /* #ifdef H5 */
-$height: calc(100vh - 210rpx);
+$height: calc(100vh - 280rpx);
 /* #endif */
 
 /* #ifdef MP-WEIXIN */
