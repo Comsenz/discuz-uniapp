@@ -226,6 +226,20 @@ export default {
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     // #endif
   },
+  onShow() {
+    // #ifdef  H5
+    uni.showLoading({
+      title: this.payStatus,
+      mask: true,
+    });
+    if (this.payStatus) {
+      uni.navigateTo({
+        url: '/pages/home/index',
+      });
+    }
+    uni.hideLoading();
+    // #endif
+  },
   onUnload() {
     clearInterval(payWechat);
     clearInterval(payPhone);
