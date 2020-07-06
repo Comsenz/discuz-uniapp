@@ -100,8 +100,12 @@
 import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
 import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
+import uniPopupMessage from '@/components/uni-popup/uni-popup-message';
 
 export default {
+  components: {
+    uniPopupMessage,
+  },
   mixins: [forums, appCommonH],
   data() {
     return {

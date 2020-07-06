@@ -46,12 +46,12 @@ export default {
       default: 3000,
     },
   },
-  inject: ['popup'],
+  // inject: ['popup'],
   data() {
     return {};
   },
   created() {
-    this.popup.childrenMsg = this;
+    // this.popup.childrenMsg = this;
   },
   methods: {
     open() {
