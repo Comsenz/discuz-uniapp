@@ -79,7 +79,7 @@
         </view>
 
         <!-- #ifdef H5-->
-        <view class="logout" v-if="register_type !== 2">
+        <view class="logout">
           <qui-button size="large" type="warn" @click="handleClick" v-if="isWeixin">
             {{ i18n.t('user.noBind') }}
           </qui-button>
@@ -177,7 +177,7 @@ export default {
         .then(res => {
           console.log('解绑成功', res);
           this.handleClickCancel();
-          window.location.reload();
+          this.$store.dispatch('session/logout').then(() => window.location.reload());
         })
         .catch(err => console.log(err));
     },
