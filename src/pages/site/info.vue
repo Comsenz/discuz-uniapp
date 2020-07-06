@@ -336,12 +336,9 @@ export default {
           payPhone = setInterval(() => {
             if (this.payStatus === 1) {
               clearInterval(payPhone);
-              uni.redirectTo({
-                url: '/pages/home/index',
-              });
               return;
             }
-            this.getOrderStatus(orderSn, browserType);
+            this.getOrderStatus(this.orderSn, browserType);
           }, 3000);
           window.location.href = res.wechat_h5_link;
         } else if (browserType === '3') {
@@ -368,16 +365,13 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
-          this.payStatusNum += 1;
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
             uni.navigateTo({
               url: '/pages/home/index',
             });
-            if (browserType === '2') {
-              // return false;
-            } else if (browserType === '3') {
+            if (browserType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
@@ -458,7 +452,6 @@ export default {
         return;
       }
       this.payStatus = false;
-      this.payStatusNum = 0;
       this.payShowStatus = true;
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow();
