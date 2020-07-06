@@ -104,7 +104,7 @@
           </view>
         </view>
         <view class="cash-button">
-          <qui-button type="primary" size="large" @click="btncash">
+          <qui-button class="cash-button-sun" type="primary" size="large" @click="btncash">
             {{ i18n.t('modify.submission') }}
           </qui-button>
         </view>
@@ -528,6 +528,31 @@ export default {
   }
   .cash-button {
     margin: 52rpx 0 0;
+    border-radius: 7rpx;
+  }
+  // /deep/.cash-button-sun {
+  //   border-radius: 7rpx;
+  // }
+}
+/* #ifndef H5 */
+.cash-content-tabi {
+  /deep/.cell-item__body {
+    align-items: flex-start;
+    height: 150rpx;
+    &__content {
+      margin-top: 32rpx;
+    }
+    &__right {
+      margin-top: 26rpx;
+    }
+  }
+}
+/* #endif */
+.cash-button /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
   }
 }
 </style>
