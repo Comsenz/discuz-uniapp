@@ -44,8 +44,9 @@
           </qui-cell-item>
         </view>
         <!-- 实际提现金额 -->
-        <view class="cash-content-tab">
+        <view class="cash-content-tabi">
           <qui-cell-item
+            class="cash-content-tab-item"
             :title="i18n.t('modify.actualamout')"
             slot-right
             :arrow="false"
@@ -391,7 +392,7 @@ export default {
     width: 100vw;
     height: 100vh;
     /* #ifdef H5 */
-    padding-top: 100rpx;
+    padding-top: 88rpx;
     /* #endif */
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
@@ -400,13 +401,29 @@ export default {
     padding: 31rpx 0 0 40rpx;
     box-sizing: border-box;
   }
-  .cash-content-tab {
+  .cash-content-tab,
+  .cash-content-tabi {
     padding: 0 40rpx 0 0;
     justify-content: space-between;
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
+  .cash-content-tabi {
+    /deep/.cell-item__body {
+      align-items: flex-start;
+      height: 150rpx;
+      &__content {
+        margin-top: 32rpx;
+      }
+      &__right {
+        margin-top: 26rpx;
+      }
+    }
+  }
   /deep/.cell-item__body__content-title {
     color: --color(--qui-FC-777);
+  }
+  /deep/.cash-content-tab-item {
+    height: 150rpx;
   }
   .cash-content-name {
     font-size: $fg-f34;
@@ -422,9 +439,10 @@ export default {
     color: --color(--qui-FC-333);
     text-align: right;
   }
-  .cash-content-actual {
-    line-height: 50rpx;
-  }
+  // .cash-content-actual {
+  //   padding-top: 26rpx;
+  //   box-sizing: border-box;
+  // }
   .cash-content-ellipsis {
     height: 50rpx;
     font-size: $fg-f24;
@@ -434,17 +452,18 @@ export default {
     text-align: right;
   }
   .cash-content-ellipsis2 {
-    height: 50rpx;
+    height: 45rpx;
     font-size: $fg-f34;
-    font-weight: 400;
-    line-height: 50rpx;
+    font-weight: bold;
+    line-height: 45rpx;
     color: --color(--qui-RED);
-    text-align: bold;
   }
   .cash-content-proced {
     height: 50rpx;
+    margin-top: 11rpx;
     font-size: $fg-f24;
     font-weight: 400;
+    line-height: 50rpx;
     color: --color(--qui-FC-777);
   }
   .cash-phon {
