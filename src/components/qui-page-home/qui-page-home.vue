@@ -121,6 +121,12 @@
         ></qui-content>
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
+      <!-- #ifdef H5-->
+      <view class="record">
+        <text>{{ i18n.t('home.record') }}</text>
+        <text>{{ forums.set_site.site_record }}</text>
+      </view>
+      <!-- #endif -->
     </scroll-view>
     <qui-filter-modal
       v-model="show"
@@ -218,7 +224,6 @@ export default {
       default: '',
     },
   },
-  // props: ['navTheme'],
   data() {
     return {
       navBarTransform,
@@ -448,6 +453,7 @@ export default {
     },
     // 筛选分类里的搜索
     searchClick() {
+      console.log('999999');
       uni.navigateTo({
         url: '/pages/site/search',
       });
@@ -905,5 +911,13 @@ export default {
   line-height: 35rpx;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.record {
+  width: 100%;
+  height: 40rpx;
+  margin-top: -100rpx;
+  font-size: $fg-f26;
+  color: #b2b2b2;
+  text-align: center;
 }
 </style>

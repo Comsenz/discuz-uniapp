@@ -329,6 +329,7 @@ export default {
     siteName: '站点名称',
     needRealname: '发布内容需要实名认证',
     needPhone: '发布内容需要绑定手机号',
+    record: '网站备案信息:',
   },
   // 站点管理页面
   manage: {
