@@ -158,7 +158,6 @@ export default {
     },
     // #ifdef H5
     handleClick() {
-      this.$refs.popupTip.open();
       if (this.isWeixin) {
         // 微信内
         if (this.register_type !== 2) {
