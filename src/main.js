@@ -24,6 +24,7 @@ const publicWhitelistPage = [
   '/pages/user/verification-code-login',
   '/pages/modify/findpwd',
   '/preview-image',
+  '/pages/site/search',
 ];
 const payWhiteListPage = [
   '/pages/site/info',
