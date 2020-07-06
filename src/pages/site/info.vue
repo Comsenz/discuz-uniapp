@@ -164,7 +164,6 @@ import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 
 let payWechat = null;
-let payPhone = null;
 
 export default {
   mixins: [
@@ -229,20 +228,18 @@ export default {
   onShow() {
     // #ifdef  H5
     const that = this;
-    uni.showToast({
-      title: `支付状态${that.payStatus}`,
-      duration: 10000,
+    uni.getStorage({
+      key: 'orderSn',
+      success(res) {
+        if (res.data) {
+          that.getOrderStatus(res.data, '2');
+        }
+      },
     });
-    if (this.payStatus) {
-      uni.navigateTo({
-        url: '/pages/home/index',
-      });
-    }
     // #endif
   },
   onUnload() {
     clearInterval(payWechat);
-    clearInterval(payPhone);
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -347,17 +344,11 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          payPhone = setInterval(() => {
-            if (this.payStatus === 1) {
-              clearInterval(payPhone);
-              return;
-            }
-            uni.showToast({
-              title: `h5支付状态`,
-              duration: 5000,
-            });
-            this.getOrderStatus(this.orderSn, browserType);
-          }, 3000);
+          // 把订单号存起来
+          uni.setStorage({
+            key: 'orderSn',
+            data: orderSn,
+          });
           window.location.href = res.wechat_h5_link;
         } else if (browserType === '3') {
           if (res) {
@@ -383,22 +374,22 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
-          const that = this;
-          uni.showToast({
-            title: `支付状态${that.payStatus}`,
-            duration: 10000,
-          });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
-            uni.navigateTo({
-              url: '/pages/home/index',
-            });
+            if (browserType === '2') {
+              uni.removeStorage({
+                key: 'orderSn',
+              });
+            }
             if (browserType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
+            uni.navigateTo({
+              url: '/pages/home/index',
+            });
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
