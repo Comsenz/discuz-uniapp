@@ -137,7 +137,7 @@ export default {
       return userInfo;
     },
   },
-  onLoad() {
+  created() {
     if (this.forums && this.forums.set_reg) {
       this.register_type = this.forums.set_reg.register_type;
     }
