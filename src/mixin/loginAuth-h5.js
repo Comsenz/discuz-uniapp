@@ -123,6 +123,7 @@ module.exports = {
             this.state = true;
             console.log('注册成功', result);
             this.logind();
+            window.location.reload();
             uni.showToast({
               title: '注册成功',
               duration: 2000,
