@@ -79,21 +79,44 @@
         </view>
 
         <!-- #ifdef H5-->
+        <!-- 微信内：无感模式不展示按钮，其他模式展示退出并解绑按钮，微信外：任何模式都展示退出登录按钮 -->
         <view class="logout">
-          <qui-button size="large" type="warn" @click="handleClick">
+          <qui-button
+            size="large"
+            type="warn"
+            @click="handleClick"
+            v-if="isWeixin && register_type !== 2"
+          >
+            {{ i18n.t('user.noBind') }}
+          </qui-button>
+          <qui-button size="large" type="warn" @click="handleClick" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
           </qui-button>
         </view>
         <!-- #endif -->
       </view>
     </scroll-view>
+    <uni-popup ref="popupTip" type="center">
+      <uni-popup-dialog
+        type="warn"
+        content="点击下面的确定解绑按钮后，您将解除微信与本账号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本账号！"
+        :before-close="true"
+        @close="handleClickCancel"
+        @confirm="handleClickOk"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
 <script>
 import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
+import forums from '@/mixin/forums';
+import appCommonH from '@/utils/commonHelper';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
+  components: { uniPopupDialog },
+  mixins: [forums, appCommonH],
   data() {
     return {
       items: [
@@ -104,6 +127,9 @@ export default {
       ],
       current: 0,
       checked: false,
+      isWeixin: false, // 默认不是微信浏览器
+      register_type: 0, // 注册模式
+      site_mode: '', // 站点模式
     };
   },
   computed: {
@@ -117,6 +143,16 @@ export default {
       return userInfo;
     },
   },
+  created() {
+    if (this.forums && this.forums.set_reg) {
+      this.register_type = this.forums.set_reg.register_type;
+    }
+    if (this.forums && this.forums.set_site) {
+      this.site_mode = this.forums.set_site.site_mode;
+    }
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+  },
   methods: {
     changeCheck(e) {
       getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
@@ -126,9 +162,35 @@ export default {
         url: `/pages/profile/index?current=${e.currentIndex}`,
       });
     },
-    // #ifdef  H5
+    // #ifdef H5
     handleClick() {
-      this.$store.dispatch('session/logout').then(() => window.location.reload());
+      if (this.isWeixin) {
+        // 微信内
+        if (this.register_type !== 2) {
+          this.$refs.popupTip.open();
+        }
+      } else {
+        this.$store.dispatch('session/logout').then(() => window.location.reload());
+      }
+    },
+    // #endif
+    // #ifdef H5
+    handleClickOk() {
+      console.log('----userId-----', this.userId);
+      console.log('this.forums', this.forums);
+      this.$store
+        .dispatch('jv/delete', `users/${this.userId}/wechat`)
+        .then(res => {
+          console.log('解绑成功', res);
+          this.handleClickCancel();
+          this.$store.dispatch('session/logout').then(() => window.location.reload());
+        })
+        .catch(err => console.log(err));
+    },
+    // #endif
+    // #ifdef H5
+    handleClickCancel() {
+      this.$refs.popupTip.close();
     },
     // #endif
     // 设置粉丝点赞那些数字
@@ -158,7 +220,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 /* #ifdef H5 */
-$height: calc(100vh - 210rpx);
+$height: calc(100vh - 280rpx);
 /* #endif */
 
 /* #ifdef MP-WEIXIN */

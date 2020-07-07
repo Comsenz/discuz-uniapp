@@ -110,6 +110,11 @@ export default {
     setTimeout(() => {
       this.uploadBeforeList = this.uploadBeforeList.concat(this.filePreview);
       this.uploadList = this.uploadList.concat(this.filePreview);
+      if (this.uploadBeforeList.length > 0) {
+        this.uploadBeforeList.map(() => {
+          return this.numberdata.push({ state: 100 });
+        });
+      }
     }, this.delayTime);
     if (this.filePreview.length) {
       this.lastOrder = this.filePreview[this.filePreview.length - 1].order;
@@ -123,6 +128,7 @@ export default {
       if (!this.asyncClear) {
         this.uploadBeforeList.splice(index, 1);
         this.uploadList.splice(index, 1);
+        this.numberdata.splice(index, 1);
         this.$emit('clear', this.uploadList, beforeUpload);
       } else {
         // 开启异步删除图片后，返回删除图片的数据和下标，调用clear()需要把下标传进去

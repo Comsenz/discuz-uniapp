@@ -195,7 +195,6 @@ export default {
         });
     },
     jump2Login() {
-      this.clear();
       console.log('跳转到登录页面');
       uni.navigateTo({
         url: `/pages/user/login?url=${this.url}&validate=${this.validate}`,

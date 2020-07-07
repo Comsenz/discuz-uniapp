@@ -101,6 +101,7 @@
           <image class="themeItem__content__coverimg" :src="coverImage"></image>
         </view>
         <video
+          :poster="coverImage"
           v-if="themeType == 2 && videoStatus"
           preload="auto"
           bindpause="handlepause"

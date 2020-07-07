@@ -82,7 +82,12 @@
       {{ text }}
     </view>
     <!-- 键盘 -->
-    <view :class="['keyboard', show ? '' : 'active', isiphonex ? 'isIphone' : '']">
+    <view
+      :class="['keyboard', show ? (dun ? '' : 'active') : 'active', isiphonex ? 'isIphone' : '']"
+    >
+      <view class="keyboard-dow" @click="btndun">
+        <qui-icon class="keyboard-dow-img" name="icon-unfold" size="20" color="#ddd"></qui-icon>
+      </view>
       <block v-for="(item, index) in 9" :key="index">
         <view class="keyboard-item" @tap="key(index + 1)">{{ index + 1 }}</view>
       </block>
@@ -124,11 +129,13 @@ export default {
       isFocus: false,
       inpcont: '',
       num: 1,
+      dun: true,
     };
   },
   methods: {
     onFocus() {
       this.isFocus = true;
+      this.dun = true;
     },
     enters() {
       this.$emit('getdata', this.iptValue);
@@ -138,6 +145,9 @@ export default {
     },
     deleat() {
       this.iptValue = '';
+    },
+    btndun() {
+      this.dun = false;
     },
     key(key) {
       if (this.iptValue.length < 6) {
@@ -218,7 +228,18 @@ export default {
   transition: all 0.2s ease-in 0.2s;
 }
 .active {
-  bottom: -400rpx;
+  bottom: -440rpx;
+}
+.keyboard-dow {
+  width: 100%;
+  height: 40rpx;
+  text-align: center;
+  background-color: #fff;
+  border-bottom: 2rpx solid #ebebeb;
+}
+.keyboard-dow-img {
+  width: 40rpx;
+  height: 40rpx;
 }
 .keyboard-item {
   display: flex;

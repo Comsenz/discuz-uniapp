@@ -36,7 +36,7 @@ module.exports = {
             // 需在用户可能点击分享按钮前就先调用
             const dataInfo = {
               title: shareData.title || 'Discuz!Q', // 分享标题
-              desc: shareData.desc || '', // 分享描述
+              desc: shareData.desc || forums.set_site.site_introduction, // 分享描述
               link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
               imgUrl: shareData.logo || `${DISCUZ_REQUEST_HOST}/static/wxshare.png`, // 分享图标
             };

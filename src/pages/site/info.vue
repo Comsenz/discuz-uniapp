@@ -68,6 +68,7 @@
       </qui-cell-item>
     </view>
     <view class="site-invite">
+      <!-- #ifdef MP-WEIXIN -->
       <view class="site-invite__detail">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
         <text class="site-invite__detail__bold">
@@ -86,6 +87,34 @@
           }}
         </qui-button>
       </view>
+      <!-- #endif -->
+
+      <!-- #ifdef H5 -->
+      <view class="site-invite__detail" v-if="isLogin">
+        <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
+        <text class="site-invite__detail__bold">
+          {{ forums.set_site && forums.set_site.site_name }}
+        </text>
+        <text>{{ i18n.t('site.site') }}</text>
+      </view>
+      <view class="site-invite__button" v-if="isLogin">
+        <qui-button type="primary" size="large" @click="submit">
+          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
+          {{
+            forums.set_site && forums.set_site.site_expire
+              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
+                  forums.set_site.site_expire}${i18n.t('site.day')}`
+              : ` / ${i18n.t('site.permanent')}`
+          }}
+        </qui-button>
+      </view>
+      <view class="site-invite__join" v-if="!isLogin">
+        <qui-button type="primary" size="large" @click="toLogin">
+          {{ i18n.t('site.join') }}{{ i18n.t('site.site') }}
+        </qui-button>
+      </view>
+      <!-- #endif -->
+
       <view v-if="payShowStatus">
         <qui-pay
           ref="payShow"
@@ -135,7 +164,6 @@ import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 
 let payWechat = null;
-let payPhone = null;
 
 export default {
   mixins: [
@@ -160,6 +188,7 @@ export default {
       browser: 0, // 0为小程序，1为除小程序之外的设备
       payStatus: false, // 订单支付状态
       orderSn: '', // 订单编号
+      isLogin: this.$store.getters['session/get']('isLogin'),
       payTypeData: [
         {
           name: this.i18n.t('pay.wxPay'),
@@ -196,9 +225,23 @@ export default {
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     // #endif
   },
+  onShow() {
+    // #ifdef  H5
+    const that = this;
+    uni.getStorage({
+      key: 'orderSn',
+      success(res) {
+        if (res.data) {
+          setTimeout(() => {
+            that.getOrderStatus(res.data, '2');
+          }, 3000);
+        }
+      },
+    });
+    // #endif
+  },
   onUnload() {
     clearInterval(payWechat);
-    clearInterval(payPhone);
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -303,13 +346,11 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          payPhone = setInterval(() => {
-            if (this.payStatus === 1) {
-              clearInterval(payPhone);
-              return;
-            }
-            this.getOrderStatus(orderSn, browserType);
-          }, 3000);
+          // 把订单号存起来
+          uni.setStorage({
+            key: 'orderSn',
+            data: orderSn,
+          });
           window.location.href = res.wechat_h5_link;
         } else if (browserType === '3') {
           if (res) {
@@ -335,27 +376,32 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
-          this.payStatusNum += 1;
+          // uni.showToast({
+          //   title: `支付状态值${this.payStatus}----订单编号${orderSn}`,
+          //   duration: 10000,
+          // });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
-            uni.navigateTo({
-              url: '/pages/home/index',
+            uni.removeStorage({
+              key: 'orderSn',
             });
-            if (browserType === '2') {
-              // return false;
-            } else if (browserType === '3') {
+            if (browserType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
+            window.location.href = '/pages/home/index';
+            // uni.navigateTo({
+            //   url: '',
+            // });
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
-        })
-        .catch(() => {
-          this.coverLoading = false;
-          this.$refs.toast.show({ message: this.pay.payFail });
         });
+      // .catch(() => {
+      //   this.coverLoading = false;
+      //   this.$refs.toast.show({ message: this.pay.payFail });
+      // });
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
@@ -370,7 +416,18 @@ export default {
           signType: 'MD5', // 微信签名方式：
           paySign: data.wechat_js.paySign, // 微信签名
         },
-        this.payCallback(),
+        res => {
+          // alert('支付唤醒');
+          if (res.err_msg === 'get_brand_wcpay_request:ok') {
+            // 微信支付成功，进行支付成功处理
+          } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
+            // 取消支付
+            clearInterval(payWechat);
+          } else if (res.err_msg === 'get_brand_wcpay_request:fail') {
+            // 支付失败
+            clearInterval(payWechat);
+          }
+        },
       );
 
       payWechat = setInterval(() => {
@@ -378,21 +435,8 @@ export default {
           clearInterval(payWechat);
           return;
         }
-        this.getOrderStatus(this.orderSn);
+        this.getOrderStatus(this.orderSn, '1');
       }, 3000);
-    },
-    // 支付取消失败校验
-    payCallback(data) {
-      // alert('支付唤醒');
-      if (data.err_msg === 'get_brand_wcpay_request:ok') {
-        // 微信支付成功，进行支付成功处理
-      } else if (data.err_msg === 'get_brand_wcpay_request:cancel') {
-        // 取消支付
-        clearInterval(payWechat);
-      } else if (data.err_msg === 'get_brand_wcpay_request:fail') {
-        // 支付失败
-        clearInterval(payWechat);
-      }
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
@@ -427,11 +471,13 @@ export default {
         return;
       }
       this.payStatus = false;
-      this.payStatusNum = 0;
       this.payShowStatus = true;
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow();
       });
+    },
+    toLogin() {
+      this.handleLogin();
     },
     // 调取用户信息取消弹框
     close() {
@@ -472,7 +518,16 @@ export default {
     color: --color(--qui-FC-333);
   }
   .site-invite {
+    padding-bottom: 50rpx;
     text-align: center;
+  }
+  .site-invite__join {
+    margin-top: 50rpx;
+  }
+  .cell-item--auto .cell-item__body {
+    height: auto;
+    padding: 35rpx 0;
+    align-items: flex-start;
   }
   .popup-pay {
     .pay-title,
@@ -565,11 +620,6 @@ export default {
 }
 .site .cell-item {
   padding-right: 40rpx;
-}
-.cell-item--auto .cell-item__body {
-  height: auto;
-  padding: 35rpx 0;
-  align-items: flex-start;
 }
 .site-invite__detail__bold {
   margin: 0 5rpx;

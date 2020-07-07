@@ -150,6 +150,7 @@ $nav-height: 44px;
   /* #ifndef APP-PLUS */
   /* font-size: $uni-font-size-lg; */
   /* #endif */
+  white-space: nowrap;
 }
 .uni-nav-bar-right-text {
   font-size: $uni-font-size-base;
@@ -217,7 +218,8 @@ $nav-height: 44px;
 
 .uni-navbar__header-container {
   flex: 2;
-  min-width: 320rpx;
+  min-width: 550rpx;
+  overflow: hidden;
 }
 
 .uni-navbar__header-container-inner {
