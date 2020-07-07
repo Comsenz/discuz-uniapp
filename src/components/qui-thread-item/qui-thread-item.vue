@@ -48,14 +48,14 @@
               <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon
                   class="content-image"
-                  :name="thread.icon"
+                  :name="item.icon"
                   size="46"
                   color="#777777"
                 ></qui-icon>
               </view>
               <!-- <image :src="thread.icon" class="content-image" mode="widthFix" /> -->
             </view>
-            <text class="popup-share-content-text">{{ thread.text }}</text>
+            <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
@@ -69,9 +69,11 @@
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 // #endif
+import forums from '@/mixin/forums';
 
 export default {
   mixins: [
+    forums,
     // #ifdef  H5
     wxshare,
     // #endif
@@ -129,7 +131,6 @@ export default {
     // #ifdef H5
     closeShare() {
       this.shareShow = false;
-      console.log(this.shareShow, '8888');
     },
     // #endif
 
@@ -189,6 +190,7 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      console.log(this.bottomData, 'this.bottomData');
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
