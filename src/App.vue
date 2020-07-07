@@ -89,7 +89,7 @@ export default {
       this.globalData.appLoadedStatus = true;
       uni.$emit('apploaded');
       // #endif
-      if (!this.$store.state.forum.error) {
+      if (!this.$store.state.forum.error.code) {
         this.$store.dispatch('forum/setError', { loading: false });
       }
     };
