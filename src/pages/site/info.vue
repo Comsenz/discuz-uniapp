@@ -1,7 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
     <qui-header
-      head-img="/static/logo.png"
+      :head-img="
+        forums.set_site && forums.set_site.site_logo
+          ? forums.set_site.site_logo
+          : '/static/logo.png'
+      "
       :theme="i18n.t('home.theme')"
       :theme-num="forums.other && forums.other.count_users"
       :post-num="forums.other && forums.other.count_threads"
