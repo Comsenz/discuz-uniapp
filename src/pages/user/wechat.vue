@@ -82,6 +82,7 @@ export default {
           }
           const err = registerErr.data;
           if (err.errors && err.errors[0].code === 'validation_error') {
+            this.state = true;
             this.noSenseh5Register(wxtoken, nickname);
           }
           console.log(registerErr);
