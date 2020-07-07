@@ -157,7 +157,6 @@
 
 <script>
 import forums from '@/mixin/forums';
-import user from '@/mixin/user';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
@@ -169,7 +168,6 @@ let payWechat = null;
 export default {
   mixins: [
     forums,
-    user,
     // #ifdef  H5
     wxshare,
     appCommonH,
@@ -225,11 +223,21 @@ export default {
     });
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
-    if (user.paid) {
-      uni.redirectTo({
-        url: '/pages/home/index',
-      });
-    }
+    // #endif
+  },
+  onShow() {
+    // #ifdef  H5
+    const that = this;
+    uni.getStorage({
+      key: 'orderSn',
+      success(res) {
+        if (res.data) {
+          setTimeout(() => {
+            that.getOrderStatus(res.data, '2');
+          }, 3000);
+        }
+      },
+    });
     // #endif
   },
   onUnload() {
@@ -338,6 +346,11 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
+          // 把订单号存起来
+          uni.setStorage({
+            key: 'orderSn',
+            data: orderSn,
+          });
           window.location.href = res.wechat_h5_link;
         } else if (browserType === '3') {
           if (res) {
@@ -370,14 +383,18 @@ export default {
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
+            uni.removeStorage({
+              key: 'orderSn',
+            });
             if (browserType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
-            uni.navigateTo({
-              url: '/pages/home/index',
-            });
+            window.location.href = '/pages/home/index';
+            // uni.navigateTo({
+            //   url: '',
+            // });
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
