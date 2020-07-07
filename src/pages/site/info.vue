@@ -376,10 +376,10 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
-          uni.showToast({
-            title: `支付状态值${this.payStatus}----订单编号${orderSn}`,
-            duration: 10000,
-          });
+          // uni.showToast({
+          //   title: `支付状态值${this.payStatus}----订单编号${orderSn}`,
+          //   duration: 10000,
+          // });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
@@ -397,11 +397,11 @@ export default {
             // });
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
-        })
-        .catch(() => {
-          this.coverLoading = false;
-          this.$refs.toast.show({ message: this.pay.payFail });
         });
+      // .catch(() => {
+      //   this.coverLoading = false;
+      //   this.$refs.toast.show({ message: this.pay.payFail });
+      // });
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
