@@ -754,6 +754,15 @@ export default {
         this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
       }
       this.playIndex = index;
+      // wx.createIntersectionObserver(that)
+      //   .relativeToViewport()
+      //   .observe('.video--wrap', res => {
+      //     if (res && res.intersectionRatio > 0) {
+      //       that.videoPlay();
+      //     } else {
+      //       that.videoPause();
+      //     }
+      //   });
     },
     // 组件初始化请求接口
     ontrueGetList() {
