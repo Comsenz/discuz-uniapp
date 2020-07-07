@@ -231,12 +231,10 @@ export default {
     uni.getStorage({
       key: 'orderSn',
       success(res) {
-        uni.showToast({
-          title: `支付号${res.data}`,
-          duration: 10000,
-        });
         if (res.data) {
-          that.getOrderStatus(res.data, '2');
+          setTimeout(() => {
+            that.getOrderStatus(res.data, '2');
+          }, 3000);
         }
       },
     });
@@ -379,17 +377,15 @@ export default {
         .then(res => {
           this.payStatus = res.status;
           uni.showToast({
-            title: `支付状态值${this.payStatus}`,
+            title: `支付状态值${this.payStatus}----订单编号${orderSn}`,
             duration: 10000,
           });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
-            if (browserType === '2') {
-              uni.removeStorage({
-                key: 'orderSn',
-              });
-            }
+            uni.removeStorage({
+              key: 'orderSn',
+            });
             if (browserType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
@@ -438,7 +434,7 @@ export default {
           clearInterval(payWechat);
           return;
         }
-        this.getOrderStatus(this.orderSn);
+        this.getOrderStatus(this.orderSn, '1');
       }, 3000);
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
