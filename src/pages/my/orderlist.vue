@@ -22,14 +22,14 @@
     <picker mode="date" :value="date" @change="bindDateChange" fields="month" class="date-picker">
       <view class="uni-input">{{ `${i18n.t('profile.time')} ：${date}` }}</view>
     </picker>
-    <view class="orderlist-items">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        class="scroll-y"
-      >
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      @scrolltolower="pullDown"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <view class="orderlist-items" v-show="dataList.length > 0">
         <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
@@ -38,10 +38,11 @@
           :addon="'-￥' + item.amount"
           :brief-right="statusType[item.status]"
           @click="toTopic(item)"
+          :border="index == dataList.length - 1 ? false : true"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
-      </scroll-view>
-    </view>
+      </view>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
+    </scroll-view>
   </qui-page>
 </template>
 
@@ -213,7 +214,6 @@ $height: calc(100vh - 150rpx);
 /* #endif */
 .orderlist /deep/ {
   min-height: auto;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
   }
@@ -252,7 +252,9 @@ $height: calc(100vh - 150rpx);
   }
   .orderlist-items {
     padding-left: 40rpx;
+    margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
 }
 .date-picker {

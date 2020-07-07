@@ -21,7 +21,7 @@
           <text class="freeze-head__money__detail">¥{{ userInfo.walletFreeze }}</text>
         </view>
       </view>
-      <view class="freeze-items">
+      <view class="freeze-items" v-show="freezelist.length > 0">
         <qui-cell-item
           v-for="(freezeItem, index) in freezelist"
           :key="index"
@@ -33,9 +33,10 @@
               : `-￥${freezeItem.change_freeze_amount.substr(1)}`
           "
           :brief-right="timeHandle(freezeItem.created_at)"
+          :border="index == freezelist.length - 1 ? false : true"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
       </view>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>
   </qui-page>
 </template>
@@ -100,7 +101,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .freeze /deep/ {
   min-height: auto;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
   }
@@ -140,7 +140,9 @@ export default {
   }
   .freeze-items {
     padding-left: 40rpx;
+    margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
 }
 .scroll-y {
