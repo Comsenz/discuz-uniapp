@@ -105,7 +105,7 @@
         </view>
       </scroll-view>
     </view>
-    <qui-page-message v-else-if="thread.isDeleted || loaded === false"></qui-page-message>
+    <qui-page-message v-else-if="loaded === false"></qui-page-message>
   </qui-page>
 </template>
 
@@ -214,21 +214,33 @@ export default {
       const params = {
         include: ['groups', 'dialog'],
       };
-      this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(res => {
-        if (res.isDeleted) {
-          this.$store.dispatch('forum/setError', {
-            code: 'users_deleted',
-            status: 500,
-          });
+      this.$store
+        .dispatch('jv/get', [`users/${userId}`, { params }])
+        .then(res => {
+          if (res.isDeleted) {
+            this.$store.dispatch('forum/setError', {
+              code: 'user_deleted',
+              status: 500,
+            });
+            this.loaded = false;
+          } else {
+            this.loaded = true;
+            this.dialogId = res.dialog ? res.dialog._jv.id : 0;
+            uni.setNavigationBarTitle({
+              title: `${res.username}的 ${this.i18n.t('profile.personalhomepage')}`,
+            });
+          }
+        })
+        .catch(err => {
           this.loaded = false;
-        } else {
-          this.loaded = true;
-          this.dialogId = res.dialog ? res.dialog._jv.id : 0;
-          uni.setNavigationBarTitle({
-            title: `${res.username}的 ${this.i18n.t('profile.personalhomepage')}`,
-          });
-        }
-      });
+          if (err.statusCode === 404) {
+            console.log('没找到');
+            this.$store.dispatch('forum/setError', {
+              code: 'user_deleted',
+              status: 500,
+            });
+          }
+        });
     },
     // 设置粉丝点赞那些数字
     setNum(res) {
