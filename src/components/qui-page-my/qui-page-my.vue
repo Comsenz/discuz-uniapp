@@ -56,7 +56,7 @@
             <qui-cell-item
               :title="i18n.t('profile.search')"
               arrow
-              :class="userInfo.groupsName == '管理员' ? '' : 'no-border'"
+              :border="userInfo.groupsName == '管理员' ? true : false"
             ></qui-cell-item>
           </navigator>
           <navigator
