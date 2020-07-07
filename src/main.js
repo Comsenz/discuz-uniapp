@@ -113,19 +113,22 @@ const app = new Vue({
     };
   },
   created() {
+    // #ifndef MP-WEIXIN
     uni.$on('stat', arg => {
       this.siteInfoStat = arg;
       console.log(this.siteInfoStat.statisticsCode, '这是Main里面');
       this.evalscript(this.siteInfoStat.statisticsCode);
     });
+    // #endif
   },
-  watch: {
-    siteInfoStat: function(newVal, oldVal) {
-      this.siteInfoStat = newVal;
-      this.evalscript(this.siteInfoStat);
-    },
-  },
+  // watch: {
+  //   siteInfoStat: function(newVal, oldVal) {
+  //     this.siteInfoStat = newVal;
+  //     this.evalscript(this.siteInfoStat);
+  //   },
+  // },
   methods: {
+    // #ifndef MP-WEIXIN
     evalscript(s) {
       // console.log(s, '222222222222');
       if (s.indexOf('<script') == -1) return s;
@@ -225,6 +228,7 @@ const app = new Vue({
       }
       return false;
     },
+    // #endif
   },
 });
 app.$mount();
