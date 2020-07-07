@@ -234,7 +234,7 @@ export default {
         if (res.data) {
           setTimeout(() => {
             that.getOrderStatus(res.data, '2');
-          }, 3000);
+          }, 500);
         }
       },
     });
