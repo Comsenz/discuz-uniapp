@@ -96,7 +96,7 @@
         <!-- #endif -->
       </view>
     </scroll-view>
-    <uni-popup ref="popupTip" type="center">
+    <uni-popup ref="popup" type="center">
       <uni-popup-dialog
         type="warn"
         content="点击下面的确定解绑按钮后，您将解除微信与本账号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本账号！"
@@ -143,6 +143,7 @@ export default {
       return userInfo;
     },
   },
+  // #ifdef H5
   created() {
     if (this.forums && this.forums.set_reg) {
       this.register_type = this.forums.set_reg.register_type;
@@ -153,6 +154,7 @@ export default {
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
   },
+  // #endif
   methods: {
     changeCheck(e) {
       getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
@@ -167,7 +169,7 @@ export default {
       if (this.isWeixin) {
         // 微信内
         if (this.register_type !== 2) {
-          this.$refs.popupTip.open();
+          this.$refs.popup.open();
         }
       } else {
         this.$store.dispatch('session/logout').then(() => window.location.reload());
@@ -190,7 +192,7 @@ export default {
     // #endif
     // #ifdef H5
     handleClickCancel() {
-      this.$refs.popupTip.close();
+      this.$refs.popup.close();
     },
     // #endif
     // 设置粉丝点赞那些数字

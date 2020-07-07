@@ -247,6 +247,7 @@ $otherHeight: 292rpx;
   &_title {
     font-size: 35rpx;
     font-weight: 700;
+    word-break: break-all;
   }
   &_details {
     margin: 20rpx 0;
