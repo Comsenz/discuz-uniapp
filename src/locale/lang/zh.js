@@ -152,6 +152,7 @@ export default {
     noViewPermission: '没有查看权限，请点击返回首页',
     route_not_found: '路由未找到',
     no_bind_user: '未绑定用户',
+    account_has_been_bound: '用户或微信已绑定',
     thread_count_fail: '主题数操作错误',
     thread_behavior_fail: '主题状态异常',
     thread_action_fail: '主题操作异常',

@@ -205,6 +205,7 @@ $otherHeight: 292rpx;
   &_title {
     margin: 20rpx;
     font-weight: 600;
+    word-break: break-all;
   }
   &_details {
     display: flex;

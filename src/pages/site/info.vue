@@ -1,7 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
     <qui-header
-      head-img="/static/logo.png"
+      :head-img="
+        forums.set_site && forums.set_site.site_logo
+          ? forums.set_site.site_logo
+          : '/static/logo.png'
+      "
       :theme="i18n.t('home.theme')"
       :theme-num="forums.other && forums.other.count_users"
       :post-num="forums.other && forums.other.count_threads"
@@ -529,6 +533,9 @@ export default {
     padding: 35rpx 0;
     align-items: flex-start;
   }
+  .cell-item--left .cell-item__body__right {
+    text-align: left;
+  }
   .popup-pay {
     .pay-title,
     .pay-radio {
@@ -656,8 +663,5 @@ export default {
 }
 .site-item__person__content {
   display: inline-block;
-}
-.cell-item--left .cell-item__body__right {
-  text-align: left;
 }
 </style>
