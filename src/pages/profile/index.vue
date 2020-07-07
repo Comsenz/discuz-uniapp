@@ -309,6 +309,9 @@ export default {
       });
     },
   },
+  onUnload() {
+    this.$store.dispatch('forum/setError', { loading: false });
+  },
 };
 </script>
 <style lang="scss">
