@@ -66,25 +66,27 @@ export default {
             },
           },
         })
-        .then(success => {
-          this.state = true;
-          console.log('注册成功', success);
-          this.logind();
-          uni.showToast({
-            title: '注册成功',
-            duration: 2000,
-          });
-        })
-        .catch(registerErr => {
-          this.state = false;
-          if (!registerErr || !registerErr.data) {
-            return;
-          }
-          const err = registerErr.data;
-          if (err.errors && err.errors[0].code === 'validation_error') {
+        .then(result => {
+          if (result) {
             this.state = true;
+            console.log('注册成功', result);
+            this.logind();
+            uni.showToast({
+              title: '注册成功',
+              duration: 2000,
+            });
+          }
+          if (
+            result &&
+            result.data &&
+            result.data.errors &&
+            result.data.errors[0].code === 'validation_error'
+          ) {
+            this.state = false;
             this.noSenseh5Register(wxtoken, nickname);
           }
+        })
+        .catch(registerErr => {
           console.log(registerErr);
         });
     },

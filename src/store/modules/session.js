@@ -146,7 +146,8 @@ const actions = {
       console.log('http', http);
       return http
         .post('register', payload)
-        .then(results => setUserInfoStore(context, results, resolve));
+        .then(results => setUserInfoStore(context, results, resolve))
+        .catch(err => resolve(err));
     });
   },
   // #endif
