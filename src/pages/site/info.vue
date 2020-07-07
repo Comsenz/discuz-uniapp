@@ -529,6 +529,9 @@ export default {
     padding: 35rpx 0;
     align-items: flex-start;
   }
+  .cell-item--left .cell-item__body__right {
+    text-align: left;
+  }
   .popup-pay {
     .pay-title,
     .pay-radio {
@@ -656,8 +659,5 @@ export default {
 }
 .site-item__person__content {
   display: inline-block;
-}
-.cell-item--left .cell-item__body__right {
-  text-align: left;
 }
 </style>
