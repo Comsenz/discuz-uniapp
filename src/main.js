@@ -116,7 +116,7 @@ const app = new Vue({
     // #ifndef MP-WEIXIN
     uni.$on('stat', arg => {
       this.siteInfoStat = arg;
-      console.log(this.siteInfoStat.statisticsCode, '这是Main里面');
+      // console.log(this.siteInfoStat.statisticsCode, '这是Main里面');
       this.evalscript(this.siteInfoStat.statisticsCode);
     });
     // #endif

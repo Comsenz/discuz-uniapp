@@ -175,11 +175,18 @@ export default {
         this.forumError.code === TYPE_404 ||
         this.forumError.code === POST_DELETED
       ) {
-        console.log('这是Message里的404，走返回');
-        this.message.btnclickType = 'toBack';
-        uni.navigateBack({
-          delta: 1,
-        });
+        const pages = getCurrentPages();
+        const delta = pages.indexOf(pages[pages.length - 1]);
+        if (delta === 1) {
+          uni.navigateBack({
+            delta: 2,
+          });
+        } else {
+          uni.navigateTo({
+            url: `/pages/home/index`,
+          });
+        }
+        // console.log(typeof delta, '这是Message里的404，走返回');
       }
     },
     handleLoginClick() {
