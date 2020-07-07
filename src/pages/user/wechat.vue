@@ -6,7 +6,6 @@ import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
-import { getRandomChars } from '@/utils/getRandomChars';
 
 export default {
   mixins: [user, forums, appCommonH, loginAuth],
@@ -47,49 +46,6 @@ export default {
       login(params);
     }
     // #endif
-  },
-  methods: {
-    noSenseh5Register(wxtoken, nickname) {
-      let username = '';
-      if (this.state) {
-        username = nickname;
-      } else {
-        username = `${nickname}${getRandomChars(6)}`;
-      }
-      this.$store
-        .dispatch('session/h5Register', {
-          data: {
-            attributes: {
-              username,
-              password: '',
-              token: wxtoken,
-            },
-          },
-        })
-        .then(result => {
-          if (result.data.statusCode === 200) {
-            this.state = true;
-            console.log('注册成功', result);
-            this.logind();
-            uni.showToast({
-              title: '注册成功',
-              duration: 2000,
-            });
-          }
-          if (
-            result &&
-            result.data &&
-            result.data.errors &&
-            result.data.errors[0].code === 'validation_error'
-          ) {
-            this.state = false;
-            this.noSenseh5Register(wxtoken, nickname);
-          }
-        })
-        .catch(registerErr => {
-          console.log(registerErr);
-        });
-    },
   },
 };
 </script>
