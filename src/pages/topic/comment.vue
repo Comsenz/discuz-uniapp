@@ -380,6 +380,9 @@ export default {
       type: 1,
     };
   },
+  onUnload() {
+    this.$store.dispatch('forum/setError', { loading: false });
+  },
   onShow() {
     let atMemberList = '';
     this.getAtMemberData.map(item => {
