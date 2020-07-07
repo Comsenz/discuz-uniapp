@@ -118,7 +118,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
       <!-- #ifdef H5-->
-      <view class="record">
+      <view class="record" v-if="forums.set_site.site_record !== ''">
         <text>{{ i18n.t('home.record') }}</text>
         <text>{{ forums.set_site.site_record }}</text>
       </view>
