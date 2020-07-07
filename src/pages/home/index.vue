@@ -53,7 +53,6 @@ export default {
     show_index: {
       get() {
         const index = this.$store.state.footerTab.footerIndex;
-        console.log(index, 'index');
         return index;
       },
       set(index) {
@@ -157,12 +156,6 @@ export default {
     },
     handlePageLoaded() {
       this.showHome = true;
-      // this.$nextTick(() => {
-      //   console.log('nextTick。。。');
-      //   // 一定要等视图更新完再调用方法
-      //   this.$refs.home.ontrueGetList();
-      // });
-      console.log(this.showHome);
     },
   },
   onUnload() {
