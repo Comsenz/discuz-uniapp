@@ -67,7 +67,7 @@ export default {
           },
         })
         .then(result => {
-          if (result) {
+          if (result.data.statusCode === 200) {
             this.state = true;
             console.log('注册成功', result);
             this.logind();
