@@ -182,7 +182,7 @@ export default class Request {
           response.config = handleRe;
           if (this.validateStatus(response.statusCode)) {
             // 成功
-            console.log('成功response', response);
+            // console.log('成功response', response);
             response = this.requestComFun(response);
             resolve(response);
           } else {

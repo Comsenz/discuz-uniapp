@@ -97,6 +97,7 @@ const actions = {
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
+    const options = { custom: { loading: false } };
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
@@ -104,7 +105,7 @@ const actions = {
       return http
         .get(
           `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}`,
-          payload,
+          options,
         )
         .then(results => {
           resolve(results);

@@ -228,7 +228,7 @@ $height: calc(100vh - 150rpx);
     position: absolute;
     right: 0;
     bottom: 35rpx;
-    width: 100rpx;
+    width: 120rpx;
   }
   .cell-item__body__right-text {
     font-weight: bold;
