@@ -1,4 +1,5 @@
 <script>
+/* eslint-disable */
 import '@/common/stat';
 import { SITE_PAY, STORGE_GET_USER_TIME } from '@/common/const';
 import Vue from 'vue';
@@ -6,6 +7,11 @@ import Vue from 'vue';
 const themeListeners = [];
 
 export default {
+  data() {
+    return {
+      statisticsCode: '', // 统计代码
+    };
+  },
   globalData: {
     // #ifdef H5
     appLoadedStatus: false,
@@ -51,7 +57,10 @@ export default {
         user = await this.$store.dispatch('jv/get', [`users/${userId}`, { params }]);
         uni.setStorageSync(STORGE_GET_USER_TIME, new Date().getTime());
       }
-
+      this.statisticsCode = forums.set_site.site_stat;
+      uni.$emit('stat', {
+        statisticsCode: this.statisticsCode,
+      });
       if (forums.set_site.site_mode === SITE_PAY) {
         // #ifndef H5
         const res = uni.getSystemInfoSync();
@@ -97,6 +106,7 @@ export default {
       }
     }
   },
+
   onShow(options) {
     // 解决各类回调的兼容问题,验证码捕获captchaResult
     // #ifdef MP-WEIXIN
