@@ -77,9 +77,7 @@ export default {
           isWeixin &&
           this.forums &&
           this.forums.passport &&
-          this.forums.passport.offiaccount_close &&
-          this.forums.set_reg &&
-          this.forums.set_reg.register_type === 2
+          this.forums.passport.offiaccount_close
         ) {
           this.$store.dispatch('session/wxh5Login');
         } else {

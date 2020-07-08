@@ -38,8 +38,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log('shiabai');
-          console.log('shibai', err);
+          console.log(err);
         });
     };
     if (!this.$store.getters['session/get']('isLogin')) {
