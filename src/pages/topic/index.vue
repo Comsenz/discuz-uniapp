@@ -972,7 +972,7 @@ export default {
           if (err.statusCode === 404) {
             console.log('没找到');
             this.$store.dispatch('forum/setError', {
-              code: 'thread_deleted',
+              code: 'type_404',
               status: 500,
             });
           }

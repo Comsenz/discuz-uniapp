@@ -105,6 +105,9 @@ module.exports = {
       let username = '';
       if (this.state) {
         username = nickname;
+      } else if (nickname.length >= 15) {
+        const name = nickname.slice(0, 9);
+        username = `${name}${getRandomChars(6)}`;
       } else {
         username = `${nickname}${getRandomChars(6)}`;
       }
@@ -119,11 +122,10 @@ module.exports = {
           },
         })
         .then(result => {
-          if (result.data.statusCode === 200) {
+          if (result && result.data && result.data.data && result.data.data.id) {
             this.state = true;
             console.log('注册成功', result);
             this.logind();
-            window.location.reload();
             uni.showToast({
               title: '注册成功',
               duration: 2000,
