@@ -1,5 +1,5 @@
 <template>
-  <view class="themeCount" v-if="!isDeleted">
+  <view ref="themeCount" class="themeCount" v-if="!isDeleted">
     <image
       class="addFine"
       src="@/static/essence.png"
@@ -368,7 +368,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 滚动高度
+    scrollTop: {
+      type: Number,
+      default: 0,
+    },
   },
+
   data: () => {
     return {
       isAdmin: true,
@@ -381,6 +387,8 @@ export default {
       currentid: 0,
       categoryShow: true,
       imageStatus: true,
+      currentTop: 0,
+      currentBottom: 0,
     };
   },
 
@@ -398,8 +406,32 @@ export default {
       getCategoryIndex: state => state.session.categoryIndex,
     }),
   },
+  watch: {
+    scrollTop(newValue) {
+      if (this.currentTop === 0 && this.currentBottom === 0) {
+        return;
+      }
+
+      // console.log(
+      //   newValue,
+      //   this.currentBottom,
+      //   this.currentTop,
+      //   newValue > this.currentBottom || newValue < this.currentTop,
+      //   'watch',
+      // );
+      if (newValue > this.currentBottom || newValue < this.currentTop) {
+        this.videoContext.pause();
+      }
+    },
+  },
   mounted() {
     this.videoContext = wx.createVideoContext(`myvideo${this.$props.currentindex}`, this);
+    const myVideo = document.querySelector(`#${`myvideo${this.$props.currentindex}`}`);
+    if (myVideo) {
+      const offsetInfo = myVideo.getBoundingClientRect();
+      this.currentTop = this.$props.scrollTop + offsetInfo.top - document.body.offsetHeight;
+      this.currentBottom = this.$props.scrollTop + offsetInfo.top + offsetInfo.height;
+    }
   },
   methods: {
     // 点击删除按钮

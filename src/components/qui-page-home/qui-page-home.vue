@@ -100,6 +100,7 @@
           :video-id="item.threadVideo && item.threadVideo._jv.id"
           :cover-image="item.threadVideo && item.threadVideo.cover_url"
           :is-deleted="item.isDeleted"
+          :scroll-top="scrollTop"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -293,6 +294,7 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
+      scrollTop: 0,
     };
   },
   computed: {
@@ -400,6 +402,8 @@ export default {
       return ';';
     },
     scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+      // console.log(this.scrollTop, 'event');
       if (!this.navbarHeight) {
         return;
       }
