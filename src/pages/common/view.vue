@@ -1,6 +1,8 @@
 <template>
   <view>
-    <web-view :webview-styles="webviewStyles" :src="url"></web-view>
+    <qui-page>
+      <web-view :webview-styles="webviewStyles" :src="url"></web-view>
+    </qui-page>
   </view>
 </template>
 <script>
