@@ -8,7 +8,12 @@ module.exports = {
   methods: {
     handleLogin() {
       const { isWeixin } = appCommonH.isWeixin();
-      if (isWeixin) {
+      if (
+        isWeixin &&
+        this.forums &&
+        this.forums.passport &&
+        this.forums.passport.offiaccount_close
+      ) {
         this.$store.dispatch('session/wxh5Login');
       } else {
         this.login();

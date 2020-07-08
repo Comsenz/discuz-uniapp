@@ -1792,6 +1792,7 @@ export default {
         uni.navigateBack({
           delta,
         });
+        this.setFooterIndex(0);
       } else {
         uni.navigateTo({
           url: '/pages/home/index',

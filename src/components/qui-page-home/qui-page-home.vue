@@ -400,7 +400,6 @@ export default {
       return ';';
     },
     scroll(event) {
-      console.log(event, 'event');
       if (!this.navbarHeight) {
         return;
       }
