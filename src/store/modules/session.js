@@ -141,11 +141,12 @@ const actions = {
   // #endif
   // #ifdef H5
   h5Register: (context, payload = {}) => {
+    const options = { custom: { showTost: false } };
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
       return http
-        .post('register', payload)
+        .post('register', payload, options)
         .then(results => {
           resolve(results);
           setUserInfoStore(context, results, resolve);
