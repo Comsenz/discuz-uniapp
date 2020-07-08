@@ -81,6 +81,7 @@
             webkit-playsinline
             x5-playsinline
             controls
+            muted
             :page-gesture="false"
             show-fullscreen-btn="true"
             :show-play-btn="true"
