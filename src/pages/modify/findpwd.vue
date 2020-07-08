@@ -1,7 +1,10 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-findpwd">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('modify.findpawdtitle')"></qui-header-back>
+    <qui-header-back
+      :title="i18n.t('modify.findpawdtitle')"
+      :is-show-more="false"
+    ></qui-header-back>
     <!-- #endif -->
     <view class="retireve" @click.stop="toggleBox">
       <view class="retireve-tab">
@@ -376,6 +379,7 @@ export default {
     font-size: $fg-f40;
     line-height: 100rpx;
     text-align: right;
+    direction: rtl;
   }
   .retireve-button {
     margin: 52rpx 0 0;

@@ -354,7 +354,7 @@ export default {
     background: --color(--qui-BG-2);
   }
   .cell-item__body__content-title {
-    width: 112rpx;
+    width: 120rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
