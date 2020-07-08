@@ -924,7 +924,6 @@ export default {
           }
           break;
         case 3:
-          console.log(this.operating, this.uploadStatus, '编辑帖子');
           if (this.operating !== 'edit') {
             if (!this.uploadStatus) {
               this.$refs.toast.show({
