@@ -119,11 +119,10 @@ module.exports = {
           },
         })
         .then(result => {
-          if (result.data.statusCode === 200) {
+          if (result && result.data && result.data.data && result.data.data.id) {
             this.state = true;
             console.log('注册成功', result);
             this.logind();
-            window.location.reload();
             uni.showToast({
               title: '注册成功',
               duration: 2000,
