@@ -203,6 +203,7 @@ export default {
     loadMore: '上拉加载更多',
     TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
     available: '暂无数据',
+    userDeleted: '该用户已被删除',
   },
   topic: {
     topicPageTitle: '内容详情页',
