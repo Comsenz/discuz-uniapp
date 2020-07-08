@@ -97,7 +97,7 @@ const actions = {
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
-    const options = { custom: { loading: false } };
+    const options = { custom: { showTost: false } };
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
@@ -146,7 +146,8 @@ const actions = {
       console.log('http', http);
       return http
         .post('register', payload)
-        .then(results => setUserInfoStore(context, results, resolve));
+        .then(results => setUserInfoStore(context, results, resolve))
+        .catch(err => resolve(err));
     });
   },
   // #endif

@@ -78,6 +78,7 @@ const THREAD_DELETED = 'thread_deleted';
 const POST_DELETED = 'post_deleted';
 const IOS_DISPLAY = 'dataerro';
 const TYPE_401 = 'type_401';
+const USER_DELETED = 'user_deleted';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -135,6 +136,13 @@ const message = {
     icon: '@/static/msg-404.svg',
     btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
+  [USER_DELETED]: {
+    title: i18n.t('core.userDeleted'),
+    subtitle: '',
+    btnTxt: i18n.t('core.back_history'),
+    icon: '@/static/msg-404.svg',
+    btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
+  },
 };
 export default {
   filters: {
@@ -160,6 +168,7 @@ export default {
           THREAD_DELETED,
           POST_DELETED,
           TYPE_401,
+          USER_DELETED,
         ].indexOf(this.forumError.code) >= 0
       );
     },
@@ -173,7 +182,8 @@ export default {
         this.forumError.code === TYPE_401 ||
         this.forumError.code === THREAD_DELETED ||
         this.forumError.code === TYPE_404 ||
-        this.forumError.code === POST_DELETED
+        this.forumError.code === POST_DELETED ||
+        this.forumError.code === USER_DELETED
       ) {
         const pages = getCurrentPages();
         const delta = pages.indexOf(pages[pages.length - 1]);

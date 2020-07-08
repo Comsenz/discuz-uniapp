@@ -1,6 +1,7 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
+import { getRandomChars } from '@/utils/getRandomChars';
 
 module.exports = {
   mixins: [forums, user, appCommonH],
@@ -99,6 +100,48 @@ module.exports = {
           }
         }
       }
+    },
+    noSenseh5Register(wxtoken, nickname) {
+      let username = '';
+      if (this.state) {
+        username = nickname;
+      } else {
+        username = `${nickname}${getRandomChars(6)}`;
+      }
+      this.$store
+        .dispatch('session/h5Register', {
+          data: {
+            attributes: {
+              username,
+              password: '',
+              token: wxtoken,
+            },
+          },
+        })
+        .then(result => {
+          if (result.data.statusCode === 200) {
+            this.state = true;
+            console.log('注册成功', result);
+            this.logind();
+            window.location.reload();
+            uni.showToast({
+              title: '注册成功',
+              duration: 2000,
+            });
+          }
+          if (
+            result &&
+            result.data &&
+            result.data.errors &&
+            result.data.errors[0].code === 'validation_error'
+          ) {
+            this.state = false;
+            this.noSenseh5Register(wxtoken, nickname);
+          }
+        })
+        .catch(registerErr => {
+          console.log(registerErr);
+        });
     },
   },
 };
