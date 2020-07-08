@@ -122,7 +122,7 @@ module.exports = {
           },
         })
         .then(result => {
-          if (result && result.data && result.data.data && result.data.data.id) {
+          if (result && result.data && result.data.id) {
             this.state = true;
             console.log('注册成功', result);
             this.logind();
