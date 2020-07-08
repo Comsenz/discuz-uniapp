@@ -122,12 +122,21 @@ module.exports = {
           },
         })
         .then(result => {
-          if (result && result.data && result.data.data && result.data.data.id) {
+          if (result && result.data) {
             this.state = true;
-            console.log('注册成功', result);
+            console.log('注册成功1', result);
             this.logind();
             uni.showToast({
-              title: '注册成功',
+              title: '注册成功1',
+              duration: 2000,
+            });
+          }
+          if (result && result.data && result.data.data) {
+            this.state = true;
+            console.log('注册成功2', result);
+            this.logind();
+            uni.showToast({
+              title: '注册成功2',
               duration: 2000,
             });
           }
