@@ -118,7 +118,7 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
       <!-- #ifdef H5-->
-      <view class="record">
+      <view class="record" v-if="forums.set_site.site_record !== ''">
         <text>{{ i18n.t('home.record') }}</text>
         <text>{{ forums.set_site.site_record }}</text>
       </view>
@@ -754,6 +754,15 @@ export default {
         this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
       }
       this.playIndex = index;
+      // wx.createIntersectionObserver(that)
+      //   .relativeToViewport()
+      //   .observe('.video--wrap', res => {
+      //     if (res && res.intersectionRatio > 0) {
+      //       that.videoPlay();
+      //     } else {
+      //       that.videoPause();
+      //     }
+      //   });
     },
     // 组件初始化请求接口
     ontrueGetList() {

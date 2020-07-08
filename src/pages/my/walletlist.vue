@@ -22,14 +22,14 @@
         <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
       </picker>
     </view>
-    <view class="walletlist-items">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        class="scroll-y"
-      >
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      @scrolltolower="pullDown"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <view class="walletlist-items" v-show="dataList.length > 0">
         <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
@@ -41,11 +41,12 @@
               : `-￥${item.change_available_amount.substr(1)}`
           "
           :class-item="item.change_available_amount > 0 ? 'fail' : 'success'"
+          :border="index == dataList.length - 1 ? false : true"
           @click="toTopic(item)"
         ></qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
-      </scroll-view>
-    </view>
+      </view>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
+    </scroll-view>
   </qui-page>
 </template>
 
@@ -226,7 +227,6 @@ $height: calc(100vh - 150rpx);
 
 .walletlist /deep/ {
   min-height: auto;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
   }
@@ -249,6 +249,7 @@ $height: calc(100vh - 150rpx);
     /* #ifdef H5 */
     padding-top: 90rpx;
     /* #endif */
+    margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
@@ -263,8 +264,9 @@ $height: calc(100vh - 150rpx);
   }
   .walletlist-items {
     padding-left: 40rpx;
-    margin-top: 30rpx;
+    margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
 }
 

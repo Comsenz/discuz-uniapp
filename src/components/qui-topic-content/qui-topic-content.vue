@@ -103,6 +103,7 @@
         <video
           :poster="coverImage"
           v-if="themeType == 2 && videoStatus"
+          controls
           preload="auto"
           bindpause="handlepause"
           playsinline

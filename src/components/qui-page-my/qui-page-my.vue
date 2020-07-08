@@ -56,7 +56,7 @@
             <qui-cell-item
               :title="i18n.t('profile.search')"
               arrow
-              :class="userInfo.groupsName == '管理员' ? '' : 'no-border'"
+              :border="userInfo.groupsName == '管理员' ? true : false"
             ></qui-cell-item>
           </navigator>
           <navigator
@@ -79,18 +79,24 @@
         </view>
 
         <!-- #ifdef H5-->
-        <view class="logout" v-if="register_type !== 2">
-          <qui-button size="large" type="warn" @click="handleClick" v-if="isWeixin">
+        <!-- 微信内：无感模式不展示按钮，其他模式展示退出并解绑按钮，微信外：任何模式都展示退出登录按钮 -->
+        <view class="logout">
+          <qui-button
+            size="large"
+            type="warn"
+            @click="handleClick"
+            v-if="isWeixin && register_type !== 2"
+          >
             {{ i18n.t('user.noBind') }}
           </qui-button>
-          <qui-button size="large" type="warn" @click="handleClick" v-else>
+          <qui-button size="large" type="warn" @click="handleClick" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
           </qui-button>
         </view>
         <!-- #endif -->
       </view>
     </scroll-view>
-    <uni-popup ref="popupTip" type="center">
+    <uni-popup ref="popup" type="center">
       <uni-popup-dialog
         type="warn"
         content="点击下面的确定解绑按钮后，您将解除微信与本账号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本账号！"
@@ -137,6 +143,7 @@ export default {
       return userInfo;
     },
   },
+  // #ifdef H5
   created() {
     if (this.forums && this.forums.set_reg) {
       this.register_type = this.forums.set_reg.register_type;
@@ -147,6 +154,7 @@ export default {
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
   },
+  // #endif
   methods: {
     changeCheck(e) {
       getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
@@ -161,7 +169,7 @@ export default {
       if (this.isWeixin) {
         // 微信内
         if (this.register_type !== 2) {
-          this.$refs.popupTip.open();
+          this.$refs.popup.open();
         }
       } else {
         this.$store.dispatch('session/logout').then(() => window.location.reload());
@@ -177,14 +185,14 @@ export default {
         .then(res => {
           console.log('解绑成功', res);
           this.handleClickCancel();
-          window.location.reload();
+          this.$store.dispatch('session/logout').then(() => window.location.reload());
         })
         .catch(err => console.log(err));
     },
     // #endif
     // #ifdef H5
     handleClickCancel() {
-      this.$refs.popupTip.close();
+      this.$refs.popup.close();
     },
     // #endif
     // 设置粉丝点赞那些数字

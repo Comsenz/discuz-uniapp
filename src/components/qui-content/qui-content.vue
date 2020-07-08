@@ -80,6 +80,7 @@
             playsinline
             webkit-playsinline
             x5-playsinline
+            controls
             :page-gesture="false"
             show-fullscreen-btn="true"
             :show-play-btn="true"

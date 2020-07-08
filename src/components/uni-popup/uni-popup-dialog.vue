@@ -101,7 +101,6 @@ export default {
       val: '',
     };
   },
-  inject: ['popup'],
   watch: {
     type(val) {
       this.dialogType = val;
@@ -117,7 +116,7 @@ export default {
   },
   created() {
     // 对话框遮罩不可点击
-    this.popup.mkclick = false;
+    // this.popup.maskClick = false;
     if (this.mode === 'input') {
       this.dialogType = 'info';
       this.val = this.value;

@@ -67,10 +67,6 @@ export default {
   },
   methods: {
     navigate(url) {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.getters['session/get']('auth').open();
-        return;
-      }
       let toUrl = url;
 
       // 适应老h5 地址

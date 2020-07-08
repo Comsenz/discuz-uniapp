@@ -1,6 +1,6 @@
 <template>
   <view class="following">
-    <view class="follow-content">
+    <view class="follow-content" v-if="followingList.length > 0">
       <view
         class="follow-content__items"
         v-for="(followingItem, index) in followingList"
@@ -16,6 +16,7 @@
               ? followingItem.toUser.groups[0].name
               : ''
           "
+          :border="index == followingList.length - 1 ? false : true"
         >
           <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
           <view
@@ -48,8 +49,8 @@
           </view>
         </qui-cell-item>
       </view>
-      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </view>
+    <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
   </view>
 </template>
 
@@ -195,6 +196,7 @@ export default {
 }
 .follow-content {
   padding: 20rpx 0;
+  margin-bottom: 30rpx;
   background: --color(--qui-BG-2);
   box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
 }
