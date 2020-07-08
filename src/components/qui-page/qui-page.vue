@@ -72,14 +72,19 @@ export default {
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {
-        // #ifdef H5
         const { isWeixin } = appCommonH.isWeixin();
-        if (isWeixin) {
+        if (
+          isWeixin &&
+          this.forums &&
+          this.forums.passport &&
+          this.forums.passport.offiaccount_close &&
+          this.forums.set_reg &&
+          this.forums.set_reg.register_type === 2
+        ) {
           this.$store.dispatch('session/wxh5Login');
         } else {
           this.login();
         }
-        // #endif
       },
     });
     // #endif
