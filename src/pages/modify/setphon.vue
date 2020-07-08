@@ -58,6 +58,7 @@ import { status } from '@/library/jsonapi-vuex/index';
 export default {
   data() {
     return {
+      userid: '',
       iptValue: '',
       isFocus: false,
       second: 60,
@@ -80,7 +81,13 @@ export default {
     };
   },
   onLoad(arr) {
+    this.userid = this.usersid;
     this.typebind = arr.type || 'bind';
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     changeinput() {
@@ -196,6 +203,14 @@ export default {
             _this.$store.dispatch('jv/get', param).then(() => {
               // console.log(1, 'froums');
             });
+            const promsget = {
+              _jv: {
+                type: 'users',
+                id: this.userid,
+              },
+              // include: 'groups',
+            };
+            _this.$store.dispatch('jv/get', promsget).then(() => {});
             if (this.typebind === 'bind') {
               // #ifdef H5
               uni.navigateBack({

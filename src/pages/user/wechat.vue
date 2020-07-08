@@ -20,13 +20,13 @@ export default {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
-          if (res.statusCode === 200) {
+          if (res && res.data && res.data.data && res.data.data.id) {
             console.log('登录成功', res);
             this.logind();
-            return;
-          }
-          if (!res || !res.data) {
-            return;
+            uni.showToast({
+              title: '登录成功',
+              duration: 2000,
+            });
           }
           const err = res.data;
           if (err.errors) {

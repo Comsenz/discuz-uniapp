@@ -44,6 +44,7 @@ export default {
       judge: false,
       judge2: false,
       test: '',
+      hasPassword: '', // 是否有初始化密码
     };
   },
   onLoad() {
@@ -52,6 +53,9 @@ export default {
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
+    },
+    users() {
+      return this.$store.getters['jv/get'](`users/${this.usersid}`);
     },
   },
   methods: {

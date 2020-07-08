@@ -41,6 +41,7 @@ import { status } from '@/library/jsonapi-vuex/index';
 export default {
   data() {
     return {
+      userid: '',
       fun: true,
       myname: '',
       myid: '',
@@ -49,6 +50,14 @@ export default {
       judge: false,
       icon: 'none',
     };
+  },
+  onLoad() {
+    this.userid = this.usersid;
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
     realnameauthen() {
@@ -84,6 +93,7 @@ export default {
       }
     },
     authentication() {
+      const _this = this;
       const params = {
         _jv: {
           type: 'users/real',
@@ -95,6 +105,22 @@ export default {
       patchname
         .then(res => {
           if (res) {
+            const param = {
+              _jv: {
+                type: 'forum',
+              },
+            };
+            _this.$store.dispatch('jv/get', param).then(() => {
+              // console.log(1, 'froums');
+            });
+            const promsget = {
+              _jv: {
+                type: 'users',
+                id: this.userid,
+              },
+              // include: 'groups',
+            };
+            _this.$store.dispatch('jv/get', promsget).then(() => {});
             uni.showToast({
               title: this.i18n.t('modify.nameauthensucc'),
               duration: 2000,
