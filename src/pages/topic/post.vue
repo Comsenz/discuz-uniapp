@@ -900,6 +900,7 @@ export default {
           }
           break;
         case 3:
+          console.log(this.operating, this.uploadStatus, '编辑帖子');
           if (this.operating !== 'edit') {
             if (!this.uploadStatus) {
               this.$refs.toast.show({
@@ -909,6 +910,15 @@ export default {
             } else if (this.uploadFile.length < 1) {
               this.$refs.toast.show({
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+          } else {
+             if (!this.uploadStatus) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
               status = false;
             } else {

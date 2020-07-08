@@ -44,7 +44,6 @@ export default {
       judge: false,
       judge2: false,
       test: '',
-      hasPassword: '', // 是否有初始化密码
     };
   },
   onLoad() {
@@ -62,7 +61,16 @@ export default {
     submission() {
       if (this.valueused && this.valuenew) {
         if (this.valueused === this.valuenew) {
-          this.setpassword();
+          console.log(this.users);
+          if (this.users.hasPassword) {
+            uni.showToast({
+              icon: 'none',
+              title: this.i18n.t('modify.logoinpaswd'),
+              duration: 2000,
+            });
+          } else {
+            this.setpassword();
+          }
         } else {
           this.judge2 = true;
           this.test = this.i18n.t('modify.masstext');
