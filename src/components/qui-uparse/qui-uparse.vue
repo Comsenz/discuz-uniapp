@@ -80,14 +80,17 @@ export default {
           }
         }
       }
+      window.location.href = toUrl;
       // #endif
 
+      // #ifndef H5
       if (toUrl.indexOf('http') !== -1) {
         toUrl = `/pages/common/view?url=${encodeURIComponent(toUrl)}`;
       }
       uni.navigateTo({
         url: toUrl,
       });
+      // #endif
     },
   },
 };
