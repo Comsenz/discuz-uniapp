@@ -105,6 +105,9 @@ module.exports = {
       let username = '';
       if (this.state) {
         username = nickname;
+      } else if (nickname.length >= 15) {
+        const name = nickname.slice(0, 9);
+        username = `${name}${getRandomChars(6)}`;
       } else {
         username = `${nickname}${getRandomChars(6)}`;
       }
