@@ -36,28 +36,17 @@
           {{ message.btnTxt }}
         </qui-button>
       </navigator>
-      <navigator
-        v-else-if="show && message.btnclickType == 'toHome'"
-        class="out page-message--exit"
-        open-type="redirect"
-        hover-class="none"
-        target="miniProgram"
+
+      <qui-button
+        v-if="
+          (show && message.btnclickType == 'toBack') || (show && message.btnclickType == 'tHome')
+        "
+        size="medium"
+        @click="handleClick"
+        class="out-btn"
       >
-        <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}
-        </qui-button>
-      </navigator>
-      <navigator
-        v-else-if="show && message.btnclickType == 'toBack'"
-        class="out page-message--exit"
-        open-type="navigateBack"
-        hover-class="none"
-        target="miniProgram"
-      >
-        <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}
-        </qui-button>
-      </navigator>
+        {{ message.btnTxt }}
+      </qui-button>
 
       <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
         {{ i18n.t('core.admin_login') }}
@@ -187,16 +176,18 @@ export default {
       ) {
         const pages = getCurrentPages();
         const delta = pages.indexOf(pages[pages.length - 1]);
-        if (delta === 1) {
-          uni.navigateBack({
-            delta: 2,
-          });
-        } else {
-          uni.navigateTo({
+        console.log(delta, '$$$$$$$$$$');
+        if (delta === 0) {
+          // console.log('走跳转');
+          uni.redirectTo({
             url: `/pages/home/index`,
           });
+        } else {
+          // console.log('走返回');
+          uni.navigateBack({
+            delta: 1,
+          });
         }
-        // console.log(typeof delta, '这是Message里的404，走返回');
       }
     },
     handleLoginClick() {
