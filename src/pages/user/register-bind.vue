@@ -179,17 +179,17 @@ export default {
               title: '注册绑定成功',
               duration: 2000,
             });
-            if (
-              result &&
-              result.data &&
-              result.data.errors &&
-              result.data.errors[0].code === 'validation_error'
-            ) {
-              uni.showToast({
-                title: '用户名已存在',
-                duration: 2000,
-              });
-            }
+          }
+          if (
+            result &&
+            result.data &&
+            result.data.errors &&
+            result.data.errors[0].code === 'validation_error'
+          ) {
+            uni.showToast({
+              title: '用户名已存在',
+              duration: 2000,
+            });
           }
         })
         .catch(err => {
