@@ -57,7 +57,9 @@ export default {
   onLoad(params) {
     console.log('params', params);
     const { url, validate } = params;
-    this.url = url;
+    if (url) {
+      this.url = url;
+    }
     if (validate) {
       this.validate = JSON.parse(validate);
     }
@@ -119,7 +121,7 @@ export default {
     jump2Register() {
       console.log('跳转到注册页面');
       uni.navigateTo({
-        url: `/pages/user/register?url=${this.url}&validate=${this.validate}`,
+        url: `/pages/user/register?url=${this.url}&validate=${this.validate}&code=''`,
       });
     },
     jump2findPassword() {
