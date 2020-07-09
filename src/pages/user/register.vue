@@ -30,7 +30,7 @@
       <view class="register-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.register') }}
       </view>
-      <view class="register-box-exist" @click="jump2Login">
+      <view class="register-box-exist" @click="jump2Login" v-if="code === ''">
         {{ i18n.t('user.exist') }}
       </view>
     </view>
@@ -144,49 +144,28 @@ export default {
       // #endif
     },
     registerClick() {
-      let params = {};
+      const params = {
+        data: {
+          attributes: {
+            username: this.username,
+            password: this.password,
+          },
+        },
+      };
       if (this.register_captcha && this.validate) {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-              register_reason: this.reason,
-              captcha_ticket: this.ticket,
-              captcha_rand_str: this.randstr,
-            },
-          },
-        };
-      } else if (this.validate) {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-              register_reason: this.reason,
-            },
-          },
-        };
-      } else if (this.register_captcha) {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-              captcha_ticket: this.ticket,
-              captcha_rand_str: this.randstr,
-            },
-          },
-        };
-      } else {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-            },
-          },
-        };
+        params.data.attributes.register_reason = this.reason;
+        params.data.attributes.captcha_ticket = this.ticket;
+        params.data.attributes.captcha_rand_str = this.randstr;
+      }
+      if (this.validate) {
+        params.data.attributes.register_reason = this.reason;
+      }
+      if (this.register_captcha) {
+        params.data.attributes.captcha_ticket = this.ticket;
+        params.data.attributes.captcha_rand_str = this.randstr;
+      }
+      if (this.code !== '') {
+        params.data.attributes.code = this.code;
       }
       this.$store
         .dispatch('session/h5Register', params)
