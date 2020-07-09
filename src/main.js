@@ -26,6 +26,8 @@ const publicWhitelistPage = [
   '/pages/modify/findpwd',
   '/preview-image',
   '/pages/site/search',
+  '/pages/site/info',
+  '/pages/site/partner-invite',
 ];
 const payWhiteListPage = [
   '/pages/site/info',
