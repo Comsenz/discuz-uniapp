@@ -13,7 +13,13 @@
       />
       <input
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[0] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title
+            ? 'hidden-ipt-input2'
+            : show
+            ? dun
+              ? 'hidden-ipt-input'
+              : 'hidden-ipt-input alias'
+            : 'hidden-ipt-input alias'
         "
         :type="number"
         disabled
@@ -24,7 +30,7 @@
       />
       <input
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[1] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title ? 'hidden-ipt-input2' : iptValue[0] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
         "
         :type="number"
         disabled
@@ -35,7 +41,7 @@
       />
       <input
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[2] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title ? 'hidden-ipt-input2' : iptValue[1] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
         "
         :type="number"
         disabled
@@ -46,7 +52,7 @@
       />
       <input
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[3] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title ? 'hidden-ipt-input2' : iptValue[2] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
         "
         :type="number"
         disabled
@@ -57,7 +63,7 @@
       />
       <input
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[4] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title ? 'hidden-ipt-input2' : iptValue[3] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
         "
         :type="number"
         disabled
@@ -68,7 +74,7 @@
       />
       <input
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[5] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title ? 'hidden-ipt-input2' : iptValue[4] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
         "
         :type="number"
         disabled
