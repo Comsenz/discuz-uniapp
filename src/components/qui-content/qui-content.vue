@@ -81,7 +81,6 @@
             webkit-playsinline
             x5-playsinline
             controls
-            muted
             :page-gesture="false"
             show-fullscreen-btn="true"
             :show-play-btn="true"
@@ -441,6 +440,7 @@ export default {
 
     // #ifdef H5
     const myVideo = document.querySelector(`#${`myvideo${this.$props.currentindex}`}`);
+    console.log(myVideo, 'myVideo');
     if (myVideo) {
       const offsetInfo = myVideo.getBoundingClientRect();
       this.currentTop = this.$props.scrollTop + offsetInfo.top - document.body.offsetHeight;
