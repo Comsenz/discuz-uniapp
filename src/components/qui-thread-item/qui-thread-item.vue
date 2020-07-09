@@ -24,6 +24,7 @@
       :video-id="thread.threadVideo && thread.threadVideo._jv.id"
       :cover-image="thread.threadVideo && thread.threadVideo.cover_url"
       :is-deleted="thread.isDeleted"
+      :scroll-top="scrollTop"
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(
@@ -97,6 +98,7 @@ export default {
       shareTitle: '', // h5内分享复制链接
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
+      scrollTop: 0,
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -114,6 +116,9 @@ export default {
     };
   },
   methods: {
+    scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+    },
     // 内容部分点击跳转到详情页
     contentClick(id) {
       uni.navigateTo({

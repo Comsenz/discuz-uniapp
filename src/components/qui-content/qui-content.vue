@@ -411,13 +411,13 @@ export default {
         return;
       }
 
-      console.log(
-        newValue,
-        this.currentBottom,
-        this.currentTop,
-        newValue > this.currentBottom || newValue < this.currentTop,
-        'watch',
-      );
+      // console.log(
+      //   newValue,
+      //   this.currentBottom,
+      //   this.currentTop,
+      //   newValue > this.currentBottom || newValue < this.currentTop,
+      //   'watch',
+      // );
       if (newValue > this.currentBottom || newValue < this.currentTop) {
         this.videoContext.pause();
       }
