@@ -59,11 +59,6 @@
 <script>
 import { mapState } from 'vuex';
 import { i18n } from '@/locale';
-// #ifdef H5
-import forums from '@/mixin/forums';
-import loginAuth from '@/mixin/loginAuth-h5';
-import appCommonH from '@/utils/commonHelper';
-// #endif
 
 const TYPE_404 = 'type_404';
 const TYPE_CLOSED = 'site_closed';
@@ -146,9 +141,6 @@ export default {
       return subtitle;
     },
   },
-  // #ifdef H5
-  mixins: [forums, appCommonH, loginAuth],
-  // #endif
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -201,20 +193,8 @@ export default {
     },
     handleLoginClick() {
       // #ifdef H5
-      this.$store.dispatch('session/setAuth', {
-        open: () => {
-          const { isWeixin } = appCommonH.isWeixin();
-          if (
-            isWeixin &&
-            this.forums &&
-            this.forums.passport &&
-            this.forums.passport.offiaccount_close
-          ) {
-            this.$store.dispatch('session/wxh5Login');
-          } else {
-            this.login();
-          }
-        },
+      uni.navigateTo({
+        url: `/pages/user/login?url=/pages/home/index`,
       });
       // #endif
     },
