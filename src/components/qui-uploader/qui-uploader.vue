@@ -255,6 +255,7 @@ export default {
           }
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
+          _this.numberdata.splice(index, 1);
           return resolve(_this.uploadList);
         },
         fail(res) {
