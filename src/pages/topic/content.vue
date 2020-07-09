@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="pages-content">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('topic.topictitle')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <qui-page-message v-if="!query.id"></qui-page-message>
     <view v-else>
