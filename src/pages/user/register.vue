@@ -60,6 +60,7 @@ export default {
       reason: '', // 注册原因
       url: '', // 上一个页面的路径
       validate: false, // 默认不开启注册审核
+      code: '', // 注册邀请码
       register_captcha: false, // 默认不开启注册验证码
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
@@ -73,9 +74,16 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    const { url, validate } = params;
-    this.url = url;
-    this.validate = JSON.parse(validate);
+    const { url, validate, code } = params;
+    if (url) {
+      this.url = url;
+    }
+    if (validate) {
+      this.validate = JSON.parse(validate);
+    }
+    if (code) {
+      this.code = code;
+    }
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
