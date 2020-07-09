@@ -57,8 +57,12 @@ export default {
   onLoad(params) {
     console.log('params', params);
     const { url, validate } = params;
-    this.url = url;
-    this.validate = JSON.parse(validate);
+    if (url) {
+      this.url = url;
+    }
+    if (validate) {
+      this.validate = JSON.parse(validate);
+    }
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
@@ -117,7 +121,7 @@ export default {
     jump2Register() {
       console.log('跳转到注册页面');
       uni.navigateTo({
-        url: `/pages/user/register?url=${this.url}&validate=${this.validate}`,
+        url: `/pages/user/register?url=${this.url}&validate=${this.validate}&code=''`,
       });
     },
     jump2findPassword() {

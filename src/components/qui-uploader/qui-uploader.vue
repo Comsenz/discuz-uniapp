@@ -237,6 +237,16 @@ export default {
             _this.uploadList.push(resObj);
             // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
+            const resObj = JSON.parse(res.data);
+            if (resObj.errors[0].detail) {
+              uni.showToast({
+                icon: 'none',
+                title: `${resObj.errors[0].code}\n${resObj.errors[0].detail[0]}`,
+              });
+            } else {
+              uni.showToast({ icon: 'none', title: resObj.errors[0].code });
+            }
+
             _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
           }
           // 抛出接口信息

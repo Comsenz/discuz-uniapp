@@ -192,7 +192,11 @@ export default {
       }
     },
     handleLoginClick() {
-      this.$store.getters['session/get']('auth').open();
+      // #ifdef H5
+      uni.navigateTo({
+        url: `/pages/user/login?url=/pages/home/index`,
+      });
+      // #endif
     },
   },
 };

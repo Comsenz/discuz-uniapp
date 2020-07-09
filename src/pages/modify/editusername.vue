@@ -153,4 +153,11 @@ export default {
     margin: 50rpx auto 0;
   }
 }
+.chagepas-pas-btn /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
+  }
+}
 </style>

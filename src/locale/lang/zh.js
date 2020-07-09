@@ -78,6 +78,11 @@ export default {
       error: '加载失败',
       imageUploading: '图片上传中...',
     },
+    // 视频
+    video: {
+      error: '加载失败',
+      videoUploading: '视频上传中...',
+    },
     // 导航
     pageHeader: {
       title: '返回',
