@@ -222,6 +222,7 @@ export default {
         name: _this.name,
         formData: formdataObj,
         success(res) {
+          console.log(res, '~~~~~~~~~~~~~~~~');
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
             if (_this.numberdata[index]) {
@@ -237,6 +238,13 @@ export default {
             _this.uploadList.push(resObj);
             // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
+            const resObj = JSON.parse(res.data);
+            if (resObj.errors[0].code) {
+              uni.showToast({ icon: 'none', title: resObj.errors[0].code });
+            } else if (resObj.errors[0].detail[0]) {
+              uni.showToast({ icon: 'none', title: resObj.errors[0].detail[0] });
+            }
+
             _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
           }
           // 抛出接口信息
