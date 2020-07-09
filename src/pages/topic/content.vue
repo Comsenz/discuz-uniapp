@@ -99,7 +99,11 @@ export default {
       });
     } else {
       this.loadThreads();
-      this.$store.dispatch('jv/get', `topics/${query.id}`);
+      this.$store.dispatch('jv/get', `topics/${query.id}`).then(res => {
+        uni.setNavigationBarTitle({
+          title: res.content,
+        });
+      });
     }
 
     // #ifdef H5
