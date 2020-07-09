@@ -204,7 +204,10 @@ export default {
             err.data.errors &&
             err.data.errors[0].code === 'validation_error'
           ) {
-            this.registerBind();
+            uni.showToast({
+              title: '用户名已存在',
+              duration: 2000,
+            });
           }
           console.log(err);
         });
