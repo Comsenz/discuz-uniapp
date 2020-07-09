@@ -81,7 +81,6 @@
             webkit-playsinline
             x5-playsinline
             controls
-            muted
             :page-gesture="false"
             show-fullscreen-btn="true"
             :show-play-btn="true"
@@ -412,13 +411,13 @@ export default {
         return;
       }
 
-      // console.log(
-      //   newValue,
-      //   this.currentBottom,
-      //   this.currentTop,
-      //   newValue > this.currentBottom || newValue < this.currentTop,
-      //   'watch',
-      // );
+      console.log(
+        newValue,
+        this.currentBottom,
+        this.currentTop,
+        newValue > this.currentBottom || newValue < this.currentTop,
+        'watch',
+      );
       if (newValue > this.currentBottom || newValue < this.currentTop) {
         this.videoContext.pause();
       }
@@ -426,12 +425,27 @@ export default {
   },
   mounted() {
     this.videoContext = wx.createVideoContext(`myvideo${this.$props.currentindex}`, this);
+    // #ifdef MP-WEIXIN
+    if (this.$props.threadType === 2 && this.$props.payStatus) {
+      wx.createSelectorQuery()
+        .in(this)
+        .select(`#${`myvideo${this.$props.currentindex}`}`)
+        .boundingClientRect(rect => {
+          this.currentTop = this.$props.scrollTop + rect.top - wx.getSystemInfoSync().windowHeight;
+          this.currentBottom = this.$props.scrollTop + rect.top + rect.height;
+        })
+        .exec();
+    }
+    // #endif
+
+    // #ifdef H5
     const myVideo = document.querySelector(`#${`myvideo${this.$props.currentindex}`}`);
     if (myVideo) {
       const offsetInfo = myVideo.getBoundingClientRect();
       this.currentTop = this.$props.scrollTop + offsetInfo.top - document.body.offsetHeight;
       this.currentBottom = this.$props.scrollTop + offsetInfo.top + offsetInfo.height;
     }
+    // #endif
   },
   methods: {
     // 点击删除按钮

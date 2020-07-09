@@ -58,7 +58,9 @@ export default {
     console.log('params', params);
     const { url, validate } = params;
     this.url = url;
-    this.validate = JSON.parse(validate);
+    if (validate) {
+      this.validate = JSON.parse(validate);
+    }
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {

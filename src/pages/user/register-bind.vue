@@ -188,14 +188,27 @@ export default {
       this.$store
         .dispatch('session/h5Register', params)
         .then(res => {
-          console.log('注册绑定成功', res);
-          this.logind();
-          uni.showToast({
-            title: '注册绑定成功',
-            duration: 2000,
-          });
+          if (res && res.data && res.data.data && res.data.data.id) {
+            console.log('注册绑定成功', res);
+            this.logind();
+            uni.showToast({
+              title: '注册绑定成功',
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
+          if (
+            err &&
+            err.data &&
+            err.data.errors &&
+            err.data.errors[0].code === 'validation_error'
+          ) {
+            uni.showToast({
+              title: '用户名已存在',
+              duration: 2000,
+            });
+          }
           console.log(err);
         });
     },

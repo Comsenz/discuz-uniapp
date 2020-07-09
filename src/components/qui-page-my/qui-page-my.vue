@@ -85,9 +85,17 @@
             size="large"
             type="warn"
             @click="handleClick"
-            v-if="isWeixin && register_type !== 2"
+            v-if="isWeixin && offiaccount_close && register_type !== 2"
           >
             {{ i18n.t('user.noBind') }}
+          </qui-button>
+          <qui-button
+            size="large"
+            type="warn"
+            @click="handleClick"
+            v-if="isWeixin && !offiaccount_close"
+          >
+            {{ i18n.t('user.logout') }}
           </qui-button>
           <qui-button size="large" type="warn" @click="handleClick" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
@@ -128,6 +136,7 @@ export default {
       current: 0,
       checked: false,
       isWeixin: false, // 默认不是微信浏览器
+      offiaccount_close: false, // 默认不开启微信公众号
       register_type: 0, // 注册模式
       site_mode: '', // 站点模式
     };
@@ -151,6 +160,9 @@ export default {
     if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
     }
+    if (this.forums && this.forums.passport) {
+      this.offiaccount_close = this.forums.passport.offiaccount_close;
+    }
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
   },
@@ -168,8 +180,12 @@ export default {
     handleClick() {
       if (this.isWeixin) {
         // 微信内
-        if (this.register_type !== 2) {
-          this.$refs.popup.open();
+        if (this.offiaccount_close) {
+          if (this.register_type !== 2) {
+            this.$refs.popup.open();
+          }
+        } else {
+          this.$store.dispatch('session/logout').then(() => window.location.reload());
         }
       } else {
         this.$store.dispatch('session/logout').then(() => window.location.reload());
