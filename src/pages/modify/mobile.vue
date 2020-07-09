@@ -280,4 +280,11 @@ export default {
     margin: 52rpx auto 0;
   }
 }
+.modify-button /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
+  }
+}
 </style>

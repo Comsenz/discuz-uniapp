@@ -166,4 +166,11 @@ export default {
     margin: 50rpx 0 0;
   }
 }
+.aogph-tab-button /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
+  }
+}
 </style>
