@@ -237,9 +237,7 @@ export default {
             _this.uploadList.push(resObj);
             // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
-            console.log(res, '~~~~~~');
             const resObj = JSON.parse(res.data);
-            console.log(resObj.errors[0].code, '~~55555~~~');
             if (resObj.errors[0].detail) {
               uni.showToast({
                 icon: 'none',

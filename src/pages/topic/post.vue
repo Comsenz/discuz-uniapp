@@ -206,7 +206,7 @@
           <view class="post-box__video__play__load play-load" v-if="videoPercent * 100 < 100">
             <view class="post-box__video__play__load__mask"></view>
             <text class="post-box__video__play__load__text">
-              {{ i18n.t('discuzq.image.imageUploading') }}
+              {{ i18n.t('discuzq.video.videoUploading') }}
             </text>
 
             <progress
@@ -721,6 +721,7 @@ export default {
             success(result) {},
             error(result) {
               _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
+              _this.videoPercent = 0;
             },
             progress(result) {
               console.log(result, '这是小程序将上传结果');
@@ -939,7 +940,7 @@ export default {
               status = true;
             }
           } else {
-             if (!this.uploadStatus) {
+            if (!this.uploadStatus) {
               this.$refs.toast.show({
                 message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
@@ -1599,7 +1600,7 @@ export default {
       &__load {
         position: absolute;
         top: 0;
-        z-index: 1;
+        z-index: 98;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -1659,7 +1660,7 @@ export default {
 }
 
 .play-load {
-  &__mask {
+  .post-box__video__play__load__mask {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -1669,7 +1670,7 @@ export default {
     opacity: 0.7;
   }
 
-  &__text {
+  .post-box__video__play__load__text {
     position: relative;
     z-index: 2;
     font-size: $fg-f28;
