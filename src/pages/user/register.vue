@@ -30,7 +30,7 @@
       <view class="register-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.register') }}
       </view>
-      <view class="register-box-exist" @click="jump2Login" v-if="code === ''">
+      <view class="register-box-exist" @click="jump2Login" v-if="code !== 'undefined'">
         {{ i18n.t('user.exist') }}
       </view>
     </view>
@@ -81,7 +81,7 @@ export default {
     if (validate) {
       this.validate = JSON.parse(validate);
     }
-    if (code) {
+    if (code !== 'undefined') {
       this.code = code;
     }
     console.log('validate', typeof this.validate);

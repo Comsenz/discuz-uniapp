@@ -127,7 +127,7 @@ export default {
     jump2VerificationCodeLogin() {
       console.log('跳转到验证码登录页面');
       uni.navigateTo({
-        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}&code=''`,
+        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
       });
     },
     jump2findPassword() {
