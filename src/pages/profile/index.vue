@@ -330,7 +330,7 @@ export default {
   padding: 40rpx;
   padding-top: 30rpx;
   /* #ifdef H5 */
-  margin-top: 90rpx;
+  margin-top: 44px;
   /* #endif */
   font-size: $fg-f28;
   background: --color(--qui-BG-2);
