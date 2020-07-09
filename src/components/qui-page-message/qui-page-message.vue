@@ -25,6 +25,7 @@
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
+      <!--#ifdef MP-WEIXIN -->
       <navigator
         v-if="show && message.btnclickType == 'siteClose'"
         class="out page-message--exit"
@@ -32,11 +33,11 @@
         hover-class="none"
         target="miniProgram"
       >
-        <qui-button size="medium" @click="handleClick" class="out-btn">
+        <qui-button size="medium" class="out-btn">
           {{ message.btnTxt }}
         </qui-button>
       </navigator>
-
+      <!-- #endif -->
       <qui-button
         v-if="
           (show && message.btnclickType == 'toBack') || (show && message.btnclickType == 'tHome')
