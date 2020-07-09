@@ -391,4 +391,11 @@ export default {
     color: --color(--qui-RED);
   }
 }
+.retireve-button /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
+  }
+}
 </style>
