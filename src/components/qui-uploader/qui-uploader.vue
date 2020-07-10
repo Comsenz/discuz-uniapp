@@ -226,9 +226,7 @@ export default {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
             setTimeout(() => {
-              if (_this.numberdata[index]) {
-                _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
-              }
+              _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
             }, 500);
             // console.log(JSON.parse(res.data), '~~~~~~~~~');
             const resObj = {
@@ -264,6 +262,7 @@ export default {
         fail(res) {
           _this.uploadBeforeList.splice(index, 1);
           _this.uploadList.splice(index, 1);
+          _this.numberdata.splice(index, 1);
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
