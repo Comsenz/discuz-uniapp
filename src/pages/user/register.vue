@@ -182,11 +182,11 @@ export default {
             result &&
             result.data &&
             result.data.errors &&
-            result.data.errors[0].code === 'validation_error'
+            result.data.errors[0].status === '422'
           ) {
             uni.showToast({
               icon: 'none',
-              title: '用户名已存在',
+              title: result.data.errors[0].detail[0],
               duration: 2000,
             });
           }
