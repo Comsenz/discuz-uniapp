@@ -317,7 +317,7 @@ export default {
   height: 125rpx;
 }
 .active {
-  color: #1878f3;
+  color: --color(--qui-TAB);
 }
 .red-circle {
   position: absolute;

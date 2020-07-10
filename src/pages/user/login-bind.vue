@@ -58,7 +58,7 @@ export default {
     if (validate) {
       this.validate = JSON.parse(validate);
     }
-    if (code) {
+    if (code !== 'undefined') {
       this.code = code;
     }
     if (token) {
@@ -127,7 +127,7 @@ export default {
     jump2RegisterBind() {
       console.log('注册并绑定页');
       uni.navigateTo({
-        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=''`,
+        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
       });
     },
   },

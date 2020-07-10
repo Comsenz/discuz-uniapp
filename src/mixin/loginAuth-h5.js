@@ -6,7 +6,7 @@ import { getRandomChars } from '@/utils/getRandomChars';
 module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin() {
+    handleLogin(code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (
         isWeixin &&
@@ -16,7 +16,7 @@ module.exports = {
       ) {
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login();
+        this.login('', '', code);
       }
       return false;
     },
