@@ -187,6 +187,7 @@ export default {
             result.data.errors[0].code === 'validation_error'
           ) {
             uni.showToast({
+              icon: 'none',
               title: '用户名已存在',
               duration: 2000,
             });
