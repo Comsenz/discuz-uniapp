@@ -478,7 +478,7 @@ export default {
         });
       } else {
         this.$store.getters['session/get']('auth').open();
-        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingTopic') });
       }
     },
     // 点击头像调转到个人主页
