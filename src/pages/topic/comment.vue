@@ -257,7 +257,9 @@
     >
       <u-loading :size="60"></u-loading>
     </view>
-    <qui-page-message v-else-if="thread.isDeleted || post.isDeleted"></qui-page-message>
+    <qui-page-message
+      v-else-if="thread.isDeleted || post.isDeleted || !loaded || !status"
+    ></qui-page-message>
   </qui-page>
 </template>
 
@@ -380,6 +382,9 @@ export default {
       type: 1,
     };
   },
+  onUnload() {
+    this.$store.dispatch('forum/setError', { loading: false });
+  },
   onShow() {
     let atMemberList = '';
     this.getAtMemberData.map(item => {
@@ -418,7 +423,7 @@ export default {
           .then(data => {
             if (data.isDeleted) {
               this.$store.dispatch('forum/setError', {
-                code: 'post_deleted',
+                code: 'TYPE_404',
                 status: 500,
               });
               this.loaded = false;
@@ -442,6 +447,12 @@ export default {
             this.loaded = false;
             this.loadingStatus = false;
             console.log(err);
+            if (err.statusCode === 404) {
+              this.$store.dispatch('forum/setError', {
+                code: 'type_404',
+                status: 500,
+              });
+            }
           }),
       );
     },
@@ -471,6 +482,12 @@ export default {
             this.status = false;
             this.loadingStatus = false;
             console.log(err);
+            if (err.statusCode === 404) {
+              this.$store.dispatch('forum/setError', {
+                code: 'type_404',
+                status: 500,
+              });
+            }
           }),
       );
     },

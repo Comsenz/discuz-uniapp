@@ -244,8 +244,14 @@ export default {
     },
     // 首页底部发帖点击事件跳转
     handleClick(item) {
+      let url;
+      if (this.footerIndex === 0) {
+        url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+      } else {
+        url = `/pages/topic/post?type=${item.type}`;
+      }
       uni.navigateTo({
-        url: `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
+        url,
       });
       this.cancel();
     },
@@ -311,7 +317,7 @@ export default {
   height: 125rpx;
 }
 .active {
-  color: #1878f3;
+  color: --color(--qui-TAB);
 }
 .red-circle {
   position: absolute;

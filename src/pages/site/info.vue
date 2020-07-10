@@ -1,7 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
     <qui-header
-      head-img="/static/logo.png"
+      :head-img="
+        forums.set_site && forums.set_site.site_logo
+          ? forums.set_site.site_logo
+          : '/static/logo.png'
+      "
       :theme="i18n.t('home.theme')"
       :theme-num="forums.other && forums.other.count_users"
       :post-num="forums.other && forums.other.count_threads"
@@ -204,17 +208,16 @@ export default {
     pay() {
       return this.i18n.t('pay');
     },
+    userId() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   onLoad() {
     // #ifdef MP-WEIXIN
     uni.hideHomeButton();
     // #endif
-    // #ifndef MP-WEIXIN
-    this.isWeixin = appCommonH.isWeixin().isWeixin;
-    this.isPhone = appCommonH.isWeixin().isPhone;
-    this.browser = 1;
-    // #endif
     this.$u.event.$on('logind', data => {
+      // 登陆成功后如果是已付费去首页
       if (data.paid) {
         uni.redirectTo({
           url: '/pages/home/index',
@@ -223,22 +226,22 @@ export default {
     });
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone;
+    this.browser = 1;
     // #endif
-  },
-  onShow() {
-    // #ifdef  H5
-    const that = this;
-    uni.getStorage({
-      key: 'orderSn',
-      success(res) {
-        if (res.data) {
-          setTimeout(() => {
-            that.getOrderStatus(res.data, '2');
-          }, 500);
-        }
-      },
+    if (!this.userId) {
+      return;
+    }
+    const params = {
+      include: 'groups,wechat',
+    };
+    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
+      if (res.paid) {
+        uni.redirectTo({
+          url: '/pages/home/index',
+        });
+      }
     });
-    // #endif
   },
   onUnload() {
     clearInterval(payWechat);
@@ -346,11 +349,6 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          // 把订单号存起来
-          uni.setStorage({
-            key: 'orderSn',
-            data: orderSn,
-          });
           window.location.href = res.wechat_h5_link;
         } else if (browserType === '3') {
           if (res) {
@@ -376,32 +374,22 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
-          // uni.showToast({
-          //   title: `支付状态值${this.payStatus}----订单编号${orderSn}`,
-          //   duration: 10000,
-          // });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
-            uni.removeStorage({
-              key: 'orderSn',
-            });
             if (browserType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
             }
             window.location.href = '/pages/home/index';
-            // uni.navigateTo({
-            //   url: '',
-            // });
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
+        })
+        .catch(() => {
+          this.coverLoading = false;
+          this.$refs.toast.show({ message: this.pay.payFail });
         });
-      // .catch(() => {
-      //   this.coverLoading = false;
-      //   this.$refs.toast.show({ message: this.pay.payFail });
-      // });
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
@@ -528,6 +516,9 @@ export default {
     height: auto;
     padding: 35rpx 0;
     align-items: flex-start;
+  }
+  .cell-item--left .cell-item__body__right {
+    text-align: left;
   }
   .popup-pay {
     .pay-title,
@@ -656,8 +647,5 @@ export default {
 }
 .site-item__person__content {
   display: inline-block;
-}
-.cell-item--left .cell-item__body__right {
-  text-align: left;
 }
 </style>

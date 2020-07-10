@@ -1,7 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
     <qui-header
-      head-img="/static/logo.png"
+      :head-img="
+        forums.set_site && forums.set_site.site_logo
+          ? forums.set_site.site_logo
+          : '/static/logo.png'
+      "
       :theme="i18n.t('home.theme')"
       :theme-num="siteInfo.count_users"
       :post-num="siteInfo.count_threads"
@@ -350,7 +354,7 @@ export default {
     background: --color(--qui-BG-2);
   }
   .cell-item__body__content-title {
-    width: 112rpx;
+    width: 120rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }

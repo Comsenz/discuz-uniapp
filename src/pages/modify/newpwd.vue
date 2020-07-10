@@ -53,12 +53,24 @@ export default {
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
+    users() {
+      return this.$store.getters['jv/get'](`users/${this.usersid}`);
+    },
   },
   methods: {
     submission() {
       if (this.valueused && this.valuenew) {
         if (this.valueused === this.valuenew) {
-          this.setpassword();
+          console.log(this.users);
+          if (this.users.hasPassword) {
+            uni.showToast({
+              icon: 'none',
+              title: this.i18n.t('modify.logoinpaswd'),
+              duration: 2000,
+            });
+          } else {
+            this.setpassword();
+          }
         } else {
           this.judge2 = true;
           this.test = this.i18n.t('modify.masstext');
@@ -181,6 +193,13 @@ export default {
     font-size: $fg-f24;
     font-weight: 400;
     color: --color(--qui-RED);
+  }
+}
+.setuppas-pas-btn /deep/.qui-button--button {
+  &[size='large'] {
+    font-size: $fg-f28;
+    color: --color(--qui-FC-FFF);
+    border-radius: 7rpx;
   }
 }
 </style>

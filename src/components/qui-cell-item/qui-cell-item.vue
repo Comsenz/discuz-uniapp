@@ -151,6 +151,7 @@ export default {
 
 .cell-item__body__right .cell-item__body__right-text {
   font-size: $fg-f28;
+  word-break: break-all;
 }
 
 .cell-item__children {

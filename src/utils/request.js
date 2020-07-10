@@ -21,6 +21,7 @@ export default class Request {
     // #endif
     custom: {
       loading: true,
+      showTost: true,
     },
     // #ifdef MP-ALIPAY
     timeout: 30000,
@@ -181,7 +182,7 @@ export default class Request {
           response.config = handleRe;
           if (this.validateStatus(response.statusCode)) {
             // 成功
-            console.log('成功response', response);
+            // console.log('成功response', response);
             response = this.requestComFun(response);
             resolve(response);
           } else {

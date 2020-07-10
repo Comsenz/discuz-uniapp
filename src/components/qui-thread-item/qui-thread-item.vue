@@ -24,6 +24,7 @@
       :video-id="thread.threadVideo && thread.threadVideo._jv.id"
       :cover-image="thread.threadVideo && thread.threadVideo.cover_url"
       :is-deleted="thread.isDeleted"
+      :scroll-top="scrollTop"
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(
@@ -48,14 +49,14 @@
               <view class="popup-share-box" @click="shareContent(index)">
                 <qui-icon
                   class="content-image"
-                  :name="thread.icon"
+                  :name="item.icon"
                   size="46"
                   color="#777777"
                 ></qui-icon>
               </view>
               <!-- <image :src="thread.icon" class="content-image" mode="widthFix" /> -->
             </view>
-            <text class="popup-share-content-text">{{ thread.text }}</text>
+            <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
         </view>
         <view class="popup-share-content-space"></view>
@@ -69,9 +70,11 @@
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 // #endif
+import forums from '@/mixin/forums';
 
 export default {
   mixins: [
+    forums,
     // #ifdef  H5
     wxshare,
     // #endif
@@ -95,6 +98,7 @@ export default {
       shareTitle: '', // h5内分享复制链接
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
+      scrollTop: 0,
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -112,6 +116,9 @@ export default {
     };
   },
   methods: {
+    scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+    },
     // 内容部分点击跳转到详情页
     contentClick(id) {
       uni.navigateTo({
@@ -129,7 +136,6 @@ export default {
     // #ifdef H5
     closeShare() {
       this.shareShow = false;
-      console.log(this.shareShow, '8888');
     },
     // #endif
 
@@ -189,6 +195,7 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      console.log(this.bottomData, 'this.bottomData');
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;

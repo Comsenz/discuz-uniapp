@@ -15,11 +15,12 @@
           v-for="(item, index) in list"
           :key="index"
           @tap="clickTab({ index: index, id: item._jv.id })"
+          :class="currentIndex === index ? 'tabActive' : ''"
           :style="[tabItemStyle(+index)]"
         >
           {{ item.name }}
         </view>
-        <view v-if="showBar" class="u-tab-bar" :style="[tabBarStyle]"></view>
+        <view v-if="showBar" class="u-tab-bar tabBarBg" :style="[tabBarStyle]"></view>
       </view>
     </scroll-view>
   </view>
@@ -154,7 +155,7 @@ export default {
         width: `${this.barWidth}px`,
         transform: `translate(${this.scrollBarLeft}px)`,
         'transition-duration': `${this.duration}s`,
-        'background-color': this.activeColor,
+        // 'background-color': this.activeColor,
         height: `${this.barHeight}rpx`,
         // 设置一个很大的值，它会自动取能用的最大值，不用高度的一半，是因为高度可能是单数，会有小数出现
         'border-radius': `${this.barHeight / 2}px`,
@@ -178,7 +179,7 @@ export default {
         if (index === this.currentIndex && this.bold) style.fontWeight = 'bold';
         if (index === this.currentIndex) style['font-size'] = '28rpx';
         if (index === this.currentIndex) {
-          style.color = this.activeColor;
+          // style.color = this.activeColor;
           // style.font-size = 28;
           // 给选中的tab item添加外部自定义的样式
           style = Object.assign(style, this.activeItemStyle);
@@ -223,6 +224,8 @@ export default {
     },
     // 点击某一个tab菜单
     clickTab(dataInfo) {
+      console.log(dataInfo.index);
+      this.currentIndex = dataInfo.index;
       // 发送事件给父组件
       this.$emit('change', dataInfo);
     },
@@ -319,7 +322,12 @@ $screen: 80rpx;
   transition-property: background-color, color;
   transition: $switch-theme-time;
 }
-
+.tabActive {
+  color: --color(--qui-TAB);
+}
+.tabBarBg {
+  background-color: --color(--qui-TAB-BAR);
+}
 .u-tab-bar {
   position: absolute;
   bottom: 0;

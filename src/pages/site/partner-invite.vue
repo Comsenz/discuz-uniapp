@@ -1,7 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site">
     <qui-header
-      head-img="/static/logo.png"
+      :head-img="
+        forums.set_site && forums.set_site.site_logo
+          ? forums.set_site.site_logo
+          : '/static/logo.png'
+      "
       :theme="i18n.t('home.theme')"
       :theme-num="forums.other && forums.other.count_users"
       :post-num="forums.other && forums.other.count_threads"
@@ -81,28 +85,42 @@
         <text>{{ i18n.t('site.site') }}</text>
       </view>
       <view class="site-invite__button">
-        <qui-button type="primary" size="large" @click="submit">
+        <qui-button type="primary" size="large" @click="check">
           {{ i18n.t('site.accepttheinvitationandbecome') }}
           {{ inviteData.group && inviteData.group.name }}
         </qui-button>
       </view>
     </view>
+    <uni-popup ref="popCode" type="center">
+      <uni-popup-dialog
+        type="warning"
+        :before-close="true"
+        :content="codeTips"
+        @close="handleInviteCancel"
+        @confirm="handleInviteOk"
+      ></uni-popup-dialog>
+    </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </qui-page>
 </template>
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
+import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 
 export default {
+  components: { uniPopupDialog },
   mixins: [
     forums,
     // #ifdef  H5
     wxshare,
+    loginAuth,
     appCommonH,
     // #endif
   ],
@@ -114,6 +132,7 @@ export default {
       shareShow: false, // h5内分享提示信息
       isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
+      codeTips: '',
     };
   },
   onLoad(params) {
@@ -185,10 +204,38 @@ export default {
     close() {
       this.$refs.auth.close();
     },
-    submit() {
-      uni.navigateTo({
-        url: '/pages/home/index',
-      });
+    check() {
+      // 处理邀请码状态 status 0 失效  1 未使用  2 已使用 3 已过期
+      const statusVal =
+        this.inviteData.status || this.inviteData.status === 0 ? this.inviteData.status : 'error';
+      switch (statusVal) {
+        case 0: {
+          this.codeTips = this.i18n.t('site.codeinvalid');
+          this.$refs.popCode.open();
+          break;
+        }
+        case 1: {
+          this.submit();
+          break;
+        }
+        case 2: {
+          this.codeTips = this.i18n.t('site.codeused');
+          this.$refs.popCode.open();
+          break;
+        }
+        case 3: {
+          this.codeTips = this.i18n.t('site.codeexpired');
+          this.$refs.popCode.open();
+          break;
+        }
+        case 'error': {
+          this.codeTips = this.i18n.t('site.codenotfound');
+          this.$refs.popCode.open();
+          break;
+        }
+        default:
+          return '';
+      }
     },
     getInviteInfo(code) {
       status
@@ -197,6 +244,41 @@ export default {
           this.inviteData = res;
           this.permission = res.group.permission;
         });
+    },
+    handleInviteCancel() {
+      this.$refs.popCode.close();
+    },
+    handleInviteOk() {
+      this.$refs.popCode.close();
+      this.submit();
+    },
+    submit() {
+      // 未登陆的情况
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        this.handleLogin(this.code);
+        // #endif
+      } else {
+        // 已经登陆的情况
+        // #ifdef MP-WEIXIN
+        uni.navigateTo({
+          url: '/pages/home/index',
+        });
+        // #endif
+        // #ifdef H5
+        if (this.forums.set_reg.register_type === 2 && this.isWeixin === true) {
+          // 无感模式
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        } else {
+          this.$refs.toast.show({ message: this.i18n.t('site.codeforbid') });
+        }
+        // #endif
+      }
     },
   },
 };

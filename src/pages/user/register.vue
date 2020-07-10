@@ -30,7 +30,7 @@
       <view class="register-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.register') }}
       </view>
-      <view class="register-box-exist" @click="jump2Login">
+      <view class="register-box-exist" @click="jump2Login" v-if="code !== 'undefined'">
         {{ i18n.t('user.exist') }}
       </view>
     </view>
@@ -60,6 +60,7 @@ export default {
       reason: '', // 注册原因
       url: '', // 上一个页面的路径
       validate: false, // 默认不开启注册审核
+      code: '', // 注册邀请码
       register_captcha: false, // 默认不开启注册验证码
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
@@ -73,9 +74,16 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    const { url, validate } = params;
-    this.url = url;
-    this.validate = JSON.parse(validate);
+    const { url, validate, code } = params;
+    if (url) {
+      this.url = url;
+    }
+    if (validate) {
+      this.validate = JSON.parse(validate);
+    }
+    if (code !== 'undefined') {
+      this.code = code;
+    }
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
@@ -136,59 +144,51 @@ export default {
       // #endif
     },
     registerClick() {
-      let params = {};
+      const params = {
+        data: {
+          attributes: {
+            username: this.username,
+            password: this.password,
+          },
+        },
+      };
       if (this.register_captcha && this.validate) {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-              register_reason: this.reason,
-              captcha_ticket: this.ticket,
-              captcha_rand_str: this.randstr,
-            },
-          },
-        };
-      } else if (this.validate) {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-              register_reason: this.reason,
-            },
-          },
-        };
-      } else if (this.register_captcha) {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-              captcha_ticket: this.ticket,
-              captcha_rand_str: this.randstr,
-            },
-          },
-        };
-      } else {
-        params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-            },
-          },
-        };
+        params.data.attributes.register_reason = this.reason;
+        params.data.attributes.captcha_ticket = this.ticket;
+        params.data.attributes.captcha_rand_str = this.randstr;
+      }
+      if (this.validate) {
+        params.data.attributes.register_reason = this.reason;
+      }
+      if (this.register_captcha) {
+        params.data.attributes.captcha_ticket = this.ticket;
+        params.data.attributes.captcha_rand_str = this.randstr;
+      }
+      if (this.code !== '') {
+        params.data.attributes.code = this.code;
       }
       this.$store
         .dispatch('session/h5Register', params)
-        .then(res => {
-          console.log('注册成功', res);
-          this.logind();
-          uni.showToast({
-            title: '注册成功',
-            duration: 2000,
-          });
+        .then(result => {
+          if (result && result.data && result.data.data && result.data.data.id) {
+            console.log('注册绑定成功', result);
+            this.logind();
+            uni.showToast({
+              title: '注册绑定成功',
+              duration: 2000,
+            });
+          }
+          if (
+            result &&
+            result.data &&
+            result.data.errors &&
+            result.data.errors[0].code === 'validation_error'
+          ) {
+            uni.showToast({
+              title: '用户名已存在',
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
           console.log(err);
@@ -238,6 +238,7 @@ export default {
     .input {
       width: 100%;
       height: 100rpx;
+      padding: 0rpx 0rpx 0rpx 20rpx;
       font-size: $fg-f34;
       line-height: 100rpx;
       text-align: left;

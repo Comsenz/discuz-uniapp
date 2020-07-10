@@ -124,6 +124,7 @@ export default {
   width: 100%;
   height: 400rpx;
   background: #1878f3;
+  background-size: 100%;
   .logo {
     display: block;
     // width: 100%;

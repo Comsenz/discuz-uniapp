@@ -56,7 +56,7 @@
             <qui-cell-item
               :title="i18n.t('profile.search')"
               arrow
-              :class="userInfo.groupsName == '管理员' ? '' : 'no-border'"
+              :border="userInfo.groupsName == '管理员' ? true : false"
             ></qui-cell-item>
           </navigator>
           <navigator
@@ -85,9 +85,17 @@
             size="large"
             type="warn"
             @click="handleClick"
-            v-if="isWeixin && register_type !== 2"
+            v-if="isWeixin && offiaccount_close && register_type !== 2"
           >
             {{ i18n.t('user.noBind') }}
+          </qui-button>
+          <qui-button
+            size="large"
+            type="warn"
+            @click="handleClick"
+            v-if="isWeixin && !offiaccount_close"
+          >
+            {{ i18n.t('user.logout') }}
           </qui-button>
           <qui-button size="large" type="warn" @click="handleClick" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
@@ -96,7 +104,7 @@
         <!-- #endif -->
       </view>
     </scroll-view>
-    <uni-popup ref="popupTip" type="center">
+    <uni-popup ref="popup" type="center">
       <uni-popup-dialog
         type="warn"
         content="点击下面的确定解绑按钮后，您将解除微信与本账号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本账号！"
@@ -128,6 +136,7 @@ export default {
       current: 0,
       checked: false,
       isWeixin: false, // 默认不是微信浏览器
+      offiaccount_close: false, // 默认不开启微信公众号
       register_type: 0, // 注册模式
       site_mode: '', // 站点模式
     };
@@ -143,6 +152,7 @@ export default {
       return userInfo;
     },
   },
+  // #ifdef H5
   created() {
     if (this.forums && this.forums.set_reg) {
       this.register_type = this.forums.set_reg.register_type;
@@ -150,9 +160,13 @@ export default {
     if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
     }
+    if (this.forums && this.forums.passport) {
+      this.offiaccount_close = this.forums.passport.offiaccount_close;
+    }
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
   },
+  // #endif
   methods: {
     changeCheck(e) {
       getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
@@ -166,8 +180,12 @@ export default {
     handleClick() {
       if (this.isWeixin) {
         // 微信内
-        if (this.register_type !== 2) {
-          this.$refs.popupTip.open();
+        if (this.offiaccount_close) {
+          if (this.register_type !== 2) {
+            this.$refs.popup.open();
+          }
+        } else {
+          this.$store.dispatch('session/logout').then(() => window.location.reload());
         }
       } else {
         this.$store.dispatch('session/logout').then(() => window.location.reload());
@@ -190,7 +208,7 @@ export default {
     // #endif
     // #ifdef H5
     handleClickCancel() {
-      this.$refs.popupTip.close();
+      this.$refs.popup.close();
     },
     // #endif
     // 设置粉丝点赞那些数字

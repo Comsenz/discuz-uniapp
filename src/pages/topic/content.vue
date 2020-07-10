@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="pages-content">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('topic.topictitle')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <qui-page-message v-if="!query.id"></qui-page-message>
     <view v-else>
@@ -99,7 +99,11 @@ export default {
       });
     } else {
       this.loadThreads();
-      this.$store.dispatch('jv/get', `topics/${query.id}`);
+      this.$store.dispatch('jv/get', `topics/${query.id}`).then(res => {
+        uni.setNavigationBarTitle({
+          title: res.content,
+        });
+      });
     }
 
     // #ifdef H5
@@ -205,6 +209,7 @@ $otherHeight: 292rpx;
   &_title {
     margin: 20rpx;
     font-weight: 600;
+    word-break: break-all;
   }
   &_details {
     display: flex;

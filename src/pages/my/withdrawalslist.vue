@@ -22,14 +22,14 @@
         <view class="uni-input">{{ `${i18n.t('profile.time')}：${date}` }}</view>
       </picker>
     </view>
-    <view class="withdrawalslist-items">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        class="scroll-y"
-      >
+    <scroll-view
+      scroll-y="true"
+      scroll-with-animation="true"
+      @scrolltolower="pullDown"
+      show-scrollbar="false"
+      class="scroll-y"
+    >
+      <view class="withdrawalslist-items" v-show="dataList.length > 0">
         <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
@@ -37,13 +37,14 @@
           :brief="item.cash_sn"
           :addon="'¥' + item.cash_apply_amount"
           :brief-right="timeHandle(item.created_at)"
+          :border="index == dataList.length - 1 ? false : true"
           :class-item="
             item.cash_status == 3 ? 'fail' : item.cash_status == 4 ? 'success' : 'normal'
           "
         ></qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
-      </scroll-view>
-    </view>
+      </view>
+      <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
+    </scroll-view>
   </qui-page>
 </template>
 
@@ -170,7 +171,6 @@ $height: calc(100vh - 150rpx);
 
 .withdrawalslist /deep/ {
   min-height: auto;
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   .cell-item {
     padding-right: 40rpx;
   }
@@ -198,7 +198,9 @@ $height: calc(100vh - 150rpx);
   }
   .withdrawalslist-items {
     padding-left: 40rpx;
+    margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .cell-item.fail .cell-item__body__content-title {
     color: --color(--qui-RED);

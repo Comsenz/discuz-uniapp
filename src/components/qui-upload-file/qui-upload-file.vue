@@ -134,7 +134,7 @@ export default {
       const that = this;
       wx.chooseMessageFile({
         count: 1, // 能选择文件的数量
-        type: 'file',
+        type: 'all',
         success(res) {
           const file = {
             name: res.tempFiles[0].name,

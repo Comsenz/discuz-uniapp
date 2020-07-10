@@ -42,6 +42,7 @@ export default {
       username: '', // 用户名
       password: '', // 密码
       url: '', // 上一个页面的路径
+      code: '', // 注册邀请码
       token: '', // token
       validate: false, // 开启注册审核
       site_mode: '', // 站点模式
@@ -50,12 +51,19 @@ export default {
   },
   onLoad(params) {
     console.log('params', params);
-    const { url, validate, token } = params;
-    this.url = url;
+    const { url, validate, token, code } = params;
+    if (url) {
+      this.url = url;
+    }
     if (validate) {
       this.validate = JSON.parse(validate);
     }
-    this.token = token;
+    if (code !== 'undefined') {
+      this.code = code;
+    }
+    if (token) {
+      this.token = token;
+    }
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
@@ -150,6 +158,7 @@ export default {
     .input {
       width: 100%;
       height: 100rpx;
+      padding: 0rpx 0rpx 0rpx 20rpx;
       font-size: $fg-f34;
       line-height: 100rpx;
       text-align: left;

@@ -203,6 +203,21 @@
             :controls="controlsStatus"
             @fullscreenchange="fullscreenchange"
           ></video>
+          <view class="post-box__video__play__load play-load" v-if="videoPercent * 100 < 100">
+            <view class="post-box__video__play__load__mask"></view>
+            <text class="post-box__video__play__load__text">
+              {{ i18n.t('discuzq.video.videoUploading') }}
+            </text>
+
+            <progress
+              :percent="videoPercent * 100"
+              active
+              stroke-width="3"
+              activeColor="#fff"
+              backgroundColor="#b5b5b5"
+            />
+          </view>
+
           <view class="post-box__video__play__icon-del">
             <qui-icon
               name="icon-close"
@@ -460,6 +475,7 @@ export default {
       fullscreenStatus: false, // 视频全屏状态
       videoName: '', // 视频名称
       percent: 0, // 视频上传进度
+      videoPercent: 0, // 视频上传进度，用来控制进度条
       fileId: '', // 视频ID
       url: '', // 视频url
       postLoading: false, // 发布按钮loading状态
@@ -629,6 +645,7 @@ export default {
     videoDel() {
       this.videoBeforeList = [];
       this.percent = 0;
+      this.videoPercent = 0;
     },
     playVideo() {
       this.controlsStatus = true;
@@ -657,65 +674,65 @@ export default {
             path: res.tempFilePath,
           });
           // #ifdef  MP-WEIXIN
-          console.log({
-            mediaFile: res,
-            getSignature: () => {
-              return new Promise((resolve, reject) => {
-                resolve(
-                  'UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0',
-                );
-              });
-            }, //_this.getSignature,
+          // console.log({
+          //   mediaFile: res,
+          //   getSignature: () => {
+          //     return new Promise((resolve, reject) => {
+          //       resolve(
+          //         'UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0',
+          //       );
+          //     });
+          //   }, //_this.getSignature,
 
-            mediaName: res.name,
-            success(result) {
-              console.log(result);
-            },
-            error(result) {
-              console.log(result);
-              // uni.showModal({
-              //   title: _this.i18n.t('uploader.uploadFailed'),
-              //   content: JSON.stringify(result),
-              //   showCancel: false,
-              // });
-              _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
-            },
-            progress(result) {
-              _this.percent = result.percent;
-              if (result.percent === 1) {
-                _this.$refs.toast.hideLoading();
-              }
-            },
-            finish(result) {
-              _this.fileId = result.fileId;
-              _this.postVideo(result.fileId);
-              // _this.$refs.toast.show({
-              //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
-              // });
-            },
-          });
+          //   mediaName: res.name,
+          //   success(result) {
+          //     console.log(result, '+++++++++++++++++');
+          //   },
+          //   error(result) {
+          //     console.log(result, 'error', '~~~~~~~~~~~');
+          //     // uni.showModal({
+          //     //   title: _this.i18n.t('uploader.uploadFailed'),
+          //     //   content: JSON.stringify(result),
+          //     //   showCancel: false,
+          //     // });
+          //     _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
+          //   },
+          //   progress(result) {
+          //     console.log(result, '这是h5h5h5将上传结果');
+          //     _this.percent = result.percent;
+          //     if (result.percent === 1) {
+          //       _this.$refs.toast.hideLoading();
+          //     }
+          //   },
+          //   finish(result) {
+          //     console.log(result, 'finish', '~~~~~~~~~~~');
+          //     _this.fileId = result.fileId;
+          //     _this.postVideo(result.fileId);
+          //     // _this.$refs.toast.show({
+          //     //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
+          //     // });
+          //   },
+          // });
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
 
             mediaName: res.name,
-            success(result) {
-              console.log(result);
-            },
+            success(result) {},
             error(result) {
-              console.log(result);
-              // uni.showModal({
-              //   title: _this.i18n.t('uploader.uploadFailed'),
-              //   content: JSON.stringify(result),
-              //   showCancel: false,
-              // });
               _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
+              _this.videoPercent = 0;
             },
             progress(result) {
+              console.log(result, '这是小程序将上传结果');
               _this.percent = result.percent;
+
               if (result.percent === 1) {
-                _this.$refs.toast.hideLoading();
+                _this.videoPercent = 0.9;
+                // _this.$refs.toast.hideLoading();
               }
+
+              _this.videoPercent = info.percent;
             },
             finish(result) {
               _this.fileId = result.fileId;
@@ -727,6 +744,7 @@ export default {
           });
           // #endif
           // #ifndef  MP-WEIXIN
+          console.log('这是h5');
           _this.getSignature(getSignature => {
             new TcVod({
               getSignature,
@@ -735,7 +753,14 @@ export default {
                 mediaFile: res.tempFile,
               })
               .on('media_progress', info => {
+                console.log(info, '这是h5');
                 _this.percent = info.percent; // 进度处理
+                // _this.videoPercent = info.percent;
+                if (info.percent === 1) {
+                  _this.videoPercent = 0.9;
+                  // _this.$refs.toast.hideLoading();
+                }
+                _this.videoPercent = info.percent;
               })
               .done()
               .then(doneResult => {
@@ -909,6 +934,15 @@ export default {
             } else if (this.uploadFile.length < 1) {
               this.$refs.toast.show({
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+          } else {
+            if (!this.uploadStatus) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
               status = false;
             } else {
@@ -1134,11 +1168,15 @@ export default {
       return this.$store
         .dispatch('jv/delete', params)
         .then(res => {
+          console.log(this.postDetails, '~~~~~~~');
           // 当编辑帖子时删除图片后传参给首页
-          this.$u.event.$emit('deleteImg', {
-            threadId: this.postDetails._jv.id,
-            index,
-          });
+          if (this.operating === 'edit') {
+            this.$u.event.$emit('deleteImg', {
+              threadId: this.postDetails._jv.id,
+              index,
+            });
+          }
+
           const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
           post.images.splice(index, 1);
           post._jv.relationships.images.data.splice(index, 1);
@@ -1563,6 +1601,20 @@ export default {
         border: 1px solid #ededed;
         border-radius: 5rpx;
       }
+      &__load {
+        position: absolute;
+        top: 0;
+        z-index: 98;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        border: 1px solid --color(--qui-BOR-ED);
+        border-radius: 5rpx;
+      }
       &__icon-del {
         position: absolute;
         top: -10px;
@@ -1608,6 +1660,33 @@ export default {
     &-categories {
       margin-bottom: 40rpx;
     }
+  }
+}
+
+.play-load {
+  .post-box__video__play__load__mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: --color(--qui-BG-ED);
+    border: 1px solid --color(--qui-BOR-ED);
+    border-radius: 5rpx;
+    opacity: 0.7;
+  }
+
+  .post-box__video__play__load__text {
+    position: relative;
+    z-index: 2;
+    font-size: $fg-f28;
+    line-height: 160rpx;
+    color: --color(--qui-FC-34);
+  }
+
+  progress {
+    position: absolute;
+    bottom: 9.5rpx;
+    z-index: 3;
+    width: 87.5%;
   }
 }
 .post-box__ft-categories /deep/ .qui-button--button {

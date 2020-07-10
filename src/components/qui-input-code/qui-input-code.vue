@@ -11,71 +11,83 @@
         v-model="iptValue"
         disabled
       />
-      <input
+      <view
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[0] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title
+            ? 'hidden-ipt-input2'
+            : show
+            ? dun
+              ? 'hidden-ipt-input'
+              : 'hidden-ipt-input alias'
+            : 'hidden-ipt-input alias'
         "
-        :type="number"
-        disabled
-        @tap="onFocus"
-        :value="iptValue.length >= 1 ? iptValue[0] : ''"
-        :focus="iptValue[0] ? false : true"
-        :cursor="1"
+        @click="onFocus"
+        v-text="iptValue.length >= 1 ? iptValue[0] : ''"
       />
-      <input
+      <view
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[1] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title
+            ? 'hidden-ipt-input2'
+            : dun
+            ? iptValue[0]
+              ? 'hidden-ipt-input'
+              : 'hidden-ipt-input alias'
+            : 'hidden-ipt-input alias'
         "
-        :type="number"
-        disabled
         @tap="onFocus"
-        :value="iptValue.length >= 2 ? iptValue[1] : ''"
-        :focus="iptValue[0] ? true : false"
-        :cursor="1"
+        v-text="iptValue.length >= 2 ? iptValue[1] : ''"
       />
-      <input
+      <view
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[2] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title
+            ? 'hidden-ipt-input2'
+            : dun
+            ? iptValue[1]
+              ? 'hidden-ipt-input'
+              : 'hidden-ipt-input alias'
+            : 'hidden-ipt-input alias'
         "
-        :type="number"
-        disabled
         @tap="onFocus"
-        :value="iptValue.length >= 3 ? iptValue[2] : ''"
-        :focus="iptValue[1] ? true : false"
-        :cursor="1"
+        v-text="iptValue.length >= 3 ? iptValue[2] : ''"
       />
-      <input
+      <view
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[3] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title
+            ? 'hidden-ipt-input2'
+            : dun
+            ? iptValue[2]
+              ? 'hidden-ipt-input'
+              : 'hidden-ipt-input alias'
+            : 'hidden-ipt-input alias'
         "
-        :type="number"
-        disabled
         @tap="onFocus"
-        :value="iptValue.length >= 4 ? iptValue[3] : ''"
-        :focus="iptValue[2] ? true : false"
-        :cursor="1"
+        v-text="iptValue.length >= 4 ? iptValue[3] : ''"
       />
-      <input
+      <view
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[4] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title
+            ? 'hidden-ipt-input2'
+            : dun
+            ? iptValue[3]
+              ? 'hidden-ipt-input'
+              : 'hidden-ipt-input alias'
+            : 'hidden-ipt-input alias'
         "
-        :type="number"
-        disabled
         @tap="onFocus"
-        :value="iptValue.length >= 3 ? iptValue[4] : ''"
-        :focus="iptValue[3] ? true : false"
-        :cursor="1"
+        v-text="iptValue.length >= 3 ? iptValue[4] : ''"
       />
-      <input
+      <view
         :class="
-          title ? 'hidden-ipt-input2' : iptValue[5] ? 'hidden-ipt-input' : 'hidden-ipt-input alias'
+          title
+            ? 'hidden-ipt-input2'
+            : dun
+            ? iptValue[4]
+              ? 'hidden-ipt-input'
+              : 'hidden-ipt-input alias'
+            : 'hidden-ipt-input alias'
         "
-        :type="number"
-        disabled
         @tap="onFocus"
-        :value="iptValue.length >= 4 ? iptValue[5] : ''"
-        :focus="iptValue[4] ? true : false"
-        :cursor="1"
+        v-text="iptValue.length >= 4 ? iptValue[5] : ''"
       />
     </view>
     <view class="hidden-ipt-test" v-if="title">
@@ -189,7 +201,7 @@ export default {
   margin: 0 24rpx 0 0;
   font-size: $fg-f50;
   font-weight: bold;
-  line-height: 45rpx;
+  line-height: 98rpx;
   text-align: center;
   border-bottom: 2rpx solid --color(--qui-FC-333);
 }
@@ -199,7 +211,7 @@ export default {
   margin: 0 24rpx 0 0;
   font-size: $fg-f50;
   font-weight: bold;
-  line-height: 45rpx;
+  line-height: 98rpx;
   color: --color(--qui-RED);
   text-align: center;
   border-bottom: 2rpx solid --color(--qui-RED);

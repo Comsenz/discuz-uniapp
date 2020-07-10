@@ -174,7 +174,7 @@ export default {
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
               _this.lastOrder += 1;
-              _this.numberdata.push({ state: item.uploadPercent });
+              _this.numberdata.push({ state: 0 });
 
               return new Promise((resolve, reject) => {
                 res.tempFiles[index].uploadPercent = 0;
@@ -182,6 +182,7 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 if (_this.uploadBeforeList.length > _this.count) {
                   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
+                  _this.numberdata = _this.numberdata.slice(0, _this.count);
                 }
                 _this.upload(
                   res.tempFilePaths[index],
@@ -224,9 +225,9 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
-            if (_this.numberdata[index]) {
+            setTimeout(() => {
               _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
-            }
+            }, 500);
             // console.log(JSON.parse(res.data), '~~~~~~~~~');
             const resObj = {
               id: JSON.parse(res.data).data.id,
@@ -237,15 +238,31 @@ export default {
             _this.uploadList.push(resObj);
             // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
-            _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
+            const resObj = JSON.parse(res.data);
+            if (resObj.errors[0].detail) {
+              uni.showToast({
+                icon: 'none',
+                title: `${resObj.errors[0].code}\n${resObj.errors[0].detail[0]}`,
+              });
+            } else {
+              uni.showToast({ icon: 'none', title: resObj.errors[0].code });
+            }
+            // _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
+            _this.uploadBeforeList.splice(index, 1);
+            _this.uploadList.splice(index, 1);
+            // 上传失败回调
+            _this.$emit('uploadFail', res, _this.uploadList);
+            return reject(res);
           }
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
+          _this.numberdata.splice(index, 1);
           return resolve(_this.uploadList);
         },
         fail(res) {
           _this.uploadBeforeList.splice(index, 1);
           _this.uploadList.splice(index, 1);
+          _this.numberdata.splice(index, 1);
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
@@ -267,6 +284,7 @@ export default {
             }
           }
         }
+        console.log(_this.uploadBeforeList, '!!!!!!!!!!!');
       });
     },
   },

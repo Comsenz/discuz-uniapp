@@ -78,6 +78,11 @@ export default {
       error: '加载失败',
       imageUploading: '图片上传中...',
     },
+    // 视频
+    video: {
+      error: '加载失败',
+      videoUploading: '视频上传中...',
+    },
     // 导航
     pageHeader: {
       title: '返回',
@@ -152,6 +157,7 @@ export default {
     noViewPermission: '没有查看权限，请点击返回首页',
     route_not_found: '路由未找到',
     no_bind_user: '未绑定用户',
+    account_has_been_bound: '用户或微信已绑定',
     thread_count_fail: '主题数操作错误',
     thread_behavior_fail: '主题状态异常',
     thread_action_fail: '主题操作异常',
@@ -202,6 +208,7 @@ export default {
     loadMore: '上拉加载更多',
     TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
     available: '暂无数据',
+    userDeleted: '该用户已被删除',
   },
   topic: {
     topicPageTitle: '内容详情页',
@@ -324,6 +331,7 @@ export default {
     word: '文字',
     released: '发布了',
     noPostingPermission: '当前没有发帖权限',
+    noPostingTopic: '当前没有查看主题权限',
     ioschoicetitle: '受iOS限制，暂时无法提供服务',
     ioschoicecontent: '请采用Android设备访问，给您带来不便尽请原谅！',
     siteName: '站点名称',
@@ -481,6 +489,7 @@ export default {
     verifyoldphon: '验证旧手机',
     greaterthan: '提现金额不能大于可提现余额',
     NoteOpen: '短信服务未开启',
+    logoinpaswd: '已有登录密码',
   },
   permission: {
     viewThreads: '查看主题列表',
@@ -510,6 +519,7 @@ export default {
     editOwnThreadOrPost: '编辑发布的主题或回复',
     hideOwnThreadOrPost: '删除发布的主题或回复',
     publishNeedBindPhone: '发布内容需要绑定手机号',
+    publishNeedRealName: '发布内容需要实名认证',
     viewUserList: '站点会员列表',
     cash: {
       create: '申请提现',
@@ -643,6 +653,15 @@ export default {
     join: '加入',
     accepttheinvitationandbecome: '接受邀请，成为',
     permanent: '永久有效',
+    codeinvalid:
+      '该邀请码已经失效，请联系站长获取新的邀请码，若继续注册将以默认角色加入本站！是否继续注册？',
+    codeused:
+      '该邀请码已经使用，请联系站长获取新的邀请码，若继续注册将以默认角色加入本站！是否继续注册？',
+    codeexpired:
+      '该邀请码已经过期，请联系站长获取新的邀请码，若继续注册将以默认角色加入本站！是否继续注册？',
+    codenotfound:
+      '该邀请码不存在，请联系站长获取新的邀请码，若继续注册将以默认角色加入本站！是否继续注册？',
+    codeforbid: '您当前已登录了帐号，无法使用邀请码进行注册，请退出后重试。',
   },
   // 搜索
   search: {

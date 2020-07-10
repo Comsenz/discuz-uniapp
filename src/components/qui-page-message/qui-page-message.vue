@@ -25,6 +25,7 @@
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
+      <!--#ifdef MP-WEIXIN -->
       <navigator
         v-if="show && message.btnclickType == 'siteClose'"
         class="out page-message--exit"
@@ -32,32 +33,21 @@
         hover-class="none"
         target="miniProgram"
       >
-        <qui-button size="medium" @click="handleClick" class="out-btn">
+        <qui-button size="medium" class="out-btn">
           {{ message.btnTxt }}
         </qui-button>
       </navigator>
-      <navigator
-        v-else-if="show && message.btnclickType == 'toHome'"
-        class="out page-message--exit"
-        open-type="redirect"
-        hover-class="none"
-        target="miniProgram"
+      <!-- #endif -->
+      <qui-button
+        v-if="
+          (show && message.btnclickType == 'toBack') || (show && message.btnclickType == 'tHome')
+        "
+        size="medium"
+        @click="handleClick"
+        class="out-btn"
       >
-        <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}
-        </qui-button>
-      </navigator>
-      <navigator
-        v-else-if="show && message.btnclickType == 'toBack'"
-        class="out page-message--exit"
-        open-type="navigateBack"
-        hover-class="none"
-        target="miniProgram"
-      >
-        <qui-button size="medium" @click="handleClick" class="out-btn">
-          {{ message.btnTxt }}
-        </qui-button>
-      </navigator>
+        {{ message.btnTxt }}
+      </qui-button>
 
       <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
         {{ i18n.t('core.admin_login') }}
@@ -78,6 +68,7 @@ const THREAD_DELETED = 'thread_deleted';
 const POST_DELETED = 'post_deleted';
 const IOS_DISPLAY = 'dataerro';
 const TYPE_401 = 'type_401';
+const USER_DELETED = 'user_deleted';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -135,6 +126,13 @@ const message = {
     icon: '@/static/msg-404.svg',
     btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
+  [USER_DELETED]: {
+    title: i18n.t('core.userDeleted'),
+    subtitle: '',
+    btnTxt: i18n.t('core.back_history'),
+    icon: '@/static/msg-404.svg',
+    btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
+  },
 };
 export default {
   filters: {
@@ -160,6 +158,7 @@ export default {
           THREAD_DELETED,
           POST_DELETED,
           TYPE_401,
+          USER_DELETED,
         ].indexOf(this.forumError.code) >= 0
       );
     },
@@ -173,17 +172,31 @@ export default {
         this.forumError.code === TYPE_401 ||
         this.forumError.code === THREAD_DELETED ||
         this.forumError.code === TYPE_404 ||
-        this.forumError.code === POST_DELETED
+        this.forumError.code === POST_DELETED ||
+        this.forumError.code === USER_DELETED
       ) {
-        console.log('这是Message里的404，走返回');
-        this.message.btnclickType = 'toBack';
-        uni.navigateBack({
-          delta: 1,
-        });
+        const pages = getCurrentPages();
+        const delta = pages.indexOf(pages[pages.length - 1]);
+        console.log(delta, '$$$$$$$$$$');
+        if (delta === 0) {
+          // console.log('走跳转');
+          uni.redirectTo({
+            url: `/pages/home/index`,
+          });
+        } else {
+          // console.log('走返回');
+          uni.navigateBack({
+            delta: 1,
+          });
+        }
       }
     },
     handleLoginClick() {
-      this.$store.getters['session/get']('auth').open();
+      // #ifdef H5
+      uni.navigateTo({
+        url: `/pages/user/login?url=/pages/home/index`,
+      });
+      // #endif
     },
   },
 };

@@ -619,6 +619,9 @@ export default {
     };
   },
   onReady() {},
+  onUnload() {
+    this.$store.dispatch('forum/setError', { loading: false });
+  },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
@@ -649,6 +652,8 @@ export default {
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
+    console.log(this.isWeixin, '这是微信浏览器');
+    // console.log(this.isPhone, '这是h5');
     this.browser = 1;
     // #endif
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
@@ -776,6 +781,8 @@ export default {
       threadAction
         .then(data => {
           if (data.isDeleted) {
+            console.log(data.isDeleted, '!!!!!!');
+            // return;
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
               status: 500,
@@ -965,7 +972,7 @@ export default {
           if (err.statusCode === 404) {
             console.log('没找到');
             this.$store.dispatch('forum/setError', {
-              code: 'thread_deleted',
+              code: 'type_404',
               status: 500,
             });
           }
@@ -1785,6 +1792,7 @@ export default {
         uni.navigateBack({
           delta,
         });
+        this.setFooterIndex(0);
       } else {
         uni.navigateTo({
           url: '/pages/home/index',

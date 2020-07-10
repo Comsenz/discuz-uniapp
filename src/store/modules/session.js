@@ -97,6 +97,7 @@ const actions = {
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
+    const options = { custom: { showTost: false } };
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
@@ -104,7 +105,7 @@ const actions = {
       return http
         .get(
           `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}`,
-          payload,
+          options,
         )
         .then(results => {
           resolve(results);
@@ -140,12 +141,17 @@ const actions = {
   // #endif
   // #ifdef H5
   h5Register: (context, payload = {}) => {
+    const options = { custom: { showTost: false } };
     console.log('payload', payload);
     return new Promise(resolve => {
       console.log('http', http);
       return http
-        .post('register', payload)
-        .then(results => setUserInfoStore(context, results, resolve));
+        .post('register', payload, options)
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(err => resolve(err));
     });
   },
   // #endif

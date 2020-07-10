@@ -100,6 +100,7 @@
           :video-id="item.threadVideo && item.threadVideo._jv.id"
           :cover-image="item.threadVideo && item.threadVideo.cover_url"
           :is-deleted="item.isDeleted"
+          :scroll-top="scrollTop"
           @click="handleClickShare(item._jv.id)"
           @handleIsGreat="
             handleIsGreat(
@@ -118,8 +119,8 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
       <!-- #ifdef H5-->
-      <view class="record">
-        <text>{{ i18n.t('home.record') }}</text>
+      <view class="record" v-if="forums.set_site.site_record !== ''">
+        <!-- <text>{{ i18n.t('home.record') }}</text> -->
         <text>{{ forums.set_site.site_record }}</text>
       </view>
       <!-- #endif -->
@@ -293,6 +294,7 @@ export default {
       threadsStatusId: 0,
       categories: [],
       playIndex: null,
+      scrollTop: 0,
     };
   },
   computed: {
@@ -400,6 +402,8 @@ export default {
       return ';';
     },
     scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+      // console.log(this.scrollTop, 'event');
       if (!this.navbarHeight) {
         return;
       }
@@ -474,7 +478,7 @@ export default {
         });
       } else {
         this.$store.getters['session/get']('auth').open();
-        this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
+        this.$refs.toast.show({ message: this.i18n.t('home.noPostingTopic') });
       }
     },
     // 点击头像调转到个人主页
