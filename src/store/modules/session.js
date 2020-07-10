@@ -69,6 +69,13 @@ const actions = {
                     },
                   },
                 };
+                // 邀请页面带上邀请码
+                const pages = getCurrentPages();
+                const page = pages[pages.length - 1].route;
+                if (page === 'pages/site/partner-invite') {
+                  const inviteCode = pages[pages.length - 1].options.code;
+                  data.data.attributes.code = inviteCode;
+                }
                 data = Object.assign(payload, data);
                 return http
                   .post('oauth/wechat/miniprogram', data)
