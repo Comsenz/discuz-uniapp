@@ -94,6 +94,7 @@ export default {
       lastOrder: 0,
       numberdata: [],
       indexs: '',
+      erroindex: '',
     };
   },
   watch: {
@@ -224,13 +225,17 @@ export default {
         name: _this.name,
         formData: formdataObj,
         success(res) {
-          console.log(res);
           if (res.statusCode >= 200 && res.statusCode < 300) {
             setTimeout(() => {
-              _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
-              _this.numberdata[_this.indexs].state = 100;
-              _this.uploadBeforeList[index].uploadPercent = 100;
-              _this.numberdata[index].state = 100;
+              if (!_this.indexs && _this.indexs !== 0) {
+                _this.uploadBeforeList[index].uploadPercent = 100;
+                _this.numberdata[index].state = 100;
+              } else if (_this.indexs >= 0) {
+                _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
+                _this.numberdata[_this.indexs].state = 100;
+                _this.uploadBeforeList[index].uploadPercent = 100;
+                _this.numberdata[index].state = 100;
+              }
             }, 500);
             console.log(JSON.parse(res.data), '~~~~~~~~~');
             const resObj = {
@@ -255,6 +260,7 @@ export default {
             _this.uploadBeforeList.splice(index, 1);
             _this.uploadList.splice(index, 1);
             _this.numberdata.splice(index, 1);
+            _this.erroindex = index;
             if (index > 0 && index === _this.uploadBeforeList.length) {
               _this.indexs = index - 1;
             } else if (index > 0 && index < _this.uploadBeforeList.length) {
