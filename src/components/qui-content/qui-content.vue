@@ -74,7 +74,7 @@
           <video
             :poster="coverImage"
             v-if="threadType === 2 && payStatus"
-            :id="'myvideo' + currentindex"
+            :id="'myVideo' + currentindex"
             preload="auto"
             bindpause="handlepause"
             playsinline
@@ -97,7 +97,7 @@
             :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 70%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
-            @click="videoClick"
+            @play="playVideo"
             @click.stop=""
           ></video>
         </view>
@@ -424,12 +424,12 @@ export default {
     },
   },
   mounted() {
-    this.videoContext = wx.createVideoContext(`myvideo${this.$props.currentindex}`, this);
+    this.videoContext = wx.createVideoContext(`myVideo${this.$props.currentindex}`, this);
     // #ifdef MP-WEIXIN
     if (this.$props.threadType === 2 && this.$props.payStatus) {
       wx.createSelectorQuery()
         .in(this)
-        .select(`#${`myvideo${this.$props.currentindex}`}`)
+        .select(`#${`myVideo${this.$props.currentindex}`}`)
         .boundingClientRect(rect => {
           this.currentTop = this.$props.scrollTop + rect.top - wx.getSystemInfoSync().windowHeight;
           this.currentBottom = this.$props.scrollTop + rect.top + rect.height;
@@ -439,7 +439,7 @@ export default {
     // #endif
 
     // #ifdef H5
-    const myVideo = document.querySelector(`#${`myvideo${this.$props.currentindex}`}`);
+    const myVideo = document.querySelector(`#${`myVideo${this.$props.currentindex}`}`);
     if (myVideo) {
       const offsetInfo = myVideo.getBoundingClientRect();
       this.currentTop = this.$props.scrollTop + offsetInfo.top - document.body.offsetHeight;
@@ -477,10 +477,9 @@ export default {
       this.$emit('backgroundClick', evt);
     },
 
-    // 视频的view点击事件
-    videoClick() {
-      const curIdx = this.$props.currentindex;
-      this.$emit('videoPlay', curIdx);
+    // 当开始/继续播放时触发play事件
+    playVideo() {
+      this.$emit('videoPlay', this.$props.currentindex);
     },
     // 视频不能同时播放
     pauseVideo() {
