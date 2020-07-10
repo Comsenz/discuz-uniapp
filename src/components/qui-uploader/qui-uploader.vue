@@ -174,7 +174,7 @@ export default {
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
               _this.lastOrder += 1;
-              _this.numberdata.push({ state: item.uploadPercent });
+              _this.numberdata.push({ state: 0 });
 
               return new Promise((resolve, reject) => {
                 res.tempFiles[index].uploadPercent = 0;
@@ -182,6 +182,7 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 if (_this.uploadBeforeList.length > _this.count) {
                   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
+                  _this.numberdata = _this.numberdata.slice(0, _this.count);
                 }
                 _this.upload(
                   res.tempFilePaths[index],
@@ -224,9 +225,9 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             _this.uploadBeforeList[index].uploadPercent = 100;
-            if (_this.numberdata[index]) {
+            setTimeout(() => {
               _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
-            }
+            }, 500);
             // console.log(JSON.parse(res.data), '~~~~~~~~~');
             const resObj = {
               id: JSON.parse(res.data).data.id,
@@ -261,6 +262,7 @@ export default {
         fail(res) {
           _this.uploadBeforeList.splice(index, 1);
           _this.uploadList.splice(index, 1);
+          _this.numberdata.splice(index, 1);
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
@@ -282,6 +284,7 @@ export default {
             }
           }
         }
+        console.log(_this.uploadBeforeList, '!!!!!!!!!!!');
       });
     },
   },

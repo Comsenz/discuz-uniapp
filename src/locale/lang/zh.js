@@ -331,6 +331,7 @@ export default {
     word: '文字',
     released: '发布了',
     noPostingPermission: '当前没有发帖权限',
+    noPostingTopic: '当前没有查看主题权限',
     ioschoicetitle: '受iOS限制，暂时无法提供服务',
     ioschoicecontent: '请采用Android设备访问，给您带来不便尽请原谅！',
     siteName: '站点名称',
