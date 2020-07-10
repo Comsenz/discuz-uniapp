@@ -82,7 +82,7 @@ export default {
     if (validate) {
       this.validate = JSON.parse(validate);
     }
-    if (code) {
+    if (code !== 'undefined') {
       this.code = code;
     }
     if (token) {

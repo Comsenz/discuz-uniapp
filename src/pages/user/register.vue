@@ -30,7 +30,7 @@
       <view class="register-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.register') }}
       </view>
-      <view class="register-box-exist" @click="jump2Login" v-if="code === ''">
+      <view class="register-box-exist" @click="jump2Login" v-if="code !== 'undefined'">
         {{ i18n.t('user.exist') }}
       </view>
     </view>
@@ -81,7 +81,7 @@ export default {
     if (validate) {
       this.validate = JSON.parse(validate);
     }
-    if (code) {
+    if (code !== 'undefined') {
       this.code = code;
     }
     console.log('validate', typeof this.validate);
@@ -169,13 +169,26 @@ export default {
       }
       this.$store
         .dispatch('session/h5Register', params)
-        .then(res => {
-          console.log('注册成功', res);
-          this.logind();
-          uni.showToast({
-            title: '注册成功',
-            duration: 2000,
-          });
+        .then(result => {
+          if (result && result.data && result.data.data && result.data.data.id) {
+            console.log('注册绑定成功', result);
+            this.logind();
+            uni.showToast({
+              title: '注册绑定成功',
+              duration: 2000,
+            });
+          }
+          if (
+            result &&
+            result.data &&
+            result.data.errors &&
+            result.data.errors[0].code === 'validation_error'
+          ) {
+            uni.showToast({
+              title: '用户名已存在',
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
           console.log(err);

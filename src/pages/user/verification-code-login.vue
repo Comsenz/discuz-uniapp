@@ -47,7 +47,7 @@
       <view
         class="verification-code-login-box-pwdlogin"
         @click="jump2PhoneNumberLogin"
-        v-if="code === ''"
+        v-if="code !== 'undefined'"
       >
         {{ i18n.t('user.passwordLogin') }}
       </view>
@@ -92,7 +92,7 @@ export default {
     if (validate) {
       this.validate = JSON.parse(validate);
     }
-    if (code) {
+    if (code !== 'undefined') {
       this.code = code;
     }
     if (token) {
@@ -201,7 +201,7 @@ export default {
       if (this.token && this.token !== '') {
         params.data.attributes.token = this.token;
       }
-      if (this.code && this.code !== '') {
+      if (this.code && this.code !== 'undefined') {
         params.data.attributes.inviteCode = this.code;
       }
       this.$store

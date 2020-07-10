@@ -246,11 +246,16 @@ export default {
             } else {
               uni.showToast({ icon: 'none', title: resObj.errors[0].code });
             }
-
-            _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
+            // _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
+            _this.uploadBeforeList.splice(index, 1);
+            _this.uploadList.splice(index, 1);
+            // 上传失败回调
+            _this.$emit('uploadFail', res, _this.uploadList);
+            return reject(res);
           }
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
+          _this.numberdata.splice(index, 1);
           return resolve(_this.uploadList);
         },
         fail(res) {
