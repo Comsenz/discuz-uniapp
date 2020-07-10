@@ -282,6 +282,7 @@ export default {
             }
           }
         }
+        console.log(_this.uploadBeforeList, '!!!!!!!!!!!');
       });
     },
   },
