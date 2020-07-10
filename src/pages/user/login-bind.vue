@@ -8,6 +8,7 @@
       <view class="login-bind-box-con">
         <input
           class="input"
+          maxlength="15"
           :placeholder="i18n.t('user.username')"
           placeholder-style="color: #ddd"
           v-model="username"
@@ -15,6 +16,7 @@
         <input
           class="input"
           type="password"
+          maxlength="50"
           :placeholder="i18n.t('user.password')"
           placeholder-style="color: #ddd"
           v-model="password"

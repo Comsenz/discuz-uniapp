@@ -25,7 +25,7 @@
           {{ i18n.t('user.pwd') }}
         </view>
         <view class="new-phon-number">
-          <input class="new-phon-num" type="password" v-model="password" />
+          <input class="new-phon-num" type="password" maxlength="50" v-model="password" />
         </view>
       </view>
       <view class="phone-number-login-box-btn" @click="login">
