@@ -93,6 +93,8 @@ export default {
       formDataAppend: {},
       lastOrder: 0,
       numberdata: [],
+      indexs: '',
+      erroindex: '',
     };
   },
   watch: {
@@ -224,11 +226,18 @@ export default {
         formData: formdataObj,
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
-            _this.uploadBeforeList[index].uploadPercent = 100;
             setTimeout(() => {
-              _this.numberdata[index].state = _this.uploadBeforeList[index].uploadPercent;
+              if (!_this.indexs && _this.indexs !== 0) {
+                _this.uploadBeforeList[index].uploadPercent = 100;
+                _this.numberdata[index].state = 100;
+              } else if (_this.indexs >= 0) {
+                _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
+                _this.numberdata[_this.indexs].state = 100;
+                _this.uploadBeforeList[index].uploadPercent = 100;
+                _this.numberdata[index].state = 100;
+              }
             }, 500);
-            // console.log(JSON.parse(res.data), '~~~~~~~~~');
+            console.log(JSON.parse(res.data), '~~~~~~~~~');
             const resObj = {
               id: JSON.parse(res.data).data.id,
               type: JSON.parse(res.data).data.type,
@@ -250,19 +259,29 @@ export default {
             // _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
             _this.uploadBeforeList.splice(index, 1);
             _this.uploadList.splice(index, 1);
+            _this.numberdata.splice(index, 1);
+            _this.erroindex = index;
+            if (index > 0 && index === _this.uploadBeforeList.length) {
+              _this.indexs = index - 1;
+            } else if (index > 0 && index < _this.uploadBeforeList.length) {
+              _this.indexs = index;
+            } else if (index === 0) {
+              _this.indexs = 0;
+            }
             // 上传失败回调
             _this.$emit('uploadFail', res, _this.uploadList);
             return reject(res);
           }
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
-          _this.numberdata.splice(index, 1);
+          // _this.numberdata.splice(index, 1);
           return resolve(_this.uploadList);
         },
         fail(res) {
           _this.uploadBeforeList.splice(index, 1);
+          _this.indexs = index;
           _this.uploadList.splice(index, 1);
-          _this.numberdata.splice(index, 1);
+          // _this.numberdata.splice(index, 1);
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
