@@ -30,7 +30,7 @@ module.exports = {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式 跳转到注册并绑定页
             uni.navigateTo({
-              url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
+              url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}&code=${code}`,
             });
           }
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
