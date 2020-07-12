@@ -62,6 +62,7 @@
       >
         <qui-content
           :ref="'myVideo' + index"
+          :key="index"
           :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
@@ -102,6 +103,7 @@ export default {
       userTotal: null,
       themeTotal: null,
       pageNum: 1, // 当前页数
+      playIndex: null,
     };
   },
   methods: {

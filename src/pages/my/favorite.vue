@@ -9,6 +9,7 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y"
+      @scroll="scroll"
     >
       <view class="favorite-head">
         <qui-cell-item
@@ -20,6 +21,7 @@
         <view v-for="(item, index) in data" :key="index" class="favorite-content__item">
           <qui-content
             :ref="'myVideo' + index"
+            :key="index"
             :currentindex="index"
             :pay-status="(item.price > 0 && item.paid) || item.price == 0"
             :user-name="item.user && item.user.username"
@@ -40,6 +42,7 @@
             :video-height="item.threadVideo && item.threadVideo.height"
             :video-id="item.threadVideo && item.threadVideo._jv.id"
             :cover-image="item.threadVideo && item.threadVideo.cover_url"
+            :scroll-top="scrollTop"
             @click="handleClickShare(item._jv.id)"
             @handleIsGreat="
               handleIsGreat(
@@ -51,6 +54,7 @@
             "
             @commentClick="commentClick(item._jv.id)"
             @contentClick="contentClick(item._jv.id)"
+            @backgroundClick="contentClick(item)"
             @headClick="headClick(item.user._jv.id)"
             @videoPlay="handleVideoPlay"
           ></qui-content>
@@ -97,12 +101,17 @@ export default {
       pageNum: 1, // 当前页数
       nowThreadId: '',
       shareTitle: '', // h5内分享复制链接
+      scrollTop: 0,
+      playIndex: null,
     };
   },
   mounted() {
     this.loadlikes();
   },
   methods: {
+    scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+    },
     handleClickShare(id) {
       // #ifdef MP-WEIXIN
       this.nowThreadId = id;

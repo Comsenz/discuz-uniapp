@@ -30,10 +30,12 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y search-item"
+      @scroll="scroll"
     >
       <view v-for="(item, index) in data" :key="index" class="search-item__content">
         <qui-content
           :ref="'myVideo' + index"
+          :key="index"
           :currentindex="index"
           :user-name="item.user.username"
           :theme-image="item.user.avatarUrl"
@@ -42,6 +44,7 @@
           :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
           :thread-type="item.type"
           :tags="[item.category]"
+          :scroll-top="scrollTop"
           :media-url="item.threadVideo && item.threadVideo.media_url"
           :images-list="item.firstPost.images"
           :theme-essence="item.isEssence"
@@ -68,6 +71,8 @@ export default {
       data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
+      scrollTop: 0,
+      playIndex: null,
     };
   },
   onLoad(params) {
@@ -75,6 +80,9 @@ export default {
     this.getThemeList(params.value);
   },
   methods: {
+    scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+    },
     searchInput(e) {
       this.searchValue = e.target.value;
       if (this.timeout) clearTimeout(this.timeout);

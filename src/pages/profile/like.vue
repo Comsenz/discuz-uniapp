@@ -5,6 +5,7 @@
       :ref="'myVideo' + index"
       :key="index"
       :currentindex="index"
+      :scroll-top="scrollTop"
       :pay-status="(item.price > 0 && item.paid) || item.price == 0"
       :user-name="item.user ? item.user.username : ''"
       :theme-reply-btn="item.canReply || ''"
@@ -59,6 +60,10 @@ export default {
       type: String,
       default: '',
     },
+    scrollTop: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -68,9 +73,19 @@ export default {
       pageNum: 1, // 当前页数
       nowThreadId: '',
       editThreadId: '',
+      playIndex: null,
       shareTitle: '', // h5内分享复制链接
       currentLoginId: this.$store.getters['session/get']('userId'),
+      scrollTopPosition: 0,
     };
+  },
+  watch: {
+    // 监听得到的数据
+    scrollTop(val) {
+      if (val !== this.scrollTopPosition) {
+        this.scrollTopPosition = val;
+      }
+    },
   },
   mounted() {
     this.loadlikes();
