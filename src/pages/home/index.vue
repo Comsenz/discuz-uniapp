@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
+  <qui-page ref="quiPage" :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
     <view class="content">
       <view class="view-content">
         <qui-page-home
@@ -93,6 +93,12 @@ export default {
     };
   },
   onShow() {
+    // #ifdef MP-WEIXIN
+    if (this.$refs.quiPage) {
+      this.$store.dispatch('session/setAuth', this.$refs.quiPage.$refs.auth);
+      this.$refs.quiPage.open();
+    }
+    // #endif
     if (
       !this.$store.getters['session/get']('isLogin') &&
       ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
