@@ -33,14 +33,14 @@ export default {
             const { nickname } = err.errors[0].user;
             const wxtoken = err.errors[0].token;
             if (err.errors[0].code === 'no_bind_user') {
-              const that = this;
+              let code = '';
               uni.getStorage({
                 key: 'inviteCode',
                 success(resData) {
-                  const code = resData.data || '';
-                  that.login(nickname, wxtoken, code);
+                  code = resData.data || '';
                 },
               });
+              this.login(nickname, wxtoken, code);
             }
           }
         })
@@ -52,11 +52,6 @@ export default {
       login(params);
     }
     // #endif
-  },
-  onUnload() {
-    uni.removeStorage({
-      key: 'inviteCode',
-    });
   },
 };
 </script>
