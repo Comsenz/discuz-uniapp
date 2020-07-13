@@ -33,7 +33,14 @@ export default {
             const { nickname } = err.errors[0].user;
             const wxtoken = err.errors[0].token;
             if (err.errors[0].code === 'no_bind_user') {
-              this.login(nickname, wxtoken);
+              let code = '';
+              uni.getStorage({
+                key: 'inviteCode',
+                success(resData) {
+                  code = resData.data || '';
+                },
+              });
+              this.login(nickname, wxtoken, code);
             }
           }
         })

@@ -61,7 +61,12 @@ export default {
       uni.$emit('stat', {
         statisticsCode: this.statisticsCode,
       });
-      if (forums.set_site.site_mode === SITE_PAY) {
+      let currentPage = {};
+      const pages = getCurrentPages();
+      if (pages.length > 0) {
+          currentPage = pages[pages.length - 1];
+      }
+      if (forums.set_site.site_mode === SITE_PAY && currentPage.route !== 'pages/site/partner-invite') {
         // #ifndef H5
         const res = uni.getSystemInfoSync();
         if (res.platform === 'ios') {
@@ -69,9 +74,6 @@ export default {
           return;
         }
         // #endif
-
-        let currentPage = {};
-        const pages = getCurrentPages();
         if (pages.length > 0) {
           currentPage = pages[pages.length - 1];
           if (!user.paid && currentPage.route !== 'pages/site/info') {

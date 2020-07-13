@@ -69,6 +69,7 @@
 <script>
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
+import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import forums from '@/mixin/forums';
 
@@ -77,6 +78,7 @@ export default {
     forums,
     // #ifdef  H5
     wxshare,
+    loginAuth,
     // #endif
   ],
   props: {
@@ -163,11 +165,9 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        console.log('注册并绑定页');
-        const url = '/pages/home/index';
-        uni.navigateTo({
-          url: `/pages/user/register-bind?url=${url}`,
-        });
+        if (!this.handleLogin()) {
+          return;
+        }
         // #endif
       }
       const params = {
