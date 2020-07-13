@@ -14,7 +14,10 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
-        this.$store.dispatch('session/wxh5Login');
+        const params = {
+          code: code || '',
+        };
+        this.$store.dispatch('session/wxh5Login', params);
       } else {
         this.login('', '', code);
       }

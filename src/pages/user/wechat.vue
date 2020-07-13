@@ -16,6 +16,11 @@ export default {
   },
   onLoad(params) {
     // #ifdef H5
+    const paramsJson = params;
+    uni.$on('inviteCode', data => {
+      console.log(data);
+      paramsJson.inviteCode = data;
+    });
     const login = data => {
       this.$store
         .dispatch('session/noSenseh5Login', data)
@@ -33,7 +38,7 @@ export default {
             const { nickname } = err.errors[0].user;
             const wxtoken = err.errors[0].token;
             if (err.errors[0].code === 'no_bind_user') {
-              this.login(nickname, wxtoken);
+              this.login(nickname, wxtoken, paramsJson.inviteCode);
             }
           }
         })
@@ -42,9 +47,13 @@ export default {
         });
     };
     if (!this.$store.getters['session/get']('isLogin')) {
-      login(params);
+      login(paramsJson);
     }
     // #endif
+  },
+  onUnload() {
+    // 移除监听事件
+    uni.$off('inviteCode');
   },
 };
 </script>
