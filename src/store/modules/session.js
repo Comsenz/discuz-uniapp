@@ -98,13 +98,8 @@ const actions = {
   // #endif
   // #ifdef H5
   wxh5Login: (context, payload = {}) => {
-    const code = payload.code || '';
-    console.log(code);
+    console.log(payload);
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
-    // 邀请code
-    if (code) {
-      uni.$emit('inviteCode', code);
-    }
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
   // #endif

@@ -14,10 +14,12 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
-        const params = {
-          code: code || '',
-        };
-        this.$store.dispatch('session/wxh5Login', params);
+        // 微信授权跳转
+        uni.setStorage({
+          key: 'inviteCode',
+          data: code,
+        });
+        this.$store.dispatch('session/wxh5Login');
       } else {
         this.login('', '', code);
       }
