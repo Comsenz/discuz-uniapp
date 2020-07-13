@@ -128,7 +128,9 @@ export default {
       }, 60000);
     },
     dingphon() {
-      this.bindphon();
+      if (this.newphon) {
+        this.bindphon();
+      }
     },
     // 新手机号发送验证码
     setphon() {

@@ -95,6 +95,7 @@ export default {
       numberdata: [],
       indexs: '',
       erroindex: '',
+      number: 0,
     };
   },
   watch: {
@@ -227,14 +228,31 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             setTimeout(() => {
-              if (!_this.indexs && _this.indexs !== 0) {
+              // console.log(_this.indexs);
+              // _this.uploadBeforeList.forEach((element, indexl) => {
+              //   _this.uploadBeforeList[indexl].uploadPercent = 100;
+              //   _this.numberdata[indexl].state = 100;
+              // });
+              if (index < _this.uploadBeforeList.length) {
                 _this.uploadBeforeList[index].uploadPercent = 100;
                 _this.numberdata[index].state = 100;
-              } else if (_this.indexs >= 0) {
+              }
+              if (
+                _this.erroindex !== '' &&
+                _this.erroindex >= 0 &&
+                _this.erroindex < _this.uploadBeforeList.length
+              ) {
+                console.log(_this.erroindex);
+                _this.uploadBeforeList[_this.erroindex].uploadPercent = 100;
+                _this.numberdata[_this.erroindex].state = 100;
+              }
+              if (
+                _this.indexs >= 0 &&
+                _this.indexs !== '' &&
+                _this.indexs < _this.uploadBeforeList.length
+              ) {
                 _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
                 _this.numberdata[_this.indexs].state = 100;
-                _this.uploadBeforeList[index].uploadPercent = 100;
-                _this.numberdata[index].state = 100;
               }
             }, 500);
             console.log(JSON.parse(res.data), '~~~~~~~~~');
@@ -247,6 +265,8 @@ export default {
             _this.uploadList.push(resObj);
             // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
+            console.log('错误的index', index);
+            _this.number += 1;
             const resObj = JSON.parse(res.data);
             if (resObj.errors[0].detail) {
               uni.showToast({
@@ -257,17 +277,38 @@ export default {
               uni.showToast({ icon: 'none', title: resObj.errors[0].code });
             }
             // _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
-            _this.uploadBeforeList.splice(index, 1);
-            _this.uploadList.splice(index, 1);
-            _this.numberdata.splice(index, 1);
-            _this.erroindex = index;
-            if (index > 0 && index === _this.uploadBeforeList.length) {
+
+            if (_this.number >= 1) {
+              if (index <= _this.number && index <= _this.uploadBeforeList.length - 1) {
+                _this.uploadBeforeList.splice(index, 1);
+                _this.uploadList.splice(index, 1);
+                _this.numberdata.splice(index, 1);
+                _this.erroindex = index;
+              } else if (index >= _this.number && index <= _this.uploadBeforeList.length) {
+                _this.uploadBeforeList.splice(index, 1);
+                _this.uploadList.splice(index, 1);
+                _this.numberdata.splice(index, 1);
+                _this.erroindex = index;
+              } else {
+                _this.uploadBeforeList.splice(index - _this.number, 1);
+                _this.uploadList.splice(index - _this.number, 1);
+                _this.numberdata.splice(index - _this.number, 1);
+                _this.erroindex = index - _this.number;
+              }
+            } else {
+              _this.uploadBeforeList.splice(index, 1);
+              _this.uploadList.splice(index, 1);
+              _this.erroindex = index;
+            }
+            if (index > 0 && index === _this.uploadBeforeList.length - 1) {
               _this.indexs = index - 1;
-            } else if (index > 0 && index < _this.uploadBeforeList.length) {
+            } else if (index > 0 && index <= _this.uploadBeforeList.length - 1) {
               _this.indexs = index;
             } else if (index === 0) {
               _this.indexs = 0;
             }
+            // _this.erroindex = index - _this.number;
+            // console.log(_this.indexs);
             // 上传失败回调
             _this.$emit('uploadFail', res, _this.uploadList);
             return reject(res);
@@ -278,10 +319,10 @@ export default {
           return resolve(_this.uploadList);
         },
         fail(res) {
+          console.log('上传失败了', index);
           _this.uploadBeforeList.splice(index, 1);
-          _this.indexs = index;
           _this.uploadList.splice(index, 1);
-          // _this.numberdata.splice(index, 1);
+          _this.numberdata.splice(index, 1);
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
