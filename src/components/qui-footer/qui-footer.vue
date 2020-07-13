@@ -22,13 +22,7 @@
         <text class="ft-box-content" :class="{ select: true, active: index === footerIndex }">
           {{ item.tabsName }}
         </text>
-        <qui-icon
-          v-if="redCircle && item.id === 2"
-          name="icon-circle"
-          class="red-circle"
-          color="red"
-          size="14"
-        ></qui-icon>
+        <view v-if="redCircle && item.id === 2" name="icon-circle" class="red-circle"></view>
       </view>
 
       <view class="ft-box-spacal">
@@ -322,7 +316,11 @@ export default {
 .red-circle {
   position: absolute;
   // top: -10rpx;
-  top: -16rpx;
+  top: -10rpx;
   left: calc(50% + 18rpx);
+  width: 14rpx;
+  height: 14rpx;
+  background: red;
+  border-radius: 50%;
 }
 </style>
