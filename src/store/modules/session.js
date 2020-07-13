@@ -97,7 +97,8 @@ const actions = {
   },
   // #endif
   // #ifdef H5
-  wxh5Login: () => {
+  wxh5Login: (context, payload = {}) => {
+    console.log(payload);
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },

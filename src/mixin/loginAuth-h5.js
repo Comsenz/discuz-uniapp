@@ -14,6 +14,11 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
+        // 微信授权跳转
+        uni.setStorage({
+          key: 'inviteCode',
+          data: code,
+        });
         this.$store.dispatch('session/wxh5Login');
       } else {
         this.login('', '', code);
@@ -125,8 +130,8 @@ module.exports = {
           },
         },
       };
-      if (this.code !== '') {
-        params.data.attributes.code = this.code;
+      if (code !== '') {
+        params.data.attributes.code = code;
       }
       this.$store
         .dispatch('session/h5Register', params)

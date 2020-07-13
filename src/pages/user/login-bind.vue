@@ -129,7 +129,7 @@ export default {
     jump2RegisterBind() {
       console.log('注册并绑定页');
       uni.navigateTo({
-        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
+        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=${this.code}`,
       });
     },
   },

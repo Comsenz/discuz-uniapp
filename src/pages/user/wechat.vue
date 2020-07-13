@@ -20,21 +20,27 @@ export default {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
+          const err = res.data;
+          if (err.errors) {
+            const { nickname } = err.errors[0].user;
+            const wxtoken = err.errors[0].token;
+            if (err.errors[0].code === 'no_bind_user') {
+              let code = '';
+              uni.getStorage({
+                key: 'inviteCode',
+                success(resData) {
+                  code = resData.data || '';
+                },
+              });
+              this.login(nickname, wxtoken, code);
+            }
+          } else if (res && res.data && res.data.data && res.data.data.id) {
             console.log('登录成功', res);
             this.logind();
             uni.showToast({
               title: '登录成功',
               duration: 2000,
             });
-          }
-          const err = res.data;
-          if (err.errors) {
-            const { nickname } = err.errors[0].user;
-            const wxtoken = err.errors[0].token;
-            if (err.errors[0].code === 'no_bind_user') {
-              this.login(nickname, wxtoken);
-            }
           }
         })
         .catch(err => {
