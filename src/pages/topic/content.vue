@@ -26,10 +26,17 @@
               size="26"
               color="#777"
             ></qui-icon>
+            <!-- #ifdef H5-->
             <button open-type="share" plain="true" @click="triggerShare" class="shareBtn">
               {{ i18n.t('topic.share') }}
             </button>
-            <view class="mask" v-if="shareShow" @click="triggerShare">
+            <!-- #endif -->
+            <!-- #ifdef MP-WEIXIN -->
+            <button open-type="share" plain="true" class="shareBtn">
+              {{ i18n.t('topic.share') }}
+            </button>
+            <!-- #endif -->
+            <view class="mask" v-if="shareShow" @click="closeShare">
               <view class="wxShareTip">
                 <img src="/static/sharePoint.png" alt class="sharePoint" />
                 <img src="/static/shareKnow.png" alt class="shareKnow" />
@@ -90,7 +97,10 @@ export default {
     // #endif
   },
   onLoad(query) {
-    console.log(query);
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
     this.query = query;
     if (!query.id) {
       this.$store.dispatch('forum/setError', {
@@ -160,18 +170,31 @@ export default {
     },
     // #ifdef H5
     triggerShare() {
-      console.log('7777777');
-      this.shareShow = !this.shareShow;
+      console.log(this.isWeixin, 'this.isWeixin');
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.topic.content,
+          id: this.query.id,
+          url: 'pages/topic/content',
+        });
+      }
+    },
+    closeShare() {
+      this.shareShow = false;
     },
     // #endif
   },
   // #ifdef MP-WEIXIN
   // 唤起小程序原声分享
-  onShareAppMessage() {
-    return {
-      title: this.topic.content,
-      path: `/pages/topic/content?id=${this.topic}`,
-    };
+  onShareAppMessage(res) {
+    if (res.from === 'button') {
+      return {
+        title: this.topic.content,
+        path: `/pages/topic/content?id=${this.topic}`,
+      };
+    }
   },
   // #endif
   onReachBottom() {
