@@ -48,10 +48,11 @@
       >
         {{ message.btnTxt }}
       </qui-button>
-
+      <!-- #ifdef H5-->
       <qui-button size="medium" @click="handleLoginClick" v-if="forumError.code === 'site_closed'">
         {{ i18n.t('core.admin_login') }}
       </qui-button>
+      <!-- #endif -->
     </view>
   </view>
 </template>

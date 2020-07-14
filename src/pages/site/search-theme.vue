@@ -33,28 +33,11 @@
       @scroll="scroll"
     >
       <view v-for="(item, index) in data" :key="index" class="search-item__content">
-        <qui-content
-          :ref="'myVideo' + index"
-          :key="index"
+        <qui-thread-item
           :currentindex="index"
-          :user-name="item.user.username"
-          :theme-image="item.user.avatarUrl"
-          :user-groups="item.user.groups"
-          :theme-time="item.createdAt"
-          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-          :thread-type="item.type"
-          :tags="[item.category]"
+          :thread="item"
           :scroll-top="scrollTop"
-          :media-url="item.threadVideo && item.threadVideo.media_url"
-          :images-list="item.firstPost.images"
-          :theme-essence="item.isEssence"
-          :video-width="item.threadVideo && item.threadVideo.width"
-          :video-height="item.threadVideo && item.threadVideo.height"
-          :video-id="item.threadVideo && item.threadVideo._jv.id"
-          @contentClick="contentClick(item._jv.id)"
-          @headClick="headClick(item.user._jv.id)"
-          @videoPlay="handleVideoPlay"
-        ></qui-content>
+        ></qui-thread-item>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
@@ -72,7 +55,6 @@ export default {
       pageSize: 20,
       pageNum: 1, // 当前页数
       scrollTop: 0,
-      playIndex: null,
     };
   },
   onLoad(params) {
@@ -126,25 +108,6 @@ export default {
       this.searchValue = '';
       this.pageNum = 1;
       this.getThemeList('', 'clear');
-    },
-    // 内容部分点击跳转到详情页
-    contentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
-    },
-    // 点击头像调转到个人主页
-    headClick(id) {
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${id}`,
-      });
-    },
-    // 视频禁止同时播放
-    handleVideoPlay(index) {
-      if (this.playIndex !== index && this.playIndex !== null) {
-        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
-      }
-      this.playIndex = index;
     },
     // 下拉加载
     pullDown() {
