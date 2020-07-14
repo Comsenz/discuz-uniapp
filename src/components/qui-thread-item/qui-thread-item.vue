@@ -98,6 +98,7 @@ export default {
       shareTitle: '', // h5内分享复制链接
       shareBtn: 'icon-share1',
       playIndex: null,
+      nowThreadId: '',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
       bottomData: [
         {
