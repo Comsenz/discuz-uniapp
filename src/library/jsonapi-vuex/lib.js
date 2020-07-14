@@ -226,6 +226,21 @@ const Utils = class {
   followRelationships(state, getters, record, seen) {
     const data = {};
 
+    if (typeof Object.getOwnPropertyDescriptors === 'undefined') {
+      Object.getOwnPropertyDescriptors = function(obj) {
+        if (obj === null || obj === undefined) {
+          throw new TypeError('Cannot convert undefined or null to object');
+        }      
+        const protoPropDescriptor = Object.getOwnPropertyDescriptor(obj, '__proto__');
+        const descriptors = protoPropDescriptor ? { ['__proto__']: protoPropDescriptor } : {}
+      
+        for (const name of Object.getOwnPropertyNames(obj)) {
+          descriptors[name] = Object.getOwnPropertyDescriptor(obj, name);
+        }
+        return descriptors;    
+      }
+    }
+
     Object.defineProperties(data, Object.getOwnPropertyDescriptors(record));
 
     const relationships = this.getRelationships(getters, data, seen);
