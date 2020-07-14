@@ -51,6 +51,7 @@
         :key="index"
         :currentindex="index"
         @toTopic="toTopic"
+        @handleClickShare="handleClickShare"
       ></qui-thread-item>
       <qui-load-more :status="loadingtype"></qui-load-more>
     </view>
@@ -80,6 +81,7 @@ export default {
       pageNum: 1,
       pageSize: 20,
       loadingtype: 'more',
+      nowThreadId: 0, // 点击主题ID
     };
   },
   computed: {
@@ -126,6 +128,11 @@ export default {
     this.uploadItem();
   },
   methods: {
+    // 点击分享事件
+    handleClickShare(e) {
+      console.log(e, 'e');
+      this.nowThreadId = e;
+    },
     toTopic(id) {
       this.editThreadId = id;
     },
@@ -170,7 +177,6 @@ export default {
     },
     // #ifdef H5
     triggerShare() {
-      console.log(this.isWeixin, 'this.isWeixin');
       if (this.isWeixin === true) {
         this.shareShow = true;
       } else {
@@ -189,12 +195,17 @@ export default {
   // #ifdef MP-WEIXIN
   // 唤起小程序原声分享
   onShareAppMessage(res) {
-    if (res.from === 'button') {
+    if (res.from === 'button' && res.target.id !== 'top') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
-        title: this.topic.content,
-        path: `/pages/topic/content?id=${this.topic}`,
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
+        path: `/pages/topic/index?id=${this.nowThreadId}`,
       };
     }
+    return {
+      title: this.topic.content,
+      path: `/pages/topic/content?id=${this.topic}`,
+    };
   },
   // #endif
   onReachBottom() {

@@ -195,7 +195,6 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
-      console.log(this.bottomData, 'this.bottomData');
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
