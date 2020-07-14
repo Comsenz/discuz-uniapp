@@ -96,6 +96,9 @@ export default {
       indexs: '',
       erroindex: '',
       number: 0,
+      detailindex: [],
+      newindex: [],
+      cunmumber: 1,
     };
   },
   watch: {
@@ -177,15 +180,16 @@ export default {
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
               _this.lastOrder += 1;
-              _this.numberdata.push({ state: 0 });
-
               return new Promise((resolve, reject) => {
                 res.tempFiles[index].uploadPercent = 0;
                 res.tempFiles[index].uploadStatus = false;
                 _this.uploadBeforeList.push(res.tempFiles[index]);
+                _this.numberdata.push({ state: 0 });
+                _this.newindex.push(res.tempFiles[index]);
                 if (_this.uploadBeforeList.length > _this.count) {
                   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
                   _this.numberdata = _this.numberdata.slice(0, _this.count);
+                  _this.newindex = _this.newindex.slice(0, _this.count);
                 }
                 _this.upload(
                   res.tempFilePaths[index],
@@ -210,14 +214,11 @@ export default {
         });
       }
     },
-
     // 上传图片到服务器
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
-      _this.formDataAppend = {
-        order: imgOrder,
-      };
-      const formdataObj = Object.assign(_this.formData, _this.formDataAppend);
+      const formdataObj = { type: _this.formData.type, order: imgOrder };
+      _this.formDataAppend = {};
       const uploadTask = uni.uploadFile({
         url: _this.url,
         fileType: _this.type,
@@ -228,11 +229,6 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             setTimeout(() => {
-              // console.log(_this.indexs);
-              // _this.uploadBeforeList.forEach((element, indexl) => {
-              //   _this.uploadBeforeList[indexl].uploadPercent = 100;
-              //   _this.numberdata[indexl].state = 100;
-              // });
               if (index < _this.uploadBeforeList.length) {
                 _this.uploadBeforeList[index].uploadPercent = 100;
                 _this.numberdata[index].state = 100;
@@ -242,7 +238,6 @@ export default {
                 _this.erroindex >= 0 &&
                 _this.erroindex < _this.uploadBeforeList.length
               ) {
-                console.log(_this.erroindex);
                 _this.uploadBeforeList[_this.erroindex].uploadPercent = 100;
                 _this.numberdata[_this.erroindex].state = 100;
               }
@@ -254,19 +249,23 @@ export default {
                 _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
                 _this.numberdata[_this.indexs].state = 100;
               }
+              console.log(JSON.parse(res.data), '~~~~~~~~~');
+              const resObj = {
+                id: JSON.parse(res.data).data.id,
+                type: JSON.parse(res.data).data.type,
+                order: _this.lastOrder,
+              };
+              // console.log(resObj, '这是新增的对象');
+              _this.uploadList.push(resObj);
+              console.log(_this.uploadList);
+              // console.log(_this.uploadList, '$$$$$$$$$$$$$');
+              _this.newindex = [];
+              _this.formDataAppend = {};
             }, 500);
-            console.log(JSON.parse(res.data), '~~~~~~~~~');
-            const resObj = {
-              id: JSON.parse(res.data).data.id,
-              type: JSON.parse(res.data).data.type,
-              order: _this.lastOrder,
-            };
-            // console.log(resObj, '这是新增的对象');
-            _this.uploadList.push(resObj);
-            // console.log(_this.uploadList, '$$$$$$$$$$$$$');
           } else {
-            console.log('错误的index', index);
+            console.log(_this.number, 'number');
             _this.number += 1;
+            console.log('错误的index', index);
             const resObj = JSON.parse(res.data);
             if (resObj.errors[0].detail) {
               uni.showToast({
@@ -276,43 +275,34 @@ export default {
             } else {
               uni.showToast({ icon: 'none', title: resObj.errors[0].code });
             }
-            // _this.uploadBeforeList.splice(_this.uploadBeforeList.length - 1, 1);
-
-            if (_this.number >= 1) {
-              if (index <= _this.number && index <= _this.uploadBeforeList.length - 1) {
-                _this.uploadBeforeList.splice(index, 1);
-                _this.uploadList.splice(index, 1);
-                _this.numberdata.splice(index, 1);
-                _this.erroindex = index;
-              } else if (index >= _this.number && index <= _this.uploadBeforeList.length) {
-                _this.uploadBeforeList.splice(index, 1);
-                _this.uploadList.splice(index, 1);
-                _this.numberdata.splice(index, 1);
-                _this.erroindex = index;
-              } else {
-                _this.uploadBeforeList.splice(index - _this.number, 1);
-                _this.uploadList.splice(index - _this.number, 1);
-                _this.numberdata.splice(index - _this.number, 1);
-                _this.erroindex = index - _this.number;
+            if (_this.uploadBeforeList.length > 1) {
+              for (let i = 0; i <= _this.uploadBeforeList.length; i += 1) {
+                if (_this.uploadBeforeList[i] === _this.newindex[index]) {
+                  _this.uploadBeforeList.splice(i, 1);
+                  _this.uploadList.splice(i, 1);
+                  _this.numberdata.splice(i, 1);
+                  _this.erroindex = i;
+                }
               }
             } else {
               _this.uploadBeforeList.splice(index, 1);
               _this.uploadList.splice(index, 1);
-              _this.erroindex = index;
+              _this.numberdata.splice(index, 1);
             }
-            if (index > 0 && index === _this.uploadBeforeList.length - 1) {
+            if (index > 0 && index === _this.uploadBeforeList.length) {
               _this.indexs = index - 1;
-            } else if (index > 0 && index <= _this.uploadBeforeList.length - 1) {
+            } else if (index > 0 && index < _this.uploadBeforeList.length) {
               _this.indexs = index;
+            } else if (index > 0 && index >= _this.uploadBeforeList.length) {
+              _this.indexs = index - _this.number;
             } else if (index === 0) {
               _this.indexs = 0;
             }
-            // _this.erroindex = index - _this.number;
-            // console.log(_this.indexs);
-            // 上传失败回调
             _this.$emit('uploadFail', res, _this.uploadList);
             return reject(res);
           }
+          _this.newindex = [];
+          _this.formDataAppend = {};
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
           // _this.numberdata.splice(index, 1);
