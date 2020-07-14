@@ -4,8 +4,8 @@
       :ref="'thread-' + currentindex"
       :currentindex="currentindex"
       :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
-      :user-name="thread.user.username"
-      :theme-image="thread.user.avatarUrl"
+      :user-name="thread.user ? thread.user.username : ''"
+      :theme-image="thread.user ? thread.user.avatarUrl : ''"
       :theme-btn="thread.canHide || ''"
       :theme-reply-btn="thread.canReply || ''"
       :user-groups="thread.user && thread.user.groups"
@@ -31,7 +31,7 @@
           thread.firstPost._jv.id,
           thread.firstPost.canLike,
           thread.firstPost.isLiked,
-          thread.firstPost.likeCount,
+          currentindex,
         )
       "
       @commentClick="commentClick(thread._jv.id)"
@@ -47,14 +47,8 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="shareContent(index)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="46"
-                  color="#777777"
-                ></qui-icon>
+                <qui-icon class="content-image" :name="item.icon" size="46" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="thread.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
@@ -92,6 +86,10 @@ export default {
       type: [Number, String],
       default: '0',
     },
+    scrollTop: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -99,8 +97,8 @@ export default {
       shareShow: false, // h5内分享提示信息
       shareTitle: '', // h5内分享复制链接
       shareBtn: 'icon-share1',
+      playIndex: null,
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
-      scrollTop: 0,
       bottomData: [
         {
           text: this.i18n.t('home.generatePoster'),
@@ -118,9 +116,6 @@ export default {
     };
   },
   methods: {
-    scroll(event) {
-      this.scrollTop = event.detail.scrollTop;
-    },
     // 内容部分点击跳转到详情页
     contentClick(id) {
       uni.navigateTo({
@@ -159,7 +154,7 @@ export default {
       this.cancel();
     },
     // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
+    handleIsGreat(id, canLike, isLiked, index) {
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -177,7 +172,9 @@ export default {
         },
         isLiked: isLiked !== true,
       };
-      this.$store.dispatch('jv/patch', params);
+      this.$store.dispatch('jv/patch', params).then(() => {
+        this.$emit('greatCallBack', isLiked, index);
+      });
     },
     // 视频禁止同时播放
     handleVideoPlay(index) {
@@ -195,7 +192,6 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
-      console.log(this.bottomData, 'this.bottomData');
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
