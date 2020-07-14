@@ -674,7 +674,7 @@ export default {
           _this.videoBeforeList.push({
             path: res.tempFilePath,
           });
-
+          // #ifdef MP-WEIXIN
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
@@ -704,7 +704,7 @@ export default {
               // });
             },
           });
-
+          // #endif
           // #ifndef  MP-WEIXIN
           console.log('这是h5');
           _this.getSignature(getSignature => {

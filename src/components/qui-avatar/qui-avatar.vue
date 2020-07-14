@@ -1,6 +1,12 @@
 <template>
   <view class="qui-avatar" @click="click" @tap="click">
-    <img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />
+    <!-- <img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />-->
+    <image
+      v-if="avatarUrl"
+      :src="user.avatarUrl"
+      :class="'qui-avatar-' + size"
+      @error="error"
+    ></image>
     <view v-else-if="styleText" :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
       {{ usernameAt }}
     </view>
