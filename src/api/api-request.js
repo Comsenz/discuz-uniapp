@@ -128,11 +128,11 @@ http.interceptor.response(
               clearTimeout(tostTimeout);
               tostTimeout = setTimeout(() => {
                 // eslint-disable-next-line no-nested-ternary
-                const title = error.detail
-                  ? Array.isArray(error.detail)
-                    ? error.detail[0]
-                    : error.detail
-                  : i18n.t(`core.${error.code}`);
+                const title = error[0].detail
+                  ? Array.isArray(error[0].detail)
+                    ? error[0].detail[0]
+                    : error[0].detail
+                  : i18n.t(`core.${error[0].code}`);
                 uni.showToast({
                   icon: 'none',
                   title,

@@ -70,6 +70,10 @@ export default {
     },
   },
   onLoad() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
@@ -90,6 +94,13 @@ export default {
     }
     return {
       title: this.forums.set_site.site_name,
+    };
+  },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
     };
   },
   onShow() {

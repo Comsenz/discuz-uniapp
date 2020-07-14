@@ -666,6 +666,7 @@ export default {
         compressed: false,
         sourceType: ['camera', 'album'],
         success(res) {
+          console.log(res, '这是chooseVideo');
           _this.$refs.toast.show({
             message: _this.i18n.t('uploader.videoUploading'),
           });
@@ -673,46 +674,7 @@ export default {
           _this.videoBeforeList.push({
             path: res.tempFilePath,
           });
-          // #ifdef  MP-WEIXIN
-          // console.log({
-          //   mediaFile: res,
-          //   getSignature: () => {
-          //     return new Promise((resolve, reject) => {
-          //       resolve(
-          //         'UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0',
-          //       );
-          //     });
-          //   }, //_this.getSignature,
-
-          //   mediaName: res.name,
-          //   success(result) {
-          //     console.log(result, '+++++++++++++++++');
-          //   },
-          //   error(result) {
-          //     console.log(result, 'error', '~~~~~~~~~~~');
-          //     // uni.showModal({
-          //     //   title: _this.i18n.t('uploader.uploadFailed'),
-          //     //   content: JSON.stringify(result),
-          //     //   showCancel: false,
-          //     // });
-          //     _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
-          //   },
-          //   progress(result) {
-          //     console.log(result, '这是h5h5h5将上传结果');
-          //     _this.percent = result.percent;
-          //     if (result.percent === 1) {
-          //       _this.$refs.toast.hideLoading();
-          //     }
-          //   },
-          //   finish(result) {
-          //     console.log(result, 'finish', '~~~~~~~~~~~');
-          //     _this.fileId = result.fileId;
-          //     _this.postVideo(result.fileId);
-          //     // _this.$refs.toast.show({
-          //     //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
-          //     // });
-          //   },
-          // });
+          // #ifdef MP-WEIXIN
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
@@ -732,7 +694,7 @@ export default {
                 // _this.$refs.toast.hideLoading();
               }
 
-              _this.videoPercent = info.percent;
+              _this.videoPercent = result.percent;
             },
             finish(result) {
               _this.fileId = result.fileId;

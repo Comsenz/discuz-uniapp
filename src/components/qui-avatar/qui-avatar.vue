@@ -1,6 +1,12 @@
 <template>
   <view class="qui-avatar" @click="click" @tap="click">
-    <img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />
+    <!--<img v-if="avatarUrl" :src="user.avatarUrl" :class="'qui-avatar-' + size" />-->
+    <image
+      v-if="avatarUrl"
+      :src="user.avatarUrl"
+      :class="'qui-ava qui-avatar-' + size"
+      @error="error"
+    ></image>
     <view v-else-if="styleText" :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
       {{ usernameAt }}
     </view>
@@ -65,7 +71,7 @@ export default {
 
 <style lang="scss" scoped>
 .qui-avatar .avatar,
-img {
+.qui-ava {
   border-radius: 50%;
 }
 

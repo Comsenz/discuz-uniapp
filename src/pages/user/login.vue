@@ -57,6 +57,11 @@ export default {
     };
   },
   onLoad(params) {
+    console.log('登录');
+    this.$store.dispatch('forum/setError', {
+      code: 'user_login',
+      status: 200,
+    });
     console.log('params', params);
     const { url, validate } = params;
     if (url) {

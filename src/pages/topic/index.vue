@@ -649,6 +649,11 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(option, 'option');
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
@@ -724,6 +729,14 @@ export default {
     }
     return {
       title: this.forums.set_site.site_name,
+    };
+  },
+  // 分享到朋友圈
+  onShareTimeline() {
+    const threadShare = this.$store.getters['jv/get'](`/threads/${this.threadId}`);
+    return {
+      title: threadShare.type === 1 ? this.thread.title : this.thread.firstPost.summaryText,
+      query: `id=${this.threadId}`,
     };
   },
   onShow() {

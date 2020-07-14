@@ -403,11 +403,10 @@ export default {
     },
     scroll(event) {
       this.scrollTop = event.detail.scrollTop;
-      // console.log(this.scrollTop, 'event');
       if (!this.navbarHeight) {
         return;
       }
-      if (event.detail.scrollTop + this.navbarHeight >= this.navTop) {
+      if (event.detail.scrollTop + this.navbarHeight + 20 >= this.navTop) {
         this.headerShow = false;
         this.navBarTransform = 'none';
       } else {
