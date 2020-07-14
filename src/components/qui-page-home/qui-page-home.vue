@@ -403,7 +403,6 @@ export default {
     },
     scroll(event) {
       this.scrollTop = event.detail.scrollTop;
-      console.log(this.scrollTop, 'event');
       if (!this.navbarHeight) {
         return;
       }
