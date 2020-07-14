@@ -130,8 +130,8 @@ module.exports = {
           },
         },
       };
-      if (this.code !== '') {
-        params.data.attributes.code = this.code;
+      if (code !== '') {
+        params.data.attributes.code = code;
       }
       this.$store
         .dispatch('session/h5Register', params)
