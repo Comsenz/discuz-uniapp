@@ -649,11 +649,12 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option, 'option');
+    // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline'],
     });
+    // #endif
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5

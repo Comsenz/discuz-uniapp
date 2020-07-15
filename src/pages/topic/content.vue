@@ -99,10 +99,12 @@ export default {
     // #endif
   },
   onLoad(query) {
+    // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline'],
     });
+    // #endif
     this.query = query;
     if (!query.id) {
       this.$store.dispatch('forum/setError', {
