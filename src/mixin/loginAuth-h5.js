@@ -2,6 +2,7 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import { getRandomChars } from '@/utils/getRandomChars';
+import { i18n } from '@/locale';
 
 module.exports = {
   mixins: [forums, user, appCommonH],
@@ -141,7 +142,7 @@ module.exports = {
             console.log('注册成功', result);
             this.logind();
             uni.showToast({
-              title: '注册成功',
+              title: i18n.t('user.registerSuccess'),
               duration: 2000,
             });
           }
