@@ -165,7 +165,6 @@ import forums from '@/mixin/forums';
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
-// import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 
 let payWechat = null;
@@ -367,8 +366,7 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          // const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/info`);
-          window.open(res.wechat_h5_link);
+          window.location.href = res.wechat_h5_link;
         } else if (browserType === '3') {
           if (res) {
             this.codeUrl = res.wechat_qrcode;
