@@ -174,10 +174,10 @@ export default {
         .dispatch('session/h5Register', params)
         .then(result => {
           if (result && result.data && result.data.data && result.data.data.id) {
-            console.log('注册绑定成功', result);
+            console.log('注册成功', result);
             this.logind();
             uni.showToast({
-              title: '注册绑定成功',
+              title: '注册成功',
               duration: 2000,
             });
           }
