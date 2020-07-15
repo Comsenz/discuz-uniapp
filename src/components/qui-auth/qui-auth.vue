@@ -78,7 +78,7 @@ export default {
     align-items: center;
     justify-content: center;
     &__image {
-      max-height: 88rpx;
+      max-height: 65rpx;
       margin: 10rpx 0 57rpx;
     }
   }
