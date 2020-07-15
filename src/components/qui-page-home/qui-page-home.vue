@@ -476,7 +476,7 @@ export default {
           url: `/pages/topic/index?id=${thread._jv.id}`,
         });
       } else {
-        this.$store.getters['session/get']('auth').open();
+        // this.$store.getters['session/get']('auth').open();
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingTopic') });
       }
     },
