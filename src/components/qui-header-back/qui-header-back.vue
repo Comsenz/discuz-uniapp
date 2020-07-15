@@ -303,7 +303,7 @@ export default {
   padding: 10rpx;
   background: --color(--qui-BG-2);
   border-radius: 10rpx;
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.16);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.16);
   box-sizing: border-box;
 }
 .qui-back__body__right-pop-item {
