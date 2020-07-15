@@ -169,7 +169,6 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 
 let payWechat = null;
-let payPhone = null;
 
 export default {
   mixins: [
@@ -353,15 +352,8 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          payPhone = setInterval(() => {
-            if (this.payStatus === 1) {
-              clearInterval(payPhone);
-              return;
-            }
-            this.getOrderStatus(orderSn, browserType);
-          }, 3000);
-          const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/info`);
-          window.open(`${res.wechat_h5_link}&redirect_url=${url}`);
+          const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/payh5`);
+          window.location.href = `${res.wechat_h5_link}&redirect_url=${url}`;
         } else if (browserType === '3') {
           if (res) {
             this.codeUrl = res.wechat_qrcode;
@@ -386,10 +378,6 @@ export default {
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
           this.payStatus = res.status;
-          uni.showToast({
-            title: `${res.status}支付状态`,
-            duration: 3000,
-          });
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
@@ -397,9 +385,6 @@ export default {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
-            }
-            if (browserType === '2') {
-              this.userInfo();
             }
             window.location.href = '/pages/home/index';
             this.$refs.toast.show({ message: this.p.paySuccess });
