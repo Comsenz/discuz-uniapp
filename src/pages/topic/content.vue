@@ -82,6 +82,7 @@ export default {
       pageSize: 20,
       loadingtype: 'more',
       nowThreadId: 0, // 点击主题ID
+      meta: '',
     };
   },
   computed: {
@@ -169,6 +170,7 @@ export default {
       };
 
       this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+        this.meta = data._jv.json.meta;
         if (this.pageNum > 1) {
           this.topicData = this.topicData.concat(data);
         } else {
@@ -211,9 +213,8 @@ export default {
   },
   // #endif
   onReachBottom() {
-    console.log(this.meta);
     if (this.meta) {
-      if (this.meta.next) {
+      if (this.meta.pageCount > 1) {
         this.pageNum += 1;
         this.loadThreads();
       }
