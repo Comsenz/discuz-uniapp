@@ -143,7 +143,20 @@ const actions = {
       console.log('http', http);
       return http
         .post('login', payload)
-        .then(results => setUserInfoStore(context, results, resolve));
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(error => {
+          if (error && error.data && error.data.errors && error.data.errors[0].status === '403') {
+            uni.showToast({
+              icon: 'none',
+              title: error.data.errors[0].detail[0],
+              duration: 2000,
+            });
+          }
+          console.log('error', error);
+        });
     });
   },
   // #endif
