@@ -169,6 +169,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 
 let payWechat = null;
+let payPhone = null;
 
 export default {
   mixins: [
@@ -234,16 +235,7 @@ export default {
     if (!this.userId) {
       return;
     }
-    const params = {
-      include: 'groups,wechat',
-    };
-    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
-      if (res.paid) {
-        uni.redirectTo({
-          url: '/pages/home/index',
-        });
-      }
-    });
+    this.userInfo();
   },
   onUnload() {
     clearInterval(payWechat);
@@ -261,6 +253,18 @@ export default {
     };
   },
   methods: {
+    userInfo() {
+      const params = {
+        include: 'groups,wechat',
+      };
+      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
+        if (res.paid) {
+          uni.redirectTo({
+            url: '/pages/home/index',
+          });
+        }
+      });
+    },
     // 首页头部分享按钮弹窗
     open() {
       // #ifdef MP-WEIXIN
@@ -351,7 +355,14 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/home/index`);
+          payPhone = setInterval(() => {
+            if (this.payStatus === 1) {
+              clearInterval(payPhone);
+              return;
+            }
+            this.getOrderStatus(orderSn, browserType);
+          }, 3000);
+          const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/info`);
           window.location.href = `${res.wechat_h5_link}&redirect_url=${url}`;
         } else if (browserType === '3') {
           if (res) {
@@ -384,6 +395,14 @@ export default {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
+            }
+            if (browserType === '2') {
+              this.userInfo();
+              uni.showToast({
+                title: res.status,
+                duration: 3000,
+              });
+              clearInterval(payPhone);
             }
             window.location.href = '/pages/home/index';
             this.$refs.toast.show({ message: this.p.paySuccess });
