@@ -649,7 +649,6 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option, 'option');
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline'],
@@ -657,8 +656,6 @@ export default {
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
-    console.log(this.isWeixin, '这是微信浏览器');
-    // console.log(this.isPhone, '这是h5');
     this.browser = 1;
     // #endif
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
@@ -794,8 +791,6 @@ export default {
       threadAction
         .then(data => {
           if (data.isDeleted) {
-            console.log(data.isDeleted, '!!!!!!');
-            // return;
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
               status: 500,
@@ -983,7 +978,6 @@ export default {
           this.loadingStatus = false;
           console.log(err);
           if (err.statusCode === 404) {
-            console.log('没找到');
             this.$store.dispatch('forum/setError', {
               code: 'type_404',
               status: 500,
@@ -1667,7 +1661,6 @@ export default {
         this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
       } else {
         this.price = Number(this.inputPrice);
-        console.log(typeof this.price, '这是金额类型');
         this.$refs.customAmountPopup.close();
         this.customAmountStatus = false;
         this.payShowStatus = true;

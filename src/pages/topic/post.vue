@@ -518,7 +518,6 @@ export default {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
       if (this.$refs.textarea) {
-        // console.log(this.$refs.textarea, '·~~~~~~~~~~~~~~');
         this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
         this.$refs.textarea.$refs.textarea.style.paddingRight = '10px';
       }
@@ -666,7 +665,6 @@ export default {
         compressed: false,
         sourceType: ['camera', 'album'],
         success(res) {
-          console.log(res, '这是chooseVideo');
           _this.$refs.toast.show({
             message: _this.i18n.t('uploader.videoUploading'),
           });
@@ -686,7 +684,6 @@ export default {
               _this.videoPercent = 0;
             },
             progress(result) {
-              console.log(result, '这是小程序将上传结果');
               _this.percent = result.percent;
 
               if (result.percent === 1) {
@@ -706,7 +703,6 @@ export default {
           });
           // #endif
           // #ifndef  MP-WEIXIN
-          console.log('这是h5');
           _this.getSignature(getSignature => {
             new TcVod({
               getSignature,
@@ -715,7 +711,6 @@ export default {
                 mediaFile: res.tempFile,
               })
               .on('media_progress', info => {
-                console.log(info, '这是h5');
                 _this.percent = info.percent; // 进度处理
                 // _this.videoPercent = info.percent;
                 if (info.percent === 1) {
@@ -1130,7 +1125,6 @@ export default {
       return this.$store
         .dispatch('jv/delete', params)
         .then(res => {
-          console.log(this.postDetails, '~~~~~~~');
           // 当编辑帖子时删除图片后传参给首页
           if (this.operating === 'edit') {
             this.$u.event.$emit('deleteImg', {
