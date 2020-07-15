@@ -368,7 +368,7 @@ export default {
           }
         } else if (browserType === '2') {
           // const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/info`);
-          window.location.href = `${res.wechat_h5_link}`;
+          window.open(res.wechat_h5_link);
         } else if (browserType === '3') {
           if (res) {
             this.codeUrl = res.wechat_qrcode;
