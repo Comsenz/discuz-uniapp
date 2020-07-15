@@ -61,7 +61,6 @@ export default {
     submission() {
       if (this.valueused && this.valuenew) {
         if (this.valueused === this.valuenew) {
-          console.log(this.users);
           if (this.users.hasPassword) {
             uni.showToast({
               icon: 'none',
@@ -90,6 +89,7 @@ export default {
       }
     },
     setpassword() {
+      const _this = this;
       const params = {
         _jv: {
           type: 'users',
@@ -101,6 +101,14 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/patch', params));
       postphon
         .then(res => {
+          const promsget = {
+            _jv: {
+              type: 'users',
+              id: this.userid,
+            },
+            // include: 'groups',
+          };
+          _this.$store.dispatch('jv/get', promsget).then(() => {});
           if (res) {
             uni.showToast({
               title: this.i18n.t('modify.passwordsetsucc'),
