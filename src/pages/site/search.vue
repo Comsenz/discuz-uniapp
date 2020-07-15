@@ -60,7 +60,7 @@
         :class="index == themeList.length - 1 ? 'noBorder' : ''"
         class="search-item__content"
       >
-        <qui-thread-item :currentindex="index" :thread="item"></qui-thread-item>
+        <qui-thread-item :currentindex="index" :thread="item" @toTopic="toTopic"></qui-thread-item>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
       <qui-no-data
@@ -82,10 +82,17 @@ export default {
       themeList: [],
       userTotal: null,
       themeTotal: null,
+      editThreadId: '',
       pageNum: 1, // 当前页数
     };
   },
+  onShow() {
+    this.uploadItem();
+  },
   methods: {
+    toTopic(id) {
+      this.editThreadId = id;
+    },
     searchInput(e) {
       this.searchValue = e.target.value;
       if (this.timeout) clearTimeout(this.timeout);
@@ -140,6 +147,19 @@ export default {
           this.themeTotal = res.length;
           this.themeList = res;
         });
+    },
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
+      }
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      const themeData = this.themeList;
+      themeData.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(themeData, index, item);
+        }
+      });
     },
     // 点击头像到个人主页
     toProfile(userId) {
