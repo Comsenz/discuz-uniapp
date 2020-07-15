@@ -234,16 +234,7 @@ export default {
     if (!this.userId) {
       return;
     }
-    const params = {
-      include: 'groups,wechat',
-    };
-    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
-      if (res.paid) {
-        uni.redirectTo({
-          url: '/pages/home/index',
-        });
-      }
-    });
+    this.userInfo();
   },
   onUnload() {
     clearInterval(payWechat);
@@ -261,6 +252,16 @@ export default {
     };
   },
   methods: {
+    userInfo() {
+      const params = {
+        include: 'groups,wechat',
+      };
+      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
+        if (res.paid) {
+          window.location.href = '/pages/home/index';
+        }
+      });
+    },
     // 首页头部分享按钮弹窗
     open() {
       // #ifdef MP-WEIXIN
@@ -351,7 +352,7 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/info`);
+          const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/payh5`);
           window.location.href = `${res.wechat_h5_link}&redirect_url=${url}`;
         } else if (browserType === '3') {
           if (res) {
