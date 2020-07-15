@@ -241,7 +241,7 @@ export default {
     if (this.isPhone && !this.isWeixin) {
       setTimeout(() => {
         this.userInfo();
-      }, 1000);
+      }, 3000);
     }
   },
   onUnload() {
