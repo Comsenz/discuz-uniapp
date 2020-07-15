@@ -352,7 +352,7 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/payh5`);
+          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/info`);
           window.location.replace(`${res.wechat_h5_link}&redirect_url=${url}`);
         } else if (browserType === '3') {
           if (res) {
