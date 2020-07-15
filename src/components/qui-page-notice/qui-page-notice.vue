@@ -34,9 +34,9 @@
         <view class="dialog-box__main" v-if="dialogList && dialogList.length > 0">
           <view
             class="dialog-box"
-            v-for="dialog of dialogList"
+            v-for="(dialog, index) of dialogList"
             :key="dialog._jv.id"
-            @click="jumpMsglistPage(dialog)"
+            @click="jumpMsglistPage(dialog, index)"
           >
             <view class="dialog-box__header">
               <view class="dialog-box__header__info">
@@ -199,9 +199,10 @@ export default {
       console.log(`跳转${this.i18n.t(item.title)}页面`);
     },
     // 跳转至 聊天页面
-    jumpMsglistPage(dialogInfo) {
+    jumpMsglistPage(dialogInfo, index) {
       if (dialogInfo) {
         console.log('会话信息', dialogInfo);
+        this.dialogList[index].readAt = '1';
         uni.navigateTo({
           url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.username}`,
         });
