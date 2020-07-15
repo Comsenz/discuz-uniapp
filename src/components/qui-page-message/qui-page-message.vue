@@ -195,7 +195,7 @@ export default {
     handleLoginClick() {
       // #ifdef H5
       uni.navigateTo({
-        url: `/pages/user/login?url=/pages/home/index`,
+        url: `/pages/user/login?url=/pages/home/index&register=false`,
       });
       // #endif
     },
