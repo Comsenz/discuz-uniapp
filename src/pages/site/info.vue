@@ -236,7 +236,7 @@ export default {
     }
     this.userInfo();
   },
-  // 安卓支付完成回来不刷新页面的情况
+  // 手机浏览器安卓支付完成回来不刷新页面的情况
   onShow() {
     if (this.isPhone && !this.isWeixin) {
       this.userInfo();
