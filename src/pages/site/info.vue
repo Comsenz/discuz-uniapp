@@ -239,9 +239,10 @@ export default {
   // 手机浏览器安卓支付完成回来不刷新页面的情况，且支付状态有延迟
   onShow() {
     if (this.isPhone && !this.isWeixin) {
-      setTimeout(() => {
-        this.userInfo();
-      }, 3000);
+      // 去到首页判断是否付费
+      uni.redirectTo({
+        url: '/pages/home/index',
+      });
     }
   },
   onUnload() {
