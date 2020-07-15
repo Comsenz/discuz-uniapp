@@ -110,7 +110,7 @@ export default {
             console.log('登录绑定成功', res);
             this.logind();
             uni.showToast({
-              title: '登录绑定成功',
+              title: this.i18n.t('user.loginBindSuccess'),
               duration: 2000,
             });
           })

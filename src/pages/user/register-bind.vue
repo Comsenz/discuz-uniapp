@@ -179,7 +179,7 @@ export default {
             console.log('注册绑定成功', result);
             this.logind();
             uni.showToast({
-              title: this.i18n.t('user.registerSuccess'),
+              title: this.i18n.t('user.registerBindSuccess'),
               duration: 2000,
             });
           }

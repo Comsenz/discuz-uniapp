@@ -707,5 +707,9 @@ export default {
     loginBind: '登录并绑定微信',
     logout: '退出登录',
     noBind: '退出并解绑',
+    registerSuccess: '注册成功',
+    registerBindSuccess: '注册绑定成功',
+    loginSuccess: '登录成功',
+    loginBindSuccess: '登录绑定成功',
   },
 };
