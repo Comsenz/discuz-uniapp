@@ -282,9 +282,9 @@ export default {
                 }
               }
             } else {
-              _this.uploadBeforeList.splice(index, 1);
-              _this.uploadList.splice(index, 1);
-              _this.numberdata.splice(index, 1);
+              _this.uploadBeforeList.splice(0, 1);
+              _this.uploadList.splice(0, 1);
+              _this.numberdata.splice(0, 1);
             }
             if (index > 0 && index === _this.uploadBeforeList.length) {
               _this.indexs = index - 1;
