@@ -239,6 +239,10 @@ export default {
   // 手机浏览器安卓支付完成回来不刷新页面的情况
   onShow() {
     if (this.isPhone && !this.isWeixin) {
+      uni.showToast({
+        title: 'h5',
+        duration: 3000,
+      });
       this.userInfo();
     }
   },
@@ -263,6 +267,10 @@ export default {
         include: 'groups,wechat',
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
+        uni.showToast({
+          title: `${res.paid}支付状态`,
+          duration: 3000,
+        });
         if (res.paid) {
           uni.redirectTo({
             url: '/pages/home/index',
