@@ -236,14 +236,12 @@ export default {
     }
     this.userInfo();
   },
-  // 手机浏览器安卓支付完成回来不刷新页面的情况
+  // 手机浏览器安卓支付完成回来不刷新页面的情况，且支付状态有延迟
   onShow() {
     if (this.isPhone && !this.isWeixin) {
-      uni.showToast({
-        title: 'h5',
-        duration: 3000,
-      });
-      this.userInfo();
+      setTimeout(() => {
+        this.userInfo();
+      }, 1000);
     }
   },
   onUnload() {
