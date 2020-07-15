@@ -236,15 +236,6 @@ export default {
     }
     this.userInfo();
   },
-  // 手机浏览器安卓支付完成回来不刷新页面的情况，且支付状态有延迟
-  onShow() {
-    if (this.isPhone && !this.isWeixin) {
-      if (this.timeout) clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.userInfo();
-      }, 5000);
-    }
-  },
   onUnload() {
     clearInterval(payWechat);
   },
@@ -266,14 +257,8 @@ export default {
         include: 'groups,wechat',
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
-        uni.showToast({
-          title: `${res.paid}支付状态`,
-          duration: 3000,
-        });
         if (res.paid) {
-          uni.redirectTo({
-            url: '/pages/home/index',
-          });
+          window.location.href = '/pages/home/index';
         }
       });
     },
@@ -367,8 +352,8 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/info`);
-          window.location.href = `${res.wechat_h5_link}&redirect_url=${url}`;
+          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/info`);
+          window.location.replace(`${res.wechat_h5_link}&redirect_url=${url}`);
         } else if (browserType === '3') {
           if (res) {
             this.codeUrl = res.wechat_qrcode;

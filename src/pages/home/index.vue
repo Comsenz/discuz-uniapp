@@ -152,7 +152,6 @@ export default {
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
-
       if (
         !this.$store.getters['session/get']('isLogin') &&
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0

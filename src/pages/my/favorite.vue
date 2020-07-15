@@ -89,7 +89,6 @@ export default {
         };
       }
     },
-    // 加载当前点赞数据
     loadlikes() {
       this.loadingType = 'loading';
       const params = {
