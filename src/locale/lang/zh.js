@@ -654,6 +654,7 @@ export default {
     join: '加入',
     accepttheinvitationandbecome: '接受邀请，成为',
     permanent: '永久有效',
+    continueResgister: '继续注册',
     codeinvalid:
       '该邀请码已经失效，请联系站长获取新的邀请码，若继续注册将以默认角色加入本站！是否继续注册？',
     codeused:
