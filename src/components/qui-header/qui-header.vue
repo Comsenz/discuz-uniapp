@@ -52,7 +52,7 @@ export default {
       default: '',
     },
     themeNum: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     homecontent: {
@@ -64,7 +64,7 @@ export default {
       default: '#fff',
     },
     postNum: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     share: {
