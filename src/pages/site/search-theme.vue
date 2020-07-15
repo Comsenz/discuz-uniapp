@@ -37,6 +37,7 @@
           :currentindex="index"
           :thread="item"
           :scroll-top="scrollTop"
+          @toTopic="toTopic"
         ></qui-thread-item>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
@@ -52,6 +53,7 @@ export default {
       searchValue: '',
       loadingType: '',
       data: [],
+      editThreadId: '',
       pageSize: 20,
       pageNum: 1, // 当前页数
       scrollTop: 0,
@@ -61,7 +63,13 @@ export default {
     this.searchValue = params.value;
     this.getThemeList(params.value);
   },
+  onShow() {
+    this.uploadItem();
+  },
   methods: {
+    toTopic(id) {
+      this.editThreadId = id;
+    },
     scroll(event) {
       this.scrollTop = event.detail.scrollTop;
     },
@@ -108,6 +116,19 @@ export default {
       this.searchValue = '';
       this.pageNum = 1;
       this.getThemeList('', 'clear');
+    },
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
+      }
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      const themeData = this.data;
+      themeData.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(themeData, index, item);
+        }
+      });
     },
     // 下拉加载
     pullDown() {
