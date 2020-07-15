@@ -30,28 +30,15 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y search-item"
+      @scroll="scroll"
     >
       <view v-for="(item, index) in data" :key="index" class="search-item__content">
-        <qui-content
-          :ref="'myVideo' + index"
+        <qui-thread-item
           :currentindex="index"
-          :user-name="item.user.username"
-          :theme-image="item.user.avatarUrl"
-          :user-groups="item.user.groups"
-          :theme-time="item.createdAt"
-          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-          :thread-type="item.type"
-          :tags="[item.category]"
-          :media-url="item.threadVideo && item.threadVideo.media_url"
-          :images-list="item.firstPost.images"
-          :theme-essence="item.isEssence"
-          :video-width="item.threadVideo && item.threadVideo.width"
-          :video-height="item.threadVideo && item.threadVideo.height"
-          :video-id="item.threadVideo && item.threadVideo._jv.id"
-          @contentClick="contentClick(item._jv.id)"
-          @headClick="headClick(item.user._jv.id)"
-          @videoPlay="handleVideoPlay"
-        ></qui-content>
+          :thread="item"
+          :scroll-top="scrollTop"
+          @toTopic="toTopic"
+        ></qui-thread-item>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
@@ -66,15 +53,26 @@ export default {
       searchValue: '',
       loadingType: '',
       data: [],
+      editThreadId: '',
       pageSize: 20,
       pageNum: 1, // 当前页数
+      scrollTop: 0,
     };
   },
   onLoad(params) {
     this.searchValue = params.value;
     this.getThemeList(params.value);
   },
+  onShow() {
+    this.uploadItem();
+  },
   methods: {
+    toTopic(id) {
+      this.editThreadId = id;
+    },
+    scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+    },
     searchInput(e) {
       this.searchValue = e.target.value;
       if (this.timeout) clearTimeout(this.timeout);
@@ -119,24 +117,18 @@ export default {
       this.pageNum = 1;
       this.getThemeList('', 'clear');
     },
-    // 内容部分点击跳转到详情页
-    contentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
-    },
-    // 点击头像调转到个人主页
-    headClick(id) {
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${id}`,
-      });
-    },
-    // 视频禁止同时播放
-    handleVideoPlay(index) {
-      if (this.playIndex !== index && this.playIndex !== null) {
-        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
       }
-      this.playIndex = index;
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      const themeData = this.data;
+      themeData.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(themeData, index, item);
+        }
+      });
     },
     // 下拉加载
     pullDown() {

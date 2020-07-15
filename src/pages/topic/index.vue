@@ -649,11 +649,15 @@ export default {
     },
   },
   onLoad(option) {
+    // #ifdef MP-WEIXIN
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
+    // #endif
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
-    console.log(this.isWeixin, '这是微信浏览器');
-    // console.log(this.isPhone, '这是h5');
     this.browser = 1;
     // #endif
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
@@ -726,6 +730,14 @@ export default {
       title: this.forums.set_site.site_name,
     };
   },
+  // 分享到朋友圈
+  onShareTimeline() {
+    const threadShare = this.$store.getters['jv/get'](`/threads/${this.threadId}`);
+    return {
+      title: threadShare.type === 1 ? this.thread.title : this.thread.firstPost.summaryText,
+      query: `id=${this.threadId}`,
+    };
+  },
   onShow() {
     let atMemberList = '';
     this.getAtMemberData.map(item => {
@@ -781,8 +793,6 @@ export default {
       threadAction
         .then(data => {
           if (data.isDeleted) {
-            console.log(data.isDeleted, '!!!!!!');
-            // return;
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
               status: 500,
@@ -970,7 +980,6 @@ export default {
           this.loadingStatus = false;
           console.log(err);
           if (err.statusCode === 404) {
-            console.log('没找到');
             this.$store.dispatch('forum/setError', {
               code: 'type_404',
               status: 500,
@@ -1654,7 +1663,6 @@ export default {
         this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
       } else {
         this.price = Number(this.inputPrice);
-        console.log(typeof this.price, '这是金额类型');
         this.$refs.customAmountPopup.close();
         this.customAmountStatus = false;
         this.payShowStatus = true;

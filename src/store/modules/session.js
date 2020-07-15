@@ -69,6 +69,13 @@ const actions = {
                     },
                   },
                 };
+                // 邀请页面带上邀请码
+                const pages = getCurrentPages();
+                const page = pages[pages.length - 1].route;
+                if (page === 'pages/site/partner-invite') {
+                  const inviteCode = pages[pages.length - 1].options.code;
+                  data.data.attributes.code = inviteCode;
+                }
                 data = Object.assign(payload, data);
                 return http
                   .post('oauth/wechat/miniprogram', data)
@@ -90,7 +97,8 @@ const actions = {
   },
   // #endif
   // #ifdef H5
-  wxh5Login: () => {
+  wxh5Login: (context, payload = {}) => {
+    console.log(payload);
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
@@ -135,7 +143,20 @@ const actions = {
       console.log('http', http);
       return http
         .post('login', payload)
-        .then(results => setUserInfoStore(context, results, resolve));
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(error => {
+          if (error && error.data && error.data.errors && error.data.errors[0].status === '403') {
+            uni.showToast({
+              icon: 'none',
+              title: error.data.errors[0].detail[0],
+              duration: 2000,
+            });
+          }
+          console.log('error', error);
+        });
     });
   },
   // #endif

@@ -518,7 +518,6 @@ export default {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
       if (this.$refs.textarea) {
-        // console.log(this.$refs.textarea, '·~~~~~~~~~~~~~~');
         this.$refs.textarea.$refs.textarea.style.overflowY = 'scroll';
         this.$refs.textarea.$refs.textarea.style.paddingRight = '10px';
       }
@@ -673,46 +672,7 @@ export default {
           _this.videoBeforeList.push({
             path: res.tempFilePath,
           });
-          // #ifdef  MP-WEIXIN
-          // console.log({
-          //   mediaFile: res,
-          //   getSignature: () => {
-          //     return new Promise((resolve, reject) => {
-          //       resolve(
-          //         'UzRrXReU4rm\/rD6UVQiqWiZ3GZZzZWNyZXRJZD1BS0lETFVpdXdxY0p1VHF3QUhHM2hBVWtJeEpZRGkzRWJQdEMmY3VycmVudFRpbWVTdGFtcD0xNTkyNTUzNjcwJmV4cGlyZVRpbWU9MTU5MjU1NzI3MCZ2b2RTdWJBcHBJZD0wJnJhbmRvbT0xMDQ3MzI5ODY0',
-          //       );
-          //     });
-          //   }, //_this.getSignature,
-
-          //   mediaName: res.name,
-          //   success(result) {
-          //     console.log(result, '+++++++++++++++++');
-          //   },
-          //   error(result) {
-          //     console.log(result, 'error', '~~~~~~~~~~~');
-          //     // uni.showModal({
-          //     //   title: _this.i18n.t('uploader.uploadFailed'),
-          //     //   content: JSON.stringify(result),
-          //     //   showCancel: false,
-          //     // });
-          //     _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
-          //   },
-          //   progress(result) {
-          //     console.log(result, '这是h5h5h5将上传结果');
-          //     _this.percent = result.percent;
-          //     if (result.percent === 1) {
-          //       _this.$refs.toast.hideLoading();
-          //     }
-          //   },
-          //   finish(result) {
-          //     console.log(result, 'finish', '~~~~~~~~~~~');
-          //     _this.fileId = result.fileId;
-          //     _this.postVideo(result.fileId);
-          //     // _this.$refs.toast.show({
-          //     //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
-          //     // });
-          //   },
-          // });
+          // #ifdef MP-WEIXIN
           VodUploader.start({
             mediaFile: res,
             getSignature: _this.getSignature,
@@ -724,7 +684,6 @@ export default {
               _this.videoPercent = 0;
             },
             progress(result) {
-              console.log(result, '这是小程序将上传结果');
               _this.percent = result.percent;
 
               if (result.percent === 1) {
@@ -732,7 +691,7 @@ export default {
                 // _this.$refs.toast.hideLoading();
               }
 
-              _this.videoPercent = info.percent;
+              _this.videoPercent = result.percent;
             },
             finish(result) {
               _this.fileId = result.fileId;
@@ -744,7 +703,6 @@ export default {
           });
           // #endif
           // #ifndef  MP-WEIXIN
-          console.log('这是h5');
           _this.getSignature(getSignature => {
             new TcVod({
               getSignature,
@@ -753,7 +711,6 @@ export default {
                 mediaFile: res.tempFile,
               })
               .on('media_progress', info => {
-                console.log(info, '这是h5');
                 _this.percent = info.percent; // 进度处理
                 // _this.videoPercent = info.percent;
                 if (info.percent === 1) {
@@ -1168,7 +1125,6 @@ export default {
       return this.$store
         .dispatch('jv/delete', params)
         .then(res => {
-          console.log(this.postDetails, '~~~~~~~');
           // 当编辑帖子时删除图片后传参给首页
           if (this.operating === 'edit') {
             this.$u.event.$emit('deleteImg', {

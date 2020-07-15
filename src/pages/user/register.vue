@@ -8,6 +8,7 @@
       <view class="register-box-con">
         <input
           class="input"
+          maxlength="15"
           :placeholder="i18n.t('user.username')"
           placeholder-style="color: #ddd"
           v-model="username"
@@ -15,6 +16,7 @@
         <input
           class="input"
           type="password"
+          maxlength="50"
           :placeholder="i18n.t('user.password')"
           placeholder-style="color: #ddd"
           v-model="password"
@@ -22,6 +24,7 @@
         <input
           v-if="validate"
           class="input"
+          maxlength="50"
           :placeholder="i18n.t('user.reason')"
           placeholder-style="color: #ddd"
           v-model="reason"
@@ -171,10 +174,10 @@ export default {
         .dispatch('session/h5Register', params)
         .then(result => {
           if (result && result.data && result.data.data && result.data.data.id) {
-            console.log('注册绑定成功', result);
+            console.log('注册成功', result);
             this.logind();
             uni.showToast({
-              title: '注册绑定成功',
+              title: this.i18n.t('user.registerSuccess'),
               duration: 2000,
             });
           }
@@ -182,10 +185,11 @@ export default {
             result &&
             result.data &&
             result.data.errors &&
-            result.data.errors[0].code === 'validation_error'
+            result.data.errors[0].status === '422'
           ) {
             uni.showToast({
-              title: '用户名已存在',
+              icon: 'none',
+              title: result.data.errors[0].detail[0],
               duration: 2000,
             });
           }

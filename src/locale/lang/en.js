@@ -270,6 +270,7 @@ export default {
     inviteyouas: 'Invite you as',
     join: 'Join',
     accepttheinvitationandbecome: 'Accept the invitation and become',
+    continueResgister: 'Continue resgister',
   },
   // 搜索
   search: {

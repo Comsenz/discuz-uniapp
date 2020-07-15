@@ -2,6 +2,7 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import { getRandomChars } from '@/utils/getRandomChars';
+import { i18n } from '@/locale';
 
 module.exports = {
   mixins: [forums, user, appCommonH],
@@ -14,6 +15,11 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
+        // 微信授权跳转
+        uni.setStorage({
+          key: 'inviteCode',
+          data: code,
+        });
         this.$store.dispatch('session/wxh5Login');
       } else {
         this.login('', '', code);
@@ -30,7 +36,7 @@ module.exports = {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式 跳转到注册并绑定页
             uni.navigateTo({
-              url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}`,
+              url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}&code=${code}`,
             });
           }
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
@@ -125,8 +131,8 @@ module.exports = {
           },
         },
       };
-      if (this.code !== '') {
-        params.data.attributes.code = this.code;
+      if (code !== '') {
+        params.data.attributes.code = code;
       }
       this.$store
         .dispatch('session/h5Register', params)
@@ -136,7 +142,7 @@ module.exports = {
             console.log('注册成功', result);
             this.logind();
             uni.showToast({
-              title: '注册成功',
+              title: i18n.t('user.registerSuccess'),
               duration: 2000,
             });
           }

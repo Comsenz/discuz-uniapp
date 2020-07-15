@@ -25,7 +25,7 @@
           {{ i18n.t('user.pwd') }}
         </view>
         <view class="new-phon-number">
-          <input class="new-phon-num" type="password" v-model="password" />
+          <input class="new-phon-num" type="password" maxlength="50" v-model="password" />
         </view>
       </view>
       <view class="phone-number-login-box-btn" @click="login">
@@ -115,7 +115,7 @@ export default {
             console.log('手机号密码登录绑定成功', res);
             this.logind();
             uni.showToast({
-              title: '登录成功',
+              title: this.i18n.t('user.loginSuccess'),
               duration: 2000,
             });
           })

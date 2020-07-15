@@ -26,10 +26,17 @@
               size="26"
               color="#777"
             ></qui-icon>
+            <!-- #ifdef H5-->
             <button open-type="share" plain="true" @click="triggerShare" class="shareBtn">
               {{ i18n.t('topic.share') }}
             </button>
-            <view class="mask" v-if="shareShow" @click="triggerShare">
+            <!-- #endif -->
+            <!-- #ifdef MP-WEIXIN -->
+            <button open-type="share" plain="true" class="shareBtn">
+              {{ i18n.t('topic.share') }}
+            </button>
+            <!-- #endif -->
+            <view class="mask" v-if="shareShow" @click="closeShare">
               <view class="wxShareTip">
                 <img src="/static/sharePoint.png" alt class="sharePoint" />
                 <img src="/static/shareKnow.png" alt class="shareKnow" />
@@ -44,6 +51,7 @@
         :key="index"
         :currentindex="index"
         @toTopic="toTopic"
+        @handleClickShare="handleClickShare"
       ></qui-thread-item>
       <qui-load-more :status="loadingtype"></qui-load-more>
     </view>
@@ -73,6 +81,8 @@ export default {
       pageNum: 1,
       pageSize: 20,
       loadingtype: 'more',
+      nowThreadId: 0, // 点击主题ID
+      meta: '',
     };
   },
   computed: {
@@ -90,7 +100,12 @@ export default {
     // #endif
   },
   onLoad(query) {
-    console.log(query);
+    // #ifdef MP-WEIXIN
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
+    // #endif
     this.query = query;
     if (!query.id) {
       this.$store.dispatch('forum/setError', {
@@ -116,6 +131,11 @@ export default {
     this.uploadItem();
   },
   methods: {
+    // 点击分享事件
+    handleClickShare(e) {
+      console.log(e, 'e');
+      this.nowThreadId = e;
+    },
     toTopic(id) {
       this.editThreadId = id;
     },
@@ -150,6 +170,7 @@ export default {
       };
 
       this.$store.dispatch('jv/get', ['threads', { params }]).then(data => {
+        this.meta = data._jv.json.meta;
         if (this.pageNum > 1) {
           this.topicData = this.topicData.concat(data);
         } else {
@@ -160,14 +181,31 @@ export default {
     },
     // #ifdef H5
     triggerShare() {
-      console.log('7777777');
-      this.shareShow = !this.shareShow;
+      if (this.isWeixin === true) {
+        this.shareShow = true;
+      } else {
+        this.h5Share({
+          title: this.topic.content,
+          id: this.query.id,
+          url: 'pages/topic/content',
+        });
+      }
+    },
+    closeShare() {
+      this.shareShow = false;
     },
     // #endif
   },
   // #ifdef MP-WEIXIN
   // 唤起小程序原声分享
-  onShareAppMessage() {
+  onShareAppMessage(res) {
+    if (res.from === 'button' && res.target.id !== 'top') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
+      return {
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
+        path: `/pages/topic/index?id=${this.nowThreadId}`,
+      };
+    }
     return {
       title: this.topic.content,
       path: `/pages/topic/content?id=${this.topic}`,
@@ -175,9 +213,8 @@ export default {
   },
   // #endif
   onReachBottom() {
-    console.log(this.meta);
     if (this.meta) {
-      if (this.meta.next) {
+      if (this.meta.pageCount > 1) {
         this.pageNum += 1;
         this.loadThreads();
       }

@@ -9,6 +9,7 @@
         scroll-with-animation="true"
         @scrolltolower="pullDown"
         show-scrollbar="false"
+        @scroll="scroll"
         class="scroll-y"
       >
         <view class="profile-info">
@@ -82,6 +83,7 @@
             <view v-if="current == 0" class="items">
               <topic
                 :user-id="userId"
+                :scroll-top="scrollTop"
                 @changeFollow="changeFollow"
                 ref="topic"
                 @handleClickShare="handleClickShare"
@@ -96,6 +98,7 @@
             <view v-else class="items">
               <like
                 :user-id="userId"
+                :scroll-top="scrollTop"
                 @changeFollow="changeFollow"
                 ref="like"
                 @handleClickShare="handleClickShare"
@@ -152,6 +155,7 @@ export default {
       imageStatus: true,
       can_create_dialog: false,
       dialogId: 0, // 会话id
+      scrollTop: 0,
       loaded: false, // 用户数据是否请求成功
     };
   },
@@ -191,6 +195,9 @@ export default {
     }
   },
   methods: {
+    scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
+    },
     onClickItem(e) {
       if (e.currentIndex !== this.current) {
         this.current = e.currentIndex;

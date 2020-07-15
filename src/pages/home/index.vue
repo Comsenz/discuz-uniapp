@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
+  <qui-page ref="quiPage" :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
     <view class="content">
       <view class="view-content">
         <qui-page-home
@@ -70,6 +70,12 @@ export default {
     },
   },
   onLoad() {
+    // #ifdef MP-WEIXIN
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
+    // #endif
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
@@ -92,7 +98,20 @@ export default {
       title: this.forums.set_site.site_name,
     };
   },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
+  },
   onShow() {
+    // #ifdef MP-WEIXIN
+    if (this.$refs.quiPage) {
+      this.$store.dispatch('session/setAuth', this.$refs.quiPage.$refs.auth);
+      this.$refs.quiPage.open();
+    }
+    // #endif
     if (
       !this.$store.getters['session/get']('isLogin') &&
       ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
@@ -133,7 +152,6 @@ export default {
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
-
       if (
         !this.$store.getters['session/get']('isLogin') &&
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0

@@ -3,7 +3,7 @@
     <uni-nav-bar
       class="status-bar"
       :style="'transform:' + navBarTransform"
-      :title="forums.set_site.site_name"
+      :title="forums.set_site ? forums.set_site.site_name : ''"
       fixed="true"
       :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
       :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
@@ -19,11 +19,11 @@
       @scrolltoupper="toUpper"
     >
       <qui-header
-        :head-img="forums.set_site.site_header_logo"
-        :background-head-full-img="forums.set_site.site_background_image"
+        :head-img="forums.set_site ? forums.set_site.site_header_logo : ''"
+        :background-head-full-img="forums.set_site ? forums.set_site.site_background_image : ''"
         :theme="theme"
-        :theme-num="forums.other.count_users"
-        :post-num="forums.other.count_threads"
+        :theme-num="forums.set_site ? forums.other.count_users : ''"
+        :post-num="forums.set_site ? forums.other.count_threads : ''"
         :share-btn="shareBtn"
         :share-show="shareShow"
         :is-show-more="false"
@@ -119,9 +119,9 @@
         <qui-load-more :status="loadingType"></qui-load-more>
       </view>
       <!-- #ifdef H5-->
-      <view class="record" v-if="forums.set_site.site_record !== ''">
+      <view class="record" v-if="forums.set_site ? forums.set_site.site_record : '' !== ''">
         <!-- <text>{{ i18n.t('home.record') }}</text> -->
-        <text>{{ forums.set_site.site_record }}</text>
+        <text>{{ forums.set_site ? forums.set_site.site_record : '' }}</text>
       </view>
       <!-- #endif -->
     </scroll-view>
@@ -359,9 +359,9 @@ export default {
     // h5微信分享
     // #ifdef H5
     this.wxShare({
-      title: this.forums.set_site.site_name,
-      desc: this.forums.set_site.site_introduction,
-      logo: this.forums.set_site.site_logo,
+      title: this.forums.set_site ? this.forums.set_site.site_name : '',
+      desc: this.forums.set_site ? this.forums.set_site.site_introduction : '',
+      logo: this.forums.set_site ? this.forums.set_site.site_logo : '',
     });
     // #endif
     this.ontrueGetList();
@@ -403,11 +403,10 @@ export default {
     },
     scroll(event) {
       this.scrollTop = event.detail.scrollTop;
-      // console.log(this.scrollTop, 'event');
       if (!this.navbarHeight) {
         return;
       }
-      if (event.detail.scrollTop + this.navbarHeight >= this.navTop) {
+      if (event.detail.scrollTop + this.navbarHeight + 20 >= this.navTop) {
         this.headerShow = false;
         this.navBarTransform = 'none';
       } else {
@@ -509,7 +508,7 @@ export default {
         this.shareShow = true;
       } else {
         this.h5Share({
-          title: this.forums.set_site.site_name,
+          title: this.forums.set_site ? this.forums.set_site.site_name : '',
           url: 'pages/home/index',
         });
       }

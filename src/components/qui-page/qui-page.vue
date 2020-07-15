@@ -89,6 +89,13 @@ export default {
   },
   methods: {
     // #ifdef MP-WEIXIN
+    open() {
+      if (!this.loading && !this.showMessage) {
+        if (!this.$store.getters['session/get']('isLogin')) {
+          this.$refs.auth.open();
+        }
+      }
+    },
     close() {
       this.$refs.auth.close();
     },

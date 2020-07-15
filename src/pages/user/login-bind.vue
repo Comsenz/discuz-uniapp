@@ -8,6 +8,7 @@
       <view class="login-bind-box-con">
         <input
           class="input"
+          maxlength="15"
           :placeholder="i18n.t('user.username')"
           placeholder-style="color: #ddd"
           v-model="username"
@@ -15,6 +16,7 @@
         <input
           class="input"
           type="password"
+          maxlength="50"
           :placeholder="i18n.t('user.password')"
           placeholder-style="color: #ddd"
           v-model="password"
@@ -108,7 +110,7 @@ export default {
             console.log('登录绑定成功', res);
             this.logind();
             uni.showToast({
-              title: '登录绑定成功',
+              title: this.i18n.t('user.loginBindSuccess'),
               duration: 2000,
             });
           })
@@ -127,7 +129,7 @@ export default {
     jump2RegisterBind() {
       console.log('注册并绑定页');
       uni.navigateTo({
-        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
+        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=${this.code}`,
       });
     },
   },

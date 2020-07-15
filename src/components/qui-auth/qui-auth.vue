@@ -6,7 +6,7 @@
     <view class="auth__content">
       <image
         class="auth__content__image"
-        mode="widthFix"
+        mode="aspectFit"
         :src="(forums && forums.set_site && forums.set_site.site_logo) || '/static/logo.png'"
       ></image>
 
@@ -78,7 +78,6 @@ export default {
     align-items: center;
     justify-content: center;
     &__image {
-      width: 275rpx;
       max-height: 65rpx;
       margin: 10rpx 0 57rpx;
     }

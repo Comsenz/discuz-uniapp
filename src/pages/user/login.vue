@@ -8,6 +8,7 @@
       <view class="login-box-con">
         <input
           class="input"
+          maxlength="15"
           :placeholder="i18n.t('user.username')"
           placeholder-style="color: #ddd"
           v-model="username"
@@ -15,6 +16,7 @@
         <input
           class="input"
           type="password"
+          maxlength="50"
           :placeholder="i18n.t('user.password')"
           placeholder-style="color: #ddd"
           v-model="password"
@@ -23,7 +25,7 @@
       <view class="login-box-btn" @click="login">
         {{ i18n.t('user.login') }}
       </view>
-      <view class="login-box-ft">
+      <view class="login-box-ft" v-if="register">
         <view @click="jump2Register">
           {{ i18n.t('user.noexist') }}
         </view>
@@ -52,17 +54,27 @@ export default {
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
       qcloud_sms: false, // 默认不开启短信功能
+      register: true, // 默认展示注册链接
     };
   },
   onLoad(params) {
+    console.log('登录');
+    this.$store.dispatch('forum/setError', {
+      code: 'user_login',
+      status: 200,
+    });
     console.log('params', params);
-    const { url, validate } = params;
+    const { url, validate, register } = params;
     if (url) {
       this.url = url;
     }
     if (validate) {
       this.validate = JSON.parse(validate);
     }
+    if (register) {
+      this.register = JSON.parse(register);
+    }
+    console.log('register', typeof this.register);
     console.log('validate', typeof this.validate);
     console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
@@ -109,7 +121,7 @@ export default {
             console.log('登录成功', res);
             this.logind();
             uni.showToast({
-              title: '登录成功',
+              title: this.i18n.t('user.loginSuccess'),
               duration: 2000,
             });
           })

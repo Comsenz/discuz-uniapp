@@ -165,6 +165,7 @@ import forums from '@/mixin/forums';
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 
 let payWechat = null;
@@ -217,7 +218,7 @@ export default {
     uni.hideHomeButton();
     // #endif
     this.$u.event.$on('logind', data => {
-      // 登陆成功后如果是已付费去首页
+      // 点击授权登陆成功后如果是已付费去首页
       if (data.paid) {
         uni.redirectTo({
           url: '/pages/home/index',
@@ -229,19 +230,11 @@ export default {
     this.isPhone = appCommonH.isWeixin().isPhone;
     this.browser = 1;
     // #endif
+    // 已经支付过的直接去首页
     if (!this.userId) {
       return;
     }
-    const params = {
-      include: 'groups,wechat',
-    };
-    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
-      if (res.paid) {
-        uni.redirectTo({
-          url: '/pages/home/index',
-        });
-      }
-    });
+    this.userInfo();
   },
   onUnload() {
     clearInterval(payWechat);
@@ -259,6 +252,16 @@ export default {
     };
   },
   methods: {
+    userInfo() {
+      const params = {
+        include: 'groups,wechat',
+      };
+      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
+        if (res.paid) {
+          window.location.href = '/pages/home/index';
+        }
+      });
+    },
     // 首页头部分享按钮弹窗
     open() {
       // #ifdef MP-WEIXIN
@@ -349,7 +352,8 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          window.location.href = res.wechat_h5_link;
+          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/info`);
+          window.location.replace(`${res.wechat_h5_link}&redirect_url=${url}`);
         } else if (browserType === '3') {
           if (res) {
             this.codeUrl = res.wechat_qrcode;
@@ -407,6 +411,9 @@ export default {
         res => {
           // alert('支付唤醒');
           if (res.err_msg === 'get_brand_wcpay_request:ok') {
+            uni.redirectTo({
+              url: '/pages/home/index',
+            });
             // 微信支付成功，进行支付成功处理
           } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
             // 取消支付

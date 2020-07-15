@@ -60,26 +60,7 @@
         :class="index == themeList.length - 1 ? 'noBorder' : ''"
         class="search-item__content"
       >
-        <qui-content
-          :ref="'myVideo' + index"
-          :currentindex="index"
-          :user-name="item.user.username"
-          :theme-image="item.user.avatarUrl"
-          :user-groups="item.user.groups"
-          :theme-time="item.createdAt"
-          :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-          :thread-type="item.type"
-          :tags="[item.category]"
-          :media-url="item.threadVideo && item.threadVideo.media_url"
-          :images-list="item.firstPost.images"
-          :theme-essence="item.isEssence"
-          :video-width="item.threadVideo && item.threadVideo.width"
-          :video-height="item.threadVideo && item.threadVideo.height"
-          :video-id="item.threadVideo && item.threadVideo._jv.id"
-          @contentClick="contentClick(item._jv.id)"
-          @headClick="toProfile(item.user._jv.id)"
-          @videoPlay="handleVideoPlay"
-        ></qui-content>
+        <qui-thread-item :currentindex="index" :thread="item" @toTopic="toTopic"></qui-thread-item>
         <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
       </view>
       <qui-no-data
@@ -101,10 +82,17 @@ export default {
       themeList: [],
       userTotal: null,
       themeTotal: null,
+      editThreadId: '',
       pageNum: 1, // 当前页数
     };
   },
+  onShow() {
+    this.uploadItem();
+  },
   methods: {
+    toTopic(id) {
+      this.editThreadId = id;
+    },
     searchInput(e) {
       this.searchValue = e.target.value;
       if (this.timeout) clearTimeout(this.timeout);
@@ -160,29 +148,29 @@ export default {
           this.themeList = res;
         });
     },
-    clearSearch() {
-      this.searchValue = '';
-      this.userList = [];
-      this.themeList = [];
-    },
-    // 内容部分点击跳转到详情页
-    contentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
-    },
-    // 视频禁止同时播放
-    handleVideoPlay(index) {
-      if (this.playIndex !== index && this.playIndex !== null) {
-        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
       }
-      this.playIndex = index;
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      const themeData = this.themeList;
+      themeData.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(themeData, index, item);
+        }
+      });
     },
     // 点击头像到个人主页
     toProfile(userId) {
       uni.navigateTo({
         url: `/pages/profile/index?userId=${userId}`,
       });
+    },
+    clearSearch() {
+      this.searchValue = '';
+      this.userList = [];
+      this.themeList = [];
     },
     searchTheme() {
       uni.navigateTo({

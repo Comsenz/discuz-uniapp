@@ -9,6 +9,7 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y"
+      @scroll="scroll"
     >
       <view class="favorite-head">
         <qui-cell-item
@@ -18,42 +19,13 @@
       </view>
       <view class="favorite-content">
         <view v-for="(item, index) in data" :key="index" class="favorite-content__item">
-          <qui-content
-            :ref="'myVideo' + index"
+          <qui-thread-item
             :currentindex="index"
-            :pay-status="(item.price > 0 && item.paid) || item.price == 0"
-            :user-name="item.user && item.user.username"
-            :theme-image="item.user && item.user.avatarUrl"
-            :user-groups="item.user && item.user.groups"
-            :theme-reply-btn="item.canReply || ''"
-            :theme-time="item.createdAt"
-            :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-            :thread-type="item.type"
-            :tags="[item.category]"
-            :media-url="item.threadVideo && item.threadVideo.media_url"
-            :is-great="item.firstPost.isLiked"
-            :theme-like="item.firstPost.likeCount"
-            :theme-comment="item.postCount - 1"
-            :images-list="item.firstPost.images"
-            :theme-essence="item.isEssence"
-            :video-width="item.threadVideo && item.threadVideo.width"
-            :video-height="item.threadVideo && item.threadVideo.height"
-            :video-id="item.threadVideo && item.threadVideo._jv.id"
-            :cover-image="item.threadVideo && item.threadVideo.cover_url"
-            @click="handleClickShare(item._jv.id)"
-            @handleIsGreat="
-              handleIsGreat(
-                item.firstPost._jv.id,
-                item.firstPost.canLike,
-                item.firstPost.isLiked,
-                index,
-              )
-            "
-            @commentClick="commentClick(item._jv.id)"
-            @contentClick="contentClick(item._jv.id)"
-            @headClick="headClick(item.user._jv.id)"
-            @videoPlay="handleVideoPlay"
-          ></qui-content>
+            :thread="item"
+            :scroll-top="scrollTop"
+            @toTopic="toTopic"
+            @handleClickShare="handleClickShare"
+          ></qui-thread-item>
           <qui-icon
             name="icon-delete"
             size="28"
@@ -63,25 +35,14 @@
         </view>
         <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
       </view>
-      <uni-popup ref="popupContent" type="bottom">
-        <qui-share :now-thread-id="nowThreadId" share-type="content" @close="cancel"></qui-share>
-      </uni-popup>
     </scroll-view>
   </qui-page>
 </template>
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-// #ifdef H5
-import wxshare from '@/mixin/wxshare-h5';
-// #endif
 
 export default {
-  mixins: [
-    // #ifdef  H5
-    wxshare,
-    // #endif
-  ],
   props: {
     userId: {
       type: String,
@@ -92,35 +53,30 @@ export default {
     return {
       loadingType: '',
       data: [],
+      query: {},
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
+      scrollTop: 0,
+      editThreadId: '',
       nowThreadId: '',
-      shareTitle: '', // h5内分享复制链接
     };
   },
   mounted() {
     this.loadlikes();
   },
+  onShow() {
+    this.uploadItem();
+  },
   methods: {
+    toTopic(id) {
+      this.editThreadId = id;
+    },
     handleClickShare(id) {
-      // #ifdef MP-WEIXIN
       this.nowThreadId = id;
-      this.$refs.popupContent.open();
-      // #endif
-      // #ifdef H5
-      const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
-      if (shareThread.type === 1) {
-        this.shareTitle = shareThread.title;
-      } else {
-        this.shareTitle = shareThread.firstPost.summary;
-      }
-      this.h5Share({
-        title: this.shareTitle,
-        id,
-        url: 'pages/topic/index',
-      });
-      // #endif
+    },
+    scroll(event) {
+      this.scrollTop = event.detail.scrollTop;
     },
     // 唤起小程序原声分享（微信）
     onShareAppMessage(res) {
@@ -133,15 +89,6 @@ export default {
         };
       }
     },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupContent.close();
-    },
-    // 调取用户信息取消弹框
-    close() {
-      this.$refs.auth.close();
-    },
-    // 加载当前点赞数据
     loadlikes() {
       this.loadingType = 'loading';
       const params = {
@@ -173,49 +120,6 @@ export default {
           this.data = [...this.data, ...res];
         });
     },
-    // 评论部分点击评论跳到详情页
-    commentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
-    },
-    // 内容部分点击跳转到详情页
-    contentClick(id) {
-      uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
-      });
-    },
-    // 点击头像调转到个人主页
-    headClick(id) {
-      uni.navigateTo({
-        url: `/pages/profile/index?userId=${id}`,
-      });
-    },
-    // 内容部分点赞按钮点击事件
-    handleIsGreat(id, canLike, isLiked) {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.getters['session/get']('auth').open();
-      }
-      const params = {
-        _jv: {
-          type: 'posts',
-          id,
-        },
-        isLiked: isLiked !== true,
-      };
-      this.$store.dispatch('jv/patch', params).then(() => {
-        // const likedData = this.data[index];
-        // const count = !isLiked ? res.likeCount + 1 : res.likeCount - 1;
-        // likedData.firstPost.likeCount = count;
-      });
-    },
-    // 视频禁止同时播放
-    handleVideoPlay(index) {
-      if (this.playIndex !== index && this.playIndex !== null) {
-        this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
-      }
-      this.playIndex = index;
-    },
     // 删除收藏
     itemDelete(id, isFavorite, index) {
       const params = {
@@ -237,6 +141,18 @@ export default {
       }
       this.pageNum += 1;
       this.loadlikes();
+    },
+    uploadItem() {
+      if (!this.editThreadId) {
+        return;
+      }
+      const item = this.$store.getters['jv/get'](`threads/${this.editThreadId}`);
+      this.data.forEach((data, index) => {
+        if (data._jv.id === this.editThreadId) {
+          this.editThreadId = '';
+          this.$set(this.data, index, item);
+        }
+      });
     },
   },
 };

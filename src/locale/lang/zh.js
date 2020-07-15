@@ -154,7 +154,8 @@ export default {
     category_not_found: '请选择分类',
     censor_not_passed: '抱歉，您填写的内容包含不良信息',
     model_not_found: '您访问的内容不存在或已被删除',
-    noViewPermission: '没有查看权限，请点击返回首页',
+    post_not_found: '您访问的内容不存在或已被删除',
+    noViewPermission: '没有查看权限，请点击返回上一级',
     route_not_found: '路由未找到',
     no_bind_user: '未绑定用户',
     account_has_been_bound: '用户或微信已绑定',
@@ -653,6 +654,7 @@ export default {
     join: '加入',
     accepttheinvitationandbecome: '接受邀请，成为',
     permanent: '永久有效',
+    continueResgister: '继续注册',
     codeinvalid:
       '该邀请码已经失效，请联系站长获取新的邀请码，若继续注册将以默认角色加入本站！是否继续注册？',
     codeused:
@@ -683,6 +685,7 @@ export default {
   user: {
     login: '登录',
     register: '注册',
+    // registerSuccess: '注册成功',
     registerReason: '注册原因',
     submit: '提交',
     username: '请输入用户名',
@@ -704,5 +707,9 @@ export default {
     loginBind: '登录并绑定微信',
     logout: '退出登录',
     noBind: '退出并解绑',
+    registerSuccess: '注册成功',
+    registerBindSuccess: '注册绑定成功',
+    loginSuccess: '登录成功',
+    loginBindSuccess: '登录绑定成功',
   },
 };
