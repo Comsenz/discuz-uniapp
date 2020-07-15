@@ -141,6 +141,12 @@ export default {
           this.themeList = res;
         });
     },
+    // 点击头像到个人主页
+    toProfile(userId) {
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${userId}`,
+      });
+    },
     clearSearch() {
       this.searchValue = '';
       this.userList = [];
