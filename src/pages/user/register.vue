@@ -177,7 +177,7 @@ export default {
             console.log('注册成功', result);
             this.logind();
             uni.showToast({
-              title: '注册成功',
+              title: this.i18n.t('user.registerSuccess'),
               duration: 2000,
             });
           }

@@ -210,7 +210,7 @@ export default {
           console.log('手机号验证成功', res);
           this.logind();
           uni.showToast({
-            title: '登录成功',
+            title: this.i18n.t('user.loginSuccess'),
             duration: 2000,
           });
         })
