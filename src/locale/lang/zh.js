@@ -685,6 +685,7 @@ export default {
   user: {
     login: '登录',
     register: '注册',
+    registerSuccess: '注册成功',
     registerReason: '注册原因',
     submit: '提交',
     username: '请输入用户名',
