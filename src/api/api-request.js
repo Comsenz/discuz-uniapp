@@ -118,11 +118,15 @@ http.interceptor.response(
               status: 500,
             });
             break;
-          case 'not_install':
           case 'site_closed':
+            uni.showToast({
+              icon: 'none',
+              title: i18n.t(`core.${error.code}`),
+            });
+            break;
+          case 'not_install':
           case 'ban_user':
             break;
-
           default:
             if (response.config.custom.showTost) {
               clearTimeout(tostTimeout);
