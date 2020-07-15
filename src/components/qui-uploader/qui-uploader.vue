@@ -257,15 +257,12 @@ export default {
               };
               // console.log(resObj, '这是新增的对象');
               _this.uploadList.push(resObj);
-              console.log(_this.uploadList);
               // console.log(_this.uploadList, '$$$$$$$$$$$$$');
               _this.newindex = [];
               _this.formDataAppend = {};
             }, 500);
           } else {
-            console.log(_this.number, 'number');
             _this.number += 1;
-            console.log('错误的index', index);
             const resObj = JSON.parse(res.data);
             if (resObj.errors[0].detail) {
               uni.showToast({
@@ -276,7 +273,7 @@ export default {
               uni.showToast({ icon: 'none', title: resObj.errors[0].code });
             }
             if (_this.uploadBeforeList.length > 1) {
-              for (let i = 0; i <= _this.uploadBeforeList.length; i += 1) {
+              for (let i = 0; i < _this.uploadBeforeList.length; i += 1) {
                 if (_this.uploadBeforeList[i] === _this.newindex[index]) {
                   _this.uploadBeforeList.splice(i, 1);
                   _this.uploadList.splice(i, 1);
@@ -309,7 +306,6 @@ export default {
           return resolve(_this.uploadList);
         },
         fail(res) {
-          console.log('上传失败了', index);
           _this.uploadBeforeList.splice(index, 1);
           _this.uploadList.splice(index, 1);
           _this.numberdata.splice(index, 1);
