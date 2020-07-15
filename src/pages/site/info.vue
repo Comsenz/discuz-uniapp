@@ -169,7 +169,6 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 
 let payWechat = null;
-let payPhone = null;
 
 export default {
   mixins: [
@@ -236,6 +235,12 @@ export default {
       return;
     }
     this.userInfo();
+  },
+  // 安卓支付完成回来不刷新页面的情况
+  onShow() {
+    if (this.isPhone && !this.isWeixin) {
+      this.userInfo();
+    }
   },
   onUnload() {
     clearInterval(payWechat);
@@ -355,13 +360,6 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          payPhone = setInterval(() => {
-            if (this.payStatus === 1) {
-              clearInterval(payPhone);
-              return;
-            }
-            this.getOrderStatus(orderSn, browserType);
-          }, 3000);
           const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/site/info`);
           window.location.href = `${res.wechat_h5_link}&redirect_url=${url}`;
         } else if (browserType === '3') {
@@ -395,14 +393,6 @@ export default {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
-            }
-            if (browserType === '2') {
-              this.userInfo();
-              uni.showToast({
-                title: res.status,
-                duration: 3000,
-              });
-              clearInterval(payPhone);
             }
             window.location.href = '/pages/home/index';
             this.$refs.toast.show({ message: this.p.paySuccess });
