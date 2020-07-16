@@ -170,7 +170,7 @@ export default {
     padding-top: 20rpx;
     padding-left: 40rpx;
     /* #ifdef H5 */
-    margin-top: 60px;
+    margin-top: 45px;
     /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
