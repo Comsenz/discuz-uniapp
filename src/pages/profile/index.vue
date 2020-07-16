@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('profile.personalhomepage')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view v-if="loaded">
       <scroll-view
@@ -152,7 +152,6 @@ export default {
       currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
       nowThreadId: '',
-      imageStatus: true,
       can_create_dialog: false,
       dialogId: 0, // 会话id
       scrollTop: 0,
@@ -305,10 +304,6 @@ export default {
     handleClickShare(e) {
       this.nowThreadId = e;
     },
-    // 头像加载失败,显示默认头像
-    imageError() {
-      this.imageStatus = false;
-    },
     // 私信跳转到聊天页面（传入用户名和会话id）
     chat() {
       uni.navigateTo({
@@ -337,7 +332,7 @@ export default {
   padding: 40rpx;
   padding-top: 30rpx;
   /* #ifdef H5 */
-  margin-top: 44px;
+  margin-top: 60px;
   /* #endif */
   font-size: $fg-f28;
   background: --color(--qui-BG-2);

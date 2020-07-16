@@ -555,6 +555,10 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    uploadFile: '上传附件',
+    filesizecannotexceed: '文件大小不能超过',
+    pleaseselect: '请选择',
+    fileformat: '格式的文件',
     downloadSuccess: '下载成功',
     downloadError: '下载失败',
     thetemporarypathis: '临时路径为',
@@ -562,6 +566,7 @@ export default {
     post: '发帖',
     notice: '消息',
     mine: '我的',
+    backhomePage: '回首页',
     myprofile: '我的资料',
     mywallet: '我的钱包',
     myfavorite: '我的收藏',

@@ -163,8 +163,10 @@ export default {
       if (this.searchText === '') {
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
           console.log('内容为空的搜索：', res);
-          if (res && res._jv) {
-            delete res._jv;
+          if (res) {
+            if (res._jv) {
+              delete res._jv;
+            }
             if (this.isSearch) {
               this.searchUserList = [...this.searchUserList, ...res];
             } else {
@@ -177,8 +179,10 @@ export default {
         params['page[number]'] = this.searchPageNum;
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
           console.log('搜索res：', res);
-          if (res && res._jv) {
-            delete res._jv;
+          if (res) {
+            if (res._jv) {
+              delete res._jv;
+            }
             this.searchUserList = [...this.searchUserList, ...res];
             this.searchLoadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }

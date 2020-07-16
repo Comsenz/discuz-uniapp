@@ -194,8 +194,6 @@ export default {
     // #endif
     // #ifdef H5
     handleClickOk() {
-      console.log('----userId-----', this.userId);
-      console.log('this.forums', this.forums);
       this.$store
         .dispatch('jv/delete', `users/${this.userId}/wechat`)
         .then(res => {

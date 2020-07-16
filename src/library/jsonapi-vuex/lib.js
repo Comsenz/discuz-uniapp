@@ -230,14 +230,14 @@ const Utils = class {
       Object.getOwnPropertyDescriptors = function(obj) {
         if (obj === null || obj === undefined) {
           throw new TypeError('Cannot convert undefined or null to object');
-        }      
+        }
         const protoPropDescriptor = Object.getOwnPropertyDescriptor(obj, '__proto__');
         const descriptors = protoPropDescriptor ? { ['__proto__']: protoPropDescriptor } : {}
-      
+
         for (const name of Object.getOwnPropertyNames(obj)) {
           descriptors[name] = Object.getOwnPropertyDescriptor(obj, name);
         }
-        return descriptors;    
+        return descriptors;
       }
     }
 
@@ -601,9 +601,9 @@ const Utils = class {
                 }
               });
             }
-            if (data._jv.type === 'users') {
-              delete data.avatarUrl;
-            }
+            // if (data._jv.type === 'users') {
+            //   delete data.avatarUrl;
+            // }
             data = merge(oldRecord, data);
           }
         }

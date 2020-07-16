@@ -1,12 +1,12 @@
 <template>
   <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
     <!-- #ifdef H5-->
-    <qui-header-back
+    <!-- <qui-header-back
       :title="title"
       :is-show-home="isShowHome"
       :is-show-back="isShowBack"
       :is-show-more="isShowMore"
-    ></qui-header-back>
+    ></qui-header-back> -->
     <!-- #endif -->
     <view class="logoBox">
       <image

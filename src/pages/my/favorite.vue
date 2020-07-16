@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="favorite">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('profile.myfavorite')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <scroll-view
       scroll-y="true"
@@ -170,7 +170,7 @@ export default {
     padding-top: 20rpx;
     padding-left: 40rpx;
     /* #ifdef H5 */
-    margin-top: 60rpx;
+    margin-top: 60px;
     /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
