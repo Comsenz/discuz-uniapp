@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('profile.myprofile')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view class="my-profile">
       <!-- canEditUsername 是否允许修改用户名-->
@@ -183,7 +183,7 @@ export default {
     padding-top: 40rpx;
     padding-left: 40rpx;
     /* #ifdef H5 */
-    margin-top: 50rpx;
+    margin-top: 40px;
     /* #endif */
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);

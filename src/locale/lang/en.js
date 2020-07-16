@@ -183,6 +183,7 @@ export default {
     post: 'Post',
     notice: 'Notice',
     mine: 'Mine',
+    backhomePage: 'Backhome page',
     myprofile: 'My profile',
     mywallet: 'My wallet',
     myfavorite: 'My favorite',

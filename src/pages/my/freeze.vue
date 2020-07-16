@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="freeze">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('profile.freezeamount')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <scroll-view
       scroll-y="true"
@@ -119,7 +119,7 @@ export default {
     justify-content: space-between;
     padding: 40rpx 40rpx 0;
     /* #ifdef H5 */
-    padding-top: 90rpx;
+    padding-top: 60px;
     /* #endif */
     margin-bottom: 30rpx;
     font-size: $fg-f24;
