@@ -431,7 +431,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   .cash-content-input {
-    width: 238rpx;
+    width: 300rpx;
     height: 100%;
     font-size: $fg-f34;
     font-weight: bold;
