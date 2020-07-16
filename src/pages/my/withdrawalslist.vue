@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="withdrawalslist">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('profile.withdrawalslist')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view class="withdrawalslist-head">
       <qui-cell-item slot-right :border="false">
@@ -187,7 +187,7 @@ $height: calc(100vh - 150rpx);
     position: relative;
     padding: 40rpx 0 0 40rpx;
     /* #ifdef H5 */
-    padding-top: 90rpx;
+    padding-top: 60px;
     /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
@@ -218,7 +218,7 @@ $height: calc(100vh - 150rpx);
   width: 50%;
   height: 78rpx;
   /* #ifdef H5 */
-  margin-top: 50rpx;
+  margin-top: 40px;
   /* #endif */
 }
 .date-picker .uni-input {

@@ -563,6 +563,7 @@ export default {
     post: '发帖',
     notice: '消息',
     mine: '我的',
+    backhomePage: '回首页',
     myprofile: '我的资料',
     mywallet: '我的钱包',
     myfavorite: '我的收藏',

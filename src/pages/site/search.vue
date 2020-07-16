@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('search.search')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
@@ -197,7 +197,7 @@ export default {
   }
   .search-box {
     /* #ifdef H5 */
-    margin-top: 80rpx;
+    margin-top: 60px;
     /* #endif */
   }
   .no-data {
