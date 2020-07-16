@@ -197,7 +197,7 @@ export default {
   }
   .search-box {
     /* #ifdef H5 */
-    margin-top: 60px;
+    margin-top: 45px;
     /* #endif */
   }
   .no-data {

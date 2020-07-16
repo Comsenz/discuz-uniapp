@@ -1,5 +1,6 @@
 <template>
   <view class="my">
+    <!-- #ifdef MP-WEIXIN -->
     <uni-nav-bar
       :title="i18n.t('profile.mine')"
       fixed="true"
@@ -7,6 +8,7 @@
       :background-color="checked ? '#2e2f30' : '#fff'"
       status-bar
     ></uni-nav-bar>
+    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -236,7 +238,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 /* #ifdef H5 */
-$height: calc(100vh - 280rpx);
+$height: calc(100vh - 120rpx);
 /* #endif */
 
 /* #ifdef MP-WEIXIN */

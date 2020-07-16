@@ -275,6 +275,9 @@ export default {
     iCantRewardMyself: '自己不能打赏自己哦',
     searchTopic: '搜索话题',
     hot: '热度',
+    sortTimeSequence: '评论时间正序',
+    sortTimeReverse: '评论时间倒序',
+    itsAlreadyWantedSort: '已经是你想要的顺序了哦',
   },
   pay: {
     passwordTip: '请输入支付密码',
