@@ -126,7 +126,6 @@ export default {
   computed: {
     profile() {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-      data.avatarUrl = data.avatarUrl || '/static/noavatar.gif';
       return data;
     },
   },

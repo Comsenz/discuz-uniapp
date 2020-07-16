@@ -152,7 +152,6 @@ export default {
       currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
       nowThreadId: '',
-      imageStatus: true,
       can_create_dialog: false,
       dialogId: 0, // 会话id
       scrollTop: 0,
@@ -304,10 +303,6 @@ export default {
     // 点击分享事件
     handleClickShare(e) {
       this.nowThreadId = e;
-    },
-    // 头像加载失败,显示默认头像
-    imageError() {
-      this.imageStatus = false;
     },
     // 私信跳转到聊天页面（传入用户名和会话id）
     chat() {
