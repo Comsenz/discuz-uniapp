@@ -1,10 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-findpwd">
     <!-- #ifdef H5-->
-    <qui-header-back
-      :title="i18n.t('modify.findpawdtitle')"
-      :is-show-more="false"
-    ></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view class="retireve" @click.stop="toggleBox">
       <view class="retireve-tab">

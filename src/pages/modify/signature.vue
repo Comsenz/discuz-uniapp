@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-sinature">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('modify.signaturetitle')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view class="aogph">
       <view class="aogph-tab">
