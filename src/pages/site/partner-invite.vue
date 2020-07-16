@@ -344,7 +344,7 @@ export default {
   width: 85%;
   padding: 0 20rpx;
   margin: 50rpx auto 30rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {

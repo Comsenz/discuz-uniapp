@@ -88,7 +88,7 @@ export default {
   box-sizing: border-box;
 }
 .qui-tabs__item__brief {
-  font-size: 28rpx;
+  font-size: $fg-f28;
   color: --color(--qui-FC-333);
   transition: $switch-theme-time;
 }
