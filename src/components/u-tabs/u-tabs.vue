@@ -79,7 +79,7 @@ export default {
     // 字体大小
     fontSize: {
       type: [String, Number],
-      default: 26,
+      default: 28,
     },
     // 过渡动画时长, 单位ms
     duration: {
