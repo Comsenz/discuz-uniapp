@@ -739,8 +739,8 @@ export default {
 .navPost {
   display: inline;
   padding-left: 8rpx;
-  font-weight: 900;
-  color: var(--qui-FC-333);
+  // font-weight: 900;
+  color: var(--qui-LINK);
 }
 .themeItem__content__coverimg {
   width: 100%;
