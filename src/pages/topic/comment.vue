@@ -1121,11 +1121,12 @@ page {
   }
 }
 .comment-content-box {
-  padding: 0 40rpx 30rpx;
+  padding: 0 40rpx 0 30rpx;
   .comment-content {
     width: 100%;
-    height: 420rpx;
-    padding: 20rpx;
+    height: 260rpx;
+    padding: 20rpx 20rpx 0;
+    overflow: hidden;
     background: --color(--qui-FC-GRAY);
     border: 1px solid --color(--qui-FC-DDD);
     border-radius: 7rpx;
@@ -1133,7 +1134,7 @@ page {
   }
   .comment-textarea {
     width: 100%;
-    height: 94rpx;
+    height: 220rpx;
     min-height: 70rpx;
     font-size: $fg-f28;
     line-height: 37rpx;

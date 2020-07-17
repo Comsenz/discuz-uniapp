@@ -17,6 +17,7 @@
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
+
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
@@ -57,6 +58,7 @@
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
+      <slot name="follow"></slot>
       <view class="themeItem__header__opera" v-if="managementShow">
         <view class="det-hd-operaCli">
           <view class="det-hd-management" @click="selectClick">
@@ -227,6 +229,12 @@ export default {
     threadPrice: {
       type: [Number, String],
       default: 0,
+    },
+    userInfo: {
+      type: Object,
+      default: () => {
+        return {};
+      },
     },
     // 需要支付查看的内容所占的比例
     // partVal: {

@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back :title="navTitle"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <!-- #ifdef H5-->
     <view class="head-gap"></view>
@@ -1467,7 +1467,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
 .head-gap {
-  height: 44px;
+  height: 60px;
 }
 .post-box {
   width: 100vw;
