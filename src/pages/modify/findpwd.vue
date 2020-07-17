@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-findpwd">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="retireve" @click.stop="toggleBox">
       <view class="retireve-tab">
         <view class="retireve-titel">

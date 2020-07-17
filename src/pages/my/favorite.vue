@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="favorite">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -28,7 +25,7 @@
           ></qui-thread-item>
           <qui-icon
             name="icon-delete"
-            size="28"
+            size="30"
             color="#aaa"
             @tap="itemDelete(item._jv.id, item.isFavorite, index)"
           ></qui-icon>

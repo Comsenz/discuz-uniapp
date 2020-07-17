@@ -19,7 +19,10 @@
           <text class="qui-back__body__right-pop-item" @tap="footerOpen">
             {{ i18n.t('profile.post') }}
           </text>
-          <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '1')">
+          <text
+            :class="['qui-back__body__right-pop-item', redCircle ? 'message' : '']"
+            @tap="backPage('/pages/home/index', '1')"
+          >
             {{ i18n.t('profile.notice') }}
           </text>
           <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '2')">
@@ -29,17 +32,10 @@
           <text
             class="qui-back__body__right-pop-item"
             @tap="backPage('/pages/manage/index')"
-            v-if="userInfo.groupsName == '管理员'"
+            v-show="forums.other && forums.other.can_create_invite"
           >
             {{ i18n.t('topic.management') }}
           </text>
-          <qui-icon
-            name="icon-oval"
-            class="red-circle"
-            color="#FB2D2D"
-            size="14"
-            v-if="redCircle"
-          ></qui-icon>
         </view>
       </view>
     </view>
@@ -249,9 +245,17 @@ export default {
   font-size: $fg-f28;
   text-align: right;
 }
-.red-circle {
+.message {
+  position: relative;
+}
+.message:after {
   position: absolute;
-  top: 14px;
-  right: 36px;
+  top: 6px;
+  right: -10px;
+  width: 7px;
+  height: 7px;
+  background: --color(--qui-RED);
+  border-radius: 50%;
+  content: '';
 }
 </style>

@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <!-- #ifdef H5-->
-    <qui-header-back title="邀请成员"></qui-header-back>
-    <!-- #endif -->
     <scroll-view
       scroll-y
       show-scrollbar="false"
@@ -277,7 +274,7 @@ export default {
       if (
         this.userInfos &&
         this.userInfos.groups.length > 0 &&
-        this.userInfos.groups[0].name === '管理员'
+        this.forums.other.can_create_invite
       ) {
         // 角色是管理员
         this.$store

@@ -43,7 +43,7 @@
           <qui-icon
             class="nav__box__icon"
             name="icon-screen"
-            size="28"
+            size="32"
             :color="show ? '#1878F3' : '#777'"
             @tap="showFilter"
           ></qui-icon>

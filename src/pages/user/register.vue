@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <!-- #ifdef H5-->
-    <qui-header-back title="" :is-show-more="false"></qui-header-back>
-    <!-- #endif -->
     <view class="register-box">
       <view class="register-box-h">{{ i18n.t('user.register') }}</view>
       <view class="register-box-con">
@@ -191,6 +188,17 @@ export default {
               icon: 'none',
               title: result.data.errors[0].detail[0],
               duration: 2000,
+            });
+          }
+          if (
+            result &&
+            result.data &&
+            result.data.errors &&
+            result.data.errors[0].code === 'register_validate'
+          ) {
+            this.$store.dispatch('forum/setError', {
+              code: 'register_validate',
+              status: 500,
             });
           }
         })

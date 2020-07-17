@@ -37,7 +37,7 @@
             <qui-icon
               class="text"
               :name="followingItem.toUser.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-              size="22"
+              size="24"
               :color="
                 followingItem.toUser.follow == 0
                   ? '#777'
