@@ -880,7 +880,7 @@ export default {
     margin-left: 21rpx;
     overflow: hidden;
     line-height: 35rpx;
-    color: #777;
+    color: --color(--qui-FC-333);
     text-overflow: ellipsis;
     white-space: nowrap;
     &__text {
@@ -948,7 +948,7 @@ export default {
   height: 40rpx;
   margin-top: -100rpx;
   font-size: $fg-f26;
-  color: #b2b2b2;
+  color: --color(--qui-FC-B2);
   text-align: center;
 }
 </style>

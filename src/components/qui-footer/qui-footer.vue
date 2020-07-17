@@ -296,14 +296,14 @@ export default {
   align-self: center;
   margin-top: 32rpx;
   margin-left: 21rpx;
-  font-size: 26rpx;
+  font-size: $fg-f26;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
   text-align: center;
 }
 .ft-box-spacal {
   position: relative;
-  top: -20rpx;
+  top: -15rpx;
   width: 105rpx;
   height: 89rpx;
   border-radius: 50%;
@@ -323,7 +323,7 @@ export default {
   left: calc(20% + 12rpx);
   width: 30rpx;
   height: 30rpx;
-  background: red;
+  background: --color(--qui-BG-FF);
   border-radius: 50%;
 }
 </style>
