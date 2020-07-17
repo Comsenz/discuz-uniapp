@@ -154,7 +154,9 @@ export default {
             this.$emit('changeFollow', { userId: this.userId });
           }
           // is_mutual 是否互相关注 1 是 0 否
-          this.followerList[index].fromUser.follow = res.is_mutual === 1 ? 2 : 1;
+          const item = this.followerList[index];
+          item.fromUser.follow = res.is_mutual === 1 ? 2 : 1;
+          this.$set(this.followerList, index, item);
         });
     },
     // 取消关注
@@ -170,7 +172,9 @@ export default {
         if (this.userId === this.currentLoginId) {
           this.$emit('changeFollow', { userId: this.userId });
         }
-        this.followerList[index].fromUser.follow = 0;
+        const item = this.followerList[index];
+        item.fromUser.follow = 0;
+        this.$set(this.followerList, index, item);
       });
     },
   },
