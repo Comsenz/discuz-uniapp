@@ -205,7 +205,13 @@ import { mapMutations, mapState } from 'vuex';
 
 const sysInfo = uni.getSystemInfoSync();
 
-const navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
+let navbarHeight;
+// #ifdef H5
+navbarHeight = sysInfo.statusBarHeight; /* uni-nav-bar的高度 */
+// #endif
+// #ifdef MP-WEIXIN
+navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
+// #endif
 const navBarTransform = `translateY(-${navbarHeight}px)`;
 
 export default {
@@ -407,9 +413,11 @@ export default {
     },
     scroll(event) {
       this.scrollTop = event.detail.scrollTop;
+      // #ifdef MP-WEIXIN
       if (!this.navbarHeight) {
         return;
       }
+
       if (event.detail.scrollTop + this.navbarHeight + 20 >= this.navTop) {
         this.headerShow = false;
         this.navBarTransform = 'none';
@@ -417,6 +425,17 @@ export default {
         this.headerShow = true;
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
+      // #endif
+
+      // #ifdef H5
+      if (event.detail.scrollTop >= this.navTop) {
+        this.headerShow = false;
+        this.navBarTransform = 'none';
+      } else {
+        this.headerShow = true;
+        this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
+      }
+      // #endif
     },
     // 滑动到顶部
     toUpper() {
