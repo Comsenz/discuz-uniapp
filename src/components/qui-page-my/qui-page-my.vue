@@ -58,11 +58,11 @@
             <qui-cell-item
               :title="i18n.t('profile.search')"
               arrow
-              :border="userInfo.groupsName == '管理员' ? true : false"
+              :border="forums.other && forums.other.can_create_invite ? true : false"
             ></qui-cell-item>
           </navigator>
           <navigator
-            v-if="userInfo.groupsName == '管理员'"
+            v-if="forums.other && forums.other.can_create_invite"
             url="/pages/manage/index"
             hover-class="none"
           >

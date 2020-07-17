@@ -32,7 +32,7 @@
           <text
             class="qui-back__body__right-pop-item"
             @tap="backPage('/pages/manage/index')"
-            v-if="userInfo.groupsName == '管理员'"
+            v-show="forums.other && forums.other.can_create_invite"
           >
             {{ i18n.t('topic.management') }}
           </text>
