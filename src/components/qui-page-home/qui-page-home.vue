@@ -956,7 +956,7 @@ export default {
     color: --color(--qui-BG-HIGH-LIGHT);
   }
   a {
-    color: --color(--qui-BG-HIGH-LIGHT);
+    color: --color(--qui-FC-B2);
     text-decoration: none;
   }
 }
