@@ -86,6 +86,7 @@ export default {
   justify-content: center;
   padding: 30rpx;
   box-sizing: border-box;
+  border-bottom: 4rpx solid;
 }
 .qui-tabs__item__brief {
   font-size: $fg-f28;
@@ -100,7 +101,7 @@ export default {
   border-bottom: 4rpx solid;
 }
 .qui-tabs__item--active .qui-tabs__item__title {
-  // font-weight: bold;
+  font-weight: bold;
   color: --color(--qui-FC-333);
 }
 </style>
