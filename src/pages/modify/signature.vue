@@ -129,12 +129,16 @@ export default {
     width: 100vw;
     height: 100vh;
     /* #ifdef H5 */
-    padding-top: 100rpx;
+    padding-top: 120rpx;
     /* #endif */
     background-color: --color(--qui-BG-2);
+    box-sizing: border-box;
   }
   .aogph-tab {
     padding: 36rpx 40rpx 0;
+    /* #ifdef H5 */
+    padding-top: 0;
+    /* #endif */
     box-sizing: border-box;
   }
   .aogph-tab-ao {

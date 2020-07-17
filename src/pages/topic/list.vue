@@ -159,7 +159,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 .pages-list /deep/ {
   /* #ifdef H5 */
-  padding-top: 88rpx;
+  padding-top: 120rpx;
   box-sizing: border-box;
   /* #endif */
 }

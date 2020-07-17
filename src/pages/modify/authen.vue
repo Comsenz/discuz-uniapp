@@ -127,7 +127,7 @@ export default {
     width: 100vw;
     height: 100vh;
     /* #ifdef H5 */
-    padding-top: 100rpx;
+    padding-top: 60rpx;
     /* #endif */
     background: --color(--qui-BG-2);
     box-sizing: border-box;
@@ -135,6 +135,9 @@ export default {
   .authen-input {
     width: 710rpx;
     padding: 31rpx 0 0 40rpx;
+    /* #ifdef H5 */
+    padding-top: 0;
+    /* #endif */
     background: --color(--qui-BG-2);
     box-sizing: border-box;
   }
