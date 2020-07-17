@@ -57,7 +57,7 @@
           active-color="#1878F3"
         ></u-tabs>
       </view>
-      <view class="sticky" :style="headerShow ? 'margin-top:30rpx' : 'margin-top:130rpx'">
+      <view class="sticky" :style="headerShow ? 'margin-top:20rpx' : 'margin-top:130rpx'">
         <view class="sticky__box">
           <view
             class="sticky__isSticky"
@@ -840,7 +840,7 @@ export default {
 }
 
 .sticky {
-  margin: 30rpx auto;
+  // margin: 20rpx auto;
   border-top: 2rpx solid #ededed;
   border-bottom: 2rpx solid #ededed;
 }
