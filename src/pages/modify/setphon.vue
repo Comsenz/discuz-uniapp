@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-setphon">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('modify.setphontitle')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view class="new" @click.stop="toggleBox">
       <view class="new-phon" v-if="phon">

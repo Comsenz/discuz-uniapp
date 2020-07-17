@@ -79,7 +79,7 @@ export default {
     // 字体大小
     fontSize: {
       type: [String, Number],
-      default: 26,
+      default: 28,
     },
     // 过渡动画时长, 单位ms
     duration: {
@@ -177,7 +177,7 @@ export default {
         };
         // 字体加粗
         if (index === this.currentIndex && this.bold) style.fontWeight = 'bold';
-        if (index === this.currentIndex) style['font-size'] = '28rpx';
+        if (index === this.currentIndex) style['font-size'] = '32rpx';
         if (index === this.currentIndex) {
           // style.color = this.activeColor;
           // style.font-size = 28;

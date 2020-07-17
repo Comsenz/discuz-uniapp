@@ -627,7 +627,7 @@ export default {
   width: 90%;
   padding: 0 20rpx;
   margin: 50rpx auto 30rpx;
-  font-size: 28rpx;
+  font-size: $fg-f28;
 }
 .site-item__pay .cell-item__body__right-text {
   color: --color(--qui-RED);

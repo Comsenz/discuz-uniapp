@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-authen">
     <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('modify.authontitle')"></qui-header-back>
+    <qui-header-back></qui-header-back>
     <!-- #endif -->
     <view class="authen" @click.stop="toggleBox">
       <view class="authen-input" @click.stop="fourse">
