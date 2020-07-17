@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="site">
+  <qui-page :data-qui-theme="theme" class="site" :header="false">
     <qui-header
       :head-img="
         forums.set_site && forums.set_site.site_logo
