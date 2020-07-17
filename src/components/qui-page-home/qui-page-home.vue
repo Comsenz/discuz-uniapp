@@ -955,5 +955,9 @@ export default {
   &record__url {
     color: --color(--qui-BG-HIGH-LIGHT);
   }
+  a {
+    color: --color(--qui-BG-HIGH-LIGHT);
+    text-decoration: none;
+  }
 }
 </style>
