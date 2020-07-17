@@ -1,5 +1,8 @@
 <template>
-  <view class="header" :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }">
+  <view
+    :class="['header', headerH5]"
+    :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }"
+  >
     <!-- #ifdef H5-->
     <!-- <qui-header-back
       :title="title"
@@ -40,6 +43,10 @@
   </view>
 </template>
 <script>
+let headerH5 = 'header-h5';
+/* #ifdef MP-WEIXIN */
+headerH5 = '';
+/* #endif */
 export default {
   name: 'QuiHeader',
   props: {
@@ -97,7 +104,9 @@ export default {
     },
   },
   data: () => {
-    return {};
+    return {
+      headerH5,
+    };
   },
   computed: {
     // 语言包
@@ -119,8 +128,6 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-/* #ifdef MP-WEIXIN */
-/* #endif */
 .header {
   position: relative;
   width: 100%;
@@ -201,6 +208,16 @@ export default {
       width: 35%;
       margin: 20vh auto 30rpx;
     }
+  }
+}
+.header-h5 {
+  height: 256rpx;
+  .logo {
+    max-height: 74rpx;
+    padding-top: 58rpx;
+  }
+  .circleDet {
+    padding: 49rpx 20rpx 47rpx;
   }
 }
 </style>
