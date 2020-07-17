@@ -190,6 +190,17 @@ export default {
               duration: 2000,
             });
           }
+          if (
+            result &&
+            result.data &&
+            result.data.errors &&
+            result.data.errors[0].code === 'register_validate'
+          ) {
+            this.$store.dispatch('forum/setError', {
+              code: 'register_validate',
+              status: 500,
+            });
+          }
         })
         .catch(err => {
           console.log(err);

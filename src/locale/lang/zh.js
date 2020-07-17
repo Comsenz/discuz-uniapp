@@ -188,6 +188,8 @@ export default {
     thread_deleted: '当前主题已被删除',
     post_deleted: '当前评论已被删除',
     register_validate: '帐号审核中,请审核通过尝试',
+    registerValidate: '注册成功,等待审核',
+    waitValidate: '感谢您的注册，站点开启了人工验证注册用户，请等待审核',
     validate_reject: '您的注册申请未通过,无法登录',
     validate_ignore: '您的注册申请还未处理,请稍后尝试',
     mobile_is_already_bind: '手机已经绑定',
@@ -693,7 +695,6 @@ export default {
   user: {
     login: '登录',
     register: '注册',
-    // registerSuccess: '注册成功',
     registerReason: '注册原因',
     submit: '提交',
     username: '请输入用户名',
