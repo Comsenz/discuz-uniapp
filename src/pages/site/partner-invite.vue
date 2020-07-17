@@ -306,7 +306,7 @@ export default {
     padding-top: 71rpx;
   }
   .cell-item__body__content-title {
-    width: 120rpx;
+    width: 150rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }
