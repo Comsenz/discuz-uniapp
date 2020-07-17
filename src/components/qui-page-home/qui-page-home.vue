@@ -125,7 +125,9 @@
       <!-- #ifdef H5-->
       <view class="record" v-if="forums.set_site ? forums.set_site.site_record : '' !== ''">
         <!-- <text>{{ i18n.t('home.record') }}</text> -->
-        <text>{{ forums.set_site ? forums.set_site.site_record : '' }}</text>
+        <a class="record__url" href="http://www.beian.miit.gov.cn" target="_blank">
+          {{ forums.set_site ? forums.set_site.site_record : '' }}
+        </a>
       </view>
       <!-- #endif -->
     </scroll-view>
@@ -950,5 +952,8 @@ export default {
   font-size: $fg-f26;
   color: --color(--qui-FC-B2);
   text-align: center;
+  &record__url {
+    color: --color(--qui-BG-HIGH-LIGHT);
+  }
 }
 </style>

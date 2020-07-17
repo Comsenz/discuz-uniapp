@@ -23,6 +23,9 @@
           {{ item.tabsName }}
         </text>
         <view v-if="redCircle && item.id === 2" name="icon-circle" class="red-circle"></view>
+        <view v-if="redCircle && item.id === 2" class="red-num">
+          {{ user.unreadNotifications }}
+        </view>
       </view>
 
       <view class="ft-box-spacal">
@@ -319,11 +322,17 @@ export default {
 }
 .red-circle {
   position: absolute;
-  top: -10rpx;
-  left: calc(20% + 12rpx);
+  top: 8rpx;
+  left: calc(19% + 12rpx);
   width: 30rpx;
   height: 30rpx;
   background: --color(--qui-BG-FF);
   border-radius: 50%;
+}
+.red-num {
+  position: absolute;
+  top: -22rpx;
+  left: calc(23% + 12rpx);
+  color: --color(--qui-BOR-FFF);
 }
 </style>
