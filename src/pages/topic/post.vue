@@ -1,9 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
-    <!-- #ifdef H5-->
     <view class="head-gap"></view>
     <!-- #endif -->
     <view class="post-box" v-if="loadStatus">

@@ -119,6 +119,8 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef MP-WEIXIN */
+/* #endif */
 .header {
   position: relative;
   width: 100%;

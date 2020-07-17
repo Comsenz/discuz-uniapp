@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="site">
+  <qui-page :data-qui-theme="theme" class="site" :header="false">
     <qui-header
       :head-img="
         forums.set_site && forums.set_site.site_logo
@@ -306,7 +306,7 @@ export default {
     padding-top: 71rpx;
   }
   .cell-item__body__content-title {
-    width: 120rpx;
+    width: 150rpx;
     margin-right: 40rpx;
     color: --color(--qui-FC-777);
   }

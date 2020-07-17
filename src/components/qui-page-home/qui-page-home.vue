@@ -1,5 +1,6 @@
 <template>
   <view class="home">
+    <!-- #ifdef MP-WEIXIN -->
     <uni-nav-bar
       class="status-bar"
       :style="'transform:' + navBarTransform"
@@ -9,6 +10,7 @@
       :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
       status-bar
     ></uni-nav-bar>
+    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -41,7 +43,7 @@
           <qui-icon
             class="nav__box__icon"
             name="icon-screen"
-            size="28"
+            size="32"
             :color="show ? '#1878F3' : '#777'"
             @tap="showFilter"
           ></qui-icon>
@@ -56,19 +58,21 @@
         ></u-tabs>
       </view>
       <view class="sticky" :style="headerShow ? 'margin-top:30rpx' : 'margin-top:130rpx'">
-        <view
-          class="sticky__isSticky"
-          v-for="(item, index) in sticky"
-          :key="index"
-          @click="stickyClick(item._jv.id)"
-        >
-          <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
-          <view class="sticky__isSticky__count">
-            <qui-uparse
-              class="sticky__isSticky__text"
-              :content="item.type == 1 ? item.title : item.firstPost.summary"
-            ></qui-uparse>
-            <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
+        <view class="sticky__box">
+          <view
+            class="sticky__isSticky"
+            v-for="(item, index) in sticky"
+            :key="index"
+            @click="stickyClick(item._jv.id)"
+          >
+            <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
+            <view class="sticky__isSticky__count">
+              <qui-uparse
+                class="sticky__isSticky__text"
+                :content="item.type == 1 ? item.title : item.firstPost.summary"
+              ></qui-uparse>
+              <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
+            </view>
           </view>
         </view>
       </view>
@@ -818,18 +822,24 @@ export default {
 
 .sticky {
   margin: 30rpx auto;
+  border-top: 2rpx solid #ededed;
+  border-bottom: 2rpx solid #ededed;
+}
+.sticky__box {
+  background: --color(--qui-BG-2);
 }
 
 .sticky__isSticky {
   display: flex;
   width: 710rpx;
   height: 80rpx;
-  margin: 10rpx auto;
+  margin-left: 21rpx;
   font-size: $fg-f26;
   line-height: 80rpx;
   background: --color(--qui-BG-2);
-  border-radius: 6rpx;
-  box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
+  border-bottom: 2rpx solid #ededed;
+  // border-radius: 6rpx;
+  // box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
   &__box {
     // display: block;
     width: 62rpx;
@@ -860,6 +870,9 @@ export default {
       align-items: center;
     }
   }
+}
+.sticky__isSticky:last-child {
+  border-bottom: none;
 }
 .horizonal-tab .active {
   color: --color(--qui-BG-HIGH-LIGHT);
@@ -895,7 +908,7 @@ export default {
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   // max-height: calc(100vh - 100rpx);
-  height: calc(100vh - 119rpx);
+  height: calc(100vh - 90rpx);
 }
 
 .nav .filter-modal {

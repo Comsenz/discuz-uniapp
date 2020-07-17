@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-sinature">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="aogph">
       <view class="aogph-tab">
         <view class="aogph-tab-ao">

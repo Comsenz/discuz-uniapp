@@ -4,6 +4,9 @@
       放在这里是因为数据是异步请求的，然后判断论坛的显示状态。
       这样每个页面还是需要引入这个组件，一个是和主题相关，一个是和站点显示状态有关
     -->
+    <!-- #ifdef H5-->
+    <qui-header-back v-if="header"></qui-header-back>
+    <!-- #endif -->
     <view v-if="loading" class="loading">
       <u-loading :size="60"></u-loading>
     </view>
@@ -33,6 +36,12 @@ export default {
   // #ifdef H5
   mixins: [forums, appCommonH, user, loginAuth],
   // #endif
+  props: {
+    header: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -49,6 +58,7 @@ export default {
           'model_not_found',
           'dataerro',
           'permission_denied',
+          'register_validate',
         ].indexOf(this.forumError.code) !== -1
       );
     },

@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-setphon">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="new" @click.stop="toggleBox">
       <view class="new-phon" v-if="phon">
         <view class="new-phon-test">

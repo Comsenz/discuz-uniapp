@@ -49,7 +49,6 @@
     </scroll-view>
     <!-- #endif -->
     <!-- #ifdef H5-->
-    <qui-header-back title="站点成员"></qui-header-back>
     <!-- 搜索成员 -->
     <view class="site-users-h5-search">
       <view class="search">

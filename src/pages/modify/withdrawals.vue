@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-withdra">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
@@ -431,7 +428,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   .cash-content-input {
-    width: 238rpx;
+    width: 300rpx;
     height: 100%;
     font-size: $fg-f34;
     font-weight: bold;

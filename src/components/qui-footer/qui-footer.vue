@@ -269,17 +269,18 @@ export default {
   z-index: 1;
   display: flex;
   width: 100%;
-  height: 119rpx;
+  height: 90rpx;
   background-color: --color(--qui-BG-2);
   box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
   justify-content: space-around;
 }
 .ft-box {
   position: relative;
-  display: flex;
+  // display: flex;
   width: 20%;
-  height: 72rpx;
-  margin-top: 20rpx;
+  height: 90rpx;
+  // margin-top: 23rpx;
+  line-height: 90rpx;
   flex-direction: column;
   justify-content: center;
   align-content: center;
@@ -287,12 +288,15 @@ export default {
 .ft-box-icon {
   align-self: center;
   height: 50rpx;
+  margin-top: 23rpx;
   // background: #c33;
 }
 .ft-box-content {
+  position: absolute;
   align-self: center;
-  margin-top: 10rpx;
-  font-size: 20rpx;
+  margin-top: 32rpx;
+  margin-left: 21rpx;
+  font-size: 26rpx;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
   text-align: center;
@@ -300,8 +304,8 @@ export default {
 .ft-box-spacal {
   position: relative;
   top: -20rpx;
-  width: 125rpx;
-  height: 125rpx;
+  width: 105rpx;
+  height: 89rpx;
   border-radius: 50%;
   box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
 }
@@ -316,9 +320,9 @@ export default {
 .red-circle {
   position: absolute;
   top: -10rpx;
-  left: calc(50% + 18rpx);
-  width: 14rpx;
-  height: 14rpx;
+  left: calc(20% + 12rpx);
+  width: 30rpx;
+  height: 30rpx;
   background: red;
   border-radius: 50%;
 }

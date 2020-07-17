@@ -1,13 +1,10 @@
 <template>
   <qui-page :data-qui-theme="theme" class="withdrawalslist">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="withdrawalslist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
           <text>{{ `${i18n.t('profile.status')} ：${filterSelected.label}` }}</text>
-          <qui-icon class="text" name="icon-screen" size="30" color="#777"></qui-icon>
+          <qui-icon class="text" name="icon-screen" size="32" color="#777"></qui-icon>
           <qui-filter-modal
             v-model="show"
             @confirm="confirm"

@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <!-- #ifdef H5-->
-    <qui-header-back :title="title"></qui-header-back>
-    <!-- #endif -->
     <view class="chat-box">
       <!-- 消息内容 -->
       <scroll-view

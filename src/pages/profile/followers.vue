@@ -41,7 +41,7 @@
                   ? 'icon-follow'
                   : 'icon-each-follow'
               "
-              size="22"
+              size="24"
               :color="
                 (followerItem.fromUser && followerItem.fromUser.follow) == 0
                   ? '#777'

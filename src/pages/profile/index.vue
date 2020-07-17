@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view v-if="loaded">
       <scroll-view
         scroll-y="true"
@@ -32,7 +29,7 @@
                     <qui-icon
                       class="text"
                       name="icon-message1"
-                      size="22"
+                      size="24"
                       :color="themeColor"
                     ></qui-icon>
                     <text>{{ i18n.t('profile.privateMessage') }}</text>
@@ -45,7 +42,7 @@
                     <qui-icon
                       class="text"
                       :name="userInfo.follow == 0 ? 'icon-follow' : 'icon-each-follow'"
-                      size="26"
+                      size="28"
                       :color="
                         userInfo.follow == 0
                           ? '#777'
