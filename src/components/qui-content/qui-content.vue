@@ -522,7 +522,7 @@ export default {
   }
 }
 .themeItem {
-  padding: 30rpx;
+  padding: 20rpx;
   margin: 20rpx 0;
   background: --color(--qui-BG-2);
   border-radius: 6rpx;

@@ -269,7 +269,7 @@ export default {
   z-index: 1;
   display: flex;
   width: 100%;
-  height: 119rpx;
+  height: 90rpx;
   background-color: --color(--qui-BG-2);
   box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
   justify-content: space-around;
@@ -279,7 +279,8 @@ export default {
   // display: flex;
   width: 20%;
   height: 90rpx;
-  margin-top: 20rpx;
+  // margin-top: 23rpx;
+  line-height: 90rpx;
   flex-direction: column;
   justify-content: center;
   align-content: center;
@@ -291,10 +292,11 @@ export default {
   // background: #c33;
 }
 .ft-box-content {
+  position: absolute;
   align-self: center;
   margin-top: 32rpx;
   margin-left: 21rpx;
-  font-size: 24rpx;
+  font-size: 26rpx;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
   text-align: center;
@@ -302,8 +304,8 @@ export default {
 .ft-box-spacal {
   position: relative;
   top: -20rpx;
-  width: 125rpx;
-  height: 125rpx;
+  width: 105rpx;
+  height: 89rpx;
   border-radius: 50%;
   box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
 }

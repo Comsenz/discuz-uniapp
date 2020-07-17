@@ -1,5 +1,6 @@
 <template>
   <view class="home">
+    <!-- #ifdef MP-WEIXIN -->
     <uni-nav-bar
       class="status-bar"
       :style="'transform:' + navBarTransform"
@@ -9,6 +10,7 @@
       :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
       status-bar
     ></uni-nav-bar>
+    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"
@@ -906,7 +908,7 @@ export default {
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   // max-height: calc(100vh - 100rpx);
-  height: calc(100vh - 119rpx);
+  height: calc(100vh - 90rpx);
 }
 
 .nav .filter-modal {
