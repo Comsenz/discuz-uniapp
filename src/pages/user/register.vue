@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <!-- #ifdef H5-->
-    <qui-header-back title="" :is-show-more="false"></qui-header-back>
-    <!-- #endif -->
     <view class="register-box">
       <view class="register-box-h">{{ i18n.t('user.register') }}</view>
       <view class="register-box-con">

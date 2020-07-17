@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-newpwd">
-    <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('modify.newpwdtitle')"></qui-header-back>
-    <!-- #endif -->
     <view class="setuppas">
       <view class="setuppas-pas">
         <input

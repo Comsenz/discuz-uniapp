@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="member-box">
-    <!-- #ifdef H5-->
-    <qui-header-back title="成员管理"></qui-header-back>
-    <!-- #endif -->
     <!-- 搜索成员 -->
     <view class="member-box-search">
       <view class="search">

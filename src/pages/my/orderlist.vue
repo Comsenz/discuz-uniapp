@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="orderlist">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="orderlist-wrap">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">

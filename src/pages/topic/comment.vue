@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content bg">
-    <!-- #ifdef H5-->
-    <qui-header-back :title="navTitle"></qui-header-back>
-    <!-- #endif -->
     <view v-if="loaded && status">
       <scroll-view
         scroll-y="true"

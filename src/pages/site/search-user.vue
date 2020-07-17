@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="search">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="search-box">
       <view class="search-box__content">
         <view class="icon-content-search">

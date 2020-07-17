@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <!-- #ifdef H5-->
-    <qui-header-back title="邀请成员"></qui-header-back>
-    <!-- #endif -->
     <scroll-view
       scroll-y
       show-scrollbar="false"

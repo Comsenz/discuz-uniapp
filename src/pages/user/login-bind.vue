@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <!-- #ifdef H5-->
-    <qui-header-back title="" :is-show-more="false"></qui-header-back>
-    <!-- #endif -->
     <view class="login-bind-box">
       <view class="login-bind-box-h">{{ i18n.t('user.loginBind') }}</view>
       <view class="login-bind-box-con">

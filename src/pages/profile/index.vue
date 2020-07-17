@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view v-if="loaded">
       <scroll-view
         scroll-y="true"

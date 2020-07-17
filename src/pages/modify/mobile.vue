@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-mobile">
-    <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('modify.mobiletitle')"></qui-header-back>
-    <!-- #endif -->
     <view class="input" @click.stop="toggleBox">
       <view class="mobile-titel">
         {{ i18n.t('modify.verifyoldphon') }}

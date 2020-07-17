@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="walletlist">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="walletlist-head">
       <qui-cell-item slot-right :border="false">
         <view @tap="showFilter">
