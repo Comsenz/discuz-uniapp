@@ -753,6 +753,10 @@ export default {
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
+    });
 
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -2076,6 +2080,9 @@ export default {
         this.thread.user.follow = 0;
       });
     },
+  },
+  destroyed() {
+    uni.$off('logind');
   },
 };
 </script>
