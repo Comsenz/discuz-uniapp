@@ -35,11 +35,7 @@
         @tap="toProfile(item.id)"
       >
         <qui-avatar class="search-item__users__avatar" :user="item" size="70" />
-        <qui-cell-item
-          :title="item.username"
-          arrow
-          :addon="item.groups ? item.groups[0].name : ''"
-        ></qui-cell-item>
+        <qui-cell-item :title="item.username" arrow :addon="item.groupName"></qui-cell-item>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>
@@ -85,6 +81,11 @@ export default {
         if (res._jv) {
           delete res._jv;
         }
+        res.forEach((v, i) => {
+          if (v.groups[0]) {
+            res[i].groupName = v.groups[0].name;
+          }
+        });
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;
