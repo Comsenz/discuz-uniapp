@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-realname">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="tica">
       <view class="tica-name">
         <input

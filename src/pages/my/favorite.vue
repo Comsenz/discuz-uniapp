@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="favorite">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <scroll-view
       scroll-y="true"
       scroll-with-animation="true"

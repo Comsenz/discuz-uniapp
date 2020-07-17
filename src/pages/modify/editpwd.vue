@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-edipwd">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="chagepas">
       <view class="chagepas-pas">
         <input

@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
-    <!-- #ifdef H5-->
-    <qui-header-back :title="i18n.t('discuzq.atMember.atTitle')"></qui-header-back>
-    <!-- #endif -->
     <view class="qui-at-member-page-box__hd">
       <view class="qui-at-member-page-box__hd__sc">
         <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>

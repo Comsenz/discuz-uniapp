@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="pages-topic">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="qui-topic-page-box">
       <view class="qui-topic-page-box__hd">
         <view class="qui-topic-page-box__hd__sc">

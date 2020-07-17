@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme" class="page-withdra">
-    <!-- #ifdef H5-->
-    <qui-header-back></qui-header-back>
-    <!-- #endif -->
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
