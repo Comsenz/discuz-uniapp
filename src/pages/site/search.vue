@@ -39,7 +39,7 @@
           :title="item.username"
           arrow
           :border="index == userList.length - 1 ? false : true"
-          :addon="item.groups ? item.groups[0].name : ''"
+          :addon="item.groupName"
         ></qui-cell-item>
       </view>
       <qui-no-data :tips="i18n.t('search.norelatedusersfound')" v-if="userTotal == 0"></qui-no-data>
@@ -114,6 +114,11 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
+          res.forEach((v, i) => {
+            if (v.groups[0]) {
+              res[i].groupName = v.groups[0].name;
+            }
+          });
           this.userTotal = res.length;
           this.userList = res;
         });
