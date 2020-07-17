@@ -176,7 +176,7 @@ export default {
           flex: this.isScroll ? 'auto' : '1',
         };
         // 字体加粗
-        // if (index === this.currentIndex && this.bold) style.fontWeight = 'bold';
+        if (index === this.currentIndex && this.bold) style.fontWeight = 'bold';
         // if (index === this.currentIndex) style['font-size'] = '30rpx';
         if (index === this.currentIndex) {
           // style.color = this.activeColor;
