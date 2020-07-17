@@ -36,7 +36,7 @@
           :scroll-top="scrollTop"
           @toTopic="toTopic"
         ></qui-thread-item>
-        <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
+        <qui-icon class="arrow" name="icon-folding-r" size="26" color="#ddd"></qui-icon>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>

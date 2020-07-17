@@ -25,7 +25,7 @@
           ></qui-thread-item>
           <qui-icon
             name="icon-delete"
-            size="28"
+            size="30"
             color="#aaa"
             @tap="itemDelete(item._jv.id, item.isFavorite, index)"
           ></qui-icon>

@@ -58,7 +58,7 @@
         class="search-item__content"
       >
         <qui-thread-item :currentindex="index" :thread="item" @toTopic="toTopic"></qui-thread-item>
-        <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
+        <qui-icon class="arrow" name="icon-folding-r" size="26" color="#ddd"></qui-icon>
       </view>
       <qui-no-data
         :tips="i18n.t('search.norelatedthemesfound')"
