@@ -276,9 +276,9 @@ export default {
 }
 .ft-box {
   position: relative;
-  display: flex;
+  // display: flex;
   width: 20%;
-  height: 72rpx;
+  height: 90rpx;
   margin-top: 20rpx;
   flex-direction: column;
   justify-content: center;
@@ -287,12 +287,14 @@ export default {
 .ft-box-icon {
   align-self: center;
   height: 50rpx;
+  margin-top: 23rpx;
   // background: #c33;
 }
 .ft-box-content {
   align-self: center;
-  margin-top: 10rpx;
-  font-size: 20rpx;
+  margin-top: 32rpx;
+  margin-left: 21rpx;
+  font-size: 24rpx;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
   text-align: center;
@@ -316,9 +318,9 @@ export default {
 .red-circle {
   position: absolute;
   top: -10rpx;
-  left: calc(50% + 18rpx);
-  width: 14rpx;
-  height: 14rpx;
+  left: calc(20% + 12rpx);
+  width: 30rpx;
+  height: 30rpx;
   background: red;
   border-radius: 50%;
 }

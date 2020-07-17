@@ -47,18 +47,16 @@
             <view class="themeItem__content__text__longessay__publish">
               {{ i18n.t('home.released') }} :
             </view>
-            <qui-icon
+            <!-- <qui-icon
               name="icon-link"
               :color="theme === $u.light() ? '#00479B' : '#1E78F3'"
               size="28"
               style="padding-left: 8rpx;"
-            ></qui-icon>
-            <!-- <navigator class="navPost">
+            ></qui-icon> -->
+            <navigator class="navPost">
               {{ themeContent }}
-            </navigator> -->
-            <qui-uparse class="navPost" :content="themeContent"></qui-uparse>
+            </navigator>
           </view>
-          <!-- <rich-text :nodes="themeContent" v-else></rich-text> -->
           <qui-uparse :content="themeContent" v-else></qui-uparse>
         </view>
         <view
@@ -525,7 +523,7 @@ export default {
 }
 .themeItem {
   padding: 30rpx;
-  margin: 0 20rpx 30rpx;
+  margin: 20rpx 0;
   background: --color(--qui-BG-2);
   border-radius: 6rpx;
   box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
@@ -624,8 +622,9 @@ export default {
       color: --color(--qui-FC-333);
       word-wrap: break-word;
       &__longessay {
-        display: flex;
-        word-break: break-all;
+        // display: flex;
+        // flex-direction: column;
+        // word-break: break-all;
       }
     }
     &__reply {
@@ -735,13 +734,13 @@ export default {
 }
 
 .themeItem__content__text__longessay__publish {
-  display: inline;
+  display: inline-block;
 }
 .navPost {
-  display: inline-block;
-  max-width: 75%;
+  display: inline;
   padding-left: 8rpx;
-  color: --color(--qui-LINK);
+  font-weight: 900;
+  color: var(--qui-FC-333);
 }
 .themeItem__content__coverimg {
   width: 100%;
