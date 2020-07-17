@@ -82,9 +82,7 @@ export default {
           delete res._jv;
         }
         res.forEach((v, i) => {
-          if (v.groups[0]) {
-            res[i].groupName = v.groups[0].name;
-          }
+          res[i].groupName = v.groups[0] ? v.groups[0].name : '';
         });
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
