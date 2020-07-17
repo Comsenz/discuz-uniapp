@@ -228,7 +228,7 @@ export default {
 
 .pages-content /deep/ {
   /* #ifdef H5 */
-  padding-top: 88rpx;
+  padding-top: 120rpx;
   box-sizing: border-box;
   /* #endif */
 }

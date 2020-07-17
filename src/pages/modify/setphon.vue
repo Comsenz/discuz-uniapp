@@ -301,7 +301,7 @@ export default {
     width: 100vw;
     height: 100vh;
     /* #ifdef H5 */
-    padding-top: 100rpx;
+    padding-top: 120rpx;
     /* #endif */
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
@@ -342,7 +342,7 @@ export default {
     display: block;
     height: 70rpx;
     min-width: 180rpx;
-    margin: 15rpx 0 0 91rpx;
+    margin: 15rpx 20rpx 0 50rpx;
     font-size: $fg-f28;
     font-weight: 400;
     line-height: 70rpx;
