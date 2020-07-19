@@ -124,12 +124,6 @@ http.interceptor.response(
               title: i18n.t(`core.${error.code}`),
             });
             break;
-          case 'register_validate':
-            app.$store.dispatch('forum/setError', {
-              code: 'register_validate',
-              status: 500,
-            });
-            break;
           case 'not_install':
           case 'ban_user':
             break;
