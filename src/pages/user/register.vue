@@ -196,10 +196,17 @@ export default {
             result.data.errors &&
             result.data.errors[0].code === 'register_validate'
           ) {
-            this.$store.dispatch('forum/setError', {
-              code: 'register_validate',
-              status: 500,
-            });
+            this.$store
+              .dispatch('forum/setError', {
+                code: 'register_validate',
+                status: 500,
+              })
+              .then(res => {
+                console.log(res);
+                uni.navigateTo({
+                  url: '/pages/home/index',
+                });
+              });
           }
         })
         .catch(err => {
