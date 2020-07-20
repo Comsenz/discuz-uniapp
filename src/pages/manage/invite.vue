@@ -330,19 +330,6 @@ export default {
         title: this.forums.set_site.site_name,
         url: `pages/site/partner-invite?code=${this.code}`,
       });
-      // if (this.isWeixin === true) {
-      //   this.shareShow = true;
-      //   this.h5Share({
-      //     title: this.forums.set_site.site_name,
-      //     url: `pages/site/partner-invite?code=${this.code}`,
-      //   });
-      // } else {
-      //   console.log('9999');
-      //   this.h5Share({
-      //     title: this.forums.set_site.site_name,
-      //     url: `pages/site/partner-invite?code=${this.code}`,
-      //   });
-      // }
       // #endif
     },
     // 取消分享
