@@ -230,7 +230,7 @@ $otherHeight: 292rpx;
     height: 80rpx;
     padding: 20rpx 40rpx;
     /* #ifdef H5 */
-    margin-top: 44px;
+    margin-top: 60px;
     /* #endif */
 
     &__sc {

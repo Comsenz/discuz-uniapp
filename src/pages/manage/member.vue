@@ -318,7 +318,7 @@ export default {
 
   .search-box {
     /* #ifdef H5 */
-    margin: 44px 0rpx 0rpx;
+    margin: 60px 0rpx 0rpx;
     /* #endif */
     background-color: --color(--qui-BG-2);
   }

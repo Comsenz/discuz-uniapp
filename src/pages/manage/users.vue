@@ -242,7 +242,7 @@ export default {
 .site-users-h5-search {
   .search {
     position: fixed;
-    top: 44px;
+    top: 60px;
     z-index: 99;
     width: 100%;
   }

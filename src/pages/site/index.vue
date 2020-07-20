@@ -332,7 +332,7 @@ export default {
   .header {
     height: auto;
     /* #ifdef H5 */
-    margin: 44px 0rpx 0rpx;
+    margin: 60px 0rpx 0rpx;
     /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
