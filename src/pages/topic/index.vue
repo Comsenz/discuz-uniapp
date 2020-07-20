@@ -753,10 +753,6 @@ export default {
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
-    uni.$on('logind', () => {
-      this.loadThread();
-      this.loadThreadPosts();
-    });
 
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -779,6 +775,12 @@ export default {
     // 编辑发帖回来后更新信息
     this.$u.event.$on('refreshFiles', () => {
       this.loadThread();
+    });
+  },
+  created() {
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
     });
   },
   // 唤起小程序原声分享

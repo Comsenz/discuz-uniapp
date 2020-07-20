@@ -584,7 +584,7 @@ export default {
 
       &__time {
         padding-top: 10rpx;
-        font-size: 24rpx;
+        font-size: $fg-f24;
         font-weight: 400;
         line-height: 31rpx;
         color: --color(--qui-FC-AAA);
@@ -739,8 +739,8 @@ export default {
 .navPost {
   display: inline;
   padding-left: 8rpx;
-  font-weight: 900;
-  color: var(--qui-FC-333);
+  // font-weight: 900;
+  color: var(--qui-LINK);
 }
 .themeItem__content__coverimg {
   width: 100%;
