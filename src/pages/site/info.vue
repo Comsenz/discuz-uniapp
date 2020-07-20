@@ -236,6 +236,12 @@ export default {
     }
     this.userInfo();
   },
+  onShow() {
+    const payType = uni.getStorageSync('pay_type');
+    if (payType && payType === 2) {
+      this.userInfo();
+    }
+  },
   onUnload() {
     clearInterval(payWechat);
   },
@@ -352,6 +358,7 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
+          uni.setStorageSync('pay_type', 2);
           const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/info`);
           window.location.replace(`${res.wechat_h5_link}&redirect_url=${url}`);
         } else if (browserType === '3') {
