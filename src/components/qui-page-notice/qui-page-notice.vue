@@ -1,13 +1,15 @@
 <template>
   <view>
     <view class="notice-box">
-      <!--<uni-nav-bar
+      <!-- #ifdef MP-WEIXIN -->
+      <uni-nav-bar
         :title="title"
         fixed
         :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
         :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
         status-bar
-      ></uni-nav-bar>-->
+      ></uni-nav-bar>
+      <!-- #endif -->
       <!-- 通知类型列表 -->
       <scroll-view
         scroll-y
@@ -124,8 +126,12 @@ export default {
     },
   },
   mounted() {
-    // this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
+    // #ifndef MP-WEIXIN
     this.navbarHeight = uni.getSystemInfoSync().statusBarHeight;
+    // #endif
+    // #ifdef MP-WEIXIN
+    this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
+    // #endif
     uni.$on('updateNotiNum', () => {
       console.log('updateNode', this.user);
       this.getUnreadNoticeNum();
