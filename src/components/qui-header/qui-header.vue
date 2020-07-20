@@ -212,6 +212,7 @@ export default {
 }
 .header-h5 {
   height: 256rpx;
+  background-size: 100%;
   .logo {
     max-height: 74rpx;
     padding-top: 58rpx;
