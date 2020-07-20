@@ -223,7 +223,7 @@ export default {
 .register-bind-box {
   height: 100vh;
   /* #ifdef H5 */
-  margin: 44px 0rpx 0rpx;
+  margin: 60px 0rpx 0rpx;
   /* #endif */
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
