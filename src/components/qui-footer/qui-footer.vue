@@ -22,7 +22,11 @@
         <text class="ft-box-content" :class="{ select: true, active: index === footerIndex }">
           {{ item.tabsName }}
         </text>
-        <view v-if="redCircle && item.id === 2" name="icon-circle" class="red-circle"></view>
+        <view
+          v-if="redCircle && item.id === 2"
+          name="icon-circle"
+          class="red-circle red-circle-wx"
+        ></view>
         <!-- <view v-if="redCircle && item.id === 2" class="red-num">
           {{ user.unreadNotifications }}
         </view> -->
@@ -330,6 +334,11 @@ export default {
   height: 14rpx;
   background: --color(--qui-BG-FF);
   border-radius: 50%;
+}
+.red-circle-wx {
+  /* #ifdef MP-WEIXIN */
+  left: calc(29% + 24rpx);
+  /* #endif */
 }
 // .red-num {
 //   position: absolute;
