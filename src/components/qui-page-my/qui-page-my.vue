@@ -175,7 +175,7 @@ export default {
     },
     onClickItem(e) {
       uni.navigateTo({
-        url: `/pages/profile/index?current=${e.currentIndex}`,
+        url: `/pages/profile/index?current=${e.currentIndex}&userId=${this.userId}`,
       });
     },
     // #ifdef H5
