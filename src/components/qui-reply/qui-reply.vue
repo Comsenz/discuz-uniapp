@@ -132,7 +132,7 @@ export default {
     flex-shrink: 0;
   }
   .reply-content {
-    display: inline;
+    // display: inline;
     color: --color(--qui-FC-777);
   }
 }
