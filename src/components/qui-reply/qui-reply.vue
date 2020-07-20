@@ -14,9 +14,10 @@
     >
       <view class="reply-user">{{ reply.user.username }}</view>
       <view class="reply-user">：</view>
-      <text class="reply-content">
+      <!--<text class="reply-content">
         {{ reply.content }}
-      </text>
+      </text>-->
+      <qui-uparse :content="reply.contentHtml" class="reply-content"></qui-uparse>
       <!--<qui-uparse
         :content="reply.contentHtml"
         class="reply-content"
@@ -121,7 +122,7 @@ export default {
   line-height: 35rpx;
   word-break: break-all;
   .reply-user {
-    display: inline;
+    float: left;
     color: --color(--qui-LINK);
   }
   .reply-connector {

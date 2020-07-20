@@ -229,18 +229,18 @@
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
               </view>
-              <qui-uploader
-                :url="`${url}api/attachments`"
-                :header="header"
-                :form-data="formData"
-                :count="3"
-                name="file"
-                async-clear
-                ref="upload"
-                @change="uploadChange"
-                @clear="uploadClear"
-              ></qui-uploader>
             </view>
+            <qui-uploader
+              :url="`${url}api/attachments`"
+              :header="header"
+              :form-data="formData"
+              :count="3"
+              name="file"
+              async-clear
+              ref="upload"
+              @change="uploadChange"
+              @clear="uploadClear"
+            ></qui-uploader>
           </view>
           <button class="publish-btn" @click="publishClick()">
             {{ t.publish }}
