@@ -186,6 +186,7 @@
               <view v-for="(post, index) in posts" :key="index">
                 <qui-topic-comment
                   v-if="!post.isDeleted && refreshVal"
+                  :comment-type="0"
                   :post-id="post._jv.id"
                   :comment-avatar-url="post.user.avatarUrl"
                   :user-name="post.user.username"

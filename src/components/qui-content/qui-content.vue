@@ -73,7 +73,7 @@
             :poster="coverImage"
             v-if="threadType === 2 && payStatus"
             :id="'myVideo' + currentindex"
-            preload="auto"
+            preload="none"
             bindpause="handlepause"
             playsinline
             webkit-playsinline

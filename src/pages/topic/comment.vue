@@ -120,6 +120,7 @@
                 <view v-for="(commentPost, index) in postComments" :key="index">
                   <qui-topic-comment
                     v-if="!commentPost.isDeleted"
+                    :comment-type="1"
                     :post-id="commentPost._jv.id"
                     :comment-avatar-url="commentPost.user.avatarUrl"
                     :user-name="commentPost.user.username"
@@ -229,18 +230,18 @@
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
               </view>
-              <qui-uploader
-                :url="`${url}api/attachments`"
-                :header="header"
-                :form-data="formData"
-                :count="3"
-                name="file"
-                async-clear
-                ref="upload"
-                @change="uploadChange"
-                @clear="uploadClear"
-              ></qui-uploader>
             </view>
+            <qui-uploader
+              :url="`${url}api/attachments`"
+              :header="header"
+              :form-data="formData"
+              :count="3"
+              name="file"
+              async-clear
+              ref="upload"
+              @change="uploadChange"
+              @clear="uploadClear"
+            ></qui-uploader>
           </view>
           <button class="publish-btn" @click="publishClick()">
             {{ t.publish }}

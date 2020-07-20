@@ -237,6 +237,7 @@ export default {
     this.userInfo();
   },
   onShow() {
+    // 解决安卓部分机型支付回来不刷新页面
     const payType = uni.getStorageSync('pay_type');
     if (payType && payType === 2) {
       this.userInfo();
@@ -264,6 +265,10 @@ export default {
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
         if (res.paid) {
+          const payType = uni.getStorageSync('pay_type');
+          if (payType && payType === 2) {
+            uni.removeStorageSync('pay_type');
+          }
           window.location.href = '/pages/home/index';
         }
       });
