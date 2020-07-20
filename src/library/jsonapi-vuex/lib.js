@@ -601,9 +601,9 @@ const Utils = class {
                 }
               });
             }
-            // if (data._jv.type === 'users') {
-            //   delete data.avatarUrl;
-            // }
+            if (data._jv.type === 'users') {
+              data.avatarUrl = oldRecord.avatarUrl;
+            }
             data = merge(oldRecord, data);
           }
         }
