@@ -324,6 +324,7 @@ export default {
   margin: 13rpx 20rpx 0 0;
 }
 .active {
+  font-weight: bold;
   color: --color(--qui-TAB);
 }
 .red-circle {
