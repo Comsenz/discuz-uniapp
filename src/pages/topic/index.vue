@@ -802,6 +802,7 @@ export default {
     return {
       title: threadShare.type === 1 ? this.thread.title : this.thread.firstPost.summaryText,
       query: `id=${this.threadId}`,
+      imageUrl: this.shareLogo,
     };
   },
   onShow() {
