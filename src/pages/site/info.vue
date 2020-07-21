@@ -213,6 +213,11 @@ export default {
       return this.$store.getters['session/get']('userId');
     },
   },
+  created() {
+    this.$u.event.$on('refresh', () => {
+      window.location.reload();
+    });
+  },
   onLoad() {
     // #ifdef MP-WEIXIN
     uni.hideHomeButton();

@@ -9,20 +9,16 @@ export default {
     };
   },
   onReady() {
-    this.userInfo();
+    this.refresh();
   },
   methods: {
-    userInfo() {
-      const params = {
-        include: 'groups,wechat',
-      };
-      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
-        if (res.paid) {
-          window.location.href = '/pages/home/index';
-        } else {
-          window.location.href = '/pages/site/info';
-        }
-      });
+    refresh() {
+      setTimeout(() => {
+        uni.redirectTo({
+          url: '/pages/site/info',
+        });
+      }, 1000);
+      this.$u.event.$emit('refresh');
     },
   },
 };
