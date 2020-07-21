@@ -155,6 +155,12 @@
       }
     },
     {
+      "path": "pages/site/payH5",
+      "style": {
+        "navigationBarTitleText": "站点信息"
+      }
+    },
+    {
       "path": "pages/site/partner-invite",
       "style": {
         "navigationBarTitleText": "站点信息"

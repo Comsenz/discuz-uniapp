@@ -236,13 +236,6 @@ export default {
     }
     this.userInfo();
   },
-  onShow() {
-    // 解决安卓部分机型支付回来不刷新页面
-    const payType = uni.getStorageSync('pay_type');
-    if (payType && payType === 2) {
-      this.userInfo();
-    }
-  },
   onUnload() {
     clearInterval(payWechat);
   },
@@ -272,10 +265,6 @@ export default {
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
         if (res.paid) {
-          const payType = uni.getStorageSync('pay_type');
-          if (payType && payType === 2) {
-            uni.removeStorageSync('pay_type');
-          }
           window.location.href = '/pages/home/index';
         }
       });
@@ -370,9 +359,8 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          uni.setStorageSync('pay_type', 2);
-          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/info`);
-          window.location.replace(`${res.wechat_h5_link}&redirect_url=${url}`);
+          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/payH5`);
+          window.location.href = `${res.wechat_h5_link}&redirect_url=${url}`;
         } else if (browserType === '3') {
           if (res) {
             this.codeUrl = res.wechat_qrcode;
