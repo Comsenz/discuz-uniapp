@@ -567,6 +567,7 @@ export default {
       limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
       paidBtnStatus: true, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
+      // rewardBtnStatus: true, // 打赏按钮是否显示（在ios里不显示，付费主题不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, // 回复状态
@@ -707,6 +708,11 @@ export default {
     },
     themeColor() {
       return this.theme === this.$u.light() ? '#333' : '#fff'; // 用于图标色
+    },
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      console.log('获取当前登录的id', userId);
+      return parseInt(userId, 10);
     },
   },
   onLoad(option) {
@@ -951,6 +957,14 @@ export default {
             this.selectList[2].text = this.t.cancelSticky;
           }
           this.isLiked = data.firstPost.isLiked;
+          // if (!this.forums.paycenter.wxpay_close) {
+          //   // 如果开启了微信支付
+          //   this.paidBtnStatus = true;
+          //   this.rewardBtnStatus = true;
+          //   this.rewardStatus = true;
+          //   this.paidStatus = true;
+          // } else {
+          // 如果关闭了微信支付
           if (!data.paid || data.paidUsers.length > 0) {
             // #ifndef H5
             if (
@@ -1038,6 +1052,8 @@ export default {
             }
             // #endif
           }
+          // }
+
           if (data.firstPost.likedUsers.length < 1) {
             this.likedStatus = false;
           } else {
@@ -1463,6 +1479,7 @@ export default {
             }
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
+              this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               if (this.payTypeVal === 0) {
                 // 这是主题支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
