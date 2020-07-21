@@ -213,7 +213,7 @@ export default {
   top: 0;
   z-index: 100;
   width: 100%;
-  padding: 8px 20px;
+  padding: 9px 20px;
   background: --color(--qui-BG-2);
   border-bottom: 2px solid --color(--qui-BG-IT);
   box-sizing: border-box;
