@@ -200,7 +200,7 @@ export default {
     },
     money: {
       handler(newVal) {
-        // console.log(newVal, '这是监听到的点赞数');
+        console.log(newVal, '这是监听到的点赞数');
       },
       deep: true,
       immediate: true,

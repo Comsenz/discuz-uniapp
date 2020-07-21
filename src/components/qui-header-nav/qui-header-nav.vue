@@ -4,7 +4,6 @@
       <view class="qui-back__body__content">
         <view class="qui-back__body__content-title">
           <qui-icon
-            :name="iconLeft"
             class="icon-back"
             size="32"
             :color="theme === $u.light() ? '#333' : '#fff'"
