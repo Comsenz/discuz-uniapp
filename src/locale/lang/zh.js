@@ -134,6 +134,8 @@ export default {
     videoUploading: '视频上传中...',
   },
   core: {
+    register_close: '站点禁止注册',
+    bind_error: '绑定错误',
     noavatar: '无',
     thousand: '万',
     content: '内容',
