@@ -214,6 +214,7 @@ export default {
     },
   },
   created() {
+    // 华为手机支付后不刷新也不进入任何生命周期的情况
     this.$u.event.$on('refresh', () => {
       window.location.reload();
     });

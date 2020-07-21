@@ -8,7 +8,7 @@ export default {
       userId: uni.getStorageSync('user_id') || 0,
     };
   },
-  onReady() {
+  onShow() {
     this.refresh();
   },
   methods: {
