@@ -42,6 +42,11 @@ export default {
       default: true,
     },
   },
+  data() {
+    return {
+      isRun: false,
+    };
+  },
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
@@ -69,6 +74,18 @@ export default {
         this.$emit('pageLoaded');
       }
     },
+    // #ifdef H5
+    $route: {
+      handler(val, oldVal) {
+        if (val.path !== oldVal.path && !this.isRun) {
+          this.isRun = true;
+          uni.$emit('apploaded');
+          this.isRun = false;
+        }
+      }, // 深度观察监听
+      deep: true,
+    },
+    // #endif
   },
   mounted() {
     // #ifdef MP-WEIXIN

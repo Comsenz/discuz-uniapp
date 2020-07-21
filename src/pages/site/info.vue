@@ -236,13 +236,6 @@ export default {
     }
     this.userInfo();
   },
-  onShow() {
-    // 解决安卓部分机型支付回来不刷新页面
-    const payType = uni.getStorageSync('pay_type');
-    if (payType && payType === 2) {
-      this.userInfo();
-    }
-  },
   onUnload() {
     clearInterval(payWechat);
   },
@@ -258,6 +251,13 @@ export default {
       title: this.forums.set_site.site_name,
     };
   },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
+  },
   methods: {
     userInfo() {
       const params = {
@@ -265,10 +265,6 @@ export default {
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
         if (res.paid) {
-          const payType = uni.getStorageSync('pay_type');
-          if (payType && payType === 2) {
-            uni.removeStorageSync('pay_type');
-          }
           window.location.href = '/pages/home/index';
         }
       });
@@ -363,9 +359,8 @@ export default {
             this.onBridgeReady(res);
           }
         } else if (browserType === '2') {
-          uni.setStorageSync('pay_type', 2);
-          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/info`);
-          window.location.replace(`${res.wechat_h5_link}&redirect_url=${url}`);
+          const url = encodeURI(`${DISCUZ_REQUEST_HOST}pages/site/payH5`);
+          window.location.href = `${res.wechat_h5_link}&redirect_url=${url}`;
         } else if (browserType === '3') {
           if (res) {
             this.codeUrl = res.wechat_qrcode;
@@ -423,9 +418,7 @@ export default {
         res => {
           // alert('支付唤醒');
           if (res.err_msg === 'get_brand_wcpay_request:ok') {
-            uni.redirectTo({
-              url: '/pages/home/index',
-            });
+            window.location.href = '/pages/home/index';
             // 微信支付成功，进行支付成功处理
           } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
             // 取消支付
