@@ -5,7 +5,7 @@
 export default {
   data() {
     return {
-      state: true,
+      userId: uni.getStorageSync('user_id') || 0,
     };
   },
   onReady() {
