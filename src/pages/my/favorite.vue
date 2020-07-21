@@ -67,6 +67,24 @@ export default {
   onShow() {
     this.uploadItem();
   },
+  // 唤起小程序原声分享（微信）
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
+      return {
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+        path: `/pages/topic/index?id=${this.nowThreadId}`,
+      };
+    }
+  },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
+  },
   methods: {
     toTopic(id) {
       this.editThreadId = id;
@@ -76,24 +94,6 @@ export default {
     },
     scroll(event) {
       this.scrollTop = event.detail.scrollTop;
-    },
-    // 唤起小程序原声分享（微信）
-    onShareAppMessage(res) {
-      // 来自页面内分享按钮
-      if (res.from === 'button') {
-        const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
-        return {
-          title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
-          path: `/pages/topic/index?id=${this.nowThreadId}`,
-        };
-      }
-    },
-    // 分享到朋友圈
-    onShareTimeline() {
-      return {
-        title: this.forums.set_site.site_name,
-        query: '',
-      };
     },
     loadlikes() {
       this.loadingType = 'loading';
