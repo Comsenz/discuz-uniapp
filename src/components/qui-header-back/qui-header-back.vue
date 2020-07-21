@@ -4,9 +4,9 @@
       <view class="qui-back__body__content">
         <view class="qui-back__body__content-title" @tap="backPage('/pages/home/index', '0')">
           <qui-icon
-            name="icon-home"
+            name="icon-home-icon"
             size="32"
-            :color="theme === $u.light() ? '#777' : '#fff'"
+            :color="theme === $u.light() ? '#333' : '#fff'"
           ></qui-icon>
           <text>{{ title || i18n.t('profile.backhomePage') }}</text>
         </view>
@@ -17,6 +17,7 @@
       <view class="qui-back__body__right" v-if="!slotRight && isLogin">
         <view class="qui-back__body__right-pop">
           <text class="qui-back__body__right-pop-item" @tap="footerOpen">
+            <text class="qui-back__body__right-pop-item-add">+</text>
             {{ i18n.t('profile.post') }}
           </text>
           <text
@@ -212,8 +213,9 @@ export default {
   top: 0;
   z-index: 100;
   width: 100%;
-  padding: 10px 20px;
+  padding: 8px 20px;
   background: --color(--qui-BG-2);
+  border-bottom: 2px solid --color(--qui-BG-IT);
   box-sizing: border-box;
   &__body {
     position: relative;
@@ -227,7 +229,7 @@ export default {
   }
   &__body__content-title {
     font-size: $fg-f28;
-    color: --color(--qui-FC-777);
+    color: --color(--qui-FC-333);
     transition: $switch-theme-time;
   }
   &__body__right-pop-item {
@@ -235,8 +237,12 @@ export default {
     font-size: $fg-f28;
     color: --color(--qui-FC-333);
   }
+  &__body__right-pop-item-add {
+    margin-right: 3px;
+    font-size: 20px;
+  }
 }
-.icon-home {
+.icon-home-icon {
   margin-right: 10px;
 }
 .cell-item__body__right {
