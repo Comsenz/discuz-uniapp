@@ -156,7 +156,7 @@ export default {
             : this.i18n.t('profile.theuserwasdeleted');
           const regex = /(<([^>]+)>)/gi;
           const thread = item.order.thread
-            ? item.order.thread.firstPost.summary.replace(regex, '')
+            ? item.order.thread.title.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
           return `${user} ${this.i18n.t('profile.givearewardforyourtheme')} ${thread}`;
         }
@@ -164,7 +164,7 @@ export default {
           // 打赏支出
           const regex = /(<([^>]+)>)/gi;
           const thread = item.order.thread
-            ? item.order.thread.firstPost.summary.replace(regex, '')
+            ? item.order.thread.title.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.givearewardforthetheme')} ${thread}`;
         }
@@ -175,7 +175,7 @@ export default {
             : this.i18n.t('profile.theuserwasdeleted');
           const regex = /(<([^>]+)>)/gi;
           const thread = item.order.thread
-            ? item.order.thread.firstPost.summary.replace(regex, '')
+            ? item.order.thread.title.replace(regex, '')
             : this.i18n.t('profile.givearewardforthetheme');
           return `${user} ${this.i18n.t('profile.paidtoseeyourtheme')} ${thread}`;
         }
@@ -183,7 +183,7 @@ export default {
           // 付费主题支出
           const regex = /(<([^>]+)>)/gi;
           const thread = item.order.thread
-            ? item.order.thread.firstPost.summary.replace(regex, '')
+            ? item.order.thread.title.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.paidtoview')} ${thread}`;
         }

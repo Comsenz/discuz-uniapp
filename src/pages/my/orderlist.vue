@@ -167,7 +167,7 @@ export default {
           // 打赏支出
           const regex = /(<([^>]+)>)/gi;
           const thread = item.thread
-            ? item.thread.firstPost.summary.replace(regex, '')
+            ? item.thread.title.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.givearewardforthetheme')} ${thread}`;
         }
@@ -175,7 +175,7 @@ export default {
           // 付费主题支出
           const regex = /(<([^>]+)>)/gi;
           const thread = item.thread
-            ? item.thread.firstPost.summary.replace(regex, '')
+            ? item.thread.title.replace(regex, '')
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.paidtoview')} ${thread}`;
         }
