@@ -38,8 +38,10 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: forums,
   props: {
     userId: {
       type: String,
@@ -85,6 +87,13 @@ export default {
           path: `/pages/topic/index?id=${this.nowThreadId}`,
         };
       }
+    },
+    // 分享到朋友圈
+    onShareTimeline() {
+      return {
+        title: this.forums.set_site.site_name,
+        query: '',
+      };
     },
     loadlikes() {
       this.loadingType = 'loading';

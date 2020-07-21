@@ -114,6 +114,7 @@ import { status } from '@/library/jsonapi-vuex/index';
 // #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
+import forums from '@/mixin/forums';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -127,6 +128,7 @@ export default {
     like,
   },
   mixins: [
+    forums,
     // #ifdef H5
     loginAuth,
     // #endif
@@ -189,6 +191,13 @@ export default {
         path: `/pages/topic/index?id=${this.nowThreadId}`,
       };
     }
+  },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
   },
   methods: {
     scroll(event) {

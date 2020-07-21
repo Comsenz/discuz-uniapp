@@ -158,6 +158,13 @@ export default {
       title: this.forums.set_site.site_name,
     };
   },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
+  },
   methods: {
     // 首页头部分享按钮弹窗
     open() {

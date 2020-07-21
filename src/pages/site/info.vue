@@ -258,6 +258,13 @@ export default {
       title: this.forums.set_site.site_name,
     };
   },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
+  },
   methods: {
     userInfo() {
       const params = {
@@ -423,9 +430,7 @@ export default {
         res => {
           // alert('支付唤醒');
           if (res.err_msg === 'get_brand_wcpay_request:ok') {
-            uni.redirectTo({
-              url: '/pages/home/index',
-            });
+            window.location.href = '/pages/home/index';
             // 微信支付成功，进行支付成功处理
           } else if (res.err_msg === 'get_brand_wcpay_request:cancel') {
             // 取消支付
