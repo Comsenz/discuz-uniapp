@@ -237,7 +237,7 @@
         :title="i18n.t('discuzq.post.paymentAmount')"
         :addon="showPrice"
         arrow
-        v-if="type !== 0 && showHidden"
+        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
         @click="cellClick('pay')"
       ></qui-cell-item>
       <qui-cell-item
