@@ -94,7 +94,6 @@ export default {
     // 监听得到的数据
     commentTypeVal: {
       handler(newVal) {
-        console.log(newVal, '~~~~~~~~~');
         this.commentTypeVal = newVal;
       },
       deep: true,
