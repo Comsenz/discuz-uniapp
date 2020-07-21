@@ -525,8 +525,10 @@ export default {
   padding: 30rpx;
   margin: 20rpx 0;
   background: --color(--qui-BG-2);
-  border-radius: 6rpx;
-  box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
+  // border-radius: 6rpx;
+  // box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
+  border-top: solid 2rpx --color(--qui-BG-777);
+  border-bottom: solid 2rpx --color(--qui-BG-777);
   box-sizing: border-box;
 
   &__header {

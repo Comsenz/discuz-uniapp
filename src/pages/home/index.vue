@@ -105,6 +105,9 @@ export default {
       query: '',
     };
   },
+  // onPullDownRefresh() {
+  //   console.log('下拉刷新');
+  // },
   onShow() {
     // #ifdef MP-WEIXIN
     if (this.$refs.quiPage) {
