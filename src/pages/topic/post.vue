@@ -1375,27 +1375,42 @@ export default {
     }
 
     try {
-      // #ifndef H5
       const res = uni.getSystemInfoSync();
-      if (
-        res.platform === 'ios' &&
-        this.forums.set_site.site_mode === 'public' &&
-        this.forums.paycenter.wxpay_ios === false
-      ) {
-        this.showHidden = false;
-      } else if (
-        res.platform === 'ios' &&
-        this.forums.set_site.site_mode === 'public' &&
-        this.forums.paycenter.wxpay_ios === true
-      ) {
+      if (this.forums.paycenter.wxpay_close) {
+        // #ifndef H5
+        if (res.platform === 'ios') {
+          if (this.forums.paycenter.wxpay_ios === false) {
+            this.showHidden = false;
+          }else {
+            this.showHidden = true;
+          }
+        } else {
+          this.showHidden = true;
+        }
+        // #endif
+        // #ifdef H5
         this.showHidden = true;
+        // #endif
       } else {
-        this.showHidden = true;
+        this.showHidden = false;
       }
-      // #endif
-      // #ifdef H5
-      this.showHidden = true;
-      // #endif
+      // if (
+      //   res.platform === 'ios' &&
+      //   this.forums.paycenter.wxpay_ios === false
+      // ) {
+      //   this.showHidden = false;
+      // } else if (
+      //   res.platform === 'ios' &&
+      //   this.forums.set_site.site_mode === 'public' &&
+      //   this.forums.paycenter.wxpay_ios === true
+      // ) {
+      //   this.showHidden = true;
+      // } else {
+      //   this.showHidden = true;
+      // }
+      // // #ifdef H5
+      // this.showHidden = true;
+      // // #endif
     } catch (e) {
       // error
     }
