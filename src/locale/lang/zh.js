@@ -116,7 +116,7 @@ export default {
       yuan: '元',
       customize: '自定义',
       theContentCanNotBeBlank: '内容不能为空',
-      theclassifyCanNotBeBlank: '分类不能为空',
+      theclassifyCanNotBeBlank: '请选择分类',
       imageCannotBeEmpty: '图片不能为空',
       videoCannotBeEmpty: '视频不能为空',
       pleaseWaitForTheVideoUploadToComplete: '请等待视频上传完成',
