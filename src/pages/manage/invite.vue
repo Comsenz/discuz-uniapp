@@ -166,6 +166,13 @@ export default {
       path: `/pages/site/partner-invite?code=${this.code}`,
     };
   },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
+  },
   computed: {
     // 获取当前登录的id
     currentLoginId() {

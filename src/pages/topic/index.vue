@@ -56,7 +56,7 @@
               @previewPicture="payClickShow"
               @tagClick="tagClick"
             >
-              <view slot="follow" v-if="thread.user.follow != null">
+              <!--<view slot="follow" v-if="thread.user.follow != null">
                 <view
                   class="themeItem__header__follow"
                   @tap="
@@ -84,7 +84,7 @@
                     }}
                   </text>
                 </view>
-              </view>
+              </view>-->
             </qui-topic-content>
             <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
             {{ p.pay }}
@@ -159,7 +159,7 @@
               >
                 {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
               </view>
-              <view class="comment-sort" v-if="thread.postCount > 1">
+              <!--<view class="comment-sort" v-if="thread.postCount > 1">
                 <view class="comment-sort-operaCl" @click="sortOperaClick">
                   <qui-icon
                     name="icon-sort1"
@@ -179,7 +179,7 @@
                     @click="sortSelectChoice"
                   ></qui-drop-down>
                 </view>
-              </view>
+              </view>-->
             </view>
 
             <view v-if="posts.length > 0">
@@ -957,102 +957,104 @@ export default {
             this.selectList[2].text = this.t.cancelSticky;
           }
           this.isLiked = data.firstPost.isLiked;
-          // if (!this.forums.paycenter.wxpay_close) {
-          //   // 如果开启了微信支付
-          //   this.paidBtnStatus = true;
-          //   this.rewardBtnStatus = true;
-          //   this.rewardStatus = true;
-          //   this.paidStatus = true;
-          // } else {
-          // 如果关闭了微信支付
-          if (!data.paid || data.paidUsers.length > 0) {
-            // #ifndef H5
-            if (
-              this.system === 'ios' &&
-              this.detectionmodel === 'public' &&
-              this.paymentmodel === false
-            ) {
-              this.paidStatus = false;
-            } else if (
-              this.system === 'ios' &&
-              this.detectionmodel === 'public' &&
-              this.paymentmodel === true
-            ) {
-              this.paidStatus = true;
-            } else {
-              this.paidStatus = true;
-            }
-            // #endif
-            // #ifdef H5
-            this.paidStatus = true;
-            if (data.paid === true) {
-              this.paidBtnStatus = false;
-            } else {
-              this.paidBtnStatus = true;
-            }
-            // #endif
-          } else {
-            this.paidStatus = false;
-          }
-          if (data.type === 3) {
-            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
-          } else if (data.type === 2) {
-            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
-          } else if (data.type === 1) {
-            this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-          }
-          if (data.price <= 0) {
-            // #ifndef H5
-            if (
-              this.system === 'ios' &&
-              this.detectionmodel === 'public' &&
-              this.paymentmodel === false
-            ) {
-              this.rewardStatus = false;
-            } else if (
-              this.system === 'ios' &&
-              this.detectionmodel === 'public' &&
-              this.paymentmodel === true
-            ) {
-              this.rewardStatus = true;
-            } else {
-              this.paidBtnStatus = false;
-              this.rewardStatus = true;
-            }
-            // #endif
-            // #ifdef H5
+          if (!this.forums.paycenter.wxpay_close) {
+            // 如果关闭了微信支付
+            console.log('关闭微信支付');
             this.paidBtnStatus = false;
-            this.rewardStatus = true;
-            // #endif
+            this.rewardBtnStatus = false;
+            // this.rewardStatus = true;
+            // this.paidStatus = true;
           } else {
-            // #ifndef H5
-            if (
-              this.system === 'ios' &&
-              this.detectionmodel === 'public' &&
-              this.paymentmodel === false
-            ) {
-              this.paidBtnStatus = false;
-            } else if (
-              this.system === 'ios' &&
-              this.detectionmodel === 'public' &&
-              this.paymentmodel === true &&
-              data.paid === false
-            ) {
-              this.paidBtnStatus = true;
-            } else if (data.paid === true) {
-              this.paidBtnStatus = false;
-            }
-            // #endif
-            this.rewardStatus = false;
-            // #ifdef H5
-            if (data.paid === true) {
-              this.paidBtnStatus = false;
+            // 如果开启了微信支付
+            console.log('开启微信支付');
+            if (!data.paid || data.paidUsers.length > 0) {
+              // #ifndef H5
+              if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === false
+              ) {
+                this.paidStatus = false;
+              } else if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === true
+              ) {
+                this.paidStatus = true;
+              } else {
+                this.paidStatus = true;
+              }
+              // #endif
+              // #ifdef H5
+              this.paidStatus = true;
+              if (data.paid === true) {
+                this.paidBtnStatus = false;
+              } else {
+                this.paidBtnStatus = true;
+              }
+              // #endif
             } else {
-              this.paidBtnStatus = true;
+              this.paidStatus = false;
             }
-            // #endif
+            if (data.type === 3) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
+            } else if (data.type === 2) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
+            } else if (data.type === 1) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+            }
+            if (data.price <= 0) {
+              // #ifndef H5
+              if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === false
+              ) {
+                this.rewardStatus = false;
+              } else if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === true
+              ) {
+                this.rewardStatus = true;
+              } else {
+                this.paidBtnStatus = false;
+                this.rewardStatus = true;
+              }
+              // #endif
+              // #ifdef H5
+              this.paidBtnStatus = false;
+              this.rewardStatus = true;
+              // #endif
+            } else {
+              // #ifndef H5
+              if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === false
+              ) {
+                this.paidBtnStatus = false;
+              } else if (
+                this.system === 'ios' &&
+                this.detectionmodel === 'public' &&
+                this.paymentmodel === true &&
+                data.paid === false
+              ) {
+                this.paidBtnStatus = true;
+              } else if (data.paid === true) {
+                this.paidBtnStatus = false;
+              }
+              // #endif
+              this.rewardStatus = false;
+              // #ifdef H5
+              if (data.paid === true) {
+                this.paidBtnStatus = false;
+              } else {
+                this.paidBtnStatus = true;
+              }
+              // #endif
+            }
           }
-          // }
 
           if (data.firstPost.likedUsers.length < 1) {
             this.likedStatus = false;

@@ -1631,7 +1631,7 @@ export default {
     position: relative;
     z-index: 2;
     font-size: $fg-f28;
-    line-height: 160rpx;
+    line-height: 36rpx;
     color: --color(--qui-FC-34);
   }
 
