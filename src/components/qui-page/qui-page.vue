@@ -147,7 +147,7 @@ export default {
   transition: $switch-theme-time;
   &--padding {
     /* #ifdef H5 */
-    padding-top: 40px;
+    padding-top: 44px;
     /* #endif */
   }
 }

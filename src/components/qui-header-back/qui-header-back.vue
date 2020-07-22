@@ -105,7 +105,7 @@ export default {
   &__body {
     position: relative;
     display: flex;
-    height: 24px;
+    height: 25px;
     align-items: center;
     justify-content: space-between;
   }
