@@ -1689,7 +1689,7 @@ export default {
       } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
       }
-      this.price = this.thread.price;
+      this.price = parseFloat(this.thread.price);
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
