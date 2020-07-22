@@ -77,7 +77,6 @@ export default {
         }
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         this.freezelist = [...this.freezelist, ...res];
-        console.log(this.freezelist);
       });
     },
     // 处理时间
