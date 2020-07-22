@@ -410,9 +410,6 @@ export default {
 
 .chat-box {
   height: 100%;
-  /* #ifdef H5 */
-  padding: 60px 0rpx 0rpx;
-  /* #endif */
   margin: 0rpx 0rpx 140rpx;
   background: --color(--qui-BG-ED);
 

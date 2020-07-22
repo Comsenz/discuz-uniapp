@@ -119,9 +119,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .notification-box {
-  /* #ifdef H5 */
-  margin: 60px 0rpx 0rpx;
-  /* #endif */
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;
