@@ -101,13 +101,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-
-.pages-topic /deep/ {
-  /* #ifdef H5 */
-  padding-top: 88rpx;
-  box-sizing: border-box;
-  /* #endif */
-}
 $otherHeight: 292rpx;
 .topic-content-item {
   position: relative;

@@ -225,13 +225,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-
-.pages-content /deep/ {
-  /* #ifdef H5 */
-  padding-top: 120rpx;
-  box-sizing: border-box;
-  /* #endif */
-}
 $otherHeight: 292rpx;
 .topic-content-header {
   padding: 15rpx;

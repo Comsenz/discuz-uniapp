@@ -157,12 +157,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-.pages-list /deep/ {
-  /* #ifdef H5 */
-  padding-top: 120rpx;
-  box-sizing: border-box;
-  /* #endif */
-}
 .dropDownBox {
   position: absolute;
   top: 50rpx;

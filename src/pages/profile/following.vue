@@ -200,7 +200,6 @@ export default {
   padding: 20rpx 0;
   margin-bottom: 30rpx;
   background: --color(--qui-BG-2);
-  border-top: solid 2rpx --color(--qui-BG-777);
   border-bottom: solid 2rpx --color(--qui-BG-777);
 }
 .follow-content__items {
