@@ -157,9 +157,6 @@ export default {
 .new {
   width: 100vw;
   height: 100vh;
-  /* #ifdef H5 */
-  padding: 60px 0rpx 0rpx;
-  /* #endif */
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }

@@ -2353,9 +2353,6 @@ page {
 }
 .ft-gap {
   width: 100%;
-  /* #ifdef H5 */
-  margin-top: 60px;
-  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {

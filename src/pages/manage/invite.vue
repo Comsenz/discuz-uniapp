@@ -356,10 +356,9 @@ export default {
   right: 0rpx;
   left: 0rpx;
   /* #ifdef H5 */
-  margin: 60px 0rpx 0rpx;
+  margin-top: 44px;
   /* #endif */
   font-size: $fg-f28;
-
   &-tabs {
     /deep/ .qui-tabs__item--active .qui-tabs__item__title {
       font-size: $fg-f28;

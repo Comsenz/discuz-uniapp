@@ -140,9 +140,6 @@ $height: calc(100vh - 110rpx);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .search-box {
-    /* #ifdef H5 */
-    margin-top: 45px;
-    /* #endif */
     background: --color(--qui-BG-2);
   }
 }

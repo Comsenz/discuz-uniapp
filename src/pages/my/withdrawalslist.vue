@@ -183,9 +183,6 @@ $height: calc(100vh - 150rpx);
   .withdrawalslist-head {
     position: relative;
     padding: 40rpx 0 0 40rpx;
-    /* #ifdef H5 */
-    padding-top: 60px;
-    /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
@@ -214,9 +211,6 @@ $height: calc(100vh - 150rpx);
   z-index: 10;
   width: 50%;
   height: 78rpx;
-  /* #ifdef H5 */
-  margin-top: 40px;
-  /* #endif */
 }
 .date-picker .uni-input {
   width: 100%;
