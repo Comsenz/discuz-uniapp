@@ -1,8 +1,5 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <!-- #ifdef H5-->
-    <view class="head-gap"></view>
-    <!-- #endif -->
     <view class="post-box" v-if="loadStatus">
       <view class="post-box__title" v-if="type === 1">
         <input
@@ -1463,9 +1460,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-.head-gap {
-  height: 60px;
-}
 .post-box {
   width: 100vw;
   height: 100%;
