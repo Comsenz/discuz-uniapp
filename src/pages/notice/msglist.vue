@@ -44,7 +44,12 @@
             </view>
           </view>
         </view>
-        <view :style="{ height: bottomPadding + 'px', background: '#EDEDED' }"></view>
+        <view
+          :style="{
+            height: bottomPadding + 'px',
+            background: theme === $u.light() ? '#EDEDED' : '#3F4243',
+          }"
+        ></view>
       </scroll-view>
 
       <!-- 底部 -->
