@@ -222,9 +222,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .register-bind-box {
   height: 100vh;
-  /* #ifdef H5 */
-  margin: 60px 0rpx 0rpx;
-  /* #endif */
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 

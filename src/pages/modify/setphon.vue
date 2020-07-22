@@ -300,9 +300,6 @@ export default {
   .new {
     width: 100vw;
     height: 100vh;
-    /* #ifdef H5 */
-    padding-top: 120rpx;
-    /* #endif */
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }

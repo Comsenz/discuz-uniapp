@@ -314,12 +314,12 @@ export default {
     top: 0rpx;
     z-index: 99;
     width: 100%;
+    /* #ifdef H5 */
+    margin-top: 44px;
+    /* #endif */
   }
 
   .search-box {
-    /* #ifdef H5 */
-    margin: 60px 0rpx 0rpx;
-    /* #endif */
     background-color: --color(--qui-BG-2);
   }
 }

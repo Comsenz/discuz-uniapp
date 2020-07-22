@@ -1045,9 +1045,6 @@ page {
 }
 .ft-gap {
   width: 100%;
-  /* #ifdef H5 */
-  margin-top: 88rpx;
-  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {

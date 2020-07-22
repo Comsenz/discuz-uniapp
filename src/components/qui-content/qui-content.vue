@@ -78,9 +78,8 @@
             playsinline
             webkit-playsinline
             x5-playsinline
-            controls
             :page-gesture="false"
-            show-fullscreen-btn="true"
+            :show-fullscreen-btn="true"
             :show-play-btn="true"
             :autoplay="false"
             auto-pause-if-open-native
@@ -527,8 +526,8 @@ export default {
   background: --color(--qui-BG-2);
   // border-radius: 6rpx;
   // box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
-  border-top: solid 2rpx --color(--qui-BG-777);
-  border-bottom: solid 2rpx --color(--qui-BG-777);
+  border-top: solid 2rpx --color(--qui-BOR-ED);
+  border-bottom: solid 2rpx --color(--qui-BOR-ED);
   box-sizing: border-box;
 
   &__header {

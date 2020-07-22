@@ -195,11 +195,6 @@ export default {
   .search-box {
     background-color: --color(--qui-BG-2);
   }
-  .search-box {
-    /* #ifdef H5 */
-    margin-top: 45px;
-    /* #endif */
-  }
   .no-data {
     padding-top: 20rpx;
   }
@@ -247,6 +242,7 @@ export default {
 /deep/ .themeCount .themeItem {
   padding-left: 0;
   margin: 0;
+  border-top: 0;
   box-shadow: none;
 }
 /deep/ .themeCount .themeItem__footer {

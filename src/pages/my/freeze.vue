@@ -115,9 +115,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 40rpx 40rpx 0;
-    /* #ifdef H5 */
-    padding-top: 60px;
-    /* #endif */
     margin-bottom: 30rpx;
     font-size: $fg-f24;
     background: --color(--qui-BG-2);

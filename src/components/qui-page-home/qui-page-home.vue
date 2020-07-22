@@ -442,6 +442,9 @@ export default {
     // 滑动到顶部
     toUpper() {
       this.headerShow = true;
+      // console.log('refresh');
+      // this.ontrueGetList();
+      // uni.startPullDownRefresh();
     },
     // 初始化选中的选项卡
     getCategorieIndex(tagId) {
@@ -843,8 +846,8 @@ export default {
 
 .sticky {
   // margin: 20rpx auto;
-  border-top: 2rpx solid #ededed;
-  border-bottom: 2rpx solid #ededed;
+  border-top: 2rpx solid --color(--qui-BOR-ED);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
 .sticky__box {
   background: --color(--qui-BG-2);
@@ -858,7 +861,7 @@ export default {
   font-size: $fg-f26;
   line-height: 80rpx;
   background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid #ededed;
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
   // border-radius: 6rpx;
   // box-shadow: 0rpx 2rpx 4rpx rgba(0, 0, 0, 0.05);
   &__box {

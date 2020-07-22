@@ -175,9 +175,6 @@ export default {
   .favorite-head {
     padding-top: 20rpx;
     padding-left: 40rpx;
-    /* #ifdef H5 */
-    margin-top: 45px;
-    /* #endif */
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);

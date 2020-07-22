@@ -337,9 +337,6 @@ export default {
 .profile-info {
   padding: 40rpx;
   padding-top: 30rpx;
-  /* #ifdef H5 */
-  margin-top: 60px;
-  /* #endif */
   font-size: $fg-f28;
   background: --color(--qui-BG-2);
 }

@@ -98,13 +98,14 @@ export default {
   z-index: 100;
   width: 100%;
   padding: 9px 20px;
+  padding-left: 16px;
   background: --color(--qui-BG-2);
-  border-bottom: 2px solid --color(--qui-BG-IT);
+  border-bottom: 1px solid --color(--qui-BOR-ED);
   box-sizing: border-box;
   &__body {
     position: relative;
     display: flex;
-    height: 40px;
+    height: 25px;
     align-items: center;
     justify-content: space-between;
   }

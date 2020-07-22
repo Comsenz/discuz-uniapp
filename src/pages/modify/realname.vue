@@ -183,18 +183,12 @@ export default {
   .tica {
     width: 100vw;
     height: 100vh;
-    /* #ifdef H5 */
-    padding-top: 120rpx;
-    /* #endif */
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
   .tica-name {
     width: 100%;
     padding: 31rpx 0 0 40rpx;
-    /* #ifdef H5 */
-    padding-top: 0;
-    /* #endif */
     box-sizing: border-box;
   }
   .tica-name-inpa {

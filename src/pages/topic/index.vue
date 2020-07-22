@@ -56,7 +56,7 @@
               @previewPicture="payClickShow"
               @tagClick="tagClick"
             >
-              <view slot="follow" v-if="thread.user.follow != null">
+              <!--<view slot="follow" v-if="thread.user.follow != null">
                 <view
                   class="themeItem__header__follow"
                   @tap="
@@ -84,7 +84,7 @@
                     }}
                   </text>
                 </view>
-              </view>
+              </view>-->
             </qui-topic-content>
             <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
             {{ p.pay }}
@@ -159,7 +159,7 @@
               >
                 {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
               </view>
-              <view class="comment-sort" v-if="thread.postCount > 1">
+              <!--<view class="comment-sort" v-if="thread.postCount > 1">
                 <view class="comment-sort-operaCl" @click="sortOperaClick">
                   <qui-icon
                     name="icon-sort1"
@@ -179,7 +179,7 @@
                     @click="sortSelectChoice"
                   ></qui-drop-down>
                 </view>
-              </view>
+              </view>-->
             </view>
 
             <view v-if="posts.length > 0">
@@ -2405,9 +2405,6 @@ page {
 }
 .ft-gap {
   width: 100%;
-  /* #ifdef H5 */
-  margin-top: 60px;
-  /* #endif */
   margin-bottom: 80rpx;
 }
 .det-ft {
