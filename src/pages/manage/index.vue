@@ -20,9 +20,6 @@
 .manage-items {
   height: 100vh;
   padding: 0rpx 0rpx 0rpx 40rpx;
-  /* #ifdef H5 */
-  margin: 60px 0rpx 0rpx;
-  /* #endif */
   background: --color(--qui-BG-2);
 
   .cell-item {

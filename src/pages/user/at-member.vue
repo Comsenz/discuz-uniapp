@@ -229,10 +229,6 @@ $otherHeight: 292rpx;
     align-items: center;
     height: 80rpx;
     padding: 20rpx 40rpx;
-    /* #ifdef H5 */
-    margin-top: 60px;
-    /* #endif */
-
     &__sc {
       display: flex;
       align-items: center;

@@ -236,9 +236,6 @@ $height: calc(100vh - 150rpx);
   }
   .orderlist-wrap {
     padding: 40rpx 0 0 40rpx;
-    /* #ifdef H5 */
-    padding-top: 60px;
-    /* #endif */
     margin-bottom: 30rpx;
     color: --color(--qui-FC-333);
     background: --color(--qui-BG-2);
