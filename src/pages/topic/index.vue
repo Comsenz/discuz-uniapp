@@ -997,13 +997,13 @@ export default {
               // }
               // #ifndef H5
               if (this.system === 'ios') {
-                 if (this.paymentmodel === false) {
-                    this.paidStatus = false;
-                    this.paidBtnStatus = false;
-                 } else {
-                   this.paidStatus = true;
-                   this.paidBtnStatus = true;
-                 }
+                if (this.paymentmodel === false) {
+                  this.paidStatus = false;
+                  this.paidBtnStatus = false;
+                } else {
+                  this.paidStatus = true;
+                  this.paidBtnStatus = true;
+                }
               } else {
                 this.paidStatus = true;
                 this.paidBtnStatus = true;
@@ -1696,8 +1696,9 @@ export default {
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
+      console.log(val, '~~~~');
       // 是否显示用户头像
-      this.isAnonymous = val;
+      this.isAnonymous = !val;
     },
 
     // 选择支付方式，获取值
