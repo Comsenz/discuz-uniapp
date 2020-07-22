@@ -151,6 +151,7 @@ export default {
       currentLoginId: this.$store.getters['session/get']('userId'),
       current: 0,
       nowThreadId: '',
+      userInfo: '',
       can_create_dialog: false,
       dialogId: 0, // 会话id
       scrollTop: 0,
@@ -158,12 +159,6 @@ export default {
     };
   },
   computed: {
-    userInfo() {
-      const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
-      userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
-      this.setNum(userInfo);
-      return userInfo;
-    },
     themeColor() {
       return this.theme === this.$u.light() ? '#333' : '#fff'; // 用于图标色
     },
@@ -238,6 +233,9 @@ export default {
           } else {
             this.loaded = true;
             this.dialogId = res.dialog ? res.dialog._jv.id : 0;
+            res.groupsName = res.groups ? res.groups[0].name : '';
+            this.setNum(res);
+            this.userInfo = res;
             uni.setNavigationBarTitle({
               title: `${res.username}的${this.i18n.t('profile.personalhomepage')}`,
             });
