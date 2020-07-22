@@ -822,7 +822,7 @@ export default {
   width: 100%;
   overflow: hidden;
   background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  // border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: box-shadow 0.2s, -webkit-transform 0.2s;
 
   &__box {
@@ -910,7 +910,7 @@ export default {
   height: 100rpx;
   text-align: center;
   white-space: nowrap;
-  // border-bottom: 1rpx solid --color(--qui-BOR-EEE);
+  border-bottom: 2rpx solid --color(--qui-BOR-EEE);
 }
 .scroll-tab-item {
   z-index: 1;
