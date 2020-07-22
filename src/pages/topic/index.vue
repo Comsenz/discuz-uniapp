@@ -111,7 +111,7 @@
                 :person-num="thread.rewardedCount"
                 :limit-count="limitShowNum"
                 :person-list="rewardedUsers"
-                :btn-show="true"
+                :btn-show="rewardBtnStatus"
                 :btn-icon-show="true"
                 btn-icon-name="reward"
                 :btn-text="t.reward"
@@ -567,7 +567,7 @@ export default {
       limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
       paidBtnStatus: true, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
-      // rewardBtnStatus: true, // 打赏按钮是否显示（在ios里不显示，付费主题不显示）
+      rewardBtnStatus: true, // 打赏按钮是否显示（在ios里不显示，付费主题不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, // 回复状态
@@ -960,29 +960,53 @@ export default {
           if (!this.forums.paycenter.wxpay_close) {
             // 如果关闭了微信支付
             console.log('关闭微信支付');
-            this.paidBtnStatus = false;
-            this.rewardBtnStatus = false;
-            // this.rewardStatus = true;
-            // this.paidStatus = true;
+            this.rewardStatus = false;
+            this.paidStatus = false;
+            // if (this.system === 'ios') {
+            //   // this.paidBtnStatus = false;
+            //   // this.rewardBtnStatus = false;
+            //   this.rewardStatus = false;
+            //   this.paidStatus = false;
+            // } else {
+            //   if (!data.paid || data.paidUsers.length > 0) {
+            //     this.rewardStatus = true;
+            //     this.paidStatus = false;
+            //     this.paidBtnStatus = true;
+            //   } else {
+            //     this.rewardStatus = false;
+            //     this.paidStatus = false;
+            //   }
+            // }
           } else {
             // 如果开启了微信支付
-            console.log('开启微信支付');
+            // console.log('开启微信支付');
+            // console.log(data.paid, '是否付费');
             if (!data.paid || data.paidUsers.length > 0) {
+              // if (
+              //   this.system === 'ios' &&
+              //   this.paymentmodel === false
+              // ) {
+              //   this.paidStatus = false;
+              // } else if (
+              //   this.system === 'ios' &&
+              //   this.paymentmodel === true
+              // ) {
+              //   this.paidStatus = true;
+              // } else {
+              //   this.paidStatus = true;
+              // }
               // #ifndef H5
-              if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === false
-              ) {
-                this.paidStatus = false;
-              } else if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === true
-              ) {
-                this.paidStatus = true;
+              if (this.system === 'ios') {
+                 if (this.paymentmodel === false) {
+                    this.paidStatus = false;
+                    this.paidBtnStatus = false;
+                 } else {
+                   this.paidStatus = true;
+                   this.paidBtnStatus = true;
+                 }
               } else {
                 this.paidStatus = true;
+                this.paidBtnStatus = true;
               }
               // #endif
               // #ifdef H5
@@ -1004,45 +1028,71 @@ export default {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             }
             if (data.price <= 0) {
+              // if (
+              //   this.system === 'ios' &&
+              //   this.paymentmodel === false
+              // ) {
+              //   this.rewardStatus = false;
+              // } else if (
+              //   this.system === 'ios' &&
+              //   this.paymentmodel === true
+              // ) {
+              //   this.rewardStatus = true;
+              // } else {
+              //   this.rewardStatus = true;
+              // }
               // #ifndef H5
-              if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === false
-              ) {
-                this.rewardStatus = false;
-              } else if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === true
-              ) {
-                this.rewardStatus = true;
+              if (this.system === 'ios') {
+                if (this.paymentmodel === false) {
+                  this.rewardStatus = false;
+                } else if (this.paymentmodel === true) {
+                  this.rewardStatus = true;
+                }
               } else {
-                this.paidBtnStatus = false;
                 this.rewardStatus = true;
               }
               // #endif
+              this.paidBtnStatus = false;
               // #ifdef H5
               this.paidBtnStatus = false;
               this.rewardStatus = true;
               // #endif
             } else {
+              // if (
+              //   this.system === 'ios' &&
+              //   this.paymentmodel === false
+              // ) {
+              //   this.paidBtnStatus = false;
+              // } else if (
+              //   this.system === 'ios' &&
+              //   this.paymentmodel === true &&
+              //   data.paid === false
+              // ) {
+              //   this.paidBtnStatus = true;
+              // } else if (
+              //   this.system === 'ios' &&
+              //   this.paymentmodel === true &&
+              //   data.paid === true
+              // ) {
+              //   this.paidBtnStatus = false;
+              // } else if (data.paid === true) {
+              //   this.paidBtnStatus = false;
+              // }
               // #ifndef H5
-              if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === false
-              ) {
-                this.paidBtnStatus = false;
-              } else if (
-                this.system === 'ios' &&
-                this.detectionmodel === 'public' &&
-                this.paymentmodel === true &&
-                data.paid === false
-              ) {
-                this.paidBtnStatus = true;
-              } else if (data.paid === true) {
-                this.paidBtnStatus = false;
+              if (this.system === 'ios') {
+                if (this.paymentmodel === false) {
+                  this.paidBtnStatus = false;
+                } else if (this.paymentmodel === true && data.paid === false) {
+                  this.paidBtnStatus = true;
+                } else if (this.paymentmodel === true && data.paid === true) {
+                  this.paidBtnStatus = false;
+                }
+              } else {
+                if (data.paid === true) {
+                  this.paidBtnStatus = false;
+                } else {
+                  this.paidBtnStatus = true;
+                }
               }
               // #endif
               this.rewardStatus = false;
