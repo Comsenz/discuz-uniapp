@@ -26,7 +26,7 @@
       show-scrollbar="false"
       class="scroll-y"
     >
-      <view class="withdrawalslist-items" v-show="dataList.length > 0">
+      <view class="withdrawalslist-items" v-if="dataList.length > 0">
         <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
@@ -200,7 +200,7 @@ $height: calc(100vh - 150rpx);
     color: --color(--qui-RED);
   }
   .cell-item.success .cell-item__body__content-title {
-    color: #189a00;
+    color: --color(--qui-GREEN);
   }
 }
 

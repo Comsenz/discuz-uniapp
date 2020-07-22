@@ -18,7 +18,7 @@
           <text class="freeze-head__money__detail">¥{{ userInfo.walletFreeze }}</text>
         </view>
       </view>
-      <view class="freeze-items" v-show="freezelist.length > 0">
+      <view class="freeze-items" v-if="freezelist.length > 0">
         <qui-cell-item
           v-for="(freezeItem, index) in freezelist"
           :key="index"
@@ -71,10 +71,13 @@ export default {
         'page[limit]': this.pageSize,
       };
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
-        this.totalData = res._jv.json.meta.total;
-        delete res._jv;
+        if (res._jv) {
+          this.totalData = res._jv.json.meta.total;
+          delete res._jv;
+        }
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         this.freezelist = [...this.freezelist, ...res];
+        console.log(this.freezelist);
       });
     },
     // 处理时间

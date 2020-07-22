@@ -26,7 +26,7 @@
       show-scrollbar="false"
       class="scroll-y"
     >
-      <view class="orderlist-items" v-show="dataList.length > 0">
+      <view class="orderlist-items" v-if="dataList.length > 0">
         <qui-cell-item
           v-for="(item, index) in dataList"
           :key="index"
@@ -229,7 +229,7 @@ $height: calc(100vh - 150rpx);
   }
   .cell-item__body__right-text {
     font-weight: bold;
-    color: #189a00;
+    color: --color(--qui-GREEN);
   }
   .icon-screen {
     margin-left: 20rpx;
