@@ -73,6 +73,7 @@
             :poster="coverImage"
             v-if="threadType === 2 && payStatus"
             :id="'myVideo' + currentindex"
+            :duration="duration"
             preload="none"
             bindpause="handlepause"
             playsinline
@@ -368,6 +369,11 @@ export default {
     scrollTop: {
       type: Number,
       default: 0,
+    },
+    // 视频时间
+    duration: {
+      type: String,
+      default: '',
     },
   },
 

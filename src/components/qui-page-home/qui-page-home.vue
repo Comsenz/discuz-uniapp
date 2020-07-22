@@ -107,6 +107,7 @@
           :video-height="item.threadVideo && item.threadVideo.height"
           :video-id="item.threadVideo && item.threadVideo._jv.id"
           :cover-image="item.threadVideo && item.threadVideo.cover_url"
+          :duration="item.threadVideo && item.threadVideo.duration"
           :is-deleted="item.isDeleted"
           :scroll-top="scrollTop"
           @click="handleClickShare(item._jv.id)"
