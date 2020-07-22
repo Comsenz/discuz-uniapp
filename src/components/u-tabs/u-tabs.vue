@@ -159,6 +159,7 @@ export default {
         height: `${this.barHeight}rpx`,
         // 设置一个很大的值，它会自动取能用的最大值，不用高度的一半，是因为高度可能是单数，会有小数出现
         'border-radius': `${this.barHeight / 2}px`,
+        // position: absolute,
       };
       Object.assign(style, this.barStyle);
       return style;

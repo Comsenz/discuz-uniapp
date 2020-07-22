@@ -57,7 +57,11 @@
           active-color="#1878F3"
         ></u-tabs>
       </view>
-      <view class="sticky" :style="headerShow ? 'margin-top:20rpx' : 'margin-top:130rpx'">
+      <view
+        class="sticky"
+        :style="headerShow ? 'margin-top:20rpx' : 'margin-top:130rpx'"
+        v-show="sticky.length > 0"
+      >
         <view class="sticky__box">
           <view
             class="sticky__isSticky"
@@ -857,7 +861,7 @@ export default {
   display: flex;
   width: 710rpx;
   height: 80rpx;
-  margin-left: 21rpx;
+  margin-left: 30rpx;
   font-size: $fg-f26;
   line-height: 80rpx;
   background: --color(--qui-BG-2);
@@ -869,7 +873,7 @@ export default {
     width: 62rpx;
     height: 35rpx;
     margin-top: 27rpx;
-    margin-left: 20rpx;
+    // margin-left: 20rpx;
     font-size: $fg-f20;
     line-height: 35rpx;
     color: --color(--qui-FC-777);
@@ -906,7 +910,7 @@ export default {
   height: 100rpx;
   text-align: center;
   white-space: nowrap;
-  border-bottom: 1rpx solid --color(--qui-BOR-EEE);
+  // border-bottom: 1rpx solid --color(--qui-BOR-EEE);
 }
 .scroll-tab-item {
   z-index: 1;
