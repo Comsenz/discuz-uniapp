@@ -15,7 +15,7 @@
       <view class="qui-back_body__right" v-if="slotRight">
         <slot></slot>
       </view>
-      <view class="qui-back__body__right" v-if="!slotRight && isLogin">
+      <view class="qui-back__body__right" v-if="!slotRight">
         <view class="qui-back__body__right-pop">
           <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '0')">
             {{ i18n.t('home.tabsCircle') }}
@@ -23,10 +23,15 @@
           <text
             :class="['qui-back__body__right-pop-item', redCircle ? 'message' : '']"
             @tap="backPage('/pages/home/index', '1')"
+            v-if="isLogin"
           >
             {{ i18n.t('profile.notice') }}
           </text>
-          <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '2')">
+          <text
+            class="qui-back__body__right-pop-item"
+            @tap="backPage('/pages/home/index', '2')"
+            v-if="isLogin"
+          >
             {{ i18n.t('home.tabsMy') }}
           </text>
         </view>
