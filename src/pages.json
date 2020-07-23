@@ -5,8 +5,8 @@
     {
       "path": "pages/home/index",
       "style": {
-        "navigationStyle": "custom"
-        // "enablePullDownRefresh": true
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": true
         // "onReachBottomDistance":126  //距离底部多远时触发 单位px
       }
     },
