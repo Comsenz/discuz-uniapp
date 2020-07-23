@@ -1391,23 +1391,6 @@ export default {
       } else {
         this.showHidden = false;
       }
-      // if (
-      //   res.platform === 'ios' &&
-      //   this.forums.paycenter.wxpay_ios === false
-      // ) {
-      //   this.showHidden = false;
-      // } else if (
-      //   res.platform === 'ios' &&
-      //   this.forums.set_site.site_mode === 'public' &&
-      //   this.forums.paycenter.wxpay_ios === true
-      // ) {
-      //   this.showHidden = true;
-      // } else {
-      //   this.showHidden = true;
-      // }
-      // // #ifdef H5
-      // this.showHidden = true;
-      // // #endif
     } catch (e) {
       // error
     }
