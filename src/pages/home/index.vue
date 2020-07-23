@@ -1,5 +1,5 @@
 <template>
-  <qui-page ref="quiPage" :data-qui-theme="theme" @pageLoaded="handlePageLoaded">
+  <qui-page ref="quiPage" :data-qui-theme="theme" @pageLoaded="handlePageLoaded" :header="false">
     <view class="content">
       <view class="view-content">
         <qui-page-home
@@ -105,6 +105,9 @@ export default {
       query: '',
     };
   },
+  // onPullDownRefresh() {
+  //   console.log('下拉刷新');
+  // },
   onShow() {
     // #ifdef MP-WEIXIN
     if (this.$refs.quiPage) {
