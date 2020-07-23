@@ -184,7 +184,7 @@
         :attachment-list="attachmentList"
         :file-format="forums.set_attach && forums.set_attach.support_file_ext"
         :file-size="forums.set_attach && forums.set_attach.support_max_size"
-        v-if="type === 1"
+        v-if="type === 1 && forums.other && forums.other.can_upload_attachments"
         @deleteItem="deleteFile"
       ></qui-upload-file>
       <view class="post-box__video" v-if="type === 2">
