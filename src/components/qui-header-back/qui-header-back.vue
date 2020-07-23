@@ -27,7 +27,7 @@
             {{ i18n.t('profile.notice') }}
           </text>
           <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '2')">
-            {{ i18n.t('profile.mine') }}
+            {{ i18n.t('home.tabsMy') }}
           </text>
         </view>
       </view>
@@ -124,7 +124,7 @@ export default {
   }
 }
 .icon-left {
-  margin-right: 10px;
+  margin-right: 5px;
 }
 .cell-item__body__right {
   align-items: center;
