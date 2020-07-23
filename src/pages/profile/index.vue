@@ -169,7 +169,13 @@ export default {
     this.userId = userId || this.currentLoginId;
     this.current = parseInt(current, 10) || 0;
     this.getAuth();
+    // uni.startPullDownRefresh();
   },
+  // onPullDownRefresh() {
+  //   const item = ['topic', 'following', 'followers', 'like'];
+  //   const { current } = this;
+  //   this.$refs[item[current]].pullDownRefresh();
+  // },
   // 解决左上角返回数据不刷新情况
   onShow() {
     this.getUserInfo(this.userId);

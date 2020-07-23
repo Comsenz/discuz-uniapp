@@ -141,6 +141,7 @@
       "path": "pages/profile/index",
       "style": {
         "navigationBarTitleText": "个人主页"
+        // "enablePullDownRefresh": true
       }
     },
     {
