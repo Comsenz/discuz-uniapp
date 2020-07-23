@@ -825,7 +825,9 @@ export default {
   width: 100%;
   overflow: hidden;
   background: --color(--qui-BG-2);
-  // border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /* #ifdef MP-WEIXIN */
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  /* #endif */
   transition: box-shadow 0.2s, -webkit-transform 0.2s;
 
   &__box {
