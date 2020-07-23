@@ -107,6 +107,7 @@
           :video-height="item.threadVideo && item.threadVideo.height"
           :video-id="item.threadVideo && item.threadVideo._jv.id"
           :cover-image="item.threadVideo && item.threadVideo.cover_url"
+          :duration="item.threadVideo && item.threadVideo.duration"
           :is-deleted="item.isDeleted"
           :scroll-top="scrollTop"
           @click="handleClickShare(item._jv.id)"
@@ -446,9 +447,9 @@ export default {
     // 滑动到顶部
     toUpper() {
       this.headerShow = true;
-      // console.log('refresh');
-      // this.ontrueGetList();
-      // uni.startPullDownRefresh();
+      console.log('refresh');
+      this.ontrueGetList();
+      uni.startPullDownRefresh();
     },
     // 初始化选中的选项卡
     getCategorieIndex(tagId) {
