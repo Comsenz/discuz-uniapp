@@ -60,7 +60,7 @@
       <view
         class="sticky"
         :style="headerShow ? 'margin-top:20rpx' : 'margin-top:130rpx'"
-        v-show="sticky.length > 0"
+        v-if="sticky.length > 0"
       >
         <view class="sticky__box">
           <view
@@ -447,9 +447,11 @@ export default {
     // 滑动到顶部
     toUpper() {
       this.headerShow = true;
-      console.log('refresh');
-      this.ontrueGetList();
-      uni.startPullDownRefresh();
+      // console.log('refresh');
+      // this.ontrueGetList();
+      // setTimeout(function() {
+      // uni.startPullDownRefresh();
+      // }, 1000);
     },
     // 初始化选中的选项卡
     getCategorieIndex(tagId) {

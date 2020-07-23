@@ -202,6 +202,7 @@ export default {
     tencent_secret_key_error: '腾讯云Secretid或SecretKey不正确',
     tencent_vod_transcode_error: '腾讯云云点播转码模板未设置',
     tencent_vod_subappid_error: '腾讯云云点播子应用错误',
+    tencent_qcloud_close_current: '腾讯云API配置没有开启',
     pay_password_failures_times_toplimit:
       '您输入的密码错误次数已超限，请点击忘记密码找回或次日后重试',
     qcloud_vod_cover_template_not_found: '截图模版不存在',
@@ -214,6 +215,7 @@ export default {
     TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
     available: '暂无数据',
     userDeleted: '该用户已被删除',
+    InvalidParameterValue: '腾讯云配置参数错误',
   },
   topic: {
     topicPageTitle: '内容详情页',
@@ -249,6 +251,7 @@ export default {
     paymentViewVideo: '查看视频',
     publishExamineTip: '您发布的内容正在审核中哦',
     examineTip: '内容正在审核中，审核通过后才能正常显示！',
+    underReview: '内容正在审核中，审核通过后才能生成海报',
     commentTip: '当前评论正在审核中，审核通过后才能正常显示！',
     transcodingTip: '视频正在转码中，转码成功后才能正常显示！',
     transcodingFailedTip: '视频转码失败，转码成功才能正常显示！',

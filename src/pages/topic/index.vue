@@ -775,6 +775,12 @@ export default {
       this.system = res.platform;
       this.detectionmodel = this.forums.set_site.site_mode;
       this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      // #ifndef H5
+      if (this.detectionmodel === 'pay' && this.system === 'ios') {
+        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+        return;
+      }
+      // #endif
     } catch (e) {
       // error
     }
@@ -982,19 +988,6 @@ export default {
             // console.log('开启微信支付');
             // console.log(data.paid, '是否付费');
             if (!data.paid || data.paidUsers.length > 0) {
-              // if (
-              //   this.system === 'ios' &&
-              //   this.paymentmodel === false
-              // ) {
-              //   this.paidStatus = false;
-              // } else if (
-              //   this.system === 'ios' &&
-              //   this.paymentmodel === true
-              // ) {
-              //   this.paidStatus = true;
-              // } else {
-              //   this.paidStatus = true;
-              // }
               // #ifndef H5
               if (this.system === 'ios') {
                 if (this.paymentmodel === false) {
@@ -1028,19 +1021,6 @@ export default {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             }
             if (data.price <= 0) {
-              // if (
-              //   this.system === 'ios' &&
-              //   this.paymentmodel === false
-              // ) {
-              //   this.rewardStatus = false;
-              // } else if (
-              //   this.system === 'ios' &&
-              //   this.paymentmodel === true
-              // ) {
-              //   this.rewardStatus = true;
-              // } else {
-              //   this.rewardStatus = true;
-              // }
               // #ifndef H5
               if (this.system === 'ios') {
                 if (this.paymentmodel === false) {
@@ -1058,26 +1038,6 @@ export default {
               this.rewardStatus = true;
               // #endif
             } else {
-              // if (
-              //   this.system === 'ios' &&
-              //   this.paymentmodel === false
-              // ) {
-              //   this.paidBtnStatus = false;
-              // } else if (
-              //   this.system === 'ios' &&
-              //   this.paymentmodel === true &&
-              //   data.paid === false
-              // ) {
-              //   this.paidBtnStatus = true;
-              // } else if (
-              //   this.system === 'ios' &&
-              //   this.paymentmodel === true &&
-              //   data.paid === true
-              // ) {
-              //   this.paidBtnStatus = false;
-              // } else if (data.paid === true) {
-              //   this.paidBtnStatus = false;
-              // }
               // #ifndef H5
               if (this.system === 'ios') {
                 if (this.paymentmodel === false) {
@@ -2020,9 +1980,17 @@ export default {
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
       if (index === 0) {
-        uni.navigateTo({
-          url: `/pages/share/topic?id=${this.threadId}`,
-        });
+        if (this.thread.isApproved == 0) {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('topic.underReview'),
+            duration: 2000,
+          });
+        } else {
+          uni.navigateTo({
+            url: `/pages/share/topic?id=${this.threadId}`,
+          });
+        }
       }
       this.cancel();
     },
