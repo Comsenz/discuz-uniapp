@@ -125,7 +125,6 @@ export default {
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
       pleaseEnterAPostTitle: '请输入帖子标题',
-      InvalidParameterValue: '腾讯云配置参数错误',
     },
   },
   uploader: {
@@ -216,6 +215,7 @@ export default {
     TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
     available: '暂无数据',
     userDeleted: '该用户已被删除',
+    InvalidParameterValue: '腾讯云配置参数错误',
   },
   topic: {
     topicPageTitle: '内容详情页',
