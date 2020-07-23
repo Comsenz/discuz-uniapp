@@ -250,6 +250,7 @@ export default {
     paymentViewVideo: '查看视频',
     publishExamineTip: '您发布的内容正在审核中哦',
     examineTip: '内容正在审核中，审核通过后才能正常显示！',
+    underReview: '内容正在审核中，审核通过后才能生成海报',
     commentTip: '当前评论正在审核中，审核通过后才能正常显示！',
     transcodingTip: '视频正在转码中，转码成功后才能正常显示！',
     transcodingFailedTip: '视频转码失败，转码成功才能正常显示！',

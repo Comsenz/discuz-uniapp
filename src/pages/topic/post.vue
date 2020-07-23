@@ -184,7 +184,7 @@
         :attachment-list="attachmentList"
         :file-format="forums.set_attach && forums.set_attach.support_file_ext"
         :file-size="forums.set_attach && forums.set_attach.support_max_size"
-        v-if="type === 1"
+        v-if="type === 1 && forums.other && forums.other.can_upload_attachments"
         @deleteItem="deleteFile"
       ></qui-upload-file>
       <view class="post-box__video" v-if="type === 2">
@@ -1391,23 +1391,6 @@ export default {
       } else {
         this.showHidden = false;
       }
-      // if (
-      //   res.platform === 'ios' &&
-      //   this.forums.paycenter.wxpay_ios === false
-      // ) {
-      //   this.showHidden = false;
-      // } else if (
-      //   res.platform === 'ios' &&
-      //   this.forums.set_site.site_mode === 'public' &&
-      //   this.forums.paycenter.wxpay_ios === true
-      // ) {
-      //   this.showHidden = true;
-      // } else {
-      //   this.showHidden = true;
-      // }
-      // // #ifdef H5
-      // this.showHidden = true;
-      // // #endif
     } catch (e) {
       // error
     }
