@@ -120,7 +120,7 @@
           :vslide-gesture="false"
           :vslide-gesture-in-fullscreen="false"
           object-fit="cover"
-          direction="90"
+          :direction="videoWidth > videoHeight ? 90 : 0"
           x5-video-player-type="h5-page"
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 70%'"
