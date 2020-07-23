@@ -136,7 +136,9 @@ export default {
   },
   destroyed() {
     uni.$off('updateNotiNum');
+    // #ifdef H5
     uni.$off('updateNoticePage');
+    // #endif
   },
   methods: {
     // 调用 会话列表 的接口
