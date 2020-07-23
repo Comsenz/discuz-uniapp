@@ -125,7 +125,7 @@ export default {
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
       pleaseEnterAPostTitle: '请输入帖子标题',
-      InvalidParameterValue: '云点播配置参数错误',
+      InvalidParameterValue: '腾讯云配置参数错误',
     },
   },
   uploader: {
