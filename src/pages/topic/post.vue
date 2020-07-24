@@ -1378,7 +1378,7 @@ export default {
         if (res.platform === 'ios') {
           if (this.forums.paycenter.wxpay_ios === false) {
             this.showHidden = false;
-          }else {
+          } else {
             this.showHidden = true;
           }
         } else {
@@ -1644,6 +1644,7 @@ export default {
 }
 .post-box__ft-categories /deep/ .qui-button--button:after {
   border: none;
+  border-radius: 0;
 }
 .post-box__ft-categories /deep/ .cateActive {
   &[size='default'] {
