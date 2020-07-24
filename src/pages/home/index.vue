@@ -85,16 +85,17 @@ export default {
     });
   },
   // 下拉刷新
-  // onPullDownRefresh() {
-  //   if (this.show_index === 0) {
-  //     this.$refs["home"].ontrueGetList();
-  //   }
-  //   if (this.show_index === 1) {
-  //     this.$refs["quinotice"].pageNum = 1;
-  //     this.$refs["quinotice"].ontrueGetList();
-  //   }
-  //   uni.stopPullDownRefresh();  //停止下拉刷新动画
-  // },
+  onPullDownRefresh() {
+    if (this.show_index === 0) {
+      this.$refs.home.ontrueGetList();
+    }
+    if (this.show_index === 1) {
+      this.$refs.quinotice.pageNum = 1;
+      this.$refs.quinotice.ontrueGetList();
+    }
+    // 停止下拉刷新动画
+    uni.stopPullDownRefresh();
+  },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮

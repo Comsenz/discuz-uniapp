@@ -133,7 +133,7 @@ export default {
   width: 100%;
   height: 400rpx;
   background: #1878f3;
-  background-size: 100%;
+  background-size: cover;
   .logo {
     display: block;
     // width: 100%;
@@ -212,7 +212,7 @@ export default {
 }
 .header-h5 {
   height: 256rpx;
-  background-size: 100%;
+  background-size: cover;
   .logo {
     max-height: 74rpx;
     padding-top: 58rpx;
