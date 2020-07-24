@@ -174,6 +174,9 @@ export default {
   // onPullDownRefresh() {
   //   const item = ['topic', 'following', 'followers', 'like'];
   //   const { current } = this;
+  //   if (!this.$refs[item[current]]) {
+  //     return;
+  //   }
   //   this.$refs[item[current]].pullDownRefresh();
   // },
   // 解决左上角返回数据不刷新情况

@@ -115,7 +115,7 @@ export default {
 .qui-back {
   position: fixed;
   top: 0;
-  z-index: 100;
+  z-index: 2000;
   width: 100%;
   padding: 9px 20px;
   padding-left: 16px;

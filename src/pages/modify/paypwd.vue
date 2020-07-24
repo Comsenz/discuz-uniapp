@@ -102,6 +102,14 @@ export default {
       const postphon = status.run(() => this.$store.dispatch('jv/patch', params));
       postphon
         .then(res => {
+          const promsget = {
+            _jv: {
+              type: 'users',
+              id: this.userid,
+            },
+            // include: 'groups',
+          };
+          this.$store.dispatch('jv/get', promsget).then(() => {});
           const pages = getCurrentPages();
           if (res) {
             uni.showToast({
