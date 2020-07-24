@@ -119,13 +119,13 @@
                 @btnClick="rewardClick"
               ></qui-person-list>
             </view>
-            <view v-if="thread.firstPost.likedUsers.length > 0">
+            <view v-if="likedUsers.length > 0">
               <!-- 点赞用户列表 -->
               <qui-person-list
                 :type="t.giveLike"
                 :person-num="thread.firstPost.likeCount"
                 :limit-count="limitShowNum"
-                :person-list="thread.firstPost.likedUsers"
+                :person-list="likedUsers"
                 :btn-show="false"
                 @personJump="personJump"
               ></qui-person-list>
@@ -668,6 +668,7 @@ export default {
       shareLogo: '', // 这是分享需要传的图片
       desc: '', // 这是分享需要传的描述
       rewardedUsers: [],
+      likedUsers: [],
       sortSeleShow: false, // 排序菜单状态
       sortSelectList: [
         { text: this.i18n.t('topic.sortTimeSequence'), type: '0', canOpera: true },
@@ -688,6 +689,7 @@ export default {
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       this.rewardedUsers = thread.rewardedUsers;
+      this.likedUsers = thread.firstPost.likedUsers;
       return thread;
     },
     // 语言包
@@ -1999,13 +2001,13 @@ export default {
       this.isLiked = liked;
       // 主题点赞
       if (this.isLiked) {
-        this.thread.firstPost.likedUsers.unshift(this.user);
+        this.likedUsers.unshift(this.user);
         this.thread.firstPost._jv.relationships.likedUsers.data.unshift({
           type: this.user._jv.type,
           id: this.user._jv.id,
         });
       } else {
-        this.thread.firstPost.likedUsers.forEach((value, key, item) => {
+        this.likedUsers.forEach((value, key, item) => {
           value.id == this.user.id && item.splice(key, 1);
         });
         this.thread.firstPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {

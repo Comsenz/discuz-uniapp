@@ -1373,7 +1373,7 @@ export default {
 
     try {
       const res = uni.getSystemInfoSync();
-      if (this.forums.paycenter.wxpay_close) {
+      if (this.forums && this.forums.paycenter.wxpay_close) {
         // #ifndef H5
         if (res.platform === 'ios') {
           if (this.forums.paycenter.wxpay_ios === false) {
