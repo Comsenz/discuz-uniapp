@@ -18,21 +18,33 @@
       <view class="qui-back__body__right" v-if="!slotRight">
         <view class="qui-back__body__right-pop">
           <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '0')">
-            {{ i18n.t('home.tabsCircle') }}
+            <qui-icon
+              name="icon-home"
+              size="34"
+              :color="theme === $u.light() ? '#777' : '#fff'"
+            ></qui-icon>
           </text>
           <text
             :class="['qui-back__body__right-pop-item', redCircle ? 'message' : '']"
             @tap="backPage('/pages/home/index', '1')"
             v-if="isLogin"
           >
-            {{ i18n.t('profile.notice') }}
+            <qui-icon
+              name="icon-message"
+              size="32"
+              :color="theme === $u.light() ? '#777' : '#fff'"
+            ></qui-icon>
           </text>
           <text
             class="qui-back__body__right-pop-item"
             @tap="backPage('/pages/home/index', '2')"
             v-if="isLogin"
           >
-            {{ i18n.t('home.tabsMy') }}
+            <qui-icon
+              name="icon-mine"
+              size="34"
+              :color="theme === $u.light() ? '#777' : '#fff'"
+            ></qui-icon>
           </text>
         </view>
       </view>
@@ -126,8 +138,7 @@ export default {
     transition: $switch-theme-time;
   }
   &__body__right-pop-item {
-    margin-left: 20px;
-    font-size: $fg-f28;
+    margin-left: 24px;
     color: --color(--qui-FC-333);
   }
 }
@@ -145,10 +156,10 @@ export default {
 }
 .message:after {
   position: absolute;
-  top: 6px;
-  right: -10px;
-  width: 7px;
-  height: 7px;
+  top: -2px;
+  right: -3px;
+  width: 5px;
+  height: 5px;
   background: --color(--qui-RED);
   border-radius: 50%;
   content: '';
