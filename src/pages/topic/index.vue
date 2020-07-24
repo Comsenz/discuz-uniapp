@@ -718,6 +718,8 @@ export default {
     },
   },
   onLoad(option) {
+    this.rewardStatus = false;
+    this.paidStatus = false;
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -970,21 +972,6 @@ export default {
             console.log('关闭微信支付');
             this.rewardStatus = false;
             this.paidStatus = false;
-            // if (this.system === 'ios') {
-            //   // this.paidBtnStatus = false;
-            //   // this.rewardBtnStatus = false;
-            //   this.rewardStatus = false;
-            //   this.paidStatus = false;
-            // } else {
-            //   if (!data.paid || data.paidUsers.length > 0) {
-            //     this.rewardStatus = true;
-            //     this.paidStatus = false;
-            //     this.paidBtnStatus = true;
-            //   } else {
-            //     this.rewardStatus = false;
-            //     this.paidStatus = false;
-            //   }
-            // }
           } else {
             // 如果开启了微信支付
             // console.log('开启微信支付');

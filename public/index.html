@@ -8,10 +8,23 @@
     <meta name="renderer" content="webkit">
     <!-- 是否启用 WebApp 全屏模式，删除苹果默认的工具栏和菜单栏 -->
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <!--QQ强制全屏-->
+    <meta name="x5-fullscreen" content="true">
+    <!--UC强制全屏-->
+    <meta name="fullscreen" content="yes">
     <title>
       <%= htmlWebpackPlugin.options.title %>
     </title>
     <script>
+    // window.οnlοad=function(){
+    //   if(document.documentElement.scrollHeight <= document.documentElement.clientHeight) {
+    //     bodyTag = document.getElementsByTagName('body')[0];
+    //     bodyTag.style.height = document.documentElement.clientWidth / screen.width * screen.height + 'px';
+    //   }
+    //   setTimeout(function() {
+    //     window.scrollTo(0, 1)
+    //   }, 0);
+    // };
       document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.fontSize = document.documentElement.clientWidth / 20 + 'px';
       })
