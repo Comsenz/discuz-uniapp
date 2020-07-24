@@ -21,6 +21,7 @@
           />
         </view>
       </view>
+      <qui-toast ref="toast"></qui-toast>
       <view class="btn-box">
         <qui-button type="primary" size="large" @click="fun">
           {{ i18n.t('share.savealbum') }}
@@ -81,10 +82,7 @@ export default {
     };
   },
   onLoad(arr) {
-    uni.showLoading({
-      title: this.i18n.t('share.generating'),
-      mask: true,
-    });
+    this.showToast();
     this.themeid = arr.id;
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
@@ -128,6 +126,16 @@ export default {
       this.recoimg = this.userInfo.avatarUrl || `${this.$u.host()}static/noavatar.gif`;
       this.getthemdata();
     },
+    showToast() {
+      this.$refs.toast.showLoading({
+        icon: 'icon-load',
+        message: this.i18n.t('share.generating'),
+        position: 'middle',
+      });
+    },
+    openLoading() {
+      this.$refs.toast.close(); // 或者 this.$refs.toast.close();
+    },
     // 获取帖子内容信息
     getthemdata() {
       const that = this;
@@ -137,6 +145,7 @@ export default {
           `threads/${this.themeid}?include=user,firstPost,firstPost.images,threadVideo,category`,
         )
         .then(data => {
+          console.log(data);
           this.headerName = data.user.username;
           this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
@@ -345,10 +354,10 @@ export default {
     },
     onImgOK(e) {
       this.imagePath = e.detail.path;
-      uni.hideLoading();
+      this.openLoading();
     },
     imgErr() {
-      uni.hideLoading();
+      this.openLoading();
       uni.showModal({
         title: this.i18n.t('discuzq.msgbox.title'),
         content: this.i18n.t('share.buildfailed'),
