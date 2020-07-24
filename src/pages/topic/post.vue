@@ -375,7 +375,6 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 // #ifdef  H5
-import tcaptchs from '@/utils/tcaptcha';
 import TcVod from 'vod-js-sdk-v6';
 // #endif
 
@@ -384,7 +383,7 @@ export default {
   mixins: [
     forums,
     // #ifdef  H5
-    tcaptchs,
+    // tcaptchs,
     // #endif
   ],
   data() {
@@ -1320,7 +1319,9 @@ export default {
       // #endif
       // h5内发布按钮验证码验证
       // #ifdef H5
-
+      if (this.forums && this.forums.qcloud.qcloud_captcha && this.forums.other.create_thread_with_captcha) {
+        let tcaptchas = require('@/utils/tcaptcha');
+      }
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         if (res.ret === 0) {
           this.ticket = res.ticket;
