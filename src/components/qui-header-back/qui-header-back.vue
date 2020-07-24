@@ -17,14 +17,14 @@
       </view>
       <view class="qui-back__body__right" v-if="!slotRight">
         <view class="qui-back__body__right-pop">
-          <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '0')">
+          <view class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '0')">
             <qui-icon
               name="icon-home"
               size="34"
               :color="theme === $u.light() ? '#777' : '#fff'"
             ></qui-icon>
-          </text>
-          <text
+          </view>
+          <view
             :class="['qui-back__body__right-pop-item', redCircle ? 'message' : '']"
             @tap="backPage('/pages/home/index', '1')"
             v-if="isLogin"
@@ -34,8 +34,8 @@
               size="32"
               :color="theme === $u.light() ? '#777' : '#fff'"
             ></qui-icon>
-          </text>
-          <text
+          </view>
+          <view
             class="qui-back__body__right-pop-item"
             @tap="backPage('/pages/home/index', '2')"
             v-if="isLogin"
@@ -45,7 +45,7 @@
               size="34"
               :color="theme === $u.light() ? '#777' : '#fff'"
             ></qui-icon>
-          </text>
+          </view>
         </view>
       </view>
     </view>
@@ -138,6 +138,7 @@ export default {
     transition: $switch-theme-time;
   }
   &__body__right-pop-item {
+    display: inline-block;
     margin-left: 24px;
     color: --color(--qui-FC-333);
   }
