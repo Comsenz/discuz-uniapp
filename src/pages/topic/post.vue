@@ -263,7 +263,7 @@
           type="primary"
           size="large"
           id="TencentCaptcha"
-          :data-appid="forums.qcloud.qcloud_captcha_app_id || ''"
+          :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
@@ -506,6 +506,17 @@ export default {
       }
       return pay;
     },
+  },
+  created() {
+    if (
+      this.forums &&
+      this.forums.qcloud.qcloud_captcha &&
+      this.forums.other.create_thread_with_captcha
+    ) {
+      // eslint-disable-next-line
+      const tcaptchas = require('@/utils/tcaptcha');
+      // eslint-disable-next-line
+    }
   },
   updated() {
     // #ifndef MP-WEIXIN
@@ -1319,9 +1330,6 @@ export default {
       // #endif
       // h5内发布按钮验证码验证
       // #ifdef H5
-      if (this.forums && this.forums.qcloud.qcloud_captcha && this.forums.other.create_thread_with_captcha) {
-        let tcaptchas = require('@/utils/tcaptcha');
-      }
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         if (res.ret === 0) {
           this.ticket = res.ticket;
