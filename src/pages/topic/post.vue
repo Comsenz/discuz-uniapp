@@ -367,7 +367,7 @@
       <uni-popup ref="deletePopup" type="center">
         <uni-popup-dialog
           type="warn"
-          content="确定删除这张照片吗？"
+          :content="deleteTip"
           :before-close="true"
           @close="handleClickCancel"
           @confirm="handleClickOk"
@@ -501,6 +501,7 @@ export default {
       deleteType: '', // 删除类型 0为图片，1为附件，2为视频
       deleteId: '', // 当前点击要删除的图片Id
       deleteIndex: '', // 当前点击要删除的图片index
+      deleteTip: '确定删除吗？', // 删除提示
     };
   },
   computed: {
@@ -831,6 +832,7 @@ export default {
       this.deleteId = id;
       this.deleteIndex = del;
       this.$refs.deletePopup.open();
+      this.deleteTip = '确定删除这张照片吗？';
     },
 
     // 表情点击事件
@@ -1055,6 +1057,7 @@ export default {
     },
     // 删除附件显示弹框
     deleteFile(id) {
+      this.deleteTip = '确定删除该附件吗？';
       this.$refs.deletePopup.open();
       this.deleteType = 1;
       this.deleteId = id;
