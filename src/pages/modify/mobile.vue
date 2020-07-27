@@ -82,6 +82,9 @@ export default {
       noclick: false,
       detail: '',
       captcha: null, // 腾讯云验证码实例
+      ticket: '',
+      randstr: '',
+      captchaResult: {},
     };
   },
   onLoad() {
@@ -89,6 +92,7 @@ export default {
     this.senduser();
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
+      console.log(result, 'resultresultresultresultresult');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
       console.log('111');
