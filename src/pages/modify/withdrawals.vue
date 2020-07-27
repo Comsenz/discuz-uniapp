@@ -159,6 +159,9 @@ export default {
       cost: 0,
       interval: '',
       captcha: null, // 腾讯云验证码实例
+      ticket: '',
+      randstr: '',
+      captchaResult: {},
     };
   },
   onLoad() {
@@ -174,7 +177,6 @@ export default {
       this.randstr = result.randstr;
       console.log('111');
       this.btnButton();
-      this.verstype();
     });
     this.$u.event.$on('closeChaReault', () => {
       // this.postLoading = false;

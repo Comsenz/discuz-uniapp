@@ -55,11 +55,17 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
 // #ifdef  H5
-// import tcaptchs from '@/utils/tcaptcha';
+import tcaptchs from '@/utils/tcaptcha';
 // #endif
 
 export default {
-  mixins: [forums, user],
+  mixins: [
+    forums,
+    user,
+    // #ifdef  H5
+    tcaptchs,
+    // #endif
+  ],
   data() {
     return {
       tit: false,
@@ -82,6 +88,7 @@ export default {
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
+      captchaResult: {},
     };
   },
   onLoad(params) {
@@ -121,13 +128,13 @@ export default {
       }
     });
   },
-  created() {
-    if (this.forums && this.forums.qcloud.qcloud_captcha) {
-      // eslint-disable-next-line
-      const tcaptchas = require('@/utils/tcaptcha');
-      // eslint-disable-next-line
-    }
-  },
+  // created() {
+  //   if (this.forums && this.forums.qcloud.qcloud_captcha) {
+  //     // eslint-disable-next-line
+  //     const tcaptchas = require('@/utils/tcaptcha');
+  //     // eslint-disable-next-line
+  //   }
+  // },
   methods: {
     changeinput() {
       setTimeout(() => {
@@ -204,11 +211,15 @@ export default {
         },
         mobile: this.phoneNumber,
         type: 'login',
+        captcha_ticket: this.ticket,
+        captcha_rand_str: this.randstr,
       };
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
           if (res) {
+            this.ticket = '';
+            this.randstr = '';
             console.log('短信发送成功', res);
           }
         })
