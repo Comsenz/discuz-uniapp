@@ -104,18 +104,6 @@ export default {
   data() {
     return {
       title: '站点信息',
-      bottomData: [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-        },
-      ],
       shareBtn: 'icon-share1',
       isWeixin: '', // 是否是微信浏览器
       shareShow: false, // h5内分享提示信息

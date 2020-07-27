@@ -87,20 +87,6 @@ export default {
       playIndex: null,
       nowThreadId: '',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
-      bottomData: [
-        {
-          text: this.i18n.t('home.generatePoster'),
-          icon: 'icon-poster',
-          name: 'wx',
-          id: 1,
-        },
-        {
-          text: this.i18n.t('home.wxShare'),
-          icon: 'icon-wx-friends',
-          name: 'wx',
-          id: 2,
-        },
-      ],
     };
   },
   methods: {
