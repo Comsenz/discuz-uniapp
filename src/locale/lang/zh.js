@@ -216,6 +216,13 @@ export default {
     available: '暂无数据',
     userDeleted: '该用户已被删除',
     InvalidParameterValue: '腾讯云配置参数错误',
+    deleteImgSure: '确定删除这张图片吗？',
+    deleteEnclosureSure: '确定删除这个附件吗？',
+    deleteVideoSure: '确定删除这个视频吗？',
+    deleteContentSure: '确定删除这篇内容吗？？',
+    deleteCommentSure: '确定删除这条评论吗？',
+    deleteReplySure: '确定删除这条回复吗？',
+    deleteNewsSure: '确定删除这条消息吗？',
   },
   topic: {
     topicPageTitle: '内容详情页',

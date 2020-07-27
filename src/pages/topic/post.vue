@@ -661,9 +661,11 @@ export default {
 
     // video相关方法
     videoDel() {
-      this.videoBeforeList = [];
-      this.percent = 0;
-      this.videoPercent = 0;
+      this.deleteType = 2;
+      // this.deleteId = id;
+      // this.deleteIndex = del;
+      this.$refs.deletePopup.open();
+      this.deleteTip = this.i18n.t('core.deleteVideoSure');
     },
     playVideo() {
       this.controlsStatus = true;
@@ -832,7 +834,7 @@ export default {
       this.deleteId = id;
       this.deleteIndex = del;
       this.$refs.deletePopup.open();
-      this.deleteTip = '确定删除这张照片吗？';
+      this.deleteTip = this.i18n.t('core.deleteImgSure');
     },
 
     // 表情点击事件
@@ -1057,7 +1059,7 @@ export default {
     },
     // 删除附件显示弹框
     deleteFile(id) {
-      this.deleteTip = '确定删除该附件吗？';
+      this.deleteTip = this.i18n.t('core.deleteEnclosureSure');
       this.$refs.deletePopup.open();
       this.deleteType = 1;
       this.deleteId = id;
@@ -1160,6 +1162,9 @@ export default {
         this.deleteFileSure(this.deleteId);
       } else if (this.deleteType === 2) {
         // 删除类型为视频
+        this.videoBeforeList = [];
+        this.percent = 0;
+        this.videoPercent = 0;
       }
     },
 
