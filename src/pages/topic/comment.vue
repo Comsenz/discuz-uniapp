@@ -250,6 +250,15 @@
           </button>
         </view>
       </uni-popup>
+      <uni-popup ref="deletePopup" type="center">
+        <uni-popup-dialog
+          type="warn"
+          :content="deleteTip"
+          :before-close="true"
+          @close="handleClickCancel"
+          @confirm="handleClickOk"
+        ></uni-popup-dialog>
+      </uni-popup>
     </view>
     <view
       v-else-if="(loadingStatus && !loaded && !thread.isDeleted) || (loadingStatus && !status)"
@@ -270,8 +279,10 @@ import { mapState, mapMutations } from 'vuex';
 import user from '@/mixin/user';
 import { time2MorningOrAfternoon } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
+  components: { uniPopupDialog },
   mixins: [user],
   data() {
     return {
@@ -338,6 +349,14 @@ export default {
       url: '',
       imageStatus: true, // 头像地址错误时显示默认头像
       likedUsers: [],
+      deleteId: '', // 删除时的Id（包括主题id，评论Id，和图片id）
+      deleteType: '', // 删除时的类型，3为评论的回复删除，4为评论删除
+      deletePostType: '', // 删除回复时传给请求接口的类型
+      deletePostCanStatus: '', // 是否可以删除该条内容
+      deletePostIsStatus: '', // 删除时的状态
+      deletePost: '', // 删除时的整个post数据
+      deleteIndex: '', // 删除图片时的Index
+      deleteTip: '确定删除吗？', // 删除提示
     };
   },
   computed: {
@@ -504,7 +523,7 @@ export default {
       );
     },
 
-    // post操作调用接口（包括type 1评论点赞，2删除回复，3删除回复的评论，4评论的回复点赞）
+    // post操作调用接口（包括type 1评论点赞，2删除评论，3删除评论的某条回复，4评论的回复点赞）
     postOpera(id, type, canStatus, isStatus, commentPost) {
       if (type == '1' && !canStatus) {
         this.$refs.toast.show({ message: this.t.noReplyLikePermission });
@@ -729,9 +748,14 @@ export default {
     // 删除图片
     uploadClear(list, del) {
       const id = list.id;
-      this.delAttachments(id, del).then(() => {
-        this.$refs.upload.clear(del);
-      });
+      this.deleteType = 0;
+      this.deleteId = id;
+      this.deleteIndex = del;
+      this.$refs.deletePopup.open();
+      this.deleteTip = this.i18n.t('core.deleteImgSure');
+      // this.delAttachments(id, del).then(() => {
+      //   this.$refs.upload.clear(del);
+      // });
     },
     // 删除图片
     delAttachments(id) {
@@ -761,13 +785,49 @@ export default {
     postLikeClick(postId, type, canStatus, isStatus) {
       this.postOpera(postId, type, canStatus, isStatus);
     },
-    // 删除当前回复
+    // 删除当前评论
     deleteReply(postId, canStatus) {
-      this.postOpera(postId, '2');
+      this.$refs.deletePopup.open();
+      this.deleteType = '2';
+      this.deleteId = postId;
+      this.deleteTip = this.i18n.t('core.deleteCommentSure');
+      // this.postOpera(postId, '2');
     },
-    // 删除回复的评论
+    // 删除评论的回复
     deleteComment(postId, type, canStatus, isStatus, commentPost) {
-      this.postOpera(postId, '3', canStatus, isStatus, commentPost);
+      this.$refs.deletePopup.open();
+      this.deleteId = postId;
+      this.deleteType = '3';
+      this.deletePostCanStatus = canStatus;
+      this.deletePostIsStatus = isStatus;
+      this.deletePost = commentPost;
+      this.deleteTip = this.i18n.t('core.deleteReplySure');
+      // this.postOpera(postId, '3', canStatus, isStatus, commentPost);
+    },
+    handleClickOk() {
+      this.$refs.deletePopup.close();
+      if (this.deleteType === '2') {
+        // 删除类型为当前评论
+        this.postOpera(this.deleteId, '2');
+      } else if (this.deleteType === '3') {
+        // 删除类型为评论的回复
+        this.postOpera(
+          this.deleteId,
+          '3',
+          this.deletePostCanStatus,
+          this.deletePostIsStatus,
+          this.deletePost,
+        );
+      } else if (this.deleteType === 0) {
+        // 删除类型为回复时上传的图片
+        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+          this.$refs.upload.clear(this.deleteIndex);
+        });
+      }
+    },
+
+    handleClickCancel() {
+      this.$refs.deletePopup.close();
     },
     // 评论的回复
     replyComment(postId, canStatus) {
