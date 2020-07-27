@@ -27,6 +27,7 @@
               :user-info="thread.user"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
+              :is-real="thread.user.isReal"
               :user-role="thread.user.groups"
               :theme-type="thread.type"
               :theme-time="thread.createdAt"
@@ -190,6 +191,7 @@
                   :post-id="post._jv.id"
                   :comment-avatar-url="post.user.avatarUrl"
                   :user-name="post.user.username"
+                  :is-real="post.user.isReal"
                   :is-liked="post.isLiked"
                   :user-role="post.user.groups"
                   :comment-time="post.createdAt"
@@ -789,6 +791,15 @@ export default {
     this.$u.event.$on('refreshFiles', () => {
       this.loadThread();
     });
+  },
+  onPullDownRefresh() {
+    console.log('refresh');
+    const _this = this;
+    setTimeout(function() {
+      _this.loadThread();
+      _this.loadThreadPosts();
+      uni.stopPullDownRefresh();
+    }, 1000);
   },
   created() {
     uni.$on('logind', () => {

@@ -22,6 +22,7 @@
                 :topic-status="thread.isApproved"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
+                :is-real="post.user.isReal"
                 :theme-time="post.createdAt"
                 :theme-content="post.contentHtml"
                 :user-role="post.user.groups"
@@ -124,6 +125,7 @@
                     :post-id="commentPost._jv.id"
                     :comment-avatar-url="commentPost.user.avatarUrl"
                     :user-name="commentPost.user.username"
+                    :is-real="commentPost.user.isReal"
                     :is-liked="commentPost.isLiked"
                     :user-role="commentPost.user.groups"
                     :comment-time="commentPost.createdAt"
@@ -379,6 +381,16 @@ export default {
     this.formData = {
       type: 1,
     };
+  },
+  onPullDownRefresh() {
+    console.log('refresh');
+    const _this = this;
+    setTimeout(function() {
+      _this.loadPost();
+      _this.loadThread();
+      _this.loadPostComments();
+      uni.stopPullDownRefresh();
+    }, 1000);
   },
   onUnload() {
     this.$store.dispatch('forum/setError', { loading: false });

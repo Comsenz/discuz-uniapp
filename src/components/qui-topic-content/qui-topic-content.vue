@@ -2,7 +2,7 @@
   <view v-if="topicStatus != 1">
     <view class="themeItem__header">
       <view class="themeItem__header__img" @click="personJump">
-        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" />
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" :is-real="isReal" />
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
@@ -43,7 +43,7 @@
   <view class="themeItem" v-else>
     <view class="themeItem__header">
       <view class="themeItem__header__img" @click="personJump">
-        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" />
+        <qui-avatar :user="{ username: userName, avatarUrl: avatarUrl }" :is-real="isReal" />
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
@@ -261,6 +261,10 @@ export default {
     userName: {
       type: String,
       default: '',
+    },
+    isReal: {
+      type: Boolean,
+      default: false,
     },
     // 管理菜单
     selectList: {
