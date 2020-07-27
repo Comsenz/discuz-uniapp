@@ -39,7 +39,11 @@
           >
             <view class="dialog-box__header">
               <view class="dialog-box__header__info">
-                <qui-avatar class="dialog-box__header__info__user-avatar" :user="dialog" />
+                <qui-avatar
+                  class="dialog-box__header__info__user-avatar"
+                  :user="dialog"
+                  :is-real="dialog.isReal"
+                />
                 <view>
                   <view class="dialog-box__header__info__box">
                     <text class="dialog-box__header__info__username">
@@ -163,11 +167,13 @@ export default {
                 list[i].avatarUrl = list[i].sender.avatarUrl;
                 list[i].groupname = list[i].sender.groups;
                 list[i].readAt = list[i].recipient_read_at;
+                list[i].isReal = list[i].sender.isReal;
               } else if (list[i].sender.id === this.currentLoginId) {
                 list[i].username = list[i].recipient.username;
                 list[i].avatarUrl = list[i].recipient.avatarUrl;
                 list[i].groupname = list[i].recipient.groups;
                 list[i].readAt = list[i].sender_read_at;
+                list[i].isReal = list[i].recipient.isReal;
               }
             } else {
               list[i].username = '该用户已被删除';
