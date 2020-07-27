@@ -33,7 +33,7 @@
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img" @click="personJump(thread.user._jv.id)">
-                      <qui-avatar :user="thread.user" />
+                      <qui-avatar :user="thread.user" :is-real="thread.user.isReal" />
                     </view>
                     <view class="thread__header__title">
                       <view class="thread__header__title__top">
