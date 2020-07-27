@@ -479,6 +479,15 @@
           <view class="code-tip">{{ p.wechatIdentificationQRcode }}</view>
         </view>
       </uni-popup>
+      <uni-popup ref="deletePopup" type="center">
+        <uni-popup-dialog
+          type="warn"
+          :content="deleteTip"
+          :before-close="true"
+          @close="handleClickCancel"
+          @confirm="handleClickOk"
+        ></uni-popup-dialog>
+      </uni-popup>
     </view>
     <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
       <u-loading :size="60"></u-loading>
@@ -502,11 +511,13 @@ import wxshare from '@/mixin/wxshare-h5';
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 let payWechat = null;
 let payPhone = null;
 
 export default {
+  components: { uniPopupDialog },
   mixins: [
     user,
     forums,
@@ -678,6 +689,14 @@ export default {
       ], // 评论排序菜单
       sortVal: 'createdAt', // 排序值
       refreshVal: true, // 是否刷新
+      deleteId: '', // 删除时的Id（包括主题id，评论Id，和图片id）
+      deleteType: '', // 删除时的类型，3为主题评论删除，4为主题删除
+      deletePostType: '', // 删除评论时传给请求接口的类型
+      deletePostCanStatus: '', // 是否可以删除该条内容
+      deletePostIsStatus: '', // 删除时的状态
+      deletePost: '', // 删除时的整个post数据
+      deleteIndex: '', // 删除图片时的Index
+      deleteTip: '确定删除吗？', // 删除提示
     };
   },
   onReady() {},
@@ -1619,8 +1638,16 @@ export default {
         uni.redirectTo({
           url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
         });
-      } else {
+      } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
+      } else if (param.type === '4') {
+        this.$refs.deletePopup.open();
+        this.deleteType = '4';
+        this.deleteId = this.threadId;
+        this.deletePostCanStatus = param.canOpera;
+        this.deletePostIsStatus = param.status;
+        this.deletePostType = param.type;
+        this.deleteTip = this.i18n.t('core.deleteContentSure');
       }
     },
     // 跳转到用户主页
@@ -1809,9 +1836,14 @@ export default {
     // 删除图片
     uploadClear(list, del) {
       const id = list.id;
-      this.delAttachments(id, del).then(() => {
-        this.$refs.upload.clear(del);
-      });
+      this.deleteType = 0;
+      this.deleteId = id;
+      this.deleteIndex = del;
+      this.$refs.deletePopup.open();
+      this.deleteTip = this.i18n.t('core.deleteImgSure');
+      // this.delAttachments(id, del).then(() => {
+      //   this.$refs.upload.clear(del);
+      // });
     },
     // 删除图片
     delAttachments(id) {
@@ -1861,7 +1893,14 @@ export default {
         this.$store.getters['session/get']('auth').open();
         return;
       }
-      this.postOpera(postId, '3', canStatus, isStatus, post);
+      this.$refs.deletePopup.open();
+      this.deleteId = postId;
+      this.deleteType = '3';
+      this.deletePostCanStatus = canStatus;
+      this.deletePostIsStatus = isStatus;
+      this.deletePost = post;
+      this.deleteTip = this.i18n.t('core.deleteCommentSure');
+      // this.postOpera(postId, '3', canStatus, isStatus, post);
     },
     // 评论的回复
     replyComment(postId, postIndex) {
@@ -1940,6 +1979,37 @@ export default {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       }
     },
+
+    handleClickOk() {
+      this.$refs.deletePopup.close();
+      if (this.deleteType === '4') {
+        this.threadOpera(
+          this.deleteId,
+          this.deletePostCanStatus,
+          this.deletePostIsStatus,
+          this.deleteType,
+        );
+      } else if (this.deleteType === '3') {
+        // 删除类型为主题评论
+        this.postOpera(
+          this.deleteId,
+          '3',
+          this.deletePostCanStatus,
+          this.deletePostIsStatus,
+          this.deletePost,
+        );
+      } else if (this.deleteType === 0) {
+        // 删除类型为评论时上传的图片
+        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+          this.$refs.upload.clear(this.deleteIndex);
+        });
+      }
+    },
+
+    handleClickCancel() {
+      this.$refs.deletePopup.close();
+    },
+
     // 分享
     shareClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
