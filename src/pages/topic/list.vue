@@ -230,10 +230,12 @@ $otherHeight: 292rpx;
 }
 .topic-page-list-item {
   padding: 30rpx;
-  margin: 20rpx;
+  margin: 20rpx 0;
   background: --color(--qui-BG-2);
-  border-radius: 6rpx;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
+  border-top: solid 2rpx --color(--qui-BOR-ED);
+  border-bottom: solid 2rpx --color(--qui-BOR-ED);
+  // border-radius: 6rpx;
+  // box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
   &_title {
     font-size: 35rpx;

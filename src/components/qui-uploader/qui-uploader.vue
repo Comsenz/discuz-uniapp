@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import { i18n } from '@/locale';
+
 export default {
   name: 'QuiUploader',
   props: {
@@ -282,7 +284,7 @@ export default {
             if (resObj.errors[0].detail) {
               uni.showToast({
                 icon: 'none',
-                title: `${resObj.errors[0].code}\n${resObj.errors[0].detail[0]}`,
+                title: `${i18n.t(`core.${resObj.errors[0].code}`)}\n${resObj.errors[0].detail[0]}`,
               });
             } else {
               uni.showToast({ icon: 'none', title: resObj.errors[0].code });

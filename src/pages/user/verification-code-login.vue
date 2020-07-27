@@ -3,9 +3,7 @@
     <view class="new" @click.stop="toggleBox">
       <view class="verification-code-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
       <view class="new-phon">
-        <view class="new-phon-test">
-          {{ i18n.t('user.phoneNumber') }}
-        </view>
+        <view class="new-phon-test">{{ i18n.t('user.phoneNumber') }}</view>
         <view class="new-phon-number">
           <input
             class="new-phon-num"
@@ -16,19 +14,21 @@
             @input="changeinput"
             maxlength="11"
           />
-          <button class="new-phon-send" @click="sendVerificationCode" :disabled="disabled">
+          <button
+            class="new-phon-send"
+            @click="sendVerificationCode"
+            id="TencentCaptcha"
+            :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
+            :disabled="disabled"
+          >
             {{ btnContent }}
           </button>
         </view>
       </view>
-      <view class="newphon-erro" v-if="formeerro">
-        {{ formeerro }}
-      </view>
+      <view class="newphon-erro" v-if="formeerro">{{ formeerro }}</view>
       <!-- 验证码 -->
       <view class="new-input" @click.stop="fourse">
-        <view class="new-input-test">
-          {{ i18n.t('modify.placeentercode') }}
-        </view>
+        <view class="new-input-test">{{ i18n.t('modify.placeentercode') }}</view>
         <qui-input-code
           @getdata="btndata"
           :title="tit"
@@ -38,9 +38,7 @@
           ref="quiinput"
         ></qui-input-code>
       </view>
-      <view class="verification-code-login-box-btn" @click="login">
-        {{ i18n.t('user.login') }}
-      </view>
+      <view class="verification-code-login-box-btn" @click="login">{{ i18n.t('user.login') }}</view>
       <view
         class="verification-code-login-box-pwdlogin"
         @click="jump2PhoneNumberLogin"
@@ -56,6 +54,9 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
+// #ifdef  H5
+// import tcaptchs from '@/utils/tcaptcha';
+// #endif
 
 export default {
   mixins: [forums, user],
@@ -78,6 +79,9 @@ export default {
       validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
+      captcha: null, // 腾讯云验证码实例
+      captcha_ticket: '', // 腾讯云验证码返回票据
+      captcha_rand_str: '', // 腾讯云验证码返回随机字符串
     };
   },
   onLoad(params) {
@@ -117,6 +121,13 @@ export default {
       }
     });
   },
+  created() {
+    if (this.forums && this.forums.qcloud.qcloud_captcha) {
+      // eslint-disable-next-line
+      const tcaptchas = require('@/utils/tcaptcha');
+      // eslint-disable-next-line
+    }
+  },
   methods: {
     changeinput() {
       setTimeout(() => {
@@ -136,10 +147,40 @@ export default {
     },
     // 发送验证码
     sendVerificationCode() {
-      this.time = 60;
-      this.countdown();
-      this.sendSMS();
+      console.log('9999');
+      if (this.forums.qcloud.qcloud_captcha) {
+        if (!this.ticket || !this.randstr) {
+          this.toTCaptcha();
+          return false;
+        }
+      } else {
+        this.time = 60;
+        this.countdown();
+        this.sendSMS();
+      }
     },
+    // h5内发布按钮验证码验证
+    // #ifdef H5
+    toTCaptcha() {
+      // eslint-disable-next-line no-undef
+      this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
+        if (res.ret === 0) {
+          this.ticket = res.ticket;
+          this.randstr = res.randstr;
+          // 验证通过后发布
+          this.time = 60;
+          this.countdown();
+          this.sendSMS();
+        }
+        if (res.ret === 2) {
+          this.postLoading = false;
+          uni.hideLoading();
+        }
+      });
+      // 显示验证码
+      this.captcha.show();
+    },
+    // #endif
     // 60s倒计时
     countdown() {
       if (this.time > 1) {
@@ -231,6 +272,12 @@ export default {
         url: `/pages/user/phone-number-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
       });
     },
+  },
+  onUnload() {
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
   },
 };
 </script>
