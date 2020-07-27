@@ -583,8 +583,12 @@ export default {
           } else if (type == '2') {
             if (data.isDeleted) {
               uni.navigateBack({
-                url: '/pages/topic/index?id=' + this.threadId,
+                delta: 1,
               });
+
+              // uni.navigateBack({
+              //   url: '/pages/topic/index?id=' + this.threadId,
+              // });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
             } else {
               this.$refs.toast.show({ message: this.t.deleteFailed });

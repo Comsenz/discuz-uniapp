@@ -1145,8 +1145,12 @@ export default {
           } else if (type === '2') {
             if (data.isDeleted) {
               uni.navigateBack({
-                url: `/pages/home/index`,
+                delta: 1,
               });
+
+              // uni.navigateBack({
+              //   url: `/pages/home/index`,
+              // });
             } else {
               // 主题删除失败
             }
