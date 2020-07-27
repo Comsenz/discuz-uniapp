@@ -364,6 +364,15 @@
           </view>
         </view>
       </uni-popup>
+      <uni-popup ref="deletePopup" type="center">
+        <uni-popup-dialog
+          type="warn"
+          content="确定删除这张照片吗？"
+          :before-close="true"
+          @close="handleClickCancel"
+          @confirm="handleClickOk"
+        ></uni-popup-dialog>
+      </uni-popup>
       <qui-toast ref="toast"></qui-toast>
     </view>
   </qui-page>
@@ -377,8 +386,10 @@ import forums from '@/mixin/forums';
 // #ifdef  H5
 import TcVod from 'vod-js-sdk-v6';
 // #endif
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
+  components: { uniPopupDialog },
   name: 'Post',
   mixins: [
     forums,
@@ -487,6 +498,9 @@ export default {
       attachmentList: [], // 附件列表
       preAttachmentList: [], // 编辑的时候只传新增的用于比较是否是新增的
       signatureVal: '',
+      deleteType: '', // 删除类型 0为图片，1为附件，2为视频
+      deleteId: '', // 当前点击要删除的图片Id
+      deleteIndex: '', // 当前点击要删除的图片index
     };
   },
   computed: {
@@ -807,11 +821,16 @@ export default {
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
+      console.log(del, '~~~~~~');
       // const id = this.operating === 'edit' ? list.id : list.data.id;
       const id = list.id;
-      this.delAttachments(id, del).then(() => {
-        this.$refs.upload.clear(del);
-      });
+      // this.delAttachments(id, del).then(() => {
+      //   this.$refs.upload.clear(del);
+      // });
+      this.deleteType = 0;
+      this.deleteId = id;
+      this.deleteIndex = del;
+      this.$refs.deletePopup.open();
     },
 
     // 表情点击事件
@@ -1034,7 +1053,14 @@ export default {
       }
       return attachments;
     },
+    // 删除附件显示弹框
     deleteFile(id) {
+      this.$refs.deletePopup.open();
+      this.deleteType = 1;
+      this.deleteId = id;
+    },
+    // 删除附件调用删除接口
+    deleteFileSure(id) {
       const params = {
         _jv: {
           type: 'attachments',
@@ -1118,6 +1144,26 @@ export default {
           });
       });
     },
+
+    handleClickOk() {
+      this.$refs.deletePopup.close();
+      if (this.deleteType === 0) {
+        // 删除类型为图片
+        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+          this.$refs.upload.clear(this.deleteIndex);
+        });
+      } else if (this.deleteType === 1) {
+        // 删除类型为附件
+        this.deleteFileSure(this.deleteId);
+      } else if (this.deleteType === 2) {
+        // 删除类型为视频
+      }
+    },
+
+    handleClickCancel() {
+      this.$refs.deletePopup.close();
+    },
+
     delAttachments(id, index) {
       const params = {
         _jv: {
@@ -1135,11 +1181,13 @@ export default {
               threadId: this.postDetails._jv.id,
               index,
             });
+            const post = this.$store.getters['jv/get'](
+              `posts/${this.postDetails.firstPost._jv.id}`,
+            );
+            post.images.splice(index, 1);
+            post._jv.relationships.images.data.splice(index, 1);
           }
 
-          const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
-          post.images.splice(index, 1);
-          post._jv.relationships.images.data.splice(index, 1);
           this.uploadFile.forEach((value, key, item) => {
             value.id == id && item.splice(key, 1);
           });
