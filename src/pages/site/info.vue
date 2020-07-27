@@ -222,6 +222,10 @@ export default {
   onLoad() {
     // #ifdef MP-WEIXIN
     uni.hideHomeButton();
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
     // #endif
     this.$u.event.$on('logind', data => {
       // 点击授权登陆成功后如果是已付费去首页

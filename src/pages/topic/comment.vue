@@ -22,6 +22,7 @@
                 :topic-status="thread.isApproved"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
+                :is-real="post.user.isReal"
                 :theme-time="post.createdAt"
                 :theme-content="post.contentHtml"
                 :user-role="post.user.groups"
@@ -32,7 +33,7 @@
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
                     <view class="thread__header__img" @click="personJump(thread.user._jv.id)">
-                      <qui-avatar :user="thread.user" />
+                      <qui-avatar :user="thread.user" :is-real="thread.user.isReal" />
                     </view>
                     <view class="thread__header__title">
                       <view class="thread__header__title__top">
@@ -124,6 +125,7 @@
                     :post-id="commentPost._jv.id"
                     :comment-avatar-url="commentPost.user.avatarUrl"
                     :user-name="commentPost.user.username"
+                    :is-real="commentPost.user.isReal"
                     :is-liked="commentPost.isLiked"
                     :user-role="commentPost.user.groups"
                     :comment-time="commentPost.createdAt"
@@ -381,6 +383,16 @@ export default {
     this.formData = {
       type: 1,
     };
+  },
+  onPullDownRefresh() {
+    console.log('refresh');
+    const _this = this;
+    setTimeout(function() {
+      _this.loadPost();
+      _this.loadThread();
+      _this.loadPostComments();
+      uni.stopPullDownRefresh();
+    }, 1000);
   },
   onUnload() {
     this.$store.dispatch('forum/setError', { loading: false });

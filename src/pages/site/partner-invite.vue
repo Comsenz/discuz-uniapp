@@ -141,6 +141,12 @@ export default {
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     // #endif
+    // #ifdef MP-WEIXIN
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
+    // #endif
   },
   onReady() {
     // 处理站点模式

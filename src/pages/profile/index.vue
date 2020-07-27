@@ -169,6 +169,12 @@ export default {
     this.userId = userId || this.currentLoginId;
     this.current = parseInt(current, 10) || 0;
     this.getAuth();
+    // #ifdef MP-WEIXIN
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
+    // #endif
     // uni.startPullDownRefresh();
   },
   // onPullDownRefresh() {
