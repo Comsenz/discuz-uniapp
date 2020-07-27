@@ -7,7 +7,12 @@
         @tap="toProfile(followingItem.toUser.id)"
         :key="index"
       >
-        <qui-avatar class="follow-content__items__avatar" :user="followingItem.toUser" size="70" />
+        <qui-avatar
+          class="follow-content__items__avatar"
+          :user="followingItem.toUser"
+          size="70"
+          :is-real="followingItem.toUser.isReal"
+        />
         <qui-cell-item
           :title="(followingItem.toUser && followingItem.toUser.username) || ''"
           slot-right
