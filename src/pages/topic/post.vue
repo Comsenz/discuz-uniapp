@@ -389,8 +389,8 @@ import TcVod from 'vod-js-sdk-v6';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
-  components: { uniPopupDialog },
   name: 'Post',
+  components: { uniPopupDialog },
   mixins: [
     forums,
     // #ifdef  H5
@@ -1071,7 +1071,7 @@ export default {
         },
       };
       this.$store.dispatch('jv/delete', params).then(res => {
-        console.log(res);
+        this.$refs.uploadFiles.deleteSure();
       });
     },
 
