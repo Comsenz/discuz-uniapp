@@ -389,8 +389,8 @@ import TcVod from 'vod-js-sdk-v6';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
-  components: { uniPopupDialog },
   name: 'Post',
+  components: { uniPopupDialog },
   mixins: [
     forums,
     // #ifdef  H5
