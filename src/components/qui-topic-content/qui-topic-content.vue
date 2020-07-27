@@ -406,32 +406,32 @@ export default {
       }
       // #endif
       // #ifdef MP-WEIXIN
-      // const that = this;
-      // wx.downloadFile({
-      //   url: item.url,
-      //   success(res) {
-      //     if (res.statusCode === 200) {
-      //       console.log(res.tempFilePath);
-      //       that.$refs.toast.show({
-      //         message: that.i18n.t('profile.downloadSuccess'),
-      //       });
-      //       wx.openDocument({
-      //         filePath: res.tempFilePath,
-      //         success() {
-      //           console.log('打开文档成功');
-      //         },
-      //       });
-      //     }
-      //   },
-      //   error() {
-      //     that.$refs.toast.show({
-      //       message: that.i18n.t('profile.downloadError'),
-      //     });
-      //   },
-      // });
-      this.$refs.toast.show({
-        message: this.i18n.t('profile.filedownloadtipswx'),
+      const that = this;
+      wx.downloadFile({
+        url: item.url,
+        success(res) {
+          if (res.statusCode === 200) {
+            console.log(res.tempFilePath);
+            that.$refs.toast.show({
+              message: that.i18n.t('profile.downloadSuccess'),
+            });
+            // wx.openDocument({
+            //   filePath: res.tempFilePath,
+            //   success() {
+            //     console.log('打开文档成功');
+            //   },
+            // });
+          }
+        },
+        error() {
+          that.$refs.toast.show({
+            message: that.i18n.t('profile.downloadError'),
+          });
+        },
       });
+      // this.$refs.toast.show({
+      //   message: this.i18n.t('profile.filedownloadtipswx'),
+      // });
       // #endif
     },
   },

@@ -112,6 +112,7 @@ export default {
         return;
       }
       if (!this.verificateFile(file, this)) {
+        input.value = '';
         return;
       }
       // 上传前的其他校验
@@ -179,7 +180,6 @@ export default {
     },
     // 文件校验
     verificateFile(file, el) {
-      // console.log(file);
       const fileName = file.name;
       const fileFormat = fileName.substring(fileName.lastIndexOf('.') + 1);
       if (el.fileFormat && this.fileFormat.indexOf(fileFormat) === -1) {

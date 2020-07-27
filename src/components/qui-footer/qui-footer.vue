@@ -287,6 +287,7 @@ export default {
   width: 21%;
   height: 90rpx;
   padding-left: 40rpx;
+  font-size: $fg-f26;
   // margin-top: 23rpx;
   line-height: 90rpx;
   flex-direction: column;
@@ -304,7 +305,6 @@ export default {
   align-self: center;
   margin-top: 32rpx;
   margin-left: 21rpx;
-  font-size: $fg-f26;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
   text-align: center;

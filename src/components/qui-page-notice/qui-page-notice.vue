@@ -127,9 +127,18 @@ export default {
       console.log('updateNode', this.user);
       this.getUnreadNoticeNum();
     });
+    // #ifdef H5
+    uni.$on('updateNoticePage', () => {
+      this.getUnreadNoticeNum();
+      this.getDialogList();
+    });
+    // #endif
   },
   destroyed() {
     uni.$off('updateNotiNum');
+    // #ifdef H5
+    uni.$off('updateNoticePage');
+    // #endif
   },
   methods: {
     // 调用 会话列表 的接口

@@ -194,11 +194,11 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.numberdata.push({ state: 0 });
                 _this.newindex.push(res.tempFiles[index]);
-                // if (_this.uploadBeforeList.length > _this.count) {
-                //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                //   _this.numberdata = _this.numberdata.slice(0, _this.count);
-                //   _this.newindex = _this.newindex.slice(0, _this.count);
-                // }
+                if (_this.uploadBeforeList.length > _this.count) {
+                  _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
+                  _this.numberdata = _this.numberdata.slice(0, _this.count);
+                  _this.newindex = _this.newindex.slice(0, _this.count);
+                }
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,

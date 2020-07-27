@@ -18,30 +18,7 @@
     ></qui-header>
     <!-- 分享弹窗 -->
     <uni-popup ref="popupHead" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content" style="box-sizing: border-box;">
-          <button
-            class="popup-share-button"
-            open-type="share"
-            v-if="siteInfo.set_site && siteInfo.set_site.site_mode !== 'pay'"
-          ></button>
-          <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
-            <view class="popup-share-content-image">
-              <view class="popup-share-box" @click="shareHead(index)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="46"
-                  :color="theme === $u.light() ? '#aaa' : '#777'"
-                ></qui-icon>
-              </view>
-            </view>
-            <text class="popup-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
-      </view>
+      <qui-share @close="cancel"></qui-share>
     </uni-popup>
     <!-- 站点信息 -->
     <view class="site-item">
@@ -150,6 +127,12 @@ export default {
     this.getPermissions();
     // #ifdef H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
+    // #endif
+    // #ifdef MP-WEIXIN
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
     // #endif
   },
   // 唤起小程序原声分享
@@ -267,15 +250,6 @@ export default {
     open() {
       // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-          },
-        ];
-      }
       // #endif
       // #ifdef H5
       if (this.isWeixin === true) {
@@ -290,18 +264,6 @@ export default {
     },
     closeShare() {
       this.shareShow = false;
-    },
-    // 头部分享海报
-    shareHead(index) {
-      if (index === 0) {
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$store.getters['session/get']('auth').open();
-          return;
-        }
-        uni.navigateTo({
-          url: '/pages/share/site',
-        });
-      }
     },
     // 取消按钮
     cancel() {

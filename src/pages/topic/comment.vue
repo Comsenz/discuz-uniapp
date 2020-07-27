@@ -77,7 +77,7 @@
                   :type="t.giveLike"
                   :person-num="post.likeCount"
                   :limit-count="limitShowNum"
-                  :person-list="post.likedUsers"
+                  :person-list="likedUsers"
                   :btn-show="false"
                   @personJump="personJump"
                 ></qui-person-list>
@@ -337,6 +337,7 @@ export default {
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
       imageStatus: true, // 头像地址错误时显示默认头像
+      likedUsers: [],
     };
   },
   computed: {
@@ -344,8 +345,9 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     post() {
-      const commentId = this.commentId;
-      return utils.deepCopy(this.$store.getters['jv/get'](`posts/${commentId}`));
+      const post = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+      this.likedUsers = post.likedUsers;
+      return post;
     },
     // postList() {
     //   // console.log(this.$store.getters['jv/get']('posts'));
@@ -546,13 +548,13 @@ export default {
             // 当前评论点赞
             this.isLiked = data.isLiked;
             if (this.isLiked) {
-              this.post.likedUsers.unshift(this.user);
+              this.likedUsers.unshift(this.user);
               orgignPost._jv.relationships.likedUsers.data.unshift({
                 type: this.user._jv.type,
                 id: this.user._jv.id,
               });
             } else {
-              this.post.likedUsers.forEach((value, key, item) => {
+              this.likedUsers.forEach((value, key, item) => {
                 value.id == this.user.id && item.splice(key, 1);
               });
               orgignPost._jv.relationships.likedUsers.data.forEach((value, key, item) => {

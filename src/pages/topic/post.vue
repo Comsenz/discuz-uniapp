@@ -263,7 +263,7 @@
           type="primary"
           size="large"
           id="TencentCaptcha"
-          :data-appid="forums.qcloud.qcloud_captcha_app_id || ''"
+          :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
@@ -375,7 +375,6 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 // #ifdef  H5
-import tcaptchs from '@/utils/tcaptcha';
 import TcVod from 'vod-js-sdk-v6';
 // #endif
 
@@ -384,7 +383,7 @@ export default {
   mixins: [
     forums,
     // #ifdef  H5
-    tcaptchs,
+    // tcaptchs,
     // #endif
   ],
   data() {
@@ -507,6 +506,17 @@ export default {
       }
       return pay;
     },
+  },
+  created() {
+    if (
+      this.forums &&
+      this.forums.qcloud.qcloud_captcha &&
+      this.forums.other.create_thread_with_captcha
+    ) {
+      // eslint-disable-next-line
+      const tcaptchas = require('@/utils/tcaptcha');
+      // eslint-disable-next-line
+    }
   },
   updated() {
     // #ifndef MP-WEIXIN
@@ -1320,7 +1330,6 @@ export default {
       // #endif
       // h5内发布按钮验证码验证
       // #ifdef H5
-
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         if (res.ret === 0) {
           this.ticket = res.ticket;
@@ -1373,7 +1382,7 @@ export default {
 
     try {
       const res = uni.getSystemInfoSync();
-      if (this.forums.paycenter.wxpay_close) {
+      if (this.forums && this.forums.paycenter.wxpay_close) {
         // #ifndef H5
         if (res.platform === 'ios') {
           if (this.forums.paycenter.wxpay_ios === false) {
