@@ -12,7 +12,7 @@
         <view class="profile-info">
           <view class="profile-info__box">
             <view class="profile-info__box__detail">
-              <qui-avatar :user="userInfo" />
+              <qui-avatar :user="userInfo" :is-real="userInfo.isReal" />
               <qui-cell-item
                 :title="userInfo.username || ''"
                 slot-right

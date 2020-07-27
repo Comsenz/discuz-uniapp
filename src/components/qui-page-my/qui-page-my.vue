@@ -18,7 +18,7 @@
       <view class="my-info">
         <view class="my-info__box">
           <view class="my-info__box__detail">
-            <qui-avatar :user="userInfo" />
+            <qui-avatar :user="userInfo" :is-real="userInfo.isReal" />
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"

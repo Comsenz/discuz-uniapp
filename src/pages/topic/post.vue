@@ -1382,7 +1382,7 @@ export default {
         if (res.ret === 0) {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
-          //验证通过后发布
+          // 验证通过后发布
           this.postClick();
         }
         if (res.ret === 2) {
