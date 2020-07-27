@@ -661,9 +661,11 @@ export default {
 
     // video相关方法
     videoDel() {
-      this.videoBeforeList = [];
-      this.percent = 0;
-      this.videoPercent = 0;
+      this.deleteType = 2;
+      // this.deleteId = id;
+      // this.deleteIndex = del;
+      this.$refs.deletePopup.open();
+      this.deleteTip = '确定删除这个视频吗？';
     },
     playVideo() {
       this.controlsStatus = true;
@@ -1160,6 +1162,9 @@ export default {
         this.deleteFileSure(this.deleteId);
       } else if (this.deleteType === 2) {
         // 删除类型为视频
+        this.videoBeforeList = [];
+        this.percent = 0;
+        this.videoPercent = 0;
       }
     },
 
