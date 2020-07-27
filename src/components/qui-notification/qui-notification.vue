@@ -10,6 +10,7 @@
               <qui-avatar
                 class="list-box__notice__hl-avatar"
                 :user="item"
+                :is-real="item.isReal"
                 @click="jumpUserPage(item.user_id)"
               />
             </view>
@@ -31,9 +32,6 @@
                     >
                       {{ item.user_name }}
                     </text>
-                    <!-- <text class="list-box__notice__hl-info-groupname" v-if="item.thread_user_groups">
-                  （{{ item.thread_user_groups }}）
-                </text> -->
                     <text class="list-box__notice__hl-info-title" v-if="item.type === 'related'">
                       {{ i18n.t('notice.relatedMe') }}
                     </text>

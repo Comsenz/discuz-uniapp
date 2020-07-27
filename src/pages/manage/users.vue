@@ -39,6 +39,7 @@
               :title="user.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
               :icon="user.avatarUrl"
+              :is-real="user.isReal"
               @click="jumpUserPage(user.id)"
             ></qui-avatar-cell>
           </view>
@@ -87,6 +88,7 @@
               :title="user.username"
               :value="user.groups[Object.keys(user.groups || {})[0]].name"
               :icon="user.avatarUrl"
+              :is-real="user.isReal"
               @click="jumpUserPage(user.id)"
             ></qui-avatar-cell>
           </view>

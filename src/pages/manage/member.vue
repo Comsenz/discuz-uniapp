@@ -44,6 +44,7 @@
               :title="item.username"
               :value="item.groups[Object.keys(item.groups || {})[0]].name"
               :icon="item.avatarUrl"
+              :is-real="item.isReal"
             >
               <checkbox
                 slot="rightIcon"
@@ -73,6 +74,7 @@
               :title="item.username"
               :value="item.groups[Object.keys(item.groups || {})[0]].name"
               :icon="item.avatarUrl"
+              :is-real="item.isReal"
             >
               <checkbox
                 slot="rightIcon"
