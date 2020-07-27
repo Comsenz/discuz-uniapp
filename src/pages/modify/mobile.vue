@@ -226,6 +226,8 @@ export default {
         .then(res => {
           this.num -= 1;
           this.second = res._jv.json.data.attributes.interval;
+          this.ticket = '';
+          this.randstr = '';
         })
         .catch(err => {
           if (err.statusCode === 500) {
