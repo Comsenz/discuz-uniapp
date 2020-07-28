@@ -10,7 +10,7 @@
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
-          <qui-avatar :user="{ avatarUrl: themeImage, username: userName }" />
+          <qui-avatar :user="{ avatarUrl: themeImage, username: userName }" :is-real="isReal" />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -92,7 +92,7 @@
             :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             :src="mediaUrl"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 70%'"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
             @play="playVideo"
@@ -232,6 +232,11 @@ export default {
     themeImage: {
       type: String,
       default: '',
+    },
+    // 头像实名认证加v
+    isReal: {
+      type: Boolean,
+      default: false,
     },
     // 是否加精
     themeEssence: {
@@ -754,7 +759,7 @@ export default {
 }
 .theme__content__videocover {
   position: relative;
-  width: 100%;
+  // width: 100%;
 }
 /deep/ .uni-video-cover {
   z-index: 0;
