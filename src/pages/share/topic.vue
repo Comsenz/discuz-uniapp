@@ -149,7 +149,7 @@ export default {
           this.headerName = data.user.username;
           this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          if (data.firstPost.images.length >= 1) {
+          if (data.firstPost.images.length >= 1 || this.postyTepy === 2) {
             if (this.postyTepy === 2 && data.threadVideo.cover_url) {
               this.implement = false;
             } else {
@@ -190,18 +190,23 @@ export default {
           this.marglength = this.attachlength + 40;
           if (this.postyTepy === 2) {
             this.video = data.threadVideo.cover_url;
+            console.log(this.video, '这是视频贴封面图');
             this.videoduc = data.threadVideo.file_name;
-            uni.getImageInfo({
-              src: that.video,
-              success(image) {
-                const num = image.height * (620 / image.width);
-                if (num > 402) {
-                  that.heightdefill = num - 402;
-                } else {
-                  that.heightdefill = 0;
-                }
-              },
-            });
+            if (this.video) {
+              uni.getImageInfo({
+                src: that.video,
+                success(image) {
+                  const num = image.height * (620 / image.width);
+                  if (num > 402) {
+                    that.heightdefill = num - 402;
+                  } else {
+                    that.heightdefill = 0;
+                  }
+                },
+              });
+            } else {
+              that.heightdefill = 0;
+            }
           }
         });
       // this.headerName = this.themedata.user.username;
