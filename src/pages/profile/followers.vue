@@ -94,6 +94,11 @@ export default {
     this.getFollowerList();
   },
   methods: {
+    pullDownRefresh() {
+      this.pageNum = 1;
+      this.followerList = [];
+      this.getFollowerList('pullDownRefresh');
+    },
     // 获取用户粉丝列表
     getFollowerList(type) {
       this.loadingType = 'loading';
@@ -115,6 +120,9 @@ export default {
             this.followerList = res;
           } else {
             this.followerList = [...this.followerList, ...res];
+          }
+          if (type && type === 'pullDownRefresh') {
+            uni.stopPullDownRefresh();
           }
         });
     },
