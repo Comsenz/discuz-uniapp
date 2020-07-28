@@ -10,7 +10,7 @@
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
-          <qui-avatar :user="{ avatarUrl: themeImage, username: userName }" />
+          <qui-avatar :user="{ avatarUrl: themeImage, username: userName }" :is-real="isReal" />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -232,6 +232,11 @@ export default {
     themeImage: {
       type: String,
       default: '',
+    },
+    // 头像实名认证加v
+    isReal: {
+      type: Boolean,
+      default: false,
     },
     // 是否加精
     themeEssence: {
