@@ -86,11 +86,8 @@
                   </text>
                 </view>
               </view>
-              -->
             </qui-topic-content>
-            <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
-            {{ p.pay }}
-          </qui-button>
+
             <!-- 已支付用户列表 -->
             <view v-if="paidStatus">
               <qui-person-list
@@ -161,7 +158,7 @@
               >
                 {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
               </view>
-              <view class="comment-sort" v-if="thread.postCount > 1">
+              <!--<view class="comment-sort" v-if="thread.postCount > 1">
                 <view class="comment-sort-operaCl" @click="sortOperaClick">
                   <qui-icon
                     name="icon-sort1"
@@ -181,7 +178,7 @@
                     @click="sortSelectChoice"
                   ></qui-drop-down>
                 </view>
-              </view>
+              </view>-->
             </view>
 
             <view v-if="posts.length > 0">
