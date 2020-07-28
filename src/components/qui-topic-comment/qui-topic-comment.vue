@@ -3,7 +3,10 @@
     <view class="themeItem">
       <view class="themeItem__header">
         <view class="themeItem__header__img" @click="personJump">
-          <qui-avatar :user="{ username: userName, avatarUrl: commentAvatarUrl }" />
+          <qui-avatar
+            :user="{ username: userName, avatarUrl: commentAvatarUrl }"
+            :is-real="isReal"
+          />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -106,6 +109,11 @@ export default {
     userName: {
       type: String,
       default: '',
+    },
+    // 实名认证
+    isReal: {
+      type: Boolean,
+      default: false,
     },
     // 回复的用户的角色
     userRole: {

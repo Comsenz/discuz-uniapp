@@ -89,6 +89,7 @@
           :currentindex="index"
           :pay-status="(item.price > 0 && item.paid) || item.price == 0"
           :user-name="item.user.username"
+          :is-real="item.user.isReal"
           :theme-image="item.user.avatarUrl"
           :theme-btn="item.canHide || ''"
           :theme-reply-btn="item.canReply || ''"
@@ -447,11 +448,6 @@ export default {
     // 滑动到顶部
     toUpper() {
       this.headerShow = true;
-      // console.log('refresh');
-      // this.ontrueGetList();
-      // setTimeout(function() {
-      // uni.startPullDownRefresh();
-      // }, 1000);
     },
     // 初始化选中的选项卡
     getCategorieIndex(tagId) {
