@@ -95,6 +95,9 @@ export default {
       if (index === '1') {
         uni.$emit('updateNoticePage');
       }
+      if (index === '2') {
+        uni.$emit('updateMy');
+      }
       uni.navigateTo({
         url: pageUrl,
       });
