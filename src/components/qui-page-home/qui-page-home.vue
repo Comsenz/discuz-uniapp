@@ -447,11 +447,6 @@ export default {
     // 滑动到顶部
     toUpper() {
       this.headerShow = true;
-      // console.log('refresh');
-      // this.ontrueGetList();
-      // setTimeout(function() {
-      // uni.startPullDownRefresh();
-      // }, 1000);
     },
     // 初始化选中的选项卡
     getCategorieIndex(tagId) {

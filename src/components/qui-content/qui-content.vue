@@ -92,7 +92,7 @@
             :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             :src="mediaUrl"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 70%'"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
             @play="playVideo"
@@ -754,7 +754,7 @@ export default {
 }
 .theme__content__videocover {
   position: relative;
-  width: 100%;
+  // width: 100%;
 }
 /deep/ .uni-video-cover {
   z-index: 0;
