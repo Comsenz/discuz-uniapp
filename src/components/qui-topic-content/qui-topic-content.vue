@@ -262,6 +262,7 @@ export default {
       type: String,
       default: '',
     },
+    // 实名认证
     isReal: {
       type: Boolean,
       default: false,
