@@ -1,13 +1,14 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content bg">
     <view v-if="loaded && status">
-      <scroll-view
+      <!--<scroll-view
         scroll-y="true"
         scroll-with-animation="true"
         show-scrollbar="false"
         class="scroll-y"
         @scrolltolower="pullDown"
-      >
+      >-->
+      <view class="scroll-y">
         <view class="content" v-if="status">
           <view class="ft-gap">
             <view class="bg-white">
@@ -214,17 +215,17 @@
               </view>
             </view>
           </view>
+          <qui-load-more
+            :status="loadingType"
+            :content-text="{
+              contentdown: c.contentdown,
+              contentrefresh: c.contentrefresh,
+              contentnomore: contentnomoreVal,
+            }"
+          ></qui-load-more>
         </view>
-
-        <qui-load-more
-          :status="loadingType"
-          :content-text="{
-            contentdown: c.contentdown,
-            contentrefresh: c.contentrefresh,
-            contentnomore: contentnomoreVal,
-          }"
-        ></qui-load-more>
-      </scroll-view>
+      </view>
+      <!--</scroll-view>-->
       <!--#ifdef MP-WEIXIN-->
       <!--适配小程序底部弹框-->
       <view class="det-ft"></view>
@@ -394,8 +395,9 @@ export default {
       commentStatus: {}, //回复状态
       commentId: '', //当前评论的Id
       loadingType: 'more', // 上拉加载状态
+      scrollTop: 0,
       pageNum: 1, //这是主题回复当前页数
-      pageSize: 20, //这是主题回复每页数据条数
+      pageSize: 5, //这是主题回复每页数据条数
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
       imageStatus: true, // 头像地址错误时显示默认头像
@@ -461,8 +463,9 @@ export default {
       type: 1,
     };
   },
+  // 下拉刷新
   onPullDownRefresh() {
-    console.log('refresh');
+    // console.log('refresh');
     const _this = this;
     setTimeout(function() {
       _this.loadPost();
@@ -470,6 +473,18 @@ export default {
       _this.loadPostComments();
       uni.stopPullDownRefresh();
     }, 1000);
+  },
+  // 上拉加载
+  onReachBottom() {
+    if (this.loadingType !== 'more') {
+      return;
+    }
+    this.pageNum += 1;
+    this.loadPostComments();
+  },
+  // 监听页面滚动，参数为Object
+  onPageScroll(event) {
+    this.scrollTop = event.scrollTop;
   },
   onUnload() {
     this.$store.dispatch('forum/setError', { loading: false });
@@ -746,6 +761,8 @@ export default {
         'filter[isApproved]': 1,
         'filter[thread]': this.threadId,
         'filter[reply]': this.commentId,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
         'filter[isDeleted]': 'no',
         'filter[isComment]': 'yes',
         include: ['replyUser', 'user.groups', 'user', 'images'],
@@ -756,6 +773,7 @@ export default {
           delete data._jv;
           this.postComments = [...this.postComments, ...data];
           this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
+          console.log('回复列表', this.postComments);
           if (data.length == 0) {
             this.contentnomoreVal = this.t.noComment;
           } else {
@@ -1013,14 +1031,14 @@ export default {
       this.commentIndex = commentIndex;
       this.postOpera(postId, '4', canLike, isLiked, commentPost);
     },
-    // 下拉加载
-    pullDown() {
-      if (this.loadingType !== 'more') {
-        return;
-      }
-      this.pageNum += 1;
-      this.loadPostComments();
-    },
+    // // 下拉加载
+    // pullDown() {
+    //   if (this.loadingType !== 'more') {
+    //     return;
+    //   }
+    //   this.pageNum += 1;
+    //   this.loadPostComments();
+    // },
     // 头像失效
     imageError() {
       this.imageStatus = false;
@@ -1276,7 +1294,7 @@ page {
 }
 .ft-gap {
   width: 100%;
-  margin-bottom: 80rpx;
+  // margin-bottom: 80rpx;
 }
 .det-ft {
   position: fixed;

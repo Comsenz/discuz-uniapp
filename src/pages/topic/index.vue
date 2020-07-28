@@ -1,13 +1,14 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content">
     <view v-if="loaded">
-      <scroll-view
+      <!--<scroll-view
         scroll-y="true"
         scroll-with-animation="true"
         show-scrollbar="false"
         class="scroll-y"
         @scrolltolower="pullDown"
-      >
+      >-->
+      <view class="scroll-y">
         <view class="ft-gap">
           <view class="bg-white">
             <view class="detail-tip" v-if="thread.type == 2 && thread.threadVideo.status == 0">
@@ -219,17 +220,17 @@
             </view>-->
             </view>
           </view>
+          <qui-load-more
+            :status="loadingType"
+            :content-text="{
+              contentdown: c.contentdown,
+              contentrefresh: c.contentrefresh,
+              contentnomore: contentnomoreVal,
+            }"
+          ></qui-load-more>
         </view>
-
-        <qui-load-more
-          :status="loadingType"
-          :content-text="{
-            contentdown: c.contentdown,
-            contentrefresh: c.contentrefresh,
-            contentnomore: contentnomoreVal,
-          }"
-        ></qui-load-more>
-      </scroll-view>
+      </view>
+      <!--</scroll-view>-->
       <!--详情页底部-->
       <view
         class="det-ft"
@@ -538,8 +539,9 @@ export default {
       // topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
       posts: [], // 评论列表数据
       loadingType: 'more', // 上拉加载状态
+      scrollTop: 0,
       pageNum: 1, // 这是主题回复当前页数
-      pageSize: 20, // 这是主题回复每页数据条数
+      pageSize: 5, // 这是主题回复每页数据条数
       payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
       loadDetailCommnetStatusId: 0,
       postIndex: '', // 点击主题评论时的index
@@ -814,6 +816,7 @@ export default {
       this.loadThread();
     });
   },
+  // 下拉刷新
   onPullDownRefresh() {
     console.log('refresh');
     const _this = this;
@@ -822,6 +825,18 @@ export default {
       _this.loadThreadPosts();
       uni.stopPullDownRefresh();
     }, 1000);
+  },
+  // 上拉加载
+  onReachBottom() {
+    if (this.loadingType !== 'more') {
+      return;
+    }
+    this.pageNum += 1;
+    this.loadThreadPosts();
+  },
+  // 监听页面滚动，参数为Object
+  onPageScroll(event) {
+    this.scrollTop = event.scrollTop;
   },
   created() {
     uni.$on('logind', () => {
@@ -2068,14 +2083,14 @@ export default {
       this.cancel();
     },
 
-    // 下拉加载
-    pullDown() {
-      if (this.loadingType !== 'more') {
-        return;
-      }
-      this.pageNum += 1;
-      this.loadThreadPosts();
-    },
+    // // 下拉加载
+    // pullDown() {
+    //   if (this.loadingType !== 'more') {
+    //     return;
+    //   }
+    //   this.pageNum += 1;
+    //   this.loadThreadPosts();
+    // },
     codeImgChange(params) {
       if (!params.show) {
         clearInterval(payWechat);
@@ -2772,4 +2787,7 @@ page {
     font-size: $fg-f26;
   }
 }
+// .scroll-y {
+//   max-height: 100vh;
+// }
 </style>

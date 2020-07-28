@@ -86,13 +86,15 @@
     {
       "path": "pages/topic/index",
       "style": {
-        "navigationBarTitleText": "内容详情页"
+        "navigationBarTitleText": "内容详情页",
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/topic/comment",
       "style": {
-        "navigationBarTitleText": "评论详情页"
+        "navigationBarTitleText": "评论详情页",
+        "enablePullDownRefresh": true
       }
     },
     //个人主页和我的部分页面
