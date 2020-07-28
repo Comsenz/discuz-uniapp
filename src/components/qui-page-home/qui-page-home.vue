@@ -427,9 +427,11 @@ export default {
       }
 
       if (event.detail.scrollTop + this.navbarHeight + 20 >= this.navTop) {
+        console.log('falsefalsefalsefalse');
         this.headerShow = false;
         this.navBarTransform = 'none';
       } else {
+        console.log('truetruetruetruetrue');
         this.headerShow = true;
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
