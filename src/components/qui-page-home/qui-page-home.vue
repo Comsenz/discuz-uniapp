@@ -242,7 +242,7 @@ export default {
   data() {
     return {
       navBarTransform,
-      suspended: false, // 是否吸顶状态
+      // suspended: false, // 是否吸顶状态
       checkoutTheme: false, // 切换主题  搭配是否吸顶使用
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
       threadEssence: '', // 筛选精华 '' 不筛选 yes 精华 no 非精华
@@ -389,6 +389,10 @@ export default {
   },
   destroyed() {
     uni.$off('logind');
+    // #ifdef H5
+    uni.$off('updateNoticePage');
+    uni.$off('updateMy');
+    // #endif
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
@@ -410,6 +414,16 @@ export default {
         title: this.forums.set_site.site_name,
       });
     }
+
+    // #ifdef H5
+    uni.$on('updateNoticePage', () => {
+      this.headerShow = true;
+    });
+
+    uni.$on('updateMy', () => {
+      this.headerShow = true;
+    });
+    // #endif
   },
   methods: {
     ...mapMutations({
@@ -427,11 +441,9 @@ export default {
       }
 
       if (event.detail.scrollTop + this.navbarHeight + 20 >= this.navTop) {
-        console.log('falsefalsefalsefalse');
         this.headerShow = false;
         this.navBarTransform = 'none';
       } else {
-        console.log('truetruetruetruetrue');
         this.headerShow = true;
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }

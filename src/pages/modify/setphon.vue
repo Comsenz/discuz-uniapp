@@ -104,10 +104,8 @@ export default {
     this.typebind = arr.type || 'bind';
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
-      console.log('22222');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
-      console.log('111');
       this.btnButton();
       this.setphon();
     });
