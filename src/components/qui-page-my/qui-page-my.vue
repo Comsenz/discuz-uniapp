@@ -109,7 +109,7 @@
     <uni-popup ref="popup" type="center">
       <uni-popup-dialog
         type="warn"
-        content="点击下面的确定解绑按钮后，您将解除微信与本账号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本账号！"
+        content="点击下面的确定解绑按钮后，您将解除微信与本帐号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本帐号！"
         :before-close="true"
         @close="handleClickCancel"
         @confirm="handleClickOk"

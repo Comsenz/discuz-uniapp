@@ -141,8 +141,9 @@
     {
       "path": "pages/profile/index",
       "style": {
-        "navigationBarTitleText": "个人主页"
-        // "enablePullDownRefresh": true
+        "navigationBarTitleText": "个人主页",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 80
       }
     },
     {

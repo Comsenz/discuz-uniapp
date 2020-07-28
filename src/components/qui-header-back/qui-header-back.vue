@@ -95,6 +95,9 @@ export default {
       if (index === '1') {
         uni.$emit('updateNoticePage');
       }
+      if (index === '2') {
+        uni.$emit('updateMy');
+      }
       uni.navigateTo({
         url: pageUrl,
       });
@@ -115,7 +118,7 @@ export default {
 .qui-back {
   position: fixed;
   top: 0;
-  z-index: 2000;
+  z-index: 200;
   width: 100%;
   padding: 9px 20px;
   padding-left: 16px;

@@ -284,7 +284,7 @@ export default {
 .ft-box {
   position: relative;
   // display: flex;
-  width: 21%;
+  width: 22%;
   height: 90rpx;
   padding-left: 40rpx;
   font-size: $fg-f26;

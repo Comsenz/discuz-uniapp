@@ -99,13 +99,13 @@ export default {
     };
   },
   onLoad(arr) {
+    console.log('onLoadonLoadonLoad');
     this.userid = this.usersid;
     this.typebind = arr.type || 'bind';
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
       this.ticket = result.ticket;
       this.randstr = result.randstr;
-      console.log('111');
       this.btnButton();
       this.setphon();
     });
@@ -175,7 +175,6 @@ export default {
         },
         fail() {
           uni.hideLoading();
-          // _this.postLoading = false;
         },
       });
       // #endif

@@ -57,7 +57,7 @@
               @previewPicture="payClickShow"
               @tagClick="tagClick"
             >
-              <!--<view slot="follow" v-if="thread.user.follow != null">
+              <view slot="follow" :key="followStatus" v-if="thread.user.follow != null">
                 <view
                   class="themeItem__header__follow"
                   @tap="
@@ -85,11 +85,9 @@
                     }}
                   </text>
                 </view>
-              </view>-->
+              </view>
             </qui-topic-content>
-            <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
-            {{ p.pay }}
-          </qui-button> -->
+
             <!-- 已支付用户列表 -->
             <view v-if="paidStatus">
               <qui-person-list
@@ -160,7 +158,7 @@
               >
                 {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
               </view>
-              <!--<view class="comment-sort" v-if="thread.postCount > 1">
+              <view class="comment-sort" v-if="thread.postCount > 1">
                 <view class="comment-sort-operaCl" @click="sortOperaClick">
                   <qui-icon
                     name="icon-sort1"
@@ -180,7 +178,7 @@
                     @click="sortSelectChoice"
                   ></qui-drop-down>
                 </view>
-              </view>-->
+              </view>
             </view>
 
             <view v-if="posts.length > 0">
@@ -697,6 +695,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      followStatus: '', // 当前关注状态
     };
   },
   onReady() {},
@@ -1145,8 +1144,12 @@ export default {
           } else if (type === '2') {
             if (data.isDeleted) {
               uni.navigateBack({
-                url: `/pages/home/index`,
+                delta: 1,
               });
+
+              // uni.navigateBack({
+              //   url: `/pages/home/index`,
+              // });
             } else {
               // 主题删除失败
             }
@@ -2140,6 +2143,7 @@ export default {
             this.refreshVal = true;
           });
           this.sortVal = 'createdAt';
+          this.posts = [];
           this.loadThreadPosts();
         }
       } else if (param.type === '1') {
@@ -2150,6 +2154,7 @@ export default {
           console.log('4');
           this.refreshVal = false;
           this.sortVal = '-createdAt';
+          this.posts = [];
           this.loadThreadPosts();
           this.$nextTick(() => {
             this.refreshVal = true;
@@ -2164,6 +2169,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
       }
       // #endif
+      const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
         _jv: {
           type: 'follow',
@@ -2171,25 +2177,26 @@ export default {
         type: 'user_follow',
         to_user_id: userInfo.id,
       };
-      status
-        .run(() => this.$store.dispatch('jv/post', params))
-        .then(res => {
-          console.log(res, '这是结果');
-          if (res.is_mutual == 0) {
-            console.log(res, '~!~~111');
-            this.thread.user.follow = 1;
-          } else {
-            console.log(res, '~~~222');
-            this.thread.user.follow = 2;
-          }
-        });
+      this.$store.dispatch('jv/post', params).then(res => {
+        // console.log(res, '这是结果');
+        if (res.is_mutual == 0) {
+          this.thread.user.follow = 1;
+          originUser.follow = 1;
+          this.followStatus = 1;
+        } else {
+          this.thread.user.follow = 2;
+          originUser.follow = 2;
+          this.followStatus = 2;
+        }
+      });
     },
     // 取消关注
     deleteFollow(userInfo) {
-      console.log(userInfo, '这是取消');
+      const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
-        console.log('成功了');
         this.thread.user.follow = 0;
+        originUser.follow = 0;
+        this.followStatus = 0;
       });
     },
   },
