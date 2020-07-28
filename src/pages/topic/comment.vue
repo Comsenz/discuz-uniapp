@@ -28,7 +28,35 @@
                 :user-role="post.user.groups"
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
-              ></qui-topic-content>
+              >
+                <view slot="follow" v-if="post.user.follow != null">
+                  <view
+                    class="themeItem__header__follow"
+                    @tap="post.user.follow === 0 ? addFollow(post.user) : deleteFollow(post.user)"
+                  >
+                    <qui-icon
+                      class="icon-follow"
+                      :name="post.user.follow === 0 ? 'icon-follow' : 'icon-each-follow'"
+                      :color="
+                        post.user.follow === 0
+                          ? '#777'
+                          : post.user.follow === 1
+                          ? themeColor
+                          : '#ff8888'
+                      "
+                    ></qui-icon>
+                    <text>
+                      {{
+                        post.user.follow === 0
+                          ? i18n.t('profile.following')
+                          : post.user.follow === 1
+                          ? i18n.t('profile.followed')
+                          : i18n.t('profile.mutualfollow')
+                      }}
+                    </text>
+                  </view>
+                </view>
+              </qui-topic-content>
               <view class="thread-box" v-if="loadDetailStatus && !thread.isApproved == 0">
                 <view class="thread" v-if="thread.isApproved == 1">
                   <view class="thread__header">
@@ -111,11 +139,34 @@
             </view>
             <!-- 评论 -->
             <view class="comment">
-              <view
-                class="comment-num"
-                :style="{ paddingBottom: post.postCount > 1 ? '0' : '40rpx' }"
-              >
-                {{ post.replyCount }}{{ t.item }}{{ t.comment }}
+              <view class="comment-top">
+                <view
+                  class="comment-num"
+                  :style="{ paddingBottom: post.postCount > 1 ? '0' : '40rpx' }"
+                >
+                  {{ post.replyCount }}{{ t.item }}{{ t.comment }}
+                </view>
+                <view class="comment-sort" v-if="thread.postCount > 1">
+                  <view class="comment-sort-operaCl" @click="sortOperaClick">
+                    <qui-icon
+                      name="icon-sort1"
+                      class="icon-management"
+                      color="#777"
+                      size="30"
+                    ></qui-icon>
+                  </view>
+                  <view>
+                    <qui-drop-down
+                      posival="absolute"
+                      :show="sortSeleShow"
+                      :list="sortSelectList"
+                      :top="60"
+                      :right="0"
+                      :width="220"
+                      @click="sortSelectChoice"
+                    ></qui-drop-down>
+                  </view>
+                </view>
               </view>
               <view v-if="postComments.length > 0">
                 <view v-for="(commentPost, index) in postComments" :key="index">
@@ -357,6 +408,12 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      sortSeleShow: false, // 排序菜单状态
+      sortSelectList: [
+        { text: this.i18n.t('topic.sortTimeSequence'), type: '0', canOpera: true },
+        { text: this.i18n.t('topic.sortTimeReverse'), type: '1', canOpera: true },
+      ], // 评论排序菜单
+      sortVal: 'createdAt', // 排序值
     };
   },
   computed: {
@@ -691,6 +748,7 @@ export default {
         'filter[isDeleted]': 'no',
         'filter[isComment]': 'yes',
         include: ['replyUser', 'user.groups', 'user', 'images'],
+        sort: this.sortVal,
       };
       this.loadPostCommentStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
@@ -714,7 +772,84 @@ export default {
       });
       return arr;
     },
+    // 添加关注
+    addFollow(userInfo) {
+      // #ifdef H5
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      // #endif
+      const params = {
+        _jv: {
+          type: 'follow',
+        },
+        type: 'user_follow',
+        to_user_id: userInfo.id,
+      };
+      status
+        .run(() => this.$store.dispatch('jv/post', params))
+        .then(res => {
+          console.log(res, '这是结果');
+          if (res.is_mutual == 0) {
+            console.log(res, '~!~~111');
+            this.post.user.follow = 1;
+          } else {
+            console.log(res, '~~~222');
+            this.post.user.follow = 2;
+          }
+        });
+    },
+    // 取消关注
+    deleteFollow(userInfo) {
+      console.log(userInfo, '这是取消');
+      this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
+        console.log('成功了');
+        this.post.user.follow = 0;
+      });
+    },
+    // 点击排序
+    sortOperaClick() {
+      this.sortSeleShow = !this.sortSeleShow;
+    },
+    // 管理菜单内标签点击事件
+    sortSelectChoice(param) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.getters['session/get']('auth').open();
+      }
+      this.sortSeleShow = false;
 
+      if (param.type === '0') {
+        if (this.sortVal === 'createdAt') {
+          console.log('1');
+          this.$refs.toast.show({ message: this.t.itsAlreadyWantedSort });
+        } else {
+          console.log('2');
+          this.refreshVal = false;
+          // this.refreshVal = true;
+
+          this.$nextTick(() => {
+            this.refreshVal = true;
+          });
+          this.sortVal = 'createdAt';
+          this.postComments = [];
+          this.loadPostComments();
+        }
+      } else if (param.type === '1') {
+        if (this.sortVal === '-createdAt') {
+          console.log('3');
+          this.$refs.toast.show({ message: this.t.itsAlreadyWantedSort });
+        } else {
+          console.log('4');
+          this.refreshVal = false;
+          this.sortVal = '-createdAt';
+          this.postComments = [];
+          this.loadPostComments();
+          this.$nextTick(() => {
+            this.refreshVal = true;
+          });
+        }
+      }
+    },
     // 跳转到用户主页
     personJump(id) {
       uni.navigateTo({
@@ -1052,12 +1187,27 @@ page {
   background: --color(--qui-BG-2);
   box-sizing: border-box;
 }
-.comment-num {
+.comment-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 0 40rpx;
+}
+.comment-num {
   font-size: $fg-f28;
   font-weight: bold;
   line-height: 37rpx;
 }
+.comment-sort {
+  position: relative;
+  z-index: 1;
+}
+// .comment-num {
+//   padding: 0 40rpx;
+//   font-size: $fg-f28;
+//   font-weight: bold;
+//   line-height: 37rpx;
+// }
 .comment-child {
   display: flex;
   flex-direction: column;

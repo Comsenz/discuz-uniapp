@@ -91,6 +91,11 @@ export default {
     this.getFollowingList();
   },
   methods: {
+    pullDownRefresh() {
+      this.pageNum = 1;
+      this.followingList = [];
+      this.getFollowingList('pullDownRefresh');
+    },
     // 获取用户关注列表
     getFollowingList(type) {
       this.loadingType = 'loading';
@@ -112,6 +117,9 @@ export default {
             this.followingList = res;
           } else {
             this.followingList = [...this.followingList, ...res];
+          }
+          if (type && type === 'pullDownRefresh') {
+            uni.stopPullDownRefresh();
           }
         });
     },
