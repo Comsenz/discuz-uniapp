@@ -57,7 +57,7 @@
               @previewPicture="payClickShow"
               @tagClick="tagClick"
             >
-              <!--<view slot="follow" v-if="thread.user.follow != null">
+              <view slot="follow" v-if="thread.user.follow != null">
                 <view
                   class="themeItem__header__follow"
                   @tap="
@@ -85,11 +85,9 @@
                     }}
                   </text>
                 </view>
-              </view>-->
+              </view>
             </qui-topic-content>
-            <!-- <qui-button size="max" type="primary" class="publishBtn" @tap="payClickShow()">
-            {{ p.pay }}
-          </qui-button> -->
+
             <!-- 已支付用户列表 -->
             <view v-if="paidStatus">
               <qui-person-list
