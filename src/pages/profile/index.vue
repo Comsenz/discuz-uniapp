@@ -1,14 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="profile">
     <view v-if="loaded">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        @scroll="scroll"
-        class="scroll-y"
-      >
+      <view class="scroll-y">
         <view class="profile-info">
           <view class="profile-info__box">
             <view class="profile-info__box__detail">
@@ -103,7 +96,7 @@
             </view>
           </view>
         </view>
-      </scroll-view>
+      </view>
     </view>
     <qui-page-message v-else-if="loaded === false"></qui-page-message>
   </qui-page>
@@ -178,13 +171,20 @@ export default {
     // uni.startPullDownRefresh();
   },
   onPullDownRefresh() {
-    console.log('onPullDownRefresh');
     const item = ['topic', 'following', 'followers', 'like'];
     const { current } = this;
     if (!this.$refs[item[current]]) {
       return;
     }
     this.$refs[item[current]].pullDownRefresh();
+  },
+  onReachBottom() {
+    const { current } = this;
+    const item = ['topic', 'following', 'followers', 'like'];
+    this.$refs[item[current]].pullDown();
+  },
+  onPageScroll(event) {
+    this.scrollTop = event.scrollTop;
   },
   // 解决左上角返回数据不刷新情况
   onShow() {
@@ -211,9 +211,9 @@ export default {
     };
   },
   methods: {
-    scroll(event) {
-      this.scrollTop = event.detail.scrollTop;
-    },
+    // scroll(event) {
+    //   this.scrollTop = event.detail.scrollTop;
+    // },
     onClickItem(e) {
       if (e.currentIndex !== this.current) {
         this.current = e.currentIndex;
@@ -315,11 +315,11 @@ export default {
     changeFollow(e) {
       this.getUserInfo(e.userId);
     },
-    pullDown() {
-      const { current } = this;
-      const item = ['topic', 'following', 'followers', 'like'];
-      this.$refs[item[current]].pullDown();
-    },
+    // pullDown() {
+    //   const { current } = this;
+    //   const item = ['topic', 'following', 'followers', 'like'];
+    //   this.$refs[item[current]].pullDown();
+    // },
     // 点击分享事件
     handleClickShare(e) {
       this.nowThreadId = e;
@@ -390,6 +390,9 @@ export default {
 }
 .profile-tabs__content {
   padding-top: 30rpx;
+  .items {
+    background: --color(--qui-BG-1);
+  }
 }
 /deep/ .qui-tabs {
   background: --color(--qui-BG-2);
