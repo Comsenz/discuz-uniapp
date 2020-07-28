@@ -397,7 +397,7 @@ export default {
       loadingType: 'more', // 上拉加载状态
       scrollTop: 0,
       pageNum: 1, //这是主题回复当前页数
-      pageSize: 5, //这是主题回复每页数据条数
+      pageSize: 20, //这是主题回复每页数据条数
       contentnomoreVal: '', //数据加载状态提示 暂无评论/没有更多数据
       url: '',
       imageStatus: true, // 头像地址错误时显示默认头像

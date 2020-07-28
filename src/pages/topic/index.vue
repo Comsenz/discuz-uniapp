@@ -541,7 +541,7 @@ export default {
       loadingType: 'more', // 上拉加载状态
       scrollTop: 0,
       pageNum: 1, // 这是主题回复当前页数
-      pageSize: 5, // 这是主题回复每页数据条数
+      pageSize: 20, // 这是主题回复每页数据条数
       payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
       loadDetailCommnetStatusId: 0,
       postIndex: '', // 点击主题评论时的index
