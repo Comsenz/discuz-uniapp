@@ -29,7 +29,7 @@
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
               >
-                <view slot="follow" v-if="post.user.follow != null">
+                <view slot="follow" :key="followStatus" v-if="post.user.follow != null">
                   <view
                     class="themeItem__header__follow"
                     @tap="post.user.follow === 0 ? addFollow(post.user) : deleteFollow(post.user)"
@@ -414,6 +414,7 @@ export default {
         { text: this.i18n.t('topic.sortTimeReverse'), type: '1', canOpera: true },
       ], // 评论排序菜单
       sortVal: 'createdAt', // 排序值
+      followStatus: '', // 当前关注状态
     };
   },
   computed: {
@@ -779,6 +780,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
       }
       // #endif
+      const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
         _jv: {
           type: 'follow',
@@ -786,25 +788,26 @@ export default {
         type: 'user_follow',
         to_user_id: userInfo.id,
       };
-      status
-        .run(() => this.$store.dispatch('jv/post', params))
-        .then(res => {
-          console.log(res, '这是结果');
-          if (res.is_mutual == 0) {
-            console.log(res, '~!~~111');
-            this.post.user.follow = 1;
-          } else {
-            console.log(res, '~~~222');
-            this.post.user.follow = 2;
-          }
-        });
+      this.$store.dispatch('jv/post', params).then(res => {
+        // console.log(res, '这是结果');
+        if (res.is_mutual == 0) {
+          this.post.user.follow = 1;
+          originUser.follow = 1;
+          this.followStatus = 1;
+        } else {
+          this.post.user.follow = 2;
+          originUser.follow = 2;
+          this.followStatus = 2;
+        }
+      });
     },
     // 取消关注
     deleteFollow(userInfo) {
-      console.log(userInfo, '这是取消');
+      const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
-        console.log('成功了');
         this.post.user.follow = 0;
+        originUser.follow = 0;
+        this.followStatus = 0;
       });
     },
     // 点击排序
@@ -1535,5 +1538,18 @@ page {
   right: 0;
   width: 31rpx;
   height: 41rpx;
+}
+.themeItem__header__follow {
+  align-self: flex-start;
+  width: 160rpx;
+  margin-right: 29rpx;
+  line-height: 1;
+  text-align: right;
+  flex-shrink: 0;
+
+  .icon-follow {
+    margin-right: 7rpx;
+    font-size: $fg-f26;
+  }
 }
 </style>
