@@ -99,6 +99,7 @@ export default {
     };
   },
   onLoad(arr) {
+    console.log('onLoadonLoadonLoad');
     this.userid = this.usersid;
     this.typebind = arr.type || 'bind';
     // 接受验证码captchaResult
@@ -176,7 +177,6 @@ export default {
         },
         fail() {
           uni.hideLoading();
-          // _this.postLoading = false;
         },
       });
       // #endif
