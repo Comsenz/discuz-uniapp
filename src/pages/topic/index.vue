@@ -158,7 +158,7 @@
               >
                 {{ thread.postCount - 1 }}{{ t.item }}{{ t.comment }}
               </view>
-              <!--<view class="comment-sort" v-if="thread.postCount > 1">
+              <view class="comment-sort" v-if="thread.postCount > 1">
                 <view class="comment-sort-operaCl" @click="sortOperaClick">
                   <qui-icon
                     name="icon-sort1"
@@ -178,7 +178,7 @@
                     @click="sortSelectChoice"
                   ></qui-drop-down>
                 </view>
-              </view>-->
+              </view>
             </view>
 
             <view v-if="posts.length > 0">
@@ -695,6 +695,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      followStatus: '', // 当前关注状态
     };
   },
   onReady() {},
@@ -2142,6 +2143,7 @@ export default {
             this.refreshVal = true;
           });
           this.sortVal = 'createdAt';
+          this.posts = [];
           this.loadThreadPosts();
         }
       } else if (param.type === '1') {
@@ -2152,6 +2154,7 @@ export default {
           console.log('4');
           this.refreshVal = false;
           this.sortVal = '-createdAt';
+          this.posts = [];
           this.loadThreadPosts();
           this.$nextTick(() => {
             this.refreshVal = true;
