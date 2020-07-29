@@ -320,6 +320,17 @@ export default {
       categoryId: state => state.session.categoryId,
       categoryIndex: state => state.session.categoryIndex,
     }),
+    setIndex: {
+      get() {
+        const index = this.$store.state.footerTab.footerIndex;
+        return index;
+      },
+      set(index) {
+        if (index === 1 || index === 2) {
+          this.headerShow = true;
+        }
+      },
+    },
   },
   created() {
     // #ifdef  H5
