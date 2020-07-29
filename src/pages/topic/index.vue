@@ -1652,7 +1652,14 @@ export default {
     // 管理菜单内标签点击事件
     selectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (param.type === '0') {
         uni.redirectTo({
@@ -1673,8 +1680,14 @@ export default {
     // 跳转到用户主页
     personJump(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1683,8 +1696,14 @@ export default {
     // 主题支付
     payClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.payStatus = false;
       this.payShowStatus = true;
@@ -1897,9 +1916,16 @@ export default {
     // 跳转到评论详情页
     commentJump(threadId, postId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
+
       uni.navigateTo({
         url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
       });
@@ -1907,8 +1933,14 @@ export default {
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus, post);
@@ -1931,8 +1963,14 @@ export default {
     // 评论的回复
     replyComment(postId, postIndex) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (!this.thread.canReply) {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -1948,8 +1986,14 @@ export default {
     // 点击图片
     imageClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       // this.previewImg();
     },
@@ -1977,24 +2021,42 @@ export default {
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.postOpera(postId, '1', canLike, isLiked);
     },
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;
@@ -2039,8 +2101,14 @@ export default {
     // 分享
     shareClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
@@ -2149,7 +2217,14 @@ export default {
     // 管理菜单内标签点击事件
     sortSelectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.sortSeleShow = false;
 
