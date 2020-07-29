@@ -6,6 +6,7 @@ import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
+import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [user, forums, appCommonH, loginAuth],
@@ -51,6 +52,27 @@ export default {
       login(params);
     }
     // #endif
+    this.$u.event.$on('logind', () => {
+      if (this.user && this.user.paid) {
+        this.isPaid = this.user.paid;
+      }
+      console.log('----this.user-----', this.user);
+      if (this.site_mode !== SITE_PAY || this.isPaid) {
+        const pages = getCurrentPages();
+        const url = pages[pages.length - 1].route;
+        uni.navigateTo({
+          url,
+        });
+      }
+      if (this.site_mode === SITE_PAY && !this.isPaid) {
+        uni.navigateTo({
+          url: '/pages/site/info',
+        });
+      }
+    });
+  },
+  onUnload() {
+    this.$u.event.$off('logind');
   },
 };
 </script>
