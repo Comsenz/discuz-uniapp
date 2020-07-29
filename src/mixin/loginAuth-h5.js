@@ -7,7 +7,7 @@ import { i18n } from '@/locale';
 module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin(code) {
+    handleLogin(url = '/pages/home/index', code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (
         isWeixin &&
@@ -22,13 +22,12 @@ module.exports = {
         });
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login('', '', code);
+        this.login(url, '', '', code);
       }
       return false;
     },
-    login(nickname, wxtoken, code) {
+    login(url, nickname, wxtoken, code) {
       const { isWeixin } = appCommonH.isWeixin();
-      const url = '/pages/home/index';
       if (isWeixin) {
         // 微信内
         if (this.forums && this.forums.passport && this.forums.passport.offiaccount_close) {

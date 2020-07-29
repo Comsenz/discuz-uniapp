@@ -1,13 +1,14 @@
 <template>
   <qui-page :data-qui-theme="theme" class="content">
     <view v-if="loaded">
-      <scroll-view
+      <!--<scroll-view
         scroll-y="true"
         scroll-with-animation="true"
         show-scrollbar="false"
         class="scroll-y"
         @scrolltolower="pullDown"
-      >
+      >-->
+      <view class="scroll-y">
         <view class="ft-gap">
           <view class="bg-white">
             <view class="detail-tip" v-if="thread.type == 2 && thread.threadVideo.status == 0">
@@ -219,17 +220,17 @@
             </view>-->
             </view>
           </view>
+          <qui-load-more
+            :status="loadingType"
+            :content-text="{
+              contentdown: c.contentdown,
+              contentrefresh: c.contentrefresh,
+              contentnomore: contentnomoreVal,
+            }"
+          ></qui-load-more>
         </view>
-
-        <qui-load-more
-          :status="loadingType"
-          :content-text="{
-            contentdown: c.contentdown,
-            contentrefresh: c.contentrefresh,
-            contentnomore: contentnomoreVal,
-          }"
-        ></qui-load-more>
-      </scroll-view>
+      </view>
+      <!--</scroll-view>-->
       <!--详情页底部-->
       <view
         class="det-ft"
@@ -505,6 +506,7 @@ import forums from '@/mixin/forums';
 import detectionModel from '@/mixin/detectionModel';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
+import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
@@ -521,6 +523,7 @@ export default {
     forums,
     // #ifdef H5
     wxshare,
+    loginAuth,
     // #endif
     detectionModel,
   ],
@@ -538,6 +541,7 @@ export default {
       // topicStatus: 1, // 0 是不合法 1 是合法 2 是忽略
       posts: [], // 评论列表数据
       loadingType: 'more', // 上拉加载状态
+      scrollTop: 0,
       pageNum: 1, // 这是主题回复当前页数
       pageSize: 20, // 这是主题回复每页数据条数
       payThreadTypeText: '', // 主题支付类型不同，支付按钮文字显示不同的支付提示
@@ -814,14 +818,27 @@ export default {
       this.loadThread();
     });
   },
+  // 下拉刷新
   onPullDownRefresh() {
-    console.log('refresh');
+    // console.log('refresh');
     const _this = this;
     setTimeout(function() {
       _this.loadThread();
       _this.loadThreadPosts();
       uni.stopPullDownRefresh();
     }, 1000);
+  },
+  // 上拉加载
+  onReachBottom() {
+    if (this.loadingType !== 'more') {
+      return;
+    }
+    this.pageNum += 1;
+    this.loadThreadPosts();
+  },
+  // 监听页面滚动，参数为Object
+  onPageScroll(event) {
+    this.scrollTop = event.scrollTop;
   },
   created() {
     uni.$on('logind', () => {
@@ -1635,7 +1652,14 @@ export default {
     // 管理菜单内标签点击事件
     selectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (param.type === '0') {
         uni.redirectTo({
@@ -1656,8 +1680,14 @@ export default {
     // 跳转到用户主页
     personJump(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
@@ -1666,8 +1696,14 @@ export default {
     // 主题支付
     payClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.payStatus = false;
       this.payShowStatus = true;
@@ -1698,8 +1734,14 @@ export default {
     // 打赏
     rewardClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (this.user._jv.id === this.thread.user._jv.id) {
         this.$refs.toast.show({ message: this.t.iCantRewardMyself });
@@ -1874,9 +1916,16 @@ export default {
     // 跳转到评论详情页
     commentJump(threadId, postId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
+
       uni.navigateTo({
         url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
       });
@@ -1884,8 +1933,14 @@ export default {
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.postIndex = index;
       this.postOpera(postId, type, canStatus, isStatus, post);
@@ -1908,8 +1963,14 @@ export default {
     // 评论的回复
     replyComment(postId, postIndex) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (!this.thread.canReply) {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -1925,8 +1986,14 @@ export default {
     // 点击图片
     imageClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       // this.previewImg();
     },
@@ -1954,24 +2021,42 @@ export default {
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.postOpera(postId, '1', canLike, isLiked);
     },
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.threadOpera(id, canStatus, isStatus, type);
     },
     // 主题回复
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;
@@ -2016,8 +2101,14 @@ export default {
     // 分享
     shareClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
@@ -2068,14 +2159,14 @@ export default {
       this.cancel();
     },
 
-    // 下拉加载
-    pullDown() {
-      if (this.loadingType !== 'more') {
-        return;
-      }
-      this.pageNum += 1;
-      this.loadThreadPosts();
-    },
+    // // 下拉加载
+    // pullDown() {
+    //   if (this.loadingType !== 'more') {
+    //     return;
+    //   }
+    //   this.pageNum += 1;
+    //   this.loadThreadPosts();
+    // },
     codeImgChange(params) {
       if (!params.show) {
         clearInterval(payWechat);
@@ -2126,7 +2217,14 @@ export default {
     // 管理菜单内标签点击事件
     sortSelectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       this.sortSeleShow = false;
 
@@ -2772,4 +2870,7 @@ page {
     font-size: $fg-f26;
   }
 }
+// .scroll-y {
+//   max-height: 100vh;
+// }
 </style>

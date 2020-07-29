@@ -223,6 +223,7 @@ export default {
     deleteCommentSure: '确定删除这条评论吗？',
     deleteReplySure: '确定删除这条回复吗？',
     deleteNewsSure: '确定删除这条消息吗？',
+    deleteFavoriteSure: '确定删除这条收藏吗？',
   },
   topic: {
     topicPageTitle: '内容详情页',
@@ -256,7 +257,7 @@ export default {
     paymentViewPicture: '查看图片',
     paymentViewRemainingContent: '查看剩余内容',
     paymentViewVideo: '查看视频',
-    publishExamineTip: '您发布的内容正在审核中哦',
+    publishExamineTip: '您发布的内容正在审核中',
     examineTip: '内容正在审核中，审核通过后才能正常显示！',
     underReview: '内容正在审核中，审核通过后才能生成海报',
     commentTip: '当前评论正在审核中，审核通过后才能正常显示！',

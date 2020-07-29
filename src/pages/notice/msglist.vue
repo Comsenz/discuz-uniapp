@@ -20,12 +20,14 @@
           >
             <qui-avatar
               v-if="item.user_id === currentLoginId"
+              :is-real="item.user.isReal"
               class="chat-box__con__msg__mine__img"
               :user="userInfo"
               @click="jumpUserPage(item.user_id)"
             />
             <qui-avatar
               v-if="item.user_id !== currentLoginId"
+              :is-real="item.user.isReal"
               class="chat-box__con__msg__other__img"
               :user="item.user"
               @click="jumpUserPage(item.user_id)"

@@ -125,9 +125,10 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .page-sinature /deep/ {
+  background-color: --color(--qui-BG-2);
+  box-sizing: border-box;
   .aogph {
     width: 100vw;
-    height: 100vh;
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
