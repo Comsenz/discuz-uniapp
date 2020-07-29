@@ -484,12 +484,21 @@ export default {
   box-sizing: border-box;
   .cash {
     width: 100vw;
+    /* #ifndef H5 */
+    height: 100vh;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
   .cash-content {
     padding: 31rpx 0 0 40rpx;
     box-sizing: border-box;
   }
+  /* #ifdef H5 */
+  .uni-input-input {
+    color: --color(--qui-FC-333);
+  }
+  /* #endif */
   .cash-content-tab,
   .cash-content-tabi {
     padding: 0 40rpx 0 0;

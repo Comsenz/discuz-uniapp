@@ -213,6 +213,9 @@ export default {
   box-sizing: border-box;
   .chagepas {
     width: 100vw;
+    /* #ifndef H5 */
+    height: 100vh;
+    /* #endif */
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
@@ -221,12 +224,18 @@ export default {
     padding: 31rpx 0 0 40rpx;
     box-sizing: border-box;
   }
+  /* #ifdef H5 */
+  .uni-input-input {
+    color: --color(--qui-FC-333);
+  }
+  /* #endif */
   .chagepas-pas-inpa {
     width: 100%;
     height: 100rpx;
     font-size: $fg-f34;
     font-weight: 400;
     line-height: 100rpx;
+    color: --color(--qui-FC-333);
     text-align: left;
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }

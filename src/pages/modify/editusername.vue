@@ -116,10 +116,15 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .page-ediname /deep/ {
+  height: 100%;
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
   .chagepas {
     width: 100vw;
+    /* #ifndef H5 */
+    height: 100vh;
+    /* #endif */
+    background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
   .chagepas-pas {
@@ -133,16 +138,18 @@ export default {
     font-weight: 400;
     color: --color(--qui-RED);
   }
+  /* #ifdef H5 */
   .uni-input-input {
-    color: --color(--qui-FC-FFF);
+    color: --color(--qui-FC-333);
   }
+  /* #endif */
   .chagepas-pas-inpa {
     width: 100%;
     height: 100rpx;
     font-size: $fg-f34;
     font-weight: 400;
     line-height: 100rpx;
-    color: rgba(221, 221, 221, 1);
+    color: --color(--qui-FC-333);
     text-align: left;
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }

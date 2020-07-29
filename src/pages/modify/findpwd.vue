@@ -365,6 +365,9 @@ export default {
   box-sizing: border-box;
   .retireve {
     width: 100vw;
+    /* #ifndef H5 */
+    height: 100vh;
+    /* #endif */
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
   }
@@ -418,6 +421,11 @@ export default {
     line-height: 100rpx;
     color: --color(--qui-FC-777);
   }
+  /* #ifdef H5 */
+  .uni-input-input {
+    color: --color(--qui-FC-333);
+  }
+  /* #endif */
   .retireve-phon-send {
     display: block;
     height: 70rpx;
