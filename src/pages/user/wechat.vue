@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme"></qui-page>
+  <qui-page :data-qui-theme="theme" :header="false"></qui-page>
 </template>
 <script>
 import user from '@/mixin/user';
@@ -38,6 +38,21 @@ export default {
           } else if (res && res.data && res.data.data && res.data.data.id) {
             console.log('登录成功', res);
             this.logind();
+            if (this.user && this.user.paid) {
+              this.isPaid = this.user.paid;
+            }
+            if (this.site_mode !== SITE_PAY || this.isPaid) {
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              uni.navigateTo({
+                url,
+              });
+            }
+            if (this.site_mode === SITE_PAY && !this.isPaid) {
+              uni.navigateTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: this.i18n.t('user.loginSuccess'),
               duration: 2000,
@@ -52,27 +67,6 @@ export default {
       login(params);
     }
     // #endif
-    this.$u.event.$on('logind', () => {
-      if (this.user && this.user.paid) {
-        this.isPaid = this.user.paid;
-      }
-      console.log('----this.user-----', this.user);
-      if (this.site_mode !== SITE_PAY || this.isPaid) {
-        const pages = getCurrentPages();
-        const url = pages[pages.length - 1].route;
-        uni.navigateTo({
-          url,
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.navigateTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
-  },
-  onUnload() {
-    this.$u.event.$off('logind');
   },
 };
 </script>
