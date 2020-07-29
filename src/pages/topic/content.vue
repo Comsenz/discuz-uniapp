@@ -1,7 +1,7 @@
 <template>
   <qui-page :data-qui-theme="theme" class="pages-content">
     <qui-page-message v-if="!query.id"></qui-page-message>
-    <view v-else>
+    <view v-else class="scroll-y">
       <view class="topic-content-header">
         <view class="topic-content-header_title">#{{ topic.content }}#</view>
         <navigator url="/pages/topic/list">
@@ -80,6 +80,7 @@ export default {
       loadingtype: 'more',
       nowThreadId: 0, // 点击主题ID
       meta: '',
+      scrollTop: 0,
     };
   },
   computed: {
@@ -209,6 +210,18 @@ export default {
     };
   },
   // #endif
+
+  // 下拉刷新
+  onPullDownRefresh() {
+    const _this = this;
+    // _this.topicData = [];
+    setTimeout(function() {
+      _this.uploadItem();
+      _this.loadThreads();
+      uni.stopPullDownRefresh();
+    }, 1000);
+  },
+  // 上拉加载
   onReachBottom() {
     if (this.meta) {
       if (this.meta.pageCount > 1) {
@@ -218,6 +231,11 @@ export default {
     } else {
       this.loadingtype = 'noMore';
     }
+  },
+
+  // 监听页面滚动，参数为Object
+  onPageScroll(event) {
+    this.scrollTop = event.scrollTop;
   },
 };
 </script>
@@ -303,5 +321,8 @@ $otherHeight: 292rpx;
     width: 35%;
     margin: 20vh auto 30rpx;
   }
+}
+.scroll-y {
+  max-height: 100vh;
 }
 </style>

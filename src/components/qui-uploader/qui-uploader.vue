@@ -171,7 +171,13 @@ export default {
         indicator: 'default',
       });
     },
-
+    compare(property) {
+      return (a, b) => {
+        const value1 = a[property];
+        const value2 = b[property];
+        return value1 - value2;
+      };
+    },
     // 上传图片到本地
     uploadClick() {
       const _this = this;
@@ -196,11 +202,11 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.numberdata.push({ state: 0 });
                 _this.newindex.push(res.tempFiles[index]);
-                if (_this.uploadBeforeList.length > _this.count) {
-                  _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                  _this.numberdata = _this.numberdata.slice(0, _this.count);
-                  _this.newindex = _this.newindex.slice(0, _this.count);
-                }
+                // if (_this.uploadBeforeList.length > _this.count) {
+                //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
+                //   _this.numberdata = _this.numberdata.slice(0, _this.count);
+                //   _this.newindex = _this.newindex.slice(0, _this.count);
+                // }
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,
@@ -264,11 +270,12 @@ export default {
               const resObj = {
                 id: JSON.parse(res.data).data.id,
                 type: JSON.parse(res.data).data.type,
-                order: _this.lastOrder,
+                order: imgOrder,
               };
               // console.log(resObj, '这是新增的对象');
               _this.uploadList.push(resObj);
               if (_this.uploadList.length > _this.count) {
+                _this.uploadList.sort(_this.compare('order'));
                 _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
                 _this.uploadList = _this.uploadList.slice(0, _this.count);
                 _this.numberdata = _this.numberdata.slice(0, _this.count);
