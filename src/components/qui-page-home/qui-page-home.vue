@@ -1003,8 +1003,7 @@ export default {
   color: --color(--qui-FC-B2);
   text-align: center;
 }
-
 .copyright_margin {
-  margin-top: -50rpx;
+  margin-top: -130rpx;
 }
 </style>
