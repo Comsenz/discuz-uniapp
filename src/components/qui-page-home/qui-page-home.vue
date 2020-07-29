@@ -135,6 +135,7 @@
         {{ forums.set_site ? forums.set_site.site_record : '' }}
       </a>
     </view>
+    <view class="copyright">Powered by Discuz! Q</view>
     <!-- #endif -->
     <!-- </scroll-view> -->
     <qui-filter-modal
@@ -993,5 +994,11 @@ export default {
     text-decoration: none;
   }
 }
-
+.copyright {
+  width: 100%;
+  height: 40rpx;
+  font-size: $fg-f26;
+  color: --color(--qui-FC-B2);
+  text-align: center;
+}
 </style>
