@@ -135,7 +135,9 @@
         {{ forums.set_site ? forums.set_site.site_record : '' }}
       </a>
     </view>
-    <view class="copyright">Powered by Discuz! Q</view>
+    <view class="copyright" :class="forums.set_site ? '' : 'copyright_margin'">
+      Powered by Discuz! Q
+    </view>
     <!-- #endif -->
     <!-- </scroll-view> -->
     <qui-filter-modal
@@ -1000,5 +1002,9 @@ export default {
   font-size: $fg-f26;
   color: --color(--qui-FC-B2);
   text-align: center;
+}
+
+.copyright_margin {
+  margin-top: -130rpx;
 }
 </style>
