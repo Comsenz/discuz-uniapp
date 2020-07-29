@@ -223,6 +223,7 @@ export default {
     deleteCommentSure: '确定删除这条评论吗？',
     deleteReplySure: '确定删除这条回复吗？',
     deleteNewsSure: '确定删除这条消息吗？',
+    deleteFavoriteSure: '确定删除这条收藏吗？',
   },
   topic: {
     topicPageTitle: '内容详情页',
