@@ -17,7 +17,8 @@
         "navigationBarTitleText": "",
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTextStyle": "black",
-        "navigationStyle": "default"
+        "navigationStyle": "default",
+        "enablePullDownRefresh": true
       }
     }, 
     {
@@ -26,7 +27,8 @@
         "navigationBarTitleText": "话题列表",
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTextStyle": "black",
-        "navigationStyle": "default"
+        "navigationStyle": "default",
+        "enablePullDownRefresh": true
       }
     }, 
     {
