@@ -135,7 +135,7 @@
         {{ forums.set_site ? forums.set_site.site_record : '' }}
       </a>
     </view>
-    <view class="copyright" :class="forums.set_site ? '' : 'copyright_margin'">
+    <view class="copyright" :class="forums.set_site.site_record ? '' : 'copyright_margin'">
       Powered by Discuz! Q
     </view>
     <!-- #endif -->
@@ -1005,6 +1005,6 @@ export default {
 }
 
 .copyright_margin {
-  margin-top: -130rpx;
+  margin-top: -50rpx;
 }
 </style>
