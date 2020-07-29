@@ -78,7 +78,7 @@ export default {
       console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
-          url: '/pages/home/index',
+          url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

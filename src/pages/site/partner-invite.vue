@@ -272,7 +272,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.handleLogin(this.code);
+        this.handleLogin('/pages/home/index', this.code);
         // #endif
       } else {
         // 已经登陆的情况

@@ -506,6 +506,7 @@ import forums from '@/mixin/forums';
 import detectionModel from '@/mixin/detectionModel';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
+import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
@@ -522,6 +523,7 @@ export default {
     forums,
     // #ifdef H5
     wxshare,
+    loginAuth,
     // #endif
     detectionModel,
   ],
@@ -1713,8 +1715,14 @@ export default {
     // 打赏
     rewardClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+          return;
+        }
+        // #endif
       }
       if (this.user._jv.id === this.thread.user._jv.id) {
         this.$refs.toast.show({ message: this.t.iCantRewardMyself });
