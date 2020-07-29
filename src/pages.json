@@ -82,7 +82,13 @@
     //     "disableScroll": true
     //   }
     // },
-
+    {
+      "path": "pages/topic/newpost",
+      "style": {
+        "navigationBarTitleText": "新发布页",
+        "enablePullDownRefresh": true
+      }
+    },
     {
       "path": "pages/topic/index",
       "style": {
