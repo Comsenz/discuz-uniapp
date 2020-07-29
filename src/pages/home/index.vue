@@ -6,6 +6,7 @@
           v-if="showHome"
           ref="home"
           :nav-theme="theme"
+          :scoll-top="scrolltop"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
@@ -19,7 +20,6 @@
           :style="{ display: show_index === 2 ? 'block' : 'none' }"
         ></qui-page-my>
       </view>
-
       <view class="tabBar">
         <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
       </view>
@@ -41,6 +41,7 @@ export default {
       showHome: false,
       tagId: 0, // 标签ID
       currentTab: 'home',
+      scrolltop: 0,
     };
   },
   computed: {
@@ -95,6 +96,14 @@ export default {
     }
     // 停止下拉刷新动画
     uni.stopPullDownRefresh();
+  },
+  // 监听页面滚动
+  onPageScroll(event) {
+    this.$refs.home.scroll(event);
+  },
+  // 上拉加载
+  onReachBottom() {
+    this.$refs.home.pullDown();
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {

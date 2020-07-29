@@ -240,7 +240,6 @@ export default {
     },
     // 点击某一个tab菜单
     clickTab(dataInfo) {
-      console.log(dataInfo.index);
       this.currentIndex = dataInfo.index;
       // 发送事件给父组件
       this.$emit('change', dataInfo);
