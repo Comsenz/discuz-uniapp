@@ -8,7 +8,7 @@
         "navigationStyle": "custom",
         "enablePullDownRefresh": true,
         "backgroundTextStyle": "dark",
-        "onReachBottomDistance": 80  //距离底部多远时触发 单位px
+        "onReachBottomDistance": 100  //距离底部多远时触发 单位px
       }
     },
     {

@@ -242,6 +242,8 @@ export default {
   /* #ifndef APP-NVUE */
   display: block;
   /* #endif */
+  max-height: 100vh;
+  overflow-y: auto;
 }
 .content-ani {
   transition-duration: 0.2s;
