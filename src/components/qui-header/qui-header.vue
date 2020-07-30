@@ -3,7 +3,7 @@
     :class="['header', headerH5]"
     :style="
       backgroundHeadFullImg
-        ? `backgroundImage: url(${backgroundHeadFullImg})`
+        ? `background-image: url(${backgroundHeadFullImg})`
         : 'background: #1878f3'
     "
   >
