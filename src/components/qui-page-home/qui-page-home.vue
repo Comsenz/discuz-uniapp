@@ -28,6 +28,7 @@
       :post-num="forums.set_site ? forums.other.count_threads : ''"
       :share-btn="shareBtn"
       :share-show="shareShow"
+      color="#1878F3"
       :is-show-more="false"
       :is-show-back="false"
       :is-show-home="false"

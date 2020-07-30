@@ -4,7 +4,7 @@
     :style="
       backgroundHeadFullImg
         ? `background-image: url(${backgroundHeadFullImg})`
-        : 'background: #1878f3'
+        : `background: ${color ? color : '#fff'}`
     "
   >
     <!-- #ifdef H5-->
@@ -105,6 +105,10 @@ export default {
     isShowMore: {
       type: Boolean,
       default: true,
+    },
+    color: {
+      type: String,
+      default: '',
     },
   },
   data: () => {
