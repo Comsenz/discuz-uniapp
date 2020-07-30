@@ -435,6 +435,9 @@ export default {
       this.headerShow = true;
     });
     // #endif
+    // uni.$on('onpullDownRefresh', () => {
+    //   this.navBarTransform = 'none';
+    // })
   },
   methods: {
     ...mapMutations({
@@ -956,7 +959,7 @@ export default {
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .main {
-  margin-bottom: 130rpx;
+  margin-bottom: 160rpx;
 }
 
 // .scroll-y {

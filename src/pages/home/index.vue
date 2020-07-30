@@ -6,7 +6,6 @@
           v-if="showHome"
           ref="home"
           :nav-theme="theme"
-          :scoll-top="scrolltop"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
@@ -41,7 +40,6 @@ export default {
       showHome: false,
       tagId: 0, // 标签ID
       currentTab: 'home',
-      scrolltop: 0,
     };
   },
   computed: {
@@ -88,6 +86,7 @@ export default {
   // 下拉刷新
   onPullDownRefresh() {
     if (this.show_index === 0) {
+      // uni.$emit('onpullDownRefresh');
       this.$refs.home.ontrueGetList();
     }
     if (this.show_index === 1) {
