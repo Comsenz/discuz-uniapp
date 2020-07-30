@@ -35,7 +35,7 @@
     </scroll-view>
     <uni-popup ref="popTips" type="center">
       <uni-popup-dialog
-        type="warning"
+        type="warn"
         :before-close="true"
         :content="i18n.t('core.deleteFavoriteSure')"
         @close="handleCancel"

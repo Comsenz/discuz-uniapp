@@ -93,7 +93,7 @@
     </view>
     <uni-popup ref="popCode" type="center">
       <uni-popup-dialog
-        type="warning"
+        type="warn"
         :before-close="true"
         :content="codeTips"
         @close="handleInviteCancel"

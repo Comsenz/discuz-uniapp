@@ -32,6 +32,7 @@
         </view>
       </view>
     </view>
+    <!-- <qui-registration-agreement></qui-registration-agreement> -->
   </qui-page>
 </template>
 

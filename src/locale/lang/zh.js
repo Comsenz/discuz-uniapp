@@ -733,5 +733,8 @@ export default {
     registerBindSuccess: '注册绑定成功',
     loginSuccess: '登录成功',
     loginBindSuccess: '登录绑定成功',
+    agreement: '注册登录即表示您同意',
+    agreementRegister: '《注册协议》',
+    agreementPrivacy: '《隐私政策》',
   },
 };
