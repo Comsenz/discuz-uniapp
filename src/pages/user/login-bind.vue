@@ -26,6 +26,7 @@
         {{ i18n.t('user.registerBindId') }}
       </view>
     </view>
+    <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
 </template>
 

@@ -179,7 +179,7 @@ export default {
   left: 0;
 
   /* #ifndef APP-NVUE */
-  z-index: 99;
+  z-index: 200;
   /* #endif */
 }
 .uni-popup__mask {

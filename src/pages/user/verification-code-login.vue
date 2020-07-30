@@ -47,6 +47,7 @@
         {{ i18n.t('user.passwordLogin') }}
       </view>
     </view>
+    <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
 </template>
 
@@ -298,7 +299,8 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .verification-code-login-box-h {
-  margin: 60rpx 0rpx 80rpx 40rpx;
+  padding-top: 20px;
+  margin: 0 0rpx 80rpx 40rpx;
   font-size: 50rpx;
   font-weight: bold;
   color: --color(--qui-FC-333);
