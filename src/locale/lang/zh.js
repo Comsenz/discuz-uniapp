@@ -219,7 +219,7 @@ export default {
     deleteImgSure: '确定删除这张图片吗？',
     deleteEnclosureSure: '确定删除这个附件吗？',
     deleteVideoSure: '确定删除这个视频吗？',
-    deleteContentSure: '确定删除这篇内容吗？？',
+    deleteContentSure: '确定删除这篇内容吗？',
     deleteCommentSure: '确定删除这条评论吗？',
     deleteReplySure: '确定删除这条回复吗？',
     deleteNewsSure: '确定删除这条消息吗？',
