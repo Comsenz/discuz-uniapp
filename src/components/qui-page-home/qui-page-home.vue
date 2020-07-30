@@ -28,6 +28,7 @@
       :post-num="forums.set_site ? forums.other.count_threads : ''"
       :share-btn="shareBtn"
       :share-show="shareShow"
+      color="#1878F3"
       :is-show-more="false"
       :is-show-back="false"
       :is-show-home="false"
@@ -837,10 +838,10 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 /* #ifdef H5 */
-$margin-bottom: 130rpx;
+$padding-bottom: 180rpx;
 /* #endif */
 /* #ifdef MP-WEIXIN */
-$margin-bottom: 160rpx;
+$padding-bottom: 160rpx;
 /* #endif */
 .home {
   min-height: 100vh;
@@ -968,7 +969,8 @@ $margin-bottom: 160rpx;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .main {
-  margin-bottom: $margin-bottom;
+  padding-bottom: $padding-bottom;
+  background: --color(--qui-BG-1);
 }
 
 // .scroll-y {
@@ -993,7 +995,7 @@ $margin-bottom: 160rpx;
 .record {
   width: 100%;
   height: 40rpx;
-  margin-top: -130rpx;
+  margin-top: -$padding-bottom;
   font-size: $fg-f26;
   color: --color(--qui-FC-B2);
   text-align: center;
@@ -1013,6 +1015,6 @@ $margin-bottom: 160rpx;
   text-align: center;
 }
 .copyright_margin {
-  margin-top: -130rpx;
+  margin-top: -$padding-bottom;
 }
 </style>

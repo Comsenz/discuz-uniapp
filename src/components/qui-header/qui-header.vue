@@ -3,8 +3,8 @@
     :class="['header', headerH5]"
     :style="
       backgroundHeadFullImg
-        ? `backgroundImage: url(${backgroundHeadFullImg})`
-        : 'background: #1878f3'
+        ? `background-image: url(${backgroundHeadFullImg})`
+        : `background: ${color ? color : '#fff'}`
     "
   >
     <!-- #ifdef H5-->
@@ -105,6 +105,10 @@ export default {
     isShowMore: {
       type: Boolean,
       default: true,
+    },
+    color: {
+      type: String,
+      default: '',
     },
   },
   data: () => {

@@ -170,7 +170,7 @@
         :form-data="formData"
         :file-preview="filePreview"
         name="file"
-        async-clear
+        :async-clear="true"
         ref="upload"
         v-if="type === 1 || type === 3"
         @change="uploadChange"
@@ -824,7 +824,7 @@ export default {
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
-      console.log(del, '~~~~~~');
+      console.log(list, del, '~~~~~~');
       // const id = this.operating === 'edit' ? list.id : list.data.id;
       const id = list.id;
       // this.delAttachments(id, del).then(() => {
@@ -1156,6 +1156,7 @@ export default {
       if (this.deleteType === 0) {
         // 删除类型为图片
         this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+          console.log(this.deleteIndex, '删除的图片');
           this.$refs.upload.clear(this.deleteIndex);
         });
       } else if (this.deleteType === 1) {
