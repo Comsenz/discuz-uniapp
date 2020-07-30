@@ -744,6 +744,20 @@ export default {
   onLoad(option) {
     this.rewardStatus = false;
     this.paidStatus = false;
+    try {
+      const res = uni.getSystemInfoSync();
+      this.system = res.platform;
+      this.detectionmodel = this.forums.set_site.site_mode;
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      // #ifndef H5
+      if (this.detectionmodel === 'pay' && this.system === 'ios') {
+        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+        return;
+      }
+      // #endif
+    } catch (e) {
+      // error
+    }
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -798,20 +812,6 @@ export default {
     this.formData = {
       type: 1,
     };
-    try {
-      const res = uni.getSystemInfoSync();
-      this.system = res.platform;
-      this.detectionmodel = this.forums.set_site.site_mode;
-      this.paymentmodel = this.forums.paycenter.wxpay_ios;
-      // #ifndef H5
-      if (this.detectionmodel === 'pay' && this.system === 'ios') {
-        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
-        return;
-      }
-      // #endif
-    } catch (e) {
-      // error
-    }
 
     // 编辑发帖回来后更新信息
     this.$u.event.$on('refreshFiles', () => {

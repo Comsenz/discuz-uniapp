@@ -155,7 +155,7 @@ export default {
     // console.log('refresh');
     const _this = this;
     // _this.topicData = [];
-    setTimeout(function() {
+    setTimeout(() => {
       _this.topics();
       uni.stopPullDownRefresh();
     }, 1000);

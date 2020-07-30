@@ -140,6 +140,7 @@ export default {
   },
   methods: {
     uploadDelete(index) {
+      this.uploadList.sort(this.compare('order'));
       const beforeUpload = this.uploadList[index];
       if (!this.asyncClear) {
         this.uploadBeforeList.splice(index, 1);
@@ -152,9 +153,10 @@ export default {
       }
     },
     clear(index) {
+      this.uploadList.sort(this.compare('order'));
       const beforeUpload = this.uploadList[index];
       this.uploadBeforeList.splice(index, 1);
-      this.uploadList.splice(index, 1);
+      this.numberdata.splice(index, 1);
       return beforeUpload;
     },
 
@@ -184,6 +186,53 @@ export default {
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
       if (_this.uploadList.length < _this.count || _this.name === 'avatar') {
+        // #ifdef MP-WEIXIN
+        wx.chooseImage({
+          count: _this.count - _this.uploadBeforeList.length,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success(res) {
+            // 上传图片后返回false状态
+            _this.$emit('uploadClick', false);
+            // 自定义开始上传的效果和回调
+            _this.$emit('chooseSuccess');
+            const promise = res.tempFiles.map((item, index) => {
+              _this.lastOrder += 1;
+              return new Promise((resolve, reject) => {
+                res.tempFiles[index].uploadPercent = 0;
+                res.tempFiles[index].uploadStatus = false;
+                _this.uploadBeforeList.push(res.tempFiles[index]);
+                _this.numberdata.push({ state: 0 });
+                _this.newindex.push(res.tempFiles[index]);
+                // if (_this.uploadBeforeList.length > _this.count) {
+                //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
+                //   _this.numberdata = _this.numberdata.slice(0, _this.count);
+                //   _this.newindex = _this.newindex.slice(0, _this.count);
+                // }
+                _this.upload(
+                  res.tempFilePaths[index],
+                  _this.uploadBeforeList.length - 1,
+                  beforeUploadFile,
+                  _this.lastOrder,
+                  resolve,
+                  reject,
+                );
+              });
+            });
+
+            Promise.race(promise).then(() => {
+              console.log(promise, '这是的', _this.uploadBeforeList.length, '----', _this.count);
+              // 返回上传成功列表和成功状态值
+              if (_this.uploadBeforeList.length > _this.count) {
+                _this.uploadList = _this.uploadList.slice(0, _this.count);
+              }
+              console.log(_this.uploadList, '这是组件内');
+              _this.$emit('change', _this.uploadList, true);
+            });
+          },
+        });
+        // #endif
+        // #ifndef MP-WEIXIN
         // 上传图片到本地
         uni.chooseImage({
           count: _this.count - _this.uploadBeforeList.length,
@@ -229,6 +278,7 @@ export default {
             });
           },
         });
+        // #endif
       }
     },
     // 上传图片到服务器
