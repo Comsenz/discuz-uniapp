@@ -1,7 +1,11 @@
 <template>
   <view
     :class="['header', headerH5]"
-    :style="{ 'background-image': 'url(' + backgroundHeadFullImg + ')' }"
+    :style="
+      backgroundHeadFullImg
+        ? `backgroundImage: url(${backgroundHeadFullImg})`
+        : 'background: #1878f3'
+    "
   >
     <!-- #ifdef H5-->
     <!-- <qui-header-back
@@ -132,7 +136,7 @@ export default {
   position: relative;
   width: 100%;
   height: 400rpx;
-  background: #1878f3;
+  // background: #1878f3;
   background-size: cover;
   .logo {
     display: block;
