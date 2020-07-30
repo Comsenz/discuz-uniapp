@@ -2472,7 +2472,7 @@ page {
   position: fixed;
   bottom: 0;
   left: 0;
-  z-index: 0;
+  z-index: 7;
   width: 100%;
   height: 80rpx;
   line-height: 80rpx;
