@@ -1,11 +1,12 @@
 <template>
-  <qui-page :data-qui-theme="theme"></qui-page>
+  <qui-page :data-qui-theme="theme" :header="false"></qui-page>
 </template>
 <script>
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
+import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [user, forums, appCommonH, loginAuth],
@@ -37,6 +38,21 @@ export default {
           } else if (res && res.data && res.data.data && res.data.data.id) {
             console.log('登录成功', res);
             this.logind();
+            if (this.user && this.user.paid) {
+              this.isPaid = this.user.paid;
+            }
+            if (this.site_mode !== SITE_PAY || this.isPaid) {
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              uni.navigateTo({
+                url,
+              });
+            }
+            if (this.site_mode === SITE_PAY && !this.isPaid) {
+              uni.navigateTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: this.i18n.t('user.loginSuccess'),
               duration: 2000,
