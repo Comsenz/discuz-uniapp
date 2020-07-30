@@ -132,7 +132,7 @@
           :style="{
             background:
               theme === $u.light()
-                ? 'linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 1))'
+                ? 'linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))'
                 : 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))',
           }"
         ></view>
@@ -545,7 +545,7 @@ export default {
       }
       &__surtip {
         position: relative;
-        z-index: 6;
+        z-index: 8;
         padding-top: 37rpx;
         padding-bottom: 20rpx;
         font-size: $fg-f28;
