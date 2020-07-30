@@ -833,6 +833,12 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$margin-bottom: 130rpx;
+/* #endif */
+/* #ifdef MP-WEIXIN */
+$margin-bottom: 160rpx;
+/* #endif */
 .home {
   min-height: 100vh;
   color: --color(--qui-FC-333);
@@ -959,7 +965,7 @@ export default {
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .main {
-  margin-bottom: 160rpx;
+  margin-bottom: $margin-bottom;
 }
 
 // .scroll-y {
