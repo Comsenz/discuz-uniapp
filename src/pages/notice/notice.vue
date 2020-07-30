@@ -16,14 +16,25 @@
           v-if="noticeList && noticeList.length > 0"
         ></qui-load-more>
       </scroll-view>
+      <uni-popup ref="popTips" type="center">
+        <uni-popup-dialog
+          type="warning"
+          :before-close="true"
+          :content="i18n.t('core.deleteNewsSure')"
+          @close="handleCancel"
+          @confirm="handleOk"
+        ></uni-popup-dialog>
+      </uni-popup>
     </view>
   </qui-page>
 </template>
 
 <script>
 import { time2MorningOrAfternoon } from '@/utils/time';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
+  components: { uniPopupDialog },
   data() {
     return {
       navTitle: '', // 导航栏标题
@@ -32,6 +43,7 @@ export default {
       pageNum: 1, // 当前页数
       noticeList: [], // 通知列表
       type: '', // 当前的通知类型
+      noticeId: 0, // 通知id
     };
   },
   onLoad(params) {
@@ -97,7 +109,15 @@ export default {
     },
     // 删除通知
     deleteNotice(id) {
-      this.$store.dispatch('jv/delete', `notification/${id}`).then(res => {
+      this.noticeId = id;
+      this.$refs.popTips.open();
+    },
+    handleCancel() {
+      this.$refs.popTips.close();
+    },
+    handleOk() {
+      this.$refs.popTips.close();
+      this.$store.dispatch('jv/delete', `notification/${this.noticeId}`).then(res => {
         console.log('删除成功', res);
         if (res) {
           this.pageNum = 1;

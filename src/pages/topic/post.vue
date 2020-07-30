@@ -1019,6 +1019,7 @@ export default {
           this.videoBeforeList.push({
             path: data.threadVideo.media_url,
           });
+          this.videoPercent = 1;
           break;
         default:
           console.log('没有匹配模式');

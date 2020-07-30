@@ -545,7 +545,7 @@ export default {
       }
       &__surtip {
         position: relative;
-        z-index: 8;
+        z-index: 6;
         padding-top: 37rpx;
         padding-bottom: 20rpx;
         font-size: $fg-f28;

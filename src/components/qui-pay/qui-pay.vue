@@ -82,7 +82,7 @@
         </view>
 
         <view class="pay-tip">
-          ￥{{ money }}{{ p.rmb }}{{ p.payTo }}，{{ toName }}{{ p.ofAccount }}
+          ￥{{ money }}{{ p.rmb }}{{ p.payTo }}{{ toName }}{{ p.ofAccount }}
         </view>
         <!--<qui-button size="max" type="primary" class="paySureBtn" @click="paysureShow">
           {{ p.surePay }}￥{{ money }}{{ p.rmb }}

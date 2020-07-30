@@ -215,7 +215,7 @@ export default {
   onPullDownRefresh() {
     const _this = this;
     // _this.topicData = [];
-    setTimeout(function() {
+    setTimeout(() => {
       _this.uploadItem();
       _this.loadThreads();
       uni.stopPullDownRefresh();

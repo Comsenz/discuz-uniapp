@@ -135,7 +135,9 @@
         {{ forums.set_site ? forums.set_site.site_record : '' }}
       </a>
     </view>
-    <view class="copyright">Powered by Discuz! Q</view>
+    <view class="copyright" :class="forums.set_site.site_record ? '' : 'copyright_margin'">
+      Powered by Discuz! Q
+    </view>
     <!-- #endif -->
     <!-- </scroll-view> -->
     <qui-filter-modal
@@ -436,6 +438,9 @@ export default {
       this.headerShow = true;
     });
     // #endif
+    // uni.$on('onpullDownRefresh', () => {
+    //   this.navBarTransform = 'none';
+    // })
   },
   methods: {
     ...mapMutations({
@@ -831,6 +836,12 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$margin-bottom: 130rpx;
+/* #endif */
+/* #ifdef MP-WEIXIN */
+$margin-bottom: 160rpx;
+/* #endif */
 .home {
   min-height: 100vh;
   color: --color(--qui-FC-333);
@@ -957,7 +968,7 @@ export default {
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .main {
-  margin-bottom: 130rpx;
+  margin-bottom: $margin-bottom;
 }
 
 // .scroll-y {
@@ -1000,5 +1011,8 @@ export default {
   font-size: $fg-f26;
   color: --color(--qui-FC-B2);
   text-align: center;
+}
+.copyright_margin {
+  margin-top: -130rpx;
 }
 </style>
