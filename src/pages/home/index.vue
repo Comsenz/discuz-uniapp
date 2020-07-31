@@ -87,6 +87,7 @@ export default {
   onPullDownRefresh() {
     if (this.show_index === 0) {
       // uni.$emit('onpullDownRefresh');
+      this.$refs.home.threads = [];
       this.$refs.home.isResetList = true;
       this.$refs.home.loadThreadsSticky();
       this.$refs.home.loadThreads();
