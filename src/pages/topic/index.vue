@@ -820,6 +820,7 @@ export default {
   // 下拉刷新
   onPullDownRefresh() {
     const _this = this;
+    _this.pageNum = 1;
     setTimeout(function() {
       _this.loadThread();
       _this.loadThreadPosts();
