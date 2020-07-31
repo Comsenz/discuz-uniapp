@@ -211,7 +211,6 @@ export default {
       handler(newVal) {
         this.refreshStatus = newVal;
         if (this.refreshStatus === true) {
-          console.log('刷新');
           this.$forceUpdate();
         }
       },

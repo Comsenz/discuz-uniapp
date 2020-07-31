@@ -221,12 +221,10 @@ export default {
             });
 
             Promise.race(promise).then(() => {
-              console.log(promise, '这是的', _this.uploadBeforeList.length, '----', _this.count);
               // 返回上传成功列表和成功状态值
               if (_this.uploadBeforeList.length > _this.count) {
                 _this.uploadList = _this.uploadList.slice(0, _this.count);
               }
-              console.log(_this.uploadList, '这是组件内');
               _this.$emit('change', _this.uploadList, true);
             });
           },
@@ -268,12 +266,10 @@ export default {
             });
 
             Promise.race(promise).then(() => {
-              console.log(promise, '这是的', _this.uploadBeforeList.length, '----', _this.count);
               // 返回上传成功列表和成功状态值
               if (_this.uploadBeforeList.length > _this.count) {
                 _this.uploadList = _this.uploadList.slice(0, _this.count);
               }
-              console.log(_this.uploadList, '这是组件内');
               _this.$emit('change', _this.uploadList, true);
             });
           },
@@ -316,13 +312,11 @@ export default {
                 _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
                 _this.numberdata[_this.indexs].state = 100;
               }
-              console.log(JSON.parse(res.data), '~~~~~~~~~');
               const resObj = {
                 id: JSON.parse(res.data).data.id,
                 type: JSON.parse(res.data).data.type,
                 order: imgOrder,
               };
-              // console.log(resObj, '这是新增的对象');
               _this.uploadList.push(resObj);
               if (_this.uploadList.length > _this.count) {
                 _this.uploadList.sort(_this.compare('order'));
@@ -331,7 +325,6 @@ export default {
                 _this.numberdata = _this.numberdata.slice(0, _this.count);
                 _this.newindex = _this.newindex.slice(0, _this.count);
               }
-              // console.log(_this.uploadList, '$$$$$$$$$$$$$');
               _this.newindex = [];
               _this.formDataAppend = {};
             }, 500);
@@ -404,7 +397,6 @@ export default {
             }
           }
         }
-        console.log(_this.uploadBeforeList, '!!!!!!!!!!!');
       });
     },
   },

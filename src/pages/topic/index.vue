@@ -737,7 +737,6 @@ export default {
     },
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
-      console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
   },
@@ -820,7 +819,6 @@ export default {
   },
   // 下拉刷新
   onPullDownRefresh() {
-    // console.log('refresh');
     const _this = this;
     setTimeout(function() {
       _this.loadThread();
@@ -922,7 +920,6 @@ export default {
 
       threadAction
         .then(data => {
-          console.log(data, '这是主题');
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1015,13 +1012,10 @@ export default {
           this.isLiked = data.firstPost.isLiked;
           if (!this.forums.paycenter.wxpay_close) {
             // 如果关闭了微信支付
-            console.log('关闭微信支付');
             this.rewardStatus = false;
             this.paidStatus = false;
           } else {
             // 如果开启了微信支付
-            // console.log('开启微信支付');
-            // console.log(data.paid, '是否付费');
             if (!data.paid || data.paidUsers.length > 0) {
               // #ifndef H5
               if (this.system === 'ios') {
@@ -1373,7 +1367,6 @@ export default {
         delete data._jv;
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
-        console.log(this.posts, '~~~~~~~~~~');
         if (data.length === 0) {
           this.contentnomoreVal = this.t.noComment;
         } else {
@@ -1722,7 +1715,6 @@ export default {
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
-      console.log(val, '~~~~');
       // 是否显示用户头像
       this.isAnonymous = !val;
     },
@@ -2230,12 +2222,9 @@ export default {
 
       if (param.type === '0') {
         if (this.sortVal === 'createdAt') {
-          console.log('1');
           this.$refs.toast.show({ message: this.t.itsAlreadyWantedSort });
         } else {
-          console.log('2');
           this.refreshVal = false;
-          // this.refreshVal = true;
 
           this.$nextTick(() => {
             this.refreshVal = true;
@@ -2246,10 +2235,8 @@ export default {
         }
       } else if (param.type === '1') {
         if (this.sortVal === '-createdAt') {
-          console.log('3');
           this.$refs.toast.show({ message: this.t.itsAlreadyWantedSort });
         } else {
-          console.log('4');
           this.refreshVal = false;
           this.sortVal = '-createdAt';
           this.posts = [];
@@ -2276,7 +2263,6 @@ export default {
         to_user_id: userInfo.id,
       };
       this.$store.dispatch('jv/post', params).then(res => {
-        // console.log(res, '这是结果');
         if (res.is_mutual == 0) {
           this.thread.user.follow = 1;
           originUser.follow = 1;
