@@ -272,13 +272,17 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
-      // #ifdef H5
       if (!this.$store.getters['session/get']('isLogin')) {
-        if (!this.handleLogin()) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/profile/index?userId=${this.userId}`)) {
           return;
         }
+        // #endif
+        return;
       }
-      // #endif
       const params = {
         _jv: {
           type: 'follow',
@@ -295,13 +299,17 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      // #ifdef H5
       if (!this.$store.getters['session/get']('isLogin')) {
-        if (!this.handleLogin()) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/profile/index?userId=${this.userId}`)) {
           return;
         }
+        // #endif
+        return;
       }
-      // #endif
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.getUserInfo(this.userId);
         if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
