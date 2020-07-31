@@ -249,7 +249,7 @@ export default {
             this.setNum(res);
             this.userInfo = res;
             uni.setNavigationBarTitle({
-              title: `${res.username}的${this.i18n.t('profile.personalhomepage')}`,
+              title: `${res.username}${this.i18n.t('profile.personalhomepage')}`,
             });
           }
         })
