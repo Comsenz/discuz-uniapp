@@ -956,7 +956,7 @@ export default {
                 // 文字帖
                 this.contentVal = data.firstPost.summaryText;
                 this.desc = data.firstPost.summaryText;
-                this.logo = '';
+                this.shareLogo = '';
                 break;
               case 1:
                 // 长文帖

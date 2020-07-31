@@ -394,7 +394,10 @@ export default {
     this.wxShare({
       title: this.forums.set_site ? this.forums.set_site.site_name : '',
       desc: this.forums.set_site ? this.forums.set_site.site_introduction : '',
-      logo: this.forums.set_site ? this.forums.set_site.site_logo : '',
+      logo:
+        this.forums.set_site && this.forums.set_site.site_logo
+          ? this.forums.set_site.site_logo
+          : '',
     });
     // #endif
     this.ontrueGetList();
