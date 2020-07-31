@@ -85,13 +85,14 @@ export default {
   },
   // 下拉刷新
   onPullDownRefresh() {
-    console.log('0000');
     if (this.show_index === 0) {
       // uni.$emit('onpullDownRefresh');
-      this.$refs.home.ontrueGetList();
+      this.$refs.home.threads = [];
+      this.$refs.home.isResetList = true;
+      this.$refs.home.loadThreadsSticky();
+      this.$refs.home.loadThreads();
     }
     if (this.show_index === 1) {
-      console.log('99999');
       this.$refs.quinotice.dialogList = [];
       this.$refs.quinotice.pageNum = 1;
       this.$refs.quinotice.ontrueGetList();
