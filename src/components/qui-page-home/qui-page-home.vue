@@ -947,7 +947,7 @@ $padding-bottom: 160rpx;
 .scroll-tab {
   z-index: 100;
   height: 100rpx;
-  text-align: center;
+  // text-align: center;
   white-space: nowrap;
   border-bottom: 2rpx solid --color(--qui-BOR-EEE);
 }
