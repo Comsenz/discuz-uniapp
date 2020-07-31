@@ -87,7 +87,9 @@ export default {
   onPullDownRefresh() {
     if (this.show_index === 0) {
       // uni.$emit('onpullDownRefresh');
-      this.$refs.home.ontrueGetList();
+      this.$refs.home.isResetList = true;
+      this.$refs.home.loadThreadsSticky();
+      this.$refs.home.loadThreads();
     }
     if (this.show_index === 1) {
       this.$refs.quinotice.dialogList = [];
