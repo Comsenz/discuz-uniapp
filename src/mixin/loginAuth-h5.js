@@ -20,11 +20,11 @@ module.exports = {
         });
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login('', code);
+        this.login('/pages/home/index', '', code);
       }
       return false;
     },
-    login(url = '/pages/home/index', wxtoken, code) {
+    login(url, wxtoken, code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (isWeixin) {
         // 微信内
