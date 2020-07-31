@@ -357,6 +357,7 @@ export default {
     needRealname: '发布内容需要实名认证，请在我的资料页进行实名认证',
     needPhone: '发布内容需要绑定手机号，请在我的资料页进行手机绑定',
     record: '网站备案信息:',
+    copyright: 'Powered by Discuz! Q',
   },
   // 站点管理页面
   manage: {
