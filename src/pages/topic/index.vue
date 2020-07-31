@@ -824,6 +824,7 @@ export default {
   // 下拉刷新
   onPullDownRefresh() {
     const _this = this;
+    _this.posts = [];
     _this.pageNum = 1;
     setTimeout(function() {
       _this.loadThread();
