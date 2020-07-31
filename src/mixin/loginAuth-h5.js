@@ -5,7 +5,7 @@ import appCommonH from '@/utils/commonHelper';
 module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin(url = '/pages/home/index', code) {
+    handleLogin(code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (
         isWeixin &&
@@ -20,11 +20,11 @@ module.exports = {
         });
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login(url, '', '', code);
+        this.login('/pages/home/index', '', code);
       }
       return false;
     },
-    login(url, nickname, wxtoken, code) {
+    login(url, wxtoken, code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (isWeixin) {
         // 微信内

@@ -98,6 +98,7 @@ export default {
 
   data() {
     return {
+      username: '', // 接收消息的用户
       scrollTop: 0,
       old: {
         scrollTop: 0,
@@ -189,8 +190,13 @@ export default {
     this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
     console.log('-----navbarHeight-------', this.navbarHeight);
     console.log('params', params);
-    const { dialogId } = params;
-    this.dialogId = dialogId;
+    const { username, dialogId } = params;
+    if (dialogId) {
+      this.dialogId = dialogId;
+    }
+    if (username) {
+      this.username = username;
+    }
     this.getChatRecord(dialogId);
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
@@ -307,7 +313,7 @@ export default {
             _jv: {
               type: 'dialog',
             },
-            recipient_username: this.title,
+            recipient_username: this.username,
             message_text: this.msg,
           };
           // 调用创建会话接口

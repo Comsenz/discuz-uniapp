@@ -824,6 +824,7 @@ export default {
   // 下拉刷新
   onPullDownRefresh() {
     const _this = this;
+    _this.posts = [];
     _this.pageNum = 1;
     setTimeout(function() {
       _this.loadThread();
@@ -956,7 +957,7 @@ export default {
                 // 文字帖
                 this.contentVal = data.firstPost.summaryText;
                 this.desc = data.firstPost.summaryText;
-                this.logo = '';
+                this.shareLogo = '';
                 break;
               case 1:
                 // 长文帖
@@ -1654,7 +1655,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1682,7 +1683,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1698,7 +1699,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1735,7 +1736,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1917,7 +1918,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1934,7 +1935,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1964,7 +1965,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1987,7 +1988,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2022,7 +2023,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2036,7 +2037,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2050,7 +2051,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2102,7 +2103,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2218,7 +2219,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
