@@ -85,7 +85,6 @@ export default {
   },
   // 下拉刷新
   onPullDownRefresh() {
-    console.log('88888');
     if (this.show_index === 0) {
       // uni.$emit('onpullDownRefresh');
       this.$refs.home.ontrueGetList();
