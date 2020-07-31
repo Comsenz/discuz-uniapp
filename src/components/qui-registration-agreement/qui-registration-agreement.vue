@@ -2,8 +2,8 @@
   <view
     class="registration-agreement"
     v-if="
-      (forums.set_reg && forums.set_reg.register === 1) ||
-        (forums.set_reg && forums.set_reg.privacy === 1)
+      (forums.agreement && forums.agreement.register) ||
+        (forums.agreement && forums.agreement.privacy)
     "
   >
     <view class="registration-agreement__content">
@@ -11,26 +11,28 @@
       <text
         class="registration-agreement__content__register"
         @tap="open('register')"
-        v-if="forums.set_reg && forums.set_reg.register === 1"
+        v-if="forums.agreement && forums.agreement.register"
       >
         {{ `《${i18n.t('user.agreementRegister')}》` }}
       </text>
       <text
         class="registration-agreement__content__privacy"
         @tap="open('privacy')"
-        v-if="forums.set_reg && forums.set_reg.privacy === 1"
+        v-if="forums.agreement && forums.agreement.privacy"
       >
         {{ `《${i18n.t('user.agreementPrivacy')}》` }}
       </text>
     </view>
     <uni-popup ref="popupMessage" type="bottom">
-      <view class="popup-share">
-        <view class="popup-share-content">
-          <view class="popup-content__title">{{ popTitle }}</view>
-          <view class="popup-content__detail">{{ popDetail }}</view>
+      <view class="popup-message">
+        <view class="popup-message__content">
+          <view class="popup-message__content__title">{{ popTitle }}</view>
+          <view class="popup-message__content__detail">{{ popDetail }}</view>
         </view>
-        <view class="popup-share-content-space"></view>
-        <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
+        <view class="popup-message__space"></view>
+        <text class="popup-message__btn" @click="cancel('share')">
+          {{ i18n.t('discuzq.close') }}
+        </text>
       </view>
     </uni-popup>
   </view>
@@ -58,10 +60,10 @@ export default {
       this.$refs.popupMessage.open();
       if (type === 'register') {
         this.popTitle = this.i18n.t('user.agreementRegister');
-        this.popDetail = this.forums.set_reg.register_content;
+        this.popDetail = this.forums.agreement.register_content;
       } else {
         this.popTitle = this.i18n.t('user.agreementPrivacy');
-        this.popDetail = this.forums.set_reg.register_content;
+        this.popDetail = this.forums.agreement.privacy_content;
       }
     },
     cancel() {
@@ -96,7 +98,34 @@ export default {
   min-height: 100vh;
   background: --color(--qui-BG-2);
 }
-.popup-share-content {
-  min-height: calc(100vh - 60px);
+.popup-message {
+  text-align: center;
+  &__btn {
+    height: 100rpx;
+    font-size: $fg-f28;
+    line-height: 100rpx;
+    color: --color(--qui-FC-333);
+    text-align: center;
+  }
+  &__space {
+    width: 100%;
+    height: 10rpx;
+    background: --color(--qui-BG-ED);
+  }
+  &__content {
+    min-height: calc(100vh - 60px);
+  }
+  &__content__title {
+    height: 60rpx;
+    padding: 40rpx 0;
+    font-size: $fg-f28;
+    line-height: 60rpx;
+  }
+  &__content__detail {
+    padding: 0 40rpx;
+    font-size: $fg-f24;
+    text-align: justify;
+    text-indent: 2em;
+  }
 }
 </style>
