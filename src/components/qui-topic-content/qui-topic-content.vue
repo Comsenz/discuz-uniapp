@@ -106,22 +106,23 @@
           :poster="coverImage"
           v-if="themeType == 2 && videoStatus"
           controls
-          preload="auto"
+          preload="none"
           bindpause="handlepause"
           playsinline
           webkit-playsinline
           x5-playsinline
           :page-gesture="false"
-          show-fullscreen-btn="true"
-          show-play-btn="true"
-          auto-pause-if-open-native="true"
-          auto-pause-if-navigate="true"
-          enable-play-gesture="false"
+          :show-fullscreen-btn="true"
+          :show-play-btn="true"
+          auto-pause-if-open-native
+          auto-pause-if-navigate
+          :enable-play-gesture="false"
           :vslide-gesture="false"
           :vslide-gesture-in-fullscreen="false"
           object-fit="cover"
           :direction="videoWidth > videoHeight ? 90 : 0"
           x5-video-player-type="h5-page"
+          bindfullscreenchange="fullScreen"
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
