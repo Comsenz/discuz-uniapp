@@ -712,8 +712,12 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
-      this.rewardedUsers = thread.rewardedUsers;
-      this.likedUsers = thread.firstPost.likedUsers;
+      if(thread.rewardedUsers) {
+        this.rewardedUsers = thread.rewardedUsers;
+      }
+      if(thread.firstPost) {
+        this.likedUsers = thread.firstPost.likedUsers;
+      }
       return thread;
     },
     // 语言包
