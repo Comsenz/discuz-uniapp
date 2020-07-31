@@ -1654,7 +1654,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1682,7 +1682,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1698,7 +1698,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1735,7 +1735,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1917,7 +1917,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1934,7 +1934,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1964,7 +1964,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1987,7 +1987,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2022,7 +2022,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2036,7 +2036,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2050,7 +2050,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2102,7 +2102,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2218,7 +2218,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/index?id=${this.threadId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif

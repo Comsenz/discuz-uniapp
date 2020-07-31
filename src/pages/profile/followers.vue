@@ -147,7 +147,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/profile/index?userId=${this.userId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -183,7 +183,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/profile/index?userId=${this.userId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
