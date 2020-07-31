@@ -168,7 +168,6 @@ export default {
       menus: ['shareAppMessage', 'shareTimeline'],
     });
     // #endif
-    // uni.startPullDownRefresh();
   },
   onPullDownRefresh() {
     const item = ['topic', 'following', 'followers', 'like'];
@@ -211,9 +210,6 @@ export default {
     };
   },
   methods: {
-    // scroll(event) {
-    //   this.scrollTop = event.detail.scrollTop;
-    // },
     onClickItem(e) {
       if (e.currentIndex !== this.current) {
         this.current = e.currentIndex;
@@ -260,7 +256,6 @@ export default {
         .catch(err => {
           this.loaded = false;
           if (err.statusCode === 404) {
-            console.log('没找到');
             this.$store.dispatch('forum/setError', {
               code: 'user_deleted',
               status: 500,
@@ -315,11 +310,6 @@ export default {
     changeFollow(e) {
       this.getUserInfo(e.userId);
     },
-    // pullDown() {
-    //   const { current } = this;
-    //   const item = ['topic', 'following', 'followers', 'like'];
-    //   this.$refs[item[current]].pullDown();
-    // },
     // 点击分享事件
     handleClickShare(e) {
       this.nowThreadId = e;
