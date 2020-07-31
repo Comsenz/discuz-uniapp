@@ -137,7 +137,7 @@
       </a>
     </view>
     <view class="copyright" :class="forums.set_site.site_record ? '' : 'copyright_margin'">
-      Powered by Discuz! Q
+      <text>{{ i18n.t('home.copyright') }}</text>
     </view>
     <!-- #endif -->
     <!-- </scroll-view> -->

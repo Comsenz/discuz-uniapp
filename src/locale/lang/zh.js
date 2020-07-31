@@ -357,6 +357,7 @@ export default {
     needRealname: '发布内容需要实名认证，请在我的资料页进行实名认证',
     needPhone: '发布内容需要绑定手机号，请在我的资料页进行手机绑定',
     record: '网站备案信息:',
+    copyright: 'Powered by Discuz! Q',
   },
   // 站点管理页面
   manage: {
@@ -734,7 +735,9 @@ export default {
     loginSuccess: '登录成功',
     loginBindSuccess: '登录绑定成功',
     agreement: '注册登录即表示您同意',
-    agreementRegister: '《注册协议》',
-    agreementPrivacy: '《隐私政策》',
+    agreementRegister: '注册协议',
+    agreementPrivacy: '隐私政策 ',
+    loginOutTips:
+      '点击下面的确定解绑按钮后，您将解除微信与本帐号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本帐号！',
   },
 };

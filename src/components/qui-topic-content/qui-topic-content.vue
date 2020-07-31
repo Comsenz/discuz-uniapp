@@ -350,9 +350,7 @@ export default {
       // topicStatus: '',
     };
   },
-  onLoad() {
-    // console.log(this.tags);
-  },
+  onLoad() {},
   computed: {
     t() {
       return this.i18n.t('topic');
@@ -412,14 +410,12 @@ export default {
         url: item.url,
         success(res) {
           if (res.statusCode === 200) {
-            console.log(res.tempFilePath);
             that.$refs.toast.show({
               message: that.i18n.t('profile.downloadSuccess'),
             });
             // wx.openDocument({
             //   filePath: res.tempFilePath,
             //   success() {
-            //     console.log('打开文档成功');
             //   },
             // });
           }

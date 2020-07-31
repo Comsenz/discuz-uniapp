@@ -168,7 +168,6 @@ export default {
       menus: ['shareAppMessage', 'shareTimeline'],
     });
     // #endif
-    // uni.startPullDownRefresh();
   },
   onPullDownRefresh() {
     const item = ['topic', 'following', 'followers', 'like'];
@@ -211,9 +210,6 @@ export default {
     };
   },
   methods: {
-    // scroll(event) {
-    //   this.scrollTop = event.detail.scrollTop;
-    // },
     onClickItem(e) {
       if (e.currentIndex !== this.current) {
         this.current = e.currentIndex;
@@ -260,7 +256,6 @@ export default {
         .catch(err => {
           this.loaded = false;
           if (err.statusCode === 404) {
-            console.log('没找到');
             this.$store.dispatch('forum/setError', {
               code: 'user_deleted',
               status: 500,
@@ -277,13 +272,17 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
-      // #ifdef H5
       if (!this.$store.getters['session/get']('isLogin')) {
-        if (!this.handleLogin()) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/profile/index?userId=${this.userId}`)) {
           return;
         }
+        // #endif
+        return;
       }
-      // #endif
       const params = {
         _jv: {
           type: 'follow',
@@ -300,13 +299,17 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      // #ifdef H5
       if (!this.$store.getters['session/get']('isLogin')) {
-        if (!this.handleLogin()) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(`/pages/profile/index?userId=${this.userId}`)) {
           return;
         }
+        // #endif
+        return;
       }
-      // #endif
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.getUserInfo(this.userId);
         if (this.$refs.followers) this.$refs.followers.getFollowerList('change');
@@ -315,11 +318,6 @@ export default {
     changeFollow(e) {
       this.getUserInfo(e.userId);
     },
-    // pullDown() {
-    //   const { current } = this;
-    //   const item = ['topic', 'following', 'followers', 'like'];
-    //   this.$refs[item[current]].pullDown();
-    // },
     // 点击分享事件
     handleClickShare(e) {
       this.nowThreadId = e;

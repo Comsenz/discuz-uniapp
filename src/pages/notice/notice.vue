@@ -142,5 +142,9 @@ export default {
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;
+
+  /deep/ .uni-dialog-title {
+    color: #f2b968;
+  }
 }
 </style>

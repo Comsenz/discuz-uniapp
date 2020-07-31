@@ -170,7 +170,7 @@
         :form-data="formData"
         :file-preview="filePreview"
         name="file"
-        async-clear
+        :async-clear="true"
         ref="upload"
         v-if="type === 1 || type === 3"
         @change="uploadChange"
@@ -824,12 +824,7 @@ export default {
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
-      console.log(del, '~~~~~~');
-      // const id = this.operating === 'edit' ? list.id : list.data.id;
       const id = list.id;
-      // this.delAttachments(id, del).then(() => {
-      //   this.$refs.upload.clear(del);
-      // });
       this.deleteType = 0;
       this.deleteId = id;
       this.deleteIndex = del;
@@ -1377,7 +1372,7 @@ export default {
           appId: this.forums.qcloud.qcloud_captcha_app_id, //您申请的验证码的 appId
         },
         success(res) {
-          console.log('验证码成功打开');
+          // 验证码成功打开
         },
         fail(err) {
           uni.hideLoading();

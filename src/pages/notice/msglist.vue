@@ -20,14 +20,14 @@
           >
             <qui-avatar
               v-if="item.user_id === currentLoginId"
-              :is-real="item.user.isReal"
+              :is-real="item.user && item.user.isReal"
               class="chat-box__con__msg__mine__img"
               :user="userInfo"
               @click="jumpUserPage(item.user_id)"
             />
             <qui-avatar
               v-if="item.user_id !== currentLoginId"
-              :is-real="item.user.isReal"
+              :is-real="item.user && item.user.isReal"
               class="chat-box__con__msg__other__img"
               :user="item.user"
               @click="jumpUserPage(item.user_id)"
@@ -98,7 +98,6 @@ export default {
 
   data() {
     return {
-      title: '', // 导航栏标题
       scrollTop: 0,
       old: {
         scrollTop: 0,
@@ -190,11 +189,7 @@ export default {
     this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
     console.log('-----navbarHeight-------', this.navbarHeight);
     console.log('params', params);
-    const { username, dialogId } = params;
-    this.title = username;
-    uni.setNavigationBarTitle({
-      title: username,
-    });
+    const { dialogId } = params;
     this.dialogId = dialogId;
     this.getChatRecord(dialogId);
     if (Object.keys(this.allEmoji).length < 1) {

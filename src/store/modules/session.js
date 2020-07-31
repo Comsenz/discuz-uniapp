@@ -106,6 +106,13 @@ const actions = {
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
+    let inviteCode = '';
+    uni.getStorage({
+      key: 'inviteCode',
+      success(resData) {
+        inviteCode = resData.data || '';
+      },
+    });
     const options = { custom: { showTost: false } };
     console.log('payload', payload);
     return new Promise(resolve => {
@@ -113,7 +120,7 @@ const actions = {
       console.log('resolve', resolve);
       return http
         .get(
-          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}`,
+          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&inviteCode=${inviteCode}`,
           options,
         )
         .then(results => {
