@@ -16,15 +16,25 @@
       <%= htmlWebpackPlugin.options.title %>
     </title>
     <script>
-    // window.οnlοad=function(){
-    //   if(document.documentElement.scrollHeight <= document.documentElement.clientHeight) {
-    //     bodyTag = document.getElementsByTagName('body')[0];
-    //     bodyTag.style.height = document.documentElement.clientWidth / screen.width * screen.height + 'px';
-    //   }
-    //   setTimeout(function() {
-    //     window.scrollTo(0, 1)
-    //   }, 0);
-    // };
+      // 通过 WeixinJSBridge 设置网页字体为默认大小，并禁止用户自定义缩放页面(安卓)
+      (function() {
+      if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+        handleFontSize();
+      } else {
+        if (document.addEventListener) {
+            document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+        } else if (document.attachEvent) {
+            document.attachEvent("WeixinJSBridgeReady", handleFontSize);
+            document.attachEvent("onWeixinJSBridgeReady", handleFontSize);
+        }
+      }
+      function handleFontSize() {
+        WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+        WeixinJSBridge.on('menu:setfont', function() {
+            WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+        });
+      }
+      })();
       document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.fontSize = document.documentElement.clientWidth / 20 + 'px';
       })
@@ -47,5 +57,10 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+  <style>
+    body {
+      -webkit-text-size-adjust: 100%;     
+    }
+  </style>
 
 </html>
