@@ -23,9 +23,9 @@ export default {
         .then(res => {
           const err = res.data;
           if (err.errors) {
-            const { nickname } = err.errors[0].user;
-            const wxtoken = err.errors[0].token;
             if (err.errors[0].code === 'no_bind_user') {
+              const { nickname } = err.errors[0].user;
+              const wxtoken = err.errors[0].token;
               let code = '';
               uni.getStorage({
                 key: 'inviteCode',
