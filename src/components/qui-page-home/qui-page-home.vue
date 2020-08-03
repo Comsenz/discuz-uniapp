@@ -410,9 +410,9 @@ export default {
   destroyed() {
     uni.$off('logind');
     // #ifdef H5
+    uni.$off('updateIndex');
     uni.$off('updateNoticePage');
     uni.$off('updateMy');
-    uni.$off('updateIndex');
     // #endif
   },
   mounted() {
@@ -427,8 +427,10 @@ export default {
     });
 
     if (this.footerIndex === 0) {
+      console.log('fffffffffffff');
       this.$uGetRect('#navId').then(rect => {
         this.navTop = rect.top;
+        console.log(this.navTop, 'this.navTopthis.navTopthis.navTopthis.navTop');
         this.navHeight = rect.height;
       });
     }
@@ -440,15 +442,15 @@ export default {
     }
 
     // #ifdef H5
-    uni.$on('updateNoticePage', () => {
-      this.headerShow = true;
-    });
-
-    uni.$on('updateMy', () => {
-      this.headerShow = true;
-    });
-
     uni.$on('updateIndex', () => {
+      this.headerShow = true;
+    });
+    uni.$on('updateNoticePage', () => {
+      console.log('99999');
+      this.headerShow = true;
+    });
+    uni.$on('updateMy', () => {
+      console.log('我的我的');
       this.headerShow = true;
     });
 
@@ -466,6 +468,7 @@ export default {
       return ';';
     },
     scroll(event) {
+      // if (this.footerIndex === 0) {
       this.scrollTop = event.scrollTop;
       // #ifdef MP-WEIXIN
       if (!this.navbarHeight) {
@@ -484,14 +487,15 @@ export default {
       // #ifdef H5
       if (event.scrollTop >= this.navTop) {
         this.headerShow = false;
-        // console.log('falsefalsefalse');
+        console.log('falsefalsefalse');
         this.navBarTransform = 'none';
       } else {
         this.headerShow = true;
-        // console.log('truetruetruetrue');
+        console.log('truetruetruetrue');
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
       // #endif
+      // }
     },
     // 滑动到顶部
     toUpper() {

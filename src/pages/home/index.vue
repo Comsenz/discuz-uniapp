@@ -45,6 +45,8 @@ export default {
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
+      footerIndex: state =>
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) : 0,
     }),
     loading() {
       return this.forumError.loading;
@@ -102,8 +104,11 @@ export default {
   },
   // 监听页面滚动
   onPageScroll(event) {
-    // console.log(event);
-    this.$refs.home.scroll(event);
+    console.log(event);
+    if (this.footerIndex === 0) {
+      console.log('监听页面滚动');
+      this.$refs.home.scroll(event);
+    }
   },
   // 上拉加载
   onReachBottom() {
