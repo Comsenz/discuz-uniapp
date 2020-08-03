@@ -263,7 +263,7 @@ export default {
       showSearch: true, // 筛选显示搜索
       navbarHeight, // 顶部导航栏的高度
       headerShow: true, // 是否显示标题图(背景+logo)，不显示标题图时，分类切换栏需要固定顶部
-      navTop: 0, // 切换分类导航的top
+      navTop: 128, // 切换分类导航的top
       navHeight: 0, // 切换分类导航的高度
       nowThreadId: '', // 当前点击主题ID
       filterTop: '', // 筛选弹窗的位置
@@ -323,6 +323,8 @@ export default {
     ...mapState({
       categoryId: state => state.session.categoryId,
       categoryIndex: state => state.session.categoryIndex,
+      footerIndex: state =>
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) : 0,
     }),
     setIndex: {
       get() {
@@ -423,10 +425,13 @@ export default {
       this.loadThreads();
     });
 
-    this.$uGetRect('#navId').then(rect => {
-      this.navTop = rect.top;
-      this.navHeight = rect.height;
-    });
+    if (this.footerIndex === 0) {
+      this.$uGetRect('#navId').then(rect => {
+        this.navTop = rect.top;
+        this.navHeight = rect.height;
+      });
+    }
+
     if (this.forums.set_site) {
       uni.setNavigationBarTitle({
         title: this.forums.set_site.site_name,
@@ -436,10 +441,12 @@ export default {
     // #ifdef H5
     uni.$on('updateNoticePage', () => {
       this.headerShow = true;
+      this.navTop = 128;
     });
 
     uni.$on('updateMy', () => {
       this.headerShow = true;
+      this.navTop = 128;
     });
     // #endif
     // uni.$on('onpullDownRefresh', () => {
@@ -473,9 +480,11 @@ export default {
       // #ifdef H5
       if (event.scrollTop >= this.navTop) {
         this.headerShow = false;
+        // console.log('falsefalsefalse');
         this.navBarTransform = 'none';
       } else {
         this.headerShow = true;
+        // console.log('truetruetruetrue');
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
       // #endif

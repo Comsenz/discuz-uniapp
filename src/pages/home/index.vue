@@ -102,6 +102,7 @@ export default {
   },
   // 监听页面滚动
   onPageScroll(event) {
+    // console.log(event);
     this.$refs.home.scroll(event);
   },
   // 上拉加载
