@@ -249,6 +249,8 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.numberdata.push({ state: 0 });
                 _this.newindex.push(res.tempFiles[index]);
+                const sun = _this.newindex;
+                console.log(sun);
                 // if (_this.uploadBeforeList.length > _this.count) {
                 //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
                 //   _this.numberdata = _this.numberdata.slice(0, _this.count);
@@ -292,6 +294,7 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             setTimeout(() => {
+              console.log(_this.newindex, '删除之后的数组');
               if (index < _this.uploadBeforeList.length) {
                 _this.uploadBeforeList[index].uploadPercent = 100;
                 _this.numberdata[index].state = 100;
@@ -325,11 +328,13 @@ export default {
                 _this.numberdata = _this.numberdata.slice(0, _this.count);
                 _this.newindex = _this.newindex.slice(0, _this.count);
               }
+              // console.log(_this.uploadList, '$$$$$$$$$$$$$');
               _this.newindex = [];
               _this.formDataAppend = {};
             }, 500);
           } else {
             _this.number += 1;
+            console.log(_this.uploadBeforeList);
             const resObj = JSON.parse(res.data);
             if (resObj.errors[0].detail) {
               uni.showToast({
@@ -365,7 +370,6 @@ export default {
             _this.$emit('uploadFail', res, _this.uploadList);
             return reject(res);
           }
-          _this.newindex = [];
           _this.formDataAppend = {};
           // 抛出接口信息
           _this.$emit('uploadSuccess', res, _this.uploadList);
@@ -507,5 +511,10 @@ export default {
     border: 1px solid --color(--qui-BOR-ED);
     border-radius: 5rpx;
   }
+}
+.van-uploader__input {
+  width: 200rpx;
+  height: 200rpx;
+  background: burlywood;
 }
 </style>

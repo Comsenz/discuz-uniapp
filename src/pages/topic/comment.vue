@@ -21,6 +21,7 @@
               </view>
               <qui-topic-content
                 :topic-status="thread.isApproved"
+                :theme-parts="1"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-real="post.user.isReal"
@@ -1552,8 +1553,7 @@ page {
 }
 .themeItem__header__follow {
   align-self: flex-start;
-  width: 160rpx;
-  margin-right: 29rpx;
+  width: 168rpx;
   line-height: 1;
   text-align: right;
   flex-shrink: 0;

@@ -17,7 +17,7 @@
             :palette="template"
             @imgErr="imgErr"
             @imgOK="onImgOK"
-            width-pixels="2080"
+            width-pixels="1040"
           />
         </view>
       </view>
