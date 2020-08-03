@@ -278,8 +278,9 @@ export default {
   height: auto;
   align-items: flex-start;
 }
-/deep/ .my-tabs .qui-tabs__item--active {
-  border: 0;
+/deep/ .my-tabs .qui-tabs__item--active:after {
+  width: 0;
+  height: 0;
 }
 /deep/ .my .qui-tabs__item__title {
   font-weight: normal;
