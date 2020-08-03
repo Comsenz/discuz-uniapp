@@ -106,22 +106,23 @@
           :poster="coverImage"
           v-if="themeType == 2 && videoStatus"
           controls
-          preload="auto"
+          preload="none"
           bindpause="handlepause"
           playsinline
           webkit-playsinline
           x5-playsinline
           :page-gesture="false"
-          show-fullscreen-btn="true"
-          show-play-btn="true"
-          auto-pause-if-open-native="true"
-          auto-pause-if-navigate="true"
-          enable-play-gesture="false"
+          :show-fullscreen-btn="true"
+          :show-play-btn="true"
+          auto-pause-if-open-native
+          auto-pause-if-navigate
+          :enable-play-gesture="false"
           :vslide-gesture="false"
           :vslide-gesture-in-fullscreen="false"
           object-fit="cover"
           :direction="videoWidth > videoHeight ? 90 : 0"
           x5-video-player-type="h5-page"
+          bindfullscreenchange="fullScreen"
           :src="mediaUrl"
           :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
         ></video>
@@ -186,7 +187,7 @@
 </template>
 
 <script>
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 
 export default {
   props: {
@@ -350,9 +351,7 @@ export default {
       // topicStatus: '',
     };
   },
-  onLoad() {
-    // console.log(this.tags);
-  },
+  onLoad() {},
   computed: {
     t() {
       return this.i18n.t('topic');
@@ -362,7 +361,7 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2MorningOrAfternoon(this.themeTime);
+      return time2DateAndHM(this.themeTime);
     },
   },
   methods: {
@@ -412,14 +411,12 @@ export default {
         url: item.url,
         success(res) {
           if (res.statusCode === 200) {
-            console.log(res.tempFilePath);
             that.$refs.toast.show({
               message: that.i18n.t('profile.downloadSuccess'),
             });
             // wx.openDocument({
             //   filePath: res.tempFilePath,
             //   success() {
-            //     console.log('打开文档成功');
             //   },
             // });
           }
@@ -456,7 +453,7 @@ export default {
     &__img {
       width: 80rpx;
       height: 80rpx;
-      margin-right: 18rpx;
+      // margin-right: 18rpx;
       background: #ccc;
       border-radius: 100%;
       image {
@@ -468,6 +465,7 @@ export default {
 
     &__title {
       flex: 1;
+      margin-left: 18rpx;
       &__top {
         display: flex;
         flex-direction: row;
@@ -494,6 +492,7 @@ export default {
       &__isAdmin {
         font-weight: 400;
         color: --color(--qui-FC-AAA);
+        white-space: nowrap;
       }
 
       &__time {
@@ -506,6 +505,7 @@ export default {
     &__opera {
       align-self: flex-start;
       width: 100rpx;
+      margin-left: 29rpx;
       text-align: right;
       flex-shrink: 0;
 

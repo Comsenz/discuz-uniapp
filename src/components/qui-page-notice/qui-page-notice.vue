@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 import user from '@/mixin/user';
 
 export default {
@@ -159,7 +159,7 @@ export default {
           const list = JSON.parse(JSON.stringify(res));
           for (let i = 0; i < list.length; i += 1) {
             if (list[i] && list[i].dialogMessage) {
-              list[i].time = time2MorningOrAfternoon(list[i].dialogMessage.created_at);
+              list[i].time = time2DateAndHM(list[i].dialogMessage.created_at);
             }
             if (list[i] && list[i].recipient && list[i].sender) {
               if (list[i].recipient.id === this.currentLoginId) {

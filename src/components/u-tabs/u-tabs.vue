@@ -196,10 +196,10 @@ export default {
       handler(newVal){
         // 用$nextTick等待视图更新完毕后再计算tab的局部信息，否则可能因为tab还没生成就获取，就会有问题
         this.$nextTick(() => {
-          this.clickTab({
-            index: this.currentIndex,
-            id: newVal[this.currentIndex]._jv.id
-          })
+          // this.clickTab({
+          //   index: this.currentIndex,
+          //   id: newVal[this.currentIndex]._jv.id
+          // })
           const timer = setTimeout(()=>{
             this.init();
           },200)

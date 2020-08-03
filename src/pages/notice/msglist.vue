@@ -20,14 +20,14 @@
           >
             <qui-avatar
               v-if="item.user_id === currentLoginId"
-              :is-real="item.user.isReal"
+              :is-real="item.user && item.user.isReal"
               class="chat-box__con__msg__mine__img"
               :user="userInfo"
               @click="jumpUserPage(item.user_id)"
             />
             <qui-avatar
               v-if="item.user_id !== currentLoginId"
-              :is-real="item.user.isReal"
+              :is-real="item.user && item.user.isReal"
               class="chat-box__con__msg__other__img"
               :user="item.user"
               @click="jumpUserPage(item.user_id)"
@@ -89,7 +89,7 @@
 
 <script>
 import quiEmoji from '@/components/qui-emoji/qui-emoji';
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 
 export default {
   components: {
@@ -98,7 +98,7 @@ export default {
 
   data() {
     return {
-      title: '', // 导航栏标题
+      username: '', // 接收消息的用户
       scrollTop: 0,
       old: {
         scrollTop: 0,
@@ -133,7 +133,7 @@ export default {
       if (recordList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           if (recordList[keys[i]].dialog_id.toString() === this.dialogId) {
-            recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
+            recordList[keys[i]].time = time2DateAndHM(recordList[keys[i]].created_at);
             list.push(recordList[keys[i]]);
           }
         }
@@ -191,11 +191,12 @@ export default {
     console.log('-----navbarHeight-------', this.navbarHeight);
     console.log('params', params);
     const { username, dialogId } = params;
-    this.title = username;
-    uni.setNavigationBarTitle({
-      title: username,
-    });
-    this.dialogId = dialogId;
+    if (dialogId) {
+      this.dialogId = dialogId;
+    }
+    if (username) {
+      this.username = username;
+    }
     this.getChatRecord(dialogId);
     if (Object.keys(this.allEmoji).length < 1) {
       this.getEmoji();
@@ -312,7 +313,7 @@ export default {
             _jv: {
               type: 'dialog',
             },
-            recipient_username: this.title,
+            recipient_username: this.username,
             message_text: this.msg,
           };
           // 调用创建会话接口

@@ -64,6 +64,7 @@ export default {
           'dataerro',
           'permission_denied',
           'register_validate',
+          'register_close',
         ].indexOf(this.forumError.code) !== -1
       );
     },

@@ -21,6 +21,7 @@
               </view>
               <qui-topic-content
                 :topic-status="thread.isApproved"
+                :theme-parts="1"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-real="post.user.isReal"
@@ -329,7 +330,7 @@
 import { status, utils } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import user from '@/mixin/user';
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
@@ -443,7 +444,7 @@ export default {
     // 时间转化
     localTime() {
       if (this.thread.createdAt) {
-        return time2MorningOrAfternoon(this.thread.createdAt);
+        return time2DateAndHM(this.thread.createdAt);
       }
     },
   },
@@ -465,8 +466,8 @@ export default {
   },
   // 下拉刷新
   onPullDownRefresh() {
-    // console.log('refresh');
     const _this = this;
+    _this.pageNum = 1;
     setTimeout(function() {
       _this.loadPost();
       _this.loadThread();
@@ -773,7 +774,6 @@ export default {
           delete data._jv;
           this.postComments = [...this.postComments, ...data];
           this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
-          console.log('回复列表', this.postComments);
           if (data.length == 0) {
             this.contentnomoreVal = this.t.noComment;
           } else {
@@ -807,7 +807,6 @@ export default {
         to_user_id: userInfo.id,
       };
       this.$store.dispatch('jv/post', params).then(res => {
-        // console.log(res, '这是结果');
         if (res.is_mutual == 0) {
           this.post.user.follow = 1;
           originUser.follow = 1;
@@ -841,12 +840,9 @@ export default {
 
       if (param.type === '0') {
         if (this.sortVal === 'createdAt') {
-          console.log('1');
           this.$refs.toast.show({ message: this.t.itsAlreadyWantedSort });
         } else {
-          console.log('2');
           this.refreshVal = false;
-          // this.refreshVal = true;
 
           this.$nextTick(() => {
             this.refreshVal = true;
@@ -857,10 +853,8 @@ export default {
         }
       } else if (param.type === '1') {
         if (this.sortVal === '-createdAt') {
-          console.log('3');
           this.$refs.toast.show({ message: this.t.itsAlreadyWantedSort });
         } else {
-          console.log('4');
           this.refreshVal = false;
           this.sortVal = '-createdAt';
           this.postComments = [];
@@ -1559,8 +1553,7 @@ page {
 }
 .themeItem__header__follow {
   align-self: flex-start;
-  width: 160rpx;
-  margin-right: 29rpx;
+  width: 168rpx;
   line-height: 1;
   text-align: right;
   flex-shrink: 0;

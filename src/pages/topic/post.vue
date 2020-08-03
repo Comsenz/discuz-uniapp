@@ -824,12 +824,7 @@ export default {
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
-      console.log(list, del, '~~~~~~');
-      // const id = this.operating === 'edit' ? list.id : list.data.id;
       const id = list.id;
-      // this.delAttachments(id, del).then(() => {
-      //   this.$refs.upload.clear(del);
-      // });
       this.deleteType = 0;
       this.deleteId = id;
       this.deleteIndex = del;
@@ -1156,7 +1151,6 @@ export default {
       if (this.deleteType === 0) {
         // 删除类型为图片
         this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
-          console.log(this.deleteIndex, '删除的图片');
           this.$refs.upload.clear(this.deleteIndex);
         });
       } else if (this.deleteType === 1) {
@@ -1378,7 +1372,7 @@ export default {
           appId: this.forums.qcloud.qcloud_captcha_app_id, //您申请的验证码的 appId
         },
         success(res) {
-          console.log('验证码成功打开');
+          // 验证码成功打开
         },
         fail(err) {
           uni.hideLoading();

@@ -34,6 +34,7 @@
         {{ i18n.t('user.exist') }}
       </view>
     </view>
+    <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
 </template>
 
@@ -144,74 +145,88 @@ export default {
       // #endif
     },
     registerClick() {
-      const params = {
-        data: {
-          attributes: {
-            username: this.username,
-            password: this.password,
+      if (this.forums && this.forums.set_reg && !this.forums.set_reg.register_close) {
+        this.$store
+          .dispatch('forum/setError', {
+            code: 'register_close',
+            status: 500,
+          })
+          .then(res => {
+            console.log(res);
+            uni.navigateTo({
+              url: '/pages/home/index',
+            });
+          });
+      } else {
+        const params = {
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+            },
           },
-        },
-      };
-      if (this.register_captcha && this.validate) {
-        params.data.attributes.register_reason = this.reason;
-        params.data.attributes.captcha_ticket = this.ticket;
-        params.data.attributes.captcha_rand_str = this.randstr;
-      }
-      if (this.validate) {
-        params.data.attributes.register_reason = this.reason;
-      }
-      if (this.register_captcha) {
-        params.data.attributes.captcha_ticket = this.ticket;
-        params.data.attributes.captcha_rand_str = this.randstr;
-      }
-      if (this.code !== '') {
-        params.data.attributes.code = this.code;
-      }
-      this.$store
-        .dispatch('session/h5Register', params)
-        .then(result => {
-          if (result && result.data && result.data.data && result.data.data.id) {
-            console.log('注册成功', result);
-            this.logind();
-            uni.showToast({
-              title: this.i18n.t('user.registerSuccess'),
-              duration: 2000,
-            });
-          }
-          if (
-            result &&
-            result.data &&
-            result.data.errors &&
-            result.data.errors[0].status === '422'
-          ) {
-            uni.showToast({
-              icon: 'none',
-              title: result.data.errors[0].detail[0],
-              duration: 2000,
-            });
-          }
-          if (
-            result &&
-            result.data &&
-            result.data.errors &&
-            result.data.errors[0].code === 'register_validate'
-          ) {
-            this.$store
-              .dispatch('forum/setError', {
-                code: 'register_validate',
-                status: 500,
-              })
-              .then(res => {
-                console.log(res);
-                uni.navigateTo({
-                  url: '/pages/home/index',
-                });
+        };
+        if (this.register_captcha && this.validate) {
+          params.data.attributes.register_reason = this.reason;
+          params.data.attributes.captcha_ticket = this.ticket;
+          params.data.attributes.captcha_rand_str = this.randstr;
+        }
+        if (this.validate) {
+          params.data.attributes.register_reason = this.reason;
+        }
+        if (this.register_captcha) {
+          params.data.attributes.captcha_ticket = this.ticket;
+          params.data.attributes.captcha_rand_str = this.randstr;
+        }
+        if (this.code !== '') {
+          params.data.attributes.code = this.code;
+        }
+        this.$store
+          .dispatch('session/h5Register', params)
+          .then(result => {
+            if (result && result.data && result.data.data && result.data.data.id) {
+              console.log('注册成功', result);
+              this.logind();
+              uni.showToast({
+                title: this.i18n.t('user.registerSuccess'),
+                duration: 2000,
               });
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+            }
+            if (
+              result &&
+              result.data &&
+              result.data.errors &&
+              result.data.errors[0].status === '422'
+            ) {
+              uni.showToast({
+                icon: 'none',
+                title: result.data.errors[0].detail[0],
+                duration: 2000,
+              });
+            }
+            if (
+              result &&
+              result.data &&
+              result.data.errors &&
+              result.data.errors[0].code === 'register_validate'
+            ) {
+              this.$store
+                .dispatch('forum/setError', {
+                  code: 'register_validate',
+                  status: 500,
+                })
+                .then(res => {
+                  console.log(res);
+                  uni.navigateTo({
+                    url: '/pages/home/index',
+                  });
+                });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     jump2Login() {
       console.log('跳转到登录页面');

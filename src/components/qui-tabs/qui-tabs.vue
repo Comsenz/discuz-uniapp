@@ -4,9 +4,6 @@
       v-for="(item, index) in values"
       :class="index === currentIndex ? 'qui-tabs__item--active qui-tabs__item' : 'qui-tabs__item'"
       :key="index"
-      :style="{
-        borderColor: index === currentIndex ? activeColor : 'transparent',
-      }"
       @tap="onClick(index)"
     >
       <text v-if="brief" class="qui-tabs__item__brief">
@@ -85,7 +82,6 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 30rpx;
-  border-bottom: 4rpx solid --color(--qui-FC-FFF);
   box-sizing: border-box;
 }
 .qui-tabs__item__brief {
@@ -98,7 +94,15 @@ export default {
   color: --color(--qui-FC-AAA);
 }
 .qui-tabs__item--active {
-  border-bottom: 4rpx solid;
+  position: relative;
+  &:after {
+    position: absolute;
+    bottom: -2rpx;
+    width: 100%;
+    height: 4rpx;
+    background: --color(--qui-MAIN);
+    content: '';
+  }
 }
 .qui-tabs__item--active .qui-tabs__item__title {
   font-weight: bold;

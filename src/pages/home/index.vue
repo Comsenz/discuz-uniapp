@@ -45,6 +45,8 @@ export default {
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
+      footerIndex: state =>
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) : 0,
     }),
     loading() {
       return this.forumError.loading;
@@ -87,9 +89,13 @@ export default {
   onPullDownRefresh() {
     if (this.show_index === 0) {
       // uni.$emit('onpullDownRefresh');
-      this.$refs.home.ontrueGetList();
+      this.$refs.home.threads = [];
+      this.$refs.home.isResetList = true;
+      this.$refs.home.loadThreadsSticky();
+      this.$refs.home.loadThreads();
     }
     if (this.show_index === 1) {
+      this.$refs.quinotice.dialogList = [];
       this.$refs.quinotice.pageNum = 1;
       this.$refs.quinotice.ontrueGetList();
     }
@@ -98,7 +104,11 @@ export default {
   },
   // 监听页面滚动
   onPageScroll(event) {
-    this.$refs.home.scroll(event);
+    console.log(event);
+    if (this.footerIndex === 0) {
+      console.log('监听页面滚动');
+      this.$refs.home.scroll(event);
+    }
   },
   // 上拉加载
   onReachBottom() {

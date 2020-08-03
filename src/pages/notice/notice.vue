@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
@@ -76,13 +76,13 @@ export default {
             res[i].username = res[i].user_name;
             res[i].avatarUrl = res[i].user_avatar;
             if (res[i].created_at) {
-              res[i].time = time2MorningOrAfternoon(res[i].created_at);
+              res[i].time = time2DateAndHM(res[i].created_at);
             }
             if (res[i].thread_created_at) {
-              res[i].thread_time = time2MorningOrAfternoon(res[i].thread_created_at);
+              res[i].thread_time = time2DateAndHM(res[i].thread_created_at);
             }
             if (res[i].reply_post_created_at) {
-              res[i].reply_time = time2MorningOrAfternoon(res[i].reply_post_created_at);
+              res[i].reply_time = time2DateAndHM(res[i].reply_post_created_at);
             }
             if (res[i].type === 'rewarded' && res[i].amount) {
               res[i].money = `￥${res[i].amount}`;
@@ -142,5 +142,9 @@ export default {
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
   transition: $switch-theme-time;
+
+  /deep/ .uni-dialog-title {
+    color: #f2b968;
+  }
 }
 </style>
