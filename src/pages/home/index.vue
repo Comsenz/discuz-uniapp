@@ -45,6 +45,7 @@ export default {
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
+      footerIndex: state => state.footerTab.footerIndex,
     }),
     loading() {
       return this.forumError.loading;
@@ -167,6 +168,12 @@ export default {
         title: title[this.show_index],
       });
     }
+    // #ifdef H5
+    const index = window.location.href.split('?')[1];
+    if (index) {
+      this.setFooterIndex(parseInt(index, 10));
+    }
+    // #endif
   },
   methods: {
     ...mapMutations({
