@@ -35,6 +35,13 @@ export default {
               });
               this.login(nickname, wxtoken, code);
             }
+            if (err.errors[0].code === 'register_validate') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('user.register_validate'),
+                duration: 2000,
+              });
+            }
           } else if (res && res.data && res.data.data && res.data.data.id) {
             console.log('登录成功', res);
             this.logind();
