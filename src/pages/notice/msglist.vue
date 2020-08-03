@@ -89,7 +89,7 @@
 
 <script>
 import quiEmoji from '@/components/qui-emoji/qui-emoji';
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 
 export default {
   components: {
@@ -133,7 +133,7 @@ export default {
       if (recordList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
           if (recordList[keys[i]].dialog_id.toString() === this.dialogId) {
-            recordList[keys[i]].time = time2MorningOrAfternoon(recordList[keys[i]].created_at);
+            recordList[keys[i]].time = time2DateAndHM(recordList[keys[i]].created_at);
             list.push(recordList[keys[i]]);
           }
         }
