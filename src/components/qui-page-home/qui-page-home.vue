@@ -412,6 +412,7 @@ export default {
     // #ifdef H5
     uni.$off('updateNoticePage');
     uni.$off('updateMy');
+    uni.$off('updateIndex');
     // #endif
   },
   mounted() {
@@ -441,13 +442,16 @@ export default {
     // #ifdef H5
     uni.$on('updateNoticePage', () => {
       this.headerShow = true;
-      this.navTop = 128;
     });
 
     uni.$on('updateMy', () => {
       this.headerShow = true;
-      this.navTop = 128;
     });
+
+    uni.$on('updateIndex', () => {
+      this.headerShow = true;
+    });
+
     // #endif
     // uni.$on('onpullDownRefresh', () => {
     //   this.navBarTransform = 'none';
