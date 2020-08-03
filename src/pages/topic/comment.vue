@@ -21,6 +21,7 @@
               </view>
               <qui-topic-content
                 :topic-status="thread.isApproved"
+                :theme-parts="1"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-real="post.user.isReal"
@@ -329,7 +330,7 @@
 import { status, utils } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import user from '@/mixin/user';
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
@@ -443,7 +444,7 @@ export default {
     // 时间转化
     localTime() {
       if (this.thread.createdAt) {
-        return time2MorningOrAfternoon(this.thread.createdAt);
+        return time2DateAndHM(this.thread.createdAt);
       }
     },
   },
@@ -1552,8 +1553,7 @@ page {
 }
 .themeItem__header__follow {
   align-self: flex-start;
-  width: 160rpx;
-  margin-right: 29rpx;
+  width: 168rpx;
   line-height: 1;
   text-align: right;
   flex-shrink: 0;

@@ -187,7 +187,7 @@
 </template>
 
 <script>
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 
 export default {
   props: {
@@ -361,7 +361,7 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2MorningOrAfternoon(this.themeTime);
+      return time2DateAndHM(this.themeTime);
     },
   },
   methods: {
@@ -453,7 +453,7 @@ export default {
     &__img {
       width: 80rpx;
       height: 80rpx;
-      margin-right: 18rpx;
+      // margin-right: 18rpx;
       background: #ccc;
       border-radius: 100%;
       image {
@@ -465,6 +465,7 @@ export default {
 
     &__title {
       flex: 1;
+      margin-left: 18rpx;
       &__top {
         display: flex;
         flex-direction: row;
@@ -491,6 +492,7 @@ export default {
       &__isAdmin {
         font-weight: 400;
         color: --color(--qui-FC-AAA);
+        white-space: nowrap;
       }
 
       &__time {
@@ -503,6 +505,7 @@ export default {
     &__opera {
       align-self: flex-start;
       width: 100rpx;
+      margin-left: 29rpx;
       text-align: right;
       flex-shrink: 0;
 
