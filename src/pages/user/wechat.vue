@@ -38,7 +38,7 @@ export default {
             if (err.errors[0].code === 'register_validate') {
               uni.showToast({
                 icon: 'none',
-                title: this.i18n.t('user.register_validate'),
+                title: this.i18n.t('core.register_validate'),
                 duration: 2000,
               });
             }
