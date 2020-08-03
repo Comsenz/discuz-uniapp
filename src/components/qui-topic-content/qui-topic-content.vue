@@ -187,7 +187,7 @@
 </template>
 
 <script>
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 
 export default {
   props: {
@@ -361,7 +361,7 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2MorningOrAfternoon(this.themeTime);
+      return time2DateAndHM(this.themeTime);
     },
   },
   methods: {
