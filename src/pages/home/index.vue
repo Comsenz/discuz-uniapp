@@ -174,10 +174,10 @@ export default {
       });
     }
     // #ifdef H5
-    const index = window.location.href.split('?')[1];
-    if (index) {
-      this.setFooterIndex(parseInt(index, 10));
-    }
+    // const index = window.location.href.split('?')[1];
+    // if (index) {
+    //   this.setFooterIndex(parseInt(index, 10));
+    // }
     // #endif
   },
   methods: {
