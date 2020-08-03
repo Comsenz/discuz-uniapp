@@ -151,7 +151,7 @@ export default {
     },
     loadThreads() {
       const params = {
-        'filter[isSticky]': 'no',
+        // 'filter[isSticky]': 'no',
         'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[topicId]': this.query.id,
