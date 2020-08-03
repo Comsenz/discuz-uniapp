@@ -27,7 +27,9 @@
       <view class="popup-message">
         <view class="popup-message__content">
           <view class="popup-message__content__title">{{ popTitle }}</view>
-          <view class="popup-message__content__detail">{{ popDetail }}</view>
+          <view class="popup-message__content__detail">
+            {{ popDetail || i18n.t('share.nothing') }}
+          </view>
         </view>
         <view class="popup-message__space"></view>
         <text class="popup-message__btn" @click="cancel('share')">
@@ -123,6 +125,7 @@ export default {
   }
   &__content__detail {
     padding: 0 40rpx;
+    padding-bottom: 40px;
     font-size: $fg-f24;
     text-align: justify;
     text-indent: 2em;
