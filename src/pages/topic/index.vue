@@ -700,6 +700,7 @@ export default {
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
       followStatus: '', // 当前关注状态
+      beRewarded: false,
     };
   },
   onReady() {},
@@ -742,6 +743,7 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(this.forums);
     this.rewardStatus = false;
     this.paidStatus = false;
     try {
@@ -912,6 +914,7 @@ export default {
           'category',
           'threadVideo',
           'paidUsers',
+          'user.groups.permissionWithoutCategories',
         ],
       };
       const threadAction = status.run(() =>
@@ -946,6 +949,15 @@ export default {
               title: titleText,
             });
             // #endif
+            data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
+               if (value.permission === 'createThreadPaid') {
+                 this.beRewarded = true;
+                 return;
+               }
+            })
+            if(data.user.groups[0]._jv.id === "1") {
+              this.beRewarded = true;
+            }
             this.loaded = true;
             this.loadingStatus = false;
             // 分享数据
@@ -1018,7 +1030,7 @@ export default {
             console.log('关闭微信支付');
             this.rewardStatus = false;
             this.paidStatus = false;
-          } else {
+          } else if(this.forums.paycenter.wxpay_close && this.beRewarded){
             // 如果开启了微信支付
             // console.log('开启微信支付');
             // console.log(data.paid, '是否付费');
@@ -1099,6 +1111,9 @@ export default {
               }
               // #endif
             }
+          } else {
+            this.rewardStatus = false;
+            this.paidBtnStatus = false;
           }
 
           if (data.firstPost.likedUsers.length < 1) {

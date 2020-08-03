@@ -1440,7 +1440,7 @@ export default {
 
     try {
       const res = uni.getSystemInfoSync();
-      if (this.forums && this.forums.paycenter.wxpay_close) {
+      if (this.forums && this.forums.paycenter.wxpay_close && this.forums.other.can_create_thread_paid) {
         // #ifndef H5
         if (res.platform === 'ios') {
           if (this.forums.paycenter.wxpay_ios === false) {
