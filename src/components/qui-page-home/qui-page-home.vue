@@ -427,10 +427,10 @@ export default {
     });
 
     if (this.footerIndex === 0) {
-      console.log('fffffffffffff');
+      // console.log('fffffffffffff');
       this.$uGetRect('#navId').then(rect => {
         this.navTop = rect.top;
-        console.log(this.navTop, 'this.navTopthis.navTopthis.navTopthis.navTop');
+        // console.log(this.navTop, 'this.navTopthis.navTopthis.navTopthis.navTop');
         this.navHeight = rect.height;
       });
     }
@@ -446,11 +446,11 @@ export default {
       this.headerShow = true;
     });
     uni.$on('updateNoticePage', () => {
-      console.log('99999');
+      // console.log('99999');
       this.headerShow = true;
     });
     uni.$on('updateMy', () => {
-      console.log('我的我的');
+      // console.log('我的我的');
       this.headerShow = true;
     });
 
@@ -487,11 +487,11 @@ export default {
       // #ifdef H5
       if (event.scrollTop >= this.navTop) {
         this.headerShow = false;
-        console.log('falsefalsefalse');
+        // console.log('falsefalsefalse');
         this.navBarTransform = 'none';
       } else {
         this.headerShow = true;
-        console.log('truetruetruetrue');
+        // console.log('truetruetruetrue');
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
       // #endif
