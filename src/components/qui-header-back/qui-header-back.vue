@@ -92,9 +92,6 @@ export default {
       // if (index) {
       //   this.setFooterIndex(parseInt(index, 10));
       // }
-      if (index) {
-        this.setFooterIndex(parseInt(index, 10));
-      }
       if (index === '1') {
         uni.$emit('updateNoticePage');
       }
