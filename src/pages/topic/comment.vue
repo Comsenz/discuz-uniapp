@@ -330,7 +330,7 @@
 import { status, utils } from '@/library/jsonapi-vuex/index';
 import { mapState, mapMutations } from 'vuex';
 import user from '@/mixin/user';
-import { time2MorningOrAfternoon } from '@/utils/time';
+import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
@@ -444,7 +444,7 @@ export default {
     // 时间转化
     localTime() {
       if (this.thread.createdAt) {
-        return time2MorningOrAfternoon(this.thread.createdAt);
+        return time2DateAndHM(this.thread.createdAt);
       }
     },
   },

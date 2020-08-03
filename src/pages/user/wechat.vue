@@ -23,9 +23,9 @@ export default {
         .then(res => {
           const err = res.data;
           if (err.errors) {
-            const { nickname } = err.errors[0].user;
-            const wxtoken = err.errors[0].token;
             if (err.errors[0].code === 'no_bind_user') {
+              const { nickname } = err.errors[0].user;
+              const wxtoken = err.errors[0].token;
               let code = '';
               uni.getStorage({
                 key: 'inviteCode',
@@ -34,6 +34,13 @@ export default {
                 },
               });
               this.login(nickname, wxtoken, code);
+            }
+            if (err.errors[0].code === 'register_validate') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.register_validate'),
+                duration: 2000,
+              });
             }
           } else if (res && res.data && res.data.data && res.data.data.id) {
             console.log('登录成功', res);
