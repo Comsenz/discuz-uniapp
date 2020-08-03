@@ -712,10 +712,10 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
-      if(thread.rewardedUsers) {
+      if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
-      if(thread.firstPost) {
+      if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
       }
       return thread;
@@ -2851,12 +2851,10 @@ page {
 }
 .themeItem__header__follow {
   align-self: flex-start;
-  width: 160rpx;
-  margin-right: 29rpx;
+  width: 168rpx;
   line-height: 1;
   text-align: right;
   flex-shrink: 0;
-
   .icon-follow {
     margin-right: 7rpx;
     font-size: $fg-f26;
