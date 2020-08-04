@@ -70,7 +70,13 @@ import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 
 export default {
-  mixins: [forums, user, loginAuth],
+  mixins: [
+    forums,
+    user,
+    // #ifdef  H5
+    loginAuth,
+    // #endif
+  ],
   props: {
     bottom: {
       type: Number,

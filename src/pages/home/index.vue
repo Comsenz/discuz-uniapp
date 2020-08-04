@@ -36,7 +36,14 @@ import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 
 export default {
-  mixins: [forums, user, detectionModel, loginAuth],
+  mixins: [
+    forums,
+    user,
+    detectionModel,
+    // #ifdef  H5
+    loginAuth,
+    // #endif
+  ],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
