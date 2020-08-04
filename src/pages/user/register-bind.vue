@@ -201,7 +201,7 @@ export default {
     },
     jump2LoginBind() {
       uni.navigateTo({
-        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
+        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=${this.code}`,
       });
     },
   },

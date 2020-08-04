@@ -223,7 +223,7 @@ export default {
     },
     jump2Login() {
       uni.navigateTo({
-        url: `/pages/user/login?url=${this.url}&validate=${this.validate}`,
+        url: `/pages/user/login?url=${this.url}&validate=${this.validate}&code=${this.code}`,
       });
     },
     showDialog(title) {

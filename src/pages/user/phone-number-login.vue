@@ -127,7 +127,7 @@ export default {
     },
     jump2VerificationCodeLogin() {
       uni.navigateTo({
-        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
+        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}&code=${this.code}`,
       });
     },
     jump2findPassword() {
