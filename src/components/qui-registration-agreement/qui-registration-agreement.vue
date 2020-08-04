@@ -129,6 +129,7 @@ export default {
     font-size: $fg-f24;
     text-align: justify;
     text-indent: 2em;
+    white-space: pre-line;
   }
 }
 </style>
