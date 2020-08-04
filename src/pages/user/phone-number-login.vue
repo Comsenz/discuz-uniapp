@@ -169,8 +169,8 @@ export default {
   box-sizing: border-box;
 }
 .new-phon {
-  width: 710rpx;
-  margin-left: 40rpx;
+  width: 100%;
+  margin: 0rpx 40rpx;
   font-size: $fg-f50;
   font-weight: bold;
   line-height: 100rpx;
@@ -187,7 +187,7 @@ export default {
   display: flex;
 }
 .new-phon-num {
-  width: 399rpx;
+  width: 100%;
   height: 100rpx;
   font-size: $fg-f50;
   font-weight: bold;

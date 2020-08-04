@@ -167,7 +167,7 @@ export default {
   }
 
   &-con {
-    margin: 0rpx 0rpx 0rpx 40rpx;
+    margin: 0rpx 40rpx;
 
     .input {
       width: 100%;
