@@ -1935,12 +1935,11 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`, 0)) {
           return;
         }
         // #endif
       }
-
       uni.navigateTo({
         url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
       });

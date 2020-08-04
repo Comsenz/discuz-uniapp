@@ -61,9 +61,12 @@ export default {
       code: 'user_login',
       status: 200,
     });
-    const { url, validate, register, code } = params;
+    const { url, validate, register, commentId, code } = params;
     if (url) {
       this.url = url;
+      if (commentId) {
+        this.url = `${url}&commentId=${commentId}`;
+      }
     }
     if (validate) {
       this.validate = JSON.parse(validate);
@@ -74,6 +77,7 @@ export default {
     if (code !== 'undefined') {
       this.code = code;
     }
+
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }

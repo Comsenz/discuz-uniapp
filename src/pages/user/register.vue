@@ -74,9 +74,12 @@ export default {
     };
   },
   onLoad(params) {
-    const { url, validate, code } = params;
+    const { url, validate, commentId, code } = params;
     if (url) {
       this.url = url;
+      if (commentId) {
+        this.url = `${url}&commentId=${commentId}`;
+      }
     }
     if (validate) {
       this.validate = JSON.parse(validate);
