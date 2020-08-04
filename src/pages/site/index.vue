@@ -145,7 +145,6 @@ export default {
   computed: {
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
-      console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
     // 获取 站点信息
@@ -166,7 +165,6 @@ export default {
         info.username = info.set_site.site_author.username;
         info.userId = info.set_site.site_author.id;
       }
-      console.log('站点信息：', info);
       return info;
     },
     // 获取 用户信息
@@ -183,7 +181,6 @@ export default {
       if (info && info.groups && info.groups.length > 0) {
         info.groupName = info.groups[0].name;
       }
-      console.log('用户信息：', info);
       return info;
     },
     // 获取 用户权限
@@ -204,13 +201,10 @@ export default {
                   });
                 }
               }
-            } else {
-              console.log('用户数据', value);
             }
           }
         }
       }
-      console.log('用户权限：', permissionList);
       return permissionList;
     },
   },
@@ -222,7 +216,7 @@ export default {
         'filter[tag]': 'agreement',
       };
       this.$store.dispatch('jv/get', ['forum', { params }]).then(res => {
-        console.log('获取站点信息：', res);
+        console.log(res);
       });
     },
     // 调用 用户组权限 接口
@@ -232,7 +226,7 @@ export default {
         include: ['permission'],
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
-        console.log('获取用户组权限：', res);
+        console.log(res);
       });
     },
     // 首页头部分享按钮弹窗
@@ -261,7 +255,6 @@ export default {
     // 跳转到个人主页
     jumpUserPage(userId) {
       if (userId) {
-        // console.log('点击头像到个人主页', userId);
         uni.navigateTo({
           url: `/pages/profile/index?userId=${userId}`,
         });

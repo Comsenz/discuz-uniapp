@@ -74,7 +74,6 @@ export default {
     };
   },
   onLoad(params) {
-    console.log('params', params);
     const { url, validate, code } = params;
     if (url) {
       this.url = url;
@@ -85,8 +84,6 @@ export default {
     if (code !== 'undefined') {
       this.code = code;
     }
-    console.log('validate', typeof this.validate);
-    console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
       this.register_captcha = this.forums.set_reg.register_captcha;
     }
@@ -97,7 +94,6 @@ export default {
       if (this.user && this.user.paid) {
         this.isPaid = this.user.paid;
       }
-      console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: this.url,
@@ -125,11 +121,9 @@ export default {
     // 验证码
     toTCaptcha() {
       // #ifdef H5
-      console.log('---------验证码-------');
       if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_captcha_app_id) {
         // eslint-disable-next-line no-undef
         this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
-          console.log('h5验证码', res);
           if (res.ret === 0) {
             this.ticket = res.ticket;
             this.randstr = res.randstr;
@@ -185,7 +179,6 @@ export default {
           .dispatch('session/h5Register', params)
           .then(result => {
             if (result && result.data && result.data.data && result.data.data.id) {
-              console.log('注册成功', result);
               this.logind();
               uni.showToast({
                 title: this.i18n.t('user.registerSuccess'),
@@ -229,7 +222,6 @@ export default {
       }
     },
     jump2Login() {
-      console.log('跳转到登录页面');
       uni.navigateTo({
         url: `/pages/user/login?url=${this.url}&validate=${this.validate}`,
       });

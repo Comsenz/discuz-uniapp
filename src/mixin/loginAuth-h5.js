@@ -45,14 +45,12 @@ module.exports = {
         } else {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式
-            console.log('用户名模式跳转到登录页');
             uni.navigateTo({
               url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });
           }
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
             // 手机号模式
-            console.log('手机号模式跳转到手机号+验证码登陆页');
             uni.navigateTo({
               url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });
@@ -60,13 +58,11 @@ module.exports = {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
             if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
               // 手机号模式
-              console.log('手机号模式跳转到手机号+验证码登陆页');
               uni.navigateTo({
                 url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
               });
             } else {
               // 用户名模式
-              console.log('用户名模式跳转到登录页');
               uni.navigateTo({
                 url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
               });
@@ -76,14 +72,12 @@ module.exports = {
       } else {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式
-          console.log('用户名模式跳转到登录页');
           uni.navigateTo({
             url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式
-          console.log('手机号模式跳转到手机号+验证码登陆页');
           uni.navigateTo({
             url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
           });
@@ -91,13 +85,11 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
             // 手机号模式
-            console.log('手机号模式跳转到手机号+验证码登陆页');
             uni.navigateTo({
               url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });
           } else {
             // 用户名模式
-            console.log('用户名模式跳转到登录页');
             uni.navigateTo({
               url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });

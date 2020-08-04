@@ -17,10 +17,5 @@ export const getCurUrl = () => {
     param = `?${param.substr(1)}`;
   }
   const url = `/${curRoute}${param}`;
-  console.log('routes', routes);
-  console.log('curRoute', curRoute);
-  console.log('curParam', curParam);
-  console.log('param', param);
-  console.log('url', url);
   return url;
 };

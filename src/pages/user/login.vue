@@ -56,12 +56,10 @@ export default {
     };
   },
   onLoad(params) {
-    console.log('登录');
     this.$store.dispatch('forum/setError', {
       code: 'user_login',
       status: 200,
     });
-    console.log('params', params);
     const { url, validate, register } = params;
     if (url) {
       this.url = url;
@@ -72,9 +70,6 @@ export default {
     if (register) {
       this.register = JSON.parse(register);
     }
-    console.log('register', typeof this.register);
-    console.log('validate', typeof this.validate);
-    console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
@@ -85,7 +80,6 @@ export default {
       if (this.user && this.user.paid) {
         this.isPaid = this.user.paid;
       }
-      console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: this.url,
@@ -116,7 +110,7 @@ export default {
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {
-            console.log('登录成功', res);
+            console.log(res);
             this.logind();
             uni.showToast({
               title: this.i18n.t('user.loginSuccess'),
@@ -129,13 +123,11 @@ export default {
       }
     },
     jump2Register() {
-      console.log('跳转到注册页面');
       uni.navigateTo({
         url: `/pages/user/register?url=${this.url}&validate=${this.validate}`,
       });
     },
     jump2findPassword() {
-      console.log('跳转到找回密码页面');
       uni.navigateTo({
         url: `/pages/modify/findpwd?pas=reset_pwd`,
       });

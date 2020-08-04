@@ -43,7 +43,6 @@ export default {
               });
             }
           } else if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('登录成功', res);
             this.logind();
             if (this.user && this.user.paid) {
               this.isPaid = this.user.paid;

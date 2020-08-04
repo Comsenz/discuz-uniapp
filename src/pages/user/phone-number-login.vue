@@ -60,15 +60,12 @@ export default {
     };
   },
   onLoad(params) {
-    console.log('params', params);
     const { url, validate, token } = params;
     this.url = url;
     if (validate) {
       this.validate = JSON.parse(validate);
     }
     this.token = token;
-    console.log('validate', typeof this.validate);
-    console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
@@ -76,7 +73,6 @@ export default {
       if (this.user && this.user.paid) {
         this.isPaid = this.user.paid;
       }
-      console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: this.url,
@@ -110,7 +106,7 @@ export default {
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {
-            console.log('手机号密码登录绑定成功', res);
+            console.log(res);
             this.logind();
             uni.showToast({
               title: this.i18n.t('user.loginSuccess'),
@@ -123,13 +119,11 @@ export default {
       }
     },
     jump2VerificationCodeLogin() {
-      console.log('跳转到验证码登录页面');
       uni.navigateTo({
         url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
       });
     },
     jump2findPassword() {
-      console.log('跳转到找回密码页面');
       uni.navigateTo({
         url: `/pages/modify/findpwd?pas=reset_pwd`,
       });

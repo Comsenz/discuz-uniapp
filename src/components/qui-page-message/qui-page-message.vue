@@ -203,14 +203,11 @@ export default {
       ) {
         const pages = getCurrentPages();
         const delta = pages.indexOf(pages[pages.length - 1]);
-        console.log(delta, '$$$$$$$$$$');
         if (delta === 0) {
-          // console.log('走跳转');
           uni.redirectTo({
             url: `/pages/home/index`,
           });
         } else {
-          // console.log('走返回');
           uni.navigateBack({
             delta: 1,
           });
@@ -225,7 +222,6 @@ export default {
       // #endif
     },
     handleBackHome() {
-      console.log('回到首页');
       window.location.reload();
     },
   },
