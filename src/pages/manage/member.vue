@@ -151,7 +151,6 @@ export default {
     // 获取当前登录的id
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
-      console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
     userListShow() {
@@ -178,7 +177,6 @@ export default {
     // 调用 获取所有用户组 接口
     getGroupList() {
       this.$store.dispatch('jv/get', 'groups').then(res => {
-        console.log('获取所有用户组：', res);
         if (res._jv) {
           delete res._jv;
           this.groupList = res;
@@ -196,7 +194,6 @@ export default {
       };
       if (this.searchText === '') {
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('内容为空的搜索：', res);
           if (res && res._jv) {
             delete res._jv;
             if (this.isSearch) {
@@ -210,7 +207,6 @@ export default {
       } else {
         params['page[number]'] = this.searchPageNum;
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('搜索res：', res);
           if (res && res._jv) {
             delete res._jv;
             this.searchUserList = [...this.searchUserList, ...res];
@@ -230,11 +226,9 @@ export default {
         this.pageNum += 1;
       }
       this.searchUser(this.searchText);
-      console.log('页码', this.pageNum);
     },
     // 调用 批量修改用户的用户组 接口
     modifyGroupName(item) {
-      console.log('item', item);
       const data = [];
       if (this.checkAvatar && this.checkAvatar.length > 0) {
         for (let i = 0; i < this.checkAvatar.length; i += 1) {
@@ -259,7 +253,6 @@ export default {
         },
       ];
       this.$store.dispatch('jv/patch', params).then(res => {
-        console.log('修改用户组res', res);
         if (res) {
           this.getGroupList();
           this.pageNum = 1;
@@ -278,7 +271,6 @@ export default {
         'filter[username]': `*${this.searchText}*`,
       };
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-        console.log('第一页的数据：', res);
         if (res && res._jv) {
           delete res._jv;
           this.userList = res;
@@ -288,7 +280,6 @@ export default {
       });
     },
     changeCheck(e) {
-      console.log('eeeeee', e);
       this.checkAvatar = [];
       e.detail.value.forEach(item => {
         this.checkAvatar.push(JSON.parse(item));
@@ -299,7 +290,6 @@ export default {
     },
     // 点击取消按钮
     cancel() {
-      console.log('取消');
       this.$refs.popup.close();
     },
   },

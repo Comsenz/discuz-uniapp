@@ -50,7 +50,6 @@ export default {
     };
   },
   onLoad(params) {
-    console.log('params', params);
     const { url, validate, token, code } = params;
     if (url) {
       this.url = url;
@@ -64,8 +63,6 @@ export default {
     if (token) {
       this.token = token;
     }
-    console.log('validate', typeof this.validate);
-    console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
@@ -73,7 +70,6 @@ export default {
       if (this.user && this.user.paid) {
         this.isPaid = this.user.paid;
       }
-      console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: this.url,
@@ -105,7 +101,7 @@ export default {
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {
-            console.log('登录绑定成功', res);
+            console.log(res);
             this.logind();
             uni.showToast({
               title: this.i18n.t('user.loginBindSuccess'),
@@ -125,7 +121,6 @@ export default {
       });
     },
     jump2RegisterBind() {
-      console.log('注册并绑定页');
       uni.navigateTo({
         url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=${this.code}`,
       });

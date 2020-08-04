@@ -133,7 +133,6 @@ export default {
     // 跳转到个人主页
     jumpUserPage(userId) {
       if (userId) {
-        console.log('点击头像到个人主页', userId);
         uni.navigateTo({
           url: `/pages/profile/index?userId=${userId}`,
         });
@@ -163,7 +162,6 @@ export default {
       };
       if (this.searchText === '') {
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('内容为空的搜索：', res);
           if (res) {
             if (res._jv) {
               delete res._jv;
@@ -179,7 +177,6 @@ export default {
       } else {
         params['page[number]'] = this.searchPageNum;
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('搜索res：', res);
           if (res) {
             if (res._jv) {
               delete res._jv;
@@ -201,7 +198,6 @@ export default {
         this.pageNum += 1;
       }
       this.searchUser(this.searchText);
-      console.log('页码', this.pageNum);
     },
   },
 };

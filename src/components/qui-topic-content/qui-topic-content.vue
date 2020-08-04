@@ -47,7 +47,23 @@
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
-          <text class="themeItem__header__title__username">{{ userName }}</text>
+          <text
+            class="themeItem__header__title__username"
+            v-if="followShow && !managementShow"
+            :style="{ maxWidth: '200rpx' }"
+          >
+            {{ userName }}1
+          </text>
+          <text
+            class="themeItem__header__title__username"
+            v-else-if="followShow && managementShow"
+            :style="{ maxWidth: '90rpx' }"
+          >
+            {{ userName }}2
+          </text>
+          <text class="themeItem__header__title__username" v-else :style="{ maxWidth: '370rpx' }">
+            {{ userName }}3
+          </text>
           <text
             class="themeItem__header__title__isAdmin"
             v-for="(group, index) in userRole"
@@ -202,6 +218,10 @@ export default {
         return ['0', '1'].indexOf(value) !== -1;
       },
       default: '0',
+    },
+    followShow: {
+      type: Boolean,
+      default: false,
     },
     // 主题类型
     // themeType: {

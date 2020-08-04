@@ -116,7 +116,6 @@ export default {
     // 获取当前登录的id
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
-      console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
   },
@@ -128,7 +127,6 @@ export default {
     this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
     // #endif
     uni.$on('updateNotiNum', () => {
-      console.log('updateNode', this.user);
       this.getUnreadNoticeNum();
     });
     // #ifdef H5
@@ -154,7 +152,6 @@ export default {
         include: ['sender', 'recipient', 'sender.groups', 'recipient.groups', 'dialogMessage'],
       };
       this.$store.dispatch('jv/get', ['dialog', { params }]).then(res => {
-        console.log('会话列表res', res);
         if (res && res.length > 0) {
           const list = JSON.parse(JSON.stringify(res));
           for (let i = 0; i < list.length; i += 1) {
@@ -188,7 +185,6 @@ export default {
     // 调用 未读通知数 的接口
     getUnreadNoticeNum() {
       if (this.user && this.user.typeUnreadNotifications) {
-        console.log('this.user', this.user);
         this.list[0].unReadNum = this.user.typeUnreadNotifications.related || '';
         this.list[1].unReadNum = this.user.typeUnreadNotifications.replied || '';
         this.list[2].unReadNum = this.user.typeUnreadNotifications.liked || '';
@@ -201,7 +197,6 @@ export default {
     },
     // 跳转至 @我的/回复我的/点赞我的/财务通知/系统通知 页面（传入标题，类型和未读通知条数）
     jumpNoticePage(item) {
-      console.log('item', item);
       // 如果有未读消息，点击时请求并更新消息信息
       if (item.unReadNum) this.getUserInfo(true);
       uni.navigateTo({
@@ -209,12 +204,10 @@ export default {
           item.unReadNum
         }`,
       });
-      console.log(`跳转${this.i18n.t(item.title)}页面`);
     },
     // 跳转至 聊天页面
     jumpMsglistPage(dialogInfo, index) {
       if (dialogInfo) {
-        console.log('会话信息', dialogInfo);
         this.dialogList[index].readAt = '1';
         uni.navigateTo({
           url: `/pages/notice/msglist?dialogId=${dialogInfo._jv.id}&username=${dialogInfo.username}`,
@@ -228,7 +221,6 @@ export default {
       }
       this.pageNum += 1;
       this.getDialogList();
-      console.log('页码', this.pageNum);
     },
     // 组件初始化数据
     ontrueGetList() {

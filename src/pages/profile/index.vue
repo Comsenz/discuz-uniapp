@@ -108,6 +108,7 @@ import { status } from '@/library/jsonapi-vuex/index';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import forums from '@/mixin/forums';
+import { getCurUrl } from '@/utils/getCurUrl';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -278,7 +279,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -305,7 +306,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
