@@ -128,7 +128,7 @@ export default {
     padding-bottom: 40px;
     font-size: $fg-f24;
     text-align: justify;
-    text-indent: 2em;
+    // text-indent: 2em;
     white-space: pre-line;
   }
 }
