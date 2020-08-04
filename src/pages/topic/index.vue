@@ -1935,7 +1935,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`, 0)) {
+        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`)) {
           return;
         }
         // #endif
