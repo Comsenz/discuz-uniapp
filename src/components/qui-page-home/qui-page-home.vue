@@ -559,7 +559,6 @@ export default {
           url: `/pages/topic/index?id=${thread._jv.id}`,
         });
       } else {
-        // this.$store.getters['session/get']('auth').open();
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingTopic') });
       }
     },
@@ -606,8 +605,14 @@ export default {
     shareHead(index) {
       if (index === 0) {
         if (!this.$store.getters['session/get']('isLogin')) {
+          // #ifdef MP-WEIXIN
           this.$store.getters['session/get']('auth').open();
-          return;
+          // #endif
+          // #ifdef H5
+          if (!this.handleLogin()) {
+            return;
+          }
+          // #endif
         }
         uni.navigateTo({
           url: '/pages/share/site',
