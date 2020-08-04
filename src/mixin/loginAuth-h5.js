@@ -26,6 +26,9 @@ module.exports = {
     },
     login(url = '/pages/home/index', wxtoken, code) {
       const { isWeixin } = appCommonH.isWeixin();
+      // if (index) {
+      //   this.setFooterIndex(parseInt(index, 10));
+      // }
       if (isWeixin) {
         // 微信内
         if (this.forums && this.forums.passport && this.forums.passport.offiaccount_close) {

@@ -93,9 +93,12 @@ export default {
     };
   },
   onLoad(params) {
-    const { url, validate, token, code } = params;
+    const { url, validate, token, commentId, code } = params;
     if (url) {
       this.url = url;
+      if (commentId) {
+        this.url = `${url}&commentId=${commentId}`;
+      }
     }
     if (validate) {
       this.validate = JSON.parse(validate);
@@ -181,12 +184,12 @@ export default {
     countdown() {
       if (this.time > 1) {
         this.time -= 1;
-        this.btnContent = `${this.time}秒后重发`;
+        this.btnContent = `${this.time}${this.i18n.t('modify.retransmission')}`;
         this.disabled = true;
         this.timer = setTimeout(this.countdown, 1000);
         this.isGray = true;
       } else if (this.time === 1) {
-        this.btnContent = '获取验证码';
+        this.btnContent = this.i18n.t('modify.retransmission');
         clearTimeout(this.timer);
         this.disabled = false;
         this.isGray = false;
@@ -217,9 +220,9 @@ export default {
     },
     login() {
       if (this.phoneNumber === '') {
-        this.showDialog('手机号不能为空');
+        this.showDialog(this.i18n.t('user.phonenumberEmpty'));
       } else if (this.verificationCode === '') {
-        this.showDialog('验证码不能为空');
+        this.showDialog(this.i18n.t('user.verificationCodeEmpty'));
       } else {
         this.verifyPhoneNumber();
       }
@@ -267,7 +270,7 @@ export default {
     },
     jump2PhoneNumberLogin() {
       uni.navigateTo({
-        url: `/pages/user/phone-number-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
+        url: `/pages/user/phone-number-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}&code=${this.code}`,
       });
     },
   },

@@ -74,9 +74,12 @@ export default {
     };
   },
   onLoad(params) {
-    const { url, validate, code } = params;
+    const { url, validate, commentId, code } = params;
     if (url) {
       this.url = url;
+      if (commentId) {
+        this.url = `${url}&commentId=${commentId}`;
+      }
     }
     if (validate) {
       this.validate = JSON.parse(validate);
@@ -109,9 +112,9 @@ export default {
   methods: {
     register() {
       if (this.username === '') {
-        this.showDialog('用户名不能为空');
+        this.showDialog(this.i18n.t('user.usernameEmpty'));
       } else if (this.password === '') {
-        this.showDialog('密码不能为空');
+        this.showDialog(this.i18n.t('user.passwordEmpty'));
       } else if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
         this.toTCaptcha();
       } else {
@@ -223,7 +226,7 @@ export default {
     },
     jump2Login() {
       uni.navigateTo({
-        url: `/pages/user/login?url=${this.url}&validate=${this.validate}`,
+        url: `/pages/user/login?url=${this.url}&validate=${this.validate}&code=${this.code}`,
       });
     },
     showDialog(title) {

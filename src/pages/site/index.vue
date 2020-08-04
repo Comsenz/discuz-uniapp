@@ -103,7 +103,7 @@ export default {
   ],
   data() {
     return {
-      title: '站点信息',
+      title: this.i18n.t('manage.circleinfo'),
       shareBtn: 'icon-share1',
       isWeixin: '', // 是否是微信浏览器
       shareShow: false, // h5内分享提示信息
@@ -176,7 +176,7 @@ export default {
       if (info && info.expiredAt) {
         info.expiredTime = info.expiredAt.substr(0, 10);
       } else {
-        info.expiredTime = '永久有效';
+        info.expiredTime = this.i18n.t('site.permanent');
       }
       if (info && info.groups && info.groups.length > 0) {
         info.groupName = info.groups[0].name;

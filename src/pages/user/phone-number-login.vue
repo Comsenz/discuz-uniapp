@@ -54,16 +54,25 @@ export default {
       password: '', // 密码
       url: '', // 上一个页面的路径
       token: '', // token
+      code: '', // 注册邀请码
       validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
     };
   },
   onLoad(params) {
-    const { url, validate, token } = params;
-    this.url = url;
+    const { url, validate, token, commentId, code } = params;
+    if (url) {
+      this.url = url;
+      if (commentId) {
+        this.url = `${url}&commentId=${commentId}`;
+      }
+    }
     if (validate) {
       this.validate = JSON.parse(validate);
+    }
+    if (code !== 'undefined') {
+      this.code = code;
     }
     this.token = token;
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
@@ -88,9 +97,9 @@ export default {
   methods: {
     login() {
       if (this.username === '') {
-        this.showDialog('手机号码不能为空');
+        this.showDialog(this.i18n.t('user.phonenumberEmpty'));
       } else if (this.password === '') {
-        this.showDialog('密码不能为空');
+        this.showDialog(this.i18n.t('user.passwordEmpty'));
       } else {
         const params = {
           data: {
@@ -102,6 +111,9 @@ export default {
         };
         if (this.token && this.token !== '') {
           params.data.attributes.token = this.token;
+        }
+        if (this.code !== '') {
+          params.data.attributes.code = this.code;
         }
         this.$store
           .dispatch('session/h5Login', params)
@@ -120,7 +132,7 @@ export default {
     },
     jump2VerificationCodeLogin() {
       uni.navigateTo({
-        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
+        url: `/pages/user/verification-code-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}&code=${this.code}`,
       });
     },
     jump2findPassword() {

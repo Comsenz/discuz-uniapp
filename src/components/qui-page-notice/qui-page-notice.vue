@@ -173,7 +173,7 @@ export default {
                 list[i].isReal = list[i].recipient.isReal;
               }
             } else {
-              list[i].username = '该用户已被删除';
+              list[i].username = this.i18n.t('core.userDeleted');
               list[i].avatarUrl = '';
             }
           }

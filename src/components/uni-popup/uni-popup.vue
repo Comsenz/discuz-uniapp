@@ -2,7 +2,6 @@
   <view
     v-if="showPopup"
     class="uni-popup"
-    @touchmove.stop.prevent="clear"
   >
     <uni-transition
       :mode-class="['fade']"

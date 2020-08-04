@@ -144,7 +144,7 @@ export default {
     this.searchUser();
     this.getGroupList();
     uni.setNavigationBarTitle({
-      title: '成员管理',
+      title: this.i18n.t('manage.manageMembers'),
     });
   },
   computed: {

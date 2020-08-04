@@ -27,7 +27,6 @@ import { mapState } from 'vuex';
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import loginAuth from '@/mixin/loginAuth-h5';
-
 // #endif
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';

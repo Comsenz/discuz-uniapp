@@ -59,11 +59,12 @@
         <view class="chat-box__footer__msg">
           <textarea
             class="uni-input"
-            :maxlength="451"
+            :maxlength="450"
             :cursor="cursor"
             :focus="focus"
             v-model="msg"
-            @blur="contBlur"
+            @blur="cursorBlur"
+            @focus="cursorFocus"
           />
           <qui-icon
             name="icon-expression chat-box__footer__msg__icon"
@@ -105,7 +106,7 @@ export default {
         focus: false,
       },
       msg: '', // 输入框内容
-      emojiShow: false, // 表情
+      emojiShow: false, // 默认不展示表情框
       dialogId: 0, // 会话id
       height: 0,
       scv: 0,
@@ -263,7 +264,7 @@ export default {
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
-    contBlur(e) {
+    cursorBlur(e) {
       if (e && e.detail) {
         this.cursor = e.detail.cursor;
         if (e.detail.value.length > 450) {
@@ -273,6 +274,12 @@ export default {
             duration: 2000,
           });
         }
+      }
+    },
+    cursorFocus(e) {
+      console.log('聚焦', e);
+      if (e) {
+        this.emojiShow = false;
       }
     },
     // 发送消息

@@ -75,9 +75,12 @@ export default {
     };
   },
   onLoad(params) {
-    const { url, validate, token, code } = params;
+    const { url, validate, token, commentId, code } = params;
     if (url) {
       this.url = url;
+      if (commentId) {
+        this.url = `${url}&commentId=${commentId}`;
+      }
     }
     if (validate) {
       this.validate = JSON.parse(validate);
@@ -113,9 +116,9 @@ export default {
   methods: {
     register() {
       if (this.username === '') {
-        this.showDialog('用户名不能为空');
+        this.showDialog(this.i18n.t('user.usernameEmpty'));
       } else if (this.password === '') {
-        this.showDialog('密码不能为空');
+        this.showDialog(this.i18n.t('user.passwordEmpty'));
       } else if (this.register_captcha) {
         this.toTCaptcha();
       } else {
@@ -201,7 +204,7 @@ export default {
     },
     jump2LoginBind() {
       uni.navigateTo({
-        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
+        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=${this.code}`,
       });
     },
   },

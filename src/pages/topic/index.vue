@@ -1935,12 +1935,11 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`)) {
           return;
         }
         // #endif
       }
-
       uni.navigateTo({
         url: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
       });
@@ -1963,8 +1962,14 @@ export default {
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(getCurUrl())) {
+          return;
+        }
+        // #endif
       }
       this.$refs.deletePopup.open();
       this.deleteId = postId;

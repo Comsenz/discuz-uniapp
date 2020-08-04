@@ -92,16 +92,18 @@ export default {
       if (index) {
         this.setFooterIndex(parseInt(index, 10));
       }
+      if (index === '0') {
+        uni.$emit('updateIndex');
+      }
       if (index === '1') {
         uni.$emit('updateNoticePage');
       }
       if (index === '2') {
         uni.$emit('updateMy');
       }
-      uni.navigateTo({
+      uni.redirectTo({
         url: pageUrl,
       });
-      // window.location.href = `${pageUrl}?${index}`;
     },
     back() {
       window.history.go(-1);
