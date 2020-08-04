@@ -5,7 +5,7 @@ import appCommonH from '@/utils/commonHelper';
 module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin(code) {
+    handleLogin(url, code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (
         isWeixin &&
@@ -20,11 +20,11 @@ module.exports = {
         });
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login('/pages/home/index', '', code);
+        this.login(url, '', code);
       }
       return false;
     },
-    login(url, wxtoken, code) {
+    login(url = '/pages/home/index', wxtoken, code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (isWeixin) {
         // 微信内
@@ -45,9 +45,9 @@ module.exports = {
         } else {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式
-            console.log('用户名模式跳转到注册页');
+            console.log('用户名模式跳转到登录页');
             uni.navigateTo({
-              url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+              url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });
           }
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
@@ -66,9 +66,9 @@ module.exports = {
               });
             } else {
               // 用户名模式
-              console.log('用户名模式跳转到注册页');
+              console.log('用户名模式跳转到登录页');
               uni.navigateTo({
-                url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+                url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
               });
             }
           }
@@ -76,9 +76,9 @@ module.exports = {
       } else {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式
-          console.log('用户名模式跳转到注册页');
+          console.log('用户名模式跳转到登录页');
           uni.navigateTo({
-            url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+            url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
@@ -97,9 +97,9 @@ module.exports = {
             });
           } else {
             // 用户名模式
-            console.log('用户名模式跳转到注册页');
+            console.log('用户名模式跳转到登录页');
             uni.navigateTo({
-              url: `/pages/user/register?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+              url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });
           }
         }
