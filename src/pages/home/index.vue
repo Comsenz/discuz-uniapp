@@ -71,7 +71,6 @@ export default {
     },
   },
   onLoad() {
-    console.log('首页unload');
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -105,7 +104,7 @@ export default {
   },
   // 监听页面滚动
   onPageScroll(event) {
-    console.log(event);
+    // console.log(event);
     // if (this.footerIndex === 0) {
     // console.log('监听页面滚动');
     this.$refs.home.scroll(event);
