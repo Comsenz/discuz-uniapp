@@ -843,6 +843,7 @@ export default {
     },
     // 组件初始化请求接口
     ontrueGetList() {
+      this.headerShow = true;
       this.isResetList = true;
       // 首页导航栏分类列表
       this.loadCategories();
