@@ -51,7 +51,7 @@ export default {
     this.type = type;
     this.navTitle = title;
     if (parseInt(unReadNum, 10) > 0) {
-      this.navTitle = `${title}(${unReadNum}条)`;
+      this.navTitle = this.i18n.t('notice.item', { title, unReadNum });
     }
     uni.setNavigationBarTitle({
       title: this.navTitle,

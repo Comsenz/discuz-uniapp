@@ -88,9 +88,9 @@ export default {
   methods: {
     login() {
       if (this.username === '') {
-        this.showDialog('手机号码不能为空');
+        this.showDialog(this.i18n.t('user.phonenumberEmpty'));
       } else if (this.password === '') {
-        this.showDialog('密码不能为空');
+        this.showDialog(this.i18n.t('user.passwordEmpty'));
       } else {
         const params = {
           data: {
