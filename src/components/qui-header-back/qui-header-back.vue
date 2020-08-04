@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       isLogin: this.$store.getters['session/get']('isLogin'),
+      // route:'',
     };
   },
 
@@ -87,6 +88,13 @@ export default {
       footerIndex: state => state.footerTab.footerIndex,
     }),
   },
+  // 暂时留着 后期修改路由时可能会用
+  // created() {
+  //   let pagesRouter = getCurrentPages();
+  //   let beforeRouter = pagesRouter[pagesRouter.length - 2];
+  //   this.route = beforeRouter.route;
+  //   console.log(beforeRouter.route, 'beforeRouterbeforeRouterbeforeRouter');
+  // },
   methods: {
     backPage(pageUrl, index) {
       if (index) {
