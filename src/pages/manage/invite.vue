@@ -125,10 +125,10 @@ export default {
       current: 0, // 当前标签页
       total: 0, // 邀请链接的总数
       tabList: [
-        { id: 1, title: '未使用', status: 1 },
-        { id: 2, title: '已使用', status: 2 },
-        { id: 3, title: '已过期', status: 3 },
-        { id: 4, title: '已失效', status: 0 },
+        { id: 1, title: this.i18n.t('manage.nouse'), status: 1 },
+        { id: 2, title: this.i18n.t('manage.used'), status: 2 },
+        { id: 3, title: this.i18n.t('manage.overdue'), status: 3 },
+        { id: 4, title: this.i18n.t('manage.invalid'), status: 0 },
       ], // 邀请链接的类型列表
       role: '', // 用户角色
       status: 1, // 邀请链接的类型
@@ -195,9 +195,9 @@ export default {
           const inviteListValue = inviteList[inviteListKeys[i]];
           const day = timestamp2day(inviteListValue.endtime);
           if (inviteListValue.status === 1) {
-            inviteListValue.time = `有效期剩余${day}天`;
+            inviteListValue.time = this.i18n.t('manage.remainDay', { day });
           } else {
-            inviteListValue.time = `有效期剩余0天`;
+            inviteListValue.time = this.i18n.t('manage.remain0Day');
           }
           if (groupListKeys && groupListKeys.length > 0) {
             for (let j = 0; j < groupListKeys.length; j += 1) {
@@ -310,7 +310,7 @@ export default {
         if (res) {
           this.getInviteList(this.status);
           uni.showToast({
-            title: '该链接已失效',
+            title: this.i18n.t('manage.invalidLink'),
             duration: 2000,
           });
         }

@@ -59,7 +59,7 @@
         <view class="chat-box__footer__msg">
           <textarea
             class="uni-input"
-            :maxlength="451"
+            :maxlength="450"
             :cursor="cursor"
             :focus="focus"
             v-model="msg"

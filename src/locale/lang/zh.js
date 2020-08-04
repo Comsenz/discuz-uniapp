@@ -391,10 +391,14 @@ export default {
     myauthority: '我的权限',
     setting: '设置',
     noContent: '暂无内容',
+    invalidLink: '该链接已失效',
+    remainDay: '有效期剩余{day}天',
+    remain0Day: '有效期剩余0天',
   },
   // 消息页面
   notice: {
     notice: '消息',
+    item: '{title}{unReadNum}条',
     relate: '@我的',
     relatedMe: ' @了我',
     reply: '回复我的',
@@ -739,5 +743,10 @@ export default {
     agreementPrivacy: '隐私政策 ',
     loginOutTips:
       '点击下面的确定解绑按钮后，您将解除微信与本帐号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本帐号！',
+    usernameEmpty: '用户名不能为空',
+    passwordEmpty: '密码不能为空',
+    phonenumberEmpty: '手机号不能为空',
+    verificationCodeEmpty: '验证码不能为空',
+    getVerificationCode: '获取验证码',
   },
 };
