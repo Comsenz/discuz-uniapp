@@ -51,6 +51,7 @@ export default {
       validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
+      code: '', // 注册邀请码
       qcloud_sms: false, // 默认不开启短信功能
       register: true, // 默认展示注册链接
     };
@@ -60,7 +61,7 @@ export default {
       code: 'user_login',
       status: 200,
     });
-    const { url, validate, register } = params;
+    const { url, validate, register, code } = params;
     if (url) {
       this.url = url;
     }
@@ -69,6 +70,9 @@ export default {
     }
     if (register) {
       this.register = JSON.parse(register);
+    }
+    if (code !== 'undefined') {
+      this.code = code;
     }
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
@@ -124,7 +128,7 @@ export default {
     },
     jump2Register() {
       uni.navigateTo({
-        url: `/pages/user/register?url=${this.url}&validate=${this.validate}`,
+        url: `/pages/user/register?url=${this.url}&validate=${this.validate}&code=${this.code}`,
       });
     },
     jump2findPassword() {
