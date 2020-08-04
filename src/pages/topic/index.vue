@@ -748,7 +748,6 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.forums);
     this.rewardStatus = false;
     this.paidStatus = false;
     try {
@@ -1060,6 +1059,7 @@ export default {
               }
               // #endif
             } else {
+              this.rewardStatus = true;
               this.paidStatus = false;
             }
             if (data.type === 3) {
