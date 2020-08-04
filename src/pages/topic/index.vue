@@ -1963,8 +1963,14 @@ export default {
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(getCurUrl())) {
+          return;
+        }
+        // #endif
       }
       this.$refs.deletePopup.open();
       this.deleteId = postId;

@@ -65,9 +65,12 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
+// #ifdef H5
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 
 export default {
-  mixins: [forums, user],
+  mixins: [forums, user, loginAuth],
   props: {
     bottom: {
       type: Number,
@@ -175,7 +178,14 @@ export default {
     // 首页底部发帖按钮弹窗
     footerOpen() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
         return;
       }
       if (this.forums.other.publish_need_real_name) {
