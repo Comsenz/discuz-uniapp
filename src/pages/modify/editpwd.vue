@@ -150,13 +150,13 @@ export default {
               duration: 2000,
             });
             // #ifdef H5
-            uni.navigateBack({
-              delta: 1,
+            uni.redirectTo({
+              url: `/pages/my/profile`,
             });
             // #endif
             // #ifndef H5
-            uni.navigateBack({
-              delta: 1,
+            uni.redirectTo({
+              url: `/pages/my/profile`,
               success() {
                 const pages = getCurrentPages();
                 pages[1].onLoad();

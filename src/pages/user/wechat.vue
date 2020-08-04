@@ -5,11 +5,20 @@
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
+// #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [user, forums, appCommonH, loginAuth],
+  mixins: [
+    user,
+    forums,
+    appCommonH,
+    // #ifdef H5
+    loginAuth,
+    // #endif
+  ],
   data() {
     return {
       state: true,
