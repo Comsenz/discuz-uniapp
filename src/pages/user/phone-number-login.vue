@@ -54,16 +54,20 @@ export default {
       password: '', // 密码
       url: '', // 上一个页面的路径
       token: '', // token
+      code: '', // 注册邀请码
       validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
     };
   },
   onLoad(params) {
-    const { url, validate, token } = params;
+    const { url, validate, token, code } = params;
     this.url = url;
     if (validate) {
       this.validate = JSON.parse(validate);
+    }
+    if (code !== 'undefined') {
+      this.code = code;
     }
     this.token = token;
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
@@ -102,6 +106,9 @@ export default {
         };
         if (this.token && this.token !== '') {
           params.data.attributes.token = this.token;
+        }
+        if (this.code !== '') {
+          params.data.attributes.code = this.code;
         }
         this.$store
           .dispatch('session/h5Login', params)

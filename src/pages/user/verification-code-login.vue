@@ -267,7 +267,7 @@ export default {
     },
     jump2PhoneNumberLogin() {
       uni.navigateTo({
-        url: `/pages/user/phone-number-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}`,
+        url: `/pages/user/phone-number-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}&code=${this.code}`,
       });
     },
   },
