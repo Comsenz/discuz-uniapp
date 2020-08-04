@@ -21,7 +21,7 @@
               </view>
               <qui-topic-content
                 :topic-status="thread.isApproved"
-                :theme-parts="1"
+                :follow-show="post.user.follow != null"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-real="post.user.isReal"
