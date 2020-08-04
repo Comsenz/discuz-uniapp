@@ -24,7 +24,7 @@
         {{ `《${i18n.t('user.agreementPrivacy')}》` }}
       </text>
     </view>
-    <uni-popup ref="popupMessage" type="bottom">
+    <uni-popup-pullscreen ref="popupMessage" type="bottom" :stop-touch="false">
       <view class="popup-message">
         <view class="popup-message__content">
           <view class="popup-message__content__title">{{ popTitle }}</view>
@@ -37,14 +37,16 @@
           {{ i18n.t('discuzq.close') }}
         </text>
       </view>
-    </uni-popup>
+    </uni-popup-pullscreen>
   </view>
 </template>
 
 <script>
 import forums from '@/mixin/forums';
+import uniPopupPullscreen from '@/components/uni-popup/uni-popup-pullscreen';
 
 export default {
+  components: { uniPopupPullscreen },
   mixins: [forums],
   props: {
     tips: {
