@@ -202,7 +202,11 @@ export default {
       }
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
-      if (['quinotice', 'quimy'].indexOf(this.currentTab) >= 0) {
+      if (
+        !this.$store.getters['session/get']('isLogin') &&
+        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+      ) {
+        this.$store.getters['session/get']('auth').open();
         this.currentTab = 'home';
         this.setFooterIndex(0);
         return;
