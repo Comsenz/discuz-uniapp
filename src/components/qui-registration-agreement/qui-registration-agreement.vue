@@ -103,7 +103,7 @@ export default {
   }
 }
 /deep/ .uni-popup__wrapper-box {
-  min-height: 100vh;
+  height: 100vh;
   background: --color(--qui-BG-2);
 }
 .popup-message {
