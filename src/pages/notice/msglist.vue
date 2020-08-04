@@ -59,11 +59,12 @@
         <view class="chat-box__footer__msg">
           <textarea
             class="uni-input"
-            :maxlength="451"
+            :maxlength="450"
             :cursor="cursor"
             :focus="focus"
             v-model="msg"
-            @blur="contBlur"
+            @blur="cursorBlur"
+            @focus="cursorFocus"
           />
           <qui-icon
             name="icon-expression chat-box__footer__msg__icon"
@@ -105,7 +106,7 @@ export default {
         focus: false,
       },
       msg: '', // 输入框内容
-      emojiShow: false, // 表情
+      emojiShow: false, // 默认不展示表情框
       dialogId: 0, // 会话id
       height: 0,
       scv: 0,
@@ -122,7 +123,6 @@ export default {
     // 获取当前登录的id
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
-      console.log('获取当前登录的id', userId);
       return parseInt(userId, 10);
     },
     // 获取会话消息列表
@@ -138,8 +138,6 @@ export default {
           }
         }
       }
-      console.log('recordList', recordList);
-      console.log('聊天记录：', list);
       return list;
     },
 
@@ -170,26 +168,18 @@ export default {
     ) {
       try {
         getApp().systemInfo = uni.getSystemInfoSync();
-        console.log('getApp().systemInfo.screenWidth', getApp().systemInfo.screenWidth);
         const screenK = getApp().systemInfo.screenWidth / 750;
         this.scv = getApp().systemInfo.windowHeight / screenK - 140;
-        console.log('screenK', screenK);
-        console.log('scv(rpx):', this.scv);
       } catch (e) {
         console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
       }
     } else {
-      console.log('getApp().systemInfo.screenWidth', getApp().systemInfo.screenWidth);
       const screenK = getApp().systemInfo.screenWidth / 750;
       this.scv = getApp().systemInfo.windowHeight / screenK - 140;
-      console.log('screenK', screenK);
-      console.log('scv(rpx):', this.scv);
     }
   },
   onLoad(params) {
     this.navbarHeight = uni.getSystemInfoSync().statusBarHeight + 44;
-    console.log('-----navbarHeight-------', this.navbarHeight);
-    console.log('params', params);
     const { username, dialogId } = params;
     if (dialogId) {
       this.dialogId = dialogId;
@@ -202,7 +192,6 @@ export default {
       this.getEmoji();
     }
     uni.onKeyboardHeightChange(res => {
-      console.log(res.height);
       if (res.height > 0) {
         // 键盘弹出（滚动条位置增加键盘高度）
         this.$nextTick(() => {
@@ -219,9 +208,7 @@ export default {
 
   methods: {
     scrollToBottom() {
-      console.log('滚动到底部');
       this.$nextTick(() => {
-        console.log('计算高度并滚动到底部');
         uni
           .createSelectorQuery()
           .selectAll('.chat-box__con')
@@ -233,7 +220,6 @@ export default {
             });
             if (height > 600) {
               this.scrollTop = height - 658 + 10;
-              console.log('scrollTop', this.scrollTop);
               this.old.scrollTop = height - 658 + 10;
             }
           });
@@ -242,12 +228,12 @@ export default {
     toUpper() {
       uni.startPullDownRefresh();
       this.pageNum += 1;
-      console.log('refresh');
       this.getChatRecord(this.dialogId);
     },
     scroll(e) {
-      this.old.scrollTop = e.detail.scrollTop;
-      console.log(e.detail.scrollTop);
+      if (e && e.detail) {
+        this.old.scrollTop = e.detail.scrollTop;
+      }
     },
     // 调用 会话消息列表 的接口
     getChatRecord(dialogId) {
@@ -264,9 +250,7 @@ export default {
         this.$store
           .dispatch('jv/get', ['dialog/message', { params }])
           .then(res => {
-            console.log('会话消息列表res：', res);
             if (res) {
-              console.log('停止手动刷新');
               uni.hideNavigationBarLoading();
               uni.stopPullDownRefresh();
             }
@@ -280,8 +264,7 @@ export default {
     getEmoji() {
       this.$store.dispatch('jv/get', ['emoji', {}]);
     },
-    contBlur(e) {
-      console.log('----触发失去焦点----', e);
+    cursorBlur(e) {
       if (e && e.detail) {
         this.cursor = e.detail.cursor;
         if (e.detail.value.length > 450) {
@@ -291,6 +274,12 @@ export default {
             duration: 2000,
           });
         }
+      }
+    },
+    cursorFocus(e) {
+      console.log('聚焦', e);
+      if (e) {
+        this.emojiShow = false;
       }
     },
     // 发送消息
@@ -321,7 +310,6 @@ export default {
             .dispatch('jv/post', params)
             .then(res => {
               if (res) {
-                console.log('创建会话res：', res);
                 this.dialogId = res._jv.id;
                 this.getChatRecord(res._jv.id);
               }
@@ -347,7 +335,6 @@ export default {
             .dispatch('jv/post', params)
             .then(res => {
               if (res) {
-                console.log('发送消息res：', res);
                 this.scrollToBottom();
               }
             })
@@ -367,7 +354,6 @@ export default {
     // 弹出表情组件
     popEmoji() {
       if (this.emojiShow) {
-        console.log('隐藏表情组件');
         this.scrollTop = this.old.scrollTop;
         this.scrollToBottom();
         this.bottomPadding -= 204;
@@ -376,7 +362,6 @@ export default {
         //   this.scrollTop -= 204;
         // });
       } else {
-        console.log('弹出表情组件');
         this.scrollTop = this.old.scrollTop;
         this.scrollToBottom(true);
         this.bottomPadding += 204;
@@ -393,16 +378,13 @@ export default {
       text = `${this.msg.slice(0, this.cursor) + code + this.msg.slice(this.cursor)}`;
       this.msg = text;
       this.cursor += code.length;
-      console.log('点击获取表情后的光标位置', this.cursor);
       this.$nextTick(() => {
         this.focus = true;
         uni.hideKeyboard();
       });
-      console.log('msg', this.msg);
     },
     jumpUserPage(id) {
       if (id) {
-        console.log('跳转到个人主页', id);
         uni.navigateTo({
           url: `/pages/profile/index?userId=${id}`,
         });

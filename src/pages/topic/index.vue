@@ -23,6 +23,7 @@
             </view>
             <qui-topic-content
               :topic-status="thread.isApproved"
+              :follow-show="thread.user.follow != null"
               :pay-status="thread.price > 0 && thread.paid"
               :video-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :user-info="thread.user"
@@ -512,6 +513,7 @@ import loginAuth from '@/mixin/loginAuth-h5';
 import appCommonH from '@/utils/commonHelper';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 let payWechat = null;
 let payPhone = null;
@@ -953,12 +955,12 @@ export default {
             });
             // #endif
             data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
-               if (value.permission === 'createThreadPaid') {
-                 this.beRewarded = true;
-                 return;
-               }
-            })
-            if(data.user.groups[0]._jv.id === "1") {
+              if (value.permission === 'createThreadPaid') {
+                this.beRewarded = true;
+                return;
+              }
+            });
+            if (data.user.groups[0]._jv.id === '1') {
               this.beRewarded = true;
             }
             this.loaded = true;
@@ -1032,7 +1034,7 @@ export default {
             // 如果关闭了微信支付
             this.rewardStatus = false;
             this.paidStatus = false;
-          } else if(this.forums.paycenter.wxpay_close && this.beRewarded){
+          } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
             // 如果开启了微信支付
             if (!data.paid || data.paidUsers.length > 0) {
               // #ifndef H5
@@ -1670,7 +1672,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -1698,7 +1700,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -1714,7 +1716,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -1751,7 +1753,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -1933,7 +1935,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -1950,7 +1952,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -1980,7 +1982,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -2003,7 +2005,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -2038,7 +2040,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -2052,7 +2054,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -2066,7 +2068,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -2118,7 +2120,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -2234,7 +2236,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -2270,11 +2272,17 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
-      // #ifdef H5
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(getCurUrl())) {
+          return;
+        }
+        // #endif
+        return;
       }
-      // #endif
       const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
         _jv: {

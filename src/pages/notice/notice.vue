@@ -47,12 +47,11 @@ export default {
     };
   },
   onLoad(params) {
-    console.log('通知列表的params：', params);
     const { title, type, unReadNum } = params;
     this.type = type;
     this.navTitle = title;
     if (parseInt(unReadNum, 10) > 0) {
-      this.navTitle = `${title}(${unReadNum}条)`;
+      this.navTitle = this.i18n.t('notice.item', { title, unReadNum });
     }
     uni.setNavigationBarTitle({
       title: this.navTitle,
@@ -69,7 +68,6 @@ export default {
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'notification' } });
       this.$store.dispatch('jv/get', ['notification', { params }]).then(res => {
-        console.log('通知列表res', res);
         if (res && res._jv) {
           delete res._jv;
           for (let i = 0; i < res.length; i += 1) {
@@ -92,7 +90,6 @@ export default {
             }
           }
           this.noticeList = [...this.noticeList, ...res];
-          console.log('this.noticeList', this.noticeList);
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           uni.$emit('notiRead');
         }
@@ -105,7 +102,6 @@ export default {
       }
       this.pageNum += 1;
       this.getNotices(this.type);
-      console.log('页码', this.pageNum);
     },
     // 删除通知
     deleteNotice(id) {
@@ -118,7 +114,6 @@ export default {
     handleOk() {
       this.$refs.popTips.close();
       this.$store.dispatch('jv/delete', `notification/${this.noticeId}`).then(res => {
-        console.log('删除成功', res);
         if (res) {
           this.pageNum = 1;
           this.noticeList = [];

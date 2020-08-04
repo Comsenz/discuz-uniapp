@@ -5,6 +5,7 @@
       (forums.agreement && forums.agreement.register) ||
         (forums.agreement && forums.agreement.privacy)
     "
+    :style="'top:' + top + 'px'"
   >
     <view class="registration-agreement__content">
       <text>{{ i18n.t('user.agreement') }}</text>
@@ -55,7 +56,12 @@ export default {
     return {
       popTitle: '',
       popDetail: '',
+      top: 0,
     };
+  },
+  mounted() {
+    const height = window.innerHeight - 50;
+    this.top = height;
   },
   methods: {
     open(type) {
@@ -81,7 +87,7 @@ export default {
 
 .registration-agreement {
   position: absolute;
-  bottom: 40px;
+  // bottom: 40px;
   width: 100%;
   padding: 0 27px;
   box-sizing: border-box;
@@ -128,7 +134,8 @@ export default {
     padding-bottom: 40px;
     font-size: $fg-f24;
     text-align: justify;
-    text-indent: 2em;
+    // text-indent: 2em;
+    white-space: pre-line;
   }
 }
 </style>

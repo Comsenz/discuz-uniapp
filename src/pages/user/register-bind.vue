@@ -75,7 +75,6 @@ export default {
     };
   },
   onLoad(params) {
-    console.log('params', params);
     const { url, validate, token, code } = params;
     if (url) {
       this.url = url;
@@ -89,8 +88,6 @@ export default {
     if (token) {
       this.token = token;
     }
-    console.log('validate', typeof this.validate);
-    console.log('----this.forums-----', this.forums);
     if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
       this.register_captcha = this.forums.set_reg.register_captcha;
     }
@@ -101,7 +98,6 @@ export default {
       if (this.user && this.user.paid) {
         this.isPaid = this.user.paid;
       }
-      console.log('----this.user-----', this.user);
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: this.url,
@@ -117,9 +113,9 @@ export default {
   methods: {
     register() {
       if (this.username === '') {
-        this.showDialog('用户名不能为空');
+        this.showDialog(this.i18n.t('user.usernameEmpty'));
       } else if (this.password === '') {
-        this.showDialog('密码不能为空');
+        this.showDialog(this.i18n.t('user.passwordEmpty'));
       } else if (this.register_captcha) {
         this.toTCaptcha();
       } else {
@@ -131,7 +127,6 @@ export default {
       // #ifdef H5
       // eslint-disable-next-line no-undef
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
-        console.log('h5验证码', res);
         if (res.ret === 0) {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
@@ -174,7 +169,6 @@ export default {
         .dispatch('session/h5Register', params)
         .then(result => {
           if (result && result.data && result.data.data && result.data.data.id) {
-            console.log('注册绑定成功', result);
             this.logind();
             uni.showToast({
               title: this.i18n.t('user.registerBindSuccess'),
@@ -206,7 +200,6 @@ export default {
       });
     },
     jump2LoginBind() {
-      console.log('登录并绑定页');
       uni.navigateTo({
         url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}`,
       });

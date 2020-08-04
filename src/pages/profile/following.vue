@@ -64,6 +64,7 @@ import { status } from '@/library/jsonapi-vuex/index';
 // #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [
@@ -144,7 +145,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -180,7 +181,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif

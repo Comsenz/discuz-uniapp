@@ -55,7 +55,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       uni.login({
         success: res => {
-          console.log(res);
           if (res.errMsg === 'login:ok') {
             const { code } = res;
             uni.getUserInfo({
@@ -114,10 +113,7 @@ const actions = {
       },
     });
     const options = { custom: { showTost: false } };
-    console.log('payload', payload);
     return new Promise(resolve => {
-      console.log('http', http);
-      console.log('resolve', resolve);
       return http
         .get(
           `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&inviteCode=${inviteCode}`,
@@ -135,9 +131,7 @@ const actions = {
   // #endif
   // #ifdef H5
   verificationCodeh5Login: (context, payload = {}) => {
-    console.log('payload', payload);
     return new Promise(resolve => {
-      console.log('http', http);
       return http
         .post('sms/verify', payload)
         .then(results => setUserInfoStore(context, results, resolve));
@@ -146,9 +140,7 @@ const actions = {
   // #endif
   // #ifdef H5
   h5Login: (context, payload = {}) => {
-    console.log('payload', payload);
     return new Promise(resolve => {
-      console.log('http', http);
       return http
         .post('login', payload)
         .then(results => {
@@ -175,7 +167,6 @@ const actions = {
               duration: 2000,
             });
           }
-          console.log('error', error);
         });
     });
   },
@@ -183,9 +174,7 @@ const actions = {
   // #ifdef H5
   h5Register: (context, payload = {}) => {
     const options = { custom: { showTost: false } };
-    console.log('payload', payload);
     return new Promise(resolve => {
-      console.log('http', http);
       return http
         .post('register', payload, options)
         .then(results => {

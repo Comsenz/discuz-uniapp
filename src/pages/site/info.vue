@@ -167,6 +167,7 @@ import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
+import { getCurUrl } from '@/utils/getCurUrl';
 
 let payWechat = null;
 
@@ -474,7 +475,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif

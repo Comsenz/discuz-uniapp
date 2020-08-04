@@ -54,6 +54,7 @@ import wxshare from '@/mixin/wxshare-h5';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import forums from '@/mixin/forums';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [
@@ -139,7 +140,8 @@ export default {
         //   param = `?${param.substr(1)}`;
         // }
         // const url = `/${curRoute}${param}`;
-        if (!this.handleLogin()) {
+        console.log('-----------', getCurUrl());
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif

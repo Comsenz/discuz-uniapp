@@ -98,10 +98,9 @@ export default {
       if (index === '2') {
         uni.$emit('updateMy');
       }
-      uni.navigateTo({
+      uni.redirectTo({
         url: pageUrl,
       });
-      // window.location.href = `${pageUrl}?${index}`;
     },
     back() {
       window.history.go(-1);

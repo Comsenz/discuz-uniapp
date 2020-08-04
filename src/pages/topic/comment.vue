@@ -21,7 +21,7 @@
               </view>
               <qui-topic-content
                 :topic-status="thread.isApproved"
-                :theme-parts="1"
+                :follow-show="post.user.follow != null"
                 :avatar-url="post.user.avatarUrl"
                 :user-name="post.user.username"
                 :is-real="post.user.isReal"
@@ -793,11 +793,17 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
-      // #ifdef H5
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(getCurUrl())) {
+          return;
+        }
+        // #endif
+        return;
       }
-      // #endif
       const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
         _jv: {
