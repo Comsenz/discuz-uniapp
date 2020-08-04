@@ -748,7 +748,6 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(this.forums);
     this.rewardStatus = false;
     this.paidStatus = false;
     try {
@@ -1060,6 +1059,7 @@ export default {
               }
               // #endif
             } else {
+              this.rewardStatus = true;
               this.paidStatus = false;
             }
             if (data.type === 3) {
@@ -1935,7 +1935,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`, 0)) {
+        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`)) {
           return;
         }
         // #endif

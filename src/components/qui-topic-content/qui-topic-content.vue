@@ -52,17 +52,17 @@
             v-if="followShow && !managementShow"
             :style="{ maxWidth: '200rpx' }"
           >
-            {{ userName }}1
+            {{ userName }}
           </text>
           <text
             class="themeItem__header__title__username"
             v-else-if="followShow && managementShow"
             :style="{ maxWidth: '90rpx' }"
           >
-            {{ userName }}2
+            {{ userName }}
           </text>
           <text class="themeItem__header__title__username" v-else :style="{ maxWidth: '370rpx' }">
-            {{ userName }}3
+            {{ userName }}
           </text>
           <text
             class="themeItem__header__title__isAdmin"

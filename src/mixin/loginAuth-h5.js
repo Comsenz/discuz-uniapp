@@ -5,7 +5,7 @@ import appCommonH from '@/utils/commonHelper';
 module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin(url, index, code) {
+    handleLogin(url, code) {
       const { isWeixin } = appCommonH.isWeixin();
       if (
         isWeixin &&
@@ -20,15 +20,15 @@ module.exports = {
         });
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login(url, index, '', code);
+        this.login(url, '', code);
       }
       return false;
     },
-    login(url = '/pages/home/index', index = 0, wxtoken, code) {
+    login(url = '/pages/home/index', wxtoken, code) {
       const { isWeixin } = appCommonH.isWeixin();
-      if (index) {
-        this.setFooterIndex(parseInt(index, 10));
-      }
+      // if (index) {
+      //   this.setFooterIndex(parseInt(index, 10));
+      // }
       if (isWeixin) {
         // 微信内
         if (this.forums && this.forums.passport && this.forums.passport.offiaccount_close) {
