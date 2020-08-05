@@ -468,6 +468,7 @@ export default {
   onPullDownRefresh() {
     const _this = this;
     _this.pageNum = 1;
+    _this.postComments = [];
     setTimeout(function() {
       _this.loadPost();
       _this.loadThread();
