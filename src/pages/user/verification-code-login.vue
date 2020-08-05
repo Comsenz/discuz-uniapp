@@ -294,7 +294,6 @@ export default {
 }
 .new {
   width: 100vw;
-  height: 100vh;
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
