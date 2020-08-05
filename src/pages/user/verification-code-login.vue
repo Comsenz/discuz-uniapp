@@ -9,8 +9,6 @@
             class="new-phon-num"
             type="number"
             v-model="phoneNumber"
-            :focus="true"
-            :cursor="1"
             @input="changeinput"
             maxlength="11"
           />
