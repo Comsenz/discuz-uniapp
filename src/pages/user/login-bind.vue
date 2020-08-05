@@ -74,10 +74,14 @@ export default {
     }
   },
   created() {
-    this.$u.event.$on('logind', () => {
+    uni.$on('logind', () => {
+      let url = '';
+      if (this.url) {
+        url = this.url;
+      }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
-          url: this.url,
+          url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
