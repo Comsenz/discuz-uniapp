@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme">
+  <qui-page :data-qui-theme="theme" class="verification-code-login-box">
     <view class="new" @click.stop="toggleBox">
       <view class="verification-code-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
       <view class="new-phon">
@@ -110,10 +110,12 @@ export default {
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
+    if (this.user && this.user.paid) {
+      this.isPaid = this.user.paid;
+    }
+  },
+  created() {
     this.$u.event.$on('logind', () => {
-      if (this.user && this.user.paid) {
-        this.isPaid = this.user.paid;
-      }
       if (this.site_mode !== SITE_PAY || this.isPaid) {
         uni.navigateTo({
           url: this.url,
@@ -125,6 +127,9 @@ export default {
         });
       }
     });
+  },
+  destroyed() {
+    uni.$off('logind');
   },
   methods: {
     changeinput() {
@@ -284,6 +289,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+
+.verification-code-login-box {
+  background-color: --color(--qui-BG-2);
+}
 
 .verification-code-login-box-h {
   padding-top: 20px;
