@@ -63,9 +63,16 @@ export default {
     });
     const { url, validate, register, commentId, code } = params;
     if (url) {
-      this.url = url;
+      let pageUrl;
+      if (url.substr(0, 1) !== '/') {
+        pageUrl = `/${url}`;
+      } else {
+        pageUrl = url;
+      }
       if (commentId) {
-        this.url = `${url}&commentId=${commentId}`;
+        this.url = `${pageUrl}&commentId=${commentId}`;
+      } else {
+        this.url = pageUrl;
       }
     }
     if (validate) {
