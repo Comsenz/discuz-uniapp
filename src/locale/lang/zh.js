@@ -728,7 +728,6 @@ export default {
     phoneNumberLogin: '手机号码登录',
     verificationCodeLogin: '验证码登录',
     passwordLogin: '密码登录',
-    sendVerificationCode: '发送验证码',
     registerBindId: '注册，并绑定微信号',
     registerBind: '注册并绑定微信',
     loginBindId: '登录，并绑定微信号',

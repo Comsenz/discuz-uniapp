@@ -74,7 +74,7 @@ export default {
       inshow: false,
       inisIphone: false,
       formeerro: '',
-      btnContent: '发送验证码',
+      btnContent: this.i18n.t('modify.sendverificode'),
       time: 0, // 倒计时
       timer: '', // 定时器
       disabled: true, // 发送验证码按钮的状态
@@ -189,7 +189,7 @@ export default {
         this.timer = setTimeout(this.countdown, 1000);
         this.isGray = true;
       } else if (this.time === 1) {
-        this.btnContent = this.i18n.t('modify.retransmission');
+        this.btnContent = this.i18n.t('modify.sendverificode');
         clearTimeout(this.timer);
         this.disabled = false;
         this.isGray = false;
