@@ -214,8 +214,8 @@ export default {
   // 下拉刷新
   onPullDownRefresh() {
     const _this = this;
-    this.pageNum = 1;
-    // _this.topicData = [];
+    _this.pageNum = 1;
+    _this.topicData = [];
     setTimeout(() => {
       _this.uploadItem();
       _this.loadThreads();

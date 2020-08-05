@@ -153,7 +153,7 @@ export default {
   // 下拉刷新
   onPullDownRefresh() {
     const _this = this;
-    // _this.topicData = [];
+    _this.topicData = [];
     setTimeout(() => {
       _this.topics();
       uni.stopPullDownRefresh();
