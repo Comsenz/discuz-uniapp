@@ -79,7 +79,7 @@ export default {
     if (url) {
       this.url = url;
       if (commentId) {
-        this.url = `${url}&commentId=${commentId}`;
+        this.url = `/${url}&commentId=${commentId}`;
       }
     }
     if (validate) {
