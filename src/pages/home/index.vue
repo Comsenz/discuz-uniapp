@@ -31,19 +31,9 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
 
 export default {
-  mixins: [
-    forums,
-    user,
-    detectionModel,
-    // #ifdef  H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [forums, user, detectionModel],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
@@ -196,17 +186,6 @@ export default {
     }),
     // 切换组件
     cut_index(e, type, isTabBar) {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
-        // #endif
-        // #ifdef H5
-        if (!this.handleLogin('/pages/home/index', type)) {
-          return;
-        }
-        // #endif
-        return;
-      }
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
       if (
