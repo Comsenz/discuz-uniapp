@@ -57,7 +57,7 @@ export default {
             if (this.user && this.user.paid) {
               this.isPaid = this.user.paid;
             }
-            if (this.site_mode !== SITE_PAY || this.isPaid) {
+            if (this.site_mode !== SITE_PAY) {
               const pages = getCurrentPages();
               const url = pages[pages.length - 1].route;
               uni.navigateTo({

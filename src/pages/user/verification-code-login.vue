@@ -116,7 +116,7 @@ export default {
   },
   created() {
     this.$u.event.$on('logind', () => {
-      if (this.site_mode !== SITE_PAY || this.isPaid) {
+      if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
           url: this.url,
         });
