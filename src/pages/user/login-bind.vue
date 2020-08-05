@@ -70,13 +70,13 @@ export default {
       this.site_mode = this.forums.set_site.site_mode;
     }
     this.$u.event.$on('logind', () => {
-      console.log('-------监听logind-------');
       if (this.user && this.user.paid) {
         this.isPaid = this.user.paid;
       }
       if (this.site_mode !== SITE_PAY || this.isPaid) {
+        const that = this;
         uni.navigateTo({
-          url: this.url,
+          url: that.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

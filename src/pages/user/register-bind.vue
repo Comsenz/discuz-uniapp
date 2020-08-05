@@ -102,8 +102,9 @@ export default {
         this.isPaid = this.user.paid;
       }
       if (this.site_mode !== SITE_PAY || this.isPaid) {
+        const that = this;
         uni.navigateTo({
-          url: this.url,
+          url: that.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

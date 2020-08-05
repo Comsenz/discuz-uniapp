@@ -53,7 +53,6 @@ export default {
               });
             }
           } else if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('-------调用logind-------');
             this.logind();
             if (this.user && this.user.paid) {
               this.isPaid = this.user.paid;

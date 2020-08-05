@@ -49,7 +49,6 @@ module.exports = {
       };
 
       this.$store.dispatch('jv/get', [`users/${userId}`, { params }]).then(val => {
-        console.log('-------触发logind-------');
         this.$u.event.$emit('logind', val);
       });
       this.$store.dispatch('forum/setError', { loading: false });
