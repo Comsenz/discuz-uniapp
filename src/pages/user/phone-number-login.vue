@@ -71,7 +71,7 @@ export default {
     if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.site_mode = this.forums.set_site.site_mode;
     }
-    uni.$on('logind', () => {
+    this.$u.event.$on('logind', () => {
       if (this.user && this.user.paid) {
         this.isPaid = this.user.paid;
       }

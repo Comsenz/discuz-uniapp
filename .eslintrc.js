@@ -48,7 +48,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'no-console': process.env.NODE_ENV === 'production' ? 2 : 0,
+    'no-console': 1,
     // allow async-await
     'generator-star-spacing': 0,
     'import/extensions': [
