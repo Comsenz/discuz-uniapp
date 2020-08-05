@@ -1,6 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme" class="pages-content">
-    <qui-page-message v-if="!query.id"></qui-page-message>
+    <qui-page-message v-if="!query.id || loadedErr"></qui-page-message>
     <view v-else class="scroll-y">
       <view class="topic-content-header">
         <view class="topic-content-header_title">#{{ topic.content }}#</view>
@@ -81,6 +81,7 @@ export default {
       nowThreadId: 0, // 点击主题ID
       meta: '',
       scrollTop: 0,
+      loadedErr: false,
     };
   },
   computed: {
@@ -106,17 +107,32 @@ export default {
     // #endif
     this.query = query;
     if (!query.id) {
+      console.log('11111111111111');
       this.$store.dispatch('forum/setError', {
         code: 'type_404',
         status: 500,
       });
+      this.loadedErr = true;
     } else {
+      console.log('2222222222222');
       this.loadThreads();
-      this.$store.dispatch('jv/get', `topics/${query.id}`).then(res => {
-        uni.setNavigationBarTitle({
-          title: res.content,
+      this.$store
+        .dispatch('jv/get', `topics/${query.id}`)
+        .then(res => {
+          uni.setNavigationBarTitle({
+            title: res.content,
+          });
+        })
+        .catch(err => {
+          console.log('走了catct');
+          this.loadedErr = true;
+          if (err.statusCode === 404) {
+            this.$store.dispatch('forum/setError', {
+              code: 'type_404',
+              status: 500,
+            });
+          }
         });
-      });
     }
 
     // #ifdef H5
