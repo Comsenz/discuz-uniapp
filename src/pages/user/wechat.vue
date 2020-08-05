@@ -33,7 +33,6 @@ export default {
           const err = res.data;
           if (err.errors) {
             if (err.errors[0].code === 'no_bind_user') {
-              const { nickname } = err.errors[0].user;
               const wxtoken = err.errors[0].token;
               let code = '';
               uni.getStorage({
@@ -42,7 +41,9 @@ export default {
                   code = resData.data || '';
                 },
               });
-              this.login(nickname, wxtoken, code);
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              this.login(url, wxtoken, code);
             }
             if (err.errors[0].code === 'register_validate') {
               uni.showToast({
