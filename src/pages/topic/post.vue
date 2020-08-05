@@ -385,6 +385,7 @@ import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 // #ifdef  H5
 import TcVod from 'vod-js-sdk-v6';
+import tcaptchs from '@/utils/tcaptcha';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
@@ -394,7 +395,7 @@ export default {
   mixins: [
     forums,
     // #ifdef  H5
-    // tcaptchs,
+    tcaptchs,
     // #endif
   ],
   data() {
@@ -522,17 +523,17 @@ export default {
       return pay;
     },
   },
-  created() {
-    if (
-      this.forums &&
-      this.forums.qcloud.qcloud_captcha &&
-      this.forums.other.create_thread_with_captcha
-    ) {
-      // eslint-disable-next-line
-      const tcaptchas = require('@/utils/tcaptcha');
-      // eslint-disable-next-line
-    }
-  },
+  // created() {
+  //   if (
+  //     this.forums &&
+  //     this.forums.qcloud.qcloud_captcha &&
+  //     this.forums.other.create_thread_with_captcha
+  //   ) {
+  //     // eslint-disable-next-line
+  //     const tcaptchas = require('@/utils/tcaptcha');
+  //     // eslint-disable-next-line
+  //   }
+  // },
   updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
