@@ -132,9 +132,16 @@
     <!-- #ifdef H5-->
     <view class="record" v-if="forums.set_site ? forums.set_site.site_record : '' !== ''">
       <!-- <text>{{ i18n.t('home.record') }}</text> -->
-      <a class="record__url" href="http://www.beian.miit.gov.cn" target="_blank">
-        {{ forums.set_site ? forums.set_site.site_record : '' }}
-      </a>
+      <view class="record__box">
+        <a class="record__box-url" href="http://www.beian.miit.gov.cn" target="_blank">
+          {{ forums.set_site ? forums.set_site.site_record : '' }}
+        </a>
+      </view>
+      <!-- <view class="record__box1">
+        <a class="record__box-url" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44030002000001" target="_blank">
+          粤公网安备 44030002000001号
+        </a>
+      </view> -->
     </view>
     <view class="copyright" :class="forums.set_site.site_record ? '' : 'copyright_margin'">
       <text>{{ i18n.t('home.copyright') }}</text>
@@ -1019,14 +1026,24 @@ $padding-bottom: 160rpx;
   white-space: nowrap;
 }
 .record {
+  display: flex;
   width: 100%;
   height: 40rpx;
   margin-top: -$padding-bottom;
   font-size: $fg-f26;
   color: --color(--qui-FC-B2);
   text-align: center;
-  &record__url {
-    color: --color(--qui-BG-HIGH-LIGHT);
+  justify-content: center;
+  &__box {
+    margin-right: 20rpx;
+    &-url {
+      color: --color(--qui-BG-HIGH-LIGHT);
+    }
+  }
+  &__box1 {
+    &-url {
+      color: --color(--qui-BG-HIGH-LIGHT);
+    }
   }
   a {
     color: --color(--qui-FC-B2);

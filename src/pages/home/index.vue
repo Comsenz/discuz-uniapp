@@ -31,19 +31,9 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
 
 export default {
-  mixins: [
-    forums,
-    user,
-    detectionModel,
-    // #ifdef  H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [forums, user, detectionModel],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID

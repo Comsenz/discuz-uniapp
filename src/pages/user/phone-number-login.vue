@@ -7,14 +7,7 @@
           {{ i18n.t('user.phoneNumber') }}
         </view>
         <view class="new-phon-number">
-          <input
-            class="new-phon-num"
-            type="number"
-            v-model="username"
-            :focus="true"
-            :cursor="1"
-            maxlength="11"
-          />
+          <input class="new-phon-num" type="number" v-model="username" maxlength="11" />
         </view>
       </view>
       <view class="new-phon">
@@ -169,7 +162,7 @@ export default {
   box-sizing: border-box;
 }
 .new-phon {
-  width: 100%;
+  width: 710rpx;
   margin: 0rpx 40rpx;
   font-size: $fg-f50;
   font-weight: bold;
@@ -187,7 +180,7 @@ export default {
   display: flex;
 }
 .new-phon-num {
-  width: 100%;
+  width: 399rpx;
   height: 100rpx;
   font-size: $fg-f50;
   font-weight: bold;
