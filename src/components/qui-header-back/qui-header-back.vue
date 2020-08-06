@@ -15,20 +15,37 @@
       <view class="qui-back_body__right" v-if="slotRight">
         <slot></slot>
       </view>
-      <view class="qui-back__body__right" v-if="!slotRight && isLogin">
+      <view class="qui-back__body__right" v-if="!slotRight">
         <view class="qui-back__body__right-pop">
-          <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '0')">
-            {{ i18n.t('home.tabsCircle') }}
-          </text>
-          <text
+          <view class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '0')">
+            <qui-icon
+              name="icon-home"
+              size="34"
+              :color="theme === $u.light() ? '#777' : '#fff'"
+            ></qui-icon>
+          </view>
+          <view
             :class="['qui-back__body__right-pop-item', redCircle ? 'message' : '']"
             @tap="backPage('/pages/home/index', '1')"
+            v-if="isLogin"
           >
-            {{ i18n.t('profile.notice') }}
-          </text>
-          <text class="qui-back__body__right-pop-item" @tap="backPage('/pages/home/index', '2')">
-            {{ i18n.t('home.tabsMy') }}
-          </text>
+            <qui-icon
+              name="icon-message"
+              size="32"
+              :color="theme === $u.light() ? '#777' : '#fff'"
+            ></qui-icon>
+          </view>
+          <view
+            class="qui-back__body__right-pop-item"
+            @tap="backPage('/pages/home/index', '2')"
+            v-if="isLogin"
+          >
+            <qui-icon
+              name="icon-mine"
+              size="34"
+              :color="theme === $u.light() ? '#777' : '#fff'"
+            ></qui-icon>
+          </view>
         </view>
       </view>
     </view>
@@ -59,6 +76,7 @@ export default {
   data() {
     return {
       isLogin: this.$store.getters['session/get']('isLogin'),
+      // route:'',
     };
   },
 
@@ -70,12 +88,28 @@ export default {
       footerIndex: state => state.footerTab.footerIndex,
     }),
   },
+  // 暂时留着 后期修改路由时可能会用
+  // created() {
+  //   let pagesRouter = getCurrentPages();
+  //   let beforeRouter = pagesRouter[pagesRouter.length - 2];
+  //   this.route = beforeRouter.route;
+  //   console.log(beforeRouter.route, 'beforeRouterbeforeRouterbeforeRouter');
+  // },
   methods: {
     backPage(pageUrl, index) {
       if (index) {
         this.setFooterIndex(parseInt(index, 10));
       }
-      uni.navigateTo({
+      if (index === '0') {
+        uni.$emit('updateIndex');
+      }
+      if (index === '1') {
+        uni.$emit('updateNoticePage');
+      }
+      if (index === '2') {
+        uni.$emit('updateMy');
+      }
+      uni.redirectTo({
         url: pageUrl,
       });
     },
@@ -95,7 +129,7 @@ export default {
 .qui-back {
   position: fixed;
   top: 0;
-  z-index: 100;
+  z-index: 200;
   width: 100%;
   padding: 9px 20px;
   padding-left: 16px;
@@ -118,8 +152,8 @@ export default {
     transition: $switch-theme-time;
   }
   &__body__right-pop-item {
-    margin-left: 20px;
-    font-size: $fg-f28;
+    display: inline-block;
+    margin-left: 24px;
     color: --color(--qui-FC-333);
   }
 }
@@ -137,10 +171,10 @@ export default {
 }
 .message:after {
   position: absolute;
-  top: 6px;
-  right: -10px;
-  width: 7px;
-  height: 7px;
+  top: -2px;
+  right: -3px;
+  width: 5px;
+  height: 5px;
   background: --color(--qui-RED);
   border-radius: 50%;
   content: '';

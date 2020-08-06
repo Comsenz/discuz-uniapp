@@ -19,7 +19,6 @@
           :style="{ display: show_index === 2 ? 'block' : 'none' }"
         ></qui-page-my>
       </view>
-
       <view class="tabBar">
         <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
       </view>
@@ -46,6 +45,8 @@ export default {
   computed: {
     ...mapState({
       forumError: state => state.forum.error,
+      footerIndex: state =>
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) : 0,
     }),
     loading() {
       return this.forumError.loading;
@@ -85,16 +86,34 @@ export default {
     });
   },
   // 下拉刷新
-  // onPullDownRefresh() {
-  //   if (this.show_index === 0) {
-  //     this.$refs["home"].ontrueGetList();
-  //   }
-  //   if (this.show_index === 1) {
-  //     this.$refs["quinotice"].pageNum = 1;
-  //     this.$refs["quinotice"].ontrueGetList();
-  //   }
-  //   uni.stopPullDownRefresh();  //停止下拉刷新动画
-  // },
+  onPullDownRefresh() {
+    if (this.show_index === 0) {
+      // uni.$emit('onpullDownRefresh');
+      this.$refs.home.threads = [];
+      this.$refs.home.isResetList = true;
+      this.$refs.home.loadThreadsSticky();
+      this.$refs.home.loadThreads();
+    }
+    if (this.show_index === 1) {
+      this.$refs.quinotice.dialogList = [];
+      this.$refs.quinotice.pageNum = 1;
+      this.$refs.quinotice.ontrueGetList();
+    }
+    // 停止下拉刷新动画
+    uni.stopPullDownRefresh();
+  },
+  // 监听页面滚动
+  onPageScroll(event) {
+    // console.log(event);
+    // if (this.footerIndex === 0) {
+    // console.log('监听页面滚动');
+    this.$refs.home.scroll(event);
+    // }
+  },
+  // 上拉加载
+  onReachBottom() {
+    this.$refs.home.pullDown();
+  },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -154,6 +173,12 @@ export default {
         title: title[this.show_index],
       });
     }
+    // #ifdef H5
+    // const index = window.location.href.split('?')[1];
+    // if (index) {
+    //   this.setFooterIndex(parseInt(index, 10));
+    // }
+    // #endif
   },
   methods: {
     ...mapMutations({
@@ -161,6 +186,17 @@ export default {
     }),
     // 切换组件
     cut_index(e, type, isTabBar) {
+      // if (!this.$store.getters['session/get']('isLogin')) {
+      //   // #ifdef MP-WEIXIN
+      //   this.$store.getters['session/get']('auth').open();
+      //   // #endif
+      //   // #ifdef H5
+      //   if (!this.handleLogin('/pages/home/index', type)) {
+      //     return;
+      //   }
+      //   // #endif
+      //   return;
+      // }
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
       if (
@@ -253,8 +289,9 @@ export default {
   height: auto;
   align-items: flex-start;
 }
-/deep/ .my-tabs .qui-tabs__item--active {
-  border: 0;
+/deep/ .my-tabs .qui-tabs__item--active:after {
+  width: 0;
+  height: 0;
 }
 /deep/ .my .qui-tabs__item__title {
   font-weight: normal;

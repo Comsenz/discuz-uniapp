@@ -1,5 +1,5 @@
 const TerserPlugin = require('terser-webpack-plugin');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
+// const StyleLintPlugin = require('stylelint-webpack-plugin');
 const path = require('path');
 
 function resolve(dir) {
@@ -20,12 +20,12 @@ module.exports = {
       .set('@', resolve('src'));
   },
   configureWebpack: config => {
-    config.plugins = [
-      ...config.plugins,
-      new StyleLintPlugin({
-        files: ['**/*.{vue,scss,css}'],
-      }),
-    ];
+    // config.plugins = [
+    //   ...config.plugins,
+    //   new StyleLintPlugin({
+    //     files: ['**/*.{vue,scss,css}'],
+    //   }),
+    // ];
     // 如果不是 H5，则不进行其它的优化打包操作。避免打包后缺少文件出错
     // 如果没有这个判断，小程序打包后缺少runtime.js等文件会出错
     if (isH5Compiler) {

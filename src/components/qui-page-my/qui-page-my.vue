@@ -18,7 +18,7 @@
       <view class="my-info">
         <view class="my-info__box">
           <view class="my-info__box__detail">
-            <qui-avatar :user="userInfo" />
+            <qui-avatar :user="userInfo" :is-real="userInfo.isReal" />
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"
@@ -109,7 +109,7 @@
     <uni-popup ref="popup" type="center">
       <uni-popup-dialog
         type="warn"
-        content="点击下面的确定解绑按钮后，您将解除微信与本账号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本账号！"
+        :content="i18n.t('user.loginOutTips')"
         :before-close="true"
         @close="handleClickCancel"
         @confirm="handleClickOk"
@@ -196,14 +196,10 @@ export default {
     // #endif
     // #ifdef H5
     handleClickOk() {
-      this.$store
-        .dispatch('jv/delete', `users/${this.userId}/wechat`)
-        .then(res => {
-          console.log('解绑成功', res);
-          this.handleClickCancel();
-          this.$store.dispatch('session/logout').then(() => window.location.reload());
-        })
-        .catch(err => console.log(err));
+      this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(() => {
+        this.handleClickCancel();
+        this.$store.dispatch('session/logout').then(() => window.location.reload());
+      });
     },
     // #endif
     // #ifdef H5

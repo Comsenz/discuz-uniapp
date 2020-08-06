@@ -65,9 +65,18 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
+// #ifdef H5
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 
 export default {
-  mixins: [forums, user],
+  mixins: [
+    forums,
+    user,
+    // #ifdef  H5
+    loginAuth,
+    // #endif
+  ],
   props: {
     bottom: {
       type: Number,
@@ -175,7 +184,14 @@ export default {
     // 首页底部发帖按钮弹窗
     footerOpen() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
         return;
       }
       if (this.forums.other.publish_need_real_name) {
@@ -284,9 +300,10 @@ export default {
 .ft-box {
   position: relative;
   // display: flex;
-  width: 21%;
+  width: 22%;
   height: 90rpx;
   padding-left: 40rpx;
+  font-size: $fg-f26;
   // margin-top: 23rpx;
   line-height: 90rpx;
   flex-direction: column;
@@ -304,7 +321,6 @@ export default {
   align-self: center;
   margin-top: 32rpx;
   margin-left: 21rpx;
-  font-size: $fg-f26;
   line-height: 26rpx;
   color: --color(--qui-FC-777);
   text-align: center;

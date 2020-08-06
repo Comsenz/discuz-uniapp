@@ -8,10 +8,33 @@
     <meta name="renderer" content="webkit">
     <!-- 是否启用 WebApp 全屏模式，删除苹果默认的工具栏和菜单栏 -->
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <!--QQ强制全屏-->
+    <meta name="x5-fullscreen" content="true">
+    <!--UC强制全屏-->
+    <meta name="fullscreen" content="yes">
     <title>
       <%= htmlWebpackPlugin.options.title %>
     </title>
     <script>
+      // 通过 WeixinJSBridge 设置网页字体为默认大小，并禁止用户自定义缩放页面(安卓)
+      (function() {
+      if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+        handleFontSize();
+      } else {
+        if (document.addEventListener) {
+            document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+        } else if (document.attachEvent) {
+            document.attachEvent("WeixinJSBridgeReady", handleFontSize);
+            document.attachEvent("onWeixinJSBridgeReady", handleFontSize);
+        }
+      }
+      function handleFontSize() {
+        WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+        WeixinJSBridge.on('menu:setfont', function() {
+            WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+        });
+      }
+      })();
       document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.fontSize = document.documentElement.clientWidth / 20 + 'px';
       })
@@ -34,5 +57,10 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+  <style>
+    body {
+      -webkit-text-size-adjust: 100%;     
+    }
+  </style>
 
 </html>

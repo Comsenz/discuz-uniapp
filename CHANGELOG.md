@@ -42,7 +42,7 @@ All notable changes to this project will be documented in this file. See [standa
 * add readme ([60ce98d](https://github.com/Comsenz/discuz-uniapp/commit/60ce98d9f58667e52fd4ebabe310a747933eb0e7))
 * add some  interface ([98c3c3b](https://github.com/Comsenz/discuz-uniapp/commit/98c3c3b0e0594939dad8d59564866d64ad4f1cbd))
 * add time2MinuteBefore() ([82fe217](https://github.com/Comsenz/discuz-uniapp/commit/82fe21750bc2f534048d420e849a775b8e60daac))
-* add time2MorningOrAfternoon ([71eaa28](https://github.com/Comsenz/discuz-uniapp/commit/71eaa2876b5f8312c31d123a9b773b5a902a385b))
+* add time2DateAndHM ([71eaa28](https://github.com/Comsenz/discuz-uniapp/commit/71eaa2876b5f8312c31d123a9b773b5a902a385b))
 * add upload img demo ([d7e7b9e](https://github.com/Comsenz/discuz-uniapp/commit/d7e7b9ee7d6f9f1a66f112ae5ed49d717a0e5b65))
 * login auth ([b9cc4d8](https://github.com/Comsenz/discuz-uniapp/commit/b9cc4d8c4dd3205b3b65925da2187a16fbf3b44c))
 * theme css ([c8b8e92](https://github.com/Comsenz/discuz-uniapp/commit/c8b8e921abe275d7eefc9f7a87cc0b9a91f9960b))

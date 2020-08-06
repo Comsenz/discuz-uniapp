@@ -1,83 +1,85 @@
 <template>
   <qui-page :data-qui-theme="theme" class="pages-list">
-    <view class="qui-topic-page-box">
-      <view class="qui-topic-page-box__hd">
-        <view class="qui-topic-page-box__hd__sc">
-          <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
-          <input
-            class="topicSearchInput"
-            type="text"
-            placeholder-class="input-placeholder"
-            confirm-type="search"
-            :placeholder="i18n.t('topic.searchTopic')"
-            v-model="keyword"
-            @input="searchInput"
-          />
-        </view>
-      </view>
-    </view>
-    <view class="topic-list-page">
-      <view class="topic-list-page-header">
-        <view class="topic-list-page-header_title">{{ i18n.t('topic.topicList') }}</view>
-        <!-- 排序功能后续补上完善 -->
-        <view class="topic-list-page-header_sortBox" @click="toggleDropDown">
-          <view>
-            <qui-icon class="icon-sort" name="icon-sort" size="30"></qui-icon>
-            <text>{{ i18n.t('core.sort') }}</text>
-          </view>
-          <view class="dropDownBox" v-show="dropDownShow">
-            <view @click="switchSort('-viewCount')" class="dropDownBox-view">
-              {{ i18n.t('topic.hot') }}
-            </view>
-            <view @click="switchSort('-threadCount')">
-              {{ i18n.t('topic.contents') }}
-            </view>
+    <view class="scroll-y">
+      <view class="qui-topic-page-box">
+        <view class="qui-topic-page-box__hd">
+          <view class="qui-topic-page-box__hd__sc">
+            <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
+            <input
+              class="topicSearchInput"
+              type="text"
+              placeholder-class="input-placeholder"
+              confirm-type="search"
+              :placeholder="i18n.t('topic.searchTopic')"
+              v-model="keyword"
+              @input="searchInput"
+            />
           </view>
         </view>
       </view>
-      <view style="clear: both;"></view>
-      <view class="topic-page-list-item" v-for="(item, i) in topicData" :key="i">
-        <navigator :url="'/pages/topic/content?id=' + item._jv.id">
-          <view class="topic-page-list-item_title">#{{ item.content }}#</view>
-        </navigator>
-        <view class="topic-page-list-item_details" v-if="item.lastThread.length">
-          <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
-            <qui-uparse
-              class="topic-page-list-item_details_text"
-              :content="item.lastThread[0].firstPost.summary"
-            ></qui-uparse>
+      <view class="topic-list-page">
+        <view class="topic-list-page-header">
+          <view class="topic-list-page-header_title">{{ i18n.t('topic.topicList') }}</view>
+          <!-- 排序功能后续补上完善 -->
+          <view class="topic-list-page-header_sortBox" @click="toggleDropDown">
+            <view>
+              <qui-icon class="icon-sort" name="icon-sort" size="30"></qui-icon>
+              <text>{{ i18n.t('core.sort') }}</text>
+            </view>
+            <view class="dropDownBox" v-show="dropDownShow">
+              <view @click="switchSort('-viewCount')" class="dropDownBox-view">
+                {{ i18n.t('topic.hot') }}
+              </view>
+              <view @click="switchSort('-threadCount')">
+                {{ i18n.t('topic.contents') }}
+              </view>
+            </view>
+          </view>
+        </view>
+        <view style="clear: both;"></view>
+        <view class="topic-page-list-item" v-for="(item, i) in topicData" :key="i">
+          <navigator :url="'/pages/topic/content?id=' + item._jv.id">
+            <view class="topic-page-list-item_title">#{{ item.content }}#</view>
           </navigator>
-          <qui-image
-            class="topic-page-list-item_details_image"
-            :images-list="item.lastThread[0].firstPost.images"
-            v-if="item.lastThread[0].firstPost.images.length"
-          ></qui-image>
-        </view>
-        <view class="topic-page-list-item_other">
-          <view class="topic-page-list-item_heat">
-            {{ i18n.t('topic.hot') }}
-            <text>
-              {{
-                item.view_count > 10000
-                  ? Number(item.view_count / 10000) + i18n.t('core.thousand')
-                  : item.view_count
-              }}
-            </text>
+          <view class="topic-page-list-item_details" v-if="item.lastThread.length">
+            <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
+              <qui-uparse
+                class="topic-page-list-item_details_text"
+                :content="item.lastThread[0].firstPost.summary"
+              ></qui-uparse>
+            </navigator>
+            <qui-image
+              class="topic-page-list-item_details_image"
+              :images-list="item.lastThread[0].firstPost.images"
+              v-if="item.lastThread[0].firstPost.images.length"
+            ></qui-image>
           </view>
-          <view class="topic-page-list-item_content">
-            {{ i18n.t('core.content') }}
-            <text>
-              {{
-                item.thread_count > 1000
-                  ? Number(item.thread_count / 1000) + 'k'
-                  : item.thread_count
-              }}
-            </text>
+          <view class="topic-page-list-item_other">
+            <view class="topic-page-list-item_heat">
+              {{ i18n.t('topic.hot') }}
+              <text>
+                {{
+                  item.view_count > 10000
+                    ? Number(item.view_count / 10000) + i18n.t('core.thousand')
+                    : item.view_count
+                }}
+              </text>
+            </view>
+            <view class="topic-page-list-item_content">
+              {{ i18n.t('core.content') }}
+              <text>
+                {{
+                  item.thread_count > 1000
+                    ? Number(item.thread_count / 1000) + 'k'
+                    : item.thread_count
+                }}
+              </text>
+            </view>
           </view>
         </view>
       </view>
+      <qui-load-more :content-text="contentText"></qui-load-more>
     </view>
-    <qui-load-more :content-text="contentText"></qui-load-more>
   </qui-page>
 </template>
 
@@ -96,8 +98,10 @@ export default {
       },
       keyword: '',
       sort: '-viewCount',
+      scrollTop: 0,
     };
   },
+
   methods: {
     toggleDropDown() {
       this.dropDownShow = !this.dropDownShow;
@@ -146,10 +150,24 @@ export default {
   onLoad() {
     this.topics();
   },
+  // 下拉刷新
+  onPullDownRefresh() {
+    const _this = this;
+    _this.topicData = [];
+    setTimeout(() => {
+      _this.topics();
+      uni.stopPullDownRefresh();
+    }, 1000);
+  },
+  // 上拉加载
   onReachBottom() {
     if (this.meta.next) {
       this.topics((currentPage += 1));
     }
+  },
+  // 监听页面滚动，参数为Object
+  onPageScroll(event) {
+    this.scrollTop = event.scrollTop;
   },
 };
 </script>
@@ -230,10 +248,12 @@ $otherHeight: 292rpx;
 }
 .topic-page-list-item {
   padding: 30rpx;
-  margin: 20rpx;
+  margin: 20rpx 0;
   background: --color(--qui-BG-2);
-  border-radius: 6rpx;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
+  border-top: solid 2rpx --color(--qui-BOR-ED);
+  border-bottom: solid 2rpx --color(--qui-BOR-ED);
+  // border-radius: 6rpx;
+  // box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
   &_title {
     font-size: 35rpx;
@@ -344,5 +364,8 @@ $otherHeight: 292rpx;
       background-color: #fff;
     }
   }
+}
+.scroll-y {
+  max-height: 100vh;
 }
 </style>
