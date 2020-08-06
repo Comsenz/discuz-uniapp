@@ -71,6 +71,7 @@
         <view class="content__video" v-if="threadType === 2 && payStatus">
           <video
             :poster="coverImage"
+            controls
             v-if="threadType === 2 && payStatus"
             :id="'myVideo' + currentindex"
             :duration="duration"
