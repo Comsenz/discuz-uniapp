@@ -49,6 +49,13 @@
               :border="false"
             ></qui-cell-item>
           </navigator>
+          <!-- <navigator url="/pages/my/shield" hover-class="none">
+            <qui-cell-item
+              :title="i18n.t('profile.myshield')"
+              arrow
+              :border="false"
+            ></qui-cell-item>
+          </navigator> -->
         </view>
         <view class="my-items__wrap">
           <navigator url="/pages/site/index" hover-class="none">

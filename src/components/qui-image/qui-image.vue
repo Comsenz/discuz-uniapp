@@ -40,11 +40,7 @@
           @click="previewPicture(previewStatus, index)"
           lazy-load
         ></image>
-        <image
-          class="themeItem__content__imgmore__item"
-          v-if="imagesList.length % 3 != 0"
-          lazy-load
-        ></image>
+        <view class="themeItem__content__imgmore__item" v-if="imagesList.length % 3 != 0"></view>
       </view>
     </view>
   </view>
@@ -137,7 +133,6 @@ export default {
         height: 211rpx;
         margin-right: 1.33%;
         margin-bottom: 10rpx;
-        background: #fff;
         border-radius: 5rpx;
       }
     }

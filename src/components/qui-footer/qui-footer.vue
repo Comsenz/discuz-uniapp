@@ -3,7 +3,7 @@
     <view
       class="ft"
       :style="{
-        bottom: bottom + 'rpx',
+        paddingBottom: bottom + 'rpx',
       }"
     >
       <view
