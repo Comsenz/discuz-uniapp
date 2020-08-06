@@ -333,6 +333,7 @@ import user from '@/mixin/user';
 import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
