@@ -81,9 +81,6 @@
     </view>
     <!-- 用户搜索列表 -->
     <view class="shield-item" v-if="searchValue">
-      <view class="shield-item__head">
-        {{ i18n.t('search.users') }}
-      </view>
       <scroll-view
         scroll-y="true"
         scroll-with-animation="true"
@@ -335,12 +332,6 @@ $height: calc(100vh - 110rpx);
 
   /deep/ .no-data {
     padding-top: 40rpx;
-  }
-
-  &__head {
-    padding: 30rpx 40rpx 20rpx;
-    font-size: $fg-f28;
-    font-weight: bold;
   }
 
   &__users {
