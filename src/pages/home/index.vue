@@ -186,17 +186,6 @@ export default {
     }),
     // 切换组件
     cut_index(e, type, isTabBar) {
-      // if (!this.$store.getters['session/get']('isLogin')) {
-      //   // #ifdef MP-WEIXIN
-      //   this.$store.getters['session/get']('auth').open();
-      //   // #endif
-      //   // #ifdef H5
-      //   if (!this.handleLogin('/pages/home/index', type)) {
-      //     return;
-      //   }
-      //   // #endif
-      //   return;
-      // }
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
       if (
