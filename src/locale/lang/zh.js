@@ -224,6 +224,7 @@ export default {
     deleteReplySure: '确定删除这条回复吗？',
     deleteNewsSure: '确定删除这条消息吗？',
     deleteFavoriteSure: '确定删除这条收藏吗？',
+    user_deny: '对方设置了屏蔽，无法进行此操作',
   },
   topic: {
     topicPageTitle: '内容详情页',
