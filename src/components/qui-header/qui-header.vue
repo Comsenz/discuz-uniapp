@@ -7,13 +7,6 @@
         : `background: ${color ? color : '--color(--qui-FC-FFF)'}`
     "
   >
-    <!-- <qui-header-back
-      :title="title"
-      :is-show-home="isShowHome"
-      :is-show-back="isShowBack"
-      :is-show-more="isShowMore"
-    ></qui-header-back> -->
-    <!-- #endif -->
     <view class="logoBox">
       <image
         class="logo"
