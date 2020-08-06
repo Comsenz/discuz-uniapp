@@ -143,6 +143,12 @@
       }
     },
     {
+      "path": "pages/my/shield",
+      "style": {
+        "navigationBarTitleText": "屏蔽设置"
+      }
+    },
+    {
       "path": "pages/profile/index",
       "style": {
         "navigationBarTitleText": "个人主页",
