@@ -236,7 +236,7 @@
       <view
         class="det-ft"
         :style="{
-          bottom: detectionModel() ? '20rpx' : 0,
+          paddingBottom: detectionModel() ? '100rpx' : 0,
         }"
         v-if="footerShow"
       >
@@ -704,6 +704,7 @@ export default {
       followStatus: '', // 当前关注状态
       beRewarded: false,
       curUrl: '', // 当前页面的路由
+      bottom: '',
     };
   },
   onReady() {},
