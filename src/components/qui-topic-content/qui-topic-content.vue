@@ -441,11 +441,12 @@ export default {
             that.$refs.toast.show({
               message: that.i18n.t('profile.downloadSuccess'),
             });
-            // wx.openDocument({
-            //   filePath: res.tempFilePath,
-            //   success() {
-            //   },
-            // });
+            wx.openDocument({
+              filePath: res.tempFilePath,
+              success(data) {
+                console.log(data);
+              },
+            });
           }
         },
         error() {
