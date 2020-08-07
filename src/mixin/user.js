@@ -39,7 +39,6 @@ module.exports = {
         {
           params: {
             include: 'users',
-            'filter[tag]': 'agreement',
           },
         },
       ]);

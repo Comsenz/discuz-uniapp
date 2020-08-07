@@ -220,7 +220,6 @@ export default {
       // 用户组等改变会改变私信权限
       const params = {
         include: 'users',
-        'filter[tag]': 'agreement',
       };
       this.$store.dispatch('jv/get', [`forum`, { params }]).then(res => {
         if (res.other && res.other.can_create_dialog) {

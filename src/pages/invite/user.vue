@@ -17,7 +17,7 @@
           <text class="search-total__invove__detail">4</text>
         </view>
       </view>
-      <view class="search-item__users">
+      <view class="search-item__users" v-if="data.length > 0">
         <view class="search-item__users__box" v-for="(item, index) in data" :key="index">
           <qui-avatar
             class="search-item__users__box-avatar"
