@@ -72,6 +72,13 @@
               :border="false"
             ></qui-cell-item>
           </navigator>
+          <!-- <navigator url="/pages/invite/index" hover-class="none">
+            <qui-cell-item
+              :title="i18n.t('profile.inviteFriends')"
+              arrow
+              :border="false"
+            ></qui-cell-item>
+          </navigator> -->
         </view>
 
         <view class="my-items__wrap">
