@@ -20,7 +20,7 @@
         ></qui-page-my>
       </view>
       <view class="tabBar">
-        <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
+        <qui-footer @click="cut_index" :bottom="detectionModel() ? 100 : 0"></qui-footer>
       </view>
     </view>
   </qui-page>
@@ -186,17 +186,6 @@ export default {
     }),
     // 切换组件
     cut_index(e, type, isTabBar) {
-      // if (!this.$store.getters['session/get']('isLogin')) {
-      //   // #ifdef MP-WEIXIN
-      //   this.$store.getters['session/get']('auth').open();
-      //   // #endif
-      //   // #ifdef H5
-      //   if (!this.handleLogin('/pages/home/index', type)) {
-      //     return;
-      //   }
-      //   // #endif
-      //   return;
-      // }
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
       if (

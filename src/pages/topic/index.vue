@@ -236,7 +236,7 @@
       <view
         class="det-ft"
         :style="{
-          bottom: detectionModel() ? '20rpx' : 0,
+          paddingBottom: detectionModel() ? '100rpx' : 0,
         }"
         v-if="footerShow"
       >
@@ -703,6 +703,8 @@ export default {
       deleteTip: '确定删除吗？', // 删除提示
       followStatus: '', // 当前关注状态
       beRewarded: false,
+      curUrl: '', // 当前页面的路由
+      bottom: '',
     };
   },
   onReady() {},
@@ -748,6 +750,7 @@ export default {
     },
   },
   onLoad(option) {
+    this.curUrl = getCurUrl();
     this.rewardStatus = false;
     this.paidStatus = false;
     try {
@@ -1672,7 +1675,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -1700,7 +1703,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -1716,7 +1719,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -1753,7 +1756,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -1951,7 +1954,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -1966,7 +1969,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -1987,7 +1990,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -2010,7 +2013,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -2045,7 +2048,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -2059,7 +2062,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -2073,7 +2076,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -2125,7 +2128,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -2241,7 +2244,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -2282,7 +2285,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
