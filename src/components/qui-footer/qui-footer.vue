@@ -196,10 +196,16 @@ export default {
       }
       if (this.forums.other.publish_need_real_name) {
         this.$refs.toast.show({ message: this.i18n.t('home.needRealname') });
+        uni.navigateTo({
+          url: `/pages/modify/realname?id=${this.user.id}`,
+        });
         return;
       }
       if (this.forums.other.publish_need_bind_phone) {
         this.$refs.toast.show({ message: this.i18n.t('home.needPhone') });
+        uni.navigateTo({
+          url: `/pages/modify/setphon?id=${this.user.id}`,
+        });
         return;
       }
 
