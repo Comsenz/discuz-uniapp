@@ -188,6 +188,11 @@ export default {
             uni.navigateTo({
               url: '/pages/modify/setphon?type=rebind',
             });
+            this.$u.event.$off('captchaResult');
+            this.$u.event.$off('closeChaReault');
+            if (this.captcha) {
+              this.captcha.destroy();
+            }
           }
         })
         .catch(err => {
@@ -292,13 +297,13 @@ export default {
     },
   },
   onUnload() {
-    console.log('onUnload事件销毁成功');
-    this.$u.event.$off('captchaResult');
-    this.$u.event.$off('closeChaReault');
+    // console.log('onUnload事件销毁成功');
+    // this.$u.event.$off('captchaResult');
+    // this.$u.event.$off('closeChaReault');
     // 隐藏验证码
-    if (this.captcha) {
-      this.captcha.destroy();
-    }
+    // if (this.captcha) {
+    //   this.captcha.destroy();
+    // }
   },
 };
 </script>
