@@ -128,6 +128,7 @@ export default {
 .cell-item__body__content-title {
   font-size: $fg-f28;
   color: --color(--qui-FC-333);
+  word-break: break-all;
   transition: $switch-theme-time;
 }
 

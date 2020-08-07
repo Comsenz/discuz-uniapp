@@ -198,6 +198,30 @@
         "navigationBarTitleText": "用户搜索"
       }
     },
+    {
+      "path": "pages/invite/index",
+      "style": {
+        "navigationBarTitleText": "邀请朋友"
+      }
+    },
+    {
+      "path": "pages/invite/invited",
+      "style": {
+        "navigationBarTitleText": "受邀朋友"
+      }
+    },
+    {
+      "path": "pages/invite/income",
+      "style": {
+        "navigationBarTitleText": "收益明细"
+      }
+    },
+    {
+      "path": "pages/invite/user",
+      "style": {
+        "navigationBarTitleText": "用户收益"
+      }
+    },
 
     {
       "path": "pages/notice/notice", // @我的/回复我的/点赞我的/支付我的/系统通知
