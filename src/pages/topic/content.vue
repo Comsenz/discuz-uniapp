@@ -100,9 +100,12 @@ export default {
     this.isPhone = appCommonH.isWeixin().isPhone;
     // #endif
     // #ifdef H5
-    this.wxShare({
-      title: this.topic.content,
-    });
+    if (this.forums.passport && this.forums.passport.offiaccount_close) {
+      this.wxShare({
+        title: this.topic.content,
+      });
+      // return;
+    }
     // #endif
   },
   onLoad(query) {
