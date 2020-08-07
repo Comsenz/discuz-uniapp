@@ -92,7 +92,7 @@ export default {
     this.senduser();
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
-      console.log(result, 'resultresultresultresultresult');
+      console.log(result, '修改旧手机号页面');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
       console.log('111');
@@ -291,14 +291,15 @@ export default {
       empty.deleat();
     },
   },
-  // onUnload() {
-  //   this.$u.event.$off('captchaResult');
-  //   this.$u.event.$off('closeChaReault');
-  //   // 隐藏验证码
-  //   if (this.captcha) {
-  //     this.captcha.destroy();
-  //   }
-  // },
+  onUnload() {
+    console.log('onUnload事件销毁成功');
+    this.$u.event.$off('captchaResult');
+    this.$u.event.$off('closeChaReault');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
+  },
 };
 </script>
 
