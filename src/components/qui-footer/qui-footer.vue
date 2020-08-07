@@ -58,6 +58,15 @@
         <text class="popup-share-btn" @click="cancel('share')">{{ i18n.t('home.cancel') }}</text>
       </view>
     </uni-popup>
+    <uni-popup ref="surePopup" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :content="sureTip"
+        :before-close="true"
+        @close="handleClickCancel"
+        @confirm="handleClickOk"
+      ></uni-popup-dialog>
+    </uni-popup>
     <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
@@ -68,8 +77,10 @@ import { mapState, mapMutations } from 'vuex';
 // #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
+  components: { uniPopupDialog },
   mixins: [
     forums,
     user,
@@ -112,6 +123,8 @@ export default {
       ],
       bottomData: [],
       isTabBar: [0], // 禁止页面第二次加载
+      sureType: '', // 二次确认类型
+      sureTip: '', // 二次确认提示
     };
   },
   computed: {
@@ -195,17 +208,18 @@ export default {
         return;
       }
       if (this.forums.other.publish_need_real_name) {
-        this.$refs.toast.show({ message: this.i18n.t('home.needRealname') });
-        uni.navigateTo({
-          url: `/pages/modify/realname?id=${this.user.id}`,
-        });
+        // this.$refs.toast.show({ message: this.i18n.t('home.needRealname') });
+        this.sureTip = this.i18n.t('home.needRealname');
+        this.$refs.surePopup.open();
+        this.sureType = '0';
         return;
       }
       if (this.forums.other.publish_need_bind_phone) {
-        this.$refs.toast.show({ message: this.i18n.t('home.needPhone') });
-        uni.navigateTo({
-          url: `/pages/modify/setphon?id=${this.user.id}`,
-        });
+        // this.$refs.toast.show({ message: this.i18n.t('home.needPhone') });
+        this.sureTip = this.i18n.t('home.needPhone');
+        this.$refs.surePopup.open();
+        this.sureType = '1';
+
         return;
       }
 
@@ -284,6 +298,23 @@ export default {
     },
     close() {
       this.$refs.auth.close();
+    },
+    handleClickOk() {
+      this.$refs.surePopup.close();
+      if (this.sureType === '0') {
+        uni.navigateTo({
+          url: `/pages/modify/realname?id=${this.user.id}`,
+        });
+      } else if (this.sureType === '1') {
+        // 删除类型为主题评论
+        uni.navigateTo({
+          url: `/pages/modify/setphon?id=${this.user.id}`,
+        });
+      }
+    },
+
+    handleClickCancel() {
+      this.$refs.surePopup.close();
     },
   },
 };
