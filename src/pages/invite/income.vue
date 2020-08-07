@@ -49,7 +49,11 @@
           size="70"
           :is-real="item.isReal"
         />
-        <qui-cell-item :title="item.username" arrow :brief="item.groupName"></qui-cell-item>
+        <qui-cell-item
+          :title="item.username"
+          :brief="item.groupName"
+          :addon="`+ ￥15.0`"
+        ></qui-cell-item>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>
@@ -222,7 +226,7 @@ $height: calc(100vh - 410rpx);
 }
 .search-total__invove {
   position: absolute;
-  top: 24rpx;
+  top: 10rpx;
   right: 40rpx;
 }
 .search-total__invove__detail {
@@ -246,7 +250,10 @@ $height: calc(100vh - 410rpx);
     background: --color(--qui-BG-2);
   }
 }
-
+/deep/ .cell-item .cell-item__body__right-text {
+  font-weight: bold;
+  color: --color(--qui-RED);
+}
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;

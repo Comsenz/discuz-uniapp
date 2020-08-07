@@ -42,12 +42,10 @@
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import uniPopupPullscreen from '@/components/uni-popup/uni-popup-pullscreen';
 
 export default {
   components: { uniPopupPullscreen },
-  mixins: [forums],
   props: {
     tips: {
       type: String,
@@ -59,9 +57,11 @@ export default {
       popTitle: '',
       popDetail: '',
       top: 0,
+      forums: '',
     };
   },
   mounted() {
+    this.getAttachMent();
     const height = window.innerHeight - 50;
     this.top = height;
   },
@@ -78,6 +78,16 @@ export default {
     },
     cancel() {
       this.$refs.popupMessage.close();
+    },
+    getAttachMent() {
+      // 用户组等改变会改变私信权限
+      const params = {
+        include: 'users',
+        'filter[tag]': 'agreement',
+      };
+      this.$store.dispatch('jv/get', [`forum`, { params }]).then(res => {
+        this.forums = res;
+      });
     },
   },
 };
