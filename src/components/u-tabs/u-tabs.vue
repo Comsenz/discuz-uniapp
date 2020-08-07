@@ -195,12 +195,14 @@ export default {
     list: {
       handler(newVal){
         // 用$nextTick等待视图更新完毕后再计算tab的局部信息，否则可能因为tab还没生成就获取，就会有问题
+        // console.log(newVal, 'newValnewValnewValnewVal');
         this.$nextTick(() => {
           // this.clickTab({
           //   index: this.currentIndex,
           //   id: newVal[this.currentIndex]._jv.id
           // })
           const timer = setTimeout(()=>{
+            this.scrollLeft = 0;
             this.init();
           },200)
         });
@@ -216,6 +218,7 @@ export default {
     current: {
       immediate: true,
       handler(nVal) {
+        // console.log(nVal, nVal);
         // 视图更新后再执行移动操作
         this.$nextTick(() => {
           this.currentIndex = nVal;
