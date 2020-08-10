@@ -1728,7 +1728,7 @@ export default {
       if (!this.forums.paycenter.wxpay_close) {
         this.payShowStatus = false;
         return;
-      } else if (this.forums.paycenter.wxpay_close) {
+      } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
         // #ifndef H5
         if (this.system === 'ios') {
           if (this.paymentmodel === false) {
@@ -1751,7 +1751,8 @@ export default {
         }
         // #endif
       } else {
-        this.payShowStatus = true;
+        this.payShowStatus = false;
+        return;
       }
       this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏
       if (this.thread.type === 3) {
