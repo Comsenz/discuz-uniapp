@@ -1743,12 +1743,6 @@ export default {
         // #endif
         // #ifdef H5
         this.payShowStatus = true;
-        if (data.paid === true) {
-          this.payShowStatus = false;
-          return;
-        } else {
-          this.payShowStatus = true;
-        }
         // #endif
       } else {
         this.payShowStatus = false;
