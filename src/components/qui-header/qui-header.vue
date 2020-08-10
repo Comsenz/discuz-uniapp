@@ -4,17 +4,9 @@
     :style="
       backgroundHeadFullImg
         ? `background-image: url(${backgroundHeadFullImg})`
-        : `background: ${color ? color : '#fff'}`
+        : `background: ${color ? color : '--color(--qui-FC-FFF)'}`
     "
   >
-    <!-- #ifdef H5-->
-    <!-- <qui-header-back
-      :title="title"
-      :is-show-home="isShowHome"
-      :is-show-back="isShowBack"
-      :is-show-more="isShowMore"
-    ></qui-header-back> -->
-    <!-- #endif -->
     <view class="logoBox">
       <image
         class="logo"

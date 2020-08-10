@@ -11,9 +11,6 @@
       :post-num="forums.other && forums.other.count_threads"
       :share-btn="shareBtn"
       :share-show="shareShow"
-      :is-show-more="false"
-      :is-show-back="false"
-      :is-show-home="false"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
       @closeShare="closeShare"
@@ -113,7 +110,6 @@ import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
-import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
@@ -273,7 +269,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.handleLogin(getCurUrl(), this.code);
+        this.handleLogin('/pages/home/index', this.code);
         // #endif
       } else {
         // 已经登陆的情况

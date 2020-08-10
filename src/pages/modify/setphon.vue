@@ -102,8 +102,10 @@ export default {
     console.log('onLoadonLoadonLoad');
     this.userid = this.usersid;
     this.typebind = arr.type || 'bind';
+    console.log(this.typebind, '新手机号');
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
+      console.log(result, '设置新手机号页面');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
       this.btnButton();

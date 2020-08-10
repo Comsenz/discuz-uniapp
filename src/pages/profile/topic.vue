@@ -60,6 +60,9 @@ export default {
   mounted() {
     this.loadThreads();
   },
+  destroyed() {
+    this.$u.event.$off('deleteThread');
+  },
   methods: {
     handleClickShare(id) {
       this.$emit('handleClickShare', id);

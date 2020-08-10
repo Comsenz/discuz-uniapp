@@ -143,6 +143,12 @@
       }
     },
     {
+      "path": "pages/my/shield",
+      "style": {
+        "navigationBarTitleText": "屏蔽设置"
+      }
+    },
+    {
       "path": "pages/profile/index",
       "style": {
         "navigationBarTitleText": "个人主页",
@@ -190,6 +196,30 @@
       "path": "pages/site/search-user",
       "style": {
         "navigationBarTitleText": "用户搜索"
+      }
+    },
+    {
+      "path": "pages/invite/index",
+      "style": {
+        "navigationBarTitleText": "邀请朋友"
+      }
+    },
+    {
+      "path": "pages/invite/invited",
+      "style": {
+        "navigationBarTitleText": "受邀朋友"
+      }
+    },
+    {
+      "path": "pages/invite/income",
+      "style": {
+        "navigationBarTitleText": "收益明细"
+      }
+    },
+    {
+      "path": "pages/invite/user",
+      "style": {
+        "navigationBarTitleText": "用户收益"
       }
     },
 

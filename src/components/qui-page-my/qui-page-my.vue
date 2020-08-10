@@ -43,8 +43,11 @@
             <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
           </navigator>
           <navigator url="/pages/my/favorite" hover-class="none">
+            <qui-cell-item :title="i18n.t('profile.myfavorite')" arrow></qui-cell-item>
+          </navigator>
+          <navigator url="/pages/my/shield" hover-class="none">
             <qui-cell-item
-              :title="i18n.t('profile.myfavorite')"
+              :title="i18n.t('profile.myshield')"
               arrow
               :border="false"
             ></qui-cell-item>
@@ -72,6 +75,13 @@
               :border="false"
             ></qui-cell-item>
           </navigator>
+          <!-- <navigator url="/pages/invite/index" hover-class="none">
+            <qui-cell-item
+              :title="i18n.t('profile.inviteFriends')"
+              arrow
+              :border="false"
+            ></qui-cell-item>
+          </navigator> -->
         </view>
 
         <view class="my-items__wrap">

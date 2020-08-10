@@ -47,7 +47,7 @@
       </view>
       <view class="themeItem__header__title">
         <view class="themeItem__header__title__top" @click="personJump">
-          <text
+          <!--<text
             class="themeItem__header__title__username"
             v-if="followShow && !managementShow"
             :style="{ maxWidth: '200rpx' }"
@@ -62,6 +62,9 @@
             {{ userName }}
           </text>
           <text class="themeItem__header__title__username" v-else :style="{ maxWidth: '370rpx' }">
+            {{ userName }}
+          </text>-->
+          <text class="themeItem__header__title__username">
             {{ userName }}
           </text>
           <text
@@ -438,11 +441,12 @@ export default {
             that.$refs.toast.show({
               message: that.i18n.t('profile.downloadSuccess'),
             });
-            // wx.openDocument({
-            //   filePath: res.tempFilePath,
-            //   success() {
-            //   },
-            // });
+            wx.openDocument({
+              filePath: res.tempFilePath,
+              success(data) {
+                console.log(data);
+              },
+            });
           }
         },
         error() {

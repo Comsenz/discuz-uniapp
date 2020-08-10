@@ -333,6 +333,7 @@ import user from '@/mixin/user';
 import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
@@ -418,6 +419,7 @@ export default {
       ], // 评论排序菜单
       sortVal: 'createdAt', // 排序值
       followStatus: '', // 当前关注状态
+      curUrl: '', // 当前页面的路由
     };
   },
   computed: {
@@ -449,6 +451,7 @@ export default {
     },
   },
   onLoad(option) {
+    this.curUrl = getCurUrl();
     this.threadId = option.threadId;
     this.commentId = option.commentId;
     this.loadPost();
@@ -799,7 +802,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -845,7 +848,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif

@@ -428,6 +428,7 @@ export default {
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
+      this.loadCategories();
       this.setCategoryId(tagId);
       this.setCategoryIndex(this.getCategorieIndex(tagId));
       // 首页主题置顶列表
