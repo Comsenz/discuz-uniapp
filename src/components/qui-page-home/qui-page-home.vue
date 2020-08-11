@@ -130,20 +130,25 @@
       <qui-load-more :status="loadingType"></qui-load-more>
     </view>
     <!-- #ifdef H5-->
-    <view class="record" v-if="forums.set_site ? forums.set_site.site_record : '' !== ''">
+    <view class="record" v-if="forums.set_site.site_record || forums.set_site.site_record_code">
       <!-- <text>{{ i18n.t('home.record') }}</text> -->
       <view class="record__box">
         <a class="record__box-url" href="http://www.beian.miit.gov.cn" target="_blank">
           {{ forums.set_site ? forums.set_site.site_record : '' }}
         </a>
       </view>
-      <view class="record__box1">
+      <view :class="forums.set_site.site_record ? 'record__box1' : 'record__box2'">
         <a class="record__box-url" :href="surl" target="_blank">
           {{ forums.set_site ? forums.set_site.site_record_code : '' }}
         </a>
       </view>
     </view>
-    <view class="copyright" :class="forums.set_site.site_record ? '' : 'copyright_margin'">
+    <view
+      class="copyright"
+      :class="
+        forums.set_site.site_record || forums.set_site.site_record_code ? '' : 'copyright_margin'
+      "
+    >
       <text>{{ i18n.t('home.copyright') }}</text>
     </view>
     <!-- #endif -->
@@ -1039,12 +1044,17 @@ $padding-bottom: 160rpx;
   text-align: center;
   justify-content: center;
   &__box {
-    margin-right: 20rpx;
     &-url {
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box1 {
+    margin-left: 20rpx;
+    &-url {
+      color: --color(--qui-BG-HIGH-LIGHT);
+    }
+  }
+  &__box2 {
     &-url {
       color: --color(--qui-BG-HIGH-LIGHT);
     }
