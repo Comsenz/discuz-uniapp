@@ -137,7 +137,10 @@
           {{ forums.set_site ? forums.set_site.site_record : '' }}
         </a>
       </view>
-      <view :class="forums.set_site.site_record ? 'record__box1' : 'record__box2'">
+      <view
+        v-if="forums.set_site.site_record_code"
+        :class="forums.set_site.site_record ? 'record__box1' : 'record__box2'"
+      >
         <a class="record__box-url" :href="surl" target="_blank">
           {{ forums.set_site ? forums.set_site.site_record_code : '' }}
         </a>
