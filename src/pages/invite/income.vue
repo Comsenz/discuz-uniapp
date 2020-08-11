@@ -23,7 +23,7 @@
     </view>
     <view class="search-total">
       {{ i18n.t('profile.total') }}
-      <text class="search-total__detail">4</text>
+      <text class="search-total__detail">{{ totalNum }}</text>
       {{ i18n.t('topic.persenUnit') }}
       <view class="search-total__invove">
         {{ i18n.t('profile.amountinvolved') }}
@@ -37,12 +37,7 @@
       show-scrollbar="false"
       class="scroll-y search-item"
     >
-      <view
-        class="search-item__users"
-        v-for="(item, index) in data"
-        :key="index"
-        @tap="toProfile(item.id)"
-      >
+      <view class="search-item__users" v-for="(item, index) in data" :key="index">
         <qui-avatar
           class="search-item__users__avatar"
           :user="item"
@@ -51,8 +46,8 @@
         />
         <qui-cell-item
           :title="item.username"
-          :brief="item.groupName"
-          :addon="`+ ￥15.0`"
+          :brief="timeHandle(item.created_at)"
+          :addon="`+ ${item.change_available_amount}`"
         ></qui-cell-item>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
@@ -67,6 +62,7 @@
 
 <script>
 import forums from '@/mixin/forums';
+import { time2MinuteOrHour } from '@/utils/time';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
@@ -85,14 +81,15 @@ export default {
       searchValue: '',
       loadingType: '',
       data: [],
+      totalNum: 0,
       code: '',
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
   },
-  onLoad(params) {
-    this.searchValue = params.value;
-    this.getUserList(params.value);
+  onLoad() {
+    this.getUserList();
+    this.getInviteCode();
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -130,6 +127,9 @@ export default {
       });
       // #endif
     },
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
+    },
     searchInput(e) {
       this.searchValue = e.target.value;
       if (this.timeout) clearTimeout(this.timeout);
@@ -139,23 +139,20 @@ export default {
         this.getUserList(e.target.value);
       }, 250);
     },
-    // 获取用户列表
     getUserList(key, type) {
       this.loadingType = 'loading';
       const params = {
-        include: 'groups',
-        sort: 'createdAt',
+        include: ['sourceUser'],
+        'filter[change_type]': [33, 62],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[username]': `*${key}*`,
+        'filter[source_username]': `*${this.searchValue}*`,
       };
-      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+      this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         if (res._jv) {
           delete res._jv;
         }
-        res.forEach((v, i) => {
-          res[i].groupName = v.groups[0] ? v.groups[0].name : '';
-        });
+        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;
@@ -169,12 +166,6 @@ export default {
       this.pageNum = 1;
       this.getUserList('', 'clear');
     },
-    // 点击头像到个人主页
-    toProfile(userId) {
-      uni.navigateTo({
-        url: `/pages/invite/user?userId=${userId}`,
-      });
-    },
     // 下拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
@@ -182,6 +173,12 @@ export default {
       }
       this.pageNum += 1;
       this.getUserList(this.searchValue);
+    },
+    // 邀请朋友
+    getInviteCode() {
+      this.$store.dispatch('jv/get', 'userInviteCode').then(res => {
+        this.code = res._jv.code;
+      });
     },
   },
 };

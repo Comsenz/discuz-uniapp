@@ -9,7 +9,7 @@
     >
       <view class="search-total">
         {{ i18n.t('profile.total') }}
-        <text class="search-total__detail">4</text>
+        <text class="search-total__detail">{{ totalNum }}</text>
         {{ i18n.t('profile.item') }}
         {{ i18n.t('profile.records') }}
         <view class="search-total__invove">
@@ -27,8 +27,8 @@
           />
           <qui-cell-item
             :title="item.username"
-            :brief="item.groupName"
-            :addon="`+ ￥15.0`"
+            :brief="timeHandle(item.created_at)"
+            :addon="`+ ${item.change_available_amount}`"
           ></qui-cell-item>
         </view>
       </view>
@@ -38,44 +38,44 @@
 </template>
 
 <script>
+import { time2MinuteOrHour } from '@/utils/time';
+
 export default {
   data() {
     return {
-      searchValue: '',
+      totalNum: 0,
       loadingType: '',
+      userId: '',
       data: [],
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
   },
   onLoad(params) {
-    this.searchValue = params.userId;
-    this.getUserList(params.userId);
+    this.userId = params.id;
+    this.getUserList();
   },
   methods: {
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
+    },
     // 获取用户列表
-    getUserList(key, type) {
+    getUserList() {
       this.loadingType = 'loading';
       const params = {
-        include: 'groups',
-        sort: 'createdAt',
+        include: ['sourceUser'],
+        'filter[user]': this.userId,
+        'filter[change_type]': [33, 62],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[username]': `*${key}*`,
       };
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         if (res._jv) {
           delete res._jv;
         }
-        res.forEach((v, i) => {
-          res[i].groupName = v.groups[0] ? v.groups[0].name : '';
-        });
+        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
-        if (type && type === 'clear') {
-          this.data = res;
-        } else {
-          this.data = [...this.data, ...res];
-        }
+        this.data = [...this.data, ...res];
       });
     },
     // 下拉加载
@@ -84,7 +84,7 @@ export default {
         return;
       }
       this.pageNum += 1;
-      this.getUserList(this.searchValue);
+      this.getUserList();
     },
   },
 };

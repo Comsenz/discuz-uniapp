@@ -531,6 +531,9 @@ export default {
       sticky: '置顶',
       deletePosts: '删除回复',
     },
+    other: {
+      canInviteUserScale: '允许邀请朋友',
+    },
     createThreadImage: '发布图片',
     createThread: '发布文本',
     createThreadLong: '发布帖子',

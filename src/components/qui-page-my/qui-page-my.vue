@@ -75,13 +75,18 @@
               :border="false"
             ></qui-cell-item>
           </navigator>
-          <!-- <navigator url="/pages/invite/index" hover-class="none">
+          <navigator
+            url="/pages/invite/index"
+            hover-class="none"
+            v-if="forums.other && forums.other.can_invite_user_scale"
+          >
             <qui-cell-item
               :title="i18n.t('profile.inviteFriends')"
               arrow
               :border="false"
+              class="invite-friends"
             ></qui-cell-item>
-          </navigator> -->
+          </navigator>
         </view>
 
         <view class="my-items__wrap">
@@ -299,5 +304,8 @@ $height: calc(100vh - 260rpx);
   margin: 30rpx 30rpx 0;
   text-align: center;
   border-radius: 7rpx;
+}
+/deep/ .invite-friends {
+  border-top: 2rpx solid --color(--qui-BOR-ED);
 }
 </style>
