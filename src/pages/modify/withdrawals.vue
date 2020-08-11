@@ -72,8 +72,11 @@
             <view class="cash-phon-test">
               {{ i18n.t('modify.phonnumber') }}
             </view>
-            <view :class="usertestphon ? 'cash-phon-num' : 'cash-phon-num1'">
-              {{ usertestphon ? usertestphon : i18n.t('modify.nohasphon') }}
+            <view v-if="user.mobile" class="cash-phon-num">
+              {{ user.mobile }}
+            </view>
+            <view v-else class="cash-phon-num1" @click="bandPhon">
+              {{ i18n.t('modify.nohasphon') }}
             </view>
             <button
               class="cash-phon-send"
@@ -175,7 +178,6 @@ export default {
     this.$u.event.$on('captchaResult', result => {
       this.ticket = result.ticket;
       this.randstr = result.randstr;
-      console.log('111');
       this.btnButton();
     });
     this.$u.event.$on('closeChaReault', () => {
@@ -186,6 +188,10 @@ export default {
   computed: {
     usersid() {
       return this.$store.getters['session/get']('userId');
+    },
+    user() {
+      const data = this.$store.getters['jv/get'](`users/${this.usersid}`);
+      return data;
     },
   },
   methods: {
@@ -456,6 +462,11 @@ export default {
             this.empty();
           }
         });
+    },
+    bandPhon() {
+      uni.navigateTo({
+        url: '/pages/modify/setphon',
+      });
     },
     toggleBox() {
       this.inshow = false;

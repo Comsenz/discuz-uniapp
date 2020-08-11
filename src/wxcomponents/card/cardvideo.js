@@ -176,7 +176,7 @@ export default class LastMayday {
             "css": {
               "color": "#333333",
               "background": "rgba(0,0,0,0)",
-              "width": "337px",
+              "width": "560px",
               "height": "31.639999999999997px",
               "top": `${960+obj.heightdefill}px`,
               "left": "210px",
@@ -202,7 +202,7 @@ export default class LastMayday {
             "css": {
               "color": "#AAAAAA",
               "background": "rgba(0,0,0,0)",
-              "width": "450px",
+              "width": "560px",
               "height": "27.119999999999997px",
               "top": `${1006+obj.heightdefill}px`,
               "left": "210px",
@@ -290,62 +290,62 @@ export default class LastMayday {
               "textAlign": "left"
             }
           },
-          {
-            "type": "rect",
-            "css": {
-              "background": "rgba(0,0,0,0.3)",
-              "width": "620px",
-              "height": "51px",
-              "top": `${591+obj.heightdefill}px`,
-              "left": "40px",
-              "rotate": "0",
-              "borderRadius": "",
-              "shadow": "",
-              "color": "#000000"
-            }
-          },
-          {
-            "type": "image",
-            "url": "",
-            "css": {
-              "width": "30px",
-              "height": "30px",
-              "top": `${601+obj.heightdefill}px`,
-              "left": "49px",
-              "rotate": "0",
-              "borderRadius": "15px",
-              "borderWidth": "",
-              "borderColor": "#000000",
-              "shadow": "",
-              "mode": "scaleToFill"
-            }
-          },
-          {
-            "type": "text",
-            "text": obj.uservideoduc,
-            "css": {
-              "color": "#ffffff",
-              "background": "rgba(0,0,0,0)",
-              "width": "122.75px",
-              "height": "27.119999999999997px",
-              "top": `${601+obj.heightdefill}px`,
-              "left": "527.25px",
-              "rotate": "0",
-              "borderRadius": "",
-              "borderWidth": "",
-              "borderColor": "#000000",
-              "shadow": "",
-              "padding": "0px",
-              "fontSize": "24px",
-              "fontWeight": "400",
-              "maxLines": "1",
-              "lineHeight": "26.64px",
-              "textStyle": "fill",
-              "textDecoration": "none",
-              "fontFamily": "",
-              "textAlign": "center"
-            }
-          }
+          // {
+          //   "type": "rect",
+          //   "css": {
+          //     "background": "rgba(0,0,0,0.3)",
+          //     "width": "620px",
+          //     "height": "51px",
+          //     "top": `${591+obj.heightdefill}px`,
+          //     "left": "40px",
+          //     "rotate": "0",
+          //     "borderRadius": "",
+          //     "shadow": "",
+          //     "color": "#000000"
+          //   }
+          // },
+          // {
+          //   "type": "image",
+          //   "url": "",
+          //   "css": {
+          //     "width": "30px",
+          //     "height": "30px",
+          //     "top": `${601+obj.heightdefill}px`,
+          //     "left": "49px",
+          //     "rotate": "0",
+          //     "borderRadius": "15px",
+          //     "borderWidth": "",
+          //     "borderColor": "#000000",
+          //     "shadow": "",
+          //     "mode": "scaleToFill"
+          //   }
+          // },
+          // {
+          //   "type": "text",
+          //   "text": obj.uservideoduc,
+          //   "css": {
+          //     "color": "#ffffff",
+          //     "background": "rgba(0,0,0,0)",
+          //     "width": "122.75px",
+          //     "height": "27.119999999999997px",
+          //     "top": `${601+obj.heightdefill}px`,
+          //     "left": "527.25px",
+          //     "rotate": "0",
+          //     "borderRadius": "",
+          //     "borderWidth": "",
+          //     "borderColor": "#000000",
+          //     "shadow": "",
+          //     "padding": "0px",
+          //     "fontSize": "24px",
+          //     "fontWeight": "400",
+          //     "maxLines": "1",
+          //     "lineHeight": "26.64px",
+          //     "textStyle": "fill",
+          //     "textDecoration": "none",
+          //     "fontFamily": "",
+          //     "textAlign": "center"
+          //   }
+          // }
         ]
       }
     );
