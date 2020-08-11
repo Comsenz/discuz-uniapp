@@ -14,6 +14,9 @@
         <view v-else-if="block.type == 'paragraph'">
           <p v-html="block.data.text"></p>
         </view>
+        <view v-else-if="block.type == 'Markdown'">
+          <p v-html="block.data.text"></p>
+        </view>
         <view v-else-if="block.type == 'image'">
           <img :src="block.data.file.url" alt />
         </view>
