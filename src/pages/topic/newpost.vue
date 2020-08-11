@@ -52,6 +52,7 @@ export default {
        * Initial Editor data
        */
       data: {},
+      initialBlock: 'Markdown',
     });
   },
   methods: {

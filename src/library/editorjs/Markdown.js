@@ -1,11 +1,39 @@
 export default class Markdown {
     constructor({data, api, config}) {
         console.log(data, api, config);
+        this.element = null;
     }
     
     render(){
-        const wrapper = document.createElement('div');
-        return wrapper;
+      this.element = this._make('div', ['ce-paragraph', 'cdx-block'], {contentEditable: true});
+      const at = e => {
+        
+        // Up, down, enter, tab, escape, left, right.
+        if ([9, 13, 27, 40, 38, 37, 39].indexOf(e.which) !== -1) return;
+        const range = window.getSelection().getRangeAt(0);
+        const cursor = range.startOffset;
+
+        const value = e.target.innerHTML;
+        let mentionStart = 0;
+        for (let i = cursor - 1; i >= cursor - 30; i--) {
+          const character = value.substr(i, 1);
+          if (character === '@') {
+            mentionStart = i + 1;
+            break;
+          }
+        }
+        if(mentionStart) {
+          console.log(123123, mentionStart, value.substring(mentionStart, cursor));
+        }
+      };
+      this.element.addEventListener('keyup', at);
+      this.element.addEventListener('input', at);
+      return this.element;
+    }
+    save(content) {
+      return {
+        text: content.innerHTML
+      }
     }
     static get toolbox() {
         return {
@@ -39,5 +67,30 @@ export default class Markdown {
         });
     
         return wrapper;
-      }
+    }
+
+
+      /**
+   * Helper for making Elements with attributes
+   *
+   * @param  {string} tagName           - new Element tag name
+   * @param  {Array|string} classNames  - list or name of CSS classname(s)
+   * @param  {object} attributes        - any attributes
+   * @returns {Element}
+   */
+  _make(tagName, classNames = null, attributes = {}) {
+    const el = document.createElement(tagName);
+
+    if (Array.isArray(classNames)) {
+      el.classList.add(...classNames);
+    } else if (classNames) {
+      el.classList.add(classNames);
+    }
+
+    for (const attrName in attributes) {
+      el[attrName] = attributes[attrName];
+    }
+
+    return el;
+  }
 }
