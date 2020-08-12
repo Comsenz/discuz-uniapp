@@ -82,7 +82,7 @@
               class="cash-phon-send"
               v-if="sun"
               @click="sendsms"
-              :disabled="disabtype"
+              :disabled="!user.mobile"
               id="TencentCaptcha"
               :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
             >
@@ -255,7 +255,7 @@ export default {
           duration: 2000,
         });
       } else {
-        if (!this.usertestphon) {
+        if (!this.user.mobile) {
           uni.showToast({
             icon: 'none',
             title: this.i18n.t('modify.nohasphon'),
@@ -354,6 +354,7 @@ export default {
         _jv: {
           type: 'sms/send',
         },
+        mobile: this.user.mobile,
         type: 'verify',
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,

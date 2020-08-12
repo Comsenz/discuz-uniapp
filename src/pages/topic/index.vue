@@ -47,6 +47,7 @@
               :thread-price="thread.price"
               :thread-is-essence="thread.isEssence"
               :media-url="thread.type == 2 ? thread.threadVideo.media_url : ''"
+              :duration="thread.type == 2 ? thread.threadVideo.duration : ''"
               :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
               :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
               :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"

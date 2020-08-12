@@ -155,6 +155,11 @@
       <text>{{ i18n.t('home.copyright') }}</text>
     </view>
     <!-- #endif -->
+    <!-- #ifdef MP-WEIXIN-->
+    <view class="wxcopyright">
+      <text>{{ i18n.t('home.copyright') }}</text>
+    </view>
+    <!-- #endif -->
     <!-- </scroll-view> -->
     <qui-filter-modal
       v-model="show"
@@ -1048,17 +1053,22 @@ $padding-bottom: 160rpx;
   justify-content: center;
   &__box {
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box1 {
     margin-left: 20rpx;
+    line-height: 40rpx;
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box2 {
+    line-height: 40rpx;
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
@@ -1070,6 +1080,12 @@ $padding-bottom: 160rpx;
 .copyright {
   width: 100%;
   height: 40rpx;
+  font-size: $fg-f26;
+  color: --color(--qui-FC-B2);
+  text-align: center;
+}
+.wxcopyright {
+  margin-top: -$padding-bottom;
   font-size: $fg-f26;
   color: --color(--qui-FC-B2);
   text-align: center;
