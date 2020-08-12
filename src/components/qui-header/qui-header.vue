@@ -132,7 +132,7 @@ export default {
   position: relative;
   width: 100%;
   height: 400rpx;
-  background: #1878f3;
+  // background: #1878f3;
   background-size: cover;
   .logo {
     display: block;
