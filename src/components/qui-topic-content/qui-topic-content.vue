@@ -125,6 +125,7 @@
           :poster="coverImage"
           v-if="themeType == 2 && videoStatus"
           controls
+          :duration="duration"
           preload="none"
           bindpause="handlepause"
           playsinline
@@ -356,6 +357,10 @@ export default {
       },
     },
     coverImage: {
+      type: String,
+      default: '',
+    },
+    duration: {
       type: String,
       default: '',
     },
