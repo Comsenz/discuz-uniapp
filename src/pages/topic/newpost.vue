@@ -1,13 +1,16 @@
 <template>
   <view class="container">
-    <view id="editor"></view>
+    <view class="content">
+      <view id="editor"></view>
+    </view>
+
     <qui-button type="primary" size="large" @tap="submit">发布</qui-button>
     <qui-editorjscontent :input="data"></qui-editorjscontent>
   </view>
 </template>
 <script>
 import EditorJS from '@editorjs/editorjs';
-import Markdown from '@/library/editorjs/markdown/markdown';
+import Markdown from '@/library/editorjs/markdown/Markdown';
 import ImageTool from '@editorjs/image';
 import linkTool from '@editorjs/link';
 // import At from '@/library/editorjs/At';
@@ -92,4 +95,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '@/library/editorjs/markdown/markdown.scss';
+.content {
+  padding: 10rpx 40rpx;
+}
 </style>

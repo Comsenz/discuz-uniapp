@@ -1,0 +1,24 @@
+.markdown {
+  position: relative;
+  width: 100%;
+  height: 200rpx;
+  padding: 20rpx;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+// .markdown input {
+//   width: 100%;
+//   padding: 10px;
+//   font-size: 14px;
+//   border: 1px solid #e4e4e4;
+//   border-radius: 3px;
+//   outline: none;
+// }
+.at_list {
+  position: absolute;
+  top: 50rpx;
+  left: 100rpx;
+  padding: 20rpx;
+  background: #eee;
+  border: 1px solid #ededed;
+}
