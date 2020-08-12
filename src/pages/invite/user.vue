@@ -14,7 +14,7 @@
         {{ i18n.t('profile.records') }}
         <view class="search-total__invove">
           {{ i18n.t('profile.amountinvolved') }}
-          <text class="search-total__invove__detail">4</text>
+          <text class="search-total__invove__detail">{{ `￥${totalMoney}` }}</text>
         </view>
       </view>
       <view class="search-item__users" v-if="data.length > 0">
@@ -44,6 +44,7 @@ export default {
   data() {
     return {
       totalNum: 0,
+      totalMoney: 0,
       loadingType: '',
       userId: '',
       data: [],

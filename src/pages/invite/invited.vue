@@ -37,16 +37,16 @@
         class="search-item__users"
         v-for="(item, index) in data"
         :key="index"
-        @tap="toProfile(item.id)"
+        @tap="toProfile(item.user.id)"
       >
         <qui-avatar
           class="search-item__users__avatar"
-          :user="item"
+          :user="item.user"
           size="70"
           :is-real="item.isReal"
         />
         <qui-cell-item
-          :title="item.username"
+          :title="item.user.username"
           arrow
           :brief="timeHandle(item.created_at)"
         ></qui-cell-item>
@@ -146,10 +146,12 @@ export default {
       const params = {
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[scale]': 1,
-        'filter[source_username]': `*${this.searchValue}*`,
       };
+      if (this.searchValue) {
+        params['filter[username]'] = `*${this.searchValue}*`;
+      }
       this.$store.dispatch('jv/get', ['invite/users', { params }]).then(res => {
+        console.log(res);
         if (res._jv) {
           delete res._jv;
         }
