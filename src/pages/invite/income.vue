@@ -103,12 +103,12 @@ export default {
     if (res.from === 'button') {
       return {
         title: this.forums.set_site.site_name,
-        path: `/pages/site/partner-invite?code=${this.code}`,
+        path: `/pages/site/partner-invite?code=${this.code}&type=normal`,
       };
     }
     return {
       title: this.forums.set_site.site_name,
-      path: `/pages/site/partner-invite?code=${this.code}`,
+      path: `/pages/site/partner-invite?code=${this.code}&type=normal`,
     };
   },
   // 分享到朋友圈
@@ -123,7 +123,7 @@ export default {
       // #ifdef H5
       this.h5Share({
         title: this.forums.set_site.site_name,
-        url: `pages/site/partner-invite?code=${this.code}`,
+        url: `pages/site/partner-invite?code=${this.code}&type=normal`,
       });
       // #endif
     },
