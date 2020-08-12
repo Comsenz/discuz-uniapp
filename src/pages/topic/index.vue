@@ -1725,7 +1725,29 @@ export default {
         // #endif
       }
       this.payStatus = false;
-      this.payShowStatus = true;
+      if (!this.forums.paycenter.wxpay_close) {
+        this.payShowStatus = false;
+        return;
+      } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
+        // #ifndef H5
+        if (this.system === 'ios') {
+          if (this.paymentmodel === false) {
+            this.payShowStatus = false;
+            return;
+          } else {
+            this.payShowStatus = true;
+          }
+        } else {
+          this.payShowStatus = true;
+        }
+        // #endif
+        // #ifdef H5
+        this.payShowStatus = true;
+        // #endif
+      } else {
+        this.payShowStatus = false;
+        return;
+      }
       this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏
       if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;

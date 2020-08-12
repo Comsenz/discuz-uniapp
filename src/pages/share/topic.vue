@@ -160,7 +160,7 @@ export default {
           }
           const arr = Object.values(data.firstPost.images);
           arr.forEach(value => {
-            this.contentImg.push(value.thumbUrl || value.url);
+            this.contentImg.push(value.url || value.thumbUrl);
           });
           if (this.contentImg) {
             uni.getImageInfo({

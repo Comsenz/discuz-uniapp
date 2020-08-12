@@ -23,7 +23,7 @@
     </view>
     <view class="search-total">
       {{ i18n.t('profile.total') }}
-      <text class="search-total__detail">4</text>
+      <text class="search-total__detail">{{ totalNum }}</text>
       {{ i18n.t('topic.persenUnit') }}
     </view>
     <scroll-view
@@ -45,7 +45,11 @@
           size="70"
           :is-real="item.isReal"
         />
-        <qui-cell-item :title="item.username" arrow :brief="item.groupName"></qui-cell-item>
+        <qui-cell-item
+          :title="item.username"
+          arrow
+          :brief="timeHandle(item.created_at)"
+        ></qui-cell-item>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>
@@ -59,6 +63,7 @@
 
 <script>
 import forums from '@/mixin/forums';
+import { time2MinuteOrHour } from '@/utils/time';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
@@ -78,13 +83,14 @@ export default {
       loadingType: '',
       data: [],
       code: '',
+      totalNum: 0,
       pageSize: 20,
       pageNum: 1, // 当前页数
     };
   },
-  onLoad(params) {
-    this.searchValue = params.value;
-    this.getUserList(params.value);
+  onLoad() {
+    this.getUserList();
+    this.getInviteCode();
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -98,12 +104,12 @@ export default {
     if (res.from === 'button') {
       return {
         title: this.forums.set_site.site_name,
-        path: `/pages/site/partner-invite?code=${this.code}`,
+        path: `/pages/site/partner-invite?code=${this.code}&type=normal`,
       };
     }
     return {
       title: this.forums.set_site.site_name,
-      path: `/pages/site/partner-invite?code=${this.code}`,
+      path: `/pages/site/partner-invite?code=${this.code}&type=normal`,
     };
   },
   // 分享到朋友圈
@@ -118,9 +124,13 @@ export default {
       // #ifdef H5
       this.h5Share({
         title: this.forums.set_site.site_name,
-        url: `pages/site/partner-invite?code=${this.code}`,
+        url: `pages/site/partner-invite?code=${this.code}&type=normal`,
       });
       // #endif
+    },
+    // 处理时间
+    timeHandle(time) {
+      return time2MinuteOrHour(time);
     },
     searchInput(e) {
       this.searchValue = e.target.value;
@@ -131,23 +141,19 @@ export default {
         this.getUserList(e.target.value);
       }, 250);
     },
-    // 获取用户列表
     getUserList(key, type) {
       this.loadingType = 'loading';
       const params = {
-        include: 'groups',
-        sort: 'createdAt',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[username]': `*${key}*`,
+        'filter[scale]': 1,
+        'filter[source_username]': `*${this.searchValue}*`,
       };
-      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+      this.$store.dispatch('jv/get', ['invite/users', { params }]).then(res => {
         if (res._jv) {
           delete res._jv;
         }
-        res.forEach((v, i) => {
-          res[i].groupName = v.groups[0] ? v.groups[0].name : '';
-        });
+        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;
@@ -161,10 +167,10 @@ export default {
       this.pageNum = 1;
       this.getUserList('', 'clear');
     },
-    // 点击头像到个人主页
+    // 点击到用户明细
     toProfile(userId) {
       uni.navigateTo({
-        url: `/pages/invite/user?userId=${userId}`,
+        url: `/pages/invite/user?id=${userId}`,
       });
     },
     // 下拉加载
@@ -174,6 +180,12 @@ export default {
       }
       this.pageNum += 1;
       this.getUserList(this.searchValue);
+    },
+    // 邀请朋友
+    getInviteCode() {
+      this.$store.dispatch('jv/get', 'userInviteCode').then(res => {
+        this.code = res._jv.code;
+      });
     },
   },
 };

@@ -235,8 +235,8 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   width: 100%;
-  background: #ebebeb;
-  border-top: 2rpx solid #ebebeb;
+  background: --color(--qui-BG-ED);
+  border-top: 2rpx solid --color(--qui-BG-ED);
   transition: all 0.2s ease-in 0.2s;
 }
 .active {
@@ -246,8 +246,8 @@ export default {
   width: 100%;
   height: 40rpx;
   text-align: center;
-  background-color: #fff;
-  border-bottom: 2rpx solid #ebebeb;
+  background-color: --color(--qui-BG-2);
+  border-bottom: 2rpx solid --color(--qui-BG-ED);
 }
 .keyboard-dow-img {
   width: 40rpx;
@@ -261,9 +261,9 @@ export default {
   width: 250rpx;
   height: 99rpx;
   font-size: 40rpx;
-  color: #333;
-  background: #fff;
-  border: 1rpx solid #ebebeb;
+  color: --color(--qui-FC-333);
+  background: --color(--qui-BG-2);
+  border: 1rpx solid --color(--qui-BG-ED);
   border-top: none;
   border-left: none;
   box-sizing: border-box;

@@ -130,10 +130,12 @@ export default {
       isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
       codeTips: '',
+      type: '', // 管理员邀请还是普通邀请
     };
   },
   onLoad(params) {
     this.code = params.code;
+    this.type = params.type || '';
     this.getInviteInfo(params.code);
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
@@ -215,6 +217,10 @@ export default {
       this.$refs.auth.close();
     },
     check() {
+      if (this.type && this.type === 'normal') {
+        this.submit();
+        return;
+      }
       // 处理邀请码状态 status 0 失效  1 未使用  2 已使用 3 已过期
       const statusVal =
         this.inviteData.status || this.inviteData.status === 0 ? this.inviteData.status : 'error';
