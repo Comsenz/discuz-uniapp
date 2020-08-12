@@ -1048,17 +1048,22 @@ $padding-bottom: 160rpx;
   justify-content: center;
   &__box {
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box1 {
     margin-left: 20rpx;
+    line-height: 40rpx;
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box2 {
+    line-height: 40rpx;
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
