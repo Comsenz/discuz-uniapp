@@ -155,6 +155,11 @@
       <text>{{ i18n.t('home.copyright') }}</text>
     </view>
     <!-- #endif -->
+    <!-- #ifdef MP-WEIXIN-->
+    <view class="wxcopyright">
+      <text>{{ i18n.t('home.copyright') }}</text>
+    </view>
+    <!-- #endif -->
     <!-- </scroll-view> -->
     <qui-filter-modal
       v-model="show"
@@ -1075,6 +1080,12 @@ $padding-bottom: 160rpx;
 .copyright {
   width: 100%;
   height: 40rpx;
+  font-size: $fg-f26;
+  color: --color(--qui-FC-B2);
+  text-align: center;
+}
+.wxcopyright {
+  margin-top: -$padding-bottom;
   font-size: $fg-f26;
   color: --color(--qui-FC-B2);
   text-align: center;
