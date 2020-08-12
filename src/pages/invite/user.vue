@@ -72,6 +72,7 @@ export default {
       };
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         if (res._jv) {
+          this.totalMoney = res._jv.json.meta.sumChangeAvailableAmount;
           delete res._jv;
         }
         this.totalNum = res.length;
