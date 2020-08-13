@@ -21,12 +21,12 @@
         <view class="search-item__users__box" v-for="(item, index) in data" :key="index">
           <qui-avatar
             class="search-item__users__box-avatar"
-            :user="item"
+            :user="item.sourceUser"
             size="70"
             :is-real="item.isReal"
           />
           <qui-cell-item
-            :title="item.username"
+            :title="item.sourceUser.username"
             :brief="timeHandle(item.created_at)"
             :addon="`+ ${item.change_available_amount}`"
           ></qui-cell-item>
@@ -65,12 +65,12 @@ export default {
       this.loadingType = 'loading';
       const params = {
         include: ['sourceUser'],
-        'filter[user]': this.userId,
+        'filter[source_user_id]': this.userId,
         'filter[change_type]': [33, 62],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
       };
-      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+      this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         if (res._jv) {
           this.totalMoney = res._jv.json.meta.sumChangeAvailableAmount;
           delete res._jv;

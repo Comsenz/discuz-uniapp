@@ -69,7 +69,7 @@
     <view class="site-invite">
       <view class="site-invite__detail">
         <text class="site-invite__detail__bold">
-          {{ inviteData.user && inviteData.user.username }}
+          {{ inviteData.user ? inviteData.user.username : '' }}
         </text>
         <text>{{ i18n.t('site.inviteyouas') }}</text>
         <text class="site-invite__detail__bold">
