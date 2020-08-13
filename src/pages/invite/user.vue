@@ -55,6 +55,9 @@ export default {
   onLoad(params) {
     this.userId = params.id;
     this.getUserList();
+    uni.setNavigationBarTitle({
+      title: params.name,
+    });
   },
   methods: {
     timeHandle(time) {

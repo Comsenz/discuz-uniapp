@@ -37,7 +37,7 @@
         class="search-item__users"
         v-for="(item, index) in data"
         :key="index"
-        @tap="toProfile(item.user.id)"
+        @tap="toProfile(item.user)"
       >
         <qui-avatar
           class="search-item__users__avatar"
@@ -170,9 +170,9 @@ export default {
       this.getUserList('', 'clear');
     },
     // 点击到用户明细
-    toProfile(userId) {
+    toProfile(user) {
       uni.navigateTo({
-        url: `/pages/invite/user?id=${userId}`,
+        url: `/pages/invite/user?id=${user.id}&name=${user.username}`,
       });
     },
     // 下拉加载
