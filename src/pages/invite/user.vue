@@ -145,6 +145,9 @@ $height: 100vh;
   padding-top: 20rpx;
   background: --color(--qui-BG-2);
 }
+/deep/ .uni-load-more {
+  background: --color(--qui-BG-2);
+}
 .scroll-y {
   max-height: $height;
 }
