@@ -155,9 +155,11 @@
           </view>
         </view>
         <view class="list-box__system-notice__con">
-          <view class="list-box__system-notice__con__text" v-if="item.type === 'system'">
-            {{ item.content }}
-          </view>
+          <view
+            class="list-box__system-notice__con__text"
+            v-if="item.type === 'system'"
+            v-html="item.content"
+          ></view>
         </view>
       </view>
       <!-- 删除按钮 -->
