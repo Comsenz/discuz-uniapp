@@ -22,6 +22,8 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
+              ref="sun"
+              :themid="threadId"
               :topic-status="thread.isApproved"
               :follow-show="thread.user.follow != null"
               :pay-status="thread.price > 0 && thread.paid"
@@ -751,6 +753,10 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(option.id);
+    this.threadId = option.id;
+    this.loadThread();
+    this.loadThreadPosts();
     this.curUrl = getCurUrl();
     this.rewardStatus = false;
     this.paidStatus = false;
@@ -809,9 +815,6 @@ export default {
         }
       });
     });
-    this.threadId = option.id;
-    this.loadThread();
-    this.loadThreadPosts();
 
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -933,7 +936,7 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
 
       threadAction
-        .then(data => {
+        .then(data => {     
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',

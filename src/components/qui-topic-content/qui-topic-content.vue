@@ -121,31 +121,44 @@
           <image class="theme__mark__open" src="/static/video.svg"></image>
           <image class="themeItem__content__coverimg" :src="coverImage"></image>
         </view>
-        <video
-          :poster="coverImage"
+        <view
+          class="theme__content__videocover"
+          @click="btnFun"
           v-if="themeType == 2 && videoStatus"
-          controls
-          :duration="duration"
-          preload="none"
-          bindpause="handlepause"
-          playsinline
-          webkit-playsinline
-          x5-playsinline
-          :page-gesture="false"
-          :show-fullscreen-btn="true"
-          :show-play-btn="true"
-          auto-pause-if-open-native
-          auto-pause-if-navigate
-          :enable-play-gesture="false"
-          :vslide-gesture="false"
-          :vslide-gesture-in-fullscreen="false"
-          object-fit="cover"
-          :direction="videoWidth > videoHeight ? 90 : 0"
-          x5-video-player-type="h5-page"
-          bindfullscreenchange="fullScreen"
-          :src="mediaUrl"
-          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
-        ></video>
+          :style="{ display: sun }"
+        >
+          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image class="themeItem__content__coverimg" :src="coverImage"></image>
+        </view>
+        <view v-show="videoShow">
+          <video
+            ref="myVideo"
+            id="myVideo"
+            :poster="coverImage"
+            :autoplay="autoplay"
+            controls
+            :duration="duration"
+            preload="none"
+            bindpause="handlepause"
+            playsinline
+            webkit-playsinline
+            x5-playsinline
+            :page-gesture="false"
+            :show-fullscreen-btn="true"
+            :show-play-btn="true"
+            auto-pause-if-open-native
+            auto-pause-if-navigate
+            :enable-play-gesture="false"
+            :vslide-gesture="false"
+            :vslide-gesture-in-fullscreen="false"
+            object-fit="cover"
+            :direction="videoWidth > videoHeight ? 90 : 0"
+            x5-video-player-type="h5-page"
+            bindfullscreenchange="fullScreen"
+            :src="mediaUrl"
+            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+          ></video>
+        </view>
         <qui-image
           :images-list="imagesList"
           :preview-status="videoStatus"
@@ -212,6 +225,7 @@
 
 <script>
 import { time2DateAndHM } from '@/utils/time';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   props: {
@@ -349,6 +363,11 @@ export default {
       type: Number,
       default: 0,
     },
+    // 主题id
+    themid: {
+      type: Number,
+      default: 0,
+    },
     // 主题相关标签
     tags: {
       type: Array,
@@ -381,6 +400,10 @@ export default {
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
       // topicStatus: '',
+      videoShow: false,
+      autoplay: false,
+      look: true,
+      sun: 1,
     };
   },
   onLoad() {},
@@ -415,6 +438,7 @@ export default {
     // 点击视频封面图事件
     videocoverClick() {
       this.$emit('videocoverClick');
+      console.log('点击封面图事件');
     },
 
     // 点击分类标签
@@ -467,6 +491,45 @@ export default {
     },
     previewPicture() {
       this.$emit('previewPicture');
+    },
+    serBtn() {
+      const params = {
+        include: [
+          'posts.replyUser',
+          'user.groups',
+          'user',
+          'posts',
+          'posts.user',
+          'posts.likedUsers',
+          'posts.images',
+          'firstPost',
+          'firstPost.likedUsers',
+          'firstPost.images',
+          'firstPost.attachments',
+          'rewardedUsers',
+          'category',
+          'threadVideo',
+          'paidUsers',
+          'user.groups.permissionWithoutCategories',
+        ],
+      };
+      const threadAction = status.run(() =>
+        this.$store.dispatch('jv/get', [`threads/${this.themid}`, { params }]),
+      );
+      threadAction.then(() => {
+        this.sun = 'none';
+        this.videoShow = true;
+        this.autoplay = true;
+        setTimeout(() => {
+          console.log('视频开始播放');
+          const videoContext = wx.createVideoContext('myVideo');
+          videoContext.play();
+        }, 200);
+      });
+    },
+
+    btnFun() {
+      this.serBtn();
     },
   },
 };
@@ -738,5 +801,10 @@ export default {
 }
 .theme__content__videocover {
   position: relative;
+}
+.cont-box {
+  width: 600rpx;
+  height: 400rpx;
+  background: brown;
 }
 </style>
