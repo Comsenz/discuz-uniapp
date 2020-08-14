@@ -81,6 +81,7 @@ export default {
       searchValue: '',
       loadingType: '',
       data: [],
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
       totalNum: 0,
       totalMoney: 0,
       code: '',
@@ -144,6 +145,7 @@ export default {
       this.loadingType = 'loading';
       const params = {
         include: ['sourceUser'],
+        'filter[user]': this.userId,
         'filter[change_type]': [33, 62],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
