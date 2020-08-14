@@ -188,19 +188,13 @@
         </view>
         <view
           class="themeItem__content__attachment-item"
-          v-for="(item, index) in fileList"
+          v-for="(item, index) in attachMentList"
           :key="index"
           @tap="download(item)"
         >
           <qui-icon
             class="icon-attachment"
-            :name="
-              item.fileName
-                ? `icon-${item.fileName
-                    .substring(item.fileName.lastIndexOf('.') + 1)
-                    .toUpperCase()}`
-                : `icon-resources`
-            "
+            :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
             color="#aaa"
             size="22"
           ></qui-icon>
@@ -399,6 +393,7 @@ export default {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
+      attachMentList: [],
       // topicStatus: '',
       videoShow: false,
       autoplay: false,
@@ -406,7 +401,6 @@ export default {
       sun: 1,
     };
   },
-  onLoad() {},
   computed: {
     t() {
       return this.i18n.t('topic');
@@ -418,6 +412,13 @@ export default {
     localTime() {
       return time2DateAndHM(this.themeTime);
     },
+  },
+  mounted() {
+    const { fileList } = this;
+    fileList.forEach((e, index) => {
+      fileList[index].format = e.fileName.substring(e.fileName.lastIndexOf('.') + 1).toUpperCase();
+    });
+    this.attachMentList = fileList;
   },
   methods: {
     // 管理菜单点击事件

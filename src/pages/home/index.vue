@@ -292,4 +292,7 @@ export default {
 /deep/ .my-info__box__detail .cell-item__body__content-title {
   font-weight: bold;
 }
+/deep/ .invite-friends {
+  border-top: 2rpx solid --color(--qui-BOR-ED);
+}
 </style>

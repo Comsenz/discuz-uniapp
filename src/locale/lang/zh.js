@@ -323,7 +323,7 @@ export default {
     wechatIdentificationQRcode: '微信识别二维码',
   },
   auth: {
-    userinfo: '获取头像和昵称',
+    userinfo: '微信快捷登录',
   },
   // 首页
   home: {

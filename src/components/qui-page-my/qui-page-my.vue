@@ -84,7 +84,7 @@
               :title="i18n.t('profile.inviteFriends')"
               arrow
               :border="false"
-              class="invite-friends"
+              :class-item="'invite-friends'"
             ></qui-cell-item>
           </navigator>
         </view>
@@ -304,8 +304,5 @@ $height: calc(100vh - 260rpx);
   margin: 30rpx 30rpx 0;
   text-align: center;
   border-radius: 7rpx;
-}
-/deep/ .invite-friends {
-  border-top: 2rpx solid --color(--qui-BOR-ED);
 }
 </style>
