@@ -514,6 +514,7 @@ export default {
     greaterthan: '提现金额不能大于可提现余额',
     NoteOpen: '短信服务未开启',
     logoinpaswd: '已有登录密码',
+    phonerro: '手机号错误',
   },
   permission: {
     viewThreads: '查看主题列表',

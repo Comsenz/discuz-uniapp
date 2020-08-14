@@ -196,6 +196,9 @@ export default {
     }),
     // 首页底部发帖按钮弹窗
     footerOpen() {
+      // uni.navigateTo({
+      //   url: '/pages/share/weixinchome',
+      // });
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();

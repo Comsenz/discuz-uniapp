@@ -12,6 +12,12 @@
       }
     },
     {
+      "path": "pages/share/weixinchome",
+      "style": {
+        "navigationBarTitleText": "相册选取"
+      }
+    },
+    {
       "path": "pages/topic/content",
       "style": {
         "navigationBarTitleText": "",
