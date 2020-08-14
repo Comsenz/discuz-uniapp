@@ -68,7 +68,10 @@
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
-        <text class="site-invite__detail__bold">
+        <text class="site-invite__detail__bold" v-if="type === 'normal'">
+          {{ inviteData.username || '' }}
+        </text>
+        <text class="site-invite__detail__bold" v-else>
           {{ inviteData.user ? inviteData.user.username : '' }}
         </text>
         <text>{{ i18n.t('site.inviteyouas') }}</text>
@@ -257,6 +260,7 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
         .then(res => {
+          console.log(res);
           this.inviteData = res;
           this.permission = res.group.permission;
         });
