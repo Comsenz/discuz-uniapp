@@ -168,9 +168,25 @@ export default {
         this.sendSMS();
       }
     },
-    // h5内发布按钮验证码验证
-    // #ifdef H5
+    // 发送验证码按钮的验证
     toTCaptcha() {
+      // #ifdef MP-WEIXIN
+      wx.navigateToMiniProgram({
+        appId: 'wx5a3a7366fd07e119',
+        path: '/pages/captcha/index',
+        envVersion: 'release',
+        extraData: {
+          appId: this.forums.qcloud.qcloud_captcha_app_id, // 您申请的验证码的 appId
+        },
+        success() {
+          console.log('验证码成功打开');
+        },
+        fail() {
+          uni.hideLoading();
+        },
+      });
+      // #endif
+      // #ifdef H5
       // eslint-disable-next-line no-undef
       this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
         if (res.ret === 0) {
@@ -188,8 +204,8 @@ export default {
       });
       // 显示验证码
       this.captcha.show();
+      // #endif
     },
-    // #endif
     // 60s倒计时
     countdown() {
       if (this.time > 1) {
@@ -248,12 +264,24 @@ export default {
           },
         },
       };
+      // #ifdef MP-WEIXIN
+      const data = this.$store.getters['session/get']('params');
+      if (data && data.data && data.data.attributes) {
+        params.data.attributes.js_code = data.data.attributes.js_code;
+        params.data.attributes.iv = data.data.attributes.iv;
+        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+      }
+      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
+        params.data.attributes.inviteCode = data.data.attributes.code;
+      }
+      // #endif
       if (this.token && this.token !== '') {
         params.data.attributes.token = this.token;
       }
       if (this.code && this.code !== 'undefined') {
         params.data.attributes.inviteCode = this.code;
       }
+      console.log('params', params);
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
