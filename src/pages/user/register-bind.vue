@@ -165,25 +165,39 @@ export default {
           attributes: {
             username: this.username,
             password: this.password,
-            token: this.token,
           },
         },
       };
+      // #ifdef MP-WEIXIN
+      const data = this.$store.getters['session/get']('params');
+      if (data && data.data && data.data.attributes) {
+        params.data.attributes.js_code = data.data.attributes.js_code;
+        params.data.attributes.iv = data.data.attributes.iv;
+        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+      }
+      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
+        params.data.attributes.code = data.data.attributes.code;
+      }
+      // #endif
       if (this.register_captcha && this.validate) {
         params.data.attributes.register_reason = this.reason;
+        params.data.attributes.captcha_ticket = this.ticket;
+        params.data.attributes.captcha_rand_str = this.randstr;
+      }
+      if (this.register_captcha) {
         params.data.attributes.captcha_ticket = this.ticket;
         params.data.attributes.captcha_rand_str = this.randstr;
       }
       if (this.validate) {
         params.data.attributes.register_reason = this.reason;
       }
-      if (this.register_captcha) {
-        params.data.attributes.captcha_ticket = this.ticket;
-        params.data.attributes.captcha_rand_str = this.randstr;
+      if (this.token && this.token !== '') {
+        params.data.attributes.token = this.token;
       }
-      if (this.code !== '') {
+      if (this.code && this.code !== '') {
         params.data.attributes.code = this.code;
       }
+      console.log('params', params);
       this.$store
         .dispatch('session/h5Register', params)
         .then(result => {

@@ -113,10 +113,18 @@ export default {
             attributes: {
               username: this.username,
               password: this.password,
-              token: this.token,
             },
           },
         };
+        // #ifdef MP-WEIXIN
+        const data = this.$store.getters['session/get']('params');
+        if (data && data.data && data.data.attributes) {
+          params.data.attributes.js_code = data.data.attributes.js_code;
+          params.data.attributes.iv = data.data.attributes.iv;
+          params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+        }
+        // #endif
+        console.log('params', params);
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {
