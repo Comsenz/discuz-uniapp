@@ -1,7 +1,7 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="verification-code-login-box">
+  <qui-page :data-qui-theme="theme" class="phone-login-box">
     <view class="new" @click.stop="toggleBox">
-      <view class="verification-code-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
+      <view class="phone-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
       <view class="new-phon">
         <view class="new-phon-test">{{ i18n.t('user.phoneNumber') }}</view>
         <view class="new-phon-number">
@@ -36,14 +36,7 @@
           ref="quiinput"
         ></qui-input-code>
       </view>
-      <view class="verification-code-login-box-btn" @click="login">{{ i18n.t('user.login') }}</view>
-      <view
-        class="verification-code-login-box-pwdlogin"
-        @click="jump2PhoneNumberLogin"
-        v-if="code !== 'undefined'"
-      >
-        {{ i18n.t('user.passwordLogin') }}
-      </view>
+      <view class="phone-login-box-btn" @click="login">{{ i18n.t('user.login') }}</view>
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
@@ -306,11 +299,6 @@ export default {
     toggleBox() {
       this.inshow = false;
     },
-    jump2PhoneNumberLogin() {
-      uni.navigateTo({
-        url: `/pages/user/phone-number-login?url=${this.url}&validate=${this.forums.set_reg.register_validate}&token=${this.token}&code=${this.code}`,
-      });
-    },
   },
   onUnload() {
     // 隐藏验证码
@@ -325,11 +313,11 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 
-.verification-code-login-box {
+.phone-login-box {
   background-color: --color(--qui-BG-2);
 }
 
-.verification-code-login-box-h {
+.phone-login-box-h {
   padding-top: 20px;
   margin: 0 0rpx 80rpx 40rpx;
   font-size: 50rpx;
@@ -405,7 +393,7 @@ export default {
 .new-button {
   margin: 52rpx 40rpx 0;
 }
-.verification-code-login-box-btn {
+.phone-login-box-btn {
   width: 670rpx;
   height: 90rpx;
   margin: 50rpx auto 0rpx;
@@ -415,7 +403,7 @@ export default {
   background-color: --color(--qui-MAIN);
   border-radius: 5rpx;
 }
-.verification-code-login-box-pwdlogin {
+.phone-login-box-pwdlogin {
   margin: 20rpx 0rpx 0rpx 40rpx;
   font-size: $fg-f28;
   color: --color(--qui-LINK);

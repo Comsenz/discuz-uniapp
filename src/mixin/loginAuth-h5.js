@@ -42,7 +42,7 @@ module.exports = {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
             // 手机号模式 跳转到手机号+验证码登陆页
             uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}&code=${code}`,
+              url: `/pages/user/phone-login?url=${url}&validate=${this.forums.set_reg.register_validate}&token=${wxtoken}&code=${code}`,
             });
           }
         } else {
@@ -55,14 +55,14 @@ module.exports = {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
             // 手机号模式
             uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+              url: `/pages/user/phone-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });
           }
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
             if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
               // 手机号模式
               uni.navigateTo({
-                url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+                url: `/pages/user/phone-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
               });
             } else {
               // 用户名模式
@@ -82,14 +82,14 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式
           uni.navigateTo({
-            url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+            url: `/pages/user/phone-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
             // 手机号模式
             uni.navigateTo({
-              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
+              url: `/pages/user/phone-login?url=${url}&validate=${this.forums.set_reg.register_validate}&code=${code}`,
             });
           } else {
             // 用户名模式
