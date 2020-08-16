@@ -43,20 +43,64 @@ export default {
         });
         return;
       }
-
+      const url = '/pages/home/index';
       if (res.detail.errMsg === 'getUserInfo:ok') {
-        // eslint-disable-next-line no-unused-vars
-        this.$store
-          .dispatch('session/login')
-          .then(data => {
-            this.logind();
-            this.$emit('login', { res, data });
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        if (this.forums && this.forums.passport && this.forums.passport.offiaccount_close) {
+          // 开启微信公众号
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+            // 用户名模式 跳转到注册并绑定页
+            uni.navigateTo({
+              url: `/pages/user/register-bind?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+            // 手机号模式 跳转到手机号+验证码登陆页
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            // 无感模式
+            this.$store
+              .dispatch('session/login')
+              .then(data => {
+                console.log(data);
+                this.logind();
+                this.$emit('login');
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
+        } else {
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+            // 用户名模式
+            uni.navigateTo({
+              url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+            // 手机号模式
+            uni.navigateTo({
+              url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+            });
+          }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+              // 手机号模式
+              uni.navigateTo({
+                url: `/pages/user/verification-code-login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+              });
+            } else {
+              // 用户名模式
+              uni.navigateTo({
+                url: `/pages/user/login?url=${url}&validate=${this.forums.set_reg.register_validate}`,
+              });
+            }
+          }
+        }
       } else {
-        this.$emit('login', { res });
+        this.$emit('login');
       }
     },
     close() {
