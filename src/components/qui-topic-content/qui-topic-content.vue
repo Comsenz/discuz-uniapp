@@ -128,7 +128,7 @@
           :style="{ display: sun }"
         >
           <image class="theme__mark__open" src="/static/video.svg"></image>
-          <image class="themeItem__content__coverimg" :src="coverImage"></image>
+          <image class="themeItem__content__coverimg" :src="coverImage" mode="widthFix"></image>
         </view>
         <view v-show="videoShow">
           <video
@@ -156,7 +156,7 @@
             x5-video-player-type="h5-page"
             bindfullscreenchange="fullScreen"
             :src="mediaUrl"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+            :style="{ width: '100%', height: blocKwidth + 'rpx' }"
           ></video>
         </view>
         <qui-image
@@ -359,7 +359,7 @@ export default {
     },
     // 主题id
     themid: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     // 主题相关标签
@@ -399,6 +399,7 @@ export default {
       autoplay: false,
       look: true,
       sun: 1,
+      blocKwidth: 224,
     };
   },
   computed: {
@@ -419,6 +420,7 @@ export default {
       fileList[index].format = e.fileName.substring(e.fileName.lastIndexOf('.') + 1).toUpperCase();
     });
     this.attachMentList = fileList;
+    this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
   },
   methods: {
     // 管理菜单点击事件
