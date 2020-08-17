@@ -76,9 +76,9 @@ export default {
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         if (res._jv) {
           this.totalMoney = res._jv.json.meta.sumChangeAvailableAmount;
+          this.totalNum = res._jv.json.meta.total;
           delete res._jv;
         }
-        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         this.data = [...this.data, ...res];
       });

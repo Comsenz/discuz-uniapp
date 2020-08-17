@@ -151,11 +151,10 @@ export default {
         params['filter[username]'] = `*${this.searchValue}*`;
       }
       this.$store.dispatch('jv/get', ['invite/users', { params }]).then(res => {
-        console.log(res);
         if (res._jv) {
+          this.totalNum = res._jv.json.meta.total;
           delete res._jv;
         }
-        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;
