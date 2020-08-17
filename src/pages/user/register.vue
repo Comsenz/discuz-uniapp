@@ -30,8 +30,35 @@
       <view class="register-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.register') }}
       </view>
-      <view class="register-box-exist" @click="jump2Login" v-if="code !== 'undefined'">
-        {{ i18n.t('user.exist') }}
+      <view class="register-box-ft">
+        <view class="register-box-ft-title" v-if="isNoSense && qcloud_sms">
+          其他注册方式
+        </view>
+        <view class="register-box-ft-con">
+          <image
+            v-if="isNoSense"
+            :class="[
+              isNoSense && qcloud_sms
+                ? 'register-box-ft-con-image register-box-ft-con-right'
+                : 'register-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WeChat"
+          />
+          <image
+            v-if="qcloud_sms"
+            :class="[
+              isNoSense && qcloud_sms
+                ? 'register-box-ft-con-image register-box-ft-con-left'
+                : 'register-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+        </view>
+        <view class="register-box-ft-btn" v-if="register" @click="jump2Login">登录</view>
       </view>
     </view>
     <qui-registration-agreement></qui-registration-agreement>
@@ -60,11 +87,13 @@ export default {
       password: '', // 密码
       reason: '', // 注册原因
       url: '', // 上一个页面的路径
-      validate: false, // 默认不开启注册审核
       code: '', // 注册邀请码
-      register_captcha: false, // 默认不开启注册验证码
       site_mode: '', // 站点模式
-      isPaid: false, // 是否付费
+      validate: false, // 默认开启注册审核
+      qcloud_sms: false, // 默认开启短信功能
+      isNoSense: true, // 默认开启无感模式
+      isPaid: false, // 默认未付费
+      register_captcha: false, // 默认不开启注册验证码
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
@@ -74,7 +103,8 @@ export default {
     };
   },
   onLoad(params) {
-    const { url, validate, commentId, code } = params;
+    console.log('this.forums', this.forums);
+    const { url, commentId, code } = params;
     if (url) {
       let pageUrl;
       if (url.substr(0, 1) !== '/') {
@@ -88,20 +118,33 @@ export default {
         this.url = pageUrl;
       }
     }
-    if (validate) {
-      this.validate = JSON.parse(validate);
-    }
     if (code !== 'undefined') {
       this.code = code;
     }
-    if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
+    if (this.forums && this.forums.set_reg) {
       this.register_captcha = this.forums.set_reg.register_captcha;
+      this.validate = this.forums.set_reg.register_validate;
     }
-    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+    if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
     }
+    if (this.forums && this.forums.qcloud) {
+      this.qcloud_sms = this.forums.qcloud.qcloud_sms;
+    }
+    if (
+      this.forums &&
+      this.forums.passport &&
+      this.forums.passport.offiaccount_close &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      this.isNoSense = true;
+    } else {
+      this.isNoSense = false;
+    }
+
     this.$u.event.$on('logind', () => {
-      if (this.user && this.user.paid) {
+      if (this.user) {
         this.isPaid = this.user.paid;
       }
       if (this.site_mode !== SITE_PAY) {
@@ -119,9 +162,17 @@ export default {
   methods: {
     register() {
       if (this.username === '') {
-        this.showDialog(this.i18n.t('user.usernameEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.usernameEmpty'),
+          duration: 2000,
+        });
       } else if (this.password === '') {
-        this.showDialog(this.i18n.t('user.passwordEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.passwordEmpty'),
+          duration: 2000,
+        });
       } else if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
         this.toTCaptcha();
       } else {
@@ -243,16 +294,19 @@ export default {
           });
       }
     },
-    jump2Login() {
+    jump2PhoneLogin() {
       uni.navigateTo({
-        url: `/pages/user/login?url=${this.url}&validate=${this.validate}&code=${this.code}`,
+        url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
       });
     },
-    showDialog(title) {
-      uni.showToast({
-        icon: 'none',
-        title,
-        duration: 2000,
+    jump2Login() {
+      uni.navigateTo({
+        url: `/pages/user/login?url=${this.url}&code=${this.code}`,
+      });
+    },
+    jump2findPassword() {
+      uni.navigateTo({
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
   },
@@ -302,9 +356,34 @@ export default {
     border-radius: 5rpx;
   }
 
-  &-exist {
-    margin: 20rpx 0rpx 0rpx 40rpx;
-    color: --color(--qui-LINK);
+  &-ft {
+    margin: 160rpx 0 50rpx;
+    text-align: center;
+
+    &-title {
+      color: rgba(221, 221, 221, 1);
+    }
+
+    &-con {
+      margin: 30rpx 0 100rpx;
+
+      &-image {
+        width: 100rpx;
+        height: 100rpx;
+      }
+
+      &-right {
+        margin-right: 20rpx;
+      }
+
+      &-left {
+        margin-left: 20rpx;
+      }
+    }
+
+    &-btn {
+      color: rgba(24, 120, 243, 1);
+    }
   }
 }
 </style>

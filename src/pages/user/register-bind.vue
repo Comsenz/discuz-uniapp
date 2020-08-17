@@ -60,12 +60,14 @@ export default {
       password: '', // 密码
       reason: '', // 注册原因
       url: '', // 上一个页面的路径
-      validate: false, // 默认不开启注册审核
       code: '', // 注册邀请码
       token: '', // token
-      register_captcha: false, // 默认不开启注册验证码
       site_mode: '', // 站点模式
-      isPaid: false, // 是否付费
+      validate: true, // 默认开启注册审核
+      qcloud_sms: true, // 默认开启短信功能
+      isNoSense: true, // 默认开启无感模式
+      register_captcha: false, // 默认不开启注册验证码
+      isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
@@ -75,7 +77,7 @@ export default {
     };
   },
   onLoad(params) {
-    const { url, validate, token, commentId, code } = params;
+    const { url, token, commentId, code } = params;
     if (url) {
       let pageUrl;
       if (url.substr(0, 1) !== '/') {
@@ -89,34 +91,41 @@ export default {
         this.url = pageUrl;
       }
     }
-    if (validate) {
-      this.validate = JSON.parse(validate);
-    }
     if (code !== 'undefined') {
       this.code = code;
     }
     if (token) {
       this.token = token;
     }
-    if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
+    if (this.forums && this.forums.set_reg) {
       this.register_captcha = this.forums.set_reg.register_captcha;
+      this.validate = this.forums.set_reg.register_validate;
     }
-    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+    if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
     }
-    if (this.user && this.user.paid) {
-      this.isPaid = this.user.paid;
+    if (this.forums && this.forums.qcloud) {
+      this.qcloud_sms = this.forums.qcloud.qcloud_sms;
     }
-  },
-  created() {
-    uni.$on('logind', () => {
-      let url = '';
-      if (this.url) {
-        url = this.url;
+    if (
+      this.forums &&
+      this.forums.passport &&
+      this.forums.passport.offiaccount_close &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      this.isNoSense = true;
+    } else {
+      this.isNoSense = false;
+    }
+
+    this.$u.event.$on('logind', () => {
+      if (this.user) {
+        this.isPaid = this.user.paid;
       }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
-          url,
+          url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
@@ -126,15 +135,20 @@ export default {
       }
     });
   },
-  destroyed() {
-    uni.$off('logind');
-  },
   methods: {
     register() {
       if (this.username === '') {
-        this.showDialog(this.i18n.t('user.usernameEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.usernameEmpty'),
+          duration: 2000,
+        });
       } else if (this.password === '') {
-        this.showDialog(this.i18n.t('user.passwordEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.passwordEmpty'),
+          duration: 2000,
+        });
       } else if (this.register_captcha) {
         this.toTCaptcha();
       } else {
@@ -225,16 +239,9 @@ export default {
           console.log(err);
         });
     },
-    showDialog(title) {
-      uni.showToast({
-        icon: 'none',
-        title,
-        duration: 2000,
-      });
-    },
     jump2LoginBind() {
       uni.navigateTo({
-        url: `/pages/user/login-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=${this.code}`,
+        url: `/pages/user/login-bind?url=${this.url}&token=${this.token}&code=${this.code}`,
       });
     },
   },

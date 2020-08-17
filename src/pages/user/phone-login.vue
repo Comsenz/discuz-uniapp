@@ -74,7 +74,6 @@ export default {
       url: '', // 上一个页面的路径
       code: '', // 注册邀请码
       token: '', // token
-      validate: false, // 开启注册审核
       site_mode: '', // 站点模式
       isPaid: false, // 是否付费
       captcha: null, // 腾讯云验证码实例
@@ -84,7 +83,7 @@ export default {
     };
   },
   onLoad(params) {
-    const { url, validate, token, commentId, code } = params;
+    const { url, token, commentId, code } = params;
     if (url) {
       let pageUrl;
       if (url.substr(0, 1) !== '/') {
@@ -98,24 +97,19 @@ export default {
         this.url = pageUrl;
       }
     }
-    if (validate) {
-      this.validate = JSON.parse(validate);
-    }
     if (code !== 'undefined') {
       this.code = code;
     }
     if (token) {
       this.token = token;
     }
-    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+    if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
     }
-    if (this.user && this.user.paid) {
-      this.isPaid = this.user.paid;
-    }
-  },
-  created() {
     this.$u.event.$on('logind', () => {
+      if (this.user) {
+        this.isPaid = this.user.paid;
+      }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
           url: this.url,
@@ -127,9 +121,6 @@ export default {
         });
       }
     });
-  },
-  destroyed() {
-    uni.$off('logind');
   },
   methods: {
     changeinput() {
@@ -239,9 +230,17 @@ export default {
     },
     login() {
       if (this.phoneNumber === '') {
-        this.showDialog(this.i18n.t('user.phonenumberEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.phonenumberEmpty'),
+          duration: 2000,
+        });
       } else if (this.verificationCode === '') {
-        this.showDialog(this.i18n.t('user.verificationCodeEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.verificationCodeEmpty'),
+          duration: 2000,
+        });
       } else {
         this.verifyPhoneNumber();
       }
@@ -288,13 +287,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    },
-    showDialog(title) {
-      uni.showToast({
-        icon: 'none',
-        title,
-        duration: 2000,
-      });
     },
     toggleBox() {
       this.inshow = false;

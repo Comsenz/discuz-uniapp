@@ -1,6 +1,6 @@
 <template>
-  <qui-page :data-qui-theme="theme">
-    <view class="login-box">
+  <qui-page :data-qui-theme="theme" class="login-box">
+    <view>
       <view class="login-box-h">{{ i18n.t('user.login') }}</view>
       <view class="login-box-con">
         <input
@@ -22,13 +22,44 @@
       <view class="login-box-btn" @click="login">
         {{ i18n.t('user.login') }}
       </view>
-      <view class="login-box-ft" v-if="register">
-        <view @click="jump2Register">
-          {{ i18n.t('user.noexist') }}
+      <view class="login-box-ft">
+        <view class="login-box-ft-title" v-if="isNoSense && qcloud_sms">
+          其他登录方式
         </view>
-        <!-- 开启短信功能才显示 -->
-        <view @click="jump2findPassword" v-if="qcloud_sms">
-          {{ i18n.t('user.forgetPassword') }}
+        <view class="login-box-ft-con">
+          <image
+            v-if="isNoSense"
+            :class="[
+              isNoSense && qcloud_sms
+                ? 'login-box-ft-con-image login-box-ft-con-right'
+                : 'login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WeChat"
+          />
+          <image
+            v-if="qcloud_sms"
+            :class="[
+              isNoSense && qcloud_sms
+                ? 'login-box-ft-con-image login-box-ft-con-left'
+                : 'login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+        </view>
+        <view>
+          <!-- 开启注册功能才显示 -->
+          <text class="login-box-ft-btn" v-if="register" @click="jump2Register">
+            注册用户
+          </text>
+          <text class="login-box-ft-line" v-if="register && qcloud_sms"></text>
+          <!-- 开启短信功能才显示 -->
+          <text class="login-box-ft-text" v-if="qcloud_sms" @click="jump2findPassword">
+            忘记密码？
+          </text>
         </view>
       </view>
     </view>
@@ -48,20 +79,21 @@ export default {
       username: '', // 用户名
       password: '', // 密码
       url: '', // 上一个页面的路径
-      validate: false, // 开启注册审核
       site_mode: '', // 站点模式
-      isPaid: false, // 是否付费
       code: '', // 注册邀请码
-      qcloud_sms: false, // 默认不开启短信功能
+      isPaid: false, // 默认未付费
+      qcloud_sms: true, // 默认开启短信功能
       register: true, // 默认展示注册链接
+      isNoSense: true, // 默认开启无感模式
     };
   },
   onLoad(params) {
+    console.log('this.forums', this.forums);
     this.$store.dispatch('forum/setError', {
       code: 'user_login',
       status: 200,
     });
-    const { url, validate, register, commentId, code } = params;
+    const { url, register, commentId, code } = params;
     if (url) {
       let pageUrl;
       if (url.substr(0, 1) !== '/') {
@@ -75,24 +107,32 @@ export default {
         this.url = pageUrl;
       }
     }
-    if (validate) {
-      this.validate = JSON.parse(validate);
-    }
     if (register) {
       this.register = JSON.parse(register);
     }
     if (code !== 'undefined') {
       this.code = code;
     }
-
-    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+    if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
     }
     if (this.forums && this.forums.qcloud) {
       this.qcloud_sms = this.forums.qcloud.qcloud_sms;
     }
+    if (
+      this.forums &&
+      this.forums.passport &&
+      this.forums.passport.offiaccount_close &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      this.isNoSense = true;
+    } else {
+      this.isNoSense = false;
+    }
+
     this.$u.event.$on('logind', () => {
-      if (this.user && this.user.paid) {
+      if (this.user) {
         this.isPaid = this.user.paid;
       }
       if (this.site_mode !== SITE_PAY) {
@@ -110,9 +150,17 @@ export default {
   methods: {
     login() {
       if (this.username === '') {
-        this.showDialog(this.i18n.t('user.usernameEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.usernameEmpty'),
+          duration: 2000,
+        });
       } else if (this.password === '') {
-        this.showDialog(this.i18n.t('user.passwordEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.passwordEmpty'),
+          duration: 2000,
+        });
       } else {
         const params = {
           data: {
@@ -146,21 +194,19 @@ export default {
           });
       }
     },
+    jump2PhoneLogin() {
+      uni.navigateTo({
+        url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
+      });
+    },
     jump2Register() {
       uni.navigateTo({
-        url: `/pages/user/register?url=${this.url}&validate=${this.validate}&code=${this.code}`,
+        url: `/pages/user/register?url=${this.url}&code=${this.code}`,
       });
     },
     jump2findPassword() {
       uni.navigateTo({
         url: `/pages/modify/findpwd?pas=reset_pwd`,
-      });
-    },
-    showDialog(title) {
-      uni.showToast({
-        icon: 'none',
-        title,
-        duration: 2000,
       });
     },
   },
@@ -170,8 +216,8 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+
 .login-box {
-  height: 100vh;
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 
@@ -208,11 +254,44 @@ export default {
   }
 
   &-ft {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 20rpx 40rpx 0rpx;
-    color: --color(--qui-LINK);
+    margin: 160rpx 0 50rpx;
+    text-align: center;
+
+    &-title {
+      color: rgba(221, 221, 221, 1);
+    }
+
+    &-con {
+      margin: 30rpx 0 100rpx;
+
+      &-image {
+        width: 100rpx;
+        height: 100rpx;
+      }
+
+      &-right {
+        margin-right: 20rpx;
+      }
+
+      &-left {
+        margin-left: 20rpx;
+      }
+    }
+
+    &-btn {
+      color: rgba(24, 120, 243, 1);
+    }
+
+    &-text {
+      color: rgba(170, 170, 170, 1);
+    }
+
+    &-line {
+      width: 0rpx;
+      height: 32rpx;
+      margin: 0 50rpx;
+      border: 2rpx solid rgba(221, 221, 221, 1);
+    }
   }
 }
 </style>
