@@ -99,6 +99,9 @@ export default {
       this.$refs.quinotice.pageNum = 1;
       this.$refs.quinotice.ontrueGetList();
     }
+    if (this.show_index === 2) {
+      this.$refs.quimy.refreshNum();
+    }
     // 停止下拉刷新动画
     uni.stopPullDownRefresh();
   },
