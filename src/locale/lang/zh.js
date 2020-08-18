@@ -740,6 +740,7 @@ export default {
     noexist: '没有帐号? 注册一下',
     forgetPassword: '忘记密码?',
     phoneNumberLogin: '手机号码登录',
+    phoneNumberRegister: '手机号码注册',
     verificationCodeLogin: '验证码登录',
     passwordLogin: '密码登录',
     registerBindId: '注册，并绑定微信号',

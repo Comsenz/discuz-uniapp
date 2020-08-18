@@ -1,7 +1,9 @@
 <template>
   <qui-page :data-qui-theme="theme" class="phone-login-box">
     <view class="new" @click.stop="toggleBox">
-      <view class="phone-login-box-h">{{ i18n.t('user.phoneNumberLogin') }}</view>
+      <view class="phone-login-box-h">
+        {{ isLogin ? i18n.t('user.phoneNumberLogin') : i18n.t('user.phoneNumberRegister') }}
+      </view>
       <view class="new-phon">
         <view class="new-phon-test">{{ i18n.t('user.phoneNumber') }}</view>
         <view class="new-phon-number">
@@ -16,7 +18,7 @@
             class="new-phon-send"
             @click="sendVerificationCode"
             id="TencentCaptcha"
-            :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
+            :data-appid="(forum && forum.qcloud && forum.qcloud.qcloud_captcha_app_id) || ''"
             :disabled="disabled"
           >
             {{ btnContent }}
@@ -36,25 +38,108 @@
           ref="quiinput"
         ></qui-input-code>
       </view>
-      <view class="phone-login-box-btn" @click="login">{{ i18n.t('user.login') }}</view>
+      <view class="phone-login-box-btn" @click="login">
+        {{ isLogin ? i18n.t('user.login') : i18n.t('user.register') }}
+      </view>
+      <view class="phone-login-box-ft">
+        <view class="phone-login-box-ft-title">
+          {{ i18n.t('user.otherLoginMode') }}
+        </view>
+        <view class="phone-login-box-ft-con">
+          <!-- #ifdef MP-WEIXIN -->
+          <image
+            v-if="forum && forum.passport && forum.passport.offiaccount_close"
+            :class="[
+              forum && forum.passport && forum.passport.offiaccount_close
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="mpAuthClick"
+          />
+          <image
+            :class="[
+              forum && forum.passport && forum.passport.offiaccount_close
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/zhanghao.svg"
+            @click="jump2Login"
+          />
+          <!-- #endif -->
+          <!-- #ifdef H5 -->
+          <image
+            v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
+            :class="[
+              forum && forum.passport && forum.passport.offiaccount_close && isWeixin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WeChat"
+          />
+          <image
+            :class="[
+              forum && forum.passport && forum.passport.offiaccount_close && isWeixin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/zhanghao.svg"
+            @click="jump2Login"
+          />
+          <!-- #endif -->
+        </view>
+        <view>
+          <!-- 开启注册功能才显示 -->
+          <text
+            class="phone-login-box-ft-btn"
+            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            @click="switchState"
+          >
+            {{ i18n.t('user.registerUser') }}
+          </text>
+          <text
+            class="phone-login-box-ft-line"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms
+            "
+          ></text>
+          <!-- 开启短信功能才显示 -->
+          <text
+            class="phone-login-box-ft-text"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            @click="jump2findPassword"
+          >
+            {{ i18n.t('user.forgetPassword') }}
+          </text>
+        </view>
+      </view>
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
-// #ifdef  H5
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
 // #endif
 
 export default {
   mixins: [
-    forums,
     user,
-    // #ifdef  H5
+    // #ifdef H5
+    appCommonH,
     tcaptchs,
     // #endif
   ],
@@ -75,14 +160,20 @@ export default {
       code: '', // 注册邀请码
       token: '', // token
       site_mode: '', // 站点模式
-      isPaid: false, // 是否付费
+      isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
       captchaResult: {},
+      isLogin: true, // 默认是登录
+      forum: {}, // 配置
+      // #ifdef H5
+      isWeixin: false, // 默认不是微信浏览器
+      // #endif
     };
   },
   onLoad(params) {
+    this.getForum();
     const { url, token, commentId, code } = params;
     if (url) {
       let pageUrl;
@@ -103,12 +194,18 @@ export default {
     if (token) {
       this.token = token;
     }
-    if (this.forums && this.forums.set_site) {
-      this.site_mode = this.forums.set_site.site_mode;
-    }
+
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
+
     this.$u.event.$on('logind', () => {
       if (this.user) {
         this.isPaid = this.user.paid;
+      }
+      if (this.forum && this.forum.set_site) {
+        this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
@@ -123,6 +220,14 @@ export default {
     });
   },
   methods: {
+    getForum() {
+      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
+        console.log('forum', res);
+        if (res) {
+          this.forum = res;
+        }
+      });
+    },
     changeinput() {
       setTimeout(() => {
         this.phoneNumber = this.phoneNumber.replace(/[^\d]/g, '');
@@ -141,7 +246,7 @@ export default {
     },
     // 发送验证码
     sendVerificationCode() {
-      if (this.forums.qcloud.qcloud_captcha) {
+      if (this.forum && this.forum.qcloud && this.forum.qcloud.qcloud_captcha) {
         if (!this.ticket || !this.randstr) {
           this.toTCaptcha();
           return false;
@@ -160,7 +265,7 @@ export default {
         path: '/pages/captcha/index',
         envVersion: 'release',
         extraData: {
-          appId: this.forums.qcloud.qcloud_captcha_app_id, // 您申请的验证码的 appId
+          appId: this.forum.qcloud.qcloud_captcha_app_id, // 您申请的验证码的 appId
         },
         success() {
           console.log('验证码成功打开');
@@ -172,7 +277,7 @@ export default {
       // #endif
       // #ifdef H5
       // eslint-disable-next-line no-undef
-      this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
+      this.captcha = new TencentCaptcha(this.forum.qcloud.qcloud_captcha_app_id, res => {
         if (res.ret === 0) {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
@@ -291,6 +396,38 @@ export default {
     toggleBox() {
       this.inshow = false;
     },
+    // #ifdef MP-WEIXIN
+    mpAuthClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+      }
+    },
+    // #endif
+    // #ifdef H5
+    jump2WeChat() {
+      if (
+        this.isWeixin &&
+        this.forum &&
+        this.forum.passport &&
+        this.forum.passport.offiaccount_close
+      ) {
+        this.$store.dispatch('session/wxh5Login');
+      }
+    },
+    // #endif
+    jump2Login() {
+      uni.navigateTo({
+        url: `/pages/user/login?url=${this.url}&code=${this.code}`,
+      });
+    },
+    switchState() {
+      this.isLogin = !this.isLogin;
+    },
+    jump2findPassword() {
+      uni.navigateTo({
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
+      });
+    },
   },
   onUnload() {
     // 隐藏验证码
@@ -399,5 +536,46 @@ export default {
   margin: 20rpx 0rpx 0rpx 40rpx;
   font-size: $fg-f28;
   color: --color(--qui-LINK);
+}
+
+.phone-login-box-ft {
+  margin: 160rpx 0 50rpx;
+  text-align: center;
+
+  &-title {
+    color: rgba(221, 221, 221, 1);
+  }
+
+  &-con {
+    margin: 30rpx 0 100rpx;
+
+    &-image {
+      width: 100rpx;
+      height: 100rpx;
+    }
+
+    &-right {
+      margin-right: 20rpx;
+    }
+
+    &-left {
+      margin-left: 20rpx;
+    }
+  }
+
+  &-btn {
+    color: rgba(24, 120, 243, 1);
+  }
+
+  &-text {
+    color: rgba(170, 170, 170, 1);
+  }
+
+  &-line {
+    width: 0rpx;
+    height: 32rpx;
+    margin: 0 50rpx;
+    border: 2rpx solid rgba(221, 221, 221, 1);
+  }
 }
 </style>
