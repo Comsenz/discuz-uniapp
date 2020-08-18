@@ -34,33 +34,55 @@
         <view
           class="register-box-ft-title"
           v-if="
-            (forum &&
-              forum.passport &&
-              forum.passport.offiaccount_close &&
-              forum.set_reg &&
-              forum.set_reg.register_type === 2) ||
+            (forum && forum.passport && forum.passport.offiaccount_close) ||
               (forum && forum.qcloud && forum.qcloud.qcloud_sms)
           "
         >
           {{ i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="register-box-ft-con">
+          <!-- #ifdef MP-WEIXIN -->
           <image
-            v-if="
-              forum &&
-                forum.passport &&
-                forum.passport.offiaccount_close &&
-                forum.set_reg &&
-                forum.set_reg.register_type === 2
-            "
+            v-if="forum && forum.passport && forum.passport.offiaccount_close"
             :class="[
               forum &&
               forum.passport &&
               forum.passport.offiaccount_close &&
-              forum.set_reg &&
-              forum.set_reg.register_type === 2 &&
               forum.qcloud &&
               forum.qcloud.qcloud_sms
+                ? 'register-box-ft-con-image register-box-ft-con-right'
+                : 'register-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="mpAuthClick"
+          />
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
+                ? 'register-box-ft-con-image register-box-ft-con-left'
+                : 'register-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+          <!-- #endif -->
+          <!-- #ifdef H5 -->
+          <image
+            v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms &&
+              isWeixin
                 ? 'register-box-ft-con-image register-box-ft-con-right'
                 : 'register-box-ft-con-image',
             ]"
@@ -74,10 +96,9 @@
               forum &&
               forum.passport &&
               forum.passport.offiaccount_close &&
-              forum.set_reg &&
-              forum.set_reg.register_type === 2 &&
               forum.qcloud &&
-              forum.qcloud.qcloud_sms
+              forum.qcloud.qcloud_sms &&
+              isWeixin
                 ? 'register-box-ft-con-image register-box-ft-con-left'
                 : 'register-box-ft-con-image',
             ]"
@@ -85,6 +106,7 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
+          <!-- #endif -->
         </view>
         <view class="register-box-ft-btn" @click="jump2Login">{{ i18n.t('user.login') }}</view>
       </view>
@@ -96,6 +118,7 @@
 <script>
 import user from '@/mixin/user';
 // #ifdef H5
+import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
 // #endif
 import { SITE_PAY } from '@/common/const';
@@ -104,6 +127,7 @@ export default {
   mixins: [
     user,
     // #ifdef H5
+    appCommonH,
     tcaptchs,
     // #endif
   ],
@@ -125,6 +149,9 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
+      // #ifdef H5
+      isWeixin: false, // 默认不是微信浏览器
+      // #endif
     };
   },
   onLoad(params) {
@@ -150,6 +177,11 @@ export default {
       this.register_captcha = this.forum.set_reg.register_captcha;
       this.validate = this.forum.set_reg.register_validate;
     }
+
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -313,6 +345,25 @@ export default {
           });
       }
     },
+    // #ifdef MP-WEIXIN
+    mpAuthClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
+      }
+    },
+    // #endif
+    // #ifdef H5
+    jump2WeChat() {
+      if (
+        this.isWeixin &&
+        this.forum &&
+        this.forum.passport &&
+        this.forum.passport.offiaccount_close
+      ) {
+        this.$store.dispatch('session/wxh5Login');
+      }
+    },
+    // #endif
     jump2PhoneLogin() {
       uni.navigateTo({
         url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
