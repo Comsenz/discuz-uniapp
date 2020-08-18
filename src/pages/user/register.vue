@@ -1,6 +1,6 @@
 <template>
-  <qui-page :data-qui-theme="theme">
-    <view class="register-box">
+  <qui-page :data-qui-theme="theme" class="register-box">
+    <view>
       <view class="register-box-h">{{ i18n.t('user.register') }}</view>
       <view class="register-box-con">
         <input
@@ -31,14 +31,36 @@
         {{ i18n.t('user.register') }}
       </view>
       <view class="register-box-ft">
-        <view class="register-box-ft-title" v-if="isNoSense && qcloud_sms">
-          其他注册方式
+        <view
+          class="register-box-ft-title"
+          v-if="
+            (forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="register-box-ft-con">
           <image
-            v-if="isNoSense"
+            v-if="
+              forum &&
+                forum.passport &&
+                forum.passport.offiaccount_close &&
+                forum.set_reg &&
+                forum.set_reg.register_type === 2
+            "
             :class="[
-              isNoSense && qcloud_sms
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
                 ? 'register-box-ft-con-image register-box-ft-con-right'
                 : 'register-box-ft-con-image',
             ]"
@@ -47,9 +69,15 @@
             @click="jump2WeChat"
           />
           <image
-            v-if="qcloud_sms"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
             :class="[
-              isNoSense && qcloud_sms
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
                 ? 'register-box-ft-con-image register-box-ft-con-left'
                 : 'register-box-ft-con-image',
             ]"
@@ -58,7 +86,7 @@
             @click="jump2PhoneLogin"
           />
         </view>
-        <view class="register-box-ft-btn" v-if="register" @click="jump2Login">登录</view>
+        <view class="register-box-ft-btn" @click="jump2Login">{{ i18n.t('user.login') }}</view>
       </view>
     </view>
     <qui-registration-agreement></qui-registration-agreement>
@@ -66,7 +94,6 @@
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 // #ifdef H5
 import tcaptchs from '@/utils/tcaptcha';
@@ -75,7 +102,6 @@ import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [
-    forums,
     user,
     // #ifdef H5
     tcaptchs,
@@ -89,10 +115,9 @@ export default {
       url: '', // 上一个页面的路径
       code: '', // 注册邀请码
       site_mode: '', // 站点模式
-      validate: false, // 默认开启注册审核
-      qcloud_sms: false, // 默认开启短信功能
-      isNoSense: true, // 默认开启无感模式
+      forum: {}, // 配置
       isPaid: false, // 默认未付费
+      validate: false, // 默认不开启注册审核
       register_captcha: false, // 默认不开启注册验证码
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
@@ -103,7 +128,7 @@ export default {
     };
   },
   onLoad(params) {
-    console.log('this.forums', this.forums);
+    this.getForum();
     const { url, commentId, code } = params;
     if (url) {
       let pageUrl;
@@ -121,31 +146,17 @@ export default {
     if (code !== 'undefined') {
       this.code = code;
     }
-    if (this.forums && this.forums.set_reg) {
-      this.register_captcha = this.forums.set_reg.register_captcha;
-      this.validate = this.forums.set_reg.register_validate;
-    }
-    if (this.forums && this.forums.set_site) {
-      this.site_mode = this.forums.set_site.site_mode;
-    }
-    if (this.forums && this.forums.qcloud) {
-      this.qcloud_sms = this.forums.qcloud.qcloud_sms;
-    }
-    if (
-      this.forums &&
-      this.forums.passport &&
-      this.forums.passport.offiaccount_close &&
-      this.forums.set_reg &&
-      this.forums.set_reg.register_type === 2
-    ) {
-      this.isNoSense = true;
-    } else {
-      this.isNoSense = false;
+    if (this.forum && this.forum.set_reg) {
+      this.register_captcha = this.forum.set_reg.register_captcha;
+      this.validate = this.forum.set_reg.register_validate;
     }
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
         this.isPaid = this.user.paid;
+      }
+      if (this.forum && this.forum.set_site) {
+        this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
@@ -160,6 +171,14 @@ export default {
     });
   },
   methods: {
+    getForum() {
+      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
+        console.log('forum', res);
+        if (res) {
+          this.forum = res;
+        }
+      });
+    },
     register() {
       if (this.username === '') {
         uni.showToast({
@@ -173,7 +192,7 @@ export default {
           title: this.i18n.t('user.passwordEmpty'),
           duration: 2000,
         });
-      } else if (this.forums && this.forums.set_reg && this.forums.set_reg.register_captcha) {
+      } else if (this.register_captcha) {
         this.toTCaptcha();
       } else {
         this.registerClick();
@@ -182,9 +201,9 @@ export default {
     // 验证码
     toTCaptcha() {
       // #ifdef H5
-      if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_captcha_app_id) {
+      if (this.forum && this.forum.qcloud && this.forum.qcloud.qcloud_captcha_app_id) {
         // eslint-disable-next-line no-undef
-        this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
+        this.captcha = new TencentCaptcha(this.forum.qcloud.qcloud_captcha_app_id, res => {
           if (res.ret === 0) {
             this.ticket = res.ticket;
             this.randstr = res.randstr;
@@ -200,7 +219,7 @@ export default {
       // #endif
     },
     registerClick() {
-      if (this.forums && this.forums.set_reg && !this.forums.set_reg.register_close) {
+      if (this.forum && this.forum.set_reg && !this.forum.set_reg.register_close) {
         this.$store
           .dispatch('forum/setError', {
             code: 'register_close',
@@ -320,7 +339,6 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .register-box {
-  height: 100vh;
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 

@@ -1,6 +1,6 @@
 <template>
-  <qui-page :data-qui-theme="theme">
-    <view class="login-bind-box">
+  <qui-page :data-qui-theme="theme" class="login-bind-box">
+    <view>
       <view class="login-bind-box-h">{{ i18n.t('user.loginBind') }}</view>
       <view class="login-bind-box-con">
         <input
@@ -22,8 +22,90 @@
       <view class="login-bind-box-btn" @click="login">
         {{ i18n.t('user.loginBindId') }}
       </view>
-      <view class="login-bind-box-register" @click="jump2RegisterBind">
-        {{ i18n.t('user.registerBindId') }}
+      <view class="login-bind-box-ft">
+        <view
+          class="login-bind-box-ft-title"
+          v-if="
+            (forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherLoginMode') }}
+        </view>
+        <view class="login-bind-box-ft-con">
+          <image
+            v-if="
+              forum &&
+                forum.passport &&
+                forum.passport.offiaccount_close &&
+                forum.set_reg &&
+                forum.set_reg.register_type === 2
+            "
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
+                ? 'login-bind-box-ft-con-image login-bind-box-ft-con-right'
+                : 'login-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WeChat"
+          />
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
+                ? 'login-bind-box-ft-con-image login-bind-box-ft-con-left'
+                : 'login-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+        </view>
+        <view>
+          <!-- 开启注册功能才显示 -->
+          <text
+            class="login-bind-box-ft-btn"
+            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            @click="jump2RegisterBind"
+          >
+            {{ i18n.t('user.registerUser') }}
+          </text>
+          <text
+            class="login-bind-box-ft-line"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms
+            "
+          ></text>
+          <!-- 开启短信功能才显示 -->
+          <text
+            class="login-bind-box-ft-text"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            @click="jump2findPassword"
+          >
+            {{ i18n.t('user.forgetPassword') }}
+          </text>
+        </view>
       </view>
     </view>
     <qui-registration-agreement></qui-registration-agreement>
@@ -31,12 +113,11 @@
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [forums, user],
+  mixins: [user],
   data() {
     return {
       username: '', // 用户名
@@ -45,12 +126,12 @@ export default {
       code: '', // 注册邀请码
       token: '', // token
       site_mode: '', // 站点模式
+      forum: {}, // 配置
       isPaid: false, // 默认未付费
-      qcloud_sms: true, // 默认开启短信功能
-      isNoSense: true, // 默认开启无感模式
     };
   },
   onLoad(params) {
+    this.getForum();
     const { url, token, commentId, code } = params;
     if (url) {
       let pageUrl;
@@ -71,27 +152,13 @@ export default {
     if (token) {
       this.token = token;
     }
-    if (this.forums && this.forums.set_site) {
-      this.site_mode = this.forums.set_site.site_mode;
-    }
-    if (this.forums && this.forums.qcloud) {
-      this.qcloud_sms = this.forums.qcloud.qcloud_sms;
-    }
-    if (
-      this.forums &&
-      this.forums.passport &&
-      this.forums.passport.offiaccount_close &&
-      this.forums.set_reg &&
-      this.forums.set_reg.register_type === 2
-    ) {
-      this.isNoSense = true;
-    } else {
-      this.isNoSense = false;
-    }
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
         this.isPaid = this.user.paid;
+      }
+      if (this.forum && this.forum.set_site) {
+        this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
@@ -106,6 +173,14 @@ export default {
     });
   },
   methods: {
+    getForum() {
+      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
+        console.log('forum', res);
+        if (res) {
+          this.forum = res;
+        }
+      });
+    },
     login() {
       if (this.username === '') {
         uni.showToast({
@@ -152,9 +227,19 @@ export default {
           });
       }
     },
+    jump2PhoneLogin() {
+      uni.navigateTo({
+        url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
+      });
+    },
     jump2RegisterBind() {
       uni.navigateTo({
         url: `/pages/user/register-bind?url=${this.url}&token=${this.token}&code=${this.code}`,
+      });
+    },
+    jump2findPassword() {
+      uni.navigateTo({
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
   },
@@ -165,7 +250,6 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .login-bind-box {
-  height: 100vh;
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 
@@ -201,10 +285,45 @@ export default {
     border-radius: 5rpx;
   }
 
-  &-register {
-    margin: 20rpx 0rpx 0rpx 40rpx;
-    font-size: $fg-f28;
-    color: --color(--qui-LINK);
+  &-ft {
+    margin: 160rpx 0 50rpx;
+    text-align: center;
+
+    &-title {
+      color: rgba(221, 221, 221, 1);
+    }
+
+    &-con {
+      margin: 30rpx 0 100rpx;
+
+      &-image {
+        width: 100rpx;
+        height: 100rpx;
+      }
+
+      &-right {
+        margin-right: 20rpx;
+      }
+
+      &-left {
+        margin-left: 20rpx;
+      }
+    }
+
+    &-btn {
+      color: rgba(24, 120, 243, 1);
+    }
+
+    &-text {
+      color: rgba(170, 170, 170, 1);
+    }
+
+    &-line {
+      width: 0rpx;
+      height: 32rpx;
+      margin: 0 50rpx;
+      border: 2rpx solid rgba(221, 221, 221, 1);
+    }
   }
 }
 </style>

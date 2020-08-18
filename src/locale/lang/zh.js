@@ -762,5 +762,8 @@ export default {
     phonenumberEmpty: '手机号不能为空',
     verificationCodeEmpty: '验证码不能为空',
     getVerificationCode: '获取验证码',
+    registerUser: '注册用户',
+    otherLoginMode: '其他登录方式',
+    otherRegisterMode: '其他注册方式',
   },
 };

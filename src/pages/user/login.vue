@@ -23,14 +23,36 @@
         {{ i18n.t('user.login') }}
       </view>
       <view class="login-box-ft">
-        <view class="login-box-ft-title" v-if="isNoSense && qcloud_sms">
-          其他登录方式
+        <view
+          class="login-box-ft-title"
+          v-if="
+            (forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherLoginMode') }}
         </view>
         <view class="login-box-ft-con">
           <image
-            v-if="isNoSense"
+            v-if="
+              forum &&
+                forum.passport &&
+                forum.passport.offiaccount_close &&
+                forum.set_reg &&
+                forum.set_reg.register_type === 2
+            "
             :class="[
-              isNoSense && qcloud_sms
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
                 ? 'login-box-ft-con-image login-box-ft-con-right'
                 : 'login-box-ft-con-image',
             ]"
@@ -39,9 +61,15 @@
             @click="jump2WeChat"
           />
           <image
-            v-if="qcloud_sms"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
             :class="[
-              isNoSense && qcloud_sms
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
                 ? 'login-box-ft-con-image login-box-ft-con-left'
                 : 'login-box-ft-con-image',
             ]"
@@ -52,13 +80,30 @@
         </view>
         <view>
           <!-- 开启注册功能才显示 -->
-          <text class="login-box-ft-btn" v-if="register" @click="jump2Register">
-            注册用户
+          <text
+            class="login-box-ft-btn"
+            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            @click="jump2Register"
+          >
+            {{ i18n.t('user.registerUser') }}
           </text>
-          <text class="login-box-ft-line" v-if="register && qcloud_sms"></text>
+          <text
+            class="login-box-ft-line"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms
+            "
+          ></text>
           <!-- 开启短信功能才显示 -->
-          <text class="login-box-ft-text" v-if="qcloud_sms" @click="jump2findPassword">
-            忘记密码？
+          <text
+            class="login-box-ft-text"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            @click="jump2findPassword"
+          >
+            {{ i18n.t('user.forgetPassword') }}
           </text>
         </view>
       </view>
@@ -68,12 +113,11 @@
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [forums, user],
+  mixins: [user],
   data() {
     return {
       username: '', // 用户名
@@ -82,18 +126,16 @@ export default {
       site_mode: '', // 站点模式
       code: '', // 注册邀请码
       isPaid: false, // 默认未付费
-      qcloud_sms: true, // 默认开启短信功能
-      register: true, // 默认展示注册链接
-      isNoSense: true, // 默认开启无感模式
+      forum: {}, // 配置
     };
   },
   onLoad(params) {
-    console.log('this.forums', this.forums);
     this.$store.dispatch('forum/setError', {
       code: 'user_login',
       status: 200,
     });
-    const { url, register, commentId, code } = params;
+    this.getForum();
+    const { url, commentId, code } = params;
     if (url) {
       let pageUrl;
       if (url.substr(0, 1) !== '/') {
@@ -107,33 +149,16 @@ export default {
         this.url = pageUrl;
       }
     }
-    if (register) {
-      this.register = JSON.parse(register);
-    }
     if (code !== 'undefined') {
       this.code = code;
-    }
-    if (this.forums && this.forums.set_site) {
-      this.site_mode = this.forums.set_site.site_mode;
-    }
-    if (this.forums && this.forums.qcloud) {
-      this.qcloud_sms = this.forums.qcloud.qcloud_sms;
-    }
-    if (
-      this.forums &&
-      this.forums.passport &&
-      this.forums.passport.offiaccount_close &&
-      this.forums.set_reg &&
-      this.forums.set_reg.register_type === 2
-    ) {
-      this.isNoSense = true;
-    } else {
-      this.isNoSense = false;
     }
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
         this.isPaid = this.user.paid;
+      }
+      if (this.forum && this.forum.set_site) {
+        this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
@@ -148,6 +173,14 @@ export default {
     });
   },
   methods: {
+    getForum() {
+      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
+        console.log('forum', res);
+        if (res) {
+          this.forum = res;
+        }
+      });
+    },
     login() {
       if (this.username === '') {
         uni.showToast({

@@ -1,6 +1,6 @@
 <template>
-  <qui-page :data-qui-theme="theme">
-    <view class="register-bind-box">
+  <qui-page :data-qui-theme="theme" class="register-bind-box">
+    <view>
       <view class="register-bind-box-h">{{ i18n.t('user.registerBind') }}</view>
       <view class="register-bind-box-con">
         <input
@@ -30,8 +30,65 @@
       <view class="register-bind-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.registerBindId') }}
       </view>
-      <view class="register-bind-box-login" @click="jump2LoginBind">
-        {{ i18n.t('user.loginBindId') }}
+      <view class="register-bind-box-ft">
+        <view
+          class="register-bind-box-ft-title"
+          v-if="
+            (forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherRegisterMode') }}
+        </view>
+        <view class="register-bind-box-ft-con">
+          <image
+            v-if="
+              forum &&
+                forum.passport &&
+                forum.passport.offiaccount_close &&
+                forum.set_reg &&
+                forum.set_reg.register_type === 2
+            "
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
+                ? 'register-bind-box-ft-con-image register-bind-box-ft-con-right'
+                : 'register-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WeChat"
+          />
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.set_reg &&
+              forum.set_reg.register_type === 2 &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
+                ? 'register-bind-box-ft-con-image register-bind-box-ft-con-left'
+                : 'register-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+        </view>
+        <view class="register-bind-box-ft-btn" @click="jump2LoginBind">
+          {{ i18n.t('user.login') }}
+        </view>
       </view>
     </view>
     <qui-registration-agreement></qui-registration-agreement>
@@ -39,7 +96,6 @@
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 // #ifdef H5
 import tcaptchs from '@/utils/tcaptcha';
@@ -48,7 +104,6 @@ import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [
-    forums,
     user,
     // #ifdef H5
     tcaptchs,
@@ -63,9 +118,8 @@ export default {
       code: '', // 注册邀请码
       token: '', // token
       site_mode: '', // 站点模式
-      validate: true, // 默认开启注册审核
-      qcloud_sms: true, // 默认开启短信功能
-      isNoSense: true, // 默认开启无感模式
+      forum: {}, // 配置
+      validate: false, // 默认不开启注册审核
       register_captcha: false, // 默认不开启注册验证码
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
@@ -77,6 +131,7 @@ export default {
     };
   },
   onLoad(params) {
+    this.getForum();
     const { url, token, commentId, code } = params;
     if (url) {
       let pageUrl;
@@ -97,31 +152,17 @@ export default {
     if (token) {
       this.token = token;
     }
-    if (this.forums && this.forums.set_reg) {
-      this.register_captcha = this.forums.set_reg.register_captcha;
-      this.validate = this.forums.set_reg.register_validate;
-    }
-    if (this.forums && this.forums.set_site) {
-      this.site_mode = this.forums.set_site.site_mode;
-    }
-    if (this.forums && this.forums.qcloud) {
-      this.qcloud_sms = this.forums.qcloud.qcloud_sms;
-    }
-    if (
-      this.forums &&
-      this.forums.passport &&
-      this.forums.passport.offiaccount_close &&
-      this.forums.set_reg &&
-      this.forums.set_reg.register_type === 2
-    ) {
-      this.isNoSense = true;
-    } else {
-      this.isNoSense = false;
+    if (this.forum && this.forum.set_reg) {
+      this.register_captcha = this.forum.set_reg.register_captcha;
+      this.validate = this.forum.set_reg.register_validate;
     }
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
         this.isPaid = this.user.paid;
+      }
+      if (this.forum && this.forum.set_site) {
+        this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
         uni.navigateTo({
@@ -136,6 +177,14 @@ export default {
     });
   },
   methods: {
+    getForum() {
+      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
+        console.log('forum', res);
+        if (res) {
+          this.forum = res;
+        }
+      });
+    },
     register() {
       if (this.username === '') {
         uni.showToast({
@@ -159,7 +208,7 @@ export default {
     toTCaptcha() {
       // #ifdef H5
       // eslint-disable-next-line no-undef
-      this.captcha = new TencentCaptcha(this.forums.qcloud.qcloud_captcha_app_id, res => {
+      this.captcha = new TencentCaptcha(this.forum.qcloud.qcloud_captcha_app_id, res => {
         if (res.ret === 0) {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
@@ -239,9 +288,19 @@ export default {
           console.log(err);
         });
     },
+    jump2PhoneLogin() {
+      uni.navigateTo({
+        url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
+      });
+    },
     jump2LoginBind() {
       uni.navigateTo({
         url: `/pages/user/login-bind?url=${this.url}&token=${this.token}&code=${this.code}`,
+      });
+    },
+    jump2findPassword() {
+      uni.navigateTo({
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
   },
@@ -255,7 +314,6 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .register-bind-box {
-  height: 100vh;
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 
@@ -291,10 +349,34 @@ export default {
     border-radius: 5rpx;
   }
 
-  &-login {
-    margin: 20rpx 0rpx 0rpx 40rpx;
-    font-size: $fg-f28;
-    color: --color(--qui-LINK);
+  &-ft {
+    margin: 160rpx 0 50rpx;
+    text-align: center;
+
+    &-title {
+      color: rgba(221, 221, 221, 1);
+    }
+
+    &-con {
+      margin: 30rpx 0 100rpx;
+
+      &-image {
+        width: 100rpx;
+        height: 100rpx;
+      }
+
+      &-right {
+        margin-right: 20rpx;
+      }
+
+      &-left {
+        margin-left: 20rpx;
+      }
+    }
+
+    &-btn {
+      color: rgba(24, 120, 243, 1);
+    }
   }
 }
 </style>
