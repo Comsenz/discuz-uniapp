@@ -101,10 +101,7 @@ export default {
               this.isSuccess = true;
               this.logind();
             }
-            if (
-              (res.data.errors && res.data.errors[0].code === 'no_bind_user') ||
-              (res.data.errors && res.data.errors[0].code === 'account_has_been_bound')
-            ) {
+            if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
               this.isSuccess = false;
               if (!this.$store.getters['session/get']('isLogin')) {
                 this.$emit('open');
