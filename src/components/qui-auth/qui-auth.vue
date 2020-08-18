@@ -66,7 +66,7 @@ export default {
                       },
                     },
                   };
-                  this.loginMode(params);
+                  this.noSenseLogin(params);
                 },
                 fail: error => {
                   console.log(error);
@@ -81,6 +81,29 @@ export default {
           },
         });
       });
+    },
+    noSenseLogin(params) {
+      this.$store
+        .dispatch('session/noSenseMPLogin', params)
+        .then(res => {
+          if (res && res.data) {
+            if (res.data.data && res.data.data.id) {
+              this.logind();
+              this.$emit('login');
+            }
+            if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
+              this.loginMode(params);
+            }
+            if (res.data.errors && res.data.errors[0].code === 'account_has_been_bound') {
+              if (!this.$store.getters['session/get']('isLogin')) {
+                this.$refs.auth.open();
+              }
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     loginMode(param) {
       let url = '/pages/home/index';
@@ -115,16 +138,6 @@ export default {
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 无感模式
-          this.$store
-            .dispatch('session/noSenseMPLogin', params)
-            .then(data => {
-              console.log(data);
-              this.logind();
-              this.$emit('login');
-            })
-            .catch(err => {
-              console.log(err);
-            });
         }
       } else {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {

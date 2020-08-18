@@ -60,11 +60,10 @@ const actions = {
       return http
         .post('oauth/wechat/miniprogram', payload)
         .then(results => {
+          resolve(results);
           setUserInfoStore(context, results, resolve);
         })
-        .catch(err => {
-          console.log(err);
-        });
+        .catch(err => resolve(err));
     });
   },
   // #endif
