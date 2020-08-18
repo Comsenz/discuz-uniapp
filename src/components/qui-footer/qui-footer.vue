@@ -329,7 +329,7 @@ export default {
   // position: absolute;
   position: fixed;
   bottom: 0;
-  z-index: 1;
+  z-index: 999;
   display: flex;
   width: 100%;
   height: 90rpx;
