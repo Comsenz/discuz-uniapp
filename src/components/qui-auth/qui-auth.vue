@@ -29,6 +29,11 @@ import user from '@/mixin/user';
 
 export default {
   mixins: [forums, user],
+  data() {
+    return {
+      isSuccess: true, // 默认无感登录成功
+    };
+  },
   computed: {
     t() {
       return this.i18n.t('auth');
@@ -66,7 +71,11 @@ export default {
                       },
                     },
                   };
-                  this.noSenseLogin(params);
+                  if (this.isSuccess) {
+                    this.noSenseLogin(params);
+                  } else {
+                    this.loginMode(params);
+                  }
                 },
                 fail: error => {
                   console.log(error);
@@ -87,16 +96,18 @@ export default {
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
           if (res && res.data) {
+            this.$emit('login');
             if (res.data.data && res.data.data.id) {
+              this.isSuccess = true;
               this.logind();
-              this.$emit('login');
             }
-            if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
-              this.loginMode(params);
-            }
-            if (res.data.errors && res.data.errors[0].code === 'account_has_been_bound') {
+            if (
+              (res.data.errors && res.data.errors[0].code === 'no_bind_user') ||
+              (res.data.errors && res.data.errors[0].code === 'account_has_been_bound')
+            ) {
+              this.isSuccess = false;
               if (!this.$store.getters['session/get']('isLogin')) {
-                this.$refs.auth.open();
+                this.$emit('open');
               }
             }
           }
