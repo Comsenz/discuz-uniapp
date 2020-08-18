@@ -190,15 +190,20 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in attachMentList"
           :key="index"
-          @tap="download(item)"
         >
-          <qui-icon
-            class="icon-attachment"
-            :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
-            color="#aaa"
-            size="22"
-          ></qui-icon>
-          <text class="attachment-name">{{ item.fileName }}</text>
+          <view v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1">
+            <qui-audio :src="item.url" :name="item.fileName" :control="false"></qui-audio>
+          </view>
+          <view v-else @tap="download(item)">
+            <qui-icon
+              class="icon-attachment"
+              :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
+              color="#aaa"
+              size="22"
+            ></qui-icon>
+            <text>{{ item.format }}</text>
+            <text class="attachment-name">{{ item.fileName }}</text>
+          </view>
         </view>
       </view>
 

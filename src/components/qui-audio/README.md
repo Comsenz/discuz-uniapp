@@ -16,4 +16,3 @@
 | src | 音频地址 | string| ''|
 | poster | 封面图 | string| ''|
 | autoplay | 是否自动开始播放 | Boolean| false|
-| obeyMuteSwitch | 是否遵循系统静音开关，当此参数为 false 时，即使用户打开了静音开关，也能继续发出声音 | Boolean| true|
