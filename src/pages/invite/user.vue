@@ -69,7 +69,7 @@ export default {
       const params = {
         include: ['sourceUser'],
         'filter[source_user_id]': this.userId,
-        'filter[change_type]': [33, 62],
+        'filter[change_type]': [33, 62, 34],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
       };
