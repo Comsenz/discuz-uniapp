@@ -14,19 +14,19 @@
         {{ i18n.t('profile.records') }}
         <view class="search-total__invove">
           {{ i18n.t('profile.amountinvolved') }}
-          <text class="search-total__invove__detail">4</text>
+          <text class="search-total__invove__detail">{{ `￥${totalMoney}` }}</text>
         </view>
       </view>
       <view class="search-item__users" v-if="data.length > 0">
         <view class="search-item__users__box" v-for="(item, index) in data" :key="index">
           <qui-avatar
             class="search-item__users__box-avatar"
-            :user="item"
+            :user="item.sourceUser"
             size="70"
             :is-real="item.isReal"
           />
           <qui-cell-item
-            :title="item.username"
+            :title="item.sourceUser.username"
             :brief="timeHandle(item.created_at)"
             :addon="`+ ${item.change_available_amount}`"
           ></qui-cell-item>
@@ -44,6 +44,7 @@ export default {
   data() {
     return {
       totalNum: 0,
+      totalMoney: 0,
       loadingType: '',
       userId: '',
       data: [],
@@ -54,6 +55,9 @@ export default {
   onLoad(params) {
     this.userId = params.id;
     this.getUserList();
+    uni.setNavigationBarTitle({
+      title: params.name,
+    });
   },
   methods: {
     timeHandle(time) {
@@ -64,16 +68,17 @@ export default {
       this.loadingType = 'loading';
       const params = {
         include: ['sourceUser'],
-        'filter[user]': this.userId,
-        'filter[change_type]': [33, 62],
+        'filter[source_user_id]': this.userId,
+        'filter[change_type]': [33, 62, 34],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
       };
-      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+      this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         if (res._jv) {
+          this.totalMoney = res._jv.json.meta.sumChangeAvailableAmount;
+          this.totalNum = res._jv.json.meta.total;
           delete res._jv;
         }
-        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         this.data = [...this.data, ...res];
       });
@@ -141,6 +146,9 @@ $height: 100vh;
 }
 .search-item__users {
   padding-top: 20rpx;
+  background: --color(--qui-BG-2);
+}
+/deep/ .uni-load-more {
   background: --color(--qui-BG-2);
 }
 .scroll-y {

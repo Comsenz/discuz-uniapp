@@ -196,6 +196,9 @@ export default {
     }),
     // 首页底部发帖按钮弹窗
     footerOpen() {
+      // uni.navigateTo({
+      //   url: '/pages/share/weixinchome',
+      // });
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -326,7 +329,7 @@ export default {
   // position: absolute;
   position: fixed;
   bottom: 0;
-  z-index: 1;
+  z-index: 100;
   display: flex;
   width: 100%;
   height: 90rpx;

@@ -1038,8 +1038,10 @@ $padding-bottom: 160rpx;
   display: inline-block;
   width: 100%;
   height: 35rpx;
+  overflow: hidden;
   line-height: 35rpx;
   text-overflow: ellipsis;
+  word-break: break-all;
   white-space: nowrap;
 }
 .record {
@@ -1053,17 +1055,22 @@ $padding-bottom: 160rpx;
   justify-content: center;
   &__box {
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box1 {
     margin-left: 20rpx;
+    line-height: 40rpx;
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box2 {
+    line-height: 40rpx;
     &-url {
+      font-size: $fg-f26;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }

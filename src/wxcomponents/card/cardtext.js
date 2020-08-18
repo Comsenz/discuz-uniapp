@@ -205,7 +205,7 @@ export default class LastCard {
               "css": {
                 "color": "#333333",
                 "background": "rgba(0,0,0,0)",
-                "width": "337px",
+                "width": "560px",
                 "height": "31.7px",
                 "top": "942px",
                 "left": "210px",

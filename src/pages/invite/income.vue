@@ -24,10 +24,11 @@
     <view class="search-total">
       {{ i18n.t('profile.total') }}
       <text class="search-total__detail">{{ totalNum }}</text>
-      {{ i18n.t('topic.persenUnit') }}
+      {{ i18n.t('profile.item') }}
+      {{ i18n.t('profile.records') }}
       <view class="search-total__invove">
         {{ i18n.t('profile.amountinvolved') }}
-        <text class="search-total__invove__detail">4</text>
+        <text class="search-total__invove__detail">{{ `￥${totalMoney}` }}</text>
       </view>
     </view>
     <scroll-view
@@ -40,12 +41,12 @@
       <view class="search-item__users" v-for="(item, index) in data" :key="index">
         <qui-avatar
           class="search-item__users__avatar"
-          :user="item"
+          :user="item.sourceUser"
           size="70"
           :is-real="item.isReal"
         />
         <qui-cell-item
-          :title="item.username"
+          :title="item.sourceUser.username"
           :brief="timeHandle(item.created_at)"
           :addon="`+ ${item.change_available_amount}`"
         ></qui-cell-item>
@@ -81,7 +82,9 @@ export default {
       searchValue: '',
       loadingType: '',
       data: [],
+      userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
       totalNum: 0,
+      totalMoney: 0,
       code: '',
       pageSize: 20,
       pageNum: 1, // 当前页数
@@ -143,16 +146,20 @@ export default {
       this.loadingType = 'loading';
       const params = {
         include: ['sourceUser'],
-        'filter[change_type]': [33, 62],
+        'filter[user]': this.userId,
+        'filter[change_type]': [33, 62, 34],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        'filter[source_username]': `*${this.searchValue}*`,
       };
+      if (this.searchValue) {
+        params['filter[source_username]'] = this.searchValue;
+      }
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         if (res._jv) {
+          this.totalMoney = res._jv.json.meta.sumChangeAvailableAmount;
+          this.totalNum = res._jv.json.meta.total;
           delete res._jv;
         }
-        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;
