@@ -226,6 +226,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .login-bind-box {
+  padding-bottom: 40px;
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 

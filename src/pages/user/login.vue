@@ -224,6 +224,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .login-box {
+  padding-bottom: 40px;
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 

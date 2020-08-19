@@ -127,8 +127,8 @@
           </text>
         </view>
       </view>
+      <qui-registration-agreement></qui-registration-agreement>
     </view>
-    <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
 </template>
 
@@ -484,6 +484,7 @@ export default {
 }
 .new {
   width: 100vw;
+  padding-bottom: 40px;
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
 }
@@ -606,5 +607,8 @@ export default {
     margin: 0 50rpx;
     border: 2rpx solid rgba(221, 221, 221, 1);
   }
+}
+/deep/ .registration-agreement {
+  margin-top: 50px;
 }
 </style>
