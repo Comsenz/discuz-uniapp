@@ -133,7 +133,7 @@
     <view class="record" v-if="forums.set_site.site_record || forums.set_site.site_record_code">
       <!-- <text>{{ i18n.t('home.record') }}</text> -->
       <view class="record__box">
-        <a class="record__box-url" href="http://www.beian.miit.gov.cn" target="_blank">
+        <a class="record__box-url" href="https://beian.miit.gov.cn" target="_blank">
           {{ forums.set_site ? forums.set_site.site_record : '' }}
         </a>
       </view>

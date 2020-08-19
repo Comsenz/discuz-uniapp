@@ -191,8 +191,11 @@
           v-for="(item, index) in attachMentList"
           :key="index"
         >
-          <view v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1">
-            <qui-audio :src="item.url" :name="item.fileName" :control="false"></qui-audio>
+          <view
+            v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1"
+            class="themeItem__content__attachment-item-wrap"
+          >
+            <qui-audio :src="item.url" :name="item.fileName"></qui-audio>
           </view>
           <view v-else @tap="download(item)">
             <qui-icon
@@ -719,6 +722,9 @@ export default {
         border: 2rpx solid --color(--qui-BOR-ED);
         border-radius: 5rpx;
         box-sizing: border-box;
+      }
+      &-item-wrap {
+        width: 100%;
       }
       .icon-attachment {
         margin-right: 10rpx;
