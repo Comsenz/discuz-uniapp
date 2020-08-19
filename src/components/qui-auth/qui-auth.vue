@@ -98,16 +98,14 @@ export default {
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
           if (res && res.data) {
+            this.$emit('login');
             if (res.data.data && res.data.data.id) {
               this.isSuccess = true;
               this.logind();
-              this.$emit('login');
             }
             if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
               this.isSuccess = false;
-              if (!this.$store.getters['session/get']('isLogin')) {
-                this.$emit('open');
-              }
+              this.getParams();
             }
           }
         })
