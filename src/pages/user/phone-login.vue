@@ -205,6 +205,19 @@ export default {
     this.isWeixin = isWeixin;
     // #endif
 
+    // 接受验证码captchaResult
+    this.$u.event.$on('captchaResult', result => {
+      console.log(result, '手机登录页');
+      this.ticket = result.ticket;
+      this.randstr = result.randstr;
+      this.time = 60;
+      this.countdown();
+      this.sendSMS();
+    });
+    this.$u.event.$on('closeChaReault', () => {
+      uni.hideLoading();
+    });
+
     this.$u.event.$on('logind', () => {
       if (this.user) {
         this.isPaid = this.user.paid;
@@ -223,6 +236,14 @@ export default {
         });
       }
     });
+  },
+  onUnload() {
+    this.$u.event.$off('captchaResult');
+    this.$u.event.$off('closeChaReault');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
   },
   methods: {
     getForum() {
@@ -438,7 +459,7 @@ export default {
         this.forum.passport &&
         this.forum.passport.offiaccount_close
       ) {
-        this.$store.dispatch('session/noSenseh5Register');
+        this.$store.dispatch('session/wxh5Register');
       }
     },
     // #endif
@@ -457,12 +478,6 @@ export default {
         url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
-  },
-  onUnload() {
-    // 隐藏验证码
-    if (this.captcha) {
-      this.captcha.destroy();
-    }
   },
 };
 </script>
