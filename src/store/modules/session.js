@@ -56,9 +56,10 @@ const actions = {
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
+    const options = { custom: { showTost: false } };
     return new Promise(resolve => {
       return http
-        .post('oauth/wechat/miniprogram', payload)
+        .post('oauth/wechat/miniprogram', payload, options)
         .then(results => {
           resolve(results);
           setUserInfoStore(context, results, resolve);
