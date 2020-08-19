@@ -19,7 +19,7 @@
           v-model="password"
         />
         <input
-          v-if="validate"
+          v-if="forum && forum.set_reg && forum.set_reg.register_validate"
           class="input"
           maxlength="50"
           :placeholder="i18n.t('user.reason')"
@@ -159,8 +159,6 @@ export default {
       token: '', // token
       site_mode: '', // 站点模式
       forum: {}, // 配置
-      validate: false, // 默认不开启注册审核
-      register_captcha: false, // 默认不开启注册验证码
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
@@ -194,10 +192,6 @@ export default {
     }
     if (token) {
       this.token = token;
-    }
-    if (this.forum && this.forum.set_reg) {
-      this.register_captcha = this.forum.set_reg.register_captcha;
-      this.validate = this.forum.set_reg.register_validate;
     }
 
     // #ifdef H5
@@ -246,7 +240,7 @@ export default {
           title: this.i18n.t('user.passwordEmpty'),
           duration: 2000,
         });
-      } else if (this.register_captcha) {
+      } else if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
         this.toTCaptcha();
       } else {
         this.registerBind();
@@ -290,16 +284,21 @@ export default {
         params.data.attributes.code = data.data.attributes.code;
       }
       // #endif
-      if (this.register_captcha && this.validate) {
+      if (
+        this.forum &&
+        this.forum.set_reg &&
+        this.forum.set_reg.register_captcha &&
+        this.forum.set_reg.register_validate
+      ) {
         params.data.attributes.register_reason = this.reason;
         params.data.attributes.captcha_ticket = this.ticket;
         params.data.attributes.captcha_rand_str = this.randstr;
       }
-      if (this.register_captcha) {
+      if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
         params.data.attributes.captcha_ticket = this.ticket;
         params.data.attributes.captcha_rand_str = this.randstr;
       }
-      if (this.validate) {
+      if (this.forum.set_reg.register_validate) {
         params.data.attributes.register_reason = this.reason;
       }
       if (this.token && this.token !== '') {
