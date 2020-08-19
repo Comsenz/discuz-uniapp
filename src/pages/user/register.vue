@@ -395,7 +395,7 @@ export default {
         this.forum.passport &&
         this.forum.passport.offiaccount_close
       ) {
-        this.$store.dispatch('session/wxh5Login');
+        this.$store.dispatch('session/noSenseh5Register');
       }
     },
     // #endif

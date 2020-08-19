@@ -101,6 +101,32 @@ const actions = {
     });
   },
   // #endif
+  // #ifdef H5
+  noSenseh5Register: (context, payload = {}) => {
+    let inviteCode = '';
+    uni.getStorage({
+      key: 'inviteCode',
+      success(resData) {
+        inviteCode = resData.data || '';
+      },
+    });
+    const options = { custom: { showTost: false } };
+    return new Promise(resolve => {
+      return http
+        .get(
+          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&inviteCode=${inviteCode}&register=1`,
+          options,
+        )
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(error => {
+          resolve(error);
+        });
+    });
+  },
+  // #endif
   verificationCodeh5Login: (context, payload = {}) => {
     return new Promise(resolve => {
       return http

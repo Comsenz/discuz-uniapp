@@ -45,6 +45,10 @@ module.exports = {
               url: `/pages/user/phone-login?url=${url}&token=${wxtoken}&code=${code}`,
             });
           }
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            // 无感模式
+            this.$store.dispatch('session/noSenseh5Register');
+          }
         } else {
           if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
             // 用户名模式
