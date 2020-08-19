@@ -91,15 +91,17 @@ export default {
         });
       });
     },
-    noSenseLogin(params) {
+    noSenseLogin(param, register = 0) {
+      const params = param;
+      params.data.attributes.register = register;
       this.$store
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
           if (res && res.data) {
-            this.$emit('login');
             if (res.data.data && res.data.data.id) {
               this.isSuccess = true;
               this.logind();
+              this.$emit('login');
             }
             if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
               this.isSuccess = false;
@@ -146,6 +148,7 @@ export default {
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 无感模式
+          this.noSenseLogin(params, 1);
         }
       } else {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {

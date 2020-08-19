@@ -337,9 +337,31 @@ export default {
     },
     // #ifdef MP-WEIXIN
     mpAuthClick() {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$refs.auth.open();
+      const params = {
+        data: {
+          attributes: {},
+        },
+      };
+      const data = this.$store.getters['session/get']('params');
+      if (data && data.data && data.data.attributes) {
+        params.data.attributes.js_code = data.data.attributes.js_code;
+        params.data.attributes.iv = data.data.attributes.iv;
+        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+        params.data.attributes.register = 1;
       }
+      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
+        params.data.attributes.code = data.data.attributes.code;
+      }
+      this.$store
+        .dispatch('session/noSenseMPLogin', params)
+        .then(res => {
+          if (res && res.data && res.data.data && res.data.data.id) {
+            this.logind();
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     // #endif
     // #ifdef H5
