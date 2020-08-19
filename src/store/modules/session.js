@@ -56,10 +56,9 @@ const actions = {
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
-    const options = { custom: { showTost: false } };
     return new Promise(resolve => {
       return http
-        .post('oauth/wechat/miniprogram', payload, options)
+        .post('oauth/wechat/miniprogram', payload)
         .then(results => {
           resolve(results);
           setUserInfoStore(context, results, resolve);
@@ -72,6 +71,13 @@ const actions = {
   wxh5Login: (context, payload = {}) => {
     console.log(payload);
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
+    window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
+  },
+  // #endif
+  // #ifdef H5
+  wxh5Register: (context, payload = {}) => {
+    console.log(payload);
+    const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat?register=1`);
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
   // #endif

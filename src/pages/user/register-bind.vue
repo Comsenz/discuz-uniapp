@@ -372,7 +372,7 @@ export default {
         this.forum.passport &&
         this.forum.passport.offiaccount_close
       ) {
-        this.$store.dispatch('session/noSenseh5Register');
+        this.$store.dispatch('session/wxh5Register');
       }
     },
     // #endif
