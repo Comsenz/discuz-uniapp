@@ -190,15 +190,23 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in attachMentList"
           :key="index"
-          @tap="download(item)"
         >
-          <qui-icon
-            class="icon-attachment"
-            :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
-            color="#aaa"
-            size="22"
-          ></qui-icon>
-          <text class="attachment-name">{{ item.fileName }}</text>
+          <view
+            v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1"
+            class="themeItem__content__attachment-item-wrap"
+          >
+            <qui-audio :src="item.url" :name="item.fileName"></qui-audio>
+          </view>
+          <view v-else @tap="download(item)">
+            <qui-icon
+              class="icon-attachment"
+              :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
+              color="#aaa"
+              size="22"
+            ></qui-icon>
+            <text>{{ item.format }}</text>
+            <text class="attachment-name">{{ item.fileName }}</text>
+          </view>
         </view>
       </view>
 
@@ -714,6 +722,9 @@ export default {
         border: 2rpx solid --color(--qui-BOR-ED);
         border-radius: 5rpx;
         box-sizing: border-box;
+      }
+      &-item-wrap {
+        width: 100%;
       }
       .icon-attachment {
         margin-right: 10rpx;

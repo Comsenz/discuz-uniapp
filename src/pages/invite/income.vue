@@ -24,7 +24,8 @@
     <view class="search-total">
       {{ i18n.t('profile.total') }}
       <text class="search-total__detail">{{ totalNum }}</text>
-      {{ i18n.t('topic.persenUnit') }}
+      {{ i18n.t('profile.item') }}
+      {{ i18n.t('profile.records') }}
       <view class="search-total__invove">
         {{ i18n.t('profile.amountinvolved') }}
         <text class="search-total__invove__detail">{{ `￥${totalMoney}` }}</text>
@@ -146,7 +147,7 @@ export default {
       const params = {
         include: ['sourceUser'],
         'filter[user]': this.userId,
-        'filter[change_type]': [33, 62],
+        'filter[change_type]': [33, 62, 34],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
       };
@@ -156,9 +157,9 @@ export default {
       this.$store.dispatch('jv/get', ['wallet/log', { params }]).then(res => {
         if (res._jv) {
           this.totalMoney = res._jv.json.meta.sumChangeAvailableAmount;
+          this.totalNum = res._jv.json.meta.total;
           delete res._jv;
         }
-        this.totalNum = res.length;
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;

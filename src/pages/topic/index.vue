@@ -239,7 +239,7 @@
       <view
         class="det-ft"
         :style="{
-          paddingBottom: detectionModel() ? '100rpx' : 0,
+          paddingBottom: detectionModel() ? '20rpx' : 0,
         }"
         v-if="footerShow"
       >
@@ -2598,7 +2598,7 @@ page {
 }
 .ft-gap {
   width: 100%;
-  margin-bottom: 80rpx;
+  padding-bottom: 100rpx;
 }
 .det-ft {
   position: fixed;
