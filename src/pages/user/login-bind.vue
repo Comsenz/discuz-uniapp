@@ -22,44 +22,17 @@
       <view class="login-bind-box-btn" @click="login">
         {{ i18n.t('user.loginBindId') }}
       </view>
-      <!-- #ifdef MP-WEIXIN -->
       <view class="login-bind-box-ft">
         <view
           class="login-bind-box-ft-title"
-          v-if="
-            (forum && forum.passport && forum.passport.miniprogram_close) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
-          "
+          v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
         >
           {{ i18n.t('user.otherLoginMode') }}
         </view>
         <view class="login-bind-box-ft-con">
           <image
-            v-if="forum && forum.passport && forum.passport.miniprogram_close"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.miniprogram_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms
-                ? 'login-bind-box-ft-con-image login-bind-box-ft-con-right'
-                : 'login-bind-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="mpAuthClick"
-          />
-          <image
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.miniprogram_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms
-                ? 'login-bind-box-ft-con-image login-bind-box-ft-con-left'
-                : 'login-bind-box-ft-con-image',
-            ]"
+            class="login-bind-box-ft-con-image"
             lazy-load
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
@@ -94,82 +67,6 @@
           </text>
         </view>
       </view>
-      <!-- #endif -->
-      <!-- #ifdef H5 -->
-      <view class="login-bind-box-ft">
-        <view
-          class="login-bind-box-ft-title"
-          v-if="
-            (forum && forum.passport && forum.passport.offiaccount_close && isWeixin) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
-          "
-        >
-          {{ i18n.t('user.otherLoginMode') }}
-        </view>
-        <view class="login-bind-box-ft-con">
-          <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.offiaccount_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms &&
-              isWeixin
-                ? 'login-bind-box-ft-con-image login-bind-box-ft-con-right'
-                : 'login-bind-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="jump2WeChat"
-          />
-          <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.offiaccount_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms &&
-              isWeixin
-                ? 'login-bind-box-ft-con-image login-bind-box-ft-con-left'
-                : 'login-bind-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/shouji.svg"
-            @click="jump2PhoneLogin"
-          />
-        </view>
-        <view>
-          <!-- 开启注册功能才显示 -->
-          <text
-            class="login-bind-box-ft-btn"
-            v-if="forum && forum.set_reg && forum.set_reg.register_close"
-            @click="jump2RegisterBind"
-          >
-            {{ i18n.t('user.registerUser') }}
-          </text>
-          <text
-            class="login-bind-box-ft-line"
-            v-if="
-              forum &&
-                forum.set_reg &&
-                forum.set_reg.register_close &&
-                forum.qcloud &&
-                forum.qcloud.qcloud_sms
-            "
-          ></text>
-          <!-- 开启短信功能才显示 -->
-          <text
-            class="login-bind-box-ft-text"
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findPassword"
-          >
-            {{ i18n.t('user.forgetPassword') }}
-          </text>
-        </view>
-      </view>
-      <!-- #endif -->
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
@@ -306,25 +203,6 @@ export default {
           });
       }
     },
-    // #ifdef MP-WEIXIN
-    mpAuthClick() {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        this.$refs.auth.open();
-      }
-    },
-    // #endif
-    // #ifdef H5
-    jump2WeChat() {
-      if (
-        this.isWeixin &&
-        this.forum &&
-        this.forum.passport &&
-        this.forum.passport.offiaccount_close
-      ) {
-        this.$store.dispatch('session/wxh5Login');
-      }
-    },
-    // #endif
     jump2PhoneLogin() {
       uni.navigateTo({
         url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
@@ -397,14 +275,6 @@ export default {
       &-image {
         width: 100rpx;
         height: 100rpx;
-      }
-
-      &-right {
-        margin-right: 20rpx;
-      }
-
-      &-left {
-        margin-left: 20rpx;
       }
     }
 

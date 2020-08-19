@@ -427,6 +427,8 @@ export default {
     },
     switchState() {
       this.isLogin = !this.isLogin;
+      this.phoneNumber = '';
+      this.$refs.quiinput.deleat();
     },
     jump2findPassword() {
       uni.navigateTo({
