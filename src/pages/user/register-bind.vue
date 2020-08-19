@@ -30,24 +30,24 @@
       <view class="register-bind-box-btn" id="TencentCaptcha" @click="register">
         {{ i18n.t('user.registerBindId') }}
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="register-bind-box-ft">
         <view
           class="register-bind-box-ft-title"
           v-if="
-            (forum && forum.passport && forum.passport.offiaccount_close) ||
+            (forum && forum.passport && forum.passport.miniprogram_close) ||
               (forum && forum.qcloud && forum.qcloud.qcloud_sms)
           "
         >
           {{ i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="register-bind-box-ft-con">
-          <!-- #ifdef MP-WEIXIN -->
           <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close"
+            v-if="forum && forum.passport && forum.passport.miniprogram_close"
             :class="[
               forum &&
               forum.passport &&
-              forum.passport.offiaccount_close &&
+              forum.passport.miniprogram_close &&
               forum.qcloud &&
               forum.qcloud.qcloud_sms
                 ? 'register-bind-box-ft-con-image register-bind-box-ft-con-right'
@@ -62,7 +62,7 @@
             :class="[
               forum &&
               forum.passport &&
-              forum.passport.offiaccount_close &&
+              forum.passport.miniprogram_close &&
               forum.qcloud &&
               forum.qcloud.qcloud_sms
                 ? 'register-bind-box-ft-con-image register-bind-box-ft-con-left'
@@ -72,8 +72,24 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
-          <!-- #endif -->
-          <!-- #ifdef H5 -->
+        </view>
+        <view class="register-bind-box-ft-btn" @click="jump2LoginBind">
+          {{ i18n.t('user.login') }}
+        </view>
+      </view>
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <view class="register-bind-box-ft">
+        <view
+          class="register-bind-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.offiaccount_close && isWeixin) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherRegisterMode') }}
+        </view>
+        <view class="register-bind-box-ft-con">
           <image
             v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
             :class="[
@@ -106,12 +122,12 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
-          <!-- #endif -->
         </view>
         <view class="register-bind-box-ft-btn" @click="jump2LoginBind">
           {{ i18n.t('user.login') }}
         </view>
       </view>
+      <!-- #endif -->
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>

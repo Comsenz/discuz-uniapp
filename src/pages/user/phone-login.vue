@@ -48,9 +48,9 @@
         <view class="phone-login-box-ft-con">
           <!-- #ifdef MP-WEIXIN -->
           <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close"
+            v-if="forum && forum.passport && forum.passport.miniprogram_close"
             :class="[
-              forum && forum.passport && forum.passport.offiaccount_close
+              forum && forum.passport && forum.passport.miniprogram_close
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
                 : 'phone-login-box-ft-con-image',
             ]"
@@ -60,7 +60,7 @@
           />
           <image
             :class="[
-              forum && forum.passport && forum.passport.offiaccount_close
+              forum && forum.passport && forum.passport.miniprogram_close
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
                 : 'phone-login-box-ft-con-image',
             ]"
@@ -93,7 +93,7 @@
           />
           <!-- #endif -->
         </view>
-        <view>
+        <view v-if="isLogin">
           <!-- 开启注册功能才显示 -->
           <text
             class="phone-login-box-ft-btn"
@@ -119,6 +119,11 @@
             @click="jump2findPassword"
           >
             {{ i18n.t('user.forgetPassword') }}
+          </text>
+        </view>
+        <view class="" v-else>
+          <text class="phone-login-box-ft-btn" @click="switchState">
+            {{ i18n.t('user.login') }}
           </text>
         </view>
       </view>

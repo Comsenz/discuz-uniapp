@@ -22,24 +22,24 @@
       <view class="login-bind-box-btn" @click="login">
         {{ i18n.t('user.loginBindId') }}
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="login-bind-box-ft">
         <view
           class="login-bind-box-ft-title"
           v-if="
-            (forum && forum.passport && forum.passport.offiaccount_close) ||
+            (forum && forum.passport && forum.passport.miniprogram_close) ||
               (forum && forum.qcloud && forum.qcloud.qcloud_sms)
           "
         >
           {{ i18n.t('user.otherLoginMode') }}
         </view>
         <view class="login-bind-box-ft-con">
-          <!-- #ifdef MP-WEIXIN -->
           <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close"
+            v-if="forum && forum.passport && forum.passport.miniprogram_close"
             :class="[
               forum &&
               forum.passport &&
-              forum.passport.offiaccount_close &&
+              forum.passport.miniprogram_close &&
               forum.qcloud &&
               forum.qcloud.qcloud_sms
                 ? 'login-bind-box-ft-con-image login-bind-box-ft-con-right'
@@ -54,7 +54,7 @@
             :class="[
               forum &&
               forum.passport &&
-              forum.passport.offiaccount_close &&
+              forum.passport.miniprogram_close &&
               forum.qcloud &&
               forum.qcloud.qcloud_sms
                 ? 'login-bind-box-ft-con-image login-bind-box-ft-con-left'
@@ -64,8 +64,49 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
-          <!-- #endif -->
-          <!-- #ifdef H5 -->
+        </view>
+        <view>
+          <!-- 开启注册功能才显示 -->
+          <text
+            class="login-bind-box-ft-btn"
+            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            @click="jump2RegisterBind"
+          >
+            {{ i18n.t('user.registerUser') }}
+          </text>
+          <text
+            class="login-bind-box-ft-line"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms
+            "
+          ></text>
+          <!-- 开启短信功能才显示 -->
+          <text
+            class="login-bind-box-ft-text"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            @click="jump2findPassword"
+          >
+            {{ i18n.t('user.forgetPassword') }}
+          </text>
+        </view>
+      </view>
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <view class="login-bind-box-ft">
+        <view
+          class="login-bind-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.offiaccount_close && isWeixin) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherLoginMode') }}
+        </view>
+        <view class="login-bind-box-ft-con">
           <image
             v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
             :class="[
@@ -98,7 +139,6 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
-          <!-- #endif -->
         </view>
         <view>
           <!-- 开启注册功能才显示 -->
@@ -129,6 +169,7 @@
           </text>
         </view>
       </view>
+      <!-- #endif -->
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
