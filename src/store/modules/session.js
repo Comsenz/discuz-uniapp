@@ -120,7 +120,7 @@ const actions = {
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&inviteCode=${inviteCode}&register=1`,
+          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=1&inviteCode=${inviteCode}`,
           options,
         )
         .then(results => {
