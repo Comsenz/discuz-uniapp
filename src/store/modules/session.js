@@ -98,10 +98,18 @@ const actions = {
           options,
         )
         .then(results => {
+          uni.setStorage({
+            key: 'register',
+            data: 0,
+          });
           resolve(results);
           setUserInfoStore(context, results, resolve);
         })
         .catch(error => {
+          uni.setStorage({
+            key: 'register',
+            data: 0,
+          });
           resolve(error);
         });
     });
