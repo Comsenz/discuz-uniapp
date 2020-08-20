@@ -125,10 +125,15 @@
           class="theme__content__videocover"
           @click="btnFun"
           v-if="themeType == 2 && videoStatus"
-          :style="{ display: sun }"
+          :style="{ display: sun, height: videoWidth > videoHeight ? '' : '860rpx' }"
         >
           <image class="theme__mark__open" src="/static/video.svg"></image>
-          <image class="themeItem__content__coverimg" :src="coverImage" mode="widthFix"></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            mode="aspectFill"
+          ></image>
         </view>
         <view v-show="videoShow">
           <video
@@ -151,12 +156,15 @@
             :enable-play-gesture="false"
             :vslide-gesture="false"
             :vslide-gesture-in-fullscreen="false"
-            object-fit="cover"
+            object-fit="contain"
             :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             bindfullscreenchange="fullScreen"
             :src="mediaUrl"
-            :style="{ width: '100%', height: blocKwidth + 'rpx' }"
+            :style="{
+              width: '100%',
+              height: videoWidth > videoHeight ? blocKwidth + 'rpx' : '860rpx',
+            }"
           ></video>
         </view>
         <qui-image

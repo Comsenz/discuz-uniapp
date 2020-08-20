@@ -143,7 +143,7 @@ export default {
     // #ifdef MP-WEIXIN
     if (this.$refs.quiPage) {
       this.$store.dispatch('session/setAuth', this.$refs.quiPage.$refs.auth);
-      this.$refs.quiPage.open();
+      // this.$refs.quiPage.open();
     }
     // #endif
     if (
