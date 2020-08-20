@@ -63,6 +63,7 @@
             :cursor="cursor"
             :focus="focus"
             :show-confirm-bar="false"
+            :adjust-position="false"
             v-model="msg"
             @blur="cursorBlur"
             @focus="cursorFocus"
