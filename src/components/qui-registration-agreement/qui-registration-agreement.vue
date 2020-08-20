@@ -63,6 +63,9 @@ export default {
   },
   methods: {
     open(type) {
+      // #ifdef MP-WEIXIN
+      uni.hideTabBar();
+      // #endif
       this.$refs.popupMessage.open();
       if (type === 'register') {
         this.popTitle = this.i18n.t('user.agreementRegister');
@@ -116,6 +119,7 @@ export default {
 }
 .popup-message {
   text-align: center;
+  background: --color(--qui-BG-2);
   &__btn {
     height: 100rpx;
     font-size: $fg-f28;
