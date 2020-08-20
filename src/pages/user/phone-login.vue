@@ -398,9 +398,11 @@ export default {
         params.data.attributes.inviteCode = data.data.attributes.code;
       }
       // #endif
+      // #ifdef H5
       if (this.token && this.token !== '') {
         params.data.attributes.token = this.token;
       }
+      // #endif
       if (this.code && this.code !== 'undefined') {
         params.data.attributes.inviteCode = this.code;
       }
