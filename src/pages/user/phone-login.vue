@@ -48,9 +48,9 @@
         <view class="phone-login-box-ft-con">
           <!-- #ifdef MP-WEIXIN -->
           <image
-            v-if="forum && forum.passport && forum.passport.miniprogram_close"
+            v-if="forum && forum.passport && forum.passport.miniprogram_close && !isLogin"
             :class="[
-              forum && forum.passport && forum.passport.miniprogram_close
+              forum && forum.passport && forum.passport.miniprogram_close && !isLogin
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
                 : 'phone-login-box-ft-con-image',
             ]"
@@ -60,7 +60,7 @@
           />
           <image
             :class="[
-              forum && forum.passport && forum.passport.miniprogram_close
+              forum && forum.passport && forum.passport.miniprogram_close && !isLogin
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
                 : 'phone-login-box-ft-con-image',
             ]"
