@@ -284,6 +284,11 @@ export default {
         params.data.attributes.code = data.data.attributes.code;
       }
       // #endif
+      // #ifdef H5
+      if (this.token && this.token !== '') {
+        params.data.attributes.token = this.token;
+      }
+      // #endif
       if (
         this.forum &&
         this.forum.set_reg &&
@@ -300,9 +305,6 @@ export default {
       }
       if (this.forum.set_reg.register_validate) {
         params.data.attributes.register_reason = this.reason;
-      }
-      if (this.token && this.token !== '') {
-        params.data.attributes.token = this.token;
       }
       if (this.code && this.code !== '') {
         params.data.attributes.code = this.code;
@@ -372,7 +374,11 @@ export default {
         this.forum.passport &&
         this.forum.passport.offiaccount_close
       ) {
-        this.$store.dispatch('session/wxh5Register');
+        uni.setStorage({
+          key: 'register',
+          data: 1,
+        });
+        this.$store.dispatch('session/wxh5Login');
       }
     },
     // #endif

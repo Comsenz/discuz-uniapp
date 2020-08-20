@@ -146,6 +146,7 @@ export default {
       const params = {
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        // sort: '-createdAt',
       };
       if (this.searchValue) {
         params['filter[username]'] = `*${this.searchValue}*`;

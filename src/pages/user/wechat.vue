@@ -26,113 +26,62 @@ export default {
   },
   onLoad(params) {
     // #ifdef H5
-    const { register } = params;
     const login = data => {
-      if (register === 1) {
-        this.$store
-          .dispatch('session/noSenseh5Register', data)
-          .then(res => {
-            const err = res.data;
-            if (err.errors) {
-              if (err.errors[0].code === 'no_bind_user') {
-                const wxtoken = err.errors[0].token;
-                let code = '';
-                uni.getStorage({
-                  key: 'inviteCode',
-                  success(resData) {
-                    code = resData.data || '';
-                  },
-                });
-                const pages = getCurrentPages();
-                const url = pages[pages.length - 1].route;
-                this.login(url, wxtoken, code);
-              }
-              if (err.errors[0].code === 'register_validate') {
-                uni.showToast({
-                  icon: 'none',
-                  title: this.i18n.t('core.register_validate'),
-                  duration: 2000,
-                });
-              }
-            } else if (res && res.data && res.data.data && res.data.data.id) {
-              this.logind();
-              if (this.user && this.user.paid) {
-                this.isPaid = this.user.paid;
-              }
-              if (this.site_mode !== SITE_PAY) {
-                const pages = getCurrentPages();
-                const url = pages[pages.length - 1].route;
-                uni.navigateTo({
-                  url,
-                });
-              }
-              if (this.site_mode === SITE_PAY && !this.isPaid) {
-                uni.navigateTo({
-                  url: '/pages/site/info',
-                });
-              }
+      this.$store
+        .dispatch('session/noSenseh5Login', data)
+        .then(res => {
+          uni.setStorage({
+            key: 'register',
+            data: 0,
+          });
+          if (res && res.data && res.data.errors) {
+            if (res.data.errors[0].code === 'no_bind_user') {
+              const wxtoken = res.data.errors[0].token;
+              let code = '';
+              uni.getStorage({
+                key: 'inviteCode',
+                success(resData) {
+                  code = resData.data || '';
+                },
+              });
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              this.login(url, wxtoken, code);
+            }
+            if (res.data.errors[0].code === 'register_validate') {
               uni.showToast({
-                title: this.i18n.t('user.loginSuccess'),
+                icon: 'none',
+                title: this.i18n.t('core.register_validate'),
                 duration: 2000,
               });
             }
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      } else {
-        this.$store
-          .dispatch('session/noSenseh5Login', data)
-          .then(res => {
-            const err = res.data;
-            if (err.errors) {
-              if (err.errors[0].code === 'no_bind_user') {
-                const wxtoken = err.errors[0].token;
-                let code = '';
-                uni.getStorage({
-                  key: 'inviteCode',
-                  success(resData) {
-                    code = resData.data || '';
-                  },
-                });
-                const pages = getCurrentPages();
-                const url = pages[pages.length - 1].route;
-                this.login(url, wxtoken, code);
-              }
-              if (err.errors[0].code === 'register_validate') {
-                uni.showToast({
-                  icon: 'none',
-                  title: this.i18n.t('core.register_validate'),
-                  duration: 2000,
-                });
-              }
-            } else if (res && res.data && res.data.data && res.data.data.id) {
-              this.logind();
-              if (this.user && this.user.paid) {
-                this.isPaid = this.user.paid;
-              }
-              if (this.site_mode !== SITE_PAY) {
-                const pages = getCurrentPages();
-                const url = pages[pages.length - 1].route;
-                uni.navigateTo({
-                  url,
-                });
-              }
-              if (this.site_mode === SITE_PAY && !this.isPaid) {
-                uni.navigateTo({
-                  url: '/pages/site/info',
-                });
-              }
-              uni.showToast({
-                title: this.i18n.t('user.loginSuccess'),
-                duration: 2000,
+          }
+          if (res && res.data && res.data.data && res.data.data.id) {
+            this.logind();
+            if (this.user && this.user.paid) {
+              this.isPaid = this.user.paid;
+            }
+            if (this.site_mode !== SITE_PAY) {
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              uni.navigateTo({
+                url,
               });
             }
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
+            if (this.site_mode === SITE_PAY && !this.isPaid) {
+              uni.navigateTo({
+                url: '/pages/site/info',
+              });
+            }
+            uni.showToast({
+              title: this.i18n.t('user.loginSuccess'),
+              duration: 2000,
+            });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     };
     if (!this.$store.getters['session/get']('isLogin')) {
       login(params);

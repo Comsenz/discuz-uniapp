@@ -45,7 +45,9 @@
                       {{
                         item.order_type === 3
                           ? i18n.t('notice.payedMe')
-                          : i18n.t('notice.rewardedMe')
+                          : !item.scale
+                          ? i18n.t('notice.rewardedMe')
+                          : i18n.t('notice.scaledMe')
                       }}
                     </text>
                   </view>

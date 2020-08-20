@@ -187,6 +187,11 @@ export default {
           params.data.attributes.encryptedData = data.data.attributes.encryptedData;
         }
         // #endif
+        // #ifdef H5
+        if (this.token && this.token !== '') {
+          params.data.attributes.token = this.token;
+        }
+        // #endif
         console.log('params', params);
         this.$store
           .dispatch('session/h5Login', params)
