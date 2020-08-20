@@ -161,7 +161,7 @@ export default {
     // 发送短信接口
     sendsms() {
       console.log('9999');
-      if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.novice)) {
+      if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.newphon)) {
         if (this.forums.qcloud.qcloud_captcha) {
           if (!this.ticket || !this.randstr) {
             console.log('腾讯云验证已经开启');
@@ -193,7 +193,7 @@ export default {
       setTimeout(() => {
         clearInterval(this.interval);
         this.showText = true;
-        this.sun = !this.sun;
+        this.sun = true;
         this.second = 60;
       }, 60000);
     },
@@ -272,13 +272,18 @@ export default {
         captcha_rand_str: this.randstr,
       };
       const sendphon = status.run(() => this.$store.dispatch('jv/post', params));
-      sendphon.then(res => {
-        if (res) {
-          this.num -= 1;
+      sendphon
+        .then(res => {
+          if (res) {
+            this.num -= 1;
+            this.ticket = '';
+            this.randstr = '';
+          }
+        })
+        .catch(() => {
           this.ticket = '';
           this.randstr = '';
-        }
-      });
+        });
     },
     // 验证短信
     postphon() {
