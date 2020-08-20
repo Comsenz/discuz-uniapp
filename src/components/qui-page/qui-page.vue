@@ -101,11 +101,7 @@ export default {
           this.forums.passport &&
           this.forums.passport.offiaccount_close
         ) {
-          if (this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-            this.$store.dispatch('session/noSenseh5Register');
-          } else {
-            this.$store.dispatch('session/wxh5Login');
-          }
+          this.$store.dispatch('session/wxh5Login');
         } else {
           this.login();
         }

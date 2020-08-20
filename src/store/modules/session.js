@@ -75,15 +75,15 @@ const actions = {
   },
   // #endif
   // #ifdef H5
-  wxh5Register: (context, payload = {}) => {
-    console.log(payload);
-    const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat?register=1`);
-    window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
-  },
-  // #endif
-  // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
     let inviteCode = '';
+    let register = 0;
+    uni.getStorage({
+      key: 'register',
+      success(resData) {
+        register = resData.data || 0;
+      },
+    });
     uni.getStorage({
       key: 'inviteCode',
       success(resData) {
@@ -94,33 +94,7 @@ const actions = {
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&inviteCode=${inviteCode}`,
-          options,
-        )
-        .then(results => {
-          resolve(results);
-          setUserInfoStore(context, results, resolve);
-        })
-        .catch(error => {
-          resolve(error);
-        });
-    });
-  },
-  // #endif
-  // #ifdef H5
-  noSenseh5Register: (context, payload = {}) => {
-    let inviteCode = '';
-    uni.getStorage({
-      key: 'inviteCode',
-      success(resData) {
-        inviteCode = resData.data || '';
-      },
-    });
-    const options = { custom: { showTost: false } };
-    return new Promise(resolve => {
-      return http
-        .get(
-          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=1&inviteCode=${inviteCode}`,
+          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=${register}&inviteCode=${inviteCode}`,
           options,
         )
         .then(results => {
