@@ -21,12 +21,12 @@
         <view class="search-item__users__box" v-for="(item, index) in data" :key="index">
           <qui-avatar
             class="search-item__users__box-avatar"
-            :user="item.sourceUser"
+            :user="item.sourceUser || ''"
             size="70"
             :is-real="item.isReal"
           />
           <qui-cell-item
-            :title="item.sourceUser.username"
+            :title="item.sourceUser && item.sourceUser.username"
             :brief="timeHandle(item.created_at)"
             :addon="`+ ${item.change_available_amount}`"
           ></qui-cell-item>

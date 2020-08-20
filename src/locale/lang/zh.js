@@ -408,6 +408,7 @@ export default {
     reward: '财务通知',
     rewardedMe: ' 打赏了我',
     payedMe: ' 支付了我',
+    scaledMe: ' 分成了我',
     system: '系统通知',
     admin: '管理员',
     delete: '删除',
@@ -533,6 +534,7 @@ export default {
     },
     other: {
       canInviteUserScale: '允许邀请朋友',
+      canUserCommissionScale: '允许收入提成',
     },
     createThreadImage: '发布图片',
     createThread: '发布文本',
