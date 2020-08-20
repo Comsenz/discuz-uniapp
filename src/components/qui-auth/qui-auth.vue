@@ -29,6 +29,11 @@ import user from '@/mixin/user';
 
 export default {
   mixins: [forums, user],
+  data() {
+    return {
+      isSuccess: true, // 默认无感登录成功
+    };
+  },
   computed: {
     t() {
       return this.i18n.t('auth');
@@ -43,20 +48,132 @@ export default {
         });
         return;
       }
-
       if (res.detail.errMsg === 'getUserInfo:ok') {
-        // eslint-disable-next-line no-unused-vars
-        this.$store
-          .dispatch('session/login')
-          .then(data => {
-            this.logind();
-            this.$emit('login', { res, data });
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        this.getParams();
       } else {
-        this.$emit('login', { res });
+        this.$emit('login');
+      }
+    },
+    getParams() {
+      return new Promise((resolve, reject) => {
+        uni.login({
+          success: loginRes => {
+            if (loginRes.errMsg === 'login:ok') {
+              const { code } = loginRes;
+              uni.getUserInfo({
+                success: res => {
+                  const params = {
+                    data: {
+                      attributes: {
+                        js_code: code,
+                        iv: res.iv,
+                        encryptedData: res.encryptedData,
+                      },
+                    },
+                  };
+                  if (this.isSuccess) {
+                    this.noSenseLogin(params);
+                  } else {
+                    this.loginMode(params);
+                  }
+                },
+                fail: error => {
+                  console.log(error);
+                  reject(error);
+                },
+              });
+            }
+          },
+          fail: error => {
+            console.log(error);
+            reject(error);
+          },
+        });
+      });
+    },
+    noSenseLogin(param, register = 0) {
+      const params = param;
+      params.data.attributes.register = register;
+      this.$store
+        .dispatch('session/noSenseMPLogin', params)
+        .then(res => {
+          if (res && res.data) {
+            this.$emit('login');
+            if (res.data.data && res.data.data.id) {
+              this.isSuccess = true;
+              this.logind();
+            }
+            if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
+              this.isSuccess = false;
+              this.getParams();
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    loginMode(param) {
+      let url = '/pages/home/index';
+      const params = param;
+      const pages = getCurrentPages();
+      const page = pages[pages.length - 1].route;
+      if (page !== '/pages/home/index') {
+        url = page;
+      }
+      // 邀请页面带上邀请码
+      if (page === 'pages/site/partner-invite') {
+        const inviteCode = pages[pages.length - 1].options.code;
+        params.data.attributes.code = inviteCode;
+      }
+      // #ifdef MP-WEIXIN
+      this.$store.dispatch('session/setParams', params);
+      // #endif
+      console.log('params', params);
+      if (this.forums && this.forums.passport && this.forums.passport.offiaccount_close) {
+        // 开启微信公众号
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 用户名模式 跳转到注册并绑定页
+          uni.navigateTo({
+            url: `/pages/user/register-bind?url=${url}`,
+          });
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 手机号模式 跳转到手机号+验证码登陆页
+          uni.navigateTo({
+            url: `/pages/user/phone-login?url=${url}`,
+          });
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          // 无感模式
+          this.noSenseLogin(params, 1);
+        }
+      } else {
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 用户名模式
+          uni.navigateTo({
+            url: `/pages/user/login?url=${url}`,
+          });
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 手机号模式
+          uni.navigateTo({
+            url: `/pages/user/phone-login?url=${url}`,
+          });
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+            // 手机号模式
+            uni.navigateTo({
+              url: `/pages/user/phone-login?url=${url}`,
+            });
+          } else {
+            // 用户名模式
+            uni.navigateTo({
+              url: `/pages/user/login?url=${url}`,
+            });
+          }
+        }
       }
     },
     close() {

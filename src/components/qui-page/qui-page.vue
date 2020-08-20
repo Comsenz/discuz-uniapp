@@ -88,6 +88,9 @@ export default {
     // #endif
   },
   mounted() {
+    // #ifdef MP-WEIXIN
+    this.$store.dispatch('session/setAuth', this.$refs.auth);
+    // #endif
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {

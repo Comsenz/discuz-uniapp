@@ -6,6 +6,8 @@ export const CHECK_SESSION = 'CHECK_SESSION';
 export const SET_ACCESS_TOKEN = 'SET_ACCESS_TOKEN';
 // 设置 弹框
 export const SET_AUTH = 'SET_AUTH';
+// 设置 params
+export const SET_PARAMS = 'SET_PARAMS';
 // 设置 分类ID
 export const SET_CATEGORYID = 'SET_CATEGORYID';
 // 设置 分类Index

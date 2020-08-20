@@ -740,6 +740,7 @@ export default {
     noexist: '没有帐号? 注册一下',
     forgetPassword: '忘记密码?',
     phoneNumberLogin: '手机号码登录',
+    phoneNumberRegister: '手机号码注册',
     verificationCodeLogin: '验证码登录',
     passwordLogin: '密码登录',
     registerBindId: '注册，并绑定微信号',
@@ -762,5 +763,8 @@ export default {
     phonenumberEmpty: '手机号不能为空',
     verificationCodeEmpty: '验证码不能为空',
     getVerificationCode: '获取验证码',
+    registerUser: '注册用户',
+    otherLoginMode: '其他登录方式',
+    otherRegisterMode: '其他注册方式',
   },
 };

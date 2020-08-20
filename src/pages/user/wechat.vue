@@ -30,29 +30,7 @@ export default {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
-          const err = res.data;
-          if (err.errors) {
-            if (err.errors[0].code === 'no_bind_user') {
-              const wxtoken = err.errors[0].token;
-              let code = '';
-              uni.getStorage({
-                key: 'inviteCode',
-                success(resData) {
-                  code = resData.data || '';
-                },
-              });
-              const pages = getCurrentPages();
-              const url = pages[pages.length - 1].route;
-              this.login(url, wxtoken, code);
-            }
-            if (err.errors[0].code === 'register_validate') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.register_validate'),
-                duration: 2000,
-              });
-            }
-          } else if (res && res.data && res.data.data && res.data.data.id) {
+          if (res && res.data && res.data.data && res.data.data.id) {
             this.logind();
             if (this.user && this.user.paid) {
               this.isPaid = this.user.paid;
@@ -73,6 +51,32 @@ export default {
               title: this.i18n.t('user.loginSuccess'),
               duration: 2000,
             });
+          }
+          if (res && res.data && res.data.errors) {
+            uni.setStorage({
+              key: 'register',
+              data: 0,
+            });
+            if (res.data.errors[0].code === 'no_bind_user') {
+              const wxtoken = res.data.errors[0].token;
+              let code = '';
+              uni.getStorage({
+                key: 'inviteCode',
+                success(resData) {
+                  code = resData.data || '';
+                },
+              });
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              this.login(url, wxtoken, code);
+            }
+            if (res.data.errors[0].code === 'register_validate') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.register_validate'),
+                duration: 2000,
+              });
+            }
           }
         })
         .catch(err => {
