@@ -195,7 +195,7 @@
             v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1"
             class="themeItem__content__attachment-item-wrap"
           >
-            <qui-audio :src="item.url" :name="item.fileName"></qui-audio>
+            <qui-audio :src="item.url" :name="item.fileName" :key="item.id"></qui-audio>
           </view>
           <view v-else @tap="download(item)">
             <qui-icon

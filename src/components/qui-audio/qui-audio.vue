@@ -18,7 +18,7 @@
 </template>
 
 <script>
-const audio = uni.createInnerAudioContext(); // 创建音频
+let audio = ''; // 创建音频
 export default {
   props: {
     // 音频链接
@@ -54,12 +54,12 @@ export default {
   },
   watch: {
     // 监听音频地址更改
-    src(e) {
-      audio.src = e;
-      this.current = 0;
-      audio.play();
-      this.loading = true;
-    },
+    // src(e) {
+    //   audio.src = e;
+    //   this.current = 0;
+    //   audio.play();
+    //   this.loading = true;
+    // },
     // 监听当前进度改变
     current(e) {
       if (e) {
@@ -67,10 +67,12 @@ export default {
       }
     },
   },
-  created() {
+  mounted() {
+    audio = uni.createInnerAudioContext();
     audio.src = this.src;
     this.current = 0;
     audio.autoplay = this.autoplay;
+    console.log(audio);
     // 音频进度更新事件
     audio.onTimeUpdate(() => {
       if (!this.seek) {
@@ -79,6 +81,7 @@ export default {
     });
     // 音频进入可以播放状态
     audio.onCanplay(() => {
+      console.log(audio);
       this.duration = this.format(audio.duration);
       this.durationTime = audio.duration;
     });
@@ -93,12 +96,9 @@ export default {
     });
     // 音频结束事件
     audio.onEnded(() => {
-      if (this.continue) {
-        this.next();
-      } else {
-        this.paused = true;
-        this.current = 0;
-      }
+      this.paused = true;
+      this.current = 0;
+      this.currentTime = '00 : 00';
     });
     // 音频完成更改进度事件
     audio.onSeeked(() => {
