@@ -53,6 +53,10 @@ export default {
             });
           }
           if (res && res.data && res.data.errors) {
+            uni.setStorage({
+              key: 'register',
+              data: 0,
+            });
             if (res.data.errors[0].code === 'no_bind_user') {
               const wxtoken = res.data.errors[0].token;
               let code = '';
