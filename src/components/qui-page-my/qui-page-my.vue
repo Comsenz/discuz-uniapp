@@ -95,18 +95,29 @@
           </qui-cell-item>
         </view>
 
-        <!-- 微信内：展示退出并解绑按钮，微信外：展示退出登录按钮 -->
+        <!-- 小程序和微信内：无感模式不展示退出并解绑按钮，其他模式展示退出并解绑按钮
+             微信外：展示退出登录按钮 -->
         <view class="logout">
           <!-- #ifdef MP-WEIXIN -->
-          <qui-button size="large" type="warn" @click="exitAndUnbind">
+          <qui-button size="large" type="warn" @click="exitAndUnbind" v-if="register_type !== 2">
             {{ i18n.t('user.noBind') }}
           </qui-button>
           <!-- #endif -->
           <!-- #ifdef H5-->
-          <qui-button size="large" type="warn" @click="exitAndUnbind" v-if="isWeixin">
+          <qui-button
+            size="large"
+            type="warn"
+            @click="exitAndUnbind"
+            v-if="isWeixin && register_type !== 2"
+          >
             {{ i18n.t('user.noBind') }}
           </qui-button>
-          <qui-button size="large" type="warn" @click="logout" v-else>
+          <qui-button
+            size="large"
+            type="warn"
+            @click="logout"
+            v-if="!isWeixin && register_type !== 2"
+          >
             {{ i18n.t('user.logout') }}
           </qui-button>
           <!-- #endif -->

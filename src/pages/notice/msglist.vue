@@ -62,6 +62,7 @@
             :maxlength="450"
             :cursor="cursor"
             :focus="focus"
+            :show-confirm-bar="false"
             v-model="msg"
             @blur="cursorBlur"
             @focus="cursorFocus"
@@ -551,7 +552,6 @@ export default {
       width: 65%;
       height: 80rpx;
       padding: 0rpx 0rpx 0rpx 20rpx;
-      line-height: 80rpx;
       background: --color(--qui-BG-2);
       border-radius: 5rpx;
     }
@@ -562,8 +562,5 @@ export default {
       background: --color(--qui-BG-BTN);
     }
   }
-}
-/deep/ .uni-textarea-textarea {
-  white-space: nowrap;
 }
 </style>
