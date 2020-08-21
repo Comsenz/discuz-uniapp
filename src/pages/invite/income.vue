@@ -46,7 +46,11 @@
           :is-real="item.isReal"
         />
         <qui-cell-item
-          :title="item.sourceUser && item.sourceUser.username"
+          :title="
+            item.sourceUser && item.sourceUser.username
+              ? item.sourceUser.username
+              : i18n.t('core.userDeleted')
+          "
           :brief="timeHandle(item.created_at)"
           :addon="`+ ${item.change_available_amount}`"
         ></qui-cell-item>
