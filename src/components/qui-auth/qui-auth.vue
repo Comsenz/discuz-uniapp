@@ -94,6 +94,13 @@ export default {
     noSenseLogin(param, register = 0) {
       const params = param;
       params.data.attributes.register = register;
+      const pages = getCurrentPages();
+      const page = pages[pages.length - 1].route;
+      // 邀请页面带上邀请码
+      if (page === 'pages/site/partner-invite') {
+        const inviteCode = pages[pages.length - 1].options.code;
+        params.data.attributes.code = inviteCode;
+      }
       this.$store
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
