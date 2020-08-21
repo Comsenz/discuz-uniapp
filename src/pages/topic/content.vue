@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
@@ -63,6 +64,7 @@ import appCommonH from '@/utils/commonHelper';
 
 export default {
   mixins: [
+    forums,
     // #ifdef  H5
     wxshare,
     appCommonH,
@@ -96,6 +98,14 @@ export default {
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
+    // #endif
+    // #ifdef H5
+    if (this.forums.passport && this.forums.passport.offiaccount_close) {
+      this.wxShare({
+        title: this.topic.content,
+      });
+      // return;
+    }
     // #endif
   },
   onLoad(query) {
@@ -134,12 +144,6 @@ export default {
           }
         });
     }
-
-    // #ifdef H5
-    this.wxShare({
-      title: this.topic.content,
-    });
-    // #endif
   },
   onShow() {
     this.uploadItem();

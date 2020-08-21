@@ -68,11 +68,27 @@
           <image class="theme__mark__open" src="/static/video.svg"></image>
           <image class="themeItem__content__coverimg" :src="coverImage" lazy-load></image>
         </view>
-        <view class="content__video" v-if="threadType === 2 && payStatus">
+
+        <!-- 封面图 -->
+        <view
+          class="theme__content__videocover"
+          v-if="threadType === 2 && payStatus"
+          :style="{ display: sun, height: videoWidth > videoHeight ? '' : '860rpx' }"
+        >
+          <image class="theme__mark__open" src="/static/video.svg" @click.stop="btn"></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            mode="aspectFill"
+          ></image>
+        </view>
+
+        <view class="content__video" v-show="videoShow">
           <video
             :poster="coverImage"
             controls
-            v-if="threadType === 2 && payStatus"
+            ref="myVideo"
             :id="'myVideo' + currentindex"
             :duration="duration"
             preload="none"
@@ -83,17 +99,20 @@
             :page-gesture="false"
             :show-fullscreen-btn="true"
             :show-play-btn="true"
-            :autoplay="false"
+            :autoplay="autoplay"
             auto-pause-if-open-native
             auto-pause-if-navigate
             :enable-play-gesture="false"
             :vslide-gesture="false"
             :vslide-gesture-in-fullscreen="false"
-            object-fit="cover"
+            object-fit="contain"
             :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             :src="mediaUrl"
-            :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+            :style="{
+              width: '100%',
+              height: videoWidth > videoHeight ? blocKwidth + 'rpx' : '860rpx',
+            }"
             bindfullscreenchange="fullScreen"
             bindended="closeVideo"
             @play="playVideo"
@@ -397,6 +416,10 @@ export default {
       imageStatus: true,
       currentTop: 0,
       currentBottom: 0,
+      videoShow: false,
+      autoplay: false,
+      sun: 1,
+      sunc: ' sunc',
     };
   },
 
@@ -446,7 +469,7 @@ export default {
         .exec();
     }
     // #endif
-
+    this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
     // #ifdef H5
     const myVideo = document.querySelector(`#${`myVideo${this.$props.currentindex}`}`);
     if (myVideo) {
@@ -514,6 +537,16 @@ export default {
     // 头像加载失败,显示默认头像
     imageError() {
       this.imageStatus = false;
+    },
+    btn() {
+      this.sun = 'none';
+      this.videoShow = true;
+      this.autoplay = true;
+      setTimeout(() => {
+        console.log('视频开始播放', `myVideo${this.currentindex}`);
+        const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
+        videoContext.play();
+      }, 200);
     },
   },
 };

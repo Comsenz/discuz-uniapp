@@ -213,7 +213,6 @@ export default {
     getSiteInfo() {
       const params = {
         include: ['users'],
-        'filter[tag]': 'agreement',
       };
       this.$store.dispatch('jv/get', ['forum', { params }]).then(res => {
         console.log(res);

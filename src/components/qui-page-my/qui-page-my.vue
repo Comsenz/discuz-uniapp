@@ -43,19 +43,15 @@
             <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
           </navigator>
           <navigator url="/pages/my/favorite" hover-class="none">
-            <qui-cell-item
-              :title="i18n.t('profile.myfavorite')"
-              arrow
-              :border="false"
-            ></qui-cell-item>
+            <qui-cell-item :title="i18n.t('profile.myfavorite')" arrow></qui-cell-item>
           </navigator>
-          <!-- <navigator url="/pages/my/shield" hover-class="none">
+          <navigator url="/pages/my/shield" hover-class="none">
             <qui-cell-item
               :title="i18n.t('profile.myshield')"
               arrow
               :border="false"
             ></qui-cell-item>
-          </navigator> -->
+          </navigator>
         </view>
         <view class="my-items__wrap">
           <navigator url="/pages/site/index" hover-class="none">
@@ -65,7 +61,24 @@
             <qui-cell-item
               :title="i18n.t('profile.search')"
               arrow
+              :border="
+                forums.other &&
+                (forums.other.can_create_invite || forums.other.can_invite_user_scale)
+                  ? true
+                  : false
+              "
+            ></qui-cell-item>
+          </navigator>
+          <navigator
+            url="/pages/invite/index"
+            hover-class="none"
+            v-if="forums.other && forums.other.can_invite_user_scale"
+          >
+            <qui-cell-item
+              :title="i18n.t('profile.inviteFriends')"
+              arrow
               :border="forums.other && forums.other.can_create_invite ? true : false"
+              :class-item="'invite-friends'"
             ></qui-cell-item>
           </navigator>
           <navigator
@@ -87,30 +100,28 @@
           </qui-cell-item>
         </view>
 
-        <!-- #ifdef H5-->
-        <!-- 微信内：无感模式不展示按钮，其他模式展示退出并解绑按钮，微信外：任何模式都展示退出登录按钮 -->
+        <!-- 小程序和微信内：无感模式不展示退出并解绑按钮，其他模式展示退出并解绑按钮
+             微信外：展示退出登录按钮 -->
         <view class="logout">
+          <!-- #ifdef MP-WEIXIN -->
+          <qui-button size="large" type="warn" @click="exitAndUnbind" v-if="register_type !== 2">
+            {{ i18n.t('user.noBind') }}
+          </qui-button>
+          <!-- #endif -->
+          <!-- #ifdef H5-->
           <qui-button
             size="large"
             type="warn"
-            @click="handleClick"
-            v-if="isWeixin && offiaccount_close && register_type !== 2"
+            @click="exitAndUnbind"
+            v-if="isWeixin && register_type !== 2"
           >
             {{ i18n.t('user.noBind') }}
           </qui-button>
-          <qui-button
-            size="large"
-            type="warn"
-            @click="handleClick"
-            v-if="isWeixin && !offiaccount_close"
-          >
+          <qui-button size="large" type="warn" @click="logout" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
           </qui-button>
-          <qui-button size="large" type="warn" @click="handleClick" v-if="!isWeixin">
-            {{ i18n.t('user.logout') }}
-          </qui-button>
+          <!-- #endif -->
         </view>
-        <!-- #endif -->
       </view>
     </scroll-view>
     <uni-popup ref="popup" type="center">
@@ -126,14 +137,16 @@
 </template>
 
 <script>
-import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
+import { THEME_DEFAULT, THEME_DARK, SITE_PAY } from '@/common/const';
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [forums, appCommonH],
+  mixins: [forums, user, appCommonH],
   data() {
     return {
       items: [
@@ -144,13 +157,19 @@ export default {
       ],
       current: 0,
       checked: false,
+      // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
+      // #endif
       offiaccount_close: false, // 默认不开启微信公众号
       register_type: 0, // 注册模式
       site_mode: '', // 站点模式
     };
   },
   computed: {
+    ...mapState({
+      footerIndex: state =>
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) : 0,
+    }),
     userId() {
       return this.$store.getters['session/get']('userId');
     },
@@ -161,7 +180,6 @@ export default {
       return userInfo;
     },
   },
-  // #ifdef H5
   created() {
     if (this.forums && this.forums.set_reg) {
       this.register_type = this.forums.set_reg.register_type;
@@ -172,11 +190,15 @@ export default {
     if (this.forums && this.forums.passport) {
       this.offiaccount_close = this.forums.passport.offiaccount_close;
     }
+    // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
+    // #endif
   },
-  // #endif
   methods: {
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
     changeCheck(e) {
       getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
     },
@@ -185,35 +207,36 @@ export default {
         url: `/pages/profile/index?current=${e.currentIndex}&userId=${this.userId}`,
       });
     },
-    // #ifdef H5
-    handleClick() {
-      if (this.isWeixin) {
-        // 微信内
-        if (this.offiaccount_close) {
-          if (this.register_type !== 2) {
-            this.$refs.popup.open();
-          }
-        } else {
-          this.$store.dispatch('session/logout').then(() => window.location.reload());
-        }
-      } else {
-        this.$store.dispatch('session/logout').then(() => window.location.reload());
-      }
+    exitAndUnbind() {
+      this.$refs.popup.open();
     },
-    // #endif
-    // #ifdef H5
+    logout() {
+      this.$store.dispatch('session/logout').then(() => window.location.reload());
+    },
     handleClickOk() {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(() => {
         this.handleClickCancel();
+        // #ifdef MP-WEIXIN
+        this.$store.dispatch('session/logout').then(() => {
+          uni.clearStorage();
+          if (this.site_mode !== SITE_PAY) {
+            this.setFooterIndex(parseInt(0, 10));
+          }
+          if (this.site_mode === SITE_PAY && this.user && !this.user.isPaid) {
+            uni.redirectTo({
+              url: '/pages/site/info',
+            });
+          }
+        });
+        // #endif
+        // #ifdef H5
         this.$store.dispatch('session/logout').then(() => window.location.reload());
+        // #endif
       });
     },
-    // #endif
-    // #ifdef H5
     handleClickCancel() {
       this.$refs.popup.close();
     },
-    // #endif
     // 设置粉丝点赞那些数字
     setNum(res) {
       this.items[0].brief = res.threadCount || 0;

@@ -21,8 +21,7 @@ const publicWhitelistPage = [
   '/pages/user/login-bind',
   '/pages/user/register-bind',
   '/pages/user/register',
-  '/pages/user/phone-number-login',
-  '/pages/user/verification-code-login',
+  '/pages/user/phone-login',
   '/pages/modify/findpwd',
   '/preview-image',
   '/pages/site/search',
@@ -38,8 +37,7 @@ const payWhiteListPage = [
   '/pages/user/login-bind',
   '/pages/user/register-bind',
   '/pages/user/register',
-  '/pages/user/phone-number-login',
-  '/pages/user/verification-code-login',
+  '/pages/user/phone-login',
   '/pages/modify/findpwd',
 ];
 const apploaded = () => {

@@ -7,6 +7,7 @@ import {
   CHECK_SESSION,
   SET_ACCESS_TOKEN,
   SET_AUTH,
+  SET_PARAMS,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -50,49 +51,19 @@ const actions = {
   setAuth: (context, payload) => {
     context.commit(SET_AUTH, payload);
   },
+  setParams: (context, payload) => {
+    context.commit(SET_PARAMS, payload);
+  },
   // #ifdef MP-WEIXIN
-  login: (context, payload = {}) => {
-    return new Promise((resolve, reject) => {
-      uni.login({
-        success: res => {
-          if (res.errMsg === 'login:ok') {
-            const { code } = res;
-            uni.getUserInfo({
-              // eslint-disable-next-line no-shadow
-              success: res => {
-                let data = {
-                  data: {
-                    attributes: {
-                      js_code: code,
-                      iv: res.iv,
-                      encryptedData: res.encryptedData,
-                    },
-                  },
-                };
-                // 邀请页面带上邀请码
-                const pages = getCurrentPages();
-                const page = pages[pages.length - 1].route;
-                if (page === 'pages/site/partner-invite') {
-                  const inviteCode = pages[pages.length - 1].options.code;
-                  data.data.attributes.code = inviteCode;
-                }
-                data = Object.assign(payload, data);
-                return http
-                  .post('oauth/wechat/miniprogram', data)
-                  .then(results => setUserInfoStore(context, results, resolve));
-              },
-              fail: error => {
-                console.log(error);
-                reject(error);
-              },
-            });
-          }
-        },
-        fail: error => {
-          console.log(error);
-          reject(error);
-        },
-      });
+  noSenseMPLogin: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .post('oauth/wechat/miniprogram', payload)
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(err => resolve(err));
     });
   },
   // #endif
@@ -106,6 +77,13 @@ const actions = {
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
     let inviteCode = '';
+    let register = 0;
+    uni.getStorage({
+      key: 'register',
+      success(resData) {
+        register = resData.data || 0;
+      },
+    });
     uni.getStorage({
       key: 'inviteCode',
       success(resData) {
@@ -116,7 +94,7 @@ const actions = {
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&inviteCode=${inviteCode}`,
+          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=${register}&inviteCode=${inviteCode}`,
           options,
         )
         .then(results => {
@@ -129,7 +107,6 @@ const actions = {
     });
   },
   // #endif
-  // #ifdef H5
   verificationCodeh5Login: (context, payload = {}) => {
     return new Promise(resolve => {
       return http
@@ -137,8 +114,6 @@ const actions = {
         .then(results => setUserInfoStore(context, results, resolve));
     });
   },
-  // #endif
-  // #ifdef H5
   h5Login: (context, payload = {}) => {
     return new Promise(resolve => {
       return http
@@ -170,8 +145,6 @@ const actions = {
         });
     });
   },
-  // #endif
-  // #ifdef H5
   h5Register: (context, payload = {}) => {
     const options = { custom: { showTost: false } };
     return new Promise(resolve => {
@@ -184,7 +157,6 @@ const actions = {
         .catch(err => resolve(err));
     });
   },
-  // #endif
   logout: context => {
     return new Promise(resolve => {
       context.commit(DELETE_USER_ID);
@@ -208,6 +180,9 @@ const mutations = {
   },
   [SET_AUTH](state, payload) {
     state.auth = payload;
+  },
+  [SET_PARAMS](state, payload) {
+    state.params = payload;
   },
   [SET_CATEGORYID](state, payload) {
     state.categoryId = payload;

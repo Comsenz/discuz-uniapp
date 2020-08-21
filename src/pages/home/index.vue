@@ -91,6 +91,7 @@ export default {
       // uni.$emit('onpullDownRefresh');
       this.$refs.home.threads = [];
       this.$refs.home.isResetList = true;
+      this.$refs.home.pageNum = 1;
       this.$refs.home.loadThreadsSticky();
       this.$refs.home.loadThreads();
     }
@@ -98,6 +99,9 @@ export default {
       this.$refs.quinotice.dialogList = [];
       this.$refs.quinotice.pageNum = 1;
       this.$refs.quinotice.ontrueGetList();
+    }
+    if (this.show_index === 2) {
+      this.$refs.quimy.refreshNum();
     }
     // 停止下拉刷新动画
     uni.stopPullDownRefresh();
@@ -139,7 +143,7 @@ export default {
     // #ifdef MP-WEIXIN
     if (this.$refs.quiPage) {
       this.$store.dispatch('session/setAuth', this.$refs.quiPage.$refs.auth);
-      this.$refs.quiPage.open();
+      // this.$refs.quiPage.open();
     }
     // #endif
     if (

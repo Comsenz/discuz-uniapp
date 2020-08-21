@@ -102,8 +102,10 @@ export default {
     console.log('onLoadonLoadonLoad');
     this.userid = this.usersid;
     this.typebind = arr.type || 'bind';
+    console.log(this.typebind, '新手机号');
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
+      console.log(result, '设置新手机号页面');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
       this.btnButton();
@@ -147,17 +149,25 @@ export default {
     // 发送短信接口
     sendsms() {
       console.log('9999');
-      if (this.forums.qcloud.qcloud_captcha) {
-        if (!this.ticket || !this.randstr) {
-          console.log('腾讯云验证已经开启');
-          this.verification();
-          return false;
+      if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.novice)) {
+        if (this.forums.qcloud.qcloud_captcha) {
+          if (!this.ticket || !this.randstr) {
+            console.log('腾讯云验证已经开启');
+            this.verification();
+            return false;
+          }
+        } else {
+          console.log('腾讯云验证未开启');
+          this.second = 60;
+          this.btnButton();
+          this.setphon();
         }
       } else {
-        console.log('腾讯云验证未开启');
-        this.second = 60;
-        this.btnButton();
-        this.setphon();
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('modify.phonerro'),
+          duration: 2000,
+        });
       }
     },
     verification() {

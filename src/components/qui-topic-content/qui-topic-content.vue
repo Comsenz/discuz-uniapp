@@ -121,30 +121,52 @@
           <image class="theme__mark__open" src="/static/video.svg"></image>
           <image class="themeItem__content__coverimg" :src="coverImage"></image>
         </view>
-        <video
-          :poster="coverImage"
+        <view
+          class="theme__content__videocover"
+          @click="btnFun"
           v-if="themeType == 2 && videoStatus"
-          controls
-          preload="none"
-          bindpause="handlepause"
-          playsinline
-          webkit-playsinline
-          x5-playsinline
-          :page-gesture="false"
-          :show-fullscreen-btn="true"
-          :show-play-btn="true"
-          auto-pause-if-open-native
-          auto-pause-if-navigate
-          :enable-play-gesture="false"
-          :vslide-gesture="false"
-          :vslide-gesture-in-fullscreen="false"
-          object-fit="cover"
-          :direction="videoWidth > videoHeight ? 90 : 0"
-          x5-video-player-type="h5-page"
-          bindfullscreenchange="fullScreen"
-          :src="mediaUrl"
-          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
-        ></video>
+          :style="{ display: sun, height: videoWidth > videoHeight ? '' : '860rpx' }"
+        >
+          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            mode="aspectFill"
+          ></image>
+        </view>
+        <view v-show="videoShow">
+          <video
+            ref="myVideo"
+            id="myVideo"
+            :poster="coverImage"
+            :autoplay="autoplay"
+            controls
+            :duration="duration"
+            preload="none"
+            bindpause="handlepause"
+            playsinline
+            webkit-playsinline
+            x5-playsinline
+            :page-gesture="false"
+            :show-fullscreen-btn="true"
+            :show-play-btn="true"
+            auto-pause-if-open-native
+            auto-pause-if-navigate
+            :enable-play-gesture="false"
+            :vslide-gesture="false"
+            :vslide-gesture-in-fullscreen="false"
+            object-fit="contain"
+            :direction="videoWidth > videoHeight ? 90 : 0"
+            x5-video-player-type="h5-page"
+            bindfullscreenchange="fullScreen"
+            :src="mediaUrl"
+            :style="{
+              width: '100%',
+              height: videoWidth > videoHeight ? blocKwidth + 'rpx' : '860rpx',
+            }"
+          ></video>
+        </view>
         <qui-image
           :images-list="imagesList"
           :preview-status="videoStatus"
@@ -174,23 +196,24 @@
         </view>
         <view
           class="themeItem__content__attachment-item"
-          v-for="(item, index) in fileList"
+          v-for="(item, index) in attachMentList"
           :key="index"
-          @tap="download(item)"
         >
-          <qui-icon
-            class="icon-attachment"
-            :name="
-              item.fileName
-                ? `icon-${item.fileName
-                    .substring(item.fileName.lastIndexOf('.') + 1)
-                    .toUpperCase()}`
-                : `icon-resources`
-            "
-            color="#aaa"
-            size="22"
-          ></qui-icon>
-          <text class="attachment-name">{{ item.fileName }}</text>
+          <!-- <view
+            v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1"
+            class="themeItem__content__attachment-item-wrap"
+          >
+            <qui-audio :src="item.url" :name="item.fileName" :key="item.id"></qui-audio>
+          </view> -->
+          <view @tap="download(item)">
+            <qui-icon
+              class="icon-attachment"
+              :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
+              color="#aaa"
+              size="22"
+            ></qui-icon>
+            <text class="attachment-name">{{ item.fileName }}</text>
+          </view>
         </view>
       </view>
 
@@ -211,6 +234,7 @@
 
 <script>
 import { time2DateAndHM } from '@/utils/time';
+import { status } from '@/library/jsonapi-vuex/index';
 
 export default {
   props: {
@@ -348,6 +372,11 @@ export default {
       type: Number,
       default: 0,
     },
+    // 主题id
+    themid: {
+      type: [Number, String],
+      default: 0,
+    },
     // 主题相关标签
     tags: {
       type: Array,
@@ -356,6 +385,10 @@ export default {
       },
     },
     coverImage: {
+      type: String,
+      default: '',
+    },
+    duration: {
       type: String,
       default: '',
     },
@@ -375,10 +408,15 @@ export default {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
+      attachMentList: [],
       // topicStatus: '',
+      videoShow: false,
+      autoplay: false,
+      look: true,
+      sun: 1,
+      blocKwidth: 224,
     };
   },
-  onLoad() {},
   computed: {
     t() {
       return this.i18n.t('topic');
@@ -390,6 +428,14 @@ export default {
     localTime() {
       return time2DateAndHM(this.themeTime);
     },
+  },
+  mounted() {
+    const { fileList } = this;
+    fileList.forEach((e, index) => {
+      fileList[index].format = e.fileName.substring(e.fileName.lastIndexOf('.') + 1).toUpperCase();
+    });
+    this.attachMentList = fileList;
+    this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
   },
   methods: {
     // 管理菜单点击事件
@@ -410,6 +456,7 @@ export default {
     // 点击视频封面图事件
     videocoverClick() {
       this.$emit('videocoverClick');
+      console.log('点击封面图事件');
     },
 
     // 点击分类标签
@@ -441,11 +488,12 @@ export default {
             that.$refs.toast.show({
               message: that.i18n.t('profile.downloadSuccess'),
             });
-            // wx.openDocument({
-            //   filePath: res.tempFilePath,
-            //   success() {
-            //   },
-            // });
+            wx.openDocument({
+              filePath: res.tempFilePath,
+              success(data) {
+                console.log(data);
+              },
+            });
           }
         },
         error() {
@@ -461,6 +509,45 @@ export default {
     },
     previewPicture() {
       this.$emit('previewPicture');
+    },
+    serBtn() {
+      const params = {
+        include: [
+          'posts.replyUser',
+          'user.groups',
+          'user',
+          'posts',
+          'posts.user',
+          'posts.likedUsers',
+          'posts.images',
+          'firstPost',
+          'firstPost.likedUsers',
+          'firstPost.images',
+          'firstPost.attachments',
+          'rewardedUsers',
+          'category',
+          'threadVideo',
+          'paidUsers',
+          'user.groups.permissionWithoutCategories',
+        ],
+      };
+      const threadAction = status.run(() =>
+        this.$store.dispatch('jv/get', [`threads/${this.themid}`, { params }]),
+      );
+      threadAction.then(() => {
+        this.sun = 'none';
+        this.videoShow = true;
+        this.autoplay = true;
+        setTimeout(() => {
+          console.log('视频开始播放');
+          const videoContext = wx.createVideoContext('myVideo');
+          videoContext.play();
+        }, 200);
+      });
+    },
+
+    btnFun() {
+      this.serBtn();
     },
   },
 };
@@ -643,6 +730,9 @@ export default {
         border-radius: 5rpx;
         box-sizing: border-box;
       }
+      &-item-wrap {
+        width: 100%;
+      }
       .icon-attachment {
         margin-right: 10rpx;
       }
@@ -732,5 +822,10 @@ export default {
 }
 .theme__content__videocover {
   position: relative;
+}
+.cont-box {
+  width: 600rpx;
+  height: 400rpx;
+  background: brown;
 }
 </style>

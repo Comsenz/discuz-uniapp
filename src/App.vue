@@ -45,7 +45,6 @@ export default {
         {
           params: {
             include: 'users',
-            'filter[tag]': 'agreement',
           },
         },
       ]);

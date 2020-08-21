@@ -30,48 +30,6 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked {
 checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
   color: --color(--qui-FC-FFF);
 }
-
-//日历控件修改
-page {
-  .uni-picker-container .uni-picker-header {
-    position: absolute;
-    bottom: 0;
-    z-index: 100;
-    height: 100rpx;
-    background: --color(--qui-BG-2);
-  }
-  .uni-picker-container .uni-picker-action {
-    width: 50%;
-    line-height: 100rpx;
-    text-align: center;
-  }
-  .uni-picker-action-cancel {
-    color: #aaa;
-    border-right: 2rpx solid --color(--qui-BG-ED);
-  }
-  .uni-picker-container .uni-picker-action.uni-picker-action-confirm {
-    color: --color(--qui-FC-333);
-  }
-  .uni-picker-container .uni-picker-item,
-  .uni-picker-container .uni-picker-view-indicator {
-    height: 100rpx;
-    font-size: 32rpx;
-    line-height: 100rpx;
-  }
-  .uni-picker-container .uni-picker-item {
-    background: --color(--qui-BG-BTN-GRAY-1);
-  }
-  .uni-picker-container .uni-picker-content {
-    height: 300rpx;
-  }
-  .uni-picker-container .uni-picker {
-    padding-bottom: 110rpx;
-    background-color: --color(--qui-BG-BTN-GRAY-1);
-  }
-  .uni-mask {
-    background: rgba(0, 0, 0, 0.4);
-  }
-}
 // video修改
 // .uni-video-cover-duration{
 //   display: none;

@@ -13,6 +13,7 @@ module.exports = {
       const url = this.getUrl();
       const forums = this.$store.getters['jv/get']('forums/1');
       if (forums.passport && !forums.passport.offiaccount_close) {
+        // console.log(forums.passport.offiaccount_close,'forums.passport.offiaccount_close');
         return;
       }
       this.$store

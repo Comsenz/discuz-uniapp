@@ -11,9 +11,6 @@
       :post-num="forums.other && forums.other.count_threads"
       :share-btn="shareBtn"
       :share-show="shareShow"
-      :is-show-more="false"
-      :is-show-back="false"
-      :is-show-home="false"
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
       @closeShare="closeShare"
@@ -71,8 +68,11 @@
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
-        <text class="site-invite__detail__bold">
-          {{ inviteData.user && inviteData.user.username }}
+        <text class="site-invite__detail__bold" v-if="type === 'normal'">
+          {{ inviteData.username || '' }}
+        </text>
+        <text class="site-invite__detail__bold" v-else>
+          {{ inviteData.user ? inviteData.user.username : '' }}
         </text>
         <text>{{ i18n.t('site.inviteyouas') }}</text>
         <text class="site-invite__detail__bold">
@@ -113,7 +113,6 @@ import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
-import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
@@ -134,10 +133,12 @@ export default {
       isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
       codeTips: '',
+      type: '', // 管理员邀请还是普通邀请
     };
   },
   onLoad(params) {
     this.code = params.code;
+    this.type = params.type || '';
     this.getInviteInfo(params.code);
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
@@ -219,6 +220,10 @@ export default {
       this.$refs.auth.close();
     },
     check() {
+      if (this.type && this.type === 'normal') {
+        this.submit();
+        return;
+      }
       // 处理邀请码状态 status 0 失效  1 未使用  2 已使用 3 已过期
       const statusVal =
         this.inviteData.status || this.inviteData.status === 0 ? this.inviteData.status : 'error';
@@ -255,6 +260,7 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
         .then(res => {
+          console.log(res);
           this.inviteData = res;
           this.permission = res.group.permission;
         });
@@ -273,7 +279,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.handleLogin(getCurUrl(), this.code);
+        this.handleLogin('/pages/home/index', this.code);
         // #endif
       } else {
         // 已经登陆的情况

@@ -5,7 +5,6 @@
       (forums.agreement && forums.agreement.register) ||
         (forums.agreement && forums.agreement.privacy)
     "
-    :style="'top:' + top + 'px'"
   >
     <view class="registration-agreement__content">
       <text>{{ i18n.t('user.agreement') }}</text>
@@ -42,12 +41,10 @@
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import uniPopupPullscreen from '@/components/uni-popup/uni-popup-pullscreen';
 
 export default {
   components: { uniPopupPullscreen },
-  mixins: [forums],
   props: {
     tips: {
       type: String,
@@ -58,15 +55,17 @@ export default {
     return {
       popTitle: '',
       popDetail: '',
-      top: 0,
+      forums: '',
     };
   },
   mounted() {
-    const height = window.innerHeight - 50;
-    this.top = height;
+    this.getAttachMent();
   },
   methods: {
     open(type) {
+      // #ifdef MP-WEIXIN
+      uni.hideTabBar();
+      // #endif
       this.$refs.popupMessage.open();
       if (type === 'register') {
         this.popTitle = this.i18n.t('user.agreementRegister');
@@ -79,6 +78,16 @@ export default {
     cancel() {
       this.$refs.popupMessage.close();
     },
+    getAttachMent() {
+      // 用户组等改变会改变私信权限
+      const params = {
+        include: 'users',
+        'filter[tag]': 'agreement',
+      };
+      this.$store.dispatch('jv/get', [`forum`, { params }]).then(res => {
+        this.forums = res;
+      });
+    },
   },
 };
 </script>
@@ -88,7 +97,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .registration-agreement {
-  position: absolute;
+  // position: absolute;
   // bottom: 40px;
   width: 100%;
   padding: 0 27px;
@@ -110,6 +119,7 @@ export default {
 }
 .popup-message {
   text-align: center;
+  background: --color(--qui-BG-2);
   &__btn {
     height: 100rpx;
     font-size: $fg-f28;

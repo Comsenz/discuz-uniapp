@@ -7,7 +7,13 @@
       background: bgColor,
     }"
   >
-    <scroll-view scroll-x class="u-scroll-view" :scroll-left="scrollLeft" scroll-with-animation>
+    <scroll-view
+      scroll-x
+      class="u-scroll-view"
+      :scroll-left="scrollLeft"
+      @scroll="scroll"
+      scroll-with-animation
+    >
       <view class="u-scroll-box" :class="{ 'u-tabs-scorll-flex': !isScroll }">
         <view
           class="u-tab-item"
@@ -146,6 +152,7 @@ export default {
       id: this.$u.guid(), // id值
       currentIndex: this.current,
       barWidth: 30,
+      oldScrollLeft: 0,
     };
   },
   computed: {
@@ -195,12 +202,15 @@ export default {
     list: {
       handler(newVal){
         // 用$nextTick等待视图更新完毕后再计算tab的局部信息，否则可能因为tab还没生成就获取，就会有问题
+        // console.log(newVal, 'newValnewValnewValnewVal');
         this.$nextTick(() => {
           // this.clickTab({
           //   index: this.currentIndex,
           //   id: newVal[this.currentIndex]._jv.id
           // })
           const timer = setTimeout(()=>{
+            this.scrollLeft = 0;
+            this.scrollLeft = this.oldScrollLeft;
             this.init();
           },200)
         });
@@ -216,6 +226,7 @@ export default {
     current: {
       immediate: true,
       handler(nVal) {
+        // console.log(nVal, nVal);
         // 视图更新后再执行移动操作
         this.$nextTick(() => {
           this.currentIndex = nVal;
@@ -228,6 +239,10 @@ export default {
     this.init();
   },
   methods: {
+    scroll(event) {
+      // console.log(event);
+      this.oldScrollLeft = event.detail.scrollLeft;
+    },
     // 设置一个init方法，方便多处调用
     async init() {
       // 获取tabs组件的尺寸信息
@@ -275,7 +290,8 @@ export default {
       const offsetLeft = tabInfo.left - this.parentLeft;
       // 将活动的tabs-item移动到屏幕正中间，实际上是对scroll-view的移动
       const scrollLeft = offsetLeft - (this.componentWidth - tabWidth) / 2;
-      this.scrollLeft = scrollLeft < 0 ? 0 : scrollLeft;
+      // this.scrollLeft = scrollLeft < 0 ? 0 : scrollLeft - this.tabQueryInfo[0].left;
+      this.scrollLeft = scrollLeft - this.tabQueryInfo[0].left;
       // 当前活动item的中点点到左边的距离减去滑块宽度的一半，即可得到滑块所需的移动距离
       const left = tabInfo.left + tabInfo.width / 2 - this.parentLeft;
       // 计算当前活跃item到组件左边的距离

@@ -22,6 +22,8 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
+              ref="sun"
+              :themid="threadId"
               :topic-status="thread.isApproved"
               :follow-show="thread.user.follow != null"
               :pay-status="thread.price > 0 && thread.paid"
@@ -47,6 +49,7 @@
               :thread-price="thread.price"
               :thread-is-essence="thread.isEssence"
               :media-url="thread.type == 2 ? thread.threadVideo.media_url : ''"
+              :duration="thread.type == 2 ? thread.threadVideo.duration : ''"
               :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
               :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
               :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
@@ -236,7 +239,7 @@
       <view
         class="det-ft"
         :style="{
-          paddingBottom: detectionModel() ? '100rpx' : 0,
+          paddingBottom: detectionModel() ? '20rpx' : 0,
         }"
         v-if="footerShow"
       >
@@ -750,6 +753,10 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(option.id);
+    this.threadId = option.id;
+    this.loadThread();
+    this.loadThreadPosts();
     this.curUrl = getCurUrl();
     this.rewardStatus = false;
     this.paidStatus = false;
@@ -808,9 +815,6 @@ export default {
         }
       });
     });
-    this.threadId = option.id;
-    this.loadThread();
-    this.loadThreadPosts();
 
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -932,7 +936,7 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
 
       threadAction
-        .then(data => {
+        .then(data => {     
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1725,7 +1729,29 @@ export default {
         // #endif
       }
       this.payStatus = false;
-      this.payShowStatus = true;
+      if (!this.forums.paycenter.wxpay_close) {
+        this.payShowStatus = false;
+        return;
+      } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
+        // #ifndef H5
+        if (this.system === 'ios') {
+          if (this.paymentmodel === false) {
+            this.payShowStatus = false;
+            return;
+          } else {
+            this.payShowStatus = true;
+          }
+        } else {
+          this.payShowStatus = true;
+        }
+        // #endif
+        // #ifdef H5
+        this.payShowStatus = true;
+        // #endif
+      } else {
+        this.payShowStatus = false;
+        return;
+      }
       this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏
       if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
@@ -2572,7 +2598,7 @@ page {
 }
 .ft-gap {
   width: 100%;
-  margin-bottom: 80rpx;
+  padding-bottom: 100rpx;
 }
 .det-ft {
   position: fixed;
