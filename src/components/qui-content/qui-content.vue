@@ -99,7 +99,7 @@
             :page-gesture="false"
             :show-fullscreen-btn="true"
             :show-play-btn="true"
-            :autoplay="false"
+            :autoplay="autoplay"
             auto-pause-if-open-native
             auto-pause-if-navigate
             :enable-play-gesture="false"
@@ -417,7 +417,9 @@ export default {
       currentTop: 0,
       currentBottom: 0,
       videoShow: false,
+      autoplay: false,
       sun: 1,
+      sunc: ' sunc',
     };
   },
 
@@ -539,9 +541,10 @@ export default {
     btn() {
       this.sun = 'none';
       this.videoShow = true;
+      this.autoplay = true;
       setTimeout(() => {
-        console.log('视频开始播放');
-        const videoContext = wx.createVideoContext(`myVideo${this.currentindex}`);
+        console.log('视频开始播放', `myVideo${this.currentindex}`);
+        const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
         videoContext.play();
       }, 200);
     },

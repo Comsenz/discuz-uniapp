@@ -112,12 +112,7 @@
           >
             {{ i18n.t('user.noBind') }}
           </qui-button>
-          <qui-button
-            size="large"
-            type="warn"
-            @click="logout"
-            v-if="!isWeixin && register_type !== 2"
-          >
+          <qui-button size="large" type="warn" @click="logout" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
           </qui-button>
           <!-- #endif -->

@@ -134,12 +134,12 @@ export default {
         this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
-        uni.navigateTo({
+        uni.redirectTo({
           url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.navigateTo({
+        uni.redirectTo({
           url: '/pages/site/info',
         });
       }
