@@ -26,6 +26,7 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [forums, user],
@@ -38,6 +39,29 @@ export default {
     t() {
       return this.i18n.t('auth');
     },
+  },
+  mounted() {
+    this.$u.event.$on('logind', () => {
+      if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+        uni.redirectTo({
+          url: '/pages/home/index',
+        });
+      }
+      if (
+        this.forum &&
+        this.forum.set_site &&
+        this.forum.set_site.site_mode === SITE_PAY &&
+        this.user &&
+        !this.user.paid
+      ) {
+        uni.redirectTo({
+          url: '/pages/site/info',
+        });
+      }
+    });
+  },
+  destroyed() {
+    this.$u.event.$off('logind');
   },
   methods: {
     handleGetUserInfo(res) {
