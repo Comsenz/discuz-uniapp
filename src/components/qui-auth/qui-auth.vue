@@ -95,10 +95,19 @@ export default {
                       },
                     },
                   };
-                  if (this.isSuccess) {
-                    this.noSenseLogin(params);
+                  if (
+                    this.forums &&
+                    this.forums.set_reg &&
+                    this.forums.set_reg.register_type !== 2
+                  ) {
+                    if (this.isSuccess) {
+                      this.noSenseLogin(params);
+                    } else {
+                      this.loginMode(params);
+                    }
                   } else {
-                    this.loginMode(params);
+                    // 无感模式
+                    this.noSenseLogin(params, 1);
                   }
                 },
                 fail: error => {
@@ -133,6 +142,10 @@ export default {
             if (res.data.data && res.data.data.id) {
               this.isSuccess = true;
               this.logind();
+              uni.showToast({
+                title: this.i18n.t('user.loginSuccess'),
+                duration: 2000,
+              });
             }
             if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
               this.isSuccess = false;

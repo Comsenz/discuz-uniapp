@@ -161,7 +161,7 @@ export default {
       isWeixin: false, // 默认不是微信浏览器
       // #endif
       offiaccount_close: false, // 默认不开启微信公众号
-      register_type: 0, // 注册模式
+      register_type: 2, // 默认注册模式为无感模式
       site_mode: '', // 站点模式
     };
   },
