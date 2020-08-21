@@ -132,15 +132,16 @@
 </template>
 
 <script>
-import { THEME_DEFAULT, THEME_DARK } from '@/common/const';
+import { THEME_DEFAULT, THEME_DARK, SITE_PAY } from '@/common/const';
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [forums, appCommonH],
+  mixins: [forums, user, appCommonH],
   data() {
     return {
       items: [
@@ -213,7 +214,14 @@ export default {
         // #ifdef MP-WEIXIN
         this.$store.dispatch('session/logout').then(() => {
           uni.clearStorage();
-          this.setFooterIndex(parseInt(0, 10));
+          if (this.site_mode !== SITE_PAY) {
+            this.setFooterIndex(parseInt(0, 10));
+          }
+          if (this.site_mode === SITE_PAY && this.user && !this.user.isPaid) {
+            uni.redirectTo({
+              url: '/pages/site/info',
+            });
+          }
         });
         // #endif
         // #ifdef H5
