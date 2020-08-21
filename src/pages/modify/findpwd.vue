@@ -161,7 +161,7 @@ export default {
     // 发送短信接口
     sendsms() {
       console.log('9999');
-      if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.newphon)) {
+      if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.newphon) || this.disphon) {
         if (this.forums.qcloud.qcloud_captcha) {
           if (!this.ticket || !this.randstr) {
             console.log('腾讯云验证已经开启');
