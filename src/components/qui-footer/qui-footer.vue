@@ -222,7 +222,6 @@ export default {
         this.sureTip = this.i18n.t('home.needPhone');
         this.$refs.surePopup.open();
         this.sureType = '1';
-
         return;
       }
 
