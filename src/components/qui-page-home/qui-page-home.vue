@@ -753,20 +753,9 @@ export default {
       this.$store.dispatch('jv/get', ['categories', {}]).then(data => {
         const resData = [...data] || [];
         this.categories = [
-          {
-            _jv: {
-              id: 0,
-            },
-            name: this.i18n.t('home.all'),
-          },
           ...resData,
         ];
         const categoryFilterList = [
-          {
-            label: this.i18n.t('home.all'),
-            value: 0,
-            selected: true,
-          },
         ];
         resData.forEach(item => {
           categoryFilterList.push({
