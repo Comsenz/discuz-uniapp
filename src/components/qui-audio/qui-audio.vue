@@ -30,6 +30,10 @@ export default {
       type: String,
       default: '',
     },
+    id: {
+      type: String,
+      default: '',
+    },
     // 是否自动播放
     autoplay: {
       type: Boolean,
@@ -83,12 +87,10 @@ export default {
       // 音频进入可以播放状态
       this.audio.onCanplay(() => {
         this.paused = false;
-        this.loading = false;
       });
       // 音频播放事件
       this.audio.onPlay(() => {
         this.paused = false;
-        this.loading = false;
       });
       // 音频暂停事件
       this.audio.onPause(() => {
@@ -108,9 +110,15 @@ export default {
     // 播放/暂停操作
     operation() {
       if (!this.audio) this.initAudio();
-      if (this.audio.paused) {
+      if (this.paused) {
         this.audio.play();
+        this.$emit('audioPlay', this.id);
       } else {
+        this.audio.pause();
+      }
+    },
+    audioPause() {
+      if (!this.paused) {
         this.audio.pause();
       }
     },

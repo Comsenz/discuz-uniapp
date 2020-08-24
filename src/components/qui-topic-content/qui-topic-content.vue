@@ -200,10 +200,16 @@
           :key="index"
         >
           <view
-            v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1"
+            v-if="['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1"
             class="themeItem__content__attachment-item-wrap"
           >
-            <qui-audio :src="item.url" :name="item.fileName" :key="item.id"></qui-audio>
+            <qui-audio
+              :src="item.url"
+              :name="item.fileName"
+              :id="item._jv.id"
+              :ref="'audio' + item._jv.id"
+              @audioPlay="audioPlay"
+            ></qui-audio>
           </view>
           <view @tap="download(item)" v-else>
             <qui-icon
@@ -408,9 +414,9 @@ export default {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
-      attachMentList: [],
       // topicStatus: '',
       videoShow: false,
+      attachMentList: [],
       autoplay: false,
       look: true,
       sun: 1,
@@ -506,6 +512,16 @@ export default {
       //   message: this.i18n.t('profile.filedownloadtipswx'),
       // });
       // #endif
+    },
+    // 只能播放一个音频
+    audioPlay(id) {
+      const { attachMentList } = this;
+      const that = this;
+      attachMentList.forEach(item => {
+        if (id !== item._jv.id && ['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1) {
+          that.$refs[`audio${item._jv.id}`][0].audioPause();
+        }
+      });
     },
     previewPicture() {
       this.$emit('previewPicture');
