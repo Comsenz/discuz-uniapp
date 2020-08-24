@@ -2,6 +2,7 @@
 @import './variable/global.scss';
 @import './variable/color.scss'; // 里面包含主题样式
 @import '@/styles/base/theme/fn.scss';
+/* stylelint-disable */
 
 page,
 body {
@@ -443,4 +444,7 @@ img {
 .wxParse .audio,
 .wxParse .uni-audio-default {
   display: block;
+}
+.qui-audio  uni-slider {
+  margin: 5px 18px;
 }
