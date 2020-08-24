@@ -771,4 +771,14 @@ export default {
     otherLoginMode: '其他登录方式',
     otherRegisterMode: '其他注册方式',
   },
+  // 举报
+  report: {
+    reportTitle: '举报',
+    pleaseClickReasons: '请点击举报理由',
+    otherReason: '其他理由...',
+    confirm: '确认',
+    cancel: '取消',
+    enterOtherReason: '请输入其他理由',
+    reportSucceed: '举报成功',
+  },
 };

@@ -53,6 +53,13 @@
               size="28"
               style="padding-left: 8rpx;"
             ></qui-icon> -->
+            <qui-icon
+              name="icon-fufei"
+              color="#aaaaaa"
+              size="30"
+              style="padding-left: 10rpx;"
+              v-if="themPayBtn"
+            ></qui-icon>
             <navigator class="navPost">
               {{ themeContent }}
             </navigator>
@@ -399,6 +406,11 @@ export default {
     duration: {
       type: String,
       default: '',
+    },
+    // 内容是否付费
+    themPayBtn: {
+      type: Boolean,
+      default: false,
     },
   },
 

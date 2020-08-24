@@ -17,26 +17,15 @@
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
-
-      <view class="themeItem__header__opera" v-if="managementShow">
-        <view class="det-hd-operaCli">
-          <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>{{ t.management }}</view>
-          </view>
-          <view>
-            <qui-drop-down
-              posival="absolute"
-              :show="seleShow"
-              :list="selectList"
-              :top="60"
-              :right="0"
-              :width="180"
-              @click="selectChoice"
-            ></qui-drop-down>
-          </view>
-        </view>
+      <view class="themeItem__header__opera">
+        <image
+          v-if="threadPrice > 0"
+          src="@/static/payment.png"
+          class="essence"
+          :class="threadIsEssence ? 'marginLf' : ''"
+        ></image>
         <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+        <slot name="more"></slot>
       </view>
     </view>
   </view>
@@ -78,25 +67,15 @@
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
       <slot name="follow"></slot>
-      <view class="themeItem__header__opera" v-if="managementShow">
-        <view class="det-hd-operaCli">
-          <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>{{ t.management }}</view>
-          </view>
-          <view>
-            <qui-drop-down
-              posival="absolute"
-              :show="seleShow"
-              :list="selectList"
-              :top="60"
-              :right="0"
-              :width="180"
-              @click="selectChoice"
-            ></qui-drop-down>
-          </view>
-        </view>
+      <view class="themeItem__header__opera">
+        <image
+          v-if="threadPrice > 0"
+          src="@/static/payment.png"
+          class="essence"
+          :class="threadIsEssence ? 'marginLf' : ''"
+        ></image>
         <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+        <slot name="more"></slot>
       </view>
     </view>
 
@@ -642,10 +621,15 @@ export default {
       text-align: right;
       flex-shrink: 0;
 
+      .marginLf {
+        margin-right: 6rpx;
+      }
+
       .essence {
         display: inline-block;
         width: 35rpx;
         height: 45rpx;
+        margin-bottom: 10rpx;
         vertical-align: top;
       }
     }

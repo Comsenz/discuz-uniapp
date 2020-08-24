@@ -62,7 +62,8 @@
               @previewPicture="payClickShow"
               @tagClick="tagClick"
             >
-              <view slot="follow" :key="followStatus" v-if="thread.user.follow != null">
+              <!-- 关注 -->
+              <!-- <view slot="follow" :key="followStatus" v-if="thread.user.follow != null">
                 <view
                   class="themeItem__header__follow"
                   @tap="
@@ -89,6 +90,16 @@
                         : i18n.t('profile.mutualfollow')
                     }}
                   </text>
+                </view>
+              </view> -->
+              <!-- 更多操作 -->
+              <view slot="more" @click="moreClick">
+                <view class="det-ft-operaCli">
+                  <view class="det-ft-more">
+                    <qui-icon name="icon-gengduo" class="icon-gengduo" style="font-size: 40rpx;">
+                      >
+                    </qui-icon>
+                  </view>
                 </view>
               </view>
             </qui-topic-content>
@@ -365,7 +376,97 @@
           </view>
         </view>
       </uni-popup>
-
+      <!--更多操作弹框-->
+      <uni-popup ref="morePopup" type="bottom">
+        <view class="popup-share">
+          <view
+            class="popup-share-content"
+            :class="moreData.length > 4 ? 'popup-share-content-inner' : ''"
+            v-if="
+              moreData[0].canOpera ||
+                moreData[1].canOpera ||
+                moreData[2].canOpera ||
+                moreData[3].canOpera
+            "
+          >
+            <view
+              v-for="(item, index) in moreData"
+              :key="index"
+              class="popup-share-content-box"
+              @click="moreContent(item)"
+            >
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content" v-else>
+            <view class="popup-share-content-box" @click="reportClick">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    name="icon-jubao"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ r.reportTitle }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="moreCancel">{{ c.cancel }}</text>
+        </view>
+      </uni-popup>
+      <!--举报弹框-->
+      <uni-popup ref="reportPopup" type="bottom">
+        <view class="popup-report">
+          <view class="popup-report__title">
+            <view class="popup-report__title-headline">{{ r.reportTitle }}</view>
+            <view class="popup-report__title-subhead">{{ r.pleaseClickReasons }}</view>
+          </view>
+          <view class="popup-report__content">
+            <radio-group @change="reportRadioChange">
+              <label
+                class="popup-report__content-cell"
+                v-for="item in reportData"
+                :key="item.value"
+              >
+                <view>{{ item.name }}</view>
+                <view>
+                  <radio :value="item.value" :checked="item.value === currentReport" />
+                </view>
+              </label>
+            </radio-group>
+            <view class="popup-report__content-textarea" v-if="currentReport === 'other'">
+              <textarea
+                placeholder-class="textarea-placeholder"
+                :placeholder="r.otherReason"
+                :maxlength="450"
+                :value="otherReasonValue"
+                @input="reportTextareaInput"
+              />
+            </view>
+          </view>
+          <view class="popup-report__btn">
+            <button class="popup-report__btn-confirm" @click="reportConfirmClick(1)">
+              {{ r.confirm }}
+            </button>
+            <view class="popup-report__btn-cancel" @click="reportCancelClick">
+              {{ r.cancel }}
+            </view>
+          </view>
+        </view>
+      </uni-popup>
       <!--支付组件-->
       <view v-if="payShowStatus">
         <qui-pay
@@ -708,6 +809,57 @@ export default {
       beRewarded: false,
       curUrl: '', // 当前页面的路由
       bottom: '',
+      moreData: [ // 更多操作
+        {
+          text: this.i18n.t('topic.edit'),
+          icon: 'icon-bianji',
+          name: 'edit',
+          type: '0'
+        },
+        {
+          text: this.i18n.t('topic.essence'),
+          icon: 'icon-jinghua',
+          name: 'essence',
+          type: '2'
+        },
+        {
+          text: this.i18n.t('topic.sticky'),
+          icon: 'icon-zhiding',
+          name: 'sticky',
+          type: '3'
+        },
+        {
+          text: this.i18n.t('topic.delete'),
+          icon: 'icon-shanchu',
+          name: 'delete',
+          type: '4'
+        },
+        {
+          text: this.i18n.t('report.reportTitle'),
+          icon: 'icon-jubao',
+          name: 'report',
+          type: '5'
+        },
+      ],
+      reportData: [{ // 举报理由
+        value: 'advertisingRubbish',
+        name: '广告垃圾'
+      },
+      {
+        value: 'illegalContent',
+        name: '违规内容'
+      },{
+        value: 'maliciousIrrigation',
+        name: '恶意灌水'
+      },{
+        value: 'repeatPost',
+        name: '重复发帖'
+      },{
+        value: 'other',
+        name: '其他'
+      }],
+      currentReport: '', // 当前举报理由
+      otherReasonValue: '', // 其他理由
     };
   },
   onReady() {},
@@ -741,6 +893,10 @@ export default {
     c() {
       return this.i18n.t('core');
     },
+    // report举报语言包
+    r() {
+      return this.i18n.t('report');
+    },
     status() {
       return status.status;
     },
@@ -753,7 +909,6 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option.id);
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -936,7 +1091,7 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
 
       threadAction
-        .then(data => {     
+        .then(data => {
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1034,6 +1189,24 @@ export default {
             // 如果初始化状态为true
 
             this.selectList[2].text = this.t.cancelSticky;
+          }
+          //追加更多操作权限字段
+          this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          this.moreData[1].canOpera = this.thread.canEssence;
+          this.moreData[2].canOpera = this.thread.canSticky;
+          this.moreData[3].canOpera = this.thread.canHide;
+          this.moreData[1].isStatus = this.thread.isEssence;
+          this.moreData[2].isStatus = this.thread.isSticky;
+          this.moreData[3].isStatus = false;
+          if (data.isEssence) {
+            // 如果初始化状态为true
+            this.moreData[1].text = this.t.cancelEssence;
+            this.moreData[1].icon = "icon-quxiaojinghua";
+          }
+          if (data.isSticky) {
+            // 如果初始化状态为true
+            this.moreData[2].text = this.t.cancelSticky;
+            this.moreData[2].icon = "icon-quxiaozhiding";
           }
           this.isLiked = data.firstPost.isLiked;
           if (!this.forums.paycenter.wxpay_close) {
@@ -1250,19 +1423,28 @@ export default {
           } else if (type === '2') {
             // 这是精华操作
             this.selectList[1].isStatus = data.isEssence;
+            this.moreData[1].isStatus = data.isEssence;
             if (data.isEssence) {
               this.selectList[1].text = this.t.cancelEssence;
+              this.moreData[1].text = this.t.cancelEssence;
+              this.moreData[1].icon = "icon-quxiaojinghua";
             } else {
               this.selectList[1].text = this.t.essence;
+              this.moreData[1].text = this.t.essence;
+              this.moreData[1].icon = "icon-jinghua";
             }
           } else if (type === '3') {
             this.selectList[2].isStatus = data.isSticky;
+            this.moreData[2].isStatus = data.isSticky;
             if (data.isSticky) {
               this.selectList[2].text = this.t.cancelSticky;
+              this.moreData[2].icon = "icon-quxiaozhiding";
+              this.moreData[2].text = this.t.cancelSticky;
               // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
               this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
+              this.moreData[2].text = this.t.sticky;
               // 详情页取消置顶,将首页置顶数据移除
               this.$u.event.$emit('cancelSticky', data);
             }
@@ -1674,6 +1856,7 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
+      console.log(param);
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -2344,7 +2527,113 @@ export default {
         this.thread.user.follow = 0;
         originUser.follow = 0;
         this.followStatus = 0;
-      });
+      });s
+    },
+    // 更多操作-唤起弹框
+    moreClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        return
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(this.curUrl)) {
+          return;
+        }
+        // #endif
+      }
+      this.$refs.morePopup.open();
+    },
+    // 更多操作内标签选择
+    moreContent(param) {
+      this.moreCancel();
+      if (param.type === '0') {
+        uni.redirectTo({
+          url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
+        });
+      } else if (param.type === '2' || param.type === '3') {
+        this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
+      } else if (param.type === '4') {
+        this.$refs.deletePopup.open();
+        this.deleteType = '4';
+        this.deleteId = this.threadId;
+        this.deletePostCanStatus = param.canOpera;
+        this.deletePostIsStatus = param.status;
+        this.deletePostType = param.type;
+        this.deleteTip = this.i18n.t('core.deleteContentSure');
+      }else if(param.type === '5'){
+        this.reportClick();
+      }
+    },
+    // 关闭更多操作弹框
+    moreCancel() {
+      this.$refs.morePopup.close();
+    },
+    // 举报
+    reportClick() {
+      this.moreCancel();
+      this.otherReasonValue = '';
+      this.currentReport = '';
+      this.$refs.reportPopup.open();
+    },
+    // 切换举报理由
+    reportRadioChange(e) {
+      this.currentReport = e.target.value;
+    },
+    // 监听其他理由输入
+    reportTextareaInput(e) {
+      this.otherReasonValue = e.detail.value;
+    },
+    // 确认举报
+    reportConfirmClick(type) {
+      if(!this.currentReport){
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('report.pleaseClickReasons'),
+        });
+        return;
+      }
+      let reason = '';
+      if (this.currentReport === 'other') {
+        if(!this.otherReasonValue){
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('report.enterOtherReason'),
+          });
+          return;
+        }
+        reason = this.otherReasonValue;
+      }else{
+        this.reportData.forEach(item => {
+          if (item.value === this.currentReport) {
+            reason = item.name;
+          }
+        })
+      }
+      const params = {
+        _jv: {
+          type: 'reports'
+        },
+        user_id: this.currentLoginId,
+        thread_id: parseInt(this.threadId),
+        type,
+        reason: `${reason}`
+      }
+      this.$store.dispatch('jv/post', params).then(res => {
+    		if(res._jv) {
+    			this.$refs.reportPopup.close();
+    			uni.showToast({
+    			  icon: 'none',
+    			  title: this.i18n.t('report.reportSucceed'),
+    			});
+    		}
+      })
+    },
+    // 取消举报
+    reportCancelClick() {
+      this.otherReasonValue = '';
+      this.currentReport = '';
+      this.$refs.reportPopup.close();
     },
   },
   destroyed() {
@@ -2813,8 +3102,10 @@ page {
     }
   }
 }
-.popup-share-content {
-  box-sizing: border-box;
+
+.popup-share-content-inner{
+  padding-right: 10rpx;
+  padding-left: 10rpx;
 }
 
 // 微信二维码弹框
@@ -2917,7 +3208,103 @@ page {
     font-size: $fg-f26;
   }
 }
+.det-ft-operaCli {
+  position: relative;
+  line-height: 30rpx;
+  .det-ft-more {
+    display: flex;
+    justify-content: flex-end;
+    .icon-gengduo {
+      color: --color(--qui-FC-AAA);
+    }
+  }
+}
 // .scroll-y {
 //   max-height: 100vh;
 // }
+// 举报弹框
+.popup-report {
+  background: --color(--qui-BG-2);
+  border-radius: 10rpx 10rpx 0rpx 0rpx;
+
+  &__title {
+    padding: 40rpx 0rpx;
+    text-align: center;
+
+    &-headline {
+      font-size: $fg-f28;
+      color: --color(--qui-FC-333);
+    }
+
+    &-subhead{
+      margin-top: 20rpx;
+      font-size: $fg-f24;
+      color: --color(--qui-FC-AAA);
+    }
+  }
+
+  &__content {
+    padding-left: 40rpx;
+
+    &-cell {
+      display: flex;
+      padding-right: 40rpx;
+      line-height: 100rpx;
+      border-bottom: 1px solid var(--qui-BOR-ED);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &-cell:last-child {
+      border-bottom: 0;
+    }
+
+    &-textarea{
+      padding-right: 40rpx;
+
+      textarea{
+        width: 100%;
+        height: 180rpx;
+        padding: 20rpx;
+        font-size: $fg-f28;
+        background-color: --color(--qui-BG-1);
+        border: 1px solid var(--qui-BOR-DDD);
+        box-sizing: border-box;
+      }
+    }
+  }
+
+  &__btn {
+    margin-top: 30rpx;
+    background: --color(--qui-BG-ED);
+
+    &-confirm {
+      width: 100%;
+      height: 100rpx;
+      margin-bottom: 10rpx;
+      font-size: $fg-f28;
+      font-weight: normal;
+      line-height: 100rpx;
+      color: --color(--qui-FC-FFF);
+      text-align: center;
+      background: --color(--qui-MAIN);
+      border-radius: 0;
+    }
+
+    &-cancel {
+      width: 100%;
+      height: 100rpx;
+      font-size: $fg-f28;
+      font-weight: normal;
+      line-height: 100rpx;
+      text-align: center;
+      background: --color(--qui-FC-FFF);
+    }
+  }
+
+  .textarea-placeholder{
+    font-size: $fg-f28;
+    color: --color(--qui-FC-B5);
+  }
+}
 </style>
