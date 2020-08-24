@@ -69,22 +69,22 @@
           <image class="themeItem__content__coverimg" :src="coverImage" lazy-load></image>
         </view>
 
-        <!-- 封面图 -->
-        <view
-          class="theme__content__videocover"
-          v-if="threadType === 2 && payStatus"
-          :style="{ display: sun, height: videoWidth > videoHeight ? '' : '860rpx' }"
-        >
-          <image class="theme__mark__open" src="/static/video.svg" @click.stop="btn"></image>
-          <image
-            class="themeItem__content__coverimg"
-            :src="coverImage"
-            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-            mode="aspectFill"
-          ></image>
-        </view>
-
-        <view class="content__video" v-show="videoShow">
+        <view class="theme__content__videocover" v-if="threadType === 2 && payStatus">
+          <!-- 封面图 -->
+          <view
+            class="theme__content__videocover-img"
+            v-if="threadType === 2 && payStatus && sun"
+            :style="{ height: videoWidth > videoHeight ? '' : '860rpx' }"
+          >
+            <image class="theme__mark__open" src="/static/video.svg" @click.stop="btn"></image>
+            <image
+              class="themeItem__content__coverimg"
+              :src="coverImage"
+              :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+              mode="aspectFill"
+            ></image>
+          </view>
+          <!-- 视频 -->
           <video
             :poster="coverImage"
             controls
@@ -418,7 +418,7 @@ export default {
       currentBottom: 0,
       videoShow: false,
       autoplay: false,
-      sun: 1,
+      sun: true,
       sunc: ' sunc',
     };
   },
@@ -454,6 +454,9 @@ export default {
         this.videoContext.pause();
       }
     },
+  },
+  onLoad() {
+    this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
   },
   mounted() {
     this.videoContext = wx.createVideoContext(`myVideo${this.$props.currentindex}`, this);
@@ -539,7 +542,7 @@ export default {
       this.imageStatus = false;
     },
     btn() {
-      this.sun = 'none';
+      this.sun = false;
       this.videoShow = true;
       this.autoplay = true;
       setTimeout(() => {
@@ -792,18 +795,14 @@ export default {
 }
 .theme__content__videocover {
   position: relative;
-  // width: 100%;
+  &-img {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+  }
 }
 /deep/ .uni-video-cover {
   z-index: 0;
-}
-.theme__mark {
-  position: absolute;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.2);
-  opacity: 0;
 }
 .theme__mark__open {
   position: absolute;
@@ -814,5 +813,13 @@ export default {
   height: 80rpx;
   margin-top: -40rpx;
   margin-left: -40rpx;
+}
+.theme__mark {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 0;
 }
 </style>

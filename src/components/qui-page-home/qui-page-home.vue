@@ -900,7 +900,7 @@ $padding-bottom: 160rpx;
 }
 .status-bar {
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   transition: 0.2s;
 }
 .nav {

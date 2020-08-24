@@ -173,8 +173,9 @@ export default {
           }
           this.contentTitle = data.title;
           this.content = data.firstPost.content;
+          const n = this.content.length - this.content.replace(/[\r\n]/g, '').length;
           if (this.content) {
-            const num = Math.ceil(this.content.length / 23);
+            const num = Math.ceil(this.content.length / 23) + n;
             if (num >= 11) {
               this.contentheight = 0;
             } else {
@@ -226,7 +227,7 @@ export default {
       //       }
       //     },
       //   });
-      // }
+      // }  str = str.replace(/↵/g,"<br/>");
       // this.contentTitle = this.themedata.title;
       // this.content = this.themedata.firstPost.content;
       // console.log(this.content);
