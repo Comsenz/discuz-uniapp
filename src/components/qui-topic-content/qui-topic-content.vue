@@ -17,26 +17,15 @@
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
-
-      <view class="themeItem__header__opera" v-if="managementShow">
-        <view class="det-hd-operaCli">
-          <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>{{ t.management }}</view>
-          </view>
-          <view>
-            <qui-drop-down
-              posival="absolute"
-              :show="seleShow"
-              :list="selectList"
-              :top="60"
-              :right="0"
-              :width="180"
-              @click="selectChoice"
-            ></qui-drop-down>
-          </view>
-        </view>
+      <view class="themeItem__header__opera">
+        <image
+          v-if="threadPrice > 0"
+          src="@/static/payment.png"
+          class="essence"
+          :class="threadIsEssence ? 'marginLf' : ''"
+        ></image>
         <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+        <slot name="more"></slot>
       </view>
     </view>
   </view>
@@ -78,25 +67,15 @@
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
       <slot name="follow"></slot>
-      <view class="themeItem__header__opera" v-if="managementShow">
-        <view class="det-hd-operaCli">
-          <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>{{ t.management }}</view>
-          </view>
-          <view>
-            <qui-drop-down
-              posival="absolute"
-              :show="seleShow"
-              :list="selectList"
-              :top="60"
-              :right="0"
-              :width="180"
-              @click="selectChoice"
-            ></qui-drop-down>
-          </view>
-        </view>
+      <view class="themeItem__header__opera">
+        <image
+          v-if="threadPrice > 0"
+          src="@/static/payment.png"
+          class="essence"
+          :class="threadIsEssence ? 'marginLf' : ''"
+        ></image>
         <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+        <slot name="more"></slot>
       </view>
     </view>
 
@@ -125,10 +104,15 @@
           class="theme__content__videocover"
           @click="btnFun"
           v-if="themeType == 2 && videoStatus"
-          :style="{ display: sun }"
+          :style="{ display: sun, height: videoWidth > videoHeight ? '' : '860rpx' }"
         >
           <image class="theme__mark__open" src="/static/video.svg"></image>
-          <image class="themeItem__content__coverimg" :src="coverImage" mode="widthFix"></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            mode="aspectFill"
+          ></image>
         </view>
         <view v-show="videoShow">
           <video
@@ -151,12 +135,15 @@
             :enable-play-gesture="false"
             :vslide-gesture="false"
             :vslide-gesture-in-fullscreen="false"
-            object-fit="cover"
+            object-fit="contain"
             :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             bindfullscreenchange="fullScreen"
             :src="mediaUrl"
-            :style="{ width: '100%', height: blocKwidth + 'rpx' }"
+            :style="{
+              width: '100%',
+              height: videoWidth > videoHeight ? blocKwidth + 'rpx' : '860rpx',
+            }"
           ></video>
         </view>
         <qui-image
@@ -192,19 +179,24 @@
           :key="index"
         >
           <view
-            v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1"
+            v-if="['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1"
             class="themeItem__content__attachment-item-wrap"
           >
-            <qui-audio :src="item.url" :name="item.fileName"></qui-audio>
+            <qui-audio
+              :src="item.url"
+              :name="item.fileName"
+              :id="item._jv.id"
+              :ref="'audio' + item._jv.id"
+              @audioPlay="audioPlay"
+            ></qui-audio>
           </view>
-          <view v-else @tap="download(item)">
+          <view @tap="download(item)" v-else>
             <qui-icon
               class="icon-attachment"
               :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text>{{ item.format }}</text>
             <text class="attachment-name">{{ item.fileName }}</text>
           </view>
         </view>
@@ -401,9 +393,9 @@ export default {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
-      attachMentList: [],
       // topicStatus: '',
       videoShow: false,
+      attachMentList: [],
       autoplay: false,
       look: true,
       sun: 1,
@@ -499,6 +491,16 @@ export default {
       //   message: this.i18n.t('profile.filedownloadtipswx'),
       // });
       // #endif
+    },
+    // 只能播放一个音频
+    audioPlay(id) {
+      const { attachMentList } = this;
+      const that = this;
+      attachMentList.forEach(item => {
+        if (id !== item._jv.id && ['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1) {
+          that.$refs[`audio${item._jv.id}`][0].audioPause();
+        }
+      });
     },
     previewPicture() {
       this.$emit('previewPicture');
@@ -619,10 +621,15 @@ export default {
       text-align: right;
       flex-shrink: 0;
 
+      .marginLf {
+        margin-right: 6rpx;
+      }
+
       .essence {
         display: inline-block;
         width: 35rpx;
         height: 45rpx;
+        margin-bottom: 10rpx;
         vertical-align: top;
       }
     }

@@ -1,6 +1,6 @@
 <template>
-  <qui-page :data-qui-theme="theme">
-    <view class="login-bind-box">
+  <qui-page :data-qui-theme="theme" class="login-bind-box">
+    <view>
       <view class="login-bind-box-h">{{ i18n.t('user.loginBind') }}</view>
       <view class="login-bind-box-con">
         <input
@@ -22,8 +22,50 @@
       <view class="login-bind-box-btn" @click="login">
         {{ i18n.t('user.loginBindId') }}
       </view>
-      <view class="login-bind-box-register" @click="jump2RegisterBind">
-        {{ i18n.t('user.registerBindId') }}
+      <view class="login-bind-box-ft">
+        <view
+          class="login-bind-box-ft-title"
+          v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+        >
+          {{ i18n.t('user.otherLoginMode') }}
+        </view>
+        <view class="login-bind-box-ft-con">
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            class="login-bind-box-ft-con-image"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+        </view>
+        <view>
+          <!-- 开启注册功能才显示 -->
+          <text
+            class="login-bind-box-ft-btn"
+            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            @click="jump2RegisterBind"
+          >
+            {{ i18n.t('user.registerUser') }}
+          </text>
+          <text
+            class="login-bind-box-ft-line"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms
+            "
+          ></text>
+          <!-- 开启短信功能才显示 -->
+          <text
+            class="login-bind-box-ft-text"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            @click="jump2findPassword"
+          >
+            {{ i18n.t('user.forgetPassword') }}
+          </text>
+        </view>
       </view>
     </view>
     <qui-registration-agreement></qui-registration-agreement>
@@ -31,12 +73,19 @@
 </template>
 
 <script>
-import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums, user],
+  mixins: [
+    user,
+    // #ifdef H5
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       username: '', // 用户名
@@ -44,13 +93,17 @@ export default {
       url: '', // 上一个页面的路径
       code: '', // 注册邀请码
       token: '', // token
-      validate: false, // 开启注册审核
       site_mode: '', // 站点模式
-      isPaid: false, // 是否付费
+      forum: {}, // 配置
+      isPaid: false, // 默认未付费
+      // #ifdef H5
+      isWeixin: false, // 默认不是微信浏览器
+      // #endif
     };
   },
   onLoad(params) {
-    const { url, validate, token, commentId, code } = params;
+    this.getForum();
+    const { url, token, commentId, code } = params;
     if (url) {
       let pageUrl;
       if (url.substr(0, 1) !== '/') {
@@ -64,59 +117,82 @@ export default {
         this.url = pageUrl;
       }
     }
-    if (validate) {
-      this.validate = JSON.parse(validate);
-    }
     if (code !== 'undefined') {
       this.code = code;
     }
     if (token) {
       this.token = token;
     }
-    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
-      this.site_mode = this.forums.set_site.site_mode;
-    }
-    if (this.user && this.user.paid) {
-      this.isPaid = this.user.paid;
-    }
-  },
-  created() {
-    uni.$on('logind', () => {
-      let url = '';
-      if (this.url) {
-        url = this.url;
+
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
+
+    this.$u.event.$on('logind', () => {
+      if (this.user) {
+        this.isPaid = this.user.paid;
+      }
+      if (this.forum && this.forum.set_site) {
+        this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
-        uni.navigateTo({
-          url,
+        uni.redirectTo({
+          url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.navigateTo({
+        uni.redirectTo({
           url: '/pages/site/info',
         });
       }
     });
   },
-  destroyed() {
-    uni.$off('logind');
-  },
   methods: {
+    getForum() {
+      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
+        console.log('forum', res);
+        if (res) {
+          this.forum = res;
+        }
+      });
+    },
     login() {
       if (this.username === '') {
-        this.showDialog(this.i18n.t('user.usernameEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.usernameEmpty'),
+          duration: 2000,
+        });
       } else if (this.password === '') {
-        this.showDialog(this.i18n.t('user.passwordEmpty'));
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.passwordEmpty'),
+          duration: 2000,
+        });
       } else {
         const params = {
           data: {
             attributes: {
               username: this.username,
               password: this.password,
-              token: this.token,
             },
           },
         };
+        // #ifdef MP-WEIXIN
+        const data = this.$store.getters['session/get']('params');
+        if (data && data.data && data.data.attributes) {
+          params.data.attributes.js_code = data.data.attributes.js_code;
+          params.data.attributes.iv = data.data.attributes.iv;
+          params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+        }
+        // #endif
+        // #ifdef H5
+        if (this.token && this.token !== '') {
+          params.data.attributes.token = this.token;
+        }
+        // #endif
+        console.log('params', params);
         this.$store
           .dispatch('session/h5Login', params)
           .then(res => {
@@ -132,16 +208,19 @@ export default {
           });
       }
     },
-    showDialog(title) {
-      uni.showToast({
-        icon: 'none',
-        title,
-        duration: 2000,
+    jump2PhoneLogin() {
+      uni.navigateTo({
+        url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
       });
     },
     jump2RegisterBind() {
       uni.navigateTo({
-        url: `/pages/user/register-bind?url=${this.url}&validate=${this.validate}&token=${this.token}&code=${this.code}`,
+        url: `/pages/user/register-bind?url=${this.url}&token=${this.token}&code=${this.code}`,
+      });
+    },
+    jump2findPassword() {
+      uni.navigateTo({
+        url: `/pages/modify/findpwd?pas=reset_pwd`,
       });
     },
   },
@@ -152,7 +231,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .login-bind-box {
-  height: 100vh;
+  padding-bottom: 40px;
   font-size: $fg-f28;
   background-color: --color(--qui-BG-2);
 
@@ -188,10 +267,37 @@ export default {
     border-radius: 5rpx;
   }
 
-  &-register {
-    margin: 20rpx 0rpx 0rpx 40rpx;
-    font-size: $fg-f28;
-    color: --color(--qui-LINK);
+  &-ft {
+    margin: 160rpx 0 50rpx;
+    text-align: center;
+
+    &-title {
+      color: rgba(221, 221, 221, 1);
+    }
+
+    &-con {
+      margin: 30rpx 0 100rpx;
+
+      &-image {
+        width: 100rpx;
+        height: 100rpx;
+      }
+    }
+
+    &-btn {
+      color: rgba(24, 120, 243, 1);
+    }
+
+    &-text {
+      color: rgba(170, 170, 170, 1);
+    }
+
+    &-line {
+      width: 0rpx;
+      height: 32rpx;
+      margin: 0 50rpx;
+      border: 2rpx solid rgba(221, 221, 221, 1);
+    }
   }
 }
 </style>

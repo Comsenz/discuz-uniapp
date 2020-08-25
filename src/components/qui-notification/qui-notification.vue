@@ -41,12 +41,27 @@
                     <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
                       {{ i18n.t('notice.likedMe') }}
                     </text>
-                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'rewarded'">
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 3"
+                    >
+                      {{ !item.isScale ? i18n.t('notice.payedMe') : i18n.t('notice.scaledpayed') }}
+                    </text>
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 2"
+                    >
                       {{
-                        item.order_type === 3
-                          ? i18n.t('notice.payedMe')
-                          : i18n.t('notice.rewardedMe')
+                        !item.isScale
+                          ? i18n.t('notice.rewardedMe')
+                          : i18n.t('notice.scaledrewarded')
                       }}
+                    </text>
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 1"
+                    >
+                      {{ i18n.t('notice.scaledRegister') }}
                     </text>
                   </view>
                   <view class="list-box__notice__hl-info-time">{{ item.time }}</view>

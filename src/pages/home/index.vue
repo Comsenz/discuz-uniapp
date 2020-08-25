@@ -143,7 +143,7 @@ export default {
     // #ifdef MP-WEIXIN
     if (this.$refs.quiPage) {
       this.$store.dispatch('session/setAuth', this.$refs.quiPage.$refs.auth);
-      this.$refs.quiPage.open();
+      // this.$refs.quiPage.open();
     }
     // #endif
     if (
@@ -295,8 +295,5 @@ export default {
 }
 /deep/ .my-info__box__detail .cell-item__body__content-title {
   font-weight: bold;
-}
-/deep/ .invite-friends {
-  border-top: 2rpx solid --color(--qui-BOR-ED);
 }
 </style>

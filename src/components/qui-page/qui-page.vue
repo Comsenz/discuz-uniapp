@@ -88,6 +88,9 @@ export default {
     // #endif
   },
   mounted() {
+    // #ifdef MP-WEIXIN
+    this.$store.dispatch('session/setAuth', this.$refs.auth);
+    // #endif
     // #ifdef H5
     this.$store.dispatch('session/setAuth', {
       open: () => {
@@ -98,6 +101,17 @@ export default {
           this.forums.passport &&
           this.forums.passport.offiaccount_close
         ) {
+          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+            uni.setStorage({
+              key: 'register',
+              data: 1,
+            });
+          } else {
+            uni.setStorage({
+              key: 'register',
+              data: 0,
+            });
+          }
           this.$store.dispatch('session/wxh5Login');
         } else {
           this.login();

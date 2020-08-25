@@ -47,13 +47,7 @@
     },
     // 登录注册
     {
-      "path": "pages/user/phone-number-login",
-      "style": {
-        "navigationBarTitleText": "手机号码登录"
-      }
-    },
-    {
-      "path": "pages/user/verification-code-login",
+      "path": "pages/user/phone-login",
       "style": {
         "navigationBarTitleText": "手机号码登录"
       }
@@ -82,15 +76,6 @@
         "navigationBarTitleText": "注册"
       }
     },
-    // {
-    //   "path": "pages/user/message",
-    //   "style": {
-    //     "navigationBarBackgroundColor": "#fff",
-    //     "navigationBarTitleText": "信息提示",
-    //     "disableScroll": true
-    //   }
-    // },
-
     {
       "path": "pages/topic/index",
       "style": {
