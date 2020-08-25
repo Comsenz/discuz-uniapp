@@ -65,13 +65,6 @@ export default {
   },
   methods: {
     handleGetUserInfo(res) {
-      if (this.forums && !this.forums.set_reg.register_close) {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('core.register_close'),
-        });
-        return;
-      }
       if (res.detail.errMsg === 'getUserInfo:ok') {
         this.getParams();
       } else {
@@ -147,7 +140,11 @@ export default {
                 duration: 2000,
               });
             }
-            if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
+            if (
+              res.data.errors &&
+              (res.data.errors[0].code === 'no_bind_user' ||
+                res.data.errors[0].code === 'register_close')
+            ) {
               this.isSuccess = false;
               this.getParams();
             }
@@ -175,7 +172,7 @@ export default {
       // #endif
       console.log('params', params);
       if (this.forums && this.forums.passport && this.forums.passport.offiaccount_close) {
-        // 开启微信公众号
+        // 开启小程序
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式 跳转到注册并绑定页
           uni.navigateTo({
@@ -183,7 +180,7 @@ export default {
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
-          // 手机号模式 跳转到手机号+验证码登陆页
+          // 手机号模式 跳转到手机号码登录页
           uni.navigateTo({
             url: `/pages/user/phone-login?url=${url}`,
           });
