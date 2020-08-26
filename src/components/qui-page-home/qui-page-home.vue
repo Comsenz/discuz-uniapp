@@ -112,7 +112,6 @@
         :cover-image="item.threadVideo && item.threadVideo.cover_url"
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
-        :scroll-top="scrollTop"
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
