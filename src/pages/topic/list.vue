@@ -38,8 +38,20 @@
         </view>
         <view style="clear: both;"></view>
         <view class="topic-page-list-item" v-for="(item, i) in topicData" :key="i">
-          <navigator :url="'/pages/topic/content?id=' + item._jv.id">
+          <!-- <navigator :url="'/pages/topic/content?id=' + item._jv.id">
             <view class="topic-page-list-item_title">#{{ item.content }}#</view>
+          </navigator> -->
+          <navigator
+            class="topic-page-list-navigator"
+            :url="'/pages/topic/content?id=' + item._jv.id"
+          >
+            <view class="topic-page-list-item_title">#{{ item.content }}#</view>
+            <view
+              class="topic-page-list-item_recoment"
+              v-if="item.recommended === 0 ? true : false"
+            >
+              <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
+            </view>
           </navigator>
           <view class="topic-page-list-item_details" v-if="item.lastThread.length">
             <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
@@ -97,7 +109,8 @@ export default {
         contentdown: this.i18n.t('topic.noMoreData'),
       },
       keyword: '',
-      sort: '-viewCount',
+      // sort: '-viewCount',
+      sort: 'recommended',
       scrollTop: 0,
     };
   },
@@ -260,6 +273,14 @@ $otherHeight: 292rpx;
     font-weight: 700;
     word-break: break-all;
   }
+  &_recoment {
+    width: 34rpx;
+    height: 34rpx;
+    margin: 4rpx 0 0 20rpx;
+    line-height: 34rpx;
+    color: #fff;
+    text-align: center;
+  }
   &_details {
     margin: 20rpx 0;
     &_text {
@@ -279,6 +300,9 @@ $otherHeight: 292rpx;
   &_other {
     display: flex;
   }
+}
+.topic-page-list-navigator {
+  display: flex;
 }
 .topic-content-item {
   position: relative;
