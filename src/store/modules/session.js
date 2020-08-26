@@ -8,6 +8,7 @@ import {
   SET_ACCESS_TOKEN,
   SET_AUTH,
   SET_PARAMS,
+  SET_CODE,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -53,6 +54,9 @@ const actions = {
   },
   setParams: (context, payload) => {
     context.commit(SET_PARAMS, payload);
+  },
+  setCode: (context, payload) => {
+    context.commit(SET_CODE, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -164,6 +168,16 @@ const actions = {
       resolve();
     });
   },
+  // #ifdef MP-WEIXIN
+  bindPhonenum: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .post('mobile/bind/miniprogram', payload)
+        .then(res => resolve(res))
+        .catch(err => resolve(err));
+    });
+  },
+  // #endif
 };
 
 const mutations = {
@@ -183,6 +197,9 @@ const mutations = {
   },
   [SET_PARAMS](state, payload) {
     state.params = payload;
+  },
+  [SET_CODE](state, payload) {
+    state.code = payload;
   },
   [SET_CATEGORYID](state, payload) {
     state.categoryId = payload;

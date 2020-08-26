@@ -324,6 +324,7 @@ export default {
   },
   auth: {
     userinfo: '微信快捷登录',
+    phone: '获取手机号',
   },
   // 首页
   home: {
