@@ -381,20 +381,20 @@
         <view class="popup-share">
           <view
             class="popup-share-content"
-            :class="moreData.length > 4 ? 'popup-share-content-inner' : ''"
-            v-if="
-              moreData[0].canOpera ||
-                moreData[1].canOpera ||
-                moreData[2].canOpera ||
-                moreData[3].canOpera
-            "
+            :class="moreDataLength > 4 ? 'popup-share-content-inner' : ''"
           >
             <view
               v-for="(item, index) in moreData"
               :key="index"
-              class="popup-share-content-box"
-              @click="moreContent(item)"
+              class="popup-share-content-box popup-more-content-box"
+              @click="moreContent(item, thread)"
+              v-show="item.canOpera"
             >
+              <button
+                class="popup-more-button"
+                open-type="share"
+                v-if="item.name === 'wxFriends'"
+              ></button>
               <view class="popup-share-content-image">
                 <view class="popup-share-box">
                   <qui-icon
@@ -406,21 +406,6 @@
                 </view>
               </view>
               <text class="popup-share-content-text">{{ item.text }}</text>
-            </view>
-          </view>
-          <view class="popup-share-content" v-else>
-            <view class="popup-share-content-box" @click="reportClick">
-              <view class="popup-share-content-image">
-                <view class="popup-share-box">
-                  <qui-icon
-                    class="content-image"
-                    name="icon-jubao"
-                    size="46"
-                    color="#777777"
-                  ></qui-icon>
-                </view>
-              </view>
-              <text class="popup-share-content-text">{{ r.reportTitle }}</text>
             </view>
           </view>
           <view class="popup-share-content-space"></view>
@@ -814,33 +799,67 @@ export default {
           text: this.i18n.t('topic.edit'),
           icon: 'icon-bianji',
           name: 'edit',
-          type: '0'
-        },
-        {
-          text: this.i18n.t('topic.essence'),
-          icon: 'icon-jinghua',
-          name: 'essence',
-          type: '2'
-        },
-        {
-          text: this.i18n.t('topic.sticky'),
-          icon: 'icon-zhiding',
-          name: 'sticky',
-          type: '3'
+          type: '0',
+          canOpera: true
         },
         {
           text: this.i18n.t('topic.delete'),
           icon: 'icon-shanchu',
           name: 'delete',
-          type: '4'
+          type: '4',
+          canOpera: true
+        },
+        {
+          text: this.i18n.t('topic.essence'),
+          icon: 'icon-jinghua',
+          name: 'essence',
+          type: '2',
+          canOpera: true
+        },
+        {
+          text: this.i18n.t('topic.sticky'),
+          icon: 'icon-zhiding',
+          name: 'sticky',
+          type: '3',
+          canOpera: true
+        },
+        {
+          text: this.i18n.t('topic.collection'),
+          icon: 'icon-collection',
+          name: 'collection',
+          type: '5',
+          canOpera: true
+        },
+        {
+          text: this.i18n.t('topic.share'),
+          icon: 'icon-share',
+          name: 'share',
+          type: '6',
+          canOpera: true
+        },
+        {
+          text: this.i18n.t('core.generatePoster'),
+          icon: 'icon-poster',
+          name: 'poster',
+          type: '7',
+          canOpera: true
+        },
+        {
+          text: this.i18n.t('core.wxShare'),
+          icon: 'icon-wx-friends',
+          name: 'wxFriends',
+          type: '8',
+          canOpera: true
         },
         {
           text: this.i18n.t('report.reportTitle'),
           icon: 'icon-jubao',
           name: 'report',
-          type: '5'
+          type: '9',
+          canOpera: true
         },
       ],
+      moreDataLength: 0,
       reportData: [{ // 举报理由
         value: 'advertisingRubbish',
         name: '广告垃圾'
@@ -1171,16 +1190,17 @@ export default {
             logo: this.shareLogo,
           });
           // #endif
-
           // 追加管理菜单权限字段
           this.selectList[0].canOpera = this.thread.firstPost.canEdit;
           this.selectList[1].canOpera = this.thread.canEssence;
           this.selectList[2].canOpera = this.thread.canSticky;
           this.selectList[3].canOpera = this.thread.canHide;
+
           // this.selectList[0].isStatus = true;
           this.selectList[1].isStatus = this.thread.isEssence;
           this.selectList[2].isStatus = this.thread.isSticky;
           this.selectList[3].isStatus = false;
+
           if (data.isEssence) {
             // 如果初始化状态为true
             this.selectList[1].text = this.t.cancelEssence;
@@ -1190,23 +1210,44 @@ export default {
 
             this.selectList[2].text = this.t.cancelSticky;
           }
+          // 修改更多弹框权限
+          // #ifdef MP-WEIXIN
+          this.moreData[5].canOpera = false;
+          this.moreData[6].canOpera = true;
+          this.moreData[7].canOpera = true;
+          // #endif
+
+          // #ifdef H5
+          this.moreData[5].canOpera = true;
+          this.moreData[6].canOpera = false;
+          this.moreData[7].canOpera = false;
+          // #endif
           //追加更多操作权限字段
           this.moreData[0].canOpera = this.thread.firstPost.canEdit;
-          this.moreData[1].canOpera = this.thread.canEssence;
-          this.moreData[2].canOpera = this.thread.canSticky;
-          this.moreData[3].canOpera = this.thread.canHide;
-          this.moreData[1].isStatus = this.thread.isEssence;
-          this.moreData[2].isStatus = this.thread.isSticky;
-          this.moreData[3].isStatus = false;
+          this.moreData[2].canOpera = this.thread.canEssence;
+          this.moreData[3].canOpera = this.thread.canSticky;
+          this.moreData[1].canOpera = this.thread.canHide;
+          this.moreData[2].isStatus = this.thread.isEssence;
+          this.moreData[3].isStatus = this.thread.isSticky;
+          this.moreData[1].isStatus = false;
+          this.moreData.forEach(item => {
+            if(item.canOpera){
+              this.moreDataLength += 1;
+            }
+          })
+          if(data.isFavorite){
+            this.moreData[4].text = this.t.collectionAlready;
+            this.moreData[4].icon = "icon-collectioned";
+          }
           if (data.isEssence) {
             // 如果初始化状态为true
-            this.moreData[1].text = this.t.cancelEssence;
-            this.moreData[1].icon = "icon-quxiaojinghua";
+            this.moreData[2].text = this.t.cancelEssence;
+            this.moreData[2].icon = "icon-quxiaojinghua";
           }
           if (data.isSticky) {
             // 如果初始化状态为true
-            this.moreData[2].text = this.t.cancelSticky;
-            this.moreData[2].icon = "icon-quxiaozhiding";
+            this.moreData[3].text = this.t.cancelSticky;
+            this.moreData[3].icon = "icon-quxiaozhiding";
           }
           this.isLiked = data.firstPost.isLiked;
           if (!this.forums.paycenter.wxpay_close) {
@@ -1420,31 +1461,39 @@ export default {
           if (type === '1') {
             // 收藏
             this.thread.isFavorite = data.isFavorite;
+            if(data.isFavorite){
+              this.moreData[4].text = this.t.collectionAlready;
+              this.moreData[4].icon = "icon-collectioned";
+            }else{
+              this.moreData[4].text = this.t.collection;
+              this.moreData[4].icon = "icon-collection";
+            }
           } else if (type === '2') {
             // 这是精华操作
             this.selectList[1].isStatus = data.isEssence;
-            this.moreData[1].isStatus = data.isEssence;
+            this.moreData[2].isStatus = data.isEssence;
             if (data.isEssence) {
               this.selectList[1].text = this.t.cancelEssence;
-              this.moreData[1].text = this.t.cancelEssence;
-              this.moreData[1].icon = "icon-quxiaojinghua";
+              this.moreData[2].text = this.t.cancelEssence;
+              this.moreData[2].icon = "icon-quxiaojinghua";
             } else {
               this.selectList[1].text = this.t.essence;
-              this.moreData[1].text = this.t.essence;
-              this.moreData[1].icon = "icon-jinghua";
+              this.moreData[2].text = this.t.essence;
+              this.moreData[2].icon = "icon-jinghua";
             }
           } else if (type === '3') {
             this.selectList[2].isStatus = data.isSticky;
-            this.moreData[2].isStatus = data.isSticky;
+            this.moreData[3].isStatus = data.isSticky;
             if (data.isSticky) {
               this.selectList[2].text = this.t.cancelSticky;
-              this.moreData[2].icon = "icon-quxiaozhiding";
-              this.moreData[2].text = this.t.cancelSticky;
+              this.moreData[3].icon = "icon-quxiaozhiding";
+              this.moreData[3].text = this.t.cancelSticky;
               // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
               this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
-              this.moreData[2].text = this.t.sticky;
+              this.moreData[3].icon = "icon-zhiding";
+              this.moreData[3].text = this.t.sticky;
               // 详情页取消置顶,将首页置顶数据移除
               this.$u.event.$emit('cancelSticky', data);
             }
@@ -2545,7 +2594,8 @@ export default {
       this.$refs.morePopup.open();
     },
     // 更多操作内标签选择
-    moreContent(param) {
+    moreContent(param, thread) {
+      console.log(thread);
       this.moreCancel();
       if (param.type === '0') {
         uni.redirectTo({
@@ -2561,9 +2611,20 @@ export default {
         this.deletePostIsStatus = param.status;
         this.deletePostType = param.type;
         this.deleteTip = this.i18n.t('core.deleteContentSure');
-      }else if(param.type === '5'){
+      }
+      if(param.name === 'report'){
         this.reportClick();
       }
+      if(param.name === 'collection'){
+        this.threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1');
+      }
+      if(param.name === 'share'){
+        this.shareClick();
+      }
+      if(param.name === 'poster'){
+        this.shareContent(0);
+      }
+
     },
     // 关闭更多操作弹框
     moreCancel() {
@@ -3103,11 +3164,25 @@ page {
   }
 }
 
-.popup-share-content-inner{
-  padding-right: 10rpx;
-  padding-left: 10rpx;
+.popup-share-content-inner {
+  height: auto;
+  padding-right: 20rpx;
+  padding-left: 20rpx;
+  overflow: hidden;
+  justify-content: flex-start;
 }
-
+.popup-more-content-box {
+  flex: 0 0 20%;
+  margin-bottom: 40rpx;
+}
+.popup-more-button {
+  position: absolute;
+  z-index: 10;
+  width: 120rpx;
+  height: 120rpx;
+  background: --color(--qui-BG-2);
+  opacity: 0;
+}
 // 微信二维码弹框
 
 .code-content {
