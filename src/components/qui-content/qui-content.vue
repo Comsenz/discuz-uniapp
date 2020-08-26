@@ -27,14 +27,6 @@
               {{ themeStatus }}
             </text>
             <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn"></view>
-            <qui-icon
-              class="themeItem__header__title__deleteBtn"
-              :name="themeBtn"
-              size="28"
-              color="#AAA"
-              @click="deleteClick"
-              @tap.stop
-            ></qui-icon>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
           <view class="themeItem__header__title__time">{{ localTime }}</view>
@@ -64,7 +56,16 @@
               {{ themeContent }}
             </navigator>
           </view>
-          <qui-uparse :content="themeContent" v-else></qui-uparse>
+          <view style="display: flex;" v-else>
+            <qui-icon
+              name="icon-fufei"
+              color="#aaaaaa"
+              size="30"
+              style="margin-right: 10rpx;"
+              v-if="themPayBtn"
+            ></qui-icon>
+            <qui-uparse :content="themeContent"></qui-uparse>
+          </view>
         </view>
         <view
           class="theme__content__videocover"

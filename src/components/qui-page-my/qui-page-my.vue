@@ -104,7 +104,12 @@
              微信外：展示退出登录按钮 -->
         <view class="logout">
           <!-- #ifdef MP-WEIXIN -->
-          <qui-button size="large" type="warn" @click="exitAndUnbind" v-if="register_type !== 2">
+          <qui-button
+            size="large"
+            type="warn"
+            @click="exitAndUnbind"
+            v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2"
+          >
             {{ i18n.t('user.noBind') }}
           </qui-button>
           <!-- #endif -->
@@ -113,7 +118,7 @@
             size="large"
             type="warn"
             @click="exitAndUnbind"
-            v-if="isWeixin && register_type !== 2"
+            v-if="isWeixin && forums && forums.set_reg && forums.set_reg.register_type !== 2"
           >
             {{ i18n.t('user.noBind') }}
           </qui-button>
@@ -160,7 +165,6 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
-      offiaccount_close: false, // 默认不开启微信公众号
       register_type: 2, // 默认注册模式为无感模式
       site_mode: '', // 站点模式
     };
@@ -182,13 +186,7 @@ export default {
   },
   created() {
     if (this.forums && this.forums.set_reg) {
-      this.register_type = this.forums.set_reg.register_type;
-    }
-    if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
-    }
-    if (this.forums && this.forums.passport) {
-      this.offiaccount_close = this.forums.passport.offiaccount_close;
     }
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
