@@ -431,7 +431,6 @@ export default {
       videoShow: false,
       autoplay: false,
       sun: true,
-      sunc: ' sunc',
     };
   },
 
