@@ -327,7 +327,24 @@
       <uni-popup ref="morePopup" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
-            <view class="popup-share-content-box" @click="moreContent">
+            <view
+              class="popup-share-content-box"
+              v-if="post.canHide"
+              @click="moreContent(0, post._jv.id, post.canHide)"
+            >
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    name="icon-delete"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ t.delete }}</text>
+            </view>
+            <view class="popup-share-content-box" @click="moreContent(1)">
               <view class="popup-share-content-image">
                 <view class="popup-share-box">
                   <qui-icon
@@ -1170,9 +1187,13 @@ export default {
       this.$refs.morePopup.open();
     },
     // 更多操作内标签选择
-    moreContent() {
-      this.moreCancel();
-      this.reportClick();
+    moreContent(type, id, canHide ) {
+      this.moreCancel(id, canHide);
+      if(type === 0){
+        this.deleteReply();
+      }else{
+        this.reportClick();
+      }
     },
     // 关闭更多操作弹框
     moreCancel() {

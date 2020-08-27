@@ -263,20 +263,20 @@ export default {
           type: 1,
         });
       }
-      if (this.forums.other.can_create_thread_video) {
-        this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
-        });
-      }
       if (this.forums.other.can_create_thread_image) {
         this.bottomData.push({
           text: this.i18n.t('home.picture'),
           icon: 'icon-img',
           name: 'image',
           type: 3,
+        });
+      }
+      if (this.forums.other.can_create_thread_video) {
+        this.bottomData.push({
+          text: this.i18n.t('home.video'),
+          icon: 'icon-video',
+          name: 'video',
+          type: 2,
         });
       }
       this.$refs.popup.open();

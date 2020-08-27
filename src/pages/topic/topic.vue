@@ -20,11 +20,19 @@
       <view class="topic-content-item_heat">{{ i18n.t('topic.newTopic') }}</view>
     </view>
     <view class="topic-content-item" v-for="(item, i) in topics" :key="i" @tap="returnToPost(i)">
-      <view class="topic-content-item_title">#{{ item.content }}#</view>
+      <view class="topic-content-item-box">
+        <view class="topic-content-item_title">#{{ item.content }}#</view>
+        <view class="topic-content-item_recoment" v-if="item.recommended === 0 ? true : false">
+          <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
+        </view>
+      </view>
+      <view class="topic-content-item_heat">{{ item.view_count }}{{ i18n.t('topic.hot') }}</view>
+      <!-- </view> -->
+      <!-- <view class="topic-content-item_title">#{{ item.content }}#</view>
       <view class="topic-content-item_heat">
         {{ item.view_count }}
         <text>{{ i18n.t('topic.hot') }}</text>
-      </view>
+      </view> -->
     </view>
   </qui-page>
 </template>
@@ -63,7 +71,8 @@ export default {
       const params = {
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
-        sort: '-viewCount',
+        // sort: '-viewCount',
+        sort: 'recommended',
       };
       if (this.searchValue) {
         params['filter[content]'] = this.searchValue;
@@ -106,23 +115,44 @@ export default {
 @import '@/styles/base/variable/global.scss';
 $otherHeight: 292rpx;
 .topic-content-item {
-  position: relative;
+  display: flex;
+  // position: relative;
   padding: 35rpx 0;
   margin: 0 40rpx;
+  justify-content: space-between;
   border-bottom: 0.5rpx solid --color(--qui-BOR-ED);
+  &-box {
+    display: flex;
+    max-width: 500rpx;
+  }
   &_title {
-    padding-right: 150rpx;
+    // padding-right: 150rpx;
+    max-width: 420rpx;
     font-size: 30rpx;
     font-weight: 600;
     color: --color(--qui-FC-333);
     word-break: break-all;
   }
-  &_heat {
-    position: absolute;
+  &_recoment {
     top: 35rpx;
-    right: 15rpx;
+    left: 253rpx;
+    width: 34rpx;
+    height: 34rpx;
+    margin: 4rpx 0 0 20rpx;
+    font-size: 22rpx;
+    line-height: 34rpx;
+    color: #fff;
+    text-align: center;
+    // background: rgba(15, 157, 245, 1);
+  }
+  &_heat {
+    // position: absolute;
+    top: 35rpx;
+    left: 15rpx;
+    // right: 15rpx;
     font-size: 24rpx;
     color: --color(--qui-BOR-AAA);
+    white-space: nowrap;
   }
 }
 .qui-topic-page-box {
