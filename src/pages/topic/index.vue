@@ -446,7 +446,7 @@
               <textarea
                 placeholder-class="textarea-placeholder"
                 :placeholder="r.otherReason"
-                :maxlength="450"
+                :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
               />
