@@ -97,6 +97,13 @@
                       </view>
                     </view>
                     <image
+                      v-if="thread.price > 0"
+                      src="@/static/payment.png"
+                      alt
+                      class="addFine"
+                      :class="thread.isEssence ? 'right40' : ''"
+                    ></image>
+                    <image
                       v-if="thread.isEssence"
                       src="@/static/essence.png"
                       alt
@@ -1785,6 +1792,9 @@ page {
   right: 0;
   width: 31rpx;
   height: 41rpx;
+}
+.right40{
+  right: 40rpx;
 }
 .themeItem__header__follow {
   align-self: flex-start;
