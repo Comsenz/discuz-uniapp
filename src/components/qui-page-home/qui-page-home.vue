@@ -114,7 +114,16 @@
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
         :scroll-top="scrollTop"
-        :position="item.location || ''"
+        :position="
+          item.location
+            ? {
+                location: item.location,
+                address: item.address,
+                longitude: item.longitude,
+                latitude: item.latitude,
+              }
+            : {}
+        "
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(

@@ -191,10 +191,13 @@
             {{ item.name }}
           </view>
         </view>
-        <view class="themeItem__content__tags  themeItem__content__tags--position" v-if="position">
-          <view class="themeItem__content__tags__item">
+        <view
+          class="themeItem__content__tags  themeItem__content__tags--position"
+          v-if="position && position.location"
+        >
+          <view class="themeItem__content__tags__item" @tap="topicPosition">
             <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
-            {{ position }}
+            {{ position && position.location }}
           </view>
         </view>
       </view>
@@ -427,8 +430,10 @@ export default {
       default: false,
     },
     position: {
-      type: String,
-      default: '',
+      type: Object,
+      default: () => {
+        return {};
+      },
     },
   },
 
@@ -570,6 +575,13 @@ export default {
     // 头像加载失败,显示默认头像
     imageError() {
       this.imageStatus = false;
+    },
+    // 地理位置
+    topicPosition() {
+      const { position } = this;
+      uni.redirectTo({
+        url: `/pages/topic/position?longitude=${position.longitude}&latitude=${position.latitude}`,
+      });
     },
     btn() {
       this.sun = false;
