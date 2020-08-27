@@ -94,11 +94,15 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !videoStatus && coverImage != null"
           @click="videocoverClick"
-          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+          :style="{ height: videoWidth > videoHeight ? '' : '860rpx' }"
         >
           <view class="theme__mark"></view>
           <image class="theme__mark__open" src="/static/video.svg"></image>
-          <image class="themeItem__content__coverimg" :src="coverImage"></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+          ></image>
         </view>
         <view
           class="theme__content__videocover"
