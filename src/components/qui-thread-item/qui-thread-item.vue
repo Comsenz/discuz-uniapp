@@ -27,7 +27,7 @@
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
       :scroll-top="scrollTop"
-      :position="item.location || ''"
+      :position="thread.location || ''"
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(
