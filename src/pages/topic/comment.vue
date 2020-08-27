@@ -326,7 +326,7 @@
       <!--更多操作弹框-->
       <uni-popup ref="morePopup" type="bottom">
         <view class="popup-share">
-          <view class="popup-share-content">
+          <view class="popup-share-content popup-share-content-inner">
             <view
               class="popup-share-content-box"
               v-if="post.canHide"
@@ -1188,9 +1188,9 @@ export default {
     },
     // 更多操作内标签选择
     moreContent(type, id, canHide ) {
-      this.moreCancel(id, canHide);
+      this.moreCancel();
       if(type === 0){
-        this.deleteReply();
+        this.deleteReply(id, canHide);
       }else{
         this.reportClick();
       }
@@ -1637,6 +1637,10 @@ page {
 }
 .popup-share-content{
   padding-top: 40rpx;
+}
+.popup-share-content-inner{
+  padding-right: 96px;
+  padding-left: 98px;
 }
 .popup-share-content-box {
   /* #ifndef APP-NVUE */

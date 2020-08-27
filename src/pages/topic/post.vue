@@ -54,7 +54,7 @@
         <textarea
           id="textarea"
           ref="textarea"
-          class="post-box__con-text"
+          class="post-box__con-text overflowAuto"
           :placeholder="i18n.t('discuzq.post.placeholder')"
           placeholder-class="textarea-placeholder"
           v-model="textAreaValue"
@@ -1922,4 +1922,9 @@ export default {
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
 }
+
+// /deep/ .overflowAuto  .uni-textarea-textarea{
+//   overflow-y: auto !important;
+// }
+
 </style>
