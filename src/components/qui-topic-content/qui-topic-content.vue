@@ -212,6 +212,12 @@
           {{ tag.name }}
         </view>
       </view>
+      <view class="themeItem__content__tags  themeItem__content__tags--position" v-if="position">
+        <view class="themeItem__content__tags__item">
+          <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
+          {{ position }}
+        </view>
+      </view>
     </view>
     <qui-toast ref="toast"></qui-toast>
   </view>
@@ -386,6 +392,10 @@ export default {
       default: () => {
         return [];
       },
+    },
+    position: {
+      type: String,
+      default: '',
     },
   },
   data: () => {
@@ -705,6 +715,12 @@ export default {
         background: --color(--qui-BG-F7);
         border-radius: 6rpx;
         transition: $switch-theme-time;
+      }
+    }
+    &__tags--position {
+      margin-top: -40rpx;
+      .icon-weizhi {
+        margin-right: 10rpx;
       }
     }
     &__attachment {

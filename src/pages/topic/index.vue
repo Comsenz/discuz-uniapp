@@ -56,6 +56,7 @@
               :file-list="
                 thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
               "
+              :position="thread.location || ''"
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"

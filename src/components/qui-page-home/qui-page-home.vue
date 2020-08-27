@@ -113,6 +113,7 @@
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
         :scroll-top="scrollTop"
+        :position="item.location || ''"
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(

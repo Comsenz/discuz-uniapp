@@ -244,6 +244,23 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
+      <qui-cell-item
+        arrow
+        :slot-left="true"
+        @click="choosePosition"
+        v-if="forums.lbs && forums.lbs.lbs"
+      >
+        <view class="post-box__position">
+          <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
+          <text>
+            {{
+              currentPosition && currentPosition.location
+                ? currentPosition.location
+                : i18n.t('discuzq.post.addPosition')
+            }}
+          </text>
+        </view>
+      </qui-cell-item>
       <view class="post-box__ft">
         <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
         <view class="post-box__ft-categories">
@@ -503,6 +520,7 @@ export default {
       deleteId: '', // 当前点击要删除的图片Id
       deleteIndex: '', // 当前点击要删除的图片index
       deleteTip: '确定删除吗？', // 删除提示
+      currentPosition: {},
     };
   },
   computed: {
@@ -545,6 +563,19 @@ export default {
     // #endif
   },
   methods: {
+    choosePosition() {
+      const { currentPosition } = this;
+      const that = this;
+      uni.chooseLocation({
+        latitude: currentPosition.latitude || '',
+        longitude: currentPosition.longitude || '',
+        success(res) {
+          console.log(res);
+          res.location = res.name;
+          that.currentPosition = res;
+        },
+      });
+    },
     focusEvent() {
       // 这是获取焦点
     },
@@ -1109,6 +1140,13 @@ export default {
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
       };
+      const currentPosition = this.currentPosition;
+      if(currentPosition.location) {
+        params.longitude = currentPosition.longitude;
+        params.latitude = currentPosition.latitude;
+        params.location = currentPosition.location;
+        params.address = currentPosition.address;
+      }
 
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
@@ -1250,6 +1288,10 @@ export default {
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
         // this.uploadFile = res.firstPost.images;
+        this.currentPosition.longitude = res.longitude || '';
+        this.currentPosition.latitude = res.latitude || '';
+        this.currentPosition.location = res.location || '';
+        this.currentPosition.address = res.address || '';
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
             if (item) {
@@ -1316,6 +1358,13 @@ export default {
           },
         },
       };
+      const currentPosition = this.currentPosition;
+      if(currentPosition.location) {
+        threads.longitude = currentPosition.longitude;
+        threads.latitude = currentPosition.latitude;
+        threads.location = currentPosition.location;
+        threads.address = currentPosition.address;
+      }
 
       switch (this.type) {
         case 0:
@@ -1666,6 +1715,12 @@ export default {
     }
     &-categories {
       margin-bottom: 40rpx;
+    }
+  }
+  &__position {
+    color: --color(--qui-FC-777);
+    .icon-weizhi {
+      margin-right: 10rpx;
     }
   }
 }
