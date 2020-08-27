@@ -13,6 +13,7 @@
       :theme-time="thread.createdAt"
       :theme-content="thread.type == 1 ? thread.title : thread.firstPost.summary"
       :thread-type="thread.type"
+      :them-pay-btn="thread.price > 0"
       :media-url="thread.threadVideo && thread.threadVideo.media_url"
       :is-great="thread.firstPost.isLiked"
       :theme-like="thread.firstPost.likeCount"
@@ -27,6 +28,7 @@
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
       :scroll-top="scrollTop"
+      :position="thread.location || ''"
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(

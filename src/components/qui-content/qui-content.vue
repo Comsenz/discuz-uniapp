@@ -191,6 +191,12 @@
             {{ item.name }}
           </view>
         </view>
+        <view class="themeItem__content__tags  themeItem__content__tags--position" v-if="position">
+          <view class="themeItem__content__tags__item">
+            <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
+            {{ position }}
+          </view>
+        </view>
       </view>
 
       <view class="themeItem__comment" @click.stop=""></view>
@@ -419,6 +425,10 @@ export default {
     themPayBtn: {
       type: Boolean,
       default: false,
+    },
+    position: {
+      type: String,
+      default: '',
     },
   },
 
@@ -773,6 +783,9 @@ export default {
         background: rgba(247, 247, 247, 1);
         border-radius: 6rpx;
       }
+    }
+    &__tags .icon-weizhi {
+      margin-right: 10rpx;
     }
   }
 
