@@ -491,7 +491,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-
+page {
+  overflow: scroll;
+  overflow-x: hidden;
+}
 .phone-login-box {
   background-color: --color(--qui-BG-2);
 }
