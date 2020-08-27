@@ -244,23 +244,33 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
-      <qui-cell-item
-        arrow
-        :slot-left="true"
-        @click="choosePosition"
-        v-if="forums.lbs && forums.lbs.lbs"
-      >
-        <view class="post-box__position">
-          <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
-          <text>
-            {{
-              currentPosition && currentPosition.location
-                ? currentPosition.location
-                : i18n.t('discuzq.post.addPosition')
-            }}
-          </text>
-        </view>
-      </qui-cell-item>
+      <view class="post-box__position">
+        <qui-cell-item
+          arrow
+          :slot-left="true"
+          @tap="choosePosition"
+          v-if="forums.lbs && forums.lbs.lbs"
+        >
+          <view>
+            <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
+            <text>
+              {{
+                currentPosition && currentPosition.location
+                  ? currentPosition.location
+                  : i18n.t('discuzq.post.addPosition')
+              }}
+            </text>
+          </view>
+        </qui-cell-item>
+        <qui-icon
+          name="icon-close1"
+          size="32"
+          color="#ccc"
+          @tap.stop="clearPosition"
+          v-if="currentPosition && currentPosition.location"
+        ></qui-icon>
+      </view>
+
       <view class="post-box__ft">
         <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
         <view class="post-box__ft-categories">
@@ -564,17 +574,19 @@ export default {
   },
   methods: {
     choosePosition() {
-      const { currentPosition } = this;
       const that = this;
+      if (that.currentPosition.location) {
+        return;
+      }
       uni.chooseLocation({
-        latitude: currentPosition.latitude || '',
-        longitude: currentPosition.longitude || '',
         success(res) {
-          console.log(res);
           res.location = res.name;
           that.currentPosition = res;
         },
       });
+    },
+    clearPosition() {
+      this.currentPosition = {};
     },
     focusEvent() {
       // 这是获取焦点
@@ -1718,9 +1730,16 @@ export default {
     }
   }
   &__position {
+    position: relative;
     color: --color(--qui-FC-777);
     .icon-weizhi {
       margin-right: 10rpx;
+    }
+    .icon-close1 {
+      position: absolute;
+      top: 36rpx;
+      right: 0;
+      z-index: 100;
     }
   }
 }
