@@ -102,6 +102,7 @@
             class="themeItem__content__coverimg"
             :src="coverImage"
             :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            mode="aspectFill"
           ></image>
         </view>
         <view
