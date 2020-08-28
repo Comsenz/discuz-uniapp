@@ -688,8 +688,9 @@ export default {
       }
 
       &__isAdminColor {
-        padding: 6rpx 16rpx;
+        padding: 2rpx 10rpx;
         font-size: $fg-f20;
+        vertical-align: top;
         background: --color(--qui-BG-IT);
         border-radius: 18rpx;
         box-sizing: border-box;
