@@ -56,15 +56,10 @@
               :file-list="
                 thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
               "
-              :position="
+              :thread-position="
                 thread.location
-                  ? {
-                      location: thread.location,
-                      address: thread.address,
-                      longitude: thread.longitude,
-                      latitude: thread.latitude,
-                    }
-                  : {}
+                  ? [thread.location, thread.address, thread.longitude, thread.latitude]
+                  : []
               "
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"

@@ -114,15 +114,8 @@
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
         :scroll-top="scrollTop"
-        :position="
-          item.location
-            ? {
-                location: item.location,
-                address: item.address,
-                longitude: item.longitude,
-                latitude: item.latitude,
-              }
-            : {}
+        :thread-position="
+          item.location ? [item.location, item.address, item.longitude, item.latitude] : []
         "
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
@@ -328,6 +321,7 @@ export default {
         },
       ],
       threads: [],
+      location: {},
       sticky: [], // 置顶帖子内容
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个

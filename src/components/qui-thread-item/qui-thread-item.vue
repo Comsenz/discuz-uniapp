@@ -28,15 +28,8 @@
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
       :scroll-top="scrollTop"
-      :position="
-        thread.location
-          ? {
-              location: thread.location,
-              address: thread.address,
-              longitude: thread.longitude,
-              latitude: thread.latitude,
-            }
-          : {}
+      :thread-position="
+        thread.location ? [thread.location, thread.address, thread.longitude, thread.latitude] : []
       "
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="

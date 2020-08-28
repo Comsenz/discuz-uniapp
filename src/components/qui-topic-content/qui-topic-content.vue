@@ -218,11 +218,11 @@
       </view>
       <view
         class="themeItem__content__tags  themeItem__content__tags--position"
-        v-if="position && position.location"
+        v-if="threadPosition && threadPosition[0]"
       >
         <view class="themeItem__content__tags__item" @tap="topicPosition">
           <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
-          {{ position && position.location }}
+          {{ threadPosition && threadPosition[0] }}
         </view>
       </view>
     </view>
@@ -400,10 +400,10 @@ export default {
         return [];
       },
     },
-    position: {
-      type: Object,
+    threadPosition: {
+      type: Array,
       default: () => {
-        return {};
+        return [];
       },
     },
   },
@@ -523,9 +523,9 @@ export default {
     },
     // 地理位置
     topicPosition() {
-      const { position } = this;
+      const { threadPosition } = this;
       uni.redirectTo({
-        url: `/pages/topic/position?longitude=${position.longitude}&latitude=${position.latitude}`,
+        url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
       });
     },
     previewPicture() {
