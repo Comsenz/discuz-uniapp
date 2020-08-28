@@ -10,6 +10,8 @@ export const SET_AUTH = 'SET_AUTH';
 export const SET_PARAMS = 'SET_PARAMS';
 // 设置 js_code
 export const SET_CODE = 'SET_CODE';
+// 设置 token
+export const SET_TOKEN = 'SET_TOKEN';
 // 设置 分类ID
 export const SET_CATEGORYID = 'SET_CATEGORYID';
 // 设置 分类Index

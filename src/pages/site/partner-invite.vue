@@ -278,8 +278,12 @@ export default {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
+        uni.setStorage({
+          key: 'inviteCode',
+          data: this.code,
+        });
         // #ifdef H5
-        this.handleLogin('/pages/home/index', this.code);
+        this.handleLogin('/pages/home/index');
         // #endif
       } else {
         // 已经登陆的情况

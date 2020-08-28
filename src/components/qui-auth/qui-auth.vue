@@ -119,12 +119,15 @@ export default {
     },
     noSenseLogin(param, register = 0) {
       const params = param;
+      let inviteCode = '';
       params.data.attributes.register = register;
-      const pages = getCurrentPages();
-      const page = pages[pages.length - 1].route;
-      // 邀请页面带上邀请码
-      if (page === 'pages/site/partner-invite') {
-        const inviteCode = pages[pages.length - 1].options.code;
+      uni.getStorage({
+        key: 'inviteCode',
+        success(resData) {
+          inviteCode = resData.data || '';
+        },
+      });
+      if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
       this.$store
@@ -159,12 +162,17 @@ export default {
       const params = param;
       const pages = getCurrentPages();
       const page = pages[pages.length - 1].route;
+      let inviteCode = '';
       if (page !== '/pages/home/index') {
         url = page;
       }
-      // 邀请页面带上邀请码
-      if (page === 'pages/site/partner-invite') {
-        const inviteCode = pages[pages.length - 1].options.code;
+      uni.getStorage({
+        key: 'inviteCode',
+        success(resData) {
+          inviteCode = resData.data || '';
+        },
+      });
+      if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
       // #ifdef MP-WEIXIN

@@ -5,7 +5,7 @@ import appCommonH from '@/utils/commonHelper';
 module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin(url, code) {
+    handleLogin(url) {
       const { isWeixin } = appCommonH.isWeixin();
       if (
         isWeixin &&
@@ -13,31 +13,26 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
-        // 微信授权跳转
-        uni.setStorage({
-          key: 'inviteCode',
-          data: code,
-        });
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login(url, '', code);
+        this.login(url);
       }
       return false;
     },
-    login(url = '/pages/home/index', wxtoken, code) {
+    login(url = '/pages/home/index') {
       const { isWeixin } = appCommonH.isWeixin();
       if (isWeixin) {
         // 微信内
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式 跳转到登录并绑定页
           uni.navigateTo({
-            url: `/pages/user/login-bind?url=${url}&token=${wxtoken}&code=${code}`,
+            url: `/pages/user/login-bind?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式 跳转到手机号码登录页
           uni.navigateTo({
-            url: `/pages/user/phone-login?url=${url}&token=${wxtoken}&code=${code}`,
+            url: `/pages/user/phone-login?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
@@ -48,25 +43,25 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式
           uni.navigateTo({
-            url: `/pages/user/login?url=${url}&code=${code}`,
+            url: `/pages/user/login?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式
           uni.navigateTo({
-            url: `/pages/user/phone-login?url=${url}&code=${code}`,
+            url: `/pages/user/phone-login?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
             // 手机号模式
             uni.navigateTo({
-              url: `/pages/user/phone-login?url=${url}&code=${code}`,
+              url: `/pages/user/phone-login?url=${url}`,
             });
           } else {
             // 用户名模式
             uni.navigateTo({
-              url: `/pages/user/login?url=${url}&code=${code}`,
+              url: `/pages/user/login?url=${url}`,
             });
           }
         }
