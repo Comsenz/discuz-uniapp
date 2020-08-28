@@ -9,8 +9,8 @@
       @scroll="scroll"
     >
       <view class="position-head">
-        <view class="position-head__name">{{ location + '111' }}</view>
-        <view class="position-head__address">{{ address + '222' }}</view>
+        <view class="position-head__name">{{ location }}</view>
+        <view class="position-head__address">{{ address }}</view>
       </view>
       <view class="position-num">
         {{
