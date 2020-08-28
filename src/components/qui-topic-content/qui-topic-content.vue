@@ -11,8 +11,9 @@
             class="themeItem__header__title__isAdmin"
             v-for="(group, index) in userRole"
             :key="index"
+            :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
           >
-            {{ group.isDisplay ? `（${group.name}）` : '' }}
+            {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
@@ -60,8 +61,9 @@
             class="themeItem__header__title__isAdmin"
             v-for="(group, index) in userRole"
             :key="index"
+            :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
           >
-            {{ group.isDisplay ? `（${group.name}）` : '' }}
+            {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
@@ -632,6 +634,15 @@ export default {
         font-weight: 400;
         color: --color(--qui-FC-AAA);
         white-space: nowrap;
+      }
+
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        margin-left: 15rpx;
+        font-size: $fg-f24;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
       }
 
       &__time {

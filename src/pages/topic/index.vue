@@ -3179,6 +3179,10 @@ page {
 .popup-more-content-box {
   flex: 0 0 20%;
   margin-bottom: 40rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
 }
 .popup-more-button {
   position: absolute;

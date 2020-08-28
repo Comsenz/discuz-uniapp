@@ -18,8 +18,12 @@
               {{ userName }}
             </text>
             <text v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
-              <text v-for="(item, index) in userGroups" :key="index">
-                {{ item.isDisplay ? `(${item.name})` : '' }}
+              <text
+                v-for="(item, index) in userGroups"
+                :key="index"
+                :class="item.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
+              >
+                {{ item.isDisplay ? `${item.name}` : '' }}
               </text>
             </text>
             <text v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
@@ -681,6 +685,14 @@ export default {
         font-weight: 400;
         color: --color(--qui-FC-AAA);
         transition: $switch-theme-time;
+      }
+
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        font-size: $fg-f24;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
       }
 
       &__time {
