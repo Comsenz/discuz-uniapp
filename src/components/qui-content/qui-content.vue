@@ -60,12 +60,12 @@
               {{ themeContent }}
             </navigator>
           </view>
-          <view style="display: flex;" v-else>
+          <view v-else>
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
               size="30"
-              style="margin-right: 10rpx;"
+              style="float: left;margin-right: 10rpx;"
               v-if="themPayBtn"
             ></qui-icon>
             <qui-uparse :content="themeContent"></qui-uparse>
