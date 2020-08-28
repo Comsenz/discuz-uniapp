@@ -339,9 +339,9 @@ export default {
       }
 
       &__isAdminColor {
-        padding: 2rpx 10rpx;
+        padding: 6rpx 16rpx;
         margin-left: 15rpx;
-        font-size: $fg-f24;
+        font-size: $fg-f20;
         background: --color(--qui-BG-IT);
         border-radius: 18rpx;
         box-sizing: border-box;
