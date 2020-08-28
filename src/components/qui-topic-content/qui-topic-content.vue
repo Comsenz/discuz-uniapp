@@ -219,11 +219,11 @@
       </view>
       <view
         class="themeItem__content__tags  themeItem__content__tags--position"
-        v-if="threadPosition && threadPosition[0]"
+        v-if="threadPosition.length > 0"
       >
         <view class="themeItem__content__tags__item" @tap="topicPosition">
           <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
-          {{ threadPosition && threadPosition[0] }}
+          {{ threadPosition.length > 0 && threadPosition[0] }}
         </view>
       </view>
     </view>
@@ -736,7 +736,7 @@ export default {
     }
     &__tags--position {
       margin-top: -40rpx;
-      .icon-weizhi {
+      text {
         margin-right: 10rpx;
       }
     }

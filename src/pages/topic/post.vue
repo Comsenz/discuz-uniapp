@@ -266,7 +266,7 @@
           name="icon-close1"
           size="32"
           color="#ccc"
-          @tap.stop="clearPosition"
+          @tap="clearPosition"
           v-if="currentPosition && currentPosition.location"
         ></qui-icon>
       </view>
@@ -1729,7 +1729,7 @@ export default {
       margin-bottom: 40rpx;
     }
   }
-  &__position {
+  &__position  /deep/ {
     position: relative;
     color: --color(--qui-FC-777);
     .icon-weizhi {
