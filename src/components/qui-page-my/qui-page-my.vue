@@ -39,7 +39,11 @@
           <navigator url="/pages/my/profile" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="/pages/my/wallet" hover-class="none" v-if="forums.paycenter.wxpay_close">
+          <navigator
+            url="/pages/my/wallet"
+            hover-class="none"
+            v-if="forums.paycenter ? forums.paycenter.wxpay_close : ''"
+          >
             <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
           </navigator>
           <navigator url="/pages/my/favorite" hover-class="none">

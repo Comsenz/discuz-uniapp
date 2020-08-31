@@ -112,6 +112,7 @@
         :cover-image="item.threadVideo && item.threadVideo.cover_url"
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
+        :scroll-top="scrollTop"
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
@@ -130,7 +131,10 @@
       <qui-load-more :status="loadingType"></qui-load-more>
     </view>
     <!-- #ifdef H5-->
-    <view class="record" v-if="forums.set_site.site_record || forums.set_site.site_record_code">
+    <view
+      class="record"
+      v-if="forums.set_site ? forums.set_site.site_record || forums.set_site.site_record_code : ''"
+    >
       <!-- <text>{{ i18n.t('home.record') }}</text> -->
       <view class="record__box">
         <a class="record__box-url" href="https://beian.miit.gov.cn" target="_blank">
@@ -138,7 +142,7 @@
         </a>
       </view>
       <view
-        v-if="forums.set_site.site_record_code"
+        v-if="forums.set_site ? forums.set_site.site_record_code : ''"
         :class="forums.set_site.site_record ? 'record__box1' : 'record__box2'"
       >
         <a class="record__box-url" :href="surl" target="_blank">
@@ -363,8 +367,10 @@ export default {
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
-    const recordNumber = this.forums.set_site.site_record_code.replace(/[^\d]/g, '');
-    this.surl = `http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=${recordNumber}`;
+    if (this.forums.set_site) {
+      const recordNumber = this.forums.set_site.site_record_code.replace(/[^\d]/g, '');
+      this.surl = `http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=${recordNumber}`;
+    }
     // #endif
     // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
