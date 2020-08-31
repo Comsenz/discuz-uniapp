@@ -88,8 +88,9 @@
                           class="thread__header__title__isAdmin"
                           v-for="(group, gindex) in thread.user.groups"
                           :key="gindex"
+                          :class="group.isDisplay ? 'thread__header__title__isAdminColor' : ''"
                         >
-                          {{ group.isDisplay ? `（${group.name}）` : '' }}
+                          {{ group.isDisplay ? `${group.name}` : '' }}
                         </span>
                       </view>
                       <view class="thread__header__title__time">
@@ -1746,6 +1747,15 @@ page {
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
+      }
+
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        margin-left: 15rpx;
+        font-size: $fg-f20;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
       }
 
       &__time {
