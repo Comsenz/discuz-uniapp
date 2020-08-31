@@ -147,22 +147,22 @@ export default {
 <style lang="scss" scoped>
 .qui-audio {
   position: relative;
-  height: 40rpx;
   padding: 0 150rpx 0 30rpx;
   &__btn {
     position: absolute;
-    top: -10rpx;
+    top: 0;
     left: 0;
+    height: 60rpx;
   }
   &__wrapper__number {
     position: absolute;
-    top: -8rpx;
+    top: 0;
     right: 0;
     height: 60rpx;
   }
   &__wrapper__name {
     position: absolute;
-    top: -10rpx;
+    top: 0;
     left: 50rpx;
   }
 }

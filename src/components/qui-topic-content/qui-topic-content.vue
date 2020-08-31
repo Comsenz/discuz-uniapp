@@ -761,9 +761,6 @@ export default {
         color: --color(--qui-FC-777);
       }
       &-item {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;
