@@ -158,7 +158,11 @@
     <view
       class="copyright"
       :class="
-        forums.set_site.site_record || forums.set_site.site_record_code ? '' : 'copyright_margin'
+        forums.set_site
+          ? forums.set_site.site_record || forums.set_site.site_record_code
+            ? ''
+            : 'copyright_margin'
+          : ''
       "
     >
       <text>{{ i18n.t('home.copyright') }}</text>
