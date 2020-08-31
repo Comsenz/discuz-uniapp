@@ -88,14 +88,22 @@
                           class="thread__header__title__isAdmin"
                           v-for="(group, gindex) in thread.user.groups"
                           :key="gindex"
+                          :class="group.isDisplay ? 'thread__header__title__isAdminColor' : ''"
                         >
-                          {{ group.isDisplay ? `（${group.name}）` : '' }}
+                          {{ group.isDisplay ? `${group.name}` : '' }}
                         </span>
                       </view>
                       <view class="thread__header__title__time">
                         {{ localTime }}
                       </view>
                     </view>
+                    <image
+                      v-if="thread.price > 0"
+                      src="@/static/payment.png"
+                      alt
+                      class="addFine"
+                      :class="thread.isEssence ? 'right40' : ''"
+                    ></image>
                     <image
                       v-if="thread.isEssence"
                       src="@/static/essence.png"
@@ -326,8 +334,25 @@
       <!--更多操作弹框-->
       <uni-popup ref="morePopup" type="bottom">
         <view class="popup-share">
-          <view class="popup-share-content">
-            <view class="popup-share-content-box" @click="moreContent">
+          <view class="popup-share-content popup-share-content-inner">
+            <view
+              class="popup-share-content-box"
+              v-if="post.canHide"
+              @click="moreContent(0, post._jv.id, post.canHide)"
+            >
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    name="icon-delete"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ t.delete }}</text>
+            </view>
+            <view class="popup-share-content-box" @click="moreContent(1)">
               <view class="popup-share-content-image">
                 <view class="popup-share-box">
                   <qui-icon
@@ -369,7 +394,7 @@
               <textarea
                 placeholder-class="textarea-placeholder"
                 :placeholder="r.otherReason"
-                :maxlength="450"
+                :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
               />
@@ -1170,9 +1195,13 @@ export default {
       this.$refs.morePopup.open();
     },
     // 更多操作内标签选择
-    moreContent() {
+    moreContent(type, id, canHide ) {
       this.moreCancel();
-      this.reportClick();
+      if(type === 0){
+        this.deleteReply(id, canHide);
+      }else{
+        this.reportClick();
+      }
     },
     // 关闭更多操作弹框
     moreCancel() {
@@ -1617,6 +1646,10 @@ page {
 .popup-share-content{
   padding-top: 40rpx;
 }
+.popup-share-content-inner{
+  padding-right: 96px;
+  padding-left: 98px;
+}
 .popup-share-content-box {
   /* #ifndef APP-NVUE */
   display: flex;
@@ -1716,6 +1749,15 @@ page {
         color: rgba(170, 170, 170, 1);
       }
 
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        margin-left: 15rpx;
+        font-size: $fg-f20;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
+      }
+
       &__time {
         font-size: 24rpx;
         font-weight: 400;
@@ -1760,6 +1802,9 @@ page {
   right: 0;
   width: 31rpx;
   height: 41rpx;
+}
+.right40{
+  right: 40rpx;
 }
 .themeItem__header__follow {
   align-self: flex-start;

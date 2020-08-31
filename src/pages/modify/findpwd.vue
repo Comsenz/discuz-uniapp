@@ -418,6 +418,7 @@ export default {
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
+    white-space: nowrap;
   }
   .retireve-phon-num {
     margin: 0 0 0 109rpx;

@@ -8,12 +8,13 @@ import {
   SET_ACCESS_TOKEN,
   SET_AUTH,
   SET_PARAMS,
+  SET_CODE,
+  SET_TOKEN,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
   DELETE_ACCESS_TOKEN,
 } from '@/store/types/session';
-import { i18n } from '@/locale';
 
 const accessToken = uni.getStorageSync('access_token');
 
@@ -53,6 +54,12 @@ const actions = {
   },
   setParams: (context, payload) => {
     context.commit(SET_PARAMS, payload);
+  },
+  setCode: (context, payload) => {
+    context.commit(SET_CODE, payload);
+  },
+  setToken: (context, payload) => {
+    context.commit(SET_TOKEN, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -101,9 +108,7 @@ const actions = {
           resolve(results);
           setUserInfoStore(context, results, resolve);
         })
-        .catch(error => {
-          resolve(error);
-        });
+        .catch(err => resolve(err));
     });
   },
   // #endif
@@ -111,38 +116,19 @@ const actions = {
     return new Promise(resolve => {
       return http
         .post('sms/verify', payload)
-        .then(results => setUserInfoStore(context, results, resolve));
+        .then(res => setUserInfoStore(context, res, resolve))
+        .catch(err => resolve(err));
     });
   },
   h5Login: (context, payload = {}) => {
     return new Promise(resolve => {
       return http
         .post('login', payload)
-        .then(results => {
-          resolve(results);
-          setUserInfoStore(context, results, resolve);
+        .then(res => {
+          resolve(res);
+          setUserInfoStore(context, res, resolve);
         })
-        .catch(error => {
-          if (error && error.data && error.data.errors && error.data.errors[0].status === '403') {
-            uni.showToast({
-              icon: 'none',
-              title: error.data.errors[0].detail[0],
-              duration: 2000,
-            });
-          }
-          if (
-            error &&
-            error.data &&
-            error.data.errors &&
-            error.data.errors[0].code === 'register_validate'
-          ) {
-            uni.showToast({
-              icon: 'none',
-              title: i18n.t('core.register_validate'),
-              duration: 2000,
-            });
-          }
-        });
+        .catch(err => resolve(err));
     });
   },
   h5Register: (context, payload = {}) => {
@@ -150,9 +136,9 @@ const actions = {
     return new Promise(resolve => {
       return http
         .post('register', payload, options)
-        .then(results => {
-          resolve(results);
-          setUserInfoStore(context, results, resolve);
+        .then(res => {
+          resolve(res);
+          setUserInfoStore(context, res, resolve);
         })
         .catch(err => resolve(err));
     });
@@ -161,9 +147,22 @@ const actions = {
     return new Promise(resolve => {
       context.commit(DELETE_USER_ID);
       context.commit(DELETE_ACCESS_TOKEN);
+      uni.removeStorage({
+        key: 'inviteCode',
+      });
       resolve();
     });
   },
+  // #ifdef MP-WEIXIN
+  bindPhonenum: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .post('mobile/bind/miniprogram', payload)
+        .then(res => resolve(res))
+        .catch(err => resolve(err));
+    });
+  },
+  // #endif
 };
 
 const mutations = {
@@ -183,6 +182,12 @@ const mutations = {
   },
   [SET_PARAMS](state, payload) {
     state.params = payload;
+  },
+  [SET_CODE](state, payload) {
+    state.code = payload;
+  },
+  [SET_TOKEN](state, payload) {
+    state.token = payload;
   },
   [SET_CATEGORYID](state, payload) {
     state.categoryId = payload;

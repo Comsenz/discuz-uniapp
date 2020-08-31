@@ -18,8 +18,12 @@
               {{ userName }}
             </text>
             <text v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
-              <text v-for="(item, index) in userGroups" :key="index">
-                {{ item.isDisplay ? `(${item.name})` : '' }}
+              <text
+                v-for="(item, index) in userGroups"
+                :key="index"
+                :class="item.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
+              >
+                {{ item.isDisplay ? `${item.name}` : '' }}
               </text>
             </text>
             <text v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
@@ -56,12 +60,12 @@
               {{ themeContent }}
             </navigator>
           </view>
-          <view style="display: flex;" v-else>
+          <view v-else>
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
               size="30"
-              style="margin-right: 10rpx;"
+              style="float: left;margin-right: 10rpx;"
               v-if="themPayBtn"
             ></qui-icon>
             <qui-uparse :content="themeContent"></qui-uparse>
@@ -70,13 +74,18 @@
         <view
           class="theme__content__videocover"
           v-if="threadType == 2 && !payStatus && coverImage != null"
-          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+          :style="{ height: videoWidth > videoHeight ? '' : '860rpx' }"
         >
           <view class="theme__mark"></view>
           <image class="theme__mark__open" src="/static/video.svg"></image>
-          <image class="themeItem__content__coverimg" :src="coverImage" lazy-load></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
+            lazy-load
+          ></image>
         </view>
-
         <view class="theme__content__videocover" v-if="threadType === 2 && payStatus">
           <!-- 封面图 -->
           <view
@@ -89,15 +98,18 @@
               class="themeItem__content__coverimg"
               :src="coverImage"
               :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-              mode="aspectFill"
+              :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
+              lazy-load
             ></image>
           </view>
           <!-- 视频 -->
           <video
+            v-show="videoShow"
             :poster="coverImage"
             controls
             ref="myVideo"
             :id="'myVideo' + currentindex"
+            class="isVideo"
             :duration="duration"
             preload="none"
             bindpause="handlepause"
@@ -182,6 +194,15 @@
         <view class="themeItem__content__tags" v-if="themeType === '0' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
+          </view>
+        </view>
+        <view
+          class="themeItem__content__tags  themeItem__content__tags--position"
+          v-if="threadPosition.length > 0"
+        >
+          <view class="themeItem__content__tags__item" @tap="topicPosition">
+            <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
+            {{ threadPosition.length > 0 && threadPosition[0] }}
           </view>
         </view>
       </view>
@@ -399,10 +420,10 @@ export default {
       default: false,
     },
     // 滚动高度
-    scrollTop: {
-      type: Number,
-      default: 0,
-    },
+    // scrollTop: {
+    //   type: Number,
+    //   default: 0,
+    // },
     // 视频时间
     duration: {
       type: String,
@@ -412,6 +433,12 @@ export default {
     themPayBtn: {
       type: Boolean,
       default: false,
+    },
+    threadPosition: {
+      type: Array,
+      default: () => {
+        return [];
+      },
     },
   },
 
@@ -432,6 +459,7 @@ export default {
       videoShow: false,
       autoplay: false,
       sun: true,
+      appear: false,
     };
   },
 
@@ -449,50 +477,50 @@ export default {
       getCategoryIndex: state => state.session.categoryIndex,
     }),
   },
-  watch: {
-    scrollTop(newValue) {
-      if (this.currentTop === 0 && this.currentBottom === 0) {
-        return;
-      }
+  // watch: {
+  //   scrollTop(newValue) {
+  //     if (this.currentTop === 0 && this.currentBottom === 0) {
+  //       return;
+  //     }
 
-      // console.log(
-      //   newValue,
-      //   this.currentBottom,
-      //   this.currentTop,
-      //   newValue > this.currentBottom || newValue < this.currentTop,
-      //   'watch',
-      // );
-      if (newValue > this.currentBottom || newValue < this.currentTop) {
-        this.videoContext.pause();
-      }
-    },
-  },
+  //     // console.log(
+  //     //   newValue,
+  //     //   this.currentBottom,
+  //     //   this.currentTop,
+  //     //   newValue > this.currentBottom || newValue < this.currentTop,
+  //     //   'watch',
+  //     // );
+  //     if (newValue > this.currentBottom || newValue < this.currentTop) {
+  //       this.videoContext.pause();
+  //     }
+  //   },
+  // },
   onLoad() {
-    this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
+    // this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
   },
   mounted() {
     this.videoContext = wx.createVideoContext(`myVideo${this.$props.currentindex}`, this);
-    // #ifdef MP-WEIXIN
-    if (this.$props.threadType === 2 && this.$props.payStatus) {
-      wx.createSelectorQuery()
-        .in(this)
-        .select(`#${`myVideo${this.$props.currentindex}`}`)
-        .boundingClientRect(rect => {
-          this.currentTop = this.$props.scrollTop + rect.top - wx.getSystemInfoSync().windowHeight;
-          this.currentBottom = this.$props.scrollTop + rect.top + rect.height;
-        })
-        .exec();
-    }
-    // #endif
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
-    // #ifdef H5
-    const myVideo = document.querySelector(`#${`myVideo${this.$props.currentindex}`}`);
-    if (myVideo) {
-      const offsetInfo = myVideo.getBoundingClientRect();
-      this.currentTop = this.$props.scrollTop + offsetInfo.top - document.body.offsetHeight;
-      this.currentBottom = this.$props.scrollTop + offsetInfo.top + offsetInfo.height;
-    }
-    // #endif
+    // // #ifdef MP-WEIXIN
+    // if (this.$props.threadType === 2 && this.$props.payStatus) {
+    //   wx.createSelectorQuery()
+    //     .in(this)
+    //     .select(`#${`myVideo${this.$props.currentindex}`}`)
+    //     .boundingClientRect(rect => {
+    //       this.currentTop = this.$props.scrollTop + rect.top - wx.getSystemInfoSync().windowHeight;
+    //       this.currentBottom = this.$props.scrollTop + rect.top + rect.height;
+    //     })
+    //     .exec();
+    // }
+    // // #endif
+    // // #ifdef H5
+    // const myVideo = document.querySelector(`#${`myVideo${this.$props.currentindex}`}`);
+    // if (myVideo) {
+    //   const offsetInfo = myVideo.getBoundingClientRect();
+    //   this.currentTop = this.$props.scrollTop + offsetInfo.top - document.body.offsetHeight;
+    //   this.currentBottom = this.$props.scrollTop + offsetInfo.top + offsetInfo.height;
+    // }
+    // // #endif
   },
   methods: {
     // 点击删除按钮
@@ -526,7 +554,7 @@ export default {
 
     // 当开始/继续播放时触发play事件
     playVideo() {
-      this.$emit('videoPlay', this.$props.currentindex);
+      this.$emit('videoPlay', this.$props.currentindex, true);
     },
     // 视频不能同时播放
     pauseVideo() {
@@ -553,15 +581,32 @@ export default {
     imageError() {
       this.imageStatus = false;
     },
+    // 地理位置
+    topicPosition() {
+      const { threadPosition } = this;
+      uni.redirectTo({
+        url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
+      });
+    },
     btn() {
       this.sun = false;
       this.videoShow = true;
       this.autoplay = true;
       setTimeout(() => {
-        console.log('视频开始播放', `myVideo${this.currentindex}`);
+        // console.log('视频开始播放', `myVideo${this.currentindex}`);
         const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
         videoContext.play();
       }, 200);
+      setTimeout(() => {
+        const sun = uni.createSelectorQuery().in(this);
+        sun
+          .select('.isVideo')
+          .boundingClientRect(data => {
+            // console.log(data);
+            this.$emit('scrollheight', data.top, this.$props.currentindex);
+          })
+          .exec();
+      }, 100);
     },
   },
 };
@@ -641,6 +686,15 @@ export default {
         font-weight: 400;
         color: --color(--qui-FC-AAA);
         transition: $switch-theme-time;
+      }
+
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        font-size: $fg-f20;
+        vertical-align: top;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
       }
 
       &__time {
@@ -756,6 +810,9 @@ export default {
         border-radius: 6rpx;
       }
     }
+    &__tags .qui-icon {
+      margin-right: 10rpx;
+    }
   }
 
   &__footer {
@@ -808,7 +865,6 @@ export default {
 .theme__content__videocover {
   position: relative;
   &-img {
-    position: absolute;
     z-index: 1;
     width: 100%;
   }

@@ -19,7 +19,7 @@
           v-model="password"
         />
       </view>
-      <view class="login-bind-box-btn" @click="login">
+      <view class="login-bind-box-btn" @click="handleLogin">
         {{ i18n.t('user.loginBindId') }}
       </view>
       <view class="login-bind-box-ft">
@@ -43,7 +43,7 @@
           <text
             class="login-bind-box-ft-btn"
             v-if="forum && forum.set_reg && forum.set_reg.register_close"
-            @click="jump2RegisterBind"
+            @click="jump2Register"
           >
             {{ i18n.t('user.registerUser') }}
           </text>
@@ -61,7 +61,7 @@
           <text
             class="login-bind-box-ft-text"
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findPassword"
+            @click="jump2findpwd"
           >
             {{ i18n.t('user.forgetPassword') }}
           </text>
@@ -74,60 +74,24 @@
 
 <script>
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 import { SITE_PAY } from '@/common/const';
-// #ifdef H5
-import appCommonH from '@/utils/commonHelper';
-// #endif
 
 export default {
-  mixins: [
-    user,
-    // #ifdef H5
-    appCommonH,
-    // #endif
-  ],
+  mixins: [user, loginModule],
   data() {
     return {
       username: '', // 用户名
       password: '', // 密码
       url: '', // 上一个页面的路径
-      code: '', // 注册邀请码
-      token: '', // token
       site_mode: '', // 站点模式
       forum: {}, // 配置
       isPaid: false, // 默认未付费
-      // #ifdef H5
-      isWeixin: false, // 默认不是微信浏览器
-      // #endif
     };
   },
   onLoad(params) {
     this.getForum();
-    const { url, token, commentId, code } = params;
-    if (url) {
-      let pageUrl;
-      if (url.substr(0, 1) !== '/') {
-        pageUrl = `/${url}`;
-      } else {
-        pageUrl = url;
-      }
-      if (commentId) {
-        this.url = `${pageUrl}&commentId=${commentId}`;
-      } else {
-        this.url = pageUrl;
-      }
-    }
-    if (code !== 'undefined') {
-      this.code = code;
-    }
-    if (token) {
-      this.token = token;
-    }
-
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
+    this.getPageParams(params);
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -149,79 +113,25 @@ export default {
     });
   },
   methods: {
-    getForum() {
-      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
-        console.log('forum', res);
-        if (res) {
-          this.forum = res;
-        }
-      });
-    },
-    login() {
-      if (this.username === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.usernameEmpty'),
-          duration: 2000,
-        });
-      } else if (this.password === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.passwordEmpty'),
-          duration: 2000,
-        });
-      } else {
-        const params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-            },
+    handleLogin() {
+      const params = {
+        data: {
+          attributes: {
+            username: this.username,
+            password: this.password,
           },
-        };
-        // #ifdef MP-WEIXIN
-        const data = this.$store.getters['session/get']('params');
-        if (data && data.data && data.data.attributes) {
-          params.data.attributes.js_code = data.data.attributes.js_code;
-          params.data.attributes.iv = data.data.attributes.iv;
-          params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-        }
-        // #endif
-        // #ifdef H5
-        if (this.token && this.token !== '') {
-          params.data.attributes.token = this.token;
-        }
-        // #endif
-        console.log('params', params);
-        this.$store
-          .dispatch('session/h5Login', params)
-          .then(res => {
-            console.log(res);
-            this.logind();
-            uni.showToast({
-              title: this.i18n.t('user.loginBindSuccess'),
-              duration: 2000,
-            });
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
+        },
+      };
+      this.getLoginParams(params, this.i18n.t('user.loginBindSuccess'));
     },
     jump2PhoneLogin() {
-      uni.navigateTo({
-        url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
-      });
+      this.jump2PhoneLoginPage();
     },
-    jump2RegisterBind() {
-      uni.navigateTo({
-        url: `/pages/user/register-bind?url=${this.url}&token=${this.token}&code=${this.code}`,
-      });
+    jump2Register() {
+      this.jump2RegisterBindPage();
     },
-    jump2findPassword() {
-      uni.navigateTo({
-        url: `/pages/modify/findpwd?pas=reset_pwd`,
-      });
+    jump2findpwd() {
+      this.jump2findpwdPage();
     },
   },
 };

@@ -11,8 +11,9 @@
             class="themeItem__header__title__isAdmin"
             v-for="(group, index) in userRole"
             :key="index"
+            :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
           >
-            {{ group.isDisplay ? `（${group.name}）` : '' }}
+            {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
@@ -60,8 +61,9 @@
             class="themeItem__header__title__isAdmin"
             v-for="(group, index) in userRole"
             :key="index"
+            :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
           >
-            {{ group.isDisplay ? `（${group.name}）` : '' }}
+            {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
@@ -94,11 +96,16 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !videoStatus && coverImage != null"
           @click="videocoverClick"
-          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+          :style="{ width: '100%', height: videoWidth > videoHeight ? '' : '860rpx' }"
+          :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
         >
           <view class="theme__mark"></view>
           <image class="theme__mark__open" src="/static/video.svg"></image>
-          <image class="themeItem__content__coverimg" :src="coverImage"></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+          ></image>
         </view>
         <view
           class="theme__content__videocover"
@@ -111,7 +118,7 @@
             class="themeItem__content__coverimg"
             :src="coverImage"
             :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-            mode="aspectFill"
+            :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
           ></image>
         </view>
         <view v-show="videoShow">
@@ -210,6 +217,15 @@
           @click="tagClick(tag._jv.id)"
         >
           {{ tag.name }}
+        </view>
+      </view>
+      <view
+        class="themeItem__content__tags  themeItem__content__tags--position"
+        v-if="threadPosition.length > 0"
+      >
+        <view class="themeItem__content__tags__item" @tap="topicPosition">
+          <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
+          {{ threadPosition.length > 0 && threadPosition[0] }}
         </view>
       </view>
     </view>
@@ -387,6 +403,12 @@ export default {
         return [];
       },
     },
+    threadPosition: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
   },
   data: () => {
     return {
@@ -502,6 +524,13 @@ export default {
         }
       });
     },
+    // 地理位置
+    topicPosition() {
+      const { threadPosition } = this;
+      uni.redirectTo({
+        url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
+      });
+    },
     previewPicture() {
       this.$emit('previewPicture');
     },
@@ -607,6 +636,15 @@ export default {
         white-space: nowrap;
       }
 
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        margin-left: 15rpx;
+        font-size: $fg-f20;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
+      }
+
       &__time {
         font-size: $fg-f24;
         font-weight: 400;
@@ -707,6 +745,12 @@ export default {
         transition: $switch-theme-time;
       }
     }
+    &__tags--position {
+      margin-top: -40rpx;
+      text {
+        margin-right: 10rpx;
+      }
+    }
     &__attachment {
       margin-top: 40rpx;
       margin-bottom: 20rpx;
@@ -717,9 +761,6 @@ export default {
         color: --color(--qui-FC-777);
       }
       &-item {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;

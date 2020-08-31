@@ -84,6 +84,7 @@
     <!-- </view> -->
     <view class="main" id="main">
       <qui-content
+        class="ivideo"
         v-for="(item, index) in threads"
         :ref="'myVideo' + index"
         :key="index"
@@ -113,6 +114,9 @@
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
         :scroll-top="scrollTop"
+        :thread-position="
+          item.location ? [item.location, item.address, item.longitude, item.latitude] : []
+        "
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
@@ -127,6 +131,7 @@
         @backgroundClick="contentClick(item)"
         @headClick="headClick(item.user._jv.id)"
         @videoPlay="handleVideoPlay"
+        @scrollheight="scrpllsip"
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </view>
@@ -319,6 +324,7 @@ export default {
         },
       ],
       threads: [],
+      location: {},
       sticky: [], // 置顶帖子内容
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
@@ -342,6 +348,10 @@ export default {
       playIndex: null,
       scrollTop: 0,
       surl: '', // 公安网备案信息地址
+      observer: null,
+      scrollnumber: '',
+      scrollindex: '',
+      switchscroll: false,
     };
   },
   computed: {
@@ -497,9 +507,23 @@ export default {
     topMargin() {
       return ';';
     },
+    scrpllsip(e, index) {
+      // console.log(e, index);
+      this.scrollnumber = e;
+      this.scrollindex = index;
+      this.switchscroll = true;
+    },
     scroll(event) {
       // if (this.footerIndex === 0) {
       this.scrollTop = event.scrollTop;
+      if (Math.abs(this.scrollnumber) && this.switchscroll) {
+        this.num = Math.abs(this.scrollTop) - Math.abs(this.scrollnumber);
+        if (this.num >= 10 || this.num <= -10) {
+          // console.log('视频暂停播放');
+          this.$refs[`myVideo${this.scrollindex}`][0].pauseVideo();
+          this.switchscroll = false;
+        }
+      }
       // #ifdef MP-WEIXIN
       if (!this.navbarHeight) {
         return;
@@ -870,7 +894,8 @@ export default {
       this.loadThreads();
     },
     // 视频禁止同时播放
-    handleVideoPlay(index) {
+    handleVideoPlay(index, e) {
+      this.switchscroll = e;
       if (this.playIndex !== index && this.playIndex !== null) {
         this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
       }

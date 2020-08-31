@@ -28,6 +28,12 @@
       }
     }, 
     {
+      "path": "pages/topic/position",
+      "style": {
+        "navigationBarTitleText": "位置信息"
+      }
+    }, 
+    {
       "path": "pages/topic/list",
       "style": {
         "navigationBarTitleText": "话题列表",

@@ -116,7 +116,7 @@
           <text
             class="phone-login-box-ft-text"
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findPassword"
+            @click="jump2findpwd"
           >
             {{ i18n.t('user.forgetPassword') }}
           </text>
@@ -134,6 +134,7 @@
 
 <script>
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 import { SITE_PAY } from '@/common/const';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
@@ -143,6 +144,7 @@ import tcaptchs from '@/utils/tcaptcha';
 export default {
   mixins: [
     user,
+    loginModule,
     // #ifdef H5
     appCommonH,
     tcaptchs,
@@ -162,8 +164,6 @@ export default {
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
       url: '', // 上一个页面的路径
-      code: '', // 注册邀请码
-      token: '', // token
       site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
@@ -179,7 +179,7 @@ export default {
   },
   onLoad(params) {
     this.getForum();
-    const { url, token, commentId, code } = params;
+    const { url, commentId } = params;
     if (url) {
       let pageUrl;
       if (url.substr(0, 1) !== '/') {
@@ -192,12 +192,6 @@ export default {
       } else {
         this.url = pageUrl;
       }
-    }
-    if (code !== 'undefined') {
-      this.code = code;
-    }
-    if (token) {
-      this.token = token;
     }
 
     // #ifdef H5
@@ -246,14 +240,6 @@ export default {
     }
   },
   methods: {
-    getForum() {
-      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
-        console.log('forum', res);
-        if (res) {
-          this.forum = res;
-        }
-      });
-    },
     changeinput() {
       setTimeout(() => {
         this.phoneNumber = this.phoneNumber.replace(/[^\d]/g, '');
@@ -399,12 +385,20 @@ export default {
       }
       // #endif
       // #ifdef H5
-      if (this.token && this.token !== '') {
-        params.data.attributes.token = this.token;
+      const token = this.$store.getters['session/get']('token');
+      if (token && token !== '') {
+        params.data.attributes.token = token;
       }
       // #endif
-      if (this.code && this.code !== 'undefined') {
-        params.data.attributes.inviteCode = this.code;
+      let inviteCode = '';
+      uni.getStorage({
+        key: 'inviteCode',
+        success(resData) {
+          inviteCode = resData.data || '';
+        },
+      });
+      if (inviteCode !== '') {
+        params.data.attributes.code = inviteCode;
       }
       console.log('params', params);
       this.$store
@@ -426,63 +420,24 @@ export default {
     },
     // #ifdef MP-WEIXIN
     mpAuthClick() {
-      const params = {
-        data: {
-          attributes: {},
-        },
-      };
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-        params.data.attributes.register = 1;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.code = data.data.attributes.code;
-      }
-      this.$store
-        .dispatch('session/noSenseMPLogin', params)
-        .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
-            this.logind();
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.getmpLoginParams();
     },
     // #endif
     // #ifdef H5
     jump2WeChat() {
-      if (
-        this.isWeixin &&
-        this.forum &&
-        this.forum.passport &&
-        this.forum.passport.offiaccount_close
-      ) {
-        uni.setStorage({
-          key: 'register',
-          data: 1,
-        });
-        this.$store.dispatch('session/wxh5Login');
-      }
+      this.wxh5Login();
     },
     // #endif
-    jump2Login() {
-      uni.navigateTo({
-        url: `/pages/user/login?url=${this.url}&code=${this.code}`,
-      });
-    },
     switchState() {
       this.isLogin = !this.isLogin;
       this.phoneNumber = '';
       this.$refs.quiinput.deleat();
     },
-    jump2findPassword() {
-      uni.navigateTo({
-        url: `/pages/modify/findpwd?pas=reset_pwd`,
-      });
+    jump2Login() {
+      this.jump2LoginPage();
+    },
+    jump2findpwd() {
+      this.jump2findpwdPage();
     },
   },
 };
@@ -491,7 +446,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-
+page {
+  overflow: scroll;
+  overflow-x: hidden;
+}
 .phone-login-box {
   background-color: --color(--qui-BG-2);
 }

@@ -125,6 +125,7 @@ export default {
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
       pleaseEnterAPostTitle: '请输入帖子标题',
+      addPosition: '添加位置',
     },
   },
   uploader: {
@@ -324,6 +325,7 @@ export default {
   },
   auth: {
     userinfo: '微信快捷登录',
+    phone: '获取手机号',
   },
   // 首页
   home: {
