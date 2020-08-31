@@ -147,6 +147,9 @@ const actions = {
     return new Promise(resolve => {
       context.commit(DELETE_USER_ID);
       context.commit(DELETE_ACCESS_TOKEN);
+      uni.removeStorage({
+        key: 'inviteCode',
+      });
       resolve();
     });
   },
