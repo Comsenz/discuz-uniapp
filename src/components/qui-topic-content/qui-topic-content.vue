@@ -96,7 +96,8 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !videoStatus && coverImage != null"
           @click="videocoverClick"
-          :style="{ height: videoWidth > videoHeight ? '' : '860rpx' }"
+          :style="{ width: '100%', height: videoWidth > videoHeight ? '' : '860rpx' }"
+          :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
         >
           <view class="theme__mark"></view>
           <image class="theme__mark__open" src="/static/video.svg"></image>
@@ -104,7 +105,6 @@
             class="themeItem__content__coverimg"
             :src="coverImage"
             :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-            mode="aspectFill"
           ></image>
         </view>
         <view
@@ -118,7 +118,7 @@
             class="themeItem__content__coverimg"
             :src="coverImage"
             :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-            mode="aspectFill"
+            :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
           ></image>
         </view>
         <view v-show="videoShow">
@@ -637,7 +637,7 @@ export default {
       }
 
       &__isAdminColor {
-        padding: 6rpx 16rpx;
+        padding: 2rpx 10rpx;
         margin-left: 15rpx;
         font-size: $fg-f20;
         background: --color(--qui-BG-IT);
