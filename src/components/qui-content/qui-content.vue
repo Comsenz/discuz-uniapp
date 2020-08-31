@@ -78,7 +78,7 @@
             class="themeItem__content__coverimg"
             :src="coverImage"
             :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-            mode="aspectFill"
+            :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
             lazy-load
           ></image>
         </view>
@@ -94,12 +94,13 @@
               class="themeItem__content__coverimg"
               :src="coverImage"
               :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-              mode="aspectFill"
+              :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
               lazy-load
             ></image>
           </view>
           <!-- 视频 -->
           <video
+            v-show="videoShow"
             :poster="coverImage"
             controls
             ref="myVideo"
@@ -851,7 +852,6 @@ export default {
 .theme__content__videocover {
   position: relative;
   &-img {
-    position: absolute;
     z-index: 1;
     width: 100%;
   }
