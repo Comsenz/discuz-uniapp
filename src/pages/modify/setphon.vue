@@ -53,11 +53,6 @@
         </qui-button>
       </view>
     </view>
-    <!-- #ifdef MP-WEIXIN -->
-    <uni-popup ref="authPhone" type="bottom">
-      <qui-auth-phone @close="close"></qui-auth-phone>
-    </uni-popup>
-    <!-- #endif -->
   </qui-page>
 </template>
 
@@ -104,11 +99,6 @@ export default {
     };
   },
   onLoad(arr) {
-    // #ifdef MP-WEIXIN
-    if (this.forums && this.forums.other && this.forums.other.publish_need_bind_phone) {
-      this.$refs.authPhone.open();
-    }
-    // #endif
     console.log('onLoadonLoadonLoad', this.forums);
     this.userid = this.usersid;
     this.typebind = arr.type || 'bind';
@@ -400,11 +390,6 @@ export default {
       const empty = this.$refs.quiinput;
       empty.deleat();
     },
-    // #ifdef MP-WEIXIN
-    close() {
-      this.$refs.authPhone.close();
-    },
-    // #endif
   },
   onUnload() {
     this.$u.event.$off('captchaResult');

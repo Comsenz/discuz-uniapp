@@ -66,8 +66,8 @@ export default {
           .then(result => {
             if (result.data) {
               console.log('result', result);
-              uni.navigateBack({
-                delta: 1,
+              uni.redirectTo({
+                url: `/pages/my/profile`,
               });
             }
           })
