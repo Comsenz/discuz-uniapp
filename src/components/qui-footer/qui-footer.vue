@@ -68,6 +68,11 @@
       ></uni-popup-dialog>
     </uni-popup>
     <qui-toast ref="toast"></qui-toast>
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-popup ref="authPhone" type="bottom">
+      <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
+    </uni-popup>
+    <!-- #endif -->
   </view>
 </template>
 <script>
@@ -308,16 +313,27 @@ export default {
           url: `/pages/modify/realname?id=${this.user.id}`,
         });
       } else if (this.sureType === '1') {
+        // #ifdef MP-WEIXIN
+        if (this.user && this.user.mobile === '') {
+          this.$refs.authPhone.open();
+        }
+        // #endif
+        // #ifdef H5
         // 删除类型为主题评论
         uni.navigateTo({
           url: `/pages/modify/setphon?id=${this.user.id}`,
         });
+        // #endif
       }
     },
-
     handleClickCancel() {
       this.$refs.surePopup.close();
     },
+    // #ifdef MP-WEIXIN
+    closeDialog() {
+      this.$refs.authPhone.close();
+    },
+    // #endif
   },
 };
 </script>
