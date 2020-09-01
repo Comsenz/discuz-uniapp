@@ -65,11 +65,25 @@ export default {
           .dispatch('session/bindPhonenum', params)
           .then(result => {
             this.$emit('closeDialog');
-            if (result.data.data) {
+            if (result && result.data && result.data.data && result.data.data.id) {
               console.log('result', result);
-              uni.redirectTo({
-                url: `/pages/my/profile`,
-              });
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              if (url === '/pages/my/profile') {
+                uni.showToast({
+                  title: this.i18n.t('auth.success'),
+                  duration: 2000,
+                });
+                uni.redirectTo({
+                  url: `/pages/my/profile`,
+                });
+              } else {
+                this.logind();
+                uni.showToast({
+                  title: this.i18n.t('auth.success'),
+                  duration: 2000,
+                });
+              }
             }
           })
           .catch(err => {

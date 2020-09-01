@@ -344,7 +344,7 @@ export default {
     },
     // #ifdef MP-WEIXIN
     mpAuthClick() {
-      this.getmpLoginParams();
+      this.getmpRegisterParams();
     },
     // #endif
     // #ifdef H5
