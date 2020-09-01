@@ -276,10 +276,11 @@ $otherHeight: 292rpx;
   &_recoment {
     width: 34rpx;
     height: 34rpx;
-    margin: 4rpx 0 0 20rpx;
-    line-height: 34rpx;
+    margin-left: 20rpx;
+    line-height: 32rpx;
     color: #fff;
     text-align: center;
+    align-self: center;
   }
   &_details {
     margin: 20rpx 0;

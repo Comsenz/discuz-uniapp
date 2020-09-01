@@ -138,11 +138,12 @@ $otherHeight: 292rpx;
     left: 253rpx;
     width: 34rpx;
     height: 34rpx;
-    margin: 4rpx 0 0 20rpx;
+    margin-left: 20rpx;
     font-size: 22rpx;
     line-height: 34rpx;
     color: #fff;
     text-align: center;
+    align-self: center;
     // background: rgba(15, 157, 245, 1);
   }
   &_heat {
