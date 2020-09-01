@@ -64,7 +64,8 @@ export default {
         this.$store
           .dispatch('session/bindPhonenum', params)
           .then(result => {
-            if (result.data) {
+            this.$emit('closeDialog');
+            if (result.data.data) {
               console.log('result', result);
               uni.redirectTo({
                 url: `/pages/my/profile`,
@@ -75,10 +76,9 @@ export default {
             console.log(err);
           });
       }
-      this.$emit('close');
     },
-    close() {
-      this.$emit('close');
+    closeDialog() {
+      this.$emit('closeDialog');
     },
   },
 };

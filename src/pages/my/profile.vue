@@ -95,7 +95,7 @@
     </view>
     <!-- #ifdef MP-WEIXIN -->
     <uni-popup ref="authPhone" type="bottom">
-      <qui-auth-phone @close="close"></qui-auth-phone>
+      <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
     </uni-popup>
     <!-- #endif -->
   </qui-page>
@@ -194,7 +194,7 @@ export default {
       uni.showLoading();
     },
     // #ifdef MP-WEIXIN
-    close() {
+    closeDialog() {
       this.$refs.authPhone.close();
     },
     // #endif
