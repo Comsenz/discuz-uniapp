@@ -30,23 +30,12 @@ export default {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
-          uni.setStorage({
-            key: 'register',
-            data: 0,
-          });
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
               this.$store.dispatch('session/setToken', res.data.errors[0].token);
-              let code = '';
-              uni.getStorage({
-                key: 'inviteCode',
-                success(resData) {
-                  code = resData.data || '';
-                },
-              });
               const pages = getCurrentPages();
               const url = pages[pages.length - 1].route;
-              this.login(url, code);
+              this.login(url);
             }
             if (res.data.errors[0].code === 'register_validate') {
               uni.showToast({
