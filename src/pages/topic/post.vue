@@ -589,19 +589,18 @@ export default {
       if (that.currentPosition.location) {
         return;
       }
-      this.getPosition();
-      // const { platform } = uni.getSystemInfoSync();
-      // if (platform === 'android' && this.isWeixin) {
-      //   // 安卓微信浏览器卡顿问题
-      //   this.getPosition();
-      // } else {
-      //   uni.chooseLocation({
-      //     success(res) {
-      //       res.location = res.name;
-      //       that.currentPosition = res;
-      //     },
-      //   });
-      // }
+      const { platform } = uni.getSystemInfoSync();
+      if (platform === 'android' && this.isWeixin) {
+        // 安卓微信浏览器卡顿问题
+        this.getPosition();
+      } else {
+        uni.chooseLocation({
+          success(res) {
+            res.location = res.name;
+            that.currentPosition = res;
+          },
+        });
+      }
     },
     clearPosition() {
       this.currentPosition = {};
@@ -1288,7 +1287,7 @@ export default {
       this.$store.dispatch('jv/post', params);
     },
     // 获取当前编辑的主题数据
-    getPostThread() {
+    getPostThread(option) {
       const params = {
         include: [
           'firstPost',
@@ -1318,10 +1317,25 @@ export default {
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
         // this.uploadFile = res.firstPost.images;
-        this.currentPosition.longitude = res.longitude || '';
-        this.currentPosition.latitude = res.latitude || '';
-        this.currentPosition.location = res.location || '';
-        this.currentPosition.address = res.address || '';
+        // 微信安卓里面的定位 
+        if(option.name) {
+          const { platform } = uni.getSystemInfoSync();
+          if(platform === 'android' && this.isWeixin) {
+            let currentPosition = {};
+            const data = option.latng.split(',');
+            currentPosition.longitude = data[0];
+            currentPosition.latitude = data[1];
+            currentPosition.location = option.name;
+            currentPosition.address = option.addr;
+            this.currentPosition = currentPosition;
+          }
+        }else {
+          this.currentPosition.longitude = res.longitude || '';
+          this.currentPosition.latitude = res.latitude || '';
+          this.currentPosition.location = res.location || '';
+          this.currentPosition.address = res.address || '';
+        }
+        
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
             if (item) {
@@ -1507,7 +1521,7 @@ export default {
 
     if (this.operating === 'edit') {
       this.loadStatus = false;
-      this.getPostThread();
+      this.getPostThread(option);
     } else {
       this.loadStatus = true;
     }
