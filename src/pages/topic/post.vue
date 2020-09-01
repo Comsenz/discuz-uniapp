@@ -413,6 +413,8 @@ import forums from '@/mixin/forums';
 // #ifdef  H5
 import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
+import appCommonH from '@/utils/commonHelper';
+import choosePosition from '@/mixin/choosePosition';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
@@ -423,6 +425,8 @@ export default {
     forums,
     // #ifdef  H5
     tcaptchs,
+    choosePosition,
+    appCommonH,
     // #endif
   ],
   data() {
@@ -435,6 +439,7 @@ export default {
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
+      isWeixin: false, // 默认不是微信浏览器
       type: 0, // 帖子类型
       price: 0, // 付费金额
       inputPrice: '', // 付费金额输入框
@@ -562,6 +567,12 @@ export default {
   //     // eslint-disable-next-line
   //   }
   // },
+  created() {
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
+  },
   updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
@@ -578,12 +589,19 @@ export default {
       if (that.currentPosition.location) {
         return;
       }
-      uni.chooseLocation({
-        success(res) {
-          res.location = res.name;
-          that.currentPosition = res;
-        },
-      });
+      this.getPosition();
+      // const { platform } = uni.getSystemInfoSync();
+      // if (platform === 'android' && this.isWeixin) {
+      //   // 安卓微信浏览器卡顿问题
+      //   this.getPosition();
+      // } else {
+      //   uni.chooseLocation({
+      //     success(res) {
+      //       res.location = res.name;
+      //       that.currentPosition = res;
+      //     },
+      //   });
+      // }
     },
     clearPosition() {
       this.currentPosition = {};
