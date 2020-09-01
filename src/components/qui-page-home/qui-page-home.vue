@@ -45,7 +45,7 @@
             name="icon-screen"
             size="32"
             :color="show ? '#1878F3' : '#777'"
-            @tap="showFilter"
+            @tap="showFilter(show)"
           ></qui-icon>
         </view>
         <u-tabs

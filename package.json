@@ -63,6 +63,7 @@
   },
   "homepage": "http://discuz.chat/docs/",
   "dependencies": {
+    "@codexteam/ajax": "^4.2.0",
     "@dcloudio/uni-app-plus": "^2.0.0-alpha-28020200701003",
     "@dcloudio/uni-h5": "^2.0.0-alpha-28020200701003",
     "@dcloudio/uni-helper-json": "*",
@@ -73,6 +74,7 @@
     "@dcloudio/uni-mp-weixin": "^2.0.0-alpha-28020200701003",
     "@dcloudio/uni-ui": "^1.2.3",
     "@editorjs/editorjs": "^2.18.0",
+    "@editorjs/link": "^2.2.1",
     "core-js": "^3.6.4",
     "flyio": "^0.6.2",
     "jsonpath-plus": "^3.0.0",

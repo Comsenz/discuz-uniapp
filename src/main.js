@@ -47,7 +47,10 @@ const apploaded = () => {
   const forums = app.$store.getters['jv/get']('forums/1');
   if (forums.set_site) {
     const isLogin = app.$store.getters['session/get']('isLogin');
-    if (forums.set_site.site_mode === SITE_PAY  && app._route.path!== '/pages/site/partner-invite') {
+    if (
+      forums.set_site.site_mode === SITE_PAY &&
+      app._route.path !== '/pages/site/partner-invite'
+    ) {
       if (payWhiteListPage.indexOf(app._route.path) === -1 && !isLogin) {
         uni.redirectTo({
           url: '/pages/site/info',
@@ -75,7 +78,7 @@ const apploaded = () => {
   const link = document.querySelector('link[rel*="icon"]') || document.createElement('link');
   link.type = 'image/x-icon';
   link.rel = 'shortcut icon';
-  link.href = forums.set_site.site_favicon;
+  link.href = forums.set_site ? forums.set_site.site_favicon : '';
   document.getElementsByTagName('head')[0].appendChild(link);
 };
 uni.$on('apploaded', apploaded);

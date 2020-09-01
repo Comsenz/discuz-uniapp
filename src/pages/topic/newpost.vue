@@ -11,18 +11,27 @@
 <script>
 import EditorJS from '@editorjs/editorjs';
 import Markdown from '@/library/editorjs/markdown/Markdown';
-import ImageTool from '@editorjs/image';
+import ImageTool from '@/library/editorjs/image';
+import AttachesTool from '@/library/editorjs/attaches';
 import linkTool from '@editorjs/link';
+// import { http } from '@/api/api-request';
+import uploadFile from '@/mixin/uploadFile';
 // import At from '@/library/editorjs/At';
 
 export default {
+  mixins: [uploadFile],
   data() {
     return {
       editor: null,
       data: {},
+      imageId: '',
     };
   },
   onLoad() {
+    const _that = this;
+
+    // console.log(window.localStorage.getItem('access_token'), '_that.header.authorization');
+
     this.editor = new EditorJS({
       /**
        * Id of Element that should contain Editor instance
@@ -38,16 +47,44 @@ export default {
         image: {
           class: ImageTool,
           config: {
-            endpoints: {
-              byFile: 'http://localhost:8008/uploadFile', // Your backend file uploader endpoint
-              byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
+            // endpoints: {
+            //   byFile: 'http://localhost:8008/uploadFile', // Your backend file uploader endpoint
+            //   byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
+            // },
+            uploader: {
+              async uploadByFile(file) {
+                return _that
+                  .uploadFile(file, 1)
+                  .then(res => {
+                    console.log(res, 'res');
+                    _that.imageId = res.data.id;
+                    console.log(_that.imageId, 'ididididididi');
+                    return {
+                      success: 1,
+                      file: {
+                        url: res.data.attributes.url,
+                        fileId: res.data.id,
+                      },
+                    };
+                  })
+                  .catch(err => {
+                    console.log(err, 'error');
+                  });
+              },
             },
+          },
+          multiple: true,
+        },
+        attaches: {
+          class: AttachesTool,
+          config: {
+            // endpoint: 'https://editor.discuzq.com/api/attachments',
           },
         },
         linkTool: {
           class: linkTool,
           config: {
-            endpoint: 'http://localhost:8008/fetchUrl', // Your backend endpoint for url data fetching
+            // endpoint: 'http://localhost:8008/fetchUrl', // Your backend endpoint for url data fetching
           },
         },
       },
@@ -76,6 +113,14 @@ export default {
               },
             },
           },
+          include: [
+            'user',
+            'user.groups',
+            'firstPost',
+            'firstPost.images',
+            'category',
+            'threadVideo',
+          ],
           content: this.data,
         };
 
