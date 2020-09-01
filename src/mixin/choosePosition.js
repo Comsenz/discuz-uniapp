@@ -7,6 +7,7 @@ module.exports = {
   methods: {
     getPosition() {
       const url = this.getUrl();
+      const that = this;
       this.$store
         .dispatch('jv/get', [`offiaccount/jssdk?url=${encodeURIComponent(url)}`, {}])
         .then(data => {
@@ -25,14 +26,7 @@ module.exports = {
               success(res) {
                 const { latitude } = res; // 纬度，浮点数，范围为90 ~ -90
                 const { longitude } = res; // 经度，浮点数，范围为180 ~ -180。
-                uni.showToast({
-                  title: latitude,
-                  duration: 2000,
-                });
-                uni.showToast({
-                  title: longitude,
-                  duration: 2000,
-                });
+                that.choosePosition(`${latitude},${longitude}`);
               },
             });
           });
