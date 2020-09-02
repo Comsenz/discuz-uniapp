@@ -8,11 +8,11 @@
       class="scroll-y"
       @scroll="scroll"
     >
-      <view class="position-head">
+      <view class="position-head" v-if="address">
         <view class="position-head__name">{{ location }}</view>
         <view class="position-head__address">{{ address }}</view>
       </view>
-      <view class="position-num">
+      <view class="position-num" v-if="address">
         {{
           `${i18n.t('profile.total')} ${totalData} ${i18n.t('profile.item')}${i18n.t(
             'core.content',
@@ -28,7 +28,12 @@
             @handleClickShare="handleClickShare"
           ></qui-thread-item>
         </view>
-        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
+        <qui-load-more
+          :status="loadingType"
+          :show-icon="false"
+          v-if="loadingType"
+          :content-text="contentText"
+        ></qui-load-more>
       </view>
     </scroll-view>
   </qui-page>
@@ -59,6 +64,9 @@ export default {
       latitude: '',
       location: '',
       address: '',
+      contentText: {
+        contentnomore: this.i18n.t('topic.noMoreDataNearby'),
+      },
     };
   },
   mounted() {
@@ -126,10 +134,10 @@ export default {
             this.totalData = res._jv.json.meta.threadCount;
             delete res._jv;
           }
-          if (!this.address) {
+          if (!this.address && res.length > 0) {
             this.address = res[0].address;
           }
-          if (!this.location) {
+          if (!this.location && res.length > 0) {
             this.location = res[0].location;
           }
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';

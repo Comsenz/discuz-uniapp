@@ -596,7 +596,11 @@ export default {
       } else {
         uni.chooseLocation({
           success(res) {
-            res.location = res.name;
+            if (res.name === that.i18n.t('topic.myPosition')) {
+              res.location = res.address;
+            } else {
+              res.location = res.name;
+            }
             that.currentPosition = res;
           },
         });
@@ -1170,12 +1174,10 @@ export default {
         captcha_rand_str: this.randstr,
       };
       const currentPosition = this.currentPosition;
-      if(currentPosition.location) {
-        params.longitude = currentPosition.longitude;
-        params.latitude = currentPosition.latitude;
-        params.location = currentPosition.location;
-        params.address = currentPosition.address;
-      }
+      params.longitude = currentPosition.longitude || '';
+      params.latitude = currentPosition.latitude || '';
+      params.location = currentPosition.location || '';
+      params.address = currentPosition.address || '';
 
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
@@ -1403,12 +1405,10 @@ export default {
         },
       };
       const currentPosition = this.currentPosition;
-      if(currentPosition.location) {
-        threads.longitude = currentPosition.longitude;
-        threads.latitude = currentPosition.latitude;
-        threads.location = currentPosition.location;
-        threads.address = currentPosition.address;
-      }
+      threads.longitude = currentPosition.longitude || '';
+      threads.latitude = currentPosition.latitude || '';
+      threads.location = currentPosition.location || '';
+      threads.address = currentPosition.address || '';
 
       switch (this.type) {
         case 0:
