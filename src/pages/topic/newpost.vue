@@ -3,7 +3,11 @@
     <view class="content">
       <view id="editor"></view>
     </view>
-
+    <view id="atList" class="child_list" v-if="atShow">
+      <view v-for="(child, index) in allSiteUser" :key="index" @click="userClick(child.username)">
+        {{ child.username }}
+      </view>
+    </view>
     <qui-button type="primary" size="large" @tap="submit">发布</qui-button>
     <qui-editorjscontent :input="data"></qui-editorjscontent>
   </view>
@@ -25,6 +29,10 @@ export default {
       editor: null,
       data: {},
       imageId: '',
+      allSiteUser: '', // 站点用户
+      userVal: '', // 用户搜索值
+      once: 1, // 请求值为1时请求一次接口
+      atShow: false, // at列表显示
     };
   },
   onLoad() {
@@ -41,7 +49,7 @@ export default {
       autofocus: true,
       tools: {
         // At,
-        Markdown: {
+        markdown: {
           class: Markdown,
         },
         image: {
@@ -91,11 +99,73 @@ export default {
       /**
        * Initial Editor data
        */
-      data: {},
-      initialBlock: 'Markdown',
+      data: {
+        blocks: [
+          {
+            type: 'markdown',
+            data: {
+              placeholder: '请输入标题',
+              classNames: ['mark-title'],
+            },
+          },
+          {
+            type: 'markdown',
+            data: {
+              placeholder: '您想说的...',
+              classNames: ['mark-content'],
+            },
+          },
+        ],
+      },
+      initialBlock: 'markdown',
+    });
+    uni.$on('mentionStart', data => {
+      console.log(data, '~~~~~');
+      this.userVal = data.msg;
+      if (data.msg) {
+        this.getAtUser();
+        // this.once = 2;
+      }
     });
   },
+  watch: {
+    userVal: {
+      handler(oldVal, newVal) {
+        console.log(oldVal, '第一个', newVal, '第二个');
+        if (oldVal && oldVal !== newVal) {
+          this.once = 1;
+          this.getAtUser();
+        }
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   methods: {
+    getAtUser() {
+      // if (this.once === 1) {
+      const params = {
+        'filter[username]': `*${this.userVal}*`,
+        'filter[status]': 'normal',
+        'page[size]': 10,
+        'page[number]': 1,
+      };
+      this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
+        // this.meta = res._jv.json.meta;
+        // this.allSiteUser = [...this.allSiteUser, ...res];
+        this.allSiteUser = res;
+        if (res !== '' && res !== null) {
+          this.atShow = true;
+        }
+        this.once = 1;
+      });
+      // }
+    },
+    // 点击at列表
+    userClick(name) {
+      uni.$emit('userClick', { name });
+      this.atShow = !this.atShow;
+    },
     submit() {
       this.editor.save().then(data => {
         console.log(data);
@@ -142,5 +212,15 @@ export default {
 @import '@/library/editorjs/markdown/markdown.scss';
 .content {
   padding: 10rpx 40rpx;
+}
+
+.child_list {
+  position: fixed;
+  top: 50rpx;
+  left: 100rpx;
+  z-index: 10;
+  padding: 20rpx;
+  background: #eee;
+  border: 1px solid #ededed;
 }
 </style>

@@ -5,13 +5,34 @@ export default class Markdown {
   constructor({ data, api, config }) {
     console.log(data, api, config);
     this.element = null;
+    this.data = data;
+    this.ment = 0;
+    uni.$on('userClick', data => {
+      let userClickName = '';
+      userClickName = data.name;
+      console.log(userClickName, '这是点击后获取到的用户名');
+      const userSpan = document.createElement('span');
+      userSpan.classList.add('diff');
+      userSpan.textContent = `@${userClickName} `;
+      console.log(this.element, '%%%%%%%%%%%');
+      this.element.textContent = this.element.textContent.slice(0, this.ment - 1);
+      this.element.appendChild(userSpan);
+      // this.element.innerHTML = '<span></span>';
+    });
   }
 
   render() {
-    this.element = this._make('div', ['ce-paragraph', 'cdx-block', 'markdown'], {
+    const attributes = {
       contentEditable: true,
-    });
+    };
+    let classNames = ['ce-paragraph', 'cdx-block', 'markdown'];
+    console.log(classNames, this.data.classNames);
+    classNames = classNames.concat(this.data.classNames);
+
+    this.element = this._make('div', classNames, attributes);
     const at = e => {
+      let once = 1;
+
       // Up, down, enter, tab, escape, left, right.
       if ([9, 13, 27, 40, 38, 37, 39].indexOf(e.which) !== -1) return;
       const range = window.getSelection().getRangeAt(0);
@@ -22,37 +43,34 @@ export default class Markdown {
       for (let i = cursor - 1; i >= cursor - 30; i--) {
         const character = value.substr(i, 1);
         if (character === '@') {
+          console.log('开始');
           mentionStart = i + 1;
           break;
         }
       }
       if (mentionStart) {
-        console.log(
-          123123,
-          e,
-          e.clientX,
-          e.clientY,
-          '~~~~',
-          mentionStart,
-          value.substring(mentionStart, cursor),
-        );
-        const username = '这是@列表';
-        const atDom = document.createElement('div');
-        atDom.id = 'atList';
-        if (!document.getElementById('atList')) {
-          this.element.parentNode.insertBefore(atDom, this.element);
-          const atChild = document.createElement('p');
-          atChild.innerHTML = username;
-          atDom.classList.add('at_list');
-          document.getElementById('atList').appendChild(atChild);
-          // document.appendChild(atDom);
+        console.log('走了');
+        this.ment = mentionStart;
+        const atDom = document.getElementById('atList');
+        let userList = [];
+        if (once === 1) {
+          once++;
+          uni.$emit('mentionStart', { msg: value.substring(mentionStart, cursor) });
+
+          console.log(once, '这是once');
         }
 
-        // console.log(document.getElementById('atList'), '@@@@@');
+        console.log(atDom, '这是整个列表dom');
+        console.log(123123, e, '~~~~', mentionStart, value.substring(mentionStart, cursor));
       }
     };
     this.element.addEventListener('keyup', at);
     this.element.addEventListener('input', at);
+    if (!this.data.text && this.data.placeholder) {
+      this.element.setAttribute('placeholder', this.data.placeholder);
+    } else if (this.data.text) {
+      this.element.innerHTML = this.data.text;
+    }
     return this.element;
   }
   save(content) {

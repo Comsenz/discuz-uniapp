@@ -1,24 +1,33 @@
-.markdown {
-  position: relative;
-  width: 100%;
-  height: 200rpx;
-  padding: 20rpx;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-// .markdown input {
-//   width: 100%;
-//   padding: 10px;
-//   font-size: 14px;
-//   border: 1px solid #e4e4e4;
-//   border-radius: 3px;
-//   outline: none;
-// }
-.at_list {
-  position: absolute;
+.child_list {
+  position: fixed;
   top: 50rpx;
   left: 100rpx;
   padding: 20rpx;
   background: #eee;
   border: 1px solid #ededed;
+}
+.diff {
+  color: #336699;
+}
+.mark-title {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+.mark-content {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 130px;
+}
+
+/* 为空时显示 element attribute content */
+.mark-content:empty:before,
+.mark-title:empty:before {
+  content: attr(placeholder); /* element attribute*/
+  color: #ccc;
+}
+/*焦点时内容为空*/
+.mark-content:focus:before,
+.mark-title:focus:before {
+  content: none;
 }
