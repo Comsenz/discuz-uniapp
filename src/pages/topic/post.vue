@@ -1325,8 +1325,8 @@ export default {
           if(platform === 'android' && this.isWeixin) {
             let currentPosition = {};
             const data = option.latng.split(',');
-            currentPosition.longitude = data[0];
-            currentPosition.latitude = data[1];
+            currentPosition.longitude = data[1];
+            currentPosition.latitude = data[0];
             currentPosition.location = option.name;
             currentPosition.address = option.addr;
             this.currentPosition = currentPosition;
