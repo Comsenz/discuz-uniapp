@@ -1,7 +1,7 @@
 module.exports = {
   /**
    * @description 上传图片/附件接口请求
-   * @param {Number} type  type:1 上传图片/type:2 上传附件
+   * @param {Number} type  type:1 上传图片/type:0 上传附件
    */
   methods: {
     uploadFile(file, type) {

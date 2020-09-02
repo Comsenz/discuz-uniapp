@@ -1,4 +1,6 @@
 import ajax from '@codexteam/ajax';
+const { uploadFile } = require('@/mixin/uploadFile').methods;
+console.log(uploadFile, 'uploadFile');
 
 /**
  * Module for file uploading.
@@ -21,21 +23,54 @@ export default class Uploader {
    * @param {function} onPreview - callback fired when preview is ready
    */
   uploadSelectedFile({ onPreview }) {
+    console.log(this, 'this');
+
     ajax
-      .transport({
+      .selectFiles({
         url: this.config.endpoint,
         accept: this.config.types,
         beforeSend: () => onPreview(),
         fieldName: this.config.field,
+        // type: 1
       })
-      .then(response => {
-        this.onUpload(response);
+      .then(res => {
+        console.log(res[0], 'reds');
+        uploadFile(res[0], 0).then(response => {
+          const attributes = response.data.attributes;
+          this.onUpload({
+            body: {
+              success: true,
+              file: {
+                url: attributes.url,
+                name: attributes.fileName,
+                size: attributes.fileSize,
+              },
+            },
+          });
+        });
       })
-      .catch(error => {
-        console.log(error, 'errorerrorerrorerror');
-        const message = error && error.message ? error.message : this.config.errorMessage;
-
+      .catch(err => {
+        const message = err && err.message ? err.message : this.config.errorMessage;
         this.onError(message);
-      });
+      })
+      .finally(() => {});
+    // ajax
+    //   .transport({
+    //     url: this.config.endpoint,
+    //     accept: this.config.types,
+    //     beforeSend: () => onPreview(),
+    //     fieldName: this.config.field,
+    //     // type: 1
+    //   })
+    //   .then(response => {
+    //     this.onUpload(response);
+    //   })
+    //   .catch(error => {
+    //     console.log(error, 'errorerrorerrorerror');
+    //     const message = error && error.message ? error.message : this.config
+    //       .errorMessage;
+
+    //     this.onError(message);
+    //   });
   }
 }

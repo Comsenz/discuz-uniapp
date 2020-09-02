@@ -1,4 +1,5 @@
 .cdx-attaches {
+  display: flex;
   &--with-file {
     display: flex;
     padding: 13px 20px;
@@ -42,6 +43,7 @@
     }
 
     ^&__size {
+      display: flex;
       color: #7b7e89;
 
       &::after {
