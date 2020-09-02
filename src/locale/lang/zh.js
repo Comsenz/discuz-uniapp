@@ -254,7 +254,7 @@ export default {
     comment: '评论',
     noComment: '暂无评论',
     noMoreData: '没有更多数据了',
-    noMoreDataNearby: '附近没有其它内容',
+    noMoreDataNearby: '附近没有其它内容了',
     myPosition: '我的位置',
     whole: '全部',
     paymentViewPicture: '查看图片',
