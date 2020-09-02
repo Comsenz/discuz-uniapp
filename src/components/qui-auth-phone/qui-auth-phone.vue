@@ -1,7 +1,12 @@
 <template>
   <view class="auth">
     <view class="auth__header">
-      <qui-icon @tap="close" class="auth__header__close" name="icon-close" size="36"></qui-icon>
+      <qui-icon
+        @tap="closeDialog"
+        class="auth__header__close"
+        name="icon-close"
+        size="36"
+      ></qui-icon>
     </view>
     <view class="auth__content">
       <image
@@ -9,7 +14,6 @@
         mode="aspectFit"
         :src="(forums && forums.set_site && forums.set_site.site_logo) || '/static/logo.png'"
       ></image>
-
       <qui-button
         type="primary"
         open-type="getPhoneNumber"
@@ -35,19 +39,22 @@ export default {
     },
   },
   mounted() {
-    uni.login({
-      success: loginRes => {
-        if (loginRes.errMsg === 'login:ok') {
-          console.log('loginRes', loginRes);
-          this.$store.dispatch('session/setCode', loginRes.code);
-        }
-      },
-      fail: error => {
-        console.log(error);
-      },
-    });
+    this.getPhoneParam();
   },
   methods: {
+    getPhoneParam() {
+      uni.login({
+        success: loginRes => {
+          if (loginRes.errMsg === 'login:ok') {
+            console.log('loginRes', loginRes);
+            this.$store.dispatch('session/setCode', loginRes.code);
+          }
+        },
+        fail: error => {
+          console.log(error);
+        },
+      });
+    },
     decryptPhoneNumber(res) {
       console.log(res);
       if (res.detail.errMsg === 'getPhoneNumber:ok') {
@@ -84,6 +91,9 @@ export default {
                   duration: 2000,
                 });
               }
+            }
+            if (result && result.data && result.data.errors) {
+              this.getPhoneParam();
             }
           })
           .catch(err => {
