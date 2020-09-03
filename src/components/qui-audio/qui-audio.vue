@@ -1,7 +1,13 @@
 <template>
   <view class="qui-audio">
     <view class="qui-audio__btn" @click="operation">
-      <qui-icon :name="paused ? 'icon-play' : 'icon-pause'" size="36" color="#ddd"></qui-icon>
+      <qui-icon name="icon-jiazaizhong" size="36" v-if="loading" color="#ddd"></qui-icon>
+      <qui-icon
+        :name="paused ? 'icon-play' : 'icon-pause'"
+        size="36"
+        color="#ddd"
+        v-else
+      ></qui-icon>
     </view>
     <view class="qui-audio__wrapper">
       <text v-if="!durationTime" class="qui-audio__wrapper__name">
@@ -30,7 +36,7 @@ export default {
       type: String,
       default: '',
     },
-    id: {
+    audioId: {
       type: String,
       default: '',
     },
@@ -77,16 +83,13 @@ export default {
     initAudio() {
       this.audio = uni.createInnerAudioContext();
       this.audio.src = this.src;
+      this.loading = true;
       // 音频进度更新事件
       this.audio.onTimeUpdate(() => {
         if (!this.durationTime) this.setDuration();
         if (!this.seek) {
           this.current = this.audio.currentTime;
         }
-      });
-      // 音频进入可以播放状态
-      this.audio.onCanplay(() => {
-        this.paused = false;
       });
       // 音频播放事件
       this.audio.onPlay(() => {
@@ -112,13 +115,15 @@ export default {
       if (!this.audio) this.initAudio();
       if (this.paused) {
         this.audio.play();
-        this.$emit('audioPlay', this.id);
+        this.$emit('audioPlay', this.audioId);
       } else {
+        console.log(this.paused);
         this.audio.pause();
       }
     },
     audioPause() {
-      if (!this.paused) {
+      console.log(333);
+      if (!this.paused || this.loading) {
         this.audio.pause();
       }
     },
@@ -139,6 +144,7 @@ export default {
     setDuration() {
       this.duration = this.format(this.audio.duration);
       this.durationTime = this.audio.duration;
+      this.loading = false;
     },
   },
 };

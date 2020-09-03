@@ -192,7 +192,7 @@
             <qui-audio
               :src="item.url"
               :name="item.fileName"
-              :id="item._jv.id"
+              :audio-id="item._jv.id"
               :ref="'audio' + item._jv.id"
               @audioPlay="audioPlay"
             ></qui-audio>
