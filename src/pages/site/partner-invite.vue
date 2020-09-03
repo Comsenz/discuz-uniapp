@@ -68,7 +68,7 @@
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
-        <text class="site-invite__detail__bold" v-if="type === 'normal'">
+        <text class="site-invite__detail__bold" v-if="code.length !== 32">
           {{ inviteData.username || '' }}
         </text>
         <text class="site-invite__detail__bold" v-else>
@@ -133,12 +133,10 @@ export default {
       isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
       codeTips: '',
-      type: '', // 管理员邀请还是普通邀请
     };
   },
   onLoad(params) {
     this.code = params.code;
-    this.type = params.type || '';
     this.getInviteInfo(params.code);
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
@@ -220,8 +218,14 @@ export default {
       this.$refs.auth.close();
     },
     check() {
-      if (this.type && this.type === 'normal') {
-        this.submit();
+      // 管理员邀请码32位，区分普通邀请和管理员邀请
+      if (this.code && this.code.length !== 32) {
+        if (!this.inviteData.id) {
+          this.codeTips = this.i18n.t('site.codenotfound');
+          this.$refs.popCode.open();
+        } else {
+          this.submit();
+        }
         return;
       }
       // 处理邀请码状态 status 0 失效  1 未使用  2 已使用 3 已过期
