@@ -567,12 +567,6 @@ export default {
   //     // eslint-disable-next-line
   //   }
   // },
-  created() {
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
-  },
   updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
@@ -586,13 +580,16 @@ export default {
   methods: {
     choosePosition() {
       const that = this;
+      let res1 = '';
       uni.getLocation({
         type: 'wgs84',
         complete(res) {
+          res1 = res;
           console.log(`当前位置的经度：${res.longitude}`);
           console.log(`当前位置的纬度：${res.latitude}`);
         },
       });
+      console.log(res1);
       if (that.currentPosition.location) {
         return;
       }
@@ -1497,6 +1494,10 @@ export default {
     },
   },
   onLoad(option) {
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
