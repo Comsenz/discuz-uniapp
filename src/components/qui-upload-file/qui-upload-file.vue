@@ -266,7 +266,7 @@ export default {
   }
   &__add__fonts {
     margin-top: 4rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-AAA);
     box-sizing: border-box;
   }
@@ -292,7 +292,7 @@ export default {
     height: 165rpx;
     padding: 15rpx;
     overflow: hidden;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-333);
     box-sizing: border-box;
   }

@@ -109,7 +109,7 @@ $height: 100vh;
   position: relative;
   padding: 24rpx 40rpx;
   margin-bottom: 30rpx;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   background-color: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
@@ -128,7 +128,7 @@ $height: 100vh;
 }
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-AAA);
 }
 /deep/ .cell-item .cell-item__body__right-text {

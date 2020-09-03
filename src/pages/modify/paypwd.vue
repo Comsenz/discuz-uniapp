@@ -209,7 +209,7 @@ export default {
     box-sizing: border-box;
   }
   .setpw-tit {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);

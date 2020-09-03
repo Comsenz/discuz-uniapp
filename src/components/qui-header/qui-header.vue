@@ -152,23 +152,23 @@ export default {
     text-align: center;
     text {
       // padding: 0 15rpx;
-      // font-size: $fg-f26;
+      // font-size: $fg-f3;
       line-height: 37rpx;
       text-align: center;
     }
   }
   .circleDet-txt {
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     color: --color(--qui-FC-FFF);
     opacity: 0.5;
   }
   .circleDet-num {
     padding-left: 15rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
   }
   .circleDet-share {
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     color: --color(--qui-FC-FFF);
   }
   .qui-icon {

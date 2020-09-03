@@ -285,7 +285,7 @@ $height: calc(100vh - 260rpx);
 .my-info {
   padding: 40rpx;
   padding-top: 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
 }
@@ -304,7 +304,7 @@ $height: calc(100vh - 260rpx);
   display: flex;
   flex-direction: row;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   box-sizing: border-box;
 }
 .my-info__box__detail-username {

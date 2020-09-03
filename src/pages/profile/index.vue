@@ -350,7 +350,7 @@ export default {
 .profile-info {
   padding: 40rpx;
   padding-top: 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background: --color(--qui-BG-2);
 }
 .profile-info__box {
@@ -368,7 +368,7 @@ export default {
   display: flex;
   flex-direction: row;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   box-sizing: border-box;
 }
 .my-info__box__detail-username {

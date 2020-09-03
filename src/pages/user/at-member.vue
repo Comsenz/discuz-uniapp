@@ -249,7 +249,7 @@ $otherHeight: 292rpx;
         height: 100%;
       }
       /deep/ input .input-placeholder {
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         color: --color(--qui-FC-C6);
       }
     }

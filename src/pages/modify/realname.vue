@@ -198,7 +198,7 @@ export default {
   .tica-name-inpa {
     width: 100%;
     height: 100rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     line-height: 100rpx;
     text-align: left;
@@ -209,14 +209,14 @@ export default {
   }
   .tica-erro-messag1 {
     margin-top: 20rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     color: --color(--qui-RED);
   }
 }
 .tica-pas-btn /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

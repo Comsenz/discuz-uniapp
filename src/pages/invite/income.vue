@@ -224,7 +224,7 @@ $height: calc(100vh - 410rpx);
   position: relative;
   padding: 10rpx 40rpx 24rpx;
   margin-bottom: 30rpx;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   background-color: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
@@ -252,7 +252,7 @@ $height: calc(100vh - 410rpx);
   margin: auto;
 
   .btn {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 90rpx;
     color: --color(--qui-FC-333);
     background: --color(--qui-BG-2);
@@ -265,7 +265,7 @@ $height: calc(100vh - 410rpx);
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-AAA);
 }
 .search-item__users__avatar {

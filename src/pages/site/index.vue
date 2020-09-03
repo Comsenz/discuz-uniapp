@@ -346,7 +346,7 @@ export default {
   padding: 0 28rpx;
   margin-right: 10rpx;
   margin-bottom: 10rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
   border-radius: 7rpx;

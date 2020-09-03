@@ -536,14 +536,14 @@ export default {
     height: 150rpx;
   }
   .cash-content-name {
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     color: --color(--qui-FC-333);
   }
   .cash-content-input {
     width: 300rpx;
     height: 100%;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: bold;
     line-height: 100rpx;
     color: --color(--qui-FC-333);
@@ -555,7 +555,7 @@ export default {
   // }
   .cash-content-ellipsis {
     height: 50rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     line-height: 50rpx;
     color: --color(--qui-FC-333);
@@ -563,7 +563,7 @@ export default {
   }
   .cash-content-ellipsis2 {
     height: 45rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: bold;
     line-height: 45rpx;
     color: --color(--qui-RED);
@@ -571,7 +571,7 @@ export default {
   .cash-content-proced {
     height: 50rpx;
     margin-top: 11rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     line-height: 50rpx;
     color: --color(--qui-FC-777);
@@ -584,21 +584,21 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .cash-phon-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
   }
   .cash-phon-num {
     margin: 0 0 0 100rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-000);
   }
   .cash-phon-num1 {
     margin: 0 0 0 10rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -608,7 +608,7 @@ export default {
     height: 70rpx;
     min-width: 180rpx;
     margin: 15rpx 40rpx 0;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 70rpx;
     color: --color(--qui-FC-FFF);
@@ -618,7 +618,7 @@ export default {
   }
   .cash-erro {
     margin-top: 20rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     color: --color(--qui-RED);
   }
@@ -626,7 +626,7 @@ export default {
     width: 710rpx;
   }
   .cash-input-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -660,7 +660,7 @@ export default {
 /* #endif */
 .cash-button /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

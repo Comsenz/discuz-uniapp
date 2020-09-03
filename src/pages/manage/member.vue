@@ -373,7 +373,7 @@ export default {
     &-text {
       width: 100%;
       height: 100rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
       line-height: 100rpx;
       text-align: center;
     }
@@ -390,7 +390,7 @@ export default {
   &-btn {
     width: 100%;
     height: 100rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 100rpx;
     text-align: center;
   }

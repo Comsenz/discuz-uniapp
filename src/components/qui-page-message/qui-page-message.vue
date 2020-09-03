@@ -248,7 +248,7 @@ export default {
   &--title {
     max-width: 510rpx;
     margin: 0 auto 20rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: bold;
     line-height: 45rpx;
     color: rgba(51, 51, 51, 1);
@@ -256,7 +256,7 @@ export default {
   &--subtitle {
     max-width: 510rpx;
     margin: 0 auto 50rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 37rpx;
     color: rgba(170, 170, 170, 1);
