@@ -372,7 +372,7 @@ export default {
   width: 85%;
   padding: 0 20rpx;
   margin: 50rpx auto 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
@@ -403,7 +403,7 @@ export default {
   padding: 0 28rpx;
   margin-right: 10rpx;
   margin-bottom: 10rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
   border-radius: 7rpx;

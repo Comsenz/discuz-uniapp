@@ -73,7 +73,7 @@ export default {
   justify-content: space-between;
 }
 .qui-back__body__content-title {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
   color: --color(--qui-FC-333);
   transition: $switch-theme-time;

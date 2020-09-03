@@ -346,7 +346,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .register-bind-box {
   padding-bottom: 40px;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background-color: --color(--qui-BG-2);
 
   &-h {
@@ -363,7 +363,7 @@ export default {
       width: 100%;
       height: 100rpx;
       padding: 0rpx 0rpx 0rpx 20rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
       line-height: 100rpx;
       text-align: left;
       border-bottom: 2rpx solid --color(--qui-BOR-ED);

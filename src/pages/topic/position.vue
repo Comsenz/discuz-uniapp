@@ -183,16 +183,16 @@ export default {
   }
   .position-head__name {
     margin-bottom: 40rpx;
-    font-size: $fg-f40;
+    font-size: $fg-f6;
     font-weight: bold;
   }
   .position-head__address {
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     color: --color(--qui-FC-777);
   }
   .position-num {
     padding: 20rpx 30rpx 0;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     color: --color(--qui-FC-7D7979);
   }
 }

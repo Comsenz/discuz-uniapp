@@ -199,7 +199,7 @@ export default {
   width: 92rpx;
   height: 98rpx;
   margin: 0 24rpx 0 0;
-  font-size: $fg-f50;
+  font-size: $fg-f7;
   font-weight: bold;
   line-height: 98rpx;
   text-align: center;
@@ -209,7 +209,7 @@ export default {
   width: 92rpx;
   height: 98rpx;
   margin: 0 24rpx 0 0;
-  font-size: $fg-f50;
+  font-size: $fg-f7;
   font-weight: bold;
   line-height: 98rpx;
   color: --color(--qui-RED);
@@ -221,7 +221,7 @@ export default {
 }
 .hidden-ipt-test {
   margin: 21rpx 0 0;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   font-weight: 400;
   color: --color(--qui-RED);
   opacity: 1;

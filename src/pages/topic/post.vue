@@ -1334,7 +1334,7 @@ export default {
           this.currentPosition.location = res.location || '';
           this.currentPosition.address = res.address || '';
         }
-        
+
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
             if (item) {
@@ -1534,7 +1534,11 @@ export default {
 
     try {
       const res = uni.getSystemInfoSync();
-      if (this.forums && this.forums.paycenter.wxpay_close && this.forums.other.can_create_thread_paid) {
+      if (
+        this.forums &&
+        this.forums.paycenter.wxpay_close &&
+        this.forums.other.can_create_thread_paid
+      ) {
         // #ifndef H5
         if (res.platform === 'ios') {
           if (this.forums.paycenter.wxpay_ios === false) {
@@ -1637,7 +1641,7 @@ export default {
     &-input {
       width: 100%;
       padding-right: 80rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
     }
   }
   &__hd {
@@ -1650,7 +1654,7 @@ export default {
       }
     }
     &-r {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       color: --color(--qui-FC-777);
     }
   }
@@ -1671,12 +1675,12 @@ export default {
     max-height: 900rpx;
     min-height: 400rpx;
     padding: 10rpx 20rpx 20rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 40rpx;
     box-sizing: border-box;
 
     .text-cover {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       line-height: 40rpx;
     }
     &--static {
@@ -1760,14 +1764,14 @@ export default {
     &-tit {
       display: block;
       margin: 30rpx 0;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-7D7979);
     }
     &-categories {
       margin-bottom: 40rpx;
     }
   }
-  &__position  /deep/ {
+  &__position /deep/ {
     position: relative;
     color: --color(--qui-FC-777);
     .icon-weizhi {
@@ -1796,7 +1800,7 @@ export default {
   .post-box__video__play__load__text {
     position: relative;
     z-index: 2;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 36rpx;
     color: --color(--qui-FC-34);
   }
@@ -1848,7 +1852,7 @@ export default {
   text-align: center;
   box-sizing: border-box;
   .popup-title {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
   }
 }
 .popup-share-content-space {
@@ -1862,11 +1866,11 @@ export default {
   width: 100%;
 }
 /deep/ textarea .textarea-placeholder {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-B5);
 }
 /deep/ input .input-placeholder {
-  font-size: $fg-f34;
+  font-size: $fg-f5;
   color: --color(--qui-FC-AAA);
 }
 
@@ -1876,7 +1880,7 @@ export default {
   }
 }
 /deep/ .cell-item__body__right .cell-item__body__right-text {
-  font-size: $fg-f34;
+  font-size: $fg-f5;
 }
 /deep/ .cell-item__body__content-title {
   color: --color(--qui-FC-777);
@@ -1891,7 +1895,7 @@ export default {
     padding-top: 40rpx;
     text-align: center;
     text {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
   }

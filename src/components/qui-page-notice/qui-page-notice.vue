@@ -245,7 +245,7 @@ export default {
 .notice-box {
   width: 100%;
   min-height: 100vh;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
 
   .left-text {
     min-width: 250rpx;

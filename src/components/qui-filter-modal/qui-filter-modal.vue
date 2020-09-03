@@ -195,7 +195,7 @@ export default {
 .filter-modal__content__search {
   position: absolute;
   right: 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-777);
 }
 .filter-modal.show {
@@ -217,7 +217,7 @@ export default {
 .filter-modal__content__item-title {
   padding-top: 10rpx;
   padding-bottom: 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
 }
 .filter-modal__content__item-detail {
@@ -226,7 +226,7 @@ export default {
   padding: 0 20rpx;
   margin-right: 20rpx;
   margin-bottom: 20rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   line-height: 70rpx;
   color: --color(--qui-FC-TAG);
   background: --color(--qui-BG-F9F);

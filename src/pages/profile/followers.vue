@@ -208,12 +208,12 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .following {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   /deep/ .cell-item__body {
     padding-right: 20rpx;
   }
   .cell-item__body__right {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-333);
   }
   .qui-icon {

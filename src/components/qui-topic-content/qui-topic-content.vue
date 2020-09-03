@@ -614,7 +614,7 @@ export default {
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
       }
 
@@ -639,14 +639,14 @@ export default {
       &__isAdminColor {
         padding: 2rpx 10rpx;
         margin-left: 15rpx;
-        font-size: $fg-f20;
+        font-size: $fg-f1;
         background: --color(--qui-BG-IT);
         border-radius: 18rpx;
         box-sizing: border-box;
       }
 
       &__time {
-        font-size: $fg-f24;
+        font-size: $fg-f2;
         font-weight: 400;
         line-height: 31rpx;
         color: --color(--qui-FC-AAA);
@@ -703,7 +703,7 @@ export default {
         z-index: 6;
         padding-top: 37rpx;
         padding-bottom: 20rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
         text-align: center;
       }
@@ -713,7 +713,7 @@ export default {
     &__text {
       margin-bottom: 12rpx;
       overflow: hidden;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: 400;
       line-height: 160%;
       word-break: break-all;
@@ -806,7 +806,7 @@ export default {
     &__themeType2 {
       &__item {
         font-family: $font-family;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
@@ -821,7 +821,7 @@ export default {
 .attachment-name {
   max-width: 100%;
   overflow: hidden;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   line-height: 31rpx;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -829,17 +829,17 @@ export default {
 .det-hd-operaCli {
   position: relative;
   z-index: 10;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 40rpx;
   .det-hd-management {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 1;
     .icon-management {
       margin-right: 7rpx;
-      font-size: $fg-f26;
+      font-size: $fg-f3;
     }
   }
 }

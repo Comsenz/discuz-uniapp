@@ -358,7 +358,7 @@ export default {
   width: 22%;
   height: 90rpx;
   padding-left: 40rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   // margin-top: 23rpx;
   line-height: 90rpx;
   flex-direction: column;

@@ -305,7 +305,7 @@ export default {
 }
 .popup-cancel-btn {
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 90rpx;
   color: #666;
   text-align: center;
@@ -321,7 +321,7 @@ export default {
 .pay-title {
   padding-top: 40rpx;
   padding-bottom: 20rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 37rpx;
   text-align: center;
 }
@@ -331,7 +331,7 @@ export default {
   justify-content: center;
   width: 465rpx;
   height: 90rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 90rpx;
   color: #fff;
   text-align: center;
@@ -396,7 +396,7 @@ export default {
   justify-content: flex-start;
   align-items: center;
   .pay-type-word {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
   }
 }
 .pay-type-r {
@@ -420,13 +420,13 @@ export default {
 }
 .pay-tip {
   padding: 40rpx 0;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   color: --color(--qui-FC-AAA);
   text-align: center;
 }
 .check-tip {
   padding-right: 20rpx;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   color: --color(--qui-FC-AAA);
 }
 .pay-radio-box {
@@ -440,7 +440,7 @@ export default {
 .paySureBtn {
   width: 100%;
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: normal;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);

@@ -121,7 +121,7 @@ export default {
     transform: rotate(45deg);
   }
   .select-child {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 76rpx;
     color: #6d6d6d;
     text-align: center;

@@ -103,7 +103,7 @@ export default {
   padding: 0 27px;
   box-sizing: border-box;
   &__content {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     color: --color(--qui-FC-AAA);
     text-align: center;
   }
@@ -122,7 +122,7 @@ export default {
   background: --color(--qui-BG-2);
   &__btn {
     height: 100rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 100rpx;
     color: --color(--qui-FC-333);
     text-align: center;
@@ -138,13 +138,13 @@ export default {
   &__content__title {
     height: 60rpx;
     padding: 40rpx 0;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 60rpx;
   }
   &__content__detail {
     padding: 0 40rpx;
     padding-bottom: 40px;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     text-align: justify;
     // text-indent: 2em;
     white-space: pre-line;

@@ -92,7 +92,7 @@ export default {
 .popup-share-content-text {
   padding-top: 5px;
   padding-bottom: 10px;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   color: --color(--qui-FC-TAG);
 }
 .popup-share-content-space {

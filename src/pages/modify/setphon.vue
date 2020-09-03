@@ -419,14 +419,14 @@ export default {
   .new-phon {
     width: 710rpx;
     margin-left: 40rpx;
-    font-size: $fg-f50;
+    font-size: $fg-f7;
     font-weight: bold;
     line-height: 100rpx;
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
     box-sizing: border-box;
   }
   .new-phon-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -437,14 +437,14 @@ export default {
   .new-phon-num {
     width: 399rpx;
     height: 100rpx;
-    font-size: $fg-f50;
+    font-size: $fg-f7;
     font-weight: bold;
     line-height: 100rpx;
     color: --color(--qui-FC-333);
   }
   .newphon-erro {
     margin: 20rpx 0 0 40rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     color: --color(--qui-RED);
   }
@@ -453,7 +453,7 @@ export default {
     height: 70rpx;
     min-width: 180rpx;
     margin: 15rpx 20rpx 0 50rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 70rpx;
     color: --color(--qui-FC-FFF);
@@ -466,7 +466,7 @@ export default {
     margin: 0 0 0 40rpx;
   }
   .new-input-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -483,7 +483,7 @@ export default {
 }
 .new-button /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

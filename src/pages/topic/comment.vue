@@ -1297,13 +1297,13 @@ export default {
 page {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 * {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 .flex {
@@ -1322,7 +1322,7 @@ page {
 .detail-tip {
   display: block;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 60rpx;
   color: #fff;
   text-align: center;
@@ -1350,12 +1350,12 @@ page {
     padding-left: 20rpx;
     .det-hd-per-name {
       margin-bottom: 10px;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: bold;
       line-height: 37rpx;
     }
     .det-hd-post-time {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       line-height: 31rpx;
       color: --color(--qui-FC-AAA);
     }
@@ -1383,7 +1383,7 @@ page {
       font-size: 26rpx;
     }
   }
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 40rpx;
 }
 //详情页帖子内容
@@ -1428,7 +1428,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
     align-items: center;
     .qui-icon {
@@ -1436,7 +1436,7 @@ page {
       font-size: 30rpx;
     }
     * {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-777);
     }
   }
@@ -1459,7 +1459,7 @@ page {
   padding: 0 40rpx;
 }
 .comment-num {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -1469,7 +1469,7 @@ page {
 }
 // .comment-num {
 //   padding: 0 40rpx;
-//   font-size: $fg-f28;
+//   font-size: $fg-f4;
 //   font-weight: bold;
 //   line-height: 37rpx;
 // }
@@ -1496,7 +1496,7 @@ page {
   .comment-child-status {
     align-items: flex-start;
     padding-top: 8rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     line-height: 35rpx;
     color: --color(--qui-RED);
   }
@@ -1519,14 +1519,14 @@ page {
     }
   }
   .comment-child-time {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 31rpx;
     color: --color(--qui-FC-AAA);
   }
 }
 .comment-child-con {
   padding: 20rpx 0 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 45rpx;
   text-align: left;
   .comment-child-con-all {
@@ -1566,7 +1566,7 @@ page {
     line-height: 80rpx;
   }
   .ft-child-word {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
   }
 }
@@ -1599,7 +1599,7 @@ page {
     width: 195rpx;
   }
   .text-word-tip {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 1;
     color: --color(--qui-FC-777);
   }
@@ -1624,7 +1624,7 @@ page {
     width: 100%;
     height: 220rpx;
     min-height: 70rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 37rpx;
   }
   .text-placeholder {
@@ -1635,7 +1635,7 @@ page {
 .publish-btn {
   width: 100%;
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);
   text-align: center;
@@ -1694,7 +1694,7 @@ page {
 }
 .popup-share-content-text {
   padding-top: 5px;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   color: --color(--qui-FC-TAG);
 }
 .popup-share-content-space {
@@ -1739,7 +1739,7 @@ page {
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
       }
 
@@ -1766,7 +1766,7 @@ page {
       &__isAdminColor {
         padding: 2rpx 10rpx;
         margin-left: 15rpx;
-        font-size: $fg-f20;
+        font-size: $fg-f1;
         background: --color(--qui-BG-IT);
         border-radius: 18rpx;
         box-sizing: border-box;
@@ -1792,7 +1792,7 @@ page {
       }
       &__reward {
         float: right;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: bold;
         color: --color(--qui-RED);
       }
@@ -1804,7 +1804,7 @@ page {
       overflow: hidden;
       flex-direction: column;
       flex-wrap: wrap;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       line-height: 45rpx;
       word-break: break-all;
     }
@@ -1829,7 +1829,7 @@ page {
 
   .icon-follow {
     margin-right: 7rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
   }
 }
 .det-ft-operaCli {
@@ -1853,13 +1853,13 @@ page {
     text-align: center;
 
     &-headline {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
 
     &-subhead {
       margin-top: 20rpx;
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       color: --color(--qui-FC-AAA);
     }
   }
@@ -1887,7 +1887,7 @@ page {
         width: 100%;
         height: 180rpx;
         padding: 20rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         background-color: --color(--qui-BG-1);
         border: 1px solid var(--qui-BOR-DDD);
         box-sizing: border-box;
@@ -1903,7 +1903,7 @@ page {
       width: 100%;
       height: 100rpx;
       margin-bottom: 10rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: normal;
       line-height: 100rpx;
       color: --color(--qui-FC-FFF);
@@ -1915,7 +1915,7 @@ page {
     &-cancel {
       width: 100%;
       height: 100rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: normal;
       line-height: 100rpx;
       text-align: center;
@@ -1924,7 +1924,7 @@ page {
   }
 
   .textarea-placeholder {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-B5);
   }
 }
