@@ -129,17 +129,17 @@ export default {
     });
   },
   watch: {
-    userVal: {
-      handler(oldVal, newVal) {
-        console.log(oldVal, '第一个', newVal, '第二个');
-        if (oldVal && oldVal !== newVal) {
-          this.once = 1;
-          this.getAtUser();
-        }
-      },
-      deep: true,
-      immediate: true,
-    },
+    // userVal: {
+    //   handler(oldVal, newVal) {
+    //     console.log(oldVal, '第一个', newVal, '第二个');
+    //     if (oldVal && oldVal !== newVal) {
+    //       this.once = 1;
+    //       this.getAtUser();
+    //     }
+    //   },
+    //   deep: true,
+    //   immediate: true,
+    // },
   },
   methods: {
     getAtUser() {
@@ -153,8 +153,11 @@ export default {
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         // this.meta = res._jv.json.meta;
         // this.allSiteUser = [...this.allSiteUser, ...res];
+        delete res._jv;
+        console.log(res, '这是res');
         this.allSiteUser = res;
-        if (res !== '' && res !== null) {
+        if (this.allSiteUser.length > 0) {
+          console.log('1234');
           this.atShow = true;
         }
         this.once = 1;

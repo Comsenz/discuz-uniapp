@@ -1,12 +1,12 @@
 // eslint-disable-next-line
 import css from './markdown.scss';
-
+var mentionPosi = 0;
 export default class Markdown {
   constructor({ data, api, config }) {
     console.log(data, api, config);
     this.element = null;
     this.data = data;
-    this.ment = 0;
+
     uni.$on('userClick', data => {
       let userClickName = '';
       userClickName = data.name;
@@ -15,8 +15,11 @@ export default class Markdown {
       userSpan.classList.add('diff');
       userSpan.textContent = `@${userClickName} `;
       console.log(this.element, '%%%%%%%%%%%');
-      this.element.textContent = this.element.textContent.slice(0, this.ment - 1);
-      this.element.appendChild(userSpan);
+      if (this.element) {
+        this.element.textContent = this.element.textContent.slice(0, mentionPosi - 1);
+        this.element.appendChild(userSpan);
+      }
+
       // this.element.innerHTML = '<span></span>';
     });
   }
@@ -50,7 +53,7 @@ export default class Markdown {
       }
       if (mentionStart) {
         console.log('走了');
-        this.ment = mentionStart;
+        mentionPosi = mentionStart;
         const atDom = document.getElementById('atList');
         let userList = [];
         if (once === 1) {
