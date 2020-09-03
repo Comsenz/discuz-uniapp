@@ -1319,18 +1319,15 @@ export default {
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
         // this.uploadFile = res.firstPost.images;
-        // 微信安卓里面的定位 
-        if(option.name) {
-          const { platform } = uni.getSystemInfoSync();
-          if(platform === 'android' && this.isWeixin) {
-            let currentPosition = {};
-            const data = option.latng.split(',');
-            currentPosition.longitude = data[1];
-            currentPosition.latitude = data[0];
-            currentPosition.location = option.name;
-            currentPosition.address = option.addr;
-            this.currentPosition = currentPosition;
-          }
+        // 微信里面的定位 
+        if(option.name && this.isWeixin) {
+          let currentPosition = {};
+          const data = option.latng.split(',');
+          currentPosition.longitude = data[1];
+          currentPosition.latitude = data[0];
+          currentPosition.location = option.name;
+          currentPosition.address = option.addr;
+          this.currentPosition = currentPosition;
         }else {
           this.currentPosition.longitude = res.longitude || '';
           this.currentPosition.latitude = res.latitude || '';
@@ -1524,6 +1521,15 @@ export default {
       this.getPostThread(option);
     } else {
       this.loadStatus = true;
+      if(option.name && this.isWeixin) {
+        let currentPosition = {};
+        const data = option.latng.split(',');
+        currentPosition.longitude = data[1];
+        currentPosition.latitude = data[0];
+        currentPosition.location = option.name;
+        currentPosition.address = option.addr;
+        this.currentPosition = currentPosition;
+      }
     }
 
     try {
