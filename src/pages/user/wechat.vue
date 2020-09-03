@@ -37,6 +37,11 @@ export default {
               const url = pages[pages.length - 1].route;
               this.login(url);
             }
+            if (res.data.errors[0].code === 'permission_denied') {
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              this.login(url);
+            }
             if (res.data.errors[0].code === 'register_validate') {
               uni.showToast({
                 icon: 'none',

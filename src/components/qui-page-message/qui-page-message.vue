@@ -25,7 +25,7 @@
         {{ message.subtitle | closedError(forumError, forumError.code) }}
       </view>
       <!-- 退出小程序：https://uniapp.dcloud.io/component/navigator?id=navigator 2.1.0+ -->
-      <!--#ifdef MP-WEIXIN -->
+      <!-- #ifdef MP-WEIXIN -->
       <navigator
         v-if="show && message.btnclickType == 'siteClose'"
         class="out page-message--exit"
@@ -53,13 +53,6 @@
         {{ i18n.t('core.admin_login') }}
       </qui-button>
       <!-- #endif -->
-      <qui-button
-        size="medium"
-        @click="handleBackHome"
-        v-if="forumError.code === 'register_close' || forumError.code === 'register_validate'"
-      >
-        {{ i18n.t('core.back_home') }}
-      </qui-button>
     </view>
   </view>
 </template>
@@ -77,8 +70,6 @@ const POST_DELETED = 'post_deleted';
 const IOS_DISPLAY = 'dataerro';
 const TYPE_401 = 'type_401';
 const USER_DELETED = 'user_deleted';
-const REGISTER_VALIDATE = 'register_validate';
-const REGISTER_CLOSE = 'register_close';
 const message = {
   [TYPE_404]: {
     title: i18n.t('core.page_not_found'),
@@ -143,20 +134,6 @@ const message = {
     icon: '@/static/msg-404.svg',
     btnclickType: 'toHome', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
   },
-  [REGISTER_VALIDATE]: {
-    title: i18n.t('core.registerValidate'),
-    subtitle: i18n.t('core.waitValidate'),
-    btnTxt: i18n.t('core.close'),
-    icon: '@/static/msg-warning.svg',
-    btnclickType: 'siteClose', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
-  },
-  [REGISTER_CLOSE]: {
-    title: i18n.t('core.register_close'),
-    subtitle: '',
-    btnTxt: i18n.t('core.close'),
-    icon: '@/static/msg-warning.svg',
-    btnclickType: 'siteClose', // 点击类型，当为toHome时，navigator的open-type = redirect，当为siteClose时，navigator的open-type = exit
-  },
 };
 export default {
   filters: {
@@ -183,8 +160,6 @@ export default {
           POST_DELETED,
           TYPE_401,
           USER_DELETED,
-          REGISTER_VALIDATE,
-          REGISTER_CLOSE,
         ].indexOf(this.forumError.code) >= 0
       );
     },
@@ -217,12 +192,9 @@ export default {
     handleLoginClick() {
       // #ifdef H5
       uni.navigateTo({
-        url: `/pages/user/login?url=/pages/home/index&register=false`,
+        url: `/pages/user/login?url=/pages/home/index`,
       });
       // #endif
-    },
-    handleBackHome() {
-      window.location.reload();
     },
   },
 };

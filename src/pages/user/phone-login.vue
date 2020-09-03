@@ -234,6 +234,7 @@ export default {
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    this.$u.event.$off('logind');
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();
