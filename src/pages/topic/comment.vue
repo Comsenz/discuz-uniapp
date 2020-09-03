@@ -935,7 +935,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -981,7 +982,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1201,7 +1203,8 @@ export default {
         return;
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
