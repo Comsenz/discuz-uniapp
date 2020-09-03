@@ -6,13 +6,6 @@ module.exports = {
   mixins: [forums],
   methods: {
     getPosition() {
-      uni.getLocation({
-        type: 'wgs84',
-        complete(res) {
-          console.log(`当前位置的经度：${res.longitude}`);
-          console.log(`当前位置的纬度：${res.latitude}`);
-        },
-      });
       const url = this.getUrl();
       const that = this;
       this.$store

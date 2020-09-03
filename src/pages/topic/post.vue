@@ -586,10 +586,16 @@ export default {
   methods: {
     choosePosition() {
       const that = this;
+      uni.getLocation({
+        type: 'wgs84',
+        complete(res) {
+          console.log(`当前位置的经度：${res.longitude}`);
+          console.log(`当前位置的纬度：${res.latitude}`);
+        },
+      });
       if (that.currentPosition.location) {
         return;
       }
-      // const { platform } = uni.getSystemInfoSync();
       if (this.isWeixin) {
         // 微信浏览器里面用微信的sdk,解决安卓微信浏览器卡顿问题
         this.getPosition();
