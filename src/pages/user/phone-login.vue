@@ -177,22 +177,8 @@ export default {
       // #endif
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.getForum();
-    const { url, commentId } = params;
-    if (url) {
-      let pageUrl;
-      if (url.substr(0, 1) !== '/') {
-        pageUrl = `/${url}`;
-      } else {
-        pageUrl = url;
-      }
-      if (commentId) {
-        this.url = `${pageUrl}&commentId=${commentId}`;
-      } else {
-        this.url = pageUrl;
-      }
-    }
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -213,6 +199,7 @@ export default {
     });
 
     this.$u.event.$on('logind', () => {
+      const url = this.$store.getters['session/get']('url');
       if (this.user) {
         this.isPaid = this.user.paid;
       }
@@ -221,7 +208,7 @@ export default {
       }
       if (this.site_mode !== SITE_PAY) {
         uni.redirectTo({
-          url: this.url,
+          url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

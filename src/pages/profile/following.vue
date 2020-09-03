@@ -178,12 +178,14 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo, index) {
+      console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        this.$store.dispatch('session/setUrl', getCurUrl());
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
