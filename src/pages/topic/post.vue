@@ -589,9 +589,9 @@ export default {
       if (that.currentPosition.location) {
         return;
       }
-      const { platform } = uni.getSystemInfoSync();
-      if (platform === 'android' && this.isWeixin) {
-        // 安卓微信浏览器卡顿问题
+      // const { platform } = uni.getSystemInfoSync();
+      if (this.isWeixin) {
+        // 微信浏览器里面用微信的sdk,解决安卓微信浏览器卡顿问题
         this.getPosition();
       } else {
         uni.chooseLocation({
