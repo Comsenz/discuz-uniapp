@@ -14,9 +14,9 @@
       </view>
       <view class="position-num" v-if="address">
         {{
-          `${i18n.t('profile.total')} ${totalData} ${i18n.t('profile.item')}${i18n.t(
-            'core.content',
-          )}`
+          `${i18n.t('profile.nearBy')}${i18n.t('profile.total')} ${totalData} ${i18n.t(
+            'profile.item',
+          )}${i18n.t('core.content')}`
         }}
       </view>
       <view class="position-content">
@@ -177,7 +177,7 @@ export default {
 }
 .position /deep/ {
   .position-head {
-    padding: 30rpx 40rpx;
+    padding: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }

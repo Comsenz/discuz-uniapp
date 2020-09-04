@@ -580,34 +580,24 @@ export default {
   methods: {
     choosePosition() {
       const that = this;
-      let res1 = '';
-      uni.getLocation({
-        type: 'wgs84',
-        complete(res) {
-          res1 = res;
-          console.log(`当前位置的经度：${res.longitude}`);
-          console.log(`当前位置的纬度：${res.latitude}`);
-        },
-      });
-      console.log(res1);
       if (that.currentPosition.location) {
         return;
       }
-      if (this.isWeixin) {
-        // 微信浏览器里面用微信的sdk,解决安卓微信浏览器卡顿问题
-        this.getPosition();
-      } else {
-        uni.chooseLocation({
-          success(res) {
-            if (res.name === that.i18n.t('topic.myPosition')) {
-              res.location = res.address;
-            } else {
-              res.location = res.name;
-            }
-            that.currentPosition = res;
-          },
-        });
-      }
+      // #ifdef H5
+      this.getPosition();
+      // #endif
+      // #ifdef MP-WEIXIN
+      wx.chooseLocation({
+        success(res) {
+          if (res.name === that.i18n.t('topic.myPosition')) {
+            res.location = res.address;
+          } else {
+            res.location = res.name;
+          }
+          that.currentPosition = res;
+        },
+      });
+      // #endif
     },
     clearPosition() {
       this.currentPosition = {};
