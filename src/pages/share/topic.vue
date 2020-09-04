@@ -5,7 +5,7 @@
         <view class="cent" :style="{ height: constyle + 'rpx' }">
           <image
             :src="imagePath"
-            mode="widthFix"
+            :mode="widthFix"
             @tap="previewImage"
             :show-menu-by-longpress="true"
             class="cent-image"
@@ -87,7 +87,7 @@ export default {
     this.themeid = arr.id;
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
-    this.slitelogo = this.forums.set_site.site_header_logo || `${this.$u.host()}static/logo.png`;
+    this.slitelogo = this.forums.set_site.site_logo || `${this.$u.host()}static/logo.png`;
     this.getusertitle();
   },
   computed: {
@@ -147,7 +147,6 @@ export default {
           `threads/${this.themeid}?include=user,firstPost,firstPost.images,threadVideo,category`,
         )
         .then(data => {
-          console.log(data);
           this.headerName = data.user.username;
           this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
@@ -341,8 +340,9 @@ export default {
           this.template = new Cardb().palette(obj);
           // 只有一张图片
         } else if (!this.content && this.contentImg.length === 1) {
-          this.constyle = 908;
-          this.paddingtop = 43;
+          this.constyle = 728;
+          this.paddingtop = 90;
+          console.log(obj);
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {

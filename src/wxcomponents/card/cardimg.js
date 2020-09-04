@@ -3,7 +3,7 @@ export default class LastMayday {
     return (
       {
         "width": "700px",
-        "height": "908px",
+        "height": "708px",
         "background": "#ffffff",
         "views": [
           {
@@ -106,7 +106,7 @@ export default class LastMayday {
               "background": "#F7F7F7",
               "width": `${obj.marglength}px`,
               "height": "50px",
-              "top": "584px",
+              "top": "384px",
               "left": "40px",
               "rotate": "0",
               "borderRadius": "6px",
@@ -122,7 +122,7 @@ export default class LastMayday {
               "background": "rgba(0,0,0,0)",
               "width": `${obj.attachlength}px`,
               "height": "27.119999999999997px",
-              "top": "595px",
+              "top": "395px",
               "left": "60px",
               "rotate": "0",
               "borderRadius": "",
@@ -146,7 +146,7 @@ export default class LastMayday {
               "background": "#F9FAFC",
               "width": "700px",
               "height": "200px",
-              "top": "708px",
+              "top": "508px",
               "left": "0px",
               "rotate": "0",
               "borderRadius": "",
@@ -160,7 +160,7 @@ export default class LastMayday {
             "css": {
               "width": "140px",
               "height": "140px",
-              "top": "738px",
+              "top": "538px",
               "left": "40px",
               "rotate": "0",
               "borderRadius": "0px",
@@ -178,7 +178,7 @@ export default class LastMayday {
               "background": "rgba(0,0,0,0)",
               "width": "560px",
               "height": "31.639999999999997px",
-              "top": "768px",
+              "top": "568px",
               "left": "210px",
               "rotate": "0",
               "borderRadius": "",
@@ -204,7 +204,7 @@ export default class LastMayday {
               "background": "rgba(0,0,0,0)",
               "width": "450px",
               "height": "27.119999999999997px",
-              "top": "815px",
+              "top": "615px",
               "left": "210px",
               "rotate": "0",
               "borderRadius": "",
@@ -226,16 +226,16 @@ export default class LastMayday {
             "type": "image",
             "url": obj.usercontimg[0],
             "css": {
-              "width": "620px",
-              "height": "402px",
-              "top": "161px",
+              // "width": "490px",
+              "height": "100px",
+              "top": "200px",
               "left": "40px",
               "rotate": "0",
               "borderRadius": "",
               "borderWidth": "",
               "borderColor": "#000000",
               "shadow": "",
-              "mode": "scaleToFill"
+              "mode": "aspectFit"
             }
           }
         ]
