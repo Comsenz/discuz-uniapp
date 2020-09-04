@@ -1102,7 +1102,15 @@ export default {
       });
       // 附件
       if (this.type === 1 && this.$refs.uploadFiles) {
-        attachments = this.$refs.uploadFiles.getValue();
+        const newAttachmentList = this.$refs.uploadFiles.getValue();
+        newAttachmentList.forEach(item => {
+          if (item.id) {
+            attachments.data.push({
+              type: 'attachments',
+              id: item.id,
+            });
+          }
+        });
       }
       return attachments;
     },
