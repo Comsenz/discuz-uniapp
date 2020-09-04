@@ -296,6 +296,7 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
+                adjust-position="false"
                 cursor-spacing="0"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
