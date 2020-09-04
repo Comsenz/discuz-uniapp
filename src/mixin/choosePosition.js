@@ -6,6 +6,23 @@ module.exports = {
   mixins: [forums],
   methods: {
     getPosition() {
+      const key = this.forums.lbs.qq_lbs_key;
+      const geolocation = new qq.maps.Geolocation(key, 'myapp');
+      geolocation.getLocation(this.showPosition);
+    },
+    showPosition(value) {
+      const key = this.forums.lbs.qq_lbs_key;
+      const coord = `${value.lat},${value.lng}`;
+      let { href } = window.location;
+      // 过滤掉上次选择后返回的参数
+      const index = href.indexOf('&name');
+      if (index !== -1) {
+        href = href.substr(0, index);
+      }
+      const currentHref = encodeURIComponent(href);
+      window.location.href = `https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${currentHref}&key=${key}&referer=myapp&coord=${coord}`;
+    },
+    getPositionWx() {
       const url = this.getUrl();
       const that = this;
       this.$store

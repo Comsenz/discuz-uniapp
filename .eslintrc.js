@@ -145,5 +145,6 @@ module.exports = {
     getCurrentPages: true,
     Component: true,
     Behavior: true,
+    qq: true,
   },
 };
