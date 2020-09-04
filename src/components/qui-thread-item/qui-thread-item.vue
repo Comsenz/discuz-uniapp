@@ -128,11 +128,11 @@ export default {
     handleIsGreat(id, canLike, isLiked, index) {
       console.log('内容部分点赞按钮点击事件', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.dispatch('session/setUrl', getCurUrl());
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', getCurUrl());
         if (!this.handleLogin()) {
           return;
         }

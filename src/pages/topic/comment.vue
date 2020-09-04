@@ -932,11 +932,11 @@ export default {
     // 添加关注
     addFollow(userInfo) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -979,11 +979,11 @@ export default {
     // 管理菜单内标签点击事件
     sortSelectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -1199,12 +1199,12 @@ export default {
     // 更多操作-唤起弹框
     moreClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         return;
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
