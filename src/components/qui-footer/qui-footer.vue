@@ -284,6 +284,14 @@ export default {
           type: 2,
         });
       }
+      // if (this.forums.other.can_create_thread_video) {
+      this.bottomData.push({
+        text: this.i18n.t('home.questions'),
+        icon: 'icon-wenda',
+        name: 'questions',
+        type: 5,
+      });
+      // }
       this.$refs.popup.open();
     },
     // 首页底部发帖点击事件跳转

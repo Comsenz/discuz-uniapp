@@ -347,6 +347,7 @@ export default {
     text: '文本',
     invitation: '帖子',
     video: '视频',
+    questions: '问答',
     picture: '图片',
     essence: '精华',
     followed: '已关注',
