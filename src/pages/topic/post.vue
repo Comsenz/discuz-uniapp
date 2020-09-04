@@ -1213,9 +1213,11 @@ export default {
       this.$refs.deletePopup.close();
       if (this.deleteType === 0) {
         // 删除类型为图片
-        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
-          this.$refs.upload.clear(this.deleteIndex);
-        });
+        this.delAttachments(this.deleteId, this.deleteIndex);
+        this.$refs.upload.clear(this.deleteIndex);
+        // this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+        //   this.$refs.upload.clear(this.deleteIndex);
+        // });
       } else if (this.deleteType === 1) {
         // 删除类型为附件
         this.deleteFileSure(this.deleteId);
@@ -1232,37 +1234,51 @@ export default {
     },
 
     delAttachments(id, index) {
-      const params = {
-        _jv: {
-          type: 'attachments',
-          id,
-        },
-      };
-
-      return this.$store
-        .dispatch('jv/delete', params)
-        .then(res => {
-          // 当编辑帖子时删除图片后传参给首页
-          if (this.operating === 'edit') {
-            this.$u.event.$emit('deleteImg', {
-              threadId: this.postDetails._jv.id,
-              index,
-            });
-            const post = this.$store.getters['jv/get'](
-              `posts/${this.postDetails.firstPost._jv.id}`,
-            );
-            post.images.splice(index, 1);
-            post._jv.relationships.images.data.splice(index, 1);
-          }
-
-          this.uploadFile.forEach((value, key, item) => {
-            value.id == id && item.splice(key, 1);
-          });
-          return res;
-        })
-        .catch(err => {
-          console.log(err);
+      if (this.operating === 'edit') {
+        console.log('这是编辑');
+        this.$u.event.$emit('deleteImg', {
+          threadId: this.postDetails._jv.id,
+          index,
         });
+        const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
+        post.images.splice(index, 1);
+        post._jv.relationships.images.data.splice(index, 1);
+      }
+
+      this.uploadFile.forEach((value, key, item) => {
+        value.id == id && item.splice(key, 1);
+      });
+      // const params = {
+      //   _jv: {
+      //     type: 'attachments',
+      //     id,
+      //   },
+      // };
+
+      // return this.$store
+      //   .dispatch('jv/delete', params)
+      //   .then(res => {
+      //     // 当编辑帖子时删除图片后传参给首页
+      //     if (this.operating === 'edit') {
+      //       this.$u.event.$emit('deleteImg', {
+      //         threadId: this.postDetails._jv.id,
+      //         index,
+      //       });
+      //       const post = this.$store.getters['jv/get'](
+      //         `posts/${this.postDetails.firstPost._jv.id}`,
+      //       );
+      //       post.images.splice(index, 1);
+      //       post._jv.relationships.images.data.splice(index, 1);
+      //     }
+
+      //     this.uploadFile.forEach((value, key, item) => {
+      //       value.id == id && item.splice(key, 1);
+      //     });
+      //     return res;
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     },
     getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
@@ -1312,8 +1328,8 @@ export default {
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
         // this.uploadFile = res.firstPost.images;
-        // 微信里面的定位 
-        if(option.name && this.isWeixin) {
+        // 微信里面的定位
+        if (option.name && this.isWeixin) {
           let currentPosition = {};
           const data = option.latng.split(',');
           currentPosition.longitude = data[1];
@@ -1321,7 +1337,7 @@ export default {
           currentPosition.location = option.name;
           currentPosition.address = option.addr;
           this.currentPosition = currentPosition;
-        }else {
+        } else {
           this.currentPosition.longitude = res.longitude || '';
           this.currentPosition.latitude = res.latitude || '';
           this.currentPosition.location = res.location || '';
@@ -1518,7 +1534,7 @@ export default {
       this.getPostThread(option);
     } else {
       this.loadStatus = true;
-      if(option.name && this.isWeixin) {
+      if (option.name && this.isWeixin) {
         let currentPosition = {};
         const data = option.latng.split(',');
         currentPosition.longitude = data[1];

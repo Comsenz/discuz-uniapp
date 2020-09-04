@@ -524,6 +524,7 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
+                adjust-position="false"
                 cursor-spacing="0"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
@@ -2220,7 +2221,10 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`);
+        this.$store.dispatch(
+          'session/setUrl',
+          `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
+        );
         if (!this.handleLogin()) {
           return;
         }
