@@ -523,6 +523,7 @@ export default {
       randstr: '',
       captchaResult: {},
       attachmentList: [], // 附件列表
+      preAttachmentList: [], // 编辑的时候只传新增的用于比较是否是新增的
       signatureVal: '',
       deleteType: '', // 删除类型 0为图片，1为附件，2为视频
       deleteId: '', // 当前点击要删除的图片Id
@@ -1090,7 +1091,7 @@ export default {
     },
     // 发布主题，处理图片
     addImg() {
-      let attachments = {};
+      const attachments = {};
       attachments.data = [];
       this.uploadFile.forEach(item => {
         if (item) {
@@ -1102,9 +1103,42 @@ export default {
       });
       // 附件
       if (this.type === 1 && this.$refs.uploadFiles) {
-        attachments = this.$refs.uploadFiles.getValue();
+        const fileList = this.$refs.uploadFiles.getValue();
+        const preAttachmentList = this.preAttachmentList;
+        fileList.forEach(item => {
+          for (let i = 0; i < preAttachmentList.length; i += 1) {
+            if (preAttachmentList[i]._jv.id === item.id) {
+              return;
+            }
+          }
+          if (item.id) {
+            attachments.data.push({
+              type: 'attachments',
+              id: item.id,
+            });
+          }
+        });
       }
       return attachments;
+    },
+    // 删除附件显示弹框
+    deleteFile(id) {
+      this.deleteTip = this.i18n.t('core.deleteEnclosureSure');
+      this.$refs.deletePopup.open();
+      this.deleteType = 1;
+      this.deleteId = id;
+    },
+    // 删除附件调用删除接口
+    deleteFileSure(id) {
+      const params = {
+        _jv: {
+          type: 'attachments',
+          id,
+        },
+      };
+      this.$store.dispatch('jv/delete', params).then(res => {
+        this.$refs.uploadFiles.deleteSure();
+      });
     },
 
     // 接口请求
@@ -1194,6 +1228,9 @@ export default {
         // this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
         //   this.$refs.upload.clear(this.deleteIndex);
         // });
+      } else if (this.deleteType === 1) {
+        // 删除类型为附件
+        this.deleteFileSure(this.deleteId);
       } else if (this.deleteType === 2) {
         // 删除类型为视频
         this.videoBeforeList = [];
@@ -1296,6 +1333,7 @@ export default {
         }
         // #endif
         this.attachmentList = res.firstPost.attachments || [];
+        this.preAttachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
