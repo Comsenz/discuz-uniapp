@@ -179,6 +179,8 @@ export default {
   },
   onLoad() {
     this.getForum();
+    const url = this.$store.getters['session/get']('url');
+    console.log('手机号码登录url', url);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -199,7 +201,6 @@ export default {
     });
 
     this.$u.event.$on('logind', () => {
-      const url = this.$store.getters['session/get']('url');
       if (this.user) {
         this.isPaid = this.user.paid;
       }

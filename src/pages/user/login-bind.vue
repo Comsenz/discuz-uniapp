@@ -91,9 +91,10 @@ export default {
   },
   onLoad() {
     this.getForum();
+    const url = this.$store.getters['session/get']('url');
+    console.log('登录绑定url', url);
 
     this.$u.event.$on('logind', () => {
-      const url = this.$store.getters['session/get']('url');
       if (this.user) {
         this.isPaid = this.user.paid;
       }

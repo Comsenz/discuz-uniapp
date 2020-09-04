@@ -92,9 +92,10 @@ export default {
       status: 200,
     });
     this.getForum();
+    const url = this.$store.getters['session/get']('url');
+    console.log('登录url', url);
 
     this.$u.event.$on('logind', () => {
-      const url = this.$store.getters['session/get']('url');
       if (this.user) {
         this.isPaid = this.user.paid;
       }

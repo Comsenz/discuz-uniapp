@@ -256,6 +256,13 @@ module.exports = {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'validate_reject') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.validate_reject'),
+                duration: 2000,
+              });
+            }
           }
         })
         .catch(err => console.log(err));
