@@ -2428,6 +2428,7 @@ export default {
           return;
         }
         // #endif
+        return;
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
