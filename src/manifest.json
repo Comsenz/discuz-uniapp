@@ -28,6 +28,11 @@
     "setting": {
       "urlCheck": false
     },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "小程序将使用定位功能"
+      }
+    },
     "usingComponents": true
   },
   "app-plus": {

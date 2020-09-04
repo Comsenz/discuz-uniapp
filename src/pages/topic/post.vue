@@ -244,13 +244,8 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
-      <view class="post-box__position">
-        <qui-cell-item
-          arrow
-          :slot-left="true"
-          @tap="choosePosition"
-          v-if="forums.lbs && forums.lbs.lbs"
-        >
+      <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
+        <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
             <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
             <text>
@@ -439,7 +434,6 @@ export default {
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
-      isWeixin: false, // 默认不是微信浏览器
       type: 0, // 帖子类型
       price: 0, // 付费金额
       inputPrice: '', // 付费金额输入框
@@ -587,14 +581,30 @@ export default {
       this.getPosition();
       // #endif
       // #ifdef MP-WEIXIN
-      wx.chooseLocation({
+      uni.getSetting({
         success(res) {
-          if (res.name === that.i18n.t('topic.myPosition')) {
-            res.location = res.address;
+          if (!res.authSetting['scope.userLocation']) {
+            uni.authorize({
+              scope: 'scope.userLocation',
+              success() {
+                uni.chooseLocation({
+                  success(res1) {
+                    const positionData = res1;
+                    positionData.location = res1.name;
+                    that.currentPosition = positionData;
+                  },
+                });
+              },
+            });
           } else {
-            res.location = res.name;
+            uni.chooseLocation({
+              success(res1) {
+                const positionData = res1;
+                positionData.location = res1.name;
+                that.currentPosition = positionData;
+              },
+            });
           }
-          that.currentPosition = res;
         },
       });
       // #endif
@@ -1329,7 +1339,7 @@ export default {
         this.checkClassData.push(res.category);
         // this.uploadFile = res.firstPost.images;
         // 微信里面的定位
-        if (option.name && this.isWeixin) {
+        if (option.name) {
           let currentPosition = {};
           const data = option.latng.split(',');
           currentPosition.longitude = data[1];
@@ -1500,10 +1510,6 @@ export default {
     },
   },
   onLoad(option) {
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -1534,7 +1540,7 @@ export default {
       this.getPostThread(option);
     } else {
       this.loadStatus = true;
-      if (option.name && this.isWeixin) {
+      if (option.name) {
         let currentPosition = {};
         const data = option.latng.split(',');
         currentPosition.longitude = data[1];

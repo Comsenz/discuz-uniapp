@@ -8,7 +8,7 @@ module.exports = {
     getPosition() {
       const key = this.forums.lbs.qq_lbs_key;
       const geolocation = new qq.maps.Geolocation(key, 'myapp');
-      geolocation.getLocation(this.showPosition);
+      geolocation.getLocation(this.showPosition, this.errorPosition, { timeout: 6000 });
     },
     showPosition(value) {
       const key = this.forums.lbs.qq_lbs_key;
@@ -21,6 +21,9 @@ module.exports = {
       }
       const currentHref = encodeURIComponent(href);
       window.location.href = `https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${currentHref}&key=${key}&referer=myapp&coord=${coord}`;
+    },
+    errorPosition() {
+      this.getPosition();
     },
     getPositionWx() {
       const url = this.getUrl();
