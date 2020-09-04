@@ -285,7 +285,7 @@
             ></qui-emoji>
           </view>
 
-          <view class="comment-content-box" :style="{ paddingBottom: padTstatus ? '180rpx' : '0' }">
+          <view class="comment-content-box" :style="{ paddingBottom: padTstatus ? '40rpx' : '0' }">
             <view class="comment-content">
               <textarea
                 ref="commentText"
