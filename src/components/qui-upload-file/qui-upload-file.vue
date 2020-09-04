@@ -199,12 +199,8 @@ export default {
       }
       return true;
     },
-    deleteItem(index, id) {
-      this.currentIndex = index;
-      this.$emit('deleteItem', id);
-    },
-    deleteSure() {
-      this.fileList.splice(this.currentIndex, 1);
+    deleteItem(index) {
+      this.fileList.splice(index, 1);
     },
     getValue() {
       return this.fileList;
