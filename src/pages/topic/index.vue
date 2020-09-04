@@ -513,7 +513,7 @@
             ></qui-emoji>
           </view>
 
-          <view class="comment-content-box">
+          <view class="comment-content-box" :style="{ paddingBottom: padTstatus ? '40rpx' : '0' }">
             <view class="comment-content">
               <textarea
                 ref="commentText"
@@ -524,10 +524,12 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                cursor-spacing="80"
+                adjust-position="false"
+                cursor-spacing="0"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
+                @focus="textFocus"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -799,91 +801,99 @@ export default {
       beRewarded: false,
       curUrl: '', // 当前页面的路由
       bottom: '',
-      moreData: [ // 更多操作
+      moreData: [
+        // 更多操作
         {
           text: this.i18n.t('topic.edit'),
           icon: 'icon-bianji',
           name: 'edit',
           type: '0',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('topic.delete'),
           icon: 'icon-shanchu',
           name: 'delete',
           type: '4',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('topic.essence'),
           icon: 'icon-jinghua',
           name: 'essence',
           type: '2',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('topic.sticky'),
           icon: 'icon-zhiding',
           name: 'sticky',
           type: '3',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('topic.collection'),
           icon: 'icon-collection',
           name: 'collection',
           type: '5',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('topic.share'),
           icon: 'icon-share',
           name: 'share',
           type: '6',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('core.generatePoster'),
           icon: 'icon-poster',
           name: 'poster',
           type: '7',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('core.wxShare'),
           icon: 'icon-wx-friends',
           name: 'wxFriends',
           type: '8',
-          canOpera: true
+          canOpera: true,
         },
         {
           text: this.i18n.t('report.reportTitle'),
           icon: 'icon-jubao',
           name: 'report',
           type: '9',
-          canOpera: true
+          canOpera: true,
         },
       ],
       moreDataLength: 0,
-      reportData: [{ // 举报理由
-        value: 'advertisingRubbish',
-        name: '广告垃圾'
-      },
-      {
-        value: 'illegalContent',
-        name: '违规内容'
-      },{
-        value: 'maliciousIrrigation',
-        name: '恶意灌水'
-      },{
-        value: 'repeatPost',
-        name: '重复发帖'
-      },{
-        value: 'other',
-        name: '其他'
-      }],
+      reportData: [
+        {
+          // 举报理由
+          value: 'advertisingRubbish',
+          name: '广告垃圾',
+        },
+        {
+          value: 'illegalContent',
+          name: '违规内容',
+        },
+        {
+          value: 'maliciousIrrigation',
+          name: '恶意灌水',
+        },
+        {
+          value: 'repeatPost',
+          name: '重复发帖',
+        },
+        {
+          value: 'other',
+          name: '其他',
+        },
+      ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
+      padTstatus: false, // 是否给评论框box加padding值
     };
   },
   onReady() {},
@@ -1236,23 +1246,23 @@ export default {
           this.moreData[3].isStatus = this.thread.isSticky;
           this.moreData[1].isStatus = false;
           this.moreData.forEach(item => {
-            if(item.canOpera){
+            if (item.canOpera) {
               this.moreDataLength += 1;
             }
-          })
-          if(data.isFavorite){
+          });
+          if (data.isFavorite) {
             this.moreData[4].text = this.t.collectionAlready;
-            this.moreData[4].icon = "icon-collectioned";
+            this.moreData[4].icon = 'icon-collectioned';
           }
           if (data.isEssence) {
             // 如果初始化状态为true
             this.moreData[2].text = this.t.cancelEssence;
-            this.moreData[2].icon = "icon-quxiaojinghua";
+            this.moreData[2].icon = 'icon-quxiaojinghua';
           }
           if (data.isSticky) {
             // 如果初始化状态为true
             this.moreData[3].text = this.t.cancelSticky;
-            this.moreData[3].icon = "icon-quxiaozhiding";
+            this.moreData[3].icon = 'icon-quxiaozhiding';
           }
           this.isLiked = data.firstPost.isLiked;
           if (!this.forums.paycenter.wxpay_close) {
@@ -1466,12 +1476,12 @@ export default {
           if (type === '1') {
             // 收藏
             this.thread.isFavorite = data.isFavorite;
-            if(data.isFavorite){
+            if (data.isFavorite) {
               this.moreData[4].text = this.t.collectionAlready;
-              this.moreData[4].icon = "icon-collectioned";
-            }else{
+              this.moreData[4].icon = 'icon-collectioned';
+            } else {
               this.moreData[4].text = this.t.collection;
-              this.moreData[4].icon = "icon-collection";
+              this.moreData[4].icon = 'icon-collection';
             }
           } else if (type === '2') {
             // 这是精华操作
@@ -1480,24 +1490,24 @@ export default {
             if (data.isEssence) {
               this.selectList[1].text = this.t.cancelEssence;
               this.moreData[2].text = this.t.cancelEssence;
-              this.moreData[2].icon = "icon-quxiaojinghua";
+              this.moreData[2].icon = 'icon-quxiaojinghua';
             } else {
               this.selectList[1].text = this.t.essence;
               this.moreData[2].text = this.t.essence;
-              this.moreData[2].icon = "icon-jinghua";
+              this.moreData[2].icon = 'icon-jinghua';
             }
           } else if (type === '3') {
             this.selectList[2].isStatus = data.isSticky;
             this.moreData[3].isStatus = data.isSticky;
             if (data.isSticky) {
               this.selectList[2].text = this.t.cancelSticky;
-              this.moreData[3].icon = "icon-quxiaozhiding";
+              this.moreData[3].icon = 'icon-quxiaozhiding';
               this.moreData[3].text = this.t.cancelSticky;
               // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
               this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
-              this.moreData[3].icon = "icon-zhiding";
+              this.moreData[3].icon = 'icon-zhiding';
               this.moreData[3].text = this.t.sticky;
               // 详情页取消置顶,将首页置顶数据移除
               this.$u.event.$emit('cancelSticky', data);
@@ -1916,7 +1926,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1944,7 +1955,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1960,7 +1972,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2019,7 +2032,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2126,9 +2140,15 @@ export default {
         });
       }
     },
+    // 输入框获取焦点时
+    textFocus() {
+      // 为了解决当文本域获取焦点时，文本域在不同设备上推错位问题
+      this.padTstatus = true;
+    },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
+      this.padTstatus = false;
     },
     // 点击表情插入到文本域
     getEmojiClick(code) {
@@ -2201,7 +2221,11 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`)) {
+        this.$store.dispatch(
+          'session/setUrl',
+          `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
+        );
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2217,7 +2241,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2232,7 +2257,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2253,7 +2279,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2276,7 +2303,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2311,7 +2339,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2325,13 +2354,15 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
       }
       this.threadOpera(id, canStatus, isStatus, type);
     },
+
     // 主题回复
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
@@ -2339,7 +2370,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2391,10 +2423,12 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
+        return;
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
@@ -2507,7 +2541,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2548,7 +2583,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2581,17 +2617,19 @@ export default {
         this.thread.user.follow = 0;
         originUser.follow = 0;
         this.followStatus = 0;
-      });s
+      });
+      s;
     },
     // 更多操作-唤起弹框
     moreClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return
+        return;
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2617,19 +2655,18 @@ export default {
         this.deletePostType = param.type;
         this.deleteTip = this.i18n.t('core.deleteContentSure');
       }
-      if(param.name === 'report'){
+      if (param.name === 'report') {
         this.reportClick();
       }
-      if(param.name === 'collection'){
+      if (param.name === 'collection') {
         this.threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1');
       }
-      if(param.name === 'share'){
+      if (param.name === 'share') {
         this.shareClick();
       }
-      if(param.name === 'poster'){
+      if (param.name === 'poster') {
         this.shareContent(0);
       }
-
     },
     // 关闭更多操作弹框
     moreCancel() {
@@ -2652,7 +2689,7 @@ export default {
     },
     // 确认举报
     reportConfirmClick(type) {
-      if(!this.currentReport){
+      if (!this.currentReport) {
         uni.showToast({
           icon: 'none',
           title: this.i18n.t('report.pleaseClickReasons'),
@@ -2661,7 +2698,7 @@ export default {
       }
       let reason = '';
       if (this.currentReport === 'other') {
-        if(!this.otherReasonValue){
+        if (!this.otherReasonValue) {
           uni.showToast({
             icon: 'none',
             title: this.i18n.t('report.enterOtherReason'),
@@ -2669,31 +2706,31 @@ export default {
           return;
         }
         reason = this.otherReasonValue;
-      }else{
+      } else {
         this.reportData.forEach(item => {
           if (item.value === this.currentReport) {
             reason = item.name;
           }
-        })
+        });
       }
       const params = {
         _jv: {
-          type: 'reports'
+          type: 'reports',
         },
         user_id: this.currentLoginId,
         thread_id: parseInt(this.threadId),
         type,
-        reason: `${reason}`
-      }
+        reason: `${reason}`,
+      };
       this.$store.dispatch('jv/post', params).then(res => {
-    		if(res._jv) {
-    			this.$refs.reportPopup.close();
-    			uni.showToast({
-    			  icon: 'none',
-    			  title: this.i18n.t('report.reportSucceed'),
-    			});
-    		}
-      })
+        if (res._jv) {
+          this.$refs.reportPopup.close();
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('report.reportSucceed'),
+          });
+        }
+      });
     },
     // 取消举报
     reportCancelClick() {
@@ -2714,7 +2751,7 @@ export default {
 page {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 .flex {
@@ -2742,7 +2779,7 @@ page {
 .detail-tip {
   display: block;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 60rpx;
   color: #fff;
   text-align: center;
@@ -2770,12 +2807,12 @@ page {
     padding-left: 20rpx;
     .det-hd-per-name {
       margin-bottom: 10px;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: bold;
       line-height: 37rpx;
     }
     .det-hd-post-time {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       line-height: 31rpx;
       color: --color(--qui-FC-AAA);
     }
@@ -2803,7 +2840,7 @@ page {
       font-size: 26rpx;
     }
   }
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 40rpx;
 }
 //详情页帖子内容
@@ -2849,7 +2886,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
     align-items: center;
     .qui-icon {
@@ -2857,7 +2894,7 @@ page {
       font-size: 30rpx;
     }
     * {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-777);
     }
   }
@@ -2880,7 +2917,7 @@ page {
   padding: 0 40rpx;
 }
 .comment-num {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -2911,7 +2948,7 @@ page {
   .comment-child-status {
     align-items: flex-start;
     padding-top: 8rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     line-height: 35rpx;
     color: --color(--qui-RED);
   }
@@ -2934,14 +2971,14 @@ page {
     }
   }
   .comment-child-time {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 31rpx;
     color: --color(--qui-FC-AAA);
   }
 }
 .comment-child-con {
   padding: 20rpx 0 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 45rpx;
   text-align: left;
   .comment-child-con-all {
@@ -2986,7 +3023,7 @@ page {
     line-height: 80rpx;
   }
   .ft-child-word {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
   }
 }
@@ -3019,7 +3056,7 @@ page {
     width: 195rpx;
   }
   .text-word-tip {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 1;
     color: --color(--qui-FC-777);
   }
@@ -3044,7 +3081,7 @@ page {
     width: 100%;
     height: 220rpx;
     min-height: 70rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 37rpx;
   }
   .text-placeholder {
@@ -3054,7 +3091,7 @@ page {
 .publish-btn {
   width: 100%;
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: normal;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);
@@ -3072,7 +3109,7 @@ page {
 }
 .popup-cancel-btn {
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 100rpx;
   color: #666;
   text-align: center;
@@ -3105,7 +3142,7 @@ page {
   box-sizing: border-box;
   .popup-title {
     height: 37rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     text-align: center;
   }
 }
@@ -3118,7 +3155,7 @@ page {
     padding-top: 40rpx;
     text-align: center;
     text {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
   }
@@ -3289,7 +3326,7 @@ page {
   flex-shrink: 0;
   .icon-follow {
     margin-right: 7rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
   }
 }
 .det-ft-operaCli {
@@ -3316,13 +3353,13 @@ page {
     text-align: center;
 
     &-headline {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
 
-    &-subhead{
+    &-subhead {
       margin-top: 20rpx;
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       color: --color(--qui-FC-AAA);
     }
   }
@@ -3343,14 +3380,14 @@ page {
       border-bottom: 0;
     }
 
-    &-textarea{
+    &-textarea {
       padding-right: 40rpx;
 
-      textarea{
+      textarea {
         width: 100%;
         height: 180rpx;
         padding: 20rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         background-color: --color(--qui-BG-1);
         border: 1px solid var(--qui-BOR-DDD);
         box-sizing: border-box;
@@ -3366,7 +3403,7 @@ page {
       width: 100%;
       height: 100rpx;
       margin-bottom: 10rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: normal;
       line-height: 100rpx;
       color: --color(--qui-FC-FFF);
@@ -3378,7 +3415,7 @@ page {
     &-cancel {
       width: 100%;
       height: 100rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: normal;
       line-height: 100rpx;
       text-align: center;
@@ -3386,8 +3423,8 @@ page {
     }
   }
 
-  .textarea-placeholder{
-    font-size: $fg-f28;
+  .textarea-placeholder {
+    font-size: $fg-f4;
     color: --color(--qui-FC-B5);
   }
 }

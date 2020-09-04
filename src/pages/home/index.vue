@@ -31,6 +31,7 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [forums, user, detectionModel],
@@ -80,6 +81,9 @@ export default {
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
+
+    const url = getCurUrl();
+    this.$store.dispatch('session/setUrl', url);
 
     uni.$on('notiRead', () => {
       this.getUserInfo(true);

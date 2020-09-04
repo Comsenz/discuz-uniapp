@@ -12,7 +12,7 @@ body {
   overflow-x: hidden;
   /* #endif */
   font-family: $font-family;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
 }
@@ -71,7 +71,7 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
   /* #endif */
   flex-direction: column;
   align-items: center;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   // height: 164rpx;
   // background: --color(--qui-BG-2);
 }
@@ -95,12 +95,12 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
 }
 .popup-share-content-text {
   margin-top: 13rpx;
-  // font-size: $fg-f28;
+  // font-size: $fg-f4;
   color: --color(--qui-FC-TAG);
 }
 .popup-share-btn {
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 100rpx;
   color: --color(--qui-FC-333);
   text-align: center;
@@ -136,7 +136,7 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
 //公共搜索头样式
 .search {
   /deep/ input .input-placeholder {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-C6);
   }
   .icon-content-search {
@@ -162,7 +162,7 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
   }
   .search-box__cancel {
     padding-left: 24rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 80rpx;
     justify-content: flex-end;
     color: --color(--qui-FC-CCC);
@@ -445,7 +445,16 @@ img {
 .wxParse .uni-audio-default {
   display: block;
 }
-.qui-audio  uni-slider {
+ /* #ifdef MP-WEIXIN  */
+ .qui-audio slider {
   margin: 0 18px;
-  padding-top: 5px;
+  padding-top: 3px;
 }
+ /* #endif */
+
+ /* #ifdef  H5 */
+ .qui-audio uni-slider{
+  margin: 0 18px;
+  padding-top: 6px;
+}
+ /* #endif */

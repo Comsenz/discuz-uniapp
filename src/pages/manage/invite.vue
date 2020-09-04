@@ -353,10 +353,10 @@ export default {
   /* #ifdef H5 */
   margin-top: 44px;
   /* #endif */
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   &-tabs {
     /deep/ .qui-tabs__item--active .qui-tabs__item__title {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
     }
   }
 }
@@ -371,7 +371,7 @@ export default {
   margin: auto;
 
   .btn {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 90rpx;
     color: --color(--qui-FC-333);
     background: --color(--qui-BG-2);
@@ -390,7 +390,7 @@ export default {
     &-text {
       width: 100%;
       height: 100rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
       line-height: 100rpx;
       text-align: center;
     }
@@ -407,7 +407,7 @@ export default {
   &-btn {
     width: 100%;
     height: 100rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 100rpx;
     text-align: center;
   }

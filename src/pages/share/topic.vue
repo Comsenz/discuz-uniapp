@@ -51,6 +51,7 @@ export default {
       template: {},
       userid: '',
       slitename: '', // 站点名称
+      slitelogo: '', // 站点logo
       themeid: '', // 数据id
       headerImg: '', // 头像
       headerName: '', // 名字
@@ -86,6 +87,7 @@ export default {
     this.themeid = arr.id;
     this.userid = this.usersid;
     this.slitename = this.forums.set_site.site_name;
+    this.slitelogo = this.forums.set_site.site_header_logo || `${this.$u.host()}static/logo.png`;
     this.getusertitle();
   },
   computed: {
@@ -149,55 +151,70 @@ export default {
           this.headerName = data.user.username;
           this.postyTepy = data.type;
           this.headerImg = data.user.avatarUrl || `${this.$u.host()}static/images/noavatar.gif`;
-          if (data.firstPost.images.length >= 1 || this.postyTepy === 2) {
-            if (this.postyTepy === 2 && data.threadVideo.cover_url) {
-              this.implement = false;
-            } else {
-              this.implement = false;
-            }
-          } else {
-            this.implement = true;
-          }
-          const arr = Object.values(data.firstPost.images);
-          arr.forEach(value => {
-            this.contentImg.push(value.url || value.thumbUrl);
-          });
-          if (this.contentImg) {
-            uni.getImageInfo({
-              src: that.contentImg[0],
-              success(image) {
-                const num = image.height * (620 / image.width);
-                that.heightdefill = num - 402;
-              },
-            });
-          }
-          this.contentTitle = data.title;
-          this.content = data.firstPost.content;
-          const n = this.content.length - this.content.replace(/[\r\n]/g, '').length;
-          if (this.content) {
-            const num = Math.ceil(this.content.length / 23) + n;
-            if (num >= 11) {
-              this.contentheight = 0;
-            } else {
-              this.contentheight = 472 - num * 42;
-            }
-          }
-          this.attachmentsType = data.category.name;
-          this.attachlength = this.attachmentsType.length * 24 + 3;
-          this.marglength = this.attachlength + 40;
-          if (this.postyTepy === 2) {
-            this.video = data.threadVideo.cover_url;
-            this.videoduc = data.threadVideo.file_name;
-            if (this.video) {
+          if (data.price > 0) {
+            this.contentImg.push(this.slitelogo);
+            if (this.contentImg) {
               uni.getImageInfo({
-                src: that.video,
+                src: that.contentImg[0],
                 success(image) {
                   const num = image.height * (620 / image.width);
                   that.heightdefill = num - 402;
                 },
               });
+            }
+            this.attachmentsType = data.category.name;
+          } else {
+            if (data.firstPost.images.length >= 1 || this.postyTepy === 2) {
+              if (this.postyTepy === 2 && data.threadVideo.cover_url) {
+                this.implement = false;
+              } else {
+                this.implement = false;
+              }
             } else {
-              that.heightdefill = 0;
+              this.implement = true;
+            }
+
+            const arr = Object.values(data.firstPost.images);
+            arr.forEach(value => {
+              this.contentImg.push(value.url || value.thumbUrl);
+            });
+            if (this.contentImg) {
+              uni.getImageInfo({
+                src: that.contentImg[0],
+                success(image) {
+                  const num = image.height * (620 / image.width);
+                  that.heightdefill = num - 402;
+                },
+              });
+            }
+            this.contentTitle = data.title;
+            this.content = data.firstPost.content;
+            const n = this.content.length - this.content.replace(/[\r\n]/g, '').length;
+            if (this.content) {
+              const num = Math.ceil(this.content.length / 23) + n;
+              if (num >= 11) {
+                this.contentheight = 0;
+              } else {
+                this.contentheight = 472 - num * 42;
+              }
+            }
+            this.attachmentsType = data.category.name;
+            this.attachlength = this.attachmentsType.length * 24 + 3;
+            this.marglength = this.attachlength + 40;
+            if (this.postyTepy === 2) {
+              this.video = data.threadVideo.cover_url;
+              this.videoduc = data.threadVideo.file_name;
+              if (this.video) {
+                uni.getImageInfo({
+                  src: that.video,
+                  success(image) {
+                    const num = image.height * (620 / image.width);
+                    that.heightdefill = num - 402;
+                  },
+                });
+              } else {
+                that.heightdefill = 0;
+              }
             }
           }
         });
@@ -325,7 +342,7 @@ export default {
           // 只有一张图片
         } else if (!this.content && this.contentImg.length === 1) {
           this.constyle = 908;
-          this.paddingtop = 164;
+          this.paddingtop = 43;
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {

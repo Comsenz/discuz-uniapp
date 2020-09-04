@@ -33,14 +33,26 @@ export default {
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
               this.$store.dispatch('session/setToken', res.data.errors[0].token);
-              const pages = getCurrentPages();
-              const url = pages[pages.length - 1].route;
-              this.login(url);
+              const url = this.$store.getters['session/get']('url');
+              console.log('微信登录url', url);
+              this.login();
+            }
+            if (res.data.errors[0].code === 'permission_denied') {
+              const url = this.$store.getters['session/get']('url');
+              console.log('微信登录url', url);
+              this.login();
             }
             if (res.data.errors[0].code === 'register_validate') {
               uni.showToast({
                 icon: 'none',
                 title: this.i18n.t('core.register_validate'),
+                duration: 2000,
+              });
+            }
+            if (res.data.errors[0].code === 'validate_reject') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.validate_reject'),
                 duration: 2000,
               });
             }

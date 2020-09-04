@@ -140,20 +140,20 @@ export default {
     box-sizing: border-box;
   }
   .authen-tit {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
   }
   .authen-forget {
     margin: 30rpx 0 0 40rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 37rpx;
     color: --color(--qui-LINK);
   }
   .authen-erro-messag1 {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-RED);

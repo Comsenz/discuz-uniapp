@@ -567,12 +567,6 @@ export default {
   //     // eslint-disable-next-line
   //   }
   // },
-  created() {
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
-  },
   updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
@@ -589,22 +583,21 @@ export default {
       if (that.currentPosition.location) {
         return;
       }
-      const { platform } = uni.getSystemInfoSync();
-      if (platform === 'android' && this.isWeixin) {
-        // 安卓微信浏览器卡顿问题
-        this.getPosition();
-      } else {
-        uni.chooseLocation({
-          success(res) {
-            if (res.name === that.i18n.t('topic.myPosition')) {
-              res.location = res.address;
-            } else {
-              res.location = res.name;
-            }
-            that.currentPosition = res;
-          },
-        });
-      }
+      // #ifdef H5
+      this.getPosition();
+      // #endif
+      // #ifdef MP-WEIXIN
+      wx.chooseLocation({
+        success(res) {
+          if (res.name === that.i18n.t('topic.myPosition')) {
+            res.location = res.address;
+          } else {
+            res.location = res.name;
+          }
+          that.currentPosition = res;
+        },
+      });
+      // #endif
     },
     clearPosition() {
       this.currentPosition = {};
@@ -1220,9 +1213,11 @@ export default {
       this.$refs.deletePopup.close();
       if (this.deleteType === 0) {
         // 删除类型为图片
-        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
-          this.$refs.upload.clear(this.deleteIndex);
-        });
+        this.delAttachments(this.deleteId, this.deleteIndex);
+        this.$refs.upload.clear(this.deleteIndex);
+        // this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+        //   this.$refs.upload.clear(this.deleteIndex);
+        // });
       } else if (this.deleteType === 1) {
         // 删除类型为附件
         this.deleteFileSure(this.deleteId);
@@ -1239,37 +1234,51 @@ export default {
     },
 
     delAttachments(id, index) {
-      const params = {
-        _jv: {
-          type: 'attachments',
-          id,
-        },
-      };
-
-      return this.$store
-        .dispatch('jv/delete', params)
-        .then(res => {
-          // 当编辑帖子时删除图片后传参给首页
-          if (this.operating === 'edit') {
-            this.$u.event.$emit('deleteImg', {
-              threadId: this.postDetails._jv.id,
-              index,
-            });
-            const post = this.$store.getters['jv/get'](
-              `posts/${this.postDetails.firstPost._jv.id}`,
-            );
-            post.images.splice(index, 1);
-            post._jv.relationships.images.data.splice(index, 1);
-          }
-
-          this.uploadFile.forEach((value, key, item) => {
-            value.id == id && item.splice(key, 1);
-          });
-          return res;
-        })
-        .catch(err => {
-          console.log(err);
+      if (this.operating === 'edit') {
+        console.log('这是编辑');
+        this.$u.event.$emit('deleteImg', {
+          threadId: this.postDetails._jv.id,
+          index,
         });
+        const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
+        post.images.splice(index, 1);
+        post._jv.relationships.images.data.splice(index, 1);
+      }
+
+      this.uploadFile.forEach((value, key, item) => {
+        value.id == id && item.splice(key, 1);
+      });
+      // const params = {
+      //   _jv: {
+      //     type: 'attachments',
+      //     id,
+      //   },
+      // };
+
+      // return this.$store
+      //   .dispatch('jv/delete', params)
+      //   .then(res => {
+      //     // 当编辑帖子时删除图片后传参给首页
+      //     if (this.operating === 'edit') {
+      //       this.$u.event.$emit('deleteImg', {
+      //         threadId: this.postDetails._jv.id,
+      //         index,
+      //       });
+      //       const post = this.$store.getters['jv/get'](
+      //         `posts/${this.postDetails.firstPost._jv.id}`,
+      //       );
+      //       post.images.splice(index, 1);
+      //       post._jv.relationships.images.data.splice(index, 1);
+      //     }
+
+      //     this.uploadFile.forEach((value, key, item) => {
+      //       value.id == id && item.splice(key, 1);
+      //     });
+      //     return res;
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     },
     getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
@@ -1319,25 +1328,22 @@ export default {
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
         // this.uploadFile = res.firstPost.images;
-        // 微信安卓里面的定位 
-        if(option.name) {
-          const { platform } = uni.getSystemInfoSync();
-          if(platform === 'android' && this.isWeixin) {
-            let currentPosition = {};
-            const data = option.latng.split(',');
-            currentPosition.longitude = data[1];
-            currentPosition.latitude = data[0];
-            currentPosition.location = option.name;
-            currentPosition.address = option.addr;
-            this.currentPosition = currentPosition;
-          }
-        }else {
+        // 微信里面的定位
+        if (option.name && this.isWeixin) {
+          let currentPosition = {};
+          const data = option.latng.split(',');
+          currentPosition.longitude = data[1];
+          currentPosition.latitude = data[0];
+          currentPosition.location = option.name;
+          currentPosition.address = option.addr;
+          this.currentPosition = currentPosition;
+        } else {
           this.currentPosition.longitude = res.longitude || '';
           this.currentPosition.latitude = res.latitude || '';
           this.currentPosition.location = res.location || '';
           this.currentPosition.address = res.address || '';
         }
-        
+
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
             if (item) {
@@ -1494,6 +1500,10 @@ export default {
     },
   },
   onLoad(option) {
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -1524,11 +1534,24 @@ export default {
       this.getPostThread(option);
     } else {
       this.loadStatus = true;
+      if (option.name && this.isWeixin) {
+        let currentPosition = {};
+        const data = option.latng.split(',');
+        currentPosition.longitude = data[1];
+        currentPosition.latitude = data[0];
+        currentPosition.location = option.name;
+        currentPosition.address = option.addr;
+        this.currentPosition = currentPosition;
+      }
     }
 
     try {
       const res = uni.getSystemInfoSync();
-      if (this.forums && this.forums.paycenter.wxpay_close && this.forums.other.can_create_thread_paid) {
+      if (
+        this.forums &&
+        this.forums.paycenter.wxpay_close &&
+        this.forums.other.can_create_thread_paid
+      ) {
         // #ifndef H5
         if (res.platform === 'ios') {
           if (this.forums.paycenter.wxpay_ios === false) {
@@ -1631,7 +1654,7 @@ export default {
     &-input {
       width: 100%;
       padding-right: 80rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
     }
   }
   &__hd {
@@ -1644,7 +1667,7 @@ export default {
       }
     }
     &-r {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       color: --color(--qui-FC-777);
     }
   }
@@ -1665,12 +1688,12 @@ export default {
     max-height: 900rpx;
     min-height: 400rpx;
     padding: 10rpx 20rpx 20rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 40rpx;
     box-sizing: border-box;
 
     .text-cover {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       line-height: 40rpx;
     }
     &--static {
@@ -1754,14 +1777,14 @@ export default {
     &-tit {
       display: block;
       margin: 30rpx 0;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-7D7979);
     }
     &-categories {
       margin-bottom: 40rpx;
     }
   }
-  &__position  /deep/ {
+  &__position /deep/ {
     position: relative;
     color: --color(--qui-FC-777);
     .icon-weizhi {
@@ -1790,7 +1813,7 @@ export default {
   .post-box__video__play__load__text {
     position: relative;
     z-index: 2;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 36rpx;
     color: --color(--qui-FC-34);
   }
@@ -1842,7 +1865,7 @@ export default {
   text-align: center;
   box-sizing: border-box;
   .popup-title {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
   }
 }
 .popup-share-content-space {
@@ -1856,11 +1879,11 @@ export default {
   width: 100%;
 }
 /deep/ textarea .textarea-placeholder {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-B5);
 }
 /deep/ input .input-placeholder {
-  font-size: $fg-f34;
+  font-size: $fg-f5;
   color: --color(--qui-FC-AAA);
 }
 
@@ -1870,7 +1893,7 @@ export default {
   }
 }
 /deep/ .cell-item__body__right .cell-item__body__right-text {
-  font-size: $fg-f34;
+  font-size: $fg-f5;
 }
 /deep/ .cell-item__body__content-title {
   color: --color(--qui-FC-777);
@@ -1885,7 +1908,7 @@ export default {
     padding-top: 40rpx;
     text-align: center;
     text {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
   }

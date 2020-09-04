@@ -14,9 +14,9 @@
       </view>
       <view class="position-num" v-if="address">
         {{
-          `${i18n.t('profile.total')} ${totalData} ${i18n.t('profile.item')}${i18n.t(
-            'core.content',
-          )}`
+          `${i18n.t('profile.nearBy')}${i18n.t('profile.total')} ${totalData} ${i18n.t(
+            'profile.item',
+          )}${i18n.t('core.content')}`
         }}
       </view>
       <view class="position-content">
@@ -177,22 +177,22 @@ export default {
 }
 .position /deep/ {
   .position-head {
-    padding: 30rpx 40rpx;
+    padding: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .position-head__name {
     margin-bottom: 40rpx;
-    font-size: $fg-f40;
+    font-size: $fg-f6;
     font-weight: bold;
   }
   .position-head__address {
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     color: --color(--qui-FC-777);
   }
   .position-num {
     padding: 20rpx 30rpx 0;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     color: --color(--qui-FC-7D7979);
   }
 }

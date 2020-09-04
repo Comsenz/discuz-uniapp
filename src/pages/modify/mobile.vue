@@ -324,7 +324,7 @@ export default {
   }
   .mobile-titel {
     padding: 31rpx 0 0 40rpx;
-    font-size: $fg-f50;
+    font-size: $fg-f7;
     font-weight: bold;
     line-height: 60rpx;
     color: --color(--qui-FC-333);
@@ -338,21 +338,21 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .modify-phon-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
   }
   .modify-phon-sun {
     margin-left: 40rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-00);
     opacity: 1;
   }
   .modify-phon-sun1 {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -362,7 +362,7 @@ export default {
     height: 70rpx;
     min-width: 180rpx;
     margin: 15rpx 40rpx 0;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 70rpx;
     color: --color(--qui-FC-FFF);
@@ -374,7 +374,7 @@ export default {
     margin: 0 0 0 40rpx;
   }
   .modify-input-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -387,7 +387,7 @@ export default {
 }
 .modify-button /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

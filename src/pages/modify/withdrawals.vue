@@ -5,9 +5,9 @@
         <!-- 收款人 -->
         <view class="cash-content-tab">
           <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
-            <test class="cash-content-name">
+            <text class="cash-content-name">
               {{ name }}
-            </test>
+            </text>
           </qui-cell-item>
         </view>
         <!-- 可提现金额 -->
@@ -18,7 +18,7 @@
             :arrow="false"
             :border="false"
           >
-            <test class="cash-content-name">￥{{ balance }}</test>
+            <text class="cash-content-name">￥{{ balance }}</text>
           </qui-cell-item>
         </view>
         <!-- 提现金额 -->
@@ -117,6 +117,11 @@
         </view>
       </view>
     </view>
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-popup ref="authPhone" type="bottom">
+      <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
+    </uni-popup>
+    <!-- #endif -->
   </qui-page>
 </template>
 
@@ -465,9 +470,16 @@ export default {
         });
     },
     bandPhon() {
-      uni.navigateTo({
-        url: '/pages/modify/setphon',
-      });
+      if (this.user && this.user.mobile === '') {
+        // #ifdef MP-WEIXIN
+        this.$refs.authPhone.open();
+        // #endif
+        // #ifdef H5
+        uni.navigateTo({
+          url: '/pages/modify/setphon',
+        });
+        // #endif
+      }
     },
     toggleBox() {
       this.inshow = false;
@@ -476,6 +488,11 @@ export default {
       const empty = this.$refs.quiinput;
       empty.deleat();
     },
+    // #ifdef MP-WEIXIN
+    closeDialog() {
+      this.$refs.authPhone.close();
+    },
+    // #endif
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
@@ -536,14 +553,14 @@ export default {
     height: 150rpx;
   }
   .cash-content-name {
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     color: --color(--qui-FC-333);
   }
   .cash-content-input {
     width: 300rpx;
     height: 100%;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: bold;
     line-height: 100rpx;
     color: --color(--qui-FC-333);
@@ -555,7 +572,7 @@ export default {
   // }
   .cash-content-ellipsis {
     height: 50rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     line-height: 50rpx;
     color: --color(--qui-FC-333);
@@ -563,7 +580,7 @@ export default {
   }
   .cash-content-ellipsis2 {
     height: 45rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: bold;
     line-height: 45rpx;
     color: --color(--qui-RED);
@@ -571,7 +588,7 @@ export default {
   .cash-content-proced {
     height: 50rpx;
     margin-top: 11rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     line-height: 50rpx;
     color: --color(--qui-FC-777);
@@ -584,21 +601,21 @@ export default {
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .cash-phon-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
   }
   .cash-phon-num {
     margin: 0 0 0 100rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-000);
   }
   .cash-phon-num1 {
     margin: 0 0 0 10rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -608,7 +625,7 @@ export default {
     height: 70rpx;
     min-width: 180rpx;
     margin: 15rpx 40rpx 0;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 70rpx;
     color: --color(--qui-FC-FFF);
@@ -618,7 +635,7 @@ export default {
   }
   .cash-erro {
     margin-top: 20rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     color: --color(--qui-RED);
   }
@@ -626,7 +643,7 @@ export default {
     width: 710rpx;
   }
   .cash-input-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -660,7 +677,7 @@ export default {
 /* #endif */
 .cash-button /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

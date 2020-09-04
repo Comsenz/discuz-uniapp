@@ -86,13 +86,14 @@ export default {
       forum: {}, // 配置
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.$store.dispatch('forum/setError', {
       code: 'user_login',
       status: 200,
     });
     this.getForum();
-    this.getPageParams(params);
+    const url = this.$store.getters['session/get']('url');
+    console.log('登录url', url);
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -103,7 +104,7 @@ export default {
       }
       if (this.site_mode !== SITE_PAY) {
         uni.redirectTo({
-          url: this.url,
+          url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
@@ -144,7 +145,7 @@ export default {
 
 .login-box {
   padding-bottom: 40px;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background-color: --color(--qui-BG-2);
 
   &-h {
@@ -161,7 +162,7 @@ export default {
       width: 100%;
       height: 100rpx;
       padding: 0rpx 0rpx 0rpx 20rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
       line-height: 100rpx;
       text-align: left;
       border-bottom: 2rpx solid --color(--qui-BOR-ED);

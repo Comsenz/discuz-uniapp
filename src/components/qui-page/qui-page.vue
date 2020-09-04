@@ -62,8 +62,6 @@ export default {
           'model_not_found',
           'dataerro',
           'permission_denied',
-          'register_validate',
-          'register_close',
         ].indexOf(this.forumError.code) !== -1
       );
     },

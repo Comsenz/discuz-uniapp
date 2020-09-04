@@ -285,7 +285,7 @@
             ></qui-emoji>
           </view>
 
-          <view class="comment-content-box">
+          <view class="comment-content-box" :style="{ paddingBottom: padTstatus ? '40rpx' : '0' }">
             <view class="comment-content">
               <textarea
                 ref="commentText"
@@ -296,10 +296,12 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                cursor-spacing="80"
+                adjust-position="false"
+                cursor-spacing="0"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
+                @focus="textFocus"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -518,25 +520,32 @@ export default {
       sortVal: 'createdAt', // 排序值
       followStatus: '', // 当前关注状态
       curUrl: '', // 当前页面的路由
-      reportData: [{ // 举报理由
-        value: 'advertisingRubbish',
-        name: '广告垃圾'
-      },
-      {
-        value: 'illegalContent',
-        name: '违规内容'
-      },{
-        value: 'maliciousIrrigation',
-        name: '恶意灌水'
-      },{
-        value: 'repeatPost',
-        name: '重复发帖'
-      },{
-        value: 'other',
-        name: '其他'
-      }],
+      reportData: [
+        {
+          // 举报理由
+          value: 'advertisingRubbish',
+          name: '广告垃圾',
+        },
+        {
+          value: 'illegalContent',
+          name: '违规内容',
+        },
+        {
+          value: 'maliciousIrrigation',
+          name: '恶意灌水',
+        },
+        {
+          value: 'repeatPost',
+          name: '重复发帖',
+        },
+        {
+          value: 'other',
+          name: '其他',
+        },
+      ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
+      padTstatus: false, // 是否给评论框box加padding值
     };
   },
   computed: {
@@ -927,7 +936,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -973,7 +983,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1013,9 +1024,15 @@ export default {
         url: `/pages/profile/index?userId=${id}`,
       });
     },
+    // 输入框获取焦点时
+    textFocus() {
+      // 为了解决当文本域获取焦点时，文本域在不同设备上推错位问题
+      this.padTstatus = true;
+    },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
+      this.padTstatus = false;
     },
     // 点击表情插入到文本域
     getEmojiClick(code) {
@@ -1184,10 +1201,11 @@ export default {
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
-        return
+        return;
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1195,11 +1213,11 @@ export default {
       this.$refs.morePopup.open();
     },
     // 更多操作内标签选择
-    moreContent(type, id, canHide ) {
+    moreContent(type, id, canHide) {
       this.moreCancel();
-      if(type === 0){
+      if (type === 0) {
         this.deleteReply(id, canHide);
-      }else{
+      } else {
         this.reportClick();
       }
     },
@@ -1223,7 +1241,7 @@ export default {
     },
     // 确认举报
     reportConfirmClick(type) {
-      if(!this.currentReport){
+      if (!this.currentReport) {
         uni.showToast({
           icon: 'none',
           title: this.i18n.t('report.pleaseClickReasons'),
@@ -1232,7 +1250,7 @@ export default {
       }
       let reason = '';
       if (this.currentReport === 'other') {
-        if(!this.otherReasonValue){
+        if (!this.otherReasonValue) {
           uni.showToast({
             icon: 'none',
             title: this.i18n.t('report.enterOtherReason'),
@@ -1240,32 +1258,32 @@ export default {
           return;
         }
         reason = this.otherReasonValue;
-      }else{
+      } else {
         this.reportData.forEach(item => {
           if (item.value === this.currentReport) {
             reason = item.name;
           }
-        })
+        });
       }
       const params = {
         _jv: {
-          type: 'reports'
+          type: 'reports',
         },
         user_id: this.currentLoginId,
         thread_id: parseInt(this.threadId),
         post_id: parseInt(this.commentId),
         type,
-        reason: `${reason}`
-      }
+        reason: `${reason}`,
+      };
       this.$store.dispatch('jv/post', params).then(res => {
-    		if(res._jv) {
-    			this.$refs.reportPopup.close();
-    			uni.showToast({
-    			  icon: 'none',
-    			  title: this.i18n.t('report.reportSucceed'),
-    			});
-    		}
-      })
+        if (res._jv) {
+          this.$refs.reportPopup.close();
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('report.reportSucceed'),
+          });
+        }
+      });
     },
     // 取消举报
     reportCancelClick() {
@@ -1283,13 +1301,13 @@ export default {
 page {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 * {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 .flex {
@@ -1308,7 +1326,7 @@ page {
 .detail-tip {
   display: block;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 60rpx;
   color: #fff;
   text-align: center;
@@ -1336,12 +1354,12 @@ page {
     padding-left: 20rpx;
     .det-hd-per-name {
       margin-bottom: 10px;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: bold;
       line-height: 37rpx;
     }
     .det-hd-post-time {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       line-height: 31rpx;
       color: --color(--qui-FC-AAA);
     }
@@ -1369,7 +1387,7 @@ page {
       font-size: 26rpx;
     }
   }
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 40rpx;
 }
 //详情页帖子内容
@@ -1414,7 +1432,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
     align-items: center;
     .qui-icon {
@@ -1422,7 +1440,7 @@ page {
       font-size: 30rpx;
     }
     * {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-777);
     }
   }
@@ -1445,7 +1463,7 @@ page {
   padding: 0 40rpx;
 }
 .comment-num {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -1455,7 +1473,7 @@ page {
 }
 // .comment-num {
 //   padding: 0 40rpx;
-//   font-size: $fg-f28;
+//   font-size: $fg-f4;
 //   font-weight: bold;
 //   line-height: 37rpx;
 // }
@@ -1482,7 +1500,7 @@ page {
   .comment-child-status {
     align-items: flex-start;
     padding-top: 8rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     line-height: 35rpx;
     color: --color(--qui-RED);
   }
@@ -1505,14 +1523,14 @@ page {
     }
   }
   .comment-child-time {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 31rpx;
     color: --color(--qui-FC-AAA);
   }
 }
 .comment-child-con {
   padding: 20rpx 0 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 45rpx;
   text-align: left;
   .comment-child-con-all {
@@ -1552,7 +1570,7 @@ page {
     line-height: 80rpx;
   }
   .ft-child-word {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
   }
 }
@@ -1585,7 +1603,7 @@ page {
     width: 195rpx;
   }
   .text-word-tip {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 1;
     color: --color(--qui-FC-777);
   }
@@ -1610,7 +1628,7 @@ page {
     width: 100%;
     height: 220rpx;
     min-height: 70rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 37rpx;
   }
   .text-placeholder {
@@ -1621,7 +1639,7 @@ page {
 .publish-btn {
   width: 100%;
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);
   text-align: center;
@@ -1643,10 +1661,10 @@ page {
   background: --color(--qui-BG-40);
   border-radius: 10px;
 }
-.popup-share-content{
+.popup-share-content {
   padding-top: 40rpx;
 }
-.popup-share-content-inner{
+.popup-share-content-inner {
   padding-right: 96px;
   padding-left: 98px;
 }
@@ -1680,7 +1698,7 @@ page {
 }
 .popup-share-content-text {
   padding-top: 5px;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   color: --color(--qui-FC-TAG);
 }
 .popup-share-content-space {
@@ -1725,7 +1743,7 @@ page {
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
       }
 
@@ -1752,7 +1770,7 @@ page {
       &__isAdminColor {
         padding: 2rpx 10rpx;
         margin-left: 15rpx;
-        font-size: $fg-f20;
+        font-size: $fg-f1;
         background: --color(--qui-BG-IT);
         border-radius: 18rpx;
         box-sizing: border-box;
@@ -1778,7 +1796,7 @@ page {
       }
       &__reward {
         float: right;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: bold;
         color: --color(--qui-RED);
       }
@@ -1790,7 +1808,7 @@ page {
       overflow: hidden;
       flex-direction: column;
       flex-wrap: wrap;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       line-height: 45rpx;
       word-break: break-all;
     }
@@ -1803,7 +1821,7 @@ page {
   width: 31rpx;
   height: 41rpx;
 }
-.right40{
+.right40 {
   right: 40rpx;
 }
 .themeItem__header__follow {
@@ -1815,7 +1833,7 @@ page {
 
   .icon-follow {
     margin-right: 7rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
   }
 }
 .det-ft-operaCli {
@@ -1839,13 +1857,13 @@ page {
     text-align: center;
 
     &-headline {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
 
-    &-subhead{
+    &-subhead {
       margin-top: 20rpx;
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       color: --color(--qui-FC-AAA);
     }
   }
@@ -1866,14 +1884,14 @@ page {
       border-bottom: 0;
     }
 
-    &-textarea{
+    &-textarea {
       padding-right: 40rpx;
 
-      textarea{
+      textarea {
         width: 100%;
         height: 180rpx;
         padding: 20rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         background-color: --color(--qui-BG-1);
         border: 1px solid var(--qui-BOR-DDD);
         box-sizing: border-box;
@@ -1889,7 +1907,7 @@ page {
       width: 100%;
       height: 100rpx;
       margin-bottom: 10rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: normal;
       line-height: 100rpx;
       color: --color(--qui-FC-FFF);
@@ -1901,7 +1919,7 @@ page {
     &-cancel {
       width: 100%;
       height: 100rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: normal;
       line-height: 100rpx;
       text-align: center;
@@ -1909,8 +1927,8 @@ page {
     }
   }
 
-  .textarea-placeholder{
-    font-size: $fg-f28;
+  .textarea-placeholder {
+    font-size: $fg-f4;
     color: --color(--qui-FC-B5);
   }
 }

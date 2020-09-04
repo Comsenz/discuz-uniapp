@@ -472,7 +472,8 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        this.$store.dispatch('session/setUrl', getCurUrl());
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -640,7 +641,7 @@ export default {
   width: 90%;
   padding: 0 20rpx;
   margin: 50rpx auto 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
 }
 .site-item__pay .cell-item__body__right-text {
   color: --color(--qui-RED);

@@ -85,12 +85,12 @@ export default {
   box-sizing: border-box;
 }
 .qui-tabs__item__brief {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
   transition: $switch-theme-time;
 }
 .qui-tabs__item__title {
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   color: --color(--qui-FC-AAA);
 }
 .qui-tabs__item--active {

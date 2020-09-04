@@ -152,7 +152,7 @@ $height: calc(100vh - 110rpx);
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-AAA);
 }
 .search-item__users__avatar {

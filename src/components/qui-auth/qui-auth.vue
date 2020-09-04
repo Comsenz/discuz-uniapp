@@ -27,6 +27,7 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [forums, user],
@@ -158,14 +159,9 @@ export default {
         });
     },
     loginMode(param) {
-      let url = '/pages/home/index';
       const params = param;
-      const pages = getCurrentPages();
-      const page = pages[pages.length - 1].route;
+      const url = getCurUrl();
       let inviteCode = '';
-      if (page !== '/pages/home/index') {
-        url = page;
-      }
       uni.getStorage({
         key: 'inviteCode',
         success(resData) {
@@ -177,18 +173,20 @@ export default {
       }
       // #ifdef MP-WEIXIN
       this.$store.dispatch('session/setParams', params);
+      this.$store.dispatch('session/setUrl', url);
       // #endif
       console.log('params', params);
+      console.log('小程序url', url);
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
         // 用户名模式 跳转到登录并绑定页
         uni.navigateTo({
-          url: `/pages/user/login-bind?url=${url}`,
+          url: '/pages/user/login-bind',
         });
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
         // 手机号模式 跳转到手机号码登录页
         uni.navigateTo({
-          url: `/pages/user/phone-login?url=${url}`,
+          url: '/pages/user/phone-login',
         });
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {

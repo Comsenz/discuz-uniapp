@@ -147,7 +147,7 @@ export default {
     flex: 1 1 0%;
   }
   &__body__content-title {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-333);
     transition: $switch-theme-time;
   }
@@ -163,7 +163,7 @@ export default {
 .cell-item__body__right {
   align-items: center;
   justify-content: flex-end;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   text-align: right;
 }
 .message {

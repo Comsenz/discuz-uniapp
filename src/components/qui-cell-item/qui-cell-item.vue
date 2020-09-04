@@ -126,7 +126,7 @@ export default {
 }
 
 .cell-item__body__content-title {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
   word-break: break-all;
   transition: $switch-theme-time;
@@ -135,7 +135,7 @@ export default {
 .cell-item__body__content-brief,
 .cell-item__body__right-brief {
   margin-top: 6rpx;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   color: --color(--qui-FC-AAA);
 }
 
@@ -146,12 +146,12 @@ export default {
 .cell-item__body__right {
   align-items: center;
   justify-content: flex-end;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   text-align: right;
 }
 
 .cell-item__body__right .cell-item__body__right-text {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   word-break: break-all;
 }
 

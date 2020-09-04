@@ -265,7 +265,7 @@ $height: calc(100vh - 150rpx);
 .date-picker .uni-input {
   width: 100%;
   height: 78rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 78rpx;
 }
 .scroll-y {
