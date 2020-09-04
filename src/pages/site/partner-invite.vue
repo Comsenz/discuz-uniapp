@@ -288,8 +288,7 @@ export default {
           data: this.code,
         });
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', getCurUrl());
-        this.handleLogin();
+        this.handleLogin(getCurUrl());
         // #endif
       } else {
         // 已经登陆的情况

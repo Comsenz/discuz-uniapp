@@ -285,7 +285,7 @@
             ></qui-emoji>
           </view>
 
-          <view class="comment-content-box" :style="{ paddingBottom: padTstatus ? '180rpx' : '0' }">
+          <view class="comment-content-box">
             <view class="comment-content">
               <textarea
                 ref="commentText"
@@ -296,12 +296,10 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                adjust-position="false"
-                cursor-spacing="0"
+                cursor-spacing="80"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
-                @focus="textFocus"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -545,7 +543,6 @@ export default {
       ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
-      padTstatus: false, // 是否给评论框box加padding值
     };
   },
   computed: {
@@ -936,8 +933,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -983,8 +979,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif
@@ -1024,15 +1019,10 @@ export default {
         url: `/pages/profile/index?userId=${id}`,
       });
     },
-    // 输入框获取焦点时
-    textFocus() {
-      // 为了解决当文本域获取焦点时，文本域在不同设备上推错位问题
-      this.padTstatus = true;
-    },
+
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
-      this.padTstatus = false;
     },
     // 点击表情插入到文本域
     getEmojiClick(code) {
@@ -1204,8 +1194,7 @@ export default {
         return;
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(this.curUrl)) {
           return;
         }
         // #endif

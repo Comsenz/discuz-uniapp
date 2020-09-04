@@ -89,11 +89,11 @@ export default {
       isPaid: false, // 默认未付费
     };
   },
-  onLoad() {
+  onLoad(params) {
     this.getForum();
+    this.getPageParams(params);
 
     this.$u.event.$on('logind', () => {
-      const url = this.$store.getters['session/get']('url');
       if (this.user) {
         this.isPaid = this.user.paid;
       }
@@ -102,7 +102,7 @@ export default {
       }
       if (this.site_mode !== SITE_PAY) {
         uni.redirectTo({
-          url,
+          url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
