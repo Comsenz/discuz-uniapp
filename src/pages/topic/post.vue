@@ -1103,14 +1103,8 @@ export default {
       });
       // 附件
       if (this.type === 1 && this.$refs.uploadFiles) {
-        const fileList = this.$refs.uploadFiles.getValue();
-        const preAttachmentList = this.preAttachmentList;
-        fileList.forEach(item => {
-          for (let i = 0; i < preAttachmentList.length; i += 1) {
-            if (preAttachmentList[i]._jv.id === item.id) {
-              return;
-            }
-          }
+        const newAttachmentList = this.$refs.uploadFiles.getValue();
+        newAttachmentList.forEach(item => {
           if (item.id) {
             attachments.data.push({
               type: 'attachments',
