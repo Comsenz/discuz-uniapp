@@ -177,10 +177,9 @@ export default {
       // #endif
     };
   },
-  onLoad() {
+  onLoad(params) {
     this.getForum();
-    const url = this.$store.getters['session/get']('url');
-    console.log('手机号码登录url', url);
+    this.getPageParams(params);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -209,7 +208,7 @@ export default {
       }
       if (this.site_mode !== SITE_PAY) {
         uni.redirectTo({
-          url,
+          url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

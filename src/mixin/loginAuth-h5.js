@@ -5,7 +5,7 @@ import appCommonH from '@/utils/commonHelper';
 module.exports = {
   mixins: [forums, user, appCommonH],
   methods: {
-    handleLogin() {
+    handleLogin(url) {
       const { isWeixin } = appCommonH.isWeixin();
       if (
         isWeixin &&
@@ -15,24 +15,24 @@ module.exports = {
       ) {
         this.$store.dispatch('session/wxh5Login');
       } else {
-        this.login();
+        this.login(url);
       }
       return false;
     },
-    login() {
+    login(url = '/pages/home/index') {
       const { isWeixin } = appCommonH.isWeixin();
       if (isWeixin) {
         // 微信内
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式 跳转到登录并绑定页
           uni.navigateTo({
-            url: '/pages/user/login-bind',
+            url: `/pages/user/login-bind?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式 跳转到手机号码登录页
           uni.navigateTo({
-            url: '/pages/user/phone-login',
+            url: `/pages/user/phone-login?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
@@ -43,25 +43,25 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式
           uni.navigateTo({
-            url: '/pages/user/login',
+            url: `/pages/user/login?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式
           uni.navigateTo({
-            url: '/pages/user/phone-login',
+            url: `/pages/user/phone-login?url=${url}`,
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
             // 手机号模式
             uni.navigateTo({
-              url: '/pages/user/phone-login',
+              url: `/pages/user/phone-login?url=${url}`,
             });
           } else {
             // 用户名模式
             uni.navigateTo({
-              url: '/pages/user/login',
+              url: `/pages/user/login?url=${url}`,
             });
           }
         }

@@ -9,6 +9,7 @@ import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import { SITE_PAY } from '@/common/const';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [
@@ -33,14 +34,14 @@ export default {
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
               this.$store.dispatch('session/setToken', res.data.errors[0].token);
-              const url = this.$store.getters['session/get']('url');
+              const url = getCurUrl();
               console.log('微信登录url', url);
-              this.login();
+              this.login(url);
             }
             if (res.data.errors[0].code === 'permission_denied') {
-              const url = this.$store.getters['session/get']('url');
+              const url = getCurUrl();
               console.log('微信登录url', url);
-              this.login();
+              this.login(url);
             }
             if (res.data.errors[0].code === 'register_validate') {
               uni.showToast({

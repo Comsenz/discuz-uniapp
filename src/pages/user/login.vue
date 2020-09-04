@@ -86,14 +86,13 @@ export default {
       forum: {}, // 配置
     };
   },
-  onLoad() {
+  onLoad(params) {
     this.$store.dispatch('forum/setError', {
       code: 'user_login',
       status: 200,
     });
     this.getForum();
-    const url = this.$store.getters['session/get']('url');
-    console.log('登录url', url);
+    this.getPageParams(params);
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -104,7 +103,7 @@ export default {
       }
       if (this.site_mode !== SITE_PAY) {
         uni.redirectTo({
-          url,
+          url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

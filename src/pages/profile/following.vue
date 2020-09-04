@@ -142,12 +142,11 @@ export default {
     addFollow(userInfo, index) {
       console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.dispatch('session/setUrl', getCurUrl());
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -180,12 +179,11 @@ export default {
     deleteFollow(userInfo, index) {
       console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.dispatch('session/setUrl', getCurUrl());
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif

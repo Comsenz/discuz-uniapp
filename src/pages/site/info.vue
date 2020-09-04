@@ -468,12 +468,11 @@ export default {
     // 跳支付页面
     submit() {
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.dispatch('session/setUrl', getCurUrl());
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif

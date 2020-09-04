@@ -89,10 +89,9 @@ export default {
       isPaid: false, // 默认未付费
     };
   },
-  onLoad() {
+  onLoad(params) {
     this.getForum();
-    const url = this.$store.getters['session/get']('url');
-    console.log('登录绑定url', url);
+    this.getPageParams(params);
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -103,7 +102,7 @@ export default {
       }
       if (this.site_mode !== SITE_PAY) {
         uni.redirectTo({
-          url,
+          url: this.url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

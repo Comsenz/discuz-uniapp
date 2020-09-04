@@ -173,20 +173,18 @@ export default {
       }
       // #ifdef MP-WEIXIN
       this.$store.dispatch('session/setParams', params);
-      this.$store.dispatch('session/setUrl', url);
       // #endif
       console.log('params', params);
-      console.log('小程序url', url);
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
         // 用户名模式 跳转到登录并绑定页
         uni.navigateTo({
-          url: '/pages/user/login-bind',
+          url: `/pages/user/login-bind?url=${url}`,
         });
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
         // 手机号模式 跳转到手机号码登录页
         uni.navigateTo({
-          url: '/pages/user/phone-login',
+          url: `/pages/user/phone-login?url=${url}`,
         });
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {

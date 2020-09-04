@@ -14,22 +14,22 @@ module.exports = {
     /**
      * 获取登录注册页面传递的参数
      */
-    // getPageParams(params) {
-    //   const { url, commentId } = params;
-    //   if (url) {
-    //     let pageUrl;
-    //     if (url.substr(0, 1) !== '/') {
-    //       pageUrl = `/${url}`;
-    //     } else {
-    //       pageUrl = url;
-    //     }
-    //     if (commentId) {
-    //       this.url = `${pageUrl}&commentId=${commentId}`;
-    //     } else {
-    //       this.url = pageUrl;
-    //     }
-    //   }
-    // },
+    getPageParams(params) {
+      const { url, commentId } = params;
+      if (url) {
+        let pageUrl;
+        if (url.substr(0, 1) !== '/') {
+          pageUrl = `/${url}`;
+        } else {
+          pageUrl = url;
+        }
+        if (commentId) {
+          this.url = `${pageUrl}&commentId=${commentId}`;
+        } else {
+          this.url = pageUrl;
+        }
+      }
+    },
     /**
      * 跳转到手机号码登录页面
      */

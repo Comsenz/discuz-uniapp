@@ -10,7 +10,6 @@ import {
   SET_PARAMS,
   SET_CODE,
   SET_TOKEN,
-  SET_URL,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -61,9 +60,6 @@ const actions = {
   },
   setToken: (context, payload) => {
     context.commit(SET_TOKEN, payload);
-  },
-  setUrl: (context, payload) => {
-    context.commit(SET_URL, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -189,9 +185,6 @@ const mutations = {
   },
   [SET_CODE](state, payload) {
     state.code = payload;
-  },
-  [SET_URL](state, payload) {
-    state.url = payload;
   },
   [SET_CATEGORYID](state, payload) {
     state.categoryId = payload;

@@ -280,7 +280,6 @@ export default {
     submit() {
       // 未登陆的情况
       if (!this.$store.getters['session/get']('isLogin')) {
-        this.$store.dispatch('session/setUrl', getCurUrl());
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
@@ -289,7 +288,7 @@ export default {
           data: this.code,
         });
         // #ifdef H5
-        this.handleLogin();
+        this.handleLogin(getCurUrl());
         // #endif
       } else {
         // 已经登陆的情况
