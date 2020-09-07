@@ -6,7 +6,6 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y"
-      @scroll="scroll"
     >
       <view class="position-head" v-if="address">
         <view class="position-head__name">{{ location }}</view>

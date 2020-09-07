@@ -200,7 +200,7 @@
           class="themeItem__content__tags  themeItem__content__tags--position"
           v-if="threadPosition.length > 0"
         >
-          <view class="themeItem__content__tags__item" @tap="topicPosition">
+          <view class="themeItem__content__tags__item" @click="topicPosition" @click.stop="">
             <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
             <text class="themeItem__content__tags__item-text">
               {{ threadPosition.length > 0 && threadPosition[0] }}
