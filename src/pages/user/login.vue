@@ -34,6 +34,13 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            class="login-box-ft-con-image"
+            lazy-load
+            src="@/static/zhanghao.svg"
+            @click="jump3PhoneLogin"
+          />
         </view>
         <view>
           <!-- 开启注册功能才显示 -->
@@ -133,6 +140,11 @@ export default {
     },
     jump2findpwd() {
       this.jump2findpwdPage();
+    },
+    jump3PhoneLogin() {
+      uni.navigateTo({
+        url: '/pages/user/uc-login',
+      });
     },
   },
 };
