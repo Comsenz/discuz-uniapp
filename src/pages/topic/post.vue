@@ -10,6 +10,7 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="post-box__hd">
         <view class="post-box__hd-l">
           <qui-icon
@@ -129,41 +130,12 @@
               @click="toolBarClick('strikethrough')"
             ></qui-icon>
           </view>
-          <!--<view>
-            <qui-icon
-              name="icon-undeline"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('undeline')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-strikethrough"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('strikethrough')"
-            ></qui-icon>
-          </view>-->
-          <!--<md-unordered-list>
-            <qui-icon
-              name="icon-unordered-list"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('unordered')"
-            ></qui-icon>
-          </md-unordered-list>
-          <md-ordered-list>
-            <qui-icon
-              name="icon-ordered-list"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('ordered')"
-            ></qui-icon>
-          </md-ordered-list>-->
         </view>
       </view>
-
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <qui-vditor></qui-vditor>
+      <!-- #endif -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -426,6 +398,7 @@ export default {
   ],
   data() {
     return {
+      vditor: null,
       navTitle: '发布', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
@@ -535,9 +508,6 @@ export default {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
     }),
-    // allEmoji() {
-    //   return this.$store.getters['jv/get']('emoji');
-    // },
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
 
@@ -549,17 +519,6 @@ export default {
       return pay;
     },
   },
-  // created() {
-  //   if (
-  //     this.forums &&
-  //     this.forums.qcloud.qcloud_captcha &&
-  //     this.forums.other.create_thread_with_captcha
-  //   ) {
-  //     // eslint-disable-next-line
-  //     const tcaptchas = require('@/utils/tcaptcha');
-  //     // eslint-disable-next-line
-  //   }
-  // },
   updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
@@ -661,32 +620,6 @@ export default {
         this.cursor += 2;
         this.focusEvent(this.cursor);
       }
-      //  else if (type === 'undeline') {
-      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
-      //     this.cursor,
-      //   )}`}`;
-      //   this.cursor += 2;
-      //   this.focusEvent(this.cursor);
-      // } else if (type === 'strikethrough') {
-      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
-      //     this.cursor,
-      //   )}`}`;
-      //   this.cursor += 2;
-      //   this.focusEvent(this.cursor);
-      // }
-      //  else if (type == 'unordered') {
-      //   text = `${this.textAreaValue.slice(0, this.cursor) +
-      //     '\n- ' +
-      //     this.textAreaValue.slice(this.cursor)}`;
-      //   this.cursor = this.cursor + 1;
-      //   this.focusEvent(this.cursor);
-      // } else if (type == 'ordered') {
-      //   text = `${this.textAreaValue.slice(0, this.cursor) +
-      //     '\n1. ' +
-      //     this.textAreaValue.slice(this.cursor)}`;
-      //   this.cursor = this.cursor + 1;
-      //   this.focusEvent(this.cursor);
-      // }
       this.textAreaValue = text;
     },
     ...mapMutations({
@@ -784,9 +717,6 @@ export default {
             finish(result) {
               _this.fileId = result.fileId;
               _this.postVideo(result.fileId);
-              // _this.$refs.toast.show({
-              //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
-              // });
             },
           });
           // #endif
@@ -882,12 +812,6 @@ export default {
     },
     uploadChange(e, status) {
       this.uploadFile = e;
-      // e.map((file, index) => {
-      //   this.formData = {
-      //     type: 1,
-      //     order: index,
-      //   };
-      // });
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
@@ -927,6 +851,11 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      // #ifdef H5
+      console.log(this.vditor.getValue(), this.vditor.getValue().toString());
+      this.textAreaValue = this.vditor.getValue();
+      // #endif
+
       if (!this.categoryId) {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
@@ -1127,9 +1056,6 @@ export default {
         });
       });
     },
-    // getEmoji() {
-    //   this.$store.dispatch('jv/get', ['emoji', {}]);
-    // },
     postThread() {
       const params = {
         _jv: {
@@ -1229,37 +1155,6 @@ export default {
       this.uploadFile.forEach((value, key, item) => {
         value.id == id && item.splice(key, 1);
       });
-      // const params = {
-      //   _jv: {
-      //     type: 'attachments',
-      //     id,
-      //   },
-      // };
-
-      // return this.$store
-      //   .dispatch('jv/delete', params)
-      //   .then(res => {
-      //     // 当编辑帖子时删除图片后传参给首页
-      //     if (this.operating === 'edit') {
-      //       this.$u.event.$emit('deleteImg', {
-      //         threadId: this.postDetails._jv.id,
-      //         index,
-      //       });
-      //       const post = this.$store.getters['jv/get'](
-      //         `posts/${this.postDetails.firstPost._jv.id}`,
-      //       );
-      //       post.images.splice(index, 1);
-      //       post._jv.relationships.images.data.splice(index, 1);
-      //     }
-
-      //     this.uploadFile.forEach((value, key, item) => {
-      //       value.id == id && item.splice(key, 1);
-      //     });
-      //     return res;
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
     },
     getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
@@ -1480,6 +1375,12 @@ export default {
     },
   },
   onLoad(option) {
+    // #ifdef H5
+    uni.$on('vditor', vditor => {
+      this.vditor = vditor;
+      this.vditor.setValue(this.textAreaValue);
+    });
+    // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -1577,11 +1478,6 @@ export default {
     });
   },
   onShow() {
-    // #ifndef  MP-WEIXIN
-    // this.tcVod = new TcVod({
-    //   getSignature: this.getSignature,
-    // });
-    // #endif
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
