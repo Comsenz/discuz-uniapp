@@ -342,9 +342,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .profile {
-  .qui-icon {
-    margin-right: 14rpx;
-  }
   /deep/ .qui-tabs__item__brief {
     font-weight: bold;
   }

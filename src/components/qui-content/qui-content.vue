@@ -202,7 +202,9 @@
         >
           <view class="themeItem__content__tags__item" @tap="topicPosition">
             <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
-            {{ threadPosition.length > 0 && threadPosition[0] }}
+            <text class="themeItem__content__tags__item-text">
+              {{ threadPosition.length > 0 && threadPosition[0] }}
+            </text>
           </view>
         </view>
       </view>
@@ -810,8 +812,8 @@ export default {
         border-radius: 6rpx;
       }
     }
-    &__tags .qui-icon {
-      margin-right: 10rpx;
+    &__tags__item-text {
+      margin-left: 10rpx;
     }
   }
 

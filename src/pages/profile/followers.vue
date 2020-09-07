@@ -238,6 +238,9 @@ export default {
   top: 16rpx;
   left: 20rpx;
 }
+.follow-content__items__operate {
+  padding-right: 20rpx;
+}
 .text {
   margin-left: 12rpx;
 }
