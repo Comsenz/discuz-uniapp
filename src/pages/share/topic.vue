@@ -156,8 +156,8 @@ export default {
               uni.getImageInfo({
                 src: that.contentImg[0],
                 success(image) {
-                  const num = image.height * (620 / image.width);
-                  that.heightdefill = num - 402;
+                  const num = image.width / (image.height / 100);
+                  that.heightdefill = (700 - num) / 2;
                 },
               });
             }
