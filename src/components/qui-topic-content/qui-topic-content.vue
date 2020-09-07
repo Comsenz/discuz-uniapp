@@ -197,14 +197,14 @@
               @audioPlay="audioPlay"
             ></qui-audio>
           </view>
-          <view @tap="download(item)" v-else>
+          <view @tap="download(item)" v-else class="attachment-name">
             <qui-icon
               class="icon-attachment"
               :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text class="attachment-name">{{ item.fileName }}</text>
+            <text>{{ item.fileName }}</text>
           </view>
         </view>
       </view>
@@ -822,7 +822,6 @@ export default {
   max-width: 100%;
   overflow: hidden;
   font-size: $fg-f2;
-  line-height: 31rpx;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
