@@ -12,8 +12,6 @@ export const SET_PARAMS = 'SET_PARAMS';
 export const SET_CODE = 'SET_CODE';
 // 设置 token
 export const SET_TOKEN = 'SET_TOKEN';
-// 设置 url
-export const SET_URL = 'SET_URL';
 // 设置 分类ID
 export const SET_CATEGORYID = 'SET_CATEGORYID';
 // 设置 分类Index

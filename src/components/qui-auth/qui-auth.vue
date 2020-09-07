@@ -27,6 +27,7 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [forums, user],
@@ -158,14 +159,9 @@ export default {
         });
     },
     loginMode(param) {
-      let url = '/pages/home/index';
       const params = param;
-      const pages = getCurrentPages();
-      const page = pages[pages.length - 1].route;
+      const url = getCurUrl();
       let inviteCode = '';
-      if (page !== '/pages/home/index') {
-        url = page;
-      }
       uni.getStorage({
         key: 'inviteCode',
         success(resData) {

@@ -637,6 +637,7 @@ export default {
     setpassword: '设置密码',
     setpaypassword: '设置支付密码',
     total: '共有',
+    nearBy: '附近',
     records: '记录',
     amountinvolved: '涉及金额',
     collection: '收藏',

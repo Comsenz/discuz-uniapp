@@ -445,7 +445,16 @@ img {
 .wxParse .uni-audio-default {
   display: block;
 }
-.qui-audio uni-slider {
+ /* #ifdef MP-WEIXIN  */
+ .qui-audio slider {
   margin: 0 18px;
   padding-top: 3px;
 }
+ /* #endif */
+
+ /* #ifdef  H5 */
+ .qui-audio uni-slider{
+  margin: 0 18px;
+  padding-top: 6px;
+}
+ /* #endif */

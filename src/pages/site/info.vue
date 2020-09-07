@@ -472,8 +472,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', getCurUrl());
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif

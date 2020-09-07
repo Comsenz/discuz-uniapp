@@ -81,6 +81,7 @@
     "lodash.isequal": "^4.5.0",
     "promise.allsettled": "^1.0.2",
     "regenerator-runtime": "^0.12.1",
+    "vditor": "^3.5.1",
     "vod-js-sdk-v6": "^1.4.8",
     "vue": "^2.6.11",
     "vue-i18n": "^8.18.2",

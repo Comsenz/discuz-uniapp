@@ -279,8 +279,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', getCurUrl());
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -308,8 +307,7 @@ export default {
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', getCurUrl());
-        if (!this.handleLogin()) {
+        if (!this.handleLogin(getCurUrl())) {
           return;
         }
         // #endif
@@ -344,9 +342,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .profile {
-  .qui-icon {
-    margin-right: 14rpx;
-  }
   /deep/ .qui-tabs__item__brief {
     font-weight: bold;
   }
