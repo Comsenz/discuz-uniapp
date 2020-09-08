@@ -733,6 +733,7 @@ export default {
     themes: '主题',
     searchmorethemes: '搜索更多主题',
     norelatedthemesfound: '没有找到相关主题',
+    norelatedTopicfound: '没有找到相关话题',
   },
   // 登录注册
   user: {

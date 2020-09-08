@@ -117,12 +117,10 @@ export default {
         this.audio.play();
         this.$emit('audioPlay', this.audioId);
       } else {
-        console.log(this.paused);
         this.audio.pause();
       }
     },
     audioPause() {
-      console.log(333);
       if (!this.paused || this.loading) {
         this.audio.pause();
       }
