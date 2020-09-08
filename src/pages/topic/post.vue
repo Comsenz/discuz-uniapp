@@ -1380,13 +1380,11 @@ export default {
     },
   },
   onLoad(option) {
-    // console.log(typeof option.type, '这是onload');
+    // 初始化进入发布页，调起上传
     if (option.type === '3') {
       this.$nextTick(() => {
         this.$refs.upload.uploadClick();
       });
-      // this.uploadClick();
-      // this.uploadChange();
     } else if (option.type === '2') {
       this.uploadVideo();
     }
