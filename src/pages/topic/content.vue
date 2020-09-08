@@ -7,7 +7,7 @@
           <view class="topic-content-header_title-size">#{{ topic.content }}#</view>
           <view
             class="topic-content-header_title-recoment"
-            v-if="topic.recommended === 0 ? true : false"
+            v-if="topic.recommended === 1 ? true : false"
           >
             <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
           </view>
