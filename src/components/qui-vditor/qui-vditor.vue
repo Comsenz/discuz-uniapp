@@ -4,8 +4,8 @@
     <uni-popup ref="atUser" type="center" class="qui-popup-at">
       <qui-popup-at @atCancel="atCancel"></qui-popup-at>
     </uni-popup>
-    <uni-popup ref="topic" type="bottom">
-      <qui-popup-topic></qui-popup-topic>
+    <uni-popup ref="topic" type="center" class="qui-popup-topic">
+      <qui-popup-topic @topicCancel="topicCancel"></qui-popup-topic>
     </uni-popup>
     <view class="emoji-bd" v-show="emojiShow">
       <qui-emoji
@@ -154,6 +154,10 @@ export default {
     // 点击取消按钮，关闭at
     atCancel() {
       this.$refs.atUser.close();
+    },
+    // 点击取消按钮，关闭话题
+    topicCancel() {
+      this.$refs.topic.close();
     },
 
     // 表情点击事件
