@@ -112,6 +112,7 @@ export default {
       // sort: '-viewCount',
       sort: 'recommended',
       scrollTop: 0,
+      types: 1,
     };
   },
 
@@ -120,6 +121,11 @@ export default {
       this.dropDownShow = !this.dropDownShow;
     },
     searchInput() {
+      if (this.keyword) {
+        this.types = '';
+      } else {
+        this.types = 1;
+      }
       clearTimeout(timer);
       timer = setTimeout(() => {
         // 为发送请求添加防抖处理
@@ -133,6 +139,7 @@ export default {
     topics(page = 1, limit = 20) {
       const params = {
         include: 'user,lastThread,lastThread.firstPost,lastThread.firstPost.images',
+        'filter[recommended]': this.types,
         'page[number]': page,
         'page[limit]': limit,
         sort: this.sort,

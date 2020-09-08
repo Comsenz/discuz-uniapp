@@ -50,9 +50,7 @@
         </view>
         <view class="loading-text">
           <qui-icon
-            v-if="
-              loadingText === 'search.norelatedusersfound' || loadingText === 'search.noFollowers'
-            "
+            v-if="loadingText === 'search.norelatedTopicfound'"
             name="icon-noData"
           ></qui-icon>
           <text class="loading-text__cont">{{ i18n.t(loadingText) }}</text>
@@ -108,16 +106,17 @@ export default {
         params['filter[content]'] = this.searchValue;
       }
       this.$store.dispatch('jv/get', ['topics', { params }]).then(data => {
+        console.log(data, '这是话题数据');
         this.meta = data._jv.json.links;
+        if (Object.keys(data).nv_length - 1 === 0) {
+          this.loadingText = 'search.norelatedTopicfound';
+        } else if (data._jv.json.meta.total <= 20 && Object.keys(data).nv_length - 1 !== 0) {
+          this.loadingText = 'discuzq.list.noMoreData';
+        }
         // eslint-disable-next-line no-param-reassign
         delete data._jv;
         if (this.pageNum > 1) {
           this.topics = this.topics.concat(data);
-          if (Object.keys(data).nv_length - 1 === 0) {
-            this.loadingText = 'search.norelatedusersfound';
-          } else if (data._jv.json.meta.total <= 20 && Object.keys(data).nv_length - 1 !== 0) {
-            this.loadingText = 'discuzq.list.noMoreData';
-          }
         } else {
           this.topics = data;
         }
