@@ -15,24 +15,52 @@
         </view>
       </view>
     </view>
-    <view class="topic-content-item" @tap="returnToPost(-1)" v-if="shouldShow">
-      <view class="topic-content-item_title">#{{ searchValue }}#</view>
-      <view class="topic-content-item_heat">{{ i18n.t('topic.newTopic') }}</view>
-    </view>
-    <view class="topic-content-item" v-for="(item, i) in topics" :key="i" @tap="returnToPost(i)">
-      <view class="topic-content-item-box">
-        <view class="topic-content-item_title">#{{ item.content }}#</view>
-        <view class="topic-content-item_recoment" v-if="item.recommended === 0 ? true : false">
-          <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
+    <view class="qui-at-member-page-box__lst">
+      <scroll-view
+        class="scroll-Y"
+        scroll-y="true"
+        scroll-with-animation="true"
+        @scrolltolower="lower"
+      >
+        <view class="topic-content-item" @tap="returnToPost(-1)" v-if="shouldShow">
+          <view class="topic-content-item_title">#{{ searchValue }}#</view>
+          <view class="topic-content-item_heat">{{ i18n.t('topic.newTopic') }}</view>
         </view>
-      </view>
-      <view class="topic-content-item_heat">{{ item.view_count }}{{ i18n.t('topic.hot') }}</view>
-      <!-- </view> -->
-      <!-- <view class="topic-content-item_title">#{{ item.content }}#</view>
-      <view class="topic-content-item_heat">
-        {{ item.view_count }}
-        <text>{{ i18n.t('topic.hot') }}</text>
-      </view> -->
+        <view
+          class="topic-content-item"
+          v-for="(item, i) in topics"
+          :key="i"
+          @tap="returnToPost(i)"
+        >
+          <view class="topic-content-item-box">
+            <view class="topic-content-item_title">#{{ item.content }}#</view>
+            <view class="topic-content-item_recoment" v-if="item.recommended === 0 ? true : false">
+              <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
+            </view>
+          </view>
+          <view class="topic-content-item_heat">
+            {{ item.view_count }}{{ i18n.t('topic.hot') }}
+          </view>
+          <!-- </view> -->
+          <!-- <view class="topic-content-item_title">#{{ item.content }}#</view>
+        <view class="topic-content-item_heat">
+          {{ item.view_count }}
+          <text>{{ i18n.t('topic.hot') }}</text>
+        </view> -->
+        </view>
+        <view class="loading-text">
+          <qui-icon
+            v-if="
+              loadingText === 'search.norelatedusersfound' || loadingText === 'search.noFollowers'
+            "
+            name="icon-noData"
+          ></qui-icon>
+          <text class="loading-text__cont">{{ i18n.t(loadingText) }}</text>
+        </view>
+      </scroll-view>
+    </view>
+    <view class="qui-at-member-page-box__ft">
+      <qui-button size="large" @click="topicCancel">取消</qui-button>
     </view>
   </view>
 </template>
@@ -48,6 +76,7 @@ export default {
       pageNum: 1, // 页面
       pageSize: 20,
       meta: {}, // 接口返回meta值
+      loadingText: 'discuzq.list.loading',
     };
   },
   created() {
@@ -59,6 +88,7 @@ export default {
       clearTimeout(timer);
       timer = setTimeout(() => {
         this.pageNum = 1;
+        this.loadingText = 'discuzq.list.loading';
         this.loadTopics();
       }, 300);
     },
@@ -83,6 +113,11 @@ export default {
         delete data._jv;
         if (this.pageNum > 1) {
           this.topics = this.topics.concat(data);
+          if (Object.keys(data).nv_length - 1 === 0) {
+            this.loadingText = 'search.norelatedusersfound';
+          } else if (data._jv.json.meta.total <= 20 && Object.keys(data).nv_length - 1 !== 0) {
+            this.loadingText = 'discuzq.list.noMoreData';
+          }
         } else {
           this.topics = data;
         }
@@ -97,6 +132,26 @@ export default {
         }
       });
     },
+    // 上划加载更多
+    lower() {
+      if (this.followStatus) {
+        if (this.meta.total > this.topics.length) {
+          this.pageNum += 1;
+          this.loadTopics(this.pageNum);
+        } else {
+          this.loadingText = 'discuzq.list.noMoreData';
+        }
+      } else if (this.meta.total > this.topics.length) {
+        this.pageNum += 1;
+        this.loadTopics(this.pageNum);
+      } else {
+        this.loadingText = 'discuzq.list.noMoreData';
+      }
+    },
+    // 取消at选择
+    topicCancel() {
+      this.$emit('topicCancel');
+    },
   },
   onReachBottom() {
     if (this.meta.next) {
@@ -110,7 +165,11 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-$otherHeight: 292rpx;
+$otherHeight: 230rpx;
+.pages-topic {
+  height: 100%;
+  background: --color(--qui-BG-2);
+}
 .topic-content-item {
   display: flex;
   // position: relative;
@@ -155,7 +214,7 @@ $otherHeight: 292rpx;
 }
 .qui-topic-page-box {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   background-color: --color(--qui-BG-2);
   &__hd {
     display: flex;
@@ -186,21 +245,7 @@ $otherHeight: 292rpx;
       }
     }
   }
-  &__lst {
-    .scroll-Y {
-      height: calc(100vh - #{$otherHeight});
-      .loading-text {
-        height: 100rpx;
-        font-size: 28rpx;
-        line-height: 100rpx;
-        color: --color(--qui-FC-AAA);
-        text-align: center;
-      }
-      .loading-text__cont {
-        margin-left: 20rpx;
-      }
-    }
-  }
+
   &__ft {
     position: absolute;
     bottom: 0;
@@ -216,5 +261,22 @@ $otherHeight: 292rpx;
       background-color: #fff;
     }
   }
+}
+.scroll-Y {
+  height: calc(100vh - #{$otherHeight});
+  .loading-text {
+    height: 100rpx;
+    font-size: 28rpx;
+    line-height: 100rpx;
+    color: --color(--qui-FC-AAA);
+    text-align: center;
+  }
+  .loading-text__cont {
+    margin-left: 20rpx;
+  }
+}
+.qui-at-member-page-box__ft {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
