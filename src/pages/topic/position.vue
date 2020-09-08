@@ -6,17 +6,16 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y"
-      @scroll="scroll"
     >
-      <view class="position-head">
+      <view class="position-head" v-if="address">
         <view class="position-head__name">{{ location }}</view>
         <view class="position-head__address">{{ address }}</view>
       </view>
-      <view class="position-num">
+      <view class="position-num" v-if="address">
         {{
-          `${i18n.t('profile.total')} ${totalData} ${i18n.t('profile.item')}${i18n.t(
-            'core.content',
-          )}`
+          `${i18n.t('profile.nearBy')}${i18n.t('profile.total')} ${totalData} ${i18n.t(
+            'profile.item',
+          )}${i18n.t('core.content')}`
         }}
       </view>
       <view class="position-content">
@@ -28,7 +27,12 @@
             @handleClickShare="handleClickShare"
           ></qui-thread-item>
         </view>
-        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
+        <qui-load-more
+          :status="loadingType"
+          :show-icon="false"
+          v-if="loadingType"
+          :content-text="contentText"
+        ></qui-load-more>
       </view>
     </scroll-view>
   </qui-page>
@@ -59,6 +63,9 @@ export default {
       latitude: '',
       location: '',
       address: '',
+      contentText: {
+        contentnomore: this.i18n.t('topic.noMoreDataNearby'),
+      },
     };
   },
   mounted() {
@@ -126,10 +133,10 @@ export default {
             this.totalData = res._jv.json.meta.threadCount;
             delete res._jv;
           }
-          if (!this.address) {
+          if (!this.address && res.length > 0) {
             this.address = res[0].address;
           }
-          if (!this.location) {
+          if (!this.location && res.length > 0) {
             this.location = res[0].location;
           }
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
@@ -169,22 +176,22 @@ export default {
 }
 .position /deep/ {
   .position-head {
-    padding: 30rpx 40rpx;
+    padding: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .position-head__name {
     margin-bottom: 40rpx;
-    font-size: $fg-f40;
+    font-size: $fg-f6;
     font-weight: bold;
   }
   .position-head__address {
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     color: --color(--qui-FC-777);
   }
   .position-num {
     padding: 20rpx 30rpx 0;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     color: --color(--qui-FC-7D7979);
   }
 }

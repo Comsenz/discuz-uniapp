@@ -1,7 +1,7 @@
 <template>
   <view class="qui-uploader-box">
     <view class="qui-uploader-box__item" v-for="(item, index) in fileList" :key="index">
-      <view class="qui-uploader-box__item__fonts">
+      <view class="qui-uploader-box__item__fonts" @tap="clickAttach(item)">
         <view class="qui-uploader-box__item__fonts-detail">{{ item.attributes.fileName }}</view>
       </view>
       <view class="qui-uploader-box__item__delete" @tap="deleteItem(index, item.id)">
@@ -93,7 +93,7 @@ export default {
       handler(newVal) {
         const list = [];
         newVal.forEach(v => {
-          list.push({ attributes: { fileName: v.fileName }, id: v._jv.id });
+          list.push({ attributes: { fileName: v.fileName, url: v.url }, id: v._jv.id });
         });
         this.fileList = list;
       },
@@ -199,12 +199,8 @@ export default {
       }
       return true;
     },
-    deleteItem(index, id) {
-      this.currentIndex = index;
-      this.$emit('deleteItem', id);
-    },
-    deleteSure() {
-      this.fileList.splice(this.currentIndex, 1);
+    deleteItem(index) {
+      this.fileList.splice(index, 1);
     },
     getValue() {
       return this.fileList;
@@ -241,6 +237,9 @@ export default {
       };
       xhr.send(fData);
     },
+    clickAttach(item) {
+      uni.$emit('clickAttach', item);
+    },
     // #endif
   },
 };
@@ -266,7 +265,7 @@ export default {
   }
   &__add__fonts {
     margin-top: 4rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-AAA);
     box-sizing: border-box;
   }
@@ -292,7 +291,7 @@ export default {
     height: 165rpx;
     padding: 15rpx;
     overflow: hidden;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-333);
     box-sizing: border-box;
   }

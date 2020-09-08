@@ -145,7 +145,7 @@ export default {
   }
   .aogph-tab-ao-my,
   .aogph-tab-ao-test {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     line-height: 45rpx;
     color: --color(--qui-FC-777);
@@ -167,7 +167,7 @@ export default {
 }
 .aogph-tab-button /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

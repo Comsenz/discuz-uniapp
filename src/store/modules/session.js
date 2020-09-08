@@ -186,9 +186,6 @@ const mutations = {
   [SET_CODE](state, payload) {
     state.code = payload;
   },
-  [SET_TOKEN](state, payload) {
-    state.token = payload;
-  },
   [SET_CATEGORYID](state, payload) {
     state.categoryId = payload;
   },

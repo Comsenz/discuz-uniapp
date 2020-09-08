@@ -27,7 +27,7 @@
           v-model="reason"
         />
       </view>
-      <view class="register-bind-box-btn" id="TencentCaptcha" @click="register">
+      <view class="register-bind-box-btn" id="TencentCaptcha" @click="handleRegister">
         {{ i18n.t('user.registerBindId') }}
       </view>
       <!-- #ifdef MP-WEIXIN -->
@@ -180,6 +180,16 @@ export default {
     this.isWeixin = isWeixin;
     // #endif
 
+    // 接受验证码captchaResult
+    this.$u.event.$on('captchaResult', result => {
+      console.log(result, '注册绑定页面');
+      this.ticket = result.ticket;
+      this.randstr = result.randstr;
+    });
+    this.$u.event.$on('closeChaReault', () => {
+      uni.hideLoading();
+    });
+
     this.$u.event.$on('logind', () => {
       if (this.user) {
         this.isPaid = this.user.paid;
@@ -199,35 +209,52 @@ export default {
       }
     });
   },
+  onUnload() {
+    this.$u.event.$off('captchaResult');
+    this.$u.event.$off('closeChaReault');
+    this.$u.event.$off('logind');
+    // 隐藏验证码
+    if (this.captcha) {
+      this.captcha.destroy();
+    }
+  },
   methods: {
-    register() {
-      if (this.username === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.usernameEmpty'),
-          duration: 2000,
-        });
-      } else if (this.password === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.passwordEmpty'),
-          duration: 2000,
-        });
-      } else if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
-        this.toTCaptcha();
-      } else {
-        this.registerBind();
-      }
+    handleRegister() {
+      const params = {
+        data: {
+          attributes: {
+            username: this.username,
+            password: this.password,
+          },
+        },
+      };
+      this.getRegisterParams(params, this.i18n.t('user.registerBindSuccess'));
     },
     // 验证码
-    toTCaptcha() {
+    toTCaptcha(param, resultDialog) {
+      // #ifdef MP-WEIXIN
+      wx.navigateToMiniProgram({
+        appId: 'wx5a3a7366fd07e119',
+        path: '/pages/captcha/index',
+        envVersion: 'release',
+        extraData: {
+          appId: this.forum.qcloud.qcloud_captcha_app_id, // 您申请的验证码的 appId
+        },
+        success() {
+          console.log('验证码成功打开');
+        },
+        fail() {
+          uni.hideLoading();
+        },
+      });
+      // #endif
       // #ifdef H5
       // eslint-disable-next-line no-undef
       this.captcha = new TencentCaptcha(this.forum.qcloud.qcloud_captcha_app_id, res => {
         if (res.ret === 0) {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
-          this.registerBind();
+          this.addRegisterParams(param, resultDialog);
         }
         if (res.ret === 2) {
           uni.hideLoading();
@@ -237,90 +264,9 @@ export default {
       this.captcha.show();
       // #endif
     },
-    registerBind() {
-      const params = {
-        data: {
-          attributes: {
-            username: this.username,
-            password: this.password,
-          },
-        },
-      };
-      // #ifdef MP-WEIXIN
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.code = data.data.attributes.code;
-      }
-      // #endif
-      // #ifdef H5
-      const token = this.$store.getters['session/get']('token');
-      if (token && token !== '') {
-        params.data.attributes.token = token;
-      }
-      // #endif
-      if (
-        this.forum &&
-        this.forum.set_reg &&
-        this.forum.set_reg.register_captcha &&
-        this.forum.set_reg.register_validate
-      ) {
-        params.data.attributes.register_reason = this.reason;
-        params.data.attributes.captcha_ticket = this.ticket;
-        params.data.attributes.captcha_rand_str = this.randstr;
-      }
-      if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
-        params.data.attributes.captcha_ticket = this.ticket;
-        params.data.attributes.captcha_rand_str = this.randstr;
-      }
-      if (this.forum.set_reg.register_validate) {
-        params.data.attributes.register_reason = this.reason;
-      }
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
-      if (inviteCode !== '') {
-        params.data.attributes.code = inviteCode;
-      }
-      console.log('params', params);
-      this.$store
-        .dispatch('session/h5Register', params)
-        .then(result => {
-          if (result && result.data && result.data.data && result.data.data.id) {
-            this.logind();
-            uni.showToast({
-              title: this.i18n.t('user.registerBindSuccess'),
-              duration: 2000,
-            });
-          }
-          if (
-            result &&
-            result.data &&
-            result.data.errors &&
-            result.data.errors[0].status === '422'
-          ) {
-            uni.showToast({
-              icon: 'none',
-              title: result.data.errors[0].detail[0],
-              duration: 2000,
-            });
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
     // #ifdef MP-WEIXIN
     mpAuthClick() {
-      this.getmpLoginParams();
+      this.getmpRegisterParams();
     },
     // #endif
     // #ifdef H5
@@ -335,9 +281,6 @@ export default {
       this.jump2LoginBindPage();
     },
   },
-  onUnload() {
-    this.$u.event.$off('logind');
-  },
 };
 </script>
 
@@ -346,7 +289,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .register-bind-box {
   padding-bottom: 40px;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background-color: --color(--qui-BG-2);
 
   &-h {
@@ -363,7 +306,7 @@ export default {
       width: 100%;
       height: 100rpx;
       padding: 0rpx 0rpx 0rpx 20rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
       line-height: 100rpx;
       text-align: left;
       border-bottom: 2rpx solid --color(--qui-BOR-ED);

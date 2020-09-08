@@ -27,7 +27,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .no-data {
   padding: 44px 0rpx 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-AAA);
   text-align: center;
 }

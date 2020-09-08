@@ -200,9 +200,11 @@
           class="themeItem__content__tags  themeItem__content__tags--position"
           v-if="threadPosition.length > 0"
         >
-          <view class="themeItem__content__tags__item" @tap="topicPosition">
+          <view class="themeItem__content__tags__item" @click="topicPosition" @click.stop="">
             <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
-            {{ threadPosition.length > 0 && threadPosition[0] }}
+            <text class="themeItem__content__tags__item-text">
+              {{ threadPosition.length > 0 && threadPosition[0] }}
+            </text>
           </view>
         </view>
       </view>
@@ -584,7 +586,7 @@ export default {
     // 地理位置
     topicPosition() {
       const { threadPosition } = this;
-      uni.redirectTo({
+      uni.navigateTo({
         url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
       });
     },
@@ -665,7 +667,7 @@ export default {
         height: 37rpx;
         margin-left: 2rpx;
         font-family: $font-family;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
       }
 
@@ -690,7 +692,7 @@ export default {
 
       &__isAdminColor {
         padding: 2rpx 10rpx;
-        font-size: $fg-f20;
+        font-size: $fg-f1;
         vertical-align: top;
         background: --color(--qui-BG-IT);
         border-radius: 18rpx;
@@ -699,7 +701,7 @@ export default {
 
       &__time {
         padding-top: 10rpx;
-        font-size: $fg-f24;
+        font-size: $fg-f2;
         font-weight: 400;
         line-height: 31rpx;
         color: --color(--qui-FC-AAA);
@@ -719,7 +721,7 @@ export default {
       }
       &__reward {
         float: right;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: bold;
         color: --color(--qui-RED);
       }
@@ -731,7 +733,7 @@ export default {
       padding-bottom: 20rpx;
       overflow: hidden;
       font-family: $font-family;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: 400;
       line-height: 45rpx;
       color: --color(--qui-FC-333);
@@ -801,7 +803,7 @@ export default {
         margin: 0rpx 10rpx 8rpx 0;
         margin-bottom: 8rpx;
         font-family: $font-family;
-        font-size: $fg-f24;
+        font-size: $fg-f2;
         font-weight: 400;
         line-height: 50rpx;
         color: rgba(119, 119, 119, 1);
@@ -810,8 +812,8 @@ export default {
         border-radius: 6rpx;
       }
     }
-    &__tags .qui-icon {
-      margin-right: 10rpx;
+    &__tags__item-text {
+      margin-left: 10rpx;
     }
   }
 
@@ -823,7 +825,7 @@ export default {
 
       &__item {
         font-family: $font-family;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
@@ -837,7 +839,7 @@ export default {
     &__themeType2 {
       &__item {
         font-family: $font-family;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);

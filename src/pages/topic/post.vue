@@ -10,6 +10,7 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="post-box__hd">
         <view class="post-box__hd-l">
           <qui-icon
@@ -129,41 +130,12 @@
               @click="toolBarClick('strikethrough')"
             ></qui-icon>
           </view>
-          <!--<view>
-            <qui-icon
-              name="icon-undeline"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('undeline')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-strikethrough"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('strikethrough')"
-            ></qui-icon>
-          </view>-->
-          <!--<md-unordered-list>
-            <qui-icon
-              name="icon-unordered-list"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('unordered')"
-            ></qui-icon>
-          </md-unordered-list>
-          <md-ordered-list>
-            <qui-icon
-              name="icon-ordered-list"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('ordered')"
-            ></qui-icon>
-          </md-ordered-list>-->
         </view>
       </view>
-
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <qui-vditor></qui-vditor>
+      <!-- #endif -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -244,13 +216,8 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
-      <view class="post-box__position">
-        <qui-cell-item
-          arrow
-          :slot-left="true"
-          @tap="choosePosition"
-          v-if="forums.lbs && forums.lbs.lbs"
-        >
+      <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
+        <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
             <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
             <text>
@@ -431,6 +398,7 @@ export default {
   ],
   data() {
     return {
+      vditor: null,
       navTitle: '发布', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
@@ -439,7 +407,6 @@ export default {
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
-      isWeixin: false, // 默认不是微信浏览器
       type: 0, // 帖子类型
       price: 0, // 付费金额
       inputPrice: '', // 付费金额输入框
@@ -529,7 +496,6 @@ export default {
       randstr: '',
       captchaResult: {},
       attachmentList: [], // 附件列表
-      preAttachmentList: [], // 编辑的时候只传新增的用于比较是否是新增的
       signatureVal: '',
       deleteType: '', // 删除类型 0为图片，1为附件，2为视频
       deleteId: '', // 当前点击要删除的图片Id
@@ -542,9 +508,6 @@ export default {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
     }),
-    // allEmoji() {
-    //   return this.$store.getters['jv/get']('emoji');
-    // },
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
 
@@ -555,23 +518,6 @@ export default {
       }
       return pay;
     },
-  },
-  // created() {
-  //   if (
-  //     this.forums &&
-  //     this.forums.qcloud.qcloud_captcha &&
-  //     this.forums.other.create_thread_with_captcha
-  //   ) {
-  //     // eslint-disable-next-line
-  //     const tcaptchas = require('@/utils/tcaptcha');
-  //     // eslint-disable-next-line
-  //   }
-  // },
-  created() {
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
   },
   updated() {
     // #ifndef MP-WEIXIN
@@ -589,19 +535,37 @@ export default {
       if (that.currentPosition.location) {
         return;
       }
+      // #ifdef H5
       this.getPosition();
-      // const { platform } = uni.getSystemInfoSync();
-      // if (platform === 'android' && this.isWeixin) {
-      //   // 安卓微信浏览器卡顿问题
-      //   this.getPosition();
-      // } else {
-      //   uni.chooseLocation({
-      //     success(res) {
-      //       res.location = res.name;
-      //       that.currentPosition = res;
-      //     },
-      //   });
-      // }
+      // #endif
+      // #ifdef MP-WEIXIN
+      uni.getSetting({
+        success(res) {
+          if (!res.authSetting['scope.userLocation']) {
+            uni.authorize({
+              scope: 'scope.userLocation',
+              success() {
+                uni.chooseLocation({
+                  success(res1) {
+                    const positionData = res1;
+                    positionData.location = res1.name;
+                    that.currentPosition = positionData;
+                  },
+                });
+              },
+            });
+          } else {
+            uni.chooseLocation({
+              success(res1) {
+                const positionData = res1;
+                positionData.location = res1.name;
+                that.currentPosition = positionData;
+              },
+            });
+          }
+        },
+      });
+      // #endif
     },
     clearPosition() {
       this.currentPosition = {};
@@ -656,32 +620,6 @@ export default {
         this.cursor += 2;
         this.focusEvent(this.cursor);
       }
-      //  else if (type === 'undeline') {
-      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
-      //     this.cursor,
-      //   )}`}`;
-      //   this.cursor += 2;
-      //   this.focusEvent(this.cursor);
-      // } else if (type === 'strikethrough') {
-      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
-      //     this.cursor,
-      //   )}`}`;
-      //   this.cursor += 2;
-      //   this.focusEvent(this.cursor);
-      // }
-      //  else if (type == 'unordered') {
-      //   text = `${this.textAreaValue.slice(0, this.cursor) +
-      //     '\n- ' +
-      //     this.textAreaValue.slice(this.cursor)}`;
-      //   this.cursor = this.cursor + 1;
-      //   this.focusEvent(this.cursor);
-      // } else if (type == 'ordered') {
-      //   text = `${this.textAreaValue.slice(0, this.cursor) +
-      //     '\n1. ' +
-      //     this.textAreaValue.slice(this.cursor)}`;
-      //   this.cursor = this.cursor + 1;
-      //   this.focusEvent(this.cursor);
-      // }
       this.textAreaValue = text;
     },
     ...mapMutations({
@@ -779,9 +717,6 @@ export default {
             finish(result) {
               _this.fileId = result.fileId;
               _this.postVideo(result.fileId);
-              // _this.$refs.toast.show({
-              //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
-              // });
             },
           });
           // #endif
@@ -877,12 +812,6 @@ export default {
     },
     uploadChange(e, status) {
       this.uploadFile = e;
-      // e.map((file, index) => {
-      //   this.formData = {
-      //     type: 1,
-      //     order: index,
-      //   };
-      // });
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
@@ -922,6 +851,11 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      // #ifdef H5
+      console.log(this.vditor.getValue(), this.vditor.getValue().toString());
+      this.textAreaValue = this.vditor.getValue();
+      // #endif
+
       if (!this.categoryId) {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
@@ -1068,6 +1002,8 @@ export default {
               path: item.thumbUrl,
               id: item._jv.id,
               order: item.order,
+              name: item.fileName,
+              url: item.url,
             });
             return item;
           });
@@ -1097,14 +1033,8 @@ export default {
       });
       // 附件
       if (this.type === 1 && this.$refs.uploadFiles) {
-        const fileList = this.$refs.uploadFiles.getValue();
-        const preAttachmentList = this.preAttachmentList;
-        fileList.forEach(item => {
-          for (let i = 0; i < preAttachmentList.length; i += 1) {
-            if (preAttachmentList[i]._jv.id === item.id) {
-              return;
-            }
-          }
+        const newAttachmentList = this.$refs.uploadFiles.getValue();
+        newAttachmentList.forEach(item => {
           if (item.id) {
             attachments.data.push({
               type: 'attachments',
@@ -1114,25 +1044,6 @@ export default {
         });
       }
       return attachments;
-    },
-    // 删除附件显示弹框
-    deleteFile(id) {
-      this.deleteTip = this.i18n.t('core.deleteEnclosureSure');
-      this.$refs.deletePopup.open();
-      this.deleteType = 1;
-      this.deleteId = id;
-    },
-    // 删除附件调用删除接口
-    deleteFileSure(id) {
-      const params = {
-        _jv: {
-          type: 'attachments',
-          id,
-        },
-      };
-      this.$store.dispatch('jv/delete', params).then(res => {
-        this.$refs.uploadFiles.deleteSure();
-      });
     },
 
     // 接口请求
@@ -1147,9 +1058,6 @@ export default {
         });
       });
     },
-    // getEmoji() {
-    //   this.$store.dispatch('jv/get', ['emoji', {}]);
-    // },
     postThread() {
       const params = {
         _jv: {
@@ -1171,12 +1079,10 @@ export default {
         captcha_rand_str: this.randstr,
       };
       const currentPosition = this.currentPosition;
-      if(currentPosition.location) {
-        params.longitude = currentPosition.longitude;
-        params.latitude = currentPosition.latitude;
-        params.location = currentPosition.location;
-        params.address = currentPosition.address;
-      }
+      params.longitude = currentPosition.longitude || '';
+      params.latitude = currentPosition.latitude || '';
+      params.location = currentPosition.location || '';
+      params.address = currentPosition.address || '';
 
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
@@ -1219,13 +1125,12 @@ export default {
       this.$refs.deletePopup.close();
       if (this.deleteType === 0) {
         // 删除类型为图片
-        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
-          this.$refs.upload.clear(this.deleteIndex);
-        });
-      } else if (this.deleteType === 1) {
-        // 删除类型为附件
-        this.deleteFileSure(this.deleteId);
-      } else if (this.deleteType === 2) {
+        this.delAttachments(this.deleteId, this.deleteIndex);
+        this.$refs.upload.clear(this.deleteIndex);
+        // this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+        //   this.$refs.upload.clear(this.deleteIndex);
+        // });
+      }else if (this.deleteType === 2) {
         // 删除类型为视频
         this.videoBeforeList = [];
         this.percent = 0;
@@ -1238,37 +1143,20 @@ export default {
     },
 
     delAttachments(id, index) {
-      const params = {
-        _jv: {
-          type: 'attachments',
-          id,
-        },
-      };
-
-      return this.$store
-        .dispatch('jv/delete', params)
-        .then(res => {
-          // 当编辑帖子时删除图片后传参给首页
-          if (this.operating === 'edit') {
-            this.$u.event.$emit('deleteImg', {
-              threadId: this.postDetails._jv.id,
-              index,
-            });
-            const post = this.$store.getters['jv/get'](
-              `posts/${this.postDetails.firstPost._jv.id}`,
-            );
-            post.images.splice(index, 1);
-            post._jv.relationships.images.data.splice(index, 1);
-          }
-
-          this.uploadFile.forEach((value, key, item) => {
-            value.id == id && item.splice(key, 1);
-          });
-          return res;
-        })
-        .catch(err => {
-          console.log(err);
+      if (this.operating === 'edit') {
+        console.log('这是编辑');
+        this.$u.event.$emit('deleteImg', {
+          threadId: this.postDetails._jv.id,
+          index,
         });
+        const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
+        post.images.splice(index, 1);
+        post._jv.relationships.images.data.splice(index, 1);
+      }
+
+      this.uploadFile.forEach((value, key, item) => {
+        value.id == id && item.splice(key, 1);
+      });
     },
     getSignature(callBack = null) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
@@ -1288,7 +1176,7 @@ export default {
       this.$store.dispatch('jv/post', params);
     },
     // 获取当前编辑的主题数据
-    getPostThread() {
+    getPostThread(option) {
       const params = {
         include: [
           'firstPost',
@@ -1313,15 +1201,26 @@ export default {
         }
         // #endif
         this.attachmentList = res.firstPost.attachments || [];
-        this.preAttachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
         // this.uploadFile = res.firstPost.images;
-        this.currentPosition.longitude = res.longitude || '';
-        this.currentPosition.latitude = res.latitude || '';
-        this.currentPosition.location = res.location || '';
-        this.currentPosition.address = res.address || '';
+        // 微信里面的定位
+        if (option.name) {
+          let currentPosition = {};
+          const data = option.latng.split(',');
+          currentPosition.longitude = data[1];
+          currentPosition.latitude = data[0];
+          currentPosition.location = option.name;
+          currentPosition.address = option.addr;
+          this.currentPosition = currentPosition;
+        } else {
+          this.currentPosition.longitude = res.longitude || '';
+          this.currentPosition.latitude = res.latitude || '';
+          this.currentPosition.location = res.location || '';
+          this.currentPosition.address = res.address || '';
+        }
+
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
             if (item) {
@@ -1329,6 +1228,9 @@ export default {
                 type: 'attachments',
                 id: item._jv.id,
                 order: item.order,
+                name: item.fileName,
+                url: item.url,
+                path: item.thumbUrl ? item.thumbUrl : '',
               });
             }
           });
@@ -1389,12 +1291,10 @@ export default {
         },
       };
       const currentPosition = this.currentPosition;
-      if(currentPosition.location) {
-        threads.longitude = currentPosition.longitude;
-        threads.latitude = currentPosition.latitude;
-        threads.location = currentPosition.location;
-        threads.address = currentPosition.address;
-      }
+      threads.longitude = currentPosition.longitude || '';
+      threads.latitude = currentPosition.latitude || '';
+      threads.location = currentPosition.location || '';
+      threads.address = currentPosition.address || '';
 
       switch (this.type) {
         case 0:
@@ -1480,6 +1380,20 @@ export default {
     },
   },
   onLoad(option) {
+    // #ifdef H5
+    uni.$on('vditor', vditor => {
+      this.vditor = vditor;
+      this.vditor.setValue(this.textAreaValue);
+    });
+    uni.$on('clickImage', item => {
+      console.log(item);
+      this.vditor.insertValue(`![${item.name}](${item.path})  `);
+    });
+    uni.$on('clickAttach', item => {
+      console.log(item);
+      this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
+    });
+    // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
 
@@ -1507,14 +1421,27 @@ export default {
 
     if (this.operating === 'edit') {
       this.loadStatus = false;
-      this.getPostThread();
+      this.getPostThread(option);
     } else {
       this.loadStatus = true;
+      if (option.name) {
+        let currentPosition = {};
+        const data = option.latng.split(',');
+        currentPosition.longitude = data[1];
+        currentPosition.latitude = data[0];
+        currentPosition.location = option.name;
+        currentPosition.address = option.addr;
+        this.currentPosition = currentPosition;
+      }
     }
 
     try {
       const res = uni.getSystemInfoSync();
-      if (this.forums && this.forums.paycenter.wxpay_close && this.forums.other.can_create_thread_paid) {
+      if (
+        this.forums &&
+        this.forums.paycenter.wxpay_close &&
+        this.forums.other.can_create_thread_paid
+      ) {
         // #ifndef H5
         if (res.platform === 'ios') {
           if (this.forums.paycenter.wxpay_ios === false) {
@@ -1564,11 +1491,6 @@ export default {
     });
   },
   onShow() {
-    // #ifndef  MP-WEIXIN
-    // this.tcVod = new TcVod({
-    //   getSignature: this.getSignature,
-    // });
-    // #endif
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1587,7 +1509,11 @@ export default {
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    // #ifdef H5
     uni.$off('clickTopic');
+    uni.$off('clickImage');
+    uni.$off('clickAttach');
+    // #endif
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();
@@ -1617,7 +1543,7 @@ export default {
     &-input {
       width: 100%;
       padding-right: 80rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
     }
   }
   &__hd {
@@ -1630,7 +1556,7 @@ export default {
       }
     }
     &-r {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       color: --color(--qui-FC-777);
     }
   }
@@ -1651,12 +1577,12 @@ export default {
     max-height: 900rpx;
     min-height: 400rpx;
     padding: 10rpx 20rpx 20rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 40rpx;
     box-sizing: border-box;
 
     .text-cover {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       line-height: 40rpx;
     }
     &--static {
@@ -1740,14 +1666,14 @@ export default {
     &-tit {
       display: block;
       margin: 30rpx 0;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-7D7979);
     }
     &-categories {
       margin-bottom: 40rpx;
     }
   }
-  &__position  /deep/ {
+  &__position /deep/ {
     position: relative;
     color: --color(--qui-FC-777);
     .icon-weizhi {
@@ -1776,7 +1702,7 @@ export default {
   .post-box__video__play__load__text {
     position: relative;
     z-index: 2;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 36rpx;
     color: --color(--qui-FC-34);
   }
@@ -1828,7 +1754,7 @@ export default {
   text-align: center;
   box-sizing: border-box;
   .popup-title {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
   }
 }
 .popup-share-content-space {
@@ -1842,11 +1768,11 @@ export default {
   width: 100%;
 }
 /deep/ textarea .textarea-placeholder {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-B5);
 }
 /deep/ input .input-placeholder {
-  font-size: $fg-f34;
+  font-size: $fg-f5;
   color: --color(--qui-FC-AAA);
 }
 
@@ -1856,7 +1782,7 @@ export default {
   }
 }
 /deep/ .cell-item__body__right .cell-item__body__right-text {
-  font-size: $fg-f34;
+  font-size: $fg-f5;
 }
 /deep/ .cell-item__body__content-title {
   color: --color(--qui-FC-777);
@@ -1871,7 +1797,7 @@ export default {
     padding-top: 40rpx;
     text-align: center;
     text {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
   }

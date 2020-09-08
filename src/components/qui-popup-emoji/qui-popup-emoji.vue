@@ -36,10 +36,6 @@ export default {
   name: 'QuiEmoji',
 
   props: {
-    // list: {
-    //   default: Object,
-    //   type: Object,
-    // },
     position: {
       default: 'absolute',
       type: String,
@@ -109,7 +105,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .emoji-box {
   z-index: 150;
-  width: calc(100vw - 80rpx);
+  width: 100%;
   height: 370rpx;
   padding: 10rpx 0;
   background-color: --color(--qui-BG-2);

@@ -273,6 +273,7 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
+      console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -300,6 +301,7 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
+      console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -340,9 +342,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .profile {
-  .qui-icon {
-    margin-right: 14rpx;
-  }
   /deep/ .qui-tabs__item__brief {
     font-weight: bold;
   }
@@ -350,7 +349,7 @@ export default {
 .profile-info {
   padding: 40rpx;
   padding-top: 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background: --color(--qui-BG-2);
 }
 .profile-info__box {
@@ -368,7 +367,7 @@ export default {
   display: flex;
   flex-direction: row;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   box-sizing: border-box;
 }
 .my-info__box__detail-username {

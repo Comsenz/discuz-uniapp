@@ -6,7 +6,28 @@ module.exports = {
   mixins: [forums],
   methods: {
     getPosition() {
+      const key = this.forums.lbs.qq_lbs_key;
+      const geolocation = new qq.maps.Geolocation(key, 'myapp');
+      geolocation.getLocation(this.showPosition, this.errorPosition, { timeout: 6000 });
+    },
+    showPosition(value) {
+      const key = this.forums.lbs.qq_lbs_key;
+      const coord = `${value.lat},${value.lng}`;
+      let { href } = window.location;
+      // 过滤掉上次选择后返回的参数
+      const index = href.indexOf('&name');
+      if (index !== -1) {
+        href = href.substr(0, index);
+      }
+      const currentHref = encodeURIComponent(href);
+      window.location.href = `https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${currentHref}&key=${key}&referer=myapp&coord=${coord}`;
+    },
+    errorPosition() {
+      this.getPosition();
+    },
+    getPositionWx() {
       const url = this.getUrl();
+      const that = this;
       this.$store
         .dispatch('jv/get', [`offiaccount/jssdk?url=${encodeURIComponent(url)}`, {}])
         .then(data => {
@@ -25,14 +46,16 @@ module.exports = {
               success(res) {
                 const { latitude } = res; // 纬度，浮点数，范围为90 ~ -90
                 const { longitude } = res; // 经度，浮点数，范围为180 ~ -180。
-                uni.showToast({
-                  title: latitude,
-                  duration: 2000,
-                });
-                uni.showToast({
-                  title: longitude,
-                  duration: 2000,
-                });
+                const coord = `${latitude},${longitude}`;
+                const key = that.forums.lbs.qq_lbs_key;
+                let { href } = window.location;
+                // 过滤掉上次选择后返回的参数
+                const index = href.indexOf('&name');
+                if (index !== -1) {
+                  href = href.substr(0, index);
+                }
+                const currentHref = encodeURIComponent(href);
+                window.location.href = `https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${currentHref}&key=${key}&referer=myapp&coord=${coord}`;
               },
             });
           });
@@ -46,10 +69,6 @@ module.exports = {
         url = window.entryUrl;
       }
       return url;
-    },
-    choosePosition(data) {
-      const currentHref = window.location.href;
-      window.location.href = `https://apis.map.qq.com/tools/locpicker?search=1&type=0&backurl=${currentHref}&key=${this.forums.lbs.qq_lbs_key}&referer=myapp&coord=${data}`;
     },
   },
 };

@@ -176,7 +176,7 @@ export default {
   text-align: center;
   background: --color(--qui-BG-2);
   .det-per-number {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-AAA);
     text-align: center;
   }
@@ -200,7 +200,7 @@ export default {
     justify-content: center;
     width: 465rpx;
     height: 90rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 90rpx;
     .qui-icon {
       margin-right: 13rpx;

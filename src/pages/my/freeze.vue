@@ -118,7 +118,7 @@ export default {
     justify-content: space-between;
     padding: 40rpx 40rpx 0;
     margin-bottom: 30rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }

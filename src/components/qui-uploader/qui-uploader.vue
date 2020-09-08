@@ -11,7 +11,7 @@
           v-if="uploadBeforeList.length > 0"
           mode="aspectFill"
           :src="item.path"
-          @click="previewPicture(index)"
+          @click="previewPicture(index, item)"
         ></image>
         <view
           class="qui-uploader-box__uploader-file--load"
@@ -161,7 +161,11 @@ export default {
     },
 
     // 图片预览
-    previewPicture(index) {
+    previewPicture(index, item) {
+      // #ifdef H5
+      uni.$emit('clickImage', item);
+      // #endif
+      // #ifdef MP-WEIXIN
       const _this = this;
       const preview = [];
       for (let i = 0, len = _this.uploadBeforeList.length; i < len; i += 1) {
@@ -172,6 +176,7 @@ export default {
         urls: preview,
         indicator: 'default',
       });
+      // #endif
     },
     compare(property) {
       return (a, b) => {
@@ -467,7 +472,7 @@ export default {
       &__text {
         position: relative;
         z-index: 2;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 160rpx;
         color: --color(--qui-FC-34);
       }

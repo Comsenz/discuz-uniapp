@@ -353,7 +353,7 @@ $height: calc(100vh - 110rpx);
       display: flex;
       align-items: center;
       margin-right: 30rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-777);
     }
 

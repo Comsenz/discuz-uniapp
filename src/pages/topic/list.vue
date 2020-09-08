@@ -202,7 +202,7 @@ export default {
   box-sizing: border-box;
   view {
     height: 70rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 70rpx;
     color: --color(--qui-FC-777);
     text-align: center;
@@ -354,7 +354,7 @@ $otherHeight: 292rpx;
         height: 100%;
       }
       /deep/ input .input-placeholder {
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         color: --color(--qui-FC-C6);
       }
     }

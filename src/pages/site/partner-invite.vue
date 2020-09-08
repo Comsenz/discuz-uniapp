@@ -68,7 +68,7 @@
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
-        <text class="site-invite__detail__bold" v-if="type === 'normal'">
+        <text class="site-invite__detail__bold" v-if="code.length !== 32">
           {{ inviteData.username || '' }}
         </text>
         <text class="site-invite__detail__bold" v-else>
@@ -113,6 +113,7 @@ import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
@@ -133,12 +134,10 @@ export default {
       isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
       codeTips: '',
-      type: '', // 管理员邀请还是普通邀请
     };
   },
   onLoad(params) {
     this.code = params.code;
-    this.type = params.type || '';
     this.getInviteInfo(params.code);
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
@@ -220,8 +219,14 @@ export default {
       this.$refs.auth.close();
     },
     check() {
-      if (this.type && this.type === 'normal') {
-        this.submit();
+      // 管理员邀请码32位，区分普通邀请和管理员邀请
+      if (this.code && this.code.length !== 32) {
+        if (!this.inviteData.id) {
+          this.codeTips = this.i18n.t('site.codenotfound');
+          this.$refs.popCode.open();
+        } else {
+          this.submit();
+        }
         return;
       }
       // 处理邀请码状态 status 0 失效  1 未使用  2 已使用 3 已过期
@@ -283,7 +288,7 @@ export default {
           data: this.code,
         });
         // #ifdef H5
-        this.handleLogin('/pages/home/index');
+        this.handleLogin(getCurUrl());
         // #endif
       } else {
         // 已经登陆的情况
@@ -368,7 +373,7 @@ export default {
   width: 85%;
   padding: 0 20rpx;
   margin: 50rpx auto 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
 }
 .site-item__person__content-avatar,
 .site-item__owner-avatar {
@@ -399,7 +404,7 @@ export default {
   padding: 0 28rpx;
   margin-right: 10rpx;
   margin-bottom: 10rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   line-height: 60rpx;
   border: 2rpx solid --color(--qui-BOR-ED);
   border-radius: 7rpx;

@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="qui-at-member-page-box">
+  <view class="qui-at-member-page-box">
     <view class="qui-at-member-page-box__hd">
       <view class="qui-at-member-page-box__hd__sc">
         <qui-icon class="icon-search" name="icon-search" size="30"></qui-icon>
@@ -60,8 +60,9 @@
       </scroll-view>
     </view>
     <view class="qui-at-member-page-box__ft">
+      <qui-button size="default" @click="atCancel">取消</qui-button>
       <qui-button
-        size="large"
+        size="default"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
         :disabled="Boolean(checkAvatar.length < 1)"
         @click="getCheckMember"
@@ -73,14 +74,13 @@
         }}
       </qui-button>
     </view>
-  </qui-page>
+  </view>
 </template>
 
 <script>
 import { mapMutations } from 'vuex';
 
 export default {
-  name: 'QuiAtMemberPage',
   data() {
     return {
       allSiteUser: [], // 所有站点成员
@@ -93,24 +93,9 @@ export default {
       meta: {}, // 接口返回meta值
     };
   },
-  computed: {
-    // 处理角色名称
-    // getGroups() {
-    //   const that = this;
-    //   let name = '';
-    //   return data => {
-    //     if (data) {
-    //       Object.keys(data).forEach(item => {
-    //         if (data[item]) {
-    //           name = data[item].name;
-    //         } else {
-    //           name = that.i18n.t('discuzq.role.noRole');
-    //         }
-    //       });
-    //     }
-    //     return name;
-    //   };
-    // },
+  created() {
+    this.getFollowMember(1);
+    this.setAtMember([]);
   },
   methods: {
     ...mapMutations({
@@ -130,9 +115,7 @@ export default {
     },
     getCheckMember() {
       this.setAtMember(this.checkAvatar);
-      uni.navigateBack({
-        delta: 1,
-      });
+      uni.$emit('atUser');
     },
     // 人员搜索
     searchInput(e) {
@@ -206,13 +189,11 @@ export default {
         }
       });
     },
-  },
-  onLoad() {
-    uni.setNavigationBarTitle({
-      title: this.i18n.t('discuzq.atMember.atTitle'),
-    });
-    this.getFollowMember(1);
-    this.setAtMember([]);
+
+    // 取消at选择
+    atCancel() {
+      this.$emit('atCancel');
+    },
   },
 };
 </script>
@@ -272,11 +253,14 @@ $otherHeight: 292rpx;
   &__ft {
     position: absolute;
     bottom: 0;
+    display: flex;
+    flex-direction: row;
     width: 100%;
     padding: 40rpx;
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
-    /deep/ .qui-button--button[size='large'] {
+    /deep/ .qui-button--button[size='default'] {
+      width: 48%;
       border-radius: 5rpx;
     }
     /deep/ .qui-button--button[disabled] {

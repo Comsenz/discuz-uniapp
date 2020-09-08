@@ -126,6 +126,7 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
+      console.log('内容部分点赞按钮点击事件', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -163,6 +164,17 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+        return;
+      }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;

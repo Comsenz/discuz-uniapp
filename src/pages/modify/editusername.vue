@@ -134,7 +134,7 @@ export default {
   }
   .chagepas-erro-test {
     margin-top: 20rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     color: --color(--qui-RED);
   }
@@ -146,7 +146,7 @@ export default {
   .chagepas-pas-inpa {
     width: 100%;
     height: 100rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-333);
@@ -160,7 +160,7 @@ export default {
 }
 .chagepas-pas-btn /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

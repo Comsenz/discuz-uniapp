@@ -1,7 +1,12 @@
 <template>
   <view class="auth">
     <view class="auth__header">
-      <qui-icon @tap="close" class="auth__header__close" name="icon-close" size="36"></qui-icon>
+      <qui-icon
+        @tap="closeDialog"
+        class="auth__header__close"
+        name="icon-close"
+        size="36"
+      ></qui-icon>
     </view>
     <view class="auth__content">
       <image
@@ -9,7 +14,6 @@
         mode="aspectFit"
         :src="(forums && forums.set_site && forums.set_site.site_logo) || '/static/logo.png'"
       ></image>
-
       <qui-button
         type="primary"
         open-type="getPhoneNumber"
@@ -35,19 +39,22 @@ export default {
     },
   },
   mounted() {
-    uni.login({
-      success: loginRes => {
-        if (loginRes.errMsg === 'login:ok') {
-          console.log('loginRes', loginRes);
-          this.$store.dispatch('session/setCode', loginRes.code);
-        }
-      },
-      fail: error => {
-        console.log(error);
-      },
-    });
+    this.getPhoneParam();
   },
   methods: {
+    getPhoneParam() {
+      uni.login({
+        success: loginRes => {
+          if (loginRes.errMsg === 'login:ok') {
+            console.log('loginRes', loginRes);
+            this.$store.dispatch('session/setCode', loginRes.code);
+          }
+        },
+        fail: error => {
+          console.log(error);
+        },
+      });
+    },
     decryptPhoneNumber(res) {
       console.log(res);
       if (res.detail.errMsg === 'getPhoneNumber:ok') {
@@ -64,21 +71,38 @@ export default {
         this.$store
           .dispatch('session/bindPhonenum', params)
           .then(result => {
-            if (result.data) {
+            this.$emit('closeDialog');
+            if (result && result.data && result.data.data && result.data.data.id) {
               console.log('result', result);
-              uni.navigateBack({
-                delta: 1,
-              });
+              const pages = getCurrentPages();
+              const url = pages[pages.length - 1].route;
+              if (url === '/pages/my/profile') {
+                uni.showToast({
+                  title: this.i18n.t('auth.success'),
+                  duration: 2000,
+                });
+                uni.redirectTo({
+                  url: `/pages/my/profile`,
+                });
+              } else {
+                this.logind();
+                uni.showToast({
+                  title: this.i18n.t('auth.success'),
+                  duration: 2000,
+                });
+              }
+            }
+            if (result && result.data && result.data.errors) {
+              this.getPhoneParam();
             }
           })
           .catch(err => {
             console.log(err);
           });
       }
-      this.$emit('close');
     },
-    close() {
-      this.$emit('close');
+    closeDialog() {
+      this.$emit('closeDialog');
     },
   },
 };

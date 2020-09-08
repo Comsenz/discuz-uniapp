@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="pages-topic">
+  <view class="pages-topic">
     <view class="qui-topic-page-box">
       <view class="qui-topic-page-box__hd">
         <view class="qui-topic-page-box__hd__sc">
@@ -22,7 +22,7 @@
     <view class="topic-content-item" v-for="(item, i) in topics" :key="i" @tap="returnToPost(i)">
       <view class="topic-content-item-box">
         <view class="topic-content-item_title">#{{ item.content }}#</view>
-        <view class="topic-content-item_recoment" v-if="item.recommended === 1 ? true : false">
+        <view class="topic-content-item_recoment" v-if="item.recommended === 0 ? true : false">
           <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
         </view>
       </view>
@@ -34,7 +34,7 @@
         <text>{{ i18n.t('topic.hot') }}</text>
       </view> -->
     </view>
-  </qui-page>
+  </view>
 </template>
 
 <script>
@@ -50,6 +50,9 @@ export default {
       meta: {}, // 接口返回meta值
     };
   },
+  created() {
+    this.loadTopics();
+  },
   methods: {
     // 话题搜索
     searchInput() {
@@ -62,10 +65,7 @@ export default {
     returnToPost(index = 0) {
       const topicMsg = {};
       topicMsg.keywords = index === -1 ? this.searchValue : this.topics[index].content;
-      console.log(topicMsg, index, this.topics);
       uni.$emit('clickTopic', topicMsg);
-
-      uni.navigateBack();
     },
     loadTopics() {
       const params = {
@@ -97,9 +97,6 @@ export default {
         }
       });
     },
-  },
-  onLoad() {
-    this.loadTopics();
   },
   onReachBottom() {
     if (this.meta.next) {
