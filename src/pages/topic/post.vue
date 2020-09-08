@@ -1130,7 +1130,7 @@ export default {
         // this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
         //   this.$refs.upload.clear(this.deleteIndex);
         // });
-      }else if (this.deleteType === 2) {
+      } else if (this.deleteType === 2) {
         // 删除类型为视频
         this.videoBeforeList = [];
         this.percent = 0;
@@ -1380,6 +1380,17 @@ export default {
     },
   },
   onLoad(option) {
+    // console.log(typeof option.type, '这是onload');
+    if (option.type === '3') {
+      this.$nextTick(() => {
+        this.$refs.upload.uploadClick();
+      });
+      // this.uploadClick();
+      // this.uploadChange();
+    } else if (option.type === '2') {
+      this.uploadVideo();
+    }
+
     // #ifdef H5
     uni.$on('vditor', vditor => {
       this.vditor = vditor;
