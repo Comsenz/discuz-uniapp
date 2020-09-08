@@ -878,7 +878,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 2;
+  z-index: 1;
   width: 80rpx;
   height: 80rpx;
   margin-top: -40rpx;

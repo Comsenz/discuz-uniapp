@@ -238,7 +238,8 @@ export default {
   opacity: 0;
   transform: scale(1.2);
 }
-.qui-popup-at {
+.qui-popup-at,
+.qui-popup-topic {
   .uni-popup__wrapper-box {
     width: 100%;
     height: 100%;

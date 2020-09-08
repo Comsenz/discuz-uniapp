@@ -4,13 +4,15 @@
     <uni-popup ref="atUser" type="center" class="qui-popup-at">
       <qui-popup-at @atCancel="atCancel"></qui-popup-at>
     </uni-popup>
-    <uni-popup ref="topic" type="bottom">
-      <qui-popup-topic></qui-popup-topic>
+    <uni-popup ref="topic" type="center" class="qui-popup-topic">
+      <qui-popup-topic @topicCancel="topicCancel"></qui-popup-topic>
     </uni-popup>
     <view class="emoji-bd" v-show="emojiShow">
       <qui-emoji
-        position="absolute"
-        top="20rpx"
+        position="fixed"
+        top="340rpx"
+        left="40rpx"
+        right="40rpx"
         border-radius="10rpx"
         @click="getEmojiClick"
       ></qui-emoji>
@@ -63,15 +65,25 @@ export default {
       mode: 'wysiwyg',
       after: () => {
         uni.$emit('vditor', this.vditor);
+        this.vditor.focus();
       },
       cache: {
         enable: false,
       },
-      height: window.innerHeight + 20,
-      outline: true,
-      debugger: true,
-      counter: true,
-      typewriterMode: true,
+      toolbarConfig: {
+        pin: true,
+      },
+      hint: {
+        // emoji: {
+        //   sad: `💔`,
+        // },
+        emojiPath: `https://dq.comsenz-service.com/emoji/qq`,
+      },
+      height: window.innerHeight / 2,
+      counter: {
+        enable: true,
+        max: 60000,
+      },
       placeholder: this.$i18n.t('discuzq.post.placeholder'),
       preview: {
         markdown: {
@@ -142,6 +154,10 @@ export default {
     // 点击取消按钮，关闭at
     atCancel() {
       this.$refs.atUser.close();
+    },
+    // 点击取消按钮，关闭话题
+    topicCancel() {
+      this.$refs.topic.close();
     },
 
     // 表情点击事件

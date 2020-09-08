@@ -22,7 +22,7 @@
     <view class="topic-content-item" v-for="(item, i) in topics" :key="i" @tap="returnToPost(i)">
       <view class="topic-content-item-box">
         <view class="topic-content-item_title">#{{ item.content }}#</view>
-        <view class="topic-content-item_recoment" v-if="item.recommended === 0 ? true : false">
+        <view class="topic-content-item_recoment" v-if="item.recommended === 1 ? true : false">
           <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
         </view>
       </view>
