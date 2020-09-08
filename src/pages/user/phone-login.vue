@@ -444,13 +444,13 @@ export default {
     jump2Login() {
       this.jump2LoginPage();
     },
-    jump2findpwd() {
-      this.jump2findpwdPage();
-    },
-    jump3findpwd() {
+    jump3Login() {
       uni.navigateTo({
         url: '/pages/user/uc-login',
       });
+    },
+    jump2findpwd() {
+      this.jump2findpwdPage();
     },
   },
 };
@@ -574,6 +574,7 @@ page {
     &-image {
       width: 100rpx;
       height: 100rpx;
+      margin-left: 40rpx;
     }
 
     &-right {

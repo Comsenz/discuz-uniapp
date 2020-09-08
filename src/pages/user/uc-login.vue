@@ -178,6 +178,16 @@ export default {
                 title: '登录成功',
                 duration: 2000,
               });
+              if (this.site_mode !== SITE_PAY) {
+                uni.redirectTo({
+                  url: '/pages/home/idnex',
+                });
+              }
+              if (this.site_mode === SITE_PAY && !this.isPaid) {
+                uni.redirectTo({
+                  url: '/pages/site/info',
+                });
+              }
             }
           })
           .catch(err => {
@@ -189,7 +199,7 @@ export default {
               this.$store.dispatch('session/setToken', err.data.errors[0].token);
               console.log(err.data.errors[0].token);
               uni.navigateTo({
-                url: '/pages/user/login-bind',
+                url: '/pages/user/register-bind',
               });
             }
           });
