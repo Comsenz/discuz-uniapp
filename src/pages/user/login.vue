@@ -29,16 +29,16 @@
         <view class="login-box-ft-con">
           <image
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            class="login-box-ft-con-image"
+            class="login-box-ft-con-image imgPhon"
             lazy-load
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
           <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
             class="login-box-ft-con-image"
             lazy-load
-            src="@/static/zhanghao.svg"
+            src="@/static/UC.svg"
             @click="jump3PhoneLogin"
           />
         </view>
@@ -223,5 +223,8 @@ export default {
       border: 2rpx solid rgba(221, 221, 221, 1);
     }
   }
+}
+.imgPhon {
+  margin-right: 40rpx;
 }
 </style>

@@ -68,6 +68,16 @@
             src="@/static/zhanghao.svg"
             @click="jump2Login"
           />
+          <image
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter && !isLogin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
+          />
           <!-- #endif -->
           <!-- #ifdef H5 -->
           <image
@@ -90,6 +100,16 @@
             lazy-load
             src="@/static/zhanghao.svg"
             @click="jump2Login"
+          />
+          <image
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter && isWeixin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
           />
           <!-- #endif -->
         </view>
@@ -426,6 +446,11 @@ export default {
     },
     jump2findpwd() {
       this.jump2findpwdPage();
+    },
+    jump3findpwd() {
+      uni.navigateTo({
+        url: '/pages/user/uc-login',
+      });
     },
   },
 };
