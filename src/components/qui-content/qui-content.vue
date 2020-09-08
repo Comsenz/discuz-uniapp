@@ -586,7 +586,7 @@ export default {
     // 地理位置
     topicPosition() {
       const { threadPosition } = this;
-      uni.redirectTo({
+      uni.navigateTo({
         url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
       });
     },
