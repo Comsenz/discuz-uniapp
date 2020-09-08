@@ -60,8 +60,9 @@
       </scroll-view>
     </view>
     <view class="qui-at-member-page-box__ft">
+      <qui-button size="default" @click="atCancel">取消</qui-button>
       <qui-button
-        size="large"
+        size="default"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
         :disabled="Boolean(checkAvatar.length < 1)"
         @click="getCheckMember"
@@ -188,6 +189,11 @@ export default {
         }
       });
     },
+
+    // 取消at选择
+    atCancel() {
+      this.$emit('atCancel');
+    },
   },
 };
 </script>
@@ -247,11 +253,14 @@ $otherHeight: 292rpx;
   &__ft {
     position: absolute;
     bottom: 0;
+    display: flex;
+    flex-direction: row;
     width: 100%;
     padding: 40rpx;
     background-color: --color(--qui-BG-2);
     box-sizing: border-box;
-    /deep/ .qui-button--button[size='large'] {
+    /deep/ .qui-button--button[size='default'] {
+      width: 48%;
       border-radius: 5rpx;
     }
     /deep/ .qui-button--button[disabled] {

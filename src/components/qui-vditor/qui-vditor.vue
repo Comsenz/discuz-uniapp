@@ -1,8 +1,8 @@
 <template>
   <view>
     <view id="editor"></view>
-    <uni-popup ref="atUser" type="bottom">
-      <qui-popup-at></qui-popup-at>
+    <uni-popup ref="atUser" type="center" class="qui-popup-at">
+      <qui-popup-at @atCancel="atCancel"></qui-popup-at>
     </uni-popup>
     <uni-popup ref="topic" type="bottom">
       <qui-popup-topic></qui-popup-topic>
@@ -139,6 +139,11 @@ export default {
     this.vditor.destroy();
   },
   methods: {
+    // 点击取消按钮，关闭at
+    atCancel() {
+      this.$refs.atUser.close();
+    },
+
     // 表情点击事件
     getEmojiClick(code) {
       this.vditor.insertValue(code);
@@ -152,4 +157,12 @@ export default {
   position: relative;
   width: 100%;
 }
+// .uni-popup__wrapper-box {
+//   position: relative;
+//   /* #ifndef APP-NVUE */
+//   display: block;
+//   /* #endif */
+//   width: 100%;
+//   height: 100%;
+// }
 </style>
