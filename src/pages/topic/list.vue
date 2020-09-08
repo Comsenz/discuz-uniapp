@@ -48,7 +48,7 @@
             <view class="topic-page-list-item_title">#{{ item.content }}#</view>
             <view
               class="topic-page-list-item_recoment"
-              v-if="item.recommended === 0 ? true : false"
+              v-if="item.recommended === 1 ? true : false"
             >
               <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
             </view>
