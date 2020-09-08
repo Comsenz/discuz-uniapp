@@ -9,8 +9,10 @@
     </uni-popup>
     <view class="emoji-bd" v-show="emojiShow">
       <qui-emoji
-        position="absolute"
-        top="20rpx"
+        position="fixed"
+        top="340rpx"
+        left="40rpx"
+        right="40rpx"
         border-radius="10rpx"
         @click="getEmojiClick"
       ></qui-emoji>
