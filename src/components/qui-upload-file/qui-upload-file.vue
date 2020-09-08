@@ -1,7 +1,7 @@
 <template>
   <view class="qui-uploader-box">
     <view class="qui-uploader-box__item" v-for="(item, index) in fileList" :key="index">
-      <view class="qui-uploader-box__item__fonts">
+      <view class="qui-uploader-box__item__fonts" @tap="clickAttach(item)">
         <view class="qui-uploader-box__item__fonts-detail">{{ item.attributes.fileName }}</view>
       </view>
       <view class="qui-uploader-box__item__delete" @tap="deleteItem(index, item.id)">
@@ -93,7 +93,7 @@ export default {
       handler(newVal) {
         const list = [];
         newVal.forEach(v => {
-          list.push({ attributes: { fileName: v.fileName }, id: v._jv.id });
+          list.push({ attributes: { fileName: v.fileName, url: v.url }, id: v._jv.id });
         });
         this.fileList = list;
       },
@@ -236,6 +236,9 @@ export default {
         this.$refs.toast.show({ message: res });
       };
       xhr.send(fData);
+    },
+    clickAttach(item) {
+      uni.$emit('clickAttach', item);
     },
     // #endif
   },

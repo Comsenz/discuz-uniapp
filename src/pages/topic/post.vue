@@ -1002,6 +1002,8 @@ export default {
               path: item.thumbUrl,
               id: item._jv.id,
               order: item.order,
+              name: item.fileName,
+              url: item.url,
             });
             return item;
           });
@@ -1226,6 +1228,9 @@ export default {
                 type: 'attachments',
                 id: item._jv.id,
                 order: item.order,
+                name: item.fileName,
+                url: item.url,
+                path: item.thumbUrl ? item.thumbUrl : '',
               });
             }
           });
@@ -1380,6 +1385,14 @@ export default {
       this.vditor = vditor;
       this.vditor.setValue(this.textAreaValue);
     });
+    uni.$on('clickImage', item => {
+      console.log(item);
+      this.vditor.insertValue(`![${item.name}](${item.path})  `);
+    });
+    uni.$on('clickAttach', item => {
+      console.log(item);
+      this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
+    });
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -1496,7 +1509,11 @@ export default {
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    // #ifdef H5
     uni.$off('clickTopic');
+    uni.$off('clickImage');
+    uni.$off('clickAttach');
+    // #endif
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();

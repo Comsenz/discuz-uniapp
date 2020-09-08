@@ -65,15 +65,25 @@ export default {
       mode: 'wysiwyg',
       after: () => {
         uni.$emit('vditor', this.vditor);
+        this.vditor.focus();
       },
       cache: {
         enable: false,
       },
-      height: window.innerHeight + 20,
-      outline: true,
-      debugger: true,
-      counter: true,
-      typewriterMode: true,
+      toolbarConfig: {
+        pin: true,
+      },
+      hint: {
+        // emoji: {
+        //   sad: `💔`,
+        // },
+        emojiPath: `https://dq.comsenz-service.com/emoji/qq`,
+      },
+      height: window.innerHeight / 2,
+      counter: {
+        enable: true,
+        max: 60000,
+      },
       placeholder: this.$i18n.t('discuzq.post.placeholder'),
       preview: {
         markdown: {
