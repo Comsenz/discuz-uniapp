@@ -93,7 +93,7 @@ export default {
     if (res.from === 'button') {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
-        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
         path: `/pages/topic/index?id=${this.nowThreadId}`,
       };
     }
