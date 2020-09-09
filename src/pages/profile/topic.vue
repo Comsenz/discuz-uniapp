@@ -77,7 +77,6 @@ export default {
       this.loadingType = 'loading';
       const params = {
         'filter[isDeleted]': 'no',
-        'filter[isSticky]': 'no',
         include: [
           'user',
           'user.groups',
