@@ -48,11 +48,17 @@ export default {
       pageNum: 1, // 页面
       pageSize: 20,
       meta: {}, // 接口返回meta值
+      types: 1,
     };
   },
   methods: {
     // 话题搜索
     searchInput() {
+      if (this.searchValue) {
+        this.types = '';
+      } else {
+        this.types = 1;
+      }
       clearTimeout(timer);
       timer = setTimeout(() => {
         this.pageNum = 1;
@@ -69,6 +75,7 @@ export default {
     },
     loadTopics() {
       const params = {
+        'filter[recommended]': this.types,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         // sort: '-viewCount',

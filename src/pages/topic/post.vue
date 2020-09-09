@@ -852,8 +852,8 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       // #ifdef H5
-      console.log(this.vditor.getValue(), this.vditor.getValue().toString());
       this.textAreaValue = this.vditor.getValue();
+      console.log(this.textAreaValue);
       // #endif
 
       if (!this.categoryId) {
@@ -1395,11 +1395,9 @@ export default {
       this.vditor.setValue(this.textAreaValue);
     });
     uni.$on('clickImage', item => {
-      console.log(item);
-      this.vditor.insertValue(`![${item.name}](${item.path})  `);
+      this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
     });
     uni.$on('clickAttach', item => {
-      console.log(item);
       this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
     });
     // #endif

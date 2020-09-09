@@ -161,6 +161,9 @@ import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { mapState, mapMutations } from 'vuex';
+// #ifdef H5
+import { setCookie } from '@/utils/setCookie';
+// #endif
 
 export default {
   components: { uniPopupDialog },
@@ -222,7 +225,10 @@ export default {
       this.$refs.popup.open();
     },
     logout() {
-      this.$store.dispatch('session/logout').then(() => window.location.reload());
+      this.$store.dispatch('session/logout').then(() => {
+        setCookie('token', '', -1);
+        window.location.reload();
+      });
     },
     handleClickOk() {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(() => {
@@ -241,7 +247,10 @@ export default {
         });
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/logout').then(() => window.location.reload());
+        this.$store.dispatch('session/logout').then(() => {
+          setCookie('token', '', -1);
+          window.location.reload();
+        });
         // #endif
       });
     },
