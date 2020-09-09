@@ -1,3 +1,7 @@
+// #ifdef H5
+import { setCookie } from '@/utils/setCookie';
+// #endif
+
 module.exports = {
   methods: {
     /**
@@ -158,10 +162,6 @@ module.exports = {
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            const date = new Date();
-            date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
-            const expires = `expires=${date.toGMTString()}`;
-            document.cookie = `token=${res.data.data.attributes.access_token};${expires}`;
             console.log('小程序无感注册成功：', res);
             this.logind();
           }
@@ -235,10 +235,9 @@ module.exports = {
         .dispatch('session/h5Login', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            const date = new Date();
-            date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
-            const expires = `expires=${date.toGMTString()}`;
-            document.cookie = `token=${res.data.data.attributes.access_token};${expires}`;
+            // #ifdef H5
+            setCookie('token', res.data.data.attributes.access_token, 30);
+            // #endif
             console.log('登录成功：', res);
             this.logind();
             uni.showToast({
@@ -362,11 +361,10 @@ module.exports = {
         .dispatch('session/h5Register', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            const date = new Date();
-            date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
-            const expires = `expires=${date.toGMTString()}`;
-            document.cookie = `token=${res.data.data.attributes.access_token};${expires}`;
-            console.log('小程序无感注册成功：', res);
+            // #ifdef H5
+            setCookie('token', res.data.data.attributes.access_token, 30);
+            // #endif
+            console.log('注册成功：', res);
             this.logind();
             uni.showToast({
               title: resultDialog,
