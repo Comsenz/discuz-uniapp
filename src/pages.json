@@ -12,6 +12,18 @@
       }
     },
     {
+      "path": "pages/user/grant-login",
+      "style": {
+        "navigationBarTitleText": "PC登录"
+      }
+    },
+    {
+      "path": "pages/user/pc-login",
+      "style": {
+        "navigationBarTitleText": "PC登录"
+      }
+    },
+    {
       "path": "pages/share/weixinchome",
       "style": {
         "navigationBarTitleText": "相册选取"

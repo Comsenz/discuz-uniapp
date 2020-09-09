@@ -34,6 +34,12 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
+          <image
+            class="login-box-ft-con-image"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump3PhoneLogin"
+          />
         </view>
         <view>
           <!-- 开启注册功能才显示 -->
@@ -72,7 +78,7 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-import { SITE_PAY } from '@/common/const';
+import { SITE_PAY, DISCUZ_REQUEST_HOST } from '@/common/const';
 
 export default {
   mixins: [user, loginModule],
@@ -133,6 +139,17 @@ export default {
     },
     jump2findpwd() {
       this.jump2findpwdPage();
+    },
+    wxh5Login: (context, payload = {}) => {
+      console.log(payload);
+      const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/pc-login`);
+      window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
+    },
+    jump3PhoneLogin() {
+      this.wxh5Login();
+      uni.navigateTo({
+        url: '/pages/user/pc-login',
+      });
     },
   },
 };
