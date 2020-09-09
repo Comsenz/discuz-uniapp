@@ -1188,6 +1188,7 @@ export default {
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        console.log(res, '这是主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -1204,6 +1205,10 @@ export default {
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
+        if (res.threadVideo) {
+          this.fileId = res.threadVideo.file_id;
+        }
+
         // this.uploadFile = res.firstPost.images;
         // 微信里面的定位
         if (option.name) {
