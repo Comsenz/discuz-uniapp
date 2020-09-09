@@ -22,7 +22,7 @@
 <script>
 // eslint-disable
 import Vditor from 'vditor';
-import 'vditor/src/assets/scss/index.scss';
+import './index.css';
 import { AtIcon, TopicIcon, EmojiIcon } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';

@@ -393,9 +393,9 @@ export default {
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
+          if (res && res.access_token) {
             // #ifdef H5
-            setCookie('token', res.data.data.attributes.access_token, 30);
+            setCookie('token', res.access_token, 30);
             // #endif
             console.log('手机号登录成功：', res);
             this.logind();
