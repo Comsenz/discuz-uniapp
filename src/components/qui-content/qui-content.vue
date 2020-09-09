@@ -60,15 +60,19 @@
               {{ themeContent }}
             </navigator>
           </view>
-          <view v-else>
+          <view :class="themPayBtn ? 'themeItem__content__uparse' : ''" v-else>
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
               size="30"
-              style="float: left;margin-right: 10rpx;"
               v-if="themPayBtn"
+              class="themeItem__content__fufei"
             ></qui-icon>
-            <qui-uparse :content="themeContent"></qui-uparse>
+            <qui-uparse
+              :content="themeContent"
+              :them-pay-btn="themPayBtn"
+              class="themeItem__content__wxParse"
+            ></qui-uparse>
           </view>
         </view>
         <view
@@ -891,5 +895,15 @@ export default {
   height: 100%;
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
+}
+.themeItem__content__uparse {
+  position: relative;
+}
+/deep/ .themeItem__content__uparse .themeItem__content__wxParse {
+  text-indent: 40rpx;
+}
+.themeItem__content__uparse .themeItem__content__fufei {
+  position: absolute;
+  top: -2rpx;
 }
 </style>

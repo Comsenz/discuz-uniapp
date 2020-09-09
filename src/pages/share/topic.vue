@@ -342,7 +342,6 @@ export default {
         } else if (!this.content && this.contentImg.length === 1) {
           this.constyle = 728;
           this.paddingtop = 90;
-          console.log(obj);
           this.template = new Cardd().palette(obj);
           // 多图片没标题内容海报
         } else if (this.content && this.contentImg.length > 1) {

@@ -139,6 +139,7 @@ import { SITE_PAY } from '@/common/const';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
+import { setCookie } from '@/utils/setCookie';
 // #endif
 
 export default {
@@ -392,11 +393,10 @@ export default {
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
-            const date = new Date();
-            date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
-            const expires = `expires=${date.toGMTString()}`;
-            document.cookie = `token=${res.data.data.attributes.access_token};${expires}`;
+          if (res && res.access_token) {
+            // #ifdef H5
+            setCookie('token', res.access_token, 30);
+            // #endif
             console.log('手机号登录成功：', res);
             this.logind();
             uni.showToast({
