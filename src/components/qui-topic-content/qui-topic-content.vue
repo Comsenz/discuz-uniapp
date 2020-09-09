@@ -91,6 +91,33 @@
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
           <qui-uparse :content="themeContent"></qui-uparse>
+          <view class="themeItem__content__text__ask">
+            <view class="themeItem__header" style="padding: 30rpx 0;">
+              <view class="themeItem__header__img" @click="personJump">
+                <qui-avatar
+                  :user="{ username: userName, avatarUrl: avatarUrl }"
+                  :is-real="isReal"
+                />
+              </view>
+              <view class="themeItem__header__title">
+                <view class="themeItem__header__title__top" @click="personJump">
+                  <text class="themeItem__header__title__username">{{ userName }}</text>
+                  <text
+                    class="themeItem__header__title__isAdmin"
+                    v-for="(group, index) in userRole"
+                    :key="index"
+                    :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
+                  >
+                    {{ group.isDisplay ? `${group.name}` : '' }}
+                  </text>
+                </view>
+                <view class="themeItem__header__title__time">{{ localTime }}</view>
+              </view>
+              <view class="themeItem__header__opera">
+                <image src="@/static/yihuida.svg" class="addAsk"></image>
+              </view>
+            </view>
+          </view>
         </view>
         <view
           class="theme__content__videocover"
@@ -670,6 +697,13 @@ export default {
         margin-bottom: 10rpx;
         vertical-align: top;
       }
+      .addAsk {
+        position: absolute;
+        top: 40rpx;
+        left: 590rpx;
+        width: 60rpx;
+        height: 60rpx;
+      }
     }
   }
 
@@ -721,6 +755,16 @@ export default {
         display: inline-block;
         width: 28rpx;
         height: 28rpx;
+      }
+      &__ask {
+        position: relative;
+        width: 670rpx;
+        height: 381rpx;
+        padding: 10px;
+        font-size: 12px;
+        color: var(--qui-FC-333);
+        background-color: var(--qui-BG-ED);
+        // border-radius: 5px;
       }
     }
 
