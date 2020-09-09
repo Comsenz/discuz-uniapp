@@ -7,8 +7,7 @@
       }"
     >
       <view
-        class="ft-box "
-        :class="{ select: true, active: index === footerIndex }"
+        :class="['ft-box', { active: index === footerIndex }, `ft-box${item.id}`]"
         v-for="(item, index) in tabs"
         :key="index"
         @click="select(item, index)"
@@ -17,19 +16,11 @@
           class="ft-box-icon"
           :name="item.tabsIcon"
           size="34"
-          :class="{ select: true, active: index === footerIndex }"
+          :class="redCircle && item.id === 3 ? 'message' : ''"
         ></qui-icon>
-        <text class="ft-box-content" :class="{ select: true, active: index === footerIndex }">
+        <view class="ft-box-content">
           {{ item.tabsName }}
-        </text>
-        <view
-          v-if="redCircle && item.id === 2"
-          name="icon-circle"
-          class="red-circle red-circle-wx"
-        ></view>
-        <!-- <view v-if="redCircle && item.id === 2" class="red-num">
-          {{ user.unreadNotifications }}
-        </view> -->
+        </view>
       </view>
 
       <view class="ft-box-spacal">
@@ -42,14 +33,8 @@
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="handleClick(item)">
-                <qui-icon
-                  class="content-image"
-                  :name="item.icon"
-                  size="56"
-                  color="#777777"
-                ></qui-icon>
+                <qui-icon class="content-image" :name="item.icon" size="56" color="#777"></qui-icon>
               </view>
-              <!-- <image :src="item.icon" class="content-image" mode="widthFix" /> -->
             </view>
             <text class="popup-share-content-text">{{ item.text }}</text>
           </view>
@@ -112,16 +97,22 @@ export default {
           // routePath: 'pages/home/index', // 仅用作标识不用来跳转
         },
         {
+          tabsName: 'home.find',
+          tabsIcon: 'icon-home',
+          id: 2,
+          url: '/pages/find/index',
+        },
+        {
           tabsName: 'home.tabsNews',
           tabsIcon: 'icon-message',
-          id: 2,
+          id: 3,
           url: '/pages/notice/index',
           // routePath: 'pages/notice/index', // 仅用作标识不用来跳转
         },
         {
           tabsName: 'home.tabsMy',
           tabsIcon: 'icon-mine',
-          id: 3,
+          id: 4,
           url: '/pages/my/index',
           // routePath: 'pages/my/index', // 仅用作标识不用来跳转
         },
@@ -181,29 +172,12 @@ export default {
       this.setFooterIndex(parseInt(index, 10));
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
-      // console.log(this.sel, 'this.sel');
-      // if (!item.url) {
-      //   return;
-      // }
-      // const currentPage = getCurrentPages();
-      // if (
-      //   item.tabsName === this.i18n.t('home.tabsCircle') &&
-      //   currentPage[0].route === 'pages/home/index'
-      // ) {
-      //   const len = currentPage.length;
-      //   uni.navigateBack({
-      //     delta: len,
-      //   });
-      // }
     },
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
     // 首页底部发帖按钮弹窗
     footerOpen() {
-      // uni.navigateTo({
-      //   url: '/pages/share/weixinchome',
-      // });
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -216,14 +190,12 @@ export default {
         return;
       }
       if (this.forums.other.publish_need_real_name) {
-        // this.$refs.toast.show({ message: this.i18n.t('home.needRealname') });
         this.sureTip = this.i18n.t('home.needRealname');
         this.$refs.surePopup.open();
         this.sureType = '0';
         return;
       }
       if (this.forums.other.publish_need_bind_phone) {
-        // this.$refs.toast.show({ message: this.i18n.t('home.needPhone') });
         this.sureTip = this.i18n.t('home.needPhone');
         this.$refs.surePopup.open();
         this.sureType = '1';
@@ -347,75 +319,58 @@ export default {
   z-index: 100;
   display: flex;
   width: 100%;
-  height: 90rpx;
+  height: 100rpx;
   background-color: --color(--qui-BG-2);
   box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
-  justify-content: space-around;
 }
 .ft-box {
   position: relative;
-  // display: flex;
   width: 22%;
-  height: 90rpx;
+  height: 100rpx;
+  padding-top: 18rpx;
   padding-left: 40rpx;
   font-size: $fg-f3;
-  // margin-top: 23rpx;
-  line-height: 90rpx;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
+  text-align: center;
+  box-sizing: border-box;
 }
-.ft-box-icon {
-  align-self: center;
-  height: 50rpx;
-  margin-top: 23rpx;
-  // background: #c33;
+.ft-box3 {
+  margin-left: 150rpx;
 }
 .ft-box-content {
-  position: absolute;
-  align-self: center;
-  margin-top: 32rpx;
-  margin-left: 21rpx;
-  line-height: 26rpx;
   color: --color(--qui-FC-777);
-  text-align: center;
 }
 .ft-box-spacal {
-  position: relative;
-  // top: -15rpx;
-  // width: 105rpx;
-  // height: 89rpx;
+  position: absolute;
+  top: -5rpx;
+  left: 50%;
+  width: 105rpx;
+  height: 105rpx;
+  margin-left: -52rpx;
   border-radius: 50%;
-  // box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
 }
 .ft-box-spacal-icon {
   position: relative;
-  width: 64rpx;
-  height: 64rpx;
-  margin: 13rpx 20rpx 0 0;
+  width: 89rpx;
+  height: 89rpx;
+  margin: 8rpx 0 0 8rpx;
 }
-.active {
+.ft-box.active,
+.ft-box.active .ft-box-content {
   font-weight: bold;
   color: --color(--qui-TAB);
 }
-.red-circle {
+.message {
+  position: relative;
+}
+.message:after {
   position: absolute;
-  top: 20rpx;
-  left: calc(29% + 12rpx);
-  width: 14rpx;
-  height: 14rpx;
-  background: --color(--qui-BG-FF);
+  top: -2px;
+  right: -3px;
+  width: 5px;
+  height: 5px;
+  background: --color(--qui-RED);
   border-radius: 50%;
+  content: '';
 }
-.red-circle-wx {
-  /* #ifdef MP-WEIXIN */
-  left: calc(29% + 24rpx);
-  /* #endif */
-}
-// .red-num {
-//   position: absolute;
-//   top: -22rpx;
-//   left: calc(23% + 12rpx);
-//   color: --color(--qui-BOR-FFF);
-// }
 </style>

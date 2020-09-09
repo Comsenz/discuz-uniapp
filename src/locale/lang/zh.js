@@ -227,6 +227,8 @@ export default {
     user_deny: '对方设置了屏蔽，无法进行此操作',
   },
   topic: {
+    permissionPurchase: '权限购买',
+    topic: '话题',
     topicPageTitle: '内容详情页',
     commentPageTitle: '评论详情页',
     topictitle: '#话题#',
@@ -340,6 +342,7 @@ export default {
     sticky: '置顶',
     cancel: '取消',
     tabsCircle: '首页',
+    find: '发现',
     tabsNews: '消息',
     tabsMy: '我',
     filterPlate: '版块',
