@@ -392,12 +392,18 @@ export default {
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
-          console.log(res);
-          this.logind();
-          uni.showToast({
-            title: this.i18n.t('user.loginSuccess'),
-            duration: 2000,
-          });
+          if (res && res.data && res.data.data && res.data.data.id) {
+            const date = new Date();
+            date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
+            const expires = `expires=${date.toGMTString()}`;
+            document.cookie = `token=${res.data.data.attributes.access_token};${expires}`;
+            console.log('手机号登录成功：', res);
+            this.logind();
+            uni.showToast({
+              title: this.i18n.t('user.loginSuccess'),
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
           console.log(err);

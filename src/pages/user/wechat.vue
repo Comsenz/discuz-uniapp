@@ -59,6 +59,11 @@ export default {
             }
           }
           if (res && res.data && res.data.data && res.data.data.id) {
+            const date = new Date();
+            date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
+            const expires = `expires=${date.toGMTString()}`;
+            document.cookie = `token=${res.data.data.attributes.access_token};${expires}`;
+            console.log('登录成功：', res);
             this.logind();
             if (this.user && this.user.paid) {
               this.isPaid = this.user.paid;
