@@ -1,3 +1,7 @@
+// #ifdef H5
+import { setCookie } from '@/utils/setCookie';
+// #endif
+
 module.exports = {
   methods: {
     /**
@@ -167,6 +171,7 @@ module.exports = {
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
+            console.log('小程序无感注册成功：', res);
             this.logind();
           }
         })
@@ -239,6 +244,9 @@ module.exports = {
         .dispatch('session/h5Login', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
+            // #ifdef H5
+            setCookie('token', res.data.data.attributes.access_token, 30);
+            // #endif
             console.log('登录成功：', res);
             this.logind();
             uni.showToast({
@@ -361,40 +369,44 @@ module.exports = {
     register(params, resultDialog) {
       this.$store
         .dispatch('session/h5Register', params)
-        .then(result => {
-          if (result && result.data && result.data.data && result.data.data.id) {
+        .then(res => {
+          if (res && res.data && res.data.data && res.data.data.id) {
+            // #ifdef H5
+            setCookie('token', res.data.data.attributes.access_token, 30);
+            // #endif
+            console.log('注册成功：', res);
             this.logind();
             uni.showToast({
               title: resultDialog,
               duration: 2000,
             });
           }
-          if (result && result.data && result.data.errors) {
-            if (result.data.errors[0].status === '422') {
+          if (res && res.data && res.data.errors) {
+            if (res.data.errors[0].status === '422') {
               uni.showToast({
                 icon: 'none',
-                title: result.data.errors[0].detail[0],
+                title: res.data.errors[0].detail[0],
                 duration: 2000,
               });
             }
-            if (result.data.errors[0].code === 'register_close') {
+            if (res.data.errors[0].code === 'register_close') {
               uni.showToast({
                 icon: 'none',
                 title: this.i18n.t('core.register_close'),
                 duration: 2000,
               });
             }
-            if (result.data.errors[0].code === 'register_validate') {
+            if (res.data.errors[0].code === 'register_validate') {
               uni.showToast({
                 icon: 'none',
                 title: this.i18n.t('core.register_validate'),
                 duration: 2000,
               });
             }
-            if (result.data.errors[0].code === 'setting_fill_register_reason') {
+            if (res.data.errors[0].code === 'setting_fill_register_reason') {
               uni.showToast({
                 icon: 'none',
-                title: result.data.errors[0].detail[0],
+                title: res.data.errors[0].detail[0],
                 duration: 2000,
               });
             }
