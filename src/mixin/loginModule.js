@@ -75,6 +75,15 @@ module.exports = {
         url,
       });
     },
+    /**
+     * 跳转到uc登录页面
+     */
+    jump2UcLoginPage() {
+      const url = `/pages/user/uc-login?url=${this.url}`;
+      uni.navigateTo({
+        url,
+      });
+    },
     MPLogin() {},
     /**
      * 跳转到找回密码页面
@@ -314,6 +323,7 @@ module.exports = {
       // #ifdef H5
       // 微信内置浏览器注册必传参数
       const token = this.$store.getters['session/get']('token');
+      console.log('token----', token);
       if (token && token !== '') {
         params.data.attributes.token = token;
       }

@@ -76,7 +76,7 @@
             ]"
             lazy-load
             src="@/static/UC.svg"
-            @click="jump3Login"
+            @click="jump2UcLogin"
           />
           <!-- #endif -->
           <!-- #ifdef H5 -->
@@ -109,7 +109,7 @@
             ]"
             lazy-load
             src="@/static/UC.svg"
-            @click="jump3Login"
+            @click="jump2UcLogin"
           />
           <!-- #endif -->
         </view>
@@ -444,10 +444,8 @@ export default {
     jump2Login() {
       this.jump2LoginPage();
     },
-    jump3Login() {
-      uni.navigateTo({
-        url: '/pages/user/uc-login',
-      });
+    jump2UcLogin() {
+      this.jump2UcLoginPage();
     },
     jump2findpwd() {
       this.jump2findpwdPage();

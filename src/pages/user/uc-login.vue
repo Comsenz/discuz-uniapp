@@ -105,11 +105,14 @@ export default {
       ],
     };
   },
-  onLoad() {
+  onLoad(params) {
     this.$store.dispatch('forum/setError', {
       code: 'user_login',
       status: 200,
     });
+
+    this.getPageParams(params);
+
     this.$u.event.$on('logind', () => {
       const url = this.$store.getters['session/get']('url');
       if (this.user) {
@@ -192,10 +195,10 @@ export default {
           })
           .catch(err => {
             console.log(err, '登录失败');
-            if (err.data.errors[0].status === 400 && err.data.errors[0].code === 'no_bind_user') {
-              // #ifdef MP-WEIXIN
-              this.refreshParams();
-              // #endif
+            if (err && err.data && err.data.errors && err.data.errors[0].code === 'no_bind_user') {
+              // // #ifdef MP-WEIXIN
+              // this.refreshParams();
+              // // #endif
               this.$store.dispatch('session/setToken', err.data.errors[0].token);
               console.log(err.data.errors[0].token);
               uni.navigateTo({
