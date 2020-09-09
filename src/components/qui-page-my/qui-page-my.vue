@@ -49,6 +49,9 @@
           <navigator url="/pages/my/favorite" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myfavorite')" arrow></qui-cell-item>
           </navigator>
+          <navigator url="/pages/questions/index" hover-class="none">
+            <qui-cell-item :title="i18n.t('profile.mycontent')" arrow></qui-cell-item>
+          </navigator>
           <navigator url="/pages/my/shield" hover-class="none">
             <qui-cell-item
               :title="i18n.t('profile.myshield')"

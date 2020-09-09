@@ -7,6 +7,8 @@
       v-if="themeEssence && themeType == '1'"
       lazy-load
     ></image>
+    <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load></image>
+
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
@@ -33,7 +35,15 @@
             <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn"></view>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
-          <view class="themeItem__header__title__time">{{ localTime }}</view>
+          <view class="themeItem__header__title__time">
+            {{ localTime }}
+            <view class="themeItem__header__title__questions" v-if="themeType == 4">
+              {{ i18n.t('home.putQuestion') }}
+            </view>
+            <view class="themeItem__header__title__questions" v-if="themeType == 5">
+              {{ i18n.t('home.answer') }}
+            </view>
+          </view>
         </view>
       </view>
 
@@ -60,6 +70,33 @@
               {{ themeContent }}
             </navigator>
           </view>
+          <!-- 提问 -->
+          <view class="themeItem__QA" v-if="threadType === 1">
+            <view class="themeItem_questions">
+              白展堂
+            </view>
+            <view class="themeItem_put">{{ i18n.t('home.to') }}</view>
+            <view class="themeItem_to">佟掌柜</view>
+            <view class="themeItem_ask">{{ i18n.t('home.putQuestions') }}</view>
+            <navigator class="navPost">
+              {{ themeContent }}
+            </navigator>
+            <view class="themeItem_askback">
+              请问今年疫情对经济影响大吗？会不会引发经济危机？
+              <view class="themeItem_watch">
+                <view class="themItem_watch_num">
+                  643
+                </view>
+                <view class="themItem_watch_gather">
+                  {{ i18n.t('home.gather') }}
+                </view>
+                <view class="themItem_watch_money">
+                  ¥2190.0000
+                </view>
+              </view>
+            </view>
+          </view>
+          <!-- 回答 -->
           <view v-else>
             <qui-icon
               name="icon-fufei"
@@ -329,7 +366,7 @@ export default {
       type: String,
       default: '',
     },
-    // 内容类型：0 文字 1 帖子 2 视频 3 图片
+    // 内容类型：0 文字 1 帖子 2 视频 3 图片 4 提问 5 回答
     threadType: {
       type: Number,
       default: 0,
@@ -460,6 +497,7 @@ export default {
       autoplay: false,
       sun: true,
       appear: false,
+      blocKwidth: '',
     };
   },
 
@@ -623,6 +661,13 @@ export default {
     left: 679rpx;
     width: 36rpx;
     height: 42rpx;
+  }
+  .addAsk {
+    position: absolute;
+    top: 40rpx;
+    left: 660rpx;
+    width: 60rpx;
+    height: 60rpx;
   }
 }
 .themeItem {
@@ -889,5 +934,32 @@ export default {
   height: 100%;
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
+}
+.themeItem__QA,
+.themeItem_put,
+.themeItem_to,
+.themeItem_ask,
+.themeItem_questions,
+.themeItem__header__title__questions,
+.themeItem_watch,
+.themItem_watch_num,
+.themItem_watch_gather,
+.themItem_watch_money {
+  display: inline-block;
+}
+.themeItem-put,
+.themeItem__header__title__questions {
+  margin: 0 4rpx;
+}
+.themeItem_askback {
+  padding: 10px;
+  font-size: 12px;
+  color: var(--qui-FC-333);
+  background-color: var(--qui-BG-ED);
+  border-radius: 5px;
+}
+.themItem_watch_num,
+.themItem_watch_money {
+  color: --color(--qui-RED);
 }
 </style>

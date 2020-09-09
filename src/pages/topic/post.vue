@@ -3,6 +3,7 @@
     <view class="post-box" v-if="loadStatus">
       <view class="post-box__title" v-if="type === 1">
         <input
+          v-if="type === 1"
           class="post-box__title-input"
           type="text"
           v-model="postTitle"
@@ -10,7 +11,18 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <view class="post-box__hd">
+      <view class="post-box__titles" v-if="type === 5">
+        <qui-cell-item
+          v-if="type === 5"
+          :title="i18n.t('discuzq.post.askedUsers')"
+          slot-right
+          arrow
+          @tap="changeAvatar"
+        >
+          <qui-avatar class="my-profile__avatar" />
+        </qui-cell-item>
+      </view>
+      <view class="post-box__hd" v-if="type !== 5">
         <view class="post-box__hd-l">
           <qui-icon
             class="post-box__hd-l__icon"
@@ -55,7 +67,11 @@
           id="textarea"
           ref="textarea"
           class="post-box__con-text"
-          :placeholder="i18n.t('discuzq.post.placeholder')"
+          :placeholder="
+            type !== 5
+              ? i18n.t('discuzq.post.placeholder')
+              : i18n.t('discuzq.post.placeholderQuestion')
+          "
           placeholder-class="textarea-placeholder"
           v-model="textAreaValue"
           auto-height="true"
@@ -234,13 +250,33 @@
         :title="i18n.t('discuzq.post.paymentAmount')"
         :addon="showPrice"
         arrow
-        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
+        v-if="type !== 0 && type !== 5 && showHidden && forums.paycenter.wxpay_close"
+        @click="cellClick('pay')"
+      ></qui-cell-item>
+      <qui-cell-item
+        v-if="type === 5"
+        :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.askingPrice')"
+        :addon="showPrice"
+        arrow
+        @click="cellClick('pay')"
+      ></qui-cell-item>
+      <view class="uni-list-cell uni-list-cell-pd">
+        <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.allowonLookers') }}</view>
+        <switch checked />
+      </view>
+      <qui-cell-item
+        v-if="type === 5"
+        :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.watchThePrice')"
+        :addon="showPrice"
+        arrow
         @click="cellClick('pay')"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0"
+        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 5"
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
@@ -853,7 +889,8 @@ export default {
         this.textShow = true;
       }
     },
-    cellClick(type) {
+    cellClick(type,) {
+      console.log(type, 'typetypetypetype');
       this.setType = type;
       if (type === 'word') {
         this.$refs.popup.open();
@@ -862,6 +899,16 @@ export default {
       }
       this.textShow = false;
     },
+    // watchThePriceClick(type) {
+    //   this.setType = type;
+    //   this.$refs.popupBtm.open();
+    //   this.textShow = false;
+    // },
+    // askingPriceClick(type) {
+    //   this.setType = type;
+    //   this.$refs.popupBtm.open();
+    //   this.textShow = false; 
+    // },
     cancel() {
       this.$refs.popupBtm.close();
       this.textShow = true;
@@ -1498,6 +1545,10 @@ export default {
       this.captcha.show();
       // #endif
     },
+    // 问答贴点击头像跳转选择被提问人
+    changeAvatar() {
+     uni.navigateTo({ url: '/pages/user/at-member?name=select' });
+    }
   },
   onLoad(option) {
     // #ifdef H5
@@ -1656,6 +1707,9 @@ export default {
       padding-right: 80rpx;
       font-size: $fg-f5;
     }
+  }
+  &__titles {
+    margin-bottom: 30rpx;
   }
   &__hd {
     display: flex;
@@ -1898,6 +1952,15 @@ export default {
 /deep/ .cell-item__body__content-title {
   color: --color(--qui-FC-777);
 }
+/deep/ .uni-list-cell {
+  display: flex;
+  justify-content: space-between;
+  height: 100rpx;
+  align-items: center;
+  font-size: $fg-f4;
+  color: --color(--qui-FC-777);
+  border-bottom: 2rpx solid #ededed;
+}
 
 .popup-dialog {
   width: 670rpx;
@@ -1976,5 +2039,12 @@ export default {
   line-height: 60rpx;
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
+}
+.my-profile__avatar {
+  position: absolute;
+  top: 13rpx;
+  right: 44rpx;
+  width: 75rpx;
+  height: 75rpx;
 }
 </style>

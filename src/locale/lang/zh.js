@@ -93,6 +93,8 @@ export default {
       selectedMember: '搜索成员',
       notSelected: '尚未选',
       selected: '@ 已选',
+      selectUser: '选择被提问用户',
+      selectedUser: '已选',
     },
     role: {
       noRole: '暂无角色',
@@ -104,6 +106,7 @@ export default {
       exceed: '已超出{num}个字',
       word: '{num}字',
       placeholder: '您想说的..',
+      placeholderQuestion: '您想发布的问题内容..',
       post: '发布',
       paymentAmount: '付费金额',
       freeWordCount: '免费的查看字数',
@@ -125,7 +128,11 @@ export default {
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
       pleaseEnterAPostTitle: '请输入帖子标题',
+      askedUsers: '被提问用户',
       addPosition: '添加位置',
+      askingPrice: '提问价格',
+      allowonLookers: '允许围观',
+      watchThePrice: '围观价格',
     },
   },
   uploader: {
@@ -364,6 +371,11 @@ export default {
     needPhone: '发布内容需要绑定手机号，请在我的资料页进行手机绑定',
     record: '网站备案信息:',
     copyright: 'Powered by Discuz! Q',
+    to: '向',
+    putQuestions: '提问:',
+    putQuestion: '提问',
+    answer: '回答',
+    gather: '人已围观,问题价值',
   },
   // 站点管理页面
   manage: {
@@ -411,6 +423,9 @@ export default {
     repliedMe: ' 回复了我',
     like: '点赞我的',
     likedMe: ' 点赞了我',
+    answersMe: '回答了我',
+    questions: '提问了我',
+    questionsAnswers: '问答通知',
     reward: '财务通知',
     rewardedMe: ' 打赏了我',
     payedMe: ' 支付了我',
@@ -606,6 +621,7 @@ export default {
     mywallet: '我的钱包',
     myfavorite: '我的收藏',
     myshield: '我的屏蔽',
+    mycontent: '我的内容',
     circleinfo: '站点信息',
     search: '搜索',
     privateMessage: '私信',
@@ -788,5 +804,9 @@ export default {
     cancel: '取消',
     enterOtherReason: '请输入其他理由',
     reportSucceed: '举报成功',
+  },
+  questions: {
+    myQuestion: '我的提问',
+    myAnswer: ' 我的回答',
   },
 };

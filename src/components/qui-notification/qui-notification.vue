@@ -41,6 +41,9 @@
                     <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
                       {{ i18n.t('notice.likedMe') }}
                     </text>
+                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
+                      {{ i18n.t('notice.likedMe') }}
+                    </text>
                     <text
                       class="list-box__notice__hl-info-title"
                       v-if="item.type === 'rewarded' && item.order_type === 3"

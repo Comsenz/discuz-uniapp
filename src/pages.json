@@ -140,6 +140,12 @@
       }
     },
     {
+      "path": "pages/questions/index",
+      "style": {
+        "navigationBarTitleText": "我的内容"
+      }
+    },
+    {
       "path": "pages/my/shield",
       "style": {
         "navigationBarTitleText": "屏蔽设置"

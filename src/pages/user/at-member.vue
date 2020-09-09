@@ -61,6 +61,7 @@
     </view>
     <view class="qui-at-member-page-box__ft">
       <qui-button
+        v-if="select !== select"
         size="large"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
         :disabled="Boolean(checkAvatar.length < 1)"
@@ -70,6 +71,20 @@
         checkAvatar.length &lt; 1
         ? i18n.t('discuzq.atMember.notSelected')
         : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
+        }}
+      </qui-button>
+
+      <qui-button
+        v-if="select === select"
+        size="large"
+        :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
+        :disabled="Boolean(checkAvatar.length < 1)"
+        @click="getCheckMember"
+      >
+        {{
+        checkAvatar.length &lt; 1
+        ? i18n.t('discuzq.atMember.notSelected')
+        : i18n.t('discuzq.atMember.selectedUser') + '(' + checkAvatar.length + ')'
         }}
       </qui-button>
     </view>
@@ -91,6 +106,7 @@ export default {
       searchValue: '', // 搜索值
       pageNum: 1, // 页面
       meta: {}, // 接口返回meta值
+      select: '', // 选择被提问人
     };
   },
   computed: {
@@ -207,10 +223,17 @@ export default {
       });
     },
   },
-  onLoad() {
-    uni.setNavigationBarTitle({
-      title: this.i18n.t('discuzq.atMember.atTitle'),
-    });
+  onLoad(option) {
+    this.select = option.name;
+    if (option.name === 'select') {
+      uni.setNavigationBarTitle({
+        title: this.i18n.t('discuzq.atMember.selectUser'),
+      });
+    } else {
+      uni.setNavigationBarTitle({
+        title: this.i18n.t('discuzq.atMember.atTitle'),
+      });
+    }
     this.getFollowMember(1);
     this.setAtMember([]);
   },
