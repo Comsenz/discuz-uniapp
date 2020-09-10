@@ -468,11 +468,15 @@ export default {
     // 跳支付页面
     submit() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -485,6 +489,10 @@ export default {
       });
     },
     toLogin() {
+      uni.setStorage({
+        key: 'page',
+        data: getCurUrl(),
+      });
       this.handleLogin();
     },
     // 调取用户信息取消弹框

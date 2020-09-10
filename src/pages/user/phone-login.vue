@@ -68,6 +68,16 @@
             src="@/static/zhanghao.svg"
             @click="jump2Login"
           />
+          <image
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter && !isLogin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
+          />
           <!-- #endif -->
           <!-- #ifdef H5 -->
           <image
@@ -90,6 +100,16 @@
             lazy-load
             src="@/static/zhanghao.svg"
             @click="jump2Login"
+          />
+          <image
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter && isWeixin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
           />
           <!-- #endif -->
         </view>
@@ -164,7 +184,6 @@ export default {
       disabled: true, // 发送验证码按钮的状态
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
-      url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
@@ -178,9 +197,8 @@ export default {
       // #endif
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.getForum();
-    this.getPageParams(params);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -208,8 +226,16 @@ export default {
         this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
+        let url = '';
+        uni.getStorage({
+          key: 'page',
+          success(resData) {
+            url = resData.data;
+          },
+        });
+        console.log('url', url);
         uni.redirectTo({
-          url: this.url,
+          url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
@@ -430,6 +456,11 @@ export default {
     jump2Login() {
       this.jump2LoginPage();
     },
+    jump3Login() {
+      uni.navigateTo({
+        url: '/pages/user/uc-login',
+      });
+    },
     jump2findpwd() {
       this.jump2findpwdPage();
     },
@@ -555,6 +586,7 @@ page {
     &-image {
       width: 100rpx;
       height: 100rpx;
+      margin-left: 40rpx;
     }
 
     &-right {

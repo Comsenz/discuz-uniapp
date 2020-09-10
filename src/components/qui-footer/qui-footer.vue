@@ -205,6 +205,10 @@ export default {
       //   url: '/pages/share/weixinchome',
       // });
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif

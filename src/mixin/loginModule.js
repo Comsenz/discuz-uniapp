@@ -16,29 +16,10 @@ module.exports = {
       });
     },
     /**
-     * 获取登录注册页面传递的参数
-     */
-    getPageParams(params) {
-      const { url, commentId } = params;
-      if (url) {
-        let pageUrl;
-        if (url.substr(0, 1) !== '/') {
-          pageUrl = `/${url}`;
-        } else {
-          pageUrl = url;
-        }
-        if (commentId) {
-          this.url = `${pageUrl}&commentId=${commentId}`;
-        } else {
-          this.url = pageUrl;
-        }
-      }
-    },
-    /**
      * 跳转到手机号码登录页面
      */
     jump2PhoneLoginPage() {
-      const url = `/pages/user/phone-login?url=${this.url}`;
+      const url = 'pages/user/phone-login';
       uni.navigateTo({
         url,
       });
@@ -47,7 +28,7 @@ module.exports = {
      * 跳转到登录页面
      */
     jump2LoginPage() {
-      const url = `/pages/user/login?url=${this.url}`;
+      const url = '/pages/user/login';
       uni.navigateTo({
         url,
       });
@@ -56,7 +37,7 @@ module.exports = {
      * 跳转到注册页面
      */
     jump2RegisterPage() {
-      const url = `/pages/user/register?url=${this.url}`;
+      const url = '/pages/user/register';
       uni.navigateTo({
         url,
       });
@@ -65,7 +46,7 @@ module.exports = {
      * 跳转到登录绑定页面
      */
     jump2LoginBindPage() {
-      const url = `/pages/user/login-bind?url=${this.url}`;
+      const url = '/pages/user/login-bind';
       uni.navigateTo({
         url,
       });
@@ -74,7 +55,7 @@ module.exports = {
      * 跳转到注册绑定页面
      */
     jump2RegisterBindPage() {
-      const url = `/pages/user/register-bind?url=${this.url}`;
+      const url = '/pages/user/register-bind';
       uni.navigateTo({
         url,
       });
