@@ -852,8 +852,8 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       // #ifdef H5
-      console.log(this.vditor.getValue(), this.vditor.getValue().toString());
       this.textAreaValue = this.vditor.getValue();
+      console.log(this.textAreaValue);
       // #endif
 
       if (!this.categoryId) {
@@ -1188,6 +1188,7 @@ export default {
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        console.log(res, '这是主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -1204,6 +1205,10 @@ export default {
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
+        if (res.threadVideo) {
+          this.fileId = res.threadVideo.file_id;
+        }
+
         // this.uploadFile = res.firstPost.images;
         // 微信里面的定位
         if (option.name) {
@@ -1395,11 +1400,9 @@ export default {
       this.vditor.setValue(this.textAreaValue);
     });
     uni.$on('clickImage', item => {
-      console.log(item);
-      this.vditor.insertValue(`![${item.name}](${item.path})  `);
+      this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
     });
     uni.$on('clickAttach', item => {
-      console.log(item);
       this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
     });
     // #endif

@@ -22,9 +22,10 @@
 <script>
 // eslint-disable
 import Vditor from 'vditor';
-import 'vditor/src/assets/scss/index.scss';
+import './index.css';
 import { AtIcon, TopicIcon, EmojiIcon } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
 
 export default {
   data() {
@@ -77,13 +78,10 @@ export default {
         // emoji: {
         //   sad: `💔`,
         // },
-        emojiPath: `https://dq.comsenz-service.com/emoji/qq`,
+        emojiPath: `${DISCUZ_REQUEST_HOST}emoji/qq`,
       },
+      cdn: `${DISCUZ_REQUEST_HOST}assets/js/vditor@3.5.2`,
       height: window.innerHeight / 2,
-      counter: {
-        enable: true,
-        max: 60000,
-      },
       placeholder: this.$i18n.t('discuzq.post.placeholder'),
       preview: {
         markdown: {
@@ -126,19 +124,16 @@ export default {
         'italic',
         'strike',
         'link',
-        '|',
         'list',
         'ordered-list',
         'check',
         'outdent',
         'indent',
-        '|',
         'quote',
         'line',
         'code',
         'inline-code',
         'table',
-        '|',
         'undo',
         'redo',
       ],
@@ -173,12 +168,9 @@ export default {
   position: relative;
   width: 100%;
 }
-// .uni-popup__wrapper-box {
-//   position: relative;
-//   /* #ifndef APP-NVUE */
-//   display: block;
-//   /* #endif */
-//   width: 100%;
-//   height: 100%;
-// }
+@media screen and (max-width: 520px) {
+  .vditor-toolbar__item {
+    padding: 0 3px;
+  }
+}
 </style>

@@ -397,6 +397,7 @@
                 :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
+                fixed="true"
               />
             </view>
           </view>

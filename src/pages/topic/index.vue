@@ -444,6 +444,7 @@
                 :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
+                fixed="true"
               />
             </view>
           </view>
@@ -628,6 +629,7 @@ export default {
   // #endif
   data() {
     return {
+      imageList: [],
       navTitle: '内容详情页', // 导航栏标题
       threadId: '', // 主题id
       // userId: 57, //当前用户Id
@@ -893,9 +895,10 @@ export default {
       otherReasonValue: '', // 其他理由
     };
   },
-  onReady() {},
   onUnload() {
     this.$store.dispatch('forum/setError', { loading: false });
+    console.log('onunload');
+    uni.$off('logind');
   },
   computed: {
     ...mapState({
@@ -903,11 +906,20 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
       if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
+        thread.firstPost.images.forEach((item, key) => {
+          if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+            thread.firstPost.images.splice(key, 1);
+            const post = this.$store.getters['jv/get'](`posts/${thread.firstPost._jv.id}`);
+            const index = post._jv.relationships.images.data.indexOf(item._jv.id);
+            post._jv.relationships.images.data.splice(index, 1);
+          }
+        });
       }
       return thread;
     },
@@ -940,6 +952,11 @@ export default {
     },
   },
   onLoad(option) {
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
+    });
+
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -1039,12 +1056,6 @@ export default {
   // 监听页面滚动，参数为Object
   onPageScroll(event) {
     this.scrollTop = event.scrollTop;
-  },
-  created() {
-    uni.$on('logind', () => {
-      this.loadThread();
-      this.loadThreadPosts();
-    });
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -2712,7 +2723,10 @@ export default {
     },
   },
   destroyed() {
-    uni.$off('logind');
+    console.log('destroyed');
+    // #ifdef H5
+    uni.$off('contentAttachments');
+    // #endif
   },
 };
 </script>
