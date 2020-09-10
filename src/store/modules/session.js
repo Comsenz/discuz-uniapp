@@ -132,6 +132,17 @@ const actions = {
         .catch(err => resolve(err));
     });
   },
+  ucLogin: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .post('uc/login', payload)
+        .then(res => {
+          resolve(res);
+          setUserInfoStore(context, res, resolve);
+        })
+        .catch(err => resolve(err));
+    });
+  },
   h5Register: (context, payload = {}) => {
     const options = { custom: { showTost: false } };
     return new Promise(resolve => {

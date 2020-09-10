@@ -139,18 +139,22 @@ export default {
         });
       } else {
         const params = {
-          _jv: {
-            type: 'uc/login',
+          // _jv: {
+          //   type: 'uc/login',
+          // },
+          data: {
+            attributes: {
+              username: this.username,
+              password: this.password,
+              questionid: this.sun,
+              answer: this.answer,
+            },
           },
-          username: this.username,
-          password: this.password,
-          questionid: this.sun,
-          answer: this.answer,
         };
         this.$store
-          .dispatch('jv/post', params)
+          .dispatch('session/ucLogin', params)
           .then(res => {
-            if (res && res.access_token) {
+            if (res && res.data.data.attributes.access_token) {
               setCookie('token', res.access_token, 30);
               this.logind();
               setTimeout(() => {
@@ -161,7 +165,6 @@ export default {
             }
           })
           .catch(err => {
-            console.log(err, '登录失败');
             if (err.data.errors[0].status === 400 && err.data.errors[0].code === 'no_bind_user') {
               this.$store.dispatch('session/setToken', err.data.errors[0].token);
               uni.navigateTo({
