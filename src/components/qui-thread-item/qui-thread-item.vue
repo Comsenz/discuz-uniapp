@@ -27,7 +27,6 @@
       :cover-image="thread.threadVideo && thread.threadVideo.cover_url"
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
-      :scroll-top="scrollTop"
       :thread-position="
         thread.location ? [thread.location, thread.address, thread.longitude, thread.latitude] : []
       "
@@ -78,10 +77,6 @@ export default {
     currentindex: {
       type: [Number, String],
       default: '0',
-    },
-    scrollTop: {
-      type: Number,
-      default: 0,
     },
   },
   data() {

@@ -444,6 +444,7 @@
                 :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
+                fixed="true"
               />
             </view>
           </view>
@@ -628,6 +629,7 @@ export default {
   // #endif
   data() {
     return {
+      imageList: [],
       navTitle: '内容详情页', // 导航栏标题
       threadId: '', // 主题id
       // userId: 57, //当前用户Id
@@ -893,9 +895,9 @@ export default {
       otherReasonValue: '', // 其他理由
     };
   },
-  onReady() {},
   onUnload() {
     this.$store.dispatch('forum/setError', { loading: false });
+    uni.$off('logind');
   },
   computed: {
     ...mapState({
@@ -903,11 +905,29 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
       if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
+        if(thread.firstPost.images) {
+          thread.firstPost.images = thread.firstPost.images.filter(item => {
+            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+              return false;
+            }
+            return true;
+          });
+        }
+
+        if(thread.firstPost.attachments) {
+          thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
+            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+              return false;
+            }
+            return true;
+          });
+        }
       }
       return thread;
     },
@@ -940,6 +960,11 @@ export default {
     },
   },
   onLoad(option) {
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
+    });
+
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -1040,12 +1065,6 @@ export default {
   onPageScroll(event) {
     this.scrollTop = event.scrollTop;
   },
-  created() {
-    uni.$on('logind', () => {
-      this.loadThread();
-      this.loadThreadPosts();
-    });
-  },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -1087,12 +1106,6 @@ export default {
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
 
-    // 表情接口请求
-    // getEmoji() {
-    //   this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
-    //     this.allEmoji = data;
-    //   });
-    // },
     // 加载当前主题数据
     loadThread() {
       const params = {
@@ -2610,7 +2623,6 @@ export default {
     },
     // 更多操作内标签选择
     moreContent(param, thread) {
-      console.log(thread);
       this.moreCancel();
       if (param.type === '0') {
         uni.redirectTo({
@@ -2710,9 +2722,6 @@ export default {
       this.currentReport = '';
       this.$refs.reportPopup.close();
     },
-  },
-  destroyed() {
-    uni.$off('logind');
   },
 };
 </script>

@@ -30,6 +30,7 @@ const publicWhitelistPage = [
   '/pages/site/search-user',
   '/pages/site/info',
   '/pages/site/partner-invite',
+  '/pages/topic/position'
 ];
 const payWhiteListPage = [
   '/pages/site/info',

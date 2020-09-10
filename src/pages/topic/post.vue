@@ -10,7 +10,6 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <!-- #ifdef MP-WEIXIN -->
       <view class="post-box__hd">
         <view class="post-box__hd-l">
           <qui-icon
@@ -132,10 +131,6 @@
           </view>
         </view>
       </view>
-      <!-- #endif -->
-      <!-- #ifdef H5 -->
-      <qui-vditor></qui-vditor>
-      <!-- #endif -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -507,6 +502,7 @@ export default {
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
+      getThread: state => state.thread.thread,
     }),
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
@@ -536,6 +532,7 @@ export default {
         return;
       }
       // #ifdef H5
+      this.saveThread();
       this.getPosition();
       // #endif
       // #ifdef MP-WEIXIN
@@ -569,6 +566,16 @@ export default {
     },
     clearPosition() {
       this.currentPosition = {};
+    },
+
+    saveThread() {
+      const thread = {};
+      thread.postTitle = this.postTitle;
+      thread.price = this.price;
+      thread.free_words = this.word;
+      thread.file_id = this.fileId;
+      thread.file_name = this.videoName;
+      thread.attachmentList = this.attachmentList;
     },
     focusEvent() {
       // 这是获取焦点
@@ -624,6 +631,7 @@ export default {
     },
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
+      SET_THREAD: 'thread/SET_THREAD',
     }),
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
     // 处理金额
@@ -852,8 +860,7 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       // #ifdef H5
-      console.log(this.vditor.getValue(), this.vditor.getValue().toString());
-      this.textAreaValue = this.vditor.getValue();
+      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
       // #endif
 
       if (!this.categoryId) {
@@ -1158,12 +1165,14 @@ export default {
         value.id == id && item.splice(key, 1);
       });
     },
-    getSignature(callBack = null) {
+    getSignature(callBack) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
         // #ifndef MP-WEIXIN
         callBack(() => res.signature);
         // #endif
+        // #ifdef MP-WEIXIN
         callBack(res.signature);
+        // #endif
       });
     },
     postVideo(fileId) {
@@ -1188,6 +1197,7 @@ export default {
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        console.log(res, '这是主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -1204,6 +1214,10 @@ export default {
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
+        if (res.threadVideo) {
+          this.fileId = res.threadVideo.file_id;
+        }
+
         // this.uploadFile = res.firstPost.images;
         // 微信里面的定位
         if (option.name) {
@@ -1381,13 +1395,13 @@ export default {
   },
   onLoad(option) {
     // 初始化进入发布页，调起上传
-    if (option.type === '3') {
-      this.$nextTick(() => {
-        this.$refs.upload.uploadClick();
-      });
-    } else if (option.type === '2') {
-      this.uploadVideo();
-    }
+    // if (option.type === '3') {
+    //   this.$nextTick(() => {
+    //     this.$refs.upload.uploadClick();
+    //   });
+    // } else if (option.type === '2') {
+    //   this.uploadVideo();
+    // }
 
     // #ifdef H5
     uni.$on('vditor', vditor => {
@@ -1395,12 +1409,10 @@ export default {
       this.vditor.setValue(this.textAreaValue);
     });
     uni.$on('clickImage', item => {
-      console.log(item);
-      this.vditor.insertValue(`![${item.name}](${item.path})  `);
+      this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
     });
     uni.$on('clickAttach', item => {
-      console.log(item);
-      this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
+      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
     });
     // #endif
     this.url = DISCUZ_REQUEST_HOST;

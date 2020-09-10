@@ -113,7 +113,7 @@ import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
-import { getCurUrl } from '@/utils/getCurUrl';
+// import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
@@ -288,7 +288,7 @@ export default {
           data: this.code,
         });
         // #ifdef H5
-        this.handleLogin(getCurUrl());
+        this.handleLogin();
         // #endif
       } else {
         // 已经登陆的情况
