@@ -502,7 +502,6 @@ export default {
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
-      getThread: state => state.thread.thread,
     }),
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
@@ -576,6 +575,25 @@ export default {
       thread.file_id = this.fileId;
       thread.file_name = this.videoName;
       thread.attachmentList = this.attachmentList;
+      thread.uploadFile = this.uploadFile;
+      thread.textAreaValue = this.textAreaValue;
+      thread.categoryIndex = this.categoryIndex;
+      thread.categoryId = this.categoryId;
+      thread.checkClassData = this.checkClassData;
+      uni.setStorageSync('current_thread', JSON.stringify(thread));
+    },
+    setThread() {
+      let thread = uni.getStorageSync('current_thread');
+      if (!thread) {
+        return;
+      }
+      thread = JSON.parse(thread);
+      Object.getOwnPropertyNames(thread).forEach(key => {
+        if (thread[key]) {
+          this[key] = thread[key];
+        }
+      });
+      uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
@@ -631,7 +649,6 @@ export default {
     },
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
-      SET_THREAD: 'thread/SET_THREAD',
     }),
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
     // 处理金额
@@ -1228,6 +1245,7 @@ export default {
           currentPosition.location = option.name;
           currentPosition.address = option.addr;
           this.currentPosition = currentPosition;
+          this.setThread();
         } else {
           this.currentPosition.longitude = res.longitude || '';
           this.currentPosition.latitude = res.latitude || '';
@@ -1453,6 +1471,7 @@ export default {
         currentPosition.location = option.name;
         currentPosition.address = option.addr;
         this.currentPosition = currentPosition;
+        this.setThread();
       }
     }
 
