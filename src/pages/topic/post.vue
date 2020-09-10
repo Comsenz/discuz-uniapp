@@ -566,20 +566,45 @@ export default {
     clearPosition() {
       this.currentPosition = {};
     },
-
+    // 暂存帖子信息，以防选完地址回来页面刷新后丢失
     saveThread() {
+      uni.removeStorageSync('current_thread');
       const thread = {};
-      thread.postTitle = this.postTitle;
-      thread.price = this.price;
-      thread.free_words = this.word;
-      thread.file_id = this.fileId;
-      thread.file_name = this.videoName;
-      thread.attachmentList = this.attachmentList;
-      thread.uploadFile = this.uploadFile;
-      thread.textAreaValue = this.textAreaValue;
-      thread.categoryIndex = this.categoryIndex;
-      thread.categoryId = this.categoryId;
-      thread.checkClassData = this.checkClassData;
+      const items = [
+        'postTitle',
+        'price',
+        'word',
+        'fileId',
+        'videoName',
+        'textAreaValue',
+        'categoryIndex',
+        'categoryId',
+        'checkClassData',
+        'uploadFile',
+      ];
+      items.forEach(key => {
+        if (this[key]) {
+          thread[key] = this[key];
+        }
+      });
+      if (this.$refs.uploadFiles) {
+        const fileList = this.$refs.uploadFiles.getValue();
+        const attachmentList = [];
+        fileList.forEach(v => {
+          attachmentList.push({
+            fileName: v.attributes.fileName,
+            url: v.attributes.url,
+            _jv: {
+              id: v.id,
+            },
+          });
+        });
+        thread.attachmentList = attachmentList;
+      }
+      // if (this.$refs.upload) {
+      //   const imgList = this.$refs.upload.getValue();
+      //   thread.imgList = imgList;
+      // }
       uni.setStorageSync('current_thread', JSON.stringify(thread));
     },
     setThread() {
@@ -589,7 +614,23 @@ export default {
       }
       thread = JSON.parse(thread);
       Object.getOwnPropertyNames(thread).forEach(key => {
-        if (thread[key]) {
+        if (key === 'imgList') {
+          // const threadImgList = thread[key];
+          // threadImgList.forEach((v, index) => {
+          //   threadImgList[index] = {
+          //     thumbUrl: v.path,
+          //     _jv: {
+          //       id: v.id,
+          //     },
+          //     order: v.order,
+          //     fileName: v.name,
+          //     url: v.url,
+          //   };
+          // });
+          // const image = { firstPost: { images: [] } };
+          // image.firstPost.images = thread[key];
+          // this.setAnnex('img', image);
+        } else {
           this[key] = thread[key];
         }
       });

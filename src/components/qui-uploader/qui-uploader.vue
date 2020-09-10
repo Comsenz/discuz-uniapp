@@ -139,6 +139,9 @@ export default {
     }
   },
   methods: {
+    getValue() {
+      return this.uploadList;
+    },
     uploadDelete(index) {
       this.uploadList.sort(this.compare('order'));
       const beforeUpload = this.uploadList[index];
