@@ -629,6 +629,10 @@ export default {
     // 首页头部分享按钮弹窗
     open() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
@@ -674,6 +678,10 @@ export default {
     shareHead(index) {
       if (index === 0) {
         if (!this.$store.getters['session/get']('isLogin')) {
+          uni.setStorage({
+            key: 'page',
+            data: '/pages/home/index',
+          });
           // #ifdef MP-WEIXIN
           this.$store.getters['session/get']('auth').open();
           // #endif
@@ -755,6 +763,10 @@ export default {
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
@@ -893,6 +905,10 @@ export default {
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif

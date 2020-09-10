@@ -225,6 +225,10 @@ export default {
     deleteNewsSure: '确定删除这条消息吗？',
     deleteFavoriteSure: '确定删除这条收藏吗？',
     user_deny: '对方设置了屏蔽，无法进行此操作',
+    uc_user_check_username_failed: '用户名错误',
+    uc_user_username_badword: '用户名或密码错误',
+    uc_connect_error_ucenter: '配置错误',
+    uc_user_username_exists: '配置错误',
   },
   topic: {
     topicPageTitle: '内容详情页',
@@ -789,6 +793,9 @@ export default {
     safetyProblem6: '您最喜欢的餐馆名称',
     safetyProblem7: '驾驶执照最后四位数字',
     answers: '回答',
+    configurationerror: '配置错误',
+    usernamePasworderro: '用户名或密码错误',
+    usernameerro: '用户名错误',
   },
   // 举报
   report: {

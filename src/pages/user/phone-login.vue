@@ -184,7 +184,6 @@ export default {
       disabled: true, // 发送验证码按钮的状态
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
-      url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
@@ -198,9 +197,8 @@ export default {
       // #endif
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.getForum();
-    this.getPageParams(params);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -228,8 +226,13 @@ export default {
         this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url: this.url,
+        uni.getStorage({
+          key: 'page',
+          success(resData) {
+            uni.redirectTo({
+              url: resData.data,
+            });
+          },
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

@@ -123,11 +123,15 @@ export default {
     handleIsGreat(id, canLike, isLiked, index) {
       console.log('内容部分点赞按钮点击事件', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -159,7 +163,12 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      console.log('首页内容部分分享按钮弹窗', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
