@@ -10,6 +10,7 @@ import forum from '@/store/modules/forum';
 import emoji from '@/store/modules/emoji';
 import pay from '@/store/modules/pay';
 import footerTab from '@/store/modules/footerTab';
+import thread from '@/store/modules/thread';
 
 Vue.use(Vuex);
 
@@ -25,6 +26,7 @@ const store = new Vuex.Store({
     emoji,
     pay,
     footerTab,
+    thread,
   },
   state: {},
   mutations: {},

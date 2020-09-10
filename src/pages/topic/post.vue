@@ -507,6 +507,7 @@ export default {
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
+      getThread: state => state.thread.thread,
     }),
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
@@ -536,6 +537,7 @@ export default {
         return;
       }
       // #ifdef H5
+      this.saveThread();
       this.getPosition();
       // #endif
       // #ifdef MP-WEIXIN
@@ -569,6 +571,11 @@ export default {
     },
     clearPosition() {
       this.currentPosition = {};
+    },
+
+    saveThread() {
+      const thread = {};
+      thread.postTitle = this.postTitle;
     },
     focusEvent() {
       // 这是获取焦点
@@ -624,6 +631,7 @@ export default {
     },
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
+      SET_THREAD: 'thread/SET_THREAD',
     }),
     // 文章类型（0:文字  1:帖子  2:视频  3:图片）
     // 处理金额
