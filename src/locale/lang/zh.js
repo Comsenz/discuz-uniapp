@@ -756,6 +756,7 @@ export default {
     ucenterlogin: '登录UCenter账号',
     passwordLogin: '密码登录',
     registerBindId: '注册，并绑定微信号',
+    registerBindUc: '注册，并绑定微UC账号',
     registerBind: '注册并绑定微信',
     loginBindId: '登录，并绑定微信号',
     loginBind: '登录并绑定微信',

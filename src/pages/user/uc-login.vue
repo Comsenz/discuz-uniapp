@@ -52,7 +52,7 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-import { SITE_PAY } from '@/common/const';
+import { setCookie } from '@/utils/setCookie';
 
 export default {
   mixins: [user, loginModule],
@@ -110,25 +110,6 @@ export default {
       code: 'user_login',
       status: 200,
     });
-    this.$u.event.$on('logind', () => {
-      const url = this.$store.getters['session/get']('url');
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url,
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   methods: {
     loader(index) {
@@ -166,42 +147,23 @@ export default {
           questionid: this.sun,
           answer: this.answer,
         };
-        console.log(params);
         this.$store
           .dispatch('jv/post', params)
           .then(res => {
-            console.log(res);
-            uni.redirectTo({
-              url: '/pages/home/idnex',
-            });
-            // if (res && res.data && res.data.data && res.data.data.id) {
-            //   console.log('登录成功：', res);
-            //   this.logind();
-
-            //   uni.showToast({
-            //     title: '登录成功',
-            //     duration: 2000,
-            //   });
-            //   if (this.site_mode !== SITE_PAY) {
-            //     uni.redirectTo({
-            //       url: '/pages/home/idnex',
-            //     });
-            //   }
-            //   if (this.site_mode === SITE_PAY && !this.isPaid) {
-            //     uni.redirectTo({
-            //       url: '/pages/site/info',
-            //     });
-            //   }
-            // }
+            if (res && res.access_token) {
+              setCookie('token', res.access_token, 30);
+              this.logind();
+              setTimeout(() => {
+                uni.navigateTo({
+                  url: '/pages/home/idnex',
+                });
+              }, 3000);
+            }
           })
           .catch(err => {
             console.log(err, '登录失败');
             if (err.data.errors[0].status === 400 && err.data.errors[0].code === 'no_bind_user') {
-              // // #ifdef MP-WEIXIN
-              // this.refreshParams();
-              // // #endif
               this.$store.dispatch('session/setToken', err.data.errors[0].token);
-              console.log(err.data.errors[0].token);
               uni.navigateTo({
                 url: '/pages/user/register-bind',
               });
