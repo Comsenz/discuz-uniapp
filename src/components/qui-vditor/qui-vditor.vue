@@ -83,12 +83,6 @@ export default {
       cdn: `${DISCUZ_REQUEST_HOST}assets/js/vditor@3.5.2`,
       height: window.innerHeight / 2,
       placeholder: this.$i18n.t('discuzq.post.placeholder'),
-      preview: {
-        markdown: {
-          toc: true,
-          mark: true,
-        },
-      },
       toolbar: [
         {
           name: 'at',

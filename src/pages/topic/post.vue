@@ -10,7 +10,6 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <!-- #ifdef MP-WEIXIN -->
       <view class="post-box__hd">
         <view class="post-box__hd-l">
           <qui-icon
@@ -132,10 +131,6 @@
           </view>
         </view>
       </view>
-      <!-- #endif -->
-      <!-- #ifdef H5 -->
-      <qui-vditor></qui-vditor>
-      <!-- #endif -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -382,6 +377,7 @@ import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
 import appCommonH from '@/utils/commonHelper';
 import choosePosition from '@/mixin/choosePosition';
+import Vditor from 'vditor';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
@@ -852,8 +848,7 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       // #ifdef H5
-      this.textAreaValue = this.vditor.getValue();
-      console.log(this.textAreaValue);
+      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
       // #endif
 
       if (!this.categoryId) {
@@ -1158,12 +1153,14 @@ export default {
         value.id == id && item.splice(key, 1);
       });
     },
-    getSignature(callBack = null) {
+    getSignature(callBack) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
         // #ifndef MP-WEIXIN
         callBack(() => res.signature);
         // #endif
+        // #ifdef MP-WEIXIN
         callBack(res.signature);
+        // #endif
       });
     },
     postVideo(fileId) {
@@ -1403,7 +1400,7 @@ export default {
       this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
     });
     uni.$on('clickAttach', item => {
-      this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
+      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
     });
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
