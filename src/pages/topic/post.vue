@@ -581,6 +581,7 @@ export default {
         'categoryId',
         'checkClassData',
         'uploadFile',
+        'videoBeforeList',
       ];
       items.forEach(key => {
         if (this[key]) {
