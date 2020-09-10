@@ -1001,6 +1001,7 @@ export default {
         uni.showLoading();
 
         if (this.operating === 'edit') {
+          this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
               this.$refs.toast.show({

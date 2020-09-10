@@ -434,6 +434,18 @@ export default {
         }
       }
     });
+
+    // 详情页编辑定位
+    this.$u.event.$on('updateLocation', (id, res) => {
+      this.threads.forEach((item, index) => {
+        if (item._jv.id === id) {
+          this.threads[index].latitude = res.latitude || '';
+          this.threads[index].location = res.location || '';
+          this.threads[index].longitude = res.longitude || '';
+          this.threads[index].address = res.address || '';
+        }
+      });
+    });
     // h5微信分享
     // #ifdef H5
     this.wxShare({
