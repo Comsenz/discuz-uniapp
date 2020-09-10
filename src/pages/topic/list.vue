@@ -133,6 +133,7 @@ export default {
       }, 300);
     },
     switchSort(sort) {
+      currentPage = 1;
       this.sort = sort;
       this.topics();
     },
