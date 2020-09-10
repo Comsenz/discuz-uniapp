@@ -377,7 +377,6 @@ import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
 import appCommonH from '@/utils/commonHelper';
 import choosePosition from '@/mixin/choosePosition';
-import Vditor from 'vditor';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
