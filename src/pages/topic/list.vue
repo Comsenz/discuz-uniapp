@@ -139,7 +139,7 @@ export default {
     topics(page = 1, limit = 20) {
       const params = {
         include: 'user,lastThread,lastThread.firstPost,lastThread.firstPost.images',
-        'filter[recommended]': this.types,
+        // 'filter[recommended]': this.types,
         'page[number]': page,
         'page[limit]': limit,
         sort: this.sort,
@@ -181,13 +181,17 @@ export default {
   },
   // 上拉加载
   onReachBottom() {
-    if (this.meta.next) {
+    console.log(this.meta, '事件触发');
+    if (this.meta.next || this.meta.prev) {
       this.topics((currentPage += 1));
     }
   },
   // 监听页面滚动，参数为Object
   onPageScroll(event) {
     this.scrollTop = event.scrollTop;
+  },
+  onUnload() {
+    currentPage = 1;
   },
 };
 </script>
