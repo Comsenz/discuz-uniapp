@@ -10,7 +10,6 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <!-- #ifdef MP-WEIXIN -->
       <view class="post-box__hd">
         <view class="post-box__hd-l">
           <qui-icon
@@ -132,10 +131,6 @@
           </view>
         </view>
       </view>
-      <!-- #endif -->
-      <!-- #ifdef H5 -->
-      <qui-vditor></qui-vditor>
-      <!-- #endif -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -536,6 +531,7 @@ export default {
         return;
       }
       // #ifdef H5
+      this.saveThread();
       this.getPosition();
       // #endif
       // #ifdef MP-WEIXIN
@@ -569,6 +565,35 @@ export default {
     },
     clearPosition() {
       this.currentPosition = {};
+    },
+
+    saveThread() {
+      const thread = {};
+      thread.postTitle = this.postTitle;
+      thread.price = this.price;
+      thread.free_words = this.word;
+      thread.file_id = this.fileId;
+      thread.file_name = this.videoName;
+      thread.attachmentList = this.attachmentList;
+      thread.uploadFile = this.uploadFile;
+      thread.textAreaValue = this.textAreaValue;
+      thread.categoryIndex = this.categoryIndex;
+      thread.categoryId = this.categoryId;
+      thread.checkClassData = this.checkClassData;
+      uni.setStorageSync('current_thread', JSON.stringify(thread));
+    },
+    setThread() {
+      let thread = uni.getStorageSync('current_thread');
+      if (!thread) {
+        return;
+      }
+      thread = JSON.parse(thread);
+      Object.getOwnPropertyNames(thread).forEach(key => {
+        if (thread[key]) {
+          this[key] = thread[key];
+        }
+      });
+      uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
@@ -852,8 +877,7 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       // #ifdef H5
-      this.textAreaValue = this.vditor.getValue();
-      console.log(this.textAreaValue);
+      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
       // #endif
 
       if (!this.categoryId) {
@@ -1158,12 +1182,14 @@ export default {
         value.id == id && item.splice(key, 1);
       });
     },
-    getSignature(callBack = null) {
+    getSignature(callBack) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
         // #ifndef MP-WEIXIN
         callBack(() => res.signature);
         // #endif
+        // #ifdef MP-WEIXIN
         callBack(res.signature);
+        // #endif
       });
     },
     postVideo(fileId) {
@@ -1219,6 +1245,7 @@ export default {
           currentPosition.location = option.name;
           currentPosition.address = option.addr;
           this.currentPosition = currentPosition;
+          this.setThread();
         } else {
           this.currentPosition.longitude = res.longitude || '';
           this.currentPosition.latitude = res.latitude || '';
@@ -1386,13 +1413,13 @@ export default {
   },
   onLoad(option) {
     // 初始化进入发布页，调起上传
-    if (option.type === '3') {
-      this.$nextTick(() => {
-        this.$refs.upload.uploadClick();
-      });
-    } else if (option.type === '2') {
-      this.uploadVideo();
-    }
+    // if (option.type === '3') {
+    //   this.$nextTick(() => {
+    //     this.$refs.upload.uploadClick();
+    //   });
+    // } else if (option.type === '2') {
+    //   this.uploadVideo();
+    // }
 
     // #ifdef H5
     uni.$on('vditor', vditor => {
@@ -1403,7 +1430,7 @@ export default {
       this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
     });
     uni.$on('clickAttach', item => {
-      this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
+      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
     });
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
@@ -1444,6 +1471,7 @@ export default {
         currentPosition.location = option.name;
         currentPosition.address = option.addr;
         this.currentPosition = currentPosition;
+        this.setThread();
       }
     }
 

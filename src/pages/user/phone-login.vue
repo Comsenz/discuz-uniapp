@@ -68,6 +68,16 @@
             src="@/static/zhanghao.svg"
             @click="jump2Login"
           />
+          <image
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter && !isLogin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
+          />
           <!-- #endif -->
           <!-- #ifdef H5 -->
           <image
@@ -90,6 +100,16 @@
             lazy-load
             src="@/static/zhanghao.svg"
             @click="jump2Login"
+          />
+          <image
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter && isWeixin
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
           />
           <!-- #endif -->
         </view>
@@ -393,9 +413,9 @@ export default {
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
+          if (res && res.access_token) {
             // #ifdef H5
-            setCookie('token', res.data.data.attributes.access_token, 30);
+            setCookie('token', res.access_token, 30);
             // #endif
             console.log('手机号登录成功：', res);
             this.logind();
@@ -429,6 +449,11 @@ export default {
     },
     jump2Login() {
       this.jump2LoginPage();
+    },
+    jump3Login() {
+      uni.navigateTo({
+        url: '/pages/user/uc-login',
+      });
     },
     jump2findpwd() {
       this.jump2findpwdPage();
@@ -555,6 +580,7 @@ page {
     &-image {
       width: 100rpx;
       height: 100rpx;
+      margin-left: 40rpx;
     }
 
     &-right {
