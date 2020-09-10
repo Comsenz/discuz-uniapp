@@ -367,7 +367,7 @@
 .vditor-toolbar__item .vditor-tooltipped {
   color: var(--toolbar-icon-color);
   border: 0;
-  padding: 10px 5px;
+  padding: 8px 5px;
   background-color: transparent;
   height: var(--toolbar-height);
   width: 25px;
