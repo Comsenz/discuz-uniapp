@@ -152,7 +152,6 @@ export default {
       username: '', // 用户名
       password: '', // 密码
       reason: '', // 注册原因
-      url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
       forum: {}, // 配置
       isPaid: false, // 默认未付费
@@ -167,9 +166,8 @@ export default {
       // #endif
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.getForum();
-    this.getPageParams(params);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -194,8 +192,16 @@ export default {
         this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
+        let url = '';
+        uni.getStorage({
+          key: 'page',
+          success(resData) {
+            url = resData.data;
+          },
+        });
+        console.log('url', url);
         uni.redirectTo({
-          url: this.url,
+          url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
