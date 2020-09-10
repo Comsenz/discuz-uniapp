@@ -19,7 +19,7 @@ module.exports = {
      * 跳转到手机号码登录页面
      */
     jump2PhoneLoginPage() {
-      const url = 'pages/user/phone-login';
+      const url = '/pages/user/phone-login';
       uni.navigateTo({
         url,
       });

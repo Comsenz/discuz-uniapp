@@ -32,7 +32,7 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式 跳转到手机号码登录页
           uni.navigateTo({
-            url: 'pages/user/phone-login',
+            url: '/pages/user/phone-login',
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
@@ -43,25 +43,25 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式
           uni.navigateTo({
-            url: 'pages/user/login',
+            url: '/pages/user/login',
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 手机号模式
           uni.navigateTo({
-            url: 'pages/user/phone-login',
+            url: '/pages/user/phone-login',
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
             // 手机号模式
             uni.navigateTo({
-              url: 'pages/user/phone-login',
+              url: '/pages/user/phone-login',
             });
           } else {
             // 用户名模式
             uni.navigateTo({
-              url: 'pages/user/login',
+              url: '/pages/user/login',
             });
           }
         }
