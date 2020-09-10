@@ -571,6 +571,11 @@ export default {
     saveThread() {
       const thread = {};
       thread.postTitle = this.postTitle;
+      thread.price = this.price;
+      thread.free_words = this.word;
+      thread.file_id = this.fileId;
+      thread.file_name = this.videoName;
+      thread.attachmentList = this.attachmentList;
     },
     focusEvent() {
       // 这是获取焦点
