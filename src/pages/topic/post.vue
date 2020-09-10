@@ -1386,13 +1386,13 @@ export default {
   },
   onLoad(option) {
     // 初始化进入发布页，调起上传
-    if (option.type === '3') {
-      this.$nextTick(() => {
-        this.$refs.upload.uploadClick();
-      });
-    } else if (option.type === '2') {
-      this.uploadVideo();
-    }
+    // if (option.type === '3') {
+    //   this.$nextTick(() => {
+    //     this.$refs.upload.uploadClick();
+    //   });
+    // } else if (option.type === '2') {
+    //   this.uploadVideo();
+    // }
 
     // #ifdef H5
     uni.$on('vditor', vditor => {
