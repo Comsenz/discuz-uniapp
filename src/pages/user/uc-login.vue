@@ -171,31 +171,35 @@ export default {
           .dispatch('jv/post', params)
           .then(res => {
             console.log(res);
-            if (res && res.data && res.data.data && res.data.data.id) {
-              console.log('登录成功：', res);
-              this.logind();
-              uni.showToast({
-                title: '登录成功',
-                duration: 2000,
-              });
-              if (this.site_mode !== SITE_PAY) {
-                uni.redirectTo({
-                  url: '/pages/home/idnex',
-                });
-              }
-              if (this.site_mode === SITE_PAY && !this.isPaid) {
-                uni.redirectTo({
-                  url: '/pages/site/info',
-                });
-              }
-            }
+            uni.redirectTo({
+              url: '/pages/home/idnex',
+            });
+            // if (res && res.data && res.data.data && res.data.data.id) {
+            //   console.log('登录成功：', res);
+            //   this.logind();
+
+            //   uni.showToast({
+            //     title: '登录成功',
+            //     duration: 2000,
+            //   });
+            //   if (this.site_mode !== SITE_PAY) {
+            //     uni.redirectTo({
+            //       url: '/pages/home/idnex',
+            //     });
+            //   }
+            //   if (this.site_mode === SITE_PAY && !this.isPaid) {
+            //     uni.redirectTo({
+            //       url: '/pages/site/info',
+            //     });
+            //   }
+            // }
           })
           .catch(err => {
             console.log(err, '登录失败');
             if (err.data.errors[0].status === 400 && err.data.errors[0].code === 'no_bind_user') {
-              // #ifdef MP-WEIXIN
-              this.refreshParams();
-              // #endif
+              // // #ifdef MP-WEIXIN
+              // this.refreshParams();
+              // // #endif
               this.$store.dispatch('session/setToken', err.data.errors[0].token);
               console.log(err.data.errors[0].token);
               uni.navigateTo({

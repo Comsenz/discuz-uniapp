@@ -34,6 +34,7 @@ const state = {
   auth: {},
   categoryId: 0,
   categoryIndex: 0,
+  token: '',
 };
 
 const actions = {
@@ -199,6 +200,9 @@ const mutations = {
   [DELETE_ACCESS_TOKEN](state) {
     uni.removeStorageSync('access_token');
     state.accessToken = '';
+  },
+  [SET_TOKEN](state, payload) {
+    state.token = payload;
   },
 };
 
