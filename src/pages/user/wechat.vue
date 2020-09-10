@@ -39,16 +39,13 @@ export default {
               this.isPaid = this.user.paid;
             }
             if (this.site_mode !== SITE_PAY) {
-              let url = '';
               uni.getStorage({
                 key: 'page',
                 success(resData) {
-                  url = resData.data;
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
                 },
-              });
-              console.log('url', url);
-              uni.redirectTo({
-                url,
               });
             }
             if (this.site_mode === SITE_PAY && !this.isPaid) {

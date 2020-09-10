@@ -44,16 +44,13 @@ export default {
   mounted() {
     this.$u.event.$on('logind', () => {
       if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-        let url = '';
         uni.getStorage({
           key: 'page',
           success(resData) {
-            url = resData.data;
+            uni.redirectTo({
+              url: resData.data,
+            });
           },
-        });
-        console.log('url', url);
-        uni.redirectTo({
-          url,
         });
       }
       if (

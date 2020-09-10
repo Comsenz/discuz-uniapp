@@ -107,16 +107,13 @@ export default {
         this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
-        let url = '';
         uni.getStorage({
           key: 'page',
           success(resData) {
-            url = resData.data;
+            uni.redirectTo({
+              url: resData.data,
+            });
           },
-        });
-        console.log('url', url);
-        uni.redirectTo({
-          url,
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
