@@ -601,10 +601,10 @@ export default {
         });
         thread.attachmentList = attachmentList;
       }
-      // if (this.$refs.upload) {
-      //   const imgList = this.$refs.upload.getValue();
-      //   thread.imgList = imgList;
-      // }
+      if (this.$refs.upload) {
+        const imgList = this.$refs.upload.getValue();
+        thread.imgList = imgList;
+      }
       uni.setStorageSync('current_thread', JSON.stringify(thread));
     },
     setThread() {
@@ -615,21 +615,21 @@ export default {
       thread = JSON.parse(thread);
       Object.getOwnPropertyNames(thread).forEach(key => {
         if (key === 'imgList') {
-          // const threadImgList = thread[key];
-          // threadImgList.forEach((v, index) => {
-          //   threadImgList[index] = {
-          //     thumbUrl: v.path,
-          //     _jv: {
-          //       id: v.id,
-          //     },
-          //     order: v.order,
-          //     fileName: v.name,
-          //     url: v.url,
-          //   };
-          // });
-          // const image = { firstPost: { images: [] } };
-          // image.firstPost.images = thread[key];
-          // this.setAnnex('img', image);
+          const threadImgList = thread[key];
+          threadImgList.forEach((v, index) => {
+            threadImgList[index] = {
+              thumbUrl: v.path,
+              _jv: {
+                id: v.id,
+              },
+              order: v.order,
+              fileName: v.name,
+              url: v.url,
+            };
+          });
+          const image = { firstPost: { images: [] } };
+          image.firstPost.images = thread[key];
+          this.setAnnex('img', image);
         } else {
           this[key] = thread[key];
         }
@@ -1062,8 +1062,9 @@ export default {
     setAnnex(type, data) {
       switch (type) {
         case 'img':
+          let filePreview = [];
           data.firstPost.images.map(item => {
-            this.filePreview.push({
+            filePreview.push({
               path: item.thumbUrl,
               id: item._jv.id,
               order: item.order,
@@ -1072,6 +1073,7 @@ export default {
             });
             return item;
           });
+          this.filePreview = filePreview;
           break;
         case 'video':
           this.videoBeforeList.push({
@@ -1277,22 +1279,6 @@ export default {
         }
 
         // this.uploadFile = res.firstPost.images;
-        // 微信里面的定位
-        if (option.name) {
-          let currentPosition = {};
-          const data = option.latng.split(',');
-          currentPosition.longitude = data[1];
-          currentPosition.latitude = data[0];
-          currentPosition.location = option.name;
-          currentPosition.address = option.addr;
-          this.currentPosition = currentPosition;
-          this.setThread();
-        } else {
-          this.currentPosition.longitude = res.longitude || '';
-          this.currentPosition.latitude = res.latitude || '';
-          this.currentPosition.location = res.location || '';
-          this.currentPosition.address = res.address || '';
-        }
 
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
@@ -1331,6 +1317,22 @@ export default {
             break;
           default:
             console.log('未知类型');
+        }
+        // 微信里面的定位
+        if (option.name) {
+          let currentPosition = {};
+          const data = option.latng.split(',');
+          currentPosition.longitude = data[1];
+          currentPosition.latitude = data[0];
+          currentPosition.location = option.name;
+          currentPosition.address = option.addr;
+          this.currentPosition = currentPosition;
+          this.setThread();
+        } else {
+          this.currentPosition.longitude = res.longitude || '';
+          this.currentPosition.latitude = res.latitude || '';
+          this.currentPosition.location = res.location || '';
+          this.currentPosition.address = res.address || '';
         }
       });
     },
