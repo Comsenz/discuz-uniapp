@@ -3,7 +3,15 @@
     <qui-page-message v-if="!query.id || loadedErr"></qui-page-message>
     <view v-else class="scroll-y">
       <view class="topic-content-header">
-        <view class="topic-content-header_title">#{{ topic.content }}#</view>
+        <view class="topic-content-header_title">
+          <view class="topic-content-header_title-size">#{{ topic.content }}#</view>
+          <view
+            class="topic-content-header_title-recoment"
+            v-if="topic.recommended === 1 ? true : false"
+          >
+            <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
+          </view>
+        </view>
         <navigator url="/pages/topic/list">
           <view class="topic-content-header_toAll">{{ i18n.t('topic.allTopics') }} ></view>
         </navigator>
@@ -273,9 +281,22 @@ $otherHeight: 292rpx;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
   &_title {
+    display: flex;
     margin: 20rpx;
-    font-weight: 600;
-    word-break: break-all;
+    &-size {
+      font-weight: 600;
+      word-break: break-all;
+      align-self: center;
+    }
+    &-recoment {
+      width: 34rpx;
+      height: 34rpx;
+      margin-left: 20rpx;
+      line-height: 28rpx;
+      color: #fff;
+      text-align: center;
+      align-self: center;
+    }
   }
   &_details {
     display: flex;

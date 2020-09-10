@@ -56,13 +56,19 @@
               :file-list="
                 thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
               "
+              :thread-position="
+                thread.location
+                  ? [thread.location, thread.address, thread.longitude, thread.latitude]
+                  : []
+              "
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
               @previewPicture="payClickShow"
               @tagClick="tagClick"
             >
-              <view slot="follow" :key="followStatus" v-if="thread.user.follow != null">
+              <!-- 关注 -->
+              <!-- <view slot="follow" :key="followStatus" v-if="thread.user.follow != null">
                 <view
                   class="themeItem__header__follow"
                   @tap="
@@ -89,6 +95,16 @@
                         : i18n.t('profile.mutualfollow')
                     }}
                   </text>
+                </view>
+              </view> -->
+              <!-- 更多操作 -->
+              <view slot="more" @click="moreClick">
+                <view class="det-ft-operaCli">
+                  <view class="det-ft-more">
+                    <qui-icon name="icon-gengduo" class="icon-gengduo" style="font-size: 40rpx;">
+                      >
+                    </qui-icon>
+                  </view>
                 </view>
               </view>
             </qui-topic-content>
@@ -365,7 +381,83 @@
           </view>
         </view>
       </uni-popup>
-
+      <!--更多操作弹框-->
+      <uni-popup ref="morePopup" type="bottom">
+        <view class="popup-share">
+          <view
+            class="popup-share-content"
+            :class="moreDataLength > 4 ? 'popup-share-content-inner' : ''"
+          >
+            <view
+              v-for="(item, index) in moreData"
+              :key="index"
+              class="popup-share-content-box popup-more-content-box"
+              @click="moreContent(item, thread)"
+              v-show="item.canOpera"
+            >
+              <button
+                class="popup-more-button"
+                open-type="share"
+                v-if="item.name === 'wxFriends'"
+              ></button>
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    :name="item.icon"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ item.text }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="moreCancel">{{ c.cancel }}</text>
+        </view>
+      </uni-popup>
+      <!--举报弹框-->
+      <uni-popup ref="reportPopup" type="bottom">
+        <view class="popup-report">
+          <view class="popup-report__title">
+            <view class="popup-report__title-headline">{{ r.reportTitle }}</view>
+            <view class="popup-report__title-subhead">{{ r.pleaseClickReasons }}</view>
+          </view>
+          <view class="popup-report__content">
+            <radio-group @change="reportRadioChange">
+              <label
+                class="popup-report__content-cell"
+                v-for="item in reportData"
+                :key="item.value"
+              >
+                <view>{{ item.name }}</view>
+                <view>
+                  <radio :value="item.value" :checked="item.value === currentReport" />
+                </view>
+              </label>
+            </radio-group>
+            <view class="popup-report__content-textarea" v-if="currentReport === 'other'">
+              <textarea
+                placeholder-class="textarea-placeholder"
+                :placeholder="r.otherReason"
+                :maxlength="200"
+                :value="otherReasonValue"
+                @input="reportTextareaInput"
+                fixed="true"
+              />
+            </view>
+          </view>
+          <view class="popup-report__btn">
+            <button class="popup-report__btn-confirm" @click="reportConfirmClick(1)">
+              {{ r.confirm }}
+            </button>
+            <view class="popup-report__btn-cancel" @click="reportCancelClick">
+              {{ r.cancel }}
+            </view>
+          </view>
+        </view>
+      </uni-popup>
       <!--支付组件-->
       <view v-if="payShowStatus">
         <qui-pay
@@ -537,6 +629,7 @@ export default {
   // #endif
   data() {
     return {
+      imageList: [],
       navTitle: '内容详情页', // 导航栏标题
       threadId: '', // 主题id
       // userId: 57, //当前用户Id
@@ -708,11 +801,103 @@ export default {
       beRewarded: false,
       curUrl: '', // 当前页面的路由
       bottom: '',
+      moreData: [
+        // 更多操作
+        {
+          text: this.i18n.t('topic.edit'),
+          icon: 'icon-bianji',
+          name: 'edit',
+          type: '0',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('topic.delete'),
+          icon: 'icon-shanchu',
+          name: 'delete',
+          type: '4',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('topic.essence'),
+          icon: 'icon-jinghua',
+          name: 'essence',
+          type: '2',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('topic.sticky'),
+          icon: 'icon-zhiding',
+          name: 'sticky',
+          type: '3',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('topic.collection'),
+          icon: 'icon-collection',
+          name: 'collection',
+          type: '5',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('topic.share'),
+          icon: 'icon-share',
+          name: 'share',
+          type: '6',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('core.generatePoster'),
+          icon: 'icon-poster',
+          name: 'poster',
+          type: '7',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('core.wxShare'),
+          icon: 'icon-wx-friends',
+          name: 'wxFriends',
+          type: '8',
+          canOpera: true,
+        },
+        {
+          text: this.i18n.t('report.reportTitle'),
+          icon: 'icon-jubao',
+          name: 'report',
+          type: '9',
+          canOpera: true,
+        },
+      ],
+      moreDataLength: 0,
+      reportData: [
+        {
+          // 举报理由
+          value: 'advertisingRubbish',
+          name: '广告垃圾',
+        },
+        {
+          value: 'illegalContent',
+          name: '违规内容',
+        },
+        {
+          value: 'maliciousIrrigation',
+          name: '恶意灌水',
+        },
+        {
+          value: 'repeatPost',
+          name: '重复发帖',
+        },
+        {
+          value: 'other',
+          name: '其他',
+        },
+      ],
+      currentReport: '', // 当前举报理由
+      otherReasonValue: '', // 其他理由
     };
   },
-  onReady() {},
   onUnload() {
     this.$store.dispatch('forum/setError', { loading: false });
+    uni.$off('logind');
   },
   computed: {
     ...mapState({
@@ -720,11 +905,29 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
       if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
+        if(thread.firstPost.images) {
+          thread.firstPost.images = thread.firstPost.images.filter(item => {
+            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+              return false;
+            }
+            return true;
+          });
+        }
+
+        if(thread.firstPost.attachments) {
+          thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
+            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+              return false;
+            }
+            return true;
+          });
+        }
       }
       return thread;
     },
@@ -741,6 +944,10 @@ export default {
     c() {
       return this.i18n.t('core');
     },
+    // report举报语言包
+    r() {
+      return this.i18n.t('report');
+    },
     status() {
       return status.status;
     },
@@ -753,7 +960,11 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option.id);
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
+    });
+
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -854,12 +1065,6 @@ export default {
   onPageScroll(event) {
     this.scrollTop = event.scrollTop;
   },
-  created() {
-    uni.$on('logind', () => {
-      this.loadThread();
-      this.loadThreadPosts();
-    });
-  },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -901,12 +1106,6 @@ export default {
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
 
-    // 表情接口请求
-    // getEmoji() {
-    //   this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
-    //     this.allEmoji = data;
-    //   });
-    // },
     // 加载当前主题数据
     loadThread() {
       const params = {
@@ -936,7 +1135,7 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
 
       threadAction
-        .then(data => {     
+        .then(data => {
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1016,16 +1215,17 @@ export default {
             logo: this.shareLogo,
           });
           // #endif
-
           // 追加管理菜单权限字段
           this.selectList[0].canOpera = this.thread.firstPost.canEdit;
           this.selectList[1].canOpera = this.thread.canEssence;
           this.selectList[2].canOpera = this.thread.canSticky;
           this.selectList[3].canOpera = this.thread.canHide;
+
           // this.selectList[0].isStatus = true;
           this.selectList[1].isStatus = this.thread.isEssence;
           this.selectList[2].isStatus = this.thread.isSticky;
           this.selectList[3].isStatus = false;
+
           if (data.isEssence) {
             // 如果初始化状态为true
             this.selectList[1].text = this.t.cancelEssence;
@@ -1034,6 +1234,45 @@ export default {
             // 如果初始化状态为true
 
             this.selectList[2].text = this.t.cancelSticky;
+          }
+          // 修改更多弹框权限
+          // #ifdef MP-WEIXIN
+          this.moreData[5].canOpera = false;
+          this.moreData[6].canOpera = true;
+          this.moreData[7].canOpera = true;
+          // #endif
+
+          // #ifdef H5
+          this.moreData[5].canOpera = true;
+          this.moreData[6].canOpera = false;
+          this.moreData[7].canOpera = false;
+          // #endif
+          //追加更多操作权限字段
+          this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          this.moreData[2].canOpera = this.thread.canEssence;
+          this.moreData[3].canOpera = this.thread.canSticky;
+          this.moreData[1].canOpera = this.thread.canHide;
+          this.moreData[2].isStatus = this.thread.isEssence;
+          this.moreData[3].isStatus = this.thread.isSticky;
+          this.moreData[1].isStatus = false;
+          this.moreData.forEach(item => {
+            if (item.canOpera) {
+              this.moreDataLength += 1;
+            }
+          });
+          if (data.isFavorite) {
+            this.moreData[4].text = this.t.collectionAlready;
+            this.moreData[4].icon = 'icon-collectioned';
+          }
+          if (data.isEssence) {
+            // 如果初始化状态为true
+            this.moreData[2].text = this.t.cancelEssence;
+            this.moreData[2].icon = 'icon-quxiaojinghua';
+          }
+          if (data.isSticky) {
+            // 如果初始化状态为true
+            this.moreData[3].text = this.t.cancelSticky;
+            this.moreData[3].icon = 'icon-quxiaozhiding';
           }
           this.isLiked = data.firstPost.isLiked;
           if (!this.forums.paycenter.wxpay_close) {
@@ -1247,22 +1486,39 @@ export default {
           if (type === '1') {
             // 收藏
             this.thread.isFavorite = data.isFavorite;
+            if (data.isFavorite) {
+              this.moreData[4].text = this.t.collectionAlready;
+              this.moreData[4].icon = 'icon-collectioned';
+            } else {
+              this.moreData[4].text = this.t.collection;
+              this.moreData[4].icon = 'icon-collection';
+            }
           } else if (type === '2') {
             // 这是精华操作
             this.selectList[1].isStatus = data.isEssence;
+            this.moreData[2].isStatus = data.isEssence;
             if (data.isEssence) {
               this.selectList[1].text = this.t.cancelEssence;
+              this.moreData[2].text = this.t.cancelEssence;
+              this.moreData[2].icon = 'icon-quxiaojinghua';
             } else {
               this.selectList[1].text = this.t.essence;
+              this.moreData[2].text = this.t.essence;
+              this.moreData[2].icon = 'icon-jinghua';
             }
           } else if (type === '3') {
             this.selectList[2].isStatus = data.isSticky;
+            this.moreData[3].isStatus = data.isSticky;
             if (data.isSticky) {
               this.selectList[2].text = this.t.cancelSticky;
+              this.moreData[3].icon = 'icon-quxiaozhiding';
+              this.moreData[3].text = this.t.cancelSticky;
               // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
               this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
+              this.moreData[3].icon = 'icon-zhiding';
+              this.moreData[3].text = this.t.sticky;
               // 详情页取消置顶,将首页置顶数据移除
               this.$u.event.$emit('cancelSticky', data);
             }
@@ -1674,6 +1930,7 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
+      console.log(param);
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -2095,6 +2352,7 @@ export default {
       }
       this.threadOpera(id, canStatus, isStatus, type);
     },
+
     // 主题回复
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
@@ -2158,6 +2416,7 @@ export default {
           return;
         }
         // #endif
+        return;
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
@@ -2345,10 +2604,124 @@ export default {
         originUser.follow = 0;
         this.followStatus = 0;
       });
+      s;
     },
-  },
-  destroyed() {
-    uni.$off('logind');
+    // 更多操作-唤起弹框
+    moreClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(this.curUrl)) {
+          return;
+        }
+        // #endif
+      }
+      this.$refs.morePopup.open();
+    },
+    // 更多操作内标签选择
+    moreContent(param, thread) {
+      this.moreCancel();
+      if (param.type === '0') {
+        uni.redirectTo({
+          url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
+        });
+      } else if (param.type === '2' || param.type === '3') {
+        this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
+      } else if (param.type === '4') {
+        this.$refs.deletePopup.open();
+        this.deleteType = '4';
+        this.deleteId = this.threadId;
+        this.deletePostCanStatus = param.canOpera;
+        this.deletePostIsStatus = param.status;
+        this.deletePostType = param.type;
+        this.deleteTip = this.i18n.t('core.deleteContentSure');
+      }
+      if (param.name === 'report') {
+        this.reportClick();
+      }
+      if (param.name === 'collection') {
+        this.threadCollectionClick(thread._jv.id, thread.canFavorite, thread.isFavorite, '1');
+      }
+      if (param.name === 'share') {
+        this.shareClick();
+      }
+      if (param.name === 'poster') {
+        this.shareContent(0);
+      }
+    },
+    // 关闭更多操作弹框
+    moreCancel() {
+      this.$refs.morePopup.close();
+    },
+    // 举报
+    reportClick() {
+      this.moreCancel();
+      this.otherReasonValue = '';
+      this.currentReport = '';
+      this.$refs.reportPopup.open();
+    },
+    // 切换举报理由
+    reportRadioChange(e) {
+      this.currentReport = e.target.value;
+    },
+    // 监听其他理由输入
+    reportTextareaInput(e) {
+      this.otherReasonValue = e.detail.value;
+    },
+    // 确认举报
+    reportConfirmClick(type) {
+      if (!this.currentReport) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('report.pleaseClickReasons'),
+        });
+        return;
+      }
+      let reason = '';
+      if (this.currentReport === 'other') {
+        if (!this.otherReasonValue) {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('report.enterOtherReason'),
+          });
+          return;
+        }
+        reason = this.otherReasonValue;
+      } else {
+        this.reportData.forEach(item => {
+          if (item.value === this.currentReport) {
+            reason = item.name;
+          }
+        });
+      }
+      const params = {
+        _jv: {
+          type: 'reports',
+        },
+        user_id: this.currentLoginId,
+        thread_id: parseInt(this.threadId),
+        type,
+        reason: `${reason}`,
+      };
+      this.$store.dispatch('jv/post', params).then(res => {
+        if (res._jv) {
+          this.$refs.reportPopup.close();
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('report.reportSucceed'),
+          });
+        }
+      });
+    },
+    // 取消举报
+    reportCancelClick() {
+      this.otherReasonValue = '';
+      this.currentReport = '';
+      this.$refs.reportPopup.close();
+    },
   },
 };
 </script>
@@ -2359,7 +2732,7 @@ export default {
 page {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 .flex {
@@ -2387,7 +2760,7 @@ page {
 .detail-tip {
   display: block;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 60rpx;
   color: #fff;
   text-align: center;
@@ -2415,12 +2788,12 @@ page {
     padding-left: 20rpx;
     .det-hd-per-name {
       margin-bottom: 10px;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: bold;
       line-height: 37rpx;
     }
     .det-hd-post-time {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       line-height: 31rpx;
       color: --color(--qui-FC-AAA);
     }
@@ -2448,7 +2821,7 @@ page {
       font-size: 26rpx;
     }
   }
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 40rpx;
 }
 //详情页帖子内容
@@ -2494,7 +2867,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
     align-items: center;
     .qui-icon {
@@ -2502,7 +2875,7 @@ page {
       font-size: 30rpx;
     }
     * {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-777);
     }
   }
@@ -2525,7 +2898,7 @@ page {
   padding: 0 40rpx;
 }
 .comment-num {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -2556,7 +2929,7 @@ page {
   .comment-child-status {
     align-items: flex-start;
     padding-top: 8rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     line-height: 35rpx;
     color: --color(--qui-RED);
   }
@@ -2579,14 +2952,14 @@ page {
     }
   }
   .comment-child-time {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 31rpx;
     color: --color(--qui-FC-AAA);
   }
 }
 .comment-child-con {
   padding: 20rpx 0 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 45rpx;
   text-align: left;
   .comment-child-con-all {
@@ -2631,7 +3004,7 @@ page {
     line-height: 80rpx;
   }
   .ft-child-word {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
   }
 }
@@ -2664,7 +3037,7 @@ page {
     width: 195rpx;
   }
   .text-word-tip {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 1;
     color: --color(--qui-FC-777);
   }
@@ -2689,7 +3062,7 @@ page {
     width: 100%;
     height: 220rpx;
     min-height: 70rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 37rpx;
   }
   .text-placeholder {
@@ -2699,7 +3072,7 @@ page {
 .publish-btn {
   width: 100%;
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: normal;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);
@@ -2717,7 +3090,7 @@ page {
 }
 .popup-cancel-btn {
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 100rpx;
   color: #666;
   text-align: center;
@@ -2750,7 +3123,7 @@ page {
   box-sizing: border-box;
   .popup-title {
     height: 37rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     text-align: center;
   }
 }
@@ -2763,7 +3136,7 @@ page {
     padding-top: 40rpx;
     text-align: center;
     text {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-333);
     }
   }
@@ -2813,10 +3186,30 @@ page {
     }
   }
 }
-.popup-share-content {
-  box-sizing: border-box;
-}
 
+.popup-share-content-inner {
+  height: auto;
+  padding-right: 20rpx;
+  padding-left: 20rpx;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+.popup-more-content-box {
+  flex: 0 0 20%;
+  margin-bottom: 40rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
+.popup-more-button {
+  position: absolute;
+  z-index: 10;
+  width: 120rpx;
+  height: 120rpx;
+  background: --color(--qui-BG-2);
+  opacity: 0;
+}
 // 微信二维码弹框
 
 .code-content {
@@ -2914,10 +3307,106 @@ page {
   flex-shrink: 0;
   .icon-follow {
     margin-right: 7rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
+  }
+}
+.det-ft-operaCli {
+  position: relative;
+  line-height: 30rpx;
+  .det-ft-more {
+    display: flex;
+    justify-content: flex-end;
+    .icon-gengduo {
+      color: --color(--qui-FC-AAA);
+    }
   }
 }
 // .scroll-y {
 //   max-height: 100vh;
 // }
+// 举报弹框
+.popup-report {
+  background: --color(--qui-BG-2);
+  border-radius: 10rpx 10rpx 0rpx 0rpx;
+
+  &__title {
+    padding: 40rpx 0rpx;
+    text-align: center;
+
+    &-headline {
+      font-size: $fg-f4;
+      color: --color(--qui-FC-333);
+    }
+
+    &-subhead {
+      margin-top: 20rpx;
+      font-size: $fg-f2;
+      color: --color(--qui-FC-AAA);
+    }
+  }
+
+  &__content {
+    padding-left: 40rpx;
+
+    &-cell {
+      display: flex;
+      padding-right: 40rpx;
+      line-height: 100rpx;
+      border-bottom: 1px solid var(--qui-BOR-ED);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &-cell:last-child {
+      border-bottom: 0;
+    }
+
+    &-textarea {
+      padding-right: 40rpx;
+
+      textarea {
+        width: 100%;
+        height: 180rpx;
+        padding: 20rpx;
+        font-size: $fg-f4;
+        background-color: --color(--qui-BG-1);
+        border: 1px solid var(--qui-BOR-DDD);
+        box-sizing: border-box;
+      }
+    }
+  }
+
+  &__btn {
+    margin-top: 30rpx;
+    background: --color(--qui-BG-ED);
+
+    &-confirm {
+      width: 100%;
+      height: 100rpx;
+      margin-bottom: 10rpx;
+      font-size: $fg-f4;
+      font-weight: normal;
+      line-height: 100rpx;
+      color: --color(--qui-FC-FFF);
+      text-align: center;
+      background: --color(--qui-MAIN);
+      border-radius: 0;
+    }
+
+    &-cancel {
+      width: 100%;
+      height: 100rpx;
+      font-size: $fg-f4;
+      font-weight: normal;
+      line-height: 100rpx;
+      text-align: center;
+      background: --color(--qui-FC-FFF);
+    }
+  }
+
+  .textarea-placeholder {
+    font-size: $fg-f4;
+    color: --color(--qui-FC-B5);
+  }
+}
 </style>

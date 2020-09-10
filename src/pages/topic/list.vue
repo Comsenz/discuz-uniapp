@@ -38,8 +38,20 @@
         </view>
         <view style="clear: both;"></view>
         <view class="topic-page-list-item" v-for="(item, i) in topicData" :key="i">
-          <navigator :url="'/pages/topic/content?id=' + item._jv.id">
+          <!-- <navigator :url="'/pages/topic/content?id=' + item._jv.id">
             <view class="topic-page-list-item_title">#{{ item.content }}#</view>
+          </navigator> -->
+          <navigator
+            class="topic-page-list-navigator"
+            :url="'/pages/topic/content?id=' + item._jv.id"
+          >
+            <view class="topic-page-list-item_title">#{{ item.content }}#</view>
+            <view
+              class="topic-page-list-item_recoment"
+              v-if="item.recommended === 1 ? true : false"
+            >
+              <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
+            </view>
           </navigator>
           <view class="topic-page-list-item_details" v-if="item.lastThread.length">
             <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
@@ -97,8 +109,10 @@ export default {
         contentdown: this.i18n.t('topic.noMoreData'),
       },
       keyword: '',
-      sort: '-viewCount',
+      // sort: '-viewCount',
+      sort: 'recommended',
       scrollTop: 0,
+      types: 1,
     };
   },
 
@@ -107,6 +121,11 @@ export default {
       this.dropDownShow = !this.dropDownShow;
     },
     searchInput() {
+      if (this.keyword) {
+        this.types = '';
+      } else {
+        this.types = 1;
+      }
       clearTimeout(timer);
       timer = setTimeout(() => {
         // 为发送请求添加防抖处理
@@ -120,6 +139,7 @@ export default {
     topics(page = 1, limit = 20) {
       const params = {
         include: 'user,lastThread,lastThread.firstPost,lastThread.firstPost.images',
+        // 'filter[recommended]': this.types,
         'page[number]': page,
         'page[limit]': limit,
         sort: this.sort,
@@ -161,13 +181,17 @@ export default {
   },
   // 上拉加载
   onReachBottom() {
-    if (this.meta.next) {
+    console.log(this.meta, '事件触发');
+    if (this.meta.next || this.meta.prev) {
       this.topics((currentPage += 1));
     }
   },
   // 监听页面滚动，参数为Object
   onPageScroll(event) {
     this.scrollTop = event.scrollTop;
+  },
+  onUnload() {
+    currentPage = 1;
   },
 };
 </script>
@@ -189,7 +213,7 @@ export default {
   box-sizing: border-box;
   view {
     height: 70rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 70rpx;
     color: --color(--qui-FC-777);
     text-align: center;
@@ -260,6 +284,15 @@ $otherHeight: 292rpx;
     font-weight: 700;
     word-break: break-all;
   }
+  &_recoment {
+    width: 34rpx;
+    height: 34rpx;
+    margin-left: 20rpx;
+    line-height: 32rpx;
+    color: #fff;
+    text-align: center;
+    align-self: center;
+  }
   &_details {
     margin: 20rpx 0;
     &_text {
@@ -279,6 +312,9 @@ $otherHeight: 292rpx;
   &_other {
     display: flex;
   }
+}
+.topic-page-list-navigator {
+  display: flex;
 }
 .topic-content-item {
   position: relative;
@@ -329,7 +365,7 @@ $otherHeight: 292rpx;
         height: 100%;
       }
       /deep/ input .input-placeholder {
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         color: --color(--qui-FC-C6);
       }
     }

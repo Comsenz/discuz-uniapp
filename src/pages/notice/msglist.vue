@@ -416,11 +416,11 @@ export default {
   }
 
   &__con {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
 
     &__time {
       padding: 30rpx 0;
-      font-size: $fg-f20;
+      font-size: $fg-f1;
       font-weight: 400;
       color: --color(--qui-JT-B5);
       text-align: center;
@@ -559,7 +559,7 @@ export default {
 
     &__btn {
       margin: 0 20rpx 0 10rpx;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       background: --color(--qui-BG-BTN);
     }
   }

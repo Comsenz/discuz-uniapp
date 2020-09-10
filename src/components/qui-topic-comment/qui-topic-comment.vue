@@ -18,8 +18,9 @@
               class="themeItem__header__title__isAdmin"
               v-for="(group, index) in userRole"
               :key="index"
+              :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
             >
-              {{ group.isDisplay ? `（${group.name}）` : '' }}
+              {{ group.isDisplay ? `${group.name}` : '' }}
             </text>
           </view>
           <view class="themeItem__header__title__time">{{ localTime }}</view>
@@ -337,6 +338,15 @@ export default {
         color: --color(--qui-FC-AAA);
       }
 
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        margin-left: 15rpx;
+        font-size: $fg-f1;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
+      }
+
       &__time {
         font-size: 24rpx;
         font-weight: 400;
@@ -401,7 +411,7 @@ export default {
   width: 100%;
   padding-top: 20rpx;
   .themeItem__footer__con {
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     line-height: 37rpx;
   }
   &__l {
@@ -434,7 +444,7 @@ export default {
   text-align: right;
   .icon {
     padding-right: 10rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 37rpx;
     color: rgba(170, 170, 170, 1);
   }
@@ -450,7 +460,7 @@ export default {
     color: --color(--qui-FC-777);
   }
   .comment-like-count {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 37rpx;
     color: --color(--qui-FC-777);
   }

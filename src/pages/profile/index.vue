@@ -73,7 +73,6 @@
             <view v-if="current == 0" class="items">
               <topic
                 :user-id="userId"
-                :scroll-top="scrollTop"
                 @changeFollow="changeFollow"
                 ref="topic"
                 @handleClickShare="handleClickShare"
@@ -88,7 +87,6 @@
             <view v-else class="items">
               <like
                 :user-id="userId"
-                :scroll-top="scrollTop"
                 @changeFollow="changeFollow"
                 ref="like"
                 @handleClickShare="handleClickShare"
@@ -148,7 +146,6 @@ export default {
       userInfo: '',
       can_create_dialog: false,
       dialogId: 0, // 会话id
-      scrollTop: 0,
       loaded: false, // 用户数据是否请求成功
     };
   },
@@ -183,9 +180,6 @@ export default {
     const item = ['topic', 'following', 'followers', 'like'];
     this.$refs[item[current]].pullDown();
   },
-  onPageScroll(event) {
-    this.scrollTop = event.scrollTop;
-  },
   // 解决左上角返回数据不刷新情况
   onShow() {
     this.getUserInfo(this.userId);
@@ -198,7 +192,7 @@ export default {
     if (res.from === 'button') {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
-        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
         path: `/pages/topic/index?id=${this.nowThreadId}`,
       };
     }
@@ -273,6 +267,7 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
+      console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -300,6 +295,7 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
+      console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -340,9 +336,6 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .profile {
-  .qui-icon {
-    margin-right: 14rpx;
-  }
   /deep/ .qui-tabs__item__brief {
     font-weight: bold;
   }
@@ -350,7 +343,7 @@ export default {
 .profile-info {
   padding: 40rpx;
   padding-top: 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background: --color(--qui-BG-2);
 }
 .profile-info__box {
@@ -368,7 +361,7 @@ export default {
   display: flex;
   flex-direction: row;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   box-sizing: border-box;
 }
 .my-info__box__detail-username {

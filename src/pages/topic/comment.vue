@@ -31,7 +31,8 @@
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
               >
-                <view slot="follow" :key="followStatus" v-if="post.user.follow != null">
+                <!-- 关注 -->
+                <!-- <view slot="follow" :key="followStatus" v-if="post.user.follow != null">
                   <view
                     class="themeItem__header__follow"
                     @tap="post.user.follow === 0 ? addFollow(post.user) : deleteFollow(post.user)"
@@ -57,6 +58,16 @@
                       }}
                     </text>
                   </view>
+                </view> -->
+                <!-- 更多操作 -->
+                <view slot="more" @click="moreClick">
+                  <view class="det-ft-operaCli">
+                    <view class="det-ft-more">
+                      <qui-icon name="icon-gengduo" class="icon-gengduo" style="font-size: 40rpx;">
+                        >
+                      </qui-icon>
+                    </view>
+                  </view>
                 </view>
               </qui-topic-content>
               <view class="thread-box" v-if="loadDetailStatus && !thread.isApproved == 0">
@@ -77,14 +88,22 @@
                           class="thread__header__title__isAdmin"
                           v-for="(group, gindex) in thread.user.groups"
                           :key="gindex"
+                          :class="group.isDisplay ? 'thread__header__title__isAdminColor' : ''"
                         >
-                          {{ group.isDisplay ? `（${group.name}）` : '' }}
+                          {{ group.isDisplay ? `${group.name}` : '' }}
                         </span>
                       </view>
                       <view class="thread__header__title__time">
                         {{ localTime }}
                       </view>
                     </view>
+                    <image
+                      v-if="thread.price > 0"
+                      src="@/static/payment.png"
+                      alt
+                      class="addFine"
+                      :class="thread.isEssence ? 'right40' : ''"
+                    ></image>
                     <image
                       v-if="thread.isEssence"
                       src="@/static/essence.png"
@@ -312,6 +331,86 @@
           @confirm="handleClickOk"
         ></uni-popup-dialog>
       </uni-popup>
+      <!--更多操作弹框-->
+      <uni-popup ref="morePopup" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content popup-share-content-inner">
+            <view
+              class="popup-share-content-box"
+              v-if="post.canHide"
+              @click="moreContent(0, post._jv.id, post.canHide)"
+            >
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    name="icon-delete"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ t.delete }}</text>
+            </view>
+            <view class="popup-share-content-box" @click="moreContent(1)">
+              <view class="popup-share-content-image">
+                <view class="popup-share-box">
+                  <qui-icon
+                    class="content-image"
+                    name="icon-jubao"
+                    size="46"
+                    color="#777777"
+                  ></qui-icon>
+                </view>
+              </view>
+              <text class="popup-share-content-text">{{ r.reportTitle }}</text>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="moreCancel">{{ c.cancel }}</text>
+        </view>
+      </uni-popup>
+      <!--举报弹框-->
+      <uni-popup ref="reportPopup" type="bottom">
+        <view class="popup-report">
+          <view class="popup-report__title">
+            <view class="popup-report__title-headline">{{ r.reportTitle }}</view>
+            <view class="popup-report__title-subhead">{{ r.pleaseClickReasons }}</view>
+          </view>
+          <view class="popup-report__content">
+            <radio-group @change="reportRadioChange">
+              <label
+                class="popup-report__content-cell"
+                v-for="item in reportData"
+                :key="item.value"
+              >
+                <view>{{ item.name }}</view>
+                <view>
+                  <radio :value="item.value" :checked="item.value === currentReport" />
+                </view>
+              </label>
+            </radio-group>
+            <view class="popup-report__content-textarea" v-if="currentReport === 'other'">
+              <textarea
+                placeholder-class="textarea-placeholder"
+                :placeholder="r.otherReason"
+                :maxlength="200"
+                :value="otherReasonValue"
+                @input="reportTextareaInput"
+                fixed="true"
+              />
+            </view>
+          </view>
+          <view class="popup-report__btn">
+            <button class="popup-report__btn-confirm" @click="reportConfirmClick(2)">
+              {{ r.confirm }}
+            </button>
+            <view class="popup-report__btn-cancel" @click="reportCancelClick">
+              {{ r.cancel }}
+            </view>
+          </view>
+        </view>
+      </uni-popup>
     </view>
     <view
       v-else-if="(loadingStatus && !loaded && !thread.isDeleted) || (loadingStatus && !status)"
@@ -420,12 +519,41 @@ export default {
       sortVal: 'createdAt', // 排序值
       followStatus: '', // 当前关注状态
       curUrl: '', // 当前页面的路由
+      reportData: [
+        {
+          // 举报理由
+          value: 'advertisingRubbish',
+          name: '广告垃圾',
+        },
+        {
+          value: 'illegalContent',
+          name: '违规内容',
+        },
+        {
+          value: 'maliciousIrrigation',
+          name: '恶意灌水',
+        },
+        {
+          value: 'repeatPost',
+          name: '重复发帖',
+        },
+        {
+          value: 'other',
+          name: '其他',
+        },
+      ],
+      currentReport: '', // 当前举报理由
+      otherReasonValue: '', // 其他理由
     };
   },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
     }),
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      return parseInt(userId, 10);
+    },
     post() {
       const post = this.$store.getters['jv/get'](`posts/${this.commentId}`);
       this.likedUsers = post.likedUsers;
@@ -442,6 +570,10 @@ export default {
     // core公共变量语言包
     c() {
       return this.i18n.t('core');
+    },
+    // report举报语言包
+    r() {
+      return this.i18n.t('report');
     },
     // 时间转化
     localTime() {
@@ -888,6 +1020,7 @@ export default {
         url: `/pages/profile/index?userId=${id}`,
       });
     },
+
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
@@ -1054,6 +1187,100 @@ export default {
     imageError() {
       this.imageStatus = false;
     },
+    // 更多操作-唤起弹框
+    moreClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        return;
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin(this.curUrl)) {
+          return;
+        }
+        // #endif
+      }
+      this.$refs.morePopup.open();
+    },
+    // 更多操作内标签选择
+    moreContent(type, id, canHide) {
+      this.moreCancel();
+      if (type === 0) {
+        this.deleteReply(id, canHide);
+      } else {
+        this.reportClick();
+      }
+    },
+    // 关闭更多操作弹框
+    moreCancel() {
+      this.$refs.morePopup.close();
+    },
+    // 举报
+    reportClick() {
+      this.otherReasonValue = '';
+      this.currentReport = '';
+      this.$refs.reportPopup.open();
+    },
+    // 切换举报理由
+    reportRadioChange(e) {
+      this.currentReport = e.target.value;
+    },
+    // 监听其他理由输入
+    reportTextareaInput(e) {
+      this.otherReasonValue = e.detail.value;
+    },
+    // 确认举报
+    reportConfirmClick(type) {
+      if (!this.currentReport) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('report.pleaseClickReasons'),
+        });
+        return;
+      }
+      let reason = '';
+      if (this.currentReport === 'other') {
+        if (!this.otherReasonValue) {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('report.enterOtherReason'),
+          });
+          return;
+        }
+        reason = this.otherReasonValue;
+      } else {
+        this.reportData.forEach(item => {
+          if (item.value === this.currentReport) {
+            reason = item.name;
+          }
+        });
+      }
+      const params = {
+        _jv: {
+          type: 'reports',
+        },
+        user_id: this.currentLoginId,
+        thread_id: parseInt(this.threadId),
+        post_id: parseInt(this.commentId),
+        type,
+        reason: `${reason}`,
+      };
+      this.$store.dispatch('jv/post', params).then(res => {
+        if (res._jv) {
+          this.$refs.reportPopup.close();
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('report.reportSucceed'),
+          });
+        }
+      });
+    },
+    // 取消举报
+    reportCancelClick() {
+      this.otherReasonValue = '';
+      this.currentReport = '';
+      this.$refs.reportPopup.close();
+    },
   },
 };
 </script>
@@ -1064,13 +1291,13 @@ export default {
 page {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 * {
   padding: 0;
   margin: 0;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-333);
 }
 .flex {
@@ -1089,7 +1316,7 @@ page {
 .detail-tip {
   display: block;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 60rpx;
   color: #fff;
   text-align: center;
@@ -1117,12 +1344,12 @@ page {
     padding-left: 20rpx;
     .det-hd-per-name {
       margin-bottom: 10px;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: bold;
       line-height: 37rpx;
     }
     .det-hd-post-time {
-      font-size: $fg-f24;
+      font-size: $fg-f2;
       line-height: 31rpx;
       color: --color(--qui-FC-AAA);
     }
@@ -1150,7 +1377,7 @@ page {
       font-size: 26rpx;
     }
   }
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 40rpx;
 }
 //详情页帖子内容
@@ -1195,7 +1422,7 @@ page {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
     align-items: center;
     .qui-icon {
@@ -1203,7 +1430,7 @@ page {
       font-size: 30rpx;
     }
     * {
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       color: --color(--qui-FC-777);
     }
   }
@@ -1226,7 +1453,7 @@ page {
   padding: 0 40rpx;
 }
 .comment-num {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
   line-height: 37rpx;
 }
@@ -1236,7 +1463,7 @@ page {
 }
 // .comment-num {
 //   padding: 0 40rpx;
-//   font-size: $fg-f28;
+//   font-size: $fg-f4;
 //   font-weight: bold;
 //   line-height: 37rpx;
 // }
@@ -1263,7 +1490,7 @@ page {
   .comment-child-status {
     align-items: flex-start;
     padding-top: 8rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
     line-height: 35rpx;
     color: --color(--qui-RED);
   }
@@ -1286,14 +1513,14 @@ page {
     }
   }
   .comment-child-time {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 31rpx;
     color: --color(--qui-FC-AAA);
   }
 }
 .comment-child-con {
   padding: 20rpx 0 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 45rpx;
   text-align: left;
   .comment-child-con-all {
@@ -1333,7 +1560,7 @@ page {
     line-height: 80rpx;
   }
   .ft-child-word {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-777);
   }
 }
@@ -1366,7 +1593,7 @@ page {
     width: 195rpx;
   }
   .text-word-tip {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     line-height: 1;
     color: --color(--qui-FC-777);
   }
@@ -1391,7 +1618,7 @@ page {
     width: 100%;
     height: 220rpx;
     min-height: 70rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 37rpx;
   }
   .text-placeholder {
@@ -1402,7 +1629,7 @@ page {
 .publish-btn {
   width: 100%;
   height: 100rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 100rpx;
   color: --color(--qui-FC-FFF);
   text-align: center;
@@ -1423,6 +1650,13 @@ page {
   line-height: 120rpx;
   background: --color(--qui-BG-40);
   border-radius: 10px;
+}
+.popup-share-content {
+  padding-top: 40rpx;
+}
+.popup-share-content-inner {
+  padding-right: 96px;
+  padding-left: 98px;
 }
 .popup-share-content-box {
   /* #ifndef APP-NVUE */
@@ -1454,7 +1688,7 @@ page {
 }
 .popup-share-content-text {
   padding-top: 5px;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   color: --color(--qui-FC-TAG);
 }
 .popup-share-content-space {
@@ -1499,7 +1733,7 @@ page {
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
       }
 
@@ -1523,6 +1757,15 @@ page {
         color: rgba(170, 170, 170, 1);
       }
 
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        margin-left: 15rpx;
+        font-size: $fg-f1;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
+      }
+
       &__time {
         font-size: 24rpx;
         font-weight: 400;
@@ -1543,7 +1786,7 @@ page {
       }
       &__reward {
         float: right;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: bold;
         color: --color(--qui-RED);
       }
@@ -1555,7 +1798,7 @@ page {
       overflow: hidden;
       flex-direction: column;
       flex-wrap: wrap;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       line-height: 45rpx;
       word-break: break-all;
     }
@@ -1568,6 +1811,9 @@ page {
   width: 31rpx;
   height: 41rpx;
 }
+.right40 {
+  right: 40rpx;
+}
 .themeItem__header__follow {
   align-self: flex-start;
   width: 168rpx;
@@ -1577,7 +1823,103 @@ page {
 
   .icon-follow {
     margin-right: 7rpx;
-    font-size: $fg-f26;
+    font-size: $fg-f3;
+  }
+}
+.det-ft-operaCli {
+  position: relative;
+  line-height: 30rpx;
+  .det-ft-more {
+    display: flex;
+    justify-content: flex-end;
+    .icon-gengduo {
+      color: --color(--qui-FC-AAA);
+    }
+  }
+}
+// 举报弹框
+.popup-report {
+  background: --color(--qui-BG-2);
+  border-radius: 10rpx 10rpx 0rpx 0rpx;
+
+  &__title {
+    padding: 40rpx 0rpx;
+    text-align: center;
+
+    &-headline {
+      font-size: $fg-f4;
+      color: --color(--qui-FC-333);
+    }
+
+    &-subhead {
+      margin-top: 20rpx;
+      font-size: $fg-f2;
+      color: --color(--qui-FC-AAA);
+    }
+  }
+
+  &__content {
+    padding-left: 40rpx;
+
+    &-cell {
+      display: flex;
+      padding-right: 40rpx;
+      line-height: 100rpx;
+      border-bottom: 1px solid var(--qui-BOR-ED);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &-cell:last-child {
+      border-bottom: 0;
+    }
+
+    &-textarea {
+      padding-right: 40rpx;
+
+      textarea {
+        width: 100%;
+        height: 180rpx;
+        padding: 20rpx;
+        font-size: $fg-f4;
+        background-color: --color(--qui-BG-1);
+        border: 1px solid var(--qui-BOR-DDD);
+        box-sizing: border-box;
+      }
+    }
+  }
+
+  &__btn {
+    margin-top: 30rpx;
+    background: --color(--qui-BG-ED);
+
+    &-confirm {
+      width: 100%;
+      height: 100rpx;
+      margin-bottom: 10rpx;
+      font-size: $fg-f4;
+      font-weight: normal;
+      line-height: 100rpx;
+      color: --color(--qui-FC-FFF);
+      text-align: center;
+      background: --color(--qui-MAIN);
+      border-radius: 0;
+    }
+
+    &-cancel {
+      width: 100%;
+      height: 100rpx;
+      font-size: $fg-f4;
+      font-weight: normal;
+      line-height: 100rpx;
+      text-align: center;
+      background: --color(--qui-FC-FFF);
+    }
+  }
+
+  .textarea-placeholder {
+    font-size: $fg-f4;
+    color: --color(--qui-FC-B5);
   }
 }
 </style>

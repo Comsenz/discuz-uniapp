@@ -19,7 +19,7 @@
           v-model="password"
         />
       </view>
-      <view class="login-box-btn" @click="login">
+      <view class="login-box-btn" @click="handleLogin">
         {{ i18n.t('user.login') }}
       </view>
       <view class="login-box-ft">
@@ -58,7 +58,7 @@
           <text
             class="login-box-ft-text"
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findPassword"
+            @click="jump2findpwd"
           >
             {{ i18n.t('user.forgetPassword') }}
           </text>
@@ -71,30 +71,19 @@
 
 <script>
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 import { SITE_PAY } from '@/common/const';
-// #ifdef H5
-import appCommonH from '@/utils/commonHelper';
-// #endif
 
 export default {
-  mixins: [
-    user,
-    // #ifdef H5
-    appCommonH,
-    // #endif
-  ],
+  mixins: [user, loginModule],
   data() {
     return {
       username: '', // 用户名
       password: '', // 密码
       url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
-      code: '', // 注册邀请码
       isPaid: false, // 默认未付费
       forum: {}, // 配置
-      // #ifdef H5
-      isWeixin: false, // 默认不是微信浏览器
-      // #endif
     };
   },
   onLoad(params) {
@@ -103,28 +92,7 @@ export default {
       status: 200,
     });
     this.getForum();
-    const { url, commentId, code } = params;
-    if (url) {
-      let pageUrl;
-      if (url.substr(0, 1) !== '/') {
-        pageUrl = `/${url}`;
-      } else {
-        pageUrl = url;
-      }
-      if (commentId) {
-        this.url = `${pageUrl}&commentId=${commentId}`;
-      } else {
-        this.url = pageUrl;
-      }
-    }
-    if (code !== 'undefined') {
-      this.code = code;
-    }
-
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
+    this.getPageParams(params);
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -146,74 +114,25 @@ export default {
     });
   },
   methods: {
-    getForum() {
-      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
-        console.log('forum', res);
-        if (res) {
-          this.forum = res;
-        }
-      });
-    },
-    login() {
-      if (this.username === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.usernameEmpty'),
-          duration: 2000,
-        });
-      } else if (this.password === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.passwordEmpty'),
-          duration: 2000,
-        });
-      } else {
-        const params = {
-          data: {
-            attributes: {
-              username: this.username,
-              password: this.password,
-            },
+    handleLogin() {
+      const params = {
+        data: {
+          attributes: {
+            username: this.username,
+            password: this.password,
           },
-        };
-        // #ifdef MP-WEIXIN
-        const data = this.$store.getters['session/get']('params');
-        if (data && data.data && data.data.attributes) {
-          params.data.attributes.js_code = data.data.attributes.js_code;
-          params.data.attributes.iv = data.data.attributes.iv;
-          params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-        }
-        // #endif
-        console.log('params', params);
-        this.$store
-          .dispatch('session/h5Login', params)
-          .then(res => {
-            console.log(res);
-            this.logind();
-            uni.showToast({
-              title: this.i18n.t('user.loginSuccess'),
-              duration: 2000,
-            });
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
+        },
+      };
+      this.getLoginParams(params, this.i18n.t('user.loginSuccess'));
     },
     jump2PhoneLogin() {
-      uni.navigateTo({
-        url: `/pages/user/phone-login?url=${this.url}&code=${this.code}`,
-      });
+      this.jump2PhoneLoginPage();
     },
     jump2Register() {
-      uni.navigateTo({
-        url: `/pages/user/register?url=${this.url}&code=${this.code}`,
-      });
+      this.jump2RegisterPage();
     },
-    jump2findPassword() {
-      uni.navigateTo({
-        url: `/pages/modify/findpwd?pas=reset_pwd`,
-      });
+    jump2findpwd() {
+      this.jump2findpwdPage();
     },
   },
 };
@@ -225,7 +144,7 @@ export default {
 
 .login-box {
   padding-bottom: 40px;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background-color: --color(--qui-BG-2);
 
   &-h {
@@ -242,7 +161,7 @@ export default {
       width: 100%;
       height: 100rpx;
       padding: 0rpx 0rpx 0rpx 20rpx;
-      font-size: $fg-f34;
+      font-size: $fg-f5;
       line-height: 100rpx;
       text-align: left;
       border-bottom: 2rpx solid --color(--qui-BOR-ED);

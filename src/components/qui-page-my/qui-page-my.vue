@@ -39,7 +39,11 @@
           <navigator url="/pages/my/profile" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myprofile')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="/pages/my/wallet" hover-class="none" v-if="forums.paycenter.wxpay_close">
+          <navigator
+            url="/pages/my/wallet"
+            hover-class="none"
+            v-if="forums.paycenter ? forums.paycenter.wxpay_close : ''"
+          >
             <qui-cell-item :title="i18n.t('profile.mywallet')" arrow></qui-cell-item>
           </navigator>
           <navigator url="/pages/my/favorite" hover-class="none">
@@ -104,7 +108,12 @@
              微信外：展示退出登录按钮 -->
         <view class="logout">
           <!-- #ifdef MP-WEIXIN -->
-          <qui-button size="large" type="warn" @click="exitAndUnbind" v-if="register_type !== 2">
+          <qui-button
+            size="large"
+            type="warn"
+            @click="exitAndUnbind"
+            v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2"
+          >
             {{ i18n.t('user.noBind') }}
           </qui-button>
           <!-- #endif -->
@@ -113,7 +122,7 @@
             size="large"
             type="warn"
             @click="exitAndUnbind"
-            v-if="isWeixin && register_type !== 2"
+            v-if="isWeixin && forums && forums.set_reg && forums.set_reg.register_type !== 2"
           >
             {{ i18n.t('user.noBind') }}
           </qui-button>
@@ -143,6 +152,9 @@ import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { mapState, mapMutations } from 'vuex';
+// #ifdef H5
+import { setCookie } from '@/utils/setCookie';
+// #endif
 
 export default {
   components: { uniPopupDialog },
@@ -160,8 +172,7 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
-      offiaccount_close: false, // 默认不开启微信公众号
-      register_type: 0, // 注册模式
+      register_type: 2, // 默认注册模式为无感模式
       site_mode: '', // 站点模式
     };
   },
@@ -182,13 +193,7 @@ export default {
   },
   created() {
     if (this.forums && this.forums.set_reg) {
-      this.register_type = this.forums.set_reg.register_type;
-    }
-    if (this.forums && this.forums.set_site) {
       this.site_mode = this.forums.set_site.site_mode;
-    }
-    if (this.forums && this.forums.passport) {
-      this.offiaccount_close = this.forums.passport.offiaccount_close;
     }
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -211,7 +216,10 @@ export default {
       this.$refs.popup.open();
     },
     logout() {
-      this.$store.dispatch('session/logout').then(() => window.location.reload());
+      this.$store.dispatch('session/logout').then(() => {
+        setCookie('token', '', -1);
+        window.location.reload();
+      });
     },
     handleClickOk() {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(() => {
@@ -230,7 +238,10 @@ export default {
         });
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/logout').then(() => window.location.reload());
+        this.$store.dispatch('session/logout').then(() => {
+          setCookie('token', '', -1);
+          window.location.reload();
+        });
         // #endif
       });
     },
@@ -283,7 +294,7 @@ $height: calc(100vh - 260rpx);
 .my-info {
   padding: 40rpx;
   padding-top: 30rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
 }
@@ -302,7 +313,7 @@ $height: calc(100vh - 260rpx);
   display: flex;
   flex-direction: row;
   width: 100%;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   box-sizing: border-box;
 }
 .my-info__box__detail-username {

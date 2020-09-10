@@ -68,6 +68,11 @@
       ></uni-popup-dialog>
     </uni-popup>
     <qui-toast ref="toast"></qui-toast>
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-popup ref="authPhone" type="bottom">
+      <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
+    </uni-popup>
+    <!-- #endif -->
   </view>
 </template>
 <script>
@@ -263,20 +268,20 @@ export default {
           type: 1,
         });
       }
-      if (this.forums.other.can_create_thread_video) {
-        this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
-        });
-      }
       if (this.forums.other.can_create_thread_image) {
         this.bottomData.push({
           text: this.i18n.t('home.picture'),
           icon: 'icon-img',
           name: 'image',
           type: 3,
+        });
+      }
+      if (this.forums.other.can_create_thread_video) {
+        this.bottomData.push({
+          text: this.i18n.t('home.video'),
+          icon: 'icon-video',
+          name: 'video',
+          type: 2,
         });
       }
       this.$refs.popup.open();
@@ -308,16 +313,27 @@ export default {
           url: `/pages/modify/realname?id=${this.user.id}`,
         });
       } else if (this.sureType === '1') {
+        // #ifdef MP-WEIXIN
+        if (this.user && this.user.mobile === '') {
+          this.$refs.authPhone.open();
+        }
+        // #endif
+        // #ifdef H5
         // 删除类型为主题评论
         uni.navigateTo({
           url: `/pages/modify/setphon?id=${this.user.id}`,
         });
+        // #endif
       }
     },
-
     handleClickCancel() {
       this.$refs.surePopup.close();
     },
+    // #ifdef MP-WEIXIN
+    closeDialog() {
+      this.$refs.authPhone.close();
+    },
+    // #endif
   },
 };
 </script>
@@ -342,7 +358,7 @@ export default {
   width: 22%;
   height: 90rpx;
   padding-left: 40rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   // margin-top: 23rpx;
   line-height: 90rpx;
   flex-direction: column;

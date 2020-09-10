@@ -13,6 +13,7 @@
       :theme-time="thread.createdAt"
       :theme-content="thread.type == 1 ? thread.title : thread.firstPost.summary"
       :thread-type="thread.type"
+      :them-pay-btn="thread.price > 0"
       :media-url="thread.threadVideo && thread.threadVideo.media_url"
       :is-great="thread.firstPost.isLiked"
       :theme-like="thread.firstPost.likeCount"
@@ -26,7 +27,9 @@
       :cover-image="thread.threadVideo && thread.threadVideo.cover_url"
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
-      :scroll-top="scrollTop"
+      :thread-position="
+        thread.location ? [thread.location, thread.address, thread.longitude, thread.latitude] : []
+      "
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(
@@ -75,10 +78,6 @@ export default {
       type: [Number, String],
       default: '0',
     },
-    scrollTop: {
-      type: Number,
-      default: 0,
-    },
   },
   data() {
     return {
@@ -122,6 +121,7 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
+      console.log('内容部分点赞按钮点击事件', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -159,6 +159,17 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+        return;
+      }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;

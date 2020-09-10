@@ -57,12 +57,12 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 
 .invite-con {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background: --color(--qui-BG-1);
 
   .invite-con-total {
     margin: 40rpx 0 20rpx 20rpx;
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     color: --color(--qui-FC-7D7979);
   }
 

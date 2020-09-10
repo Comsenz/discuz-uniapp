@@ -24,21 +24,13 @@
         <qui-avatar class="my-profile__avatar" :user="profile" :is-real="profile.isReal" />
       </qui-cell-item>
       <!-- qcloud_sms 是否开启短信服务  没有绑定手机号码，跳到“设置新手机”页,反之跳到修改手机号页面，-->
-      <navigator
-        :url="
-          profile.mobile
-            ? `/pages/modify/mobile?id=${userId}`
-            : `/pages/modify/setphon?id=${userId}`
-        "
-        hover-class="none"
+      <qui-cell-item
+        :title="i18n.t('profile.mobile')"
+        arrow
+        :addon="profile.mobile ? profile.mobile : i18n.t('profile.bindingmobile')"
         v-if="forums.qcloud && forums.qcloud.qcloud_sms"
-      >
-        <qui-cell-item
-          :title="i18n.t('profile.mobile')"
-          arrow
-          :addon="profile.mobile ? profile.mobile : i18n.t('profile.bindingmobile')"
-        ></qui-cell-item>
-      </navigator>
+        @click="bindPhone"
+      ></qui-cell-item>
       <!--没有密码，跳到“设置密码”页,反之跳到密码是修改页面，-->
       <navigator
         :url="
@@ -101,6 +93,11 @@
       ></qui-uploader>
       <qui-toast ref="toast"></qui-toast>
     </view>
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-popup ref="authPhone" type="bottom">
+      <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
+    </uni-popup>
+    <!-- #endif -->
   </qui-page>
 </template>
 
@@ -143,6 +140,36 @@ export default {
     };
   },
   methods: {
+    bindPhone() {
+      console.log('this.forums', this.forums);
+      console.log('this.profile', this.profile);
+      // #ifdef MP-WEIXIN
+      if (
+        this.forums &&
+        this.forums.other &&
+        this.forums.other.publish_need_bind_phone &&
+        this.profile &&
+        this.profile.mobile === ''
+      ) {
+        this.$refs.authPhone.open();
+      } else {
+        uni.navigateTo({
+          url: `/pages/modify/mobile?id=${this.userId}`,
+        });
+      }
+      // #endif
+      // #ifdef H5
+      if (this.profile && this.profile.mobile !== '') {
+        uni.navigateTo({
+          url: `/pages/modify/mobile?id=${this.userId}`,
+        });
+      } else {
+        uni.navigateTo({
+          url: `/pages/modify/setphon?id=${this.userId}`,
+        });
+      }
+      // #endif
+    },
     uploadSuccess(res) {
       uni.hideLoading();
       if (res.statusCode >= 200 && res.statusCode < 300) {
@@ -166,6 +193,11 @@ export default {
     chooseSuccess() {
       uni.showLoading();
     },
+    // #ifdef MP-WEIXIN
+    closeDialog() {
+      this.$refs.authPhone.close();
+    },
+    // #endif
   },
 };
 </script>

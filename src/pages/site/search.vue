@@ -217,17 +217,17 @@ export default {
   padding: 30rpx 40rpx 20rpx 0;
 }
 .search-item__head-title {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
 }
 .search-item__head-more {
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   color: --color(--qui-LINK);
 }
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-AAA);
 }
 .search-item__users__avatar {

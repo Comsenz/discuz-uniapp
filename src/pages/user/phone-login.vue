@@ -116,7 +116,7 @@
           <text
             class="phone-login-box-ft-text"
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findPassword"
+            @click="jump2findpwd"
           >
             {{ i18n.t('user.forgetPassword') }}
           </text>
@@ -134,15 +134,18 @@
 
 <script>
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 import { SITE_PAY } from '@/common/const';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
+import { setCookie } from '@/utils/setCookie';
 // #endif
 
 export default {
   mixins: [
     user,
+    loginModule,
     // #ifdef H5
     appCommonH,
     tcaptchs,
@@ -162,8 +165,6 @@ export default {
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
       url: '', // 上一个页面的路径
-      code: '', // 注册邀请码
-      token: '', // token
       site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
@@ -179,26 +180,7 @@ export default {
   },
   onLoad(params) {
     this.getForum();
-    const { url, token, commentId, code } = params;
-    if (url) {
-      let pageUrl;
-      if (url.substr(0, 1) !== '/') {
-        pageUrl = `/${url}`;
-      } else {
-        pageUrl = url;
-      }
-      if (commentId) {
-        this.url = `${pageUrl}&commentId=${commentId}`;
-      } else {
-        this.url = pageUrl;
-      }
-    }
-    if (code !== 'undefined') {
-      this.code = code;
-    }
-    if (token) {
-      this.token = token;
-    }
+    this.getPageParams(params);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -240,20 +222,13 @@ export default {
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    this.$u.event.$off('logind');
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();
     }
   },
   methods: {
-    getForum() {
-      this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
-        console.log('forum', res);
-        if (res) {
-          this.forum = res;
-        }
-      });
-    },
     changeinput() {
       setTimeout(() => {
         this.phoneNumber = this.phoneNumber.replace(/[^\d]/g, '');
@@ -399,23 +374,36 @@ export default {
       }
       // #endif
       // #ifdef H5
-      if (this.token && this.token !== '') {
-        params.data.attributes.token = this.token;
+      const token = this.$store.getters['session/get']('token');
+      if (token && token !== '') {
+        params.data.attributes.token = token;
       }
       // #endif
-      if (this.code && this.code !== 'undefined') {
-        params.data.attributes.inviteCode = this.code;
+      let inviteCode = '';
+      uni.getStorage({
+        key: 'inviteCode',
+        success(resData) {
+          inviteCode = resData.data || '';
+        },
+      });
+      if (inviteCode !== '') {
+        params.data.attributes.code = inviteCode;
       }
       console.log('params', params);
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
-          console.log(res);
-          this.logind();
-          uni.showToast({
-            title: this.i18n.t('user.loginSuccess'),
-            duration: 2000,
-          });
+          if (res && res.access_token) {
+            // #ifdef H5
+            setCookie('token', res.access_token, 30);
+            // #endif
+            console.log('手机号登录成功：', res);
+            this.logind();
+            uni.showToast({
+              title: this.i18n.t('user.loginSuccess'),
+              duration: 2000,
+            });
+          }
         })
         .catch(err => {
           console.log(err);
@@ -426,63 +414,24 @@ export default {
     },
     // #ifdef MP-WEIXIN
     mpAuthClick() {
-      const params = {
-        data: {
-          attributes: {},
-        },
-      };
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-        params.data.attributes.register = 1;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.code = data.data.attributes.code;
-      }
-      this.$store
-        .dispatch('session/noSenseMPLogin', params)
-        .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
-            this.logind();
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.getmpRegisterParams();
     },
     // #endif
     // #ifdef H5
     jump2WeChat() {
-      if (
-        this.isWeixin &&
-        this.forum &&
-        this.forum.passport &&
-        this.forum.passport.offiaccount_close
-      ) {
-        uni.setStorage({
-          key: 'register',
-          data: 1,
-        });
-        this.$store.dispatch('session/wxh5Login');
-      }
+      this.wxh5Login();
     },
     // #endif
-    jump2Login() {
-      uni.navigateTo({
-        url: `/pages/user/login?url=${this.url}&code=${this.code}`,
-      });
-    },
     switchState() {
       this.isLogin = !this.isLogin;
       this.phoneNumber = '';
       this.$refs.quiinput.deleat();
     },
-    jump2findPassword() {
-      uni.navigateTo({
-        url: `/pages/modify/findpwd?pas=reset_pwd`,
-      });
+    jump2Login() {
+      this.jump2LoginPage();
+    },
+    jump2findpwd() {
+      this.jump2findpwdPage();
     },
   },
 };
@@ -491,7 +440,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-
+page {
+  overflow: scroll;
+  overflow-x: hidden;
+}
 .phone-login-box {
   background-color: --color(--qui-BG-2);
 }
@@ -512,14 +464,14 @@ export default {
 .new-phon {
   width: 710rpx;
   margin-left: 40rpx;
-  font-size: $fg-f50;
+  font-size: $fg-f7;
   font-weight: bold;
   line-height: 100rpx;
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   box-sizing: border-box;
 }
 .new-phon-test {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: 400;
   line-height: 100rpx;
   color: --color(--qui-FC-777);
@@ -530,14 +482,14 @@ export default {
 .new-phon-num {
   width: 399rpx;
   height: 100rpx;
-  font-size: $fg-f50;
+  font-size: $fg-f7;
   font-weight: bold;
   line-height: 100rpx;
   color: --color(--qui-FC-333);
 }
 .newphon-erro {
   margin: 20rpx 0 0 40rpx;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   font-weight: 400;
   color: --color(--qui-RED);
 }
@@ -546,7 +498,7 @@ export default {
   height: 70rpx;
   min-width: 180rpx;
   margin: 15rpx 0 0 91rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: 400;
   line-height: 70rpx;
   color: --color(--qui-FC-FFF);
@@ -559,7 +511,7 @@ export default {
   margin: 0 0 0 40rpx;
 }
 .new-input-test {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: 400;
   line-height: 100rpx;
   color: --color(--qui-FC-777);
@@ -585,7 +537,7 @@ export default {
 }
 .phone-login-box-pwdlogin {
   margin: 20rpx 0rpx 0rpx 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-LINK);
 }
 

@@ -27,6 +27,7 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [forums, user],
@@ -65,13 +66,6 @@ export default {
   },
   methods: {
     handleGetUserInfo(res) {
-      if (this.forums && !this.forums.set_reg.register_close) {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('core.register_close'),
-        });
-        return;
-      }
       if (res.detail.errMsg === 'getUserInfo:ok') {
         this.getParams();
       } else {
@@ -95,10 +89,19 @@ export default {
                       },
                     },
                   };
-                  if (this.isSuccess) {
-                    this.noSenseLogin(params);
+                  if (
+                    this.forums &&
+                    this.forums.set_reg &&
+                    this.forums.set_reg.register_type !== 2
+                  ) {
+                    if (this.isSuccess) {
+                      this.noSenseLogin(params);
+                    } else {
+                      this.loginMode(params);
+                    }
                   } else {
-                    this.loginMode(params);
+                    // 无感模式
+                    this.noSenseLogin(params, 1);
                   }
                 },
                 fail: error => {
@@ -117,12 +120,15 @@ export default {
     },
     noSenseLogin(param, register = 0) {
       const params = param;
+      let inviteCode = '';
       params.data.attributes.register = register;
-      const pages = getCurrentPages();
-      const page = pages[pages.length - 1].route;
-      // 邀请页面带上邀请码
-      if (page === 'pages/site/partner-invite') {
-        const inviteCode = pages[pages.length - 1].options.code;
+      uni.getStorage({
+        key: 'inviteCode',
+        success(resData) {
+          inviteCode = resData.data || '';
+        },
+      });
+      if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
       this.$store
@@ -133,8 +139,16 @@ export default {
             if (res.data.data && res.data.data.id) {
               this.isSuccess = true;
               this.logind();
+              uni.showToast({
+                title: this.i18n.t('user.loginSuccess'),
+                duration: 2000,
+              });
             }
-            if (res.data.errors && res.data.errors[0].code === 'no_bind_user') {
+            if (
+              res.data.errors &&
+              (res.data.errors[0].code === 'no_bind_user' ||
+                res.data.errors[0].code === 'register_close')
+            ) {
               this.isSuccess = false;
               this.getParams();
             }
@@ -145,66 +159,37 @@ export default {
         });
     },
     loginMode(param) {
-      let url = '/pages/home/index';
       const params = param;
-      const pages = getCurrentPages();
-      const page = pages[pages.length - 1].route;
-      if (page !== '/pages/home/index') {
-        url = page;
-      }
-      // 邀请页面带上邀请码
-      if (page === 'pages/site/partner-invite') {
-        const inviteCode = pages[pages.length - 1].options.code;
+      const url = getCurUrl();
+      let inviteCode = '';
+      uni.getStorage({
+        key: 'inviteCode',
+        success(resData) {
+          inviteCode = resData.data || '';
+        },
+      });
+      if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
       // #ifdef MP-WEIXIN
       this.$store.dispatch('session/setParams', params);
       // #endif
       console.log('params', params);
-      if (this.forums && this.forums.passport && this.forums.passport.offiaccount_close) {
-        // 开启微信公众号
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
-          // 用户名模式 跳转到注册并绑定页
-          uni.navigateTo({
-            url: `/pages/user/register-bind?url=${url}`,
-          });
-        }
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
-          // 手机号模式 跳转到手机号+验证码登陆页
-          uni.navigateTo({
-            url: `/pages/user/phone-login?url=${url}`,
-          });
-        }
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-          // 无感模式
-          this.noSenseLogin(params, 1);
-        }
-      } else {
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
-          // 用户名模式
-          uni.navigateTo({
-            url: `/pages/user/login?url=${url}`,
-          });
-        }
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
-          // 手机号模式
-          uni.navigateTo({
-            url: `/pages/user/phone-login?url=${url}`,
-          });
-        }
-        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
-            // 手机号模式
-            uni.navigateTo({
-              url: `/pages/user/phone-login?url=${url}`,
-            });
-          } else {
-            // 用户名模式
-            uni.navigateTo({
-              url: `/pages/user/login?url=${url}`,
-            });
-          }
-        }
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+        // 用户名模式 跳转到登录并绑定页
+        uni.navigateTo({
+          url: `/pages/user/login-bind?url=${url}`,
+        });
+      }
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+        // 手机号模式 跳转到手机号码登录页
+        uni.navigateTo({
+          url: `/pages/user/phone-login?url=${url}`,
+        });
+      }
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+        // 无感模式
+        this.noSenseLogin(params, 1);
       }
     },
     close() {

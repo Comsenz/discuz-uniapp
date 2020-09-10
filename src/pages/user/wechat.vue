@@ -7,8 +7,10 @@ import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
 // #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
+import { setCookie } from '@/utils/setCookie';
 // #endif
 import { SITE_PAY } from '@/common/const';
+import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [
@@ -30,23 +32,17 @@ export default {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
-          uni.setStorage({
-            key: 'register',
-            data: 0,
-          });
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
-              const wxtoken = res.data.errors[0].token;
-              let code = '';
-              uni.getStorage({
-                key: 'inviteCode',
-                success(resData) {
-                  code = resData.data || '';
-                },
-              });
-              const pages = getCurrentPages();
-              const url = pages[pages.length - 1].route;
-              this.login(url, wxtoken, code);
+              this.$store.dispatch('session/setToken', res.data.errors[0].token);
+              const url = getCurUrl();
+              console.log('微信登录url', url);
+              this.login(url);
+            }
+            if (res.data.errors[0].code === 'permission_denied') {
+              const url = getCurUrl();
+              console.log('微信登录url', url);
+              this.login(url);
             }
             if (res.data.errors[0].code === 'register_validate') {
               uni.showToast({
@@ -55,8 +51,17 @@ export default {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'validate_reject') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.validate_reject'),
+                duration: 2000,
+              });
+            }
           }
           if (res && res.data && res.data.data && res.data.data.id) {
+            setCookie('token', res.data.data.attributes.access_token, 30);
+            console.log('登录成功：', res);
             this.logind();
             if (this.user && this.user.paid) {
               this.isPaid = this.user.paid;

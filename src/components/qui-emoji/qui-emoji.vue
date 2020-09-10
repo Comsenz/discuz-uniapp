@@ -109,7 +109,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .emoji-box {
   z-index: 150;
-  width: 100%;
+  width: calc(100vw - 80rpx);
   height: 370rpx;
   padding: 10rpx 0;
   background-color: --color(--qui-BG-2);

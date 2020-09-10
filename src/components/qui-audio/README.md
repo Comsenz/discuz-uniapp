@@ -16,3 +16,4 @@
 | src | 音频地址 | string| ''|
 | poster | 封面图 | string| ''|
 | autoplay | 是否自动开始播放 | Boolean| false|
+| audioId | 主键 | string| ''|

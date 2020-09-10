@@ -11,32 +11,22 @@
             class="themeItem__header__title__isAdmin"
             v-for="(group, index) in userRole"
             :key="index"
+            :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
           >
-            {{ group.isDisplay ? `（${group.name}）` : '' }}
+            {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
-
-      <view class="themeItem__header__opera" v-if="managementShow">
-        <view class="det-hd-operaCli">
-          <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>{{ t.management }}</view>
-          </view>
-          <view>
-            <qui-drop-down
-              posival="absolute"
-              :show="seleShow"
-              :list="selectList"
-              :top="60"
-              :right="0"
-              :width="180"
-              @click="selectChoice"
-            ></qui-drop-down>
-          </view>
-        </view>
+      <view class="themeItem__header__opera">
+        <image
+          v-if="threadPrice > 0"
+          src="@/static/payment.png"
+          class="essence"
+          :class="threadIsEssence ? 'marginLf' : ''"
+        ></image>
         <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+        <slot name="more"></slot>
       </view>
     </view>
   </view>
@@ -71,32 +61,23 @@
             class="themeItem__header__title__isAdmin"
             v-for="(group, index) in userRole"
             :key="index"
+            :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
           >
-            {{ group.isDisplay ? `（${group.name}）` : '' }}
+            {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
         <view class="themeItem__header__title__time">{{ localTime }}</view>
       </view>
       <slot name="follow"></slot>
-      <view class="themeItem__header__opera" v-if="managementShow">
-        <view class="det-hd-operaCli">
-          <view class="det-hd-management" @click="selectClick">
-            <qui-icon name="icon-management" class="icon-management"></qui-icon>
-            <view>{{ t.management }}</view>
-          </view>
-          <view>
-            <qui-drop-down
-              posival="absolute"
-              :show="seleShow"
-              :list="selectList"
-              :top="60"
-              :right="0"
-              :width="180"
-              @click="selectChoice"
-            ></qui-drop-down>
-          </view>
-        </view>
+      <view class="themeItem__header__opera">
+        <image
+          v-if="threadPrice > 0"
+          src="@/static/payment.png"
+          class="essence"
+          :class="threadIsEssence ? 'marginLf' : ''"
+        ></image>
         <image v-if="threadIsEssence" src="@/static/essence.png" class="essence"></image>
+        <slot name="more"></slot>
       </view>
     </view>
 
@@ -115,11 +96,16 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !videoStatus && coverImage != null"
           @click="videocoverClick"
-          :style="videoWidth >= videoHeight ? 'width:100%' : 'max-width: 50%'"
+          :style="{ width: '100%', height: videoWidth > videoHeight ? '' : '860rpx' }"
+          :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
         >
           <view class="theme__mark"></view>
           <image class="theme__mark__open" src="/static/video.svg"></image>
-          <image class="themeItem__content__coverimg" :src="coverImage"></image>
+          <image
+            class="themeItem__content__coverimg"
+            :src="coverImage"
+            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+          ></image>
         </view>
         <view
           class="theme__content__videocover"
@@ -132,7 +118,7 @@
             class="themeItem__content__coverimg"
             :src="coverImage"
             :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
-            mode="aspectFill"
+            :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
           ></image>
         </view>
         <view v-show="videoShow">
@@ -199,20 +185,26 @@
           v-for="(item, index) in attachMentList"
           :key="index"
         >
-          <!-- <view
-            v-if="['MP3', 'OGG', 'WAV'].indexOf(item.format) !== -1"
+          <view
+            v-if="['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1"
             class="themeItem__content__attachment-item-wrap"
           >
-            <qui-audio :src="item.url" :name="item.fileName" :key="item.id"></qui-audio>
-          </view> -->
-          <view @tap="download(item)">
+            <qui-audio
+              :src="item.url"
+              :name="item.fileName"
+              :audio-id="item._jv.id"
+              :ref="'audio' + item._jv.id"
+              @audioPlay="audioPlay"
+            ></qui-audio>
+          </view>
+          <view @tap="download(item)" v-else class="attachment-name">
             <qui-icon
               class="icon-attachment"
               :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text class="attachment-name">{{ item.fileName }}</text>
+            <text>{{ item.fileName }}</text>
           </view>
         </view>
       </view>
@@ -225,6 +217,17 @@
           @click="tagClick(tag._jv.id)"
         >
           {{ tag.name }}
+        </view>
+      </view>
+      <view
+        class="themeItem__content__tags  themeItem__content__tags--position"
+        v-if="threadPosition.length > 0"
+      >
+        <view class="themeItem__content__tags__item" @tap="topicPosition">
+          <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
+          <text class="themeItem__content__tags__item-text">
+            {{ threadPosition.length > 0 && threadPosition[0] }}
+          </text>
         </view>
       </view>
     </view>
@@ -402,15 +405,21 @@ export default {
         return [];
       },
     },
+    threadPosition: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
   },
   data: () => {
     return {
       seleShow: false, // 默认收起管理菜单
       selectActive: false,
       imageStatus: true, // 头像地址错误时显示默认头像
-      attachMentList: [],
       // topicStatus: '',
       videoShow: false,
+      attachMentList: [],
       autoplay: false,
       look: true,
       sun: 1,
@@ -507,6 +516,23 @@ export default {
       // });
       // #endif
     },
+    // 只能播放一个音频
+    audioPlay(id) {
+      const { attachMentList } = this;
+      const that = this;
+      attachMentList.forEach(item => {
+        if (id !== item._jv.id && ['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1) {
+          that.$refs[`audio${item._jv.id}`][0].audioPause();
+        }
+      });
+    },
+    // 地理位置
+    topicPosition() {
+      const { threadPosition } = this;
+      uni.navigateTo({
+        url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
+      });
+    },
     previewPicture() {
       this.$emit('previewPicture');
     },
@@ -590,7 +616,7 @@ export default {
         height: 37rpx;
         margin-bottom: 10rpx;
         margin-left: 2rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
       }
 
@@ -612,8 +638,17 @@ export default {
         white-space: nowrap;
       }
 
+      &__isAdminColor {
+        padding: 2rpx 10rpx;
+        margin-left: 15rpx;
+        font-size: $fg-f1;
+        background: --color(--qui-BG-IT);
+        border-radius: 18rpx;
+        box-sizing: border-box;
+      }
+
       &__time {
-        font-size: $fg-f24;
+        font-size: $fg-f2;
         font-weight: 400;
         line-height: 31rpx;
         color: --color(--qui-FC-AAA);
@@ -626,10 +661,15 @@ export default {
       text-align: right;
       flex-shrink: 0;
 
+      .marginLf {
+        margin-right: 6rpx;
+      }
+
       .essence {
         display: inline-block;
         width: 35rpx;
         height: 45rpx;
+        margin-bottom: 10rpx;
         vertical-align: top;
       }
     }
@@ -665,7 +705,7 @@ export default {
         z-index: 6;
         padding-top: 37rpx;
         padding-bottom: 20rpx;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         line-height: 37rpx;
         text-align: center;
       }
@@ -675,7 +715,7 @@ export default {
     &__text {
       margin-bottom: 12rpx;
       overflow: hidden;
-      font-size: $fg-f28;
+      font-size: $fg-f4;
       font-weight: 400;
       line-height: 160%;
       word-break: break-all;
@@ -707,6 +747,12 @@ export default {
         transition: $switch-theme-time;
       }
     }
+    &__tags--position {
+      margin-top: -40rpx;
+    }
+    &__tags__item-text {
+      margin-left: 10rpx;
+    }
     &__attachment {
       margin-top: 40rpx;
       margin-bottom: 20rpx;
@@ -717,9 +763,6 @@ export default {
         color: --color(--qui-FC-777);
       }
       &-item {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;
@@ -765,7 +808,7 @@ export default {
     &__themeType2 {
       &__item {
         font-family: $font-family;
-        font-size: $fg-f28;
+        font-size: $fg-f4;
         font-weight: 400;
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
@@ -780,25 +823,24 @@ export default {
 .attachment-name {
   max-width: 100%;
   overflow: hidden;
-  font-size: $fg-f24;
-  line-height: 31rpx;
+  font-size: $fg-f2;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .det-hd-operaCli {
   position: relative;
   z-index: 10;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 40rpx;
   .det-hd-management {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 1;
     .icon-management {
       margin-right: 7rpx;
-      font-size: $fg-f26;
+      font-size: $fg-f3;
     }
   }
 }

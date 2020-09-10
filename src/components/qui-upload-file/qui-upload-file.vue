@@ -1,7 +1,7 @@
 <template>
   <view class="qui-uploader-box">
     <view class="qui-uploader-box__item" v-for="(item, index) in fileList" :key="index">
-      <view class="qui-uploader-box__item__fonts">
+      <view class="qui-uploader-box__item__fonts" @tap="clickAttach(item)">
         <view class="qui-uploader-box__item__fonts-detail">{{ item.attributes.fileName }}</view>
       </view>
       <view class="qui-uploader-box__item__delete" @tap="deleteItem(index, item.id)">
@@ -93,7 +93,7 @@ export default {
       handler(newVal) {
         const list = [];
         newVal.forEach(v => {
-          list.push({ attributes: { fileName: v.fileName }, id: v._jv.id });
+          list.push({ attributes: { fileName: v.fileName, url: v.url }, id: v._jv.id });
         });
         this.fileList = list;
       },
@@ -161,7 +161,7 @@ export default {
               const response = JSON.parse(data.data).data;
               if (status >= 200 && status < 300) {
                 that.fileList.push({
-                  attributes: { fileName: file.name },
+                  attributes: { fileName: file.name, url: response.attributes.url },
                   id: response.id,
                 });
               } else {
@@ -199,12 +199,8 @@ export default {
       }
       return true;
     },
-    deleteItem(index, id) {
-      this.currentIndex = index;
-      this.$emit('deleteItem', id);
-    },
-    deleteSure() {
-      this.fileList.splice(this.currentIndex, 1);
+    deleteItem(index) {
+      this.fileList.splice(index, 1);
     },
     getValue() {
       return this.fileList;
@@ -212,7 +208,7 @@ export default {
     setValue(v) {
       this.fileList = v;
     },
-    // #ifdef  H5
+    // #ifdef H5
     uploadFile(path) {
       uni.showLoading();
       const fData = new FormData();
@@ -226,7 +222,10 @@ export default {
         const data = JSON.parse(res.target.response);
         if (status >= 200 && status < 300) {
           this.fileList.push({
-            attributes: { fileName: data.data.attributes.fileName },
+            attributes: {
+              fileName: data.data.attributes.fileName,
+              url: data.data.attributes.url,
+            },
             id: data.data.id,
           });
         } else {
@@ -240,6 +239,9 @@ export default {
         this.$refs.toast.show({ message: res });
       };
       xhr.send(fData);
+    },
+    clickAttach(item) {
+      uni.$emit('clickAttach', item);
     },
     // #endif
   },
@@ -266,7 +268,7 @@ export default {
   }
   &__add__fonts {
     margin-top: 4rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-AAA);
     box-sizing: border-box;
   }
@@ -292,7 +294,7 @@ export default {
     height: 165rpx;
     padding: 15rpx;
     overflow: hidden;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-333);
     box-sizing: border-box;
   }

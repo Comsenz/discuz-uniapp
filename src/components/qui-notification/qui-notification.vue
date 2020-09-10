@@ -260,7 +260,7 @@ export default {
 .list-box {
   width: 100%;
   margin: 0 0 20rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   background-color: --color(--qui-BG-2);
 
   &__notice {

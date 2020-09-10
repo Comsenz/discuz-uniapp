@@ -125,6 +125,7 @@ export default {
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
       pleaseEnterAPostTitle: '请输入帖子标题',
+      addPosition: '添加位置',
     },
   },
   uploader: {
@@ -193,7 +194,7 @@ export default {
     waitValidate: '感谢您的注册，站点开启了人工验证注册用户，请等待审核',
     validate_reject: '您的注册申请未通过,无法登录',
     validate_ignore: '您的注册申请还未处理,请稍后尝试',
-    mobile_is_already_bind: '手机已经绑定',
+    mobile_is_already_bind: '该手机号已经绑定其他账号',
     setting_fill_register_reason: '注册时的注册原因必须必填',
     faceid_error: '身份信息验证不通过',
     invalid_emoji_path: '无效的表情目录',
@@ -253,6 +254,8 @@ export default {
     comment: '评论',
     noComment: '暂无评论',
     noMoreData: '没有更多数据了',
+    noMoreDataNearby: '附近没有其它内容了',
+    myPosition: '我的位置',
     whole: '全部',
     paymentViewPicture: '查看图片',
     paymentViewRemainingContent: '查看剩余内容',
@@ -324,6 +327,8 @@ export default {
   },
   auth: {
     userinfo: '微信快捷登录',
+    phone: '获取手机号',
+    success: '绑定成功',
   },
   // 首页
   home: {
@@ -632,6 +637,7 @@ export default {
     setpassword: '设置密码',
     setpaypassword: '设置支付密码',
     total: '共有',
+    nearBy: '附近',
     records: '记录',
     amountinvolved: '涉及金额',
     collection: '收藏',
@@ -727,6 +733,7 @@ export default {
     themes: '主题',
     searchmorethemes: '搜索更多主题',
     norelatedthemesfound: '没有找到相关主题',
+    norelatedTopicfound: '没有找到相关话题',
   },
   // 登录注册
   user: {
@@ -764,11 +771,22 @@ export default {
       '点击下面的确定解绑按钮后，您将解除微信与本帐号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本帐号！',
     usernameEmpty: '用户名不能为空',
     passwordEmpty: '密码不能为空',
+    reasonEmpty: '注册原因不能为空',
     phonenumberEmpty: '手机号不能为空',
     verificationCodeEmpty: '验证码不能为空',
     getVerificationCode: '获取验证码',
     registerUser: '注册用户',
     otherLoginMode: '其他登录方式',
     otherRegisterMode: '其他注册方式',
+  },
+  // 举报
+  report: {
+    reportTitle: '举报',
+    pleaseClickReasons: '请点击举报理由',
+    otherReason: '其他理由...',
+    confirm: '确认',
+    cancel: '取消',
+    enterOtherReason: '请输入其他理由',
+    reportSucceed: '举报成功',
   },
 };

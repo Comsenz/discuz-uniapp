@@ -389,7 +389,7 @@ export default {
     box-sizing: border-box;
   }
   .retireve-titel {
-    font-size: $fg-f50;
+    font-size: $fg-f7;
     font-weight: bold;
     line-height: 60rpx;
     color: --color(--qui-FC-333);
@@ -408,20 +408,21 @@ export default {
     width: 280rpx;
     height: 100rpx;
     margin-left: 50rpx;
-    font-size: $fg-f40;
+    font-size: $fg-f6;
     font-weight: bold;
     line-height: 100rpx;
     color: --color(--qui-FC-333);
   }
   .retireve-phon-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
+    white-space: nowrap;
   }
   .retireve-phon-num {
     margin: 0 0 0 109rpx;
-    font-size: $fg-f34;
+    font-size: $fg-f5;
     font-weight: 400;
     line-height: 100rpx;
     color: rgba(0, 0, 0, 1);
@@ -429,7 +430,7 @@ export default {
   }
   .retireve-phon-num1 {
     margin-left: 80rpx;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -444,7 +445,7 @@ export default {
     height: 70rpx;
     min-width: 180rpx;
     margin: 15rpx 40rpx 0;
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 70rpx;
     color: --color(--qui-FC-FFF);
@@ -462,7 +463,7 @@ export default {
     justify-content: space-between;
   }
   .retireve-pas-title {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -472,7 +473,7 @@ export default {
     width: 710rpx;
   }
   .retireve-input-test {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-FC-777);
@@ -485,7 +486,7 @@ export default {
   .retireve-pas-input-i {
     width: 400rpx;
     height: 100rpx;
-    font-size: $fg-f40;
+    font-size: $fg-f6;
     line-height: 100rpx;
     text-align: right;
     direction: rtl;
@@ -494,7 +495,7 @@ export default {
     margin: 52rpx 0 0;
   }
   .retireve-pass {
-    font-size: $fg-f24;
+    font-size: $fg-f2;
     font-weight: 400;
     line-height: 100rpx;
     color: --color(--qui-RED);
@@ -502,7 +503,7 @@ export default {
 }
 .retireve-button /deep/.qui-button--button {
   &[size='large'] {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     color: --color(--qui-FC-FFF);
     border-radius: 7rpx;
   }

@@ -239,6 +239,7 @@ $height: calc(100vh - 150rpx);
     margin-bottom: 30rpx;
     color: --color(--qui-FC-333);
     background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
   }
   .orderlist-wrap .cell-item__body {
     height: 78rpx;
@@ -264,7 +265,7 @@ $height: calc(100vh - 150rpx);
 .date-picker .uni-input {
   width: 100%;
   height: 78rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   line-height: 78rpx;
 }
 .scroll-y {

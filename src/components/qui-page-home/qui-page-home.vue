@@ -84,6 +84,7 @@
     <!-- </view> -->
     <view class="main" id="main">
       <qui-content
+        class="ivideo"
         v-for="(item, index) in threads"
         :ref="'myVideo' + index"
         :key="index"
@@ -94,6 +95,7 @@
         :theme-image="item.user.avatarUrl"
         :theme-btn="item.canHide || ''"
         :theme-reply-btn="item.canReply || ''"
+        :them-pay-btn="item.price > 0"
         :user-groups="item.user && item.user.groups"
         :theme-time="item.createdAt"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
@@ -112,6 +114,9 @@
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
         :scroll-top="scrollTop"
+        :thread-position="
+          item.location ? [item.location, item.address, item.longitude, item.latitude] : []
+        "
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
@@ -126,11 +131,15 @@
         @backgroundClick="contentClick(item)"
         @headClick="headClick(item.user._jv.id)"
         @videoPlay="handleVideoPlay"
+        @scrollheight="scrpllsip"
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </view>
     <!-- #ifdef H5-->
-    <view class="record" v-if="forums.set_site.site_record || forums.set_site.site_record_code">
+    <view
+      class="record"
+      v-if="forums.set_site ? forums.set_site.site_record || forums.set_site.site_record_code : ''"
+    >
       <!-- <text>{{ i18n.t('home.record') }}</text> -->
       <view class="record__box">
         <a class="record__box-url" href="https://beian.miit.gov.cn" target="_blank">
@@ -138,7 +147,7 @@
         </a>
       </view>
       <view
-        v-if="forums.set_site.site_record_code"
+        v-if="forums.set_site ? forums.set_site.site_record_code : ''"
         :class="forums.set_site.site_record ? 'record__box1' : 'record__box2'"
       >
         <a class="record__box-url" :href="surl" target="_blank">
@@ -149,7 +158,11 @@
     <view
       class="copyright"
       :class="
-        forums.set_site.site_record || forums.set_site.site_record_code ? '' : 'copyright_margin'
+        forums.set_site
+          ? forums.set_site.site_record || forums.set_site.site_record_code
+            ? ''
+            : 'copyright_margin'
+          : ''
       "
     >
       <text>{{ i18n.t('home.copyright') }}</text>
@@ -315,6 +328,7 @@ export default {
         },
       ],
       threads: [],
+      location: {},
       sticky: [], // 置顶帖子内容
       shareBtn: 'icon-share1',
       tabIndex: 0, // 选中标签栏的序列,默认显示第一个
@@ -338,6 +352,10 @@ export default {
       playIndex: null,
       scrollTop: 0,
       surl: '', // 公安网备案信息地址
+      observer: null,
+      scrollnumber: '',
+      scrollindex: '',
+      switchscroll: false,
     };
   },
   computed: {
@@ -363,8 +381,10 @@ export default {
     // #ifdef  H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
-    const recordNumber = this.forums.set_site.site_record_code.replace(/[^\d]/g, '');
-    this.surl = `http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=${recordNumber}`;
+    if (this.forums.set_site) {
+      const recordNumber = this.forums.set_site.site_record_code.replace(/[^\d]/g, '');
+      this.surl = `http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=${recordNumber}`;
+    }
     // #endif
     // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
@@ -491,9 +511,23 @@ export default {
     topMargin() {
       return ';';
     },
+    scrpllsip(e, index) {
+      // console.log(e, index);
+      this.scrollnumber = e;
+      this.scrollindex = index;
+      this.switchscroll = true;
+    },
     scroll(event) {
       // if (this.footerIndex === 0) {
       this.scrollTop = event.scrollTop;
+      if (Math.abs(this.scrollnumber) && this.switchscroll) {
+        this.num = Math.abs(this.scrollTop) - Math.abs(this.scrollnumber);
+        if (this.num >= 10 || this.num <= -10) {
+          // console.log('视频暂停播放');
+          this.$refs[`myVideo${this.scrollindex}`][0].pauseVideo();
+          this.switchscroll = false;
+        }
+      }
       // #ifdef MP-WEIXIN
       if (!this.navbarHeight) {
         return;
@@ -594,6 +628,17 @@ export default {
     },
     // 首页头部分享按钮弹窗
     open() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+        return;
+      }
       // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
       // 付费模式下不显示微信分享
@@ -709,6 +754,17 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+        return;
+      }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;
@@ -864,7 +920,8 @@ export default {
       this.loadThreads();
     },
     // 视频禁止同时播放
-    handleVideoPlay(index) {
+    handleVideoPlay(index, e) {
+      this.switchscroll = e;
       if (this.playIndex !== index && this.playIndex !== null) {
         this.$refs[`myVideo${this.playIndex}`][0].pauseVideo();
       }
@@ -900,7 +957,7 @@ $padding-bottom: 160rpx;
 }
 .status-bar {
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   transition: 0.2s;
 }
 .nav {
@@ -951,7 +1008,7 @@ $padding-bottom: 160rpx;
   width: 710rpx;
   height: 80rpx;
   margin-left: 30rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   line-height: 80rpx;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
@@ -963,7 +1020,7 @@ $padding-bottom: 160rpx;
     height: 35rpx;
     margin-top: 27rpx;
     // margin-left: 20rpx;
-    font-size: $fg-f20;
+    font-size: $fg-f1;
     line-height: 35rpx;
     color: --color(--qui-FC-777);
     text-align: center;
@@ -1005,7 +1062,7 @@ $padding-bottom: 160rpx;
   z-index: 1;
   display: inline-block;
   margin: 20rpx 30rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   line-height: 77rpx;
   color: --color(--qui-FC-777);
 }
@@ -1014,7 +1071,7 @@ $padding-bottom: 160rpx;
   border-bottom: 4rpx solid --color(--qui-BG-HIGH-LIGHT);
 }
 .uni-tab-bar .active {
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   font-weight: bold;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
@@ -1049,13 +1106,13 @@ $padding-bottom: 160rpx;
   width: 100%;
   height: 40rpx;
   margin-top: -$padding-bottom;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   color: --color(--qui-FC-B2);
   text-align: center;
   justify-content: center;
   &__box {
     &-url {
-      font-size: $fg-f26;
+      font-size: $fg-f3;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
@@ -1063,14 +1120,14 @@ $padding-bottom: 160rpx;
     margin-left: 20rpx;
     line-height: 40rpx;
     &-url {
-      font-size: $fg-f26;
+      font-size: $fg-f3;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
   &__box2 {
     line-height: 40rpx;
     &-url {
-      font-size: $fg-f26;
+      font-size: $fg-f3;
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
@@ -1082,13 +1139,13 @@ $padding-bottom: 160rpx;
 .copyright {
   width: 100%;
   height: 40rpx;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   color: --color(--qui-FC-B2);
   text-align: center;
 }
 .wxcopyright {
   margin-top: -$padding-bottom;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   color: --color(--qui-FC-B2);
   text-align: center;
 }

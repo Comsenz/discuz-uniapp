@@ -142,7 +142,7 @@ export default {
 }
 .comment-child-reply {
   display: block;
-  font-size: $fg-f26;
+  font-size: $fg-f3;
   line-height: 35rpx;
   word-break: break-all;
   .reply-user {

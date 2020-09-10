@@ -104,12 +104,12 @@ export default {
     if (res.from === 'button') {
       return {
         title: this.forums.set_site.site_name,
-        path: `/pages/site/partner-invite?code=${this.code}&type=normal`,
+        path: `/pages/site/partner-invite?code=${this.code}`,
       };
     }
     return {
       title: this.forums.set_site.site_name,
-      path: `/pages/site/partner-invite?code=${this.code}&type=normal`,
+      path: `/pages/site/partner-invite?code=${this.code}`,
     };
   },
   // 分享到朋友圈
@@ -124,7 +124,7 @@ export default {
       // #ifdef H5
       this.h5Share({
         title: this.forums.set_site.site_name,
-        url: `pages/site/partner-invite?code=${this.code}&type=normal`,
+        url: `pages/site/partner-invite?code=${this.code}`,
       });
       // #endif
     },
@@ -221,7 +221,7 @@ $height: calc(100vh - 410rpx);
 .search-total {
   padding: 10rpx 40rpx 24rpx;
   margin-bottom: 30rpx;
-  font-size: $fg-f24;
+  font-size: $fg-f2;
   background-color: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }
@@ -240,7 +240,7 @@ $height: calc(100vh - 410rpx);
   margin: auto;
 
   .btn {
-    font-size: $fg-f28;
+    font-size: $fg-f4;
     line-height: 90rpx;
     color: --color(--qui-FC-333);
     background: --color(--qui-BG-2);
@@ -250,7 +250,7 @@ $height: calc(100vh - 410rpx);
 // 用户
 /deep/ .cell-item__body__right {
   padding-right: 40rpx;
-  font-size: $fg-f28;
+  font-size: $fg-f4;
   color: --color(--qui-FC-AAA);
 }
 .search-item__users__avatar {
