@@ -377,7 +377,6 @@ import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
 import appCommonH from '@/utils/commonHelper';
 import choosePosition from '@/mixin/choosePosition';
-import Vditor from 'vditor';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
@@ -532,6 +531,7 @@ export default {
         return;
       }
       // #ifdef H5
+      this.saveThread();
       this.getPosition();
       // #endif
       // #ifdef MP-WEIXIN
@@ -565,6 +565,35 @@ export default {
     },
     clearPosition() {
       this.currentPosition = {};
+    },
+
+    saveThread() {
+      const thread = {};
+      thread.postTitle = this.postTitle;
+      thread.price = this.price;
+      thread.free_words = this.word;
+      thread.file_id = this.fileId;
+      thread.file_name = this.videoName;
+      thread.attachmentList = this.attachmentList;
+      thread.uploadFile = this.uploadFile;
+      thread.textAreaValue = this.textAreaValue;
+      thread.categoryIndex = this.categoryIndex;
+      thread.categoryId = this.categoryId;
+      thread.checkClassData = this.checkClassData;
+      uni.setStorageSync('current_thread', JSON.stringify(thread));
+    },
+    setThread() {
+      let thread = uni.getStorageSync('current_thread');
+      if (!thread) {
+        return;
+      }
+      thread = JSON.parse(thread);
+      Object.getOwnPropertyNames(thread).forEach(key => {
+        if (thread[key]) {
+          this[key] = thread[key];
+        }
+      });
+      uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
@@ -1216,6 +1245,7 @@ export default {
           currentPosition.location = option.name;
           currentPosition.address = option.addr;
           this.currentPosition = currentPosition;
+          this.setThread();
         } else {
           this.currentPosition.longitude = res.longitude || '';
           this.currentPosition.latitude = res.latitude || '';
@@ -1441,6 +1471,7 @@ export default {
         currentPosition.location = option.name;
         currentPosition.address = option.addr;
         this.currentPosition = currentPosition;
+        this.setThread();
       }
     }
 

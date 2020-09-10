@@ -28,7 +28,7 @@
         />
       </view>
       <view class="register-bind-box-btn" id="TencentCaptcha" @click="handleRegister">
-        {{ i18n.t('user.registerBindId') }}
+        {{ type ? i18n.t('user.registerBindId') : i18n.t('user.registerBindUc') }}
       </view>
       <!-- #ifdef MP-WEIXIN -->
       <view class="register-bind-box-ft">
@@ -169,9 +169,14 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
+      type: true,
     };
   },
   onLoad(params) {
+    const pages = getCurrentPages();
+    if (pages[1].route === 'pages/user/uc-login') {
+      this.type = false;
+    }
     this.getForum();
     this.getPageParams(params);
 
