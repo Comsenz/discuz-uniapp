@@ -43,7 +43,7 @@
       </view>
       <view class="phone-login-box-ft">
         <view class="phone-login-box-ft-title">
-          {{ i18n.t('user.otherLoginMode') }}
+          {{ isLogin ? i18n.t('user.otherLoginMode') : i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="phone-login-box-ft-con">
           <!-- #ifdef MP-WEIXIN -->
@@ -186,7 +186,6 @@ export default {
       disabled: true, // 发送验证码按钮的状态
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
-      site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
@@ -219,35 +218,10 @@ export default {
     this.$u.event.$on('closeChaReault', () => {
       uni.hideLoading();
     });
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.getStorage({
-          key: 'page',
-          success(resData) {
-            uni.redirectTo({
-              url: resData.data,
-            });
-          },
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
-    this.$u.event.$off('logind');
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();
@@ -424,6 +398,27 @@ export default {
             // #endif
             console.log('手机号登录成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: this.i18n.t('user.loginSuccess'),
               duration: 2000,

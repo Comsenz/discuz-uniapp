@@ -140,7 +140,6 @@ import loginModule from '@/mixin/loginModule';
 import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
 // #endif
-import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [
@@ -192,35 +191,10 @@ export default {
     this.$u.event.$on('closeChaReault', () => {
       uni.hideLoading();
     });
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.getStorage({
-          key: 'page',
-          success(resData) {
-            uni.redirectTo({
-              url: resData.data,
-            });
-          },
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
-    this.$u.event.$off('logind');
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();

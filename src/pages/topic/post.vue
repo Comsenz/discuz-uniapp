@@ -574,14 +574,14 @@ export default {
         'postTitle',
         'price',
         'word',
-        // 'fileId',
-        // 'videoName',
+        'fileId',
+        'videoName',
         'textAreaValue',
         'categoryIndex',
         'categoryId',
         'checkClassData',
         'uploadFile',
-        // 'videoBeforeList',
+        'videoBeforeList',
       ];
       items.forEach(key => {
         if (this[key]) {

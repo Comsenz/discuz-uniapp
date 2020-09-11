@@ -35,10 +35,11 @@ export default {
             setCookie('token', res.data.data.attributes.access_token, 30);
             console.log('登录成功：', res);
             this.logind();
-            if (this.user && this.user.paid) {
-              this.isPaid = this.user.paid;
-            }
-            if (this.site_mode !== SITE_PAY) {
+            if (
+              this.forums &&
+              this.forums.set_site &&
+              this.forums.set_site.site_mode !== SITE_PAY
+            ) {
               uni.getStorage({
                 key: 'page',
                 success(resData) {
@@ -48,15 +49,17 @@ export default {
                 },
               });
             }
-            if (this.site_mode === SITE_PAY && !this.isPaid) {
+            if (
+              this.forums &&
+              this.forums.set_site &&
+              this.forums.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
               uni.redirectTo({
                 url: '/pages/site/info',
               });
             }
-            uni.showToast({
-              title: this.i18n.t('user.loginSuccess'),
-              duration: 2000,
-            });
           }
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
