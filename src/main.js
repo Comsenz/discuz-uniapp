@@ -18,6 +18,7 @@ const publicWhitelistPage = [
   '/pages/profile/index',
   '/pages/user/pc-login',
   '/pages/user/login',
+  '/pages/user/uc-login',
   '/pages/user/weichat',
   '/pages/user/login-bind',
   '/pages/user/register-bind',
@@ -30,11 +31,13 @@ const publicWhitelistPage = [
   '/pages/site/search-user',
   '/pages/site/info',
   '/pages/site/partner-invite',
+  '/pages/topic/position'
 ];
 const payWhiteListPage = [
   '/pages/site/info',
   '/pages/user/pc-login',
   '/pages/user/login',
+  '/pages/user/uc-login',
   '/pages/user/weichat',
   '/pages/user/login-bind',
   '/pages/user/register-bind',

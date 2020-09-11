@@ -22,7 +22,7 @@
 <script>
 // eslint-disable
 import Vditor from 'vditor';
-import 'vditor/src/assets/scss/index.scss';
+import './index.css';
 import { AtIcon, TopicIcon, EmojiIcon } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -83,12 +83,6 @@ export default {
       cdn: `${DISCUZ_REQUEST_HOST}assets/js/vditor@3.5.2`,
       height: window.innerHeight / 2,
       placeholder: this.$i18n.t('discuzq.post.placeholder'),
-      preview: {
-        markdown: {
-          toc: true,
-          mark: true,
-        },
-      },
       toolbar: [
         {
           name: 'at',

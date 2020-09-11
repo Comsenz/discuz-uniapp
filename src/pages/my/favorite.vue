@@ -6,7 +6,6 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y"
-      @scroll="scroll"
     >
       <view class="favorite-head">
         <qui-cell-item
@@ -19,7 +18,6 @@
           <qui-thread-item
             :currentindex="index"
             :thread="item"
-            :scroll-top="scrollTop"
             @toTopic="toTopic"
             @handleClickShare="handleClickShare"
           ></qui-thread-item>
@@ -67,7 +65,6 @@ export default {
       totalData: 0, // 总数
       pageSize: 20,
       pageNum: 1, // 当前页数
-      scrollTop: 0,
       currentItem: '',
       editThreadId: '',
       nowThreadId: '',
@@ -111,9 +108,6 @@ export default {
     },
     handleClickShare(id) {
       this.nowThreadId = id;
-    },
-    scroll(event) {
-      this.scrollTop = event.detail.scrollTop;
     },
     loadlikes() {
       this.loadingType = 'loading';

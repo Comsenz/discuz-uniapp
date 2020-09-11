@@ -466,6 +466,7 @@ export default {
       autoplay: false,
       sun: true,
       appear: false,
+      blocKwidth: 224,
     };
   },
 

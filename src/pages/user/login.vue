@@ -35,9 +35,10 @@
             @click="jump2PhoneLogin"
           />
           <image
-            class="login-box-ft-con-image"
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
+            class="login-box-ft-con-image uImg"
             lazy-load
-            src="@/static/shouji.svg"
+            src="@/static/UC.svg"
             @click="jump3PhoneLogin"
           />
         </view>
@@ -78,7 +79,7 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-import { SITE_PAY, DISCUZ_REQUEST_HOST } from '@/common/const';
+import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [user, loginModule],
@@ -86,19 +87,17 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
-      url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       forum: {}, // 配置
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.$store.dispatch('forum/setError', {
       code: 'user_login',
       status: 200,
     });
     this.getForum();
-    this.getPageParams(params);
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -108,8 +107,13 @@ export default {
         this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url: this.url,
+        uni.getStorage({
+          key: 'page',
+          success(resData) {
+            uni.redirectTo({
+              url: resData.data,
+            });
+          },
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {
@@ -140,15 +144,9 @@ export default {
     jump2findpwd() {
       this.jump2findpwdPage();
     },
-    wxh5Login: (context, payload = {}) => {
-      console.log(payload);
-      const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/pc-login`);
-      window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
-    },
     jump3PhoneLogin() {
-      this.wxh5Login();
       uni.navigateTo({
-        url: '/pages/user/pc-login',
+        url: '/pages/user/uc-login',
       });
     },
   },
@@ -228,5 +226,8 @@ export default {
       border: 2rpx solid rgba(221, 221, 221, 1);
     }
   }
+}
+.uImg {
+  margin-left: 40rpx;
 }
 </style>

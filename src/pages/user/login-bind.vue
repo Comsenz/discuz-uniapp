@@ -83,15 +83,13 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
-      url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
       forum: {}, // 配置
       isPaid: false, // 默认未付费
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.getForum();
-    this.getPageParams(params);
 
     this.$u.event.$on('logind', () => {
       if (this.user) {
@@ -101,8 +99,13 @@ export default {
         this.site_mode = this.forum.set_site.site_mode;
       }
       if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url: this.url,
+        uni.getStorage({
+          key: 'page',
+          success(resData) {
+            uni.redirectTo({
+              url: resData.data,
+            });
+          },
         });
       }
       if (this.site_mode === SITE_PAY && !this.isPaid) {

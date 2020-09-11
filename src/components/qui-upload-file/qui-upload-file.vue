@@ -161,7 +161,7 @@ export default {
               const response = JSON.parse(data.data).data;
               if (status >= 200 && status < 300) {
                 that.fileList.push({
-                  attributes: { fileName: file.name },
+                  attributes: { fileName: file.name, url: response.attributes.url },
                   id: response.id,
                 });
               } else {
@@ -208,7 +208,7 @@ export default {
     setValue(v) {
       this.fileList = v;
     },
-    // #ifdef  H5
+    // #ifdef H5
     uploadFile(path) {
       uni.showLoading();
       const fData = new FormData();
@@ -222,7 +222,10 @@ export default {
         const data = JSON.parse(res.target.response);
         if (status >= 200 && status < 300) {
           this.fileList.push({
-            attributes: { fileName: data.data.attributes.fileName },
+            attributes: {
+              fileName: data.data.attributes.fileName,
+              url: data.data.attributes.url,
+            },
             id: data.data.id,
           });
         } else {
