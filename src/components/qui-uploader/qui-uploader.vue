@@ -139,6 +139,9 @@ export default {
     }
   },
   methods: {
+    getValue() {
+      return this.uploadList;
+    },
     uploadDelete(index) {
       this.uploadList.sort(this.compare('order'));
       const beforeUpload = this.uploadList[index];
@@ -316,12 +319,7 @@ export default {
                 _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
                 _this.numberdata[_this.indexs].state = 100;
               }
-              const resObj = {
-                id: JSON.parse(res.data).data.id,
-                type: JSON.parse(res.data).data.type,
-                order: imgOrder,
-              };
-              _this.uploadList.push(resObj);
+              _this.uploadList.push(JSON.parse(res.data).data);
               if (_this.uploadList.length > _this.count) {
                 _this.uploadList.sort(_this.compare('order'));
                 _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);

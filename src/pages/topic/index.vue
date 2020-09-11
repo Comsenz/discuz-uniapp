@@ -1932,11 +1932,15 @@ export default {
     selectChoice(param) {
       console.log(param);
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1960,11 +1964,15 @@ export default {
     // 跳转到用户主页
     personJump(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1976,11 +1984,15 @@ export default {
     // 主题支付
     payClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2035,11 +2047,15 @@ export default {
     // 打赏
     rewardClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2217,11 +2233,15 @@ export default {
     // 跳转到评论详情页
     commentJump(threadId, postId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(`/pages/topic/comment?threadId=${threadId}&commentId=${postId}`)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2233,11 +2253,15 @@ export default {
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2248,11 +2272,15 @@ export default {
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2269,11 +2297,15 @@ export default {
     // 评论的回复
     replyComment(postId, postIndex) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2292,11 +2324,15 @@ export default {
     // 点击图片
     imageClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2327,11 +2363,15 @@ export default {
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2341,11 +2381,15 @@ export default {
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2356,11 +2400,15 @@ export default {
     // 主题回复
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2408,11 +2456,15 @@ export default {
     // 分享
     shareClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2525,11 +2577,15 @@ export default {
     // 管理菜单内标签点击事件
     sortSelectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2566,11 +2622,15 @@ export default {
     // 添加关注
     addFollow(userInfo) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -2609,12 +2669,16 @@ export default {
     // 更多操作-唤起弹框
     moreClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         return;
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif

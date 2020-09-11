@@ -190,6 +190,10 @@ export default {
     }),
     // 切换组件
     cut_index(e, type, isTabBar) {
+      uni.setStorage({
+        key: 'page',
+        data: '/pages/home/index',
+      });
       const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
       if (

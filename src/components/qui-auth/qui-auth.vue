@@ -44,8 +44,13 @@ export default {
   mounted() {
     this.$u.event.$on('logind', () => {
       if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url: '/pages/home/index',
+        uni.getStorage({
+          key: 'page',
+          success(resData) {
+            uni.redirectTo({
+              url: resData.data,
+            });
+          },
         });
       }
       if (
@@ -160,7 +165,20 @@ export default {
     },
     loginMode(param) {
       const params = param;
-      const url = getCurUrl();
+      const routes = getCurrentPages();
+      const curRoute = routes[routes.length - 1].route;
+      console.log('getCurrentPages()', getCurrentPages());
+      if (curRoute !== 'pages/site/partner-invite') {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
+      } else {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
+      }
       let inviteCode = '';
       uni.getStorage({
         key: 'inviteCode',
@@ -178,13 +196,13 @@ export default {
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
         // 用户名模式 跳转到登录并绑定页
         uni.navigateTo({
-          url: `/pages/user/login-bind?url=${url}`,
+          url: '/pages/user/login-bind',
         });
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
         // 手机号模式 跳转到手机号码登录页
         uni.navigateTo({
-          url: `/pages/user/phone-login?url=${url}`,
+          url: '/pages/user/phone-login',
         });
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {

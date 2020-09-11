@@ -434,6 +434,18 @@ export default {
         }
       }
     });
+
+    // 详情页编辑定位
+    this.$u.event.$on('updateLocation', (id, res) => {
+      this.threads.forEach((item, index) => {
+        if (item._jv.id === id) {
+          this.threads[index].latitude = res.latitude || '';
+          this.threads[index].location = res.location || '';
+          this.threads[index].longitude = res.longitude || '';
+          this.threads[index].address = res.address || '';
+        }
+      });
+    });
     // h5微信分享
     // #ifdef H5
     this.wxShare({
@@ -629,6 +641,10 @@ export default {
     // 首页头部分享按钮弹窗
     open() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
@@ -674,6 +690,10 @@ export default {
     shareHead(index) {
       if (index === 0) {
         if (!this.$store.getters['session/get']('isLogin')) {
+          uni.setStorage({
+            key: 'page',
+            data: '/pages/home/index',
+          });
           // #ifdef MP-WEIXIN
           this.$store.getters['session/get']('auth').open();
           // #endif
@@ -755,6 +775,10 @@ export default {
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
@@ -893,6 +917,10 @@ export default {
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif

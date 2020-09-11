@@ -735,6 +735,7 @@ export default {
 
   &__content {
     &__text {
+      min-height: 45rpx;
       padding-bottom: 20rpx;
       overflow: hidden;
       font-family: $font-family;
