@@ -574,14 +574,14 @@ export default {
         'postTitle',
         'price',
         'word',
-        'fileId',
-        'videoName',
+        // 'fileId',
+        // 'videoName',
         'textAreaValue',
         'categoryIndex',
         'categoryId',
         'checkClassData',
         'uploadFile',
-        'videoBeforeList',
+        // 'videoBeforeList',
       ];
       items.forEach(key => {
         if (this[key]) {
@@ -604,6 +604,17 @@ export default {
       }
       if (this.$refs.upload) {
         const imgList = this.$refs.upload.getValue();
+        imgList.forEach((value, index) => {
+          if (value.attributes) {
+            imgList[index] = {
+              path: value.attributes.thumbUrl,
+              id: value.id,
+              order: value.attributes.order,
+              name: value.attributes.fileName,
+              url: value.attributes.url,
+            };
+          }
+        });
         thread.imgList = imgList;
       }
       uni.setStorageSync('current_thread', JSON.stringify(thread));
@@ -635,6 +646,10 @@ export default {
           this[key] = thread[key];
         }
       });
+      if (this.videoBeforeList.length > 0) {
+        this.videoPercent = 1;
+        this.percent = 1;
+      }
       uni.removeStorageSync('current_thread');
     },
     focusEvent() {
