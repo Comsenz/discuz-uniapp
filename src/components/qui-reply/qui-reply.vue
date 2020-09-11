@@ -14,9 +14,13 @@
     >
       <view class="reply-user">{{ reply.user.username }}</view>
       <view class="reply-user">：</view>
-      <!--<text class="reply-content">
+      <text class="reply-content" v-if="commentTypeVal === 0">
         {{ reply.content }}
-      </text>-->
+      </text>
+      <text class="reply-content" v-else-if="commentTypeVal === 1">
+        {{ reply.content }}
+      </text>
+      <!--
       <qui-uparse
         v-if="commentTypeVal === 0"
         :content="reply.summary"
@@ -27,6 +31,7 @@
         :content="reply.contentHtml"
         class="reply-content"
       ></qui-uparse>
+      -->
       <!--<qui-uparse
         :content="reply.contentHtml"
         class="reply-content"
