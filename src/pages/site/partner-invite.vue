@@ -285,6 +285,7 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
+        this.$store.dispatch('session/setInviteCode', this.code);
         this.$store.getters['session/get']('auth').open();
         // #endif
         uni.setStorage({
