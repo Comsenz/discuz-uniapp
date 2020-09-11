@@ -94,7 +94,7 @@
           <image
             :class="[
               forum && forum.passport && forum.passport.offiaccount_close && isWeixin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                ? 'phone-login-box-ft-con-image'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
@@ -102,8 +102,9 @@
             @click="jump2Login"
           />
           <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
             :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter && isWeixin
+              forum && forum.ucenter && forum.ucenter.ucenter
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
                 : 'phone-login-box-ft-con-image',
             ]"
@@ -578,12 +579,13 @@ page {
   }
 
   &-con {
+    display: flex;
+    justify-content: center;
     margin: 30rpx 0 100rpx;
-
     &-image {
+      display: block;
       width: 100rpx;
       height: 100rpx;
-      margin-left: 40rpx;
     }
 
     &-right {
