@@ -61,7 +61,7 @@
           <image
             :class="[
               forum && forum.passport && forum.passport.miniprogram_close && !isLogin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                ? 'phone-login-box-ft-con-image'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
@@ -69,8 +69,9 @@
             @click="jump2Login"
           />
           <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
             :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter && !isLogin
+              forum && forum.ucenter && forum.ucenter.ucenter
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
                 : 'phone-login-box-ft-con-image',
             ]"
