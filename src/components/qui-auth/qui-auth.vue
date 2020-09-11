@@ -165,10 +165,20 @@ export default {
     },
     loginMode(param) {
       const params = param;
-      uni.setStorage({
-        key: 'page',
-        data: getCurUrl(),
-      });
+      const routes = getCurrentPages();
+      const curRoute = routes[routes.length - 1].route;
+      console.log('getCurrentPages()', getCurrentPages());
+      if (curRoute !== 'pages/site/partner-invite') {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
+      } else {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
+      }
       let inviteCode = '';
       uni.getStorage({
         key: 'inviteCode',
