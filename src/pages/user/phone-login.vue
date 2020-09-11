@@ -43,7 +43,7 @@
       </view>
       <view class="phone-login-box-ft">
         <view class="phone-login-box-ft-title">
-          {{ i18n.t('user.otherLoginMode') }}
+          {{ isLogin ? i18n.t('user.otherLoginMode') : i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="phone-login-box-ft-con">
           <!-- #ifdef MP-WEIXIN -->

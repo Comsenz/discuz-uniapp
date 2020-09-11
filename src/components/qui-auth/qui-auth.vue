@@ -111,7 +111,11 @@ export default {
             if (res.data.data && res.data.data.id) {
               this.isSuccess = true;
               this.logind();
-              if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              if (
+                this.forums &&
+                this.forums.set_site &&
+                this.forums.set_site.site_mode !== SITE_PAY
+              ) {
                 uni.getStorage({
                   key: 'page',
                   success(resData) {
@@ -122,9 +126,9 @@ export default {
                 });
               }
               if (
-                this.forum &&
-                this.forum.set_site &&
-                this.forum.set_site.site_mode === SITE_PAY &&
+                this.forums &&
+                this.forums.set_site &&
+                this.forums.set_site.site_mode === SITE_PAY &&
                 this.user &&
                 !this.user.paid
               ) {
