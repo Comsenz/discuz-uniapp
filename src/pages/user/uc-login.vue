@@ -154,22 +154,30 @@ export default {
         this.$store
           .dispatch('session/ucLogin', params)
           .then(res => {
-            if (res && res.data.data.attributes.access_token) {
+            if (res && res.data && res.data.errors) {
+              if (res.data.errors[0].code === 'no_bind_user') {
+                this.$store.dispatch('session/setToken', res.data.errors[0].token);
+                uni.navigateTo({
+                  url: '/pages/user/register-bind',
+                });
+              }
+            }
+            if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
               setCookie('token', res.access_token, 30);
               this.logind();
-              setTimeout(() => {
-                uni.navigateTo({
-                  url: '/pages/home/idnex',
-                });
-              }, 3000);
+              uni.navigateTo({
+                url: '/pages/home/idnex',
+              });
             }
           })
           .catch(err => {
-            if (err.data.errors[0].status === 400 && err.data.errors[0].code === 'no_bind_user') {
-              this.$store.dispatch('session/setToken', err.data.errors[0].token);
-              uni.navigateTo({
-                url: '/pages/user/register-bind',
-              });
+            if (err && err.data && err.data.errors) {
+              if (err.data.errors[0].code === 'no_bind_user') {
+                this.$store.dispatch('session/setToken', err.data.errors[0].token);
+                uni.navigateTo({
+                  url: '/pages/user/register-bind',
+                });
+              }
             }
           });
       }
