@@ -760,6 +760,7 @@ export default {
       display: flex;
       justify-content: flex-start;
       margin-top: 10rpx;
+      margin-bottom: 20rpx;
       line-height: 0;
       &__item {
         max-width: 80%;
@@ -771,6 +772,7 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-top: 20rpx;
+      margin-bottom: 20rpx;
       line-height: 0;
       &__item {
         display: block;
@@ -788,6 +790,7 @@ export default {
       align-content: flex-start;
       flex-wrap: wrap;
       margin-top: 30rpx;
+      margin-bottom: 20rpx;
       line-height: 0;
       &__item {
         display: block;
@@ -872,6 +875,7 @@ export default {
 }
 .theme__content__videocover {
   position: relative;
+  margin-bottom: 20rpx;
   &-img {
     z-index: 1;
     width: 100%;
