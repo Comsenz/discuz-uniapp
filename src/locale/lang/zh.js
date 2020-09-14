@@ -227,7 +227,7 @@ export default {
     user_deny: '对方设置了屏蔽，无法进行此操作',
     uc_user_check_username_failed: '用户名错误',
     uc_user_username_badword: '用户名或密码错误',
-    uc_connect_error_ucenter: '配置错误',
+    uc_connect_error: 'Ucenter配置错误',
     uc_user_username_exists: '配置错误',
   },
   topic: {
