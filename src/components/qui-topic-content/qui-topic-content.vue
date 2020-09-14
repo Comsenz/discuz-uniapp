@@ -751,7 +751,7 @@ export default {
       }
     }
     &__tags--position {
-      margin-top: -40rpx;
+      margin-top: -60rpx;
     }
     &__tags__item-text {
       margin-left: 10rpx;
