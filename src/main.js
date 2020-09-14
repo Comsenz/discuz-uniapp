@@ -44,13 +44,14 @@ const payWhiteListPage = [
   '/pages/user/register',
   '/pages/user/phone-login',
   '/pages/modify/findpwd',
+  '/pages/site/partner-invite',
 ];
 const apploaded = () => {
   const app = getApp();
   const forums = app.$store.getters['jv/get']('forums/1');
   if (forums.set_site) {
     const isLogin = app.$store.getters['session/get']('isLogin');
-    if (forums.set_site.site_mode === SITE_PAY  && app._route.path!== '/pages/site/partner-invite') {
+    if (forums.set_site.site_mode === SITE_PAY) {
       if (payWhiteListPage.indexOf(app._route.path) === -1 && !isLogin) {
         uni.redirectTo({
           url: '/pages/site/info',

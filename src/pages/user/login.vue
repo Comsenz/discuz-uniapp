@@ -79,7 +79,6 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [user, loginModule],
@@ -87,7 +86,6 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
-      site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       forum: {}, // 配置
     };
@@ -98,30 +96,6 @@ export default {
       status: 200,
     });
     this.getForum();
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.getStorage({
-          key: 'page',
-          success(resData) {
-            uni.redirectTo({
-              url: resData.data,
-            });
-          },
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   methods: {
     handleLogin() {
@@ -228,6 +202,6 @@ export default {
   }
 }
 .uImg {
-  margin-left: 40rpx;
+  margin-left: 20rpx;
 }
 </style>

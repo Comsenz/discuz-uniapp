@@ -10,6 +10,7 @@ import {
   SET_PARAMS,
   SET_CODE,
   SET_TOKEN,
+  SET_INVITE_CODE,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -61,6 +62,9 @@ const actions = {
   },
   setToken: (context, payload) => {
     context.commit(SET_TOKEN, payload);
+  },
+  setInviteCode: (context, payload) => {
+    context.commit(SET_INVITE_CODE, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -167,6 +171,9 @@ const actions = {
       uni.removeStorage({
         key: 'inviteCode',
       });
+      uni.removeStorage({
+        key: 'page',
+      });
       resolve();
     });
   },
@@ -219,6 +226,9 @@ const mutations = {
   },
   [SET_TOKEN](state, payload) {
     state.token = payload;
+  },
+  [SET_INVITE_CODE](state, payload) {
+    state.inviteCode = payload;
   },
 };
 

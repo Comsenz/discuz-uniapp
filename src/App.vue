@@ -66,7 +66,7 @@ export default {
       if (pages.length > 0) {
           currentPage = pages[pages.length - 1];
       }
-      if (forums.set_site.site_mode === SITE_PAY && currentPage.route !== 'pages/site/partner-invite') {
+      if (forums.set_site.site_mode === SITE_PAY) {
         // #ifndef H5
         const res = uni.getSystemInfoSync();
         if (res.platform === 'ios') {

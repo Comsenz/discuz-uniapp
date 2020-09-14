@@ -75,7 +75,6 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [user, loginModule],
@@ -90,30 +89,6 @@ export default {
   },
   onLoad() {
     this.getForum();
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.getStorage({
-          key: 'page',
-          success(resData) {
-            uni.redirectTo({
-              url: resData.data,
-            });
-          },
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   methods: {
     handleLogin() {

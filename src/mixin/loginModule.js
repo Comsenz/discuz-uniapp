@@ -1,6 +1,7 @@
 // #ifdef H5
 import { setCookie } from '@/utils/setCookie';
 // #endif
+import { SITE_PAY } from '@/common/const';
 
 module.exports = {
   methods: {
@@ -145,6 +146,31 @@ module.exports = {
           if (res && res.data && res.data.data && res.data.data.id) {
             console.log('小程序无感注册成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
+            uni.showToast({
+              title: this.i18n.t('user.registerSuccess'),
+              duration: 2000,
+            });
           }
         })
         .catch(err => {
@@ -221,6 +247,27 @@ module.exports = {
             // #endif
             console.log('登录成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: resultDialog,
               duration: 2000,
@@ -347,6 +394,27 @@ module.exports = {
             // #endif
             console.log('注册成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: resultDialog,
               duration: 2000,
