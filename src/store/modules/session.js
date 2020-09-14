@@ -10,6 +10,7 @@ import {
   SET_PARAMS,
   SET_CODE,
   SET_TOKEN,
+  SET_INVITE_CODE,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -34,6 +35,7 @@ const state = {
   auth: {},
   categoryId: 0,
   categoryIndex: 0,
+  token: '',
 };
 
 const actions = {
@@ -60,6 +62,9 @@ const actions = {
   },
   setToken: (context, payload) => {
     context.commit(SET_TOKEN, payload);
+  },
+  setInviteCode: (context, payload) => {
+    context.commit(SET_INVITE_CODE, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -131,6 +136,17 @@ const actions = {
         .catch(err => resolve(err));
     });
   },
+  ucLogin: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .post('uc/login', payload)
+        .then(res => {
+          resolve(res);
+          setUserInfoStore(context, res, resolve);
+        })
+        .catch(err => resolve(err));
+    });
+  },
   h5Register: (context, payload = {}) => {
     const options = { custom: { showTost: false } };
     return new Promise(resolve => {
@@ -149,6 +165,9 @@ const actions = {
       context.commit(DELETE_ACCESS_TOKEN);
       uni.removeStorage({
         key: 'inviteCode',
+      });
+      uni.removeStorage({
+        key: 'page',
       });
       resolve();
     });
@@ -186,9 +205,6 @@ const mutations = {
   [SET_CODE](state, payload) {
     state.code = payload;
   },
-  [SET_TOKEN](state, payload) {
-    state.token = payload;
-  },
   [SET_CATEGORYID](state, payload) {
     state.categoryId = payload;
   },
@@ -202,6 +218,12 @@ const mutations = {
   [DELETE_ACCESS_TOKEN](state) {
     uni.removeStorageSync('access_token');
     state.accessToken = '';
+  },
+  [SET_TOKEN](state, payload) {
+    state.token = payload;
+  },
+  [SET_INVITE_CODE](state, payload) {
+    state.inviteCode = payload;
   },
 };
 

@@ -73,7 +73,6 @@
             <view v-if="current == 0" class="items">
               <topic
                 :user-id="userId"
-                :scroll-top="scrollTop"
                 @changeFollow="changeFollow"
                 ref="topic"
                 @handleClickShare="handleClickShare"
@@ -88,7 +87,6 @@
             <view v-else class="items">
               <like
                 :user-id="userId"
-                :scroll-top="scrollTop"
                 @changeFollow="changeFollow"
                 ref="like"
                 @handleClickShare="handleClickShare"
@@ -148,7 +146,6 @@ export default {
       userInfo: '',
       can_create_dialog: false,
       dialogId: 0, // 会话id
-      scrollTop: 0,
       loaded: false, // 用户数据是否请求成功
     };
   },
@@ -182,9 +179,6 @@ export default {
     const { current } = this;
     const item = ['topic', 'following', 'followers', 'like'];
     this.$refs[item[current]].pullDown();
-  },
-  onPageScroll(event) {
-    this.scrollTop = event.scrollTop;
   },
   // 解决左上角返回数据不刷新情况
   onShow() {
@@ -275,11 +269,15 @@ export default {
     addFollow(userInfo) {
       console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -303,11 +301,15 @@ export default {
     deleteFollow(userInfo) {
       console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(getCurUrl())) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif

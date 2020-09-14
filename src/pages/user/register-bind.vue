@@ -28,7 +28,7 @@
         />
       </view>
       <view class="register-bind-box-btn" id="TencentCaptcha" @click="handleRegister">
-        {{ i18n.t('user.registerBindId') }}
+        {{ type ? i18n.t('user.registerBindId') : i18n.t('user.registerBindUc') }}
       </view>
       <!-- #ifdef MP-WEIXIN -->
       <view class="register-bind-box-ft">
@@ -140,7 +140,6 @@ import loginModule from '@/mixin/loginModule';
 import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
 // #endif
-import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [
@@ -156,7 +155,6 @@ export default {
       username: '', // 用户名
       password: '', // 密码
       reason: '', // 注册原因
-      url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
       forum: {}, // 配置
       isPaid: false, // 默认未付费
@@ -169,11 +167,15 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
+      type: true,
     };
   },
-  onLoad(params) {
+  onLoad() {
+    const pages = getCurrentPages();
+    if (pages[1].route === 'pages/user/uc-login') {
+      this.type = false;
+    }
     this.getForum();
-    this.getPageParams(params);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -189,30 +191,10 @@ export default {
     this.$u.event.$on('closeChaReault', () => {
       uni.hideLoading();
     });
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url: this.url,
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
-    this.$u.event.$off('logind');
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();

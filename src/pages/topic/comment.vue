@@ -518,7 +518,6 @@ export default {
       ], // 评论排序菜单
       sortVal: 'createdAt', // 排序值
       followStatus: '', // 当前关注状态
-      curUrl: '', // 当前页面的路由
       reportData: [
         {
           // 举报理由
@@ -583,7 +582,6 @@ export default {
     },
   },
   onLoad(option) {
-    this.curUrl = getCurUrl();
     this.threadId = option.threadId;
     this.commentId = option.commentId;
     this.loadPost();
@@ -930,11 +928,15 @@ export default {
     // 添加关注
     addFollow(userInfo) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -976,11 +978,15 @@ export default {
     // 管理菜单内标签点击事件
     sortSelectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif
@@ -1190,12 +1196,16 @@ export default {
     // 更多操作-唤起弹框
     moreClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         return;
         // #endif
         // #ifdef H5
-        if (!this.handleLogin(this.curUrl)) {
+        if (!this.handleLogin()) {
           return;
         }
         // #endif

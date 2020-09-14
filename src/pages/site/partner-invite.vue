@@ -113,7 +113,7 @@ import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
-import { getCurUrl } from '@/utils/getCurUrl';
+// import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
@@ -280,7 +280,12 @@ export default {
     submit() {
       // 未登陆的情况
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
+        this.$store.dispatch('session/setInviteCode', this.code);
         this.$store.getters['session/get']('auth').open();
         // #endif
         uni.setStorage({
@@ -288,7 +293,7 @@ export default {
           data: this.code,
         });
         // #ifdef H5
-        this.handleLogin(getCurUrl());
+        this.handleLogin();
         // #endif
       } else {
         // 已经登陆的情况

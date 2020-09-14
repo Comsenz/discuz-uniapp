@@ -179,6 +179,10 @@ export default {
     // 首页底部发帖按钮弹窗
     footerOpen() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif

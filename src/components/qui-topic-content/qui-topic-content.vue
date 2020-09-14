@@ -238,6 +238,7 @@
 <script>
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
+import { setCookie } from '@/utils/setCookie';
 
 export default {
   props: {
@@ -485,6 +486,8 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
+        const token = uni.getStorageSync('access_token');
+        setCookie('token', token, 30);
         window.location.href = item.url;
       }
       // #endif
@@ -748,7 +751,7 @@ export default {
       }
     }
     &__tags--position {
-      margin-top: -40rpx;
+      margin-top: -60rpx;
     }
     &__tags__item-text {
       margin-left: 10rpx;

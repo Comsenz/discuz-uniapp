@@ -59,6 +59,12 @@
       }
     },
     {
+      "path": "pages/user/uc-login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
       "path": "pages/user/login-bind",
       "style": {
         "navigationBarTitleText": "登录并绑定"

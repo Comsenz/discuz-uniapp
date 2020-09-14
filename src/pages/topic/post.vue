@@ -10,7 +10,6 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <!-- #ifdef MP-WEIXIN -->
       <view class="post-box__hd">
         <view class="post-box__hd-l">
           <qui-icon
@@ -132,10 +131,6 @@
           </view>
         </view>
       </view>
-      <!-- #endif -->
-      <!-- #ifdef H5 -->
-      <qui-vditor></qui-vditor>
-      <!-- #endif -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -536,6 +531,7 @@ export default {
         return;
       }
       // #ifdef H5
+      this.saveThread();
       this.getPosition();
       // #endif
       // #ifdef MP-WEIXIN
@@ -569,6 +565,92 @@ export default {
     },
     clearPosition() {
       this.currentPosition = {};
+    },
+    // 暂存帖子信息，以防选完地址回来页面刷新后丢失
+    saveThread() {
+      uni.removeStorageSync('current_thread');
+      const thread = {};
+      const items = [
+        'postTitle',
+        'price',
+        'word',
+        'fileId',
+        'videoName',
+        'textAreaValue',
+        'categoryIndex',
+        'categoryId',
+        'checkClassData',
+        'uploadFile',
+        'videoBeforeList',
+      ];
+      items.forEach(key => {
+        if (this[key]) {
+          thread[key] = this[key];
+        }
+      });
+      if (this.$refs.uploadFiles) {
+        const fileList = this.$refs.uploadFiles.getValue();
+        const attachmentList = [];
+        fileList.forEach(v => {
+          attachmentList.push({
+            fileName: v.attributes.fileName,
+            url: v.attributes.url,
+            _jv: {
+              id: v.id,
+            },
+          });
+        });
+        thread.attachmentList = attachmentList;
+      }
+      if (this.$refs.upload) {
+        const imgList = this.$refs.upload.getValue();
+        imgList.forEach((value, index) => {
+          if (value.attributes) {
+            imgList[index] = {
+              path: value.attributes.thumbUrl,
+              id: value.id,
+              order: value.attributes.order,
+              name: value.attributes.fileName,
+              url: value.attributes.url,
+            };
+          }
+        });
+        thread.imgList = imgList;
+      }
+      uni.setStorageSync('current_thread', JSON.stringify(thread));
+    },
+    setThread() {
+      let thread = uni.getStorageSync('current_thread');
+      if (!thread) {
+        return;
+      }
+      thread = JSON.parse(thread);
+      Object.getOwnPropertyNames(thread).forEach(key => {
+        if (key === 'imgList') {
+          const threadImgList = thread[key];
+          threadImgList.forEach((v, index) => {
+            threadImgList[index] = {
+              thumbUrl: v.path,
+              _jv: {
+                id: v.id,
+              },
+              order: v.order,
+              fileName: v.name,
+              url: v.url,
+            };
+          });
+          const image = { firstPost: { images: [] } };
+          image.firstPost.images = thread[key];
+          this.setAnnex('img', image);
+        } else {
+          this[key] = thread[key];
+        }
+      });
+      if (this.videoBeforeList.length > 0) {
+        this.videoPercent = 1;
+        this.percent = 1;
+      }
+      uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
@@ -852,8 +934,7 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       // #ifdef H5
-      this.textAreaValue = this.vditor.getValue();
-      console.log(this.textAreaValue);
+      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
       // #endif
 
       if (!this.categoryId) {
@@ -935,6 +1016,7 @@ export default {
         uni.showLoading();
 
         if (this.operating === 'edit') {
+          this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
               this.$refs.toast.show({
@@ -997,8 +1079,9 @@ export default {
     setAnnex(type, data) {
       switch (type) {
         case 'img':
+          let filePreview = [];
           data.firstPost.images.map(item => {
-            this.filePreview.push({
+            filePreview.push({
               path: item.thumbUrl,
               id: item._jv.id,
               order: item.order,
@@ -1007,6 +1090,7 @@ export default {
             });
             return item;
           });
+          this.filePreview = filePreview;
           break;
         case 'video':
           this.videoBeforeList.push({
@@ -1158,12 +1242,14 @@ export default {
         value.id == id && item.splice(key, 1);
       });
     },
-    getSignature(callBack = null) {
+    getSignature(callBack) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
         // #ifndef MP-WEIXIN
         callBack(() => res.signature);
         // #endif
+        // #ifdef MP-WEIXIN
         callBack(res.signature);
+        // #endif
       });
     },
     postVideo(fileId) {
@@ -1188,6 +1274,7 @@ export default {
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        console.log(res, '这是主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -1204,22 +1291,11 @@ export default {
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
-        // this.uploadFile = res.firstPost.images;
-        // 微信里面的定位
-        if (option.name) {
-          let currentPosition = {};
-          const data = option.latng.split(',');
-          currentPosition.longitude = data[1];
-          currentPosition.latitude = data[0];
-          currentPosition.location = option.name;
-          currentPosition.address = option.addr;
-          this.currentPosition = currentPosition;
-        } else {
-          this.currentPosition.longitude = res.longitude || '';
-          this.currentPosition.latitude = res.latitude || '';
-          this.currentPosition.location = res.location || '';
-          this.currentPosition.address = res.address || '';
+        if (res.threadVideo) {
+          this.fileId = res.threadVideo.file_id;
         }
+
+        // this.uploadFile = res.firstPost.images;
 
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
@@ -1259,6 +1335,22 @@ export default {
           default:
             console.log('未知类型');
         }
+        // 微信里面的定位
+        if (option.name) {
+          let currentPosition = {};
+          const data = option.latng.split(',');
+          currentPosition.longitude = data[1];
+          currentPosition.latitude = data[0];
+          currentPosition.location = option.name;
+          currentPosition.address = option.addr;
+          this.currentPosition = currentPosition;
+        } else {
+          this.currentPosition.longitude = res.longitude || '';
+          this.currentPosition.latitude = res.latitude || '';
+          this.currentPosition.location = res.location || '';
+          this.currentPosition.address = res.address || '';
+        }
+        this.setThread();
       });
     },
     // 编辑帖子接口
@@ -1381,13 +1473,13 @@ export default {
   },
   onLoad(option) {
     // 初始化进入发布页，调起上传
-    if (option.type === '3') {
-      this.$nextTick(() => {
-        this.$refs.upload.uploadClick();
-      });
-    } else if (option.type === '2') {
-      this.uploadVideo();
-    }
+    // if (option.type === '3') {
+    //   this.$nextTick(() => {
+    //     this.$refs.upload.uploadClick();
+    //   });
+    // } else if (option.type === '2') {
+    //   this.uploadVideo();
+    // }
 
     // #ifdef H5
     uni.$on('vditor', vditor => {
@@ -1398,7 +1490,7 @@ export default {
       this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
     });
     uni.$on('clickAttach', item => {
-      this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url})  `);
+      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
     });
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
@@ -1509,6 +1601,9 @@ export default {
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
     this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
+    if(!this.threadId){
+      this.setThread();
+    } 
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');

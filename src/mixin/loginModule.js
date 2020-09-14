@@ -1,6 +1,7 @@
 // #ifdef H5
 import { setCookie } from '@/utils/setCookie';
 // #endif
+import { SITE_PAY } from '@/common/const';
 
 module.exports = {
   methods: {
@@ -16,29 +17,10 @@ module.exports = {
       });
     },
     /**
-     * 获取登录注册页面传递的参数
-     */
-    getPageParams(params) {
-      const { url, commentId } = params;
-      if (url) {
-        let pageUrl;
-        if (url.substr(0, 1) !== '/') {
-          pageUrl = `/${url}`;
-        } else {
-          pageUrl = url;
-        }
-        if (commentId) {
-          this.url = `${pageUrl}&commentId=${commentId}`;
-        } else {
-          this.url = pageUrl;
-        }
-      }
-    },
-    /**
      * 跳转到手机号码登录页面
      */
     jump2PhoneLoginPage() {
-      const url = `/pages/user/phone-login?url=${this.url}`;
+      const url = '/pages/user/phone-login';
       uni.navigateTo({
         url,
       });
@@ -47,7 +29,7 @@ module.exports = {
      * 跳转到登录页面
      */
     jump2LoginPage() {
-      const url = `/pages/user/login?url=${this.url}`;
+      const url = '/pages/user/login';
       uni.navigateTo({
         url,
       });
@@ -56,7 +38,7 @@ module.exports = {
      * 跳转到注册页面
      */
     jump2RegisterPage() {
-      const url = `/pages/user/register?url=${this.url}`;
+      const url = '/pages/user/register';
       uni.navigateTo({
         url,
       });
@@ -65,7 +47,7 @@ module.exports = {
      * 跳转到登录绑定页面
      */
     jump2LoginBindPage() {
-      const url = `/pages/user/login-bind?url=${this.url}`;
+      const url = '/pages/user/login-bind';
       uni.navigateTo({
         url,
       });
@@ -74,7 +56,7 @@ module.exports = {
      * 跳转到注册绑定页面
      */
     jump2RegisterBindPage() {
-      const url = `/pages/user/register-bind?url=${this.url}`;
+      const url = '/pages/user/register-bind';
       uni.navigateTo({
         url,
       });
@@ -164,6 +146,31 @@ module.exports = {
           if (res && res.data && res.data.data && res.data.data.id) {
             console.log('小程序无感注册成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
+            uni.showToast({
+              title: this.i18n.t('user.registerSuccess'),
+              duration: 2000,
+            });
           }
         })
         .catch(err => {
@@ -240,6 +247,27 @@ module.exports = {
             // #endif
             console.log('登录成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: resultDialog,
               duration: 2000,
@@ -366,6 +394,27 @@ module.exports = {
             // #endif
             console.log('注册成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: resultDialog,
               duration: 2000,

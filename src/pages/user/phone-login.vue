@@ -43,7 +43,7 @@
       </view>
       <view class="phone-login-box-ft">
         <view class="phone-login-box-ft-title">
-          {{ i18n.t('user.otherLoginMode') }}
+          {{ isLogin ? i18n.t('user.otherLoginMode') : i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="phone-login-box-ft-con">
           <!-- #ifdef MP-WEIXIN -->
@@ -61,12 +61,23 @@
           <image
             :class="[
               forum && forum.passport && forum.passport.miniprogram_close && !isLogin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                ? 'phone-login-box-ft-con-image'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/zhanghao.svg"
             @click="jump2Login"
+          />
+          <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
           />
           <!-- #endif -->
           <!-- #ifdef H5 -->
@@ -84,12 +95,23 @@
           <image
             :class="[
               forum && forum.passport && forum.passport.offiaccount_close && isWeixin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                ? 'phone-login-box-ft-con-image'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/zhanghao.svg"
             @click="jump2Login"
+          />
+          <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter
+                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3Login"
           />
           <!-- #endif -->
         </view>
@@ -164,8 +186,6 @@ export default {
       disabled: true, // 发送验证码按钮的状态
       phoneNumber: '', // 手机号
       verificationCode: '', // 验证码
-      url: '', // 上一个页面的路径
-      site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
@@ -178,9 +198,8 @@ export default {
       // #endif
     };
   },
-  onLoad(params) {
+  onLoad() {
     this.getForum();
-    this.getPageParams(params);
 
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
@@ -199,30 +218,10 @@ export default {
     this.$u.event.$on('closeChaReault', () => {
       uni.hideLoading();
     });
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url: this.url,
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
-    this.$u.event.$off('logind');
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();
@@ -393,12 +392,33 @@ export default {
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
+          if (res && res.access_token) {
             // #ifdef H5
-            setCookie('token', res.data.data.attributes.access_token, 30);
+            setCookie('token', res.access_token, 30);
             // #endif
             console.log('手机号登录成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: this.i18n.t('user.loginSuccess'),
               duration: 2000,
@@ -429,6 +449,11 @@ export default {
     },
     jump2Login() {
       this.jump2LoginPage();
+    },
+    jump3Login() {
+      uni.navigateTo({
+        url: '/pages/user/uc-login',
+      });
     },
     jump2findpwd() {
       this.jump2findpwdPage();
@@ -550,9 +575,11 @@ page {
   }
 
   &-con {
+    display: flex;
+    justify-content: center;
     margin: 30rpx 0 100rpx;
-
     &-image {
+      display: block;
       width: 100rpx;
       height: 100rpx;
     }
