@@ -1,5 +1,14 @@
 <template>
   <qui-page :data-qui-theme="theme" class="find">
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-nav-bar
+      :title="i18n.t('home.find')"
+      fixed="true"
+      :color="checked ? '#fff' : '#000'"
+      :background-color="checked ? '#2e2f30' : '#fff'"
+      status-bar
+    ></uni-nav-bar>
+    <!-- #endif -->
     <view class="find-item">
       <navigator url="/pages/site/search" hover-class="none">
         <qui-cell-item :title="i18n.t('profile.search')" arrow></qui-cell-item>
@@ -53,7 +62,7 @@ export default {
 }
 .find-item {
   padding-left: 40rpx;
-  margin-top: 30rpx;
+  margin-bottom: 30rpx;
   background-color: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
 }

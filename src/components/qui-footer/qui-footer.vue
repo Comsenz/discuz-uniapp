@@ -15,7 +15,7 @@
         <qui-icon
           class="ft-box-icon"
           :name="item.tabsIcon"
-          size="34"
+          :size="item.tabsIcon === 'icon-faxian' ? 38 : 36"
           :class="redCircle && item.id === 3 ? 'message' : ''"
         ></qui-icon>
         <view class="ft-box-content">
@@ -98,7 +98,7 @@ export default {
         },
         {
           tabsName: 'home.find',
-          tabsIcon: 'icon-home',
+          tabsIcon: 'icon-faxian',
           id: 2,
           url: '/pages/find/index',
         },
@@ -331,7 +331,7 @@ export default {
   position: relative;
   width: 22%;
   height: 100rpx;
-  padding-top: 18rpx;
+  padding-top: 15rpx;
   padding-left: 40rpx;
   font-size: $fg-f3;
   text-align: center;
