@@ -202,6 +202,6 @@ export default {
   }
 }
 .uImg {
-  margin-left: 40rpx;
+  margin-left: 20rpx;
 }
 </style>
