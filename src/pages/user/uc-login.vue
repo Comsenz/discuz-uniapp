@@ -166,7 +166,7 @@ export default {
               setCookie('token', res.access_token, 30);
               this.logind();
               uni.navigateTo({
-                url: '/pages/home/idnex',
+                url: '/pages/home/index',
               });
             }
           })
