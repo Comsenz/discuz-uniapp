@@ -1344,13 +1344,13 @@ export default {
           currentPosition.location = option.name;
           currentPosition.address = option.addr;
           this.currentPosition = currentPosition;
-          this.setThread();
         } else {
           this.currentPosition.longitude = res.longitude || '';
           this.currentPosition.latitude = res.latitude || '';
           this.currentPosition.location = res.location || '';
           this.currentPosition.address = res.address || '';
         }
+        this.setThread();
       });
     },
     // 编辑帖子接口
@@ -1531,7 +1531,6 @@ export default {
         currentPosition.location = option.name;
         currentPosition.address = option.addr;
         this.currentPosition = currentPosition;
-        this.setThread();
       }
     }
 
@@ -1602,6 +1601,9 @@ export default {
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
     this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
+    if(!this.threadId){
+      this.setThread();
+    } 
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');
