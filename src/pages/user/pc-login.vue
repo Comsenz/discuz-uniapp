@@ -20,31 +20,44 @@
 </template>
 
 <script>
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
+
 export default {
+  mixins: [appCommonH],
   data: () => {
     return {
       num: false,
       code: '',
       sessionId: '',
       token: '',
+      // #ifdef H5
+      isWeixin: false, // 默认不是微信浏览器
+      // #endif
     };
   },
-  onLoad(data) {
-    console.log(data);
+  onLoad() {
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
   },
   methods: {
     pcLogin() {
-      this.$store
-        .dispatch(
-          'jv/get',
-          `oauth/wechat/user?code=${this.code}&sessionId=${this.sessionId}&session_token=${this.token}`,
-        )
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      if (this.isWeixin) {
+        this.$store
+          .dispatch(
+            'jv/get',
+            `oauth/wechat/user?code=${this.code}&sessionId=${this.sessionId}&session_token=${this.token}`,
+          )
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     cancelPclogin() {},
   },
