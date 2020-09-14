@@ -192,6 +192,10 @@ export default {
     // 切换组件
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quifind', 'quinotice', 'quimy'];
+      uni.setStorage({
+        key: 'page',
+        data: '/pages/home/index',
+      });
       this.currentTab = tabs[type];
       if (
         !this.$store.getters['session/get']('isLogin') &&

@@ -70,18 +70,6 @@
               "
             ></qui-cell-item>
           </navigator>
-          <!-- <navigator url="/pages/site/search" hover-class="none">
-            <qui-cell-item
-              :title="i18n.t('profile.search')"
-              arrow
-              :border="
-                forums.other &&
-                (forums.other.can_create_invite || forums.other.can_invite_user_scale)
-                  ? true
-                  : false
-              "
-            ></qui-cell-item>
-          </navigator> -->
           <navigator
             url="/pages/invite/index"
             hover-class="none"
