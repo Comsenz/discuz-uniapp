@@ -52,7 +52,9 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
+// #ifdef H5
 import { setCookie } from '@/utils/setCookie';
+// #endif
 
 export default {
   mixins: [user, loginModule],
@@ -163,7 +165,9 @@ export default {
               }
             }
             if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
+              // #ifdef H5
               setCookie('token', res.access_token, 30);
+              // #endif
               this.logind();
               uni.navigateTo({
                 url: '/pages/home/index',
