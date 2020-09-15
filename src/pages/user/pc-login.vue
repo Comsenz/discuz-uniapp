@@ -5,15 +5,15 @@
         <image class="pc-login__box__img" src="@/static/logo.png"></image>
       </view>
       <view class="pc-login__title">
-        PC端登录确认
+        {{ i18n.t('user.pcloginconfirm') }}
       </view>
     </view>
     <view class="pc-login-bt">
       <view class="pc-login__btn" @click="pcLogin">
-        登录
+        {{ i18n.t('user.login') }}
       </view>
       <view class="pc-login__cancel" @click="cancelPclogin">
-        取消登录
+        {{ i18n.t('user.cancelpclogin') }}
       </view>
     </view>
   </view>
@@ -46,29 +46,39 @@ export default {
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     // #endif
-    this.token = data.session_token;
-    if (this.switch) {
-      this.datas = data;
+    uni.getStorage({
+      key: 'session_token_data',
+      success(e) {
+        console.log(e);
+        if (e.data !== '') {
+          this.switch = true;
+          this.token = e.data;
+          this.datas = data;
+        }
+      },
+    });
+    if (!this.switch) {
+      uni.setStorage({
+        key: 'session_token_data',
+        data: data.session_token,
+      });
+      this.$store.dispatch('session/wxPcLogin');
     }
   },
   methods: {
-    pcLogin(data) {
-      this.switch = true;
-      setTimeout(() => {
-        if (this.switch) {
-          this.$store.dispatch('session/wxPcLogin');
-          if (this.isWeixin) {
-            this.$store
-              .dispatch('session/scancodeverification', data)
-              .then(res => {
-                console.log(res);
-              })
-              .catch(err => {
-                console.log(err);
-              });
-          }
-        }
-      }, 200);
+    pcLogin() {
+      this.datas.session_token = this.token;
+      console.log(this.datas);
+      if (this.isWeixin) {
+        this.$store
+          .dispatch('session/scancodeverification', this.datas)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     cancelPclogin() {},
   },

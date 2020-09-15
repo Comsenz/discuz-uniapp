@@ -123,6 +123,7 @@ const actions = {
     });
   },
   scancodeverification: (context, payload = {}) => {
+    console.log(payload);
     const options = { custom: { showTost: false } };
     return new Promise(resolve => {
       return http
