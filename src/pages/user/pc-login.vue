@@ -25,7 +25,9 @@ import appCommonH from '@/utils/commonHelper';
 // #endif
 
 export default {
+  // #ifdef H5
   mixins: [appCommonH],
+  // #endif
   data: () => {
     return {
       num: false,
