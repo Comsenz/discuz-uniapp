@@ -762,6 +762,7 @@ export default {
     registerBindId: '注册，并绑定微信号',
     registerBindUc: '注册，并绑定微UC账号',
     registerBind: '注册并绑定微信',
+    registerBindUcenter: '注册并绑定UC账号',
     loginBindId: '登录，并绑定微信号',
     loginBind: '登录并绑定微信',
     logout: '退出登录',
@@ -796,6 +797,8 @@ export default {
     configurationerror: '配置错误',
     usernamePasworderro: '用户名或密码错误',
     usernameerro: '用户名错误',
+    pcloginconfirm: 'pc端登录确认',
+    cancelpclogin: '取消登录',
   },
   // 举报
   report: {

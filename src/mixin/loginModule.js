@@ -346,6 +346,12 @@ module.exports = {
       if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
         params.data.attributes.code = data.data.attributes.code;
       }
+      if (!this.type) {
+        const token = this.$store.getters['session/get']('token');
+        if (token && token !== '') {
+          params.data.attributes.token = token;
+        }
+      }
       // #endif
       // #ifdef H5
       // 微信内置浏览器注册必传参数
