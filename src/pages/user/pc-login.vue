@@ -35,29 +35,38 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
+      switch: false,
+      datas: {},
     };
   },
-  onLoad() {
+  onLoad(data) {
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     // #endif
+    this.token = data.session_token;
+    if (this.switch) {
+      this.datas = data;
+    }
   },
   methods: {
-    pcLogin() {
-      if (this.isWeixin) {
-        this.$store
-          .dispatch(
-            'jv/get',
-            `oauth/wechat/user?code=${this.code}&sessionId=${this.sessionId}&session_token=${this.token}`,
-          )
-          .then(res => {
-            console.log(res);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
+    pcLogin(data) {
+      this.switch = true;
+      setTimeout(() => {
+        if (this.switch) {
+          this.$store.dispatch('session/wxPcLogin');
+          if (this.isWeixin) {
+            this.$store
+              .dispatch('session/scancodeverification', data)
+              .then(res => {
+                console.log(res);
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
+        }
+      }, 200);
     },
     cancelPclogin() {},
   },

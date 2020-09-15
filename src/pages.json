@@ -65,13 +65,19 @@
       }
     },
     {
-      "path": "pages/user/grant-login",
+      "path": "pages/user/wechat",
+      "style": {
+        "navigationBarTitleText": "微信授权"
+      }
+    },
+    {
+      "path": "pages/user/pc-login",
       "style": {
         "navigationBarTitleText": "PC登录"
       }
     },
     {
-      "path": "pages/user/pc-login",
+      "path": "pages/user/grant-login",
       "style": {
         "navigationBarTitleText": "PC登录"
       }
@@ -382,12 +388,6 @@
       "path": "pages/modify/authen",
       "style": {
         "navigationBarTitleText": "验证身份"
-      }
-    },
-    {
-      "path": "pages/user/wechat",
-      "style": {
-        "navigationBarTitleText": "微信授权"
       }
     },
     {

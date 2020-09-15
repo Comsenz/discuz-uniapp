@@ -93,6 +93,7 @@ const actions = {
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
+    console.log(context, payload);
     let inviteCode = '';
     let register = 0;
     uni.getStorage({
@@ -112,6 +113,21 @@ const actions = {
       return http
         .get(
           `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=${register}&inviteCode=${inviteCode}`,
+          options,
+        )
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(err => resolve(err));
+    });
+  },
+  scancodeverification: (context, payload = {}) => {
+    const options = { custom: { showTost: false } };
+    return new Promise(resolve => {
+      return http
+        .get(
+          `oauth/wechat/user?code=${payload.code}&sessionId=${payload.sessionId}&session_token=${payload.token}`,
           options,
         )
         .then(results => {
@@ -142,6 +158,7 @@ const actions = {
     });
   },
   ucLogin: (context, payload = {}) => {
+    console.log(context, payload, 'session');
     return new Promise(resolve => {
       return http
         .post('uc/login', payload)
