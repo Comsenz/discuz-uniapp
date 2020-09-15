@@ -387,6 +387,9 @@ export default {
   display: inline-block;
   margin-left: 42rpx;
   color: --color(--qui-FC-333);
+  .qui-icon {
+    margin-right: 12rpx;
+  }
 }
 .profile-tabs__content {
   padding-top: 30rpx;
