@@ -762,6 +762,7 @@ export default {
     registerBindId: '注册，并绑定微信号',
     registerBindUc: '注册，并绑定微UC账号',
     registerBind: '注册并绑定微信',
+    registerBindUcenter: '注册并绑定UC账号',
     loginBindId: '登录，并绑定微信号',
     loginBind: '登录并绑定微信',
     logout: '退出登录',
