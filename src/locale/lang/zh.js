@@ -596,6 +596,7 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    play: '播放',
     uploadFile: '上传附件',
     filesizecannotexceed: '文件大小不能超过',
     pleaseselect: '请选择',
