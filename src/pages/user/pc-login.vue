@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     pcLogin() {
-      this.datas.session_token = this.token;
+      this.datas.token = this.token;
       console.log(this.datas);
       if (this.isWeixin) {
         this.$store
