@@ -751,4 +751,10 @@ tdjs.async = true;
 tdjs.src = "https://jic.talkingdata.com/app/h5/v1?appid=86697ADBE1104854B72523C08FFB688B";
 document.getElementsByTagName("body")[0].appendChild(tdjs);
 
+var dzqjs = document.createElement("script");
+dzqjs.type = "text/javascript";
+dzqjs.async = true;
+dzqjs.src = "https://dl.discuz.chat/dzq.js";
+document.getElementsByTagName("body")[0].appendChild(dzqjs);
+
 // #endif
