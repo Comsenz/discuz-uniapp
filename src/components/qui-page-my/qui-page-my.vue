@@ -64,7 +64,9 @@
               arrow
               :border="
                 forums.other &&
-                (forums.other.can_create_invite || forums.other.can_invite_user_scale)
+                (forums.other.can_create_invite ||
+                  forums.other.can_edit_user_group ||
+                  forums.other.can_invite_user_scale)
                   ? true
                   : false
               "
@@ -78,12 +80,18 @@
             <qui-cell-item
               :title="i18n.t('profile.inviteFriends')"
               arrow
-              :border="forums.other && forums.other.can_create_invite ? true : false"
+              :border="
+                forums.other && (forums.other.can_create_invite || forums.other.can_edit_user_group)
+                  ? true
+                  : false
+              "
               :class-item="'invite-friends'"
             ></qui-cell-item>
           </navigator>
           <navigator
-            v-if="forums.other && forums.other.can_create_invite"
+            v-if="
+              forums.other && (forums.other.can_create_invite || forums.other.can_edit_user_group)
+            "
             url="/pages/manage/index"
             hover-class="none"
           >

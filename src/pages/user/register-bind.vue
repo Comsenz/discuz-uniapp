@@ -1,7 +1,9 @@
 <template>
   <qui-page :data-qui-theme="theme" class="register-bind-box">
     <view>
-      <view class="register-bind-box-h">{{ i18n.t('user.registerBind') }}</view>
+      <view class="register-bind-box-h">
+        {{ type ? i18n.t('user.registerBind') : i18n.t('user.registerBindUcenter') }}
+      </view>
       <view class="register-bind-box-con">
         <input
           class="input"
@@ -172,7 +174,7 @@ export default {
   },
   onLoad() {
     const pages = getCurrentPages();
-    if (pages[1].route === 'pages/user/uc-login') {
+    if (pages[pages.length - 2].route === 'pages/user/uc-login') {
       this.type = false;
     }
     this.getForum();
