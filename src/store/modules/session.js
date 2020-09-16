@@ -136,7 +136,7 @@ const actions = {
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/user?code=${payload.code}&sessionId=${payload.sessionId}&session_token=${sessionToken}`,
+          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${sessionToken}`,
         )
         .then(results => {
           resolve(results);
