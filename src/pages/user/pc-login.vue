@@ -57,13 +57,15 @@ export default {
         }
       },
     });
-    if (!this.switch) {
-      uni.setStorage({
-        key: 'session_token_data',
-        data: data.session_token,
-      });
-      this.$store.dispatch('session/wxPcLogin');
-    }
+    setTimeout(() => {
+      if (!this.switch) {
+        uni.setStorage({
+          key: 'session_token_data',
+          data: 111,
+        });
+        this.$store.dispatch('session/wxPcLogin');
+      }
+    }, 1000);
   },
   methods: {
     pcLogin() {
