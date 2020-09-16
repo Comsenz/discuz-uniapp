@@ -37,8 +37,11 @@ export default {
       duration: '',
     };
   },
-  mounted() {
-    this.initVideo();
+  created() {
+    this.videoContext = uni.createVideoContext(`myVideo${this.$props.videoId}`, this);
+  },
+  destroyed() {
+    if (this.videoContext) this.videoContext = null;
   },
   methods: {
     // 点击直接全屏播放
@@ -55,13 +58,11 @@ export default {
       }
     },
     loadedmetadata(e) {
+      console.log(e);
+      console.log(this.videoContext);
       if (!this.duration) {
         this.duration = e.detail.duration;
       }
-    },
-    initVideo() {
-      this.videoContext = uni.createVideoContext(`myVideo${this.$props.videoId}`, this);
-      // 音频进度更新事件
     },
   },
 };
