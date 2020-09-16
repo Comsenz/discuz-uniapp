@@ -39,33 +39,44 @@ export default {
       // #endif
       switch: false,
       datas: {},
+      switchdata: true,
     };
   },
-  onLoad(data) {
+  onLoad(content) {
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     // #endif
+    if (content.session_token) {
+      console.log(111);
+      uni.setStorage({
+        key: 'session_token_data',
+        data: content.session_token,
+      });
+      this.$store.dispatch('session/wxPcLogin');
+    }
+    if (content.sessionId) {
+      console.log(222);
+      this.datas = content;
+    }
     uni.getStorage({
       key: 'session_token_data',
       success(e) {
-        console.log(e);
         if (e.data !== '') {
-          this.switch = true;
           this.token = e.data;
-          this.datas = data;
         }
       },
     });
-    setTimeout(() => {
-      if (!this.switch) {
-        uni.setStorage({
-          key: 'session_token_data',
-          data: 111,
-        });
-        this.$store.dispatch('session/wxPcLogin');
-      }
-    }, 1000);
+    // if (!this.switch) {
+    //   uni.setStorage({
+    //     key: 'session_token_data',
+    //     data: content.session_token,
+    //     success() {
+    //       this.switchdata = false;
+    //     },
+    //   });
+    //   this.$store.dispatch('session/wxPcLogin');
+    // }
   },
   methods: {
     pcLogin() {
