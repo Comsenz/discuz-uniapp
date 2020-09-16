@@ -73,6 +73,24 @@
       <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
     </uni-popup>
     <!-- #endif -->
+    <view v-show="false">
+      <qui-uploader
+        :url="`${url}api/attachments`"
+        :header="header"
+        :form-data="formData"
+        name="file"
+        :async-clear="true"
+        ref="upload"
+        :choose-type="0"
+        @uploadClick="uploadClick"
+      ></qui-uploader>
+      <qui-upload-video
+        ref="uploadVideo"
+        :url="url"
+        @uploadVideo="uploadVideo"
+        :choose-type="0"
+      ></qui-upload-video>
+    </view>
   </view>
 </template>
 <script>
@@ -83,6 +101,7 @@ import { mapState, mapMutations } from 'vuex';
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import { DISCUZ_REQUEST_HOST } from '@/common/const';
 
 export default {
   components: { uniPopupDialog },
@@ -130,6 +149,11 @@ export default {
       isTabBar: [0], // 禁止页面第二次加载
       sureType: '', // 二次确认类型
       sureTip: '', // 二次确认提示
+
+      url: '', // 视频url
+      header: {}, // 图片请求头部
+      formData: {}, // 图片请求data
+      uploadStatus: true,
     };
   },
   computed: {
@@ -175,6 +199,16 @@ export default {
       }
       // #endif
     }
+    // 上传图片
+    this.url = DISCUZ_REQUEST_HOST;
+    const token = uni.getStorageSync('access_token');
+
+    this.header = {
+      authorization: `Bearer ${token}`,
+    };
+    this.formData = {
+      type: 1,
+    };
   },
   methods: {
     select(item, index) {
