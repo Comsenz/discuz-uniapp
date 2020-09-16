@@ -39,46 +39,66 @@ export default {
       // #endif
       switch: false,
       datas: {},
+      switchdata: true,
     };
   },
-  onLoad(data) {
+  onLoad(content) {
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     // #endif
-    uni.getStorage({
-      key: 'session_token_data',
-      success(e) {
-        console.log(e);
-        if (e.data !== '') {
-          this.switch = true;
-          this.token = e.data;
-          this.datas = data;
-        }
-      },
-    });
-    if (!this.switch) {
+    if (content.session_token) {
+      console.log(111);
       uni.setStorage({
         key: 'session_token_data',
-        data: data.session_token,
+        data: content.session_token,
       });
       this.$store.dispatch('session/wxPcLogin');
     }
+    if (content.sessionId) {
+      console.log(222);
+      this.datas = content;
+    }
+    uni.getStorage({
+      key: 'session_token_data',
+      success(e) {
+        if (e.data !== '') {
+          this.token = e.data;
+        }
+      },
+    });
+    // if (!this.switch) {
+    //   uni.setStorage({
+    //     key: 'session_token_data',
+    //     data: content.session_token,
+    //     success() {
+    //       this.switchdata = false;
+    //     },
+    //   });
+    //   this.$store.dispatch('session/wxPcLogin');
+    // }
   },
   methods: {
     pcLogin() {
-      this.datas.token = this.token;
-      console.log(this.datas);
-      if (this.isWeixin) {
-        this.$store
-          .dispatch('session/scancodeverification', this.datas)
-          .then(res => {
-            console.log(res);
-          })
-          .catch(err => {
-            console.log(err);
+      this.$store
+        .dispatch('session/scancodeverification', this.datas)
+        .then(res => {
+          console.log(res);
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('user.loginSuccess'),
+            duration: 2000,
           });
-      }
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        });
     },
     cancelPclogin() {},
   },
