@@ -58,8 +58,6 @@ export default {
       }
     },
     loadedmetadata(e) {
-      console.log(e);
-      console.log(this.videoContext);
       if (!this.duration) {
         this.duration = e.detail.duration;
       }
