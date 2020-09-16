@@ -13,6 +13,10 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
+        uni.setStorage({
+          key: 'register',
+          data: 1,
+        });
         this.$store.dispatch('session/wxh5Login');
       } else {
         this.login();
