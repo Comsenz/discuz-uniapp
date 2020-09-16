@@ -80,18 +80,25 @@ export default {
   },
   methods: {
     pcLogin() {
-      this.datas.token = this.token;
-      console.log(this.datas);
-      if (this.isWeixin) {
-        this.$store
-          .dispatch('session/scancodeverification', this.datas)
-          .then(res => {
-            console.log(res);
-          })
-          .catch(err => {
-            console.log(err);
+      this.$store
+        .dispatch('session/scancodeverification', this.datas)
+        .then(res => {
+          console.log(res);
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('user.loginSuccess'),
+            duration: 2000,
           });
-      }
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          uni.navigateTo({
+            url: '/pages/home/index',
+          });
+        });
     },
     cancelPclogin() {},
   },
