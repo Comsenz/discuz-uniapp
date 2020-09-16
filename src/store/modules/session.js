@@ -145,6 +145,17 @@ const actions = {
         .catch(err => resolve(err));
     });
   },
+  loginscancodeverification: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .post(`oauth/wechat/qrcode/login/${payload.token}`)
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(err => resolve(err));
+    });
+  },
   // #endif
   verificationCodeh5Login: (context, payload = {}) => {
     return new Promise(resolve => {
