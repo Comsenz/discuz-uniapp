@@ -47,60 +47,126 @@ export default {
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     // #endif
-    if (content.session_token) {
-      console.log(111);
-      uni.setStorage({
-        key: 'session_token_data',
-        data: content.session_token,
-      });
-      this.$store.dispatch('session/wxPcLogin');
-    }
-    if (content.sessionId) {
-      console.log(222);
-      this.datas = content;
-    }
     uni.getStorage({
-      key: 'session_token_data',
+      key: 'access_token',
       success(e) {
-        if (e.data !== '') {
-          this.token = e.data;
+        if (e.data) {
+          this.switchdata = false;
         }
       },
     });
-    // if (!this.switch) {
-    //   uni.setStorage({
-    //     key: 'session_token_data',
-    //     data: content.session_token,
-    //     success() {
-    //       this.switchdata = false;
-    //     },
-    //   });
-    //   this.$store.dispatch('session/wxPcLogin');
-    // }
+    if (this.isWeixin) {
+      console.log(this.isWeixin);
+      if (content.session_token) {
+        console.log(111);
+        uni.setStorage({
+          key: 'session_token_data',
+          data: content.session_token,
+          success() {
+            if (this.switchdata) {
+              this.$store.dispatch('session/wxPcLogin');
+            } else {
+              this.token = content.session_token;
+            }
+          },
+        });
+      }
+      if (content.sessionId) {
+        console.log(222);
+        this.datas = content;
+      }
+    } else {
+      uni.redirectTo({
+        url: '/pages/home/index',
+      });
+    }
   },
   methods: {
     pcLogin() {
-      this.$store
-        .dispatch('session/scancodeverification', this.datas)
-        .then(res => {
-          console.log(res);
-          uni.showToast({
-            icon: 'none',
-            title: this.i18n.t('user.loginSuccess'),
-            duration: 2000,
+      if (this.switchdata) {
+        this.$store
+          .dispatch('session/scancodeverification', this.datas)
+          .then(res => {
+            console.log(res);
+            if (res && res.data && res.data.errors) {
+              if (res.data.errors[0].code === 'no_bind_user') {
+                uni.showToast({
+                  icon: 'none',
+                  title: this.i18n.t('user.loginSuccessFail'),
+                  duration: 2000,
+                });
+              }
+            }
+            if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('user.loginSuccess'),
+                duration: 2000,
+              });
+              setTimeout(() => {
+                uni.redirectTo({
+                  url: '/pages/home/index',
+                });
+              }, 1000);
+            }
+          })
+          .catch(err => {
+            if (err && err.data) {
+              if (err.data.errors[0].sstatus === 500) {
+                uni.showToast({
+                  icon: 'none',
+                  title: err.data.errors[0].code,
+                  duration: 2000,
+                });
+              }
+            }
           });
-          uni.navigateTo({
-            url: '/pages/home/index',
+      } else {
+        this.datas.token = this.token;
+        this.$store
+          .dispatch('session/loginscancodeverification', this.datas)
+          .then(res => {
+            console.log(res);
+            if (res && res.data && res.data.errors) {
+              if (res.data.errors[0].code === 'no_bind_user') {
+                uni.showToast({
+                  icon: 'none',
+                  title: this.i18n.t('user.loginSuccessFail'),
+                  duration: 2000,
+                });
+              }
+            }
+            if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('user.loginSuccess'),
+                duration: 2000,
+              });
+              setTimeout(() => {
+                uni.redirectTo({
+                  url: '/pages/home/index',
+                });
+              }, 1000);
+            }
+          })
+          .catch(err => {
+            if (err && err.data) {
+              if (err.data.errors[0].sstatus === 500) {
+                uni.showToast({
+                  icon: 'none',
+                  title: err.data.errors[0].code,
+                  duration: 2000,
+                });
+              }
+            }
           });
-        })
-        .catch(err => {
-          console.log(err);
-          uni.navigateTo({
-            url: '/pages/home/index',
-          });
-        });
+      }
     },
-    cancelPclogin() {},
+    cancelPclogin() {
+      uni.redirectTo({
+        url: '/pages/home/index',
+      });
+    },
   },
 };
 </script>
