@@ -65,6 +65,24 @@
       }
     },
     {
+      "path": "pages/user/wechat",
+      "style": {
+        "navigationBarTitleText": "微信授权"
+      }
+    },
+    {
+      "path": "pages/user/pc-login",
+      "style": {
+        "navigationBarTitleText": "PC登录"
+      }
+    },
+    {
+      "path": "pages/user/grant-login",
+      "style": {
+        "navigationBarTitleText": "PC登录"
+      }
+    },
+    {
       "path": "pages/user/login-bind",
       "style": {
         "navigationBarTitleText": "登录并绑定"
@@ -373,15 +391,21 @@
       }
     },
     {
-      "path": "pages/user/wechat",
-      "style": {
-        "navigationBarTitleText": "微信授权"
-      }
-    },
-    {
       "path": "pages/common/view",
       "style": {
         "navigationBarTitleText": ""
+      }
+    },
+    {
+      "path": "pages/modify/rightdetails",
+      "style": {
+        "navigationBarTitleText": "权力详情"
+      }
+    },
+    {
+      "path": "pages/modify/right",
+      "style": {
+        "navigationBarTitleText": "权力的市场"
       }
     }
   ],

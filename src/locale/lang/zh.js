@@ -227,7 +227,7 @@ export default {
     user_deny: '对方设置了屏蔽，无法进行此操作',
     uc_user_check_username_failed: '用户名错误',
     uc_user_username_badword: '用户名或密码错误',
-    uc_connect_error_ucenter: '配置错误',
+    uc_connect_error: 'Ucenter配置错误',
     uc_user_username_exists: '配置错误',
   },
   topic: {
@@ -762,6 +762,7 @@ export default {
     registerBindId: '注册，并绑定微信号',
     registerBindUc: '注册，并绑定微UC账号',
     registerBind: '注册并绑定微信',
+    registerBindUcenter: '注册并绑定UC账号',
     loginBindId: '登录，并绑定微信号',
     loginBind: '登录并绑定微信',
     logout: '退出登录',
@@ -769,6 +770,7 @@ export default {
     registerSuccess: '注册成功',
     registerBindSuccess: '注册绑定成功',
     loginSuccess: '登录成功',
+    loginSuccessFail: '登录失败',
     loginBindSuccess: '登录绑定成功',
     agreement: '注册登录即表示您同意',
     agreementRegister: '注册协议',
@@ -796,6 +798,8 @@ export default {
     configurationerror: '配置错误',
     usernamePasworderro: '用户名或密码错误',
     usernameerro: '用户名错误',
+    pcloginconfirm: 'pc端登录确认',
+    cancelpclogin: '取消登录',
   },
   // 举报
   report: {

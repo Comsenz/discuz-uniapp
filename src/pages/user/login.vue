@@ -35,7 +35,7 @@
             @click="jump2PhoneLogin"
           />
           <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
             class="login-box-ft-con-image uImg"
             lazy-load
             src="@/static/UC.svg"
@@ -88,6 +88,7 @@ export default {
       password: '', // 密码
       isPaid: false, // 默认未付费
       forum: {}, // 配置
+      isShow: false,
     };
   },
   onLoad() {

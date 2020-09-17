@@ -233,7 +233,7 @@ export default {
         }
         uni.hideLoading();
       };
-      xhr.timeout = 30000; // 超时时间，单位是毫秒
+      // xhr.timeout = 30000; // 超时时间，单位是毫秒
       xhr.onerror = res => {
         uni.hideLoading();
         this.$refs.toast.show({ message: res });
