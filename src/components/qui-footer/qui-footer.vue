@@ -327,15 +327,61 @@ export default {
     // 首页底部发帖点击事件跳转
     handleClick(item) {
       let url;
-      if (this.footerIndex === 0) {
-        url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+      if (item.type === 3) {
+        // 当选择图片帖时
+        this.$nextTick(() => {
+          this.$refs.upload.uploadClick();
+        });
+        uni.$on('uploadOver', data => {
+          // console.log(data, 'data');
+          if (this.footerIndex === 0) {
+            url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+          } else {
+            url = `/pages/topic/post?type=${item.type}`;
+          }
+          uni.navigateTo({
+            url,
+            success: res => {
+              // 通过eventChannel向被打开页面传送数据
+              res.eventChannel.emit('acceptDataFromOpenerPage', { data });
+            },
+          });
+          this.cancel();
+        });
+      } else if (item.type === 2) {
+        // 当选择视屏帖时
+        this.$nextTick(() => {
+          this.$refs.uploadVideo.uploadVideo();
+        });
+        uni.$on('uploadVideoOver', data => {
+          // console.log('这是首页接收到的视频文件', typeof data, data);
+          if (this.footerIndex === 0) {
+            url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+          } else {
+            url = `/pages/topic/post?type=${item.type}`;
+          }
+          uni.navigateTo({
+            url,
+            success: res => {
+              // 通过eventChannel向被打开页面传送数据
+              res.eventChannel.emit('acceptDataFromOpenerPage', {
+                data,
+              });
+            },
+          });
+          this.cancel();
+        });
       } else {
-        url = `/pages/topic/post?type=${item.type}`;
+        if (this.footerIndex === 0) {
+          url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+        } else {
+          url = `/pages/topic/post?type=${item.type}`;
+        }
+        uni.navigateTo({
+          url,
+        });
+        this.cancel();
       }
-      uni.navigateTo({
-        url,
-      });
-      this.cancel();
     },
     // 取消按钮
     cancel() {
