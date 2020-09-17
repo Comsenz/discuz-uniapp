@@ -697,10 +697,12 @@ export default {
     shieldusersure: '确定屏蔽该用户吗？',
   },
   site: {
+    partialcontentpreview: '部分内容预览',
     circleintroduction: '站点介绍',
     creationtime: '创建时间',
     periodvalidity: '有效期',
     day: '天',
+    createdDays: '已创建{num}天',
     circlemaster: '站长',
     site: '站点',
     paynow: '立即付费',
@@ -712,7 +714,7 @@ export default {
     myauthority: '我的权限',
     inviteyouas: '邀请您，作为',
     join: '加入',
-    accepttheinvitationandbecome: '接受邀请，成为',
+    accepttheinvitation: '接受邀请',
     permanent: '永久有效',
     continueResgister: '继续注册',
     codeinvalid:

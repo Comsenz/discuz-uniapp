@@ -18,53 +18,47 @@
     <uni-popup ref="popupHead" type="bottom">
       <qui-share @close="cancel"></qui-share>
     </uni-popup>
-    <view class="site-item">
-      <qui-cell-item
-        class="cell-item--auto cell-item--left"
-        :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site && forums.set_site.site_introduction"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site && forums.set_site.site_install"
-      ></qui-cell-item>
-      <qui-cell-item :title="i18n.t('site.circlemode')" :addon="handleMode()"></qui-cell-item>
-      <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
-        <view class="site-item__owner">
-          <qui-avatar
-            class="site-item__owner-avatar"
-            :user="{
-              username: forums.set_site && forums.set_site.site_author.username,
-              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
-            }"
-            size="60"
-          />
-          <text class="site-item__owner-name">
-            {{ forums.set_site && forums.set_site.site_author.username }}
-          </text>
-        </view>
-      </qui-cell-item>
-      <qui-cell-item :title="i18n.t('home.theme')" slot-right>
-        <view class="site-item__person">
-          <view
-            v-for="(item, index) in forums.users"
-            :key="index"
-            class="site-item__person__content"
-          >
-            <qui-avatar class="site-item__person__content-avatar" :user="item" size="60" />
+    <view class="site-info">
+      <view class="site-info__title">{{ i18n.t('site.circleintroduction') }}</view>
+      <view class="site-info__introduction">
+        {{ forums.set_site && forums.set_site.site_introduction }}
+      </view>
+      <view class="site-info__owner">
+        <qui-avatar
+          class="site-info__owner-avatar"
+          :user="{
+            username: forums.set_site && forums.set_site.site_author.username,
+            avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
+          }"
+          size="60"
+        />
+        <view class="site-info__owner-detail">
+          <view>
+            {{
+              `${i18n.t('site.circlemaster')} : ${forums.set_site &&
+                forums.set_site.site_author.username}`
+            }}
+          </view>
+          <view class="site-info__owner-detail-days">
+            {{ i18n.t('site.createdDays', { num: 812 }) }}
           </view>
         </view>
-      </qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.myauthority')"
-        slot-right
-        :border="false"
-        class="cell-item--auto cell-item--left"
-      >
-        <view v-for="(item, index) in permission" :key="index" class="site-item__permission">
-          <text>{{ i18n.t(`permission.${item.permission}`) }}</text>
+      </view>
+      <view class="site-info__person">
+        <view v-for="(item, index) in forums.users" :key="index" class="site-info__person__content">
+          <qui-avatar :user="item" size="60" />
         </view>
-      </qui-cell-item>
+      </view>
+    </view>
+    <view class="site-theme">
+      <view class="site-theme__title">{{ i18n.t('site.partialcontentpreview') }}</view>
+      <qui-thread-item
+        v-for="(item, index) in data"
+        :key="index"
+        :currentindex="index"
+        :thread="item"
+        :can-click="false"
+      ></qui-thread-item>
     </view>
     <view class="site-invite">
       <view class="site-invite__detail">
@@ -84,12 +78,24 @@
         </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
-      <view class="site-invite__button">
-        <qui-button type="primary" size="large" @click="check">
-          {{ i18n.t('site.accepttheinvitationandbecome') }}
-          {{ inviteData.group && inviteData.group.name }}
-        </qui-button>
+    </view>
+    <view class="site-submit">
+      <view>
+        <view class="site-submit__price">
+          {{ `¥${(forums.set_site && forums.set_site.site_price) || 0}` }}
+        </view>
+        <view class="site-submit__expire">
+          {{
+            forums.set_site && forums.set_site.site_expire
+              ? `${i18n.t('site.periodvalidity')} ${forums.set_site &&
+                  forums.set_site.site_expire} ${i18n.t('site.day')}`
+              : i18n.t('site.permanent')
+          }}
+        </view>
       </view>
+      <qui-button type="primary" @click="check" size="small">
+        {{ i18n.t('site.accepttheinvitation') }}
+      </qui-button>
     </view>
     <uni-popup ref="popCode" type="center">
       <uni-popup-dialog
@@ -128,12 +134,14 @@ export default {
   data() {
     return {
       code: '', // 邀请码
-      permission: [],
       shareBtn: 'icon-share1',
       shareShow: false, // h5内分享提示信息
       isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
       codeTips: '',
+      data: [],
+      pageSize: 10,
+      pageNum: 1, // 当前页数
     };
   },
   onLoad(params) {
@@ -148,10 +156,7 @@ export default {
       menus: ['shareAppMessage', 'shareTimeline'],
     });
     // #endif
-  },
-  onReady() {
-    // 处理站点模式
-    this.handleMode();
+    this.getThemeList();
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -195,24 +200,6 @@ export default {
     // 取消按钮
     cancel() {
       this.$refs.popupHead.close();
-    },
-    handleMode() {
-      if (!this.forums.set_site) {
-        return;
-      }
-      if (this.forums.set_site.site_mode === 'pay') {
-        const siteMode = `${this.i18n.t('site.paymentmode')}，¥${
-          this.forums.set_site.site_price
-        }，`;
-        const siteExpire = this.forums.set_site.site_expire
-          ? this.i18n.t('site.periodvalidity') +
-            this.forums.set_site.site_expire +
-            this.i18n.t('site.day')
-          : this.i18n.t('site.permanent');
-        return siteMode + siteExpire;
-      }
-      const siteMode = this.i18n.t('site.publicmode');
-      return siteMode;
     },
     // 调取用户信息取消弹框
     close() {
@@ -265,9 +252,7 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
         .then(res => {
-          console.log(res);
           this.inviteData = res;
-          this.permission = res.group.permission;
         });
     },
     handleInviteCancel() {
@@ -314,6 +299,32 @@ export default {
         // #endif
       }
     },
+    // 获取主题列表
+    getThemeList() {
+      this.loadingType = 'loading';
+      const params = {
+        include: [
+          'user',
+          'user.groups',
+          'firstPost',
+          'firstPost.images',
+          'category',
+          'threadVideo',
+        ],
+        'filter[isDeleted]': 'no',
+        'filter[isApproved]': 1,
+        'filter[isSite]': 'yes',
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
+      };
+      this.$store.dispatch('jv/get', ['threads', { params }]).then(res => {
+        if (res._jv) {
+          delete res._jv;
+        }
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+        this.data = [...this.data, ...res];
+      });
+    },
   },
 };
 </script>
@@ -326,92 +337,110 @@ export default {
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    .circleDet {
+      padding: 60rpx 30rpx;
+      opacity: 1;
+    }
+    .circleDet-txt {
+      color: --color(--qui-FC-333);
+      opacity: 1;
+    }
+    .logo {
+      height: 75rpx;
+      padding-top: 71rpx;
+    }
+    .circleDet-num,
+    .circleDet-share {
+      color: --color(--qui-FC-333);
+    }
   }
-  .header .circleDet {
-    padding: 60rpx 40rpx 50rpx;
-    opacity: 1;
+  .themeCount .themeItem__footer {
+    display: none;
   }
-  .header .circleDet-txt {
-    color: --color(--qui-FC-333);
-    opacity: 1;
+  .themeCount .themeItem {
+    padding-left: 0;
+    margin: 0;
+    border-top: none;
   }
-  .header .logo {
-    height: 75rpx;
-    padding-top: 71rpx;
-  }
-  .cell-item__body__content-title {
-    width: 150rpx;
-    margin-right: 40rpx;
-    color: --color(--qui-FC-777);
-  }
-  .header .circleDet-num,
-  .header .circleDet-share {
-    color: --color(--qui-FC-333);
-  }
-  .site-invite {
-    padding-bottom: 50rpx;
-    text-align: center;
-  }
-  .cell-item--auto .cell-item__body {
-    height: auto;
-    padding: 35rpx 0;
-    align-items: flex-start;
-  }
-  .cell-item--left .cell-item__body__right {
-    text-align: left;
+  .qui-button--button {
+    position: absolute;
+    top: 20rpx;
+    right: 24rpx;
   }
 }
-//下面部分样式
-.site-item {
-  padding-left: 40rpx;
+.site-info {
+  padding: 50rpx 30rpx 80rpx;
+  font-size: $fg-f3;
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  &__title {
+    font-weight: bold;
+    color: --color(--qui-FC-333);
+  }
+  &__introduction {
+    margin-top: 20rpx;
+    margin-bottom: 40rpx;
+    color: --color(--qui-FC-777);
+  }
+  &__owner-detail-days {
+    font-size: $fg-f2;
+    color: --color(--qui-FC-777);
+  }
+  &__owner {
+    margin-bottom: 50rpx;
+  }
+  &__person__content {
+    display: inline-block;
+    margin-right: 8rpx;
+    vertical-align: top;
+  }
 }
-.site .cell-item {
-  padding-right: 40rpx;
-}
-.site-invite__detail__bold {
-  margin: 0 5rpx;
-  font-weight: bold;
-}
-.site-invite__detail {
-  width: 85%;
-  padding: 0 20rpx;
-  margin: 50rpx auto 30rpx;
-  font-size: $fg-f4;
-}
-.site-item__person__content-avatar,
-.site-item__owner-avatar {
-  margin-left: 8rpx;
-}
-.site-item__person__content-avatar {
-  margin-left: 8rpx;
-}
-.site-item__owner {
-  display: flex;
-  align-items: center;
-}
-.site-item__owner-avatar {
+/deep/ .site-info__owner-avatar,
+.site-info__owner-detail {
+  display: inline-block;
   margin-right: 20rpx;
+  vertical-align: middle;
 }
-.site-item__person {
-  display: flex;
-  height: 60rpx;
-  overflow: hidden;
-  font-size: 0;
+.site-invite {
+  text-align: center;
+  &__detail__bold {
+    margin: 0 5rpx;
+    font-weight: bold;
+  }
+  &__detail {
+    padding: 30rpx 60rpx;
+    font-size: $fg-f4;
+  }
 }
-.site-item__person__content {
-  display: inline-block;
+.site-theme {
+  padding-left: 30rpx;
+  margin-top: 20rpx;
+  background: --color(--qui-BG-2);
+  border-top: 2rpx solid --color(--qui-BOR-ED);
+  border-bottom: 2rpx solid --color(--qui-BOR-ED);
+  &__title {
+    margin-top: 50rpx;
+    margin-bottom: 10rpx;
+    font-weight: bold;
+    color: --color(--qui-FC-333);
+  }
 }
-.site-item__permission {
-  display: inline-block;
-  height: 60rpx;
-  padding: 0 28rpx;
-  margin-right: 10rpx;
-  margin-bottom: 10rpx;
-  font-size: $fg-f3;
-  line-height: 60rpx;
-  border: 2rpx solid --color(--qui-BOR-ED);
-  border-radius: 7rpx;
+.site-submit {
+  position: relative;
+  height: 130rpx;
+  padding: 20rpx 24rpx;
+  background: --color(--qui-BG-2);
+  box-shadow: 0rpx -3rpx 6rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  &__price {
+    margin-top: 10rpx;
+    font-size: $fg-f5;
+    color: --color(--qui-FC-AAA);
+    text-decoration: line-through;
+  }
+  &__expire {
+    font-size: $fg-f2;
+    color: --color(--qui-FC-333);
+  }
 }
 </style>
