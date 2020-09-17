@@ -1,73 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site" :header="false">
-    <qui-header
-      :head-img="
-        forums.set_site && forums.set_site.site_logo
-          ? forums.set_site.site_logo
-          : '/static/logo.png'
-      "
-      :theme="i18n.t('home.theme')"
-      :theme-num="forums.other && forums.other.count_users"
-      :post-num="forums.other && forums.other.count_threads"
-      :share-btn="shareBtn"
-      :share-show="shareShow"
-      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
-      @click="open"
-      @closeShare="closeShare"
-    ></qui-header>
-    <uni-popup ref="popupHead" type="bottom">
-      <qui-share @close="cancel"></qui-share>
-    </uni-popup>
-    <view class="site-item">
-      <qui-cell-item
-        class="cell-item--left cell-item--auto"
-        :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site && forums.set_site.site_introduction"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site && forums.set_site.site_install"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="'¥' + ((forums.set_site && forums.set_site.site_price) || 0)"
-        class="site-item__pay"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.periodvalidity')"
-        :addon="
-          forums.set_site && forums.set_site.site_expire
-            ? (forums.set_site && forums.set_site.site_expire) + i18n.t('site.day')
-            : i18n.t('site.permanent')
-        "
-      ></qui-cell-item>
-      <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
-        <view class="site-item__owner">
-          <qui-avatar
-            class="site-item__owner-avatar"
-            :user="{
-              username: forums.set_site && forums.set_site.site_author.username,
-              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
-            }"
-            size="60"
-          />
-          <text class="site-item__owner-name">
-            {{ forums.set_site && forums.set_site.site_author.username }}
-          </text>
-        </view>
-      </qui-cell-item>
-      <qui-cell-item :title="i18n.t('home.theme')" slot-right :border="false">
-        <view class="site-item__person">
-          <view
-            v-for="(item, index) in forums.users"
-            :key="index"
-            class="site-item__person__content"
-          >
-            <qui-avatar class="site-item__person__content-avatar" :user="item" size="60" />
-          </view>
-        </view>
-      </qui-cell-item>
-    </view>
+    <qui-site-thread share-url="pages/site/info"></qui-site-thread>
     <view class="site-invite">
       <view class="site-invite__detail" v-if="isLogin">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
@@ -76,60 +9,57 @@
         </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
-      <view class="site-invite__button" v-if="isLogin">
-        <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
+    </view>
+    <view class="site-submit">
+      <view>
+        <view class="site-submit__price">
+          {{ `¥${(forums.set_site && forums.set_site.site_price) || 0}` }}
+        </view>
+        <view class="site-submit__expire">
           {{
             forums.set_site && forums.set_site.site_expire
-              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
-                  forums.set_site.site_expire}${i18n.t('site.day')}`
-              : ` / ${i18n.t('site.permanent')}`
+              ? `${i18n.t('site.periodvalidity')} ${forums.set_site &&
+                  forums.set_site.site_expire} ${i18n.t('site.day')}`
+              : i18n.t('site.permanent')
           }}
-        </qui-button>
-      </view>
-      <view class="site-invite__join" v-if="!isLogin">
-        <qui-button type="primary" size="large" @click="toLogin">
-          {{ i18n.t('site.join') }}{{ i18n.t('site.site') }}
-        </qui-button>
-      </view>
-
-      <view v-if="payShowStatus">
-        <qui-pay
-          ref="payShow"
-          :money="forums.set_site && parseFloat(forums.set_site.site_price)"
-          :wallet-status="true"
-          :balance="10"
-          :pay-type-data="payTypeData"
-          @radioMyHead="radioMyHead"
-          @onInput="onInput"
-          @paysureShow="paysureShow"
-        ></qui-pay>
-      </view>
-      <uni-popup ref="codePopup" type="center" class="code-popup-box">
-        <view class="code-content" v-if="qrcodeShow">
-          <view class="code-title">{{ pay.payNow }}</view>
-          <view class="code-pay-money">
-            <view class="code-yuan">￥</view>
-            {{ forums.set_site && forums.set_site.site_price }}
-          </view>
-          <view class="code-type-box">
-            <view class="code-type-tit">{{ pay.payType }}</view>
-            <view class="code-type">
-              <qui-icon
-                class="code-type-icon"
-                name="icon-wxPay"
-                size="36"
-                color="#09bb07"
-              ></qui-icon>
-              <view class="code-type-text">{{ pay.wxPay }}</view>
-            </view>
-          </view>
-          <image :src="codeUrl" class="code-img"></image>
-          <view class="code-tip">{{ pay.wechatIdentificationQRcode }}</view>
         </view>
-      </uni-popup>
-      <qui-toast ref="toast"></qui-toast>
+      </view>
+      <qui-button type="primary" @click="toLogin" size="small">
+        {{ isLogin ? i18n.t('site.paynow') : i18n.t('site.join') + i18n.t('site.site') }}
+        {{ i18n.t('site.accepttheinvitation') }}
+      </qui-button>
     </view>
+    <view v-if="payShowStatus">
+      <qui-pay
+        ref="payShow"
+        :money="forums.set_site && parseFloat(forums.set_site.site_price)"
+        :wallet-status="true"
+        :balance="10"
+        :pay-type-data="payTypeData"
+        @radioMyHead="radioMyHead"
+        @onInput="onInput"
+        @paysureShow="paysureShow"
+      ></qui-pay>
+    </view>
+    <uni-popup ref="codePopup" type="center" class="code-popup-box">
+      <view class="code-content" v-if="qrcodeShow">
+        <view class="code-title">{{ pay.payNow }}</view>
+        <view class="code-pay-money">
+          <view class="code-yuan">￥</view>
+          {{ forums.set_site && forums.set_site.site_price }}
+        </view>
+        <view class="code-type-box">
+          <view class="code-type-tit">{{ pay.payType }}</view>
+          <view class="code-type">
+            <qui-icon class="code-type-icon" name="icon-wxPay" size="36" color="#09bb07"></qui-icon>
+            <view class="code-type-text">{{ pay.wxPay }}</view>
+          </view>
+        </view>
+        <image :src="codeUrl" class="code-img"></image>
+        <view class="code-tip">{{ pay.wechatIdentificationQRcode }}</view>
+      </view>
+    </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </qui-page>
 </template>
 
@@ -216,10 +146,10 @@ export default {
     this.browser = 1;
     // #endif
     // 已经支付过的直接去首页
-    if (!this.userId) {
-      return;
-    }
-    this.userInfo();
+    // if (!this.userId) {
+    //   return;
+    // }
+    // this.userInfo();
   },
   onUnload() {
     clearInterval(payWechat);
