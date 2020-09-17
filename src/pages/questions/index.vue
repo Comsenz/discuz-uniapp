@@ -17,13 +17,13 @@ export default {
       list: [
         {
           id: 1,
-          url: '/pages/manage/member',
+          url: '/pages/questions/myquestion',
           title: this.i18n.t('questions.myQuestion'),
           slotRight: true,
         },
         {
           id: 2,
-          url: '/pages/manage/invite',
+          url: '/pages/questions/myanswer',
           title: this.i18n.t('questions.myAnswer'),
           slotRight: false,
           text: '',

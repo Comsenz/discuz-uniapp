@@ -66,6 +66,8 @@
               @videocoverClick="payClickShow"
               @previewPicture="payClickShow"
               @tagClick="tagClick"
+              @watchClick="watchClick"
+              @queClick="queClick"
             >
               <!-- 关注 -->
               <!-- <view slot="follow" :key="followStatus" v-if="thread.user.follow != null">
@@ -499,7 +501,7 @@
                   @click="callClick"
                 ></qui-icon>
               </view>
-              <view class="text-word-tip">
+              <view class="text-word-tip" v-if="commentWorkTips">
                 {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
               </view>
             </view>
@@ -520,7 +522,7 @@
                 :focus="focusVal"
                 :maxlength="450"
                 class="comment-textarea"
-                :placeholder="t.writeComments"
+                :placeholder="commentText !== true ? t.writeCommentsAsk : t.writeComments"
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
@@ -648,6 +650,8 @@ export default {
       footerShow: true, // 默认显示底部
       commentShow: false, // 显示评论
       commentPopupStatus: false, // 回复弹框内容状态是否显示
+      commentWorkTips: true, // 回复弹框是否显示字数
+      commentText: true, // 回复弹框默认字
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
@@ -2027,6 +2031,7 @@ export default {
     },
     // 打赏
     rewardClick() {
+      console.log('打赏')
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -2054,6 +2059,24 @@ export default {
         },
       ];
       this.$refs.rewardPopup.open();
+    },
+    // 围观支付
+    watchClick() {
+      console.log('围观');
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+      };
+      console.log(this.payShowStatus, '弹出');
+      this.payShowStatus = true;
+      // this.$refs.rewardPopup.open();
     },
     // 取消打赏
     cancelReward() {
@@ -2293,6 +2316,8 @@ export default {
         this.commentId = postId;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
+        this.commentWorkTips = true;
+        this.commentText =true;
         this.focusVal = true;
       }
     },
@@ -2380,10 +2405,32 @@ export default {
         this.commentId = threadId;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
+        this.commentWorkTips = true;
+        this.commentText =true;
         this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
       }
+    },
+
+    // 回答问题
+    queClick() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+      }
+      console.log('回答问题');
+      this.$refs.commentPopup.open();
+      this.commentPopupStatus = true;
+      this.commentWorkTips = false;
+      this.commentText = false;
     },
 
     handleClickOk() {

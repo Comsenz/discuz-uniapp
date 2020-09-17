@@ -49,7 +49,10 @@
 
       <view class="themeItem__content" @click.stop="" @click="contentClick">
         <view class="themeItem__content__text">
-          <view class="themeItem__content__text__longessay" v-if="threadType === 1">
+          <view
+            class="themeItem__content__text__longessay"
+            v-if="threadType === 1 && themeType !== '5'"
+          >
             <view class="themeItem__content__text__longessay__publish">
               {{ i18n.t('home.released') }} :
             </view>
@@ -70,8 +73,38 @@
               {{ themeContent }}
             </navigator>
           </view>
+          <view class="themeItem__QA" v-if="threadType === 1 && themeType === '5'">
+            <view class="themeItem_questions">
+              佟掌柜
+            </view>
+            <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
+            <view class="themeItem_to">白展堂</view>
+            <view class="themeItem_ask">{{ i18n.t('home.problem') }} ,</view>
+            <!-- <navigator class="navPost">
+              {{ themeContent }}
+            </navigator> -->
+            <view class="themeItem_quemoney">{{ i18n.t('home.quemoney') }}</view>
+            <view class="themeItem_money">¥2190.000 ,</view>
+            <view class="themeItem_all">
+              {{ `${i18n.t('home.spendingMoney')}${date}${i18n.t('home.element')}` }}
+            </view>
+            <view class="themeItem_askback">
+              请问今年疫情对经济影响大吗？会不会引发经济危机？
+              <view class="themeItem_watch">
+                <view class="themItem_watch_num">
+                  643
+                </view>
+                <view class="themItem_watch_gather">
+                  {{ i18n.t('home.gather') }}
+                </view>
+                <view class="themItem_watch_money">
+                  ¥2190.0000
+                </view>
+              </view>
+            </view>
+          </view>
           <!-- 提问 -->
-          <view class="themeItem__QA" v-if="threadType === 1">
+          <view class="themeItem__QA" v-if="threadType === 1 && themeType !== '5'">
             <view class="themeItem_questions">
               白展堂
             </view>
@@ -97,7 +130,37 @@
             </view>
           </view>
           <!-- 回答 -->
-          <view v-else>
+          <view class="themeItem__QA" v-else>
+            <view class="themeItem_questions">
+              佟掌柜
+            </view>
+            <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
+            <view class="themeItem_to">白展堂</view>
+            <view class="themeItem_ask">{{ i18n.t('home.problem') }} ,</view>
+            <!-- <navigator class="navPost">
+              {{ themeContent }}
+            </navigator> -->
+            <view class="themeItem_quemoney">{{ i18n.t('home.quemoney') }}</view>
+            <view class="themeItem_money">¥2190.000 ,</view>
+            <view class="themeItem_all">
+              {{ `${i18n.t('home.spendingMoney')}${date}${i18n.t('home.element')}` }}
+            </view>
+            <view class="themeItem_askback">
+              请问今年疫情对经济影响大吗？会不会引发经济危机？
+              <view class="themeItem_watch">
+                <view class="themItem_watch_num">
+                  643
+                </view>
+                <view class="themItem_watch_gather">
+                  {{ i18n.t('home.gather') }}
+                </view>
+                <view class="themItem_watch_money">
+                  ¥2190.0000
+                </view>
+              </view>
+            </view>
+          </view>
+          <view>
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
@@ -123,7 +186,10 @@
             lazy-load
           ></image>
         </view>
-        <view class="theme__content__videocover" v-if="threadType === 2 && payStatus">
+        <view
+          class="theme__content__videocover"
+          v-if="threadType === 2 && payStatus && themeType !== '5'"
+        >
           <!-- 封面图 -->
           <view
             class="theme__content__videocover-img"
@@ -176,7 +242,7 @@
             @click.stop=""
           ></video>
         </view>
-        <view v-if="imagesList.length == 1">
+        <view v-if="imagesList.length == 1 && themeType !== '5'">
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -191,7 +257,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length == 2">
+        <view v-if="imagesList.length == 2 && themeType !== '5'">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -206,7 +272,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length >= 3">
+        <view v-if="imagesList.length >= 3 && themeType !== '5'">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -228,7 +294,10 @@
           </view>
         </view>
 
-        <view class="themeItem__content__tags" v-if="themeType === '0' && getCategoryId === 0">
+        <view
+          class="themeItem__content__tags"
+          v-if="(themeType === '0' && getCategoryId === 0) || themeType === '5'"
+        >
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
           </view>
@@ -247,7 +316,7 @@
       <view class="themeItem__comment" @click.stop=""></view>
 
       <view class="themeItem__footer" @click.stop="">
-        <view v-if="themeType === '1'" class="themeItem__footer__themeType1">
+        <view v-if="themeType === '1' || themeType === '5'" class="themeItem__footer__themeType1">
           <view
             :class="[
               'themeItem__footer__themeType1__item',
@@ -304,8 +373,8 @@ export default {
   props: {
     themeType: {
       validator: value => {
-        // 1 首页  2 回复  3 @  4 我的收藏
-        return ['1', '2', '3'].indexOf(value) !== -1;
+        // 1 首页  2 回复  3 @  4 我的收藏 5 我的回答
+        return ['1', '2', '3', '4', '5'].indexOf(value) !== -1;
       },
       default: '1',
     },
@@ -498,6 +567,7 @@ export default {
       sun: true,
       appear: false,
       blocKwidth: '',
+      date: 1,
     };
   },
 
@@ -944,6 +1014,9 @@ export default {
 .themeItem_watch,
 .themItem_watch_num,
 .themItem_watch_gather,
+.themeItem_quemoney,
+.themeItem_money,
+.themeItem_all,
 .themItem_watch_money {
   display: inline-block;
 }
@@ -953,9 +1026,9 @@ export default {
 }
 .themeItem_askback {
   padding: 10px;
-  font-size: 12px;
+  font-size: $fg-f4;
   color: var(--qui-FC-333);
-  background-color: var(--qui-BG-ED);
+  background-color: --color(--qui-BG-F7);
   border-radius: 5px;
 }
 .themItem_watch_num,

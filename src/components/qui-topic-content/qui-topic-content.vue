@@ -91,8 +91,9 @@
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
           <qui-uparse :content="themeContent"></qui-uparse>
-          <view class="themeItem__content__text__ask">
-            <view class="themeItem__header" style="padding: 30rpx 0;">
+          <!--提问部分-->
+          <!-- <view class="themeItem__content__text__ask">
+            <view class="themeItem__header" style="padding: 30rpx 0 65rpx;">
               <view class="themeItem__header__img" @click="personJump">
                 <qui-avatar
                   :user="{ username: userName, avatarUrl: avatarUrl }"
@@ -117,7 +118,35 @@
                 <image src="@/static/yihuida.svg" class="addAsk"></image>
               </view>
             </view>
-          </view>
+            <view class="themeItem__ask"></view>
+            <view class="themeItem__value">
+              问题价值
+            <text class=themeItem__value__text>¥2910.0</text>
+            ,立即围观答案
+            </view>
+            <view class="themeItem__ask"></view>
+            <view class="themeItem__btn" @click="watchClick()">
+              <qui-button size="medium" type='watch' class="watch-btn">
+                1元围观
+              </qui-button>
+            </view>
+            <view class="themeItem__answer" else>
+              疫情不会引发经济危机，疫情不会引发经济危机，疫情不会引发经济危机，疫情不会引发经济危机
+            </view>
+          </view> -->
+          <!--作者向 某某某 发起了提问部分-->
+          <!-- <view class="theme__put">
+            <view class="theme__put__ask">
+              作者向
+              <view class="theme__put__ask__user">某某某</view>
+              发起了提问
+            </view>
+           <view class="theme__put__btn" @click="watchClick()">
+              <qui-button size="medium" type='answer' class="watch-btn">
+                {{ i18n.t('topic.questionsToBeAnswered' )}}
+              </qui-button>
+            </view>
+          </view> -->
         </view>
         <view
           class="theme__content__videocover"
@@ -233,6 +262,16 @@
             ></qui-icon>
             <text class="attachment-name">{{ item.fileName }}</text>
           </view>
+        </view>
+      </view>
+
+      <!--作者向您发起了提问部分-->
+      <view class="theme__que">
+        <view class="theme__que__author">作者向您发起了提问</view>
+        <view class="theme__que__btn" @click="queClick()">
+          <qui-button size="medium" type="primary" class="watch-btn">
+            {{ i18n.t('topic.questionAnswering') }}
+          </qui-button>
         </view>
       </view>
 
@@ -600,6 +639,14 @@ export default {
     btnFun() {
       this.serBtn();
     },
+    // 点击围观支付
+    watchClick() {
+      this.$emit('watchClick');
+    },
+    // 点击回答问题跳转到发布回答页
+    queClick() {
+      this.$emit('queClick');
+    },
   },
 };
 </script>
@@ -763,7 +810,7 @@ export default {
         padding: 10px;
         font-size: 12px;
         color: var(--qui-FC-333);
-        background-color: var(--qui-BG-ED);
+        background: --color(--qui-BG-F7);
         // border-radius: 5px;
       }
     }
@@ -912,5 +959,56 @@ export default {
   width: 600rpx;
   height: 400rpx;
   background: brown;
+}
+.themeItem__ask {
+  display: inline-block;
+  width: 112.5rpx;
+  padding-top: 6rpx;
+  border-top: solid 4rpx --color(--qui-BG-777);
+}
+.themeItem__value {
+  display: inline-block;
+  width: 364rpx;
+  padding: 0 19rpx 60rpx;
+  font-size: $fg-f2;
+  color: --color(--qui-FC-777);
+  &__text {
+    color: --color(--qui-RED);
+  }
+}
+.themeItem__btn {
+  padding-left: 60rpx;
+}
+.themeItem__answer {
+  width: 616rpx;
+  height: 82rpx;
+  font-size: $fg-f3;
+  color: --color(--qui-FC-333);
+}
+.theme__que {
+  width: 100%;
+  &__author {
+    margin-bottom: 30rpx;
+    font-size: $fg-f3;
+    color: --color(--qui-FC-AAA);
+    text-align: center;
+  }
+  &__btn {
+    padding-left: 80rpx;
+  }
+}
+.theme__put {
+  width: 670rpx;
+  height: 271rpx;
+  text-align: center;
+  background: --color(--qui-BG-F7);
+  &__ask {
+    padding: 30rpx 0;
+    font-size: $fg-f3;
+    color: --color(--qui-FC-AAA);
+    &__user {
+      display: inline;
+    }
+  }
 }
 </style>

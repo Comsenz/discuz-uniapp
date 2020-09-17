@@ -201,9 +201,6 @@ export default {
     }),
     // 首页底部发帖按钮弹窗
     footerOpen() {
-      // uni.navigateTo({
-      //   url: '/pages/share/weixinchome',
-      // });
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -246,7 +243,8 @@ export default {
         !this.forums.other.can_create_thread &&
         !this.forums.other.can_create_thread_long &&
         !this.forums.other.can_create_thread_video &&
-        !this.forums.other.can_create_thread_image
+        !this.forums.other.can_create_thread_image &&
+        !this.forums.other.can_create_thread_question
       ) {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         return;
@@ -284,19 +282,25 @@ export default {
           type: 2,
         });
       }
-      // if (this.forums.other.can_create_thread_video) {
-      this.bottomData.push({
-        text: this.i18n.t('home.questions'),
-        icon: 'icon-wenda',
-        name: 'questions',
-        type: 5,
-      });
-      // }
+      if (this.forums.other.can_create_thread_question) {
+        this.bottomData.push({
+          text: this.i18n.t('home.questions'),
+          icon: 'icon-wenda',
+          name: 'questions',
+          type: 5,
+        });
+      }
       this.$refs.popup.open();
     },
     // 首页底部发帖点击事件跳转
     handleClick(item) {
       let url;
+      if (item.type === 5) {
+        uni.navigateTo({
+          url: '/pages/user/at-member?name=select',
+        });
+        return;
+      }
       if (this.footerIndex === 0) {
         url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
       } else {

@@ -251,6 +251,7 @@ export default {
     like: '赞',
     writeComment: '写评论',
     writeComments: '写评论...',
+    writeCommentsAsk: '您想发布的回答内容..',
     share: '分享',
     reward: '打赏',
     pay: '支付',
@@ -303,6 +304,8 @@ export default {
     sortTimeSequence: '评论时间正序',
     sortTimeReverse: '评论时间倒序',
     itsAlreadyWantedSort: '已经是你想要的顺序了哦',
+    questionAnswering: '回答问题',
+    questionsToBeAnswered: '问题待回答',
   },
   pay: {
     passwordTip: '请输入支付密码',
@@ -376,6 +379,11 @@ export default {
     putQuestion: '提问',
     answer: '回答',
     gather: '人已围观,问题价值',
+    beAnswer: '回答了',
+    problem: '的问题',
+    quemoney: '问题价值',
+    spendingMoney: '大家快来花',
+    element: '元围观～',
   },
   // 站点管理页面
   manage: {
@@ -425,7 +433,7 @@ export default {
     likedMe: ' 点赞了我',
     answersMe: '回答了我',
     questions: '提问了我',
-    questionsAnswers: '问答通知',
+    questionsAnswers: '我收到的提问',
     reward: '财务通知',
     rewardedMe: ' 打赏了我',
     payedMe: ' 支付了我',
@@ -808,5 +816,8 @@ export default {
   questions: {
     myQuestion: '我的提问',
     myAnswer: ' 我的回答',
+    strip: '条提问',
+    allTypes: '所有类型',
+    answers: '条回答',
   },
 };

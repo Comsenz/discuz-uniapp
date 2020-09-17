@@ -19,7 +19,12 @@
           arrow
           @tap="changeAvatar"
         >
-          <qui-avatar class="my-profile__avatar" />
+          <qui-avatar
+            class="my-profile__avatar"
+            :user="{ avatarUrl: userImage }"
+            style="margin-right: 20rpx;"
+          />
+          <view class="username">{{ beUserName }}</view>
         </qui-cell-item>
       </view>
       <view class="post-box__hd" v-if="type !== 5">
@@ -253,25 +258,28 @@
         v-if="type !== 0 && type !== 5 && showHidden && forums.paycenter.wxpay_close"
         @click="cellClick('pay')"
       ></qui-cell-item>
+      <!-- 提问价格 -->
       <qui-cell-item
         v-if="type === 5"
         :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.askingPrice')"
         :addon="showPrice"
         arrow
-        @click="cellClick('pay')"
+        @click="askClick('pay')"
       ></qui-cell-item>
-      <view class="uni-list-cell uni-list-cell-pd">
+      <!-- 是否允许围观 -->
+      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.allowonLookers') }}</view>
-        <switch checked />
+        <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
+      <!-- 围观价格 -->
       <qui-cell-item
-        v-if="type === 5"
+        v-if="type === 5 && checked === true"
         :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.watchThePrice')"
         :addon="showPrice"
         arrow
-        @click="cellClick('pay')"
+        @click="watchClick('pay')"
       ></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
@@ -489,6 +497,9 @@ export default {
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
+      userImage: '', // 被提问用户的头像
+      beUserName: '', // 被提问用户的用户名
+      checked: false, // 是否围观
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -592,17 +603,6 @@ export default {
       return pay;
     },
   },
-  // created() {
-  //   if (
-  //     this.forums &&
-  //     this.forums.qcloud.qcloud_captcha &&
-  //     this.forums.other.create_thread_with_captcha
-  //   ) {
-  //     // eslint-disable-next-line
-  //     const tcaptchas = require('@/utils/tcaptcha');
-  //     // eslint-disable-next-line
-  //   }
-  // },
   updated() {
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
@@ -614,6 +614,11 @@ export default {
     // #endif
   },
   methods: {
+    // 允许围观
+    changeCheck() {
+      console.log(9999);
+      // this.checked !== this.checked;
+    },
     choosePosition() {
       const that = this;
       if (that.currentPosition.location) {
@@ -899,16 +904,18 @@ export default {
       }
       this.textShow = false;
     },
-    // watchThePriceClick(type) {
-    //   this.setType = type;
-    //   this.$refs.popupBtm.open();
-    //   this.textShow = false;
-    // },
-    // askingPriceClick(type) {
-    //   this.setType = type;
-    //   this.$refs.popupBtm.open();
-    //   this.textShow = false; 
-    // },
+    // 围观价格
+    watchClick(type) {
+      this.setType = type;
+      this.$refs.popupBtm.open();
+      this.textShow = false;
+    },
+    // 提问价格
+    askClick(type) {
+      this.setType = type;
+      this.$refs.popupBtm.open();
+      this.textShow = false; 
+    },
     cancel() {
       this.$refs.popupBtm.close();
       this.textShow = true;
@@ -1681,6 +1688,14 @@ export default {
       this.captcha.destroy();
     }
   },
+  mounted() {
+    this.$u.event.$on('radioChange', item => {
+    // setTimeout(() => {
+    this.beUserName = item.username;
+    this.userImage = item.avatarUrl;
+    // }, 1000);
+  });
+  },
 };
 </script>
 
@@ -1961,6 +1976,9 @@ export default {
   color: --color(--qui-FC-777);
   border-bottom: 2rpx solid #ededed;
 }
+/deep/ .my-profile__avatar {
+  position: relative;
+}
 
 .popup-dialog {
   width: 670rpx;
@@ -2030,6 +2048,9 @@ export default {
 /deep/ .uni-video-cover {
   display: none;
 }
+/deep/ .cell-item__body__right {
+  display: contents;
+}
 .markdown-box {
   display: flex;
   flex-direction: row;
@@ -2040,11 +2061,20 @@ export default {
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
 }
-.my-profile__avatar {
-  position: absolute;
-  top: 13rpx;
-  right: 44rpx;
-  width: 75rpx;
-  height: 75rpx;
+// .my-profile__avatar {
+//   position: absolute;
+//   top: 13rpx;
+//   right: 44rpx;
+//   width: 75rpx;
+//   height: 75rpx;
+// }
+.username {
+  // position: absolute;
+  // right: 48rpx;
+  max-width: 200rpx;
+  overflow: hidden;
+  font-size: $fg-f3; 
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
