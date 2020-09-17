@@ -69,28 +69,6 @@
       </qui-cell-item>
     </view>
     <view class="site-invite">
-      <!-- #ifdef MP-WEIXIN -->
-      <view class="site-invite__detail">
-        <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
-        <text class="site-invite__detail__bold">
-          {{ forums.set_site && forums.set_site.site_name }}
-        </text>
-        <text>{{ i18n.t('site.site') }}</text>
-      </view>
-      <view class="site-invite__button">
-        <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
-          {{
-            forums.set_site && forums.set_site.site_expire
-              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
-                  forums.set_site.site_expire}${i18n.t('site.day')}`
-              : ` / ${i18n.t('site.permanent')}`
-          }}
-        </qui-button>
-      </view>
-      <!-- #endif -->
-
-      <!-- #ifdef H5 -->
       <view class="site-invite__detail" v-if="isLogin">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
         <text class="site-invite__detail__bold">
@@ -114,7 +92,6 @@
           {{ i18n.t('site.join') }}{{ i18n.t('site.site') }}
         </qui-button>
       </view>
-      <!-- #endif -->
 
       <view v-if="payShowStatus">
         <qui-pay
