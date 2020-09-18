@@ -292,6 +292,13 @@ export default {
     // 上传图片到服务器
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
+      if (_this.chooseType === 0) {
+        // 这是首页上传图片
+        uni.showLoading({
+          title: _this.i18n.t('core.loading'),
+          mask: true,
+        });
+      }
       const formdataObj = { type: _this.formData.type, order: imgOrder };
       _this.formDataAppend = {};
       const uploadTask = uni.uploadFile({

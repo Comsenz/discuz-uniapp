@@ -143,13 +143,15 @@ export default {
         compressed: false,
         sourceType: ['camera', 'album'],
         success(res) {
+          if (_this.chooseType === 0) {
+            // 这是首页上传视频
+            uni.showLoading({
+              title: _this.i18n.t('core.loading'),
+              mask: true,
+            });
+          }
           let uploadVideoRes = '';
           uploadVideoRes = res;
-          // console.log(res, '这是上传');
-          // uni.$emit('uploadVideoOver', res);
-          // _this.$refs.toast.show({
-          //   message: _this.i18n.t('uploader.videoUploading'),
-          // });
           uni.showToast({
             title: _this.i18n.t('uploader.videoUploading'),
             icon: 'none',
