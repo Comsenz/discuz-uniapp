@@ -206,6 +206,19 @@
             ></qui-icon>
             <text>{{ item.fileName }}</text>
           </view>
+          <view v-if="['MP4'].indexOf(item.format) !== -1">
+            <text
+              class="themeItem__content__attachment-item-mp4-play"
+              @tap="fullscreenPlay(item._jv.id)"
+            >
+              {{ i18n.t('profile.play') }}
+            </text>
+            <qui-video
+              :src="item.url"
+              :ref="'video' + item._jv.id"
+              :video-id="item._jv.id"
+            ></qui-video>
+          </view>
         </view>
       </view>
 
@@ -514,9 +527,6 @@ export default {
           });
         },
       });
-      // this.$refs.toast.show({
-      //   message: this.i18n.t('profile.filedownloadtipswx'),
-      // });
       // #endif
     },
     // 只能播放一个音频
@@ -528,6 +538,9 @@ export default {
           that.$refs[`audio${item._jv.id}`][0].audioPause();
         }
       });
+    },
+    fullscreenPlay(id) {
+      this.$refs[`video${id}`][0].fullscreenPlay();
     },
     // 地理位置
     topicPosition() {
@@ -751,7 +764,7 @@ export default {
       }
     }
     &__tags--position {
-      margin-top: -40rpx;
+      margin-top: -60rpx;
     }
     &__tags__item-text {
       margin-left: 10rpx;
@@ -766,6 +779,7 @@ export default {
         color: --color(--qui-FC-777);
       }
       &-item {
+        position: relative;
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;
@@ -778,6 +792,12 @@ export default {
       }
       &-item-wrap {
         width: 100%;
+      }
+      &-item-mp4-play {
+        position: absolute;
+        top: 0;
+        right: 20rpx;
+        color: --color(--qui-BG-HIGH-LIGHT);
       }
       .icon-attachment {
         margin-right: 10rpx;

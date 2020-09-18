@@ -1,5 +1,5 @@
 <template>
-  <view class="home">
+  <view :class="'thread' + currentindex">
     <qui-content
       :ref="'thread-' + currentindex"
       :currentindex="currentindex"
@@ -78,6 +78,11 @@ export default {
       type: [Number, String],
       default: '0',
     },
+    // 是否可以点击到详情页和个人主页
+    canClick: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -93,13 +98,19 @@ export default {
   methods: {
     // 内容部分点击跳转到详情页
     contentClick(id) {
+      this.$emit('toTopic', id);
+      if (!this.canClick) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
-      this.$emit('toTopic', id);
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (!this.canClick) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });

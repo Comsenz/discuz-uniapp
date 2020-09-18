@@ -227,10 +227,12 @@ export default {
     user_deny: '对方设置了屏蔽，无法进行此操作',
     uc_user_check_username_failed: '用户名错误',
     uc_user_username_badword: '用户名或密码错误',
-    uc_connect_error_ucenter: '配置错误',
+    uc_connect_error: 'Ucenter配置错误',
     uc_user_username_exists: '配置错误',
   },
   topic: {
+    permissionPurchase: '权限购买',
+    topic: '话题',
     topicPageTitle: '内容详情页',
     commentPageTitle: '评论详情页',
     topictitle: '#话题#',
@@ -344,6 +346,7 @@ export default {
     sticky: '置顶',
     cancel: '取消',
     tabsCircle: '首页',
+    find: '发现',
     tabsNews: '消息',
     tabsMy: '我',
     filterPlate: '版块',
@@ -593,6 +596,7 @@ export default {
   },
   // 我的和个人主页
   profile: {
+    play: '播放',
     uploadFile: '上传附件',
     filesizecannotexceed: '文件大小不能超过',
     pleaseselect: '请选择',
@@ -693,10 +697,12 @@ export default {
     shieldusersure: '确定屏蔽该用户吗？',
   },
   site: {
+    partialcontentpreview: '部分内容预览',
     circleintroduction: '站点介绍',
     creationtime: '创建时间',
     periodvalidity: '有效期',
     day: '天',
+    createdDays: '已创建{num}天',
     circlemaster: '站长',
     site: '站点',
     paynow: '立即付费',
@@ -708,7 +714,7 @@ export default {
     myauthority: '我的权限',
     inviteyouas: '邀请您，作为',
     join: '加入',
-    accepttheinvitationandbecome: '接受邀请，成为',
+    accepttheinvitation: '接受邀请',
     permanent: '永久有效',
     continueResgister: '继续注册',
     codeinvalid:
@@ -762,6 +768,7 @@ export default {
     registerBindId: '注册，并绑定微信号',
     registerBindUc: '注册，并绑定微UC账号',
     registerBind: '注册并绑定微信',
+    registerBindUcenter: '注册并绑定UC账号',
     loginBindId: '登录，并绑定微信号',
     loginBind: '登录并绑定微信',
     logout: '退出登录',
@@ -769,6 +776,7 @@ export default {
     registerSuccess: '注册成功',
     registerBindSuccess: '注册绑定成功',
     loginSuccess: '登录成功',
+    loginSuccessFail: '登录失败',
     loginBindSuccess: '登录绑定成功',
     agreement: '注册登录即表示您同意',
     agreementRegister: '注册协议',
@@ -796,6 +804,8 @@ export default {
     configurationerror: '配置错误',
     usernamePasworderro: '用户名或密码错误',
     usernameerro: '用户名错误',
+    pcloginconfirm: 'pc端登录确认',
+    cancelpclogin: '取消登录',
   },
   // 举报
   report: {

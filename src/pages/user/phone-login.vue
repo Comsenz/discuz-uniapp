@@ -43,7 +43,7 @@
       </view>
       <view class="phone-login-box-ft">
         <view class="phone-login-box-ft-title">
-          {{ i18n.t('user.otherLoginMode') }}
+          {{ isLogin ? i18n.t('user.otherLoginMode') : i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="phone-login-box-ft-con">
           <!-- #ifdef MP-WEIXIN -->
@@ -61,7 +61,7 @@
           <image
             :class="[
               forum && forum.passport && forum.passport.miniprogram_close && !isLogin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                ? 'phone-login-box-ft-con-image'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
@@ -69,8 +69,9 @@
             @click="jump2Login"
           />
           <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
             :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter && !isLogin
+              forum && forum.ucenter && forum.ucenter.ucenter
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
                 : 'phone-login-box-ft-con-image',
             ]"
@@ -102,7 +103,7 @@
             @click="jump2Login"
           />
           <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
             :class="[
               forum && forum.ucenter && forum.ucenter.ucenter
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
@@ -195,6 +196,7 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
+      isShow: false,
     };
   },
   onLoad() {

@@ -35,7 +35,11 @@ export default {
             setCookie('token', res.data.data.attributes.access_token, 30);
             console.log('登录成功：', res);
             this.logind();
-            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+            if (
+              this.forums &&
+              this.forums.set_site &&
+              this.forums.set_site.site_mode !== SITE_PAY
+            ) {
               uni.getStorage({
                 key: 'page',
                 success(resData) {
@@ -46,9 +50,9 @@ export default {
               });
             }
             if (
-              this.forum &&
-              this.forum.set_site &&
-              this.forum.set_site.site_mode === SITE_PAY &&
+              this.forums &&
+              this.forums.set_site &&
+              this.forums.set_site.site_mode === SITE_PAY &&
               this.user &&
               !this.user.paid
             ) {

@@ -14,6 +14,8 @@ export const SET_CODE = 'SET_CODE';
 export const SET_TOKEN = 'SET_TOKEN';
 // 设置 商品
 export const SET_GOOD = 'SET_GOOD';
+// 设置 inviteCode
+export const SET_INVITE_CODE = 'SET_INVITE_CODE';
 // 设置 分类ID
 export const SET_CATEGORYID = 'SET_CATEGORYID';
 // 设置 分类Index

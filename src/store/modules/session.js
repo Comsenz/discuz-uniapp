@@ -11,6 +11,7 @@ import {
   SET_CODE,
   SET_TOKEN,
   SET_GOOD,
+  SET_INVITE_CODE,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -66,6 +67,9 @@ const actions = {
   setGood: (context, payload) => {
     context.commit(SET_GOOD, payload);
   },
+  setInviteCode: (context, payload) => {
+    context.commit(SET_INVITE_CODE, payload);
+  },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
     return new Promise(resolve => {
@@ -85,9 +89,15 @@ const actions = {
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
+  wxPcLogin: (context, payload = {}) => {
+    console.log(payload);
+    const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/pc-login`);
+    window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
+  },
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
+    console.log(context, payload);
     let inviteCode = '';
     let register = 0;
     uni.getStorage({
@@ -116,6 +126,40 @@ const actions = {
         .catch(err => resolve(err));
     });
   },
+  scancodeverification: (context, payload = {}) => {
+    console.log(payload);
+    let sessionToken = '';
+    uni.getStorage({
+      key: 'session_token_data',
+      success(e) {
+        if (e.data !== '') {
+          sessionToken = e.data;
+        }
+      },
+    });
+    return new Promise(resolve => {
+      return http
+        .get(
+          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${sessionToken}`,
+        )
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(err => resolve(err));
+    });
+  },
+  loginscancodeverification: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .post(`oauth/wechat/qrcode/login/${payload.token}`)
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(err => resolve(err));
+    });
+  },
   // #endif
   verificationCodeh5Login: (context, payload = {}) => {
     return new Promise(resolve => {
@@ -137,6 +181,7 @@ const actions = {
     });
   },
   ucLogin: (context, payload = {}) => {
+    console.log(context, payload, 'session');
     return new Promise(resolve => {
       return http
         .post('uc/login', payload)
@@ -165,6 +210,9 @@ const actions = {
       context.commit(DELETE_ACCESS_TOKEN);
       uni.removeStorage({
         key: 'inviteCode',
+      });
+      uni.removeStorage({
+        key: 'page',
       });
       resolve();
     });
@@ -221,6 +269,9 @@ const mutations = {
   },
   [SET_GOOD](state, payload) {
     state.good = payload;
+  },
+  [SET_INVITE_CODE](state, payload) {
+    state.inviteCode = payload;
   },
 };
 

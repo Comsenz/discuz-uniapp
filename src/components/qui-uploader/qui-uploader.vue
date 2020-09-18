@@ -46,6 +46,11 @@ import { i18n } from '@/locale';
 export default {
   name: 'QuiUploader',
   props: {
+    // 上传类型 0是首页上传，1是默认上传
+    chooseType: {
+      default: 1,
+      type: Number,
+    },
     url: {
       default: '',
       type: String,
@@ -101,6 +106,7 @@ export default {
       detailindex: [],
       newindex: [],
       cunmumber: 1,
+      uploadType: '',
     };
   },
   watch: {
@@ -241,7 +247,8 @@ export default {
           sourceType: ['album', 'camera'],
           success(res) {
             // 上传图片后返回false状态
-            _this.$emit('uploadClick', false);
+            _this.$emit('uploadClickSure', false);
+
             // 自定义开始上传的效果和回调
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
@@ -285,6 +292,13 @@ export default {
     // 上传图片到服务器
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
+      if (_this.chooseType === 0) {
+        // 这是首页上传图片
+        uni.showLoading({
+          title: _this.i18n.t('core.loading'),
+          mask: true,
+        });
+      }
       const formdataObj = { type: _this.formData.type, order: imgOrder };
       _this.formDataAppend = {};
       const uploadTask = uni.uploadFile({
@@ -382,6 +396,11 @@ export default {
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
+        },
+        complete(res) {
+          if (_this.chooseType === 0) {
+            uni.$emit('uploadOver', JSON.parse(res.data));
+          }
         },
       });
 

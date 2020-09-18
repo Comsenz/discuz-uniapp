@@ -52,7 +52,9 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
+// #ifdef H5
 import { setCookie } from '@/utils/setCookie';
+// #endif
 
 export default {
   mixins: [user, loginModule],
@@ -154,22 +156,32 @@ export default {
         this.$store
           .dispatch('session/ucLogin', params)
           .then(res => {
-            if (res && res.data.data.attributes.access_token) {
-              setCookie('token', res.access_token, 30);
-              this.logind();
-              setTimeout(() => {
+            if (res && res.data && res.data.errors) {
+              if (res.data.errors[0].code === 'no_bind_user') {
+                this.$store.dispatch('session/setToken', res.data.errors[0].token);
                 uni.navigateTo({
-                  url: '/pages/home/idnex',
+                  url: '/pages/user/register-bind',
                 });
-              }, 3000);
+              }
+            }
+            if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
+              // #ifdef H5
+              setCookie('token', res.access_token, 30);
+              // #endif
+              this.logind();
+              uni.navigateTo({
+                url: '/pages/home/index',
+              });
             }
           })
           .catch(err => {
-            if (err.data.errors[0].status === 400 && err.data.errors[0].code === 'no_bind_user') {
-              this.$store.dispatch('session/setToken', err.data.errors[0].token);
-              uni.navigateTo({
-                url: '/pages/user/register-bind',
-              });
+            if (err && err.data && err.data.errors) {
+              if (err.data.errors[0].code === 'no_bind_user') {
+                this.$store.dispatch('session/setToken', err.data.errors[0].token);
+                uni.navigateTo({
+                  url: '/pages/user/register-bind',
+                });
+              }
             }
           });
       }
