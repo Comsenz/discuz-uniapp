@@ -9,6 +9,9 @@
     ></image>
     <view v-else-if="styleText" :class="'avatar' + ' qui-avatar-' + size" :style="styleText">
       {{ usernameAt }}
+      <!--<view v-for="(group, index) in userRole" :key="index">
+        <image :src="group.avatar"></image>
+      </view>-->
     </view>
     <image v-if="isReal" src="@/static/auth.svg" class="auth-icon"></image>
   </view>
