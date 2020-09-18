@@ -44,7 +44,7 @@
           :wallet-status="user.canWalletPay"
           :description-show="true"
           :money="100"
-          :balance="200"
+          :balance="Number(user.walletBalance)"
           pay-type="我的"
           to-name="李李李"
           :pay-type-data="payTypeData"
@@ -56,6 +56,30 @@
         <!--遮罩层组件-->
         <qui-loading-cover v-if="false" mask-zindex="111"></qui-loading-cover>
       </view>
+      <!-- 二维码弹框 -->
+      <uni-popup ref="codePopup" type="center" class="code-popup-box" @change="codeImgChange">
+        <view class="code-content" v-if="qrcodeShow">
+          <view class="code-title">{{ p.payNow }}</view>
+          <view class="code-pay-money">
+            <view class="code-yuan">￥</view>
+            {{ price }}
+          </view>
+          <view class="code-type-box">
+            <view class="code-type-tit">{{ p.payType }}</view>
+            <view class="code-type">
+              <qui-icon
+                class="code-type-icon"
+                name="icon-wxPay"
+                size="36"
+                color="#09bb07"
+              ></qui-icon>
+              <view class="code-type-text">{{ p.wxPay }}</view>
+            </view>
+          </view>
+          <image :src="codeUrl" class="code-img"></image>
+          <view class="code-tip">{{ p.wechatIdentificationQRcode }}</view>
+        </view>
+      </uni-popup>
     </view>
   </qui-page>
 </template>
@@ -110,6 +134,12 @@ export default {
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
     // #endif
+  },
+  computed: {
+    // pay支付语言包
+    p() {
+      return this.i18n.t('pay');
+    },
   },
   methods: {
     powerlist(index) {
@@ -251,7 +281,7 @@ export default {
               if (res) {
                 this.codeUrl = res.wechat_qrcode;
                 this.payShowStatus = false;
-                // this.$refs.codePopup.open();
+                this.$refs.codePopup.open();
                 this.qrcodeShow = true;
                 payWechat = setInterval(() => {
                   if (this.payStatus === 1) {
@@ -285,6 +315,35 @@ export default {
           this.$refs.payShow.clearPassword();
         });
     },
+
+    wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
+      // 小程序支付。
+      const _this = this;
+      uni.requestPayment({
+        provider: 'wxpay',
+        timeStamp,
+        nonceStr,
+        package: packageVal,
+        signType,
+        paySign,
+        success(res) {
+          _this.coverLoading = true;
+          payWechat = setInterval(() => {
+            if (_this.payStatus === 1) {
+              clearInterval(payWechat);
+              return;
+            }
+            _this.getOrderStatus(_this.orderSn);
+          }, 3000);
+        },
+        fail(err) {
+          _this.payShowStatus = false;
+          _this.coverLoading = false;
+          _this.$refs.toast.show({ message: _this.p.payFail });
+        },
+      });
+    },
+
     // 非小程序内微信支付
     onBridgeReady(data) {
       // const that = this;
@@ -321,6 +380,7 @@ export default {
         this.getOrderStatus(this.orderSn);
       }, 3000);
     },
+
     // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     getOrderStatus(orderSn, broswerType) {
       this.$store
@@ -492,5 +552,65 @@ export default {
   text-align: center;
   background: #fa5151;
   border-radius: 5rpx;
+}
+
+// 微信二维码弹框
+.code-content {
+  position: fixed;
+  top: 10%;
+  left: 11%;
+  z-index: 22;
+  display: flex;
+  flex-direction: column;
+  width: 78%;
+  padding: 40rpx;
+  background: --color(--qui-BG-FFF);
+  border-radius: 16rpx;
+  box-sizing: border-box;
+  .code-title {
+    text-align: center;
+  }
+  .code-pay-money {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 36rpx;
+    padding-bottom: 36rpx;
+    font-size: 70rpx;
+    .code-yuan {
+      font-size: 48rpx;
+      line-height: 66rpx;
+    }
+  }
+}
+
+.code-type-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 24rpx 0 34rpx;
+  line-height: 36rpx;
+  border-top: 1px solid --color(--qui-BG-ED);
+  .code-type-tit {
+    color: --color(--qui-FC-AAA);
+  }
+  .code-type {
+    display: flex;
+    flex-direction: row;
+    .code-type-icon {
+      font-size: 36rpx;
+    }
+    .code-type-text {
+      padding-left: 12rpx;
+    }
+  }
+}
+.code-img {
+  align-self: center;
+  width: 380rpx;
+  height: 380rpx;
+}
+.code-tip {
+  padding: 14rpx 0 20rpx;
 }
 </style>

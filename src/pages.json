@@ -12,6 +12,12 @@
       }
     },
     {
+      "path": "pages/modify/rightdetails",
+      "style": {
+        "navigationBarTitleText": "权力详情"
+      }
+    },
+    {
       "path": "pages/share/weixinchome",
       "style": {
         "navigationBarTitleText": "相册选取"
@@ -394,12 +400,6 @@
       "path": "pages/modify/right",
       "style": {
         "navigationBarTitleText": "权力的市场"
-      }
-    },
-    {
-      "path": "pages/modify/rightdetails",
-      "style": {
-        "navigationBarTitleText": "权力详情"
       }
     },
     {
