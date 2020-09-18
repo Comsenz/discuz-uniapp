@@ -1,6 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme" class="details">
-    <viwe class="details-box" style="height: 100%;">
+    <view class="details-box">
       <view class="details-box__head">
         全站白金会员
       </view>
@@ -29,24 +29,87 @@
           购买90天后
         </view>
       </view>
-      <view class="details-box__purchase">
+      <view class="details-box__purchase purchase-model">
         <view class="details-box__purchase-list">
           <qui-cell-item title="¥20元" slot-right :arrow="false" brief="你好" :border="false">
-            <view class="details-box__purchase-list-btn">立即购买</view>
+            <view class="details-box__purchase-list-btn" @click="purchase">立即购买</view>
           </qui-cell-item>
         </view>
       </view>
-    </viwe>
+      <!-- 支付组件 -->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type-val="payTypeVal"
+          :wallet-status="user.canWalletPay"
+          :description-show="true"
+          :money="100"
+          :balance="200"
+          pay-type="我的"
+          to-name="李李李"
+          :pay-type-data="payTypeData"
+          pay-password="111111"
+          @radioChange="radioChange"
+          @paysureShow="paysureShow"
+          @onInput="onInput"
+        ></qui-pay>
+        <!--遮罩层组件-->
+        <qui-loading-cover v-if="false" mask-zindex="111"></qui-loading-cover>
+      </view>
+    </view>
   </qui-page>
 </template>
 
 <script>
+import user from '@/mixin/user';
+import forums from '@/mixin/forums';
+// #ifndef MP-WEIXIN
+import appCommonH from '@/utils/commonHelper';
+// #endif
+
+let payWechat = null;
+let payPhone = null;
+
 export default {
+  mixins: [user, forums],
   data() {
     return {
       typenum1: true,
       typenum2: false,
+      payShowStatus: false,
+      coverLoading: false,
+      payTypeData: [
+        {
+          name: '微信支付',
+          icon: 'icon-wxPay',
+          color: '#09bb07',
+          value: '0',
+        },
+        {
+          name: '钱包支付',
+          icon: 'icon-walletPay',
+          color: '#1878f3',
+          value: '1',
+        },
+      ], // 支付方式
+      payTypeVal: 1,
+      value: '',
+      price: 1, // 价格
+      orderSn: '', // 订单编号
+      browser: 0, // 0为小程序，1为除小程序之外的设备
+      isWeixin: false,
+      isPhone: false,
+      codeUrl: '', // 二维码支付url
+      qrcodeShow: false, // 二维码显示
+      threadId: 222,
     };
+  },
+  onLoad() {
+    // #ifndef MP-WEIXIN
+    this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
+    this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
+    this.browser = 1;
+    // #endif
   },
   methods: {
     powerlist(index) {
@@ -58,6 +121,240 @@ export default {
         this.typenum2 = true;
       }
     },
+    purchase() {
+      console.log('购买', this.user);
+      this.payShowStatus = true;
+      this.payTypeVal = 1;
+      this.$nextTick(() => {
+        // this.$refs.payShow.payClickShow();
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
+    },
+    radioMyHead(val) {
+      // 是否显示用户头像
+      this.isAnonymous = !val;
+    },
+    // 选择支付方式，获取值
+    radioChange(val) {
+      console.log(val);
+      // val, 这是父级得到的
+    },
+    // 输入密码完成时
+    onInput(val) {
+      this.value = val;
+      this.creatOrder(this.price, 3, this.value, 1);
+    },
+    // 支付方式选择完成点击确定时
+    paysureShow(payType) {
+      if (payType === 0) {
+        this.creatOrder(this.price, 3, this.value, payType);
+      } else if (payType === 1) {
+        // 这是详情页获取到的支付方式---钱包
+      }
+    },
+    // 创建订单
+    creatOrder(amount, type, value, payType) {
+      const params = {
+        _jv: {
+          type: 'orders',
+        },
+        type,
+        thread_id: this.threadId,
+        amount,
+        is_anonymous: this.isAnonymous,
+      };
+      /* eslint-disable */
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.orderSn = res.order_sn;
+          if (payType === 0) {
+            // 微信支付
+            if (this.browser === 0) {
+              // 这是微信小程序内的支付
+              this.orderPay(13, value, this.orderSn, payType, '0');
+            } else {
+              // 这是除微信小程序之外, this.isWeixin, this.isPhone
+              if (this.isWeixin && this.isPhone) {
+                // 这是微信浏览器
+                this.orderPay(12, value, this.orderSn, payType, '1');
+              } else if (this.isPhone) {
+                this.orderPay(11, value, this.orderSn, payType, '2');
+              } else {
+                // 这是pc，没调接口之前
+                this.orderPay(10, value, this.orderSn, payType, '3');
+              }
+            }
+          } else if (payType === 1) {
+            // 钱包支付
+            this.orderPay(20, value, this.orderSn, payType);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    orderPay(type, value, orderSn, payType, broswerType) {
+      let params = {};
+      if (payType === 0) {
+        params = {
+          _jv: {
+            type: `trade/pay/order/${orderSn}`,
+          },
+          payment_type: type,
+        };
+      } else if (payType === 1) {
+        params = {
+          _jv: {
+            type: `trade/pay/order/${orderSn}`,
+          },
+          payment_type: type,
+          pay_password: value,
+        };
+      }
+
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.wxRes = res;
+          if (payType === 0) {
+            if (broswerType === '0') {
+              this.wechatPay(
+                res.wechat_js.timeStamp,
+                res.wechat_js.nonceStr,
+                res.wechat_js.package,
+                res.wechat_js.signType,
+                res.wechat_js.paySign,
+              );
+            } else if (broswerType === '1') {
+              if (typeof WeixinJSBridge === 'undefined') {
+                if (document.addEventListener) {
+                  document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
+                } else if (document.attachEvent) {
+                  document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
+                  document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
+                }
+              } else {
+                this.onBridgeReady(res);
+              }
+            } else if (broswerType === '2') {
+              payPhone = setInterval(() => {
+                if (this.payStatus === 1) {
+                  clearInterval(payPhone);
+                  return;
+                }
+                this.getOrderStatus(orderSn, broswerType);
+              }, 3000);
+              window.location.href = res.wechat_h5_link;
+            } else if (broswerType === '3') {
+              if (res) {
+                this.codeUrl = res.wechat_qrcode;
+                this.payShowStatus = false;
+                // this.$refs.codePopup.open();
+                this.qrcodeShow = true;
+                payWechat = setInterval(() => {
+                  if (this.payStatus === 1) {
+                    clearInterval(payWechat);
+                    return;
+                  }
+                  this.getOrderStatus(this.orderSn, broswerType);
+                  uni.hideLoading();
+                }, 3000);
+              }
+            }
+          } else if (payType === 1) {
+            if (res.wallet_pay.result === 'success') {
+              this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
+              // if (this.payTypeVal === 0) {
+              //   // 这是主题支付，支付完成刷新详情页，重新请求数据
+              //   this.loadThread();
+              // } else if (this.payTypeVal === 1) {
+              //   // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+              //   this._updateRewardUsers();
+              // }
+              this.payShowStatus = false;
+              this.coverLoading = false;
+            }
+            this.coverLoading = false;
+          }
+        })
+        .catch(err => {
+          // 清空支付的密码
+          console.log(err);
+          this.$refs.payShow.clearPassword();
+        });
+    },
+    // 非小程序内微信支付
+    onBridgeReady(data) {
+      // const that = this;
+      WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        {
+          appId: data.wechat_js.appId, // 公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, // 随机串
+          package: data.wechat_js.package,
+          signType: 'MD5', // 微信签名方式：
+          paySign: data.wechat_js.paySign, // 微信签名
+        },
+        function(data) {
+          // alert('支付唤醒');
+          if (data.err_msg == 'get_brand_wcpay_request:ok') {
+            //微信支付成功，进行支付成功处理
+          } else if (data.err_msg == 'get_brand_wcpay_request:cancel') {
+            // 取消支付
+            clearInterval(payWechat);
+            resolve;
+          } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
+            // 支付失败
+            clearInterval(payWechat);
+            resolve;
+          }
+        },
+      );
+      payWechat = setInterval(() => {
+        if (this.payStatus === 1) {
+          clearInterval(payWechat);
+          return;
+        }
+        this.getOrderStatus(this.orderSn);
+      }, 3000);
+    },
+    // 查询订单支状 broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    getOrderStatus(orderSn, broswerType) {
+      this.$store
+        .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
+        .then(res => {
+          this.payStatus = res.status;
+          if (this.payStatus === 1) {
+            this.payShowStatus = false;
+            this.coverLoading = false;
+            if (broswerType === '2') {
+              // return false;
+            } else if (broswerType === '3') {
+              // 这是pc扫码支付完成
+              this.$refs.codePopup.close();
+              this.qrcodeShow = false;
+              this.loadThread();
+            }
+
+            if (this.payTypeVal === 0) {
+              // 这是主题支付，支付完成刷新详情页，重新请求数据
+              this.loadThread();
+            } else if (this.payTypeVal === 1) {
+              // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+              this._updateRewardUsers();
+            }
+            this.$refs.toast.show({ message: this.p.paySuccess });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.coverLoading = false;
+          this.$refs.toast.show({ message: this.p.payFail });
+        });
+    },
   },
 };
 </script>
@@ -66,13 +363,20 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .details /deep/ {
-  width: 100vw;
-  height: 100vh;
+  /* #ifdef H5 */
+  padding-top: 0;
+  /* #endif */
+  overflow: hidden;
   background: #fff;
   box-sizing: border-box;
   .details-box {
-    width: 100%;
-    height: 100%;
+    // position: relative;
+    width: 100vw;
+    height: 100vh;
+    /* #ifdef H5 */
+    padding-top: 88rpx;
+    /* #endif */
+    box-sizing: border-box;
   }
 }
 .details {
@@ -147,14 +451,25 @@ export default {
       }
     }
     &__purchase {
+      position: absolute;
       bottom: 0;
+      /* #ifdef H5 */
       width: 100%;
+      /* #endif */
       height: 130rpx;
       padding: 15rpx 40rpx 0;
       border-top: 2rpx solid #ededed;
       box-sizing: border-box;
     }
   }
+}
+.purchase-model {
+  /* #ifndef H5 */
+  width: 100vw;
+  /* #endif */
+}
+.ele {
+  height: 100%;
 }
 .details-box__foot__center__box {
   height: 50rpx;
@@ -176,5 +491,6 @@ export default {
   color: #fff;
   text-align: center;
   background: #fa5151;
+  border-radius: 5rpx;
 }
 </style>

@@ -136,6 +136,7 @@ export default {
       display: flex;
       width: 100%;
       height: 108rpx;
+      background: #fff;
       border-bottom: 2rpx solid #ededed;
       &-smore {
         width: 240rpx;
