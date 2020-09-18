@@ -52,13 +52,12 @@ export default {
       success(e) {
         if (e.data) {
           this.switchdata = false;
+          this.token = content.session_token;
         }
       },
     });
     if (this.isWeixin) {
-      console.log(this.isWeixin);
       if (content.session_token) {
-        console.log(111);
         uni.setStorage({
           key: 'session_token_data',
           data: content.session_token,
@@ -72,7 +71,6 @@ export default {
         });
       }
       if (content.sessionId) {
-        console.log(222);
         this.datas = content;
       }
     } else {
@@ -104,9 +102,7 @@ export default {
                 duration: 2000,
               });
               setTimeout(() => {
-                uni.redirectTo({
-                  url: '/pages/home/index',
-                });
+                wx.closeWindow();
               }, 1000);
             }
           })
@@ -143,9 +139,7 @@ export default {
                 duration: 2000,
               });
               setTimeout(() => {
-                uni.redirectTo({
-                  url: '/pages/home/index',
-                });
+                wx.closeWindow();
               }, 1000);
             }
           })
@@ -163,9 +157,7 @@ export default {
       }
     },
     cancelPclogin() {
-      uni.redirectTo({
-        url: '/pages/home/index',
-      });
+      wx.closeWindow();
     },
   },
 };

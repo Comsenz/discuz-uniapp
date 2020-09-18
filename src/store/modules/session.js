@@ -152,7 +152,7 @@ const actions = {
   loginscancodeverification: (context, payload = {}) => {
     return new Promise(resolve => {
       return http
-        .post(`oauth/wechat/qrcode/login/${payload.token}`)
+        .get(`oauth/wechat/qrcode/login/${payload.token}`)
         .then(results => {
           resolve(results);
           setUserInfoStore(context, results, resolve);
