@@ -4,6 +4,14 @@
       <view class="cash-content">
         <!-- 收款人 -->
         <view class="cash-content-tab">
+          <qui-cell-item title="微信收款手机号" slot-right :arrow="false" :border="false">
+            <view class="cash-content-name">
+              11111111111
+            </view>
+          </qui-cell-item>
+        </view>
+        <!-- 收款人 -->
+        <view class="cash-content-tab">
           <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
             <text class="cash-content-name">
               {{ name }}
@@ -109,6 +117,9 @@
               ref="quiinput"
             ></qui-input-code>
           </view>
+        </view>
+        <view class="cash-explain">
+          注：须确保在微信开启了“允许通过手机向我转账”的功能，否则将无法收到提现转账，开通方式为“微信-首付款-向银行卡或手机号转账-手机号收款设置“。
         </view>
         <view class="cash-button">
           <qui-button class="cash-button-sun" type="primary" size="large" @click="btncash">
@@ -652,6 +663,15 @@ export default {
     display: flex;
     width: 100%;
     height: 100rpx;
+  }
+  .cash-explain {
+    width: 100%;
+    padding-right: 40rpx;
+    margin-top: 40rpx;
+    font-size: 28rpx;
+    line-height: 45rpx;
+    color: --color(--qui-FC-777);
+    box-sizing: border-box;
   }
   .cash-button {
     margin: 52rpx 0 0;
