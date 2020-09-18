@@ -140,10 +140,6 @@ export default {
     cancel() {
       this.$refs.popupHead.close();
     },
-    // 调取用户信息取消弹框
-    close() {
-      this.$refs.auth.close();
-    },
     // 获取主题列表
     getThemeList() {
       this.loadingType = 'loading';

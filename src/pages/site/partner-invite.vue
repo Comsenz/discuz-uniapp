@@ -58,7 +58,6 @@ import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 // #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
-// import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   components: { uniPopupDialog },
@@ -156,6 +155,10 @@ export default {
       this.$refs.popCode.close();
       this.submit();
     },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
+    },
     submit() {
       // 未登陆的情况
       if (!this.$store.getters['session/get']('isLogin')) {
@@ -205,13 +208,13 @@ export default {
   right: 24rpx;
 }
 .site-invite {
+  padding: 30rpx 60rpx;
   text-align: center;
   &__detail__bold {
     margin: 0 5rpx;
     font-weight: bold;
   }
   &__detail {
-    padding: 30rpx 60rpx;
     font-size: $fg-f4;
   }
 }

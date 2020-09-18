@@ -24,9 +24,8 @@
           }}
         </view>
       </view>
-      <qui-button type="primary" @click="toLogin" size="small">
+      <qui-button type="primary" @click="submit" size="small">
         {{ isLogin ? i18n.t('site.paynow') : i18n.t('site.join') + i18n.t('site.site') }}
-        {{ i18n.t('site.accepttheinvitation') }}
       </qui-button>
     </view>
     <view v-if="payShowStatus">
@@ -66,7 +65,6 @@
 <script>
 import forums from '@/mixin/forums';
 // #ifdef H5
-import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 import loginAuth from '@/mixin/loginAuth-h5';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -79,7 +77,6 @@ export default {
   mixins: [
     forums,
     // #ifdef  H5
-    wxshare,
     appCommonH,
     loginAuth,
     // #endif
@@ -88,7 +85,6 @@ export default {
     return {
       payShowStatus: true, // 是否显示支付
       codeUrl: '', // 二维码支付url，base64
-      shareBtn: 'icon-share1',
       shareShow: false, // h5内分享提示信息
       isAnonymous: '0',
       qrcodeShow: false, // 二维码弹框
@@ -146,10 +142,10 @@ export default {
     this.browser = 1;
     // #endif
     // 已经支付过的直接去首页
-    // if (!this.userId) {
-    //   return;
-    // }
-    // this.userInfo();
+    if (!this.userId) {
+      return;
+    }
+    this.userInfo();
   },
   onUnload() {
     clearInterval(payWechat);
@@ -183,29 +179,6 @@ export default {
           window.location.href = '/pages/home/index';
         }
       });
-    },
-    // 首页头部分享按钮弹窗
-    open() {
-      // #ifdef MP-WEIXIN
-      this.$refs.popupHead.open();
-      // #endif
-      // #ifdef H5
-      if (this.isWeixin === true) {
-        this.shareShow = true;
-      } else {
-        this.h5Share({
-          title: this.forums.set_site.site_name,
-          url: 'pages/site/info',
-        });
-      }
-      // #endif
-    },
-    closeShare() {
-      this.shareShow = false;
-    },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupHead.close();
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
@@ -395,13 +368,6 @@ export default {
         this.$refs.payShow.payClickShow();
       });
     },
-    toLogin() {
-      uni.setStorage({
-        key: 'page',
-        data: getCurUrl(),
-      });
-      this.handleLogin();
-    },
     // 调取用户信息取消弹框
     close() {
       this.$refs.auth.close();
@@ -413,48 +379,6 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .site /deep/ {
-  .header {
-    height: auto;
-    margin-bottom: 30rpx;
-    background: --color(--qui-BG-2);
-    border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  }
-  .header .circleDet {
-    padding: 60rpx 40rpx 50rpx;
-    opacity: 1;
-  }
-  .header .circleDet-txt {
-    color: --color(--qui-FC-333);
-    opacity: 1;
-  }
-  .header .logo {
-    height: 75rpx;
-    padding-top: 71rpx;
-  }
-  .cell-item__body__content-title {
-    width: 150rpx;
-    margin-right: 40rpx;
-    color: --color(--qui-FC-777);
-  }
-  .header .circleDet-num,
-  .header .circleDet-share {
-    color: --color(--qui-FC-333);
-  }
-  .site-invite {
-    padding-bottom: 50rpx;
-    text-align: center;
-  }
-  .site-invite__join {
-    margin-top: 50rpx;
-  }
-  .cell-item--auto .cell-item__body {
-    height: auto;
-    padding: 35rpx 0;
-    align-items: flex-start;
-  }
-  .cell-item--left .cell-item__body__right {
-    text-align: left;
-  }
   .popup-pay {
     .pay-title,
     .pay-radio {
@@ -476,6 +400,11 @@ export default {
     .pay-type-chi {
       margin-bottom: 40rpx;
     }
+  }
+  /deep/ .qui-button--button {
+    position: absolute;
+    top: 20rpx;
+    right: 24rpx;
   }
 }
 // 微信二维码弹框
@@ -539,48 +468,34 @@ export default {
   padding: 14rpx 0 20rpx;
 }
 //下面部分样式
-.site-item {
-  padding-left: 40rpx;
+.site-invite {
+  padding: 30rpx 60rpx;
+  text-align: center;
+  &__detail__bold {
+    margin: 0 5rpx;
+    font-weight: bold;
+  }
+  &__detail {
+    width: 90%;
+    font-size: $fg-f4;
+  }
+}
+.site-submit {
+  position: relative;
+  height: 130rpx;
+  padding: 20rpx 24rpx;
   background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.site .cell-item {
-  padding-right: 40rpx;
-}
-.site-invite__detail__bold {
-  margin: 0 5rpx;
-  font-weight: bold;
-}
-.site-invite__detail {
-  width: 90%;
-  padding: 0 20rpx;
-  margin: 50rpx auto 30rpx;
-  font-size: $fg-f4;
-}
-.site-item__pay .cell-item__body__right-text {
-  color: --color(--qui-RED);
-}
-.site-item__person__content-avatar,
-.site-item__owner-avatar {
-  margin-left: 8rpx;
-}
-.site-item__person__content-avatar {
-  margin-left: 8rpx;
-}
-.site-item__owner {
-  display: flex;
-  align-items: center;
-}
-.site-item__owner-avatar {
-  margin-right: 20rpx;
-}
-.site-item__person {
-  display: flex;
-  height: 60rpx;
-  overflow: hidden;
-  font-size: 0;
-}
-.site-item__person__content {
-  display: inline-block;
+  box-shadow: 0rpx -3rpx 6rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  &__price {
+    margin-top: 10rpx;
+    font-size: $fg-f5;
+    color: --color(--qui-FC-AAA);
+    text-decoration: line-through;
+  }
+  &__expire {
+    font-size: $fg-f2;
+    color: --color(--qui-FC-333);
+  }
 }
 </style>
