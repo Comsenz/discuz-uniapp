@@ -395,6 +395,18 @@
       "style": {
         "navigationBarTitleText": ""
       }
+    },
+    {
+      "path": "pages/modify/rightdetails",
+      "style": {
+        "navigationBarTitleText": "权力详情"
+      }
+    },
+    {
+      "path": "pages/modify/right",
+      "style": {
+        "navigationBarTitleText": "权力的市场"
+      }
     }
   ],
   "globalStyle": {

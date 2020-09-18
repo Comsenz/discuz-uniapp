@@ -69,7 +69,7 @@
             @click="jump2Login"
           />
           <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
             :class="[
               forum && forum.ucenter && forum.ucenter.ucenter
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
@@ -103,7 +103,7 @@
             @click="jump2Login"
           />
           <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter"
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
             :class="[
               forum && forum.ucenter && forum.ucenter.ucenter
                 ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
@@ -196,6 +196,7 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
+      isShow: false,
     };
   },
   onLoad() {
