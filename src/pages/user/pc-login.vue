@@ -25,6 +25,7 @@ import appCommonH from '@/utils/commonHelper';
 // #endif
 let switchdata = true;
 
+/* eslint-disable */
 export default {
   // #ifdef H5
   mixins: [appCommonH],
@@ -52,7 +53,6 @@ export default {
       success(e) {
         if (e.data) {
           switchdata = false;
-          console.log(switchdata);
           this.token = content.session_token;
           uni.setStorage({
             key: 'session_token_data',
@@ -61,30 +61,23 @@ export default {
         }
       },
       fail() {
-        if (this.isWeixin) {
-          if (content.session_token) {
-            uni.setStorage({
-              key: 'session_token_data',
-              data: content.session_token,
-              success() {
-                if (switchdata) {
-                  console.log('111');
-                  switchdata = true;
-                  this.$store.dispatch('session/wxPcLogin');
-                } else {
-                  console.log('222');
-                  this.token = content.session_token;
-                }
-              },
-            });
-          }
-          if (content.sessionId) {
-            this.datas = content;
-          }
-        } else {
-          uni.redirectTo({
-            url: '/pages/home/index',
+        switchdata = true;
+        if (content.session_token) {
+          uni.setStorage({
+            key: 'session_token_data',
+            data: content.session_token,
+            success() {
+              if (switchdata) {
+                switchdata = true;
+                this.$store.dispatch('session/wxPcLogin');
+              } else {
+                this.token = content.session_token;
+              }
+            },
           });
+        }
+        if (content.sessionId) {
+          this.datas = content;
         }
       },
     });
@@ -98,26 +91,28 @@ export default {
           .then(res => {
             console.log(res);
             if (res && res.data && res.data.errors) {
-              if (res.data.errors[0].code === 'no_bind_user') {
-                uni.showToast({
-                  icon: 'none',
-                  title: this.i18n.t('user.loginSuccessFail'),
-                  duration: 2000,
-                });
-              }
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('user.loginSuccessFail'),
+                duration: 2000,
+              });
             }
-            if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
+            if (res && res.data && res.data.data) {
               uni.showToast({
                 icon: 'none',
                 title: this.i18n.t('user.loginSuccess'),
                 duration: 2000,
               });
               setTimeout(() => {
-                wx.closeWindow();
-              }, 1000);
+                WeixinJSBridge.call('closeWindow');
+              }, 1500);
             }
           })
           .catch(err => {
+            setTimeout(() => {
+              console.log(111);
+              WeixinJSBridge.call('closeWindow');
+            }, 1000);
             if (err && err.data) {
               if (err.data.errors[0].sstatus === 500) {
                 uni.showToast({
@@ -135,25 +130,22 @@ export default {
         this.$store
           .dispatch('session/loginscancodeverification', this.datas)
           .then(res => {
-            console.log(res);
             if (res && res.data && res.data.errors) {
-              if (res.data.errors[0].code === 'no_bind_user') {
-                uni.showToast({
-                  icon: 'none',
-                  title: this.i18n.t('user.loginSuccessFail'),
-                  duration: 2000,
-                });
-              }
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('user.loginSuccessFail'),
+                duration: 2000,
+              });
             }
-            if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
+            if (res && res.data && res.data.pc_login) {
               uni.showToast({
                 icon: 'none',
                 title: this.i18n.t('user.loginSuccess'),
                 duration: 2000,
               });
               setTimeout(() => {
-                wx.closeWindow();
-              }, 1000);
+                WeixinJSBridge.call('closeWindow');
+              }, 1500);
             }
           })
           .catch(err => {
@@ -170,7 +162,7 @@ export default {
       }
     },
     cancelPclogin() {
-      wx.closeWindow();
+      WeixinJSBridge.call('closeWindow');
     },
   },
 };
