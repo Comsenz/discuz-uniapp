@@ -150,9 +150,20 @@ const actions = {
     });
   },
   loginscancodeverification: (context, payload = {}) => {
+    console.log(payload.token);
+    let sessionToken = '';
+    uni.getStorage({
+      key: 'session_token_data',
+      success(e) {
+        if (e.data !== '') {
+          sessionToken = e.data;
+          console.log(sessionToken);
+        }
+      },
+    });
     return new Promise(resolve => {
       return http
-        .get(`oauth/wechat/qrcode/login/${payload.token}`)
+        .get(`oauth/wechat/qrcode/login/${sessionToken}`)
         .then(results => {
           resolve(results);
           setUserInfoStore(context, results, resolve);

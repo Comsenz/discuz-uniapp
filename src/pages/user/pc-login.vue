@@ -23,6 +23,7 @@
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 // #endif
+let switchdata = true;
 
 export default {
   // #ifdef H5
@@ -39,7 +40,6 @@ export default {
       // #endif
       switch: false,
       datas: {},
-      switchdata: true,
     };
   },
   onLoad(content) {
@@ -51,37 +51,48 @@ export default {
       key: 'access_token',
       success(e) {
         if (e.data) {
-          this.switchdata = false;
+          switchdata = false;
+          console.log(switchdata);
           this.token = content.session_token;
+          uni.setStorage({
+            key: 'session_token_data',
+            data: content.session_token,
+          });
+        }
+      },
+      fail() {
+        if (this.isWeixin) {
+          if (content.session_token) {
+            uni.setStorage({
+              key: 'session_token_data',
+              data: content.session_token,
+              success() {
+                if (switchdata) {
+                  console.log('111');
+                  switchdata = true;
+                  this.$store.dispatch('session/wxPcLogin');
+                } else {
+                  console.log('222');
+                  this.token = content.session_token;
+                }
+              },
+            });
+          }
+          if (content.sessionId) {
+            this.datas = content;
+          }
+        } else {
+          uni.redirectTo({
+            url: '/pages/home/index',
+          });
         }
       },
     });
-    if (this.isWeixin) {
-      if (content.session_token) {
-        uni.setStorage({
-          key: 'session_token_data',
-          data: content.session_token,
-          success() {
-            if (this.switchdata) {
-              this.$store.dispatch('session/wxPcLogin');
-            } else {
-              this.token = content.session_token;
-            }
-          },
-        });
-      }
-      if (content.sessionId) {
-        this.datas = content;
-      }
-    } else {
-      uni.redirectTo({
-        url: '/pages/home/index',
-      });
-    }
   },
   methods: {
     pcLogin() {
-      if (this.switchdata) {
+      if (switchdata) {
+        console.log(switchdata, '444');
         this.$store
           .dispatch('session/scancodeverification', this.datas)
           .then(res => {
@@ -118,6 +129,8 @@ export default {
             }
           });
       } else {
+        console.log(333);
+        console.log(switchdata);
         this.datas.token = this.token;
         this.$store
           .dispatch('session/loginscancodeverification', this.datas)
