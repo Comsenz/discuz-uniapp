@@ -20,145 +20,84 @@
 </template>
 
 <script>
-// #ifdef H5
-import appCommonH from '@/utils/commonHelper';
-// #endif
-let switchdata = true;
-
 /* eslint-disable */
+let switchdata = true;
+import { http } from '@/api/api-request';
+
 export default {
-  // #ifdef H5
-  mixins: [appCommonH],
-  // #endif
   data: () => {
     return {
       num: false,
       code: '',
       sessionId: '',
       token: '',
-      // #ifdef H5
-      isWeixin: false, // 默认不是微信浏览器
-      // #endif
       switch: false,
-      datas: {},
+      content: {},
+      showPage: false,
     };
   },
   onLoad(content) {
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
-    uni.getStorage({
-      key: 'access_token',
-      success(e) {
-        if (e.data) {
-          switchdata = false;
-          this.token = content.session_token;
-          uni.setStorage({
-            key: 'session_token_data',
-            data: content.session_token,
-          });
-        }
-      },
-      fail() {
-        switchdata = true;
-        if (content.session_token) {
-          uni.setStorage({
-            key: 'session_token_data',
-            data: content.session_token,
-            success() {
-              if (switchdata) {
-                switchdata = true;
-                this.$store.dispatch('session/wxPcLogin');
-              } else {
-                this.token = content.session_token;
-              }
-            },
-          });
-        }
-        if (content.sessionId) {
-          this.datas = content;
-        }
-      },
-    });
+    this.content = content;
+    this.isLogin = this.$store.getters['session/get']('isLogin');
+    if(this.isLogin) {
+      this.token = content.session_token;
+    } else {
+      if(content.session_token) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.loging'),
+        });
+        uni.setStorage({
+          key: 'session_token_data',
+          data: content.session_token,
+          success: () => {
+            this.token = content.session_token;
+            this.$store.dispatch('session/wxPcLogin');
+          },
+        });
+      }
+    }
   },
   methods: {
     pcLogin() {
-      if (switchdata) {
-        console.log(switchdata, '444');
-        this.$store
-          .dispatch('session/scancodeverification', this.datas)
-          .then(res => {
-            console.log(res);
-            if (res && res.data && res.data.errors) {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('user.loginSuccessFail'),
-                duration: 2000,
-              });
-            }
-            if (res && res.data && res.data.data) {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('user.loginSuccess'),
-                duration: 2000,
-              });
-              setTimeout(() => {
-                WeixinJSBridge.call('closeWindow');
-              }, 1500);
-            }
-          })
-          .catch(err => {
-            setTimeout(() => {
-              console.log(111);
-              WeixinJSBridge.call('closeWindow');
-            }, 1000);
-            if (err && err.data) {
-              if (err.data.errors[0].sstatus === 500) {
-                uni.showToast({
-                  icon: 'none',
-                  title: err.data.errors[0].code,
-                  duration: 2000,
-                });
+      if(this.isLogin) {
+        http
+          .get(`oauth/wechat/qrcode/login/${this.token}`)
+          .then(() => {
+            uni.showToast({
+              icon: 'none',
+              title: this.i18n.t('user.loginSuccess'),
+              success: () => {
+                this.cancelPclogin();
               }
-            }
+            });
           });
       } else {
-        console.log(333);
-        console.log(switchdata);
-        this.datas.token = this.token;
-        this.$store
-          .dispatch('session/loginscancodeverification', this.datas)
-          .then(res => {
-            if (res && res.data && res.data.errors) {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('user.loginSuccessFail'),
-                duration: 2000,
-              });
-            }
-            if (res && res.data && res.data.pc_login) {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('user.loginSuccess'),
-                duration: 2000,
-              });
-              setTimeout(() => {
-                WeixinJSBridge.call('closeWindow');
-              }, 1500);
-            }
-          })
-          .catch(err => {
-            if (err && err.data) {
-              if (err.data.errors[0].sstatus === 500) {
+        uni.getStorage({
+          key: 'session_token_data',
+          success: (e) => {
+            if (e.data != '') {
+              const sessionToken = e.data;
+              const code = this.content.code;
+              const state = this.content.state;
+              const sessionId = this.content.sessionId;
+              this.$store.dispatch('session/scancodeverification', {
+                code,
+                state,
+                sessionId,
+                sessionToken
+              }).then(() => {
                 uni.showToast({
                   icon: 'none',
-                  title: err.data.errors[0].code,
-                  duration: 2000,
+                  title: this.i18n.t('user.loginSuccess'),
+                  success: () => {
+                    this.cancelPclogin();
+                  }
                 });
-              }
+              });
             }
-          });
+          },
+        });
       }
     },
     cancelPclogin() {
