@@ -8,7 +8,12 @@
         <image class="image right" lazy-load src="@/static/tmall.svg" />
         <image class="image" lazy-load src="@/static/pinduoduo.svg" />
       </view>
-      <textarea class="parse-goods-box-con" placeholder="请粘贴 \ 输入商品链接" v-model="link" />
+      <textarea
+        class="parse-goods-box-con"
+        maxlength="10000"
+        placeholder="请粘贴 \ 输入商品链接"
+        v-model="link"
+      />
       <qui-button class="parse-goods-box-btn" @click="handleNext">下一步</qui-button>
     </view>
   </qui-page>
@@ -23,7 +28,6 @@ export default {
   },
   methods: {
     handleNext() {
-      console.log('-------');
       console.log('link', this.link);
       if (this.link === '') {
         uni.showToast({
@@ -44,9 +48,13 @@ export default {
           .dispatch('jv/post', params)
           .then(res => {
             console.log('查询商品信息：', res);
-            uni.navigateTo({
-              url: '/pages/topic/goods-post',
-            });
+            if (res && res._jv) {
+              this.$store.dispatch('session/setGood', res);
+              uni.navigateTo({
+                url: '/pages/topic/goods-post',
+              });
+              this.link = '';
+            }
           })
           .catch(err => {
             console.log(err);

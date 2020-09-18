@@ -211,6 +211,20 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
+
+      <view class="">
+        <view class="">
+          <image
+            class="post-box__image"
+            lazy-load
+            src="http://img.alicdn.com/imgextra/i4/880734502/O1CN014avVeu1j7xhYiV2ip_!!880734502.jpg_430x430q90.jpg"
+          />
+        </view>
+        <view class="">
+          <view class="">cc{{ goodInfo.title }}</view>
+          <view class="">xx{{ goodInfo.price }}</view>
+        </view>
+      </view>
       <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
         <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
@@ -512,6 +526,14 @@ export default {
         pay = `￥${this.price + this.i18n.t('discuzq.post.yuan')}`;
       }
       return pay;
+    },
+    goodInfo() {
+      const data = this.$store.getters['session/get']('good');
+      console.log('取商品信息', data);
+      if (data && data._jv) {
+        return data;
+      }
+      return {};
     },
   },
   updated() {
@@ -1773,6 +1795,14 @@ export default {
       margin-bottom: 40rpx;
     }
   }
+
+  &__image {
+    width: 160rpx;
+    height: 160rpx;
+    margin: 30rpx 0;
+    border-radius: 5rpx;
+  }
+
   &__position /deep/ {
     position: relative;
     color: --color(--qui-FC-777);

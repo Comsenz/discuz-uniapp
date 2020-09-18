@@ -10,6 +10,7 @@ import {
   SET_PARAMS,
   SET_CODE,
   SET_TOKEN,
+  SET_GOOD,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -61,6 +62,9 @@ const actions = {
   },
   setToken: (context, payload) => {
     context.commit(SET_TOKEN, payload);
+  },
+  setGood: (context, payload) => {
+    context.commit(SET_GOOD, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -214,6 +218,9 @@ const mutations = {
   },
   [SET_TOKEN](state, payload) {
     state.token = payload;
+  },
+  [SET_GOOD](state, payload) {
+    state.good = payload;
   },
 };
 
