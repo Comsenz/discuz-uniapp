@@ -76,7 +76,7 @@ export default {
         // #endif
         if (pages.length > 0) {
           currentPage = pages[pages.length - 1];
-          if (!user.paid && currentPage.route !== 'pages/site/info') {
+          if (!user.paid && currentPage.route !== 'pages/site/info' && currentPage.route !== 'pages/site/partner-invite') {
             uni.redirectTo({
               url: '/pages/site/info',
             });
