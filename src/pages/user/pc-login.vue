@@ -140,9 +140,8 @@ export default {
     }
   }
   &__title {
-    width: 235rpx;
     height: 45rpx;
-    margin: 63rpx auto 0;
+    margin-top: 63rpx;
     font-size: $fg-f5;
     font-weight: 400;
     line-height: 45rpx;
@@ -162,12 +161,12 @@ export default {
     border-radius: 5rpx;
   }
   &__cancel {
-    width: 112rpx;
     height: 37rpx;
-    margin: 80rpx auto 0;
+    margin-top: 80rpx;
     font-size: $fg-f3;
     font-weight: 400;
     color: #1878f3;
+    text-align: center;
   }
   &-bt {
     margin-bottom: 223rpx;

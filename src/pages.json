@@ -3,6 +3,12 @@
   // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
   "pages": [
     {
+      "path": "pages/user/pc-login",
+      "style": {
+        "navigationBarTitleText": "PC端登录确认"
+      }
+    },
+    {
       "path": "pages/home/index",
       "style": {
         "navigationStyle": "custom",
@@ -84,12 +90,6 @@
       "path": "pages/user/wechat",
       "style": {
         "navigationBarTitleText": "微信授权"
-      }
-    },
-    {
-      "path": "pages/user/pc-login",
-      "style": {
-        "navigationBarTitleText": "PC登录"
       }
     },
     {
