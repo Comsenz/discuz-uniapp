@@ -24,7 +24,7 @@
         </view>
       </view>
       <view class="power-box__package-foot" v-if="typenum1">
-        <view class="power-box__package-foot-list">
+        <view class="power-box__package-foot-list" @click="godetails">
           <qui-cell-item
             title="全站白金会员"
             slot-right
@@ -35,7 +35,7 @@
             <view class="money">¥1150.0</view>
           </qui-cell-item>
         </view>
-        <view class="power-box__package-foot-list">
+        <view class="power-box__package-foot-list" @click="godetails">
           <qui-cell-item
             title="全站白金会员"
             slot-right
@@ -46,7 +46,7 @@
             <view class="money">¥1150.0</view>
           </qui-cell-item>
         </view>
-        <view class="power-box__package-foot-list">
+        <view class="power-box__package-foot-list" @click="godetails">
           <qui-cell-item
             title="全站白金会员"
             slot-right
@@ -59,7 +59,7 @@
         </view>
       </view>
       <view class="power-box__package-foots" v-if="typenum2">
-        <view class="power-box__package-foots-list">
+        <view class="power-box__package-foots-list" @click="godetails">
           <qui-cell-item
             title="全站白金会员"
             slot-right
@@ -70,7 +70,7 @@
             <view class="time">2013-3-3 到期</view>
           </qui-cell-item>
         </view>
-        <view class="power-box__package-foots-list">
+        <view class="power-box__package-foots-list" @click="godetails">
           <qui-cell-item
             title="全站白金会员"
             slot-right
@@ -81,7 +81,7 @@
             <view class="time">2013-3-3 到期</view>
           </qui-cell-item>
         </view>
-        <view class="power-box__package-foots-list">
+        <view class="power-box__package-foots-list" @click="godetails">
           <qui-cell-item
             title="全站白金会员"
             slot-right
@@ -115,6 +115,11 @@ export default {
         this.typenum2 = true;
       }
     },
+    godetails() {
+      uni.navigateTo({
+        url: '/pages/modify/rightdetails',
+      });
+    },
   },
 };
 </script>
@@ -123,54 +128,54 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .power-box {
-  background: #f9fafc;
+  background: --color(--qui-BG-1);
   box-sizing: border-box;
   &__package {
     width: 100vw;
     /* #ifndef H5 */
     height: 100vh;
     /* #endif */
-    background-color: #f9fafc;
+    background-color: --color(--qui-BG-1);
     box-sizing: border-box;
     &-head {
       display: flex;
       width: 100%;
       height: 108rpx;
-      background: #fff;
-      border-bottom: 2rpx solid #ededed;
+      background: --color(--qui-BG-2);
+      border-bottom: 2rpx solid --color(--qui-BG-777);
       &-smore {
         width: 240rpx;
         height: 100%;
         font-size: 28rpx;
         font-weight: bold;
         line-height: 108rpx;
-        color: #333;
+        color: --color(--qui-FC-333);
         text-align: center;
       }
       .boder-bottom {
-        border-bottom: 4rpx solid #1878f3;
+        border-bottom: 4rpx solid --color(--qui-BG-HIGH-LIGHT);
       }
     }
     &-foot {
       padding-left: 40rpx;
       margin-top: 40rpx;
-      background: #fff;
+      background: --color(--qui-BG-2);
       box-sizing: border-box;
       &-list {
         height: 150rpx;
         padding-right: 40rpx;
-        border-bottom: 2rpx solid #ededed;
+        border-bottom: 2rpx solid --color(--qui-BG-777);
       }
     }
     &-foots {
       padding-left: 40rpx;
       margin-top: 40rpx;
-      background: #fff;
+      background: --color(--qui-BG-2);
       box-sizing: border-box;
       &-list {
         height: 150rpx;
         padding-right: 40rpx;
-        border-bottom: 2rpx solid #ededed;
+        border-bottom: 2rpx solid --color(--qui-BG-777);
       }
     }
   }
@@ -178,16 +183,16 @@ export default {
 /deep/.cell-item__body__content-title {
   margin-top: 40rpx;
   font-size: 28rpx;
-  color: #333;
+  color: --color(--qui-FC-333);
 }
 .money {
   font-size: 28rpx;
   font-weight: bold;
-  color: #fa5151;
+  color: --color(--qui-RED);
 }
 .time {
   font-size: 28rpx;
   font-weight: 400;
-  color: #777;
+  color: --color(--qui-FC-TAG);
 }
 </style>

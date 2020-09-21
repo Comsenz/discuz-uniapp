@@ -427,7 +427,7 @@ export default {
   padding-top: 0;
   /* #endif */
   overflow: hidden;
-  background: #fff;
+  background: --color(--qui-BG-2);
   box-sizing: border-box;
   .details-box {
     // position: relative;
@@ -444,7 +444,7 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #fff;
+    background-color: --color(--qui-BG-2);
     box-sizing: border-box;
     &__head {
       width: 100%;
@@ -453,7 +453,7 @@ export default {
       font-size: 36rpx;
       font-weight: bold;
       line-height: 97rpx;
-      color: #303133;
+      color: --color(--qui-FC-333);
       box-sizing: border-box;
     }
     &__center {
@@ -473,7 +473,7 @@ export default {
         font-size: 28rpx;
         font-weight: bold;
         line-height: 31rpx;
-        color: #333;
+        color: --color(--qui-FC-333);
         box-sizing: border-box;
       }
       &__center {
@@ -495,7 +495,7 @@ export default {
         font-size: 28rpx;
         font-weight: bold;
         line-height: 31rpx;
-        color: #333;
+        color: --color(--qui-FC-333);
         box-sizing: border-box;
       }
       &__bot {
@@ -506,7 +506,7 @@ export default {
         font-size: 28rpx;
         font-weight: 400;
         line-height: 40rpx;
-        color: #333;
+        color: --color(--qui-FC-333);
         box-sizing: border-box;
       }
     }
@@ -518,7 +518,7 @@ export default {
       /* #endif */
       height: 130rpx;
       padding: 15rpx 40rpx 0;
-      border-top: 2rpx solid #ededed;
+      border-top: 2rpx solid --color(--qui-BG-ED);
       box-sizing: border-box;
     }
   }
@@ -534,13 +534,15 @@ export default {
 .details-box__foot__center__box {
   height: 50rpx;
   min-width: 136rpx;
+  padding: 0 20rpx;
   margin: 40rpx 40rpx 0 0;
   font-size: 24rpx;
   font-weight: 400;
   line-height: 50rpx;
-  color: #777;
+  color: --color(--qui-FC-777);
   text-align: center;
-  background: #f7f7f7;
+  background: --color(--qui-BG-FFF);
+  box-sizing: border-box;
 }
 .details-box__purchase-list-btn {
   width: 230rpx;
@@ -548,9 +550,9 @@ export default {
   font-size: 28rpx;
   font-weight: 400;
   line-height: 90rpx;
-  color: #fff;
+  color: --color(--qui-BG-2);
   text-align: center;
-  background: #fa5151;
+  background: --color(--qui-RED);
   border-radius: 5rpx;
 }
 

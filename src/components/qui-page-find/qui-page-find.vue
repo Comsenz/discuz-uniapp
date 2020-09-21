@@ -18,7 +18,7 @@
       </navigator>
     </view>
     <view class="find-item">
-      <navigator url="/pages/topic/list" hover-class="none">
+      <navigator url="/pages/modify/right" hover-class="none">
         <qui-cell-item
           :title="i18n.t('topic.permissionPurchase')"
           arrow
