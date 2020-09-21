@@ -401,10 +401,40 @@ export default {
       margin-bottom: 40rpx;
     }
   }
-  /deep/ .qui-button--button {
+  .site-submit .qui-button--button {
     position: absolute;
     top: 20rpx;
     right: 24rpx;
+  }
+  .header {
+    height: auto;
+    margin-bottom: 30rpx;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    .circleDet {
+      padding: 60rpx 30rpx;
+      opacity: 1;
+    }
+    .circleDet-txt {
+      color: --color(--qui-FC-333);
+      opacity: 1;
+    }
+    .logo {
+      height: 75rpx;
+      padding-top: 71rpx;
+    }
+    .circleDet-num,
+    .circleDet-share {
+      color: --color(--qui-FC-333);
+    }
+  }
+  .themeCount .themeItem__footer {
+    display: none;
+  }
+  .themeCount .themeItem {
+    padding-left: 0;
+    margin: 0;
+    border-top: none;
   }
 }
 // 微信二维码弹框
@@ -490,8 +520,7 @@ export default {
   &__price {
     margin-top: 10rpx;
     font-size: $fg-f5;
-    color: --color(--qui-FC-AAA);
-    text-decoration: line-through;
+    color: --color(--qui-BG-FF);
   }
   &__expire {
     font-size: $fg-f2;

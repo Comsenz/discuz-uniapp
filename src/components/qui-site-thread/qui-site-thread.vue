@@ -172,38 +172,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.site-wrap /deep/ {
-  .header {
-    height: auto;
-    margin-bottom: 30rpx;
-    background: --color(--qui-BG-2);
-    border-bottom: 2rpx solid --color(--qui-BOR-ED);
-    .circleDet {
-      padding: 60rpx 30rpx;
-      opacity: 1;
-    }
-    .circleDet-txt {
-      color: --color(--qui-FC-333);
-      opacity: 1;
-    }
-    .logo {
-      height: 75rpx;
-      padding-top: 71rpx;
-    }
-    .circleDet-num,
-    .circleDet-share {
-      color: --color(--qui-FC-333);
-    }
-  }
-  .themeCount .themeItem__footer {
-    display: none;
-  }
-  .themeCount .themeItem {
-    padding-left: 0;
-    margin: 0;
-    border-top: none;
-  }
-}
 .site-info {
   padding: 50rpx 30rpx 80rpx;
   font-size: $fg-f3;
