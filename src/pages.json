@@ -51,6 +51,22 @@
         "navigationBarTitleText": "#话题#"
       }
     },
+    {
+      "path": "pages/topic/parse-goods",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "发布"
+      }
+    },
+    {
+      "path": "pages/topic/goods-post",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "发布"
+      }
+    },
     // 登录注册
     {
       "path": "pages/user/phone-login",

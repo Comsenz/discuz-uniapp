@@ -776,6 +776,7 @@ export default {
     registerSuccess: '注册成功',
     registerBindSuccess: '注册绑定成功',
     loginSuccess: '登录成功',
+    loging: '正在登录中...',
     loginSuccessFail: '登录失败',
     loginBindSuccess: '登录绑定成功',
     agreement: '注册登录即表示您同意',
@@ -806,6 +807,7 @@ export default {
     usernameerro: '用户名错误',
     pcloginconfirm: 'pc端登录确认',
     cancelpclogin: '取消登录',
+    noBindUser: '未绑定用户',
   },
   // 举报
   report: {
