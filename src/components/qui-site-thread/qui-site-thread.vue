@@ -40,7 +40,11 @@
             }}
           </view>
           <view class="site-info__owner-detail-days">
-            {{ i18n.t('site.createdDays', { num: 812 }) }}
+            {{
+              i18n.t('site.createdDays', {
+                num: setDays(forums.set_site && forums.set_site.site_install),
+              })
+            }}
           </view>
         </view>
       </view>
@@ -52,13 +56,18 @@
     </view>
     <view class="site-theme">
       <view class="site-theme__title">{{ i18n.t('site.partialcontentpreview') }}</view>
-      <qui-thread-item
+      <view
         v-for="(item, index) in data"
         :key="index"
-        :currentindex="index"
-        :thread="item"
-        :can-click="false"
-      ></qui-thread-item>
+        :class="data.length - 1 == index ? 'site-theme__last' : 'site-theme__wrap'"
+      >
+        <qui-thread-item
+          :key="index"
+          :currentindex="index"
+          :thread="item"
+          :can-click="false"
+        ></qui-thread-item>
+      </view>
     </view>
   </view>
 </template>
@@ -165,6 +174,13 @@ export default {
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         this.data = [...this.data, ...res];
       });
+    },
+    setDays(time) {
+      const oldTimeFormat = new Date(time.replace(/-/g, '/'));
+      const nowDate = new Date();
+      const times = nowDate.getTime() - oldTimeFormat.getTime();
+      const days = parseInt(times / (60 * 60 * 24 * 1000), 10);
+      return days;
     },
   },
 };
