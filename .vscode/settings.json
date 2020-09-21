@@ -45,5 +45,5 @@
   },
   "stylelint.enable": true,
   "stylelint.configOverrides": null,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": false
 }
