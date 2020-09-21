@@ -807,6 +807,7 @@ export default {
     usernameerro: '用户名错误',
     pcloginconfirm: 'pc端登录确认',
     cancelpclogin: '取消登录',
+    noBindUser: '未绑定用户',
   },
   // 举报
   report: {

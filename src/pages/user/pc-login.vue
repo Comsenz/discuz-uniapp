@@ -21,7 +21,6 @@
 
 <script>
 /* eslint-disable */
-let switchdata = true;
 import { http } from '@/api/api-request';
 
 export default {
@@ -86,14 +85,27 @@ export default {
                 state,
                 sessionId,
                 sessionToken
-              }).then(() => {
-                uni.showToast({
-                  icon: 'none',
-                  title: this.i18n.t('user.loginSuccess'),
-                  success: () => {
-                    this.cancelPclogin();
+              }).then((res) => {
+                if (res && res.data && res.data.errors) {
+                  if (res.data.errors[0].code === 'no_bind_user') {
+                    uni.showToast({
+                      icon: 'none',
+                      title: this.i18n.t('user.loginSuccess'),
+                      success: () => {
+                        this.cancelPclogin();
+                      }
+                    });
                   }
-                });
+                }
+                if (res && res.data && res.data.data) {
+                  uni.showToast({
+                    icon: 'none',
+                    title: this.i18n.t('user.loginSuccess'),
+                    success: () => {
+                      this.cancelPclogin();
+                    }
+                  });
+                }
               });
             }
           },
