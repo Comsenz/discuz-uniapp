@@ -267,7 +267,6 @@ export default {
     },
     // 添加关注
     addFollow(userInfo) {
-      console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -299,7 +298,6 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',

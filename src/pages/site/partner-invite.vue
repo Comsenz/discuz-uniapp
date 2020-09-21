@@ -202,7 +202,45 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-.site /deep/ .qui-button--button {
+.site /deep/ {
+  padding-bottom: 130rpx;
+  .header {
+    height: auto;
+    margin-bottom: 30rpx;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    .circleDet {
+      padding: 60rpx 30rpx;
+      opacity: 1;
+    }
+    .circleDet-txt {
+      color: --color(--qui-FC-333);
+      opacity: 1;
+    }
+    .logo {
+      height: 75rpx;
+      padding-top: 71rpx;
+    }
+    .circleDet-num,
+    .circleDet-share {
+      color: --color(--qui-FC-333);
+    }
+  }
+  .themeCount .themeItem__footer {
+    display: none;
+  }
+  .themeCount .themeItem {
+    padding-left: 0;
+    margin: 0;
+    border-top: none;
+  }
+  .site-theme__last {
+    .themeItem {
+      border-bottom: none;
+    }
+  }
+}
+.site /deep/ .site-submit .qui-button--button {
   position: absolute;
   top: 20rpx;
   right: 24rpx;
@@ -219,7 +257,9 @@ export default {
   }
 }
 .site-submit {
-  position: relative;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   height: 130rpx;
   padding: 20rpx 24rpx;
   background: --color(--qui-BG-2);

@@ -251,7 +251,7 @@
 <script>
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
-import { setCookie } from '@/utils/setCookie';
+// import { setCookie } from '@/utils/setCookie';
 
 export default {
   props: {
@@ -500,8 +500,27 @@ export default {
         });
       } else {
         const token = uni.getStorageSync('access_token');
-        setCookie('token', token, 30);
-        window.location.href = item.url;
+        // setCookie('token', token, 30);
+        const header = {
+          authorization: `Bearer ${token}`,
+        };
+        const that = this;
+        uni.downloadFile({
+          url: item.url,
+          header,
+          success(res) {
+            if (res.statusCode === 200) {
+              that.$refs.toast.show({
+                message: that.i18n.t('profile.downloadSuccess'),
+              });
+            }
+          },
+          error() {
+            that.$refs.toast.show({
+              message: that.i18n.t('profile.downloadError'),
+            });
+          },
+        });
       }
       // #endif
       // #ifdef MP-WEIXIN
