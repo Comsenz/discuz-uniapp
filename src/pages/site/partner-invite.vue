@@ -203,6 +203,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .site /deep/ {
+  padding-bottom: 130rpx;
   .header {
     height: auto;
     margin-bottom: 30rpx;
@@ -251,7 +252,9 @@ export default {
   }
 }
 .site-submit {
-  position: relative;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   height: 130rpx;
   padding: 20rpx 24rpx;
   background: --color(--qui-BG-2);
