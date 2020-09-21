@@ -59,11 +59,8 @@
         </view>
         <view class="my-items__wrap">
           <navigator url="/pages/site/index" hover-class="none">
-            <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
-          </navigator>
-          <navigator url="/pages/site/search" hover-class="none">
             <qui-cell-item
-              :title="i18n.t('profile.search')"
+              :title="i18n.t('profile.circleinfo')"
               arrow
               :border="
                 forums.other &&
