@@ -1,5 +1,5 @@
 <template>
-  <view :class="'thread' + currentindex">
+  <view class="thread">
     <qui-content
       :ref="'thread-' + currentindex"
       :currentindex="currentindex"
