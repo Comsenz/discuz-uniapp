@@ -135,6 +135,7 @@ export default {
     videoUploading: '视频上传中...',
   },
   core: {
+    not_play_video: '浏览器不支持该媒体的播放',
     register_close: '站点禁止注册',
     bind_error: '绑定错误',
     noavatar: '无',

@@ -10,6 +10,7 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="post-box__hd">
         <view class="post-box__hd-l">
           <qui-icon
@@ -131,6 +132,10 @@
           </view>
         </view>
       </view>
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <qui-vditor ref="vditor"></qui-vditor>
+      <!-- #endif -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -188,7 +193,7 @@
               @click="videoDel"
             ></qui-icon>
           </view>
-          <view class="controls-play-icon" @click.stop="playVideo">
+          <view class="controls-play-icon" @click.stop="playVideo(item)">
             <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
           </view>
         </view>
@@ -749,10 +754,15 @@ export default {
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteVideoSure');
     },
-    playVideo() {
+    playVideo(video) {
+      // #ifdef MP-WEiXIN
       this.controlsStatus = true;
       this.videoContext.play();
       this.videoContext.requestFullScreen();
+      // #endif
+      // #ifdef H5
+      uni.$emit('playVideo', video);
+      // #endif
     },
     fullscreenchange(e) {
       this.fullscreenStatus = e.detail.fullScreen;
@@ -934,7 +944,9 @@ export default {
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       // #ifdef H5
-      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      // console.log(this.textAreaValue);
+      // return;
       // #endif
 
       if (!this.categoryId) {
@@ -1485,12 +1497,7 @@ export default {
     uni.$on('vditor', vditor => {
       this.vditor = vditor;
       this.vditor.setValue(this.textAreaValue);
-    });
-    uni.$on('clickImage', item => {
-      this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
-    });
-    uni.$on('clickAttach', item => {
-      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
+      this.$refs.vditor.setPostComponent(this);
     });
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
@@ -1603,7 +1610,7 @@ export default {
     this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     if(!this.threadId){
       this.setThread();
-    } 
+    }
   },
   onReady() {
     this.videoContext = uni.createVideoContext('video');
