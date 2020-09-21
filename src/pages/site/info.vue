@@ -437,6 +437,11 @@ export default {
     margin: 0;
     border-top: none;
   }
+  .site-theme__last {
+    .themeItem {
+      border-bottom: none;
+    }
+  }
 }
 // 微信二维码弹框
 

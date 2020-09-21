@@ -234,6 +234,11 @@ export default {
     margin: 0;
     border-top: none;
   }
+  .site-theme__last {
+    .themeItem {
+      border-bottom: none;
+    }
+  }
 }
 .site /deep/ .site-submit .qui-button--button {
   position: absolute;
