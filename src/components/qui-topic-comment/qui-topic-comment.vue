@@ -13,15 +13,15 @@
             <text class="themeItem__header__title__username" @click="personJump">
               {{ userName }}
             </text>
-
-            <text
-              class="themeItem__header__title__isAdmin"
-              v-for="(group, index) in userRole"
-              :key="index"
-              :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
-            >
-              {{ group.isDisplay ? `${group.name}` : '' }}
-            </text>
+            <view class="themeItem__header__title__isAdmin">
+              <image
+                class="groups_icon"
+                mode="heightFix"
+                v-for="(item, index) in userRole"
+                :key="index"
+                :src="item.isDisplay ? `${item.icon}` : ''"
+              ></image>
+            </view>
           </view>
           <view class="themeItem__header__title__time">{{ localTime }}</view>
         </view>
@@ -331,11 +331,12 @@ export default {
       }
 
       &__isAdmin {
-        display: inline-block;
-        height: 37rpx;
-        font-weight: 400;
-        line-height: 37rpx;
-        color: --color(--qui-FC-AAA);
+        margin-left: 6px;
+        // display: inline-block;
+        // height: 37rpx;
+        // font-weight: 400;
+        // line-height: 37rpx;
+        // color: --color(--qui-FC-AAA);
       }
 
       &__isAdminColor {
@@ -464,5 +465,8 @@ export default {
     line-height: 37rpx;
     color: --color(--qui-FC-777);
   }
+}
+.groups_icon {
+  height: 14px;
 }
 </style>
