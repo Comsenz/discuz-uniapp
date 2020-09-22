@@ -89,7 +89,7 @@
     {
       "path": "pages/user/pc-login",
       "style": {
-        "navigationBarTitleText": "PC登录"
+        "navigationBarTitleText": "PC端登录确认"
       }
     },
     {
