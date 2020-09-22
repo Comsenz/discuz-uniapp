@@ -5,9 +5,14 @@
         <!-- 收款人 -->
         <view class="cash-content-tab">
           <qui-cell-item title="微信收款手机号" slot-right :arrow="false" :border="false">
-            <view class="cash-content-name">
-              11111111111
-            </view>
+            <input
+              class="cash-content-input cashphon"
+              type="number"
+              maxlength="11"
+              @input="setphonnumber"
+              v-model="withdrawalPhon"
+              placeholder-style="color:rgba(221,221,221,1)"
+            />
           </qui-cell-item>
         </view>
         <!-- 收款人 -->
@@ -181,6 +186,9 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
+      withdrawalPhon: '', // 提现手机号
+      withdrawalNumber: '',
+      cashType: 0,
     };
   },
   onLoad() {
@@ -200,6 +208,10 @@ export default {
       // this.postLoading = false;
       uni.hideLoading();
     });
+    console.log(this.forums);
+    if (this.forums.paycenter.wxpay_mchpay_close) {
+      this.cashType = 1;
+    }
   },
   computed: {
     usersid() {
@@ -262,6 +274,12 @@ export default {
         }
       }, 5);
     },
+    // 提现手机号设置
+    setphonnumber() {
+      setTimeout(() => {
+        this.withdrawalPhon = this.withdrawalPhon.replace(/[^\d]/g, '');
+      }, 30);
+    },
     // 点击获取验证码计时开始
     btnButton() {
       if (this.forums.qcloud.qcloud_sms === false) {
@@ -306,6 +324,7 @@ export default {
         this.balance = data.walletBalance;
         this.usertestphon = data.mobile;
         this.userphon = data.originalMobile;
+        this.withdrawalPhon = data.originalMobile;
         if (!this.usertestphon) {
           this.disabtype = true;
         }
@@ -421,12 +440,20 @@ export default {
     },
     // 提现申请
     cashwithdrawal() {
+      if (this.cashType === 1) {
+        this.withdrawalNumber = this.withdrawalPhon;
+      } else {
+        this.withdrawalNumber = this.userphon;
+      }
+      console.log(this.cashmany, this.withdrawalPhon, this.cashType, '提现参数');
       const params = {
         _jv: {
           type: 'wallet/cash',
           include: ['user', 'userWallet'],
         },
         cash_apply_amount: this.cashmany,
+        cash_type: this.cashType,
+        cash_mobile: this.withdrawalPhon,
       };
       const postcash = status.run(() => this.$store.dispatch('jv/post', params));
       postcash
@@ -576,6 +603,9 @@ export default {
     line-height: 100rpx;
     color: --color(--qui-FC-333);
     text-align: right;
+  }
+  .cashphon {
+    font-weight: 400;
   }
   // .cash-content-actual {
   //   padding-top: 26rpx;
