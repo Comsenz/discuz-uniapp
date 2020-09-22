@@ -92,48 +92,7 @@
         <view class="themeItem__content__text" v-if="themeContent">
           <qui-uparse :content="themeContent"></qui-uparse>
           <!--提问部分-->
-          <!-- <view class="themeItem__content__text__ask">
-            <view class="themeItem__header" style="padding: 30rpx 0 65rpx;">
-              <view class="themeItem__header__img" @click="personJump">
-                <qui-avatar
-                  :user="{ username: userName, avatarUrl: avatarUrl }"
-                  :is-real="isReal"
-                />
-              </view>
-              <view class="themeItem__header__title">
-                <view class="themeItem__header__title__top" @click="personJump">
-                  <text class="themeItem__header__title__username">{{ userName }}</text>
-                  <text
-                    class="themeItem__header__title__isAdmin"
-                    v-for="(group, index) in userRole"
-                    :key="index"
-                    :class="group.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
-                  >
-                    {{ group.isDisplay ? `${group.name}` : '' }}
-                  </text>
-                </view>
-                <view class="themeItem__header__title__time">{{ localTime }}</view>
-              </view>
-              <view class="themeItem__header__opera">
-                <image src="@/static/yihuida.svg" class="addAsk"></image>
-              </view>
-            </view>
-            <view class="themeItem__ask"></view>
-            <view class="themeItem__value">
-              问题价值
-            <text class=themeItem__value__text>¥2910.0</text>
-            ,立即围观答案
-            </view>
-            <view class="themeItem__ask"></view>
-            <view class="themeItem__btn" @click="watchClick()">
-              <qui-button size="medium" type='watch' class="watch-btn">
-                1元围观
-              </qui-button>
-            </view>
-            <view class="themeItem__answer" else>
-              疫情不会引发经济危机，疫情不会引发经济危机，疫情不会引发经济危机，疫情不会引发经济危机
-            </view>
-          </view> -->
+
           <!--作者向 某某某 发起了提问部分-->
           <!-- <view class="theme__put">
             <view class="theme__put__ask">
@@ -262,16 +221,6 @@
             ></qui-icon>
             <text class="attachment-name">{{ item.fileName }}</text>
           </view>
-        </view>
-      </view>
-
-      <!--作者向您发起了提问部分-->
-      <view class="theme__que">
-        <view class="theme__que__author">作者向您发起了提问</view>
-        <view class="theme__que__btn" @click="queClick()">
-          <qui-button size="medium" type="primary" class="watch-btn">
-            {{ i18n.t('topic.questionAnswering') }}
-          </qui-button>
         </view>
       </view>
 
@@ -984,18 +933,6 @@ export default {
   height: 82rpx;
   font-size: $fg-f3;
   color: --color(--qui-FC-333);
-}
-.theme__que {
-  width: 100%;
-  &__author {
-    margin-bottom: 30rpx;
-    font-size: $fg-f3;
-    color: --color(--qui-FC-AAA);
-    text-align: center;
-  }
-  &__btn {
-    padding-left: 80rpx;
-  }
 }
 .theme__put {
   width: 670rpx;

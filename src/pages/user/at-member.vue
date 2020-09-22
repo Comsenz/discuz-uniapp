@@ -74,7 +74,7 @@
     </view>
     <view class="qui-at-member-page-box__ft">
       <qui-button
-        v-if="select !== select"
+        v-if="select !== 'select'"
         size="large"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
         :disabled="Boolean(checkAvatar.length < 1)"

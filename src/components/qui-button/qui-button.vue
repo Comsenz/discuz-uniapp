@@ -124,6 +124,7 @@ $success-bg-color: #07c160;
 $danger-bg-color: #ee0a24;
 $plain-bg-color: #fff;
 $watch-bg-color: #fc9324;
+$ask-bg-color: #fa5151;
 $answer-bg-color: --color(--qui-BG-777);
 
 $txt-color-grey: --color(--qui-FC-TAG);
@@ -163,6 +164,10 @@ $font-size-post: 40rpx;
   &[type='answer'] {
     color: $txt-color-aaa;
     background-color: $answer-bg-color;
+  }
+  &[type='ask'] {
+    color: $txt-color-white;
+    background-color: $ask-bg-color;
   }
   &[size='large'] {
     width: 670rpx;

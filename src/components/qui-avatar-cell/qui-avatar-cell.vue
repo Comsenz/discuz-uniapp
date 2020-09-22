@@ -1,7 +1,7 @@
 <template>
   <view>
     <label class="avatar-box" @click="getNameId(mark)">
-      <view class="avatar-box__img">
+      <view class="avatar-box__img" v-if="post === true">
         <qui-avatar :user="{ username: title, avatarUrl: icon }" :is-real="isReal" size="70" />
       </view>
       <view class="avatar-box__r">
@@ -62,6 +62,10 @@ export default {
     },
     center: {
       default: false,
+      type: Boolean,
+    },
+    post: {
+      default: true,
       type: Boolean,
     },
     rightColor: {
