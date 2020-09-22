@@ -805,7 +805,7 @@ export default {
     configurationerror: '配置错误',
     usernamePasworderro: '用户名或密码错误',
     usernameerro: '用户名错误',
-    pcloginconfirm: 'pc端登录确认',
+    pcloginconfirm: 'PC 端登录确认',
     cancelpclogin: '取消登录',
     noBindUser: '未绑定用户',
   },

@@ -16,11 +16,7 @@
         <qui-cell-item
           :title="(followingItem.toUser && followingItem.toUser.username) || ''"
           slot-right
-          :brief="
-            followingItem.toUser && followingItem.toUser.groups
-              ? followingItem.toUser.groups[0].name
-              : ''
-          "
+          :brief="handleGroups(followingItem.toUser)"
           :border="index == followingList.length - 1 ? false : true"
         >
           <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
@@ -130,6 +126,14 @@ export default {
         url: `/pages/profile/index?userId=${userId}`,
       });
     },
+    handleGroups(data) {
+      const { groups } = data;
+      let groupsName = '';
+      groups.forEach(v => {
+        groupsName = `${groupsName}${v.name}`;
+      });
+      return groupsName;
+    },
     // 下拉加载
     pullDown() {
       if (this.loadingType !== 'more') {
@@ -140,7 +144,6 @@ export default {
     },
     // 添加关注
     addFollow(userInfo, index) {
-      console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -181,7 +184,6 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo, index) {
-      console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',

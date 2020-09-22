@@ -54,7 +54,7 @@
         </view>
       </view>
     </view>
-    <view class="site-theme">
+    <view class="site-theme" v-if="data.length > 0">
       <view class="site-theme__title">{{ i18n.t('site.partialcontentpreview') }}</view>
       <view
         v-for="(item, index) in data"
