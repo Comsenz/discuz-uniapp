@@ -17,15 +17,15 @@
             <text class="themeItem__header__title__username">
               {{ userName }}
             </text>
-            <view v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
-              <image
-                class="groups_icon"
-                mode="heightFix"
+            <text v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
+              <text
                 v-for="(item, index) in userGroups"
                 :key="index"
-                :src="item.isDisplay ? `${item.icon}` : ''"
-              ></image>
-            </view>
+                :class="item.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
+              >
+                {{ item.isDisplay ? `${item.name}` : '' }}
+              </text>
+            </text>
             <text v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
               <!-- {{ themeType === '2' ? '回复了我' : '@了我' }} -->
               {{ themeStatus }}
@@ -911,8 +911,5 @@ export default {
 .themeItem__content__uparse .themeItem__content__fufei {
   position: absolute;
   top: -2rpx;
-}
-.groups_icon {
-  height: 14px;
 }
 </style>

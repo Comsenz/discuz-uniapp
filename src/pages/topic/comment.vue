@@ -84,15 +84,14 @@
                         >
                           {{ thread.user.username }}
                         </span>
-                        <view class="thread__header__title__isAdmin">
-                          <image
-                            class="groups_icon"
-                            mode="heightFix"
-                            v-for="(item, index) in thread.user.groups"
-                            :key="index"
-                            :src="item.isDisplay ? `${item.icon}` : ''"
-                          ></image>
-                        </view>
+                        <span
+                          class="thread__header__title__isAdmin"
+                          v-for="(group, gindex) in thread.user.groups"
+                          :key="gindex"
+                          :class="group.isDisplay ? 'thread__header__title__isAdminColor' : ''"
+                        >
+                          {{ group.isDisplay ? `${group.name}` : '' }}
+                        </span>
                       </view>
                       <view class="thread__header__title__time">
                         {{ localTime }}
@@ -1761,12 +1760,11 @@ page {
       }
 
       &__isAdmin {
-        margin-left: 6px;
-        // display: inline-block;
-        // height: 37rpx;
-        // font-weight: 400;
-        // line-height: 37rpx;
-        // color: rgba(170, 170, 170, 1);
+        display: inline-block;
+        height: 37rpx;
+        font-weight: 400;
+        line-height: 37rpx;
+        color: rgba(170, 170, 170, 1);
       }
 
       &__isAdminColor {
@@ -1933,8 +1931,5 @@ page {
     font-size: $fg-f4;
     color: --color(--qui-FC-B5);
   }
-}
-.groups_icon {
-  height: 14px;
 }
 </style>
