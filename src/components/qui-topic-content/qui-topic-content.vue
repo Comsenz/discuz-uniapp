@@ -499,28 +499,7 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        const token = uni.getStorageSync('access_token');
-        // setCookie('token', token, 30);
-        const header = {
-          authorization: `Bearer ${token}`,
-        };
-        const that = this;
-        uni.downloadFile({
-          url: item.url,
-          header,
-          success(res) {
-            if (res.statusCode === 200) {
-              that.$refs.toast.show({
-                message: that.i18n.t('profile.downloadSuccess'),
-              });
-            }
-          },
-          error() {
-            that.$refs.toast.show({
-              message: that.i18n.t('profile.downloadError'),
-            });
-          },
-        });
+        window.location.href = item.url;
       }
       // #endif
       // #ifdef MP-WEIXIN
