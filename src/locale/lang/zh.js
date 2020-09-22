@@ -530,6 +530,7 @@ export default {
     NoteOpen: '短信服务未开启',
     logoinpaswd: '已有登录密码',
     phonerro: '手机号错误',
+    withdrawalPhon: '请输入收款手机号',
   },
   permission: {
     viewThreads: '查看主题列表',

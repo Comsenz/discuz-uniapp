@@ -11,6 +11,7 @@
               maxlength="11"
               @input="setphonnumber"
               v-model="withdrawalPhon"
+              :placeholder="i18n.t('modify.withdrawalPhon')"
               placeholder-style="color:rgba(221,221,221,1)"
             />
           </qui-cell-item>
