@@ -4,7 +4,12 @@
       <view class="cash-content">
         <!-- 收款人 -->
         <view class="cash-content-tab">
-          <qui-cell-item title="微信收款手机号" slot-right :arrow="false" :border="false">
+          <qui-cell-item
+            :title="i18n.t('modify.collectionwechat')"
+            slot-right
+            :arrow="false"
+            :border="false"
+          >
             <input
               class="cash-content-input cashphon"
               type="number"
