@@ -141,8 +141,6 @@ export default {
   },
   methods: {
     bindPhone() {
-      console.log('this.forums', this.forums);
-      console.log('this.profile', this.profile);
       // #ifdef MP-WEIXIN
       if (this.profile && this.profile.mobile === '') {
         this.$refs.authPhone.open();
