@@ -12,12 +12,6 @@
       }
     },
     {
-      "path": "pages/share/weixinchome",
-      "style": {
-        "navigationBarTitleText": "相册选取"
-      }
-    },
-    {
       "path": "pages/topic/content",
       "style": {
         "navigationBarTitleText": "",
@@ -90,12 +84,6 @@
       "path": "pages/user/pc-login",
       "style": {
         "navigationBarTitleText": "PC端登录确认"
-      }
-    },
-    {
-      "path": "pages/user/grant-login",
-      "style": {
-        "navigationBarTitleText": "PC登录"
       }
     },
     {

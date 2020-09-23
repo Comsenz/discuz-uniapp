@@ -1136,6 +1136,7 @@ export default {
 
       threadAction
         .then(data => {
+          console.log(data);
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1316,21 +1317,53 @@ export default {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             }
             if (data.price <= 0) {
+              console.log('免费贴');
               // #ifndef H5
               if (this.system === 'ios') {
-                if (this.paymentmodel === false) {
-                  this.rewardStatus = false;
-                } else if (this.paymentmodel === true) {
-                  this.rewardStatus = true;
+                if (data.attachmentPrice > 0) {
+                  console.log('附件付费');
+                  if (this.paymentmodel === false) {
+                    this.paidStatus = false;
+                    this.rewardStatus = false;
+                  } else if (this.paymentmodel === true) {
+                    this.paidStatus = true;
+                    this.rewardStatus = false;
+                  }
+                } else {
+                  if (this.paymentmodel === false) {
+                    this.rewardStatus = false;
+                  } else if (this.paymentmodel === true) {
+                    this.rewardStatus = true;
+                  }
                 }
               } else {
-                this.rewardStatus = true;
+                if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
+                  console.log('附件付费2');
+                  this.paidStatus = true;
+                  this.paidBtnStatus = true;
+                  this.rewardStatus = false;
+                } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
+                  this.paidStatus = false;
+                  this.rewardStatus = false;
+                } else {
+                  this.paidStatus = false;
+                  this.rewardStatus = true;
+                }
               }
               // #endif
-              this.paidBtnStatus = false;
               // #ifdef H5
-              this.paidBtnStatus = false;
-              this.rewardStatus = true;
+              if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
+                console.log('附件付费2');
+                this.paidStatus = true;
+                this.paidBtnStatus = true;
+                this.rewardStatus = false;
+              } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
+                this.paidStatus = false;
+                this.rewardStatus = false;
+              } else {
+                this.paidStatus = false;
+                this.rewardStatus = true;
+              }
               // #endif
             } else {
               // #ifndef H5
