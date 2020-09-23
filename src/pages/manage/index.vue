@@ -1,35 +1,31 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site-management-box">
-    <view class="site-management-box-list" v-for="listItem in list" :key="listItem.id">
-      <navigator :url="listItem.url" hover-class="none">
-        <qui-cell-item :title="listItem.title" arrow :slot-right="listItem.slotRight">
-          <text>{{ listItem.text }}</text>
+    <view
+      class="site-management-box-list"
+      v-if="forums.other && (forums.other.can_edit_user_group || forums.other.can_edit_user_status)"
+    >
+      <navigator url="/pages/manage/member" hover-class="none">
+        <qui-cell-item :title="i18n.t('manage.manageMembers')" arrow :slot-right="true">
+          <text>{{ i18n.t('manage.setting') }}</text>
         </qui-cell-item>
+      </navigator>
+    </view>
+    <view class="site-management-box-list">
+      <navigator url="/pages/manage/invite" hover-class="none">
+        <qui-cell-item :title="i18n.t('manage.inviteMembers')" arrow></qui-cell-item>
       </navigator>
     </view>
   </qui-page>
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
+  mixins: [forums],
   data() {
     return {
-      list: [
-        {
-          id: 1,
-          url: '/pages/manage/member',
-          title: this.i18n.t('manage.manageMembers'),
-          slotRight: true,
-          text: this.i18n.t('manage.setting'),
-        },
-        {
-          id: 2,
-          url: '/pages/manage/invite',
-          title: this.i18n.t('manage.inviteMembers'),
-          slotRight: false,
-          text: '',
-        },
-      ],
+      //
     };
   },
 };

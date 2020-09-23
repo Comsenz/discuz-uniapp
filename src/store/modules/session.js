@@ -12,6 +12,7 @@ import {
   SET_TOKEN,
   SET_GOOD,
   SET_INVITE_CODE,
+  SET_ATTACHMENT,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -69,6 +70,9 @@ const actions = {
   },
   setInviteCode: (context, payload) => {
     context.commit(SET_INVITE_CODE, payload);
+  },
+  setAttachment: (context, payload) => {
+    context.commit(SET_ATTACHMENT, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -251,6 +255,9 @@ const mutations = {
   },
   [SET_INVITE_CODE](state, payload) {
     state.inviteCode = payload;
+  },
+  [SET_ATTACHMENT](state, payload) {
+    state.attachment = payload;
   },
 };
 
