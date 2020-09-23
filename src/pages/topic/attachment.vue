@@ -1,6 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme">
-    <web-view :src="src"></web-view>
+    <img :src="src" />
   </qui-page>
 </template>
 
