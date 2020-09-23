@@ -23,14 +23,12 @@
 <script>
 // eslint-disable
 import Vditor from 'vditor';
-import './index.css';
 import {
   AtIcon,
   TopicIcon,
   EmojiIcon,
   ImageIcon,
   AttachIcon,
-  RecordIcon,
 } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -166,14 +164,14 @@ export default {
           document.querySelector('#vditor-file').click();
         },
       },
-      {
-        name: 'record',
-        tip: '上传语音',
-        icon: RecordIcon,
-        click() {
-          console.log(this, 'RecordIcon');
-        },
-      },
+      // {
+      //   name: 'record-q',
+      //   tip: '上传语音',
+      //   icon: RecordIcon,
+      //   click() {
+      //     console.log(this, 'RecordIcon');
+      //   },
+      // },
       'line',
       'code',
       'inline-code',
@@ -184,7 +182,7 @@ export default {
     this.vditor = new Vditor('editor', {
       mode: 'wysiwyg',
       after: () => {
-        uni.$emit('vditor', this.vditor);
+        uni.$emit('vditor', this.vditor, this);
         this.vditor.focus();
       },
       cache: {

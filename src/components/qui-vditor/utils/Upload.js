@@ -27,7 +27,6 @@ export default class Upload {
               })
               .then(data => {
                 if(data.statusCode === 201) {
-                  console.log(this);
                   _that._insertImage({ name: res.tempFiles[index].name, path: tmpFile, id: data.data.data.id });
                   return resolve(data, res, index);
                 }
