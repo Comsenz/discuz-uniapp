@@ -207,10 +207,17 @@
       </view>-->
       <qui-cell-item
         :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.lookPay')"
+        :addon="showPayType"
+        arrow
+        @click="lookPay"
+      ></qui-cell-item>
+      <qui-cell-item
+        :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.paymentAmount')"
         :addon="showPrice"
         arrow
-        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
+        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
         @click="cellClick('pay')"
       ></qui-cell-item>
       <qui-cell-item
@@ -268,6 +275,23 @@
           {{ i18n.t('discuzq.post.post') }}
         </qui-button>
       </view>
+      <uni-popup ref="lookPayPopup" type="bottom">
+        <view class="popup-share">
+          <view class="pay-type" @click="choicePayType(0)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
+          </view>
+          <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
+            {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
+          </view>
+          <view class="pay-type" @click="choicePayType(2)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancelLookPay()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
+        </view>
+      </uni-popup>
       <uni-popup ref="popupBtm" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
@@ -507,6 +531,8 @@ export default {
       deleteTip: '确定删除吗？', // 删除提示
       currentPosition: {},
       chooseType: 1, // 视频是从首页上传的还是从发布页上传的
+      payType: 0, //  查看付费的方式，  0均免费， 1内容免费，附件付费，  2内容和附件都付费
+      showPayType: '', // 选择的支付方式
     };
   },
   computed: {
@@ -825,6 +851,31 @@ export default {
         this.textShow = true;
       }
     },
+
+    // 点击显示查看支付的抽屉
+    lookPay() {
+      this.$refs.lookPayPopup.open();
+    },
+
+    // 取消查看支付选择
+    cancelLookPay() {
+      this.$refs.lookPayPopup.close();
+    },
+
+    // 选择支付查看的方式 0均免费， 1内容免费，附件付费，  2内容和附件都付费
+    choicePayType(type) {
+      console.log(type, '类型');
+      if (type === 0) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+      } else if (type === 1) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+      } else {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+      }
+      this.payType = type;
+      this.$refs.lookPayPopup.close();
+    },
+
     cellClick(type) {
       this.setType = type;
       if (type === 'word') {
@@ -884,6 +935,7 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      console.log(this.type, '``````', this.price, '价格');
       // #ifdef H5
       // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
       // #endif
@@ -914,6 +966,35 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 1) {
+            // 内容免费，附件付费
+            console.log(this.$refs.uploadFiles.getValue(), '这是附件列表');
+            if (this.$refs.uploadFiles.getValue().length === 0) {
+              // 附件不能为空
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.attachmentCannotBeEmpty'),
+              });
+              status = false;
+            } else if (this.price === 0) {
+              // 选择付费后，价格不能为空
+              // console.log('选择付费后，价格不能为空');
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -927,6 +1008,16 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -943,6 +1034,16 @@ export default {
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
@@ -952,6 +1053,16 @@ export default {
                 message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
@@ -1113,6 +1224,11 @@ export default {
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
       };
+      if (this.payType === 1) {
+        params.attachment_price = this.price;
+        params.price = '';
+      }
+
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
@@ -1610,6 +1726,8 @@ export default {
         }
       }
     });
+    // 初始化默认内容附件均免费
+    this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
   },
   onShow() {
     let atMemberList = '';
@@ -1990,5 +2108,11 @@ export default {
   line-height: 60rpx;
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
+}
+.pay-type {
+  font-size: $fg-f4;
+  line-height: 100rpx;
+  text-align: center;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
 }
 </style>
