@@ -210,6 +210,7 @@
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
+        v-if="type !== 0 && forums.other.can_create_thread_paid"
         @click="lookPay"
       ></qui-cell-item>
       <qui-cell-item
