@@ -911,18 +911,18 @@ export default {
       }
       if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
-        if(thread.firstPost.images) {
+        if (thread.firstPost.images) {
           thread.firstPost.images = thread.firstPost.images.filter(item => {
-            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+            if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
             }
             return true;
           });
         }
 
-        if(thread.firstPost.attachments) {
+        if (thread.firstPost.attachments) {
           thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
-            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+            if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
             }
             return true;
