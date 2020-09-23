@@ -532,18 +532,21 @@ export default {
     },
     // 附件预览
     preview(item) {
-      if (item && item._jv) {
-        console.log('item-----', item);
-        const { id } = item._jv;
-        this.$store
-          .dispatch('jv/get', [`attachments/${id}&page=1`, {}])
-          .then(res => {
-            console.log('res', res);
-          })
-          .catch(err => {
-            console.log(err);
+      const params = {
+        item,
+      };
+      this.$store.dispatch('session/setAttachment', params);
+      this.$store
+        .dispatch('jv/get', [`attachments/${item._jv.id}&page=1`, {}])
+        .then(res => {
+          console.log('res', res);
+          uni.navigateTo({
+            url: '/pages/topic/attachment',
           });
-      }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     // 只能播放一个音频
     audioPlay(id) {
