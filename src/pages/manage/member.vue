@@ -42,7 +42,7 @@
               right-color="#aaa"
               :mark="item.id"
               :title="item.username"
-              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :value="handleGroups(item)"
               :icon="item.avatarUrl"
               :is-real="item.isReal"
             >
@@ -72,7 +72,7 @@
               right-color="#aaa"
               :mark="item.id"
               :title="item.username"
-              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :value="handleGroups(item)"
               :icon="item.avatarUrl"
               :is-real="item.isReal"
             >
@@ -173,6 +173,14 @@ export default {
     cancelSearch() {
       this.isSearch = false;
       this.searchText = '';
+    },
+    handleGroups(data) {
+      const { groups } = data;
+      let groupsName = '';
+      groups.forEach(v => {
+        groupsName = `${groupsName}${v.name}`;
+      });
+      return groupsName;
     },
     // 调用 获取所有用户组 接口
     getGroupList() {

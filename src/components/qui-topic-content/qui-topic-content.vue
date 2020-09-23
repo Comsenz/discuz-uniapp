@@ -197,14 +197,17 @@
               @audioPlay="audioPlay"
             ></qui-audio>
           </view>
-          <view @tap="download(item)" v-else class="attachment-name">
+          <view v-else class="attachment-name">
             <qui-icon
               class="icon-attachment"
               :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text>{{ item.fileName }}</text>
+            <text @tap="download(item)">{{ item.fileName }}</text>
+            <text @click="preview(item)" style="position: absolute; right: 20rpx; color: #1878f3;">
+              预览
+            </text>
           </view>
           <view v-if="['MP4'].indexOf(item.format) !== -1">
             <text
@@ -499,28 +502,7 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        const token = uni.getStorageSync('access_token');
-        // setCookie('token', token, 30);
-        const header = {
-          authorization: `Bearer ${token}`,
-        };
-        const that = this;
-        uni.downloadFile({
-          url: item.url,
-          header,
-          success(res) {
-            if (res.statusCode === 200) {
-              that.$refs.toast.show({
-                message: that.i18n.t('profile.downloadSuccess'),
-              });
-            }
-          },
-          error() {
-            that.$refs.toast.show({
-              message: that.i18n.t('profile.downloadError'),
-            });
-          },
-        });
+        window.location.href = item.url;
       }
       // #endif
       // #ifdef MP-WEIXIN
@@ -547,6 +529,21 @@ export default {
         },
       });
       // #endif
+    },
+    // 附件预览
+    preview(item) {
+      if (item && item._jv) {
+        console.log('item-----', item);
+        const { id } = item._jv;
+        this.$store
+          .dispatch('jv/get', [`attachments/${id}&page=1`, {}])
+          .then(res => {
+            console.log('res', res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     // 只能播放一个音频
     audioPlay(id) {

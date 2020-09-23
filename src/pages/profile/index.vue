@@ -240,7 +240,7 @@ export default {
           } else {
             this.loaded = true;
             this.dialogId = res.dialog ? res.dialog._jv.id : 0;
-            res.groupsName = res.groups ? res.groups[0].name : '';
+            res.groupsName = res.groups && res.groups.length > 0 ? res.groups[0].name : '';
             this.setNum(res);
             this.userInfo = res;
             uni.setNavigationBarTitle({
