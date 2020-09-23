@@ -10,127 +10,132 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <view class="post-box__hd">
-        <view class="post-box__hd-l">
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-expression"
-            size="40"
-            :color="emojiShow ? '#1878F3' : '#777'"
-            @click="emojiclick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-call"
-            size="40"
-            color="#777"
-            @click="callClick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-wei"
-            size="40"
-            color="#777"
-            @click="topicPage"
-          ></qui-icon>
+
+      <view v-if="type !== 1">
+        <view class="post-box__hd">
+          <view class="post-box__hd-l">
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-expression"
+              size="40"
+              :color="emojiShow ? '#1878F3' : '#777'"
+              @click="emojiclick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-call"
+              size="40"
+              color="#777"
+              @click="callClick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-wei"
+              size="40"
+              color="#777"
+              @click="topicPage"
+            ></qui-icon>
+          </view>
+          <text class="post-box__hd-r">
+            {{
+          textAreaValue.length &lt;= textAreaLength
+          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+            }}
+          </text>
         </view>
-        <text class="post-box__hd-r">
-          {{
-        textAreaValue.length &lt;= textAreaLength
-        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
-          }}
-        </text>
-      </view>
-      <view class="emoji-bd" v-show="emojiShow">
-        <qui-emoji
-          position="absolute"
-          top="20rpx"
-          border-radius="10rpx"
-          @click="getEmojiClick"
-        ></qui-emoji>
-      </view>
-      <view class="post-box__con">
-        <textarea
-          id="textarea"
-          ref="textarea"
-          class="post-box__con-text"
-          :placeholder="i18n.t('discuzq.post.placeholder')"
-          placeholder-class="textarea-placeholder"
-          v-model="textAreaValue"
-          auto-height="true"
-          :show-confirm-bar="barStatus"
-          :adjust-position="true"
-          cursor-spacing="30"
-          cursor="cursor"
-          :maxlength="10000"
-          :focus="type !== 1"
-          v-show="textShow"
-          @blur="contBlur"
-          @focus="focusEvent"
-        ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
-          <text class="text-cover">{{ textAreaValue }}</text>
+        <view class="emoji-bd" v-show="emojiShow">
+          <qui-emoji
+            position="absolute"
+            top="20rpx"
+            border-radius="10rpx"
+            @click="getEmojiClick"
+          ></qui-emoji>
         </view>
-        <view class="markdown-box" v-if="markdownShow">
-          <view>
-            <qui-icon
-              name="icon-bold"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('bold')"
-            ></qui-icon>
+        <view class="post-box__con">
+          <textarea
+            id="textarea"
+            ref="textarea"
+            class="post-box__con-text"
+            :placeholder="i18n.t('discuzq.post.placeholder')"
+            placeholder-class="textarea-placeholder"
+            v-model="textAreaValue"
+            auto-height="true"
+            :show-confirm-bar="barStatus"
+            :adjust-position="true"
+            cursor-spacing="30"
+            cursor="cursor"
+            :maxlength="10000"
+            :focus="type !== 1"
+            v-show="textShow"
+            @blur="contBlur"
+            @focus="focusEvent"
+          ></textarea>
+          <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
+            <text class="text-cover">{{ textAreaValue }}</text>
           </view>
-          <view>
-            <qui-icon
-              name="icon-title"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('title')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-italic"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('italic')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-quote"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('quote')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-code"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('code')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-link"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('link')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-strikethrough"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('strikethrough')"
-            ></qui-icon>
+          <view class="markdown-box" v-if="markdownShow">
+            <view>
+              <qui-icon
+                name="icon-bold"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('bold')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-title"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('title')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-italic"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('italic')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-quote"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('quote')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-code"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('code')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-link"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('link')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-strikethrough"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('strikethrough')"
+              ></qui-icon>
+            </view>
           </view>
         </view>
       </view>
+      <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
+
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -197,7 +202,7 @@
               @click="videoDel"
             ></qui-icon>
           </view>
-          <view class="controls-play-icon" @click.stop="playVideo">
+          <view class="controls-play-icon" @click.stop="playVideo(item)">
             <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
           </view>
         </view>
@@ -796,10 +801,15 @@ export default {
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteVideoSure');
     },
-    playVideo() {
+    playVideo(video) {
+      // #ifdef MP-WEiXIN
       this.controlsStatus = true;
       this.videoContext.play();
       this.videoContext.requestFullScreen();
+      // #endif
+      // #ifdef H5
+      uni.$emit('playVideo', video);
+      // #endif
     },
     fullscreenchange(e) {
       this.fullscreenStatus = e.detail.fullScreen;
@@ -938,7 +948,9 @@ export default {
     postClick() {
       console.log(this.type, '``````', this.price, '价格');
       // #ifdef H5
-      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      // console.log(this.textAreaValue);
+      // return;
       // #endif
 
       if (!this.categoryId) {
@@ -1559,17 +1571,16 @@ export default {
     },
   },
   onLoad(option) {
+    if (option.type) this.type = Number(option.type);
     // #ifdef H5
-    uni.$on('vditor', vditor => {
-      this.vditor = vditor;
-      this.vditor.setValue(this.textAreaValue);
-    });
-    uni.$on('clickImage', item => {
-      this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
-    });
-    uni.$on('clickAttach', item => {
-      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
-    });
+    if(this.type === 1) {
+      uni.$on('vditor', (vditor, vditorComponent) => {
+        this.vditor = vditor;
+        console.log(this.textAreaValue);
+        this.vditor.setValue(this.textAreaValue);
+        vditorComponent.setPostComponent(this);
+      });
+    }
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -1581,7 +1592,7 @@ export default {
       type: 1,
     };
     this.getCategories();
-    if (option.type) this.type = Number(option.type);
+
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
 
