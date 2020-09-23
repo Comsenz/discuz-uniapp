@@ -10,127 +10,132 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <view class="post-box__hd">
-        <view class="post-box__hd-l">
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-expression"
-            size="40"
-            :color="emojiShow ? '#1878F3' : '#777'"
-            @click="emojiclick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-call"
-            size="40"
-            color="#777"
-            @click="callClick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-wei"
-            size="40"
-            color="#777"
-            @click="topicPage"
-          ></qui-icon>
+
+      <view v-if="type !== 1">
+        <view class="post-box__hd">
+          <view class="post-box__hd-l">
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-expression"
+              size="40"
+              :color="emojiShow ? '#1878F3' : '#777'"
+              @click="emojiclick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-call"
+              size="40"
+              color="#777"
+              @click="callClick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-wei"
+              size="40"
+              color="#777"
+              @click="topicPage"
+            ></qui-icon>
+          </view>
+          <text class="post-box__hd-r">
+            {{
+          textAreaValue.length &lt;= textAreaLength
+          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+            }}
+          </text>
         </view>
-        <text class="post-box__hd-r">
-          {{
-        textAreaValue.length &lt;= textAreaLength
-        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
-          }}
-        </text>
-      </view>
-      <view class="emoji-bd" v-show="emojiShow">
-        <qui-emoji
-          position="absolute"
-          top="20rpx"
-          border-radius="10rpx"
-          @click="getEmojiClick"
-        ></qui-emoji>
-      </view>
-      <view class="post-box__con">
-        <textarea
-          id="textarea"
-          ref="textarea"
-          class="post-box__con-text"
-          :placeholder="i18n.t('discuzq.post.placeholder')"
-          placeholder-class="textarea-placeholder"
-          v-model="textAreaValue"
-          auto-height="true"
-          :show-confirm-bar="barStatus"
-          :adjust-position="true"
-          cursor-spacing="30"
-          cursor="cursor"
-          :maxlength="10000"
-          :focus="type !== 1"
-          v-show="textShow"
-          @blur="contBlur"
-          @focus="focusEvent"
-        ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
-          <text class="text-cover">{{ textAreaValue }}</text>
+        <view class="emoji-bd" v-show="emojiShow">
+          <qui-emoji
+            position="absolute"
+            top="20rpx"
+            border-radius="10rpx"
+            @click="getEmojiClick"
+          ></qui-emoji>
         </view>
-        <view class="markdown-box" v-if="markdownShow">
-          <view>
-            <qui-icon
-              name="icon-bold"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('bold')"
-            ></qui-icon>
+        <view class="post-box__con">
+          <textarea
+            id="textarea"
+            ref="textarea"
+            class="post-box__con-text"
+            :placeholder="i18n.t('discuzq.post.placeholder')"
+            placeholder-class="textarea-placeholder"
+            v-model="textAreaValue"
+            auto-height="true"
+            :show-confirm-bar="barStatus"
+            :adjust-position="true"
+            cursor-spacing="30"
+            cursor="cursor"
+            :maxlength="10000"
+            :focus="type !== 1"
+            v-show="textShow"
+            @blur="contBlur"
+            @focus="focusEvent"
+          ></textarea>
+          <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
+            <text class="text-cover">{{ textAreaValue }}</text>
           </view>
-          <view>
-            <qui-icon
-              name="icon-title"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('title')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-italic"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('italic')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-quote"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('quote')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-code"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('code')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-link"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('link')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-strikethrough"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('strikethrough')"
-            ></qui-icon>
+          <view class="markdown-box" v-if="markdownShow">
+            <view>
+              <qui-icon
+                name="icon-bold"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('bold')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-title"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('title')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-italic"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('italic')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-quote"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('quote')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-code"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('code')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-link"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('link')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-strikethrough"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('strikethrough')"
+              ></qui-icon>
+            </view>
           </view>
         </view>
       </view>
+      <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
+
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -197,7 +202,7 @@
               @click="videoDel"
             ></qui-icon>
           </view>
-          <view class="controls-play-icon" @click.stop="playVideo">
+          <view class="controls-play-icon" @click.stop="playVideo(item)">
             <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
           </view>
         </view>
@@ -207,10 +212,18 @@
       </view>-->
       <qui-cell-item
         :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.lookPay')"
+        :addon="showPayType"
+        arrow
+        v-if="type !== 0 && forums.other.can_create_thread_paid"
+        @click="lookPay"
+      ></qui-cell-item>
+      <qui-cell-item
+        :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.paymentAmount')"
         :addon="showPrice"
         arrow
-        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
+        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
         @click="cellClick('pay')"
       ></qui-cell-item>
       <qui-cell-item
@@ -268,6 +281,23 @@
           {{ i18n.t('discuzq.post.post') }}
         </qui-button>
       </view>
+      <uni-popup ref="lookPayPopup" type="bottom">
+        <view class="popup-share">
+          <view class="pay-type" @click="choicePayType(0)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
+          </view>
+          <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
+            {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
+          </view>
+          <view class="pay-type" @click="choicePayType(2)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancelLookPay()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
+        </view>
+      </uni-popup>
       <uni-popup ref="popupBtm" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
@@ -507,6 +537,8 @@ export default {
       deleteTip: '确定删除吗？', // 删除提示
       currentPosition: {},
       chooseType: 1, // 视频是从首页上传的还是从发布页上传的
+      payType: 0, //  查看付费的方式，  0均免费， 1内容免费，附件付费，  2内容和附件都付费
+      showPayType: '', // 选择的支付方式
     };
   },
   computed: {
@@ -769,10 +801,15 @@ export default {
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteVideoSure');
     },
-    playVideo() {
+    playVideo(video) {
+      // #ifdef MP-WEiXIN
       this.controlsStatus = true;
       this.videoContext.play();
       this.videoContext.requestFullScreen();
+      // #endif
+      // #ifdef H5
+      uni.$emit('playVideo', video);
+      // #endif
     },
     fullscreenchange(e) {
       this.fullscreenStatus = e.detail.fullScreen;
@@ -825,6 +862,31 @@ export default {
         this.textShow = true;
       }
     },
+
+    // 点击显示查看支付的抽屉
+    lookPay() {
+      this.$refs.lookPayPopup.open();
+    },
+
+    // 取消查看支付选择
+    cancelLookPay() {
+      this.$refs.lookPayPopup.close();
+    },
+
+    // 选择支付查看的方式 0均免费， 1内容免费，附件付费，  2内容和附件都付费
+    choicePayType(type) {
+      console.log(type, '类型');
+      if (type === 0) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+      } else if (type === 1) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+      } else {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+      }
+      this.payType = type;
+      this.$refs.lookPayPopup.close();
+    },
+
     cellClick(type) {
       this.setType = type;
       if (type === 'word') {
@@ -884,8 +946,11 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      console.log(this.type, '``````', this.price, '价格');
       // #ifdef H5
-      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      // console.log(this.textAreaValue);
+      // return;
       // #endif
 
       if (!this.categoryId) {
@@ -914,6 +979,35 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 1) {
+            // 内容免费，附件付费
+            console.log(this.$refs.uploadFiles.getValue(), '这是附件列表');
+            if (this.$refs.uploadFiles.getValue().length === 0) {
+              // 附件不能为空
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.attachmentCannotBeEmpty'),
+              });
+              status = false;
+            } else if (this.price === 0) {
+              // 选择付费后，价格不能为空
+              // console.log('选择付费后，价格不能为空');
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -927,6 +1021,16 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -943,6 +1047,16 @@ export default {
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
@@ -952,6 +1066,16 @@ export default {
                 message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
@@ -1113,6 +1237,11 @@ export default {
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
       };
+      if (this.payType === 1) {
+        params.attachment_price = this.price;
+        params.price = '';
+      }
+
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
@@ -1442,17 +1571,16 @@ export default {
     },
   },
   onLoad(option) {
+    if (option.type) this.type = Number(option.type);
     // #ifdef H5
-    uni.$on('vditor', vditor => {
-      this.vditor = vditor;
-      this.vditor.setValue(this.textAreaValue);
-    });
-    uni.$on('clickImage', item => {
-      this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
-    });
-    uni.$on('clickAttach', item => {
-      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
-    });
+    if(this.type === 1) {
+      uni.$on('vditor', (vditor, vditorComponent) => {
+        this.vditor = vditor;
+        console.log(this.textAreaValue);
+        this.vditor.setValue(this.textAreaValue);
+        vditorComponent.setPostComponent(this);
+      });
+    }
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -1464,7 +1592,7 @@ export default {
       type: 1,
     };
     this.getCategories();
-    if (option.type) this.type = Number(option.type);
+
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
 
@@ -1610,6 +1738,8 @@ export default {
         }
       }
     });
+    // 初始化默认内容附件均免费
+    this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
   },
   onShow() {
     let atMemberList = '';
@@ -1990,5 +2120,11 @@ export default {
   line-height: 60rpx;
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
+}
+.pay-type {
+  font-size: $fg-f4;
+  line-height: 100rpx;
+  text-align: center;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
 }
 </style>
