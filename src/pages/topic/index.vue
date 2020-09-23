@@ -1136,7 +1136,6 @@ export default {
 
       threadAction
         .then(data => {
-          console.log(data);
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1317,16 +1316,22 @@ export default {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             }
             if (data.price <= 0) {
-              console.log('免费贴');
               // #ifndef H5
               if (this.system === 'ios') {
-                if (data.attachmentPrice > 0) {
-                  console.log('附件付费');
+                if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
                   if (this.paymentmodel === false) {
                     this.paidStatus = false;
                     this.rewardStatus = false;
                   } else if (this.paymentmodel === true) {
                     this.paidStatus = true;
+                    this.rewardStatus = false;
+                  }
+                } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
+                  if (this.paymentmodel === false) {
+                    this.paidStatus = false;
+                    this.rewardStatus = false;
+                  } else if (this.paymentmodel === true) {
+                    this.paidStatus = false;
                     this.rewardStatus = false;
                   }
                 } else {
@@ -1338,7 +1343,6 @@ export default {
                 }
               } else {
                 if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
-                  console.log('附件付费2');
                   this.paidStatus = true;
                   this.paidBtnStatus = true;
                   this.rewardStatus = false;
@@ -1353,7 +1357,6 @@ export default {
               // #endif
               // #ifdef H5
               if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
-                console.log('附件付费2');
                 this.paidStatus = true;
                 this.paidBtnStatus = true;
                 this.rewardStatus = false;
