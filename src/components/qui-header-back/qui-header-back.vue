@@ -26,7 +26,7 @@
           </view>
           <view
             :class="['qui-back__body__right-pop-item', redCircle ? 'message' : '']"
-            @tap="backPage('/pages/home/index', '1')"
+            @tap="backPage('/pages/home/index', '2')"
             v-if="isLogin"
           >
             <qui-icon
@@ -37,7 +37,7 @@
           </view>
           <view
             class="qui-back__body__right-pop-item"
-            @tap="backPage('/pages/home/index', '2')"
+            @tap="backPage('/pages/home/index', '3')"
             v-if="isLogin"
           >
             <qui-icon
@@ -103,10 +103,10 @@ export default {
       if (index === '0') {
         uni.$emit('updateIndex');
       }
-      if (index === '1') {
+      if (index === '2') {
         uni.$emit('updateNoticePage');
       }
-      if (index === '2') {
+      if (index === '3') {
         uni.$emit('updateMy');
       }
       uni.redirectTo({

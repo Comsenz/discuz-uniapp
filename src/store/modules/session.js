@@ -10,6 +10,7 @@ import {
   SET_PARAMS,
   SET_CODE,
   SET_TOKEN,
+  SET_GOOD,
   SET_INVITE_CODE,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
@@ -62,6 +63,9 @@ const actions = {
   },
   setToken: (context, payload) => {
     context.commit(SET_TOKEN, payload);
+  },
+  setGood: (context, payload) => {
+    context.commit(SET_GOOD, payload);
   },
   setInviteCode: (context, payload) => {
     context.commit(SET_INVITE_CODE, payload);
@@ -123,20 +127,10 @@ const actions = {
     });
   },
   scancodeverification: (context, payload = {}) => {
-    console.log(payload);
-    let sessionToken = '';
-    uni.getStorage({
-      key: 'session_token_data',
-      success(e) {
-        if (e.data !== '') {
-          sessionToken = e.data;
-        }
-      },
-    });
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${sessionToken}`,
+          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
         )
         .then(results => {
           resolve(results);
@@ -251,6 +245,9 @@ const mutations = {
   },
   [SET_TOKEN](state, payload) {
     state.token = payload;
+  },
+  [SET_GOOD](state, payload) {
+    state.good = payload;
   },
   [SET_INVITE_CODE](state, payload) {
     state.inviteCode = payload;

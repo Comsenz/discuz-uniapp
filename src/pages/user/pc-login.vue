@@ -20,97 +20,100 @@
 </template>
 
 <script>
-// #ifdef H5
-import appCommonH from '@/utils/commonHelper';
-// #endif
+/* eslint-disable */
+import { http } from '@/api/api-request';
 
 export default {
-  // #ifdef H5
-  mixins: [appCommonH],
-  // #endif
   data: () => {
     return {
       num: false,
       code: '',
       sessionId: '',
       token: '',
-      // #ifdef H5
-      isWeixin: false, // 默认不是微信浏览器
-      // #endif
       switch: false,
-      datas: {},
-      switchdata: true,
+      content: {},
+      showPage: false,
     };
   },
   onLoad(content) {
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
-    if (this.isWeixin) {
-      console.log(this.isWeixin);
-      if (content.session_token) {
-        console.log(111);
+    this.content = content;
+    this.isLogin = this.$store.getters['session/get']('isLogin');
+    if(this.isLogin) {
+      this.token = content.session_token;
+    } else {
+      if(content.session_token) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.loging'),
+        });
         uni.setStorage({
           key: 'session_token_data',
           data: content.session_token,
+          success: () => {
+            this.token = content.session_token;
+            this.$store.dispatch('session/wxPcLogin');
+          },
         });
-        this.$store.dispatch('session/wxPcLogin');
       }
-      if (content.sessionId) {
-        console.log(222);
-        this.datas = content;
-      }
-    } else {
-      uni.redirectTo({
-        url: '/pages/home/index',
-      });
     }
   },
   methods: {
     pcLogin() {
-      this.$store
-        .dispatch('session/scancodeverification', this.datas)
-        .then(res => {
-          console.log(res);
-          if (res && res.data && res.data.errors) {
-            if (res.data.errors[0].code === 'no_bind_user') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('user.loginSuccessFail'),
-                duration: 2000,
-              });
-            }
-          }
-          if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
+      if(this.isLogin) {
+        http
+          .get(`oauth/wechat/qrcode/login/${this.token}`)
+          .then(() => {
             uni.showToast({
               icon: 'none',
               title: this.i18n.t('user.loginSuccess'),
-              duration: 2000,
+              success: () => {
+                this.cancelPclogin();
+              }
             });
-            setTimeout(() => {
-              uni.redirectTo({
-                url: '/pages/home/index',
-              });
-            }, 1000);
-          }
-        })
-        .catch(err => {
-          if (err && err.data) {
-            if (err.data.errors[0].sstatus === 500) {
-              uni.showToast({
-                icon: 'none',
-                title: err.data.errors[0].code,
-                duration: 2000,
+          });
+      } else {
+        uni.getStorage({
+          key: 'session_token_data',
+          success: (e) => {
+            if (e.data != '') {
+              const sessionToken = e.data;
+              const code = this.content.code;
+              const state = this.content.state;
+              const sessionId = this.content.sessionId;
+              this.$store.dispatch('session/scancodeverification', {
+                code,
+                state,
+                sessionId,
+                sessionToken
+              }).then((res) => {
+                if (res && res.data && res.data.errors) {
+                  if (res.data.errors[0].code === 'no_bind_user') {
+                    uni.showToast({
+                      icon: 'none',
+                      title: this.i18n.t('user.loginSuccess'),
+                      success: () => {
+                        this.cancelPclogin();
+                      }
+                    });
+                  }
+                }
+                if (res && res.data && res.data.data) {
+                  uni.showToast({
+                    icon: 'none',
+                    title: this.i18n.t('user.loginSuccess'),
+                    success: () => {
+                      this.cancelPclogin();
+                    }
+                  });
+                }
               });
             }
-          }
+          },
         });
+      }
     },
     cancelPclogin() {
-      uni.redirectTo({
-        url: '/pages/home/index',
-      });
+      WeixinJSBridge.call('closeWindow');
     },
   },
 };
@@ -137,9 +140,8 @@ export default {
     }
   }
   &__title {
-    width: 235rpx;
     height: 45rpx;
-    margin: 63rpx auto 0;
+    margin-top: 63rpx;
     font-size: $fg-f5;
     font-weight: 400;
     line-height: 45rpx;
@@ -159,12 +161,12 @@ export default {
     border-radius: 5rpx;
   }
   &__cancel {
-    width: 112rpx;
     height: 37rpx;
-    margin: 80rpx auto 0;
+    margin-top: 80rpx;
     font-size: $fg-f3;
     font-weight: 400;
     color: #1878f3;
+    text-align: center;
   }
   &-bt {
     margin-bottom: 223rpx;
