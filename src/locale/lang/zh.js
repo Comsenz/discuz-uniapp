@@ -543,6 +543,8 @@ export default {
     phonerro: '手机号错误',
     withdrawalPhon: '请输入收款手机号',
     collectionwechat: '微信收款手机号',
+    withdrawalTitle:
+      '注：须确保在微信开启了“允许通过手机向我转账”的功能，否则将无法收到提现转账，开通方式为“微信-首付款-向银行卡或手机号转账-手机号收款设置“。',
   },
   permission: {
     viewThreads: '查看主题列表',

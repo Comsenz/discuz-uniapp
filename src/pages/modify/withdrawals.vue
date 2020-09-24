@@ -130,7 +130,7 @@
           </view>
         </view>
         <view class="cash-explain">
-          注：须确保在微信开启了“允许通过手机向我转账”的功能，否则将无法收到提现转账，开通方式为“微信-首付款-向银行卡或手机号转账-手机号收款设置“。
+          {{ i18n.t('modify.withdrawalTitle') }}
         </view>
         <view class="cash-button">
           <qui-button class="cash-button-sun" type="primary" size="large" @click="btncash">
