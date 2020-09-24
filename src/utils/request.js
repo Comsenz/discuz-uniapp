@@ -309,6 +309,7 @@ export default class Request {
       // #ifdef MP-ALIPAY
       fileType,
       // #endif
+      file,
       filePath,
       name,
       header,
@@ -330,6 +331,7 @@ export default class Request {
         fileType,
         // #endif
         filePath,
+        file,
         method: 'UPLOAD',
         name,
         header: header || globalHeader,
@@ -359,6 +361,7 @@ export default class Request {
         fileType: handleRe.fileType,
         // #endif
         filePath: handleRe.filePath,
+        file: handleRe.file,
         name: handleRe.name,
         header: handleRe.header,
         formData: handleRe.formData,

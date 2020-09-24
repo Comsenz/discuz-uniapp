@@ -168,6 +168,18 @@
             }"
           ></video>
         </view>
+        <view v-if="themeType == 4 && threadAudio">
+          <qui-audio-cell
+            :src="threadAudio.media_url"
+            :name="threadAudio.file_name"
+            :audio-id="threadAudio.file_id"
+            :ref="'audio' + threadAudio.file_id"
+            :is-delete="false"
+            :preview-status="videoStatus"
+            @audioPlayer="audioPlayer"
+            @previewAudio="previewAudio"
+          ></qui-audio-cell>
+        </view>
         <qui-image
           :images-list="imagesList"
           :preview-status="videoStatus"
@@ -212,14 +224,34 @@
               @audioPlay="audioPlay"
             ></qui-audio>
           </view>
-          <view @tap="download(item)" v-else>
+          <view v-else class="attachment-name">
             <qui-icon
               class="icon-attachment"
               :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text class="attachment-name">{{ item.fileName }}</text>
+            <text @tap="download(item)">{{ item.fileName }}</text>
+            <text
+              v-if="['MP4'].indexOf(item.format) === -1"
+              @click="preview(item)"
+              style="position: absolute; right: 20rpx; color: #1878f3;"
+            >
+              预览
+            </text>
+          </view>
+          <view v-if="['MP4'].indexOf(item.format) !== -1">
+            <text
+              class="themeItem__content__attachment-item-mp4-play"
+              @tap="fullscreenPlay(item._jv.id)"
+            >
+              {{ i18n.t('profile.play') }}
+            </text>
+            <qui-video
+              :src="item.url"
+              :ref="'video' + item._jv.id"
+              :video-id="item._jv.id"
+            ></qui-video>
           </view>
         </view>
       </view>
@@ -240,7 +272,9 @@
       >
         <view class="themeItem__content__tags__item" @tap="topicPosition">
           <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
-          {{ threadPosition.length > 0 && threadPosition[0] }}
+          <text class="themeItem__content__tags__item-text">
+            {{ threadPosition.length > 0 && threadPosition[0] }}
+          </text>
         </view>
       </view>
     </view>
@@ -251,6 +285,7 @@
 <script>
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
+// import { setCookie } from '@/utils/setCookie';
 
 export default {
   props: {
@@ -424,6 +459,12 @@ export default {
         return [];
       },
     },
+    threadAudio: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
   data: () => {
     return {
@@ -524,10 +565,25 @@ export default {
           });
         },
       });
-      // this.$refs.toast.show({
-      //   message: this.i18n.t('profile.filedownloadtipswx'),
-      // });
       // #endif
+    },
+    // 附件预览
+    preview(item) {
+      const params = {
+        item,
+      };
+      this.$store.dispatch('session/setAttachment', params);
+      this.$store
+        .dispatch('jv/get', [`attachments/${item._jv.id}&page=1`, {}])
+        .then(res => {
+          console.log('res', res);
+          uni.navigateTo({
+            url: '/pages/topic/attachment',
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     // 只能播放一个音频
     audioPlay(id) {
@@ -539,15 +595,21 @@ export default {
         }
       });
     },
+    fullscreenPlay(id) {
+      this.$refs[`video${id}`][0].fullscreenPlay();
+    },
     // 地理位置
     topicPosition() {
       const { threadPosition } = this;
-      uni.redirectTo({
+      uni.navigateTo({
         url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
       });
     },
     previewPicture() {
       this.$emit('previewPicture');
+    },
+    previewAudio() {
+      this.$emit('previewAudio');
     },
     serBtn() {
       const params = {
@@ -566,6 +628,7 @@ export default {
           'rewardedUsers',
           'category',
           'threadVideo',
+          'threadAudio',
           'paidUsers',
           'user.groups.permissionWithoutCategories',
         ],
@@ -588,6 +651,7 @@ export default {
     btnFun() {
       this.serBtn();
     },
+
     // 点击围观支付
     watchClick() {
       this.$emit('watchClick');
@@ -595,6 +659,9 @@ export default {
     // 点击回答问题跳转到发布回答页
     queClick() {
       this.$emit('queClick');
+    },
+    audioPlayer(id) {
+      this.$refs[`audio${id}`].audioPause();
     },
   },
 };
@@ -786,10 +853,10 @@ export default {
       }
     }
     &__tags--position {
-      margin-top: -40rpx;
-      text {
-        margin-right: 10rpx;
-      }
+      margin-top: -60rpx;
+    }
+    &__tags__item-text {
+      margin-left: 10rpx;
     }
     &__attachment {
       margin-top: 40rpx;
@@ -801,6 +868,7 @@ export default {
         color: --color(--qui-FC-777);
       }
       &-item {
+        position: relative;
         height: 60rpx;
         padding: 0 20rpx;
         margin-bottom: 10rpx;
@@ -813,6 +881,12 @@ export default {
       }
       &-item-wrap {
         width: 100%;
+      }
+      &-item-mp4-play {
+        position: absolute;
+        top: 0;
+        right: 20rpx;
+        color: --color(--qui-BG-HIGH-LIGHT);
       }
       .icon-attachment {
         margin-right: 10rpx;
@@ -862,7 +936,6 @@ export default {
   max-width: 100%;
   overflow: hidden;
   font-size: $fg-f2;
-  line-height: 31rpx;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

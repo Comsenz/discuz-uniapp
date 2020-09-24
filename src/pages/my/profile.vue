@@ -141,16 +141,8 @@ export default {
   },
   methods: {
     bindPhone() {
-      console.log('this.forums', this.forums);
-      console.log('this.profile', this.profile);
       // #ifdef MP-WEIXIN
-      if (
-        this.forums &&
-        this.forums.other &&
-        this.forums.other.publish_need_bind_phone &&
-        this.profile &&
-        this.profile.mobile === ''
-      ) {
+      if (this.profile && this.profile.mobile === '') {
         this.$refs.authPhone.open();
       } else {
         uni.navigateTo({

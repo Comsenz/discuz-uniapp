@@ -38,8 +38,6 @@
       "autoFix": false
     }
   ],
-  // 保存自动格式化
-  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
     "source.fixAll.eslint": false,

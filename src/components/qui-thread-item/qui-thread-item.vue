@@ -1,5 +1,5 @@
 <template>
-  <view class="home">
+  <view class="thread">
     <qui-content
       :ref="'thread-' + currentindex"
       :currentindex="currentindex"
@@ -41,6 +41,7 @@
       :thread-position="
         thread.location ? [thread.location, thread.address, thread.longitude, thread.latitude] : []
       "
+      :thread-audio="thread.threadAudio"
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(
@@ -89,9 +90,10 @@ export default {
       type: [Number, String],
       default: '0',
     },
-    scrollTop: {
-      type: Number,
-      default: 0,
+    // 是否可以点击到详情页和个人主页
+    canClick: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
@@ -108,13 +110,19 @@ export default {
   methods: {
     // 内容部分点击跳转到详情页
     contentClick(id) {
+      this.$emit('toTopic', id);
+      if (!this.canClick) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/topic/index?id=${id}`,
       });
-      this.$emit('toTopic', id);
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (!this.canClick) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });
@@ -138,11 +146,14 @@ export default {
     handleIsGreat(id, canLike, isLiked, index) {
       console.log('内容部分点赞按钮点击事件', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', getCurUrl());
         if (!this.handleLogin()) {
           return;
         }
@@ -175,6 +186,22 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
+      console.log('首页内容部分分享按钮弹窗', getCurUrl());
+      if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+        return;
+      }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
       this.nowThreadId = id;

@@ -22,7 +22,7 @@
     <view class="topic-content-item" v-for="(item, i) in topics" :key="i" @tap="returnToPost(i)">
       <view class="topic-content-item-box">
         <view class="topic-content-item_title">#{{ item.content }}#</view>
-        <view class="topic-content-item_recoment" v-if="item.recommended === 0 ? true : false">
+        <view class="topic-content-item_recoment" v-if="item.recommended === 1 ? true : false">
           <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
         </view>
       </view>
@@ -48,11 +48,17 @@ export default {
       pageNum: 1, // 页面
       pageSize: 20,
       meta: {}, // 接口返回meta值
+      types: 1,
     };
   },
   methods: {
     // 话题搜索
     searchInput() {
+      if (this.searchValue) {
+        this.types = '';
+      } else {
+        this.types = 1;
+      }
       clearTimeout(timer);
       timer = setTimeout(() => {
         this.pageNum = 1;
@@ -69,6 +75,7 @@ export default {
     },
     loadTopics() {
       const params = {
+        'filter[recommended]': this.types,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         // sort: '-viewCount',

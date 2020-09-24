@@ -5,7 +5,6 @@
       :key="index"
       :currentindex="index"
       :thread="item"
-      :scroll-top="scrollTopPosition"
       @toTopic="toTopic"
       @greatCallBack="greatCallBack"
       @handleClickShare="handleClickShare"
@@ -23,10 +22,6 @@ export default {
       type: String,
       default: '',
     },
-    scrollTop: {
-      type: Number,
-      default: 0,
-    },
   },
   data() {
     return {
@@ -36,16 +31,7 @@ export default {
       pageNum: 1, // 当前页数
       editThreadId: '',
       currentLoginId: this.$store.getters['session/get']('userId'),
-      scrollTopPosition: 0,
     };
-  },
-  watch: {
-    // 监听得到的数据
-    scrollTop(val) {
-      if (val !== this.scrollTopPosition) {
-        this.scrollTopPosition = val;
-      }
-    },
   },
   mounted() {
     this.loadlikes();
@@ -73,6 +59,7 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'threadAudio',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,

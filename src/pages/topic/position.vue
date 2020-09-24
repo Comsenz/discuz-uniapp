@@ -6,7 +6,6 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y"
-      @scroll="scroll"
     >
       <view class="position-head" v-if="address">
         <view class="position-head__name">{{ location }}</view>
@@ -91,8 +90,8 @@ export default {
     if (res.from === 'button') {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
-        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summary,
-        path: `/pages/topic/index?id=${this.nowThreadId}`,
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
+        path: `/pages/position/index?id=${this.nowThreadId}`,
       };
     }
   },
@@ -125,6 +124,7 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'threadAudio',
         ],
       };
       status

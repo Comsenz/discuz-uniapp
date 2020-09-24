@@ -4,6 +4,25 @@
       <view class="cash-content">
         <!-- 收款人 -->
         <view class="cash-content-tab">
+          <qui-cell-item
+            :title="i18n.t('modify.collectionwechat')"
+            slot-right
+            :arrow="false"
+            :border="false"
+          >
+            <input
+              class="cash-content-input cashphon"
+              type="number"
+              maxlength="11"
+              @input="setphonnumber"
+              v-model="withdrawalPhon"
+              :placeholder="i18n.t('modify.withdrawalPhon')"
+              placeholder-style="color:rgba(221,221,221,1)"
+            />
+          </qui-cell-item>
+        </view>
+        <!-- 收款人 -->
+        <view class="cash-content-tab">
           <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
             <text class="cash-content-name">
               {{ name }}
@@ -110,6 +129,9 @@
             ></qui-input-code>
           </view>
         </view>
+        <view class="cash-explain">
+          {{ i18n.t('modify.withdrawalTitle') }}
+        </view>
         <view class="cash-button">
           <qui-button class="cash-button-sun" type="primary" size="large" @click="btncash">
             {{ i18n.t('modify.submission') }}
@@ -170,6 +192,9 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
+      withdrawalPhon: '', // 提现手机号
+      withdrawalNumber: '',
+      cashType: 0,
     };
   },
   onLoad() {
@@ -189,6 +214,10 @@ export default {
       // this.postLoading = false;
       uni.hideLoading();
     });
+    console.log(this.forums);
+    if (this.forums.paycenter.wxpay_mchpay_close) {
+      this.cashType = 1;
+    }
   },
   computed: {
     usersid() {
@@ -251,6 +280,12 @@ export default {
         }
       }, 5);
     },
+    // 提现手机号设置
+    setphonnumber() {
+      setTimeout(() => {
+        this.withdrawalPhon = this.withdrawalPhon.replace(/[^\d]/g, '');
+      }, 30);
+    },
     // 点击获取验证码计时开始
     btnButton() {
       if (this.forums.qcloud.qcloud_sms === false) {
@@ -295,6 +330,7 @@ export default {
         this.balance = data.walletBalance;
         this.usertestphon = data.mobile;
         this.userphon = data.originalMobile;
+        this.withdrawalPhon = data.originalMobile;
         if (!this.usertestphon) {
           this.disabtype = true;
         }
@@ -410,12 +446,20 @@ export default {
     },
     // 提现申请
     cashwithdrawal() {
+      if (this.cashType === 1) {
+        this.withdrawalNumber = this.withdrawalPhon;
+      } else {
+        this.withdrawalNumber = this.userphon;
+      }
+      console.log(this.cashmany, this.withdrawalPhon, this.cashType, '提现参数');
       const params = {
         _jv: {
           type: 'wallet/cash',
           include: ['user', 'userWallet'],
         },
         cash_apply_amount: this.cashmany,
+        cash_type: this.cashType,
+        cash_mobile: this.withdrawalPhon,
       };
       const postcash = status.run(() => this.$store.dispatch('jv/post', params));
       postcash
@@ -566,6 +610,9 @@ export default {
     color: --color(--qui-FC-333);
     text-align: right;
   }
+  .cashphon {
+    font-weight: 400;
+  }
   // .cash-content-actual {
   //   padding-top: 26rpx;
   //   box-sizing: border-box;
@@ -652,6 +699,15 @@ export default {
     display: flex;
     width: 100%;
     height: 100rpx;
+  }
+  .cash-explain {
+    width: 100%;
+    padding-right: 40rpx;
+    margin-top: 40rpx;
+    font-size: 28rpx;
+    line-height: 45rpx;
+    color: --color(--qui-FC-777);
+    box-sizing: border-box;
   }
   .cash-button {
     margin: 52rpx 0 0;

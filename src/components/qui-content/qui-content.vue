@@ -94,14 +94,20 @@
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
           <view>
+          <view :class="themPayBtn ? 'themeItem__content__uparse' : ''" v-else>
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
               size="30"
-              style="float: left;margin-right: 10rpx;"
               v-if="themPayBtn"
+              class="themeItem__content__fufei"
             ></qui-icon>
             <qui-uparse :content="themeContent" v-if="threadType !== 1"></qui-uparse>
+            <qui-uparse
+              :content="themeContent"
+              :them-pay-btn="themPayBtn"
+              class="themeItem__content__wxParse"
+            ></qui-uparse>
           </view>
         </view>
         <view
@@ -176,6 +182,19 @@
           ></video>
         </view>
         <view v-if="imagesList.length == 1 && themeType !== '5'">
+        <view v-if="threadType === 4 && payStatus" @click.stop="">
+          <qui-audio-cell
+            :src="threadAudio.media_url"
+            :name="threadAudio.file_name"
+            :audio-id="threadAudio.file_id"
+            :ref="'audio' + threadAudio.file_id"
+            v-show="threadAudio.media_url"
+            @audioPlayer="audioPlayer"
+            :is-delete="false"
+          ></qui-audio-cell>
+        </view>
+        <view v-if="imagesList.length == 1">
+
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -235,9 +254,11 @@
           class="themeItem__content__tags  themeItem__content__tags--position"
           v-if="threadPosition.length > 0"
         >
-          <view class="themeItem__content__tags__item" @tap="topicPosition">
+          <view class="themeItem__content__tags__item" @click="topicPosition" @click.stop="">
             <qui-icon name="icon-weizhi" size="30" color="#777"></qui-icon>
-            {{ threadPosition.length > 0 && threadPosition[0] }}
+            <text class="themeItem__content__tags__item-text">
+              {{ threadPosition.length > 0 && threadPosition[0] }}
+            </text>
           </view>
         </view>
       </view>
@@ -535,6 +556,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    threadAudio: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+
+    },
   },
 
   data: () => {
@@ -555,8 +583,8 @@ export default {
       autoplay: false,
       sun: true,
       appear: false,
-      blocKwidth: '',
       date: 1,
+      blocKwidth: 224,
     };
   },
 
@@ -681,7 +709,7 @@ export default {
     // 地理位置
     topicPosition() {
       const { threadPosition } = this;
-      uni.redirectTo({
+      uni.navigateTo({
         url: `/pages/topic/position?longitude=${threadPosition[2]}&latitude=${threadPosition[3]}`,
       });
     },
@@ -689,9 +717,10 @@ export default {
       this.sun = false;
       this.videoShow = true;
       this.autoplay = true;
+      const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
+      // videoContext.requestFullScreen();
       setTimeout(() => {
         // console.log('视频开始播放', `myVideo${this.currentindex}`);
-        const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
         videoContext.play();
       }, 200);
       setTimeout(() => {
@@ -704,6 +733,10 @@ export default {
           })
           .exec();
       }, 100);
+    },
+
+    audioPlayer(id) {
+      this.$refs[`audio${id}`].audioPause();
     },
   },
 };
@@ -832,6 +865,7 @@ export default {
 
   &__content {
     &__text {
+      min-height: 45rpx;
       padding-bottom: 20rpx;
       overflow: hidden;
       font-family: $font-family;
@@ -856,6 +890,7 @@ export default {
       display: flex;
       justify-content: flex-start;
       margin-top: 10rpx;
+      margin-bottom: 20rpx;
       line-height: 0;
       &__item {
         max-width: 80%;
@@ -867,6 +902,7 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-top: 20rpx;
+      margin-bottom: 20rpx;
       line-height: 0;
       &__item {
         display: block;
@@ -884,6 +920,7 @@ export default {
       align-content: flex-start;
       flex-wrap: wrap;
       margin-top: 30rpx;
+      margin-bottom: 20rpx;
       line-height: 0;
       &__item {
         display: block;
@@ -914,8 +951,8 @@ export default {
         border-radius: 6rpx;
       }
     }
-    &__tags .qui-icon {
-      margin-right: 10rpx;
+    &__tags__item-text {
+      margin-left: 10rpx;
     }
   }
 
@@ -968,6 +1005,7 @@ export default {
 }
 .theme__content__videocover {
   position: relative;
+  margin-bottom: 20rpx;
   &-img {
     z-index: 1;
     width: 100%;
@@ -980,7 +1018,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 2;
+  z-index: 1;
   width: 80rpx;
   height: 80rpx;
   margin-top: -40rpx;
@@ -994,6 +1032,7 @@ export default {
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
 }
+
 .themeItem__QA,
 .themeItem_put,
 .themeItem_to,
@@ -1033,5 +1072,14 @@ export default {
 .themItem_watch_num,
 .themItem_watch_money {
   color: --color(--qui-RED);
+.themeItem__content__uparse {
+  position: relative;
+}
+/deep/ .themeItem__content__uparse .themeItem__content__wxParse {
+  text-indent: 40rpx;
+}
+.themeItem__content__uparse .themeItem__content__fufei {
+  position: absolute;
+  top: -2rpx;
 }
 </style>

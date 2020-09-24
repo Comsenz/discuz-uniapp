@@ -27,15 +27,9 @@
       @scrolltolower="pullDown"
       show-scrollbar="false"
       class="scroll-y search-item"
-      @scroll="scroll"
     >
       <view v-for="(item, index) in data" :key="index" class="search-item__content">
-        <qui-thread-item
-          :currentindex="index"
-          :thread="item"
-          :scroll-top="scrollTop"
-          @toTopic="toTopic"
-        ></qui-thread-item>
+        <qui-thread-item :currentindex="index" :thread="item" @toTopic="toTopic"></qui-thread-item>
         <qui-icon class="arrow" name="icon-folding-r" size="26" color="#ddd"></qui-icon>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
@@ -53,7 +47,6 @@ export default {
       editThreadId: '',
       pageSize: 20,
       pageNum: 1, // 当前页数
-      scrollTop: 0,
     };
   },
   onLoad(params) {
@@ -66,9 +59,6 @@ export default {
   methods: {
     toTopic(id) {
       this.editThreadId = id;
-    },
-    scroll(event) {
-      this.scrollTop = event.detail.scrollTop;
     },
     searchInput(e) {
       this.searchValue = e.target.value;
@@ -90,6 +80,7 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'threadAudio',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,

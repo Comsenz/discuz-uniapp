@@ -75,7 +75,6 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [user, loginModule],
@@ -83,7 +82,6 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
-      url: '', // 上一个页面的路径
       site_mode: '', // 站点模式
       forum: {}, // 配置
       isPaid: false, // 默认未付费
@@ -91,27 +89,6 @@ export default {
   },
   onLoad() {
     this.getForum();
-    const url = this.$store.getters['session/get']('url');
-    console.log('登录绑定url', url);
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url,
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   methods: {
     handleLogin() {

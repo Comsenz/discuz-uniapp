@@ -48,7 +48,7 @@
             <view class="topic-page-list-item_title">#{{ item.content }}#</view>
             <view
               class="topic-page-list-item_recoment"
-              v-if="item.recommended === 0 ? true : false"
+              v-if="item.recommended === 1 ? true : false"
             >
               <qui-icon name="icon-tuijian" color="#1878f3" size="34"></qui-icon>
             </view>
@@ -112,6 +112,7 @@ export default {
       // sort: '-viewCount',
       sort: 'recommended',
       scrollTop: 0,
+      types: 1,
     };
   },
 
@@ -120,6 +121,11 @@ export default {
       this.dropDownShow = !this.dropDownShow;
     },
     searchInput() {
+      if (this.keyword) {
+        this.types = '';
+      } else {
+        this.types = 1;
+      }
       clearTimeout(timer);
       timer = setTimeout(() => {
         // 为发送请求添加防抖处理
@@ -127,12 +133,14 @@ export default {
       }, 300);
     },
     switchSort(sort) {
+      currentPage = 1;
       this.sort = sort;
       this.topics();
     },
     topics(page = 1, limit = 20) {
       const params = {
         include: 'user,lastThread,lastThread.firstPost,lastThread.firstPost.images',
+        // 'filter[recommended]': this.types,
         'page[number]': page,
         'page[limit]': limit,
         sort: this.sort,
@@ -174,13 +182,17 @@ export default {
   },
   // 上拉加载
   onReachBottom() {
-    if (this.meta.next) {
+    console.log(this.meta, '事件触发');
+    if (this.meta.next || this.meta.prev) {
       this.topics((currentPage += 1));
     }
   },
   // 监听页面滚动，参数为Object
   onPageScroll(event) {
     this.scrollTop = event.scrollTop;
+  },
+  onUnload() {
+    currentPage = 1;
   },
 };
 </script>

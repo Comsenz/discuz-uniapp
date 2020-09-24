@@ -26,7 +26,7 @@
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="item.toUser.groups[0].name"
+              :value="item.toUser.groups.length > 0 ? item.toUser.groups[0].name : ''"
               :label="item.toUser.label"
               :is-real="item.toUser.isReal"
             >

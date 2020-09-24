@@ -41,29 +41,6 @@ export default {
       return this.i18n.t('auth');
     },
   },
-  mounted() {
-    this.$u.event.$on('logind', () => {
-      if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url: '/pages/home/index',
-        });
-      }
-      if (
-        this.forum &&
-        this.forum.set_site &&
-        this.forum.set_site.site_mode === SITE_PAY &&
-        this.user &&
-        !this.user.paid
-      ) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
-  },
-  destroyed() {
-    this.$u.event.$off('logind');
-  },
   methods: {
     handleGetUserInfo(res) {
       if (res.detail.errMsg === 'getUserInfo:ok') {
@@ -120,14 +97,9 @@ export default {
     },
     noSenseLogin(param, register = 0) {
       const params = param;
-      let inviteCode = '';
       params.data.attributes.register = register;
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
+      const inviteCode = this.$store.getters['session/get']('inviteCode');
+      console.log('inviteCode', inviteCode);
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
@@ -139,6 +111,31 @@ export default {
             if (res.data.data && res.data.data.id) {
               this.isSuccess = true;
               this.logind();
+              if (
+                this.forums &&
+                this.forums.set_site &&
+                this.forums.set_site.site_mode !== SITE_PAY
+              ) {
+                uni.getStorage({
+                  key: 'page',
+                  success(resData) {
+                    uni.redirectTo({
+                      url: resData.data,
+                    });
+                  },
+                });
+              }
+              if (
+                this.forums &&
+                this.forums.set_site &&
+                this.forums.set_site.site_mode === SITE_PAY &&
+                this.user &&
+                !this.user.paid
+              ) {
+                uni.redirectTo({
+                  url: '/pages/site/info',
+                });
+              }
               uni.showToast({
                 title: this.i18n.t('user.loginSuccess'),
                 duration: 2000,
@@ -160,23 +157,29 @@ export default {
     },
     loginMode(param) {
       const params = param;
-      const url = getCurUrl();
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
+      const routes = getCurrentPages();
+      const curRoute = routes[routes.length - 1].route;
+      console.log('getCurrentPages()', getCurrentPages());
+      if (curRoute !== 'pages/site/partner-invite') {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
+      } else {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
+      }
+      const inviteCode = this.$store.getters['session/get']('inviteCode');
+      console.log('inviteCode', inviteCode);
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
       // #ifdef MP-WEIXIN
       this.$store.dispatch('session/setParams', params);
-      this.$store.dispatch('session/setUrl', url);
       // #endif
       console.log('params', params);
-      console.log('小程序url', url);
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
         // 用户名模式 跳转到登录并绑定页
         uni.navigateTo({

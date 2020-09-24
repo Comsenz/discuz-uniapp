@@ -11,6 +11,7 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
+
       <view class="post-box__titles" v-if="type === 5">
         <qui-cell-item
           v-if="type === 5"
@@ -118,72 +119,133 @@
               @click="toolBarClick('italic')"
             ></qui-icon>
           </view>
-          <view>
+       <view>
+
+
+      <view v-if="type !== 1">
+        <view class="post-box__hd">
+          <view class="post-box__hd-l">
             <qui-icon
-              name="icon-quote"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('quote')"
+              class="post-box__hd-l__icon"
+              name="icon-expression"
+              size="40"
+              :color="emojiShow ? '#1878F3' : '#777'"
+              @click="emojiclick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-call"
+              size="40"
+              color="#777"
+              @click="callClick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-wei"
+              size="40"
+              color="#777"
+              @click="topicPage"
             ></qui-icon>
           </view>
-          <view>
-            <qui-icon
-              name="icon-code"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('code')"
-            ></qui-icon>
+          <text class="post-box__hd-r">
+            {{
+          textAreaValue.length &lt;= textAreaLength
+          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+            }}
+          </text>
+        </view>
+        <view class="emoji-bd" v-show="emojiShow">
+          <qui-emoji
+            position="absolute"
+            top="20rpx"
+            border-radius="10rpx"
+            @click="getEmojiClick"
+          ></qui-emoji>
+        </view>
+        <view class="post-box__con">
+          <textarea
+            id="textarea"
+            ref="textarea"
+            class="post-box__con-text"
+            :placeholder="i18n.t('discuzq.post.placeholder')"
+            placeholder-class="textarea-placeholder"
+            v-model="textAreaValue"
+            auto-height="true"
+            :show-confirm-bar="barStatus"
+            :adjust-position="true"
+            cursor-spacing="30"
+            cursor="cursor"
+            :maxlength="10000"
+            :focus="type !== 1"
+            v-show="textShow"
+            @blur="contBlur"
+            @focus="focusEvent"
+          ></textarea>
+          <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
+            <text class="text-cover">{{ textAreaValue }}</text>
           </view>
-          <view>
-            <qui-icon
-              name="icon-link"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('link')"
-            ></qui-icon>
+          <view class="markdown-box" v-if="markdownShow">
+            <view>
+              <qui-icon
+                name="icon-bold"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('bold')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-title"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('title')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-italic"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('italic')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-quote"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('quote')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-code"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('code')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-link"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('link')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-strikethrough"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('strikethrough')"
+              ></qui-icon>
+            </view>
           </view>
-          <view>
-            <qui-icon
-              name="icon-strikethrough"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('strikethrough')"
-            ></qui-icon>
-          </view>
-          <!--<view>
-            <qui-icon
-              name="icon-undeline"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('undeline')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-strikethrough"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('strikethrough')"
-            ></qui-icon>
-          </view>-->
-          <!--<md-unordered-list>
-            <qui-icon
-              name="icon-unordered-list"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('unordered')"
-            ></qui-icon>
-          </md-unordered-list>
-          <md-ordered-list>
-            <qui-icon
-              name="icon-ordered-list"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('ordered')"
-            ></qui-icon>
-          </md-ordered-list>-->
         </view>
       </view>
+      <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
 
       <qui-uploader
         :url="`${url}api/attachments`"
@@ -208,7 +270,16 @@
         v-if="type === 1 && forums.other && forums.other.can_upload_attachments"
         @deleteItem="deleteFile"
       ></qui-upload-file>
-      <view class="post-box__video" v-if="type === 2">
+      <qui-upload-video
+        v-if="type === 2"
+        ref="uploadVideo"
+        :url="url"
+        :video-before-list="videoBeforeList"
+        :controls="controlsStatus"
+        :choose-type="chooseType"
+        @videoDel="videoDel"
+      ></qui-upload-video>
+      <!--<view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
           <video
             id="video"
@@ -242,20 +313,35 @@
               @click="videoDel"
             ></qui-icon>
           </view>
-          <view class="controls-play-icon" @click.stop="playVideo">
+          <view class="controls-play-icon" @click.stop="playVideo(item)">
             <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
           </view>
         </view>
         <view class="post-box__video__add" @click="uploadVideo" v-if="videoBeforeList.length < 1">
           <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
         </view>
+      </view>-->
+      <view class="post-box__audio" v-if="type === 4">
+        <qui-upload-audio
+          ref="uploadAudio"
+          :audio-before-list="audioBeforeList"
+          @change="uploadAudioChange"
+        ></qui-upload-audio>
       </view>
+      <qui-cell-item
+        :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.lookPay')"
+        :addon="showPayType"
+        arrow
+        v-if="type !== 0 && forums.other.can_create_thread_paid"
+        @click="lookPay"
+      ></qui-cell-item>
       <qui-cell-item
         :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.paymentAmount')"
         :addon="showPrice"
         arrow
-        v-if="type !== 0 && type !== 5 && showHidden && forums.paycenter.wxpay_close"
+        v-if="type !== 0 && type !== 5 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
         @click="cellClick('pay')"
       ></qui-cell-item>
       <!-- 匿名提问 -->
@@ -295,16 +381,12 @@
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
         v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 5"
+        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 5 && type !== 4"
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
-      <view class="post-box__position">
-        <qui-cell-item
-          arrow
-          :slot-left="true"
-          @tap="choosePosition"
-          v-if="forums.lbs && forums.lbs.lbs"
-        >
+      <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
+        <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
             <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
             <text>
@@ -355,6 +437,23 @@
           }}
         </qui-button>
       </view>
+      <uni-popup ref="lookPayPopup" type="bottom">
+        <view class="popup-share">
+          <view class="pay-type" @click="choicePayType(0)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
+          </view>
+          <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
+            {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
+          </view>
+          <view class="pay-type" @click="choicePayType(2)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancelLookPay()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
+        </view>
+      </uni-popup>
       <uni-popup ref="popupBtm" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
@@ -482,11 +581,11 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
-import VodUploader from '@/common/cos-wx-sdk-v5.1';
+// import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 // #ifdef  H5
-import TcVod from 'vod-js-sdk-v6';
+// import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
 import appCommonH from '@/utils/commonHelper';
 import choosePosition from '@/mixin/choosePosition';
@@ -510,6 +609,7 @@ export default {
   ],
   data() {
     return {
+      vditor: null,
       navTitle: '发布', // 导航栏标题
       loadStatus: '',
       textAreaValue: '', // 输入框内容
@@ -518,7 +618,6 @@ export default {
       textAreaLength: 450, // 输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
-      isWeixin: false, // 默认不是微信浏览器
       type: 0, // 帖子类型
       price: 0, // 付费金额
       priceAsk: 0, // 提问价格
@@ -608,10 +707,11 @@ export default {
       setType: 'pay', // 金额或查看字
       controlsStatus: false, // 是否显示默认播放控件
       videoBeforeList: [], // 视频上传列表
+      audioBeforeList: [], // 语音上传列表
       fullscreenStatus: false, // 视频全屏状态
       videoName: '', // 视频名称
       percent: 0, // 视频上传进度
-      videoPercent: 0, // 视频上传进度，用来控制进度条
+      // videoPercent: 0, // 视频上传进度，用来控制进度条
       fileId: '', // 视频ID
       url: '', // 视频url
       postLoading: false, // 发布按钮loading状态
@@ -628,7 +728,6 @@ export default {
       randstr: '',
       captchaResult: {},
       attachmentList: [], // 附件列表
-      preAttachmentList: [], // 编辑的时候只传新增的用于比较是否是新增的
       signatureVal: '',
       deleteType: '', // 删除类型 0为图片，1为附件，2为视频
       deleteId: '', // 当前点击要删除的图片Id
@@ -655,15 +754,16 @@ export default {
           value: '1',
         },
       ], // 支付方式
+
+      chooseType: 1, // 视频是从首页上传的还是从发布页上传的
+      payType: 0, //  查看付费的方式，  0均免费， 1内容免费，附件付费，  2内容和附件都付费
+      showPayType: '', // 选择的支付方式
     };
   },
   computed: {
     ...mapState({
       getAtMemberData: state => state.atMember.atMemberData,
     }),
-    // allEmoji() {
-    //   return this.$store.getters['jv/get']('emoji');
-    // },
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
 
@@ -697,6 +797,16 @@ export default {
       }
     });
     // #endif
+    uni.$on('uploadVideoOver', data => {
+      console.log('这是计算周期里获取到的上传后的数据', data);
+      this.percent = 1;
+      if (data.doneResult) {
+        this.fileId = data.doneResult.fileId;
+      }
+      if (data.result) {
+        this.fileId = data.result.fileId;
+      }
+    });
   },
   methods: {
     // 允许围观
@@ -710,23 +820,127 @@ export default {
         return;
       }
       // #ifdef H5
+      this.saveThread();
       this.getPosition();
       // #endif
       // #ifdef MP-WEIXIN
-      wx.chooseLocation({
+      uni.getSetting({
         success(res) {
-          if (res.name === that.i18n.t('topic.myPosition')) {
-            res.location = res.address;
+          if (!res.authSetting['scope.userLocation']) {
+            uni.authorize({
+              scope: 'scope.userLocation',
+              success() {
+                uni.chooseLocation({
+                  success(res1) {
+                    const positionData = res1;
+                    positionData.location = res1.name;
+                    that.currentPosition = positionData;
+                  },
+                });
+              },
+            });
           } else {
-            res.location = res.name;
+            uni.chooseLocation({
+              success(res1) {
+                const positionData = res1;
+                positionData.location = res1.name;
+                that.currentPosition = positionData;
+              },
+            });
           }
-          that.currentPosition = res;
         },
       });
       // #endif
     },
     clearPosition() {
       this.currentPosition = {};
+    },
+    // 暂存帖子信息，以防选完地址回来页面刷新后丢失
+    saveThread() {
+      uni.removeStorageSync('current_thread');
+      const thread = {};
+      const items = [
+        'postTitle',
+        'price',
+        'word',
+        'fileId',
+        'videoName',
+        'textAreaValue',
+        'categoryIndex',
+        'categoryId',
+        'checkClassData',
+        'uploadFile',
+        'videoBeforeList',
+        'audioBeforeList',
+      ];
+      items.forEach(key => {
+        if (this[key]) {
+          thread[key] = this[key];
+        }
+      });
+      if (this.$refs.uploadFiles) {
+        const fileList = this.$refs.uploadFiles.getValue();
+        const attachmentList = [];
+        fileList.forEach(v => {
+          attachmentList.push({
+            fileName: v.attributes.fileName,
+            url: v.attributes.url,
+            _jv: {
+              id: v.id,
+            },
+          });
+        });
+        thread.attachmentList = attachmentList;
+      }
+      if (this.$refs.upload) {
+        const imgList = this.$refs.upload.getValue();
+        imgList.forEach((value, index) => {
+          if (value.attributes) {
+            imgList[index] = {
+              path: value.attributes.thumbUrl,
+              id: value.id,
+              order: value.attributes.order,
+              name: value.attributes.fileName,
+              url: value.attributes.url,
+            };
+          }
+        });
+        thread.imgList = imgList;
+      }
+      uni.setStorageSync('current_thread', JSON.stringify(thread));
+    },
+    setThread() {
+      let thread = uni.getStorageSync('current_thread');
+      if (!thread) {
+        return;
+      }
+      thread = JSON.parse(thread);
+      Object.getOwnPropertyNames(thread).forEach(key => {
+        if (key === 'imgList') {
+          const threadImgList = thread[key];
+          threadImgList.forEach((v, index) => {
+            threadImgList[index] = {
+              thumbUrl: v.path,
+              _jv: {
+                id: v.id,
+              },
+              order: v.order,
+              fileName: v.name,
+              url: v.url,
+            };
+          });
+          const image = { firstPost: { images: [] } };
+          image.firstPost.images = thread[key];
+          this.setAnnex('img', image);
+        } else {
+          this[key] = thread[key];
+        }
+      });
+      if (this.videoBeforeList.length > 0) {
+        // this.videoPercent = 1;
+        this.percent = 1;
+      }
+      uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
@@ -778,32 +992,6 @@ export default {
         this.cursor += 2;
         this.focusEvent(this.cursor);
       }
-      //  else if (type === 'undeline') {
-      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}++++${this.textAreaValue.slice(
-      //     this.cursor,
-      //   )}`}`;
-      //   this.cursor += 2;
-      //   this.focusEvent(this.cursor);
-      // } else if (type === 'strikethrough') {
-      //   text = `${`${this.textAreaValue.slice(0, this.cursor)}~~~~${this.textAreaValue.slice(
-      //     this.cursor,
-      //   )}`}`;
-      //   this.cursor += 2;
-      //   this.focusEvent(this.cursor);
-      // }
-      //  else if (type == 'unordered') {
-      //   text = `${this.textAreaValue.slice(0, this.cursor) +
-      //     '\n- ' +
-      //     this.textAreaValue.slice(this.cursor)}`;
-      //   this.cursor = this.cursor + 1;
-      //   this.focusEvent(this.cursor);
-      // } else if (type == 'ordered') {
-      //   text = `${this.textAreaValue.slice(0, this.cursor) +
-      //     '\n1. ' +
-      //     this.textAreaValue.slice(this.cursor)}`;
-      //   this.cursor = this.cursor + 1;
-      //   this.focusEvent(this.cursor);
-      // }
       this.textAreaValue = text;
     },
     ...mapMutations({
@@ -851,10 +1039,15 @@ export default {
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteVideoSure');
     },
-    playVideo() {
+    playVideo(video) {
+      // #ifdef MP-WEiXIN
       this.controlsStatus = true;
       this.videoContext.play();
       this.videoContext.requestFullScreen();
+      // #endif
+      // #ifdef H5
+      uni.$emit('playVideo', video);
+      // #endif
     },
     fullscreenchange(e) {
       this.fullscreenStatus = e.detail.fullScreen;
@@ -863,78 +1056,6 @@ export default {
         this.videoContext.pause();
       }
     },
-    uploadVideo() {
-      const _this = this;
-      uni.chooseVideo({
-        count: 1,
-        compressed: false,
-        sourceType: ['camera', 'album'],
-        success(res) {
-          _this.$refs.toast.show({
-            message: _this.i18n.t('uploader.videoUploading'),
-          });
-          _this.videoName = res.name ? res.name : _this.i18n.t('discuzq.post.fromWeChatApplet');
-          _this.videoBeforeList.push({
-            path: res.tempFilePath,
-          });
-          // #ifdef MP-WEIXIN
-          VodUploader.start({
-            mediaFile: res,
-            getSignature: _this.getSignature,
-
-            mediaName: res.name,
-            success(result) {},
-            error(result) {
-              _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
-              _this.videoPercent = 0;
-            },
-            progress(result) {
-              _this.percent = result.percent;
-
-              if (result.percent === 1) {
-                _this.videoPercent = 0.9;
-                // _this.$refs.toast.hideLoading();
-              }
-
-              _this.videoPercent = result.percent;
-            },
-            finish(result) {
-              _this.fileId = result.fileId;
-              _this.postVideo(result.fileId);
-              // _this.$refs.toast.show({
-              //   message: _this.i18n.t('uploader.videoUploadedSuccessfully'),
-              // });
-            },
-          });
-          // #endif
-          // #ifndef  MP-WEIXIN
-          _this.getSignature(getSignature => {
-            new TcVod({
-              getSignature,
-            })
-              .upload({
-                mediaFile: res.tempFile,
-              })
-              .on('media_progress', info => {
-                _this.percent = info.percent; // 进度处理
-                // _this.videoPercent = info.percent;
-                if (info.percent === 1) {
-                  _this.videoPercent = 0.9;
-                  // _this.$refs.toast.hideLoading();
-                }
-                _this.videoPercent = info.percent;
-              })
-              .done()
-              .then(doneResult => {
-                _this.fileId = doneResult.fileId;
-                _this.postVideo(doneResult.fileId);
-              });
-          });
-          // #endif
-        },
-      });
-    },
-
     // 点击表情
     emojiclick() {
       this.emojiShow = !this.emojiShow;
@@ -1001,8 +1122,32 @@ export default {
         this.textShow = true;
       }
     },
-    cellClick(type,) {
-      console.log(type, 'typetypetypetype');
+
+    // 点击显示查看支付的抽屉
+    lookPay() {
+      this.$refs.lookPayPopup.open();
+    },
+
+    // 取消查看支付选择
+    cancelLookPay() {
+      this.$refs.lookPayPopup.close();
+    },
+
+    // 选择支付查看的方式 0均免费， 1内容免费，附件付费，  2内容和附件都付费
+    choicePayType(type) {
+      console.log(type, '类型');
+      if (type === 0) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+      } else if (type === 1) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+      } else {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+      }
+      this.payType = type;
+      this.$refs.lookPayPopup.close();
+    },
+
+    cellClick(type) {
       this.setType = type;
       if (type === 'word') {
         this.$refs.popup.open();
@@ -1029,12 +1174,6 @@ export default {
     },
     uploadChange(e, status) {
       this.uploadFile = e;
-      // e.map((file, index) => {
-      //   this.formData = {
-      //     type: 1,
-      //     order: index,
-      //   };
-      // });
       this.uploadStatus = status;
     },
     uploadClear(list, del) {
@@ -1044,6 +1183,11 @@ export default {
       this.deleteIndex = del;
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteImgSure');
+    },
+
+    // 音频上传改变
+    uploadAudioChange(e) {
+      this.audioBeforeList = e;
     },
 
     // 表情点击事件
@@ -1336,9 +1480,13 @@ export default {
 
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
-      console.log(this, '发布来吗')
-      // this.i18n.t('discuzq.post.theclassifyCanNotBeBlank')
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
+
+      // #ifdef H5
+      if(this.type === 1) {
+        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
+      }
+      // #endif
 
       if (!this.categoryId) {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
@@ -1366,6 +1514,35 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 1) {
+            // 内容免费，附件付费
+            console.log(this.$refs.uploadFiles.getValue(), '这是附件列表');
+            if (this.$refs.uploadFiles.getValue().length === 0) {
+              // 附件不能为空
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.attachmentCannotBeEmpty'),
+              });
+              status = false;
+            } else if (this.price === 0) {
+              // 选择付费后，价格不能为空
+              // console.log('选择付费后，价格不能为空');
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -1379,6 +1556,16 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -1395,6 +1582,16 @@ export default {
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
@@ -1404,6 +1601,16 @@ export default {
                 message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
@@ -1425,6 +1632,16 @@ export default {
               this.$refs.payShow.payClickShow();
             });
           }
+
+        case 4:
+          if (this.audioBeforeList.length < 1) {
+						this.$refs.toast.show({
+							message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
+						});
+						status = false;
+					} else {
+						status = true;
+					}
           break;
         default:
           status = false;
@@ -1438,6 +1655,7 @@ export default {
         }
 
         if (this.operating === 'edit') {
+          this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
               this.$refs.toast.show({
@@ -1503,20 +1721,31 @@ export default {
     setAnnex(type, data) {
       switch (type) {
         case 'img':
+          let filePreview = [];
           data.firstPost.images.map(item => {
-            this.filePreview.push({
+            filePreview.push({
               path: item.thumbUrl,
               id: item._jv.id,
               order: item.order,
+              name: item.fileName,
+              url: item.url,
             });
             return item;
           });
+          this.filePreview = filePreview;
           break;
         case 'video':
           this.videoBeforeList.push({
             path: data.threadVideo.media_url,
           });
-          this.videoPercent = 1;
+          // this.videoPercent = 1;
+          break;
+        case 'audio':
+          this.audioBeforeList.push({
+            fileName: data.threadAudio.file_name,
+            url: data.threadAudio.media_url,
+            id: data.threadAudio.file_id,
+          });
           break;
         default:
           console.log('没有匹配模式');
@@ -1537,14 +1766,8 @@ export default {
       });
       // 附件
       if (this.type === 1 && this.$refs.uploadFiles) {
-        const fileList = this.$refs.uploadFiles.getValue();
-        const preAttachmentList = this.preAttachmentList;
-        fileList.forEach(item => {
-          for (let i = 0; i < preAttachmentList.length; i += 1) {
-            if (preAttachmentList[i]._jv.id === item.id) {
-              return;
-            }
-          }
+        const newAttachmentList = this.$refs.uploadFiles.getValue();
+        newAttachmentList.forEach(item => {
           if (item.id) {
             attachments.data.push({
               type: 'attachments',
@@ -1602,9 +1825,6 @@ export default {
         });
       });
     },
-    // getEmoji() {
-    //   this.$store.dispatch('jv/get', ['emoji', {}]);
-    // },
     postThread() {
       const params = {
         _jv: {
@@ -1626,6 +1846,11 @@ export default {
         captcha_rand_str: this.randstr,
         is_anonymous: this.checked,
       };
+      if (this.payType === 1) {
+        params.attachment_price = this.price;
+        params.price = '';
+      }
+
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
@@ -1654,6 +1879,10 @@ export default {
           case 5:
             params._jv.relationships.attachments = this.addImg();
             params._jv.relationships.question = this.addQuestion();
+          case 4:
+            params.file_id = this.audioBeforeList[0].id;
+            params.file_name = this.audioBeforeList[0].fileName;
+
             resolve();
             break;
           default:
@@ -1673,7 +1902,26 @@ export default {
           });
       });
     },
-
+    // delAttachments(id, index) {
+    //   const params = {
+    //     _jv: {
+    //       type: 'attachments',
+    //       id,
+    //     },
+    //   }
+    // },
+    delAttachments(id, index) {
+      if (this.operating === 'edit') {
+        // console.log('这是编辑');
+        this.$u.event.$emit('deleteImg', {
+          threadId: this.postDetails._jv.id,
+          index,
+        });
+        const post = this.$store.getters['jv/get'](`posts/${this.postDetails.firstPost._jv.id}`);
+        post.images.splice(index, 1);
+        post._jv.relationships.images.data.splice(index, 1);
+      }
+    },
     handleClickOk() {
       this.$refs.deletePopup.close();
       if (this.deleteType === 0) {
@@ -1683,14 +1931,11 @@ export default {
         // this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
         //   this.$refs.upload.clear(this.deleteIndex);
         // });
-      } else if (this.deleteType === 1) {
-        // 删除类型为附件
-        this.deleteFileSure(this.deleteId);
       } else if (this.deleteType === 2) {
         // 删除类型为视频
         this.videoBeforeList = [];
         this.percent = 0;
-        this.videoPercent = 0;
+        // this.videoPercent = 0;
       }
     },
 
@@ -1713,44 +1958,15 @@ export default {
       this.uploadFile.forEach((value, key, item) => {
         value.id == id && item.splice(key, 1);
       });
-      // const params = {
-      //   _jv: {
-      //     type: 'attachments',
-      //     id,
-      //   },
-      // };
-
-      // return this.$store
-      //   .dispatch('jv/delete', params)
-      //   .then(res => {
-      //     // 当编辑帖子时删除图片后传参给首页
-      //     if (this.operating === 'edit') {
-      //       this.$u.event.$emit('deleteImg', {
-      //         threadId: this.postDetails._jv.id,
-      //         index,
-      //       });
-      //       const post = this.$store.getters['jv/get'](
-      //         `posts/${this.postDetails.firstPost._jv.id}`,
-      //       );
-      //       post.images.splice(index, 1);
-      //       post._jv.relationships.images.data.splice(index, 1);
-      //     }
-
-      //     this.uploadFile.forEach((value, key, item) => {
-      //       value.id == id && item.splice(key, 1);
-      //     });
-      //     return res;
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
     },
-    getSignature(callBack = null) {
+    getSignature(callBack) {
       this.$store.dispatch('jv/get', ['signature', {}]).then(res => {
         // #ifndef MP-WEIXIN
         callBack(() => res.signature);
         // #endif
+        // #ifdef MP-WEIXIN
         callBack(res.signature);
+        // #endif
       });
     },
     postVideo(fileId) {
@@ -1759,6 +1975,7 @@ export default {
           type: 'thread/video',
         },
         file_id: fileId,
+        type: 0,
       };
       this.$store.dispatch('jv/post', params);
     },
@@ -1769,12 +1986,14 @@ export default {
           'firstPost',
           'firstPost.images',
           'threadVideo',
+          'threadAudio',
           'category',
           'firstPost.attachments',
         ],
       };
 
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
+        // console.log(res, '这是主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -1788,26 +2007,14 @@ export default {
         }
         // #endif
         this.attachmentList = res.firstPost.attachments || [];
-        this.preAttachmentList = res.firstPost.attachments || [];
         this.textAreaValue = res.firstPost.content;
         this.categoryId = res.category._jv.id;
         this.checkClassData.push(res.category);
-        // this.uploadFile = res.firstPost.images;
-        // 微信里面的定位
-        if (option.name && this.isWeixin) {
-          let currentPosition = {};
-          const data = option.latng.split(',');
-          currentPosition.longitude = data[1];
-          currentPosition.latitude = data[0];
-          currentPosition.location = option.name;
-          currentPosition.address = option.addr;
-          this.currentPosition = currentPosition;
-        } else {
-          this.currentPosition.longitude = res.longitude || '';
-          this.currentPosition.latitude = res.latitude || '';
-          this.currentPosition.location = res.location || '';
-          this.currentPosition.address = res.address || '';
+        if (res.threadVideo) {
+          this.fileId = res.threadVideo.file_id;
         }
+
+        // this.uploadFile = res.firstPost.images;
 
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
@@ -1816,6 +2023,9 @@ export default {
                 type: 'attachments',
                 id: item._jv.id,
                 order: item.order,
+                name: item.fileName,
+                url: item.url,
+                path: item.thumbUrl ? item.thumbUrl : '',
               });
             }
           });
@@ -1841,9 +2051,28 @@ export default {
           case 3:
             this.setAnnex('img', res);
             break;
+          case 4:
+            this.setAnnex('audio', res);
+            break;
           default:
             console.log('未知类型');
         }
+        // 微信里面的定位
+        if (option.name) {
+          let currentPosition = {};
+          const data = option.latng.split(',');
+          currentPosition.longitude = data[1];
+          currentPosition.latitude = data[0];
+          currentPosition.location = option.name;
+          currentPosition.address = option.addr;
+          this.currentPosition = currentPosition;
+        } else {
+          this.currentPosition.longitude = res.longitude || '';
+          this.currentPosition.latitude = res.latitude || '';
+          this.currentPosition.location = res.location || '';
+          this.currentPosition.address = res.address || '';
+        }
+        this.setThread();
       });
     },
     // 编辑帖子接口
@@ -1898,6 +2127,11 @@ export default {
         case 3:
           threads.price = this.price;
           posts._jv.relationships.attachments = this.addImg();
+          break;
+        case 4:
+          threads.price = this.price;
+          threads.file_id = this.audioBeforeList[0].id;
+          threads.file_name = this.audioBeforeList[0].fileName;
           break;
         default:
           break;
@@ -1969,12 +2203,20 @@ export default {
     }
   },
   onLoad(option) {
-        console.log(this.forums,'    console.log(this.forums);');
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
+    if (option.type) this.type = Number(option.type);
+    if(this.type === 1) {
+      uni.$on('vditor', (vditor, vditorComponent) => {
+        this.vditor = vditor;
+        console.log(this.textAreaValue);
+        this.vditor.setValue(this.textAreaValue);
+        vditorComponent.setPostComponent(this);
+      });
+    }
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
@@ -1986,7 +2228,7 @@ export default {
       type: 1,
     };
     this.getCategories();
-    if (option.type) this.type = Number(option.type);
+
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
 
@@ -2006,7 +2248,7 @@ export default {
       this.getPostThread(option);
     } else {
       this.loadStatus = true;
-      if (option.name && this.isWeixin) {
+      if (option.name) {
         let currentPosition = {};
         const data = option.latng.split(',');
         currentPosition.longitude = data[1];
@@ -2071,13 +2313,71 @@ export default {
         )}#${this.textAreaValue.slice(this.cursor)}  `;
       this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
+
+    // 接收来自首页的数据，并渲染或者报错时提示
+    const eventChannel = this.getOpenerEventChannel();
+    eventChannel.on('acceptDataFromOpenerPage', data => {
+      if (this.type === 3) {
+        // console.log(data, '这是在首页上传图片后传过来的数据');
+        if (data.data.data && data.data.data.attributes) {
+          // 当首页上传图片成功时
+          this.uploadFile.push({
+            type: 'attachments',
+            id: data.data.data.id,
+            order: data.data.data.attributes.order,
+            name: data.data.data.attributes.fileName,
+            url: data.data.data.attributes.url,
+            path: data.data.data.attributes.thumbUrl ? data.data.data.attributes.thumbUrl : '',
+          });
+          this.filePreview.push({
+            path: data.data.data.attributes.thumbUrl,
+            id: data.data.data.id,
+            order: data.data.data.attributes.order,
+            name: data.data.data.attributes.fileName,
+            url: data.data.data.attributes.url,
+          });
+          // console.log(this.uploadFile, '这是首页上传后追加到的列表');
+        }
+        if (data.data.errors) {
+          // 当首页上传图片失败时
+          data.data.errors.forEach(error => {
+            const title = error.detail
+              ? Array.isArray(error.detail)
+                ? error.detail[0]
+                : error.detail
+              : this.i18n.t(`core.${error.code}`);
+            setTimeout(() => {
+              uni.showToast({
+                icon: 'none',
+                title: title,
+              });
+            }, 1000);
+          });
+        }
+      }
+      if (this.type === 2) {
+        console.log(data, '这是在首页上传视频·····后传过来的数据');
+        if (data.data) {
+          if (data.data.doneResult) {
+            this.fileId = data.data.doneResult.fileId;
+          } else {
+            this.fileId = data.data.result.fileId;
+          }
+
+          // console.log(data.data, '这是视频地址');
+          this.videoBeforeList.push({
+            path: data.data.uploadVideoRes.tempFilePath,
+          });
+          this.chooseType = 0;
+          this.percent = 1;
+          // console.log(this.videoBeforeList, '这是视频列表');
+        }
+      }
+    });
+    // 初始化默认内容附件均免费
+    this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
   },
   onShow() {
-    // #ifndef  MP-WEIXIN
-    // this.tcVod = new TcVod({
-    //   getSignature: this.getSignature,
-    // });
-    // #endif
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -2089,14 +2389,22 @@ export default {
       this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
     this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
+    if (!this.threadId) {
+      this.setThread();
+    }
   },
+
   onReady() {
     this.videoContext = uni.createVideoContext('video');
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    // #ifdef H5
     uni.$off('clickTopic');
+    uni.$off('clickImage');
+    uni.$off('clickAttach');
+    // #endif
     // 隐藏验证码
     if (this.captcha) {
       this.captcha.destroy();
@@ -2187,78 +2495,78 @@ export default {
     }
   }
 
-  &__video {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    min-height: 160rpx;
-    padding: 30rpx 0;
+  // &__video {
+  //   display: flex;
+  //   flex-wrap: wrap;
+  //   width: 100%;
+  //   min-height: 160rpx;
+  //   padding: 30rpx 0;
 
-    &__play {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 160rpx;
-      height: 160rpx;
-      margin-right: 13rpx;
+  //   &__play {
+  //     position: relative;
+  //     display: flex;
+  //     align-items: center;
+  //     justify-content: center;
+  //     width: 160rpx;
+  //     height: 160rpx;
+  //     margin-right: 13rpx;
 
-      &__video {
-        z-index: 0;
-        width: 100%;
-        height: 100%;
-        border: 1px solid #ededed;
-        border-radius: 5rpx;
-      }
-      &__load {
-        position: absolute;
-        top: 0;
-        z-index: 98;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        border: 1px solid --color(--qui-BOR-ED);
-        border-radius: 5rpx;
-      }
-      &__icon-del {
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        z-index: 99;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 50rpx;
-        height: 50rpx;
-        background-color: #dd524d;
-        border-radius: 50px;
-      }
-      .controls-play-icon {
-        position: absolute;
-        z-index: 2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(1, 1, 1, 0.5);
-      }
-    }
+  //     &__video {
+  //       z-index: 0;
+  //       width: 100%;
+  //       height: 100%;
+  //       border: 1px solid #ededed;
+  //       border-radius: 5rpx;
+  //     }
+  //     &__load {
+  //       position: absolute;
+  //       top: 0;
+  //       z-index: 98;
+  //       display: flex;
+  //       flex-direction: column;
+  //       justify-content: center;
+  //       align-items: center;
+  //       width: 100%;
+  //       height: 100%;
+  //       text-align: center;
+  //       border: 1px solid --color(--qui-BOR-ED);
+  //       border-radius: 5rpx;
+  //     }
+  //     &__icon-del {
+  //       position: absolute;
+  //       top: -10px;
+  //       right: -10px;
+  //       z-index: 99;
+  //       display: flex;
+  //       justify-content: center;
+  //       align-items: center;
+  //       width: 50rpx;
+  //       height: 50rpx;
+  //       background-color: #dd524d;
+  //       border-radius: 50px;
+  //     }
+  //     .controls-play-icon {
+  //       position: absolute;
+  //       z-index: 2;
+  //       display: flex;
+  //       justify-content: center;
+  //       align-items: center;
+  //       width: 100%;
+  //       height: 100%;
+  //       background-color: rgba(1, 1, 1, 0.5);
+  //     }
+  //   }
 
-    &__add {
-      width: 160rpx;
-      height: 160rpx;
-      line-height: 160rpx;
-      text-align: center;
-      background-color: #f7f7f7;
-      border: 1px solid #ededed;
-      border-radius: 5rpx;
-    }
-  }
+  //   &__add {
+  //     width: 160rpx;
+  //     height: 160rpx;
+  //     line-height: 160rpx;
+  //     text-align: center;
+  //     background-color: #f7f7f7;
+  //     border: 1px solid #ededed;
+  //     border-radius: 5rpx;
+  //   }
+  // }
   &__ft {
     &-tit {
       display: block;
@@ -2487,6 +2795,7 @@ export default {
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
 }
+
 .username {
   // position: absolute;
   // right: 48rpx;
@@ -2499,5 +2808,11 @@ export default {
 .watchpay {
   font-size: $fg-f3;
   color: --color(--qui-FC-AAA);
+
+.pay-type {
+  font-size: $fg-f4;
+  line-height: 100rpx;
+  text-align: center;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
 }
 </style>

@@ -1,3 +1,8 @@
+// #ifdef H5
+import { setCookie } from '@/utils/setCookie';
+// #endif
+import { SITE_PAY } from '@/common/const';
+
 module.exports = {
   methods: {
     /**
@@ -12,30 +17,11 @@ module.exports = {
       });
     },
     /**
-     * 获取登录注册页面传递的参数
-     */
-    // getPageParams(params) {
-    //   const { url, commentId } = params;
-    //   if (url) {
-    //     let pageUrl;
-    //     if (url.substr(0, 1) !== '/') {
-    //       pageUrl = `/${url}`;
-    //     } else {
-    //       pageUrl = url;
-    //     }
-    //     if (commentId) {
-    //       this.url = `${pageUrl}&commentId=${commentId}`;
-    //     } else {
-    //       this.url = pageUrl;
-    //     }
-    //   }
-    // },
-    /**
      * 跳转到手机号码登录页面
      */
     jump2PhoneLoginPage() {
-      const url = `/pages/user/phone-login?url=${this.url}`;
-      uni.navigateTo({
+      const url = '/pages/user/phone-login';
+      uni.redirectTo({
         url,
       });
     },
@@ -43,8 +29,8 @@ module.exports = {
      * 跳转到登录页面
      */
     jump2LoginPage() {
-      const url = `/pages/user/login?url=${this.url}`;
-      uni.navigateTo({
+      const url = '/pages/user/login';
+      uni.redirectTo({
         url,
       });
     },
@@ -52,8 +38,8 @@ module.exports = {
      * 跳转到注册页面
      */
     jump2RegisterPage() {
-      const url = `/pages/user/register?url=${this.url}`;
-      uni.navigateTo({
+      const url = '/pages/user/register';
+      uni.redirectTo({
         url,
       });
     },
@@ -61,8 +47,8 @@ module.exports = {
      * 跳转到登录绑定页面
      */
     jump2LoginBindPage() {
-      const url = `/pages/user/login-bind?url=${this.url}`;
-      uni.navigateTo({
+      const url = '/pages/user/login-bind';
+      uni.redirectTo({
         url,
       });
     },
@@ -70,18 +56,17 @@ module.exports = {
      * 跳转到注册绑定页面
      */
     jump2RegisterBindPage() {
-      const url = `/pages/user/register-bind?url=${this.url}`;
-      uni.navigateTo({
+      const url = '/pages/user/register-bind';
+      uni.redirectTo({
         url,
       });
     },
-    MPLogin() {},
     /**
      * 跳转到找回密码页面
      */
     jump2findpwdPage() {
       const url = `/pages/modify/findpwd?pas=reset_pwd`;
-      uni.navigateTo({
+      uni.redirectTo({
         url,
       });
     },
@@ -158,7 +143,33 @@ module.exports = {
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
+            console.log('小程序无感注册成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
+            uni.showToast({
+              title: this.i18n.t('user.registerSuccess'),
+              duration: 2000,
+            });
           }
         })
         .catch(err => {
@@ -230,8 +241,32 @@ module.exports = {
         .dispatch('session/h5Login', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
+            // #ifdef H5
+            setCookie('token', res.data.data.attributes.access_token, 30);
+            // #endif
             console.log('登录成功：', res);
             this.logind();
+            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forum &&
+              this.forum.set_site &&
+              this.forum.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
             uni.showToast({
               title: resultDialog,
               duration: 2000,
@@ -266,133 +301,6 @@ module.exports = {
           }
         })
         .catch(err => console.log(err));
-    },
-    /**
-     * 获取注册需要的参数
-     * @param {Object} param 包含用户名和密码的对象
-     * @param {*} resultDialog 登录成功展示的对话框信息
-     */
-    getRegisterParams(param, resultDialog) {
-      const params = param;
-      if (param.data.attributes.username === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.usernameEmpty'),
-          duration: 2000,
-        });
-      } else if (param.data.attributes.password === '') {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.passwordEmpty'),
-          duration: 2000,
-        });
-      } else if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
-        this.toTCaptcha(param, resultDialog);
-      } else {
-        this.addRegisterParams(params, resultDialog);
-      }
-    },
-    /**
-     * 增加注册需要的参数
-     * @param {Object} param 包含用户名和密码的对象
-     * @param {*} resultDialog 登录成功展示的对话框信息
-     */
-    addRegisterParams(param, resultDialog) {
-      const params = param;
-      // #ifdef MP-WEIXIN
-      // 小程序注册必传参数
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.code = data.data.attributes.code;
-      }
-      // #endif
-      // #ifdef H5
-      // 微信内置浏览器注册必传参数
-      const token = this.$store.getters['session/get']('token');
-      if (token && token !== '') {
-        params.data.attributes.token = token;
-      }
-      // #endif
-      if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
-        // 开启腾讯云验证码必传参数
-        params.data.attributes.captcha_ticket = this.ticket;
-        params.data.attributes.captcha_rand_str = this.randstr;
-      }
-      // 开启注册审核必传注册原因参数
-      if (
-        this.forum &&
-        this.forum.set_reg &&
-        this.forum.set_reg.register_validate &&
-        this.reason !== ''
-      ) {
-        params.data.attributes.register_reason = this.reason;
-      }
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
-      if (inviteCode !== '') {
-        params.data.attributes.code = inviteCode;
-      }
-      console.log('params', params);
-      this.register(params, resultDialog);
-    },
-    /**
-     * 发送注册请求
-     */
-    register(params, resultDialog) {
-      this.$store
-        .dispatch('session/h5Register', params)
-        .then(result => {
-          if (result && result.data && result.data.data && result.data.data.id) {
-            this.logind();
-            uni.showToast({
-              title: resultDialog,
-              duration: 2000,
-            });
-          }
-          if (result && result.data && result.data.errors) {
-            if (result.data.errors[0].status === '422') {
-              uni.showToast({
-                icon: 'none',
-                title: result.data.errors[0].detail[0],
-                duration: 2000,
-              });
-            }
-            if (result.data.errors[0].code === 'register_close') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.register_close'),
-                duration: 2000,
-              });
-            }
-            if (result.data.errors[0].code === 'register_validate') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.register_validate'),
-                duration: 2000,
-              });
-            }
-            if (result.data.errors[0].code === 'setting_fill_register_reason') {
-              uni.showToast({
-                icon: 'none',
-                title: result.data.errors[0].detail[0],
-                duration: 2000,
-              });
-            }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
     },
   },
 };

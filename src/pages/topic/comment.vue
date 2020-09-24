@@ -285,7 +285,7 @@
             ></qui-emoji>
           </view>
 
-          <view class="comment-content-box" :style="{ paddingBottom: padTstatus ? '40rpx' : '0' }">
+          <view class="comment-content-box">
             <view class="comment-content">
               <textarea
                 ref="commentText"
@@ -296,12 +296,10 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                adjust-position="false"
-                cursor-spacing="0"
+                cursor-spacing="80"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
-                @focus="textFocus"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -399,6 +397,7 @@
                 :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
+                fixed="true"
               />
             </view>
           </view>
@@ -519,7 +518,6 @@ export default {
       ], // 评论排序菜单
       sortVal: 'createdAt', // 排序值
       followStatus: '', // 当前关注状态
-      curUrl: '', // 当前页面的路由
       reportData: [
         {
           // 举报理由
@@ -545,7 +543,6 @@ export default {
       ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
-      padTstatus: false, // 是否给评论框box加padding值
     };
   },
   computed: {
@@ -585,7 +582,6 @@ export default {
     },
   },
   onLoad(option) {
-    this.curUrl = getCurUrl();
     this.threadId = option.threadId;
     this.commentId = option.commentId;
     this.loadPost();
@@ -932,11 +928,14 @@ export default {
     // 添加关注
     addFollow(userInfo) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -979,11 +978,14 @@ export default {
     // 管理菜单内标签点击事件
     sortSelectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -1024,15 +1026,10 @@ export default {
         url: `/pages/profile/index?userId=${id}`,
       });
     },
-    // 输入框获取焦点时
-    textFocus() {
-      // 为了解决当文本域获取焦点时，文本域在不同设备上推错位问题
-      this.padTstatus = true;
-    },
+
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
-      this.padTstatus = false;
     },
     // 点击表情插入到文本域
     getEmojiClick(code) {
@@ -1199,12 +1196,15 @@ export default {
     // 更多操作-唤起弹框
     moreClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         return;
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }

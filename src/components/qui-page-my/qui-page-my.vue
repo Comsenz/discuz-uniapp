@@ -62,15 +62,14 @@
         </view>
         <view class="my-items__wrap">
           <navigator url="/pages/site/index" hover-class="none">
-            <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
-          </navigator>
-          <navigator url="/pages/site/search" hover-class="none">
             <qui-cell-item
-              :title="i18n.t('profile.search')"
+              :title="i18n.t('profile.circleinfo')"
               arrow
               :border="
                 forums.other &&
-                (forums.other.can_create_invite || forums.other.can_invite_user_scale)
+                (forums.other.can_create_invite ||
+                  forums.other.can_edit_user_group ||
+                  forums.other.can_invite_user_scale)
                   ? true
                   : false
               "
@@ -84,12 +83,18 @@
             <qui-cell-item
               :title="i18n.t('profile.inviteFriends')"
               arrow
-              :border="forums.other && forums.other.can_create_invite ? true : false"
+              :border="
+                forums.other && (forums.other.can_create_invite || forums.other.can_edit_user_group)
+                  ? true
+                  : false
+              "
               :class-item="'invite-friends'"
             ></qui-cell-item>
           </navigator>
           <navigator
-            v-if="forums.other && forums.other.can_create_invite"
+            v-if="
+              forums.other && (forums.other.can_create_invite || forums.other.can_edit_user_group)
+            "
             url="/pages/manage/index"
             hover-class="none"
           >
@@ -155,6 +160,9 @@ import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { mapState, mapMutations } from 'vuex';
+// #ifdef H5
+import { setCookie } from '@/utils/setCookie';
+// #endif
 
 export default {
   components: { uniPopupDialog },
@@ -217,7 +225,10 @@ export default {
       this.$refs.popup.open();
     },
     logout() {
-      this.$store.dispatch('session/logout').then(() => window.location.reload());
+      this.$store.dispatch('session/logout').then(() => {
+        setCookie('token', '', -1);
+        window.location.reload();
+      });
     },
     handleClickOk() {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(() => {
@@ -236,7 +247,10 @@ export default {
         });
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/logout').then(() => window.location.reload());
+        this.$store.dispatch('session/logout').then(() => {
+          setCookie('token', '', -1);
+          window.location.reload();
+        });
         // #endif
       });
     },

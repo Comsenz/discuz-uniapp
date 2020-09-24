@@ -12,12 +12,6 @@
       }
     },
     {
-      "path": "pages/share/weixinchome",
-      "style": {
-        "navigationBarTitleText": "相册选取"
-      }
-    },
-    {
       "path": "pages/topic/content",
       "style": {
         "navigationBarTitleText": "",
@@ -51,11 +45,53 @@
         "navigationBarTitleText": "#话题#"
       }
     },
+    {
+      "path": "pages/topic/parse-goods",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "发布"
+      }
+    },
+    {
+      "path": "pages/topic/goods-post",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "发布"
+      }
+    },
+    {
+      "path": "pages/topic/attachment",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "预览附件"
+      }
+    },
     // 登录注册
     {
       "path": "pages/user/phone-login",
       "style": {
         "navigationBarTitleText": "手机号码登录"
+      }
+    },
+    {
+      "path": "pages/user/uc-login",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/user/wechat",
+      "style": {
+        "navigationBarTitleText": "微信授权"
+      }
+    },
+    {
+      "path": "pages/user/pc-login",
+      "style": {
+        "navigationBarTitleText": "PC端登录确认"
       }
     },
     {
@@ -385,15 +421,21 @@
       }
     },
     {
-      "path": "pages/user/wechat",
-      "style": {
-        "navigationBarTitleText": "微信授权"
-      }
-    },
-    {
       "path": "pages/common/view",
       "style": {
         "navigationBarTitleText": ""
+      }
+    },
+    {
+      "path": "pages/modify/rightdetails",
+      "style": {
+        "navigationBarTitleText": "权力详情"
+      }
+    },
+    {
+      "path": "pages/modify/right",
+      "style": {
+        "navigationBarTitleText": "权力的市场"
       }
     }
   ],

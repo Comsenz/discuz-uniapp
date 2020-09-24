@@ -11,7 +11,7 @@
           v-if="uploadBeforeList.length > 0"
           mode="aspectFill"
           :src="item.path"
-          @click="previewPicture(index)"
+          @click="previewPicture(index, item)"
         ></image>
         <view
           class="qui-uploader-box__uploader-file--load"
@@ -46,6 +46,11 @@ import { i18n } from '@/locale';
 export default {
   name: 'QuiUploader',
   props: {
+    // 上传类型 0是首页上传，1是默认上传
+    chooseType: {
+      default: 1,
+      type: Number,
+    },
     url: {
       default: '',
       type: String,
@@ -101,6 +106,7 @@ export default {
       detailindex: [],
       newindex: [],
       cunmumber: 1,
+      uploadType: '',
     };
   },
   watch: {
@@ -139,6 +145,9 @@ export default {
     }
   },
   methods: {
+    getValue() {
+      return this.uploadList;
+    },
     uploadDelete(index) {
       this.uploadList.sort(this.compare('order'));
       const beforeUpload = this.uploadList[index];
@@ -161,7 +170,8 @@ export default {
     },
 
     // 图片预览
-    previewPicture(index) {
+    previewPicture(index, item) {
+      // #ifdef MP-WEIXIN
       const _this = this;
       const preview = [];
       for (let i = 0, len = _this.uploadBeforeList.length; i < len; i += 1) {
@@ -172,6 +182,10 @@ export default {
         urls: preview,
         indicator: 'default',
       });
+      // #endif
+      // #ifdef H5
+      uni.$emit('clickImage', item);
+      // #endif
     },
     compare(property) {
       return (a, b) => {
@@ -238,7 +252,8 @@ export default {
           sourceType: ['album', 'camera'],
           success(res) {
             // 上传图片后返回false状态
-            _this.$emit('uploadClick', false);
+            _this.$emit('uploadClickSure', false);
+
             // 自定义开始上传的效果和回调
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
@@ -249,12 +264,6 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.numberdata.push({ state: 0 });
                 _this.newindex.push(res.tempFiles[index]);
-                // const sun = _this.newindex;
-                // if (_this.uploadBeforeList.length > _this.count) {
-                //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                //   _this.numberdata = _this.numberdata.slice(0, _this.count);
-                //   _this.newindex = _this.newindex.slice(0, _this.count);
-                // }
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,
@@ -281,6 +290,13 @@ export default {
     // 上传图片到服务器
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
+      if (_this.chooseType === 0) {
+        // 这是首页上传图片
+        uni.showLoading({
+          title: _this.i18n.t('core.loading'),
+          mask: true,
+        });
+      }
       const formdataObj = { type: _this.formData.type, order: imgOrder };
       _this.formDataAppend = {};
       const uploadTask = uni.uploadFile({
@@ -293,9 +309,10 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             setTimeout(() => {
-              console.log(_this.newindex, '删除之后的数组');
+              // console.log(_this.newindex, '删除之后的数组');
               if (index < _this.uploadBeforeList.length) {
                 _this.uploadBeforeList[index].uploadPercent = 100;
+                _this.uploadBeforeList[index].id = JSON.parse(res.data).data.id;
                 _this.numberdata[index].state = 100;
               }
               if (
@@ -314,12 +331,7 @@ export default {
                 _this.uploadBeforeList[_this.indexs].uploadPercent = 100;
                 _this.numberdata[_this.indexs].state = 100;
               }
-              const resObj = {
-                id: JSON.parse(res.data).data.id,
-                type: JSON.parse(res.data).data.type,
-                order: imgOrder,
-              };
-              _this.uploadList.push(resObj);
+              _this.uploadList.push(JSON.parse(res.data).data);
               if (_this.uploadList.length > _this.count) {
                 _this.uploadList.sort(_this.compare('order'));
                 _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
@@ -333,7 +345,7 @@ export default {
             }, 500);
           } else {
             _this.number += 1;
-            console.log(_this.uploadBeforeList);
+            // console.log(_this.uploadBeforeList);
             const resObj = JSON.parse(res.data);
             if (resObj.errors[0].detail) {
               uni.showToast({
@@ -382,6 +394,11 @@ export default {
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
+        },
+        complete(res) {
+          if (_this.chooseType === 0) {
+            uni.$emit('uploadOver', JSON.parse(res.data));
+          }
         },
       });
 

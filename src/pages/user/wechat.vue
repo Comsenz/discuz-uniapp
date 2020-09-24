@@ -7,6 +7,7 @@ import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
 // #ifdef H5
 import loginAuth from '@/mixin/loginAuth-h5';
+import { setCookie } from '@/utils/setCookie';
 // #endif
 import { SITE_PAY } from '@/common/const';
 
@@ -30,16 +31,42 @@ export default {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
+          if (res && res.data && res.data.data && res.data.data.id) {
+            setCookie('token', res.data.data.attributes.access_token, 30);
+            console.log('登录成功：', res);
+            this.logind();
+            if (
+              this.forums &&
+              this.forums.set_site &&
+              this.forums.set_site.site_mode !== SITE_PAY
+            ) {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+            }
+            if (
+              this.forums &&
+              this.forums.set_site &&
+              this.forums.set_site.site_mode === SITE_PAY &&
+              this.user &&
+              !this.user.paid
+            ) {
+              uni.redirectTo({
+                url: '/pages/site/info',
+              });
+            }
+          }
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
               this.$store.dispatch('session/setToken', res.data.errors[0].token);
-              const url = this.$store.getters['session/get']('url');
-              console.log('微信登录url', url);
               this.login();
             }
             if (res.data.errors[0].code === 'permission_denied') {
-              const url = this.$store.getters['session/get']('url');
-              console.log('微信登录url', url);
               this.login();
             }
             if (res.data.errors[0].code === 'register_validate') {
@@ -56,28 +83,6 @@ export default {
                 duration: 2000,
               });
             }
-          }
-          if (res && res.data && res.data.data && res.data.data.id) {
-            this.logind();
-            if (this.user && this.user.paid) {
-              this.isPaid = this.user.paid;
-            }
-            if (this.site_mode !== SITE_PAY) {
-              const pages = getCurrentPages();
-              const url = pages[pages.length - 1].route;
-              uni.navigateTo({
-                url,
-              });
-            }
-            if (this.site_mode === SITE_PAY && !this.isPaid) {
-              uni.navigateTo({
-                url: '/pages/site/info',
-              });
-            }
-            uni.showToast({
-              title: this.i18n.t('user.loginSuccess'),
-              duration: 2000,
-            });
           }
         })
         .catch(err => {

@@ -34,6 +34,13 @@
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
+          <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
+            class="login-box-ft-con-image uImg"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump3PhoneLogin"
+          />
         </view>
         <view>
           <!-- 开启注册功能才显示 -->
@@ -72,7 +79,6 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-import { SITE_PAY } from '@/common/const';
 
 export default {
   mixins: [user, loginModule],
@@ -80,10 +86,9 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
-      url: '', // 上一个页面的路径
-      site_mode: '', // 站点模式
       isPaid: false, // 默认未付费
       forum: {}, // 配置
+      isShow: false,
     };
   },
   onLoad() {
@@ -92,27 +97,6 @@ export default {
       status: 200,
     });
     this.getForum();
-    const url = this.$store.getters['session/get']('url');
-    console.log('登录url', url);
-
-    this.$u.event.$on('logind', () => {
-      if (this.user) {
-        this.isPaid = this.user.paid;
-      }
-      if (this.forum && this.forum.set_site) {
-        this.site_mode = this.forum.set_site.site_mode;
-      }
-      if (this.site_mode !== SITE_PAY) {
-        uni.redirectTo({
-          url,
-        });
-      }
-      if (this.site_mode === SITE_PAY && !this.isPaid) {
-        uni.redirectTo({
-          url: '/pages/site/info',
-        });
-      }
-    });
   },
   methods: {
     handleLogin() {
@@ -134,6 +118,11 @@ export default {
     },
     jump2findpwd() {
       this.jump2findpwdPage();
+    },
+    jump3PhoneLogin() {
+      uni.navigateTo({
+        url: '/pages/user/uc-login',
+      });
     },
   },
 };
@@ -212,5 +201,8 @@ export default {
       border: 2rpx solid rgba(221, 221, 221, 1);
     }
   }
+}
+.uImg {
+  margin-left: 20rpx;
 }
 </style>

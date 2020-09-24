@@ -183,7 +183,12 @@ $font-size-post: 40rpx;
   &[size='medium'] {
     width: 510rpx;
     height: 90rpx;
-    font-size: $font-size-md;
+    font-size: $font-size-lg;
+  }
+  &[size='small'] {
+    width: 230rpx;
+    height: 90rpx;
+    font-size: $font-size-sm;
   }
   &[size='default'] {
     height: 70rpx;

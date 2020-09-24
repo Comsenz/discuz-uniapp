@@ -1,9 +1,5 @@
 <template>
-  <view
-    v-if="showPopup"
-    class="uni-popup"
-    @touchmove.stop.prevent="clear"
-  >
+  <view v-if="showPopup" class="uni-popup" @touchmove.stop.prevent="clear">
     <uni-transition
       :mode-class="['fade']"
       :styles="maskClass"
@@ -241,6 +237,13 @@ export default {
   align-items: center;
   opacity: 0;
   transform: scale(1.2);
+}
+.qui-popup-at,
+.qui-popup-topic {
+  .uni-popup__wrapper-box {
+    width: 100%;
+    height: 100%;
+  }
 }
 .uni-popup__wrapper-box {
   position: relative;

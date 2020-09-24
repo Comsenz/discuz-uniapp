@@ -61,10 +61,12 @@
                   ? [thread.location, thread.address, thread.longitude, thread.latitude]
                   : []
               "
+              :thread-audio="thread.type == 4 ? thread.threadAudio : null"
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
               @previewPicture="payClickShow"
+              @previewAudio="payClickShow"
               @tagClick="tagClick"
             >
               <!-- 关注 -->
@@ -486,6 +488,7 @@
                 :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
+                fixed="true"
               />
             </view>
           </view>
@@ -555,7 +558,7 @@
             ></qui-emoji>
           </view>
 
-          <view class="comment-content-box" :style="{ paddingBottom: padTstatus ? '40rpx' : '0' }">
+          <view class="comment-content-box">
             <view class="comment-content">
               <textarea
                 ref="commentText"
@@ -566,12 +569,10 @@
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"
-                adjust-position="false"
-                cursor-spacing="0"
+                cursor-spacing="80"
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
-                @focus="textFocus"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -672,6 +673,7 @@ export default {
   // #endif
   data() {
     return {
+      imageList: [],
       navTitle: '内容详情页', // 导航栏标题
       threadId: '', // 主题id
       // userId: 57, //当前用户Id
@@ -946,12 +948,11 @@ export default {
       ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
-      padTstatus: false, // 是否给评论框box加padding值
     };
   },
-  onReady() {},
   onUnload() {
     this.$store.dispatch('forum/setError', { loading: false });
+    uni.$off('logind');
   },
   computed: {
     ...mapState({
@@ -959,11 +960,29 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
       if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
+        if (thread.firstPost.images) {
+          thread.firstPost.images = thread.firstPost.images.filter(item => {
+            if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+              return false;
+            }
+            return true;
+          });
+        }
+
+        if (thread.firstPost.attachments) {
+          thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
+            if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+              return false;
+            }
+            return true;
+          });
+        }
       }
       return thread;
     },
@@ -996,6 +1015,11 @@ export default {
     },
   },
   onLoad(option) {
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
+    });
+
     this.threadId = option.id;
     this.loadThread();
     this.loadThreadPosts();
@@ -1096,12 +1120,6 @@ export default {
   onPageScroll(event) {
     this.scrollTop = event.scrollTop;
   },
-  created() {
-    uni.$on('logind', () => {
-      this.loadThread();
-      this.loadThreadPosts();
-    });
-  },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
     // 来自页面内分享按钮
@@ -1143,12 +1161,6 @@ export default {
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
 
-    // 表情接口请求
-    // getEmoji() {
-    //   this.$store.dispatch('jv/get', ['emoji', {}]).then(data => {
-    //     this.allEmoji = data;
-    //   });
-    // },
     // 加载当前主题数据
     loadThread() {
       const params = {
@@ -1167,6 +1179,7 @@ export default {
           'rewardedUsers',
           'category',
           'threadVideo',
+          'threadAudio',
           'paidUsers',
           'user.groups.permissionWithoutCategories',
           'question',
@@ -1402,23 +1415,71 @@ export default {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             } else if (data.type === 5) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+
+              if (data.attachmentPrice > 0) {
+                this.payThreadTypeText =
+                  this.t.pay + data.attachmentPrice + this.t.checkTheAttachment;
+              } else {
+                this.payThreadTypeText =
+                  this.t.pay + data.price + this.t.paymentViewRemainingContent;
+              }
+              // this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+            } else if (data.type === 4) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewAudio;
             }
+
             if (data.price <= 0) {
               // #ifndef H5
               if (this.system === 'ios') {
-                if (this.paymentmodel === false) {
-                  this.rewardStatus = false;
-                } else if (this.paymentmodel === true) {
-                  this.rewardStatus = true;
+                if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
+                  if (this.paymentmodel === false) {
+                    this.paidStatus = false;
+                    this.rewardStatus = false;
+                  } else if (this.paymentmodel === true) {
+                    this.paidStatus = true;
+                    this.rewardStatus = false;
+                  }
+                } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
+                  if (this.paymentmodel === false) {
+                    this.paidStatus = false;
+                    this.rewardStatus = false;
+                  } else if (this.paymentmodel === true) {
+                    this.paidStatus = false;
+                    this.rewardStatus = false;
+                  }
+                } else {
+                  if (this.paymentmodel === false) {
+                    this.rewardStatus = false;
+                  } else if (this.paymentmodel === true) {
+                    this.rewardStatus = true;
+                  }
                 }
               } else {
-                this.rewardStatus = true;
+                if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
+                  this.paidStatus = true;
+                  this.paidBtnStatus = true;
+                  this.rewardStatus = false;
+                } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
+                  this.paidStatus = false;
+                  this.rewardStatus = false;
+                } else {
+                  this.paidStatus = false;
+                  this.rewardStatus = true;
+                }
               }
               // #endif
-              this.paidBtnStatus = false;
               // #ifdef H5
-              this.paidBtnStatus = false;
-              this.rewardStatus = true;
+              if (data.attachmentPrice > 0 && data.isPaidAttachment === false) {
+                this.paidStatus = true;
+                this.paidBtnStatus = true;
+                this.rewardStatus = false;
+              } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
+                this.paidStatus = false;
+                this.rewardStatus = false;
+              } else {
+                this.paidStatus = false;
+                this.rewardStatus = true;
+              }
               // #endif
             } else {
               // #ifndef H5
@@ -1937,7 +1998,7 @@ export default {
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
-              if (this.payTypeVal === 0) {
+              if (this.payTypeVal === 0 || this.payTypeVal === 2) {
                 // 这是主题支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
               } else if (this.payTypeVal === 1) {
@@ -2030,6 +2091,8 @@ export default {
       } else if (this.payTypeVal === 2) {
         // 这是围观支付
         this.creatOrder(this.price, 6, val, 1);
+      } else {
+        this.creatOrder(this.thread.attachmentPrice, 7, val, 1);
       }
     },
     // 支付方式选择完成点击确定时
@@ -2044,6 +2107,8 @@ export default {
         } else if (this.payTypeVal === 2) {
           // 这是围观支付
           this.creatOrder(this.price, 6, this.value, payType);
+        } else {
+          this.creatOrder(this.thread.attachmentPrice, 7, this.value, payType);
         }
       } else if (payType === 1) {
         // 这是详情页获取到的支付方式---钱包
@@ -2065,11 +2130,14 @@ export default {
     selectChoice(param) {
       console.log(param);
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2077,7 +2145,7 @@ export default {
       }
       if (param.type === '0') {
         uni.redirectTo({
-          url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
+          url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
@@ -2094,11 +2162,14 @@ export default {
     // 跳转到用户主页
     personJump(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2112,11 +2183,14 @@ export default {
     payClickShow() {
       console.log('0000')
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2146,15 +2220,39 @@ export default {
         this.payShowStatus = false;
         return;
       }
+
       this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏 2围观支付
+
+      // payTypeVal, '这是类型，0为主题支付，1为主题打赏 2为附件支付
+      if (this.thread.attachmentPrice > 0) {
+        this.payTypeVal = 2;
+      } else {
+        this.payTypeVal = 0;
+      }
+
       if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
+        this.price = parseFloat(this.thread.price);
       } else if (this.thread.type === 1) {
-        this.payTypeText = this.t.pay + this.t.paymentViewRemainingContent;
+        if (this.thread.attachmentPrice > 0) {
+          this.payTypeText = this.t.pay + this.thread.attachmentPrice + this.t.checkTheAttachment;
+          this.price = parseFloat(this.thread.attachmentPrice);
+          console.log(this.payTypeText, '支付附件');
+        } else {
+          this.payTypeText = this.t.pay + this.thread.price + this.t.paymentViewRemainingContent;
+          this.price = parseFloat(this.thread.price);
+        }
       } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
       } 
       this.price = parseFloat(this.thread.price);
+
+        this.price = parseFloat(this.thread.price);
+      } else if (this.thread.type === 4) {
+        this.payTypeText = this.t.pay + this.t.paymentViewAudio;
+        this.price = parseFloat(this.thread.price);
+      }
+
       this.$nextTick(() => {
         console.log('9999')
         this.$refs.payShow.payClickShow(this.payTypeVal);
@@ -2197,11 +2295,14 @@ export default {
     rewardClick() {
       console.log('打赏')
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2309,15 +2410,9 @@ export default {
         });
       }
     },
-    // 输入框获取焦点时
-    textFocus() {
-      // 为了解决当文本域获取焦点时，文本域在不同设备上推错位问题
-      this.padTstatus = true;
-    },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
       this.cursor = e.detail.cursor;
-      this.padTstatus = false;
     },
     // 点击表情插入到文本域
     getEmojiClick(code) {
@@ -2391,14 +2486,14 @@ export default {
     // 跳转到评论详情页
     commentJump(threadId, postId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch(
-          'session/setUrl',
-          `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
-        );
         if (!this.handleLogin()) {
           return;
         }
@@ -2411,11 +2506,14 @@ export default {
     // 评论点赞
     commentLikeClick(postId, type, canStatus, isStatus, index, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2427,11 +2525,14 @@ export default {
     // 删除评论
     deleteComment(postId, type, canStatus, isStatus, post) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2449,11 +2550,14 @@ export default {
     // 评论的回复
     replyComment(postId, postIndex) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2475,11 +2579,14 @@ export default {
     // 点击图片
     imageClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2511,11 +2618,14 @@ export default {
     // 主题点赞
     threadLikeClick(postId, canLike, isLiked) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2526,11 +2636,14 @@ export default {
     // 主题收藏
     threadCollectionClick(id, canStatus, isStatus, type) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2542,11 +2655,14 @@ export default {
     // 主题回复
     threadComment(threadId) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2620,11 +2736,14 @@ export default {
     // 分享
     shareClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2738,11 +2857,14 @@ export default {
     // 管理菜单内标签点击事件
     sortSelectChoice(param) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2780,11 +2902,14 @@ export default {
     // 添加关注
     addFollow(userInfo) {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2824,12 +2949,15 @@ export default {
     // 更多操作-唤起弹框
     moreClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
         return;
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         if (!this.handleLogin()) {
           return;
         }
@@ -2839,11 +2967,10 @@ export default {
     },
     // 更多操作内标签选择
     moreContent(param, thread) {
-      console.log(thread);
       this.moreCancel();
       if (param.type === '0') {
         uni.redirectTo({
-          url: `/pages/topic/post?operating=edit&threadId=${this.thread._jv.id}`,
+          url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
@@ -2939,9 +3066,6 @@ export default {
       this.currentReport = '';
       this.$refs.reportPopup.close();
     },
-  },
-  destroyed() {
-    uni.$off('logind');
   },
 };
 </script>

@@ -13,6 +13,10 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
+        uni.setStorage({
+          key: 'register',
+          data: 1,
+        });
         this.$store.dispatch('session/wxh5Login');
       } else {
         this.login();
@@ -37,7 +41,7 @@ module.exports = {
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 无感模式
-          this.$store.dispatch('session/noSenseh5Register');
+          this.$store.dispatch('session/wxh5Login');
         }
       } else {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
