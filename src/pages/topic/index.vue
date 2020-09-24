@@ -23,6 +23,7 @@
             </view>
             <qui-topic-content
               ref="sun"
+              :thread-info="thread"
               :themid="threadId"
               :topic-status="thread.isApproved"
               :follow-show="thread.user.follow != null"
@@ -960,6 +961,7 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+      console.log('thread', thread);
 
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;

@@ -18,8 +18,8 @@ export default {
     preview() {
       const attachment = this.$store.getters['session/get']('attachment');
       console.log('attachment', attachment);
-      if (attachment && attachment.item) {
-        this.src = `${attachment.item.url}&page=1`;
+      if (attachment) {
+        this.src = `${attachment.url}&page=1`;
       }
     },
   },
