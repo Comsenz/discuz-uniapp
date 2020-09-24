@@ -599,9 +599,10 @@ export default {
       this.sun = false;
       this.videoShow = true;
       this.autoplay = true;
+      const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
+      // videoContext.requestFullScreen();
       setTimeout(() => {
         // console.log('视频开始播放', `myVideo${this.currentindex}`);
-        const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
         videoContext.play();
       }, 200);
       setTimeout(() => {

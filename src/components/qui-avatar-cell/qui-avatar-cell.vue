@@ -93,6 +93,11 @@ export default {
   &:active {
     background-color: --color(--qui-BOR-ED);
   }
+  &__r__tit-label {
+    margin-right: 20rpx;
+    font-size: 24rpx;
+    color: --color(--qui-FC-AAA);
+  }
 
   &__img {
     display: flex;
@@ -114,9 +119,6 @@ export default {
       display: flex;
       flex-direction: column;
       font-size: 28rpx;
-      &-label {
-        color: --color(--qui-FC-DDD);
-      }
     }
 
     .avatar-box__r__val-box {

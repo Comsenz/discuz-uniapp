@@ -259,7 +259,7 @@ $height: calc(100vh - 150rpx);
   width: 50%;
   height: 78rpx;
   /* #ifdef H5 */
-  margin-top: 40px;
+  margin-top: 44px;
   /* #endif */
 }
 .date-picker .uni-input {

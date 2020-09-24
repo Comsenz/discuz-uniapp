@@ -12,12 +12,6 @@
       }
     },
     {
-      "path": "pages/share/weixinchome",
-      "style": {
-        "navigationBarTitleText": "相册选取"
-      }
-    },
-    {
       "path": "pages/topic/content",
       "style": {
         "navigationBarTitleText": "",
@@ -67,6 +61,14 @@
         "navigationBarTitleText": "发布"
       }
     },
+    {
+      "path": "pages/topic/attachment",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "预览附件"
+      }
+    },
     // 登录注册
     {
       "path": "pages/user/phone-login",
@@ -90,12 +92,6 @@
       "path": "pages/user/pc-login",
       "style": {
         "navigationBarTitleText": "PC端登录确认"
-      }
-    },
-    {
-      "path": "pages/user/grant-login",
-      "style": {
-        "navigationBarTitleText": "PC登录"
       }
     },
     {
