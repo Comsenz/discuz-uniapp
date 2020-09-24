@@ -162,6 +162,7 @@ export default {
   data() {
     return {
       items: [
+        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.topic'), brief: '0' },
         { title: this.i18n.t('profile.following'), brief: '0' },
         { title: this.i18n.t('profile.followers'), brief: '0' },
@@ -245,9 +246,10 @@ export default {
     // 设置粉丝点赞那些数字
     setNum(res) {
       this.items[0].brief = res.threadCount || 0;
-      this.items[1].brief = res.followCount || 0;
-      this.items[2].brief = res.fansCount || 0;
-      this.items[3].brief = res.likedCount || 0;
+      this.items[1].brief = res.threadCount || 0;
+      this.items[2].brief = res.followCount || 0;
+      this.items[3].brief = res.fansCount || 0;
+      this.items[4].brief = res.likedCount || 0;
     },
     // 组件初始化数据
     ontrueGetList() {

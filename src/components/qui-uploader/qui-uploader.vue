@@ -249,8 +249,7 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.numberdata.push({ state: 0 });
                 _this.newindex.push(res.tempFiles[index]);
-                const sun = _this.newindex;
-                console.log(sun);
+                // const sun = _this.newindex;
                 // if (_this.uploadBeforeList.length > _this.count) {
                 //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
                 //   _this.numberdata = _this.numberdata.slice(0, _this.count);

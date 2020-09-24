@@ -79,7 +79,7 @@ module.exports = {
     // 更多代理设置请看：https://github.com/chimurai/http-proxy-middleware#options
     proxy: {
       '/api': {
-        target: 'https://editor.discuzq.com',
+        target: 'https://dq.comsenz-service.com',
         changeOrigin: true,
         ws: true,
         pathRewrite: {

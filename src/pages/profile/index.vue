@@ -71,6 +71,15 @@
           ></qui-tabs>
           <view class="profile-tabs__content">
             <view v-if="current == 0" class="items">
+              <question
+                :user-id="userId"
+                :scroll-top="scrollTop"
+                @changeFollow="changeFollow"
+                ref="topic"
+                @handleClickShare="handleClickShare"
+              ></question>
+            </view>
+            <view v-if="current == 1" class="items">
               <topic
                 :user-id="userId"
                 :scroll-top="scrollTop"
@@ -79,10 +88,10 @@
                 @handleClickShare="handleClickShare"
               ></topic>
             </view>
-            <view v-else-if="current == 1" class="items">
+            <view v-else-if="current == 2" class="items">
               <following :user-id="userId" @changeFollow="changeFollow" ref="following"></following>
             </view>
-            <view v-else-if="current == 2" class="items">
+            <view v-else-if="current == 3" class="items">
               <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
             </view>
             <view v-else class="items">
@@ -113,6 +122,7 @@ import topic from './topic';
 import following from './following';
 import followers from './followers';
 import like from './like';
+import question from './question';
 
 export default {
   components: {
@@ -120,6 +130,7 @@ export default {
     following,
     followers,
     like,
+    question,
   },
   mixins: [
     forums,
@@ -136,6 +147,7 @@ export default {
   data() {
     return {
       items: [
+        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.topic'), brief: '0' },
         { title: this.i18n.t('profile.following'), brief: '0' },
         { title: this.i18n.t('profile.followers'), brief: '0' },
@@ -171,7 +183,7 @@ export default {
     // #endif
   },
   onPullDownRefresh() {
-    const item = ['topic', 'following', 'followers', 'like'];
+    const item = ['question', 'topic', 'following', 'followers', 'like'];
     const { current } = this;
     if (!this.$refs[item[current]]) {
       return;
@@ -180,7 +192,7 @@ export default {
   },
   onReachBottom() {
     const { current } = this;
-    const item = ['topic', 'following', 'followers', 'like'];
+    const item = ['question', 'topic', 'following', 'followers', 'like'];
     this.$refs[item[current]].pullDown();
   },
   onPageScroll(event) {
@@ -267,9 +279,10 @@ export default {
     // 设置粉丝点赞那些数字
     setNum(res) {
       this.items[0].brief = res.threadCount || 0;
-      this.items[1].brief = res.followCount || 0;
-      this.items[2].brief = res.fansCount || 0;
-      this.items[3].brief = res.likedCount || 0;
+      this.items[1].brief = res.threadCount || 0;
+      this.items[2].brief = res.followCount || 0;
+      this.items[3].brief = res.fansCount || 0;
+      this.items[4].brief = res.likedCount || 0;
     },
     // 添加关注
     addFollow(userInfo) {

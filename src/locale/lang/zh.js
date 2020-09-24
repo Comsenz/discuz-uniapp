@@ -391,7 +391,7 @@ export default {
     record: '网站备案信息:',
     copyright: 'Powered by Discuz! Q',
     to: '向',
-    putQuestions: '提问:',
+    putQuestions: '提问',
     putQuestion: '提问',
     answer: '回答',
     gather: '人已围观,问题价值',
@@ -728,6 +728,7 @@ export default {
     noshield: '您没有屏蔽任何人',
     unboundsucceed: '解除绑定成功',
     shieldusersure: '确定屏蔽该用户吗？',
+    questionAndAnswer: '问答',
   },
   site: {
     circleintroduction: '站点介绍',

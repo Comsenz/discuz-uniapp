@@ -19,7 +19,7 @@
         scroll-with-animation="true"
         @scrolltolower="lower"
       >
-        <checkbox-group @change="changeCheck" v-if="followStatus">
+        <checkbox-group @change="changeCheck" v-if="followStatus && !select">
           <label v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
               v-if="item.toUser"

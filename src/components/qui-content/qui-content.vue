@@ -7,7 +7,7 @@
       v-if="themeEssence && themeType == '1'"
       lazy-load
     ></image>
-    <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load></image>
+    <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load v-if="addAsk === 1"></image>
 
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
@@ -56,12 +56,6 @@
             <view class="themeItem__content__text__longessay__publish">
               {{ i18n.t('home.released') }} :
             </view>
-            <!-- <qui-icon
-              name="icon-link"
-              :color="theme === $u.light() ? '#00479B' : '#1E78F3'"
-              size="28"
-              style="padding-left: 8rpx;"
-            ></qui-icon> -->
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
@@ -73,92 +67,31 @@
               {{ themeContent }}
             </navigator>
           </view>
-          <view class="themeItem__QA" v-if="threadType === 1 && themeType === '5'">
+          <view class="themeItem__QA" v-if="threadType === 5 && themeType === '5'">
             <view class="themeItem_questions">
-              佟掌柜
+              {{ questionsName }}
             </view>
             <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
-            <view class="themeItem_to">白展堂</view>
+            <view class="themeItem_to">{{ beAskName }}</view>
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} ,</view>
-            <!-- <navigator class="navPost">
-              {{ themeContent }}
-            </navigator> -->
-            <view class="themeItem_quemoney">{{ i18n.t('home.quemoney') }}</view>
-            <view class="themeItem_money">¥2190.000 ,</view>
-            <view class="themeItem_all">
-              {{ `${i18n.t('home.spendingMoney')}${date}${i18n.t('home.element')}` }}
-            </view>
-            <view class="themeItem_askback">
-              请问今年疫情对经济影响大吗？会不会引发经济危机？
-              <view class="themeItem_watch">
-                <view class="themItem_watch_num">
-                  643
-                </view>
-                <view class="themItem_watch_gather">
-                  {{ i18n.t('home.gather') }}
-                </view>
-                <view class="themItem_watch_money">
-                  ¥2190.0000
-                </view>
-              </view>
-            </view>
           </view>
           <!-- 提问 -->
-          <view class="themeItem__QA" v-if="threadType === 1 && themeType !== '5'">
-            <view class="themeItem_questions">
-              白展堂
-            </view>
+          <view class="themeItem__QA" v-if="threadType === 5 && themeType !== '5' && addAsk === 0">
+            <view class="themeItem_questions">@{{ questionsName }}</view>
             <view class="themeItem_put">{{ i18n.t('home.to') }}</view>
-            <view class="themeItem_to">佟掌柜</view>
-            <view class="themeItem_ask">{{ i18n.t('home.putQuestions') }}</view>
+            <view class="themeItem_to">@{{ beAskName }}</view>
+            <view class="themeItem_ask">{{ i18n.t('home.putQuestions') }} :</view>
+            <!-- <qui-uparse :content="questionContent"></qui-uparse> -->
             <navigator class="navPost">
-              {{ themeContent }}
+              {{ questionContent }}
             </navigator>
-            <view class="themeItem_askback">
-              请问今年疫情对经济影响大吗？会不会引发经济危机？
-              <view class="themeItem_watch">
-                <view class="themItem_watch_num">
-                  643
-                </view>
-                <view class="themItem_watch_gather">
-                  {{ i18n.t('home.gather') }}
-                </view>
-                <view class="themItem_watch_money">
-                  ¥2190.0000
-                </view>
-              </view>
-            </view>
           </view>
           <!-- 回答 -->
-          <view class="themeItem__QA" v-else>
-            <view class="themeItem_questions">
-              佟掌柜
-            </view>
+          <view class="themeItem__QA" v-if="addAsk === 1 && freeAsk">
+            <view class="themeItem_questions">@{{ beAskName }}</view>
             <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
-            <view class="themeItem_to">白展堂</view>
-            <view class="themeItem_ask">{{ i18n.t('home.problem') }} ,</view>
-            <!-- <navigator class="navPost">
-              {{ themeContent }}
-            </navigator> -->
-            <view class="themeItem_quemoney">{{ i18n.t('home.quemoney') }}</view>
-            <view class="themeItem_money">¥2190.000 ,</view>
-            <view class="themeItem_all">
-              {{ `${i18n.t('home.spendingMoney')}${date}${i18n.t('home.element')}` }}
-            </view>
-            <view class="themeItem_askback">
-              请问今年疫情对经济影响大吗？会不会引发经济危机？
-              <view class="themeItem_watch">
-                <view class="themItem_watch_num">
-                  643
-                </view>
-                <view class="themItem_watch_gather">
-                  {{ i18n.t('home.gather') }}
-                </view>
-                <view class="themItem_watch_money">
-                  ¥2190.0000
-                </view>
-              </view>
-            </view>
+            <view class="themeItem_to">@{{ questionsName }}</view>
+            <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
           <view>
             <qui-icon
@@ -168,7 +101,7 @@
               style="float: left;margin-right: 10rpx;"
               v-if="themPayBtn"
             ></qui-icon>
-            <qui-uparse :content="themeContent"></qui-uparse>
+            <qui-uparse :content="themeContent" v-if="threadType !== 1"></qui-uparse>
           </view>
         </view>
         <view
@@ -293,11 +226,7 @@
             ></view>
           </view>
         </view>
-
-        <view
-          class="themeItem__content__tags"
-          v-if="(themeType === '0' && getCategoryId === 0) || themeType === '5'"
-        >
+        <view class="themeItem__content__tags" v-if="themeType === '0' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
           </view>
@@ -546,6 +475,66 @@ export default {
         return [];
       },
     },
+    // 提问用户名称
+    questionsName: {
+      type: String,
+      default: '',
+    },
+    // 被提问用户名称
+    beAskName: {
+      type: String,
+      default: '',
+    },
+    // 提问内容
+    questionContent: {
+      type: String,
+      default: '',
+    },
+    // 显示付费提问
+    paidQuestions: {
+      type: Boolean,
+      default: false,
+    },
+    // 已回答提问
+    answered: {
+      type: Boolean,
+      default: false,
+    },
+    // 已回答图标显示
+    addAsk: {
+      type: Number,
+      default: 0,
+    },
+    // 围观总人数
+    onlookerNumber: {
+      type: Number,
+      default: 0,
+    },
+    // 免费的提问
+    freeAsk: {
+      type: Boolean,
+      default: false,
+    },
+    // 问题价值
+    askPrice: {
+      type: String,
+      default: '',
+    },
+    // 回答问题的内容
+    askContent: {
+      type: String,
+      default: '',
+    },
+    // 围观单价
+    onlookerUnitPrice: {
+      type: String,
+      default: '',
+    },
+    // 是否显示围观单价
+    onLooker: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => {
@@ -736,8 +725,8 @@ export default {
     position: absolute;
     top: 40rpx;
     left: 660rpx;
-    width: 60rpx;
-    height: 60rpx;
+    width: 72rpx;
+    height: 72rpx;
   }
 }
 .themeItem {
@@ -1020,16 +1009,26 @@ export default {
 .themItem_watch_money {
   display: inline-block;
 }
+.themeItem_questions,
+.themeItem_to {
+  color: --color(--qui-LINK);
+}
+.themeItem_put,
+.themeItem_ask {
+  margin: 0 8rpx;
+}
 .themeItem-put,
 .themeItem__header__title__questions {
   margin: 0 4rpx;
 }
 .themeItem_askback {
-  padding: 10px;
+  width: 690rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
   font-size: $fg-f4;
   color: var(--qui-FC-333);
   background-color: --color(--qui-BG-F7);
-  border-radius: 5px;
+  border-radius: 5rpx;
 }
 .themItem_watch_num,
 .themItem_watch_money {

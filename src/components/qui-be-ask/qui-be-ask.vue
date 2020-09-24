@@ -14,11 +14,22 @@
 </template>
 <script>
 export default {
-  props: {},
+  props: {
+    // 回答即可获得
+    date: {
+      type: Number,
+      default: 0,
+    },
+    // 每次回答可获得
+    beDate: {
+      type: Number,
+      default: 0,
+    },
+  },
   data: () => {
     return {
-      date: '555',
-      beDate: '666',
+      // date: '555',
+      // beDate: '666',
     };
   },
   methods: {

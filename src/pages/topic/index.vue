@@ -141,7 +141,11 @@
             </view>
             <!-- 回答问题 -->
             <view v-if="beAsk">
-              <qui-be-ask @queClick="queClick"></qui-be-ask>
+              <qui-be-ask
+                :date="beAskDate"
+                :be-date="beAskBeDate"
+                @queClick="queClick"
+              ></qui-be-ask>
             </view>
             <!-- 答案支付 -->
             <view v-if="answerPay" style="padding: 0 20rpx;">
@@ -173,6 +177,7 @@
                 :avatar-url="thread.question.beUser.avatarUrl"
                 :theme-time="thread.question.beUser.createdAt"
                 :answer-content="thread.question.content_html"
+                :images-list="thread.question.images"
                 :thread="thread"
               ></qui-payment-visible>
             </view>
@@ -699,6 +704,9 @@ export default {
       answerPay: false, // 支付答案
       payment: false, // 支付可见
       questionId: '', // 回答问题ID
+      beAskDate: 0, // 回答即可获得
+      beAskBeDate: 0, // 每次回答可获得
+      platformDate: 0, // 平台获得
       bottomData: [
         {
           text: this.i18n.t('core.generatePoster'),
@@ -739,6 +747,7 @@ export default {
       isAnonymous: '0', // 支付时是否显示头像，默认不显示
       payTypeText: '',
       payTypeVal: 0, // 点击的支付类型， 0主题支付  1主题打赏 2围观支付
+      
       payNum: [
         {
           name: '￥1',
@@ -1056,7 +1065,7 @@ export default {
       authorization: `Bearer ${token}`,
     };
     this.formData = {
-      type: 1,
+      type: 1, // 上传图片类型 1:图片 5: 问答图片
     };
 
     // 编辑发帖回来后更新信息
@@ -1163,7 +1172,7 @@ export default {
           'question',
           'onlookers',
           'question.beUser',
-          // 'question.attachments'
+          'question.images'
         ],
       };
       const threadAction = status.run(() =>
@@ -1198,34 +1207,39 @@ export default {
             });
             // #endif
             console.log(data, '详情页主题');
-            // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
-            if (this.user.id === data.question.be_user_id && data.question.is_answer === 0 ) {
-              this.beAsk = true;
-            } else if (this.user.id === data.question.be_user_id && data.question.is_answer === 1) {
-              this.payment = true;
-              this.beAsk = false;
-            } else if (this.user.id !== (data.question.be_user_id && data.user.id ) && data.question.is_answer === 0) {
-              this.answerPay = true;
-            } else if (this.user.id !== (data.question.be_user_id && data.user.id) && data.question.is_answer === 1) {
-              // 免费围观
-              if (data.question.onlooker_unit_price === 0) {
+            if (data.question) {
+              this.platformDate = data.question.price * (this.forums.set_site.site_master_scale / 10);
+              this.beAskDate = (data.question.price - this.platformDate)/2;
+              this.beAskBeDate = (data.question.price - this.platformDate)/2;
+              // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
+              if (this.user.id === data.question.be_user_id && data.question.is_answer === 0 ) {
+                this.beAsk = true;
+              } else if (this.user.id === data.question.be_user_id && data.question.is_answer === 1) {
                 this.payment = true;
-                this.answerPay = false;
-              } else {
-                // 循环已付费围观者
-                data.onlookers.forEach( item => {
-                  console.log(item, 'item');
-                  if (this.user.id === item.id) {
-                    this.payment = true;
-                    this.answerPay = false;
-                    return;
-                  }
-                  this.payment = false;
-                  this.answerPay = true;
-                });
+                this.beAsk = false;
+              } else if (this.user.id !== (data.question.be_user_id && data.user.id ) && data.question.is_answer === 0) {
+                this.answerPay = true;
+              } else if (this.user.id !== (data.question.be_user_id && data.user.id) && data.question.is_answer === 1) {
+                // 免费围观
+                if (data.question.onlooker_unit_price === 0) {
+                  this.payment = true;
+                  this.answerPay = false;
+                } else {
+                  // 循环已付费围观者
+                  data.onlookers.forEach( item => {
+                    console.log(item, 'item');
+                    if (this.user.id === item.id) {
+                      this.payment = true;
+                      this.answerPay = false;
+                      return;
+                    }
+                    this.payment = false;
+                    this.answerPay = true;
+                  });
+                }
               }
+              this.questionId = data.question._jv.id;
             }
-            this.questionId = data.question._jv.id;
             data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
               if (value.permission === 'createThreadPaid') {
                 this.beRewarded = true;
@@ -1342,7 +1356,12 @@ export default {
             this.moreData[3].icon = 'icon-quxiaozhiding';
           }
           this.isLiked = data.firstPost.isLiked;
-          if (!this.forums.paycenter.wxpay_close) {
+          if(data.type === 5) {
+            this.rewardStatus = false;
+            this.paidStatus = false;
+            return;        
+          }
+          else if (!this.forums.paycenter.wxpay_close) {
             // 如果关闭了微信支付
             this.rewardStatus = false;
             this.paidStatus = false;
@@ -1695,7 +1714,6 @@ export default {
     },
     // 创建问答的回答
     postAnswer() {
-      console.log('回答问题的接口')
       this.commentAnser = true;
       if (this.textAreaValue.length < 1) {
         this.$refs.toast.show({ message: this.t.TheContentOfTheAnswerCannotBeEmpty });
@@ -1728,6 +1746,7 @@ export default {
         this.$refs.commentPopup.close();
         console.log(res, '回答问题的接口')
         this.loadThread();
+        this.$u.event.$emit('answered', res);
       })
     },
 
@@ -2535,6 +2554,7 @@ export default {
       }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
         this.commentId = threadId;
+        this.formData.type = 1;
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
@@ -2559,6 +2579,7 @@ export default {
         // #endif
       }
       console.log('回答问题');
+      this.formData.type = 5;
       this.$refs.commentPopup.open();
       this.postAnswer();
       this.commentPopupStatus = true;
