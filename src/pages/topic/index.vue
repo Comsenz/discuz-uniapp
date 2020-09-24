@@ -1853,7 +1853,7 @@ export default {
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
-              if (this.payTypeVal === 0 || this.payTypeVal === 2) {
+              if (this.payTypeVal === 0 || this.payTypeVal === 3) {
                 // 这是主题支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
               } else if (this.payTypeVal === 1) {
@@ -1943,7 +1943,7 @@ export default {
       } else if (this.payTypeVal === 1) {
         // 这是主题打赏
         this.creatOrder(this.price, 2, val, 1);
-      } else if (this.payTypeVal === 2) {
+      } else if (this.payTypeVal === 3) {
         this.creatOrder(this.thread.attachmentPrice, 7, val, 1);
       }
     },
@@ -1956,7 +1956,7 @@ export default {
         } else if (this.payTypeVal === 1) {
           // 这是主题打赏
           this.creatOrder(this.price, 2, this.value, payType);
-        } else if (this.payTypeVal === 2) {
+        } else if (this.payTypeVal === 3) {
           this.creatOrder(this.thread.attachmentPrice, 7, this.value, payType);
         }
       } else if (payType === 1) {
@@ -2068,9 +2068,9 @@ export default {
         this.payShowStatus = false;
         return;
       }
-      // payTypeVal, '这是类型，0为主题支付，1为主题打赏 2为附件支付
+      // payTypeVal, '这是类型，0为主题支付，1为主题打赏 3为附件支付
       if (this.thread.attachmentPrice > 0) {
-        this.payTypeVal = 2;
+        this.payTypeVal = 3;
       } else {
         this.payTypeVal = 0;
       }
