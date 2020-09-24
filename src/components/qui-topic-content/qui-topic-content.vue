@@ -205,7 +205,11 @@
               size="22"
             ></qui-icon>
             <text @tap="download(item)">{{ item.fileName }}</text>
-            <text @click="preview(item)" style="position: absolute; right: 20rpx; color: #1878f3;">
+            <text
+              v-if="['MP4'].indexOf(item.format) === -1"
+              @click="preview(item)"
+              style="position: absolute; right: 20rpx; color: #1878f3;"
+            >
               预览
             </text>
           </view>
