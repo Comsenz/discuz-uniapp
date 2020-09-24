@@ -119,167 +119,165 @@
               @click="toolBarClick('italic')"
             ></qui-icon>
           </view>
-       <view>
-
-
-      <view v-if="type !== 1">
-        <view class="post-box__hd">
-          <view class="post-box__hd-l">
-            <qui-icon
-              class="post-box__hd-l__icon"
-              name="icon-expression"
-              size="40"
-              :color="emojiShow ? '#1878F3' : '#777'"
-              @click="emojiclick"
-            ></qui-icon>
-            <qui-icon
-              class="post-box__hd-l__icon"
-              name="icon-call"
-              size="40"
-              color="#777"
-              @click="callClick"
-            ></qui-icon>
-            <qui-icon
-              class="post-box__hd-l__icon"
-              name="icon-wei"
-              size="40"
-              color="#777"
-              @click="topicPage"
-            ></qui-icon>
-          </view>
-          <text class="post-box__hd-r">
-            {{
+          <view>
+            <view v-if="type !== 1">
+              <view class="post-box__hd">
+                <view class="post-box__hd-l">
+                  <qui-icon
+                    class="post-box__hd-l__icon"
+                    name="icon-expression"
+                    size="40"
+                    :color="emojiShow ? '#1878F3' : '#777'"
+                    @click="emojiclick"
+                  ></qui-icon>
+                  <qui-icon
+                    class="post-box__hd-l__icon"
+                    name="icon-call"
+                    size="40"
+                    color="#777"
+                    @click="callClick"
+                  ></qui-icon>
+                  <qui-icon
+                    class="post-box__hd-l__icon"
+                    name="icon-wei"
+                    size="40"
+                    color="#777"
+                    @click="topicPage"
+                  ></qui-icon>
+                </view>
+                <text class="post-box__hd-r">
+                  {{
           textAreaValue.length &lt;= textAreaLength
           ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
           : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
-            }}
-          </text>
-        </view>
-        <view class="emoji-bd" v-show="emojiShow">
-          <qui-emoji
-            position="absolute"
-            top="20rpx"
-            border-radius="10rpx"
-            @click="getEmojiClick"
-          ></qui-emoji>
-        </view>
-        <view class="post-box__con">
-          <textarea
-            id="textarea"
-            ref="textarea"
-            class="post-box__con-text"
-            :placeholder="i18n.t('discuzq.post.placeholder')"
-            placeholder-class="textarea-placeholder"
-            v-model="textAreaValue"
-            auto-height="true"
-            :show-confirm-bar="barStatus"
-            :adjust-position="true"
-            cursor-spacing="30"
-            cursor="cursor"
-            :maxlength="10000"
-            :focus="type !== 1"
-            v-show="textShow"
-            @blur="contBlur"
-            @focus="focusEvent"
-          ></textarea>
-          <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
-            <text class="text-cover">{{ textAreaValue }}</text>
-          </view>
-          <view class="markdown-box" v-if="markdownShow">
-            <view>
-              <qui-icon
-                name="icon-bold"
-                size="30"
-                class="qui-icon"
-                @click="toolBarClick('bold')"
-              ></qui-icon>
+                  }}
+                </text>
+              </view>
+              <view class="emoji-bd" v-show="emojiShow">
+                <qui-emoji
+                  position="absolute"
+                  top="20rpx"
+                  border-radius="10rpx"
+                  @click="getEmojiClick"
+                ></qui-emoji>
+              </view>
+              <view class="post-box__con">
+                <textarea
+                  id="textarea"
+                  ref="textarea"
+                  class="post-box__con-text"
+                  :placeholder="i18n.t('discuzq.post.placeholder')"
+                  placeholder-class="textarea-placeholder"
+                  v-model="textAreaValue"
+                  auto-height="true"
+                  :show-confirm-bar="barStatus"
+                  :adjust-position="true"
+                  cursor-spacing="30"
+                  cursor="cursor"
+                  :maxlength="10000"
+                  :focus="type !== 1"
+                  v-show="textShow"
+                  @blur="contBlur"
+                  @focus="focusEvent"
+                ></textarea>
+                <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
+                  <text class="text-cover">{{ textAreaValue }}</text>
+                </view>
+                <view class="markdown-box" v-if="markdownShow">
+                  <view>
+                    <qui-icon
+                      name="icon-bold"
+                      size="30"
+                      class="qui-icon"
+                      @click="toolBarClick('bold')"
+                    ></qui-icon>
+                  </view>
+                  <view>
+                    <qui-icon
+                      name="icon-title"
+                      size="30"
+                      class="qui-icon"
+                      @click="toolBarClick('title')"
+                    ></qui-icon>
+                  </view>
+                  <view>
+                    <qui-icon
+                      name="icon-italic"
+                      size="30"
+                      class="qui-icon"
+                      @click="toolBarClick('italic')"
+                    ></qui-icon>
+                  </view>
+                  <view>
+                    <qui-icon
+                      name="icon-quote"
+                      size="30"
+                      class="qui-icon"
+                      @click="toolBarClick('quote')"
+                    ></qui-icon>
+                  </view>
+                  <view>
+                    <qui-icon
+                      name="icon-code"
+                      size="30"
+                      class="qui-icon"
+                      @click="toolBarClick('code')"
+                    ></qui-icon>
+                  </view>
+                  <view>
+                    <qui-icon
+                      name="icon-link"
+                      size="30"
+                      class="qui-icon"
+                      @click="toolBarClick('link')"
+                    ></qui-icon>
+                  </view>
+                  <view>
+                    <qui-icon
+                      name="icon-strikethrough"
+                      size="30"
+                      class="qui-icon"
+                      @click="toolBarClick('strikethrough')"
+                    ></qui-icon>
+                  </view>
+                </view>
+              </view>
             </view>
-            <view>
-              <qui-icon
-                name="icon-title"
-                size="30"
-                class="qui-icon"
-                @click="toolBarClick('title')"
-              ></qui-icon>
-            </view>
-            <view>
-              <qui-icon
-                name="icon-italic"
-                size="30"
-                class="qui-icon"
-                @click="toolBarClick('italic')"
-              ></qui-icon>
-            </view>
-            <view>
-              <qui-icon
-                name="icon-quote"
-                size="30"
-                class="qui-icon"
-                @click="toolBarClick('quote')"
-              ></qui-icon>
-            </view>
-            <view>
-              <qui-icon
-                name="icon-code"
-                size="30"
-                class="qui-icon"
-                @click="toolBarClick('code')"
-              ></qui-icon>
-            </view>
-            <view>
-              <qui-icon
-                name="icon-link"
-                size="30"
-                class="qui-icon"
-                @click="toolBarClick('link')"
-              ></qui-icon>
-            </view>
-            <view>
-              <qui-icon
-                name="icon-strikethrough"
-                size="30"
-                class="qui-icon"
-                @click="toolBarClick('strikethrough')"
-              ></qui-icon>
-            </view>
-          </view>
-        </view>
-      </view>
-      <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
+            <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
 
-      <qui-uploader
-        :url="`${url}api/attachments`"
-        :header="header"
-        :form-data="formData"
-        :file-preview="filePreview"
-        name="file"
-        :async-clear="true"
-        ref="upload"
-        v-if="type === 1 || type === 3 || type === 5"
-        @change="uploadChange"
-        @clear="uploadClear"
-        @uploadClick="uploadClick"
-      ></qui-uploader>
-      <qui-upload-file
-        :url="`${url}api/attachments`"
-        ref="uploadFiles"
-        :header="header"
-        :attachment-list="attachmentList"
-        :file-format="forums.set_attach && forums.set_attach.support_file_ext"
-        :file-size="forums.set_attach && forums.set_attach.support_max_size"
-        v-if="type === 1 && forums.other && forums.other.can_upload_attachments"
-        @deleteItem="deleteFile"
-      ></qui-upload-file>
-      <qui-upload-video
-        v-if="type === 2"
-        ref="uploadVideo"
-        :url="url"
-        :video-before-list="videoBeforeList"
-        :controls="controlsStatus"
-        :choose-type="chooseType"
-        @videoDel="videoDel"
-      ></qui-upload-video>
-      <!--<view class="post-box__video" v-if="type === 2">
+            <qui-uploader
+              :url="`${url}api/attachments`"
+              :header="header"
+              :form-data="formData"
+              :file-preview="filePreview"
+              name="file"
+              :async-clear="true"
+              ref="upload"
+              v-if="type === 1 || type === 3 || type === 5"
+              @change="uploadChange"
+              @clear="uploadClear"
+              @uploadClick="uploadClick"
+            ></qui-uploader>
+            <qui-upload-file
+              :url="`${url}api/attachments`"
+              ref="uploadFiles"
+              :header="header"
+              :attachment-list="attachmentList"
+              :file-format="forums.set_attach && forums.set_attach.support_file_ext"
+              :file-size="forums.set_attach && forums.set_attach.support_max_size"
+              v-if="type === 1 && forums.other && forums.other.can_upload_attachments"
+              @deleteItem="deleteFile"
+            ></qui-upload-file>
+            <qui-upload-video
+              v-if="type === 2"
+              ref="uploadVideo"
+              :url="url"
+              :video-before-list="videoBeforeList"
+              :controls="controlsStatus"
+              :choose-type="chooseType"
+              @videoDel="videoDel"
+            ></qui-upload-video>
+            <!--<view class="post-box__video" v-if="type === 2">
         <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
           <video
             id="video"
@@ -321,259 +319,273 @@
           <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
         </view>
       </view>-->
-      <view class="post-box__audio" v-if="type === 4">
-        <qui-upload-audio
-          ref="uploadAudio"
-          :audio-before-list="audioBeforeList"
-          @change="uploadAudioChange"
-        ></qui-upload-audio>
-      </view>
-      <qui-cell-item
-        :class="price > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.lookPay')"
-        :addon="showPayType"
-        arrow
-        v-if="type !== 0 && forums.other.can_create_thread_paid"
-        @click="lookPay"
-      ></qui-cell-item>
-      <qui-cell-item
-        :class="price > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="showPrice"
-        arrow
-        v-if="type !== 0 && type !== 5 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
-        @click="cellClick('pay')"
-      ></qui-cell-item>
-      <!-- 匿名提问 -->
-      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
-        <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
-        <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
-      </view>
-      <!-- 提问价格 -->
-      <qui-cell-item
-        v-if="type === 5"
-        :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.askingPrice')"
-        :addon="showAskPrice"
-        arrow
-        @click="askClick('pay')"
-      ></qui-cell-item>
-      <!-- 他人围观须付费1元 -->
-      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5 && watchShow">
-        <view class="uni-list-cell-db">
-          <view class="">
-            {{ `${i18n.t('discuzq.post.otherPay')}${forums.set_site.site_onlooker_price}元` }}
-          </view>
-          <view class="watchpay">
-            {{
-              `${i18n.t('discuzq.post.youHaveTo')}
+            <view class="post-box__audio" v-if="type === 4">
+              <qui-upload-audio
+                ref="uploadAudio"
+                :audio-before-list="audioBeforeList"
+                @change="uploadAudioChange"
+              ></qui-upload-audio>
+            </view>
+            <qui-cell-item
+              :class="price > 0 ? 'cell-item-right-text' : ''"
+              :title="i18n.t('discuzq.post.lookPay')"
+              :addon="showPayType"
+              arrow
+              v-if="type !== 0 && forums.other.can_create_thread_paid"
+              @click="lookPay"
+            ></qui-cell-item>
+            <qui-cell-item
+              :class="price > 0 ? 'cell-item-right-text' : ''"
+              :title="i18n.t('discuzq.post.paymentAmount')"
+              :addon="showPrice"
+              arrow
+              v-if="
+                type !== 0 &&
+                  type !== 5 &&
+                  showHidden &&
+                  forums.paycenter.wxpay_close &&
+                  payType !== 0
+              "
+              @click="cellClick('pay')"
+            ></qui-cell-item>
+            <!-- 匿名提问 -->
+            <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
+              <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
+              <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
+            </view>
+            <!-- 提问价格 -->
+            <qui-cell-item
+              v-if="type === 5"
+              :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
+              :title="i18n.t('discuzq.post.askingPrice')"
+              :addon="showAskPrice"
+              arrow
+              @click="askClick('pay')"
+            ></qui-cell-item>
+            <!-- 他人围观须付费1元 -->
+            <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5 && watchShow">
+              <view class="uni-list-cell-db">
+                <view class="">
+                  {{ `${i18n.t('discuzq.post.otherPay')}${forums.set_site.site_onlooker_price}元` }}
+                </view>
+                <view class="watchpay">
+                  {{
+                    `${i18n.t('discuzq.post.youHaveTo')}
               ${haveDate}${i18n.t('discuzq.post.yuan')},
               ${i18n.t('discuzq.post.theAnswerIs')}
               ${answerIsDate}${i18n.t('discuzq.post.yuan')},
               ${i18n.t('discuzq.post.platform')}
               ${platformDate}${i18n.t('discuzq.post.yuan')}`
-            }}
-          </view>
-        </view>
-        <u-switch @change="changeCheck" v-model="watchChecked" active-color="#1E78F3"></u-switch>
-      </view>
-      <qui-cell-item
-        :title="i18n.t('discuzq.post.freeWordCount')"
-        :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 5"
-        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 5 && type !== 4"
-        arrow
-        @click="cellClick('word')"
-      ></qui-cell-item>
-      <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
-        <qui-cell-item arrow :slot-left="true" @click="choosePosition">
-          <view>
-            <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
-            <text>
-              {{
-                currentPosition && currentPosition.location
-                  ? currentPosition.location
-                  : i18n.t('discuzq.post.addPosition')
-              }}
-            </text>
-          </view>
-        </qui-cell-item>
-        <qui-icon
-          name="icon-close1"
-          size="32"
-          color="#ccc"
-          @tap="clearPosition"
-          v-if="currentPosition && currentPosition.location"
-        ></qui-icon>
-      </view>
+                  }}
+                </view>
+              </view>
+              <u-switch
+                @change="changeCheck"
+                v-model="watchChecked"
+                active-color="#1E78F3"
+              ></u-switch>
+            </view>
+            <qui-cell-item
+              :title="i18n.t('discuzq.post.freeWordCount')"
+              :addon="i18n.t('discuzq.post.word', { num: word })"
+              v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 5 && type !== 4"
+              arrow
+              @click="cellClick('word')"
+            ></qui-cell-item>
+            <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
+              <qui-cell-item arrow :slot-left="true" @click="choosePosition">
+                <view>
+                  <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
+                  <text>
+                    {{
+                      currentPosition && currentPosition.location
+                        ? currentPosition.location
+                        : i18n.t('discuzq.post.addPosition')
+                    }}
+                  </text>
+                </view>
+              </qui-cell-item>
+              <qui-icon
+                name="icon-close1"
+                size="32"
+                color="#ccc"
+                @tap="clearPosition"
+                v-if="currentPosition && currentPosition.location"
+              ></qui-icon>
+            </view>
 
-      <view class="post-box__ft">
-        <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
-        <view class="post-box__ft-categories">
-          <qui-button
-            v-for="(item, index) in allCategories"
-            :key="item._jv.id"
-            :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
-            :plain="Number(item._jv.id) === Number(categoryId)"
-            :class="Number(item._jv.id) === Number(categoryId) ? 'cateActive' : ''"
-            @click="checkClass(item, index)"
-          >
-            {{ item.name }}
-          </qui-button>
-        </view>
-        <qui-button
-          :loading="postLoading"
-          type="primary"
-          size="large"
-          id="TencentCaptcha"
-          :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
-          @click="postClick"
-          :disabled="textAreaValue.length > textAreaLength"
-        >
-          {{
-            type === 5 && watchShow === true
-              ? i18n.t('discuzq.post.nextPay')
-              : i18n.t('discuzq.post.post')
-          }}
-        </qui-button>
-      </view>
-      <uni-popup ref="lookPayPopup" type="bottom">
-        <view class="popup-share">
-          <view class="pay-type" @click="choicePayType(0)">
-            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
-          </view>
-          <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
-            {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
-          </view>
-          <view class="pay-type" @click="choicePayType(2)">
-            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
-          </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancelLookPay()">
-            {{ i18n.t('discuzq.post.cancel') }}
-          </text>
-        </view>
-      </uni-popup>
-      <uni-popup ref="popupBtm" type="bottom">
-        <view class="popup-share">
-          <view class="popup-share-content">
-            <text class="popup-title">
-              {{
-                setType === 'pay'
-                  ? i18n.t('discuzq.post.selectToViewPaymentAmount')
-                  : i18n.t('discuzq.post.selectToViewFreeWordCount')
-              }}
-            </text>
-            <view class="popup-content-btn" v-if="setType === 'pay'">
+            <view class="post-box__ft">
+              <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
+              <view class="post-box__ft-categories">
+                <qui-button
+                  v-for="(item, index) in allCategories"
+                  :key="item._jv.id"
+                  :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
+                  :plain="Number(item._jv.id) === Number(categoryId)"
+                  :class="Number(item._jv.id) === Number(categoryId) ? 'cateActive' : ''"
+                  @click="checkClass(item, index)"
+                >
+                  {{ item.name }}
+                </qui-button>
+              </view>
               <qui-button
-                class="popup-btn"
-                v-for="(item, index) in payNum"
-                :key="index"
-                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
-                plain
-                size="post"
-                @click="moneyClick(index)"
+                :loading="postLoading"
+                type="primary"
+                size="large"
+                id="TencentCaptcha"
+                :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
+                @click="postClick"
+                :disabled="textAreaValue.length > textAreaLength"
               >
-                {{ item.name }}
+                {{
+                  type === 5 && watchShow === true
+                    ? i18n.t('discuzq.post.nextPay')
+                    : i18n.t('discuzq.post.post')
+                }}
               </qui-button>
             </view>
+            <uni-popup ref="lookPayPopup" type="bottom">
+              <view class="popup-share">
+                <view class="pay-type" @click="choicePayType(0)">
+                  {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
+                </view>
+                <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
+                  {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
+                </view>
+                <view class="pay-type" @click="choicePayType(2)">
+                  {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
+                </view>
+                <view class="popup-share-content-space"></view>
+                <text class="popup-share-btn" @click="cancelLookPay()">
+                  {{ i18n.t('discuzq.post.cancel') }}
+                </text>
+              </view>
+            </uni-popup>
+            <uni-popup ref="popupBtm" type="bottom">
+              <view class="popup-share">
+                <view class="popup-share-content">
+                  <text class="popup-title">
+                    {{
+                      setType === 'pay'
+                        ? i18n.t('discuzq.post.selectToViewPaymentAmount')
+                        : i18n.t('discuzq.post.selectToViewFreeWordCount')
+                    }}
+                  </text>
+                  <view class="popup-content-btn" v-if="setType === 'pay'">
+                    <qui-button
+                      class="popup-btn"
+                      v-for="(item, index) in payNum"
+                      :key="index"
+                      :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+                      plain
+                      size="post"
+                      @click="moneyClick(index)"
+                    >
+                      {{ item.name }}
+                    </qui-button>
+                  </view>
+                </view>
+                <view class="popup-share-content-space"></view>
+                <text class="popup-share-btn" @click="cancel()">
+                  {{ i18n.t('discuzq.post.cancel') }}
+                </text>
+              </view>
+            </uni-popup>
+            <uni-popup ref="popup" type="center">
+              <view class="popup-dialog">
+                <view class="popup-dialog__top">
+                  <text>
+                    {{
+                      setType === 'pay'
+                        ? i18n.t('discuzq.post.enterToViewPaymentAmount')
+                        : i18n.t('discuzq.post.enterTheWordCount')
+                    }}
+                  </text>
+                </view>
+                <view class="popup-dialog__cont">
+                  <qui-icon
+                    class="popup-dialog__cont-rmb"
+                    name="icon-rmb"
+                    size="40"
+                    v-if="setType === 'pay'"
+                  ></qui-icon>
+                  <text class="popup-dialog__cont-rmb" v-else>
+                    {{ i18n.t('discuzq.post.word', { num: '' }) }}
+                  </text>
+                  <input
+                    class="popup-dialog__cont-input"
+                    v-if="setType === 'pay'"
+                    v-model="inputPrice"
+                    type="digit"
+                    placeholder="0.0"
+                    :maxlength="maxLength"
+                    :focus="setType === 'pay'"
+                    @input="checkNum"
+                  />
+                  <input
+                    class="popup-dialog__cont-input"
+                    v-else
+                    v-model="inputWord"
+                    type="digit"
+                    placeholder="0"
+                    :maxlength="5"
+                    :focus="setType === 'word'"
+                  />
+                </view>
+                <view class="popup-dialog__ft">
+                  <button class="popup-btn--close" @click="diaLogClose">
+                    {{ i18n.t('discuzq.close') }}
+                  </button>
+                  <button
+                    class="popup-btn--ok"
+                    v-if="setType === 'pay'"
+                    :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
+                    :disabled="inputPrice === ''"
+                    @click="diaLogOk"
+                  >
+                    {{ i18n.t('discuzq.ok') }}
+                  </button>
+                  <button
+                    class="popup-btn--ok"
+                    v-else
+                    :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
+                    :disabled="inputWord === ''"
+                    @click="diaLogOk"
+                  >
+                    {{ i18n.t('discuzq.ok') }}
+                  </button>
+                </view>
+              </view>
+            </uni-popup>
+            <uni-popup ref="deletePopup" type="center">
+              <uni-popup-dialog
+                type="warn"
+                :content="deleteTip"
+                :before-close="true"
+                @close="handleClickCancel"
+                @confirm="handleClickOk"
+              ></uni-popup-dialog>
+            </uni-popup>
+            <!--支付组件-->
+            <view v-if="payShowStatus">
+              <qui-pay
+                ref="payShow"
+                :pay-type="payTypeText"
+                :money="priceAsk"
+                :wallet-status="user.canWalletPay"
+                :balance="Number(user.walletBalance)"
+                :pay-password="pwdVal"
+                :pay-type-data="payTypeData"
+                @paysureShow="paysureShow"
+                @onInput="onInput"
+                @radioChange="radioChange"
+              ></qui-pay>
+            </view>
+            <qui-toast ref="toast"></qui-toast>
+            <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
           </view>
-          <view class="popup-share-content-space"></view>
-          <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
         </view>
-      </uni-popup>
-      <uni-popup ref="popup" type="center">
-        <view class="popup-dialog">
-          <view class="popup-dialog__top">
-            <text>
-              {{
-                setType === 'pay'
-                  ? i18n.t('discuzq.post.enterToViewPaymentAmount')
-                  : i18n.t('discuzq.post.enterTheWordCount')
-              }}
-            </text>
-          </view>
-          <view class="popup-dialog__cont">
-            <qui-icon
-              class="popup-dialog__cont-rmb"
-              name="icon-rmb"
-              size="40"
-              v-if="setType === 'pay'"
-            ></qui-icon>
-            <text class="popup-dialog__cont-rmb" v-else>
-              {{ i18n.t('discuzq.post.word', { num: '' }) }}
-            </text>
-            <input
-              class="popup-dialog__cont-input"
-              v-if="setType === 'pay'"
-              v-model="inputPrice"
-              type="digit"
-              placeholder="0.0"
-              :maxlength="maxLength"
-              :focus="setType === 'pay'"
-              @input="checkNum"
-            />
-            <input
-              class="popup-dialog__cont-input"
-              v-else
-              v-model="inputWord"
-              type="digit"
-              placeholder="0"
-              :maxlength="5"
-              :focus="setType === 'word'"
-            />
-          </view>
-          <view class="popup-dialog__ft">
-            <button class="popup-btn--close" @click="diaLogClose">
-              {{ i18n.t('discuzq.close') }}
-            </button>
-            <button
-              class="popup-btn--ok"
-              v-if="setType === 'pay'"
-              :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
-              :disabled="inputPrice === ''"
-              @click="diaLogOk"
-            >
-              {{ i18n.t('discuzq.ok') }}
-            </button>
-            <button
-              class="popup-btn--ok"
-              v-else
-              :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
-              :disabled="inputWord === ''"
-              @click="diaLogOk"
-            >
-              {{ i18n.t('discuzq.ok') }}
-            </button>
-          </view>
-        </view>
-      </uni-popup>
-      <uni-popup ref="deletePopup" type="center">
-        <uni-popup-dialog
-          type="warn"
-          :content="deleteTip"
-          :before-close="true"
-          @close="handleClickCancel"
-          @confirm="handleClickOk"
-        ></uni-popup-dialog>
-      </uni-popup>
-      <!--支付组件-->
-      <view v-if="payShowStatus">
-        <qui-pay
-          ref="payShow"
-          :pay-type="payTypeText"
-          :money="priceAsk"
-          :wallet-status="user.canWalletPay"
-          :balance="Number(user.walletBalance)"
-          :pay-password="pwdVal"
-          :pay-type-data="payTypeData"
-          @paysureShow="paysureShow"
-          @onInput="onInput"
-          @radioChange="radioChange"
-        ></qui-pay>
       </view>
-      <qui-toast ref="toast"></qui-toast>
-      <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
     </view>
   </qui-page>
 </template>
@@ -1161,7 +1173,7 @@ export default {
       console.log('提问价格');
       // this.setType = type;
       this.$refs.popupBtm.open();
-      this.textShow = false; 
+      this.textShow = false;
     },
     cancel() {
       this.$refs.popupBtm.close();
@@ -2801,7 +2813,7 @@ export default {
   // right: 48rpx;
   max-width: 200rpx;
   overflow: hidden;
-  font-size: $fg-f3; 
+  font-size: $fg-f3;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2809,10 +2821,11 @@ export default {
   font-size: $fg-f3;
   color: --color(--qui-FC-AAA);
 
-.pay-type {
-  font-size: $fg-f4;
-  line-height: 100rpx;
-  text-align: center;
-  border-bottom: 1px solid --color(--qui-BOR-ED);
+  .pay-type {
+    font-size: $fg-f4;
+    line-height: 100rpx;
+    text-align: center;
+    border-bottom: 1px solid --color(--qui-BOR-ED);
+  }
 }
 </style>

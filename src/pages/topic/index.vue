@@ -749,7 +749,7 @@ export default {
       isAnonymous: '0', // 支付时是否显示头像，默认不显示
       payTypeText: '',
       payTypeVal: 0, // 点击的支付类型， 0主题支付  1主题打赏 2围观支付
-      
+
       payNum: [
         {
           name: '￥1',
@@ -1372,7 +1372,7 @@ export default {
           if(data.type === 5) {
             this.rewardStatus = false;
             this.paidStatus = false;
-            return;        
+            return;
           }
           else if (!this.forums.paycenter.wxpay_close) {
             // 如果关闭了微信支付
@@ -2244,9 +2244,6 @@ export default {
         }
       } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
-      } 
-      this.price = parseFloat(this.thread.price);
-
         this.price = parseFloat(this.thread.price);
       } else if (this.thread.type === 4) {
         this.payTypeText = this.t.pay + this.t.paymentViewAudio;

@@ -8,7 +8,6 @@
       lazy-load
     ></image>
     <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load v-if="addAsk === 1"></image>
-
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
@@ -67,6 +66,7 @@
               {{ themeContent }}
             </navigator>
           </view>
+
           <view class="themeItem__QA" v-if="threadType === 5 && themeType === '5'">
             <view class="themeItem_questions">
               {{ questionsName }}
@@ -93,8 +93,8 @@
             <view class="themeItem_to">@{{ questionsName }}</view>
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
-          <view>
-          <view :class="themPayBtn ? 'themeItem__content__uparse' : ''" v-else>
+
+          <!-- <view :class="themPayBtn ? 'themeItem__content__uparse' : ''" v-else>
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
@@ -102,13 +102,13 @@
               v-if="themPayBtn"
               class="themeItem__content__fufei"
             ></qui-icon>
-            <qui-uparse :content="themeContent" v-if="threadType !== 1"></qui-uparse>
             <qui-uparse
               :content="themeContent"
               :them-pay-btn="themPayBtn"
               class="themeItem__content__wxParse"
+              v-if="threadType !== 1"
             ></qui-uparse>
-          </view>
+          </view> -->
         </view>
         <view
           class="theme__content__videocover"
@@ -181,7 +181,6 @@
             @click.stop=""
           ></video>
         </view>
-        <view v-if="imagesList.length == 1 && themeType !== '5'">
         <view v-if="threadType === 4 && payStatus" @click.stop="">
           <qui-audio-cell
             :src="threadAudio.media_url"
@@ -194,7 +193,6 @@
           ></qui-audio-cell>
         </view>
         <view v-if="imagesList.length == 1">
-
           <view class="themeItem__content__imgone">
             <image
               class="themeItem__content__imgone__item"
@@ -209,7 +207,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length == 2 && themeType !== '5'">
+        <view v-if="imagesList.length == 2">
           <view class="themeItem__content__imgtwo">
             <image
               class="themeItem__content__imgtwo__item"
@@ -224,7 +222,7 @@
             ></image>
           </view>
         </view>
-        <view v-if="imagesList.length >= 3 && themeType !== '5'">
+        <view v-if="imagesList.length >= 3">
           <view class="themeItem__content__imgmore">
             <image
               class="themeItem__content__imgmore__item"
@@ -245,6 +243,7 @@
             ></view>
           </view>
         </view>
+
         <view class="themeItem__content__tags" v-if="themeType === '0' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
@@ -385,10 +384,70 @@ export default {
       type: String,
       default: '',
     },
-    // 内容类型：0 文字 1 帖子 2 视频 3 图片 4 提问 5 回答
+    // 内容类型：0 文字 1 帖子 2 视频 3 图片
     threadType: {
       type: Number,
       default: 0,
+    },
+    // 提问用户名称
+    questionsName: {
+      type: String,
+      default: '',
+    },
+    // 被提问用户名称
+    beAskName: {
+      type: String,
+      default: '',
+    },
+    // 提问内容
+    questionContent: {
+      type: String,
+      default: '',
+    },
+    // 显示付费提问
+    paidQuestions: {
+      type: Boolean,
+      default: false,
+    },
+    // 已回答提问
+    answered: {
+      type: Boolean,
+      default: false,
+    },
+    // 已回答图标显示
+    addAsk: {
+      type: Number,
+      default: 0,
+    },
+    // 围观总人数
+    onlookerNumber: {
+      type: Number,
+      default: 0,
+    },
+    // 免费的提问
+    freeAsk: {
+      type: Boolean,
+      default: false,
+    },
+    // 问题价值
+    askPrice: {
+      type: String,
+      default: '',
+    },
+    // 回答问题的内容
+    askContent: {
+      type: String,
+      default: '',
+    },
+    // 围观单价
+    onlookerUnitPrice: {
+      type: String,
+      default: '',
+    },
+    // 是否显示围观单价
+    onLooker: {
+      type: Boolean,
+      default: false,
     },
     // 内容区域图片
     imagesList: {
@@ -496,75 +555,13 @@ export default {
         return [];
       },
     },
-    // 提问用户名称
-    questionsName: {
-      type: String,
-      default: '',
-    },
-    // 被提问用户名称
-    beAskName: {
-      type: String,
-      default: '',
-    },
-    // 提问内容
-    questionContent: {
-      type: String,
-      default: '',
-    },
-    // 显示付费提问
-    paidQuestions: {
-      type: Boolean,
-      default: false,
-    },
-    // 已回答提问
-    answered: {
-      type: Boolean,
-      default: false,
-    },
-    // 已回答图标显示
-    addAsk: {
-      type: Number,
-      default: 0,
-    },
-    // 围观总人数
-    onlookerNumber: {
-      type: Number,
-      default: 0,
-    },
-    // 免费的提问
-    freeAsk: {
-      type: Boolean,
-      default: false,
-    },
-    // 问题价值
-    askPrice: {
-      type: String,
-      default: '',
-    },
-    // 回答问题的内容
-    askContent: {
-      type: String,
-      default: '',
-    },
-    // 围观单价
-    onlookerUnitPrice: {
-      type: String,
-      default: '',
-    },
-    // 是否显示围观单价
-    onLooker: {
-      type: Boolean,
-      default: false,
-    },
     threadAudio: {
       type: Object,
       default: () => {
         return {};
       },
-
     },
   },
-
   data: () => {
     return {
       isAdmin: true,
@@ -587,7 +584,6 @@ export default {
       blocKwidth: 224,
     };
   },
-
   computed: {
     // 语言包
     t() {
@@ -607,7 +603,6 @@ export default {
   //     if (this.currentTop === 0 && this.currentBottom === 0) {
   //       return;
   //     }
-
   //     // console.log(
   //     //   newValue,
   //     //   this.currentBottom,
@@ -676,7 +671,6 @@ export default {
     backgroundClick(evt) {
       this.$emit('backgroundClick', evt);
     },
-
     // 当开始/继续播放时触发play事件
     playVideo() {
       this.$emit('videoPlay', this.$props.currentindex, true);
@@ -734,7 +728,6 @@ export default {
           .exec();
       }, 100);
     },
-
     audioPlayer(id) {
       this.$refs[`audio${id}`].audioPause();
     },
@@ -762,6 +755,7 @@ export default {
     height: 72rpx;
   }
 }
+
 .themeItem {
   padding: 30rpx;
   margin: 20rpx 0;
@@ -771,7 +765,6 @@ export default {
   border-top: solid 2rpx --color(--qui-BOR-ED);
   border-bottom: solid 2rpx --color(--qui-BOR-ED);
   box-sizing: border-box;
-
   &__header {
     display: inline-flex;
     flex-direction: row;
@@ -779,24 +772,20 @@ export default {
     width: auto;
     padding-bottom: 12rpx;
     box-sizing: border-box;
-
     &__img {
       width: 80rpx;
       height: 80rpx;
       margin-right: 18rpx;
       // background: #ccc;
       border-radius: 100%;
-
       image {
         width: 100%;
         height: 100%;
         border-radius: 100%;
       }
     }
-
     &__title {
       flex: 1;
-
       &__top {
         display: flex;
         height: 37rpx;
@@ -805,7 +794,6 @@ export default {
         font-size: $fg-f4;
         line-height: 37rpx;
       }
-
       &__username {
         display: flex;
         max-width: 336rpx;
@@ -817,14 +805,12 @@ export default {
         white-space: nowrap;
         transition: $switch-theme-time;
       }
-
       &__isAdmin {
         margin-left: 13rpx;
         font-weight: 400;
         color: --color(--qui-FC-AAA);
         transition: $switch-theme-time;
       }
-
       &__isAdminColor {
         padding: 2rpx 10rpx;
         font-size: $fg-f1;
@@ -833,7 +819,6 @@ export default {
         border-radius: 18rpx;
         box-sizing: border-box;
       }
-
       &__time {
         padding-top: 10rpx;
         font-size: $fg-f2;
@@ -842,7 +827,6 @@ export default {
         color: --color(--qui-FC-AAA);
         transition: $switch-theme-time;
       }
-
       &__jumpBtn {
         float: right;
         width: 10rpx;
@@ -862,7 +846,6 @@ export default {
       }
     }
   }
-
   &__content {
     &__text {
       min-height: 45rpx;
@@ -931,11 +914,9 @@ export default {
         border-radius: 5rpx;
       }
     }
-
     &__tags {
       display: flex;
       flex-wrap: wrap;
-
       &__item {
         height: 50rpx;
         padding: 0 20rpx;
@@ -955,13 +936,11 @@ export default {
       margin-left: 10rpx;
     }
   }
-
   &__footer {
     &__themeType1 {
       display: flex;
       justify-content: space-between;
       margin-top: 60rpx;
-
       &__item {
         font-family: $font-family;
         font-size: $fg-f4;
@@ -969,12 +948,10 @@ export default {
         line-height: 37rpx;
         color: rgba(170, 170, 170, 1);
       }
-
       .qui-icon {
         margin-right: 15rpx;
       }
     }
-
     &__themeType2 {
       &__item {
         font-family: $font-family;
@@ -990,7 +967,6 @@ export default {
     }
   }
 }
-
 .themeItem__content__text__longessay__publish {
   display: inline-block;
 }
@@ -1032,7 +1008,6 @@ export default {
   background: rgba(0, 0, 0, 0.2);
   opacity: 0;
 }
-
 .themeItem__QA,
 .themeItem_put,
 .themeItem_to,
@@ -1072,6 +1047,7 @@ export default {
 .themItem_watch_num,
 .themItem_watch_money {
   color: --color(--qui-RED);
+}
 .themeItem__content__uparse {
   position: relative;
 }

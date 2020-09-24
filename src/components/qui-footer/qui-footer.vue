@@ -261,7 +261,7 @@ export default {
         !this.forums.other.can_create_thread_long &&
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image &&
-        !this.forums.other.can_create_thread_question
+        !this.forums.other.can_create_thread_question &&
         !this.forums.other.can_create_thread_audio
       ) {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
@@ -379,7 +379,6 @@ export default {
           });
           this.cancel();
         });
-
       } else {
         if (this.footerIndex === 0) {
           url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
