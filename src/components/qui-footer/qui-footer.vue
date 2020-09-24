@@ -261,6 +261,7 @@ export default {
         !this.forums.other.can_create_thread_long &&
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image &&
+        !this.forums.other.can_create_thread_question
         !this.forums.other.can_create_thread_audio
       ) {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
@@ -307,12 +308,33 @@ export default {
           type: 2,
         });
       }
+
+      if (this.forums.other.can_create_thread_question) {
+        this.bottomData.push({
+          text: this.i18n.t('home.questions'),
+          icon: 'icon-wenda',
+          name: 'questions',
+          type: 5,
+        });
+      }
+
       this.bottomDataLength = this.bottomData.length;
+
       this.$refs.popup.open();
     },
     // 首页底部发帖点击事件跳转
     handleClick(item) {
       let url;
+
+      if (item.type === 5) {
+        uni.navigateTo({
+          url: '/pages/user/at-member?name=select',
+        });
+        return;
+      }
+      if (this.footerIndex === 0) {
+        url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+      }
       if (item.type === 3) {
         // 当选择图片帖时
         this.$nextTick(() => {
@@ -357,6 +379,7 @@ export default {
           });
           this.cancel();
         });
+
       } else {
         if (this.footerIndex === 0) {
           url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;

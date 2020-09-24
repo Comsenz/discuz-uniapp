@@ -218,7 +218,7 @@ export default {
     },
     // 父组件触发是否显示弹框
     payClickShow(val) {
-      if (val === 0) {
+      if (val === 0 || val === 2) {
         this.$refs.payPopup.open();
       } else {
         this.$refs.payTypePopup.open();

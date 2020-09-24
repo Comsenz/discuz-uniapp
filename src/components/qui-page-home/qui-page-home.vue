@@ -114,6 +114,16 @@
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
         :scroll-top="scrollTop"
+        :questions-name="item.user.username"
+        :be-ask-name="item.question && item.question.beUser.username"
+        :question-content="item.question && item.question.content"
+        :add-ask="item.question && item.question.is_answer"
+        :onlooker-number="item.question && item.question.onlooker_number"
+        :free-ask="item.question && item.question.price == 0"
+        :ask-price="item.question && item.question.price"
+        :ask-content="item.question && item.question.content"
+        :onlooker-unit-price="item.question && item.question.onlooker_unit_price"
+        :on-looker="item.question && item.question.onlooker_unit_price == 0"
         :thread-position="
           item.location ? [item.location, item.address, item.longitude, item.latitude] : []
         "
@@ -376,6 +386,9 @@ export default {
           this.headerShow = true;
         }
       },
+    },
+    userId() {
+      return this.$store.getters['session/get']('userId');
     },
   },
   created() {
@@ -891,6 +904,8 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'question',
+          'question.beUser',
           'threadAudio',
         ],
       };
@@ -906,6 +921,7 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
+        console.log(res, '首页列表');
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {

@@ -91,6 +91,21 @@
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
           <qui-uparse :content="themeContent"></qui-uparse>
+          <!--提问部分-->
+
+          <!--作者向 某某某 发起了提问部分-->
+          <!-- <view class="theme__put">
+            <view class="theme__put__ask">
+              作者向
+              <view class="theme__put__ask__user">某某某</view>
+              发起了提问
+            </view>
+           <view class="theme__put__btn" @click="watchClick()">
+              <qui-button size="medium" type='answer' class="watch-btn">
+                {{ i18n.t('topic.questionsToBeAnswered' )}}
+              </qui-button>
+            </view>
+          </view> -->
         </view>
         <view
           class="theme__content__videocover"
@@ -636,6 +651,15 @@ export default {
     btnFun() {
       this.serBtn();
     },
+
+    // 点击围观支付
+    watchClick() {
+      this.$emit('watchClick');
+    },
+    // 点击回答问题跳转到发布回答页
+    queClick() {
+      this.$emit('queClick');
+    },
     audioPlayer(id) {
       this.$refs[`audio${id}`].audioPause();
     },
@@ -736,6 +760,13 @@ export default {
         margin-bottom: 10rpx;
         vertical-align: top;
       }
+      .addAsk {
+        position: absolute;
+        top: 40rpx;
+        left: 590rpx;
+        width: 60rpx;
+        height: 60rpx;
+      }
     }
   }
 
@@ -787,6 +818,16 @@ export default {
         display: inline-block;
         width: 28rpx;
         height: 28rpx;
+      }
+      &__ask {
+        position: relative;
+        width: 670rpx;
+        height: 381rpx;
+        padding: 10px;
+        font-size: 12px;
+        color: var(--qui-FC-333);
+        background: --color(--qui-BG-F7);
+        // border-radius: 5px;
       }
     }
 
@@ -940,5 +981,44 @@ export default {
   width: 600rpx;
   height: 400rpx;
   background: brown;
+}
+.themeItem__ask {
+  display: inline-block;
+  width: 112.5rpx;
+  padding-top: 6rpx;
+  border-top: solid 4rpx --color(--qui-BG-777);
+}
+.themeItem__value {
+  display: inline-block;
+  width: 364rpx;
+  padding: 0 19rpx 60rpx;
+  font-size: $fg-f2;
+  color: --color(--qui-FC-777);
+  &__text {
+    color: --color(--qui-RED);
+  }
+}
+.themeItem__btn {
+  padding-left: 60rpx;
+}
+.themeItem__answer {
+  width: 616rpx;
+  height: 82rpx;
+  font-size: $fg-f3;
+  color: --color(--qui-FC-333);
+}
+.theme__put {
+  width: 670rpx;
+  height: 271rpx;
+  text-align: center;
+  background: --color(--qui-BG-F7);
+  &__ask {
+    padding: 30rpx 0;
+    font-size: $fg-f3;
+    color: --color(--qui-FC-AAA);
+    &__user {
+      display: inline;
+    }
+  }
 }
 </style>

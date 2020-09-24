@@ -102,7 +102,14 @@ export default {
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
         { id: 3, title: 'notice.like', type: 'liked', unReadNum: 0, border: true },
         { id: 4, title: 'notice.reward', type: 'rewarded,withdrawal', unReadNum: 0, border: true },
-        { id: 5, title: 'notice.system', type: 'system', unReadNum: 0, border: false },
+        {
+          id: 5,
+          title: 'notice.questionsAnswers',
+          type: 'questionsAnswers',
+          unReadNum: 0,
+          border: true,
+        },
+        { id: 6, title: 'notice.system', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more', // 上拉加载状态
       isFirst: true, // 是否是第一次进入页面
