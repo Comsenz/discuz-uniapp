@@ -948,7 +948,7 @@ export default {
     postClick() {
       console.log(this.type, '``````', this.price, '价格');
       // #ifdef H5
-      this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
       // console.log(this.textAreaValue);
       // return;
       // #endif
