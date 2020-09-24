@@ -30,6 +30,7 @@
       :thread-position="
         thread.location ? [thread.location, thread.address, thread.longitude, thread.latitude] : []
       "
+      :thread-audio="thread.threadAudio"
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(

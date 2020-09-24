@@ -117,6 +117,7 @@
         :thread-position="
           item.location ? [item.location, item.address, item.longitude, item.latitude] : []
         "
+        :thread-audio="item.threadAudio"
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
@@ -890,6 +891,7 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'threadAudio',
         ],
       };
       if (this.threadType !== null) {

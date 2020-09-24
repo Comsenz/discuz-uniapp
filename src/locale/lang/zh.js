@@ -123,6 +123,7 @@ export default {
       theclassifyCanNotBeBlank: '请选择分类',
       imageCannotBeEmpty: '图片不能为空',
       videoCannotBeEmpty: '视频不能为空',
+      audioCannotBeEmpty: '语音不能为空',
       attachmentCannotBeEmpty: '附件不能为空',
       priceCannotBeFree: '选择类型为付费类型后，价格不能为0',
       pleaseWaitForTheVideoUploadToComplete: '请等待视频上传完成',
@@ -132,6 +133,7 @@ export default {
       theTitleCanNotBeBlank: '标题不能为空',
       pleaseEnterAPostTitle: '请输入帖子标题',
       addPosition: '添加位置',
+      payByListeningToAudio: '听语音支付费用',
     },
   },
   uploader: {
@@ -310,6 +312,7 @@ export default {
     sortTimeSequence: '评论时间正序',
     sortTimeReverse: '评论时间倒序',
     itsAlreadyWantedSort: '已经是你想要的顺序了哦',
+    paymentViewAudio: '查看音频内容',
   },
   pay: {
     passwordTip: '请输入支付密码',
@@ -362,6 +365,7 @@ export default {
     text: '文本',
     invitation: '帖子',
     video: '视频',
+    audio: '语音',
     picture: '图片',
     essence: '精华',
     followed: '已关注',

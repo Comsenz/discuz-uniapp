@@ -153,6 +153,18 @@
             }"
           ></video>
         </view>
+        <view v-if="themeType == 4 && threadAudio">
+          <qui-audio-cell
+            :src="threadAudio.media_url"
+            :name="threadAudio.file_name"
+            :audio-id="threadAudio.file_id"
+            :ref="'audio' + threadAudio.file_id"
+            :is-delete="false"
+            :preview-status="videoStatus"
+            @audioPlayer="audioPlayer"
+            @previewAudio="previewAudio"
+          ></qui-audio-cell>
+        </view>
         <qui-image
           :images-list="imagesList"
           :preview-status="videoStatus"
@@ -432,6 +444,12 @@ export default {
         return [];
       },
     },
+    threadAudio: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
   data: () => {
     return {
@@ -575,6 +593,9 @@ export default {
     previewPicture() {
       this.$emit('previewPicture');
     },
+    previewAudio() {
+      this.$emit('previewAudio');
+    },
     serBtn() {
       const params = {
         include: [
@@ -592,6 +613,7 @@ export default {
           'rewardedUsers',
           'category',
           'threadVideo',
+          'threadAudio',
           'paidUsers',
           'user.groups.permissionWithoutCategories',
         ],
@@ -613,6 +635,9 @@ export default {
 
     btnFun() {
       this.serBtn();
+    },
+    audioPlayer(id) {
+      this.$refs[`audio${id}`].audioPause();
     },
   },
 };

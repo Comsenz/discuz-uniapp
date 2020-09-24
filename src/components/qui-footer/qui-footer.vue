@@ -29,7 +29,10 @@
     </view>
     <uni-popup ref="popup" type="bottom">
       <view class="popup-share">
-        <view class="popup-share-content">
+        <view
+          class="popup-share-content"
+          :class="bottomDataLength > 4 ? 'popup-share-content-inner' : ''"
+        >
           <view v-for="(item, index) in bottomData" :key="index" class="popup-share-content-box">
             <view class="popup-share-content-image">
               <view class="popup-share-box" @click="handleClick(item)">
@@ -137,6 +140,7 @@ export default {
         },
       ],
       bottomData: [],
+      bottomDataLength: 0,
       isTabBar: [0], // 禁止页面第二次加载
       sureType: '', // 二次确认类型
       sureTip: '', // 二次确认提示
@@ -256,7 +260,8 @@ export default {
         !this.forums.other.can_create_thread &&
         !this.forums.other.can_create_thread_long &&
         !this.forums.other.can_create_thread_video &&
-        !this.forums.other.can_create_thread_image
+        !this.forums.other.can_create_thread_image &&
+        !this.forums.other.can_create_thread_audio
       ) {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         return;
@@ -286,6 +291,14 @@ export default {
           type: 3,
         });
       }
+      if (this.forums.other.can_create_thread_audio) {
+        this.bottomData.push({
+          text: this.i18n.t('home.audio'),
+          icon: 'icon-record',
+          name: 'audio',
+          type: 4,
+        });
+      }
       if (this.forums.other.can_create_thread_video) {
         this.bottomData.push({
           text: this.i18n.t('home.video'),
@@ -294,6 +307,7 @@ export default {
           type: 2,
         });
       }
+      this.bottomDataLength = this.bottomData.length;
       this.$refs.popup.open();
     },
     // 首页底部发帖点击事件跳转
@@ -456,5 +470,14 @@ export default {
   background: --color(--qui-RED);
   border-radius: 50%;
   content: '';
+}
+.popup-share-content-inner {
+  height: auto;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+.popup-share-content-inner .popup-share-content-box {
+  margin-bottom: 40rpx;
+  flex: 0 0 25%;
 }
 </style>

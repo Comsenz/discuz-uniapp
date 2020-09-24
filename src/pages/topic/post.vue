@@ -210,6 +210,13 @@
           <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
         </view>
       </view>-->
+      <view class="post-box__audio" v-if="type === 4">
+        <qui-upload-audio
+          ref="uploadAudio"
+          :audio-before-list="audioBeforeList"
+          @change="uploadAudioChange"
+        ></qui-upload-audio>
+      </view>
       <qui-cell-item
         :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.lookPay')"
@@ -229,7 +236,7 @@
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0"
+        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 4"
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
@@ -510,6 +517,7 @@ export default {
       setType: 'pay', // 金额或查看字
       controlsStatus: false, // 是否显示默认播放控件
       videoBeforeList: [], // 视频上传列表
+      audioBeforeList: [], // 语音上传列表
       fullscreenStatus: false, // 视频全屏状态
       videoName: '', // 视频名称
       percent: 0, // 视频上传进度
@@ -634,6 +642,7 @@ export default {
         'checkClassData',
         'uploadFile',
         'videoBeforeList',
+        'audioBeforeList',
       ];
       items.forEach(key => {
         if (this[key]) {
@@ -918,6 +927,11 @@ export default {
       this.deleteTip = this.i18n.t('core.deleteImgSure');
     },
 
+    // 音频上传改变
+    uploadAudioChange(e) {
+      this.audioBeforeList = e;
+    },
+
     // 表情点击事件
     getEmojiClick(code) {
       let text = '';
@@ -1081,6 +1095,16 @@ export default {
             }
           }
           break;
+        case 4:
+          if (this.audioBeforeList.length < 1) {
+						this.$refs.toast.show({
+							message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
+						});
+						status = false;
+					} else {
+						status = true;
+					}
+          break;
         default:
           status = false;
           this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
@@ -1172,6 +1196,13 @@ export default {
             path: data.threadVideo.media_url,
           });
           // this.videoPercent = 1;
+          break;
+        case 'audio':
+          this.audioBeforeList.push({
+            fileName: data.threadAudio.file_name,
+            url: data.threadAudio.media_url,
+            id: data.threadAudio.file_id,
+          });
           break;
         default:
           console.log('没有匹配模式');
@@ -1267,6 +1298,11 @@ export default {
             params._jv.relationships.attachments = this.addImg();
             resolve();
             break;
+          case 4:
+            params.file_id = this.audioBeforeList[0].id;
+            params.file_name = this.audioBeforeList[0].fileName;
+            resolve();
+            break;
           default:
             reject();
             this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
@@ -1357,6 +1393,7 @@ export default {
           type: 'thread/video',
         },
         file_id: fileId,
+        type: 0,
       };
       this.$store.dispatch('jv/post', params);
     },
@@ -1367,6 +1404,7 @@ export default {
           'firstPost',
           'firstPost.images',
           'threadVideo',
+          'threadAudio',
           'category',
           'firstPost.attachments',
         ],
@@ -1430,6 +1468,9 @@ export default {
             break;
           case 3:
             this.setAnnex('img', res);
+            break;
+          case 4:
+            this.setAnnex('audio', res);
             break;
           default:
             console.log('未知类型');
@@ -1504,6 +1545,11 @@ export default {
         case 3:
           threads.price = this.price;
           posts._jv.relationships.attachments = this.addImg();
+          break;
+        case 4:
+          threads.price = this.price;
+          threads.file_id = this.audioBeforeList[0].id;
+          threads.file_name = this.audioBeforeList[0].fileName;
           break;
         default:
           break;

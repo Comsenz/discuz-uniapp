@@ -143,6 +143,17 @@
             @click.stop=""
           ></video>
         </view>
+        <view v-if="threadType === 4 && payStatus" @click.stop="">
+          <qui-audio-cell
+            :src="threadAudio.media_url"
+            :name="threadAudio.file_name"
+            :audio-id="threadAudio.file_id"
+            :ref="'audio' + threadAudio.file_id"
+            v-show="threadAudio.media_url"
+            @audioPlayer="audioPlayer"
+            :is-delete="false"
+          ></qui-audio-cell>
+        </view>
         <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
@@ -446,6 +457,12 @@ export default {
         return [];
       },
     },
+    threadAudio: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
 
   data: () => {
@@ -615,6 +632,10 @@ export default {
           })
           .exec();
       }, 100);
+    },
+
+    audioPlayer(id) {
+      this.$refs[`audio${id}`].audioPause();
     },
   },
 };

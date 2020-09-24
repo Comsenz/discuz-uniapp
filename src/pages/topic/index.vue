@@ -61,10 +61,12 @@
                   ? [thread.location, thread.address, thread.longitude, thread.latitude]
                   : []
               "
+              :thread-audio="thread.type == 4 ? thread.threadAudio : null"
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
               @previewPicture="payClickShow"
+              @previewAudio="payClickShow"
               @tagClick="tagClick"
             >
               <!-- 关注 -->
@@ -1124,6 +1126,7 @@ export default {
           'rewardedUsers',
           'category',
           'threadVideo',
+          'threadAudio',
           'paidUsers',
           'user.groups.permissionWithoutCategories',
         ],
@@ -1321,7 +1324,10 @@ export default {
                   this.t.pay + data.price + this.t.paymentViewRemainingContent;
               }
               // this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+            } else if (data.type === 4) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewAudio;
             }
+
             if (data.price <= 0) {
               // #ifndef H5
               if (this.system === 'ios') {
@@ -2088,6 +2094,9 @@ export default {
         }
       } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
+        this.price = parseFloat(this.thread.price);
+      } else if (this.thread.type === 4) {
+        this.payTypeText = this.t.pay + this.t.paymentViewAudio;
         this.price = parseFloat(this.thread.price);
       }
       this.$nextTick(() => {
