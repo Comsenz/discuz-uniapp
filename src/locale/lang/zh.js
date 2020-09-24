@@ -413,6 +413,9 @@ export default {
     invalidLink: '该链接已失效',
     remainDay: '有效期剩余{day}天',
     remain0Day: '有效期剩余0天',
+    normal: '正常',
+    disable: '禁用',
+    clearDisable: '解除禁用',
   },
   // 消息页面
   notice: {
