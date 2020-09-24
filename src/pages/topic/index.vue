@@ -911,18 +911,18 @@ export default {
       }
       if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
-        if(thread.firstPost.images) {
+        if (thread.firstPost.images) {
           thread.firstPost.images = thread.firstPost.images.filter(item => {
-            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+            if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
             }
             return true;
           });
         }
 
-        if(thread.firstPost.attachments) {
+        if (thread.firstPost.attachments) {
           thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
-            if(thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
+            if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
             }
             return true;
@@ -1313,7 +1313,14 @@ export default {
             } else if (data.type === 2) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
             } else if (data.type === 1) {
-              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+              if (data.attachmentPrice > 0) {
+                this.payThreadTypeText =
+                  this.t.pay + data.attachmentPrice + this.t.checkTheAttachment;
+              } else {
+                this.payThreadTypeText =
+                  this.t.pay + data.price + this.t.paymentViewRemainingContent;
+              }
+              // this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             }
             if (data.price <= 0) {
               // #ifndef H5
@@ -1846,7 +1853,7 @@ export default {
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
-              if (this.payTypeVal === 0) {
+              if (this.payTypeVal === 0 || this.payTypeVal === 2) {
                 // 这是主题支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
               } else if (this.payTypeVal === 1) {
@@ -1936,6 +1943,8 @@ export default {
       } else if (this.payTypeVal === 1) {
         // 这是主题打赏
         this.creatOrder(this.price, 2, val, 1);
+      } else if (this.payTypeVal === 2) {
+        this.creatOrder(this.thread.attachmentPrice, 7, val, 1);
       }
     },
     // 支付方式选择完成点击确定时
@@ -1947,6 +1956,8 @@ export default {
         } else if (this.payTypeVal === 1) {
           // 这是主题打赏
           this.creatOrder(this.price, 2, this.value, payType);
+        } else if (this.payTypeVal === 2) {
+          this.creatOrder(this.thread.attachmentPrice, 7, this.value, payType);
         }
       } else if (payType === 1) {
         // 这是详情页获取到的支付方式---钱包
@@ -2057,15 +2068,28 @@ export default {
         this.payShowStatus = false;
         return;
       }
-      this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏
+      // payTypeVal, '这是类型，0为主题支付，1为主题打赏 2为附件支付
+      if (this.thread.attachmentPrice > 0) {
+        this.payTypeVal = 2;
+      } else {
+        this.payTypeVal = 0;
+      }
       if (this.thread.type === 3) {
         this.payTypeText = this.t.pay + this.t.paymentViewPicture;
+        this.price = parseFloat(this.thread.price);
       } else if (this.thread.type === 1) {
-        this.payTypeText = this.t.pay + this.t.paymentViewRemainingContent;
+        if (this.thread.attachmentPrice > 0) {
+          this.payTypeText = this.t.pay + this.thread.attachmentPrice + this.t.checkTheAttachment;
+          this.price = parseFloat(this.thread.attachmentPrice);
+          console.log(this.payTypeText, '支付附件');
+        } else {
+          this.payTypeText = this.t.pay + this.thread.price + this.t.paymentViewRemainingContent;
+          this.price = parseFloat(this.thread.price);
+        }
       } else if (this.thread.type === 2) {
         this.payTypeText = this.t.pay + this.t.paymentViewVideo;
+        this.price = parseFloat(this.thread.price);
       }
-      this.price = parseFloat(this.thread.price);
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
