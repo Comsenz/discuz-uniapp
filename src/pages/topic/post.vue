@@ -202,18 +202,29 @@
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
-        v-if="type !== 0 && type !== 5 && forums.other.can_create_thread_paid"
+        v-if="type === 1 && forums.other.can_create_thread_paid"
         @click="lookPay"
       ></qui-cell-item>
-      <qui-cell-item
-        :class="price > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="showPrice"
-        arrow
-        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
-        @click="cellClick('pay')"
-      ></qui-cell-item>
-
+      <view v-if="type === 1">
+        <qui-cell-item
+          :class="price > 0 ? 'cell-item-right-text' : ''"
+          :title="i18n.t('discuzq.post.paymentAmount')"
+          :addon="showPrice"
+          arrow
+          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
+          @click="cellClick('pay')"
+        ></qui-cell-item>
+      </view>
+      <view v-else-if="type !== 0">
+        <qui-cell-item
+          :class="price > 0 ? 'cell-item-right-text' : ''"
+          :title="i18n.t('discuzq.post.paymentAmount')"
+          :addon="showPrice"
+          arrow
+          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
+          @click="cellClick('pay')"
+        ></qui-cell-item>
+      </view>
       <!-- 匿名提问 -->
       <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
@@ -962,7 +973,7 @@ export default {
       this.textShow = true;
     },
     moneyClick(index) {
-      if (this.forums.set_site.site_onlooker_price === 0 ) {
+      if (this.forums.set_site.site_onlooker_price === 0) {
         this.watchShow = false;
       } else if (index === 0) {
         this.watchShow = false;
