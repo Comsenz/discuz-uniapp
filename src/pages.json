@@ -339,6 +339,14 @@
         "disableScroll": true
       }
     },
+    {
+      "path": "pages/common/error",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "404",
+        "disableScroll": true
+      }
+    },
     // 帖子海报分享
     {
       "path": "pages/share/topic",
