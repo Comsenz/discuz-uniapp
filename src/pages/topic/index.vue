@@ -23,7 +23,6 @@
             </view>
             <qui-topic-content
               ref="sun"
-              :thread-info="thread"
               :themid="threadId"
               :topic-status="thread.isApproved"
               :follow-show="thread.user.follow != null"
@@ -1198,6 +1197,7 @@ export default {
 
       threadAction
         .then(data => {
+          this.$store.dispatch('session/setThread', data);
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',

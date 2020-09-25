@@ -13,6 +13,7 @@ import {
   SET_GOOD,
   SET_INVITE_CODE,
   SET_ATTACHMENT,
+  SET_THREAD,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -73,6 +74,9 @@ const actions = {
   },
   setAttachment: (context, payload) => {
     context.commit(SET_ATTACHMENT, payload);
+  },
+  setThread: (context, payload) => {
+    context.commit(SET_THREAD, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -258,6 +262,9 @@ const mutations = {
   },
   [SET_ATTACHMENT](state, payload) {
     state.attachment = payload;
+  },
+  [SET_THREAD](state, payload) {
+    state.thread = payload;
   },
 };
 

@@ -341,12 +341,6 @@ import { status } from '@/library/jsonapi-vuex/index';
 export default {
   mixins: [forums],
   props: {
-    threadInfo: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
     topicStatus: {
       type: Number,
       default: 0,
@@ -549,6 +543,11 @@ export default {
     localTime() {
       return time2DateAndHM(this.themeTime);
     },
+    threadInfo() {
+      const thread = this.$store.getters['session/get']('thread');
+      console.log('thread', thread);
+      return thread;
+    },
   },
   mounted() {
     const { fileList } = this;
@@ -635,7 +634,7 @@ export default {
       const attachment = this.$store.getters['session/get']('attachment');
       console.log('attachment', attachment);
       this.$store
-        .dispatch('jv/get', [`attachments/${item._jv.id}&page=1`, {}])
+        .dispatch('jv/get', [`attachments/${item.url}&page=1`, {}])
         .then(res => {
           console.log('res', res);
           uni.navigateTo({
