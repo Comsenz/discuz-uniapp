@@ -394,6 +394,7 @@ export default {
     video: '视频',
     questions: '问答',
     audio: '语音',
+    good: '商品',
     picture: '图片',
     essence: '精华',
     followed: '已关注',

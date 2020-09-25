@@ -262,7 +262,8 @@ export default {
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image &&
         !this.forums.other.can_create_thread_question &&
-        !this.forums.other.can_create_thread_audio
+        !this.forums.other.can_create_thread_audio &&
+        !this.forums.other.can_create_thread_goods
       ) {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         return;
@@ -276,19 +277,27 @@ export default {
           type: 0,
         });
       }
-      if (this.forums.other.can_create_thread_long) {
-        this.bottomData.push({
-          text: this.i18n.t('home.invitation'),
-          icon: 'icon-post',
-          name: 'post',
-          type: 1,
-        });
-      }
       if (this.forums.other.can_create_thread_image) {
         this.bottomData.push({
           text: this.i18n.t('home.picture'),
           icon: 'icon-img',
           name: 'image',
+          type: 1,
+        });
+      }
+      if (this.forums.other.can_create_thread_video) {
+        this.bottomData.push({
+          text: this.i18n.t('home.video'),
+          icon: 'icon-video',
+          name: 'video',
+          type: 2,
+        });
+      }
+      if (this.forums.other.can_create_thread_long) {
+        this.bottomData.push({
+          text: this.i18n.t('home.invitation'),
+          icon: 'icon-post',
+          name: 'post',
           type: 3,
         });
       }
@@ -300,21 +309,20 @@ export default {
           type: 4,
         });
       }
-      if (this.forums.other.can_create_thread_video) {
+      if (this.forums.other.can_create_thread_goods) {
         this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
+          text: this.i18n.t('home.good'),
+          icon: 'icon-good',
+          name: 'good',
+          type: 5,
         });
       }
-
       if (this.forums.other.can_create_thread_question) {
         this.bottomData.push({
           text: this.i18n.t('home.questions'),
           icon: 'icon-wenda',
           name: 'questions',
-          type: 5,
+          type: 6,
         });
       }
 
@@ -327,6 +335,13 @@ export default {
       let url;
 
       if (item.type === 5) {
+        uni.navigateTo({
+          url: '/pages/topic/parse-goods',
+        });
+        return;
+      }
+
+      if (item.type === 6) {
         uni.navigateTo({
           url: '/pages/user/at-member?name=select',
         });
