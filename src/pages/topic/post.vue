@@ -28,564 +28,422 @@
           <view class="username">{{ beUserName }}</view>
         </qui-cell-item>
       </view>
-      <view class="post-box__hd">
-        <view class="post-box__hd-l">
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-expression"
-            size="40"
-            :color="emojiShow ? '#1878F3' : '#777'"
-            @click="emojiclick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-call"
-            size="40"
-            color="#777"
-            @click="callClick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-wei"
-            size="40"
-            color="#777"
-            @click="topicPage"
-          ></qui-icon>
-        </view>
-        <text class="post-box__hd-r">
-          {{
-        textAreaValue.length &lt;= textAreaLength
-        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
-          }}
-        </text>
-      </view>
-      <view class="emoji-bd" v-show="emojiShow">
-        <qui-emoji
-          position="absolute"
-          top="20rpx"
-          border-radius="10rpx"
-          @click="getEmojiClick"
-        ></qui-emoji>
-      </view>
-      <view class="post-box__con">
-        <textarea
-          id="textarea"
-          ref="textarea"
-          class="post-box__con-text"
-          :placeholder="
-            type !== 5
-              ? i18n.t('discuzq.post.placeholder')
-              : i18n.t('discuzq.post.placeholderQuestion')
-          "
-          placeholder-class="textarea-placeholder"
-          v-model="textAreaValue"
-          auto-height="true"
-          :show-confirm-bar="barStatus"
-          :adjust-position="true"
-          cursor-spacing="30"
-          cursor="cursor"
-          :maxlength="10000"
-          :focus="type !== 1"
-          v-show="textShow"
-          @blur="contBlur"
-          @focus="focusEvent"
-        ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
-          <text class="text-cover">{{ textAreaValue }}</text>
-        </view>
-        <view class="markdown-box" v-if="markdownShow">
-          <view>
+
+      <view v-if="type !== 1">
+        <view class="post-box__hd">
+          <view class="post-box__hd-l">
             <qui-icon
-              name="icon-bold"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('bold')"
+              class="post-box__hd-l__icon"
+              name="icon-expression"
+              size="40"
+              :color="emojiShow ? '#1878F3' : '#777'"
+              @click="emojiclick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-call"
+              size="40"
+              color="#777"
+              @click="callClick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-wei"
+              size="40"
+              color="#777"
+              @click="topicPage"
             ></qui-icon>
           </view>
-          <view>
-            <qui-icon
-              name="icon-title"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('title')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-italic"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('italic')"
-            ></qui-icon>
-          </view>
-          <view>
-            <view v-if="type !== 1">
-              <view class="post-box__hd">
-                <view class="post-box__hd-l">
-                  <qui-icon
-                    class="post-box__hd-l__icon"
-                    name="icon-expression"
-                    size="40"
-                    :color="emojiShow ? '#1878F3' : '#777'"
-                    @click="emojiclick"
-                  ></qui-icon>
-                  <qui-icon
-                    class="post-box__hd-l__icon"
-                    name="icon-call"
-                    size="40"
-                    color="#777"
-                    @click="callClick"
-                  ></qui-icon>
-                  <qui-icon
-                    class="post-box__hd-l__icon"
-                    name="icon-wei"
-                    size="40"
-                    color="#777"
-                    @click="topicPage"
-                  ></qui-icon>
-                </view>
-                <text class="post-box__hd-r">
-                  {{
+          <text class="post-box__hd-r">
+            {{
           textAreaValue.length &lt;= textAreaLength
           ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
           : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
-                  }}
-                </text>
-              </view>
-              <view class="emoji-bd" v-show="emojiShow">
-                <qui-emoji
-                  position="absolute"
-                  top="20rpx"
-                  border-radius="10rpx"
-                  @click="getEmojiClick"
-                ></qui-emoji>
-              </view>
-              <view class="post-box__con">
-                <textarea
-                  id="textarea"
-                  ref="textarea"
-                  class="post-box__con-text"
-                  :placeholder="i18n.t('discuzq.post.placeholder')"
-                  placeholder-class="textarea-placeholder"
-                  v-model="textAreaValue"
-                  auto-height="true"
-                  :show-confirm-bar="barStatus"
-                  :adjust-position="true"
-                  cursor-spacing="30"
-                  cursor="cursor"
-                  :maxlength="10000"
-                  :focus="type !== 1"
-                  v-show="textShow"
-                  @blur="contBlur"
-                  @focus="focusEvent"
-                ></textarea>
-                <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
-                  <text class="text-cover">{{ textAreaValue }}</text>
-                </view>
-                <view class="markdown-box" v-if="markdownShow">
-                  <view>
-                    <qui-icon
-                      name="icon-bold"
-                      size="30"
-                      class="qui-icon"
-                      @click="toolBarClick('bold')"
-                    ></qui-icon>
-                  </view>
-                  <view>
-                    <qui-icon
-                      name="icon-title"
-                      size="30"
-                      class="qui-icon"
-                      @click="toolBarClick('title')"
-                    ></qui-icon>
-                  </view>
-                  <view>
-                    <qui-icon
-                      name="icon-italic"
-                      size="30"
-                      class="qui-icon"
-                      @click="toolBarClick('italic')"
-                    ></qui-icon>
-                  </view>
-                  <view>
-                    <qui-icon
-                      name="icon-quote"
-                      size="30"
-                      class="qui-icon"
-                      @click="toolBarClick('quote')"
-                    ></qui-icon>
-                  </view>
-                  <view>
-                    <qui-icon
-                      name="icon-code"
-                      size="30"
-                      class="qui-icon"
-                      @click="toolBarClick('code')"
-                    ></qui-icon>
-                  </view>
-                  <view>
-                    <qui-icon
-                      name="icon-link"
-                      size="30"
-                      class="qui-icon"
-                      @click="toolBarClick('link')"
-                    ></qui-icon>
-                  </view>
-                  <view>
-                    <qui-icon
-                      name="icon-strikethrough"
-                      size="30"
-                      class="qui-icon"
-                      @click="toolBarClick('strikethrough')"
-                    ></qui-icon>
-                  </view>
-                </view>
-              </view>
+            }}
+          </text>
+        </view>
+        <view class="emoji-bd" v-show="emojiShow">
+          <qui-emoji
+            position="absolute"
+            top="20rpx"
+            border-radius="10rpx"
+            @click="getEmojiClick"
+          ></qui-emoji>
+        </view>
+        <view class="post-box__con">
+          <textarea
+            id="textarea"
+            ref="textarea"
+            class="post-box__con-text"
+            :placeholder="
+              type !== 5
+                ? i18n.t('discuzq.post.placeholder')
+                : i18n.t('discuzq.post.placeholderQuestion')
+            "
+            placeholder-class="textarea-placeholder"
+            v-model="textAreaValue"
+            auto-height="true"
+            :show-confirm-bar="barStatus"
+            :adjust-position="true"
+            cursor-spacing="30"
+            cursor="cursor"
+            :maxlength="10000"
+            :focus="type !== 1"
+            v-show="textShow"
+            @blur="contBlur"
+            @focus="focusEvent"
+          ></textarea>
+          <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
+            <text class="text-cover">{{ textAreaValue }}</text>
+          </view>
+          <view class="markdown-box" v-if="markdownShow">
+            <view>
+              <qui-icon
+                name="icon-bold"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('bold')"
+              ></qui-icon>
             </view>
-            <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
-
-            <qui-uploader
-              :url="`${url}api/attachments`"
-              :header="header"
-              :form-data="formData"
-              :file-preview="filePreview"
-              name="file"
-              :async-clear="true"
-              ref="upload"
-              v-if="type === 1 || type === 3 || type === 5"
-              @change="uploadChange"
-              @clear="uploadClear"
-              @uploadClick="uploadClick"
-            ></qui-uploader>
-            <qui-upload-file
-              :url="`${url}api/attachments`"
-              ref="uploadFiles"
-              :header="header"
-              :attachment-list="attachmentList"
-              :file-format="forums.set_attach && forums.set_attach.support_file_ext"
-              :file-size="forums.set_attach && forums.set_attach.support_max_size"
-              v-if="type === 1 && forums.other && forums.other.can_upload_attachments"
-              @deleteItem="deleteFile"
-            ></qui-upload-file>
-            <qui-upload-video
-              v-if="type === 2"
-              ref="uploadVideo"
-              :url="url"
-              :video-before-list="videoBeforeList"
-              :controls="controlsStatus"
-              :choose-type="chooseType"
-              @videoDel="videoDel"
-            ></qui-upload-video>
-            <!--<view class="post-box__video" v-if="type === 2">
-        <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
-          <video
-            id="video"
-            v-if="type === 2"
-            class="post-box__video__play__video"
-            :src="item.path"
-            :controls="controlsStatus"
-            @fullscreenchange="fullscreenchange"
-          ></video>
-          <view class="post-box__video__play__load play-load" v-if="videoPercent * 100 < 100">
-            <view class="post-box__video__play__load__mask"></view>
-            <text class="post-box__video__play__load__text">
-              {{ i18n.t('discuzq.video.videoUploading') }}
-            </text>
-
-            <progress
-              :percent="videoPercent * 100"
-              active
-              stroke-width="3"
-              activeColor="#fff"
-              backgroundColor="#b5b5b5"
-            />
-          </view>
-
-          <view class="post-box__video__play__icon-del">
-            <qui-icon
-              name="icon-close"
-              class=""
-              color="#fff"
-              size="40"
-              @click="videoDel"
-            ></qui-icon>
-          </view>
-          <view class="controls-play-icon" @click.stop="playVideo(item)">
-            <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
+            <view>
+              <qui-icon
+                name="icon-title"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('title')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-italic"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('italic')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-quote"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('quote')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-code"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('code')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-link"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('link')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-strikethrough"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('strikethrough')"
+              ></qui-icon>
+            </view>
           </view>
         </view>
-        <view class="post-box__video__add" @click="uploadVideo" v-if="videoBeforeList.length < 1">
-          <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
-        </view>
-      </view>-->
-            <view class="post-box__audio" v-if="type === 4">
-              <qui-upload-audio
-                ref="uploadAudio"
-                :audio-before-list="audioBeforeList"
-                @change="uploadAudioChange"
-              ></qui-upload-audio>
-            </view>
-            <qui-cell-item
-              :class="price > 0 ? 'cell-item-right-text' : ''"
-              :title="i18n.t('discuzq.post.lookPay')"
-              :addon="showPayType"
-              arrow
-              v-if="type !== 0 && forums.other.can_create_thread_paid"
-              @click="lookPay"
-            ></qui-cell-item>
-            <qui-cell-item
-              :class="price > 0 ? 'cell-item-right-text' : ''"
-              :title="i18n.t('discuzq.post.paymentAmount')"
-              :addon="showPrice"
-              arrow
-              v-if="
-                type !== 0 &&
-                  type !== 5 &&
-                  showHidden &&
-                  forums.paycenter.wxpay_close &&
-                  payType !== 0
-              "
-              @click="cellClick('pay')"
-            ></qui-cell-item>
-            <!-- 匿名提问 -->
-            <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
-              <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
-              <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
-            </view>
-            <!-- 提问价格 -->
-            <qui-cell-item
-              v-if="type === 5"
-              :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
-              :title="i18n.t('discuzq.post.askingPrice')"
-              :addon="showAskPrice"
-              arrow
-              @click="askClick('pay')"
-            ></qui-cell-item>
-            <!-- 他人围观须付费1元 -->
-            <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5 && watchShow">
-              <view class="uni-list-cell-db">
-                <view class="">
-                  {{ `${i18n.t('discuzq.post.otherPay')}${forums.set_site.site_onlooker_price}元` }}
-                </view>
-                <view class="watchpay">
-                  {{
-                    `${i18n.t('discuzq.post.youHaveTo')}
+      </view>
+      <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
+
+      <qui-uploader
+        :url="`${url}api/attachments`"
+        :header="header"
+        :form-data="formData"
+        :file-preview="filePreview"
+        name="file"
+        :async-clear="true"
+        ref="upload"
+        v-if="type === 1 || type === 3 || type === 5"
+        @change="uploadChange"
+        @clear="uploadClear"
+        @uploadClick="uploadClick"
+      ></qui-uploader>
+      <qui-upload-file
+        :url="`${url}api/attachments`"
+        ref="uploadFiles"
+        :header="header"
+        :attachment-list="attachmentList"
+        :file-format="forums.set_attach && forums.set_attach.support_file_ext"
+        :file-size="forums.set_attach && forums.set_attach.support_max_size"
+        v-if="type === 1 && type !== 5 && forums.other && forums.other.can_upload_attachments"
+        @deleteItem="deleteFile"
+      ></qui-upload-file>
+      <qui-upload-video
+        v-if="type === 2"
+        ref="uploadVideo"
+        :url="url"
+        :video-before-list="videoBeforeList"
+        :controls="controlsStatus"
+        :choose-type="chooseType"
+        @videoDel="videoDel"
+      ></qui-upload-video>
+      <view class="post-box__audio" v-if="type === 4">
+        <qui-upload-audio
+          ref="uploadAudio"
+          :audio-before-list="audioBeforeList"
+          @change="uploadAudioChange"
+        ></qui-upload-audio>
+      </view>
+      <qui-cell-item
+        :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.lookPay')"
+        :addon="showPayType"
+        arrow
+        v-if="type !== 0 && forums.other.can_create_thread_paid"
+        @click="lookPay"
+      ></qui-cell-item>
+      <qui-cell-item
+        :class="price > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.paymentAmount')"
+        :addon="showPrice"
+        arrow
+        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
+        @click="cellClick('pay')"
+      ></qui-cell-item>
+
+      <!-- 匿名提问 -->
+      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
+        <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
+        <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
+      </view>
+      <!-- 提问价格 -->
+      <qui-cell-item
+        v-if="type === 5"
+        :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.askingPrice')"
+        :addon="showAskPrice"
+        arrow
+        @click="askClick('pay')"
+      ></qui-cell-item>
+      <!-- 他人围观须付费1元 -->
+      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5 && watchShow">
+        <view class="uni-list-cell-db">
+          <view class="">
+            {{ `${i18n.t('discuzq.post.otherPay')}${forums.set_site.site_onlooker_price}元` }}
+          </view>
+          <view class="watchpay">
+            {{
+              `${i18n.t('discuzq.post.youHaveTo')}
               ${haveDate}${i18n.t('discuzq.post.yuan')},
               ${i18n.t('discuzq.post.theAnswerIs')}
               ${answerIsDate}${i18n.t('discuzq.post.yuan')},
               ${i18n.t('discuzq.post.platform')}
               ${platformDate}${i18n.t('discuzq.post.yuan')}`
-                  }}
-                </view>
-              </view>
-              <u-switch
-                @change="changeCheck"
-                v-model="watchChecked"
-                active-color="#1E78F3"
-              ></u-switch>
-            </view>
-            <qui-cell-item
-              :title="i18n.t('discuzq.post.freeWordCount')"
-              :addon="i18n.t('discuzq.post.word', { num: word })"
-              v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 5 && type !== 4"
-              arrow
-              @click="cellClick('word')"
-            ></qui-cell-item>
-            <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
-              <qui-cell-item arrow :slot-left="true" @click="choosePosition">
-                <view>
-                  <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
-                  <text>
-                    {{
-                      currentPosition && currentPosition.location
-                        ? currentPosition.location
-                        : i18n.t('discuzq.post.addPosition')
-                    }}
-                  </text>
-                </view>
-              </qui-cell-item>
-              <qui-icon
-                name="icon-close1"
-                size="32"
-                color="#ccc"
-                @tap="clearPosition"
-                v-if="currentPosition && currentPosition.location"
-              ></qui-icon>
-            </view>
-
-            <view class="post-box__ft">
-              <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
-              <view class="post-box__ft-categories">
-                <qui-button
-                  v-for="(item, index) in allCategories"
-                  :key="item._jv.id"
-                  :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
-                  :plain="Number(item._jv.id) === Number(categoryId)"
-                  :class="Number(item._jv.id) === Number(categoryId) ? 'cateActive' : ''"
-                  @click="checkClass(item, index)"
-                >
-                  {{ item.name }}
-                </qui-button>
-              </view>
-              <qui-button
-                :loading="postLoading"
-                type="primary"
-                size="large"
-                id="TencentCaptcha"
-                :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
-                @click="postClick"
-                :disabled="textAreaValue.length > textAreaLength"
-              >
-                {{
-                  type === 5 && watchShow === true
-                    ? i18n.t('discuzq.post.nextPay')
-                    : i18n.t('discuzq.post.post')
-                }}
-              </qui-button>
-            </view>
-            <uni-popup ref="lookPayPopup" type="bottom">
-              <view class="popup-share">
-                <view class="pay-type" @click="choicePayType(0)">
-                  {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
-                </view>
-                <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
-                  {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
-                </view>
-                <view class="pay-type" @click="choicePayType(2)">
-                  {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
-                </view>
-                <view class="popup-share-content-space"></view>
-                <text class="popup-share-btn" @click="cancelLookPay()">
-                  {{ i18n.t('discuzq.post.cancel') }}
-                </text>
-              </view>
-            </uni-popup>
-            <uni-popup ref="popupBtm" type="bottom">
-              <view class="popup-share">
-                <view class="popup-share-content">
-                  <text class="popup-title">
-                    {{
-                      setType === 'pay'
-                        ? i18n.t('discuzq.post.selectToViewPaymentAmount')
-                        : i18n.t('discuzq.post.selectToViewFreeWordCount')
-                    }}
-                  </text>
-                  <view class="popup-content-btn" v-if="setType === 'pay'">
-                    <qui-button
-                      class="popup-btn"
-                      v-for="(item, index) in payNum"
-                      :key="index"
-                      :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
-                      plain
-                      size="post"
-                      @click="moneyClick(index)"
-                    >
-                      {{ item.name }}
-                    </qui-button>
-                  </view>
-                </view>
-                <view class="popup-share-content-space"></view>
-                <text class="popup-share-btn" @click="cancel()">
-                  {{ i18n.t('discuzq.post.cancel') }}
-                </text>
-              </view>
-            </uni-popup>
-            <uni-popup ref="popup" type="center">
-              <view class="popup-dialog">
-                <view class="popup-dialog__top">
-                  <text>
-                    {{
-                      setType === 'pay'
-                        ? i18n.t('discuzq.post.enterToViewPaymentAmount')
-                        : i18n.t('discuzq.post.enterTheWordCount')
-                    }}
-                  </text>
-                </view>
-                <view class="popup-dialog__cont">
-                  <qui-icon
-                    class="popup-dialog__cont-rmb"
-                    name="icon-rmb"
-                    size="40"
-                    v-if="setType === 'pay'"
-                  ></qui-icon>
-                  <text class="popup-dialog__cont-rmb" v-else>
-                    {{ i18n.t('discuzq.post.word', { num: '' }) }}
-                  </text>
-                  <input
-                    class="popup-dialog__cont-input"
-                    v-if="setType === 'pay'"
-                    v-model="inputPrice"
-                    type="digit"
-                    placeholder="0.0"
-                    :maxlength="maxLength"
-                    :focus="setType === 'pay'"
-                    @input="checkNum"
-                  />
-                  <input
-                    class="popup-dialog__cont-input"
-                    v-else
-                    v-model="inputWord"
-                    type="digit"
-                    placeholder="0"
-                    :maxlength="5"
-                    :focus="setType === 'word'"
-                  />
-                </view>
-                <view class="popup-dialog__ft">
-                  <button class="popup-btn--close" @click="diaLogClose">
-                    {{ i18n.t('discuzq.close') }}
-                  </button>
-                  <button
-                    class="popup-btn--ok"
-                    v-if="setType === 'pay'"
-                    :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
-                    :disabled="inputPrice === ''"
-                    @click="diaLogOk"
-                  >
-                    {{ i18n.t('discuzq.ok') }}
-                  </button>
-                  <button
-                    class="popup-btn--ok"
-                    v-else
-                    :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
-                    :disabled="inputWord === ''"
-                    @click="diaLogOk"
-                  >
-                    {{ i18n.t('discuzq.ok') }}
-                  </button>
-                </view>
-              </view>
-            </uni-popup>
-            <uni-popup ref="deletePopup" type="center">
-              <uni-popup-dialog
-                type="warn"
-                :content="deleteTip"
-                :before-close="true"
-                @close="handleClickCancel"
-                @confirm="handleClickOk"
-              ></uni-popup-dialog>
-            </uni-popup>
-            <!--支付组件-->
-            <view v-if="payShowStatus">
-              <qui-pay
-                ref="payShow"
-                :pay-type="payTypeText"
-                :money="priceAsk"
-                :wallet-status="user.canWalletPay"
-                :balance="Number(user.walletBalance)"
-                :pay-password="pwdVal"
-                :pay-type-data="payTypeData"
-                @paysureShow="paysureShow"
-                @onInput="onInput"
-                @radioChange="radioChange"
-              ></qui-pay>
-            </view>
-            <qui-toast ref="toast"></qui-toast>
-            <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
+            }}
           </view>
         </view>
+        <u-switch @change="changeCheck" v-model="watchChecked" active-color="#1E78F3"></u-switch>
       </view>
+
+      <qui-cell-item
+        :title="i18n.t('discuzq.post.freeWordCount')"
+        :addon="i18n.t('discuzq.post.word', { num: word })"
+        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 4 && type !== 5"
+        arrow
+        @click="cellClick('word')"
+      ></qui-cell-item>
+      <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
+        <qui-cell-item arrow :slot-left="true" @click="choosePosition">
+          <view>
+            <qui-icon name="icon-weizhi" size="35" color="#777"></qui-icon>
+            <text>
+              {{
+                currentPosition && currentPosition.location
+                  ? currentPosition.location
+                  : i18n.t('discuzq.post.addPosition')
+              }}
+            </text>
+          </view>
+        </qui-cell-item>
+        <qui-icon
+          name="icon-close1"
+          size="32"
+          color="#ccc"
+          @tap="clearPosition"
+          v-if="currentPosition && currentPosition.location"
+        ></qui-icon>
+      </view>
+
+      <view class="post-box__ft">
+        <text class="post-box__ft-tit">{{ i18n.t('discuzq.post.chooseCategory') }}</text>
+        <view class="post-box__ft-categories">
+          <qui-button
+            v-for="(item, index) in allCategories"
+            :key="item._jv.id"
+            :type="Number(item._jv.id) === Number(categoryId) ? 'primary' : ''"
+            :plain="Number(item._jv.id) === Number(categoryId)"
+            :class="Number(item._jv.id) === Number(categoryId) ? 'cateActive' : ''"
+            @click="checkClass(item, index)"
+          >
+            {{ item.name }}
+          </qui-button>
+        </view>
+        <qui-button
+          :loading="postLoading"
+          type="primary"
+          size="large"
+          id="TencentCaptcha"
+          :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
+          @click="postClick"
+          :disabled="textAreaValue.length > textAreaLength"
+        >
+          {{
+            type === 5 && watchShow === true
+              ? i18n.t('discuzq.post.nextPay')
+              : i18n.t('discuzq.post.post')
+          }}
+        </qui-button>
+      </view>
+      <uni-popup ref="lookPayPopup" type="bottom">
+        <view class="popup-share">
+          <view class="pay-type" @click="choicePayType(0)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
+          </view>
+          <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
+            {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
+          </view>
+          <view class="pay-type" @click="choicePayType(2)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancelLookPay()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
+        </view>
+      </uni-popup>
+      <uni-popup ref="popupBtm" type="bottom">
+        <view class="popup-share">
+          <view class="popup-share-content">
+            <text class="popup-title">
+              {{
+                setType === 'pay'
+                  ? i18n.t('discuzq.post.selectToViewPaymentAmount')
+                  : i18n.t('discuzq.post.selectToViewFreeWordCount')
+              }}
+            </text>
+            <view class="popup-content-btn" v-if="setType === 'pay'">
+              <qui-button
+                class="popup-btn"
+                v-for="(item, index) in payNum"
+                :key="index"
+                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+                plain
+                size="post"
+                @click="moneyClick(index)"
+              >
+                {{ item.name }}
+              </qui-button>
+            </view>
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
+        </view>
+      </uni-popup>
+      <uni-popup ref="popup" type="center">
+        <view class="popup-dialog">
+          <view class="popup-dialog__top">
+            <text>
+              {{
+                setType === 'pay'
+                  ? i18n.t('discuzq.post.enterToViewPaymentAmount')
+                  : i18n.t('discuzq.post.enterTheWordCount')
+              }}
+            </text>
+          </view>
+          <view class="popup-dialog__cont">
+            <qui-icon
+              class="popup-dialog__cont-rmb"
+              name="icon-rmb"
+              size="40"
+              v-if="setType === 'pay'"
+            ></qui-icon>
+            <text class="popup-dialog__cont-rmb" v-else>
+              {{ i18n.t('discuzq.post.word', { num: '' }) }}
+            </text>
+            <input
+              class="popup-dialog__cont-input"
+              v-if="setType === 'pay'"
+              v-model="inputPrice"
+              type="digit"
+              placeholder="0.0"
+              :maxlength="maxLength"
+              :focus="setType === 'pay'"
+              @input="checkNum"
+            />
+            <input
+              class="popup-dialog__cont-input"
+              v-else
+              v-model="inputWord"
+              type="digit"
+              placeholder="0"
+              :maxlength="5"
+              :focus="setType === 'word'"
+            />
+          </view>
+          <view class="popup-dialog__ft">
+            <button class="popup-btn--close" @click="diaLogClose">
+              {{ i18n.t('discuzq.close') }}
+            </button>
+            <button
+              class="popup-btn--ok"
+              v-if="setType === 'pay'"
+              :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
+              :disabled="inputPrice === ''"
+              @click="diaLogOk"
+            >
+              {{ i18n.t('discuzq.ok') }}
+            </button>
+            <button
+              class="popup-btn--ok"
+              v-else
+              :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
+              :disabled="inputWord === ''"
+              @click="diaLogOk"
+            >
+              {{ i18n.t('discuzq.ok') }}
+            </button>
+          </view>
+        </view>
+      </uni-popup>
+      <uni-popup ref="deletePopup" type="center">
+        <uni-popup-dialog
+          type="warn"
+          :content="deleteTip"
+          :before-close="true"
+          @close="handleClickCancel"
+          @confirm="handleClickOk"
+        ></uni-popup-dialog>
+      </uni-popup>
+      <!--支付组件-->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type="payTypeText"
+          :money="priceAsk"
+          :wallet-status="user.canWalletPay"
+          :balance="Number(user.walletBalance)"
+          :pay-password="pwdVal"
+          :pay-type-data="payTypeData"
+          @paysureShow="paysureShow"
+          @onInput="onInput"
+          @radioChange="radioChange"
+        ></qui-pay>
+      </view>
+      <qui-toast ref="toast"></qui-toast>
+      <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
     </view>
   </qui-page>
 </template>
@@ -766,7 +624,6 @@ export default {
           value: '1',
         },
       ], // 支付方式
-
       chooseType: 1, // 视频是从首页上传的还是从发布页上传的
       payType: 0, //  查看付费的方式，  0均免费， 1内容免费，附件付费，  2内容和附件都付费
       showPayType: '', // 选择的支付方式
@@ -778,7 +635,6 @@ export default {
     }),
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
-
       if (this.price <= 0) {
         pay = this.i18n.t('discuzq.post.free');
       } else {
@@ -1016,7 +872,6 @@ export default {
       let that = this;
       let price = e.target.value;
       let maxLength = price.indexOf('.');
-
       if (price.indexOf('.') < 0 && price != '') {
         // '超过4位则大于1万元';
         if (price.length > 6) {
@@ -1042,7 +897,6 @@ export default {
         that.inputPrice = price;
       });
     },
-
     // video相关方法
     videoDel() {
       this.deleteType = 2;
@@ -1087,20 +941,18 @@ export default {
         this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
         this.haveDate = (this.priceAsk - this.platformDate)/2;
         this.answerIsDate = (this.priceAsk - this.platformDate)/2;
+        return;
       }
-      return;
+
       if (this.setType === 'pay') {
         this.price = this.inputPrice;
       } else {
         this.word = this.inputWord;
       }
-
       this.$refs.popup.close();
       this.textShow = true;
     },
-    // 选择金额
     moneyClick(index) {
-      console.log(index, '选择金额');
       if (index === 0) {
         this.watchShow = false;
       } else {
@@ -1109,11 +961,9 @@ export default {
       this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
-
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         this.textShow = false;
         this.$refs.popupBtm.close();
-
         this.$nextTick(() => {
           this.inputPrice = '';
           this.$refs.popup.open();
@@ -1121,30 +971,27 @@ export default {
         });
       } else {
         if (this.type === 5) {
-        this.priceAsk = this.payNumCheck[0].pay;
-        this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-        this.haveDate = (this.priceAsk - this.platformDate)/2;
-        this.answerIsDate = (this.priceAsk - this.platformDate)/2;
-        this.$refs.popupBtm.close();
-        this.textShow = true;
-        return;
+          this.priceAsk = this.payNumCheck[0].pay;
+          this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
+          this.haveDate = (this.priceAsk - this.platformDate)/2;
+          this.answerIsDate = (this.priceAsk - this.platformDate)/2;
+          this.$refs.popupBtm.close();
+          this.textShow = true;
+          return;
         }
         this.price = this.payNumCheck[0].pay;
         this.$refs.popupBtm.close();
         this.textShow = true;
       }
     },
-
     // 点击显示查看支付的抽屉
     lookPay() {
       this.$refs.lookPayPopup.open();
     },
-
     // 取消查看支付选择
     cancelLookPay() {
       this.$refs.lookPayPopup.close();
     },
-
     // 选择支付查看的方式 0均免费， 1内容免费，附件付费，  2内容和附件都付费
     choicePayType(type) {
       console.log(type, '类型');
@@ -1158,7 +1005,6 @@ export default {
       this.payType = type;
       this.$refs.lookPayPopup.close();
     },
-
     cellClick(type) {
       this.setType = type;
       if (type === 'word') {
@@ -1179,7 +1025,6 @@ export default {
       this.$refs.popupBtm.close();
       this.textShow = true;
     },
-
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
@@ -1196,12 +1041,10 @@ export default {
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteImgSure');
     },
-
     // 音频上传改变
     uploadAudioChange(e) {
       this.audioBeforeList = e;
     },
-
     // 表情点击事件
     getEmojiClick(code) {
       let text = '';
@@ -1286,7 +1129,6 @@ export default {
       this.value = val;
       this.creatOrder(this.priceAsk, 5, val, 1);
     },
-
     creatOrder(amount, type, value, payType) {
       const params = {
         _jv: {
@@ -1347,7 +1189,6 @@ export default {
           pay_password: value,
         };
       }
-
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
@@ -1404,7 +1245,6 @@ export default {
             }
             this.coverLoading = false;
           }
-
           this.postThread().then(res => {
             this.postLoading = false;
             uni.hideLoading();
@@ -1424,7 +1264,6 @@ export default {
           this.$refs.payShow.clearPassword();
         });
     },
-
     getOrderStatus(orderSn, broswerType) {
       this.$store
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
@@ -1439,7 +1278,6 @@ export default {
               this.qrcodeShow = false;
               this.loadThread();
             }
-
             if (this.payTypeVal === 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               this.loadThread();
@@ -1456,7 +1294,6 @@ export default {
           this.$refs.toast.show({ message: this.p.payFail });
         });
     },
-
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
       // 小程序支付。
       const _this = this;
@@ -1484,22 +1321,18 @@ export default {
         },
       });
     },
-
     // 选择支付方式，获取值
     radioChange(val) {
       // console.log(val, '支付方式')
     },
-
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
-
       // #ifdef H5
       if(this.type === 1) {
         this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
       }
       // #endif
-
       if (!this.categoryId) {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
@@ -1628,6 +1461,16 @@ export default {
             }
           }
           break;
+        case 4:
+          if (this.audioBeforeList.length < 1) {
+						this.$refs.toast.show({
+							message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
+						});
+						status = false;
+					} else {
+						status = true;
+					}
+          break;
         case 5:
           if (this.beAskId === ''){
               this.$refs.toast.show({
@@ -1644,28 +1487,16 @@ export default {
               this.$refs.payShow.payClickShow();
             });
           }
-
-        case 4:
-          if (this.audioBeforeList.length < 1) {
-						this.$refs.toast.show({
-							message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
-						});
-						status = false;
-					} else {
-						status = true;
-					}
           break;
         default:
           status = false;
           this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
       }
-
       if (status) {
         if(this.type !== 5){
           this.postLoading = true;
           uni.showLoading();
         }
-
         if (this.operating === 'edit') {
           this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
@@ -1710,8 +1541,7 @@ export default {
               return false;
             }
           }
-
-          if(!this.watchShow || this.type !== 5){
+          if(!this.watchShow || this.type !== 5) {
             this.postThread().then(res => {
               this.postLoading = false;
               uni.hideLoading();
@@ -1728,7 +1558,6 @@ export default {
         }
       }
     },
-
     // 编辑回显主题，处理附件
     setAnnex(type, data) {
       switch (type) {
@@ -1824,7 +1653,6 @@ export default {
         this.$refs.uploadFiles.deleteSure();
       });
     },
-
     // 接口请求
     getCategories() {
       this.$store.dispatch('jv/get', ['categories?filter[createThread]=1', {}]).then(res => {
@@ -1862,13 +1690,11 @@ export default {
         params.attachment_price = this.price;
         params.price = '';
       }
-
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
       params.location = currentPosition.location || '';
       params.address = currentPosition.address || '';
-
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
           case 0:
@@ -1888,13 +1714,14 @@ export default {
             params._jv.relationships.attachments = this.addImg();
             resolve();
             break;
-          case 5:
-            params._jv.relationships.attachments = this.addImg();
-            params._jv.relationships.question = this.addQuestion();
           case 4:
             params.file_id = this.audioBeforeList[0].id;
             params.file_name = this.audioBeforeList[0].fileName;
-
+            resolve();
+            break;
+          case 5:
+            params._jv.relationships.attachments = this.addImg();
+            params._jv.relationships.question = this.addQuestion();
             resolve();
             break;
           default:
@@ -1902,7 +1729,6 @@ export default {
             this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
         }
       });
-
       return postPromise.then(() => {
         return this.$store
           .dispatch('jv/post', params)
@@ -1914,14 +1740,6 @@ export default {
           });
       });
     },
-    // delAttachments(id, index) {
-    //   const params = {
-    //     _jv: {
-    //       type: 'attachments',
-    //       id,
-    //     },
-    //   }
-    // },
     delAttachments(id, index) {
       if (this.operating === 'edit') {
         // console.log('这是编辑');
@@ -1950,11 +1768,9 @@ export default {
         // this.videoPercent = 0;
       }
     },
-
     handleClickCancel() {
       this.$refs.deletePopup.close();
     },
-
     delAttachments(id, index) {
       if (this.operating === 'edit') {
         console.log('这是编辑');
@@ -1966,7 +1782,6 @@ export default {
         post.images.splice(index, 1);
         post._jv.relationships.images.data.splice(index, 1);
       }
-
       this.uploadFile.forEach((value, key, item) => {
         value.id == id && item.splice(key, 1);
       });
@@ -2003,13 +1818,11 @@ export default {
           'firstPost.attachments',
         ],
       };
-
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
         // console.log(res, '这是主题数据');
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
-
         // #ifdef MP-WEIXIN
         this.markdownShow = false;
         // #endif
@@ -2025,9 +1838,7 @@ export default {
         if (res.threadVideo) {
           this.fileId = res.threadVideo.file_id;
         }
-
         // this.uploadFile = res.firstPost.images;
-
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
             if (item) {
@@ -2042,7 +1853,6 @@ export default {
             }
           });
         }
-
         this.loadStatus = true;
         if (Number(res.price) > 0) {
           this.price = res.price;
@@ -2121,7 +1931,6 @@ export default {
       threads.latitude = currentPosition.latitude || '';
       threads.location = currentPosition.location || '';
       threads.address = currentPosition.address || '';
-
       switch (this.type) {
         case 0:
           break;
@@ -2148,7 +1957,6 @@ export default {
         default:
           break;
       }
-
       await this.$store.dispatch('jv/patch', posts).then(res => {
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
@@ -2165,7 +1973,6 @@ export default {
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
       });
-
       if (state === 2) {
         return state;
       }
@@ -2212,15 +2019,20 @@ export default {
     // 问答贴点击头像跳转选择被提问人
     changeAvatar() {
      uni.navigateTo({ url: '/pages/user/at-member?name=select' });
-    }
+    },
   },
   onLoad(option) {
+    this.$u.event.$on('radioChange', item => {
+      this.beUserName = item.username;
+      this.beAskId = item.id;
+      this.userImage = item.avatarUrl;
+    });
+    if (option.type) this.type = Number(option.type);
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
-    if (option.type) this.type = Number(option.type);
     if(this.type === 1) {
       uni.$on('vditor', (vditor, vditorComponent) => {
         this.vditor = vditor;
@@ -2232,7 +2044,6 @@ export default {
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
-
     this.header = {
       authorization: `Bearer ${token}`,
     };
@@ -2240,10 +2051,8 @@ export default {
       type: 1,
     };
     this.getCategories();
-
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
-
     if (option.categoryIndex) {
       if (option.categoryIndex === '0') {
         this.categoryIndex = '';
@@ -2254,7 +2063,6 @@ export default {
     if (option.categoryId)
       this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
-
     if (this.operating === 'edit') {
       this.loadStatus = false;
       this.getPostThread(option);
@@ -2270,7 +2078,6 @@ export default {
         this.currentPosition = currentPosition;
       }
     }
-
     try {
       const res = uni.getSystemInfoSync();
       if (
@@ -2316,7 +2123,6 @@ export default {
       this.postLoading = false;
       uni.hideLoading();
     });
-
     uni.$on('clickTopic', data => {
       if (data.keywords)
         this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${data.keywords.replace(
@@ -2325,7 +2131,6 @@ export default {
         )}#${this.textAreaValue.slice(this.cursor)}  `;
       this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
-
     // 接收来自首页的数据，并渲染或者报错时提示
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('acceptDataFromOpenerPage', data => {
@@ -2375,7 +2180,6 @@ export default {
           } else {
             this.fileId = data.data.result.fileId;
           }
-
           // console.log(data.data, '这是视频地址');
           this.videoBeforeList.push({
             path: data.data.uploadVideoRes.tempFilePath,
@@ -2395,7 +2199,6 @@ export default {
       atMemberList += `@${item.username} `;
       return atMemberList;
     });
-
     this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
@@ -2405,13 +2208,13 @@ export default {
       this.setThread();
     }
   },
-
   onReady() {
     this.videoContext = uni.createVideoContext('video');
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    this.$u.event.$off('radioChange');
     // #ifdef H5
     uni.$off('clickTopic');
     uni.$off('clickImage');
@@ -2423,15 +2226,6 @@ export default {
     }
     clearInterval(payWechat);
     clearInterval(payPhone);
-  },
-  mounted() {
-    this.$u.event.$on('radioChange', item => {
-    // setTimeout(() => {
-    this.beUserName = item.username;
-    this.beAskId = item.id;
-    this.userImage = item.avatarUrl;
-    // }, 1000);
-  });
   },
 };
 </script>
@@ -2446,7 +2240,6 @@ export default {
   overflow: hidden;
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
-
   &__title {
     display: flex;
     align-items: center;
@@ -2497,7 +2290,6 @@ export default {
     font-size: $fg-f4;
     line-height: 40rpx;
     box-sizing: border-box;
-
     .text-cover {
       font-size: $fg-f4;
       line-height: 40rpx;
@@ -2506,79 +2298,6 @@ export default {
       overflow: auto;
     }
   }
-
-  // &__video {
-  //   display: flex;
-  //   flex-wrap: wrap;
-  //   width: 100%;
-  //   min-height: 160rpx;
-  //   padding: 30rpx 0;
-
-  //   &__play {
-  //     position: relative;
-  //     display: flex;
-  //     align-items: center;
-  //     justify-content: center;
-  //     width: 160rpx;
-  //     height: 160rpx;
-  //     margin-right: 13rpx;
-
-  //     &__video {
-  //       z-index: 0;
-  //       width: 100%;
-  //       height: 100%;
-  //       border: 1px solid #ededed;
-  //       border-radius: 5rpx;
-  //     }
-  //     &__load {
-  //       position: absolute;
-  //       top: 0;
-  //       z-index: 98;
-  //       display: flex;
-  //       flex-direction: column;
-  //       justify-content: center;
-  //       align-items: center;
-  //       width: 100%;
-  //       height: 100%;
-  //       text-align: center;
-  //       border: 1px solid --color(--qui-BOR-ED);
-  //       border-radius: 5rpx;
-  //     }
-  //     &__icon-del {
-  //       position: absolute;
-  //       top: -10px;
-  //       right: -10px;
-  //       z-index: 99;
-  //       display: flex;
-  //       justify-content: center;
-  //       align-items: center;
-  //       width: 50rpx;
-  //       height: 50rpx;
-  //       background-color: #dd524d;
-  //       border-radius: 50px;
-  //     }
-  //     .controls-play-icon {
-  //       position: absolute;
-  //       z-index: 2;
-  //       display: flex;
-  //       justify-content: center;
-  //       align-items: center;
-  //       width: 100%;
-  //       height: 100%;
-  //       background-color: rgba(1, 1, 1, 0.5);
-  //     }
-  //   }
-
-  //   &__add {
-  //     width: 160rpx;
-  //     height: 160rpx;
-  //     line-height: 160rpx;
-  //     text-align: center;
-  //     background-color: #f7f7f7;
-  //     border: 1px solid #ededed;
-  //     border-radius: 5rpx;
-  //   }
-  // }
   &__ft {
     &-tit {
       display: block;
@@ -2604,7 +2323,6 @@ export default {
     }
   }
 }
-
 .play-load {
   .post-box__video__play__load__mask {
     position: absolute;
@@ -2615,7 +2333,6 @@ export default {
     border-radius: 5rpx;
     opacity: 0.7;
   }
-
   .post-box__video__play__load__text {
     position: relative;
     z-index: 2;
@@ -2623,7 +2340,6 @@ export default {
     line-height: 36rpx;
     color: --color(--qui-FC-34);
   }
-
   progress {
     position: absolute;
     bottom: 9.5rpx;
@@ -2648,7 +2364,6 @@ export default {
     border: 1px solid #1878f3;
   }
 }
-
 .popup-content-btn {
   display: flex;
   flex-wrap: wrap;
@@ -2657,7 +2372,6 @@ export default {
     margin-top: 20rpx;
   }
 }
-
 .popup-share {
   /* #ifndef APP-NVUE */
   display: flex;
@@ -2679,7 +2393,6 @@ export default {
   height: 9rpx;
   background: --color(--qui-BG-ED);
 }
-
 .emoji-bd {
   position: relative;
   width: 100%;
@@ -2692,7 +2405,6 @@ export default {
   font-size: $fg-f5;
   color: --color(--qui-FC-AAA);
 }
-
 .cell-item-right-text {
   /deep/ .cell-item__body__right-text {
     color: --color(--qui-RED);
@@ -2725,7 +2437,6 @@ export default {
 /deep/ .uni-list-cell .uni-list-cell-pd {
   position: relative;
 }
-
 .popup-dialog {
   width: 670rpx;
   height: 342rpx;
@@ -2739,7 +2450,6 @@ export default {
       color: --color(--qui-FC-333);
     }
   }
-
   &__cont {
     position: relative;
     display: flex;
@@ -2760,14 +2470,12 @@ export default {
       box-sizing: border-box;
     }
   }
-
   &__ft {
     display: flex;
     align-items: center;
     height: 100rpx;
     border-top: 2rpx solid --color(--qui-BOR-DDD);
     box-sizing: border-box;
-
     button {
       width: 50%;
       color: --color(--qui-FC-777);
@@ -2784,13 +2492,11 @@ export default {
         border-bottom-left-radius: 10rpx;
       }
     }
-
     .popup-btn--ok--blue {
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
 }
-
 /deep/ .uni-video-cover {
   display: none;
 }
@@ -2807,25 +2513,21 @@ export default {
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
 }
-
 .username {
-  // position: absolute;
-  // right: 48rpx;
   max-width: 200rpx;
   overflow: hidden;
   font-size: $fg-f3;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.pay-type {
+  font-size: $fg-f4;
+  line-height: 100rpx;
+  text-align: center;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
+}
 .watchpay {
   font-size: $fg-f3;
   color: --color(--qui-FC-AAA);
-
-  .pay-type {
-    font-size: $fg-f4;
-    line-height: 100rpx;
-    text-align: center;
-    border-bottom: 1px solid --color(--qui-BOR-ED);
-  }
 }
 </style>
