@@ -150,7 +150,7 @@
               ></qui-be-ask>
             </view>
             <!-- 答案支付 -->
-            <view v-if="answerPay" style="padding: 0 20rpx;">
+            <view v-if="answerPay" class="answerPay">
               <qui-answer
                 :user-info="thread.user"
                 :avatar-url="thread.user.avatarUrl"
@@ -1232,11 +1232,12 @@ export default {
                 this.user.id === data.question.be_user_id &&
                 data.question.is_answer === 1
               ) {
+                console.log('已回答')
                 this.payment = true;
                 this.beAsk = false;
               } else if (
                 this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 0
+                data.question.is_answer === 1 && data.question.is_onlooker === true
               ) {
                 this.answerPay = true;
               } else if (
@@ -1816,7 +1817,6 @@ export default {
         this.$refs.commentPopup.close();
         console.log(res, '回答问题的接口');
         this.loadThread();
-        this.$u.event.$emit('answered', res);
       });
     },
 
@@ -2973,9 +2973,13 @@ export default {
     moreContent(param, thread) {
       this.moreCancel();
       if (param.type === '0') {
+        this.$
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
+        // setTimeout(() => {
+        //   this.$u.event.$emit('radioEditChange', thread);
+        // }, 1000);
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
       } else if (param.type === '4') {
@@ -3759,5 +3763,8 @@ page {
 }
 .payment {
   padding: 0 40rpx;
+}
+.answerPay {
+  padding: 0 20rpx 40rpx;   
 }
 </style>

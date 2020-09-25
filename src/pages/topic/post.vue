@@ -202,7 +202,7 @@
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
-        v-if="type !== 0 && forums.other.can_create_thread_paid"
+        v-if="type !== 0 && type !== 5 && forums.other.can_create_thread_paid"
         @click="lookPay"
       ></qui-cell-item>
       <qui-cell-item
@@ -221,7 +221,7 @@
       </view>
       <!-- 提问价格 -->
       <qui-cell-item
-        v-if="type === 5"
+        v-if="type === 5 && askingPrice"
         :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.askingPrice')"
         :addon="showAskPrice"
@@ -513,6 +513,7 @@ export default {
       haveDate: 0, // 你得
       answerIsDate: 0, // 回答者得
       platformDate: 0, // 平台得
+      askingPrice: true, // 显示提问价格
       otherList: [
         {
           name: '匿名提问',
@@ -953,7 +954,9 @@ export default {
       this.textShow = true;
     },
     moneyClick(index) {
-      if (index === 0) {
+      if (this.forums.set_site.site_onlooker_price === 0 ) {
+        this.watchShow = false;
+      } else if (index === 0) {
         this.watchShow = false;
       } else {
         this.watchShow =true;
@@ -1498,6 +1501,9 @@ export default {
           uni.showLoading();
         }
         if (this.operating === 'edit') {
+          if (this.type === 5) {
+            // this.beUserName =
+          }
           this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
@@ -1816,10 +1822,19 @@ export default {
           'threadAudio',
           'category',
           'firstPost.attachments',
+          'question',
+          'onlookers',
+          'question.beUser',
+          'question.images',
         ],
       };
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
-        // console.log(res, '这是主题数据');
+        console.log(res, '这是主题数据');
+        if (res.question) {
+          this.beUserName = res.question.beUser.username;
+          this.beAskId = res.question.beUser.id;
+          this.userImage = res.question.beUser.avatarUrl;
+        }
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -2022,6 +2037,10 @@ export default {
     },
   },
   onLoad(option) {
+    // 问答编辑不显示提问价格
+    if (option.operating === 'edit') {
+      this.askingPrice = false;
+    }
     this.$u.event.$on('radioChange', item => {
       this.beUserName = item.username;
       this.beAskId = item.id;
@@ -2215,6 +2234,7 @@ export default {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
     this.$u.event.$off('radioChange');
+    this.$u.event.$off('radioEditChange');
     // #ifdef H5
     uni.$off('clickTopic');
     uni.$off('clickImage');
