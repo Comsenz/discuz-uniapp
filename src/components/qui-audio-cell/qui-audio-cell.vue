@@ -180,8 +180,10 @@ export default {
       this.audio.seek(e.detail.value);
     },
     setDuration() {
-      this.duration = this.format(this.audio.duration);
-      this.durationTime = this.audio.duration;
+      if (Number.isFinite(this.audio.duration)) {
+        this.duration = this.format(this.audio.duration);
+        this.durationTime = this.audio.duration;
+      }
     },
     // 删除语音
     deleteItem(audioId) {
