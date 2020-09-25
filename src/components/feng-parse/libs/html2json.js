@@ -14,7 +14,7 @@
  */
 
 import wxDiscode from './wxDiscode';
-import HTMLParser from './htmlparser';
+import { HTMLParser } from './htmlparser';
 
 function makeMap(str) {
   const obj = {};
@@ -23,19 +23,12 @@ function makeMap(str) {
   return obj;
 }
 
-// Block Elements - HTML 5
-const block = makeMap(
-  'br,code,address,article,applet,aside,audio,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,ins,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video',
-);
+var block = makeMap('a,address,article,applet,aside,audio,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video'); // Inline Elements - HTML 5
 
-// Inline Elements - HTML 5
-const inline = makeMap(
-  'a,abbr,acronym,applet,b,basefont,bdo,big,button,cite,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var',
-);
-
-// Elements that you can, intentionally, leave open
+var inline = makeMap('abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var'); // Elements that you can, intentionally, leave open
 // (and which close themselves)
-const closeSelf = makeMap('colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr');
+
+var closeSelf = makeMap('colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr'); // Attributes that have their values filled in disabled="disabled"
 
 function removeDOCTYPE(html) {
   const isDocument = /<body.*>([^]*)<\/body>/.test(html);
@@ -66,9 +59,9 @@ function getScreenInfo() {
 
 function html2json(html, customHandler, imageProp, host) {
   // 处理字符串
-  html = removeDOCTYPE(html);
-  html = trimHtml(html);
-  html = wxDiscode.strDiscode(html);
+  // html = removeDOCTYPE(html);
+  // html = trimHtml(html);
+  // html = wxDiscode.strDiscode(html);
   // 生成node节点
   const bufArray = [];
   const results = {
@@ -279,7 +272,7 @@ function html2json(html, customHandler, imageProp, host) {
 
       const node = {
         node: 'text',
-        text,
+        text: wxDiscode.strDiscode(text),
       };
       //#ifndef MP-BAIDU
       if (customHandler.chars) {
@@ -298,7 +291,6 @@ function html2json(html, customHandler, imageProp, host) {
       }
     },
   });
-
   return results;
 }
 

@@ -156,7 +156,10 @@
           </view>
         </view>
       </view>
-      <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
+      <view v-else>
+        <view v-if="!vditor" style="text-align:center;"><u-loading :size="40"></u-loading></view>
+        <qui-vditor ref="vditor"></qui-vditor>
+      </view>
 
       <qui-uploader
         :url="`${url}api/attachments`"
