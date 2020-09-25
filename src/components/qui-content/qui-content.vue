@@ -93,11 +93,14 @@
             <view class="themeItem_to">@{{ questionsName }}</view>
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
-          <view>
-            <qui-icon style="float: left;margin-right: 10rpx;" v-if="themPayBtn"></qui-icon>
+          <view :class="themPayBtn ? 'themeItem__content__uparse' : ''">
+            <qui-icon
+              name="icon-fufei"
+              v-if="themPayBtn && threadType !== 1"
+              class="themeItem__content__fufei"
+            ></qui-icon>
             <qui-uparse
               :content="themeContent"
-              :them-pay-btn="themPayBtn"
               class="themeItem__content__wxParse"
               v-if="threadType !== 1"
             ></qui-uparse>
