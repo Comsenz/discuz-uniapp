@@ -251,7 +251,15 @@
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 4 && type !== 5"
+        v-if="
+          price > 0 &&
+            type !== 3 &&
+            type !== 2 &&
+            type !== 0 &&
+            type !== 4 &&
+            type !== 5 &&
+            payType !== 1
+        "
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
@@ -939,8 +947,8 @@ export default {
       if (this.type === 5) {
         this.priceAsk = this.inputPrice;
         this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-        this.haveDate = (this.priceAsk - this.platformDate)/2;
-        this.answerIsDate = (this.priceAsk - this.platformDate)/2;
+        this.haveDate = (this.priceAsk - this.platformDate) / 2;
+        this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
         return;
       }
 
@@ -956,7 +964,7 @@ export default {
       if (index === 0) {
         this.watchShow = false;
       } else {
-        this.watchShow =true;
+        this.watchShow = true;
       }
       this.setType = 'pay';
       this.payNumCheck = [];
@@ -973,8 +981,8 @@ export default {
         if (this.type === 5) {
           this.priceAsk = this.payNumCheck[0].pay;
           this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-          this.haveDate = (this.priceAsk - this.platformDate)/2;
-          this.answerIsDate = (this.priceAsk - this.platformDate)/2;
+          this.haveDate = (this.priceAsk - this.platformDate) / 2;
+          this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
           this.$refs.popupBtm.close();
           this.textShow = true;
           return;
@@ -1109,8 +1117,8 @@ export default {
         return;
       }
       this.payTypeText = this.t.pay + this.t.payAskingPrice;
-      console.log('888888')
-      this.priceAsk= parseFloat(this.thread.price);
+      console.log('888888');
+      this.priceAsk = parseFloat(this.thread.price);
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
@@ -1171,7 +1179,7 @@ export default {
     },
     // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     orderPay(type, value, orderSn, payType, broswerType) {
-      console.log(type, value, orderSn, payType, broswerType)
+      console.log(type, value, orderSn, payType, broswerType);
       let params = {};
       if (payType === 0) {
         params = {
@@ -1329,7 +1337,7 @@ export default {
     postClick() {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
-      if(this.type === 1) {
+      if (this.type === 1) {
         this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
       }
       // #endif
@@ -1463,25 +1471,25 @@ export default {
           break;
         case 4:
           if (this.audioBeforeList.length < 1) {
-						this.$refs.toast.show({
-							message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
-						});
-						status = false;
-					} else {
-						status = true;
-					}
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
+            });
+            status = false;
+          } else {
+            status = true;
+          }
           break;
         case 5:
-          if (this.beAskId === ''){
-              this.$refs.toast.show({
-                message: this.i18n.t('discuzq.post.pleaseSelectTheUserToBeAsked'),
-              });
-              status = false;
+          if (this.beAskId === '') {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.pleaseSelectTheUserToBeAsked'),
+            });
+            status = false;
           } else if (this.textAreaValue.length < 1) {
             this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
             status = false;
           } else if (this.watchShow) {
-            console.log(this.watchShow, 'this.watchShow')
+            console.log(this.watchShow, 'this.watchShow');
             this.payShowStatus = true;
             this.$nextTick(() => {
               this.$refs.payShow.payClickShow();
@@ -1493,7 +1501,7 @@ export default {
           this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
       }
       if (status) {
-        if(this.type !== 5){
+        if (this.type !== 5) {
           this.postLoading = true;
           uni.showLoading();
         }
@@ -1541,7 +1549,7 @@ export default {
               return false;
             }
           }
-          if(!this.watchShow || this.type !== 5) {
+          if (!this.watchShow || this.type !== 5) {
             this.postThread().then(res => {
               this.postLoading = false;
               uni.hideLoading();
@@ -1626,8 +1634,8 @@ export default {
           be_user_id: this.beAskId,
           price: this.priceAsk,
           is_onlooker: this.watchChecked,
-          order_id: this.orderSn
-        }
+          order_id: this.orderSn,
+        },
       };
       // if(!this.watchShow){
       //   delete question.data.order_id
@@ -2018,7 +2026,7 @@ export default {
     },
     // 问答贴点击头像跳转选择被提问人
     changeAvatar() {
-     uni.navigateTo({ url: '/pages/user/at-member?name=select' });
+      uni.navigateTo({ url: '/pages/user/at-member?name=select' });
     },
   },
   onLoad(option) {
@@ -2033,7 +2041,7 @@ export default {
     this.isWeixin = isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
-    if(this.type === 1) {
+    if (this.type === 1) {
       uni.$on('vditor', (vditor, vditorComponent) => {
         this.vditor = vditor;
         console.log(this.textAreaValue);

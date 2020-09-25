@@ -211,6 +211,7 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in attachMentList"
           :key="index"
+          @click="attachmentPayStatus ? attachmentPay() : ''"
         >
           <view
             v-if="['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1"
@@ -231,7 +232,7 @@
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text @tap="download(item)">{{ item.fileName }}</text>
+            <text @tap="!attachmentPayStatus ? download(item) : ''">{{ item.fileName }}</text>
             <text
               v-if="
                 threadInfo &&
@@ -517,6 +518,10 @@ export default {
         return {};
       },
     },
+    attachmentPayStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -588,6 +593,11 @@ export default {
     // 头像失效
     imageError() {
       this.imageStatus = false;
+    },
+    // 如果附件是未支付状态，点击触发支付
+    attachmentPay() {
+      console.log('这是子组件内');
+      this.$emit('attachmentPay');
     },
     // 附件下载
     download(item) {
