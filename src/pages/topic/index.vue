@@ -62,6 +62,8 @@
                   : []
               "
               :thread-audio="thread.type == 4 ? thread.threadAudio : null"
+              :attachment-pay-status="thread.attachmentPrice > 0 && !thread.isPaidAttachment"
+              @attachmentPay="payClickShow"
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
@@ -960,6 +962,7 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+      console.log('thread', thread);
 
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
@@ -1196,6 +1199,7 @@ export default {
 
       threadAction
         .then(data => {
+          this.$store.dispatch('session/setThread', data);
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1422,10 +1426,6 @@ export default {
             } else if (data.type === 2) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
             } else if (data.type === 1) {
-              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-            } else if (data.type === 5) {
-              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-
               if (data.attachmentPrice > 0) {
                 this.payThreadTypeText =
                   this.t.pay + data.attachmentPrice + this.t.checkTheAttachment;
@@ -1434,6 +1434,8 @@ export default {
                   this.t.pay + data.price + this.t.paymentViewRemainingContent;
               }
               // this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+            } else if (data.type === 5) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             } else if (data.type === 4) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewAudio;
             }
