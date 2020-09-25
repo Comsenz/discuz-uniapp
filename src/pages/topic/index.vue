@@ -62,6 +62,8 @@
                   : []
               "
               :thread-audio="thread.type == 4 ? thread.threadAudio : null"
+              :attachment-pay-status="thread.attachmentPrice > 0 && !thread.isPaidAttachment"
+              @attachmentPay="payClickShow"
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
@@ -150,7 +152,7 @@
               ></qui-be-ask>
             </view>
             <!-- 答案支付 -->
-            <view v-if="answerPay" style="padding: 0 20rpx;">
+            <view v-if="answerPay" class="answerPay">
               <qui-answer
                 :user-info="thread.user"
                 :avatar-url="thread.user.avatarUrl"
@@ -960,6 +962,7 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+      console.log('thread', thread);
 
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
@@ -1185,7 +1188,7 @@ export default {
           'question',
           'onlookers',
           'question.beUser',
-          'question.images'
+          'question.images',
         ],
       };
       const threadAction = status.run(() =>
@@ -1196,6 +1199,7 @@ export default {
 
       threadAction
         .then(data => {
+          this.$store.dispatch('session/setThread', data);
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1221,25 +1225,36 @@ export default {
             // #endif
             console.log(data, '详情页主题');
             if (data.question) {
-              this.platformDate = data.question.price * (this.forums.set_site.site_master_scale / 10);
-              this.beAskDate = (data.question.price - this.platformDate)/2;
-              this.beAskBeDate = (data.question.price - this.platformDate)/2;
+              this.platformDate =
+                data.question.price * (this.forums.set_site.site_master_scale / 10);
+              this.beAskDate = (data.question.price - this.platformDate) / 2;
+              this.beAskBeDate = (data.question.price - this.platformDate) / 2;
               // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
-              if (this.user.id === data.question.be_user_id && data.question.is_answer === 0 ) {
+              if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                 this.beAsk = true;
-              } else if (this.user.id === data.question.be_user_id && data.question.is_answer === 1) {
+              } else if (
+                this.user.id === data.question.be_user_id &&
+                data.question.is_answer === 1
+              ) {
+                console.log('已回答')
                 this.payment = true;
                 this.beAsk = false;
-              } else if (this.user.id !== (data.question.be_user_id && data.user.id ) && data.question.is_answer === 0) {
+              } else if (
+                this.user.id !== (data.question.be_user_id && data.user.id) &&
+                data.question.is_answer === 1 && data.question.is_onlooker === true
+              ) {
                 this.answerPay = true;
-              } else if (this.user.id !== (data.question.be_user_id && data.user.id) && data.question.is_answer === 1) {
+              } else if (
+                this.user.id !== (data.question.be_user_id && data.user.id) &&
+                data.question.is_answer === 1
+              ) {
                 // 免费围观
                 if (data.question.onlooker_unit_price === 0) {
                   this.payment = true;
                   this.answerPay = false;
                 } else {
                   // 循环已付费围观者
-                  data.onlookers.forEach( item => {
+                  data.onlookers.forEach(item => {
                     console.log(item, 'item');
                     if (this.user.id === item.id) {
                       this.payment = true;
@@ -1369,12 +1384,11 @@ export default {
             this.moreData[3].icon = 'icon-quxiaozhiding';
           }
           this.isLiked = data.firstPost.isLiked;
-          if(data.type === 5) {
+          if (data.type === 5) {
             this.rewardStatus = false;
             this.paidStatus = false;
             return;
-          }
-          else if (!this.forums.paycenter.wxpay_close) {
+          } else if (!this.forums.paycenter.wxpay_close) {
             // 如果关闭了微信支付
             this.rewardStatus = false;
             this.paidStatus = false;
@@ -1412,10 +1426,6 @@ export default {
             } else if (data.type === 2) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
             } else if (data.type === 1) {
-              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-            } else if (data.type === 5) {
-              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-
               if (data.attachmentPrice > 0) {
                 this.payThreadTypeText =
                   this.t.pay + data.attachmentPrice + this.t.checkTheAttachment;
@@ -1424,6 +1434,8 @@ export default {
                   this.t.pay + data.price + this.t.paymentViewRemainingContent;
               }
               // this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+            } else if (data.type === 5) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             } else if (data.type === 4) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewAudio;
             }
@@ -1717,20 +1729,20 @@ export default {
         };
       } else {
         if (!this.commentAnser) {
-        params = {
-          _jv: {
-            type: 'posts',
-            relationships: {
-              thread: {
-                data: {
-                  type: 'threads',
-                  id: this.threadId,
+          params = {
+            _jv: {
+              type: 'posts',
+              relationships: {
+                thread: {
+                  data: {
+                    type: 'threads',
+                    id: this.threadId,
+                  },
                 },
               },
             },
-          },
-          content: this.textAreaValue,
-        };
+            content: this.textAreaValue,
+          };
         }
       }
       params._jv.relationships.attachments = {
@@ -1781,17 +1793,17 @@ export default {
         this.publishClickStatus = true;
         return false;
       }
-      const  params = {
-          content: this.textAreaValue,
-          type: 5,
+      const params = {
+        content: this.textAreaValue,
+        type: 5,
         _jv: {
           type: 'answer',
-            relationships: {},
-        links: {
-          self: `questions/${this.questionId}/answer`
+          relationships: {},
+          links: {
+            self: `questions/${this.questionId}/answer`,
+          },
         },
-        }
-      }
+      };
       params._jv.relationships.attachments = {
         data: [],
       };
@@ -1805,10 +1817,9 @@ export default {
       }
       this.$store.dispatch('jv/post', params).then(res => {
         this.$refs.commentPopup.close();
-        console.log(res, '回答问题的接口')
+        console.log(res, '回答问题的接口');
         this.loadThread();
-        this.$u.event.$emit('answered', res);
-      })
+      });
     },
 
     // 加载当前主题评论的数据
@@ -1998,8 +2009,8 @@ export default {
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
-              if (this.payTypeVal === 0 || this.payTypeVal === 2) {
-                // 这是主题支付，支付完成刷新详情页，重新请求数据
+              if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
+                // 这是主题支付和附件支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
               } else if (this.payTypeVal === 1) {
                 // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
@@ -2035,7 +2046,7 @@ export default {
               this.loadThread();
             }
 
-            if (this.payTypeVal === 0) {
+            if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               this.loadThread();
             } else if (this.payTypeVal === 1) {
@@ -2091,7 +2102,7 @@ export default {
       } else if (this.payTypeVal === 2) {
         // 这是围观支付
         this.creatOrder(this.price, 6, val, 1);
-      } else {
+      } else if (this.payTypeVal === 3) {
         this.creatOrder(this.thread.attachmentPrice, 7, val, 1);
       }
     },
@@ -2107,7 +2118,7 @@ export default {
         } else if (this.payTypeVal === 2) {
           // 这是围观支付
           this.creatOrder(this.price, 6, this.value, payType);
-        } else {
+        } else if (this.payTypeVal === 3) {
           this.creatOrder(this.thread.attachmentPrice, 7, this.value, payType);
         }
       } else if (payType === 1) {
@@ -2181,7 +2192,7 @@ export default {
     },
     // 主题支付
     payClickShow() {
-      console.log('0000')
+      console.log('0000');
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2221,11 +2232,9 @@ export default {
         return;
       }
 
-      this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏 2围观支付
-
-      // payTypeVal, '这是类型，0为主题支付，1为主题打赏 2为附件支付
+      this.payTypeVal = 0; // payTypeVal, '这是类型，0为主题支付，1为主题打赏 2围观支付  3为附件支付
       if (this.thread.attachmentPrice > 0) {
-        this.payTypeVal = 2;
+        this.payTypeVal = 3;
       } else {
         this.payTypeVal = 0;
       }
@@ -2251,13 +2260,13 @@ export default {
       }
 
       this.$nextTick(() => {
-        console.log('9999')
+        console.log('9999');
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
     },
     // 围观支付
     payAnswerClickShow() {
-      console.log('围观')
+      console.log('围观');
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.$store.getters['session/get']('auth').open();
@@ -2273,9 +2282,9 @@ export default {
       this.payTypeVal = 2;
       this.price = parseFloat(this.thread.question.onlooker_unit_price);
       this.$nextTick(() => {
-        console.log('9999')
+        console.log('9999');
         this.$refs.payShow.payClickShow(this.payTypeVal);
-        console.log(this.payTypeVal)
+        console.log(this.payTypeVal);
       });
     },
     // 支付是否显示用户头像
@@ -2290,7 +2299,7 @@ export default {
     },
     // 打赏
     rewardClick() {
-      console.log('打赏')
+      console.log('打赏');
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2477,7 +2486,7 @@ export default {
         console.log('commentAnsercommentAnser');
         this.postAnswer();
       } else {
-      this.postComment(this.commentId);
+        this.postComment(this.commentId);
       }
     },
     // 跳转到评论详情页
@@ -2569,7 +2578,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText =true;
+        this.commentText = true;
         this.focusVal = true;
       }
     },
@@ -2671,7 +2680,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText =true;
+        this.commentText = true;
         this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -2966,9 +2975,13 @@ export default {
     moreContent(param, thread) {
       this.moreCancel();
       if (param.type === '0') {
+        this.$
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
+        // setTimeout(() => {
+        //   this.$u.event.$emit('radioEditChange', thread);
+        // }, 1000);
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
       } else if (param.type === '4') {
@@ -3749,9 +3762,11 @@ page {
     font-size: $fg-f4;
     color: --color(--qui-FC-B5);
   }
-
 }
 .payment {
   padding: 0 40rpx;
+}
+.answerPay {
+  padding: 0 20rpx 40rpx;   
 }
 </style>

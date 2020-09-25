@@ -93,22 +93,18 @@
             <view class="themeItem_to">@{{ questionsName }}</view>
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
-
-          <!-- <view :class="themPayBtn ? 'themeItem__content__uparse' : ''" v-else>
+          <view :class="themPayBtn ? 'themeItem__content__uparse' : ''">
             <qui-icon
               name="icon-fufei"
-              color="#aaaaaa"
-              size="30"
-              v-if="themPayBtn"
+              v-if="themPayBtn && threadType !== 1"
               class="themeItem__content__fufei"
             ></qui-icon>
             <qui-uparse
               :content="themeContent"
-              :them-pay-btn="themPayBtn"
               class="themeItem__content__wxParse"
               v-if="threadType !== 1"
             ></qui-uparse>
-          </view> -->
+          </view>
         </view>
         <view
           class="theme__content__videocover"
@@ -244,7 +240,7 @@
           </view>
         </view>
 
-        <view class="themeItem__content__tags" v-if="themeType === '0' && getCategoryId === 0">
+        <view class="themeItem__content__tags" v-if="themeType === '1' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
           </view>

@@ -156,7 +156,10 @@
           </view>
         </view>
       </view>
-      <view v-else><qui-vditor ref="vditor"></qui-vditor></view>
+      <view v-else>
+        <view v-if="!vditor" style="text-align: center;"><u-loading size="40"></u-loading></view>
+        <qui-vditor ref="vditor"></qui-vditor>
+      </view>
 
       <qui-uploader
         :url="`${url}api/attachments`"
@@ -202,18 +205,29 @@
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
-        v-if="type !== 0 && forums.other.can_create_thread_paid"
+        v-if="type === 1 && forums.other.can_create_thread_paid"
         @click="lookPay"
       ></qui-cell-item>
-      <qui-cell-item
-        :class="price > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="showPrice"
-        arrow
-        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
-        @click="cellClick('pay')"
-      ></qui-cell-item>
-
+      <view v-if="type === 1">
+        <qui-cell-item
+          :class="price > 0 ? 'cell-item-right-text' : ''"
+          :title="i18n.t('discuzq.post.paymentAmount')"
+          :addon="showPrice"
+          arrow
+          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
+          @click="cellClick('pay')"
+        ></qui-cell-item>
+      </view>
+      <view v-else-if="type !== 0">
+        <qui-cell-item
+          :class="price > 0 ? 'cell-item-right-text' : ''"
+          :title="i18n.t('discuzq.post.paymentAmount')"
+          :addon="showPrice"
+          arrow
+          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
+          @click="cellClick('pay')"
+        ></qui-cell-item>
+      </view>
       <!-- 匿名提问 -->
       <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
@@ -221,7 +235,7 @@
       </view>
       <!-- 提问价格 -->
       <qui-cell-item
-        v-if="type === 5"
+        v-if="type === 5 && askingPrice"
         :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.askingPrice')"
         :addon="showAskPrice"
@@ -251,7 +265,15 @@
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0 && type !== 4 && type !== 5"
+        v-if="
+          price > 0 &&
+            type !== 3 &&
+            type !== 2 &&
+            type !== 0 &&
+            type !== 4 &&
+            type !== 5 &&
+            payType !== 1
+        "
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
@@ -513,6 +535,7 @@ export default {
       haveDate: 0, // 你得
       answerIsDate: 0, // 回答者得
       platformDate: 0, // 平台得
+      askingPrice: true, // 显示提问价格
       otherList: [
         {
           name: '匿名提问',
@@ -939,8 +962,8 @@ export default {
       if (this.type === 5) {
         this.priceAsk = this.inputPrice;
         this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-        this.haveDate = (this.priceAsk - this.platformDate)/2;
-        this.answerIsDate = (this.priceAsk - this.platformDate)/2;
+        this.haveDate = (this.priceAsk - this.platformDate) / 2;
+        this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
         return;
       }
 
@@ -953,10 +976,12 @@ export default {
       this.textShow = true;
     },
     moneyClick(index) {
-      if (index === 0) {
+      if (this.forums.set_site.site_onlooker_price === 0) {
+        this.watchShow = false;
+      } else if (index === 0) {
         this.watchShow = false;
       } else {
-        this.watchShow =true;
+        this.watchShow = true;
       }
       this.setType = 'pay';
       this.payNumCheck = [];
@@ -973,8 +998,8 @@ export default {
         if (this.type === 5) {
           this.priceAsk = this.payNumCheck[0].pay;
           this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-          this.haveDate = (this.priceAsk - this.platformDate)/2;
-          this.answerIsDate = (this.priceAsk - this.platformDate)/2;
+          this.haveDate = (this.priceAsk - this.platformDate) / 2;
+          this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
           this.$refs.popupBtm.close();
           this.textShow = true;
           return;
@@ -1109,8 +1134,8 @@ export default {
         return;
       }
       this.payTypeText = this.t.pay + this.t.payAskingPrice;
-      console.log('888888')
-      this.priceAsk= parseFloat(this.thread.price);
+      console.log('888888');
+      this.priceAsk = parseFloat(this.thread.price);
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
@@ -1171,7 +1196,7 @@ export default {
     },
     // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
     orderPay(type, value, orderSn, payType, broswerType) {
-      console.log(type, value, orderSn, payType, broswerType)
+      console.log(type, value, orderSn, payType, broswerType);
       let params = {};
       if (payType === 0) {
         params = {
@@ -1329,7 +1354,7 @@ export default {
     postClick() {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
-      if(this.type === 1) {
+      if (this.type === 1) {
         this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
       }
       // #endif
@@ -1463,25 +1488,25 @@ export default {
           break;
         case 4:
           if (this.audioBeforeList.length < 1) {
-						this.$refs.toast.show({
-							message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
-						});
-						status = false;
-					} else {
-						status = true;
-					}
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
+            });
+            status = false;
+          } else {
+            status = true;
+          }
           break;
         case 5:
-          if (this.beAskId === ''){
-              this.$refs.toast.show({
-                message: this.i18n.t('discuzq.post.pleaseSelectTheUserToBeAsked'),
-              });
-              status = false;
+          if (this.beAskId === '') {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.pleaseSelectTheUserToBeAsked'),
+            });
+            status = false;
           } else if (this.textAreaValue.length < 1) {
             this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
             status = false;
           } else if (this.watchShow) {
-            console.log(this.watchShow, 'this.watchShow')
+            console.log(this.watchShow, 'this.watchShow');
             this.payShowStatus = true;
             this.$nextTick(() => {
               this.$refs.payShow.payClickShow();
@@ -1493,11 +1518,14 @@ export default {
           this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
       }
       if (status) {
-        if(this.type !== 5){
+        if (this.type !== 5) {
           this.postLoading = true;
           uni.showLoading();
         }
         if (this.operating === 'edit') {
+          if (this.type === 5) {
+            // this.beUserName =
+          }
           this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
@@ -1541,7 +1569,7 @@ export default {
               return false;
             }
           }
-          if(!this.watchShow || this.type !== 5) {
+          if (!this.watchShow || this.type !== 5) {
             this.postThread().then(res => {
               this.postLoading = false;
               uni.hideLoading();
@@ -1626,8 +1654,8 @@ export default {
           be_user_id: this.beAskId,
           price: this.priceAsk,
           is_onlooker: this.watchChecked,
-          order_id: this.orderSn
-        }
+          order_id: this.orderSn,
+        },
       };
       // if(!this.watchShow){
       //   delete question.data.order_id
@@ -1816,10 +1844,19 @@ export default {
           'threadAudio',
           'category',
           'firstPost.attachments',
+          'question',
+          'onlookers',
+          'question.beUser',
+          'question.images',
         ],
       };
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
-        // console.log(res, '这是主题数据');
+        console.log(res, '这是主题数据');
+        if (res.question) {
+          this.beUserName = res.question.beUser.username;
+          this.beAskId = res.question.beUser.id;
+          this.userImage = res.question.beUser.avatarUrl;
+        }
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
@@ -2018,10 +2055,14 @@ export default {
     },
     // 问答贴点击头像跳转选择被提问人
     changeAvatar() {
-     uni.navigateTo({ url: '/pages/user/at-member?name=select' });
+      uni.navigateTo({ url: '/pages/user/at-member?name=select' });
     },
   },
   onLoad(option) {
+    // 问答编辑不显示提问价格
+    if (option.operating === 'edit') {
+      this.askingPrice = false;
+    }
     this.$u.event.$on('radioChange', item => {
       this.beUserName = item.username;
       this.beAskId = item.id;
@@ -2033,7 +2074,7 @@ export default {
     this.isWeixin = isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
-    if(this.type === 1) {
+    if (this.type === 1) {
       uni.$on('vditor', (vditor, vditorComponent) => {
         this.vditor = vditor;
         console.log(this.textAreaValue);
@@ -2215,6 +2256,7 @@ export default {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
     this.$u.event.$off('radioChange');
+    this.$u.event.$off('radioEditChange');
     // #ifdef H5
     uni.$off('clickTopic');
     uni.$off('clickImage');
