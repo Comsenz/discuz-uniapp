@@ -18,6 +18,8 @@ export const SET_GOOD = 'SET_GOOD';
 export const SET_INVITE_CODE = 'SET_INVITE_CODE';
 // 设置 attachment
 export const SET_ATTACHMENT = 'SET_ATTACHMENT';
+// 设置 thread
+export const SET_THREAD = 'SET_THREAD';
 // 设置 分类ID
 export const SET_CATEGORYID = 'SET_CATEGORYID';
 // 设置 分类Index

@@ -62,6 +62,8 @@
                   : []
               "
               :thread-audio="thread.type == 4 ? thread.threadAudio : null"
+              :attachment-pay-status="thread.attachmentPrice > 0 && !thread.isPaidAttachment"
+              @attachmentPay="payClickShow"
               @personJump="personJump(thread.user._jv.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
@@ -150,7 +152,7 @@
               ></qui-be-ask>
             </view>
             <!-- 答案支付 -->
-            <view v-if="answerPay" style="padding: 0 20rpx;">
+            <view v-if="answerPay" class="answerPay">
               <qui-answer
                 :user-info="thread.user"
                 :avatar-url="thread.user.avatarUrl"
@@ -961,6 +963,7 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
+      console.log('thread', thread);
 
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
@@ -1197,6 +1200,7 @@ export default {
 
       threadAction
         .then(data => {
+          this.$store.dispatch('session/setThread', data);
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
               code: 'thread_deleted',
@@ -1233,11 +1237,12 @@ export default {
                 this.user.id === data.question.be_user_id &&
                 data.question.is_answer === 1
               ) {
+                console.log('已回答')
                 this.payment = true;
                 this.beAsk = false;
               } else if (
                 this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 0
+                data.question.is_answer === 1 && data.question.is_onlooker === true
               ) {
                 this.answerPay = true;
               } else if (
@@ -1422,10 +1427,6 @@ export default {
             } else if (data.type === 2) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewVideo;
             } else if (data.type === 1) {
-              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-            } else if (data.type === 5) {
-              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
-
               if (data.attachmentPrice > 0) {
                 this.payThreadTypeText =
                   this.t.pay + data.attachmentPrice + this.t.checkTheAttachment;
@@ -1434,6 +1435,8 @@ export default {
                   this.t.pay + data.price + this.t.paymentViewRemainingContent;
               }
               // this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
+            } else if (data.type === 5) {
+              this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewRemainingContent;
             } else if (data.type === 4) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewAudio;
             }
@@ -1830,7 +1833,6 @@ export default {
         this.$refs.commentPopup.close();
         console.log(res, '回答问题的接口');
         this.loadThread();
-        this.$u.event.$emit('answered', res);
       });
     },
 
@@ -2986,9 +2988,13 @@ export default {
     moreContent(param, thread) {
       this.moreCancel();
       if (param.type === '0') {
+        this.$
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
+        // setTimeout(() => {
+        //   this.$u.event.$emit('radioEditChange', thread);
+        // }, 1000);
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
       } else if (param.type === '4') {
@@ -3772,5 +3778,8 @@ page {
 }
 .payment {
   padding: 0 40rpx;
+}
+.answerPay {
+  padding: 0 20rpx 40rpx;   
 }
 </style>

@@ -145,17 +145,17 @@ export default {
         success(res) {
           if (_this.chooseType === 0) {
             // 这是首页上传视频
-            uni.showLoading({
-              title: _this.i18n.t('core.loading'),
-              mask: true,
-            });
+            // uni.showLoading({
+            //   title: _this.i18n.t('core.loading'),
+            //   mask: true,
+            // });
           }
           let uploadVideoRes = '';
           uploadVideoRes = res;
-          uni.showToast({
-            title: _this.i18n.t('uploader.videoUploading'),
-            icon: 'none',
-          });
+          // uni.showToast({
+          //   title: _this.i18n.t('uploader.videoUploading'),
+          //   icon: 'none',
+          // });
           _this.videoName = res.name ? res.name : _this.i18n.t('discuzq.post.fromWeChatApplet');
           _this.videoBeforeList.push({
             path: res.tempFilePath,
@@ -181,13 +181,19 @@ export default {
                 _this.videoPercent = 0.9;
                 // _this.$refs.toast.hideLoading();
               }
-
+              uni.showLoading({
+                title: _this.i18n.t('core.loading'),
+                mask: true,
+              });
               _this.videoPercent = result.percent;
             },
             finish(result) {
               _this.fileId = result.fileId;
               // _this.postVideo(result.fileId);
               uni.$emit('uploadVideoOver', { result, uploadVideoRes });
+              setTimeout(() => {
+                uni.hideLoading();
+              }, 500);
             },
           });
           // #endif
@@ -205,6 +211,10 @@ export default {
                 if (info.percent === 1) {
                   _this.videoPercent = 0.9;
                 }
+                uni.showLoading({
+                  title: _this.i18n.t('core.loading'),
+                  mask: true,
+                });
                 _this.videoPercent = info.percent;
               })
               .done()
@@ -212,6 +222,9 @@ export default {
                 // console.log('上传视频', doneResult);
                 uni.$emit('uploadVideoOver', { doneResult, uploadVideoRes });
                 _this.fileId = doneResult.fileId;
+                setTimeout(() => {
+                  uni.hideLoading();
+                }, 500);
                 // _this.postVideo(doneResult.fileId);
               });
           });

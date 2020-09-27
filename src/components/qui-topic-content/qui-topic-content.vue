@@ -211,6 +211,7 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in attachMentList"
           :key="index"
+          @click="attachmentPayStatus ? attachmentPay() : ''"
         >
           <view
             v-if="['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1"
@@ -231,9 +232,59 @@
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text @tap="download(item)">{{ item.fileName }}</text>
+            <text @tap="!attachmentPayStatus ? download(item) : ''">{{ item.fileName }}</text>
             <text
-              v-if="['MP4'].indexOf(item.format) === -1"
+              v-if="
+                threadInfo &&
+                  ((threadInfo.price > 0 && threadInfo.attachmentPrice <= 0 && threadInfo.isPaid) ||
+                    (threadInfo.price <= 0 &&
+                      threadInfo.attachmentPrice > 0 &&
+                      threadInfo.isPaidAttachment)) &&
+                  forums &&
+                  forums.qcloud &&
+                  forums.qcloud.qcloud_cos &&
+                  item.isRemote &&
+                  [
+                    'PPTX',
+                    'PPT',
+                    'POT',
+                    'POTX',
+                    'PPS',
+                    'PPSX',
+                    'DPS',
+                    'DPT',
+                    'PPTM',
+                    'POTM',
+                    'PPSM',
+                    'DOC',
+                    'DOT',
+                    'WPS',
+                    'WPT',
+                    'DOCX',
+                    'DOTX',
+                    'DOCM',
+                    'DOTM',
+                    'PDF',
+                    'LRC',
+                    'C',
+                    'CPP',
+                    'H',
+                    'ASM',
+                    'S',
+                    'JAVA',
+                    'ASP',
+                    'BAT',
+                    'BAS',
+                    'PRG',
+                    'CMD',
+                    'RTF',
+                    'TXT',
+                    'LOG',
+                    'XML',
+                    'HTM',
+                    'HTML',
+                  ].indexOf(item.format) !== -1
+              "
               @click="preview(item)"
               style="position: absolute; right: 20rpx; color: #1878f3;"
             >
@@ -283,11 +334,13 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
 // import { setCookie } from '@/utils/setCookie';
 
 export default {
+  mixins: [forums],
   props: {
     topicStatus: {
       type: Number,
@@ -312,7 +365,7 @@ export default {
     //     return ['0', '1', '2', '3'].indexOf(value) !== -1;
     //   },
     //   default: '1',
-    // },、
+    // },'
     // 主题类型 0 文字  1 帖子  2 视频 3 图片
     themeType: {
       type: Number,
@@ -408,7 +461,7 @@ export default {
         return [];
       },
     },
-    // // 图片裁剪、缩放的模式
+    // // 图片裁剪'缩放的模式
     // modeVal: {
     //   type: String,
     //   default: 'aspectFill',
@@ -465,6 +518,10 @@ export default {
         return {};
       },
     },
+    attachmentPayStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -491,6 +548,11 @@ export default {
     localTime() {
       return time2DateAndHM(this.themeTime);
     },
+    threadInfo() {
+      const thread = this.$store.getters['session/get']('thread');
+      console.log('thread', thread);
+      return thread;
+    },
   },
   mounted() {
     const { fileList } = this;
@@ -499,6 +561,8 @@ export default {
     });
     this.attachMentList = fileList;
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
+    console.log('forums', this.forums);
+    console.log('this.threadInfo', this.threadInfo);
   },
   methods: {
     // 管理菜单点击事件
@@ -529,6 +593,11 @@ export default {
     // 头像失效
     imageError() {
       this.imageStatus = false;
+    },
+    // 如果附件是未支付状态，点击触发支付
+    attachmentPay() {
+      console.log('这是子组件内');
+      this.$emit('attachmentPay');
     },
     // 附件下载
     download(item) {
@@ -569,12 +638,13 @@ export default {
     },
     // 附件预览
     preview(item) {
-      const params = {
-        item,
-      };
+      const params = item;
+      console.log(item, '---');
       this.$store.dispatch('session/setAttachment', params);
+      const attachment = this.$store.getters['session/get']('attachment');
+      console.log('attachment', attachment);
       this.$store
-        .dispatch('jv/get', [`attachments/${item._jv.id}&page=1`, {}])
+        .dispatch('jv/get', [`attachments/${item.url}&page=1`, {}])
         .then(res => {
           console.log('res', res);
           uni.navigateTo({
