@@ -970,14 +970,7 @@ export default {
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       console.log('thread', thread);
-      this.refreshStatus = false;
-      this.$nextTick(() => {
-        if (this.thread.type === 1 && this.thread.firstPost.attachments) {
-          // console.log('有附件呀', this.refreshStatus);
-          this.attachmentFileList = this.thread.firstPost.attachments;
-          this.refreshStatus = !this.refreshStatus;
-        }
-      });
+
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
@@ -1223,6 +1216,9 @@ export default {
 
             this.loaded = false;
           } else {
+            data.firstPost.attachments.forEach(attachment => {
+              this.attachmentFileList.push(attachment);
+            });
             // #ifndef MP-WEIXIN
             let titleText = '';
             if (data.type === 1) {
