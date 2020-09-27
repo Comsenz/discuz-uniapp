@@ -1871,6 +1871,7 @@ export default {
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
+
         // #ifdef MP-WEIXIN
         this.markdownShow = false;
         // #endif
@@ -1905,7 +1906,16 @@ export default {
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
+          this.payType = 2;
+          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+        } else if (Number(res.attachmentPrice) > 0) {
+          this.price = res.attachmentPrice;
+          this.payType = 1;
+          this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+        } else {
+          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
+
         this.textAreaLength = this.type === 1 ? 10000 : 450;
         switch (Number(res.type)) {
           case 0:
