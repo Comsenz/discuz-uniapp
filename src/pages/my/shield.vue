@@ -24,8 +24,10 @@
             class="search-box__content-input"
             placeholder-class="input-placeholder"
             :placeholder="i18n.t('search.searchusers')"
-            @input="searchInput"
             :value="searchValue"
+            :focus="isFocus"
+            @input="searchInput"
+            @blur="searchBlur"
           />
           <view @tap="cancelSearch" v-if="searchValue" class="search-box__content-delete">
             <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
@@ -166,6 +168,7 @@ export default {
       unbundlingArry: [], // 解绑用户组
       unbundUserData: [], // 已屏蔽用户组
       shieldType: '', // 屏蔽类型 user 用户列表 sheild 黑名单
+      isFocus: false,
     };
   },
   onLoad() {
@@ -181,6 +184,11 @@ export default {
     // 显示搜索框
     showSearch() {
       this.showSearchInput = false;
+      this.isFocus = true;
+    },
+    // 输入框失去焦点
+    searchBlur() {
+      this.isFocus = false;
     },
     // 搜索框输入
     searchInput(e) {
@@ -201,6 +209,7 @@ export default {
       this.sPageNum = 1;
       this.shieldList = [];
       this.getShieldList();
+      this.isFocus = false;
       this.showSearchInput = true;
     },
     // 获取黑名单数据
