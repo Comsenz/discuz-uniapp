@@ -756,6 +756,7 @@ export default {
     unboundsucceed: '解除绑定成功',
     shieldusersure: '确定屏蔽该用户吗？',
     questionAndAnswer: '问答',
+    addshielduser: '添加屏蔽用户',
   },
   site: {
     partialcontentpreview: '部分内容预览',

@@ -221,7 +221,11 @@
       <view v-else-if="type !== 0">
         <qui-cell-item
           :class="price > 0 ? 'cell-item-right-text' : ''"
-          :title="i18n.t('discuzq.post.paymentAmount')"
+          :title="
+            type === 4
+              ? i18n.t('discuzq.post.payByListeningToAudio')
+              : i18n.t('discuzq.post.paymentAmount')
+          "
           :addon="showPrice"
           arrow
           v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
