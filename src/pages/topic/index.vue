@@ -166,6 +166,9 @@
                 :btn-show="paidBtnStatus"
                 :btn-icon-show="true"
                 :thread="thread"
+                :images-list="thread.question.images"
+                :answer-content="thread.question.content_html"
+                :is-onlooker="thread.isOnlooker"
                 btn-icon-name="rmb"
                 :btn-text="payThreadTypeText"
                 @personJump="personJump"
@@ -1232,16 +1235,21 @@ export default {
               // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
               if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                 this.beAsk = true;
-              } else if (
-                this.user.id === data.question.be_user_id &&
-                data.question.is_answer === 1
-              ) {
-                console.log('已回答')
+              } else if ((this.user.id === data.question.be_user_id || data.user.id) &&  data.question.is_answer === 1 && data.question.onlooker_unit_price === 0) {
                 this.payment = true;
                 this.beAsk = false;
+              }
+              else if (
+                // 当前登录的ID等于被提问的ID && 问题已回答 && 已有人围观
+                (this.user.id === data.question.be_user_id || data.user.id) &&
+                data.question.is_answer === 1 && data.question.onlooker_number > 0
+              ) {
+                this.answerPay = true;
+                this.beAsk = false;
               } else if (
+                // 当前登录ID是围观用户 && 问题已被回答 && 允许围观 && 未支付
                 this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 1 && data.question.is_onlooker === true
+                data.question.is_answer === 1 && data.question.is_onlooker === true && data.isOnlooker === false
               ) {
                 this.answerPay = true;
               } else if (

@@ -73,9 +73,8 @@
             <view v-if="current == 0" class="items">
               <question
                 :user-id="userId"
-                :scroll-top="scrollTop"
                 @changeFollow="changeFollow"
-                ref="topic"
+                ref="question"
                 @handleClickShare="handleClickShare"
               ></question>
             </view>
