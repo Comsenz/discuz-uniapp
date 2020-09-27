@@ -1476,7 +1476,8 @@ export default {
                     this.paidStatus = false;
                     this.rewardStatus = false;
                   } else if (this.paymentmodel === true) {
-                    this.paidStatus = false;
+                    this.paidStatus = true;
+                    this.paidBtnStatus = false;
                     this.rewardStatus = false;
                   }
                 } else {
@@ -1506,7 +1507,8 @@ export default {
                 this.paidBtnStatus = true;
                 this.rewardStatus = false;
               } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
-                this.paidStatus = false;
+                this.paidStatus = true;
+                this.paidBtnStatus = false;
                 this.rewardStatus = false;
               } else {
                 this.paidStatus = false;
