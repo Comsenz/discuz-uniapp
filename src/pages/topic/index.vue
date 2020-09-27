@@ -950,6 +950,7 @@ export default {
       ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
+      conversationId: '', // 话题id
     };
   },
   onUnload() {
@@ -1022,8 +1023,8 @@ export default {
       this.loadThread();
       this.loadThreadPosts();
     });
-
     this.threadId = option.id;
+    this.conversationId = option.topicid || '';
     this.loadThread();
     this.loadThreadPosts();
     this.curUrl = getCurUrl();
@@ -1684,14 +1685,27 @@ export default {
               this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type === '4') {
+            const _this = this;
             if (data.isDeleted) {
               // 删除成功，跳转到首页
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToBack });
               const pages = getCurrentPages();
               // const delta = pages.indexOf(pages[pages.length - 1]);
               const naviBack = setTimeout(() => {
-                uni.navigateBack({
-                  delta: 1,
+                console.log(_this.conversationId);
+                if (_this.conversationId) {
+                  uni.redirectTo({
+                    url: `/pages/topic/content?id=${_this.conversationId}`,
+                  });
+                } else {
+                  uni.navigateBack({
+                    delta: 1,
+                  });
+                }
+                _this.$store.dispatch('jv/get', `topics/${_this.conversationId}`).then((res) => {
+                  if (res) {
+                    _this.conversationId = '';
+                  }
                 });
               }, 1000);
               this.$u.event.$emit('deleteThread', this.threadId);
@@ -2139,7 +2153,6 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
-      console.log(param);
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
