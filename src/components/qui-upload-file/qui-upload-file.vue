@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-uploader">
+  <view class="qui-uploader-box">
     <view class="qui-uploader-box__item" v-for="(item, index) in fileList" :key="index">
       <view class="qui-uploader-box__item__fonts" @tap="clickAttach(item)">
         <view class="qui-uploader-box__item__fonts-detail">{{ item.attributes.fileName }}</view>

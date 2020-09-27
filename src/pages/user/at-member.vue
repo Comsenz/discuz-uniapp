@@ -7,7 +7,11 @@
           type="text"
           placeholder-class="input-placeholder"
           confirm-type="search"
-          :placeholder="i18n.t('discuzq.atMember.selectedMember')"
+          :placeholder="
+            select === 'select'
+              ? i18n.t('discuzq.atMember.selectUser')
+              : i18n.t('discuzq.atMember.selectedMember')
+          "
           @input="searchInput"
         />
       </view>
@@ -113,7 +117,7 @@ export default {
     return {
       allSiteUser: [], // 所有站点成员
       allFollow: [], // 所有关注成员
-      followStatus: true, // 第一次进来显示follow列表
+      followStatus: false, // 第一次进来显示follow列表
       checkAvatar: [], // 选择人员列表
       loadingText: 'discuzq.list.loading',
       searchValue: '', // 搜索值
@@ -216,6 +220,9 @@ export default {
         'page[size]': 20,
         'page[number]': number,
       };
+      if (this.select === 'select') {
+        params['filter[canBeAsked]'] = 'yes';
+      }
       this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
@@ -235,6 +242,9 @@ export default {
         'page[size]': 20,
         'page[number]': number,
       };
+      if (this.select === 'select') {
+        params['filter[canBeAsked]'] = 'yes';
+      }
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         this.meta = res._jv.json.meta;
         this.allSiteUser = [...this.allSiteUser, ...res];
@@ -249,7 +259,7 @@ export default {
   },
   onLoad(option) {
     this.select = option.name;
-    console.log(this.select);
+    // console.log(this.select);
     if (option.name === 'select') {
       uni.setNavigationBarTitle({
         title: this.i18n.t('discuzq.atMember.selectUser'),

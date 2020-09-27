@@ -22,6 +22,7 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
+              v-if="refreshStatus"
               ref="sun"
               :themid="threadId"
               :topic-status="thread.isApproved"
@@ -53,9 +54,7 @@
               :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
               :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
               :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
-              :file-list="
-                thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
-              "
+              :file-list="attachmentFileList"
               :thread-position="
                 thread.location
                   ? [thread.location, thread.address, thread.longitude, thread.latitude]
@@ -116,6 +115,8 @@
             <!-- 已支付用户列表 -->
             <view v-if="paidStatus">
               <qui-person-list
+                v-if="refreshStatus"
+                ref="paidList"
                 :type="t.pay"
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
@@ -166,6 +167,9 @@
                 :btn-show="paidBtnStatus"
                 :btn-icon-show="true"
                 :thread="thread"
+                :images-list="thread.question.images"
+                :answer-content="thread.question.content_html"
+                :is-onlooker="thread.isOnlooker"
                 btn-icon-name="rmb"
                 :btn-text="payThreadTypeText"
                 @personJump="personJump"
@@ -951,6 +955,8 @@ export default {
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
       conversationId: '', // 话题id
+      attachmentFileList: [], // 附件列表
+      refreshStatus: true, // 是否刷新
     };
   },
   onUnload() {
@@ -964,7 +970,14 @@ export default {
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       console.log('thread', thread);
-
+      this.refreshStatus = false;
+      this.$nextTick(() => {
+        if (this.thread.type === 1 && this.thread.firstPost.attachments) {
+          // console.log('有附件呀', this.refreshStatus);
+          this.attachmentFileList = this.thread.firstPost.attachments;
+          this.refreshStatus = !this.refreshStatus;
+        }
+      });
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
@@ -980,6 +993,7 @@ export default {
         }
 
         if (thread.firstPost.attachments) {
+          this.attachmentFileList = thread.firstPost.attachments;
           thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
             if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
@@ -1224,7 +1238,7 @@ export default {
               title: titleText,
             });
             // #endif
-            console.log(data, '详情页主题');
+            // console.log(data, '详情页主题');
             if (data.question) {
               this.platformDate =
                 data.question.price * (this.forums.set_site.site_master_scale / 10);
@@ -1233,16 +1247,21 @@ export default {
               // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
               if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                 this.beAsk = true;
-              } else if (
-                this.user.id === data.question.be_user_id &&
-                data.question.is_answer === 1
-              ) {
-                console.log('已回答')
+              } else if ((this.user.id === data.question.be_user_id || data.user.id) &&  data.question.is_answer === 1 && data.question.onlooker_unit_price === 0) {
                 this.payment = true;
                 this.beAsk = false;
+              }
+              else if (
+                // 当前登录的ID等于被提问的ID && 问题已回答 && 已有人围观
+                (this.user.id === data.question.be_user_id || data.user.id) &&
+                data.question.is_answer === 1 && data.question.onlooker_number > 0
+              ) {
+                this.answerPay = true;
+                this.beAsk = false;
               } else if (
+                // 当前登录ID是围观用户 && 问题已被回答 && 允许围观 && 未支付
                 this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 1 && data.question.is_onlooker === true
+                data.question.is_answer === 1 && data.question.is_onlooker === true && data.isOnlooker === false
               ) {
                 this.answerPay = true;
               } else if (
@@ -1457,7 +1476,8 @@ export default {
                     this.paidStatus = false;
                     this.rewardStatus = false;
                   } else if (this.paymentmodel === true) {
-                    this.paidStatus = false;
+                    this.paidStatus = true;
+                    this.paidBtnStatus = false;
                     this.rewardStatus = false;
                   }
                 } else {
@@ -1487,7 +1507,8 @@ export default {
                 this.paidBtnStatus = true;
                 this.rewardStatus = false;
               } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
-                this.paidStatus = false;
+                this.paidStatus = true;
+                this.paidBtnStatus = false;
                 this.rewardStatus = false;
               } else {
                 this.paidStatus = false;
@@ -1702,7 +1723,7 @@ export default {
                     delta: 1,
                   });
                 }
-                _this.$store.dispatch('jv/get', `topics/${_this.conversationId}`).then((res) => {
+                _this.$store.dispatch('jv/get', `topics/${_this.conversationId}`).then(res => {
                   if (res) {
                     _this.conversationId = '';
                   }
@@ -2153,6 +2174,7 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
+      // console.log(param);
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2205,7 +2227,7 @@ export default {
     },
     // 主题支付
     payClickShow() {
-      console.log('0000');
+      // console.log('0000');
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2259,7 +2281,7 @@ export default {
         if (this.thread.attachmentPrice > 0) {
           this.payTypeText = this.t.pay + this.thread.attachmentPrice + this.t.checkTheAttachment;
           this.price = parseFloat(this.thread.attachmentPrice);
-          console.log(this.payTypeText, '支付附件');
+          // console.log(this.payTypeText, '支付附件');
         } else {
           this.payTypeText = this.t.pay + this.thread.price + this.t.paymentViewRemainingContent;
           this.price = parseFloat(this.thread.price);
@@ -2273,7 +2295,7 @@ export default {
       }
 
       this.$nextTick(() => {
-        console.log('9999');
+        // console.log('9999');
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
     },
@@ -2295,7 +2317,7 @@ export default {
       this.payTypeVal = 2;
       this.price = parseFloat(this.thread.question.onlooker_unit_price);
       this.$nextTick(() => {
-        console.log('9999');
+        // console.log('9999');
         this.$refs.payShow.payClickShow(this.payTypeVal);
         console.log(this.payTypeVal);
       });
@@ -2312,7 +2334,7 @@ export default {
     },
     // 打赏
     rewardClick() {
-      console.log('打赏');
+      // console.log('打赏');
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2988,7 +3010,7 @@ export default {
     moreContent(param, thread) {
       this.moreCancel();
       if (param.type === '0') {
-        this.$
+        this.$;
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
@@ -3780,6 +3802,6 @@ page {
   padding: 0 40rpx;
 }
 .answerPay {
-  padding: 0 20rpx 40rpx;   
+  padding: 0 20rpx 40rpx;
 }
 </style>

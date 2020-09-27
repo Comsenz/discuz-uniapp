@@ -660,7 +660,7 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.$emit('openLoginPop');
         // #endif
         // #ifdef H5
         if (!this.handleLogin()) {
@@ -709,7 +709,7 @@ export default {
             data: '/pages/home/index',
           });
           // #ifdef MP-WEIXIN
-          this.$store.getters['session/get']('auth').open();
+          this.$emit('openLoginPop');
           // #endif
           // #ifdef H5
           if (!this.handleLogin()) {
@@ -794,7 +794,7 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.$emit('openLoginPop');
         // #endif
         // #ifdef H5
         if (!this.handleLogin()) {
@@ -940,13 +940,14 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.$emit('openLoginPop');
         // #endif
         // #ifdef H5
         if (!this.handleLogin()) {
           return;
         }
         // #endif
+        return;
       }
       const params = {
         _jv: {

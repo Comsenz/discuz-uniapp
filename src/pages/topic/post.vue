@@ -54,7 +54,14 @@
               @click="topicPage"
             ></qui-icon>
           </view>
-          <text class="post-box__hd-r">
+          <text class="post-box__hd-r" v-if="type !== 5">
+            {{
+          textAreaValue.length &lt;= textAreaLength
+          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+            }}
+          </text>
+          <text class="post-box__hd-r" v-if="type === 5">
             {{
           textAreaValue.length &lt;= textAreaLength
           ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
@@ -2063,6 +2070,10 @@ export default {
     },
   },
   onLoad(option) {
+    // console.log(option)
+    // if (option.type === 5) {
+    //   this.textAreaLength = 10000;
+    // }
     // 问答编辑不显示提问价格
     if (option.operating === 'edit') {
       this.askingPrice = false;
@@ -2474,9 +2485,9 @@ export default {
 /deep/ .my-profile__avatar {
   position: relative;
 }
-/deep/ .avatar-box {
-  padding-left: 0;
-}
+// /deep/ .avatar-box {
+//   padding-left: 0;
+// }
 /deep/ .avatar-box__r__tit {
   color: --color(--qui-FC-TAG);
 }

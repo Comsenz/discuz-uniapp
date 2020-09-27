@@ -105,7 +105,7 @@ export default {
         {
           id: 5,
           title: 'notice.questionsAnswers',
-          type: 'questionsAnswers',
+          type: 'questioned',
           unReadNum: 0,
           border: true,
         },
