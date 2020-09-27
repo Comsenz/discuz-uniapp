@@ -14,7 +14,13 @@
           购买后拥有以下权限：
         </view>
         <view class="details-box__foot__center">
-          <view class="details-box__foot__center__box">帖子操作</view>
+          <view
+            class="details-box__foot__center__box"
+            v-for="(item, index) in paidusergroup[1].permission"
+            :key="index"
+          >
+            {{ item.permission }}
+          </view>
           <view class="details-box__foot__center__box">帖子操作帖子操作帖子操作</view>
           <view class="details-box__foot__center__box">帖子操作</view>
           <view class="details-box__foot__center__box">帖子操作</view>
@@ -126,6 +132,7 @@ export default {
       codeUrl: '', // 二维码支付url
       qrcodeShow: false, // 二维码显示
       threadId: 222,
+      paidusergroup: [],
     };
   },
   onLoad() {
@@ -143,6 +150,16 @@ export default {
     },
   },
   methods: {
+    allusergroups() {
+      const params = {
+        'filter[isPaid]': 1,
+        include: 'permission',
+      };
+      this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
+        console.log(res);
+        this.paidusergroup = res;
+      });
+    },
     purchase() {
       console.log('购买', this.user);
       this.payShowStatus = true;

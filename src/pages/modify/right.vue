@@ -31,7 +31,7 @@
           @click="godetails"
         >
           <qui-cell-item :title="item.name" slot-right :arrow="false" :border="false">
-            <view class="money">¥{{ item.fee }}</view>
+            <view class="money">¥{{ item.fee.toFixed(2) }}</view>
           </qui-cell-item>
         </view>
         <!-- <view class="power-box__package-foot-list" @click="godetails">
