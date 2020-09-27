@@ -554,6 +554,10 @@ export default {
       return thread;
     },
   },
+  created() {
+    console.log('这是内容组件created');
+    this.$forceUpdate();
+  },
   mounted() {
     const { fileList } = this;
     fileList.forEach((e, index) => {
@@ -644,7 +648,13 @@ export default {
       const attachment = this.$store.getters['session/get']('attachment');
       console.log('attachment', attachment);
       this.$store
-        .dispatch('jv/get', [`attachments/${item.url}&page=1`, {}])
+        .dispatch('jv/get', [
+          `attachments/${item._jv.id}${item.url.slice(
+            item.url.indexOf('?'),
+            item.url.length,
+          )}&page=1`,
+          {},
+        ])
         .then(res => {
           console.log('res', res);
           uni.navigateTo({

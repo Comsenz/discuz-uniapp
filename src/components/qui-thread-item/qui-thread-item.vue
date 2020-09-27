@@ -85,6 +85,10 @@ export default {
         return {};
       },
     },
+    conversationId: {
+      type: [Number, String],
+      default: 0,
+    },
     currentindex: {
       type: [Number, String],
       default: '0',
@@ -114,7 +118,7 @@ export default {
         return;
       }
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
+        url: `/pages/topic/index?id=${id}&topicid=${this.conversationId}`,
       });
     },
     // 点击头像调转到个人主页

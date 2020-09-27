@@ -22,6 +22,7 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
+              v-if="refreshStatus"
               ref="sun"
               :themid="threadId"
               :topic-status="thread.isApproved"
@@ -53,9 +54,7 @@
               :video-width="thread.type == 2 ? thread.threadVideo.width : 0"
               :video-height="thread.type == 2 ? thread.threadVideo.height : 0"
               :cover-image="thread.type == 2 ? thread.threadVideo.cover_url : ''"
-              :file-list="
-                thread.type == 1 && thread.firstPost.attachments ? thread.firstPost.attachments : []
-              "
+              :file-list="attachmentFileList"
               :thread-position="
                 thread.location
                   ? [thread.location, thread.address, thread.longitude, thread.latitude]
@@ -116,6 +115,8 @@
             <!-- 已支付用户列表 -->
             <view v-if="paidStatus">
               <qui-person-list
+                v-if="refreshStatus"
+                ref="paidList"
                 :type="t.pay"
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
@@ -953,6 +954,9 @@ export default {
       ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
+      conversationId: '', // 话题id
+      attachmentFileList: [], // 附件列表
+      refreshStatus: true, // 是否刷新
     };
   },
   onUnload() {
@@ -966,7 +970,14 @@ export default {
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       console.log('thread', thread);
-
+      this.refreshStatus = false;
+      this.$nextTick(() => {
+        if (this.thread.type === 1 && this.thread.firstPost.attachments) {
+          // console.log('有附件呀', this.refreshStatus);
+          this.attachmentFileList = this.thread.firstPost.attachments;
+          this.refreshStatus = !this.refreshStatus;
+        }
+      });
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
@@ -982,6 +993,7 @@ export default {
         }
 
         if (thread.firstPost.attachments) {
+          this.attachmentFileList = thread.firstPost.attachments;
           thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
             if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
@@ -1025,8 +1037,8 @@ export default {
       this.loadThread();
       this.loadThreadPosts();
     });
-
     this.threadId = option.id;
+    this.conversationId = option.topicid || '';
     this.loadThread();
     this.loadThreadPosts();
     this.curUrl = getCurUrl();
@@ -1226,7 +1238,7 @@ export default {
               title: titleText,
             });
             // #endif
-            console.log(data, '详情页主题');
+            // console.log(data, '详情页主题');
             if (data.question) {
               this.platformDate =
                 data.question.price * (this.forums.set_site.site_master_scale / 10);
@@ -1692,14 +1704,27 @@ export default {
               this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type === '4') {
+            const _this = this;
             if (data.isDeleted) {
               // 删除成功，跳转到首页
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToBack });
               const pages = getCurrentPages();
               // const delta = pages.indexOf(pages[pages.length - 1]);
               const naviBack = setTimeout(() => {
-                uni.navigateBack({
-                  delta: 1,
+                console.log(_this.conversationId);
+                if (_this.conversationId) {
+                  uni.redirectTo({
+                    url: `/pages/topic/content?id=${_this.conversationId}`,
+                  });
+                } else {
+                  uni.navigateBack({
+                    delta: 1,
+                  });
+                }
+                _this.$store.dispatch('jv/get', `topics/${_this.conversationId}`).then(res => {
+                  if (res) {
+                    _this.conversationId = '';
+                  }
                 });
               }, 1000);
               this.$u.event.$emit('deleteThread', this.threadId);
@@ -2147,7 +2172,7 @@ export default {
     },
     // 管理菜单内标签点击事件
     selectChoice(param) {
-      console.log(param);
+      // console.log(param);
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2200,7 +2225,7 @@ export default {
     },
     // 主题支付
     payClickShow() {
-      console.log('0000');
+      // console.log('0000');
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2254,7 +2279,7 @@ export default {
         if (this.thread.attachmentPrice > 0) {
           this.payTypeText = this.t.pay + this.thread.attachmentPrice + this.t.checkTheAttachment;
           this.price = parseFloat(this.thread.attachmentPrice);
-          console.log(this.payTypeText, '支付附件');
+          // console.log(this.payTypeText, '支付附件');
         } else {
           this.payTypeText = this.t.pay + this.thread.price + this.t.paymentViewRemainingContent;
           this.price = parseFloat(this.thread.price);
@@ -2268,7 +2293,7 @@ export default {
       }
 
       this.$nextTick(() => {
-        console.log('9999');
+        // console.log('9999');
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
     },
@@ -2290,7 +2315,7 @@ export default {
       this.payTypeVal = 2;
       this.price = parseFloat(this.thread.question.onlooker_unit_price);
       this.$nextTick(() => {
-        console.log('9999');
+        // console.log('9999');
         this.$refs.payShow.payClickShow(this.payTypeVal);
         console.log(this.payTypeVal);
       });
@@ -2307,7 +2332,7 @@ export default {
     },
     // 打赏
     rewardClick() {
-      console.log('打赏');
+      // console.log('打赏');
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -2983,7 +3008,7 @@ export default {
     moreContent(param, thread) {
       this.moreCancel();
       if (param.type === '0') {
-        this.$
+        this.$;
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
@@ -3775,6 +3800,6 @@ page {
   padding: 0 40rpx;
 }
 .answerPay {
-  padding: 0 20rpx 40rpx;   
+  padding: 0 20rpx 40rpx;
 }
 </style>
