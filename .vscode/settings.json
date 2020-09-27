@@ -44,6 +44,5 @@
     "source.fixAll.stylelint": false
   },
   "stylelint.enable": true,
-  "stylelint.configOverrides": null,
-  "editor.formatOnSave": false
+  "stylelint.configOverrides": null
 }

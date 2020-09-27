@@ -59,6 +59,7 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'threadAudio',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,

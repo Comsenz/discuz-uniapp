@@ -73,6 +73,14 @@
         "navigationBarTitleText": "发布"
       }
     },
+    {
+      "path": "pages/topic/attachment",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "预览附件"
+      }
+    },
     // 登录注册
     {
       "path": "pages/user/phone-login",
@@ -96,12 +104,6 @@
       "path": "pages/user/pc-login",
       "style": {
         "navigationBarTitleText": "PC端登录确认"
-      }
-    },
-    {
-      "path": "pages/user/grant-login",
-      "style": {
-        "navigationBarTitleText": "PC登录"
       }
     },
     {
@@ -183,6 +185,24 @@
       "path": "pages/my/favorite",
       "style": {
         "navigationBarTitleText": "我的收藏"
+      }
+    },
+    {
+      "path": "pages/questions/index",
+      "style": {
+        "navigationBarTitleText": "我的内容"
+      }
+    },
+    {
+      "path": "pages/questions/myquestion",
+      "style": {
+        "navigationBarTitleText": "我的提问"
+      }
+    },
+    {
+      "path": "pages/questions/myanswer",
+      "style": {
+        "navigationBarTitleText": "我的回答"
       }
     },
     {
@@ -328,6 +348,14 @@
       "style": {
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTitleText": "信息提示",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/common/error",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "404",
         "disableScroll": true
       }
     },

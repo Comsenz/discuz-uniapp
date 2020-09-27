@@ -27,9 +27,21 @@
       :cover-image="thread.threadVideo && thread.threadVideo.cover_url"
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
+      :scroll-top="scrollTop"
+      :questions-name="thread.user.username"
+      :be-ask-name="thread.question && thread.question.beUser.username"
+      :question-content="thread.question && thread.question.content"
+      :add-ask="thread.question && thread.question.is_answer"
+      :onlooker-number="thread.question && thread.question.onlooker_number"
+      :free-ask="thread.question && thread.question.price == 0"
+      :ask-price="thread.question && thread.question.price"
+      :ask-content="thread.question && thread.question.content"
+      :onlooker-unit-price="thread.question && thread.question.onlooker_unit_price"
+      :on-looker="thread.question && thread.question.onlooker_unit_price == 0"
       :thread-position="
         thread.location ? [thread.location, thread.address, thread.longitude, thread.latitude] : []
       "
+      :thread-audio="thread.threadAudio"
       @click="handleClickShare(thread._jv.id)"
       @handleIsGreat="
         handleIsGreat(
@@ -74,6 +86,10 @@ export default {
         return {};
       },
     },
+    conversationId: {
+      type: [Number, String],
+      default: 0,
+    },
     currentindex: {
       type: [Number, String],
       default: '0',
@@ -103,7 +119,7 @@ export default {
         return;
       }
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
+        url: `/pages/topic/index?id=${id}&topicid=${this.conversationId}`,
       });
     },
     // 点击头像调转到个人主页

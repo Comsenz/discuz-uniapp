@@ -3,6 +3,7 @@
     <view class="post-box" v-if="loadStatus">
       <view class="post-box__title" v-if="type === 1">
         <input
+          v-if="type === 1"
           class="post-box__title-input"
           type="text"
           v-model="postTitle"
@@ -10,127 +11,156 @@
           :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
         />
       </view>
-      <view class="post-box__hd">
-        <view class="post-box__hd-l">
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-expression"
-            size="40"
-            :color="emojiShow ? '#1878F3' : '#777'"
-            @click="emojiclick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-call"
-            size="40"
-            color="#777"
-            @click="callClick"
-          ></qui-icon>
-          <qui-icon
-            class="post-box__hd-l__icon"
-            name="icon-wei"
-            size="40"
-            color="#777"
-            @click="topicPage"
-          ></qui-icon>
-        </view>
-        <text class="post-box__hd-r">
-          {{
-        textAreaValue.length &lt;= textAreaLength
-        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
-          }}
-        </text>
+
+      <view class="post-box__titles" v-if="type === 5">
+        <qui-cell-item
+          v-if="type === 5"
+          :title="i18n.t('discuzq.post.askedUsers')"
+          slot-right
+          arrow
+          @tap="changeAvatar"
+        >
+          <qui-avatar
+            class="my-profile__avatar"
+            :user="{ avatarUrl: userImage, username: beUserName }"
+            style="margin-right: 20rpx;"
+          />
+          <view class="username">{{ beUserName }}</view>
+        </qui-cell-item>
       </view>
-      <view class="emoji-bd" v-show="emojiShow">
-        <qui-emoji
-          position="absolute"
-          top="20rpx"
-          border-radius="10rpx"
-          @click="getEmojiClick"
-        ></qui-emoji>
-      </view>
-      <view class="post-box__con">
-        <textarea
-          id="textarea"
-          ref="textarea"
-          class="post-box__con-text"
-          :placeholder="i18n.t('discuzq.post.placeholder')"
-          placeholder-class="textarea-placeholder"
-          v-model="textAreaValue"
-          auto-height="true"
-          :show-confirm-bar="barStatus"
-          :adjust-position="true"
-          cursor-spacing="30"
-          cursor="cursor"
-          :maxlength="10000"
-          :focus="type !== 1"
-          v-show="textShow"
-          @blur="contBlur"
-          @focus="focusEvent"
-        ></textarea>
-        <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
-          <text class="text-cover">{{ textAreaValue }}</text>
+
+      <view v-if="type !== 1">
+        <view class="post-box__hd">
+          <view class="post-box__hd-l">
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-expression"
+              size="40"
+              :color="emojiShow ? '#1878F3' : '#777'"
+              @click="emojiclick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-call"
+              size="40"
+              color="#777"
+              @click="callClick"
+            ></qui-icon>
+            <qui-icon
+              class="post-box__hd-l__icon"
+              name="icon-wei"
+              size="40"
+              color="#777"
+              @click="topicPage"
+            ></qui-icon>
+          </view>
+          <text class="post-box__hd-r">
+            {{
+          textAreaValue.length &lt;= textAreaLength
+          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+            }}
+          </text>
         </view>
-        <view class="markdown-box" v-if="markdownShow">
-          <view>
-            <qui-icon
-              name="icon-bold"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('bold')"
-            ></qui-icon>
+        <view class="emoji-bd" v-show="emojiShow">
+          <qui-emoji
+            position="absolute"
+            top="20rpx"
+            border-radius="10rpx"
+            @click="getEmojiClick"
+          ></qui-emoji>
+        </view>
+        <view class="post-box__con">
+          <textarea
+            id="textarea"
+            ref="textarea"
+            class="post-box__con-text"
+            :placeholder="
+              type !== 5
+                ? i18n.t('discuzq.post.placeholder')
+                : i18n.t('discuzq.post.placeholderQuestion')
+            "
+            placeholder-class="textarea-placeholder"
+            v-model="textAreaValue"
+            auto-height="true"
+            :show-confirm-bar="barStatus"
+            :adjust-position="true"
+            cursor-spacing="30"
+            cursor="cursor"
+            :maxlength="10000"
+            :focus="type !== 1"
+            v-show="textShow"
+            @blur="contBlur"
+            @focus="focusEvent"
+          ></textarea>
+          <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
+            <text class="text-cover">{{ textAreaValue }}</text>
           </view>
-          <view>
-            <qui-icon
-              name="icon-title"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('title')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-italic"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('italic')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-quote"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('quote')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-code"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('code')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-link"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('link')"
-            ></qui-icon>
-          </view>
-          <view>
-            <qui-icon
-              name="icon-strikethrough"
-              size="30"
-              class="qui-icon"
-              @click="toolBarClick('strikethrough')"
-            ></qui-icon>
+          <view class="markdown-box" v-if="markdownShow">
+            <view>
+              <qui-icon
+                name="icon-bold"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('bold')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-title"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('title')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-italic"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('italic')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-quote"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('quote')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-code"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('code')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-link"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('link')"
+              ></qui-icon>
+            </view>
+            <view>
+              <qui-icon
+                name="icon-strikethrough"
+                size="30"
+                class="qui-icon"
+                @click="toolBarClick('strikethrough')"
+              ></qui-icon>
+            </view>
           </view>
         </view>
       </view>
+      <view v-else>
+        <view v-if="!vditor" style="text-align: center;"><u-loading size="40"></u-loading></view>
+        <qui-vditor ref="vditor"></qui-vditor>
+      </view>
+
       <qui-uploader
         :url="`${url}api/attachments`"
         :header="header"
@@ -139,7 +169,7 @@
         name="file"
         :async-clear="true"
         ref="upload"
-        v-if="type === 1 || type === 3"
+        v-if="type === 1 || type === 3 || type === 5"
         @change="uploadChange"
         @clear="uploadClear"
         @uploadClick="uploadClick"
@@ -151,7 +181,7 @@
         :attachment-list="attachmentList"
         :file-format="forums.set_attach && forums.set_attach.support_file_ext"
         :file-size="forums.set_attach && forums.set_attach.support_max_size"
-        v-if="type === 1 && forums.other && forums.other.can_upload_attachments"
+        v-if="type === 1 && type !== 5 && forums.other && forums.other.can_upload_attachments"
         @deleteItem="deleteFile"
       ></qui-upload-file>
       <qui-upload-video
@@ -163,60 +193,91 @@
         :choose-type="chooseType"
         @videoDel="videoDel"
       ></qui-upload-video>
-      <!--<view class="post-box__video" v-if="type === 2">
-        <view class="post-box__video__play" v-for="(item, index) in videoBeforeList" :key="index">
-          <video
-            id="video"
-            v-if="type === 2"
-            class="post-box__video__play__video"
-            :src="item.path"
-            :controls="controlsStatus"
-            @fullscreenchange="fullscreenchange"
-          ></video>
-          <view class="post-box__video__play__load play-load" v-if="videoPercent * 100 < 100">
-            <view class="post-box__video__play__load__mask"></view>
-            <text class="post-box__video__play__load__text">
-              {{ i18n.t('discuzq.video.videoUploading') }}
-            </text>
-
-            <progress
-              :percent="videoPercent * 100"
-              active
-              stroke-width="3"
-              activeColor="#fff"
-              backgroundColor="#b5b5b5"
-            />
-          </view>
-
-          <view class="post-box__video__play__icon-del">
-            <qui-icon
-              name="icon-close"
-              class=""
-              color="#fff"
-              size="40"
-              @click="videoDel"
-            ></qui-icon>
-          </view>
-          <view class="controls-play-icon" @click.stop="playVideo">
-            <qui-icon name="icon-play" size="50" color="#fff"></qui-icon>
-          </view>
-        </view>
-        <view class="post-box__video__add" @click="uploadVideo" v-if="videoBeforeList.length < 1">
-          <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
-        </view>
-      </view>-->
+      <view class="post-box__audio" v-if="type === 4">
+        <qui-upload-audio
+          ref="uploadAudio"
+          :audio-before-list="audioBeforeList"
+          @change="uploadAudioChange"
+        ></qui-upload-audio>
+      </view>
       <qui-cell-item
         :class="price > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="showPrice"
+        :title="i18n.t('discuzq.post.lookPay')"
+        :addon="showPayType"
         arrow
-        v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
-        @click="cellClick('pay')"
+        v-if="type === 1 && forums.other.can_create_thread_paid"
+        @click="lookPay"
       ></qui-cell-item>
+      <view v-if="type === 1">
+        <qui-cell-item
+          :class="price > 0 ? 'cell-item-right-text' : ''"
+          :title="i18n.t('discuzq.post.paymentAmount')"
+          :addon="showPrice"
+          arrow
+          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
+          @click="cellClick('pay')"
+        ></qui-cell-item>
+      </view>
+      <view v-else-if="type !== 0">
+        <qui-cell-item
+          :class="price > 0 ? 'cell-item-right-text' : ''"
+          :title="
+            type === 4
+              ? i18n.t('discuzq.post.payByListeningToAudio')
+              : i18n.t('discuzq.post.paymentAmount')
+          "
+          :addon="showPrice"
+          arrow
+          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
+          @click="cellClick('pay')"
+        ></qui-cell-item>
+      </view>
+      <!-- 匿名提问 -->
+      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
+        <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
+        <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
+      </view>
+      <!-- 提问价格 -->
+      <qui-cell-item
+        v-if="type === 5 && askingPrice"
+        :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
+        :title="i18n.t('discuzq.post.askingPrice')"
+        :addon="showAskPrice"
+        arrow
+        @click="askClick('pay')"
+      ></qui-cell-item>
+      <!-- 他人围观须付费1元 -->
+      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5 && watchShow">
+        <view class="uni-list-cell-db">
+          <view class="">
+            {{ `${i18n.t('discuzq.post.otherPay')}${forums.set_site.site_onlooker_price}元` }}
+          </view>
+          <view class="watchpay">
+            {{
+              `${i18n.t('discuzq.post.youHaveTo')}
+              ${haveDate}${i18n.t('discuzq.post.yuan')},
+              ${i18n.t('discuzq.post.theAnswerIs')}
+              ${answerIsDate}${i18n.t('discuzq.post.yuan')},
+              ${i18n.t('discuzq.post.platform')}
+              ${platformDate}${i18n.t('discuzq.post.yuan')}`
+            }}
+          </view>
+        </view>
+        <u-switch @change="changeCheck" v-model="watchChecked" active-color="#1E78F3"></u-switch>
+      </view>
+
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
         :addon="i18n.t('discuzq.post.word', { num: word })"
-        v-if="price > 0 && type !== 3 && type !== 2 && type !== 0"
+        v-if="
+          price > 0 &&
+            type !== 3 &&
+            type !== 2 &&
+            type !== 0 &&
+            type !== 4 &&
+            type !== 5 &&
+            payType !== 1
+        "
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
@@ -265,9 +326,30 @@
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
-          {{ i18n.t('discuzq.post.post') }}
+          {{
+            type === 5 && watchShow === true
+              ? i18n.t('discuzq.post.nextPay')
+              : i18n.t('discuzq.post.post')
+          }}
         </qui-button>
       </view>
+      <uni-popup ref="lookPayPopup" type="bottom">
+        <view class="popup-share">
+          <view class="pay-type" @click="choicePayType(0)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
+          </view>
+          <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
+            {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
+          </view>
+          <view class="pay-type" @click="choicePayType(2)">
+            {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid') }}
+          </view>
+          <view class="popup-share-content-space"></view>
+          <text class="popup-share-btn" @click="cancelLookPay()">
+            {{ i18n.t('discuzq.post.cancel') }}
+          </text>
+        </view>
+      </uni-popup>
       <uni-popup ref="popupBtm" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
@@ -371,7 +453,23 @@
           @confirm="handleClickOk"
         ></uni-popup-dialog>
       </uni-popup>
+      <!--支付组件-->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type="payTypeText"
+          :money="priceAsk"
+          :wallet-status="user.canWalletPay"
+          :balance="Number(user.walletBalance)"
+          :pay-password="pwdVal"
+          :pay-type-data="payTypeData"
+          @paysureShow="paysureShow"
+          @onInput="onInput"
+          @radioChange="radioChange"
+        ></qui-pay>
+      </view>
       <qui-toast ref="toast"></qui-toast>
+      <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
     </view>
   </qui-page>
 </template>
@@ -381,6 +479,7 @@ import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
+import user from '@/mixin/user';
 // #ifdef  H5
 // import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
@@ -389,11 +488,15 @@ import choosePosition from '@/mixin/choosePosition';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
+// 小程序与h5支付setInterval
+let payWechat = null;
+let payPhone = null;
 export default {
   name: 'Post',
   components: { uniPopupDialog },
   mixins: [
     forums,
+    user,
     // #ifdef  H5
     tcaptchs,
     choosePosition,
@@ -413,6 +516,9 @@ export default {
       checkClassData: [],
       type: 0, // 帖子类型
       price: 0, // 付费金额
+      priceAsk: 0, // 提问价格
+      pwdVal: '', // 提问价格的支付密码
+      browser: 0, // 是不是浏览器
       inputPrice: '', // 付费金额输入框
       maxLength: 7, // 输入框长度
       inputWord: '', // 查看字数输入框
@@ -424,6 +530,24 @@ export default {
       captcha: null, // 腾讯云验证码实例
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
+      userImage: '', // 被提问用户的头像
+      beUserName: '', // 被提问用户的用户名
+      checked: false, // 是否匿名
+      watchChecked: false, // 他人围观
+      watchShow: false, // 是否显示他人围观
+      payShowStatus: true, // 是否显示支付
+      haveDate: 0, // 你得
+      answerIsDate: 0, // 回答者得
+      platformDate: 0, // 平台得
+      askingPrice: true, // 显示提问价格
+      otherList: [
+        {
+          name: '匿名提问',
+        },
+        {
+          name: '他人围观须付费1元',
+        },
+      ],
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -480,6 +604,7 @@ export default {
       setType: 'pay', // 金额或查看字
       controlsStatus: false, // 是否显示默认播放控件
       videoBeforeList: [], // 视频上传列表
+      audioBeforeList: [], // 语音上传列表
       fullscreenStatus: false, // 视频全屏状态
       videoName: '', // 视频名称
       percent: 0, // 视频上传进度
@@ -506,7 +631,29 @@ export default {
       deleteIndex: '', // 当前点击要删除的图片index
       deleteTip: '确定删除吗？', // 删除提示
       currentPosition: {},
+      watchMoeny: '1', // 他人付费需付费多少元
+      beAskId: '', // 被提问人ID
+      payTypeText: '', // 支付提问价格文案
+      orderSn: '', // 提问支付订单号
+      coverLoading: false, // 提问支付遮罩层
+      payStatus: false, // 订单支付状态
+      payTypeData: [
+        {
+          name: '微信支付',
+          icon: 'icon-wxPay',
+          color: '#09bb07',
+          value: '0',
+        },
+        {
+          name: '钱包支付',
+          icon: 'icon-walletPay',
+          color: '#1878f3',
+          value: '1',
+        },
+      ], // 支付方式
       chooseType: 1, // 视频是从首页上传的还是从发布页上传的
+      payType: 0, //  查看付费的方式，  0均免费， 1内容免费，附件付费，  2内容和附件都付费
+      showPayType: '', // 选择的支付方式
     };
   },
   computed: {
@@ -515,13 +662,25 @@ export default {
     }),
     showPrice() {
       let pay = this.i18n.t('discuzq.post.free');
-
       if (this.price <= 0) {
         pay = this.i18n.t('discuzq.post.free');
       } else {
         pay = `￥${this.price + this.i18n.t('discuzq.post.yuan')}`;
       }
       return pay;
+    },
+    showAskPrice() {
+      let payAsk = this.i18n.t('discuzq.post.free');
+      if (this.priceAsk <= 0) {
+        payAsk = this.i18n.t('discuzq.post.free');
+      } else {
+        payAsk = `￥${this.priceAsk + this.i18n.t('discuzq.post.yuan')}`;
+      }
+      return payAsk;
+    },
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      return parseInt(userId, 10);
     },
   },
   updated() {
@@ -545,6 +704,11 @@ export default {
     });
   },
   methods: {
+    // 允许围观
+    changeCheck() {
+      console.log(9999);
+      // this.checked !== this.checked;
+    },
     choosePosition() {
       const that = this;
       if (that.currentPosition.location) {
@@ -602,6 +766,7 @@ export default {
         'checkClassData',
         'uploadFile',
         'videoBeforeList',
+        'audioBeforeList',
       ];
       items.forEach(key => {
         if (this[key]) {
@@ -734,7 +899,6 @@ export default {
       let that = this;
       let price = e.target.value;
       let maxLength = price.indexOf('.');
-
       if (price.indexOf('.') < 0 && price != '') {
         // '超过4位则大于1万元';
         if (price.length > 6) {
@@ -760,7 +924,6 @@ export default {
         that.inputPrice = price;
       });
     },
-
     // video相关方法
     videoDel() {
       this.deleteType = 2;
@@ -769,10 +932,15 @@ export default {
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteVideoSure');
     },
-    playVideo() {
+    playVideo(video) {
+      // #ifdef MP-WEiXIN
       this.controlsStatus = true;
       this.videoContext.play();
       this.videoContext.requestFullScreen();
+      // #endif
+      // #ifdef H5
+      uni.$emit('playVideo', video);
+      // #endif
     },
     fullscreenchange(e) {
       this.fullscreenStatus = e.detail.fullScreen;
@@ -795,35 +963,76 @@ export default {
       this.textShow = true;
     },
     diaLogOk() {
+      if (this.type === 5) {
+        this.priceAsk = this.inputPrice;
+        this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
+        this.haveDate = (this.priceAsk - this.platformDate) / 2;
+        this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
+        return;
+      }
+
       if (this.setType === 'pay') {
         this.price = this.inputPrice;
       } else {
         this.word = this.inputWord;
       }
-
       this.$refs.popup.close();
       this.textShow = true;
     },
-
     moneyClick(index) {
+      if (this.forums.set_site.site_onlooker_price === 0) {
+        this.watchShow = false;
+      } else if (index === 0) {
+        this.watchShow = false;
+      } else {
+        this.watchShow = true;
+      }
       this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
-
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         this.textShow = false;
         this.$refs.popupBtm.close();
-
         this.$nextTick(() => {
           this.inputPrice = '';
           this.$refs.popup.open();
           this.textShow = false;
         });
       } else {
+        if (this.type === 5) {
+          this.priceAsk = this.payNumCheck[0].pay;
+          this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
+          this.haveDate = (this.priceAsk - this.platformDate) / 2;
+          this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
+          this.$refs.popupBtm.close();
+          this.textShow = true;
+          return;
+        }
         this.price = this.payNumCheck[0].pay;
         this.$refs.popupBtm.close();
         this.textShow = true;
       }
+    },
+    // 点击显示查看支付的抽屉
+    lookPay() {
+      this.$refs.lookPayPopup.open();
+    },
+    // 取消查看支付选择
+    cancelLookPay() {
+      this.$refs.lookPayPopup.close();
+    },
+    // 选择支付查看的方式 0均免费， 1内容免费，附件付费，  2内容和附件都付费
+    choicePayType(type) {
+      console.log(type, '类型');
+      if (type === 0) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+      } else if (type === 1) {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+      } else {
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+      }
+      this.payType = type;
+      this.$refs.lookPayPopup.close();
     },
     cellClick(type) {
       this.setType = type;
@@ -834,11 +1043,17 @@ export default {
       }
       this.textShow = false;
     },
+    // 提问价格
+    askClick(type) {
+      console.log('提问价格');
+      // this.setType = type;
+      this.$refs.popupBtm.open();
+      this.textShow = false;
+    },
     cancel() {
       this.$refs.popupBtm.close();
       this.textShow = true;
     },
-
     // 图片上传相关方法
     uploadClick(e) {
       this.uploadStatus = e;
@@ -855,7 +1070,10 @@ export default {
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteImgSure');
     },
-
+    // 音频上传改变
+    uploadAudioChange(e) {
+      this.audioBeforeList = e;
+    },
     // 表情点击事件
     getEmojiClick(code) {
       let text = '';
@@ -882,12 +1100,268 @@ export default {
       this.checkClassData = [];
       this.checkClassData.push(this.allCategories[index]);
     },
+    // 主题提问价格
+    payClickShow() {
+      if (!this.$store.getters['session/get']('isLogin')) {
+        // #ifdef MP-WEIXIN
+        this.$store.getters['session/get']('auth').open();
+        // #endif
+        // #ifdef H5
+        this.$store.dispatch('session/setUrl', this.curUrl);
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
+      }
+      this.payStatus = false;
+      if (!this.forums.paycenter.wxpay_close) {
+        this.payShowStatus = false;
+        return;
+      } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
+        // #ifndef H5
+        if (this.system === 'ios') {
+          if (this.paymentmodel === false) {
+            this.payShowStatus = false;
+            return;
+          } else {
+            this.payShowStatus = true;
+          }
+        } else {
+          this.payShowStatus = true;
+        }
+        // #endif
+        // #ifdef H5
+        this.payShowStatus = true;
+        // #endif
+      } else {
+        this.payShowStatus = false;
+        return;
+      }
+      this.payTypeText = this.t.pay + this.t.payAskingPrice;
+      console.log('888888');
+      this.priceAsk = parseFloat(this.thread.price);
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
+    },
+    // 支付方式选择完成点击确定时
+    paysureShow(payType) {
+      console.log(payType, '支付方式');
+      if (payType === 0) {
+        this.creatOrder(this.priceAsk, 5, '', payType);
+      } else if (payType === 1) {
+        // 这是详情页获取到的支付方式---钱包
+      }
+    },
+    // 输入密码完成时
+    onInput(val) {
+      this.value = val;
+      this.creatOrder(this.priceAsk, 5, val, 1);
+    },
+    creatOrder(amount, type, value, payType) {
+      const params = {
+        _jv: {
+          type: 'orders',
+        },
+        type,
+        payee_id: this.beAskId,
+        amount,
+        is_anonymous: this.checked ? '0' : '1',
+      };
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.orderSn = res.order_sn;
+          if (payType === 0) {
+            // 微信支付
+            if (this.browser == 0) {
+              // 这是微信小程序内的支付
+              this.orderPay(13, value, this.orderSn, payType, '0');
+            } else {
+              // 这是除微信小程序之外, this.isWeixin, this.isPhone
+              if (this.isWeixin && this.isPhone) {
+                // 这是微信浏览器
+                this.orderPay(12, value, this.orderSn, payType, '1');
+              } else if (this.isPhone) {
+                this.orderPay(11, value, this.orderSn, payType, '2');
+              } else {
+                // 这是pc，没调接口之前
+                this.orderPay(10, value, this.orderSn, payType, '3');
+              }
+            }
+          } else if (payType === 1) {
+            // 钱包支付
+            this.orderPay(20, value, this.orderSn, payType);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    orderPay(type, value, orderSn, payType, broswerType) {
+      console.log(type, value, orderSn, payType, broswerType);
+      let params = {};
+      if (payType === 0) {
+        params = {
+          _jv: {
+            type: `trade/pay/order/${orderSn}`,
+          },
+          payment_type: type,
+        };
+      } else if (payType === 1) {
+        params = {
+          _jv: {
+            type: `trade/pay/order/${orderSn}`,
+          },
+          payment_type: type,
+          pay_password: value,
+        };
+      }
+      this.$store
+        .dispatch('jv/post', params)
+        .then(res => {
+          this.wxRes = res;
+          if (payType === 0) {
+            if (broswerType === '0') {
+              this.wechatPay(
+                res.wechat_js.timeStamp,
+                res.wechat_js.nonceStr,
+                res.wechat_js.package,
+                res.wechat_js.signType,
+                res.wechat_js.paySign,
+              );
+            } else if (broswerType === '1') {
+              if (typeof WeixinJSBridge === 'undefined') {
+                if (document.addEventListener) {
+                  document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
+                } else if (document.attachEvent) {
+                  document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(res));
+                  document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
+                }
+              } else {
+                this.onBridgeReady(res);
+              }
+            } else if (broswerType === '2') {
+              payPhone = setInterval(() => {
+                if (this.payStatus === 1) {
+                  clearInterval(payPhone);
+                  return;
+                }
+                this.getOrderStatus(orderSn, broswerType);
+              }, 3000);
+              window.location.href = res.wechat_h5_link;
+            } else if (broswerType === '3') {
+              if (res) {
+                this.codeUrl = res.wechat_qrcode;
+                this.payShowStatus = false;
+                this.$refs.codePopup.open();
+                this.qrcodeShow = true;
+                payWechat = setInterval(() => {
+                  if (this.payStatus === 1) {
+                    clearInterval(payWechat);
+                    return;
+                  }
+                  this.getOrderStatus(this.orderSn, broswerType);
+                  uni.hideLoading();
+                }, 3000);
+              }
+            }
+          } else if (payType === 1) {
+            if (res.wallet_pay.result === 'success') {
+              this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
+              this.coverLoading = false;
+            }
+            this.coverLoading = false;
+          }
+          this.postThread().then(res => {
+            this.postLoading = false;
+            uni.hideLoading();
+            if (res && res.isApproved === 1) {
+              this.$u.event.$emit('addThread', res);
+            }
+            if (res && res._jv.json.data.id) {
+              uni.redirectTo({
+                url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+              });
+            }
+          });
+        })
+        .catch(err => {
+          // 清空支付的密码
+          console.log(err);
+          this.$refs.payShow.clearPassword();
+        });
+    },
+    getOrderStatus(orderSn, broswerType) {
+      this.$store
+        .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
+        .then(res => {
+          this.payStatus = res.status;
+          if (this.payStatus === 1) {
+            if (broswerType === '2') {
+              // return false;
+            } else if (broswerType === '3') {
+              // 这是pc扫码支付完成
+              this.$refs.codePopup.close();
+              this.qrcodeShow = false;
+              this.loadThread();
+            }
+            if (this.payTypeVal === 0) {
+              // 这是主题支付，支付完成刷新详情页，重新请求数据
+              this.loadThread();
+            } else if (this.payTypeVal === 1) {
+              // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
+              this._updateRewardUsers();
+            }
+            this.$refs.toast.show({ message: this.p.paySuccess });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.coverLoading = false;
+          this.$refs.toast.show({ message: this.p.payFail });
+        });
+    },
+    wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
+      // 小程序支付。
+      const _this = this;
+      uni.requestPayment({
+        provider: 'wxpay',
+        timeStamp,
+        nonceStr,
+        package: packageVal,
+        signType,
+        paySign,
+        success(res) {
+          _this.coverLoading = true;
+          payWechat = setInterval(() => {
+            if (_this.payStatus === 1) {
+              clearInterval(payWechat);
+              return;
+            }
+            _this.getOrderStatus(_this.orderSn);
+          }, 3000);
+        },
+        fail(err) {
+          _this.payShowStatus = false;
+          _this.coverLoading = false;
+          _this.$refs.toast.show({ message: _this.p.payFail });
+        },
+      });
+    },
+    // 选择支付方式，获取值
+    radioChange(val) {
+      // console.log(val, '支付方式')
+    },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
-      // this.textAreaValue = this.vditor.getValue().replaceAll('blob:', '');
+      if (this.type === 1) {
+        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
+      }
       // #endif
-
       if (!this.categoryId) {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
@@ -914,6 +1388,35 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 1) {
+            // 内容免费，附件付费
+            console.log(this.$refs.uploadFiles.getValue(), '这是附件列表');
+            if (this.$refs.uploadFiles.getValue().length === 0) {
+              // 附件不能为空
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.attachmentCannotBeEmpty'),
+              });
+              status = false;
+            } else if (this.price === 0) {
+              // 选择付费后，价格不能为空
+              // console.log('选择付费后，价格不能为空');
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -927,6 +1430,16 @@ export default {
               message: this.i18n.t('discuzq.post.pleaseWaitForTheVideoUploadToComplete'),
             });
             status = false;
+          } else if (this.payType === 2) {
+            // 内容附件均付费
+            if (this.price === 0) {
+              this.$refs.toast.show({
+                message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+              });
+              status = false;
+            } else {
+              status = true;
+            }
           } else {
             status = true;
           }
@@ -943,6 +1456,16 @@ export default {
                 message: this.i18n.t('discuzq.post.imageCannotBeEmpty'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
@@ -952,21 +1475,61 @@ export default {
                 message: this.i18n.t('discuzq.post.pleaseWaitForTheImageUploadToComplete'),
               });
               status = false;
+            } else if (this.payType === 2) {
+              // 内容附件均付费
+              if (this.price === 0) {
+                this.$refs.toast.show({
+                  message: this.i18n.t('discuzq.post.priceCannotBeFree'),
+                });
+                status = false;
+              } else {
+                status = true;
+              }
             } else {
               status = true;
             }
+          }
+          break;
+        case 4:
+          if (this.audioBeforeList.length < 1) {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.audioCannotBeEmpty'),
+            });
+            status = false;
+          } else {
+            status = true;
+          }
+          break;
+        case 5:
+          if (this.beAskId === '') {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.pleaseSelectTheUserToBeAsked'),
+            });
+            status = false;
+          } else if (this.textAreaValue.length < 1) {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theContentCanNotBeBlank') });
+            status = false;
+          } else if (this.watchShow) {
+            console.log(this.watchShow, 'this.watchShow');
+            this.payShowStatus = true;
+            this.$nextTick(() => {
+              this.$refs.payShow.payClickShow();
+            });
           }
           break;
         default:
           status = false;
           this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
       }
-
       if (status) {
-        this.postLoading = true;
-        uni.showLoading();
-
+        if (this.type !== 5) {
+          this.postLoading = true;
+          uni.showLoading();
+        }
         if (this.operating === 'edit') {
+          if (this.type === 5) {
+            // this.beUserName =
+          }
           this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
@@ -1010,22 +1573,23 @@ export default {
               return false;
             }
           }
-          this.postThread().then(res => {
-            this.postLoading = false;
-            uni.hideLoading();
-            if (res && res.isApproved === 1) {
-              this.$u.event.$emit('addThread', res);
-            }
-            if (res && res._jv.json.data.id) {
-              uni.redirectTo({
-                url: `/pages/topic/index?id=${res._jv.json.data.id}`,
-              });
-            }
-          });
+          if (!this.watchShow || this.type !== 5) {
+            this.postThread().then(res => {
+              this.postLoading = false;
+              uni.hideLoading();
+              if (res && res.isApproved === 1) {
+                this.$u.event.$emit('addThread', res);
+              }
+              if (res && res._jv.json.data.id) {
+                uni.redirectTo({
+                  url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                });
+              }
+            });
+          }
         }
       }
     },
-
     // 编辑回显主题，处理附件
     setAnnex(type, data) {
       switch (type) {
@@ -1048,6 +1612,13 @@ export default {
             path: data.threadVideo.media_url,
           });
           // this.videoPercent = 1;
+          break;
+        case 'audio':
+          this.audioBeforeList.push({
+            fileName: data.threadAudio.file_name,
+            url: data.threadAudio.media_url,
+            id: data.threadAudio.file_id,
+          });
           break;
         default:
           console.log('没有匹配模式');
@@ -1080,7 +1651,40 @@ export default {
       }
       return attachments;
     },
-
+    // 发布问题
+    addQuestion() {
+      const question = {
+        data: {
+          be_user_id: this.beAskId,
+          price: this.priceAsk,
+          is_onlooker: this.watchChecked,
+          order_id: this.orderSn,
+        },
+      };
+      // if(!this.watchShow){
+      //   delete question.data.order_id
+      // }
+      return question;
+    },
+    // 删除附件显示弹框
+    deleteFile(id) {
+      this.deleteTip = this.i18n.t('core.deleteEnclosureSure');
+      this.$refs.deletePopup.open();
+      this.deleteType = 1;
+      this.deleteId = id;
+    },
+    // 删除附件调用删除接口
+    deleteFileSure(id) {
+      const params = {
+        _jv: {
+          type: 'attachments',
+          id,
+        },
+      };
+      this.$store.dispatch('jv/delete', params).then(res => {
+        this.$refs.uploadFiles.deleteSure();
+      });
+    },
     // 接口请求
     getCategories() {
       this.$store.dispatch('jv/get', ['categories?filter[createThread]=1', {}]).then(res => {
@@ -1112,13 +1716,17 @@ export default {
         free_words: this.word,
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
+        is_anonymous: this.checked,
       };
+      if (this.payType === 1) {
+        params.attachment_price = this.price;
+        params.price = '';
+      }
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
       params.location = currentPosition.location || '';
       params.address = currentPosition.address || '';
-
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
           case 0:
@@ -1138,12 +1746,21 @@ export default {
             params._jv.relationships.attachments = this.addImg();
             resolve();
             break;
+          case 4:
+            params.file_id = this.audioBeforeList[0].id;
+            params.file_name = this.audioBeforeList[0].fileName;
+            resolve();
+            break;
+          case 5:
+            params._jv.relationships.attachments = this.addImg();
+            params._jv.relationships.question = this.addQuestion();
+            resolve();
+            break;
           default:
             reject();
             this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
         }
       });
-
       return postPromise.then(() => {
         return this.$store
           .dispatch('jv/post', params)
@@ -1155,14 +1772,6 @@ export default {
           });
       });
     },
-    // delAttachments(id, index) {
-    //   const params = {
-    //     _jv: {
-    //       type: 'attachments',
-    //       id,
-    //     },
-    //   }
-    // },
     delAttachments(id, index) {
       if (this.operating === 'edit') {
         // console.log('这是编辑');
@@ -1191,11 +1800,9 @@ export default {
         // this.videoPercent = 0;
       }
     },
-
     handleClickCancel() {
       this.$refs.deletePopup.close();
     },
-
     delAttachments(id, index) {
       if (this.operating === 'edit') {
         console.log('这是编辑');
@@ -1207,7 +1814,6 @@ export default {
         post.images.splice(index, 1);
         post._jv.relationships.images.data.splice(index, 1);
       }
-
       this.uploadFile.forEach((value, key, item) => {
         value.id == id && item.splice(key, 1);
       });
@@ -1228,6 +1834,7 @@ export default {
           type: 'thread/video',
         },
         file_id: fileId,
+        type: 0,
       };
       this.$store.dispatch('jv/post', params);
     },
@@ -1238,17 +1845,25 @@ export default {
           'firstPost',
           'firstPost.images',
           'threadVideo',
+          'threadAudio',
           'category',
           'firstPost.attachments',
+          'question',
+          'onlookers',
+          'question.beUser',
+          'question.images',
         ],
       };
-
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
-        // console.log(res, '这是主题数据');
+        console.log(res, '这是主题数据');
+        if (res.question) {
+          this.beUserName = res.question.beUser.username;
+          this.beAskId = res.question.beUser.id;
+          this.userImage = res.question.beUser.avatarUrl;
+        }
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
-
         // #ifdef MP-WEIXIN
         this.markdownShow = false;
         // #endif
@@ -1264,9 +1879,7 @@ export default {
         if (res.threadVideo) {
           this.fileId = res.threadVideo.file_id;
         }
-
         // this.uploadFile = res.firstPost.images;
-
         if (res.firstPost.images) {
           res.firstPost.images.forEach(item => {
             if (item) {
@@ -1281,7 +1894,6 @@ export default {
             }
           });
         }
-
         this.loadStatus = true;
         if (Number(res.price) > 0) {
           this.price = res.price;
@@ -1301,6 +1913,9 @@ export default {
             break;
           case 3:
             this.setAnnex('img', res);
+            break;
+          case 4:
+            this.setAnnex('audio', res);
             break;
           default:
             console.log('未知类型');
@@ -1357,7 +1972,6 @@ export default {
       threads.latitude = currentPosition.latitude || '';
       threads.location = currentPosition.location || '';
       threads.address = currentPosition.address || '';
-
       switch (this.type) {
         case 0:
           break;
@@ -1376,10 +1990,14 @@ export default {
           threads.price = this.price;
           posts._jv.relationships.attachments = this.addImg();
           break;
+        case 4:
+          threads.price = this.price;
+          threads.file_id = this.audioBeforeList[0].id;
+          threads.file_name = this.audioBeforeList[0].fileName;
+          break;
         default:
           break;
       }
-
       await this.$store.dispatch('jv/patch', posts).then(res => {
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
@@ -1396,7 +2014,6 @@ export default {
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
       });
-
       if (state === 2) {
         return state;
       }
@@ -1440,23 +2057,38 @@ export default {
       this.captcha.show();
       // #endif
     },
+    // 问答贴点击头像跳转选择被提问人
+    changeAvatar() {
+      uni.navigateTo({ url: '/pages/user/at-member?name=select' });
+    },
   },
   onLoad(option) {
+    // 问答编辑不显示提问价格
+    if (option.operating === 'edit') {
+      this.askingPrice = false;
+    }
+    this.$u.event.$on('radioChange', item => {
+      this.beUserName = item.username;
+      this.beAskId = item.id;
+      this.userImage = item.avatarUrl;
+    });
+    if (option.type) this.type = Number(option.type);
     // #ifdef H5
-    uni.$on('vditor', vditor => {
-      this.vditor = vditor;
-      this.vditor.setValue(this.textAreaValue);
-    });
-    uni.$on('clickImage', item => {
-      this.vditor.insertValue(`![${item.name}](${item.path} '${item.id}')  `);
-    });
-    uni.$on('clickAttach', item => {
-      // this.vditor.insertValue(`[${item.attributes.fileName}](${item.attributes.url} '${item.id}')  `);
-    });
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
+    this.browser = 1;
+    if (this.type === 1) {
+      uni.$on('vditor', (vditor, vditorComponent) => {
+        this.vditor = vditor;
+        console.log(this.textAreaValue);
+        this.vditor.setValue(this.textAreaValue);
+        vditorComponent.setPostComponent(this);
+      });
+    }
     // #endif
     this.url = DISCUZ_REQUEST_HOST;
     const token = uni.getStorageSync('access_token');
-
     this.header = {
       authorization: `Bearer ${token}`,
     };
@@ -1464,10 +2096,8 @@ export default {
       type: 1,
     };
     this.getCategories();
-    if (option.type) this.type = Number(option.type);
     if (option.operating) this.operating = option.operating;
     if (option.threadId) this.threadId = option.threadId;
-
     if (option.categoryIndex) {
       if (option.categoryIndex === '0') {
         this.categoryIndex = '';
@@ -1478,7 +2108,6 @@ export default {
     if (option.categoryId)
       this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
     this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
-
     if (this.operating === 'edit') {
       this.loadStatus = false;
       this.getPostThread(option);
@@ -1494,7 +2123,6 @@ export default {
         this.currentPosition = currentPosition;
       }
     }
-
     try {
       const res = uni.getSystemInfoSync();
       if (
@@ -1540,7 +2168,6 @@ export default {
       this.postLoading = false;
       uni.hideLoading();
     });
-
     uni.$on('clickTopic', data => {
       if (data.keywords)
         this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor)}  #${data.keywords.replace(
@@ -1549,7 +2176,6 @@ export default {
         )}#${this.textAreaValue.slice(this.cursor)}  `;
       this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
-
     // 接收来自首页的数据，并渲染或者报错时提示
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('acceptDataFromOpenerPage', data => {
@@ -1599,7 +2225,6 @@ export default {
           } else {
             this.fileId = data.data.result.fileId;
           }
-
           // console.log(data.data, '这是视频地址');
           this.videoBeforeList.push({
             path: data.data.uploadVideoRes.tempFilePath,
@@ -1610,6 +2235,8 @@ export default {
         }
       }
     });
+    // 初始化默认内容附件均免费
+    this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
   },
   onShow() {
     let atMemberList = '';
@@ -1617,7 +2244,6 @@ export default {
       atMemberList += `@${item.username} `;
       return atMemberList;
     });
-
     this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
       atMemberList +
       this.textAreaValue.slice(this.cursor)}`;
@@ -1627,13 +2253,14 @@ export default {
       this.setThread();
     }
   },
-
   onReady() {
     this.videoContext = uni.createVideoContext('video');
   },
   onUnload() {
     this.$u.event.$off('captchaResult');
     this.$u.event.$off('closeChaReault');
+    this.$u.event.$off('radioChange');
+    this.$u.event.$off('radioEditChange');
     // #ifdef H5
     uni.$off('clickTopic');
     uni.$off('clickImage');
@@ -1643,6 +2270,8 @@ export default {
     if (this.captcha) {
       this.captcha.destroy();
     }
+    clearInterval(payWechat);
+    clearInterval(payPhone);
   },
 };
 </script>
@@ -1657,7 +2286,6 @@ export default {
   overflow: hidden;
   background-color: --color(--qui-BG-2);
   box-sizing: border-box;
-
   &__title {
     display: flex;
     align-items: center;
@@ -1670,6 +2298,9 @@ export default {
       padding-right: 80rpx;
       font-size: $fg-f5;
     }
+  }
+  &__titles {
+    margin-bottom: 30rpx;
   }
   &__hd {
     display: flex;
@@ -1705,7 +2336,6 @@ export default {
     font-size: $fg-f4;
     line-height: 40rpx;
     box-sizing: border-box;
-
     .text-cover {
       font-size: $fg-f4;
       line-height: 40rpx;
@@ -1714,79 +2344,6 @@ export default {
       overflow: auto;
     }
   }
-
-  // &__video {
-  //   display: flex;
-  //   flex-wrap: wrap;
-  //   width: 100%;
-  //   min-height: 160rpx;
-  //   padding: 30rpx 0;
-
-  //   &__play {
-  //     position: relative;
-  //     display: flex;
-  //     align-items: center;
-  //     justify-content: center;
-  //     width: 160rpx;
-  //     height: 160rpx;
-  //     margin-right: 13rpx;
-
-  //     &__video {
-  //       z-index: 0;
-  //       width: 100%;
-  //       height: 100%;
-  //       border: 1px solid #ededed;
-  //       border-radius: 5rpx;
-  //     }
-  //     &__load {
-  //       position: absolute;
-  //       top: 0;
-  //       z-index: 98;
-  //       display: flex;
-  //       flex-direction: column;
-  //       justify-content: center;
-  //       align-items: center;
-  //       width: 100%;
-  //       height: 100%;
-  //       text-align: center;
-  //       border: 1px solid --color(--qui-BOR-ED);
-  //       border-radius: 5rpx;
-  //     }
-  //     &__icon-del {
-  //       position: absolute;
-  //       top: -10px;
-  //       right: -10px;
-  //       z-index: 99;
-  //       display: flex;
-  //       justify-content: center;
-  //       align-items: center;
-  //       width: 50rpx;
-  //       height: 50rpx;
-  //       background-color: #dd524d;
-  //       border-radius: 50px;
-  //     }
-  //     .controls-play-icon {
-  //       position: absolute;
-  //       z-index: 2;
-  //       display: flex;
-  //       justify-content: center;
-  //       align-items: center;
-  //       width: 100%;
-  //       height: 100%;
-  //       background-color: rgba(1, 1, 1, 0.5);
-  //     }
-  //   }
-
-  //   &__add {
-  //     width: 160rpx;
-  //     height: 160rpx;
-  //     line-height: 160rpx;
-  //     text-align: center;
-  //     background-color: #f7f7f7;
-  //     border: 1px solid #ededed;
-  //     border-radius: 5rpx;
-  //   }
-  // }
   &__ft {
     &-tit {
       display: block;
@@ -1812,7 +2369,6 @@ export default {
     }
   }
 }
-
 .play-load {
   .post-box__video__play__load__mask {
     position: absolute;
@@ -1823,7 +2379,6 @@ export default {
     border-radius: 5rpx;
     opacity: 0.7;
   }
-
   .post-box__video__play__load__text {
     position: relative;
     z-index: 2;
@@ -1831,7 +2386,6 @@ export default {
     line-height: 36rpx;
     color: --color(--qui-FC-34);
   }
-
   progress {
     position: absolute;
     bottom: 9.5rpx;
@@ -1856,7 +2410,6 @@ export default {
     border: 1px solid #1878f3;
   }
 }
-
 .popup-content-btn {
   display: flex;
   flex-wrap: wrap;
@@ -1865,7 +2418,6 @@ export default {
     margin-top: 20rpx;
   }
 }
-
 .popup-share {
   /* #ifndef APP-NVUE */
   display: flex;
@@ -1887,7 +2439,6 @@ export default {
   height: 9rpx;
   background: --color(--qui-BG-ED);
 }
-
 .emoji-bd {
   position: relative;
   width: 100%;
@@ -1900,7 +2451,6 @@ export default {
   font-size: $fg-f5;
   color: --color(--qui-FC-AAA);
 }
-
 .cell-item-right-text {
   /deep/ .cell-item__body__right-text {
     color: --color(--qui-RED);
@@ -1912,7 +2462,27 @@ export default {
 /deep/ .cell-item__body__content-title {
   color: --color(--qui-FC-777);
 }
-
+/deep/ .uni-list-cell {
+  display: flex;
+  justify-content: space-between;
+  height: 100rpx;
+  align-items: center;
+  font-size: $fg-f4;
+  color: --color(--qui-FC-777);
+  border-bottom: 2rpx solid #ededed;
+}
+/deep/ .my-profile__avatar {
+  position: relative;
+}
+/deep/ .avatar-box {
+  padding-left: 0;
+}
+/deep/ .avatar-box__r__tit {
+  color: --color(--qui-FC-TAG);
+}
+/deep/ .uni-list-cell .uni-list-cell-pd {
+  position: relative;
+}
 .popup-dialog {
   width: 670rpx;
   height: 342rpx;
@@ -1926,7 +2496,6 @@ export default {
       color: --color(--qui-FC-333);
     }
   }
-
   &__cont {
     position: relative;
     display: flex;
@@ -1947,14 +2516,12 @@ export default {
       box-sizing: border-box;
     }
   }
-
   &__ft {
     display: flex;
     align-items: center;
     height: 100rpx;
     border-top: 2rpx solid --color(--qui-BOR-DDD);
     box-sizing: border-box;
-
     button {
       width: 50%;
       color: --color(--qui-FC-777);
@@ -1971,15 +2538,16 @@ export default {
         border-bottom-left-radius: 10rpx;
       }
     }
-
     .popup-btn--ok--blue {
       color: --color(--qui-BG-HIGH-LIGHT);
     }
   }
 }
-
 /deep/ .uni-video-cover {
   display: none;
+}
+/deep/ .cell-item__body__right {
+  display: contents;
 }
 .markdown-box {
   display: flex;
@@ -1990,5 +2558,22 @@ export default {
   line-height: 60rpx;
   background: --color(--qui-BG-FFF);
   border-top: 1px solid --color(--qui-BOR-DDD);
+}
+.username {
+  max-width: 200rpx;
+  overflow: hidden;
+  font-size: $fg-f3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pay-type {
+  font-size: $fg-f4;
+  line-height: 100rpx;
+  text-align: center;
+  border-bottom: 1px solid --color(--qui-BOR-ED);
+}
+.watchpay {
+  font-size: $fg-f3;
+  color: --color(--qui-FC-AAA);
 }
 </style>

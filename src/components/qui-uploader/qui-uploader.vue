@@ -11,7 +11,7 @@
           v-if="uploadBeforeList.length > 0"
           mode="aspectFill"
           :src="item.path"
-          @click="previewPicture(index)"
+          @click="previewPicture(index, item)"
         ></image>
         <view
           class="qui-uploader-box__uploader-file--load"
@@ -170,7 +170,8 @@ export default {
     },
 
     // 图片预览
-    previewPicture(index) {
+    previewPicture(index, item) {
+      // #ifdef MP-WEIXIN
       const _this = this;
       const preview = [];
       for (let i = 0, len = _this.uploadBeforeList.length; i < len; i += 1) {
@@ -181,6 +182,10 @@ export default {
         urls: preview,
         indicator: 'default',
       });
+      // #endif
+      // #ifdef H5
+      uni.$emit('clickImage', item);
+      // #endif
     },
     compare(property) {
       return (a, b) => {
@@ -259,13 +264,6 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.numberdata.push({ state: 0 });
                 _this.newindex.push(res.tempFiles[index]);
-                // const sun = _this.newindex;
-                // console.log(sun);
-                // if (_this.uploadBeforeList.length > _this.count) {
-                //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                //   _this.numberdata = _this.numberdata.slice(0, _this.count);
-                //   _this.newindex = _this.newindex.slice(0, _this.count);
-                // }
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,

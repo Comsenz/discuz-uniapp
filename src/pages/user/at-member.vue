@@ -19,14 +19,14 @@
         scroll-with-animation="true"
         @scrolltolower="lower"
       >
-        <checkbox-group @change="changeCheck" v-if="followStatus">
+        <checkbox-group @change="changeCheck" v-if="followStatus && !select">
           <label v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
               v-if="item.toUser"
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="item.toUser.groups[0].name"
+              :value="item.toUser.groups.length > 0 ? item.toUser.groups[0].name : ''"
               :label="item.toUser.label"
               :is-real="item.toUser.isReal"
             >
@@ -34,7 +34,7 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <checkbox-group @change="changeCheck" v-else>
+        <checkbox-group @change="changeCheck" v-if="!followStatus && !select">
           <label v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
               :mark="item.id"
@@ -48,6 +48,19 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
+        <view v-if="select">
+          <view v-for="item in allSiteUser" :key="item.id">
+            <qui-avatar-cell
+              :mark="item.id"
+              :title="item.username"
+              :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
+              :value="item.groups[0].name"
+              :label="item.label"
+              :is-real="item.isReal"
+              @click="radioChange(item)"
+            ></qui-avatar-cell>
+          </view>
+        </view>
         <view class="loading-text">
           <qui-icon
             v-if="
@@ -61,6 +74,7 @@
     </view>
     <view class="qui-at-member-page-box__ft">
       <qui-button
+        v-if="select !== 'select'"
         size="large"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
         :disabled="Boolean(checkAvatar.length < 1)"
@@ -72,6 +86,20 @@
         : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
         }}
       </qui-button>
+
+      <!-- <qui-button
+        v-if="select === select"
+        size="large"
+        :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
+        :disabled="Boolean(checkAvatar.length < 1)"
+        @click="getCheckQueMember"
+      >
+        {{
+        checkAvatar.length &lt; 1
+        ? i18n.t('discuzq.atMember.notSelected')
+        : i18n.t('discuzq.atMember.selectedUser') + '(' + checkAvatar.length + ')'
+        }}
+      </qui-button> -->
     </view>
   </qui-page>
 </template>
@@ -91,6 +119,8 @@ export default {
       searchValue: '', // 搜索值
       pageNum: 1, // 页面
       meta: {}, // 接口返回meta值
+      select: true, // 选择被提问人
+      current: 0,
     };
   },
   computed: {
@@ -127,6 +157,16 @@ export default {
           this.checkAvatar.push(JSON.parse(item));
         }
       });
+    },
+    // 单选人员
+    radioChange(item) {
+      console.log(item, '单选人员');
+      uni.navigateTo({
+        url: '/pages/topic/post?type=5',
+      });
+      setTimeout(() => {
+        this.$u.event.$emit('radioChange', item);
+      }, 1000);
     },
     getCheckMember() {
       this.setAtMember(this.checkAvatar);
@@ -207,10 +247,18 @@ export default {
       });
     },
   },
-  onLoad() {
-    uni.setNavigationBarTitle({
-      title: this.i18n.t('discuzq.atMember.atTitle'),
-    });
+  onLoad(option) {
+    this.select = option.name;
+    console.log(this.select);
+    if (option.name === 'select') {
+      uni.setNavigationBarTitle({
+        title: this.i18n.t('discuzq.atMember.selectUser'),
+      });
+    } else {
+      uni.setNavigationBarTitle({
+        title: this.i18n.t('discuzq.atMember.atTitle'),
+      });
+    }
     this.getFollowMember(1);
     this.setAtMember([]);
   },

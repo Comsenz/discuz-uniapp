@@ -91,6 +91,21 @@
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
           <qui-uparse :content="themeContent"></qui-uparse>
+          <!--提问部分-->
+
+          <!--作者向 某某某 发起了提问部分-->
+          <!-- <view class="theme__put">
+            <view class="theme__put__ask">
+              作者向
+              <view class="theme__put__ask__user">某某某</view>
+              发起了提问
+            </view>
+           <view class="theme__put__btn" @click="watchClick()">
+              <qui-button size="medium" type='answer' class="watch-btn">
+                {{ i18n.t('topic.questionsToBeAnswered' )}}
+              </qui-button>
+            </view>
+          </view> -->
         </view>
         <view
           class="theme__content__videocover"
@@ -153,6 +168,18 @@
             }"
           ></video>
         </view>
+        <view v-if="themeType == 4 && threadAudio">
+          <qui-audio-cell
+            :src="threadAudio.media_url"
+            :name="threadAudio.file_name"
+            :audio-id="threadAudio.file_id"
+            :ref="'audio' + threadAudio.file_id"
+            :is-delete="false"
+            :preview-status="videoStatus"
+            @audioPlayer="audioPlayer"
+            @previewAudio="previewAudio"
+          ></qui-audio-cell>
+        </view>
         <qui-image
           :images-list="imagesList"
           :preview-status="videoStatus"
@@ -184,6 +211,7 @@
           class="themeItem__content__attachment-item"
           v-for="(item, index) in attachMentList"
           :key="index"
+          @click="attachmentPayStatus ? attachmentPay() : ''"
         >
           <view
             v-if="['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1"
@@ -197,14 +225,71 @@
               @audioPlay="audioPlay"
             ></qui-audio>
           </view>
-          <view @tap="download(item)" v-else class="attachment-name">
+          <view v-else class="attachment-name">
             <qui-icon
               class="icon-attachment"
               :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text>{{ item.fileName }}</text>
+            <text @tap="!attachmentPayStatus ? download(item) : ''">{{ item.fileName }}</text>
+            <text
+              v-if="
+                threadInfo &&
+                  ((threadInfo.price > 0 && threadInfo.attachmentPrice <= 0 && threadInfo.isPaid) ||
+                    (threadInfo.price <= 0 &&
+                      threadInfo.attachmentPrice > 0 &&
+                      threadInfo.isPaidAttachment)) &&
+                  forums &&
+                  forums.qcloud &&
+                  forums.qcloud.qcloud_cos &&
+                  item.isRemote &&
+                  [
+                    'PPTX',
+                    'PPT',
+                    'POT',
+                    'POTX',
+                    'PPS',
+                    'PPSX',
+                    'DPS',
+                    'DPT',
+                    'PPTM',
+                    'POTM',
+                    'PPSM',
+                    'DOC',
+                    'DOT',
+                    'WPS',
+                    'WPT',
+                    'DOCX',
+                    'DOTX',
+                    'DOCM',
+                    'DOTM',
+                    'PDF',
+                    'LRC',
+                    'C',
+                    'CPP',
+                    'H',
+                    'ASM',
+                    'S',
+                    'JAVA',
+                    'ASP',
+                    'BAT',
+                    'BAS',
+                    'PRG',
+                    'CMD',
+                    'RTF',
+                    'TXT',
+                    'LOG',
+                    'XML',
+                    'HTM',
+                    'HTML',
+                  ].indexOf(item.format) !== -1
+              "
+              @click="preview(item)"
+              style="position: absolute; right: 20rpx; color: #1878f3;"
+            >
+              预览
+            </text>
           </view>
           <view v-if="['MP4'].indexOf(item.format) !== -1">
             <text
@@ -249,11 +334,13 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
 // import { setCookie } from '@/utils/setCookie';
 
 export default {
+  mixins: [forums],
   props: {
     topicStatus: {
       type: Number,
@@ -278,7 +365,7 @@ export default {
     //     return ['0', '1', '2', '3'].indexOf(value) !== -1;
     //   },
     //   default: '1',
-    // },、
+    // },'
     // 主题类型 0 文字  1 帖子  2 视频 3 图片
     themeType: {
       type: Number,
@@ -374,7 +461,7 @@ export default {
         return [];
       },
     },
-    // // 图片裁剪、缩放的模式
+    // // 图片裁剪'缩放的模式
     // modeVal: {
     //   type: String,
     //   default: 'aspectFill',
@@ -425,6 +512,16 @@ export default {
         return [];
       },
     },
+    threadAudio: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    attachmentPayStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -451,6 +548,11 @@ export default {
     localTime() {
       return time2DateAndHM(this.themeTime);
     },
+    threadInfo() {
+      const thread = this.$store.getters['session/get']('thread');
+      console.log('thread', thread);
+      return thread;
+    },
   },
   mounted() {
     const { fileList } = this;
@@ -459,6 +561,8 @@ export default {
     });
     this.attachMentList = fileList;
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
+    console.log('forums', this.forums);
+    console.log('this.threadInfo', this.threadInfo);
   },
   methods: {
     // 管理菜单点击事件
@@ -489,6 +593,11 @@ export default {
     // 头像失效
     imageError() {
       this.imageStatus = false;
+    },
+    // 如果附件是未支付状态，点击触发支付
+    attachmentPay() {
+      console.log('这是子组件内');
+      this.$emit('attachmentPay');
     },
     // 附件下载
     download(item) {
@@ -527,6 +636,25 @@ export default {
       });
       // #endif
     },
+    // 附件预览
+    preview(item) {
+      const params = item;
+      console.log(item, '---');
+      this.$store.dispatch('session/setAttachment', params);
+      const attachment = this.$store.getters['session/get']('attachment');
+      console.log('attachment', attachment);
+      this.$store
+        .dispatch('jv/get', [`attachments/${item.url}&page=1`, {}])
+        .then(res => {
+          console.log('res', res);
+          uni.navigateTo({
+            url: '/pages/topic/attachment',
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     // 只能播放一个音频
     audioPlay(id) {
       const { attachMentList } = this;
@@ -550,6 +678,9 @@ export default {
     previewPicture() {
       this.$emit('previewPicture');
     },
+    previewAudio() {
+      this.$emit('previewAudio');
+    },
     serBtn() {
       const params = {
         include: [
@@ -567,6 +698,7 @@ export default {
           'rewardedUsers',
           'category',
           'threadVideo',
+          'threadAudio',
           'paidUsers',
           'user.groups.permissionWithoutCategories',
         ],
@@ -588,6 +720,18 @@ export default {
 
     btnFun() {
       this.serBtn();
+    },
+
+    // 点击围观支付
+    watchClick() {
+      this.$emit('watchClick');
+    },
+    // 点击回答问题跳转到发布回答页
+    queClick() {
+      this.$emit('queClick');
+    },
+    audioPlayer(id) {
+      this.$refs[`audio${id}`].audioPause();
     },
   },
 };
@@ -686,6 +830,13 @@ export default {
         margin-bottom: 10rpx;
         vertical-align: top;
       }
+      .addAsk {
+        position: absolute;
+        top: 40rpx;
+        left: 590rpx;
+        width: 60rpx;
+        height: 60rpx;
+      }
     }
   }
 
@@ -737,6 +888,16 @@ export default {
         display: inline-block;
         width: 28rpx;
         height: 28rpx;
+      }
+      &__ask {
+        position: relative;
+        width: 670rpx;
+        height: 381rpx;
+        padding: 10px;
+        font-size: 12px;
+        color: var(--qui-FC-333);
+        background: --color(--qui-BG-F7);
+        // border-radius: 5px;
       }
     }
 
@@ -890,5 +1051,44 @@ export default {
   width: 600rpx;
   height: 400rpx;
   background: brown;
+}
+.themeItem__ask {
+  display: inline-block;
+  width: 112.5rpx;
+  padding-top: 6rpx;
+  border-top: solid 4rpx --color(--qui-BG-777);
+}
+.themeItem__value {
+  display: inline-block;
+  width: 364rpx;
+  padding: 0 19rpx 60rpx;
+  font-size: $fg-f2;
+  color: --color(--qui-FC-777);
+  &__text {
+    color: --color(--qui-RED);
+  }
+}
+.themeItem__btn {
+  padding-left: 60rpx;
+}
+.themeItem__answer {
+  width: 616rpx;
+  height: 82rpx;
+  font-size: $fg-f3;
+  color: --color(--qui-FC-333);
+}
+.theme__put {
+  width: 670rpx;
+  height: 271rpx;
+  text-align: center;
+  background: --color(--qui-BG-F7);
+  &__ask {
+    padding: 30rpx 0;
+    font-size: $fg-f3;
+    color: --color(--qui-FC-AAA);
+    &__user {
+      display: inline;
+    }
+  }
 }
 </style>
