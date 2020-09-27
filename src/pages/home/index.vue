@@ -8,6 +8,7 @@
           :nav-theme="theme"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
+          @openLoginPop="openLoginPop()"
         ></qui-page-home>
         <qui-page-find
           ref="quifind"
@@ -25,7 +26,11 @@
         ></qui-page-my>
       </view>
       <view class="tabBar">
-        <qui-footer @click="cut_index" :bottom="detectionModel() ? 100 : 0"></qui-footer>
+        <qui-footer
+          @click="cut_index"
+          :bottom="detectionModel() ? 100 : 0"
+          @openLoginPop="openLoginPop()"
+        ></qui-footer>
       </view>
     </view>
   </qui-page>
@@ -201,7 +206,7 @@ export default {
         !this.$store.getters['session/get']('isLogin') &&
         ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
-        this.$store.getters['session/get']('auth').open();
+        this.openLoginPop();
         this.currentTab = 'home';
         this.setFooterIndex(0);
         return;
@@ -219,6 +224,9 @@ export default {
     },
     handlePageLoaded() {
       this.showHome = true;
+    },
+    openLoginPop() {
+      this.$refs.quiPage.$refs.auth.open();
     },
   },
   onUnload() {
