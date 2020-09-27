@@ -554,6 +554,10 @@ export default {
       return thread;
     },
   },
+  created() {
+    console.log('这是内容组件created');
+    this.$forceUpdate();
+  },
   mounted() {
     const { fileList } = this;
     fileList.forEach((e, index) => {
