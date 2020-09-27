@@ -52,6 +52,7 @@
       </view>
       <qui-thread-item
         :thread="item"
+        :conversation-id="query.id"
         v-for="(item, index) in topicData"
         :key="index"
         :currentindex="index"
