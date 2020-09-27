@@ -41,9 +41,18 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
+// #ifdef H5
+import loginAuth from '@/mixin/loginAuth-h5';
+// #endif
 
 export default {
-  mixins: [forums, user, detectionModel],
+  mixins: [
+    forums,
+    user,
+    detectionModel, // #ifdef  H5
+    loginAuth,
+    // #endif
+  ],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
@@ -206,7 +215,14 @@ export default {
         !this.$store.getters['session/get']('isLogin') &&
         ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
+        // #ifdef MP-WEIXIN
         this.openLoginPop();
+        // #endif
+        // #ifdef H5
+        if (!this.handleLogin()) {
+          return;
+        }
+        // #endif
         this.currentTab = 'home';
         this.setFooterIndex(0);
         return;
@@ -226,7 +242,9 @@ export default {
       this.showHome = true;
     },
     openLoginPop() {
+      // #ifdef MP-WEIXIN
       this.$refs.quiPage.$refs.auth.open();
+      // #endif
     },
   },
   onUnload() {
