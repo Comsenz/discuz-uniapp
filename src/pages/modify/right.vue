@@ -24,7 +24,17 @@
         </view>
       </view>
       <view class="power-box__package-foot" v-if="typenum1">
-        <view class="power-box__package-foot-list" @click="godetails">
+        <view
+          class="power-box__package-foot-list"
+          v-for="(item, index) in paidusergroup"
+          :key="index"
+          @click="godetails"
+        >
+          <qui-cell-item :title="item.name" slot-right :arrow="false" :border="false">
+            <view class="money">¥{{ item.fee }}</view>
+          </qui-cell-item>
+        </view>
+        <!-- <view class="power-box__package-foot-list" @click="godetails">
           <qui-cell-item
             title="全站白金会员"
             slot-right
@@ -34,39 +44,11 @@
           >
             <view class="money">¥1150.0</view>
           </qui-cell-item>
-        </view>
-        <view class="power-box__package-foot-list" @click="godetails">
-          <qui-cell-item
-            title="全站白金会员"
-            slot-right
-            :arrow="false"
-            brief="你好"
-            :border="false"
-          >
-            <view class="money">¥1150.0</view>
-          </qui-cell-item>
-        </view>
-        <view class="power-box__package-foot-list" @click="godetails">
-          <qui-cell-item
-            title="全站白金会员"
-            slot-right
-            :arrow="false"
-            brief="你好"
-            :border="false"
-          >
-            <view class="money">¥1150.0</view>
-          </qui-cell-item>
-        </view>
+        </view> -->
       </view>
       <view class="power-box__package-foots" v-if="typenum2">
         <view class="power-box__package-foots-list" @click="godetails">
-          <qui-cell-item
-            title="全站白金会员"
-            slot-right
-            :arrow="false"
-            brief="你好"
-            :border="false"
-          >
+          <qui-cell-item title="全站白金会员" slot-right :arrow="false" :border="false">
             <view class="time">2013-3-3 到期</view>
           </qui-cell-item>
         </view>
@@ -103,9 +85,22 @@ export default {
     return {
       typenum1: true,
       typenum2: false,
+      paidusergroup: [],
     };
   },
+  onLoad() {
+    this.allusergroups();
+  },
   methods: {
+    allusergroups() {
+      const params = {
+        'filter[isPaid]': 1,
+      };
+      this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
+        console.log(res);
+        this.paidusergroup = res;
+      });
+    },
     powerlist(index) {
       if (index === 1) {
         this.typenum1 = true;
@@ -162,7 +157,7 @@ export default {
       background: --color(--qui-BG-2);
       box-sizing: border-box;
       &-list {
-        height: 150rpx;
+        // height: 150rpx;
         padding-right: 40rpx;
         border-bottom: 2rpx solid --color(--qui-BG-777);
       }
@@ -173,18 +168,18 @@ export default {
       background: --color(--qui-BG-2);
       box-sizing: border-box;
       &-list {
-        height: 150rpx;
+        // height: 150rpx;
         padding-right: 40rpx;
         border-bottom: 2rpx solid --color(--qui-BG-777);
       }
     }
   }
 }
-/deep/.cell-item__body__content-title {
-  margin-top: 40rpx;
-  font-size: 28rpx;
-  color: --color(--qui-FC-333);
-}
+// /deep/.cell-item__body__content-title {
+//   margin-top: 40rpx;
+//   font-size: 28rpx;
+//   color: --color(--qui-FC-333);
+// }
 .money {
   font-size: 28rpx;
   font-weight: bold;

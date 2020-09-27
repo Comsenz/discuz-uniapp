@@ -4,11 +4,11 @@
       <view class="details-box__head">
         全站白金会员
       </view>
-      <view class="details-box__center">
+      <!-- <view class="details-box__center">
         让青小蛙把压箱底的工具都 翻了出来，有用来保护眼睛的护目镜、防灰尘的口罩手
         套鬼知道当年青小蛙为了什么买齐了全套。但是，这好 像不太够。
         亚马逊的这些防护用品来自美国亚马逊、日本亚马逊德 国亚马逊和英国亚马逊，均可以直邮中国大陆。
-      </view>
+      </view> -->
       <view class="details-box__foot">
         <view class="details-box__foot__top">
           购买后拥有以下权限：
@@ -134,6 +134,7 @@ export default {
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
     // #endif
+    this.allusergroups();
   },
   computed: {
     // pay支付语言包
@@ -142,15 +143,6 @@ export default {
     },
   },
   methods: {
-    powerlist(index) {
-      if (index === 1) {
-        this.typenum1 = true;
-        this.typenum2 = false;
-      } else {
-        this.typenum1 = false;
-        this.typenum2 = true;
-      }
-    },
     purchase() {
       console.log('购买', this.user);
       this.payShowStatus = true;
@@ -469,7 +461,6 @@ export default {
         width: 100%;
         height: 31rpx;
         padding-left: 40rpx;
-        margin-top: 50rpx;
         font-size: 28rpx;
         font-weight: bold;
         line-height: 31rpx;
