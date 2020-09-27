@@ -27,7 +27,6 @@
       :cover-image="thread.threadVideo && thread.threadVideo.cover_url"
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
-      :scroll-top="scrollTop"
       :questions-name="thread.user.username"
       :be-ask-name="thread.question && thread.question.beUser.username"
       :question-content="thread.question && thread.question.content"
