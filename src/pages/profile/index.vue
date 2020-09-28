@@ -78,7 +78,7 @@
                 @handleClickShare="handleClickShare"
               ></question>
             </view>
-            <view v-if="current == 1" class="items">
+            <view v-else-if="current == 1" class="items">
               <topic
                 :user-id="userId"
                 @changeFollow="changeFollow"
@@ -271,7 +271,7 @@ export default {
     },
     // 设置粉丝点赞那些数字
     setNum(res) {
-      this.items[0].brief = res.threadCount || 0;
+      this.items[0].brief = res.questionCount || 0;
       this.items[1].brief = res.threadCount || 0;
       this.items[2].brief = res.followCount || 0;
       this.items[3].brief = res.fansCount || 0;

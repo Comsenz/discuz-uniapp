@@ -26,7 +26,7 @@
               :themid="threadId"
               :topic-status="thread.isApproved"
               :follow-show="thread.user.follow != null"
-              :pay-status="thread.price > 0 && thread.paid"
+              :pay-status="threadIsPaidCover"
               :video-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :user-info="thread.user"
               :avatar-url="thread.user.avatarUrl"
@@ -956,6 +956,7 @@ export default {
       conversationId: '', // 话题id
       attachmentFileList: [], // 附件列表
       refreshStatus: true, // 是否刷新
+      threadIsPaidCover: false, // 付费主题显示遮盖层
     };
   },
   onUnload() {
@@ -1214,6 +1215,20 @@ export default {
 
             this.loaded = false;
           } else {
+            if (data.type === 1) {
+              if (data.attachmentPrice > 0) {
+                this.threadIsPaidCover = false;
+              } else {
+                if ((data.price > 0 && data.isPaid) || data.price <= 0) {
+                  this.threadIsPaidCover = false;
+                } else if (data.price > 0 && !data.isPaid) {
+                  this.threadIsPaidCover = true;
+                }
+              }
+            } else {
+              this.threadIsPaidCover = false;
+            }
+            this.attachmentFileList = [];
             data.firstPost.attachments.forEach(attachment => {
               this.attachmentFileList.push(attachment);
             });
@@ -1232,60 +1247,100 @@ export default {
               title: titleText,
             });
             // #endif
-            // console.log(data, '详情页主题');
+            console.log(data, '详情页主题');
             if (data.question) {
+              console.log('wenda')
               this.platformDate =
                 data.question.price * (this.forums.set_site.site_master_scale / 10);
               this.beAskDate = (data.question.price - this.platformDate) / 2;
               this.beAskBeDate = (data.question.price - this.platformDate) / 2;
-              // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
-              if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
-                this.beAsk = true;
-              } else if (
-                (this.user.id === data.question.be_user_id || data.user.id) &&
+              // 问答免费
+              if (data.question.price === '0.00') {
+                console.log('ooooo')
+                // 问答免费 当前登录ID == 被提问ID && 未回答
+                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0 ){
+                  this.beAsk = true;
+                  console.log('显示问答按钮')   
+                  // 问答免费 已回答 所有人都可以看               
+                } else if ( data.question.is_answer === 1 ) {
+                  this.beAsk = false;
+                  this.payment = true;
+                  console.log('显示答案')
+                }
+              } else if (data.question.price > '0.00') {
+                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0 ) {
+                  this.beAsk = true;
+                  console.log('显示问答按钮')                   
+                } else if (this.user.id === data.question.be_user_id || data.user.id && data.question.is_answer === 1) {
+                  this.beAsk = false;
+                  this.answerPay = true;
+                  console.log('显示答案111')
+                } else if ((this.user.id === data.question.be_user_id || data.user.id) &&
                 data.question.is_answer === 1 &&
-                data.question.onlooker_unit_price === 0
-              ) {
-                this.payment = true;
-                this.beAsk = false;
-              } else if (
-                // 当前登录的ID等于被提问的ID && 问题已回答 && 已有人围观
-                (this.user.id === data.question.be_user_id || data.user.id) &&
-                data.question.is_answer === 1 &&
-                data.question.onlooker_number > 0
-              ) {
+                data.question.onlooker_number > 0) {
                 this.answerPay = true;
-                this.beAsk = false;
-              } else if (
-                // 当前登录ID是围观用户 && 问题已被回答 && 允许围观 && 未支付
-                this.user.id !== (data.question.be_user_id && data.user.id) &&
+                this.beAsk = false;                  
+                } else if (this.user.id !== (data.question.be_user_id && data.user.id) &&
                 data.question.is_answer === 1 &&
                 data.question.is_onlooker === true &&
-                data.isOnlooker === false
-              ) {
-                this.answerPay = true;
-              } else if (
-                this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 1
-              ) {
-                // 免费围观
-                if (data.question.onlooker_unit_price === 0) {
-                  this.payment = true;
-                  this.answerPay = false;
-                } else {
-                  // 循环已付费围观者
-                  data.onlookers.forEach(item => {
-                    console.log(item, 'item');
-                    if (this.user.id === item.id) {
-                      this.payment = true;
-                      this.answerPay = false;
-                      return;
-                    }
-                    this.payment = false;
-                    this.answerPay = true;
-                  });
-                }
+                data.isOnlooker === false) {
+                  this.answerPay = true;
+                } 
               }
+
+
+
+
+              // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
+              // if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
+              //   this.beAsk = true;
+              //   console.log('显示问答按钮')
+              // } else if (
+              //   this.user.id ===  data.user.id &&
+              //   data.question.is_answer === 1 &&
+              //   data.question.onlooker_unit_price === 0
+              // ) {
+              //   this.payment = true;
+              //   this.beAsk = false;
+              //   console.log('99999')
+              // } else if (
+              //   // 当前登录的ID等于被提问的ID && 问题已回答 && 已有人围观
+              //   (this.user.id === data.question.be_user_id || data.user.id) &&
+              //   data.question.is_answer === 1 &&
+              //   data.question.onlooker_number > 0
+              // ) {
+              //   this.answerPay = true;
+              //   this.beAsk = false;
+              // } else if (
+              //   // 当前登录ID是围观用户 && 问题已被回答 && 允许围观 && 未支付
+              //   this.user.id !== (data.question.be_user_id && data.user.id) &&
+              //   data.question.is_answer === 1 &&
+              //   data.question.is_onlooker === true &&
+              //   data.isOnlooker === false
+              // ) {
+              //   this.answerPay = true;
+              // } else if (
+              //   this.user.id !== (data.question.be_user_id && data.user.id) &&
+              //   data.question.is_answer === 1
+              // ) {
+              //   // 免费围观
+              //   if (data.question.onlooker_unit_price === 0) {
+              //     this.payment = true;
+              //     this.answerPay = false;
+              //   } else {
+              //     // 循环已付费围观者
+              //     data.onlookers.forEach(item => {
+              //       console.log(item, 'item');
+              //       if (this.user.id === item.id) {
+              //         this.payment = true;
+              //         this.answerPay = false;
+              //         return;
+              //       }
+              //       this.payment = false;
+              //       this.answerPay = true;
+              //     });
+              //   }
+              // }
               this.questionId = data.question._jv.id;
             }
             data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
@@ -1377,7 +1432,11 @@ export default {
           this.moreData[7].canOpera = false;
           // #endif
           //追加更多操作权限字段
-          this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          if (data.type === 5 && data.question.is_answer === 1) {
+           this.moreData[0].canOpera = false;
+          } else {
+            this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          }
           this.moreData[2].canOpera = this.thread.canEssence;
           this.moreData[3].canOpera = this.thread.canSticky;
           this.moreData[1].canOpera = this.thread.canHide;
@@ -3039,9 +3098,6 @@ export default {
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
-        // setTimeout(() => {
-        //   this.$u.event.$emit('radioEditChange', thread);
-        // }, 1000);
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
       } else if (param.type === '4') {
