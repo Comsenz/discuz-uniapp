@@ -277,27 +277,19 @@ export default {
           type: 0,
         });
       }
-      if (this.forums.other.can_create_thread_image) {
-        this.bottomData.push({
-          text: this.i18n.t('home.picture'),
-          icon: 'icon-img',
-          name: 'image',
-          type: 1,
-        });
-      }
-      if (this.forums.other.can_create_thread_video) {
-        this.bottomData.push({
-          text: this.i18n.t('home.video'),
-          icon: 'icon-video',
-          name: 'video',
-          type: 2,
-        });
-      }
       if (this.forums.other.can_create_thread_long) {
         this.bottomData.push({
           text: this.i18n.t('home.invitation'),
           icon: 'icon-post',
           name: 'post',
+          type: 1,
+        });
+      }
+      if (this.forums.other.can_create_thread_image) {
+        this.bottomData.push({
+          text: this.i18n.t('home.picture'),
+          icon: 'icon-img',
+          name: 'image',
           type: 3,
         });
       }
@@ -307,6 +299,14 @@ export default {
           icon: 'icon-record',
           name: 'audio',
           type: 4,
+        });
+      }
+      if (this.forums.other.can_create_thread_video) {
+        this.bottomData.push({
+          text: this.i18n.t('home.video'),
+          icon: 'icon-video',
+          name: 'video',
+          type: 2,
         });
       }
       if (this.forums.other.can_create_thread_goods) {
