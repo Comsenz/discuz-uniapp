@@ -105,8 +105,8 @@
           ></view>
           <view
             class="list-box__notice__con__text"
-            v-if="item.content"
-            v-html="item.content"
+            v-if="item.answer_content"
+            v-html="item.answer_content"
             @click="jumpMyComment(item)"
           ></view>
           <view
@@ -137,6 +137,11 @@
               ></view>
               <view
                 v-if="item.type === 'rewarded'"
+                v-html="item.content"
+                style="display: inline-block;"
+              ></view>
+              <view
+                v-if="item.type === 'questioned'"
                 v-html="item.content"
                 style="display: inline-block;"
               ></view>

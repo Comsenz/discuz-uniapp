@@ -103,7 +103,7 @@ export default {
     return {
       allSiteUser: [], // 所有站点成员
       allFollow: [], // 所有关注成员
-      followStatus: false, // 第一次进来显示follow列表
+      followStatus: true, // 第一次进来显示follow列表
       checkAvatar: [], // 选择人员列表
       loadingText: 'discuzq.list.loading',
       searchValue: '', // 搜索值
@@ -247,6 +247,7 @@ export default {
     this.select = option.name;
     // console.log(this.select);
     if (option.name === 'select') {
+      this.followStatus = true;
       uni.setNavigationBarTitle({
         title: this.i18n.t('discuzq.atMember.selectUser'),
       });
