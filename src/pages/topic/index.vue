@@ -1216,15 +1216,19 @@ export default {
             this.loaded = false;
           } else {
             if (data.type === 1) {
-              if ((data.price > 0 && data.isPaid) || data.price <= 0) {
+              if (data.attachmentPrice > 0) {
                 this.threadIsPaidCover = false;
-              } else if (data.price > 0 && !data.isPaid) {
-                this.threadIsPaidCover = true;
+              } else {
+                if ((data.price > 0 && data.isPaid) || data.price <= 0) {
+                  this.threadIsPaidCover = false;
+                } else if (data.price > 0 && !data.isPaid) {
+                  this.threadIsPaidCover = true;
+                }
               }
             } else {
               this.threadIsPaidCover = false;
             }
-
+            this.attachmentFileList = [];
             data.firstPost.attachments.forEach(attachment => {
               this.attachmentFileList.push(attachment);
             });

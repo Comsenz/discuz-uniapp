@@ -186,7 +186,7 @@
           @previewPicture="previewPicture"
         ></qui-image>
         <view
-          v-if="!payStatus"
+          v-if="payStatus"
           class="themeItem__content__con__cover"
           :style="{
             background:
