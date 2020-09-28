@@ -46,7 +46,7 @@
               :images-list="thread.firstPost.images"
               :select-list="selectList"
               :tags="[thread.category]"
-              :thread-price="thread.price"
+              :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
               :thread-is-essence="thread.isEssence"
               :media-url="thread.type == 2 ? thread.threadVideo.media_url : ''"
               :duration="thread.type == 2 ? thread.threadVideo.duration : ''"
@@ -2047,6 +2047,14 @@ export default {
               if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
                 // 这是主题支付和附件支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
+                this.$store.dispatch('jv/get', [
+                  'forum',
+                  {
+                    params: {
+                      include: 'users',
+                    },
+                  },
+                ]);
               } else if (this.payTypeVal === 1) {
                 // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
                 this._updateRewardUsers();
@@ -2079,11 +2087,27 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
               this.loadThread();
+              this.$store.dispatch('jv/get', [
+                'forum',
+                {
+                  params: {
+                    include: 'users',
+                  },
+                },
+              ]);
             }
 
             if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               this.loadThread();
+              this.$store.dispatch('jv/get', [
+                'forum',
+                {
+                  params: {
+                    include: 'users',
+                  },
+                },
+              ]);
             } else if (this.payTypeVal === 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               this._updateRewardUsers();
@@ -2517,7 +2541,7 @@ export default {
     // 主题评论点击发布事件
     publishClick() {
       this.publishClickStatus = false;
-      if (this.commentAnser) {
+      if (this.commentAnser === true) {
         console.log('commentAnsercommentAnser');
         this.postAnswer();
       } else {
@@ -2737,8 +2761,9 @@ export default {
       }
       console.log('回答问题');
       this.formData.type = 5;
+      this.commentAnser = true;
       this.$refs.commentPopup.open();
-      this.postAnswer();
+      // this.postAnswer();
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
       this.commentText = false;

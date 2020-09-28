@@ -700,7 +700,7 @@ export default {
     });
     // #endif
     uni.$on('uploadVideoOver', data => {
-      console.log('这是计算周期里获取到的上传后的数据', data);
+      // console.log('这是计算周期里获取到的上传后的数据', data);
       this.percent = 1;
       if (data.doneResult) {
         this.fileId = data.doneResult.fileId;
@@ -1030,7 +1030,7 @@ export default {
     },
     // 选择支付查看的方式 0均免费， 1内容免费，附件付费，  2内容和附件都付费
     choicePayType(type) {
-      console.log(type, '类型');
+      // console.log(type, '类型');
       if (type === 0) {
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
       } else if (type === 1) {
@@ -1729,6 +1729,7 @@ export default {
         params.attachment_price = this.price;
         params.price = '';
       }
+      console.log(params, '这是参数');
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
@@ -1994,7 +1995,15 @@ export default {
           break;
         case 1:
           threads.title = this.postTitle;
-          threads.price = this.price;
+          // threads.price = this.price;
+          if (this.payType === 1) {
+            // console.log(this.price, '价格');
+            threads.attachment_price = this.price;
+            threads.price = '';
+          } else {
+            threads.attachment_price = '';
+            threads.price = this.price;
+          }
           threads.free_words = this.word;
           posts._jv.relationships.attachments = this.addImg();
           break;
@@ -2028,6 +2037,7 @@ export default {
         this.$u.event.$emit('refreshFiles');
         return res;
       });
+      // console.log(threads, '这是编辑时传的参数');
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
       });
@@ -2080,13 +2090,12 @@ export default {
     },
   },
   onLoad(option) {
-    // console.log(option)
-    // if (option.type === 5) {
-    //   this.textAreaLength = 10000;
-    // }
     // 问答编辑不显示提问价格
     if (option.operating === 'edit') {
       this.askingPrice = false;
+    } else {
+      // 初始化默认内容附件均免费
+      this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
     }
     this.$u.event.$on('radioChange', item => {
       this.beUserName = item.username;
@@ -2094,6 +2103,12 @@ export default {
       this.userImage = item.avatarUrl;
     });
     if (option.type) this.type = Number(option.type);
+    // #ifdef MP-WEIXIN
+    const data = uni.getSystemInfoSync();
+    if (data.platform === 'ios' && this.type === 5) {
+      this.askingPrice = false;
+    }
+    // #endif
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
@@ -2239,7 +2254,7 @@ export default {
         }
       }
       if (this.type === 2) {
-        console.log(data, '这是在首页上传视频·····后传过来的数据');
+        // console.log(data, '这是在首页上传视频·····后传过来的数据');
         if (data.data) {
           if (data.data.doneResult) {
             this.fileId = data.data.doneResult.fileId;
@@ -2256,8 +2271,6 @@ export default {
         }
       }
     });
-    // 初始化默认内容附件均免费
-    this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
   },
   onShow() {
     let atMemberList = '';
