@@ -1533,9 +1533,9 @@ export default {
           uni.showLoading();
         }
         if (this.operating === 'edit') {
-          if (this.type === 5) {
-            // this.beUserName =
-          }
+          // if (this.type === 5) {
+          //   // this.beUserName =
+          // }
           this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
@@ -2019,6 +2019,10 @@ export default {
           threads.price = this.price;
           threads.file_id = this.audioBeforeList[0].id;
           threads.file_name = this.audioBeforeList[0].fileName;
+          break;
+        case 5:
+          posts._jv.relationships.attachments = this.addImg();
+          // params._jv.relationships.question = this.addQuestion();
           break;
         default:
           break;
