@@ -28,7 +28,9 @@
       :duration="thread.threadVideo && thread.threadVideo.duration"
       :is-deleted="thread.isDeleted"
       :questions-name="thread.user.username"
-      :be-ask-name="thread.question && thread.question.beUser.username"
+      :be-ask-name="
+        thread.question && thread.question.beUser ? thread.question.beUser.username : ''
+      "
       :question-content="thread.question && thread.question.content"
       :add-ask="thread.question && thread.question.is_answer"
       :onlooker-number="thread.question && thread.question.onlooker_number"
