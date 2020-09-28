@@ -61,6 +61,13 @@
                 </view>
               </view>
               <view class="dialog-box__header__r">
+                <qui-icon
+                  class="delete"
+                  name="icon-delete"
+                  size="26"
+                  color="#aaa"
+                  @click.stop=""
+                ></qui-icon>
                 <text class="dialog-box__header__r-red-circle" v-if="dialog.readAt === null"></text>
                 <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
               </view>
@@ -347,6 +354,9 @@ export default {
         background: --color(--qui-RED);
         border-radius: 50%;
         content: '';
+      }
+      .delete {
+        margin-right: 20rpx;
       }
     }
   }

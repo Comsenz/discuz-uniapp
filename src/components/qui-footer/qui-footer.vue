@@ -445,10 +445,9 @@ export default {
 }
 .ft-box {
   position: relative;
-  width: 22%;
+  width: 20%;
   height: 100rpx;
   padding-top: 15rpx;
-  padding-left: 40rpx;
   font-size: $fg-f3;
   text-align: center;
   box-sizing: border-box;
