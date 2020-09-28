@@ -2070,10 +2070,6 @@ export default {
     },
   },
   onLoad(option) {
-    // console.log(option)
-    // if (option.type === 5) {
-    //   this.textAreaLength = 10000;
-    // }
     // 问答编辑不显示提问价格
     if (option.operating === 'edit') {
       this.askingPrice = false;
@@ -2084,6 +2080,12 @@ export default {
       this.userImage = item.avatarUrl;
     });
     if (option.type) this.type = Number(option.type);
+    // #ifdef MP-WEIXIN
+    const data = uni.getSystemInfoSync();
+    if (data.platform === 'ios' && this.type === 5) {
+      this.askingPrice = false;
+    }
+    // #endif
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;

@@ -514,6 +514,7 @@ export default {
     // #ifdef H5
     uni.$on('updateIndex', () => {
       this.headerShow = true;
+      this.ontrueGetList();
     });
     uni.$on('updateNoticePage', () => {
       // console.log('99999');
