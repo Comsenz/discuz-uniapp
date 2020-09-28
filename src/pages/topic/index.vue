@@ -26,7 +26,7 @@
               :themid="threadId"
               :topic-status="thread.isApproved"
               :follow-show="thread.user.follow != null"
-              :pay-status="thread.price > 0 && thread.paid"
+              :pay-status="threadIsPaidCover"
               :video-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :user-info="thread.user"
               :avatar-url="thread.user.avatarUrl"
@@ -956,6 +956,7 @@ export default {
       conversationId: '', // 话题id
       attachmentFileList: [], // 附件列表
       refreshStatus: true, // 是否刷新
+      threadIsPaidCover: false, // 付费主题显示遮盖层
     };
   },
   onUnload() {
@@ -1214,6 +1215,16 @@ export default {
 
             this.loaded = false;
           } else {
+            if (data.type === 1) {
+              if ((data.price > 0 && data.isPaid) || data.price <= 0) {
+                this.threadIsPaidCover = false;
+              } else if (data.price > 0 && !data.isPaid) {
+                this.threadIsPaidCover = true;
+              }
+            } else {
+              this.threadIsPaidCover = false;
+            }
+
             data.firstPost.attachments.forEach(attachment => {
               this.attachmentFileList.push(attachment);
             });
