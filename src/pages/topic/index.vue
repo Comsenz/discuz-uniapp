@@ -2047,6 +2047,14 @@ export default {
               if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
                 // 这是主题支付和附件支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
+                this.$store.dispatch('jv/get', [
+                  'forum',
+                  {
+                    params: {
+                      include: 'users',
+                    },
+                  },
+                ]);
               } else if (this.payTypeVal === 1) {
                 // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
                 this._updateRewardUsers();
@@ -2079,11 +2087,27 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
               this.loadThread();
+              this.$store.dispatch('jv/get', [
+                'forum',
+                {
+                  params: {
+                    include: 'users',
+                  },
+                },
+              ]);
             }
 
             if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               this.loadThread();
+              this.$store.dispatch('jv/get', [
+                'forum',
+                {
+                  params: {
+                    include: 'users',
+                  },
+                },
+              ]);
             } else if (this.payTypeVal === 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               this._updateRewardUsers();
