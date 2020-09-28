@@ -245,7 +245,6 @@ export default {
   },
   onLoad(option) {
     this.select = option.name;
-    // console.log(this.select);
     if (option.name === 'select') {
       this.followStatus = true;
       uni.setNavigationBarTitle({

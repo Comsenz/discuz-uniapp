@@ -110,6 +110,12 @@
             @click="jumpMyComment(item)"
           ></view>
           <view
+            class="list-box__notice__con__text"
+            v-if="item.content && item.is_answer === 0"
+            v-html="item.content"
+            @click="jumpMyComment(item)"
+          ></view>
+          <view
             class="list-box__notice__con__space"
             v-if="item.post_content && item.thread_id"
           ></view>
