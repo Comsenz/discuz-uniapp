@@ -46,7 +46,7 @@
               :images-list="thread.firstPost.images"
               :select-list="selectList"
               :tags="[thread.category]"
-              :thread-price="thread.price"
+              :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
               :thread-is-essence="thread.isEssence"
               :media-url="thread.type == 2 ? thread.threadVideo.media_url : ''"
               :duration="thread.type == 2 ? thread.threadVideo.duration : ''"
