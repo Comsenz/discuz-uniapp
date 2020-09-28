@@ -90,20 +90,6 @@
         : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
         }}
       </qui-button>
-
-      <!-- <qui-button
-        v-if="select === select"
-        size="large"
-        :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
-        :disabled="Boolean(checkAvatar.length < 1)"
-        @click="getCheckQueMember"
-      >
-        {{
-        checkAvatar.length &lt; 1
-        ? i18n.t('discuzq.atMember.notSelected')
-        : i18n.t('discuzq.atMember.selectedUser') + '(' + checkAvatar.length + ')'
-        }}
-      </qui-button> -->
     </view>
   </qui-page>
 </template>

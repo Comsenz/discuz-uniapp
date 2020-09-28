@@ -320,7 +320,7 @@ export default {
       if (this.forums.other.can_create_thread_question) {
         this.bottomData.push({
           text: this.i18n.t('home.questions'),
-          icon: 'icon-wenda',
+          icon: 'icon-question',
           name: 'questions',
           type: 6,
         });
