@@ -66,6 +66,18 @@
                     >
                       {{ i18n.t('notice.scaledRegister') }}
                     </text>
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'questioned' && item.is_answer === 1"
+                    >
+                      {{ i18n.t('notice.answersMe') }}
+                    </text>
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'questioned' && item.is_answer === 0"
+                    >
+                      {{ i18n.t('notice.questions') }}
+                    </text>
                   </view>
                   <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
                 </view>
@@ -92,6 +104,12 @@
             @click="jumpMyComment(item)"
           ></view>
           <view
+            class="list-box__notice__con__text"
+            v-if="item.content"
+            v-html="item.content"
+            @click="jumpMyComment(item)"
+          ></view>
+          <view
             class="list-box__notice__con__space"
             v-if="item.post_content && item.thread_id"
           ></view>
@@ -105,7 +123,7 @@
           </view>
           <view
             class="list-box__notice__con__wrap"
-            v-if="item.thread_id && item.reply_post_id === 0"
+            v-if="item.thread_id && item.reply_post_id === 0 && item.is_answer !== 0"
             @click="jumpOtherTopic(item.thread_id)"
           >
             <view class="list-box__notice__con__wrap-info">

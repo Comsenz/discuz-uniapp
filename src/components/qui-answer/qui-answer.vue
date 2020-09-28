@@ -9,13 +9,18 @@
       :user-role="userRole"
       :theme-time="themeTime"
     ></qui-topic-header>
+    <!-- 回答内容 -->
+    <div class="theme-content" v-if="isOnlooker">
+      <qui-uparse :content="answerContent"></qui-uparse>
+      <qui-image :images-list="imagesList"></qui-image>
+    </div>
     <!-- <view class="themeItem__list"> -->
     <qui-person-list
       :type="i18n.t('topic.pay')"
       :person-num="thread.question.onlooker_number"
       :limit-count="10"
       :person-list="thread.onlookers"
-      :btn-show="true"
+      :btn-show="!thread.isOnlooker"
       :btn-icon-show="false"
       btn-icon-name="rmb"
       :btn-text="
@@ -69,7 +74,18 @@ export default {
       type: String,
       default: '',
     },
-
+    // 回答的图片
+    imagesList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+    // 围观人员是否已支付
+    isOnlooker: {
+      type: Boolean,
+      default: false,
+    },
     // 已支付人员
     thread: {
       type: Object,
@@ -129,5 +145,8 @@ export default {
 }
 /deep/ .det-person-box {
   background: --color(--qui-BG-ED);
+}
+.theme-content {
+  padding: 0 36rpx;
 }
 </style>

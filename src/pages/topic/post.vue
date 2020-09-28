@@ -54,7 +54,14 @@
               @click="topicPage"
             ></qui-icon>
           </view>
-          <text class="post-box__hd-r">
+          <text class="post-box__hd-r" v-if="type !== 5">
+            {{
+          textAreaValue.length &lt;= textAreaLength
+          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+            }}
+          </text>
+          <text class="post-box__hd-r" v-if="type === 5">
             {{
           textAreaValue.length &lt;= textAreaLength
           ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
@@ -1864,6 +1871,7 @@ export default {
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
+
         // #ifdef MP-WEIXIN
         this.markdownShow = false;
         // #endif
@@ -1898,7 +1906,16 @@ export default {
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
+          this.payType = 2;
+          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+        } else if (Number(res.attachmentPrice) > 0) {
+          this.price = res.attachmentPrice;
+          this.payType = 1;
+          this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+        } else {
+          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
+
         this.textAreaLength = this.type === 1 ? 10000 : 450;
         switch (Number(res.type)) {
           case 0:
@@ -2063,6 +2080,10 @@ export default {
     },
   },
   onLoad(option) {
+    // console.log(option)
+    // if (option.type === 5) {
+    //   this.textAreaLength = 10000;
+    // }
     // 问答编辑不显示提问价格
     if (option.operating === 'edit') {
       this.askingPrice = false;
@@ -2474,9 +2495,9 @@ export default {
 /deep/ .my-profile__avatar {
   position: relative;
 }
-/deep/ .avatar-box {
-  padding-left: 0;
-}
+// /deep/ .avatar-box {
+//   padding-left: 0;
+// }
 /deep/ .avatar-box__r__tit {
   color: --color(--qui-FC-TAG);
 }

@@ -74,7 +74,7 @@
               <question
                 :user-id="userId"
                 @changeFollow="changeFollow"
-                ref="topic"
+                ref="question"
                 @handleClickShare="handleClickShare"
               ></question>
             </view>

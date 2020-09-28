@@ -176,24 +176,6 @@
       }
     },
     {
-      "path": "pages/questions/index",
-      "style": {
-        "navigationBarTitleText": "我的内容"
-      }
-    },
-    {
-      "path": "pages/questions/myquestion",
-      "style": {
-        "navigationBarTitleText": "我的提问"
-      }
-    },
-    {
-      "path": "pages/questions/myanswer",
-      "style": {
-        "navigationBarTitleText": "我的回答"
-      }
-    },
-    {
       "path": "pages/my/shield",
       "style": {
         "navigationBarTitleText": "屏蔽设置"

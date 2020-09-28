@@ -101,7 +101,6 @@ export default {
       transform: '',
     };
   },
-  onLoad() {},
   computed: {
     t() {
       return this.i18n.t('topic');
@@ -122,6 +121,10 @@ export default {
       deep: true,
       immediate: true,
     },
+  },
+  created() {
+    console.log('这是组件created');
+    this.$forceUpdate();
   },
   methods: {
     // 数组取前几条数据

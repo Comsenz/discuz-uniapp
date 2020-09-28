@@ -87,7 +87,7 @@
             </navigator>
           </view>
           <!-- 回答 -->
-          <view class="themeItem__QA" v-if="addAsk === 1 && freeAsk">
+          <view class="themeItem__QA" v-if="addAsk === 1">
             <view class="themeItem_questions">@{{ beAskName }}</view>
             <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
             <view class="themeItem_to">@{{ questionsName }}</view>
