@@ -160,6 +160,7 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'threadAudio',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,
