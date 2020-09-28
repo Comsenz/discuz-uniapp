@@ -22,7 +22,6 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
-              v-if="refreshStatus"
               ref="sun"
               :themid="threadId"
               :topic-status="thread.isApproved"
@@ -986,7 +985,6 @@ export default {
         }
 
         if (thread.firstPost.attachments) {
-          this.attachmentFileList = thread.firstPost.attachments;
           thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
             if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;

@@ -262,7 +262,8 @@ export default {
         !this.forums.other.can_create_thread_video &&
         !this.forums.other.can_create_thread_image &&
         !this.forums.other.can_create_thread_question &&
-        !this.forums.other.can_create_thread_audio
+        !this.forums.other.can_create_thread_audio &&
+        !this.forums.other.can_create_thread_goods
       ) {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingPermission') });
         return;
@@ -308,13 +309,20 @@ export default {
           type: 2,
         });
       }
-
+      if (this.forums.other.can_create_thread_goods) {
+        this.bottomData.push({
+          text: this.i18n.t('home.good'),
+          icon: 'icon-good',
+          name: 'good',
+          type: 5,
+        });
+      }
       if (this.forums.other.can_create_thread_question) {
         this.bottomData.push({
           text: this.i18n.t('home.questions'),
           icon: 'icon-wenda',
           name: 'questions',
-          type: 5,
+          type: 6,
         });
       }
 
@@ -327,6 +335,13 @@ export default {
       let url;
 
       if (item.type === 5) {
+        uni.navigateTo({
+          url: '/pages/topic/parse-goods',
+        });
+        return;
+      }
+
+      if (item.type === 6) {
         uni.navigateTo({
           url: '/pages/user/at-member?name=select',
         });
@@ -445,10 +460,9 @@ export default {
 }
 .ft-box {
   position: relative;
-  width: 22%;
+  width: 20%;
   height: 100rpx;
   padding-top: 15rpx;
-  padding-left: 40rpx;
   font-size: $fg-f3;
   text-align: center;
   box-sizing: border-box;
