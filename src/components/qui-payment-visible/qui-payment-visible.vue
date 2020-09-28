@@ -82,7 +82,11 @@ export default {
         return [];
       },
     },
-
+    // // 被提问用户ID
+    // beUserId: {
+    //   type: String,
+    //   default: '',
+    // },
     // 已支付人员
     thread: {
       type: Object,
