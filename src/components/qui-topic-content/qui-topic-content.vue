@@ -84,7 +84,7 @@
     <view class="themeItem__content">
       <view
         class="themeItem__content__con"
-        :style="{ position: payStatus ? 'static' : 'relative' }"
+        :style="{ position: !payStatus ? 'static' : 'relative' }"
       >
         <view class="themeItem__content__con__title" v-if="themeType == 1 && themeTitle">
           {{ themeTitle }}
@@ -186,7 +186,7 @@
           @previewPicture="previewPicture"
         ></qui-image>
         <view
-          v-if="!payStatus && threadPrice > 0 && themeType == 1"
+          v-if="payStatus"
           class="themeItem__content__con__cover"
           :style="{
             background:
@@ -195,10 +195,7 @@
                 : 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))',
           }"
         ></view>
-        <view
-          v-if="!payStatus && threadPrice > 0 && themeType == 1"
-          class="themeItem__content__con__surtip"
-        >
+        <view v-if="payStatus" class="themeItem__content__con__surtip">
           {{ p.surplus }}{{ p.contentHide }}
         </view>
       </view>

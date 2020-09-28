@@ -208,7 +208,6 @@
         ></qui-upload-audio>
       </view>
       <qui-cell-item
-        :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow

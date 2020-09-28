@@ -172,7 +172,7 @@ export default {
   methods: {
     userInfo() {
       const params = {
-        include: 'groups,wechat',
+        include: 'groups',
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
         if (res.paid) {
