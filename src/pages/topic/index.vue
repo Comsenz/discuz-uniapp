@@ -1432,7 +1432,11 @@ export default {
           this.moreData[7].canOpera = false;
           // #endif
           //追加更多操作权限字段
-          this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          if (data.type === 5 && data.question.is_answer === 1) {
+           this.moreData[0].canOpera = false;
+          } else {
+            this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          }
           this.moreData[2].canOpera = this.thread.canEssence;
           this.moreData[3].canOpera = this.thread.canSticky;
           this.moreData[1].canOpera = this.thread.canHide;
@@ -3094,9 +3098,6 @@ export default {
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
-        // setTimeout(() => {
-        //   this.$u.event.$emit('radioEditChange', thread);
-        // }, 1000);
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
       } else if (param.type === '4') {
