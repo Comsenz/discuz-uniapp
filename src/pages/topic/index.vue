@@ -168,7 +168,7 @@
                 :thread="thread"
                 :images-list="thread.question.images"
                 :answer-content="thread.question.content_html"
-                :is-onlooker="thread.isOnlooker"
+                :is-onlooker="thread.onlookerState"
                 btn-icon-name="rmb"
                 :btn-text="payThreadTypeText"
                 @personJump="personJump"
@@ -1293,7 +1293,7 @@ export default {
                   this.user.id !== (data.question.be_user_id && data.user.id) &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true &&
-                  data.isOnlooker === false
+                  data.onlookerState === false
                 ) {
                   this.answerPay = true;
                 }

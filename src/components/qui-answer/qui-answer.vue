@@ -21,7 +21,7 @@
       :person-num="thread.question.onlooker_number"
       :limit-count="10"
       :person-list="thread.onlookers"
-      :btn-show="!thread.isOnlooker"
+      :btn-show="!thread.onlookerState"
       :btn-icon-show="false"
       btn-icon-name="rmb"
       :btn-text="
