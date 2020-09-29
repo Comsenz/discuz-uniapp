@@ -170,7 +170,6 @@
 
       <qui-uploader
         :url="`${url}api/attachments`"
-        :header="header"
         :form-data="formData"
         :file-preview="filePreview"
         name="file"
@@ -972,7 +971,6 @@ export default {
     diaLogOk() {
       if (this.type === 5) {
         this.priceAsk = this.inputPrice;
-        // console.log(this.forums.set_site.site_onlooker_price, 'iiiiiii');
         this.$refs.popup.close();
         this.textShow = true;
         return;

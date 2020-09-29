@@ -345,6 +345,7 @@ export default {
     tmall: '天猫',
     pinduoduo: '拼多多',
     supportedLink: '现已支持以下商品链接',
+    goodsLinkEmpty: '商品链接不能为空',
     goodsLink: '请粘贴 \\ 输入商品链接',
   },
   pay: {
@@ -809,6 +810,7 @@ export default {
     codenotfound:
       '该邀请码不存在，请联系站长获取新的邀请码，若继续注册将以默认角色加入本站！是否继续注册？',
     codeforbid: '您当前已登录了帐号，无法使用邀请码进行注册，请退出后重试。',
+    jointosee: '加入站点后才可以查看',
   },
   // 搜索
   search: {

@@ -44,7 +44,7 @@ export default {
       if (this.link === '') {
         uni.showToast({
           icon: 'none',
-          title: '请输入商品链接',
+          title: this.i18n.t('topic.goodsLinkEmpty'),
           duration: 2000,
         });
       } else {
@@ -76,6 +76,7 @@ export default {
                 title: err.data.errors[0].detail[0],
                 duration: 2000,
               });
+              this.link = '';
             }
           });
       }
@@ -90,7 +91,7 @@ export default {
 
 .parse-goods {
   font-size: $fg-f3;
-  color: #000;
+  color: --color(--qui-FC-000);
   background-color: --color(--qui-BG-2);
 
   &-box {
@@ -111,12 +112,12 @@ export default {
       .image {
         width: 40rpx;
         height: 40rpx;
-        margin-right: 10rpx;
+        margin-right: 20rpx;
         vertical-align: middle;
       }
 
       .right {
-        margin-right: 46rpx;
+        margin-right: 50rpx;
       }
     }
 
@@ -126,8 +127,8 @@ export default {
       font-size: $fg-f3;
       color: --color(--qui-FC-B5);
       background-color: --color(--qui-BG-1);
-      border: 1px solid --color(--qui-FC-DDD);
-      border-radius: 10px;
+      border: 1rpx solid --color(--qui-FC-DDD);
+      border-radius: 10rpx;
     }
 
     &-btn {

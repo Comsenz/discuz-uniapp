@@ -1,6 +1,3 @@
-// #ifdef H5
-import { setCookie } from '@/utils/setCookie';
-// #endif
 import { SITE_PAY } from '@/common/const';
 
 module.exports = {
@@ -241,9 +238,6 @@ module.exports = {
         .dispatch('session/h5Login', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            // #ifdef H5
-            setCookie('token', res.data.data.attributes.access_token, 30);
-            // #endif
             console.log('登录成功：', res);
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
