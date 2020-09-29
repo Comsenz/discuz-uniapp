@@ -2,43 +2,45 @@
   <qui-page :data-qui-theme="theme" class="details">
     <view class="details-box">
       <view class="details-box__head">
-        全站白金会员
+        {{ paidusergrouplist.name }}
       </view>
-      <!-- <view class="details-box__center">
-        让青小蛙把压箱底的工具都 翻了出来，有用来保护眼睛的护目镜、防灰尘的口罩手
-        套鬼知道当年青小蛙为了什么买齐了全套。但是，这好 像不太够。
-        亚马逊的这些防护用品来自美国亚马逊、日本亚马逊德 国亚马逊和英国亚马逊，均可以直邮中国大陆。
-      </view> -->
       <view class="details-box__foot">
         <view class="details-box__foot__top">
-          购买后拥有以下权限：
+          {{ i18n.t('modify.haveauthority') }}
         </view>
         <view class="details-box__foot__center">
           <view
             class="details-box__foot__center__box"
-            v-for="(item, index) in paidusergroup[1].permission"
+            v-for="(item, index) in paidusergroup"
             :key="index"
           >
-            {{ item.permission }}
+            {{ i18n.t(`permission.${item.permission}`) }}
           </view>
-          <view class="details-box__foot__center__box">帖子操作帖子操作帖子操作</view>
-          <view class="details-box__foot__center__box">帖子操作</view>
-          <view class="details-box__foot__center__box">帖子操作</view>
-          <view class="details-box__foot__center__box">帖子操作</view>
         </view>
       </view>
       <view class="details-box__bottom">
-        <view class="details-box__bottom__top">
-          有效期：
+        <view class="details-box__bottom__top">{{ i18n.t('modify.termofvalidity') }}：</view>
+        <view class="details-box__bottom__bot" v-if="oder">
+          {{ i18n.t('modify.purchase') }}{{ paidusergrouplist.days }}
+          {{ i18n.t('modify.daysafter') }}
         </view>
-        <view class="details-box__bottom__bot">
-          购买90天后
-        </view>
+        <view class="details-box__bottom__bot" v-if="!oder">{{ fun(expirationTime) }}</view>
+        <view class="details-box__bottom__bot" v-if="!oder">{{ sun(expirationTime) }}</view>
       </view>
-      <view class="details-box__purchase purchase-model">
-        <view class="details-box__purchase-list">
-          <qui-cell-item title="¥20元" slot-right :arrow="false" brief="你好" :border="false">
-            <view class="details-box__purchase-list-btn" @click="purchase">立即购买</view>
+      <view class="details-box__purchase purchase-model" v-if="oder">
+        <view class="details-box__purchase-list money">
+          <qui-cell-item
+            :title="pricefun(paidusergrouplist.fee)"
+            slot-right
+            :arrow="false"
+            :brief="
+              i18n.t('modify.termofvalidity') + paidusergrouplist.days + i18n.t('modify.days')
+            "
+            :border="false"
+          >
+            <view class="details-box__purchase-list-btn" @click="purchase">
+              {{ i18n.t('modify.immediately') }}
+            </view>
           </qui-cell-item>
         </view>
       </view>
@@ -49,12 +51,12 @@
           :pay-type-val="payTypeVal"
           :wallet-status="user.canWalletPay"
           :description-show="true"
-          :money="100"
+          :money="paidusergrouplist.fee"
           :balance="Number(user.walletBalance)"
-          pay-type="我的"
+          :pay-type="i18n.t('modify.purchaseuser')"
           to-name="李李李"
           :pay-type-data="payTypeData"
-          pay-password="111111"
+          :pay-password="pwdVal"
           @radioChange="radioChange"
           @paysureShow="paysureShow"
           @onInput="onInput"
@@ -124,23 +126,34 @@ export default {
       ], // 支付方式
       payTypeVal: 1,
       value: '',
-      price: 1, // 价格
+      price: '', // 价格
       orderSn: '', // 订单编号
       browser: 0, // 0为小程序，1为除小程序之外的设备
       isWeixin: false,
       isPhone: false,
       codeUrl: '', // 二维码支付url
       qrcodeShow: false, // 二维码显示
-      threadId: 222,
+      groupId: '',
       paidusergroup: [],
+      oder: '',
+      paidusergrouplist: '', // 权限用户
+      pwdVal: '', // 支付密码
+      expirationTime: '', // 到期时间
     };
   },
-  onLoad() {
+  onLoad(index) {
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
     // #endif
+    this.groupId = index.groups;
+    if (index.sice === '1') {
+      this.oder = true;
+    } else {
+      this.oder = false;
+      this.grouplist();
+    }
     this.allusergroups();
   },
   computed: {
@@ -148,29 +161,78 @@ export default {
     p() {
       return this.i18n.t('pay');
     },
+    currentLoginId() {
+      const userId = this.$store.getters['session/get']('userId');
+      return parseInt(userId, 10);
+    },
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
+    fun(num) {
+      const time = num.replace(/T/, ' ').replace(/Z/, '');
+      if (num) {
+        return `${time
+          .substring(0, 10)
+          .replace(/-/, '年')
+          .replace(/-/, '月')}日`;
+      }
+    },
+    sun(num) {
+      const now = new Date();
+      const pass = new Date(num);
+      const result = pass - now;
+      if (result > 1000 * 60 * 60 * 24) {
+        const days = Math.ceil(result / 1000 / 60 / 60 / 24);
+        return `距离过期还有${days}天`;
+      }
+      if (result < 1000 * 60 * 60 * 24 && result > 1000 * 60 * 60) {
+        const host = parseInt(result / 1000 / 60 / 60, 0);
+        return `距离过期还有${host}小时`;
+      }
+      if (result < 1000 * 60 * 60) {
+        const min = parseInt(result / 1000 / 60, 0);
+        return `距离过期还有${min}分钟`;
+      }
+    },
+    pricefun(num) {
+      if (num) {
+        const money = num.toFixed(2);
+        return `¥${money}元`;
+      }
+    },
     allusergroups() {
       const params = {
-        'filter[isPaid]': 1,
         include: 'permission',
       };
-      this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
-        console.log(res);
-        this.paidusergroup = res;
+      this.$store.dispatch('jv/get', [`groups/${this.groupId}`, { params }]).then(res => {
+        this.paidusergroup = res.permission;
+        this.paidusergrouplist = res;
+        this.price = res.fee;
+      });
+    },
+    grouplist() {
+      const params = {
+        sort: 'created_at',
+        'filter[user]': this.usersid,
+        'filter[delete_type]': 0,
+        include: 'group',
+      };
+      this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
+        this.expirationTime = res[0].expiration_time;
       });
     },
     purchase() {
-      console.log('购买', this.user);
       this.payShowStatus = true;
-      this.payTypeVal = 1;
+      this.payTypeVal = 4;
       this.$nextTick(() => {
         // this.$refs.payShow.payClickShow();
         this.$refs.payShow.payClickShow(this.payTypeVal);
       });
     },
     radioMyHead(val) {
-      // 是否显示用户头像
+      // 是否显示用户头像ad
       this.isAnonymous = !val;
     },
     // 选择支付方式，获取值
@@ -181,12 +243,12 @@ export default {
     // 输入密码完成时
     onInput(val) {
       this.value = val;
-      this.creatOrder(this.price, 3, this.value, 1);
+      this.creatOrder(this.price, 4, this.value, 1);
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
       if (payType === 0) {
-        this.creatOrder(this.price, 3, this.value, payType);
+        this.creatOrder(this.price, 4, this.value, payType);
       } else if (payType === 1) {
         // 这是详情页获取到的支付方式---钱包
       }
@@ -198,7 +260,7 @@ export default {
           type: 'orders',
         },
         type,
-        thread_id: this.threadId,
+        group_id: this.groupId,
         amount,
         is_anonymous: this.isAnonymous,
       };
@@ -320,7 +382,6 @@ export default {
         })
         .catch(err => {
           // 清空支付的密码
-          console.log(err);
           this.$refs.payShow.clearPassword();
         });
     },
@@ -435,15 +496,15 @@ export default {
   /* #ifdef H5 */
   padding-top: 0;
   /* #endif */
-  overflow: hidden;
+  // overflow: hidden;
   background: --color(--qui-BG-2);
   box-sizing: border-box;
   .details-box {
     // position: relative;
     width: 100vw;
-    height: 100vh;
+    // height: 100vh;
     /* #ifdef H5 */
-    padding-top: 88rpx;
+    padding: 88rpx 0 150rpx;
     /* #endif */
     box-sizing: border-box;
   }
@@ -519,16 +580,23 @@ export default {
       }
     }
     &__purchase {
-      position: absolute;
+      position: fixed;
       bottom: 0;
+      z-index: 1;
       /* #ifdef H5 */
       width: 100%;
       /* #endif */
       height: 130rpx;
       padding: 15rpx 40rpx 0;
+      background: --color(--qui-BG-2);
       border-top: 2rpx solid --color(--qui-BG-ED);
       box-sizing: border-box;
     }
+  }
+}
+/deep/.money {
+  .cell-item__body__content-title {
+    color: #fa5151;
   }
 }
 .purchase-model {

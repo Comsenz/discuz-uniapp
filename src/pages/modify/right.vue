@@ -10,7 +10,7 @@
           "
           @click="powerlist(1)"
         >
-          权力列表
+          {{ i18n.t('modify.powerlist') }}
         </view>
         <view
           :class="
@@ -20,7 +20,7 @@
           "
           @click="powerlist(2)"
         >
-          已购权力
+          {{ i18n.t('modify.purchasepower') }}
         </view>
       </view>
       <view class="power-box__package-foot" v-if="typenum1">
@@ -28,50 +28,25 @@
           class="power-box__package-foot-list"
           v-for="(item, index) in paidusergroup"
           :key="index"
-          @click="godetails"
+          @click="godetails(1, item._jv.id)"
         >
           <qui-cell-item :title="item.name" slot-right :arrow="false" :border="false">
             <view class="money">¥{{ item.fee.toFixed(2) }}</view>
           </qui-cell-item>
         </view>
-        <!-- <view class="power-box__package-foot-list" @click="godetails">
-          <qui-cell-item
-            title="全站白金会员"
-            slot-right
-            :arrow="false"
-            brief="你好"
-            :border="false"
-          >
-            <view class="money">¥1150.0</view>
-          </qui-cell-item>
-        </view> -->
       </view>
       <view class="power-box__package-foots" v-if="typenum2">
-        <view class="power-box__package-foots-list" @click="godetails">
-          <qui-cell-item title="全站白金会员" slot-right :arrow="false" :border="false">
-            <view class="time">2013-3-3 到期</view>
-          </qui-cell-item>
-        </view>
-        <view class="power-box__package-foots-list" @click="godetails">
-          <qui-cell-item
-            title="全站白金会员"
-            slot-right
-            :arrow="false"
-            brief="你好"
-            :border="false"
-          >
-            <view class="time">2013-3-3 到期</view>
-          </qui-cell-item>
-        </view>
-        <view class="power-box__package-foots-list" @click="godetails">
-          <qui-cell-item
-            title="全站白金会员"
-            slot-right
-            :arrow="false"
-            brief="你好"
-            :border="false"
-          >
-            <view class="time">2013-3-3 到期</view>
+        <view
+          class="power-box__package-foots-list"
+          v-for="(sitem, index) in privilegeUserGroup"
+          :key="index"
+          @click="godetails(2, sitem.group_id)"
+        >
+          <qui-cell-item :title="sitem.group.name" slot-right :arrow="false" :border="false">
+            <view class="time">
+              {{ fun(sitem.expiration_time) }}
+              {{ i18n.t('modify.termout') }}
+            </view>
           </qui-cell-item>
         </view>
       </view>
@@ -80,25 +55,50 @@
 </template>
 
 <script>
+import user from '@/mixin/user';
+
 export default {
+  mixins: [user],
   data() {
     return {
       typenum1: true,
       typenum2: false,
       paidusergroup: [],
+      privilegeUserGroup: [], // 已购买用户组权限
     };
   },
   onLoad() {
     this.allusergroups();
+    this.allusergroupsusers();
+    // this.allusergroupsuser();
+  },
+  computed: {
+    usersid() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   methods: {
+    fun(sun) {
+      const time = sun.replace(/T/, ' ').replace(/Z/, '');
+      return time.substring(0, 10);
+    },
     allusergroups() {
       const params = {
         'filter[isPaid]': 1,
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
-        console.log(res);
         this.paidusergroup = res;
+      });
+    },
+    allusergroupsusers() {
+      const params = {
+        sort: 'created_at',
+        'filter[user]': this.usersid,
+        'filter[delete_type]': 0,
+        include: 'group',
+      };
+      this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
+        this.privilegeUserGroup = res;
       });
     },
     powerlist(index) {
@@ -110,9 +110,9 @@ export default {
         this.typenum2 = true;
       }
     },
-    godetails() {
+    godetails(index, group) {
       uni.navigateTo({
-        url: '/pages/modify/rightdetails',
+        url: `/pages/modify/rightdetails?sice=${index}&groups=${group}`,
       });
     },
   },
