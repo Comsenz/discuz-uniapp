@@ -1279,14 +1279,14 @@ export default {
                   this.beAsk = true;
                   console.log('显示问答按钮');
                   // 问答免费 已回答 && 允许围观 所有人都可以看
-                } else if (data.question.is_answer === 1 && this.forums.other.can_be_onlooker === true) {
+                } else if (data.question.is_answer === 1 && data.question.is_onlooker === true) {
                   this.beAsk = false;
                   this.payment = true;
                   console.log('显示答案');
-                } else if (data.question.is_answer === 1 && this.forums.other.can_be_onlooker === false) {
+                } else if (data.question.is_answer === 1 && data.question.is_onlooker === false) {
                   this.beAsk = false;
                   this.payment = false;
-                  this.answerPay = true;
+                  this.answerPay = false;
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1294,7 +1294,7 @@ export default {
                   console.log('显示问答按钮');
                 } else if (
                   this.user.id === data.question.be_user_id ||
-                  (data.user.id && data.question.is_answer === 1)
+                  (data.user.id && data.question.is_answer === 1 && data.question.is_onlooker === true)
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
