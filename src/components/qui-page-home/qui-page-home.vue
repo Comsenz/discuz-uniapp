@@ -507,7 +507,7 @@ export default {
 
     if (this.forums.set_site) {
       uni.setNavigationBarTitle({
-        title: this.forums.set_site.site_name,
+        title: `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
       });
     }
 
@@ -619,6 +619,9 @@ export default {
       this.threads = [];
       await this.loadThreads();
       this.checkoutTheme = false;
+      uni.setNavigationBarTitle({
+        title: `${dataInfo.name} - ${this.forums.set_site.site_name}`,
+      });
     },
     // 筛选分类里的搜索
     searchClick() {
