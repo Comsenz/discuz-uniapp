@@ -191,4 +191,7 @@ $height: calc(100vh - 110rpx);
 /deep/ .themeCount .addFine {
   display: none;
 }
+/deep/ .themeCount .addAsk {
+  display: none;
+}
 </style>

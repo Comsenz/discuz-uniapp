@@ -210,6 +210,9 @@ export default {
   .themeCount .addFine {
     display: none;
   }
+  .themeCount .addAsk {
+    display: none;
+  }
   .themeCount .icon-delete {
     position: absolute;
     top: 35rpx;
