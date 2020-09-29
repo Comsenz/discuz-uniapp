@@ -858,6 +858,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      deleteImgId: '', // 删除时图片Id
       followStatus: '', // 当前关注状态
       beRewarded: false,
       curUrl: '', // 当前页面的路由
@@ -1250,47 +1251,51 @@ export default {
             // #endif
             console.log(data, '详情页主题');
             if (data.question) {
-              console.log('wenda')
+              console.log('wenda');
               this.platformDate =
                 data.question.price * (this.forums.set_site.site_master_scale / 10);
               this.beAskDate = (data.question.price - this.platformDate) / 2;
               this.beAskBeDate = (data.question.price - this.platformDate) / 2;
               // 问答免费
               if (data.question.price === '0.00') {
-                console.log('ooooo')
+                console.log('ooooo');
                 // 问答免费 当前登录ID == 被提问ID && 未回答
-                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0 ){
+                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
-                  console.log('显示问答按钮')   
-                  // 问答免费 已回答 所有人都可以看               
-                } else if ( data.question.is_answer === 1 ) {
+                  console.log('显示问答按钮');
+                  // 问答免费 已回答 所有人都可以看
+                } else if (data.question.is_answer === 1) {
                   this.beAsk = false;
                   this.payment = true;
-                  console.log('显示答案')
+                  console.log('显示答案');
                 }
               } else if (data.question.price > '0.00') {
-                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0 ) {
+                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
-                  console.log('显示问答按钮')                   
-                } else if (this.user.id === data.question.be_user_id || data.user.id && data.question.is_answer === 1) {
+                  console.log('显示问答按钮');
+                } else if (
+                  this.user.id === data.question.be_user_id ||
+                  (data.user.id && data.question.is_answer === 1)
+                ) {
                   this.beAsk = false;
                   this.answerPay = true;
-                  console.log('显示答案111')
-                } else if ((this.user.id === data.question.be_user_id || data.user.id) &&
-                data.question.is_answer === 1 &&
-                data.question.onlooker_number > 0) {
-                this.answerPay = true;
-                this.beAsk = false;                  
-                } else if (this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 1 &&
-                data.question.is_onlooker === true &&
-                data.isOnlooker === false) {
+                  console.log('显示答案111');
+                } else if (
+                  (this.user.id === data.question.be_user_id || data.user.id) &&
+                  data.question.is_answer === 1 &&
+                  data.question.onlooker_number > 0
+                ) {
                   this.answerPay = true;
-                } 
+                  this.beAsk = false;
+                } else if (
+                  this.user.id !== (data.question.be_user_id && data.user.id) &&
+                  data.question.is_answer === 1 &&
+                  data.question.is_onlooker === true &&
+                  data.isOnlooker === false
+                ) {
+                  this.answerPay = true;
+                }
               }
-
-
-
 
               // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
               // if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1434,7 +1439,7 @@ export default {
           // #endif
           //追加更多操作权限字段
           if (data.type === 5 && data.question.is_answer === 1) {
-           this.moreData[0].canOpera = false;
+            this.moreData[0].canOpera = false;
           } else {
             this.moreData[0].canOpera = this.thread.firstPost.canEdit;
           }
@@ -2570,9 +2575,10 @@ export default {
     },
     // 删除图片
     uploadClear(list, del) {
+      console.log('触发删除');
       const id = list.id;
       this.deleteType = 0;
-      this.deleteId = id;
+      this.deleteImgId = id;
       this.deleteIndex = del;
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteImgSure');
@@ -2848,9 +2854,14 @@ export default {
           this.deletePost,
         );
       } else if (this.deleteType === 0) {
+        console.log('确定删除');
         // 删除类型为评论时上传的图片
-        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+        this.delAttachments(this.deleteImgId, this.deleteIndex).then(() => {
           this.$refs.upload.clear(this.deleteIndex);
+          this.$refs.upload.getValue().forEach((value, key, item) => {
+            value.id == this.deleteImgId && item.splice(key, 1);
+          });
+          // console.log(this.$refs.upload.getValue(), '这是列表');
         });
       }
     },
