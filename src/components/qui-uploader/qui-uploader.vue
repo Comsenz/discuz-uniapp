@@ -107,6 +107,7 @@ export default {
       newindex: [],
       cunmumber: 1,
       uploadType: '',
+      header: {}, // 上传图片header
     };
   },
   watch: {
