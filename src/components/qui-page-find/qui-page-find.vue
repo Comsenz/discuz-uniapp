@@ -17,8 +17,8 @@
         <qui-cell-item :title="i18n.t('topic.topic')" arrow :border="false"></qui-cell-item>
       </navigator>
     </view>
-    <view class="find-item">
-      <navigator url="/pages/topic/list" hover-class="none">
+    <view class="find-item" v-if="forums.set_site.site_pay_group_close === '1' ? true : false">
+      <navigator url="/pages/modify/right" hover-class="none">
         <qui-cell-item
           :title="i18n.t('topic.permissionPurchase')"
           arrow
@@ -30,7 +30,10 @@
 </template>
 
 <script>
+import forums from '@/mixin/forums';
+
 export default {
+  mixins: [forums],
   data() {
     return {
       searchValue: '',
