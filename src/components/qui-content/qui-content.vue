@@ -88,10 +88,10 @@
           </view>
           <!-- 回答 -->
           <view class="themeItem__QA" v-if="addAsk === 1">
-            <view class="themeItem_questions">@{{ beAskName }}</view>
-            <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
-            <view class="themeItem_to">@{{ questionsName }}</view>
-            <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
+            <view class="themeItem_questions">@{{ questionsName }}</view>
+            <view class="themeItem_put">{{ i18n.t('home.to') }}</view>
+            <view class="themeItem_to">@{{ beAskName }}</view>
+            <view class="themeItem_ask">{{ i18n.t('home.putQuestions') }} :</view>
           </view>
           <view :class="themPayBtn ? 'themeItem__content__uparse' : ''">
             <qui-icon

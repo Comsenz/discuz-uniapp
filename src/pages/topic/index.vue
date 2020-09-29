@@ -155,7 +155,7 @@
             <view v-if="answerPay" class="answerPay">
               <qui-answer
                 :user-info="thread.user"
-                :avatar-url="thread.user.avatarUrl"
+                :avatar-url="thread.question.beUser.avatarUrl"
                 :user-name="thread.question.beUser.username"
                 :is-real="thread.question.beUser.isReal"
                 :user-role="thread.user.groups"
@@ -186,6 +186,7 @@
                 :answer-content="thread.question.content_html"
                 :images-list="thread.question.images"
                 :thread="thread"
+                :be-user-id="thread.question.be_user_id"
               ></qui-payment-visible>
             </view>
             <view v-if="likedUsers.length > 0">

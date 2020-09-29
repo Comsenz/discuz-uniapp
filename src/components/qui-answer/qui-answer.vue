@@ -8,6 +8,7 @@
       :user-id="userId"
       :user-role="userRole"
       :theme-time="themeTime"
+      @personJump="personJump(thread.question.be_user_id)"
     ></qui-topic-header>
     <!-- 回答内容 -->
     <div class="theme-content" v-if="isOnlooker">

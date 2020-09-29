@@ -339,6 +339,12 @@ export default {
     payNum: '人支付',
     visible: '可见',
     paymentViewAudio: '查看音频内容',
+    jingdong: '京东',
+    taobao: '淘宝',
+    tmall: '天猫',
+    pinduoduo: '拼多多',
+    supportedLink: '现已支持以下商品链接',
+    goodsLink: '请粘贴 \\ 输入商品链接',
   },
   pay: {
     passwordTip: '请输入支付密码',

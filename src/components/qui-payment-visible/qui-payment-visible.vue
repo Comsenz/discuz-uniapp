@@ -8,6 +8,7 @@
       :user-id="userId"
       :user-role="userRole"
       :theme-time="themeTime"
+      @personJump="personJump(thread.question.be_user_id)"
     ></qui-topic-header>
 
     <!-- 回答内容 -->
@@ -26,7 +27,7 @@
         :btn-icon-show="true"
         btn-icon-name="rmb"
         :btn-text="''"
-        @personJump="personJump"
+        @personJump="personJump()"
       ></qui-person-list>
     </view>
   </view>
@@ -81,7 +82,11 @@ export default {
         return [];
       },
     },
-
+    // // 被提问用户ID
+    // beUserId: {
+    //   type: String,
+    //   default: '',
+    // },
     // 已支付人员
     thread: {
       type: Object,

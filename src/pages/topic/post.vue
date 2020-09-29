@@ -224,7 +224,7 @@
           @click="cellClick('pay')"
         ></qui-cell-item>
       </view>
-      <view v-else-if="type !== 0">
+      <view v-else-if="type !== 0 && type !== 5">
         <qui-cell-item
           :class="price > 0 ? 'cell-item-right-text' : ''"
           :title="
