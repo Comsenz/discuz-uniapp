@@ -23,7 +23,7 @@
         :type="i18n.t('topic.paids')"
         :person-num="thread.question.onlooker_number"
         :person-list="thread.onlookers"
-        :btn-show="!thread.isOnlooker && thread.question.price === '0'"
+        :btn-show="!thread.onlookerState && thread.question.price === '0'"
         :btn-icon-show="true"
         btn-icon-name="rmb"
         :btn-text="''"

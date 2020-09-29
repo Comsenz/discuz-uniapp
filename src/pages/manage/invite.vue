@@ -21,10 +21,12 @@
             <qui-invite
               :total="total"
               :status="status"
-              :list="allInviteList"
-              v-if="allInviteList && allInviteList.length > 0"
+              :list="invitationList"
+              :loading-type="loadingType"
+              v-if="invitationList && invitationList.length > 0"
               @setInvalid="setInvalid"
               @share="share"
+              @pullDown="pullDown"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
           </view>
@@ -32,8 +34,10 @@
             <qui-invite
               :total="total"
               :status="status"
-              :list="allInviteList"
-              v-if="allInviteList && allInviteList.length > 0"
+              :list="invitationList"
+              :loading-type="loadingType"
+              v-if="invitationList && invitationList.length > 0"
+              @pullDown="pullDown"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
           </view>
@@ -41,8 +45,10 @@
             <qui-invite
               :total="total"
               :status="status"
-              :list="allInviteList"
-              v-if="allInviteList && allInviteList.length > 0"
+              :list="invitationList"
+              :loading-type="loadingType"
+              v-if="invitationList && invitationList.length > 0"
+              @pullDown="pullDown"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
           </view>
@@ -50,8 +56,10 @@
             <qui-invite
               :total="total"
               :status="status"
-              :list="allInviteList"
-              v-if="allInviteList && allInviteList.length > 0"
+              :list="invitationList"
+              :loading-type="loadingType"
+              v-if="invitationList && invitationList.length > 0"
+              @pullDown="pullDown"
             ></qui-invite>
             <qui-no-data :tips="i18n.t('manage.noContent')" v-else></qui-no-data>
           </view>
@@ -141,10 +149,15 @@ export default {
       ],
       navbarHeight: 0,
       isWeixin: '', // 是否是微信浏览器
+      loadingType: '',
+      pageNum: 1, // 当前页数
+      pageSize: 15, // 每页显示条数
+      invitationList: [],
     };
   },
   onLoad() {
     this.getInviteList(1);
+    this.invitationList = [];
     this.getGroupList();
     // #ifdef H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
@@ -227,15 +240,34 @@ export default {
       return this.$store.getters['jv/get'](`users/${this.currentLoginId}`);
     },
   },
+  watch: {
+    allInviteList: {
+      handler(newVal) {
+        let inviteData = [];
+        const hash = {};
+        inviteData = [...this.invitationList, ...newVal];
+        inviteData = inviteData.reduce((item, next) => {
+          // eslint-disable-next-line no-unused-expressions
+          hash[next._jv.id] ? '' : (hash[next._jv.id] = true && item.push(next));
+          return item;
+        }, []);
+        this.invitationList = inviteData;
+      },
+      deep: true,
+    },
+  },
   methods: {
     // 调用 管理邀请列表 接口
     getInviteList(status) {
       const params = {
         'filter[status]': status,
+        'page[number]': this.pageNum,
+        'page[limit]': this.pageSize,
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'invite' } });
       this.$store.dispatch('jv/get', ['invite', { params }]).then(res => {
         this.total = res._jv.json.meta.total;
+        this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
       });
     },
     // 调用 获取所有用户组 接口
@@ -249,6 +281,8 @@ export default {
     // 改变标签页
     onClickItem(e) {
       if (e.currentIndex !== this.current) {
+        this.pageNum = 1;
+        this.invitationList = [];
         this.current = e.currentIndex;
         this.status = this.tabList[e.currentIndex].status;
         this.getInviteList(this.tabList[e.currentIndex].status);
@@ -284,6 +318,7 @@ export default {
             if (res) {
               this.$refs.popup.close();
               this.getInviteList(1);
+              this.invitationList = [];
             }
           })
           .catch(err => {
@@ -297,6 +332,7 @@ export default {
             if (res) {
               this.$refs.popup.close();
               this.getInviteList(1);
+              this.invitationList = [];
             }
           })
           .catch(err => {
@@ -308,6 +344,7 @@ export default {
     setInvalid(id) {
       this.$store.dispatch('jv/delete', `invite/${id}`).then(res => {
         if (res) {
+          this.invitationList = [];
           this.getInviteList(this.status);
           uni.showToast({
             title: this.i18n.t('manage.invalidLink'),
@@ -336,6 +373,13 @@ export default {
     // 取消修改用户组
     cancelModify() {
       this.$refs.popup.close();
+    },
+    pullDown() {
+      if (this.loadingType !== 'more') {
+        return;
+      }
+      this.pageNum += 1;
+      this.getInviteList(this.status);
     },
   },
 };

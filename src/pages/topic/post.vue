@@ -469,6 +469,7 @@
           :balance="Number(user.walletBalance)"
           :pay-password="pwdVal"
           :pay-type-data="payTypeData"
+          :to-name="beUserName"
           @paysureShow="paysureShow"
           @onInput="onInput"
           @radioChange="radioChange"
@@ -971,9 +972,11 @@ export default {
     diaLogOk() {
       if (this.type === 5) {
         this.priceAsk = this.inputPrice;
-        this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-        this.haveDate = (this.priceAsk - this.platformDate) / 2;
-        this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
+        this.platformDate = (this.priceAsk * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+        this.haveDate = ((this.priceAsk - this.platformDate) / 2).toFixed(2);
+        this.answerIsDate =((this.priceAsk - this.platformDate) / 2).toFixed(2);
+        this.$refs.popup.close();
+        this.textShow = true;
         return;
       }
 
