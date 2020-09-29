@@ -519,10 +519,12 @@ export default {
     uni.$on('updateNoticePage', () => {
       // console.log('99999');
       this.headerShow = true;
+      this.ontrueGetList();
     });
     uni.$on('updateMy', () => {
       // console.log('我的我的');
       this.headerShow = true;
+      this.ontrueGetList();
     });
 
     // #endif
