@@ -20,6 +20,7 @@
                 {{ t.commentTip }}
               </view>
               <qui-topic-content
+                :theme-parts="1"
                 :topic-status="thread.isApproved"
                 :follow-show="post.user.follow != null"
                 :avatar-url="post.user.avatarUrl"
