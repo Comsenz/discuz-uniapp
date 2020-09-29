@@ -256,6 +256,11 @@ const mutations = {
   },
   [SET_GOOD](state, payload) {
     state.good = payload;
+    if (payload) {
+      state.good = payload;
+    } else {
+      state.good = {};
+    }
   },
   [SET_INVITE_CODE](state, payload) {
     state.inviteCode = payload;
