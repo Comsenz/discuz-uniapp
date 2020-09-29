@@ -176,7 +176,7 @@
         name="file"
         :async-clear="true"
         ref="upload"
-        v-if="type === 1 || type === 3 || type === 5"
+        v-if="type === 3 || type === 5"
         @change="uploadChange"
         @clear="uploadClear"
         @uploadClick="uploadClick"
@@ -1399,7 +1399,6 @@ export default {
             status = false;
           } else if (this.payType === 1) {
             // 内容免费，附件付费
-            console.log(this.$refs.uploadFiles.getValue(), '这是附件列表');
             if (this.$refs.uploadFiles.getValue().length === 0) {
               // 附件不能为空
               this.$refs.toast.show({
