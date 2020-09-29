@@ -42,16 +42,29 @@
           <label v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
               :mark="item.id"
-              :title="item.username"
+              :title="item.toUser.username"
               :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
               :value="item.groups[0].name"
-              :label="item.label"
-              :is-real="item.isReal"
+              :label="item.toUser.label"
+              :is-real="item.toUser.isReal"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>
           </label>
         </checkbox-group>
+        <view v-if="select && followStatus">
+          <view v-for="item in allFollow" :key="item.id">
+            <qui-avatar-cell
+              :mark="item.toUser.id"
+              :title="item.username"
+              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
+              :value="item.toUser.groups.length > 0 ? item.toUser.groups[0].name : ''"
+              :label="item.label"
+              :is-real="item.isReal"
+              @click="radioChange(item)"
+            ></qui-avatar-cell>
+          </view>
+        </view>
         <view v-if="select">
           <view v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
@@ -217,6 +230,7 @@ export default {
         if (Object.keys(res).nv_length - 1 === 0) {
           this.loadingText = 'search.noFollowers';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
+          // console.log('没有更多')
           this.loadingText = 'discuzq.list.noMoreData';
         }
       });
