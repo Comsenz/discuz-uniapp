@@ -433,7 +433,7 @@ export default {
   grid-gap: 13rpx;
   width: 100%;
   min-height: 160rpx;
-  padding: 30rpx 0;
+  padding-top: 30rpx;
 
   &__uploader-file {
     position: relative;

@@ -67,7 +67,6 @@ export default {
     });
 
     uni.$on('loadedThread', res => {
-      console.log(123);
       this.vditor.insertValue(res.firstPost.content);
     });
 
@@ -95,7 +94,6 @@ export default {
     uni.$on('playVideo', item => {
       const a = document.createElement('a');
       appCommonH.insertElementAtCaret(a);
-      // document.execCommand('insertHTML', false, `![](${item.path})`);
       videoRender(a, item.path);
     });
   },
@@ -183,7 +181,6 @@ export default {
       mode: 'wysiwyg',
       after: () => {
         uni.$emit('vditor', this.vditor, this);
-        this.vditor.focus();
       },
       cache: {
         enable: false,
@@ -232,9 +229,7 @@ export default {
   position: relative;
   width: 100%;
 }
-@media screen and (max-width: 520px) {
-  .vditor-toolbar__item {
-    padding: 0 3px;
-  }
+#editor {
+  user-select: auto;
 }
 </style>

@@ -20,6 +20,7 @@
                 {{ t.commentTip }}
               </view>
               <qui-topic-content
+                :theme-parts="1"
                 :topic-status="thread.isApproved"
                 :follow-show="post.user.follow != null"
                 :avatar-url="post.user.avatarUrl"
@@ -511,6 +512,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      deleteImgId: '', // 删除时图片Id
       sortSeleShow: false, // 排序菜单状态
       sortSelectList: [
         { text: this.i18n.t('topic.sortTimeSequence'), type: '0', canOpera: true },
@@ -1059,7 +1061,7 @@ export default {
     uploadClear(list, del) {
       const id = list.id;
       this.deleteType = 0;
-      this.deleteId = id;
+      this.deleteImgId = id;
       this.deleteIndex = del;
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteImgSure');
@@ -1130,8 +1132,11 @@ export default {
         );
       } else if (this.deleteType === 0) {
         // 删除类型为回复时上传的图片
-        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+        this.delAttachments(this.deleteImgId, this.deleteIndex).then(() => {
           this.$refs.upload.clear(this.deleteIndex);
+          this.$refs.upload.getValue().forEach((value, key, item) => {
+            value.id == this.deleteImgId && item.splice(key, 1);
+          });
         });
       }
     },
