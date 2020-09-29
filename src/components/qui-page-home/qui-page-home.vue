@@ -327,7 +327,7 @@ export default {
             { label: this.i18n.t('home.invitation'), value: '1', selected: false },
             { label: this.i18n.t('home.video'), value: '2', selected: false },
             { label: this.i18n.t('home.picture'), value: '3', selected: false },
-            { label: this.i18n.t('home.questions'), value: '4', selected: false },
+            { label: this.i18n.t('home.questions'), value: '5', selected: false },
           ],
         },
         {
