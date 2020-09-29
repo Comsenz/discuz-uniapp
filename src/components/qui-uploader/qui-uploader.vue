@@ -55,12 +55,12 @@ export default {
       default: '',
       type: String,
     },
-    header: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
+    // header: {
+    //   type: Object,
+    //   default: () => {
+    //     return {};
+    //   },
+    // },
     type: {
       default: 'image',
       type: String,
@@ -107,6 +107,7 @@ export default {
       newindex: [],
       cunmumber: 1,
       uploadType: '',
+      header: {}, // 上传图片header
     };
   },
   watch: {
@@ -290,6 +291,10 @@ export default {
     // 上传图片到服务器
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
+      const token = uni.getStorageSync('access_token');
+      _this.header = {
+        authorization: `Bearer ${token}`,
+      };
       if (_this.chooseType === 0) {
         // 这是首页上传图片
         uni.showLoading({

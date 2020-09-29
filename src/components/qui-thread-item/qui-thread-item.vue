@@ -117,6 +117,9 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (id <= 0) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });

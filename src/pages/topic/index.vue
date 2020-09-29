@@ -1232,19 +1232,30 @@ export default {
             }
             this.attachmentFileList = [];
             data.firstPost.attachments.forEach(attachment => {
-              if(data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
+              if (data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
                 this.attachmentFileList.push(attachment);
               }
             });
             // #ifndef MP-WEIXIN
             let titleText = '';
             if (data.type === 1) {
-              titleText = data.title;
+              if (data.title.length > 40) {
+                titleText = data.title.slice(0, 30) + '... - ' + this.forums.set_site.site_name;
+              } else {
+                titleText = data.title + ' - ' + this.forums.set_site.site_name;
+              }
             } else {
               if (data.firstPost.summaryText) {
-                titleText = data.firstPost.summaryText.slice(0, 80);
+                if (data.firstPost.summaryText.length > 20) {
+                  titleText =
+                    data.firstPost.summaryText.slice(0, 20) +
+                    '... - ' +
+                    this.forums.set_site.site_name;
+                } else {
+                  titleText = data.firstPost.summaryText + ' - ' + this.forums.set_site.site_name;
+                }
               } else {
-                titleText = this.t.topicPageTitle;
+                titleText = this.t.topicPageTitle + ' - ' + this.forums.set_site.site_name;
               }
             }
             uni.setNavigationBarTitle({
@@ -2311,6 +2322,9 @@ export default {
           return;
         }
         // #endif
+      }
+      if (id <= 0) {
+        return;
       }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,

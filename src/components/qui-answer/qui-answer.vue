@@ -128,6 +128,9 @@ export default {
         }
         // #endif
       }
+      if (id <= 0) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });

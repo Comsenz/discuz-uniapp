@@ -170,7 +170,6 @@
 
       <qui-uploader
         :url="`${url}api/attachments`"
-        :header="header"
         :form-data="formData"
         :file-preview="filePreview"
         name="file"
@@ -972,9 +971,11 @@ export default {
     diaLogOk() {
       if (this.type === 5) {
         this.priceAsk = this.inputPrice;
-        this.platformDate = (this.priceAsk * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+        this.platformDate = (this.priceAsk * (this.forums.set_site.site_master_scale / 10)).toFixed(
+          2,
+        );
         this.haveDate = ((this.priceAsk - this.platformDate) / 2).toFixed(2);
-        this.answerIsDate =((this.priceAsk - this.platformDate) / 2).toFixed(2);
+        this.answerIsDate = ((this.priceAsk - this.platformDate) / 2).toFixed(2);
         this.$refs.popup.close();
         this.textShow = true;
         return;
