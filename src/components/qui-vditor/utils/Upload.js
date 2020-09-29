@@ -71,7 +71,6 @@ export default class Upload {
   }
 
   _insertImage(item) {
-    this.postComponent.uploadFile.push(item);
     document.execCommand(
       'insertHTML',
       false,

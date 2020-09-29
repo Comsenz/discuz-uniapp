@@ -249,7 +249,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 
 .qui-uploader-box {
-  margin-bottom: 30rpx;
+  padding: 30rpx 0;
   &__add__fonts {
     margin-top: 4rpx;
     font-size: $fg-f4;

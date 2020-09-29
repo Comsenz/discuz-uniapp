@@ -1232,7 +1232,9 @@ export default {
             }
             this.attachmentFileList = [];
             data.firstPost.attachments.forEach(attachment => {
-              this.attachmentFileList.push(attachment);
+              if(data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
+                this.attachmentFileList.push(attachment);
+              }
             });
             // #ifndef MP-WEIXIN
             let titleText = '';
