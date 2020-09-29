@@ -134,8 +134,8 @@ export default {
     },
     // 支付金额
     money: {
-      type: Number,
-      default: 0,
+      type: [Number, String],
+      default: 0.0,
     },
     // 余额
     balance: {

@@ -1,17 +1,29 @@
 <template>
   <qui-page :data-qui-theme="theme" class="parse-goods">
     <view class="parse-goods-box">
-      <view class="parse-goods-box-title">现以支持以下商品链接</view>
+      <view class="parse-goods-box-title">{{ i18n.t('topic.supportedLink') }}</view>
       <view class="parse-goods-box-image">
-        <image class="image" lazy-load src="@/static/jingdong.svg" />
-        <image class="image left right" lazy-load src="@/static/taobao.svg" />
-        <image class="image right" lazy-load src="@/static/tmall.svg" />
-        <image class="image" lazy-load src="@/static/pinduoduo.svg" />
+        <view class="box right">
+          <image class="image" lazy-load src="@/static/jingdong.svg" />
+          <text>{{ i18n.t('topic.jingdong') }}</text>
+        </view>
+        <view class="box right">
+          <image class="image" lazy-load src="@/static/taobao.svg" />
+          <text>{{ i18n.t('topic.taobao') }}</text>
+        </view>
+        <view class="box right">
+          <image class="image" lazy-load src="@/static/tmall.svg" />
+          <text>{{ i18n.t('topic.tmall') }}</text>
+        </view>
+        <view class="box">
+          <image class="image" lazy-load src="@/static/pinduoduo.svg" />
+          <text>{{ i18n.t('topic.pinduoduo') }}</text>
+        </view>
       </view>
       <textarea
         class="parse-goods-box-con"
         maxlength="10000"
-        placeholder="请粘贴 \ 输入商品链接"
+        :placeholder="i18n.t('topic.goodsLink')"
         v-model="link"
       />
       <qui-button class="parse-goods-box-btn" @click="handleNext">下一步</qui-button>
@@ -57,7 +69,14 @@ export default {
             }
           })
           .catch(err => {
-            console.log(err);
+            console.log('查询商品信息：', err);
+            if (err && err.data && err.data.errors) {
+              uni.showToast({
+                icon: 'none',
+                title: err.data.errors[0].detail[0],
+                duration: 2000,
+              });
+            }
           });
       }
     },
@@ -83,18 +102,21 @@ export default {
 
     &-image {
       margin: 30rpx 0;
+      font-size: $fg-f2;
 
-      .image {
-        width: 80rpx;
-        height: 80rpx;
+      .box {
+        display: inline-block;
       }
 
-      .left {
-        margin-left: 14rpx;
+      .image {
+        width: 40rpx;
+        height: 40rpx;
+        margin-right: 10rpx;
+        vertical-align: middle;
       }
 
       .right {
-        margin-right: 14rpx;
+        margin-right: 46rpx;
       }
     }
 

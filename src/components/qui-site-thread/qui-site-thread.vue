@@ -160,6 +160,7 @@ export default {
           'firstPost.images',
           'category',
           'threadVideo',
+          'threadAudio',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,
@@ -194,6 +195,7 @@ export default {
   background: --color(--qui-BG-2);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   &__title {
+    font-size: $fg-f4;
     font-weight: bold;
     color: --color(--qui-FC-333);
   }
@@ -230,6 +232,7 @@ export default {
   &__title {
     margin-top: 50rpx;
     margin-bottom: 10rpx;
+    font-size: $fg-f4;
     font-weight: bold;
     color: --color(--qui-FC-333);
   }

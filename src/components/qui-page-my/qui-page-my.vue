@@ -49,9 +49,9 @@
           <navigator url="/pages/my/favorite" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myfavorite')" arrow></qui-cell-item>
           </navigator>
-          <navigator url="/pages/questions/index" hover-class="none">
+          <!-- <navigator url="/pages/questions/index" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.mycontent')" arrow></qui-cell-item>
-          </navigator>
+          </navigator> -->
           <navigator url="/pages/my/shield" hover-class="none">
             <qui-cell-item
               :title="i18n.t('profile.myshield')"
@@ -259,7 +259,7 @@ export default {
     },
     // 设置粉丝点赞那些数字
     setNum(res) {
-      this.items[0].brief = res.threadCount || 0;
+      this.items[0].brief = res.questionCount || 0;
       this.items[1].brief = res.threadCount || 0;
       this.items[2].brief = res.followCount || 0;
       this.items[3].brief = res.fansCount || 0;

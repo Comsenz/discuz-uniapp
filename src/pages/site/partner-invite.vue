@@ -214,8 +214,8 @@ export default {
       opacity: 1;
     }
     .circleDet-txt {
-      color: --color(--qui-FC-333);
-      opacity: 1;
+      color: --color(--qui-FC-34);
+      opacity: 0.49;
     }
     .logo {
       height: 75rpx;

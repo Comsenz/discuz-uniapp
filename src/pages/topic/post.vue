@@ -176,7 +176,7 @@
         name="file"
         :async-clear="true"
         ref="upload"
-        v-if="type === 1 || type === 3 || type === 5"
+        v-if="type === 3 || type === 5"
         @change="uploadChange"
         @clear="uploadClear"
         @uploadClick="uploadClick"
@@ -208,7 +208,6 @@
         ></qui-upload-audio>
       </view>
       <qui-cell-item
-        :class="price > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
@@ -225,7 +224,7 @@
           @click="cellClick('pay')"
         ></qui-cell-item>
       </view>
-      <view v-else-if="type !== 0">
+      <view v-else-if="type !== 0 && type !== 5">
         <qui-cell-item
           :class="price > 0 ? 'cell-item-right-text' : ''"
           :title="
@@ -470,6 +469,7 @@
           :balance="Number(user.walletBalance)"
           :pay-password="pwdVal"
           :pay-type-data="payTypeData"
+          :to-name="beUserName"
           @paysureShow="paysureShow"
           @onInput="onInput"
           @radioChange="radioChange"
@@ -700,7 +700,7 @@ export default {
     });
     // #endif
     uni.$on('uploadVideoOver', data => {
-      console.log('这是计算周期里获取到的上传后的数据', data);
+      // console.log('这是计算周期里获取到的上传后的数据', data);
       this.percent = 1;
       if (data.doneResult) {
         this.fileId = data.doneResult.fileId;
@@ -972,9 +972,11 @@ export default {
     diaLogOk() {
       if (this.type === 5) {
         this.priceAsk = this.inputPrice;
-        this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-        this.haveDate = (this.priceAsk - this.platformDate) / 2;
-        this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
+        this.platformDate = (this.priceAsk * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+        this.haveDate = ((this.priceAsk - this.platformDate) / 2).toFixed(2);
+        this.answerIsDate =( (this.priceAsk - this.platformDate) / 2).toFixed(2);
+        this.$refs.popup.close();
+        this.textShow = true;
         return;
       }
 
@@ -1030,7 +1032,7 @@ export default {
     },
     // 选择支付查看的方式 0均免费， 1内容免费，附件付费，  2内容和附件都付费
     choicePayType(type) {
-      console.log(type, '类型');
+      // console.log(type, '类型');
       if (type === 0) {
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
       } else if (type === 1) {
@@ -1397,7 +1399,6 @@ export default {
             status = false;
           } else if (this.payType === 1) {
             // 内容免费，附件付费
-            console.log(this.$refs.uploadFiles.getValue(), '这是附件列表');
             if (this.$refs.uploadFiles.getValue().length === 0) {
               // 附件不能为空
               this.$refs.toast.show({
@@ -1534,9 +1535,9 @@ export default {
           uni.showLoading();
         }
         if (this.operating === 'edit') {
-          if (this.type === 5) {
-            // this.beUserName =
-          }
+          // if (this.type === 5) {
+          //   // this.beUserName =
+          // }
           this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
@@ -1729,6 +1730,7 @@ export default {
         params.attachment_price = this.price;
         params.price = '';
       }
+      console.log(params, '这是参数');
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
@@ -1871,6 +1873,7 @@ export default {
         this.postDetails = res;
         this.firstPostId = res.firstPost._jv.id;
         this.type = res.type;
+
         // #ifdef MP-WEIXIN
         this.markdownShow = false;
         // #endif
@@ -1905,7 +1908,16 @@ export default {
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
+          this.payType = 2;
+          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+        } else if (Number(res.attachmentPrice) > 0) {
+          this.price = res.attachmentPrice;
+          this.payType = 1;
+          this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+        } else {
+          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
+
         this.textAreaLength = this.type === 1 ? 10000 : 450;
         switch (Number(res.type)) {
           case 0:
@@ -1984,7 +1996,15 @@ export default {
           break;
         case 1:
           threads.title = this.postTitle;
-          threads.price = this.price;
+          // threads.price = this.price;
+          if (this.payType === 1) {
+            // console.log(this.price, '价格');
+            threads.attachment_price = this.price;
+            threads.price = '';
+          } else {
+            threads.attachment_price = '';
+            threads.price = this.price;
+          }
           threads.free_words = this.word;
           posts._jv.relationships.attachments = this.addImg();
           break;
@@ -2002,6 +2022,10 @@ export default {
           threads.file_id = this.audioBeforeList[0].id;
           threads.file_name = this.audioBeforeList[0].fileName;
           break;
+        case 5:
+          posts._jv.relationships.attachments = this.addImg();
+          // params._jv.relationships.question = this.addQuestion();
+          break;
         default:
           break;
       }
@@ -2018,6 +2042,7 @@ export default {
         this.$u.event.$emit('refreshFiles');
         return res;
       });
+      // console.log(threads, '这是编辑时传的参数');
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
       });
@@ -2070,13 +2095,12 @@ export default {
     },
   },
   onLoad(option) {
-    // console.log(option)
-    // if (option.type === 5) {
-    //   this.textAreaLength = 10000;
-    // }
     // 问答编辑不显示提问价格
     if (option.operating === 'edit') {
       this.askingPrice = false;
+    } else {
+      // 初始化默认内容附件均免费
+      this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
     }
     this.$u.event.$on('radioChange', item => {
       this.beUserName = item.username;
@@ -2084,6 +2108,12 @@ export default {
       this.userImage = item.avatarUrl;
     });
     if (option.type) this.type = Number(option.type);
+    // #ifdef MP-WEIXIN
+    const data = uni.getSystemInfoSync();
+    if (data.platform === 'ios' && this.type === 5) {
+      this.askingPrice = false;
+    }
+    // #endif
     // #ifdef H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
@@ -2229,7 +2259,7 @@ export default {
         }
       }
       if (this.type === 2) {
-        console.log(data, '这是在首页上传视频·····后传过来的数据');
+        // console.log(data, '这是在首页上传视频·····后传过来的数据');
         if (data.data) {
           if (data.data.doneResult) {
             this.fileId = data.data.doneResult.fileId;
@@ -2246,8 +2276,6 @@ export default {
         }
       }
     });
-    // 初始化默认内容附件均免费
-    this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
   },
   onShow() {
     let atMemberList = '';

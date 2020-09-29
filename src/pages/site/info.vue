@@ -172,7 +172,7 @@ export default {
   methods: {
     userInfo() {
       const params = {
-        include: 'groups,wechat',
+        include: 'groups',
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
         if (res.paid) {
@@ -417,8 +417,8 @@ export default {
       opacity: 1;
     }
     .circleDet-txt {
-      color: --color(--qui-FC-333);
-      opacity: 1;
+      color: --color(--qui-FC-34);
+      opacity: 0.49;
     }
     .logo {
       height: 75rpx;

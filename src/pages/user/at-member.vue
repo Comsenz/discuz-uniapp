@@ -90,20 +90,6 @@
         : i18n.t('discuzq.atMember.selected') + '(' + checkAvatar.length + ')'
         }}
       </qui-button>
-
-      <!-- <qui-button
-        v-if="select === select"
-        size="large"
-        :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
-        :disabled="Boolean(checkAvatar.length < 1)"
-        @click="getCheckQueMember"
-      >
-        {{
-        checkAvatar.length &lt; 1
-        ? i18n.t('discuzq.atMember.notSelected')
-        : i18n.t('discuzq.atMember.selectedUser') + '(' + checkAvatar.length + ')'
-        }}
-      </qui-button> -->
     </view>
   </qui-page>
 </template>
@@ -117,7 +103,7 @@ export default {
     return {
       allSiteUser: [], // 所有站点成员
       allFollow: [], // 所有关注成员
-      followStatus: false, // 第一次进来显示follow列表
+      followStatus: true, // 第一次进来显示follow列表
       checkAvatar: [], // 选择人员列表
       loadingText: 'discuzq.list.loading',
       searchValue: '', // 搜索值
@@ -259,8 +245,8 @@ export default {
   },
   onLoad(option) {
     this.select = option.name;
-    // console.log(this.select);
     if (option.name === 'select') {
+      this.followStatus = true;
       uni.setNavigationBarTitle({
         title: this.i18n.t('discuzq.atMember.selectUser'),
       });

@@ -60,9 +60,22 @@
                   <view class="dialog-box__header__info__time">{{ dialog.time }}</view>
                 </view>
               </view>
-              <view class="dialog-box__header__r">
+              <view class="dialog-box__header__r" @click.stop>
+                <qui-icon
+                  class="delete"
+                  name="icon-delete"
+                  size="26"
+                  color="#aaa"
+                  @click="deleteMessage(dialog)"
+                ></qui-icon>
                 <text class="dialog-box__header__r-red-circle" v-if="dialog.readAt === null"></text>
-                <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
+                <qui-icon
+                  class="arrow"
+                  name="icon-folding-r"
+                  size="22"
+                  color="#ddd"
+                  @click="jumpMsglistPage(dialog, index)"
+                ></qui-icon>
               </view>
             </view>
             <view class="dialog-box__con">
@@ -79,14 +92,25 @@
         </view>
       </scroll-view>
     </view>
+    <uni-popup ref="popDelete" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :before-close="true"
+        :content="i18n.t('core.deleteMessageSure')"
+        @close="handleCancel"
+        @confirm="handleOk"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
 <script>
 import { time2DateAndHM } from '@/utils/time';
 import user from '@/mixin/user';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
+  components: { uniPopupDialog },
   mixins: [user],
   props: {
     navTheme: {
@@ -116,6 +140,7 @@ export default {
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
       dialogList: [], // 会话列表
+      currentDialog: {},
       navbarHeight: 0, // 顶部导航栏的高度
     };
   },
@@ -150,6 +175,26 @@ export default {
     // #endif
   },
   methods: {
+    deleteMessage(dialog) {
+      this.currentDialog = dialog;
+      this.$refs.popDelete.open();
+    },
+    handleCancel() {
+      this.$refs.popDelete.close();
+    },
+    handleOk() {
+      this.$store.dispatch('jv/delete', `dialog/${this.currentDialog._jv.id}`).then(() => {
+        this.$refs.popDelete.close();
+        const { currentDialog } = this;
+        const { dialogList } = this;
+        this.dialogList.forEach((value, index) => {
+          if (value._jv.id === currentDialog._jv.id) {
+            dialogList.splice(index, 1);
+          }
+        });
+        this.dialogList = dialogList;
+      });
+    },
     // 调用 会话列表 的接口
     getDialogList() {
       const params = {
@@ -347,6 +392,9 @@ export default {
         background: --color(--qui-RED);
         border-radius: 50%;
         content: '';
+      }
+      .delete {
+        margin-right: 35rpx;
       }
     }
   }

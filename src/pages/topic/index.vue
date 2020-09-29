@@ -22,12 +22,11 @@
               {{ t.examineTip }}
             </view>
             <qui-topic-content
-              v-if="refreshStatus"
               ref="sun"
               :themid="threadId"
               :topic-status="thread.isApproved"
               :follow-show="thread.user.follow != null"
-              :pay-status="thread.price > 0 && thread.paid"
+              :pay-status="threadIsPaidCover"
               :video-status="(thread.price > 0 && thread.paid) || thread.price == 0"
               :user-info="thread.user"
               :avatar-url="thread.user.avatarUrl"
@@ -47,7 +46,7 @@
               :images-list="thread.firstPost.images"
               :select-list="selectList"
               :tags="[thread.category]"
-              :thread-price="thread.price"
+              :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
               :thread-is-essence="thread.isEssence"
               :media-url="thread.type == 2 ? thread.threadVideo.media_url : ''"
               :duration="thread.type == 2 ? thread.threadVideo.duration : ''"
@@ -156,7 +155,7 @@
             <view v-if="answerPay" class="answerPay">
               <qui-answer
                 :user-info="thread.user"
-                :avatar-url="thread.user.avatarUrl"
+                :avatar-url="thread.question.beUser.avatarUrl"
                 :user-name="thread.question.beUser.username"
                 :is-real="thread.question.beUser.isReal"
                 :user-role="thread.user.groups"
@@ -187,6 +186,7 @@
                 :answer-content="thread.question.content_html"
                 :images-list="thread.question.images"
                 :thread="thread"
+                :be-user-id="thread.question.be_user_id"
               ></qui-payment-visible>
             </view>
             <view v-if="likedUsers.length > 0">
@@ -858,6 +858,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      deleteImgId: '', // 删除时图片Id
       followStatus: '', // 当前关注状态
       beRewarded: false,
       curUrl: '', // 当前页面的路由
@@ -957,6 +958,7 @@ export default {
       conversationId: '', // 话题id
       attachmentFileList: [], // 附件列表
       refreshStatus: true, // 是否刷新
+      threadIsPaidCover: false, // 付费主题显示遮盖层
     };
   },
   onUnload() {
@@ -970,14 +972,7 @@ export default {
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       console.log('thread', thread);
-      this.refreshStatus = false;
-      this.$nextTick(() => {
-        if (this.thread.type === 1 && this.thread.firstPost.attachments) {
-          // console.log('有附件呀', this.refreshStatus);
-          this.attachmentFileList = this.thread.firstPost.attachments;
-          this.refreshStatus = !this.refreshStatus;
-        }
-      });
+
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
@@ -993,7 +988,6 @@ export default {
         }
 
         if (thread.firstPost.attachments) {
-          this.attachmentFileList = thread.firstPost.attachments;
           thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
             if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
@@ -1223,6 +1217,25 @@ export default {
 
             this.loaded = false;
           } else {
+            if (data.type === 1) {
+              if (data.attachmentPrice > 0) {
+                this.threadIsPaidCover = false;
+              } else {
+                if ((data.price > 0 && data.isPaid) || data.price <= 0) {
+                  this.threadIsPaidCover = false;
+                } else if (data.price > 0 && !data.isPaid) {
+                  this.threadIsPaidCover = true;
+                }
+              }
+            } else {
+              this.threadIsPaidCover = false;
+            }
+            this.attachmentFileList = [];
+            data.firstPost.attachments.forEach(attachment => {
+              if(data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
+                this.attachmentFileList.push(attachment);
+              }
+            });
             // #ifndef MP-WEIXIN
             let titleText = '';
             if (data.type === 1) {
@@ -1238,54 +1251,104 @@ export default {
               title: titleText,
             });
             // #endif
-            // console.log(data, '详情页主题');
+            console.log(data, '详情页主题');
             if (data.question) {
+              console.log('wenda');
               this.platformDate =
                 data.question.price * (this.forums.set_site.site_master_scale / 10);
               this.beAskDate = (data.question.price - this.platformDate) / 2;
               this.beAskBeDate = (data.question.price - this.platformDate) / 2;
-              // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
-              if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
-                this.beAsk = true;
-              } else if ((this.user.id === data.question.be_user_id || data.user.id) &&  data.question.is_answer === 1 && data.question.onlooker_unit_price === 0) {
-                this.payment = true;
-                this.beAsk = false;
-              }
-              else if (
-                // 当前登录的ID等于被提问的ID && 问题已回答 && 已有人围观
-                (this.user.id === data.question.be_user_id || data.user.id) &&
-                data.question.is_answer === 1 && data.question.onlooker_number > 0
-              ) {
-                this.answerPay = true;
-                this.beAsk = false;
-              } else if (
-                // 当前登录ID是围观用户 && 问题已被回答 && 允许围观 && 未支付
-                this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 1 && data.question.is_onlooker === true && data.isOnlooker === false
-              ) {
-                this.answerPay = true;
-              } else if (
-                this.user.id !== (data.question.be_user_id && data.user.id) &&
-                data.question.is_answer === 1
-              ) {
-                // 免费围观
-                if (data.question.onlooker_unit_price === 0) {
+              // 问答免费
+              if (data.question.price === '0.00') {
+                console.log('ooooo');
+                // 问答免费 当前登录ID == 被提问ID && 未回答
+                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
+                  this.beAsk = true;
+                  console.log('显示问答按钮');
+                  // 问答免费 已回答 所有人都可以看
+                } else if (data.question.is_answer === 1) {
+                  this.beAsk = false;
                   this.payment = true;
-                  this.answerPay = false;
-                } else {
-                  // 循环已付费围观者
-                  data.onlookers.forEach(item => {
-                    console.log(item, 'item');
-                    if (this.user.id === item.id) {
-                      this.payment = true;
-                      this.answerPay = false;
-                      return;
-                    }
-                    this.payment = false;
-                    this.answerPay = true;
-                  });
+                  console.log('显示答案');
+                }
+              } else if (data.question.price > '0.00') {
+                if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
+                  this.beAsk = true;
+                  console.log('显示问答按钮');
+                } else if (
+                  this.user.id === data.question.be_user_id ||
+                  (data.user.id && data.question.is_answer === 1)
+                ) {
+                  this.beAsk = false;
+                  this.answerPay = true;
+                  console.log('显示答案111');
+                } else if (
+                  (this.user.id === data.question.be_user_id || data.user.id) &&
+                  data.question.is_answer === 1 &&
+                  data.question.onlooker_number > 0
+                ) {
+                  this.answerPay = true;
+                  this.beAsk = false;
+                } else if (
+                  this.user.id !== (data.question.be_user_id && data.user.id) &&
+                  data.question.is_answer === 1 &&
+                  data.question.is_onlooker === true &&
+                  data.isOnlooker === false
+                ) {
+                  this.answerPay = true;
                 }
               }
+
+              // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
+              // if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
+              //   this.beAsk = true;
+              //   console.log('显示问答按钮')
+              // } else if (
+              //   this.user.id ===  data.user.id &&
+              //   data.question.is_answer === 1 &&
+              //   data.question.onlooker_unit_price === 0
+              // ) {
+              //   this.payment = true;
+              //   this.beAsk = false;
+              //   console.log('99999')
+              // } else if (
+              //   // 当前登录的ID等于被提问的ID && 问题已回答 && 已有人围观
+              //   (this.user.id === data.question.be_user_id || data.user.id) &&
+              //   data.question.is_answer === 1 &&
+              //   data.question.onlooker_number > 0
+              // ) {
+              //   this.answerPay = true;
+              //   this.beAsk = false;
+              // } else if (
+              //   // 当前登录ID是围观用户 && 问题已被回答 && 允许围观 && 未支付
+              //   this.user.id !== (data.question.be_user_id && data.user.id) &&
+              //   data.question.is_answer === 1 &&
+              //   data.question.is_onlooker === true &&
+              //   data.isOnlooker === false
+              // ) {
+              //   this.answerPay = true;
+              // } else if (
+              //   this.user.id !== (data.question.be_user_id && data.user.id) &&
+              //   data.question.is_answer === 1
+              // ) {
+              //   // 免费围观
+              //   if (data.question.onlooker_unit_price === 0) {
+              //     this.payment = true;
+              //     this.answerPay = false;
+              //   } else {
+              //     // 循环已付费围观者
+              //     data.onlookers.forEach(item => {
+              //       console.log(item, 'item');
+              //       if (this.user.id === item.id) {
+              //         this.payment = true;
+              //         this.answerPay = false;
+              //         return;
+              //       }
+              //       this.payment = false;
+              //       this.answerPay = true;
+              //     });
+              //   }
+              // }
               this.questionId = data.question._jv.id;
             }
             data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
@@ -1377,7 +1440,11 @@ export default {
           this.moreData[7].canOpera = false;
           // #endif
           //追加更多操作权限字段
-          this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          if (data.type === 5 && data.question.is_answer === 1) {
+            this.moreData[0].canOpera = false;
+          } else {
+            this.moreData[0].canOpera = this.thread.firstPost.canEdit;
+          }
           this.moreData[2].canOpera = this.thread.canEssence;
           this.moreData[3].canOpera = this.thread.canSticky;
           this.moreData[1].canOpera = this.thread.canHide;
@@ -2047,6 +2114,14 @@ export default {
               if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
                 // 这是主题支付和附件支付，支付完成刷新详情页，重新请求数据
                 this.loadThread();
+                this.$store.dispatch('jv/get', [
+                  'forum',
+                  {
+                    params: {
+                      include: 'users',
+                    },
+                  },
+                ]);
               } else if (this.payTypeVal === 1) {
                 // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
                 this._updateRewardUsers();
@@ -2079,11 +2154,27 @@ export default {
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
               this.loadThread();
+              this.$store.dispatch('jv/get', [
+                'forum',
+                {
+                  params: {
+                    include: 'users',
+                  },
+                },
+              ]);
             }
 
             if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
               this.loadThread();
+              this.$store.dispatch('jv/get', [
+                'forum',
+                {
+                  params: {
+                    include: 'users',
+                  },
+                },
+              ]);
             } else if (this.payTypeVal === 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               this._updateRewardUsers();
@@ -2486,9 +2577,10 @@ export default {
     },
     // 删除图片
     uploadClear(list, del) {
+      console.log('触发删除');
       const id = list.id;
       this.deleteType = 0;
-      this.deleteId = id;
+      this.deleteImgId = id;
       this.deleteIndex = del;
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteImgSure');
@@ -2517,7 +2609,7 @@ export default {
     // 主题评论点击发布事件
     publishClick() {
       this.publishClickStatus = false;
-      if (this.commentAnser) {
+      if (this.commentAnser === true) {
         console.log('commentAnsercommentAnser');
         this.postAnswer();
       } else {
@@ -2737,8 +2829,9 @@ export default {
       }
       console.log('回答问题');
       this.formData.type = 5;
+      this.commentAnser = true;
       this.$refs.commentPopup.open();
-      this.postAnswer();
+      // this.postAnswer();
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
       this.commentText = false;
@@ -2763,9 +2856,14 @@ export default {
           this.deletePost,
         );
       } else if (this.deleteType === 0) {
+        console.log('确定删除');
         // 删除类型为评论时上传的图片
-        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+        this.delAttachments(this.deleteImgId, this.deleteIndex).then(() => {
           this.$refs.upload.clear(this.deleteIndex);
+          this.$refs.upload.getValue().forEach((value, key, item) => {
+            value.id == this.deleteImgId && item.splice(key, 1);
+          });
+          // console.log(this.$refs.upload.getValue(), '这是列表');
         });
       }
     },
@@ -3014,9 +3112,6 @@ export default {
         uni.redirectTo({
           url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
-        // setTimeout(() => {
-        //   this.$u.event.$emit('radioEditChange', thread);
-        // }, 1000);
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);
       } else if (param.type === '4') {
