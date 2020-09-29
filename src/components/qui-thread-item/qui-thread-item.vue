@@ -125,7 +125,7 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
-      if (!this.canClick) {
+      if (!this.canClick || id <= 0) {
         return;
       }
       uni.navigateTo({
