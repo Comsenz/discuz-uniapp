@@ -78,7 +78,7 @@ export default {
       set(index) {
         if (this.forums.set_site) {
           const title = [
-            this.forums.set_site.site_name,
+            `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
             this.i18n.t('home.find'),
             this.i18n.t('notice.notice'),
             this.i18n.t('profile.mine'),
@@ -189,7 +189,7 @@ export default {
     // 其他页面返回
     if (this.forums.set_site) {
       const title = [
-        this.forums.set_site.site_name,
+        `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
         this.i18n.t('home.find'),
         this.i18n.t('notice.notice'),
         this.i18n.t('profile.mine'),

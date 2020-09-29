@@ -20,7 +20,7 @@
           :id="'u-tab-item-' + index"
           v-for="(item, index) in list"
           :key="index"
-          @tap="clickTab({ index: index, id: item._jv.id })"
+          @tap="clickTab({ index: index, id: item._jv.id, name: item.name })"
           :class="currentIndex === index ? 'tabActive' : ''"
           :style="[tabItemStyle(+index)]"
         >
@@ -200,7 +200,7 @@ export default {
     // 监听tab的变化，重新计算tab菜单的布局信息，因为实际使用中菜单可能是通过
     // 后台获取的（如新闻app顶部的菜单），获取返回需要一定时间，所以list变化时，重新获取布局信息
     list: {
-      handler(newVal){
+      handler(newVal) {
         // 用$nextTick等待视图更新完毕后再计算tab的局部信息，否则可能因为tab还没生成就获取，就会有问题
         // console.log(newVal, 'newValnewValnewValnewVal');
         this.$nextTick(() => {
@@ -208,11 +208,11 @@ export default {
           //   index: this.currentIndex,
           //   id: newVal[this.currentIndex]._jv.id
           // })
-          const timer = setTimeout(()=>{
+          const timer = setTimeout(() => {
             this.scrollLeft = 0;
             this.scrollLeft = this.oldScrollLeft;
             this.init();
-          },200)
+          }, 200);
         });
       },
       deep: true,
