@@ -334,6 +334,7 @@
 import forums from '@/mixin/forums';
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
+import { http } from '@/api/api-request';
 
 export default {
   mixins: [forums],
@@ -638,21 +639,19 @@ export default {
     },
     // 附件预览
     preview(item) {
-      const params = item;
-      console.log(item, '---');
-      this.$store.dispatch('session/setAttachment', params);
-      const attachment = this.$store.getters['session/get']('attachment');
-      console.log('attachment', attachment);
-      this.$store
-        .dispatch('jv/get', [
+      http
+        .get(
           `attachments/${item._jv.id}${item.url.slice(
             item.url.indexOf('?'),
             item.url.length,
           )}&page=1`,
-          {},
-        ])
+        )
         .then(res => {
           console.log('res', res);
+          const params = { item, res };
+          this.$store.dispatch('session/setAttachment', params);
+          const attachment = this.$store.getters['session/get']('attachment');
+          console.log('attachment', attachment);
           uni.navigateTo({
             url: '/pages/topic/attachment',
           });

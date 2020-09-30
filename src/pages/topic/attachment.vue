@@ -17,7 +17,7 @@ export default {
     return {
       src: '',
       page: 1,
-      totalPage: 2,
+      totalPage: 1,
     };
   },
   onLoad() {
@@ -28,7 +28,8 @@ export default {
       const attachment = this.$store.getters['session/get']('attachment');
       console.log('attachment', attachment);
       if (attachment) {
-        this.src = `${attachment.url}&page=${page}`;
+        this.src = `${attachment.item.url}&page=${page}`;
+        this.totalPage = `${attachment.res.header['x-total-page']}`;
       }
     },
     previewPic() {
