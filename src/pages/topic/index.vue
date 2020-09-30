@@ -168,7 +168,7 @@
                 :thread="thread"
                 :images-list="thread.question.images"
                 :answer-content="thread.question.content_html"
-                :is-onlooker="thread.isOnlooker"
+                :is-onlooker="thread.onlookerState"
                 btn-icon-name="rmb"
                 :btn-text="payThreadTypeText"
                 @personJump="personJump"
@@ -715,6 +715,7 @@ export default {
       beAskDate: 0, // 回答即可获得
       beAskBeDate: 0, // 每次回答可获得
       platformDate: 0, // 平台获得
+      onLookformDate: 0, // 围观平台获得
       bottomData: [
         {
           text: this.i18n.t('core.generatePoster'),
@@ -1232,19 +1233,30 @@ export default {
             }
             this.attachmentFileList = [];
             data.firstPost.attachments.forEach(attachment => {
-              if(data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
+              if (data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
                 this.attachmentFileList.push(attachment);
               }
             });
             // #ifndef MP-WEIXIN
             let titleText = '';
             if (data.type === 1) {
-              titleText = data.title;
+              if (data.title.length > 40) {
+                titleText = data.title.slice(0, 30) + '... - ' + this.forums.set_site.site_name;
+              } else {
+                titleText = data.title + ' - ' + this.forums.set_site.site_name;
+              }
             } else {
               if (data.firstPost.summaryText) {
-                titleText = data.firstPost.summaryText.slice(0, 80);
+                if (data.firstPost.summaryText.length > 20) {
+                  titleText =
+                    data.firstPost.summaryText.slice(0, 20) +
+                    '... - ' +
+                    this.forums.set_site.site_name;
+                } else {
+                  titleText = data.firstPost.summaryText + ' - ' + this.forums.set_site.site_name;
+                }
               } else {
-                titleText = this.t.topicPageTitle;
+                titleText = this.t.topicPageTitle + ' - ' + this.forums.set_site.site_name;
               }
             }
             uni.setNavigationBarTitle({
@@ -1255,9 +1267,10 @@ export default {
             if (data.question) {
               console.log('wenda');
               this.platformDate =
-                data.question.price * (this.forums.set_site.site_master_scale / 10);
-              this.beAskDate = (data.question.price - this.platformDate) / 2;
-              this.beAskBeDate = (data.question.price - this.platformDate) / 2;
+               ( data.question.price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+              this.onLookformDate = (data.question.onlooker_unit_price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+              this.beAskDate = ((data.question.price - this.platformDate) / 2).toFixed(2);
+              this.beAskBeDate = ((data.question.onlooker_unit_price - this.onLookformDate) / 2).toFixed(2);
               // 问答免费
               if (data.question.price === '0.00') {
                 console.log('ooooo');
@@ -1265,11 +1278,15 @@ export default {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
                   console.log('显示问答按钮');
-                  // 问答免费 已回答 所有人都可以看
-                } else if (data.question.is_answer === 1) {
+                  // 问答免费 已回答 && 允许围观 所有人都可以看
+                } else if (data.question.is_answer === 1 && data.question.is_onlooker === true) {
                   this.beAsk = false;
                   this.payment = true;
                   console.log('显示答案');
+                } else if (data.question.is_answer === 1 && data.question.is_onlooker === false) {
+                  this.beAsk = false;
+                  this.payment = false;
+                  this.answerPay = false;
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1277,7 +1294,7 @@ export default {
                   console.log('显示问答按钮');
                 } else if (
                   this.user.id === data.question.be_user_id ||
-                  (data.user.id && data.question.is_answer === 1)
+                  (data.user.id && data.question.is_answer === 1 && data.question.is_onlooker === true)
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
@@ -1293,7 +1310,7 @@ export default {
                   this.user.id !== (data.question.be_user_id && data.user.id) &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true &&
-                  data.isOnlooker === false
+                  data.onlookerState === false
                 ) {
                   this.answerPay = true;
                 }
@@ -2311,6 +2328,9 @@ export default {
           return;
         }
         // #endif
+      }
+      if (id <= 0) {
+        return;
       }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,

@@ -160,9 +160,6 @@ import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { mapState, mapMutations } from 'vuex';
-// #ifdef H5
-import { setCookie } from '@/utils/setCookie';
-// #endif
 
 export default {
   components: { uniPopupDialog },
@@ -226,7 +223,6 @@ export default {
     },
     logout() {
       this.$store.dispatch('session/logout').then(() => {
-        setCookie('token', '', -1);
         window.location.reload();
       });
     },
@@ -248,7 +244,6 @@ export default {
         // #endif
         // #ifdef H5
         this.$store.dispatch('session/logout').then(() => {
-          setCookie('token', '', -1);
           window.location.reload();
         });
         // #endif

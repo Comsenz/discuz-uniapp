@@ -241,6 +241,9 @@ export default {
 
   methods: {
     jumpUserPage(id) {
+      if (id <= 0) {
+        return;
+      }
       if (id) {
         uni.navigateTo({
           url: `/pages/profile/index?userId=${id}`,

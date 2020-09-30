@@ -334,7 +334,6 @@
 import forums from '@/mixin/forums';
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
-// import { setCookie } from '@/utils/setCookie';
 
 export default {
   mixins: [forums],

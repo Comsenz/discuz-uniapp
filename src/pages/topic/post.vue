@@ -170,7 +170,6 @@
 
       <qui-uploader
         :url="`${url}api/attachments`"
-        :header="header"
         :form-data="formData"
         :file-preview="filePreview"
         name="file"
@@ -972,9 +971,6 @@ export default {
     diaLogOk() {
       if (this.type === 5) {
         this.priceAsk = this.inputPrice;
-        this.platformDate = (this.priceAsk * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
-        this.haveDate = ((this.priceAsk - this.platformDate) / 2).toFixed(2);
-        this.answerIsDate =( (this.priceAsk - this.platformDate) / 2).toFixed(2);
         this.$refs.popup.close();
         this.textShow = true;
         return;
@@ -1010,9 +1006,6 @@ export default {
       } else {
         if (this.type === 5) {
           this.priceAsk = this.payNumCheck[0].pay;
-          this.platformDate = this.priceAsk * (this.forums.set_site.site_master_scale / 10);
-          this.haveDate = (this.priceAsk - this.platformDate) / 2;
-          this.answerIsDate = (this.priceAsk - this.platformDate) / 2;
           this.$refs.popupBtm.close();
           this.textShow = true;
           return;
@@ -2095,6 +2088,11 @@ export default {
     },
   },
   onLoad(option) {
+    if (this.forums) {
+      this.platformDate = (this.forums.set_site.site_onlooker_price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+      this.haveDate = ((this.forums.set_site.site_onlooker_price - this.platformDate) / 2).toFixed(2);
+      this.answerIsDate =((this.forums.set_site.site_onlooker_price - this.platformDate) / 2).toFixed(2);
+    }
     // 问答编辑不显示提问价格
     if (option.operating === 'edit') {
       this.askingPrice = false;

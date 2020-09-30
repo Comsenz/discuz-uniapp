@@ -161,7 +161,6 @@ import { SITE_PAY } from '@/common/const';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
-import { setCookie } from '@/utils/setCookie';
 // #endif
 
 export default {
@@ -394,9 +393,6 @@ export default {
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
           if (res && res.access_token) {
-            // #ifdef H5
-            setCookie('token', res.access_token, 30);
-            // #endif
             console.log('手机号登录成功：', res);
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {

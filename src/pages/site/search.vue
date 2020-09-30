@@ -268,4 +268,7 @@ export default {
 /deep/ .themeCount .addFine {
   display: none;
 }
+/deep/ .themeCount .addAsk {
+  display: none;
+}
 </style>

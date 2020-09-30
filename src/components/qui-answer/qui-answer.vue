@@ -11,7 +11,7 @@
       @personJump="personJump(thread.question.be_user_id)"
     ></qui-topic-header>
     <!-- 回答内容 -->
-    <div class="theme-content" v-if="isOnlooker">
+    <div class="theme-content">
       <qui-uparse :content="answerContent"></qui-uparse>
       <qui-image :images-list="imagesList"></qui-image>
     </div>
@@ -21,7 +21,7 @@
       :person-num="thread.question.onlooker_number"
       :limit-count="10"
       :person-list="thread.onlookers"
-      :btn-show="!thread.isOnlooker"
+      :btn-show="!thread.onlookerState"
       :btn-icon-show="false"
       btn-icon-name="rmb"
       :btn-text="
@@ -127,6 +127,9 @@ export default {
           return;
         }
         // #endif
+      }
+      if (id <= 0) {
+        return;
       }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,

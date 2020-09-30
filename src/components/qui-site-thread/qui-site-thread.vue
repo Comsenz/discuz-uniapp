@@ -67,8 +67,10 @@
           :thread="item"
           :can-click="false"
         ></qui-thread-item>
+        <view class="site-theme__mask" @tap="openTips"></view>
       </view>
     </view>
+    <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
@@ -126,6 +128,9 @@ export default {
     this.getThemeList();
   },
   methods: {
+    openTips() {
+      this.$refs.toast.show({ message: this.i18n.t('site.jointosee') });
+    },
     // 首页头部分享按钮弹窗
     open() {
       // #ifdef MP-WEIXIN
@@ -235,6 +240,18 @@ export default {
     font-size: $fg-f4;
     font-weight: bold;
     color: --color(--qui-FC-333);
+  }
+  &__mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+  }
+  &__wrap,
+  &__last {
+    position: relative;
   }
 }
 </style>

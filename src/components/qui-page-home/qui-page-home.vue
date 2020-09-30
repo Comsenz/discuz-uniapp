@@ -327,6 +327,7 @@ export default {
             { label: this.i18n.t('home.invitation'), value: '1', selected: false },
             { label: this.i18n.t('home.video'), value: '2', selected: false },
             { label: this.i18n.t('home.picture'), value: '3', selected: false },
+            { label: this.i18n.t('home.questions'), value: '5', selected: false },
           ],
         },
         {
@@ -507,7 +508,7 @@ export default {
 
     if (this.forums.set_site) {
       uni.setNavigationBarTitle({
-        title: this.forums.set_site.site_name,
+        title: `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
       });
     }
 
@@ -619,6 +620,9 @@ export default {
       this.threads = [];
       await this.loadThreads();
       this.checkoutTheme = false;
+      uni.setNavigationBarTitle({
+        title: `${dataInfo.name} - ${this.forums.set_site.site_name}`,
+      });
     },
     // 筛选分类里的搜索
     searchClick() {
@@ -651,6 +655,9 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (id <= 0) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });

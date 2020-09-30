@@ -64,7 +64,6 @@
     <view v-show="false">
       <qui-uploader
         :url="`${url}api/attachments`"
-        :header="header"
         :form-data="formData"
         name="file"
         :async-clear="true"
@@ -146,7 +145,6 @@ export default {
       sureTip: '', // 二次确认提示
 
       url: '', // 视频url
-      header: {}, // 图片请求头部
       formData: {}, // 图片请求data
       uploadStatus: true,
     };
@@ -196,11 +194,6 @@ export default {
     }
     // 上传图片
     this.url = DISCUZ_REQUEST_HOST;
-    const token = uni.getStorageSync('access_token');
-
-    this.header = {
-      authorization: `Bearer ${token}`,
-    };
     this.formData = {
       type: 1,
     };

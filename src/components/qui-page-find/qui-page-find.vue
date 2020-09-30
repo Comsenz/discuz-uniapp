@@ -1,5 +1,5 @@
 <template>
-  <qui-page :data-qui-theme="theme" class="find">
+  <view class="find">
     <!-- #ifdef MP-WEIXIN -->
     <uni-nav-bar
       :title="i18n.t('home.find')"
@@ -26,7 +26,7 @@
         ></qui-cell-item>
       </navigator>
     </view>
-  </qui-page>
+  </view>
 </template>
 
 <script>
