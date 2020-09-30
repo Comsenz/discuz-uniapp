@@ -13,7 +13,9 @@ export default class Recorder {
         navigator.getUserMedia ||
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia ||
-        navigator.msGetUserMedia;
+        navigator.msGetUserMedia ||
+        navigator.oGetUserMedia ||
+        navigator.khtmlGetUserMedia;
       navigator.mediaDevices.getUserMedia = constraints => {
         // 首先，如果有getUserMedia的话，就获得它
         // 一些浏览器根本没实现它 - 那么就返回一个error到promise的reject来保持一个统一的接口
