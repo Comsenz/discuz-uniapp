@@ -506,6 +506,9 @@ export default {
     /* #ifdef H5 */
     padding: 88rpx 0 150rpx;
     /* #endif */
+    /* #ifndef H5 */
+    padding-bottom: 150rpx;
+    /* #endif */
     box-sizing: border-box;
   }
 }
@@ -617,7 +620,8 @@ export default {
   line-height: 50rpx;
   color: --color(--qui-FC-777);
   text-align: center;
-  background: --color(--qui-BG-FFF);
+  background: --color(--qui-BG-F7);
+  border-radius: 6rpx;
   box-sizing: border-box;
 }
 .details-box__purchase-list-btn {
