@@ -1457,7 +1457,7 @@ export default {
           this.moreData[7].canOpera = false;
           // #endif
           //追加更多操作权限字段
-          if (data.type === 5 && data.question.is_answer === 1) {
+          if (data.type === 5) {
             this.moreData[0].canOpera = false;
           } else {
             this.moreData[0].canOpera = this.thread.firstPost.canEdit;
