@@ -521,6 +521,7 @@
           :pay-type-data="payTypeData"
           :to-name="thread.user.username"
           :pay-type="payTypeText"
+          :pay-tip-show="thread.type === 5 ? false : true"
           @radioMyHead="radioMyHead"
           @radioChange="radioChange"
           @onInput="onInput"
