@@ -1197,12 +1197,15 @@ export default {
         free_words: this.word,
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
+        post_goods_id: 6,
       };
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
       params.location = currentPosition.location || '';
       params.address = currentPosition.address || '';
+
+      console.log('-----params', params);
 
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {

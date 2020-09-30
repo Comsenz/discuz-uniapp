@@ -1190,6 +1190,7 @@ export default {
           'firstPost.likedUsers',
           'firstPost.images',
           'firstPost.attachments',
+          'firstPost.postGoods',
           'rewardedUsers',
           'category',
           'threadVideo',
