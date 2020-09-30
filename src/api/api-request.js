@@ -81,7 +81,6 @@ http.interceptor.response(
     }
     // 状态码 >= 200 < 300 会走这里
     response.status = response.statusCode;
-    console.log('response', response.header);
     return response;
   },
   response => {

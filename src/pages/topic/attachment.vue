@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { http } from '@/api/api-request';
+
 export default {
   data() {
     return {
@@ -28,8 +30,23 @@ export default {
       const attachment = this.$store.getters['session/get']('attachment');
       console.log('attachment', attachment);
       if (attachment) {
-        this.src = `${attachment.item.url}&page=${page}`;
-        this.totalPage = `${attachment.res.header['x-total-page']}`;
+        http
+          .get(
+            `attachments/${attachment._jv.id}${attachment.url.slice(
+              attachment.url.indexOf('?'),
+              attachment.url.length,
+            )}&page=1`,
+          )
+          .then(res => {
+            if (res) {
+              console.log('res', res);
+              this.src = `${attachment.url}&page=${page}`;
+              this.totalPage = `${res.header['x-total-page']}`;
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
       }
     },
     previewPic() {
