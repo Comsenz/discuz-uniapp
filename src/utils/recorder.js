@@ -1,14 +1,31 @@
 /* eslint-disable no-param-reassign */
 export default class Recorder {
   constructor(stream, config) {
-    // 兼容
     window.URL = window.URL || window.webkitURL;
-    navigator.getUserMedia =
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia;
-
+    // 老的浏览器可能根本没有实现 mediaDevices，所以我们可以先设置一个空的对象
+    if (navigator.mediaDevices === undefined) {
+      navigator.mediaDevices = {};
+    }
+    // 一些浏览器部分支持 mediaDevices。我们不能直接给对象设置 getUserMedia
+    // 因为这样可能会覆盖已有的属性。这里我们只会在没有getUserMedia属性的时候添加它。
+    if (navigator.mediaDevices.getUserMedia === undefined) {
+      const getUserMedia =
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia ||
+        navigator.msGetUserMedia;
+      navigator.mediaDevices.getUserMedia = constraints => {
+        // 首先，如果有getUserMedia的话，就获得它
+        // 一些浏览器根本没实现它 - 那么就返回一个error到promise的reject来保持一个统一的接口
+        if (!getUserMedia) {
+          return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+        }
+        // 否则，为老的navigator.getUserMedia方法包裹一个Promise
+        return new Promise((resolve, reject) => {
+          getUserMedia.call(navigator, constraints, resolve, reject);
+        });
+      };
+    }
     config = config || {};
     config.sampleBits = config.sampleBits || 16; // 采样数位 8, 16
     config.sampleRate = config.sampleRate || 8000; // 采样率(1/6 44100)
@@ -170,38 +187,22 @@ export default class Recorder {
   }
 
   static canRecording() {
-    return navigator.getUserMedia != null;
+    return navigator.mediaDevices.getUserMedia != null;
   }
 
   static get(callback, config) {
     if (callback) {
       if (Recorder.canRecording()) {
-        navigator.getUserMedia(
-          { audio: true }, // 只启用音频
-          stream => {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then(stream => {
             const rec = new Recorder(stream, config);
             callback(rec);
-          },
-          error => {
-            switch (error.code || error.name) {
-              case 'PERMISSION_DENIED':
-              case 'PermissionDeniedError':
-                Recorder.throwError('用户拒绝提供信息。');
-                break;
-              case 'NOT_SUPPORTED_ERROR':
-              case 'NotSupportedError':
-                Recorder.throwError('浏览器不支持硬件设备。');
-                break;
-              case 'MANDATORY_UNSATISFIED_ERROR':
-              case 'MandatoryUnsatisfiedError':
-                Recorder.throwError('无法发现指定的硬件设备。');
-                break;
-              default:
-                Recorder.throwError(`无法打开麦克风。异常信息:${error.code || error.name}`);
-                break;
-            }
-          },
-        );
+          })
+          .catch(error => {
+            console.log(error);
+            Recorder.throwError('无法录音，请检查设备状态。');
+          });
       } else {
         Recorder.throwError('当前浏览器不支持录音功能。');
       }
