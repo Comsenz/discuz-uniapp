@@ -56,7 +56,7 @@
           <view v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
               :mark="item.toUser.id"
-              :title="item.username"
+              :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
               :value="item.toUser.groups.length > 0 ? item.toUser.groups[0].name : ''"
               :label="item.label"

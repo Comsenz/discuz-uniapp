@@ -307,7 +307,7 @@ export default {
           text: this.i18n.t('home.good'),
           icon: 'icon-good',
           name: 'good',
-          type: 5,
+          type: 6,
         });
       }
       if (this.forums.other.can_create_thread_question) {
@@ -315,7 +315,7 @@ export default {
           text: this.i18n.t('home.questions'),
           icon: 'icon-question',
           name: 'questions',
-          type: 6,
+          type: 5,
         });
       }
 
@@ -327,14 +327,14 @@ export default {
     handleClick(item) {
       let url;
 
-      if (item.type === 5) {
+      if (item.type === 6) {
         uni.navigateTo({
           url: '/pages/topic/parse-goods',
         });
         return;
       }
 
-      if (item.type === 6) {
+      if (item.type === 5) {
         uni.navigateTo({
           url: '/pages/user/at-member?name=select',
         });

@@ -690,6 +690,19 @@ export default {
     },
   },
   updated() {
+    if (this.forums) {
+      this.platformDate = (
+        this.forums.set_site.site_onlooker_price *
+        (this.forums.set_site.site_master_scale / 10)
+      ).toFixed(2);
+      this.haveDate = ((this.forums.set_site.site_onlooker_price - this.platformDate) / 2).toFixed(
+        2,
+      );
+      this.answerIsDate = (
+        (this.forums.set_site.site_onlooker_price - this.platformDate) /
+        2
+      ).toFixed(2);
+    }
     // #ifndef MP-WEIXIN
     this.$nextTick(() => {
       if (this.$refs.textarea) {
@@ -2088,22 +2101,17 @@ export default {
     },
   },
   onLoad(option) {
-    if (this.forums) {
-      this.platformDate = (this.forums.set_site.site_onlooker_price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
-      this.haveDate = ((this.forums.set_site.site_onlooker_price - this.platformDate) / 2).toFixed(2);
-      this.answerIsDate =((this.forums.set_site.site_onlooker_price - this.platformDate) / 2).toFixed(2);
-    }
     // 问答编辑不显示提问价格
-    if (option.operating === 'edit') {
+    if (option.operating === 'edit' || this.forums.paycenter.wxpay_close === 0) {
       this.askingPrice = false;
     } else {
       // 初始化默认内容附件均免费
       this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
     }
     this.$u.event.$on('radioChange', item => {
-      this.beUserName = item.username;
-      this.beAskId = item.id;
-      this.userImage = item.avatarUrl;
+      this.beUserName = item.toUser.username;
+      this.beAskId = item.toUser.id;
+      this.userImage = item.toUser.avatarUrl;
     });
     if (option.type) this.type = Number(option.type);
     // #ifdef MP-WEIXIN
