@@ -44,6 +44,8 @@
           </qui-cell-item>
         </view>
       </view>
+      <!-- 请提示 -->
+      <qui-toast ref="toast"></qui-toast>
       <!-- 支付组件 -->
       <view v-if="payShowStatus">
         <qui-pay
@@ -54,7 +56,7 @@
           :money="paidusergrouplist.fee"
           :balance="Number(user.walletBalance)"
           :pay-type="i18n.t('modify.purchaseuser')"
-          to-name="李李李"
+          to-name="admin"
           :pay-type-data="payTypeData"
           :pay-password="pwdVal"
           @radioChange="radioChange"
@@ -253,6 +255,19 @@ export default {
         // 这是详情页获取到的支付方式---钱包
       }
     },
+    allusergroupsusers() {
+      const params = {
+        sort: 'created_at',
+        'filter[user]': this.usersid,
+        'filter[delete_type]': 0,
+        include: 'group',
+      };
+      this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
+        console.log(res);
+        this.oder = false;
+        this.grouplist();
+      });
+    },
     // 创建订单
     creatOrder(amount, type, value, payType) {
       const params = {
@@ -365,15 +380,17 @@ export default {
               }
             }
           } else if (payType === 1) {
+            const _this = this;
             if (res.wallet_pay.result === 'success') {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
-              // if (this.payTypeVal === 0) {
-              //   // 这是主题支付，支付完成刷新详情页，重新请求数据
-              //   this.loadThread();
-              // } else if (this.payTypeVal === 1) {
-              //   // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              //   this._updateRewardUsers();
-              // }
+              uni.showToast({
+                icon: 'none',
+                title: '用户组购买成功',
+                duration: 2000,
+              });
+              setTimeout(() => {
+                _this.allusergroupsusers();
+              }, 1500);
               this.payShowStatus = false;
               this.coverLoading = false;
             }
@@ -460,22 +477,27 @@ export default {
           if (this.payStatus === 1) {
             this.payShowStatus = false;
             this.coverLoading = false;
-            if (broswerType === '2') {
+            if (broswerType === '4') {
               // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
-              this.loadThread();
+              uni.showToast({
+                icon: 'none',
+                title: '用户组购买成功',
+                duration: 2000,
+              });
+              setTimeout(() => {
+                _this.allusergroupsusers();
+              }, 1500);
             }
 
-            if (this.payTypeVal === 0) {
+            if (this.payTypeVal === 4) {
+              const _this = this;
               // 这是主题支付，支付完成刷新详情页，重新请求数据
-              this.loadThread();
-            } else if (this.payTypeVal === 1) {
-              // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              this._updateRewardUsers();
-            }
+                _this.allusergroupsusers();
+            } 
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
@@ -505,6 +527,9 @@ export default {
     // height: 100vh;
     /* #ifdef H5 */
     padding: 88rpx 0 150rpx;
+    /* #endif */
+    /* #ifndef H5 */
+    padding-bottom: 150rpx;
     /* #endif */
     box-sizing: border-box;
   }
@@ -617,7 +642,8 @@ export default {
   line-height: 50rpx;
   color: --color(--qui-FC-777);
   text-align: center;
-  background: --color(--qui-BG-FFF);
+  background: --color(--qui-BG-F7);
+  border-radius: 6rpx;
   box-sizing: border-box;
 }
 .details-box__purchase-list-btn {

@@ -212,19 +212,22 @@
         @click="cellClick('word')"
       ></qui-cell-item>
 
-      <view class="">
-        <view class="">
-          <image
-            class="post-box__image"
-            lazy-load
-            src="http://img.alicdn.com/imgextra/i4/880734502/O1CN014avVeu1j7xhYiV2ip_!!880734502.jpg_430x430q90.jpg"
-          />
+      <view class="post-box__good" v-if="isShowGoods">
+        <view>
+          <image class="post-box__good__image" lazy-load :src="goodInfo.image_path" />
         </view>
-        <view class="">
-          <view class="">cc{{ goodInfo.title }}</view>
-          <view class="">xx{{ goodInfo.price }}</view>
+        <view class="post-box__good__info">
+          <view class="post-box__good__title">{{ goodInfo.title }}</view>
+          <view class="post-box__good__ft">
+            <view class="post-box__good__price">￥{{ goodInfo.price }}元</view>
+            <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
+          </view>
         </view>
       </view>
+      <view class="post-box__space" v-else @click="addGoods">
+        <qui-icon name="icon-add" size="26"></qui-icon>
+      </view>
+
       <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
         <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
@@ -511,6 +514,7 @@ export default {
       deleteIndex: '', // 当前点击要删除的图片index
       deleteTip: '确定删除吗？', // 删除提示
       currentPosition: {},
+      isShowGoods: true,
     };
   },
   computed: {
@@ -547,6 +551,16 @@ export default {
     // #endif
   },
   methods: {
+    addGoods() {
+      uni.navigateTo({
+        url: '/pages/topic/parse-goods',
+      });
+      this.$store.dispatch('session/setGood');
+      this.isShowGoods = true;
+    },
+    deleteGoods() {
+      this.isShowGoods = false;
+    },
     choosePosition() {
       const that = this;
       if (that.currentPosition.location) {
@@ -1183,12 +1197,15 @@ export default {
         free_words: this.word,
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
+        post_goods_id: 6,
       };
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
       params.location = currentPosition.location || '';
       params.address = currentPosition.address || '';
+
+      console.log('-----params', params);
 
       const postPromise = new Promise((resolve, reject) => {
         switch (this.type) {
@@ -1796,10 +1813,60 @@ export default {
     }
   }
 
-  &__image {
-    width: 160rpx;
+  &__good{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 30rpx 0;
+    font-size: $fg-f3;
+
+    &__image {
+      width: 160rpx;
+      height: 160rpx;
+      margin: 0 30rpx 0 0;
+      border-radius: 5rpx;
+    }
+
+    &__info {
+      position: relative;
+    }
+
+    &__title {
+      font-weight: bold;
+      color: --color(--qui-FC-333);
+    }
+
+    &__ft {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      color: --color(--qui-FC-777);
+    }
+
+    &__price {
+      display: inline-block;
+      font-size: $fg-f5;
+      color: --color(--qui-RED);
+    }
+
+    &__btn {
+      display: inline-block;
+    }
+
+  }
+
+  &__space {
+    width: 100%;
     height: 160rpx;
     margin: 30rpx 0;
+    line-height: 160rpx;
+    color: --color(--qui-FC-B5);
+    text-align: center;
+    background-color: --color(--qui-FC-f7);
+    border: 1rpx solid --color(--qui-BOR-ED);
     border-radius: 5rpx;
   }
 

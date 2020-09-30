@@ -4,6 +4,7 @@
       <view class="register-bind-box-h">
         {{ type ? i18n.t('user.registerBind') : i18n.t('user.registerBindUcenter') }}
       </view>
+      <view class="register-bind-box-info">亲爱的，头像 用户名</view>
       <view class="register-bind-box-con">
         <input
           class="input"
@@ -141,7 +142,6 @@ import loginModule from '@/mixin/loginModule';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
-import { setCookie } from '@/utils/setCookie';
 // #endif
 import { SITE_PAY } from '@/common/const';
 
@@ -325,9 +325,6 @@ export default {
         .dispatch('session/h5Register', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            // #ifdef H5
-            setCookie('token', res.data.data.attributes.access_token, 30);
-            // #endif
             console.log('注册成功：', res);
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
@@ -424,6 +421,11 @@ export default {
     font-size: 50rpx;
     font-weight: bold;
     color: --color(--qui-FC-333);
+  }
+
+  &-info {
+    padding: 0rpx 0rpx 50rpx 40rpx;
+    font-size: 50rpx;
   }
 
   &-con {

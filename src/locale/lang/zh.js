@@ -345,6 +345,7 @@ export default {
     tmall: '天猫',
     pinduoduo: '拼多多',
     supportedLink: '现已支持以下商品链接',
+    goodsLinkEmpty: '商品链接不能为空',
     goodsLink: '请粘贴 \\ 输入商品链接',
   },
   pay: {
@@ -484,6 +485,7 @@ export default {
     reward: '财务通知',
     rewardedMe: ' 打赏了我',
     payedMe: ' 支付了我',
+    watchedMe: ' 围观了我',
     scaledrewarded: ' 的打赏分成',
     scaledpayed: ' 的付费分成',
     scaledRegister: ' 的注册分成',

@@ -17,12 +17,12 @@ export default {
   props: {
     // 回答即可获得
     date: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
     // 每次回答可获得
     beDate: {
-      type: Number,
+      type: [Number, String],
       default: 0,
     },
   },

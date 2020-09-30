@@ -83,6 +83,7 @@ export default {
 }
 .qui-avatar .avatar,
 .qui-ava {
+  vertical-align: middle;
   border-radius: 50%;
 }
 

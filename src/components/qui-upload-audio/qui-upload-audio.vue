@@ -133,30 +133,32 @@ export default {
     },
     // 停止录音
     stop() {
-      clearInterval(this.timer);
-      const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
-      // #ifdef MP-WEIXIN
-      recorderManager.stop();
-      recorderManager.onStop(res => {
-        // this.audioSize = res.fileSize;
-        this.uploadAudio(res, audioName);
-      });
-      // #endif
+      if (this.durationTime > 1) {
+        clearInterval(this.timer);
+        const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
+        // #ifdef MP-WEIXIN
+        recorderManager.stop();
+        recorderManager.onStop(res => {
+          // this.audioSize = res.fileSize;
+          this.uploadAudio(res, audioName);
+        });
+        // #endif
 
-      // #ifdef H5
-      this.recorder.stopRecord({
-        success: res => {
-          // 此处可以获取音频源文件(res)，用于上传等操作
-          // this.audioSize = res.size;
-          const file = this.blobToFile(res, audioName);
-          this.uploadAudio(file, audioName);
-          console.log('stop record successfully.');
-        },
-        error: () => {
-          console.log('stop record failed.');
-        },
-      });
-      // #endif
+        // #ifdef H5
+        this.recorder.stopRecord({
+          success: res => {
+            // 此处可以获取音频源文件(res)，用于上传等操作
+            // this.audioSize = res.size;
+            const file = this.blobToFile(res, audioName);
+            this.uploadAudio(file, audioName);
+            console.log('stop record successfully.');
+          },
+          error: () => {
+            console.log('stop record failed.');
+          },
+        });
+        // #endif
+      }
     },
     // 录音上传
     uploadAudio(audioFile, name) {

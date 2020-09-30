@@ -521,6 +521,7 @@
           :pay-type-data="payTypeData"
           :to-name="thread.user.username"
           :pay-type="payTypeText"
+          :pay-tip-show="thread.type === 5 ? false : true"
           @radioMyHead="radioMyHead"
           @radioChange="radioChange"
           @onInput="onInput"
@@ -715,6 +716,7 @@ export default {
       beAskDate: 0, // 回答即可获得
       beAskBeDate: 0, // 每次回答可获得
       platformDate: 0, // 平台获得
+      onLookformDate: 0, // 围观平台获得
       bottomData: [
         {
           text: this.i18n.t('core.generatePoster'),
@@ -1188,6 +1190,7 @@ export default {
           'firstPost.likedUsers',
           'firstPost.images',
           'firstPost.attachments',
+          'firstPost.postGoods',
           'rewardedUsers',
           'category',
           'threadVideo',
@@ -1266,9 +1269,10 @@ export default {
             if (data.question) {
               console.log('wenda');
               this.platformDate =
-                data.question.price * (this.forums.set_site.site_master_scale / 10);
-              this.beAskDate = (data.question.price - this.platformDate) / 2;
-              this.beAskBeDate = (data.question.price - this.platformDate) / 2;
+               ( data.question.price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+              this.onLookformDate = (data.question.onlooker_unit_price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+              this.beAskDate = ((data.question.price - this.platformDate) / 2).toFixed(2);
+              this.beAskBeDate = ((data.question.onlooker_unit_price - this.onLookformDate) / 2).toFixed(2);
               // 问答免费
               if (data.question.price === '0.00') {
                 console.log('ooooo');
@@ -1276,11 +1280,15 @@ export default {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
                   console.log('显示问答按钮');
-                  // 问答免费 已回答 所有人都可以看
-                } else if (data.question.is_answer === 1) {
+                  // 问答免费 已回答 && 允许围观 所有人都可以看
+                } else if (data.question.is_answer === 1 && data.question.is_onlooker === true) {
                   this.beAsk = false;
                   this.payment = true;
                   console.log('显示答案');
+                } else if (data.question.is_answer === 1 && data.question.is_onlooker === false) {
+                  this.beAsk = false;
+                  this.payment = false;
+                  this.answerPay = false;
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1288,7 +1296,7 @@ export default {
                   console.log('显示问答按钮');
                 } else if (
                   this.user.id === data.question.be_user_id ||
-                  (data.user.id && data.question.is_answer === 1)
+                  (data.user.id && data.question.is_answer === 1 && data.question.is_onlooker === true)
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
@@ -1451,7 +1459,7 @@ export default {
           this.moreData[7].canOpera = false;
           // #endif
           //追加更多操作权限字段
-          if (data.type === 5 && data.question.is_answer === 1) {
+          if (data.type === 5) {
             this.moreData[0].canOpera = false;
           } else {
             this.moreData[0].canOpera = this.thread.firstPost.canEdit;

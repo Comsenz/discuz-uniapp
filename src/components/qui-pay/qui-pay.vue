@@ -81,7 +81,7 @@
           </radio-group>
         </view>
 
-        <view class="pay-tip">
+        <view class="pay-tip" v-if="payTipShow">
           ￥{{ money }}{{ p.rmb }}{{ p.payTo }}{{ toName }}{{ p.ofAccount }}
         </view>
         <!--<qui-button size="max" type="primary" class="paySureBtn" @click="paysureShow">
@@ -151,6 +151,11 @@ export default {
     toName: {
       type: String,
       default: '',
+    },
+    // 支付提示
+    payTipShow: {
+      type: Boolean,
+      default: true,
     },
     // 支付方式数组
     payTypeData: {
