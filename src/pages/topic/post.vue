@@ -2109,9 +2109,9 @@ export default {
       this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
     }
     this.$u.event.$on('radioChange', item => {
-      this.beUserName = item.toUser.username;
-      this.beAskId = item.toUser.id;
-      this.userImage = item.toUser.avatarUrl;
+      this.beUserName = item.username;
+      this.beAskId = item.id;
+      this.userImage = item.avatarUrl;
     });
     if (option.type) this.type = Number(option.type);
     // #ifdef MP-WEIXIN

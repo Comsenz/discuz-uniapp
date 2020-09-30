@@ -168,7 +168,11 @@ export default {
         url: '/pages/topic/post?type=5',
       });
       setTimeout(() => {
-        this.$u.event.$emit('radioChange', item);
+        if (item.toUser) {
+          this.$u.event.$emit('radioChange', item.toUser);
+        } else {
+          this.$u.event.$emit('radioChange', item);
+        }
       }, 1000);
     },
     getCheckMember() {
