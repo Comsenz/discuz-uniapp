@@ -1375,7 +1375,7 @@ export default {
                 return;
               }
             });
-            if (data.user.groups[0]._jv.id === '1') {
+            if (data.user && data.user.groups[0]._jv.id === '1') {
               this.beRewarded = true;
             }
             this.loaded = true;

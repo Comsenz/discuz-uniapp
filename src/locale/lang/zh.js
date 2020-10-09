@@ -238,6 +238,7 @@ export default {
     sort: '排序',
     loadMore: '上拉加载更多',
     TheAmountCannotExceedOneMillion: '金额最高不能超过100万元',
+    TheAmountCannotBeLessThanOneYuan: '金额最低不能低于1元',
     available: '暂无数据',
     userDeleted: '该用户已被删除',
     InvalidParameterValue: '腾讯云配置参数错误',

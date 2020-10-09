@@ -983,6 +983,13 @@ export default {
     },
     diaLogOk() {
       if (this.type === 5) {
+        if(this.inputPrice < '1.0') {
+          uni.showToast({
+            title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
+            icon: 'none',
+          });
+          return;
+        };
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
         this.textShow = true;
@@ -2102,11 +2109,13 @@ export default {
   },
   onLoad(option) {
     // 问答编辑不显示提问价格
-    if (option.operating === 'edit' || !this.forums.paycenter.wxpay_close) {
-      this.askingPrice = false;
-    } else {
-      // 初始化默认内容附件均免费
-      this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+    if (this.forums) {
+      if (option.operating === 'edit' || !this.forums.paycenter.wxpay_close) {
+        this.askingPrice = false;
+      } else {
+        // 初始化默认内容附件均免费
+        this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+      }
     }
     this.$u.event.$on('radioChange', item => {
       this.beUserName = item.username;
