@@ -95,7 +95,7 @@
         :theme-image="item.user.avatarUrl"
         :theme-btn="item.canHide || ''"
         :theme-reply-btn="item.canReply || ''"
-        :them-pay-btn="item.price > 0"
+        :them-pay-btn="item.price > 0 || item.attachmentPrice > 0"
         :user-groups="item.user && item.user.groups"
         :theme-time="item.createdAt"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
