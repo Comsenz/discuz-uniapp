@@ -495,12 +495,15 @@
       <uni-popup ref="popupBtm" type="bottom">
         <view class="popup-share">
           <view class="popup-share-content">
-            <text class="popup-title">
+            <text class="popup-title" v-if="type !== 5">
               {{
                 setType === 'pay'
                   ? i18n.t('discuzq.post.selectToViewPaymentAmount')
                   : i18n.t('discuzq.post.selectToViewFreeWordCount')
               }}
+            </text>
+            <text class="popup-title" v-if="setType === 'pay' && type === 5">
+              {{ i18n.t('discuzq.post.supportTheAuthorToContinueToCreate') }}
             </text>
             <view class="popup-content-btn" v-if="setType === 'pay'">
               <qui-button

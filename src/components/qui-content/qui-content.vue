@@ -11,21 +11,44 @@
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header" @click="headClick" @click.stop="">
         <view class="themeItem__header__img">
-          <qui-avatar :user="{ avatarUrl: themeImage, username: userName }" :is-real="isReal" />
+          <qui-avatar
+            v-if="addAsk !== 1"
+            :user="{ avatarUrl: themeImage, username: userName }"
+            :is-real="isReal"
+          />
+          <qui-avatar
+            v-if="addAsk === 1 && threadType === 5"
+            :user="{ avatarUrl: answerImage, username: beAskName }"
+            :is-real="isReal"
+          />
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
-            <text class="themeItem__header__title__username">
+            <text class="themeItem__header__title__username" v-if="addAsk !== 1">
               {{ userName }}
             </text>
+            <text class="themeItem__header__title__username" v-if="addAsk === 1">
+              {{ beAskName }}
+            </text>
             <text v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
-              <text
-                v-for="(item, index) in userGroups"
-                :key="index"
-                :class="item.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
-              >
-                {{ item.isDisplay ? `${item.name}` : '' }}
-              </text>
+              <view v-if="addAsk !== 1">
+                <text
+                  v-for="(item, index) in userGroups"
+                  :key="index"
+                  :class="item.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
+                >
+                  {{ item.isDisplay ? `${item.name}` : '' }}
+                </text>
+              </view>
+              <view v-if="addAsk === 1">
+                <text
+                  v-for="(item, index) in userAnswerGroups"
+                  :key="index"
+                  :class="item.isDisplay ? 'themeItem__header__title__isAdminColor' : ''"
+                >
+                  {{ item.isDisplay ? `${item.name}` : '' }}
+                </text>
+              </view>
             </text>
             <text v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
               <!-- {{ themeType === '2' ? '回复了我' : '@了我' }} -->
@@ -88,10 +111,10 @@
           </view>
           <!-- 回答 -->
           <view class="themeItem__QA" v-if="addAsk === 1">
-            <view class="themeItem_questions">@{{ questionsName }}</view>
-            <view class="themeItem_put">{{ i18n.t('home.to') }}</view>
-            <view class="themeItem_to">@{{ beAskName }}</view>
-            <view class="themeItem_ask">{{ i18n.t('home.putQuestions') }} :</view>
+            <view class="themeItem_questions">@{{ beAskName }}</view>
+            <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
+            <view class="themeItem_to">@{{ questionsName }}</view>
+            <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
           <view :class="themPayBtn ? 'themeItem__content__uparse' : ''">
             <qui-icon
@@ -377,6 +400,13 @@ export default {
         return [];
       },
     },
+    // 已回答用户组
+    userAnswerGroups: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
     // 内容
     themeContent: {
       type: String,
@@ -558,6 +588,11 @@ export default {
       default: () => {
         return {};
       },
+    },
+    // 已回答人的头像
+    answerImage: {
+      type: String,
+      default: '',
     },
   },
   data: () => {
@@ -747,10 +782,10 @@ export default {
   }
   .addAsk {
     position: absolute;
-    top: 40rpx;
-    left: 660rpx;
-    width: 72rpx;
-    height: 72rpx;
+    top: 0rpx;
+    right: 0rpx;
+    width: 120rpx;
+    height: 120rpx;
   }
 }
 

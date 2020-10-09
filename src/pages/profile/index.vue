@@ -71,20 +71,20 @@
           ></qui-tabs>
           <view class="profile-tabs__content">
             <view v-if="current == 0" class="items">
-              <question
-                :user-id="userId"
-                @changeFollow="changeFollow"
-                ref="question"
-                @handleClickShare="handleClickShare"
-              ></question>
-            </view>
-            <view v-else-if="current == 1" class="items">
               <topic
                 :user-id="userId"
                 @changeFollow="changeFollow"
                 ref="topic"
                 @handleClickShare="handleClickShare"
               ></topic>
+            </view>
+            <view v-else-if="current == 1" class="items">
+              <question
+                :user-id="userId"
+                @changeFollow="changeFollow"
+                ref="question"
+                @handleClickShare="handleClickShare"
+              ></question>
             </view>
             <view v-else-if="current == 2" class="items">
               <following :user-id="userId" @changeFollow="changeFollow" ref="following"></following>
@@ -144,8 +144,8 @@ export default {
   data() {
     return {
       items: [
-        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.topic'), brief: '0' },
+        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.following'), brief: '0' },
         { title: this.i18n.t('profile.followers'), brief: '0' },
         { title: this.i18n.t('profile.likes'), brief: '0' },
@@ -179,7 +179,7 @@ export default {
     // #endif
   },
   onPullDownRefresh() {
-    const item = ['question', 'topic', 'following', 'followers', 'like'];
+    const item = ['topic', 'question', 'following', 'followers', 'like'];
     const { current } = this;
     if (!this.$refs[item[current]]) {
       return;
@@ -188,7 +188,7 @@ export default {
   },
   onReachBottom() {
     const { current } = this;
-    const item = ['question', 'topic', 'following', 'followers', 'like'];
+    const item = ['topic', 'question', 'following', 'followers', 'like'];
     this.$refs[item[current]].pullDown();
   },
   // 解决左上角返回数据不刷新情况
@@ -273,8 +273,8 @@ export default {
     },
     // 设置粉丝点赞那些数字
     setNum(res) {
-      this.items[0].brief = res.questionCount || 0;
-      this.items[1].brief = res.threadCount || 0;
+      this.items[0].brief = res.threadCount || 0;
+      this.items[1].brief = res.questionCount || 0;
       this.items[2].brief = res.followCount || 0;
       this.items[3].brief = res.fansCount || 0;
       this.items[4].brief = res.likedCount || 0;
