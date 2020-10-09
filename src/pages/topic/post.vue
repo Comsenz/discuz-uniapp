@@ -2109,7 +2109,7 @@ export default {
   },
   onLoad(option) {
     // 问答编辑不显示提问价格
-    if (this.forums) {
+    if (this.forums && this.forums.paycenter) {
       if (option.operating === 'edit' || !this.forums.paycenter.wxpay_close) {
         this.askingPrice = false;
       } else {
