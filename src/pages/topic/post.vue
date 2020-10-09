@@ -983,13 +983,13 @@ export default {
     },
     diaLogOk() {
       if (this.type === 5) {
-        if(this.inputPrice < '1.0') {
+        if (this.inputPrice < '1.0') {
           uni.showToast({
             title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
             icon: 'none',
           });
           return;
-        };
+        }
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
         this.textShow = true;
@@ -1008,6 +1008,7 @@ export default {
       if (this.forums.set_site.site_onlooker_price === 0) {
         this.watchShow = false;
       } else if (index === 0) {
+        this.payType = 0;
         this.watchShow = false;
       } else {
         this.watchShow = true;
