@@ -100,7 +100,6 @@ export default {
     // },
   },
   created() {
-    console.log('这是上传组件内', this.typeStatus);
     if (this.typeStatus === 'edit') {
       this.videoPercent = 1;
     }
