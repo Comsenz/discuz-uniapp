@@ -64,8 +64,8 @@
           <text class="post-box__hd-r" v-if="type === 5">
             {{
           textAreaValue.length &lt;= textAreaLength
-          ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
-          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+          ? i18n.t('discuzq.post.note', { num: textAnswerLength - textAreaValue.length })
+          : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAnswerLength })
             }}
           </text>
         </view>
@@ -518,6 +518,7 @@ export default {
       markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
       textAreaLength: 450, // 输入框可输入字
+      textAnswerLength: 10000, // 问答输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
       type: 0, // 帖子类型

@@ -551,8 +551,11 @@
                   @click="callClick"
                 ></qui-icon>
               </view>
-              <view class="text-word-tip" v-if="commentWorkTips">
+              <view class="text-word-tip" v-if="commentText == false">
                 {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+              </view>
+              <view class="text-word-tip" v-if="commentText">
+                {{ t.canWrite }}{{ 10000 - textAreaValue.length }}{{ t.word }}
               </view>
             </view>
             <qui-emoji
@@ -1289,10 +1292,6 @@ export default {
                   this.beAsk = true;
                   console.log('显示问答按钮');
                   // 问答免费 已回答 && 允许围观 所有人都可以看
-                } else if (data.question.is_answer === 1 && data.question.is_onlooker === true) {
-                  this.beAsk = false;
-                  this.payment = true;
-                  console.log('显示答案');
                 } else if (data.question.is_answer === 1 && data.question.is_onlooker === false) {
                   this.beAsk = false;
                   this.payment = false;
@@ -2744,7 +2743,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = true;
+        this.commentText = false;
         this.focusVal = true;
       }
     },
@@ -2846,7 +2845,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = true;
+        this.commentText = false;
         this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -2873,7 +2872,7 @@ export default {
       // this.postAnswer();
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
-      this.commentText = false;
+      this.commentText = true;
     },
 
     handleClickOk() {

@@ -96,6 +96,8 @@
           <view :class="themPayBtn ? 'themeItem__content__uparse' : ''">
             <qui-icon
               name="icon-fufei"
+              color="#aaaaaa"
+              size="30"
               v-if="themPayBtn && threadType !== 1"
               class="themeItem__content__fufei"
             ></qui-icon>
@@ -1053,5 +1055,6 @@ export default {
 .themeItem__content__uparse .themeItem__content__fufei {
   position: absolute;
   top: -2rpx;
+  color: #aaa;
 }
 </style>
