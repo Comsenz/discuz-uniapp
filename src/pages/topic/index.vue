@@ -3571,7 +3571,7 @@ page {
   }
 }
 .comment-content-box {
-  padding: 0 40rpx 0 30rpx;
+  padding: 0 40rpx 30rpx 30rpx;
   .comment-content {
     width: 100%;
     height: 260rpx;
