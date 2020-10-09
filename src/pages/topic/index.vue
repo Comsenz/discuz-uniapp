@@ -551,11 +551,8 @@
                   @click="callClick"
                 ></qui-icon>
               </view>
-              <view class="text-word-tip" v-if="commentText == false">
+              <view class="text-word-tip" v-if="commentWorkTips">
                 {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
-              </view>
-              <view class="text-word-tip" v-if="commentText">
-                {{ t.canWrite }}{{ 10000 - textAreaValue.length }}{{ t.word }}
               </view>
             </view>
             <qui-emoji
@@ -1292,9 +1289,14 @@ export default {
                   this.beAsk = true;
                   console.log('显示问答按钮');
                   // 问答免费 已回答 && 允许围观 所有人都可以看
-                } else if (data.question.is_answer === 1 && data.question.is_onlooker === false) {
+                } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
+                  console.log('12345678')
                   this.beAsk = false;
-                  this.payment = false;
+                  this.payment = true;
+                  this.answerPay = false;
+                } else if (this.user.id === data.question.be_user_id && data.question.is_answer === 1) {
+                  this.beAsk = false;
+                  this.payment = true;
                   this.answerPay = false;
                 }
               } else if (data.question.price > '0.00') {
@@ -2743,7 +2745,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = false;
+        this.commentText = true;
         this.focusVal = true;
       }
     },
@@ -2845,7 +2847,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = false;
+        this.commentText = true;
         this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -2872,7 +2874,7 @@ export default {
       // this.postAnswer();
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
-      this.commentText = true;
+      this.commentText = false;
     },
 
     handleClickOk() {
