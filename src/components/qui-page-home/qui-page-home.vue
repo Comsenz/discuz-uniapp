@@ -970,6 +970,9 @@ export default {
     },
     // 上拉加载
     pullDown() {
+      if (this.footerIndex !== 0) {
+        return;
+      }
       if (this.loadingType !== 'more') {
         return;
       }

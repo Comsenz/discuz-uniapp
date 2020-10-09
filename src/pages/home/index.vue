@@ -258,7 +258,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .view-content {
   width: 100%;
-  height: calc(100vh - 98rpx);
+  height: calc(100vh - 120rpx);
 }
 .ioschoice {
   width: 100%;
