@@ -29,6 +29,142 @@
         </qui-cell-item>
       </view>
 
+      <!-- #ifdef MP-WEIXIN -->
+      <view class="post-box__hd">
+        <view class="post-box__hd-l">
+          <qui-icon
+            class="post-box__hd-l__icon"
+            name="icon-expression"
+            size="40"
+            :color="emojiShow ? '#1878F3' : '#777'"
+            @click="emojiclick"
+          ></qui-icon>
+          <qui-icon
+            class="post-box__hd-l__icon"
+            name="icon-call"
+            size="40"
+            color="#777"
+            @click="callClick"
+          ></qui-icon>
+          <qui-icon
+            class="post-box__hd-l__icon"
+            name="icon-wei"
+            size="40"
+            color="#777"
+            @click="topicPage"
+          ></qui-icon>
+        </view>
+        <text class="post-box__hd-r" v-if="type !== 5">
+          {{
+        textAreaValue.length &lt;= textAreaLength
+        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+          }}
+        </text>
+        <text class="post-box__hd-r" v-if="type === 5">
+          {{
+        textAreaValue.length &lt;= textAreaLength
+        ? i18n.t('discuzq.post.note', { num: textAreaLength - textAreaValue.length })
+        : i18n.t('discuzq.post.exceed', { num: textAreaValue.length - textAreaLength })
+          }}
+        </text>
+      </view>
+      <view class="emoji-bd" v-show="emojiShow">
+        <qui-emoji
+          position="absolute"
+          top="20rpx"
+          border-radius="10rpx"
+          @click="getEmojiClick"
+        ></qui-emoji>
+      </view>
+      <view class="post-box__con">
+        <textarea
+          id="textarea"
+          ref="textarea"
+          class="post-box__con-text"
+          :placeholder="
+            type !== 5
+              ? i18n.t('discuzq.post.placeholder')
+              : i18n.t('discuzq.post.placeholderQuestion')
+          "
+          placeholder-class="textarea-placeholder"
+          v-model="textAreaValue"
+          auto-height="true"
+          :show-confirm-bar="barStatus"
+          :adjust-position="true"
+          cursor-spacing="30"
+          cursor="cursor"
+          :maxlength="10000"
+          :focus="type !== 1"
+          v-show="textShow"
+          @blur="contBlur"
+          @focus="focusEvent"
+        ></textarea>
+        <view class="post-box__con-text post-box__con-text--static" v-show="!textShow">
+          <text class="text-cover">{{ textAreaValue }}</text>
+        </view>
+        <view class="markdown-box" v-if="markdownShow">
+          <view>
+            <qui-icon
+              name="icon-bold"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('bold')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-title"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('title')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-italic"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('italic')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-quote"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('quote')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-code"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('code')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-link"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('link')"
+            ></qui-icon>
+          </view>
+          <view>
+            <qui-icon
+              name="icon-strikethrough"
+              size="30"
+              class="qui-icon"
+              @click="toolBarClick('strikethrough')"
+            ></qui-icon>
+          </view>
+        </view>
+      </view>
+      <!-- #endif -->
+
+      <!-- #ifdef H5 -->
       <view v-if="type !== 1">
         <view class="post-box__hd">
           <view class="post-box__hd-l">
@@ -167,6 +303,7 @@
         <view v-if="!vditor" style="text-align: center;"><u-loading size="40"></u-loading></view>
         <qui-vditor ref="vditor"></qui-vditor>
       </view>
+      <!-- #endif -->
 
       <qui-uploader
         :url="`${url}api/attachments`"
@@ -772,6 +909,9 @@ export default {
     // 暂存帖子信息，以防选完地址回来页面刷新后丢失
     saveThread() {
       uni.removeStorageSync('current_thread');
+      if (this.type === 1) {
+        this.textAreaValue = this.vditor.getValue();
+      }
       const thread = {};
       const items = [
         'postTitle',
@@ -2156,7 +2296,6 @@ export default {
     if (this.type === 1) {
       uni.$on('vditor', (vditor, vditorComponent) => {
         this.vditor = vditor;
-        console.log(this.textAreaValue);
         this.vditor.setValue(this.textAreaValue);
         vditorComponent.setPostComponent(this);
       });
