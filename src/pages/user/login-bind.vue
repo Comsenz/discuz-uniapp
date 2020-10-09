@@ -1,7 +1,15 @@
 <template>
   <qui-page :data-qui-theme="theme" class="login-bind-box">
     <view>
-      <view class="login-bind-box-h">{{ i18n.t('user.loginBind') }}</view>
+      <view class="login-bind-box-h">{{ i18n.t('user.loginBindId') }}</view>
+      <view class="login-bind-box-info">
+        <view class="login-bind-box-info-h">
+          <text>{{ i18n.t('user.dear') }}</text>
+          <img class="login-bind-box-info-image" src="@/static/taobao.svg" />
+          <text class="login-bind-box-info-bold">用户名</text>
+        </view>
+        <view class="login-bind-box-info-ft">{{ i18n.t('user.loginBindText') }}</view>
+      </view>
       <view class="login-bind-box-con">
         <input
           class="input"
@@ -20,24 +28,9 @@
         />
       </view>
       <view class="login-bind-box-btn" @click="handleLogin">
-        {{ i18n.t('user.loginBindId') }}
+        {{ i18n.t('user.loginBind') }}
       </view>
       <view class="login-bind-box-ft">
-        <view
-          class="login-bind-box-ft-title"
-          v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-        >
-          {{ i18n.t('user.otherLoginMode') }}
-        </view>
-        <view class="login-bind-box-ft-con">
-          <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            class="login-bind-box-ft-con-image"
-            lazy-load
-            src="@/static/shouji.svg"
-            @click="jump2PhoneLogin"
-          />
-        </view>
         <view>
           <!-- 开启注册功能才显示 -->
           <text
@@ -102,9 +95,6 @@ export default {
       };
       this.getLoginParams(params, this.i18n.t('user.loginBindSuccess'));
     },
-    jump2PhoneLogin() {
-      this.jump2PhoneLoginPage();
-    },
     jump2Register() {
       this.jump2RegisterBindPage();
     },
@@ -128,6 +118,31 @@ export default {
     font-size: 50rpx;
     font-weight: bold;
     color: --color(--qui-FC-333);
+  }
+
+  &-info {
+    padding: 0rpx 0rpx 50rpx 40rpx;
+    font-size: 40rpx;
+
+    &-h {
+      margin-bottom: 20rpx;
+    }
+
+    &-image {
+      width: 50rpx;
+      height: 50rpx;
+      margin-right: 20rpx;
+      vertical-align: middle;
+      border-radius: 100rpx;
+    }
+
+    &-bold {
+      font-weight: bold;
+    }
+
+    &-ft {
+      font-size: 34rpx;
+    }
   }
 
   &-con {
@@ -158,19 +173,6 @@ export default {
   &-ft {
     margin: 160rpx 0 50rpx;
     text-align: center;
-
-    &-title {
-      color: rgba(221, 221, 221, 1);
-    }
-
-    &-con {
-      margin: 30rpx 0 100rpx;
-
-      &-image {
-        width: 100rpx;
-        height: 100rpx;
-      }
-    }
 
     &-btn {
       color: rgba(24, 120, 243, 1);
