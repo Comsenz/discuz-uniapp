@@ -330,6 +330,7 @@
       <qui-upload-video
         v-if="type === 2"
         ref="uploadVideo"
+        :type-status="operating"
         :url="url"
         :video-before-list="videoBeforeList"
         :controls="controlsStatus"
@@ -2061,6 +2062,7 @@ export default {
         this.checkClassData.push(res.category);
         if (res.threadVideo) {
           this.fileId = res.threadVideo.file_id;
+          this.percent = 1;
         }
         // this.uploadFile = res.firstPost.images;
         if (res.firstPost.images) {
