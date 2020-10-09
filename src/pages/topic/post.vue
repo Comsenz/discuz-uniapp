@@ -1009,6 +1009,10 @@ export default {
         this.watchShow = false;
       } else if (index === 0) {
         this.payType = 0;
+        if (this.payType === 0) {
+          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+        }
+
         this.watchShow = false;
       } else {
         this.watchShow = true;
@@ -1743,6 +1747,9 @@ export default {
       if (this.payType === 1) {
         params.attachment_price = this.price;
         params.price = '';
+      } else if (this.payType === 0) {
+        params.attachment_price = '';
+        params.price = '';
       }
       console.log(params, '这是参数');
       const currentPosition = this.currentPosition;
@@ -2015,9 +2022,12 @@ export default {
             // console.log(this.price, '价格');
             threads.attachment_price = this.price;
             threads.price = '';
-          } else {
+          } else if (this.payType === 2) {
             threads.attachment_price = '';
             threads.price = this.price;
+          } else if (this.payType === 0) {
+            threads.attachment_price = '';
+            threads.price = '';
           }
           threads.free_words = this.word;
           posts._jv.relationships.attachments = this.addImg();
