@@ -17,7 +17,7 @@
             :is-real="isReal"
           />
           <qui-avatar
-            v-if="addAsk === 1 && threadType === 5"
+            v-if="addAsk === 1"
             :user="{ avatarUrl: answerImage, username: beAskName }"
             :is-real="isReal"
           />
