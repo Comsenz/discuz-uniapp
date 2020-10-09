@@ -786,6 +786,14 @@ export default {
         'uploadFile',
         'videoBeforeList',
         'audioBeforeList',
+        'checked',
+        'watchChecked',
+        'askingPrice',
+        'watchShow',
+        'priceAsk',
+        'beAskId',
+        'userImage',
+        'beUserName',
       ];
       items.forEach(key => {
         if (this[key]) {
