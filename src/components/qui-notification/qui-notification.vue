@@ -41,14 +41,11 @@
                     <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
                       {{ i18n.t('notice.likedMe') }}
                     </text>
-                    <text class="list-box__notice__hl-info-title" v-if="item.type === 'liked'">
-                      {{ i18n.t('notice.likedMe') }}
-                    </text>
                     <text
                       class="list-box__notice__hl-info-title"
-                      v-if="item.type === 'rewarded' && item.order_type === 3"
+                      v-if="item.type === 'rewarded' && item.order_type === 1"
                     >
-                      {{ !item.isScale ? i18n.t('notice.payedMe') : i18n.t('notice.scaledpayed') }}
+                      {{ i18n.t('notice.scaledRegister') }}
                     </text>
                     <text
                       class="list-box__notice__hl-info-title"
@@ -62,9 +59,40 @@
                     </text>
                     <text
                       class="list-box__notice__hl-info-title"
-                      v-if="item.type === 'rewarded' && item.order_type === 1"
+                      v-if="item.type === 'rewarded' && item.order_type === 3"
                     >
-                      {{ i18n.t('notice.scaledRegister') }}
+                      {{ !item.isScale ? i18n.t('notice.payedMe') : i18n.t('notice.scaledpayed') }}
+                    </text>
+
+                    <!-- type为rewarded和order_type为5展示：提问了我 -->
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 5"
+                    >
+                      {{ i18n.t('notice.questions') }}
+                    </text>
+
+                    <!-- type为rewarded和order_type为6展示：围观了我 -->
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 6"
+                    >
+                      {{ i18n.t('notice.watchedMe') }}
+                    </text>
+
+                    <!-- type为rewarded和order_type为7展示：支付了我 -->
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 7"
+                    >
+                      {{ i18n.t('notice.payedMe') }}
+                    </text>
+
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'questioned' && item.is_answer === 0"
+                    >
+                      {{ i18n.t('notice.questions') }}
                     </text>
                     <text
                       class="list-box__notice__hl-info-title"
@@ -72,17 +100,11 @@
                     >
                       {{ i18n.t('notice.answersMe') }}
                     </text>
-                    <text
-                      class="list-box__notice__hl-info-title"
-                      v-if="item.type === 'questioned' && item.is_answer === 0"
-                    >
-                      {{ i18n.t('notice.questions') }}
-                    </text>
                   </view>
                   <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
                 </view>
               </view>
-              <view class="">
+              <view>
                 <text class="list-box__notice__hl__amount" v-if="item.type === 'rewarded'">
                   {{ item.money }}
                 </text>

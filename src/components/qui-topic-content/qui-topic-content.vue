@@ -638,28 +638,12 @@ export default {
     },
     // 附件预览
     preview(item) {
-      const params = item;
-      console.log(item, '---');
-      this.$store.dispatch('session/setAttachment', params);
+      this.$store.dispatch('session/setAttachment', item);
       const attachment = this.$store.getters['session/get']('attachment');
       console.log('attachment', attachment);
-      this.$store
-        .dispatch('jv/get', [
-          `attachments/${item._jv.id}${item.url.slice(
-            item.url.indexOf('?'),
-            item.url.length,
-          )}&page=1`,
-          {},
-        ])
-        .then(res => {
-          console.log('res', res);
-          uni.navigateTo({
-            url: '/pages/topic/attachment',
-          });
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      uni.navigateTo({
+        url: '/pages/topic/attachment',
+      });
     },
     // 只能播放一个音频
     audioPlay(id) {

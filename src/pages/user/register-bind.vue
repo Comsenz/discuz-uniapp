@@ -4,6 +4,7 @@
       <view class="register-bind-box-h">
         {{ type ? i18n.t('user.registerBind') : i18n.t('user.registerBindUcenter') }}
       </view>
+      <view class="register-bind-box-info">亲爱的，头像 用户名</view>
       <view class="register-bind-box-con">
         <input
           class="input"
@@ -420,6 +421,11 @@ export default {
     font-size: 50rpx;
     font-weight: bold;
     color: --color(--qui-FC-333);
+  }
+
+  &-info {
+    padding: 0rpx 0rpx 50rpx 40rpx;
+    font-size: 50rpx;
   }
 
   &-con {

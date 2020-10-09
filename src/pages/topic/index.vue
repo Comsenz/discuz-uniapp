@@ -32,7 +32,7 @@
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
               :is-real="thread.user.isReal"
-              :user-role="thread.user.groups"
+              :user-role="thread.user.groups ? thread.user.groups : ''"
               :theme-type="thread.type"
               :theme-time="thread.createdAt"
               :management-show="
@@ -158,7 +158,7 @@
                 :avatar-url="thread.question.beUser.avatarUrl"
                 :user-name="thread.question.beUser.username"
                 :is-real="thread.question.beUser.isReal"
-                :user-role="thread.user.groups"
+                :user-role="thread.user.groups ? thread.user.groups : ''"
                 :theme-time="thread.createdAt"
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
@@ -262,7 +262,7 @@
                   :user-name="post.user.username"
                   :is-real="post.user.isReal"
                   :is-liked="post.isLiked"
-                  :user-role="post.user.groups"
+                  :user-role="post.user.groups ? post.user.groups : ''"
                   :comment-time="post.createdAt"
                   :comment-status="post.isApproved"
                   :comment-content="post.summary"
@@ -1190,6 +1190,7 @@ export default {
           'firstPost.likedUsers',
           'firstPost.images',
           'firstPost.attachments',
+          'firstPost.postGoods',
           'rewardedUsers',
           'category',
           'threadVideo',
@@ -1267,11 +1268,19 @@ export default {
             console.log(data, '详情页主题');
             if (data.question) {
               console.log('wenda');
-              this.platformDate =
-               ( data.question.price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
-              this.onLookformDate = (data.question.onlooker_unit_price * (this.forums.set_site.site_master_scale / 10)).toFixed(2);
+              this.platformDate = (
+                data.question.price *
+                (this.forums.set_site.site_master_scale / 10)
+              ).toFixed(2);
+              this.onLookformDate = (
+                data.question.onlooker_unit_price *
+                (this.forums.set_site.site_master_scale / 10)
+              ).toFixed(2);
               this.beAskDate = ((data.question.price - this.platformDate) / 2).toFixed(2);
-              this.beAskBeDate = ((data.question.onlooker_unit_price - this.onLookformDate) / 2).toFixed(2);
+              this.beAskBeDate = (
+                (data.question.onlooker_unit_price - this.onLookformDate) /
+                2
+              ).toFixed(2);
               // 问答免费
               if (data.question.price === '0.00') {
                 console.log('ooooo');
@@ -1295,7 +1304,9 @@ export default {
                   console.log('显示问答按钮');
                 } else if (
                   this.user.id === data.question.be_user_id ||
-                  (data.user.id && data.question.is_answer === 1 && data.question.is_onlooker === true)
+                  (data.user.id &&
+                    data.question.is_answer === 1 &&
+                    data.question.is_onlooker === true)
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
@@ -1369,13 +1380,20 @@ export default {
               // }
               this.questionId = data.question._jv.id;
             }
-            data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
-              if (value.permission === 'createThreadPaid') {
-                this.beRewarded = true;
-                return;
-              }
-            });
-            if (data.user && data.user.groups[0]._jv.id === '1') {
+            if (data.user.groups && data.user.groups.length > 0) {
+              data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
+                if (value.permission === 'createThreadPaid') {
+                  this.beRewarded = true;
+                  return;
+                }
+              });
+            }
+
+            if (
+              data.user.groups &&
+              data.user.groups.length > 0 &&
+              data.user.groups[0]._jv.id === '1'
+            ) {
               this.beRewarded = true;
             }
             this.loaded = true;

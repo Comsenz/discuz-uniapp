@@ -486,6 +486,7 @@ export default {
     reward: '财务通知',
     rewardedMe: ' 打赏了我',
     payedMe: ' 支付了我',
+    watchedMe: ' 围观了我',
     scaledrewarded: ' 的打赏分成',
     scaledpayed: ' 的付费分成',
     scaledRegister: ' 的注册分成',
