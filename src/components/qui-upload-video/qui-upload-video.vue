@@ -54,6 +54,10 @@ export default {
       default: 1,
       type: Number,
     },
+    typeStatus: {
+      default: '',
+      type: String,
+    },
     url: {
       default: '',
       type: String,
@@ -96,6 +100,10 @@ export default {
     // },
   },
   created() {
+    console.log('这是上传组件内', this.typeStatus);
+    if (this.typeStatus === 'edit') {
+      this.videoPercent = 1;
+    }
     // this.url = DISCUZ_REQUEST_HOST;
     this.videoContext = uni.createVideoContext('video');
     if (this.chooseType === 0) {
