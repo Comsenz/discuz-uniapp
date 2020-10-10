@@ -79,6 +79,7 @@ export default {
         'filter[isApproved]': 1,
         'filter[userId]': this.userId,
         'filter[type]': 5,
+        'filter[answer]': 'yes',
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
