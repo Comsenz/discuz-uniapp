@@ -13,12 +13,12 @@
 
     <!-- 回答内容 -->
     <div class="theme-content">
-      <qui-uparse :content="answerContent"></qui-uparse>
+      <qui-uparse :content="answerContent" class="theme-content-answer"></qui-uparse>
       <qui-image :images-list="imagesList"></qui-image>
     </div>
 
     <!-- 已支付列表 -->
-    <view>
+    <view v-if="thread.question.onlooker_number > 0">
       <qui-person-list
         :type="i18n.t('topic.paids')"
         :person-num="thread.question.onlooker_number"
@@ -134,9 +134,13 @@ export default {
 
   &-content {
     padding: 0 33rpx 0 21rpx;
+    &-answer {
+      // padding-bottom: 36rpx;
+    }
   }
 
   /deep/ .det-person-box {
+    padding-bottom: 0rpx;
     margin-top: 86rpx;
     background: --color(--qui-BG-ED);
     .det-per-list {

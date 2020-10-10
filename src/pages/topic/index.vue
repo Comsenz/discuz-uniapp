@@ -1289,13 +1289,14 @@ export default {
                   this.beAsk = true;
                   console.log('显示问答按钮');
                   // 问答免费 已回答 && 允许围观 所有人都可以看
-                } else if (data.question.is_answer === 1 && data.question.is_onlooker === true) {
+                } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
+                  console.log('12345678')
                   this.beAsk = false;
                   this.payment = true;
-                  console.log('显示答案');
-                } else if (data.question.is_answer === 1 && data.question.is_onlooker === false) {
+                  this.answerPay = false;
+                } else if (this.user.id === data.question.be_user_id && data.question.is_answer === 1) {
                   this.beAsk = false;
-                  this.payment = false;
+                  this.payment = true;
                   this.answerPay = false;
                 }
               } else if (data.question.price > '0.00') {
@@ -3570,7 +3571,7 @@ page {
   }
 }
 .comment-content-box {
-  padding: 0 40rpx 0 30rpx;
+  padding: 0 40rpx 30rpx 30rpx;
   .comment-content {
     width: 100%;
     height: 260rpx;

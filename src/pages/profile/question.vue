@@ -72,12 +72,14 @@ export default {
           'threadVideo',
           'question',
           'question.beUser',
+          'question.beUser.groups',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[isApproved]': 1,
         'filter[userId]': this.userId,
         'filter[type]': 5,
+        'filter[answer]': 'yes',
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))

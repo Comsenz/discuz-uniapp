@@ -1,16 +1,14 @@
 <template>
   <qui-page :data-qui-theme="theme" class="register-bind-box">
     <view>
-      <view class="register-bind-box-h">
-        {{ type ? i18n.t('user.registerBindId') : i18n.t('user.registerBindUcenter') }}
-      </view>
+      <view class="register-bind-box-h">{{ i18n.t('user.registerBindPhone') }}</view>
       <view class="register-bind-box-info">
         <view class="register-bind-box-info-h">
           <text>{{ i18n.t('user.dear') }}</text>
-          <img class="register-bind-box-info-image" src="@/static/taobao.svg" />
-          <text class="register-bind-box-info-bold">用户名</text>
+          <img />
+          <text class="register-bind-box-info-bold">手机号</text>
         </view>
-        <view class="register-bind-box-info-ft">{{ i18n.t('user.registerBindText') }}</view>
+        <view class="register-bind-box-info-ft">{{ i18n.t('user.phoneRegisterBindText') }}</view>
       </view>
       <view class="register-bind-box-con">
         <input
@@ -38,13 +36,106 @@
         />
       </view>
       <view class="register-bind-box-btn" id="TencentCaptcha" @click="handleRegister">
-        {{ type ? i18n.t('user.registerBind') : i18n.t('user.registerBindUc') }}
+        {{ i18n.t('user.registerBind') }}
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="register-bind-box-ft">
+        <view
+          class="register-bind-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.miniprogram_close) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherRegisterMode') }}
+        </view>
+        <view class="register-bind-box-ft-con">
+          <image
+            v-if="forum && forum.passport && forum.passport.miniprogram_close"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.miniprogram_close &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
+                ? 'register-bind-box-ft-con-image register-bind-box-ft-con-right'
+                : 'register-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="mpAuthClick"
+          />
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.miniprogram_close &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms
+                ? 'register-bind-box-ft-con-image register-bind-box-ft-con-left'
+                : 'register-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+        </view>
         <view class="register-bind-box-ft-btn" @click="jump2Login">
           {{ i18n.t('user.login') }}
         </view>
       </view>
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <view class="register-bind-box-ft">
+        <view
+          class="register-bind-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.offiaccount_close && isWeixin) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+          "
+        >
+          {{ i18n.t('user.otherRegisterMode') }}
+        </view>
+        <view class="register-bind-box-ft-con">
+          <image
+            v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms &&
+              isWeixin
+                ? 'register-bind-box-ft-con-image register-bind-box-ft-con-right'
+                : 'register-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WeChat"
+          />
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            :class="[
+              forum &&
+              forum.passport &&
+              forum.passport.offiaccount_close &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms &&
+              isWeixin
+                ? 'register-bind-box-ft-con-image register-bind-box-ft-con-left'
+                : 'register-bind-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+        </view>
+        <view class="register-bind-box-ft-btn" @click="jump2Login">
+          {{ i18n.t('user.login') }}
+        </view>
+      </view>
+      <!-- #endif -->
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
@@ -302,6 +393,19 @@ export default {
           console.log(err);
         });
     },
+    // #ifdef MP-WEIXIN
+    mpAuthClick() {
+      this.getmpRegisterParams();
+    },
+    // #endif
+    // #ifdef H5
+    jump2WeChat() {
+      this.wxh5Login();
+    },
+    // #endif
+    jump2PhoneLogin() {
+      this.jump2PhoneLoginPage();
+    },
     jump2Login() {
       this.jump2LoginBindPage();
     },
@@ -330,14 +434,6 @@ export default {
 
     &-h {
       margin-bottom: 20rpx;
-    }
-
-    &-image {
-      width: 50rpx;
-      height: 50rpx;
-      margin-right: 20rpx;
-      vertical-align: middle;
-      border-radius: 100rpx;
     }
 
     &-bold {
@@ -377,6 +473,27 @@ export default {
   &-ft {
     margin: 160rpx 0 50rpx;
     text-align: center;
+
+    &-title {
+      color: rgba(221, 221, 221, 1);
+    }
+
+    &-con {
+      margin: 30rpx 0 100rpx;
+
+      &-image {
+        width: 100rpx;
+        height: 100rpx;
+      }
+
+      &-right {
+        margin-right: 20rpx;
+      }
+
+      &-left {
+        margin-left: 20rpx;
+      }
+    }
 
     &-btn {
       color: rgba(24, 120, 243, 1);
