@@ -515,9 +515,13 @@ export default {
       });
     }
 
-    if (this.forums.set_site) {
+    if (this.forums.set_site && this.forums.set_site.site_title) {
       uni.setNavigationBarTitle({
-        title: `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
+        title: `${this.forums.set_site.site_title}`,
+      });
+    } else if (this.forums.set_site) {
+      uni.setNavigationBarTitle({
+        title: `${this.forums.set_site.site_name}`,
       });
     }
 
@@ -629,9 +633,19 @@ export default {
       this.threads = [];
       await this.loadThreads();
       this.checkoutTheme = false;
-      uni.setNavigationBarTitle({
-        title: `${dataInfo.name} - ${this.forums.set_site.site_name}`,
-      });
+      if (dataInfo.id !== 0) {
+        uni.setNavigationBarTitle({
+          title: `${dataInfo.name} - ${this.forums.set_site.site_name}`,
+        });
+      } else if (this.forums.set_site && this.forums.set_site.site_title) {
+        uni.setNavigationBarTitle({
+          title: `${this.forums.set_site.site_title}`,
+        });
+      } else {
+        uni.setNavigationBarTitle({
+          title: `${this.forums.set_site.site_name}`,
+        });
+      }
     },
     // 筛选分类里的搜索
     searchClick() {
