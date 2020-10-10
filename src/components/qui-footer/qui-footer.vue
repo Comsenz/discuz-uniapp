@@ -200,7 +200,9 @@ export default {
   },
   methods: {
     select(item, index) {
-      this.setFooterIndex(parseInt(index, 10));
+      if (this.$store.getters['session/get']('isLogin')) {
+        this.setFooterIndex(parseInt(index, 10));
+      }
       this.$emit('click', item, index, this.isTabBar);
       this.sel = item.id;
     },
