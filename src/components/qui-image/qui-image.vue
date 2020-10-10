@@ -2,44 +2,60 @@
   <view>
     <view v-if="imagesList.length == 1">
       <view class="themeItem__content__imgone">
-        <image
+        <view
           class="themeItem__content__imgone__item"
           v-for="(image, index) in imagesList"
           :key="index"
-          :mode="modeVal"
-          :src="image.thumbUrl"
-          alt
-          @click="previewPicture(previewStatus, index)"
-          lazy-load
-        ></image>
+        >
+          <image
+            class="qui_img"
+            v-if="image.thumbUrl"
+            :mode="modeVal"
+            :src="image.thumbUrl"
+            alt
+            @click="previewPicture(previewStatus, index)"
+            lazy-load
+          ></image>
+        </view>
       </view>
     </view>
     <view v-if="imagesList.length == 2">
       <view class="themeItem__content__imgtwo">
-        <image
+        <view
           class="themeItem__content__imgtwo__item"
           v-for="(image, index) in imagesList"
           :key="index"
-          :mode="modeVal"
-          :src="image.thumbUrl"
-          alt
-          @click="previewPicture(previewStatus, index)"
-          lazy-load
-        ></image>
+        >
+          <image
+            class="qui_img"
+            v-if="image.thumbUrl"
+            :mode="modeVal"
+            :src="image.thumbUrl"
+            alt
+            @click="previewPicture(previewStatus, index)"
+            lazy-load
+          ></image>
+        </view>
       </view>
     </view>
     <view v-if="imagesList.length >= 3">
       <view class="themeItem__content__imgmore">
-        <image
+        <view
           class="themeItem__content__imgmore__item"
           v-for="(image, index) in imagesList"
           :key="index"
-          :mode="modeVal"
-          :src="image.thumbUrl"
-          alt
-          @click="previewPicture(previewStatus, index)"
-          lazy-load
-        ></image>
+        >
+          <image
+            class="qui_img"
+            v-if="image.thumbUrl"
+            :mode="modeVal"
+            :src="image.thumbUrl"
+            alt
+            @click="previewPicture(previewStatus, index)"
+            lazy-load
+          ></image>
+        </view>
+
         <view class="themeItem__content__imgmore__item" v-if="imagesList.length % 3 != 0"></view>
       </view>
     </view>
@@ -137,5 +153,10 @@ export default {
       }
     }
   }
+}
+.qui_img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -1851,17 +1851,34 @@ export default {
         }
       });
       // 附件
-      if (this.type === 1 && this.$refs.uploadFiles) {
-        const newAttachmentList = this.$refs.uploadFiles.getValue();
-        newAttachmentList.forEach(item => {
-          if (item.id) {
-            attachments.data.push({
-              type: 'attachments',
-              id: item.id,
-            });
-          }
-        });
-      }
+      // if (this.type === 1 && this.$refs.uploadFiles) {
+      //   const newAttachmentList = this.$refs.uploadFiles.getValue();
+      //   newAttachmentList.forEach(item => {
+      //     if (item.id) {
+      //       attachments.data.push({
+      //         type: 'attachments',
+      //         id: item.id,
+      //       });
+      //     }
+      //   });
+      // }
+      return attachments;
+    },
+    // 发布主题，处理附件
+    addFile() {
+      const attachments = {};
+      attachments.data = [];
+      // if (this.type === 1 && this.$refs.uploadFiles) {
+      const newAttachmentList = this.$refs.uploadFiles.getValue();
+      newAttachmentList.forEach(item => {
+        if (item.id) {
+          attachments.data.push({
+            type: 'attachments',
+            id: item.id,
+          });
+        }
+      });
+      // }
       return attachments;
     },
     // 发布问题
@@ -1951,7 +1968,7 @@ export default {
             break;
           case 1:
             params.title = this.postTitle;
-            params._jv.relationships.attachments = this.addImg();
+            params._jv.relationships.attachments = this.addFile();
             resolve();
             break;
           case 2:
@@ -2218,7 +2235,7 @@ export default {
             threads.price = '';
           }
           threads.free_words = this.word;
-          posts._jv.relationships.attachments = this.addImg();
+          posts._jv.relationships.attachments = this.addFile();
           break;
         case 2:
           threads.file_id = this.fileId;

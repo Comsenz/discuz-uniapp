@@ -441,11 +441,18 @@ export default {
 
     // 详情页编辑增加图片时首页增加图片
     this.$u.event.$on('refreshImg', res => {
+      // console.log('这是接收的', res);
       // eslint-disable-next-line no-restricted-syntax
       for (const index in this.threads) {
         if (this.threads[index]._jv.id === res.threadId) {
-          const images = this.$store.getters['jv/get'](`posts/${res.id}`);
-          this.threads[index].firstPost.images = images.attachments;
+          const images = [];
+          if (res.images.data) {
+            res.images.data.forEach(image => {
+              images.push(this.$store.getters['jv/get'](`attachments/${image.id}`));
+            });
+          }
+
+          this.threads[index].firstPost.images = images;
           this.$forceUpdate();
           break;
         }
