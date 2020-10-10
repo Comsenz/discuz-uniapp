@@ -364,7 +364,7 @@
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
-        v-if="type === 1 && forums.other.can_create_thread_paid"
+        v-if="type === 1 && forums.other.can_create_thread_paid && ioshide"
         @click="lookPay"
       ></qui-cell-item>
       <view v-if="type === 1">
@@ -373,11 +373,18 @@
           :title="i18n.t('discuzq.post.paymentAmount')"
           :addon="showPrice"
           arrow
-          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close && payType !== 0"
+          v-if="
+            type !== 0 &&
+              showHidden &&
+              forums.paycenter.wxpay_close &&
+              payType !== 0 &&
+              forums.other.can_create_thread_paid &&
+              ioshide
+          "
           @click="cellClick('pay')"
         ></qui-cell-item>
       </view>
-      <view v-else-if="type !== 0 && type !== 5">
+      <view v-else-if="type !== 0 && type !== 5 && forums.other.can_create_thread_paid && ioshide">
         <qui-cell-item
           :class="price > 0 ? 'cell-item-right-text' : ''"
           :title="
@@ -387,18 +394,27 @@
           "
           :addon="showPrice"
           arrow
-          v-if="type !== 0 && showHidden && forums.paycenter.wxpay_close"
+          v-if="
+            type !== 0 &&
+              showHidden &&
+              forums.paycenter.wxpay_close &&
+              forums.other.can_create_thread_paid &&
+              ioshide
+          "
           @click="cellClick('pay')"
         ></qui-cell-item>
       </view>
       <!-- 匿名提问 -->
-      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
+      <view
+        class="uni-list-cell uni-list-cell-pd"
+        v-if="type === 5 && forums.other.can_create_thread_paid && ioshide"
+      >
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
         <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
       <!-- 提问价格 -->
       <qui-cell-item
-        v-if="type === 5 && askingPrice"
+        v-if="type === 5 && askingPrice && forums.other.can_create_thread_paid && ioshide"
         :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.askingPrice')"
         :addon="showAskPrice"
@@ -435,7 +451,8 @@
             type !== 0 &&
             type !== 4 &&
             type !== 5 &&
-            payType !== 1
+            payType !== 1 &&
+            payType !== 0
         "
         arrow
         @click="cellClick('word')"
@@ -818,6 +835,7 @@ export default {
       chooseType: 1, // 视频是从首页上传的还是从发布页上传的
       payType: 0, //  查看付费的方式，  0均免费， 1内容免费，附件付费，  2内容和附件都付费
       showPayType: '', // 选择的支付方式
+      ioshide: false, // ios下付费隐藏
     };
   },
   computed: {
@@ -1310,26 +1328,27 @@ export default {
         // #endif
       }
       this.payStatus = false;
+      console.log('hellow word');
       if (!this.forums.paycenter.wxpay_close) {
         this.payShowStatus = false;
         return;
-      } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
+      } else if (this.forums.paycenter.wxpay_close && this.forums.other.can_create_thread_paid) {
         // #ifndef H5
         if (this.system === 'ios') {
-          if (this.paymentmodel === false) {
-            this.payShowStatus = false;
-            return;
-          } else {
-            this.payShowStatus = true;
-          }
+          this.payShowStatus = false;
+          this.ioshide = false;
+          return;
         } else {
+          this.ioshide = true;
           this.payShowStatus = true;
         }
         // #endif
         // #ifdef H5
+        this.ioshide = true;
         this.payShowStatus = true;
         // #endif
       } else {
+        this.ioshide = false;
         this.payShowStatus = false;
         return;
       }
@@ -1851,17 +1870,34 @@ export default {
         }
       });
       // 附件
-      if (this.type === 1 && this.$refs.uploadFiles) {
-        const newAttachmentList = this.$refs.uploadFiles.getValue();
-        newAttachmentList.forEach(item => {
-          if (item.id) {
-            attachments.data.push({
-              type: 'attachments',
-              id: item.id,
-            });
-          }
-        });
-      }
+      // if (this.type === 1 && this.$refs.uploadFiles) {
+      //   const newAttachmentList = this.$refs.uploadFiles.getValue();
+      //   newAttachmentList.forEach(item => {
+      //     if (item.id) {
+      //       attachments.data.push({
+      //         type: 'attachments',
+      //         id: item.id,
+      //       });
+      //     }
+      //   });
+      // }
+      return attachments;
+    },
+    // 发布主题，处理附件
+    addFile() {
+      const attachments = {};
+      attachments.data = [];
+      // if (this.type === 1 && this.$refs.uploadFiles) {
+      const newAttachmentList = this.$refs.uploadFiles.getValue();
+      newAttachmentList.forEach(item => {
+        if (item.id) {
+          attachments.data.push({
+            type: 'attachments',
+            id: item.id,
+          });
+        }
+      });
+      // }
       return attachments;
     },
     // 发布问题
@@ -1951,7 +1987,7 @@ export default {
             break;
           case 1:
             params.title = this.postTitle;
-            params._jv.relationships.attachments = this.addImg();
+            params._jv.relationships.attachments = this.addFile();
             resolve();
             break;
           case 2:
@@ -2218,7 +2254,7 @@ export default {
             threads.price = '';
           }
           threads.free_words = this.word;
-          posts._jv.relationships.attachments = this.addImg();
+          posts._jv.relationships.attachments = this.addFile();
           break;
         case 2:
           threads.file_id = this.fileId;
@@ -2387,19 +2423,23 @@ export default {
       ) {
         // #ifndef H5
         if (res.platform === 'ios') {
-          if (this.forums.paycenter.wxpay_ios === false) {
-            this.showHidden = false;
-          } else {
-            this.showHidden = true;
-          }
+          // if (this.forums.paycenter.wxpay_ios === false) {
+          //   this.showHidden = false;
+          // } else {
+          //   this.showHidden = true;
+          // }
+          this.ioshide = false;
         } else {
+          this.ioshide = true;
           this.showHidden = true;
         }
         // #endif
         // #ifdef H5
+        this.ioshide = true;
         this.showHidden = true;
         // #endif
       } else {
+        this.ioshide = false;
         this.showHidden = false;
       }
     } catch (e) {

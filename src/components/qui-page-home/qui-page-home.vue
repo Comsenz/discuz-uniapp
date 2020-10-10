@@ -442,11 +442,18 @@ export default {
 
     // 详情页编辑增加图片时首页增加图片
     this.$u.event.$on('refreshImg', res => {
+      // console.log('这是接收的', res);
       // eslint-disable-next-line no-restricted-syntax
       for (const index in this.threads) {
         if (this.threads[index]._jv.id === res.threadId) {
-          const images = this.$store.getters['jv/get'](`posts/${res.id}`);
-          this.threads[index].firstPost.images = images.attachments;
+          const images = [];
+          if (res.images.data) {
+            res.images.data.forEach(image => {
+              images.push(this.$store.getters['jv/get'](`attachments/${image.id}`));
+            });
+          }
+
+          this.threads[index].firstPost.images = images;
           this.$forceUpdate();
           break;
         }
@@ -509,9 +516,13 @@ export default {
       });
     }
 
-    if (this.forums.set_site) {
+    if (this.forums.set_site && this.forums.set_site.site_title) {
       uni.setNavigationBarTitle({
-        title: `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
+        title: `${this.forums.set_site.site_title}`,
+      });
+    } else if (this.forums.set_site) {
+      uni.setNavigationBarTitle({
+        title: `${this.forums.set_site.site_name}`,
       });
     }
 
@@ -623,9 +634,19 @@ export default {
       this.threads = [];
       await this.loadThreads();
       this.checkoutTheme = false;
-      uni.setNavigationBarTitle({
-        title: `${dataInfo.name} - ${this.forums.set_site.site_name}`,
-      });
+      if (dataInfo.id !== 0) {
+        uni.setNavigationBarTitle({
+          title: `${dataInfo.name} - ${this.forums.set_site.site_name}`,
+        });
+      } else if (this.forums.set_site && this.forums.set_site.site_title) {
+        uni.setNavigationBarTitle({
+          title: `${this.forums.set_site.site_title}`,
+        });
+      } else {
+        uni.setNavigationBarTitle({
+          title: `${this.forums.set_site.site_name}`,
+        });
+      }
     },
     // 筛选分类里的搜索
     searchClick() {

@@ -226,6 +226,16 @@ export default {
       });
     },
     purchase() {
+      if (!this.forums.paycenter.wxpay_close) {
+        this.payTypeData = [
+          {
+            name: '钱包支付',
+            icon: 'icon-walletPay',
+            color: '#1878f3',
+            value: '1',
+          },
+        ]; // 支付方式
+      }
       this.payShowStatus = true;
       this.payTypeVal = 4;
       this.$nextTick(() => {
