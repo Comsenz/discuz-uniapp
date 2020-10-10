@@ -170,7 +170,6 @@ export default {
       !this.$store.getters['session/get']('isLogin') &&
       ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
     ) {
-      this.setFooterIndex(0);
       // uni.navigateTo({
       //   url: 'pages/home/index',
       // });
@@ -224,8 +223,8 @@ export default {
           return;
         }
         // #endif
-        this.currentTab = 'home';
-        this.setFooterIndex(0);
+        // this.currentTab = 'home';
+        // this.setFooterIndex(0);
         return;
       }
 
