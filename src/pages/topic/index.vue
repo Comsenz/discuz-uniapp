@@ -1370,15 +1370,15 @@ export default {
               // }
               this.questionId = data.question._jv.id;
             }
-            data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
-              if (value.permission === 'createThreadPaid') {
-                this.beRewarded = true;
-                return;
-              }
-            });
-            if (data.user.groups[0]._jv.id === '1') {
-              this.beRewarded = true;
-            }
+            // data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
+            //   if (value.permission === 'createThreadPaid') {
+            //     this.beRewarded = true;
+            //     return;
+            //   }
+            // });
+            // if (data.user.groups[0]._jv.id === '1') {
+            //   this.beRewarded = true;
+            // }
             this.loaded = true;
             this.loadingStatus = false;
             // 分享数据
@@ -1498,7 +1498,7 @@ export default {
             // 如果关闭了微信支付
             this.rewardStatus = false;
             this.paidStatus = false;
-          } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
+          } else if (this.forums.paycenter.wxpay_close) {
             // 如果开启了微信支付
             if (!data.paid || data.paidUsers.length > 0) {
               // #ifndef H5
@@ -1524,7 +1524,11 @@ export default {
               }
               // #endif
             } else {
-              this.rewardStatus = true;
+              if (this.forums.other.can_be_reward) {
+                this.rewardStatus = true;
+              } else {
+                this.rewardStatus = false;
+              }
               this.paidStatus = false;
             }
             if (data.type === 3) {
@@ -1568,9 +1572,15 @@ export default {
                   }
                 } else {
                   if (this.paymentmodel === false) {
+                    this.paidStatus = false;
                     this.rewardStatus = false;
                   } else if (this.paymentmodel === true) {
-                    this.rewardStatus = true;
+                    if (this.forums.other.can_be_reward) {
+                      this.paidStatus = false;
+                      this.rewardStatus = true;
+                    } else {
+                      this.rewardStatus = false;
+                    }
                   }
                 }
               } else {
@@ -1582,8 +1592,13 @@ export default {
                   this.paidStatus = false;
                   this.rewardStatus = false;
                 } else {
-                  this.paidStatus = false;
-                  this.rewardStatus = true;
+                   if (this.forums.other.can_be_reward) {
+                     this.paidStatus = false;
+                     this.rewardStatus = true;
+                   } else { 
+                     this.paidStatus = false;
+                     this.rewardStatus = false;
+                   }
                 }
               }
               // #endif
@@ -1597,8 +1612,13 @@ export default {
                 this.paidBtnStatus = false;
                 this.rewardStatus = false;
               } else {
-                this.paidStatus = false;
-                this.rewardStatus = true;
+                if (this.forums.other.can_be_reward) {
+                  this.paidStatus = false;
+                  this.rewardStatus = true;
+                } else {
+                  this.paidStatus = false;
+                  this.rewardStatus = false;
+                }
               }
               // #endif
             } else {
@@ -2359,7 +2379,7 @@ export default {
       if (!this.forums.paycenter.wxpay_close) {
         this.payShowStatus = false;
         return;
-      } else if (this.forums.paycenter.wxpay_close && this.beRewarded) {
+      } else if (this.forums.paycenter.wxpay_close) {
         // #ifndef H5
         if (this.system === 'ios') {
           if (this.paymentmodel === false) {
