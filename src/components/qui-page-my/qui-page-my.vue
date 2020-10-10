@@ -9,12 +9,7 @@
       status-bar
     ></uni-nav-bar>
     <!-- #endif -->
-    <scroll-view
-      scroll-y="true"
-      scroll-with-animation="true"
-      show-scrollbar="false"
-      class="scroll-y"
-    >
+    <view class="scroll-y">
       <view class="my-info">
         <view class="my-info__box">
           <view class="my-info__box__detail">
@@ -140,7 +135,7 @@
           <!-- #endif -->
         </view>
       </view>
-    </scroll-view>
+    </view>
     <uni-popup ref="popup" type="center">
       <uni-popup-dialog
         type="warn"
@@ -167,8 +162,8 @@ export default {
   data() {
     return {
       items: [
-        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.topic'), brief: '0' },
+        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.following'), brief: '0' },
         { title: this.i18n.t('profile.followers'), brief: '0' },
         { title: this.i18n.t('profile.likes'), brief: '0' },
@@ -254,8 +249,8 @@ export default {
     },
     // 设置粉丝点赞那些数字
     setNum(res) {
-      this.items[0].brief = res.questionCount || 0;
-      this.items[1].brief = res.threadCount || 0;
+      this.items[0].brief = res.threadCount || 0;
+      this.items[1].brief = res.questionCount || 0;
       this.items[2].brief = res.followCount || 0;
       this.items[3].brief = res.fansCount || 0;
       this.items[4].brief = res.likedCount || 0;
@@ -279,13 +274,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-/* #ifdef H5 */
-$height: calc(100vh - 120rpx);
-/* #endif */
-
-/* #ifdef MP-WEIXIN */
-$height: calc(100vh - 260rpx);
-/* #endif */
 .my-items__wrap {
   padding-left: 40rpx;
   margin-top: 30rpx;
@@ -294,7 +282,7 @@ $height: calc(100vh - 260rpx);
   transition: $switch-theme-time;
 }
 .my-items {
-  padding-bottom: 60rpx;
+  padding-bottom: 120rpx;
 }
 .my-info {
   padding: 40rpx;
@@ -327,9 +315,6 @@ $height: calc(100vh - 260rpx);
 .my-tabs {
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
-}
-.scroll-y {
-  max-height: $height;
 }
 .logout {
   margin: 30rpx 30rpx 0;

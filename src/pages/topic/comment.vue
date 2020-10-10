@@ -28,7 +28,7 @@
                 :is-real="post.user.isReal"
                 :theme-time="post.createdAt"
                 :theme-content="post.contentHtml"
-                :user-role="post.user.groups"
+                :user-role="post.user.groups ? post.user.groups : ''"
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
               >
@@ -200,7 +200,7 @@
                     :user-name="commentPost.user.username"
                     :is-real="commentPost.user.isReal"
                     :is-liked="commentPost.isLiked"
-                    :user-role="commentPost.user.groups"
+                    :user-role="commentPost.user.groups ? commentPost.user.groups : ''"
                     :comment-time="commentPost.createdAt"
                     :comment-status="commentPost.isApproved"
                     :comment-content="commentPost.contentHtml"
@@ -1618,7 +1618,7 @@ page {
   }
 }
 .comment-content-box {
-  padding: 0 40rpx 0 30rpx;
+  padding: 0 40rpx 30rpx 30rpx;
   .comment-content {
     width: 100%;
     height: 260rpx;

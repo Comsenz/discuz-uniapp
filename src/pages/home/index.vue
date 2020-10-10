@@ -168,11 +168,12 @@ export default {
     // #endif
     if (
       !this.$store.getters['session/get']('isLogin') &&
-      ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+      ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
     ) {
-      uni.navigateTo({
-        url: 'pages/home/index',
-      });
+      this.setFooterIndex(0);
+      // uni.navigateTo({
+      //   url: 'pages/home/index',
+      // });
       return;
     }
 
@@ -258,7 +259,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .view-content {
   width: 100%;
-  height: calc(100vh - 98rpx);
+  height: calc(100vh - 120rpx);
 }
 .ioschoice {
   width: 100%;

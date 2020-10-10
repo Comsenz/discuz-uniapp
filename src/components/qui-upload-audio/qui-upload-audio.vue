@@ -62,7 +62,7 @@ export default {
       fileList: [],
       showAdd: true,
       audioSize: 0,
-      duration: '00：00.00', // 总时长（格式00:00，用于显示）
+      duration: '00:00:00', // 总时长（格式00:00，用于显示）
       durationTime: 0, // 总时长（格式秒，用于计时）
       timer: null, // 计时器
       recorder: new Record(),
@@ -234,7 +234,7 @@ export default {
         const hours = this.showNum(parseInt(this.durationTime / 60 / 60, 10));
         const minute = this.showNum(parseInt(this.durationTime / 60, 10) % 60);
         const second = this.showNum(this.durationTime % 60);
-        this.duration = `${hours}：${minute}.${second}`;
+        this.duration = `${hours}:${minute}:${second}`;
       }, 1000);
     },
     // 删除
@@ -246,7 +246,7 @@ export default {
       });
       this.showAdd = true;
       this.audioSize = 0;
-      this.duration = '00：00.00';
+      this.duration = '00:00:00';
       this.durationTime = 0;
       this.timer = null;
     },

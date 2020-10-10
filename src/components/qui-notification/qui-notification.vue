@@ -276,6 +276,12 @@ export default {
       this.$emit('deleteNotice', id);
     },
     jumpMyComment(item) {
+      if (item.type === 'questioned') {
+        uni.navigateTo({
+          url: `/pages/topic/index?id=${item.thread_id}`,
+        });
+        return;
+      }
       if (item && item.reply_post_id !== 0) {
         uni.navigateTo({
           url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.reply_post_id}`,

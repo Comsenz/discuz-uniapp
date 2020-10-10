@@ -93,10 +93,12 @@
         :user-name="item.user.username"
         :is-real="item.user.isReal"
         :theme-image="item.user.avatarUrl"
+        :answer-image="item.question && item.question.beUser.avatarUrl"
         :theme-btn="item.canHide || ''"
         :theme-reply-btn="item.canReply || ''"
-        :them-pay-btn="item.price > 0"
+        :them-pay-btn="item.price > 0 || item.attachmentPrice > 0"
         :user-groups="item.user && item.user.groups"
+        :user-answer-groups="item.question && item.question.beUser.groups"
         :theme-time="item.createdAt"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
@@ -916,6 +918,7 @@ export default {
           'threadVideo',
           'question',
           'question.beUser',
+          'question.beUser.groups',
           'threadAudio',
         ],
       };
@@ -970,6 +973,9 @@ export default {
     },
     // 上拉加载
     pullDown() {
+      if (this.footerIndex !== 0) {
+        return;
+      }
       if (this.loadingType !== 'more') {
         return;
       }

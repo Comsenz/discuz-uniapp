@@ -106,6 +106,7 @@ export default {
       this.$store
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
+          console.log('noSenseMPLogin的res', res);
           if (res && res.data) {
             this.$emit('login');
             if (res.data.data && res.data.data.id) {
@@ -183,7 +184,7 @@ export default {
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
         // 用户名模式 跳转到登录并绑定页
         uni.navigateTo({
-          url: '/pages/user/login-bind',
+          url: '/pages/user/login',
         });
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {

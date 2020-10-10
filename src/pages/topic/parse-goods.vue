@@ -122,6 +122,7 @@ export default {
     }
 
     &-con {
+      width: 95%;
       height: 400rpx;
       padding: 20rpx;
       font-size: $fg-f3;
