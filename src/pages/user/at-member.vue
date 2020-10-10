@@ -169,9 +169,11 @@ export default {
       });
       setTimeout(() => {
         if (item.toUser) {
-          this.$u.event.$emit('radioChange', item.toUser);
+          console.log(item.toUser, 'item.toUser');
+          uni.$emit('radioChange', item.toUser);
         } else {
-          this.$u.event.$emit('radioChange', item);
+          console.log(item.toUser, 'elseitem.toUser');
+          uni.$emit('radioChange', item);
         }
       }, 1000);
     },

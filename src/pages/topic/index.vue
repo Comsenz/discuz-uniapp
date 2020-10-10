@@ -182,7 +182,7 @@
                 :user-id="thread.question.beUser.id"
                 :user-name="thread.question.beUser.username"
                 :avatar-url="thread.question.beUser.avatarUrl"
-                :theme-time="thread.question.beUser.createdAt"
+                :theme-time="thread.question.created_at"
                 :answer-content="thread.question.content_html"
                 :images-list="thread.question.images"
                 :thread="thread"
@@ -1276,6 +1276,7 @@ export default {
                 data.question.onlooker_unit_price *
                 (this.forums.set_site.site_master_scale / 10)
               ).toFixed(2);
+              // console.log(this.onLookformDate, 'onLookformDate')
               this.beAskDate = ((data.question.price - this.platformDate) / 2).toFixed(2);
               this.beAskBeDate = (
                 (data.question.onlooker_unit_price - this.onLookformDate) /

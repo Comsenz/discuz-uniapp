@@ -17,7 +17,10 @@
         <qui-cell-item :title="i18n.t('topic.topic')" arrow :border="false"></qui-cell-item>
       </navigator>
     </view>
-    <view class="find-item" v-if="forums.set_site.site_pay_group_close === '1' ? true : false">
+    <view
+      class="find-item"
+      v-if="forums.set_site && forums.set_site.site_pay_group_close === '1' ? true : false"
+    >
       <navigator url="/pages/modify/right" hover-class="none">
         <qui-cell-item
           :title="i18n.t('topic.permissionPurchase')"

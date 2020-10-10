@@ -135,7 +135,7 @@ export default {
   &-content {
     padding: 0 33rpx 0 21rpx;
     &-answer {
-      // padding-bottom: 36rpx;
+      padding: 0 26rpx 36rpx;
     }
   }
 

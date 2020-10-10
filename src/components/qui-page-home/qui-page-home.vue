@@ -100,6 +100,7 @@
         :user-groups="item.user && item.user.groups"
         :user-answer-groups="item.question && item.question.beUser.groups"
         :theme-time="item.createdAt"
+        :theme-time-answer="item.question && item.question.created_at"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
         :media-url="item.threadVideo && item.threadVideo.media_url"

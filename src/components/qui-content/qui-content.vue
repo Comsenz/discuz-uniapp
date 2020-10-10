@@ -57,14 +57,17 @@
             <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn"></view>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
-          <view class="themeItem__header__title__time">
+          <view class="themeItem__header__title__time" v-if="addAsk !== 1">
             {{ localTime }}
-            <view class="themeItem__header__title__questions" v-if="themeType == 4">
+            <!-- <view class="themeItem__header__title__questions" v-if="themeType == 4">
               {{ i18n.t('home.putQuestion') }}
             </view>
             <view class="themeItem__header__title__questions" v-if="themeType == 5">
               {{ i18n.t('home.answer') }}
-            </view>
+            </view> -->
+          </view>
+          <view class="themeItem__header__title__time" v-if="addAsk === 1">
+            {{ localTimeAnswer }}
           </view>
         </view>
       </view>
@@ -489,6 +492,11 @@ export default {
       type: String,
       default: '',
     },
+    // 已回答的时间
+    themeTimeAnswer: {
+      type: String,
+      default: '',
+    },
     // 点赞数量
     themeLike: {
       type: Number,
@@ -625,6 +633,9 @@ export default {
     // 时间转化
     localTime() {
       return time2DateAndHM(this.themeTime);
+    },
+    localTimeAnswer() {
+      return time2DateAndHM(this.themeTimeAnswer);
     },
     ...mapState({
       getCategoryId: state => state.session.categoryId,
