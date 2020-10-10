@@ -554,6 +554,9 @@
               <view class="text-word-tip" v-if="commentWorkTips">
                 {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
               </view>
+              <view class="text-word-tip" v-if="commentText">
+                {{ t.canWrite }}{{ 10000 - textAreaValue.length }}{{ t.word }}
+              </view>
             </view>
             <qui-emoji
               v-if="emojiShow"
@@ -1622,7 +1625,7 @@ export default {
                    if (this.forums.other.can_be_reward) {
                      this.paidStatus = false;
                      this.rewardStatus = true;
-                   } else { 
+                   } else {
                      this.paidStatus = false;
                      this.rewardStatus = false;
                    }
