@@ -305,6 +305,21 @@
       </view>
       <!-- #endif -->
 
+      <!-- #ifdef MP-WEIXIN -->
+      <qui-uploader
+        :url="`${url}api/attachments`"
+        :form-data="formData"
+        :file-preview="filePreview"
+        name="file"
+        :async-clear="true"
+        ref="upload"
+        v-if="type === 1 || type === 3 || type === 5"
+        @change="uploadChange"
+        @clear="uploadClear"
+        @uploadClick="uploadClick"
+      ></qui-uploader>
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
       <qui-uploader
         :url="`${url}api/attachments`"
         :form-data="formData"
@@ -317,6 +332,7 @@
         @clear="uploadClear"
         @uploadClick="uploadClick"
       ></qui-uploader>
+      <!-- #endif -->
       <qui-upload-file
         :url="`${url}api/attachments`"
         ref="uploadFiles"

@@ -41,7 +41,7 @@ export default {
             if (res) {
               console.log('res', res);
               this.src = `${attachment.url}&page=${page}`;
-              this.totalPage = `${res.header['x-total-page']}`;
+              this.totalPage = parseInt(`${res.header['x-total-page']}`, 10);
             }
           })
           .catch(err => {

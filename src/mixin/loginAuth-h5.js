@@ -30,7 +30,7 @@ module.exports = {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
           // 用户名模式 跳转到登录并绑定页
           uni.navigateTo({
-            url: '/pages/user/login-bind',
+            url: '/pages/user/login',
           });
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {

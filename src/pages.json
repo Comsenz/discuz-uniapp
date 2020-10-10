@@ -103,13 +103,25 @@
     {
       "path": "pages/user/login-bind",
       "style": {
-        "navigationBarTitleText": "登录并绑定"
+        "navigationBarTitleText": "登录并绑定微信号"
+      }
+    },
+    {
+      "path": "pages/user/login-bind-phone",
+      "style": {
+        "navigationBarTitleText": "登录并绑定手机号"
       }
     },
     {
       "path": "pages/user/register-bind",
       "style": {
-        "navigationBarTitleText": "注册并绑定"
+        "navigationBarTitleText": "注册并绑定微信号"
+      }
+    },
+    {
+      "path": "pages/user/register-bind-phone",
+      "style": {
+        "navigationBarTitleText": "注册并绑定手机号"
       }
     },
     {

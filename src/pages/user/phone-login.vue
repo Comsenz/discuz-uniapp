@@ -46,23 +46,28 @@
           {{ isLogin ? i18n.t('user.otherLoginMode') : i18n.t('user.otherRegisterMode') }}
         </view>
         <view class="phone-login-box-ft-con">
-          <!-- #ifdef MP-WEIXIN -->
           <image
-            v-if="forum && forum.passport && forum.passport.miniprogram_close && !isLogin"
             :class="[
-              forum && forum.passport && forum.passport.miniprogram_close && !isLogin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
+              forum && forum.qcloud && forum.qcloud.qcloud_sms
+                ? 'phone-login-box-ft-con-image right'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/weixin.svg"
-            @click="mpAuthClick"
+            @click="jump2WechatLogin"
           />
+          <!-- 开启短信功能才显示 -->
           <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
             :class="[
-              forum && forum.passport && forum.passport.miniprogram_close && !isLogin
-                ? 'phone-login-box-ft-con-image'
-                : 'phone-login-box-ft-con-image',
+              forum &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms &&
+              forum.ucenter &&
+              forum.ucenter.ucenter &&
+              isShow
+                ? 'phone-login-box-ft-con-image right left'
+                : 'phone-login-box-ft-con-image left',
             ]"
             lazy-load
             src="@/static/zhanghao.svg"
@@ -72,48 +77,13 @@
             v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
             :class="[
               forum && forum.ucenter && forum.ucenter.ucenter
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
+                ? 'phone-login-box-ft-con-image left'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/UC.svg"
-            @click="jump3Login"
+            @click="jump2UcLogin"
           />
-          <!-- #endif -->
-          <!-- #ifdef H5 -->
-          <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
-            :class="[
-              forum && forum.passport && forum.passport.offiaccount_close && isWeixin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="jump2WeChat"
-          />
-          <image
-            :class="[
-              forum && forum.passport && forum.passport.offiaccount_close && isWeixin
-                ? 'phone-login-box-ft-con-image'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/zhanghao.svg"
-            @click="jump2Login"
-          />
-          <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/UC.svg"
-            @click="jump3Login"
-          />
-          <!-- #endif -->
         </view>
         <view v-if="isLogin">
           <!-- 开启注册功能才显示 -->
@@ -444,10 +414,26 @@ export default {
       this.phoneNumber = '';
       this.$refs.quiinput.deleat();
     },
+    jump2WechatLogin() {
+      // #ifdef MP-WEIXIN
+      this.getmpLoginParams();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login();
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
     jump2Login() {
       this.jump2LoginPage();
     },
-    jump3Login() {
+    jump2UcLogin() {
       uni.navigateTo({
         url: '/pages/user/uc-login',
       });
@@ -580,14 +566,6 @@ page {
       width: 100rpx;
       height: 100rpx;
     }
-
-    &-right {
-      margin-right: 20rpx;
-    }
-
-    &-left {
-      margin-left: 20rpx;
-    }
   }
 
   &-btn {
@@ -605,6 +583,15 @@ page {
     border: 2rpx solid rgba(221, 221, 221, 1);
   }
 }
+
+.right {
+  margin-right: 20rpx;
+}
+
+.left {
+  margin-left: 20rpx;
+}
+
 /deep/ .registration-agreement {
   margin-top: 50px;
 }
