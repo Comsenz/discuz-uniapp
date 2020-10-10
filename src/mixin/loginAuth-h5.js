@@ -11,14 +11,19 @@ module.exports = {
         isWeixin &&
         this.forums &&
         this.forums.passport &&
-        this.forums.passport.offiaccount_close &&
-        this.forums.set_reg &&
-        this.forums.set_reg.register_type === 2
+        this.forums.passport.offiaccount_close
       ) {
-        uni.setStorage({
-          key: 'register',
-          data: 1,
-        });
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          uni.setStorage({
+            key: 'register',
+            data: 1,
+          });
+        } else {
+          uni.setStorage({
+            key: 'register',
+            data: 0,
+          });
+        }
         this.$store.dispatch('session/wxh5Login');
       } else {
         this.login();
