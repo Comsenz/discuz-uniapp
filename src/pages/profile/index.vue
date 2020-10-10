@@ -256,7 +256,7 @@ export default {
             this.userInfo = res;
             uni.setNavigationBarTitle({
               title: `${res.username}${this.i18n.t('profile.personalhomepage')} - ${
-                this.forums.set_site.site_title
+                this.forums.set_site.site_name
               }`,
             });
           }

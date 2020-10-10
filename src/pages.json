@@ -139,7 +139,7 @@
     {
       "path": "pages/topic/index",
       "style": {
-        "navigationBarTitleText": "内容详情页",
+        "navigationBarTitleText": "",
         "enablePullDownRefresh": true
       }
     },

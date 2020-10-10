@@ -451,7 +451,8 @@
             type !== 0 &&
             type !== 4 &&
             type !== 5 &&
-            payType !== 1
+            payType !== 1 &&
+            payType !== 0
         "
         arrow
         @click="cellClick('word')"
@@ -2410,7 +2411,7 @@ export default {
           // }
           this.ioshide = false;
         } else {
-           this.ioshide = true;
+          this.ioshide = true;
           this.showHidden = true;
         }
         // #endif
