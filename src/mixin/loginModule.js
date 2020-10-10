@@ -1,6 +1,12 @@
 import { SITE_PAY } from '@/common/const';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 module.exports = {
+  // #ifdef H5
+  mixins: [appCommonH],
+  // #endif
   methods: {
     /**
      * 获取配置信息
@@ -66,6 +72,64 @@ module.exports = {
       uni.redirectTo({
         url,
       });
+    },
+    /**
+     * 小程序登录方式
+     */
+    mpLoginMode() {
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+        // 用户名模式
+        this.jump2LoginPage();
+      }
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+        // 手机号模式
+        this.jump2PhoneLoginPage();
+      }
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+        // 无感模式
+        this.$store.getters['session/get']('auth').open();
+      }
+    },
+    /**
+     * h5登录方式
+     */
+    h5LoginMode() {
+      const { isWeixin } = appCommonH.isWeixin();
+      if (isWeixin) {
+        // 微信内
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 微信内-用户名模式
+          this.jump2LoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 微信内-手机号模式
+          this.jump2PhoneLoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          // 微信内-无感模式
+          this.$store.dispatch('session/wxh5Login');
+        }
+      } else {
+        // 微信外
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 微信外-用户名模式
+          this.jump2LoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 微信外-手机号模式
+          this.jump2PhoneLoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          // 微信外-无感模式
+          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+            // 微信外-手机号模式
+            this.jump2PhoneLoginPage();
+          } else {
+            // 微信外-用户名模式
+            this.jump2LoginPage();
+          }
+        }
+      }
     },
     /**
      * 更新小程序必传的参数
