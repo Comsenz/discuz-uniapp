@@ -650,6 +650,9 @@ export default {
     publishNeedBindPhone: '发布内容需要绑定手机号',
     publishNeedRealName: '发布内容需要实名认证',
     viewUserList: '站点会员列表',
+    createThreadQuestion: '发布问答',
+    canBeOnlooker: '设置围观',
+    canBeAsked: '允许被提问',
     cash: {
       create: '申请提现',
     },
@@ -658,7 +661,10 @@ export default {
     },
     user: {
       view: '查看某个用户信息权限',
-      edit: '编辑用户状态',
+      edit: {
+        group: '编辑用户用户组',
+        status: '编辑用户状态',
+      },
     },
     userFollow: {
       create: '关注用户',

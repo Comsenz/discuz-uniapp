@@ -13,10 +13,17 @@ module.exports = {
         this.forums.passport &&
         this.forums.passport.offiaccount_close
       ) {
-        uni.setStorage({
-          key: 'register',
-          data: 1,
-        });
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          uni.setStorage({
+            key: 'register',
+            data: 1,
+          });
+        } else {
+          uni.setStorage({
+            key: 'register',
+            data: 0,
+          });
+        }
         this.$store.dispatch('session/wxh5Login');
       } else {
         this.login();
@@ -28,7 +35,7 @@ module.exports = {
       if (isWeixin) {
         // 微信内
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
-          // 用户名模式 跳转到登录并绑定页
+          // 用户名模式 跳转到登录页
           uni.navigateTo({
             url: '/pages/user/login',
           });
