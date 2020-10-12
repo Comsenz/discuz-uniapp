@@ -976,6 +976,10 @@ export default {
         'beAskId',
         'userImage',
         'beUserName',
+        'type',
+        'showHidden',
+        'payType',
+        'ioshide',
       ];
       items.forEach(key => {
         if (this[key]) {

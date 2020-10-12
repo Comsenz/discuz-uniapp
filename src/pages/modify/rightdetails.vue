@@ -628,6 +628,9 @@ export default {
     }
   }
 }
+/deep/.pay-tip {
+  display: none;
+}
 /deep/.money {
   .cell-item__body__content-title {
     color: #fa5151;

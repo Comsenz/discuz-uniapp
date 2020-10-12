@@ -125,6 +125,8 @@ export default {
           'category',
           'threadVideo',
           'threadAudio',
+          'question.beUser',
+          'question.beUser.groups',
         ],
         'filter[isApproved]': 1,
         'page[number]': this.pageNum,
