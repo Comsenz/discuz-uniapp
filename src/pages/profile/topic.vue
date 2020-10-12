@@ -72,6 +72,8 @@ export default {
           'category',
           'threadVideo',
           'threadAudio',
+          'question.beUser',
+          'question.beUser.groups',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,

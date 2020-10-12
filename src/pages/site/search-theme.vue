@@ -81,6 +81,8 @@ export default {
           'category',
           'threadVideo',
           'threadAudio',
+          'question.beUser',
+          'question.beUser.groups',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,
