@@ -183,6 +183,14 @@ export default {
           // 付费用户组
           return this.i18n.t('profile.paygroup');
         }
+        case 5: {
+          // 问答主题支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.thread
+            ? item.thread.title.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.paidtoviewQuestion')} ${thread}`;
+        }
         default:
           return item.type;
       }

@@ -602,8 +602,8 @@ export default {
     collectionwechat: '微信收款手机号',
     withdrawalTitle:
       '注：须确保在微信开启了“允许通过手机向我转账”的功能，否则将无法收到提现转账，开通方式为“微信-首付款-向银行卡或手机号转账-手机号收款设置“。',
-    powerlist: '权力列表',
-    purchasepower: '已购权力',
+    powerlist: '权限列表',
+    purchasepower: '已购权限',
     termout: ' 到期',
     haveauthority: '购买后拥有以下权限：',
     termofvalidity: '有效期',
@@ -653,6 +653,8 @@ export default {
     createThreadQuestion: '发布问答',
     canBeOnlooker: '设置围观',
     canBeAsked: '允许被提问',
+    canBeReward: '允许被打赏',
+    createThreadAudio: '发布语音',
     cash: {
       create: '申请提现',
     },
@@ -772,6 +774,7 @@ export default {
     givearewardforthetheme: '打赏了主题',
     paidtoseeyourtheme: '付费查看了你的主题',
     paidtoview: '付费查看了',
+    paidtoviewQuestion: '付费查看了问答',
     orderexpired: '订单过期',
     payfail: '支付失败',
     cancelorder: '取消订单',
