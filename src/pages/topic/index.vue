@@ -554,6 +554,9 @@
               <view class="text-word-tip" v-if="commentWorkTips">
                 {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
               </view>
+              <view class="text-word-tip" v-if="commentText">
+                {{ t.canWrite }}{{ 10000 - textAreaValue.length }}{{ t.word }}
+              </view>
             </view>
             <qui-emoji
               v-if="emojiShow"
@@ -1622,7 +1625,7 @@ export default {
                    if (this.forums.other.can_be_reward) {
                      this.paidStatus = false;
                      this.rewardStatus = true;
-                   } else { 
+                   } else {
                      this.paidStatus = false;
                      this.rewardStatus = false;
                    }
@@ -2774,7 +2777,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = true;
+        this.commentText = false;
         this.focusVal = true;
       }
     },
@@ -2876,7 +2879,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = true;
+        this.commentText = false;
         this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -2903,7 +2906,7 @@ export default {
       // this.postAnswer();
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
-      this.commentText = false;
+      this.commentText = true;
     },
 
     handleClickOk() {
