@@ -8,6 +8,7 @@
           :nav-theme="theme"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
+          @openLoginPop="openLoginPop()"
         ></qui-page-home>
         <qui-page-find
           ref="quifind"
@@ -25,7 +26,11 @@
         ></qui-page-my>
       </view>
       <view class="tabBar">
-        <qui-footer @click="cut_index" :bottom="detectionModel() ? 100 : 0"></qui-footer>
+        <qui-footer
+          @click="cut_index"
+          :bottom="detectionModel() ? 100 : 0"
+          @openLoginPop="openLoginPop()"
+        ></qui-footer>
       </view>
     </view>
   </qui-page>
@@ -34,7 +39,6 @@
 <script>
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
-import loginModule from '@/mixin/loginModule';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
 // #ifdef H5
@@ -45,9 +49,7 @@ export default {
   mixins: [
     forums,
     user,
-    loginModule,
-    detectionModel,
-    // #ifdef H5
+    detectionModel, // #ifdef  H5
     loginAuth,
     // #endif
   ],
@@ -214,10 +216,12 @@ export default {
         ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
-        this.mpLoginMode();
+        this.openLoginPop();
         // #endif
         // #ifdef H5
-        this.h5LoginMode();
+        if (!this.handleLogin()) {
+          return;
+        }
         // #endif
         // this.currentTab = 'home';
         // this.setFooterIndex(0);
@@ -236,6 +240,11 @@ export default {
     },
     handlePageLoaded() {
       this.showHome = true;
+    },
+    openLoginPop() {
+      // #ifdef MP-WEIXIN
+      this.$refs.quiPage.$refs.auth.open();
+      // #endif
     },
   },
   onUnload() {

@@ -774,6 +774,7 @@ export default {
     givearewardforthetheme: '打赏了主题',
     paidtoseeyourtheme: '付费查看了你的主题',
     paidtoview: '付费查看了',
+    paidtoviewQuestion: '付费查看了问答',
     orderexpired: '订单过期',
     payfail: '支付失败',
     cancelorder: '取消订单',
