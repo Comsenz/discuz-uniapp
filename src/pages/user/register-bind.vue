@@ -90,7 +90,8 @@ export default {
   },
   onLoad() {
     const pages = getCurrentPages();
-    if (pages[pages.length - 2].route === 'pages/user/uc-login') {
+    const url = pages[pages.length - 1].route;
+    if (url === 'pages/user/uc-login') {
       this.type = false;
     }
     this.getForum();

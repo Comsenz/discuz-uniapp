@@ -28,14 +28,10 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { SITE_PAY } from '@/common/const';
 import { getCurUrl } from '@/utils/getCurUrl';
+import loginModule from '@/mixin/loginModule';
 
 export default {
-  mixins: [forums, user],
-  data() {
-    return {
-      isSuccess: true, // 默认无感登录成功
-    };
-  },
+  mixins: [forums, user, loginModule],
   computed: {
     t() {
       return this.i18n.t('auth');
@@ -44,12 +40,21 @@ export default {
   methods: {
     handleGetUserInfo(res) {
       if (res.detail.errMsg === 'getUserInfo:ok') {
-        this.getParams();
+        let register = 0;
+        uni.getStorage({
+          key: 'register',
+          success(resData) {
+            console.log('resData', resData);
+            console.log('resData.data', resData.data);
+            register = resData.data;
+          },
+        });
+        this.getmpParams(register);
       } else {
         this.$emit('login');
       }
     },
-    getParams() {
+    getmpParams(register = 0) {
       return new Promise((resolve, reject) => {
         uni.login({
           success: loginRes => {
@@ -63,23 +68,13 @@ export default {
                         js_code: code,
                         iv: res.iv,
                         encryptedData: res.encryptedData,
+                        register,
                       },
                     },
                   };
-                  if (
-                    this.forums &&
-                    this.forums.set_reg &&
-                    this.forums.set_reg.register_type !== 2
-                  ) {
-                    if (this.isSuccess) {
-                      this.noSenseLogin(params);
-                    } else {
-                      this.loginMode(params);
-                    }
-                  } else {
-                    // 无感模式
-                    this.noSenseLogin(params, 1);
-                  }
+                  console.log('params------', params);
+                  this.$store.dispatch('session/setParams', params);
+                  this.getParams();
                 },
                 fail: error => {
                   console.log(error);
@@ -95,13 +90,53 @@ export default {
         });
       });
     },
-    noSenseLogin(param, register = 0) {
-      const params = param;
-      params.data.attributes.register = register;
-      const inviteCode = this.$store.getters['session/get']('inviteCode');
-      console.log('inviteCode', inviteCode);
+    /**
+     * 获取参数
+     */
+    getParams() {
+      const params = {
+        data: {
+          attributes: {},
+        },
+      };
+      const data = this.$store.getters['session/get']('params');
+      if (data && data.data && data.data.attributes) {
+        params.data.attributes.js_code = data.data.attributes.js_code;
+        params.data.attributes.iv = data.data.attributes.iv;
+        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+        params.data.attributes.register = data.data.attributes.register;
+      }
+      let inviteCode = '';
+      uni.getStorage({
+        key: 'inviteCode',
+        success(resData) {
+          inviteCode = resData.data || '';
+        },
+      });
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
+      }
+      console.log('获取参数:params', params);
+      this.noSenseLogin(params);
+    },
+    /**
+     * 无感登录
+     */
+    noSenseLogin(params) {
+      console.log('无感登录:params', params);
+      const routes = getCurrentPages();
+      const curRoute = routes[routes.length - 1].route;
+      console.log('getCurrentPages()', getCurrentPages());
+      if (curRoute !== 'pages/site/partner-invite') {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
+      } else {
+        uni.setStorage({
+          key: 'page',
+          data: '/pages/home/index',
+        });
       }
       this.$store
         .dispatch('session/noSenseMPLogin', params)
@@ -110,7 +145,6 @@ export default {
           if (res && res.data) {
             this.$emit('login');
             if (res.data.data && res.data.data.id) {
-              this.isSuccess = true;
               this.logind();
               if (
                 this.forums &&
@@ -147,56 +181,13 @@ export default {
               (res.data.errors[0].code === 'no_bind_user' ||
                 res.data.errors[0].code === 'register_close')
             ) {
-              this.isSuccess = false;
-              this.getParams();
+              this.jump2RegisterBindPage();
             }
           }
         })
         .catch(err => {
           console.log(err);
         });
-    },
-    loginMode(param) {
-      const params = param;
-      const routes = getCurrentPages();
-      const curRoute = routes[routes.length - 1].route;
-      console.log('getCurrentPages()', getCurrentPages());
-      if (curRoute !== 'pages/site/partner-invite') {
-        uni.setStorage({
-          key: 'page',
-          data: getCurUrl(),
-        });
-      } else {
-        uni.setStorage({
-          key: 'page',
-          data: '/pages/home/index',
-        });
-      }
-      const inviteCode = this.$store.getters['session/get']('inviteCode');
-      console.log('inviteCode', inviteCode);
-      if (inviteCode !== '') {
-        params.data.attributes.code = inviteCode;
-      }
-      // #ifdef MP-WEIXIN
-      this.$store.dispatch('session/setParams', params);
-      // #endif
-      console.log('params', params);
-      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
-        // 用户名模式 跳转到登录并绑定页
-        uni.navigateTo({
-          url: '/pages/user/login',
-        });
-      }
-      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
-        // 手机号模式 跳转到手机号码登录页
-        uni.navigateTo({
-          url: '/pages/user/phone-login',
-        });
-      }
-      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-        // 无感模式
-        this.noSenseLogin(params, 1);
-      }
     },
     close() {
       this.$emit('close');

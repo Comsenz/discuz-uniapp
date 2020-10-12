@@ -256,10 +256,10 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
-import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import { mapMutations, mapState } from 'vuex';
 
@@ -278,10 +278,10 @@ export default {
   mixins: [
     forums,
     user,
-    // #ifdef  H5
+    loginModule,
+    // #ifdef H5
     wxshare,
     appCommonH,
-    loginAuth,
     // #endif
   ],
 
@@ -705,14 +705,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$emit('openLoginPop');
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
@@ -754,12 +751,10 @@ export default {
             data: '/pages/home/index',
           });
           // #ifdef MP-WEIXIN
-          this.$emit('openLoginPop');
+          this.mpLoginMode();
           // #endif
           // #ifdef H5
-          if (!this.handleLogin()) {
-            return;
-          }
+          this.h5LoginMode();
           // #endif
         }
         uni.navigateTo({
@@ -839,14 +834,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$emit('openLoginPop');
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
@@ -1000,14 +992,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$emit('openLoginPop');
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const params = {
         _jv: {

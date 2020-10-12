@@ -301,8 +301,9 @@ export default {
         });
     },
     jump2WechatRegister() {
+      console.log('----jump2WechatRegister');
       // #ifdef MP-WEIXIN
-      this.getmpLoginParams(1);
+      this.mpLogin(1);
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
@@ -315,6 +316,9 @@ export default {
         });
       }
       // #endif
+    },
+    jump2Login() {
+      this.jump2LoginPage();
     },
     jump2PhoneRegister() {
       this.jump2PhoneRegisterPage();

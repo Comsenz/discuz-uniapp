@@ -64,9 +64,9 @@
 
 <script>
 import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
-import loginAuth from '@/mixin/loginAuth-h5';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 import { getCurUrl } from '@/utils/getCurUrl';
@@ -76,9 +76,9 @@ let payWechat = null;
 export default {
   mixins: [
     forums,
-    // #ifdef  H5
+    loginModule,
+    // #ifdef H5
     appCommonH,
-    loginAuth,
     // #endif
   ],
   data() {
@@ -353,14 +353,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       this.payStatus = false;
       this.payShowStatus = true;

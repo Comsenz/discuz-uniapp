@@ -70,17 +70,17 @@
 <script>
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
-import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
 import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
   mixins: [
     forums,
-    // #ifdef  H5
+    loginModule,
+    // #ifdef H5
     wxshare,
-    loginAuth,
     // #endif
   ],
   props: {
@@ -151,12 +151,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       const params = {
@@ -193,14 +191,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);

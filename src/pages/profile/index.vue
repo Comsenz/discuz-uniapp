@@ -110,10 +110,8 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
 import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
 import { getCurUrl } from '@/utils/getCurUrl';
 import topic from './topic';
 import following from './following';
@@ -129,12 +127,7 @@ export default {
     like,
     question,
   },
-  mixins: [
-    forums,
-    // #ifdef H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [forums, loginModule],
   props: {
     type: {
       type: String,
@@ -287,14 +280,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const params = {
         _jv: {
@@ -318,14 +308,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.getUserInfo(this.userId);

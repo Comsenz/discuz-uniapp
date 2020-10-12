@@ -1,6 +1,12 @@
 import { SITE_PAY } from '@/common/const';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 module.exports = {
+  // #ifdef H5
+  mixins: [appCommonH],
+  // #endif
   methods: {
     /**
      * 获取配置信息
@@ -77,9 +83,67 @@ module.exports = {
       });
     },
     /**
-     * 更新小程序必传的参数
+     * 小程序登录方式
      */
-    refreshParams() {
+    mpLoginMode() {
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+        // 用户名模式
+        this.jump2LoginPage();
+      }
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+        // 手机号模式
+        this.jump2PhoneLoginPage();
+      }
+      if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+        // 无感模式
+        this.$store.getters['session/get']('auth').open();
+      }
+    },
+    /**
+     * h5登录方式
+     */
+    h5LoginMode() {
+      const { isWeixin } = appCommonH.isWeixin();
+      if (isWeixin) {
+        // 微信内
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 微信内-用户名模式
+          this.jump2LoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 微信内-手机号模式
+          this.jump2PhoneLoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          // 微信内-无感模式
+          this.$store.dispatch('session/wxh5Login');
+        }
+      } else {
+        // 微信外
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 0) {
+          // 微信外-用户名模式
+          this.jump2LoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
+          // 微信外-手机号模式
+          this.jump2PhoneLoginPage();
+        }
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          // 微信外-无感模式
+          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
+            // 微信外-手机号模式
+            this.jump2PhoneLoginPage();
+          } else {
+            // 微信外-用户名模式
+            this.jump2LoginPage();
+          }
+        }
+      }
+    },
+    /**
+     * 更新小程序参数
+     */
+    refreshmpParams() {
       uni.login({
         success: loginRes => {
           if (loginRes.errMsg === 'login:ok') {
@@ -96,16 +160,6 @@ module.exports = {
                     },
                   },
                 };
-                let inviteCode = '';
-                uni.getStorage({
-                  key: 'inviteCode',
-                  success(resData) {
-                    inviteCode = resData.data || '';
-                  },
-                });
-                if (inviteCode !== '') {
-                  params.data.attributes.code = inviteCode;
-                }
                 this.$store.dispatch('session/setParams', params);
               },
               fail: error => {
@@ -120,76 +174,81 @@ module.exports = {
       });
     },
     /**
-     * 获取小程序登录登录/注册需要的参数
-     * @param {Object} param 小程序必传的几个参数
+     * 小程序登录/注册
      */
-    getmpLoginParams(register = 0) {
-      const params = {
-        data: {
-          attributes: {},
-        },
-      };
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-        params.data.attributes.register = register;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.code = data.data.attributes.code;
-      }
-      this.mpLogin(params);
+    mpLogin(register = 0) {
+      console.log('mpLogin-register', register);
+      uni.setStorage({
+        key: 'register',
+        data: 1,
+      });
+      this.$store.getters['session/get']('auth').open();
+      // const params = {
+      //   data: {
+      //     attributes: {},
+      //   },
+      // };
+      // const data = this.$store.getters['session/get']('params');
+      // if (data && data.data && data.data.attributes) {
+      //   params.data.attributes.js_code = data.data.attributes.js_code;
+      //   params.data.attributes.iv = data.data.attributes.iv;
+      //   params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+      //   params.data.attributes.register = register;
+      // }
+      // if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
+      //   params.data.attributes.code = data.data.attributes.code;
+      // }
+      // this.mpLogin(params);
     },
     /**
      * 小程序登录
      */
-    mpLogin(params) {
-      this.$store
-        .dispatch('session/noSenseMPLogin', params)
-        .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('小程序登录成功：', res);
-            this.logind();
-            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-              uni.getStorage({
-                key: 'page',
-                success(resData) {
-                  uni.redirectTo({
-                    url: resData.data,
-                  });
-                },
-              });
-            }
-            if (
-              this.forum &&
-              this.forum.set_site &&
-              this.forum.set_site.site_mode === SITE_PAY &&
-              this.user &&
-              !this.user.paid
-            ) {
-              uni.redirectTo({
-                url: '/pages/site/info',
-              });
-            }
-            uni.showToast({
-              title: this.i18n.t('user.registerSuccess'),
-              duration: 2000,
-            });
-          }
-          if (
-            res.data.errors &&
-            (res.data.errors[0].code === 'no_bind_user' ||
-              res.data.errors[0].code === 'register_close')
-          ) {
-            this.refreshParams();
-            this.jump2RegisterBindPage();
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
+    // mpLogin(params) {
+    //   this.$store
+    //     .dispatch('session/noSenseMPLogin', params)
+    //     .then(res => {
+    //       if (res && res.data && res.data.data && res.data.data.id) {
+    //         console.log('小程序登录成功：', res);
+    //         this.logind();
+    //         if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
+    //           uni.getStorage({
+    //             key: 'page',
+    //             success(resData) {
+    //               uni.redirectTo({
+    //                 url: resData.data,
+    //               });
+    //             },
+    //           });
+    //         }
+    //         if (
+    //           this.forum &&
+    //           this.forum.set_site &&
+    //           this.forum.set_site.site_mode === SITE_PAY &&
+    //           this.user &&
+    //           !this.user.paid
+    //         ) {
+    //           uni.redirectTo({
+    //             url: '/pages/site/info',
+    //           });
+    //         }
+    //         uni.showToast({
+    //           title: this.i18n.t('user.registerSuccess'),
+    //           duration: 2000,
+    //         });
+    //       }
+    //       if (
+    //         res.data.errors &&
+    //         (res.data.errors[0].code === 'no_bind_user' ||
+    //           res.data.errors[0].code === 'register_close')
+    //       ) {
+    //         this.refreshParams();
+    //         this.jump2RegisterBindPage();
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.log(err);
+    //     });
+    // },
     /**
      * 微信h5登录/注册
      */

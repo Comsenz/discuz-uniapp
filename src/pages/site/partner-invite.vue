@@ -55,18 +55,11 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
+import loginModule from '@/mixin/loginModule';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [
-    forums,
-    // #ifdef  H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [forums, loginModule],
   data() {
     return {
       code: '', // 邀请码
@@ -168,14 +161,14 @@ export default {
         });
         // #ifdef MP-WEIXIN
         this.$store.dispatch('session/setInviteCode', this.code);
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         uni.setStorage({
           key: 'inviteCode',
           data: this.code,
         });
         // #ifdef H5
-        this.handleLogin();
+        this.h5LoginMode();
         // #endif
       } else {
         // 已经登陆的情况

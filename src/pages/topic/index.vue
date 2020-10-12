@@ -655,9 +655,9 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import detectionModel from '@/mixin/detectionModel';
+import loginModule from '@/mixin/loginModule';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
-import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
@@ -673,9 +673,9 @@ export default {
   mixins: [
     user,
     forums,
+    loginModule,
     // #ifdef H5
     wxshare,
-    loginAuth,
     // #endif
     detectionModel,
   ],
@@ -2342,12 +2342,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       if (param.type === '0') {
@@ -2374,12 +2372,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       if (id <= 0) {
@@ -2398,12 +2394,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.payStatus = false;
@@ -2468,13 +2462,11 @@ export default {
       console.log('围观');
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
         this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.payStatus = false;
@@ -2505,12 +2497,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       if (this.user._jv.id === this.thread.user._jv.id) {
@@ -2697,12 +2687,10 @@ export default {
           data: `/pages/topic/comment?threadId=${threadId}&commentId=${postId}`,
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       uni.navigateTo({
@@ -2717,12 +2705,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.postIndex = index;
@@ -2736,12 +2722,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.$refs.deletePopup.open();
@@ -2761,12 +2745,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       if (!this.thread.canReply) {
@@ -2790,12 +2772,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       // this.previewImg();
@@ -2829,12 +2809,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.postOpera(postId, '1', canLike, isLiked);
@@ -2847,12 +2825,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.threadOpera(id, canStatus, isStatus, type);
@@ -2866,12 +2842,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       if (this.thread.canReply && this.thread.category.canReplyThread) {
@@ -2891,13 +2865,11 @@ export default {
     queClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
         this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       console.log('回答问题');
@@ -2953,14 +2925,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
@@ -3074,12 +3043,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.sortSeleShow = false;
@@ -3119,14 +3086,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
@@ -3166,13 +3130,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
-        return;
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.$refs.morePopup.open();

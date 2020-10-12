@@ -663,6 +663,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 // #ifdef  H5
 // import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
@@ -680,7 +681,8 @@ export default {
   mixins: [
     forums,
     user,
-    // #ifdef  H5
+    loginModule,
+    // #ifdef H5
     tcaptchs,
     choosePosition,
     appCommonH,
@@ -1325,13 +1327,11 @@ export default {
     payClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
         this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.payStatus = false;

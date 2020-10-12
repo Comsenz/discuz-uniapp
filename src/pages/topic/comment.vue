@@ -434,10 +434,11 @@ import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { getCurUrl } from '@/utils/getCurUrl';
+import loginModule from '@/mixin/loginModule';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [user],
+  mixins: [user, loginModule],
   data() {
     return {
       navTitle: '评论详情页', // 导航栏标题
@@ -935,14 +936,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
@@ -985,12 +983,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.sortSeleShow = false;
@@ -1206,13 +1202,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
-        return;
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.$refs.morePopup.open();
