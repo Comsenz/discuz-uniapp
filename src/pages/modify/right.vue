@@ -23,32 +23,44 @@
           {{ i18n.t('modify.purchasepower') }}
         </view>
       </view>
-      <view class="power-box__package-foot" v-if="typenum1">
-        <view
-          class="power-box__package-foot-list"
-          v-for="(item, index) in paidusergroup"
-          :key="index"
-          @click="godetails(1, item._jv.id)"
-        >
-          <qui-cell-item :title="item.name" slot-right :arrow="false" :border="false">
-            <view class="money">¥{{ item.fee.toFixed(2) }}</view>
-          </qui-cell-item>
+      <view
+        :class="permissiondisplay ? 'power-box__package-foot' : 'power-box__package-bottom'"
+        v-if="typenum1"
+      >
+        <view v-if="paidusergroup.length >= 1">
+          <view
+            class="power-box__package-foot-list"
+            v-for="(item, index) in paidusergroup"
+            :key="index"
+            @click="godetails(1, item._jv.id)"
+          >
+            <qui-cell-item :title="item.name" slot-right :arrow="false" :border="false">
+              <view class="money">¥{{ item.fee.toFixed(2) }}</view>
+            </qui-cell-item>
+          </view>
         </view>
+        <qui-no-data name="icon-unfold" tips="暂无内容" v-else></qui-no-data>
       </view>
-      <view class="power-box__package-foots" v-if="typenum2">
-        <view
-          class="power-box__package-foots-list"
-          v-for="(sitem, index) in privilegeUserGroup"
-          :key="index"
-          @click="godetails(2, sitem.group_id)"
-        >
-          <qui-cell-item :title="sitem.group.name" slot-right :arrow="false" :border="false">
-            <view class="time">
-              {{ fun(sitem.expiration_time) }}
-              {{ i18n.t('modify.termout') }}
-            </view>
-          </qui-cell-item>
+      <view
+        :class="rightspurchased ? 'power-box__package-foots' : 'power-box__package-bottoms'"
+        v-if="typenum2"
+      >
+        <view v-if="privilegeUserGroup.length >= 1">
+          <view
+            class="power-box__package-foots-list"
+            v-for="(sitem, index) in privilegeUserGroup"
+            :key="index"
+            @click="godetails(2, sitem.group_id)"
+          >
+            <qui-cell-item :title="sitem.group.name" slot-right :arrow="false" :border="false">
+              <view class="time">
+                {{ fun(sitem.expiration_time) }}
+                {{ i18n.t('modify.termout') }}
+              </view>
+            </qui-cell-item>
+          </view>
         </view>
+        <qui-no-data name="icon-unfold" tips="暂无内容" v-else></qui-no-data>
       </view>
     </view>
   </qui-page>
@@ -65,6 +77,8 @@ export default {
       typenum2: false,
       paidusergroup: [],
       privilegeUserGroup: [], // 已购买用户组权限
+      permissiondisplay: false,
+      rightspurchased: false,
     };
   },
   onLoad() {
@@ -88,6 +102,11 @@ export default {
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
         this.paidusergroup = res;
+        if (res.length > 0) {
+          this.permissiondisplay = true;
+        } else {
+          this.permissiondisplay = false;
+        }
       });
     },
     allusergroupsusers() {
@@ -99,6 +118,11 @@ export default {
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
         this.privilegeUserGroup = res;
+        if (res.length > 0) {
+          this.rightspurchased = true;
+        } else {
+          this.rightspurchased = false;
+        }
       });
     },
     powerlist(index) {
