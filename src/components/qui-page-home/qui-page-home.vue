@@ -530,6 +530,7 @@ export default {
     uni.$on('updateIndex', () => {
       this.headerShow = true;
       this.ontrueGetList();
+      console.log('回到首页');
     });
     uni.$on('updateNoticePage', () => {
       // console.log('99999');

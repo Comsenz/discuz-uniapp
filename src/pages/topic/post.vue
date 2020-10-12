@@ -405,16 +405,19 @@
         ></qui-cell-item>
       </view>
       <!-- 匿名提问 -->
-      <view
-        class="uni-list-cell uni-list-cell-pd"
-        v-if="type === 5 && forums.other.can_create_thread_paid && ioshide"
-      >
+      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
         <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
       <!-- 提问价格 -->
       <qui-cell-item
-        v-if="type === 5 && askingPrice && forums.other.can_create_thread_paid && ioshide"
+        v-if="
+          type === 5 &&
+            askingPrice &&
+            forums.other &&
+            forums.other.can_create_thread_paid &&
+            ioshide
+        "
         :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.askingPrice')"
         :addon="showAskPrice"
@@ -1492,7 +1495,9 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
+                  console.log('222222222222222')
                   this.$u.event.$emit('addThread', res);
+                  console.log(res,'resresresresres')
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
