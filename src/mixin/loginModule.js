@@ -17,7 +17,16 @@ module.exports = {
      * 跳转到手机号码登录页面
      */
     jump2PhoneLoginPage() {
-      const url = '/pages/user/phone-login';
+      const url = `/pages/user/phone-login?isLogin=true`;
+      uni.redirectTo({
+        url,
+      });
+    },
+    /**
+     * 跳转到手机号码注册页面
+     */
+    jump2PhoneRegisterPage() {
+      const url = `/pages/user/phone-login?isLogin=false`;
       uni.redirectTo({
         url,
       });
@@ -111,10 +120,10 @@ module.exports = {
       });
     },
     /**
-     * 获取小程序登录登录需要的参数
+     * 获取小程序登录登录/注册需要的参数
      * @param {Object} param 小程序必传的几个参数
      */
-    getmpLoginParams() {
+    getmpLoginParams(register = 0) {
       const params = {
         data: {
           attributes: {},
@@ -125,7 +134,7 @@ module.exports = {
         params.data.attributes.js_code = data.data.attributes.js_code;
         params.data.attributes.iv = data.data.attributes.iv;
         params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-        params.data.attributes.register = 0;
+        params.data.attributes.register = register;
       }
       if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
         params.data.attributes.code = data.data.attributes.code;
@@ -182,12 +191,12 @@ module.exports = {
         });
     },
     /**
-     * 微信h5登录
+     * 微信h5登录/注册
      */
-    wxh5Login() {
+    wxh5Login(register = 0) {
       uni.setStorage({
         key: 'register',
-        data: 0,
+        data: register,
       });
       this.$store
         .dispatch('session/noSenseh5Login')

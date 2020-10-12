@@ -168,7 +168,13 @@ export default {
       isShow: false,
     };
   },
-  onLoad() {
+  onLoad(params) {
+    console.log('params', params);
+    if (params) {
+      const { isLogin } = params;
+      this.isLogin = JSON.parse(isLogin);
+      console.log('this.isLogin', this.isLogin);
+    }
     this.getForum();
 
     // #ifdef H5
@@ -416,11 +422,19 @@ export default {
     },
     jump2WechatLogin() {
       // #ifdef MP-WEIXIN
-      this.getmpLoginParams();
+      if (this.isLogin) {
+        this.getmpLoginParams();
+      } else {
+        this.getmpLoginParams(1);
+      }
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
-        this.wxh5Login();
+        if (this.isLogin) {
+          this.wxh5Login();
+        } else {
+          this.wxh5Login(1);
+        }
       } else {
         uni.showToast({
           icon: 'none',
@@ -431,7 +445,11 @@ export default {
       // #endif
     },
     jump2Login() {
-      this.jump2LoginPage();
+      if (this.isLogin) {
+        this.jump2LoginPage();
+      } else {
+        this.jump2RegisterPage();
+      }
     },
     jump2UcLogin() {
       uni.navigateTo({
