@@ -74,7 +74,6 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
-          console.log(res);
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
           this.data = [...this.data, ...res];
           if (type && type === 'pullDownRefresh') {

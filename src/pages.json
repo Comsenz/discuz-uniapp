@@ -60,14 +60,6 @@
       }
     },
     {
-      "path": "pages/topic/goods-post",
-      "style": {
-        "navigationBarBackgroundColor": "#fff",
-        "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "发布"
-      }
-    },
-    {
       "path": "pages/topic/attachment",
       "style": {
         "navigationBarBackgroundColor": "#fff",
@@ -313,16 +305,6 @@
         "navigationBarTitleText": "邀请成员"
       }
     },
-
-    {
-      "path": "pages/topic/post",
-      "style": {
-        "navigationBarTitleText": "发布",
-        "navigationBarBackgroundColor": "#fff",
-        "navigationBarTextStyle": "black",
-        "navigationStyle": "default"
-      }
-    },
     {
       "path": "pages/user/at-member",
       "style": {
@@ -441,6 +423,35 @@
       }
     }
   ],
+  "subPackages": [{
+      "root": "topic",
+      "pages": [{
+          "path": "post",
+          "style": {
+            "navigationBarTitleText": "发布",
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black",
+            "navigationStyle": "default"
+          }
+      },{
+        "path": "goods-post",
+        "style": {
+          "navigationBarBackgroundColor": "#fff",
+          "navigationBarTextStyle": "black",
+          "navigationBarTitleText": "发布"
+        }
+    }]
+  }],
+  "preloadRule": {
+      "topic/post": {
+          "network": "all",
+          "packages": ["__APP__"]
+      },
+      "topic/goods-post": {
+        "network": "all",
+        "packages": ["__APP__"]
+    }
+  },
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",

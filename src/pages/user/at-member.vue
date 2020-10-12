@@ -165,7 +165,7 @@ export default {
     radioChange(item) {
       console.log(item, '单选人员');
       uni.navigateTo({
-        url: '/pages/topic/post?type=5',
+        url: '/topic/post?type=5',
       });
       setTimeout(() => {
         if (item.toUser) {
