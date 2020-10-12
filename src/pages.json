@@ -427,11 +427,11 @@
       "style": {
         "navigationBarTitleText": ""
       }
-    },
+    },  
     {
       "path": "pages/modify/right",
       "style": {
-        "navigationBarTitleText": "权力的市场"
+        "navigationBarTitleText": "权限购买"
       }
     },
     {

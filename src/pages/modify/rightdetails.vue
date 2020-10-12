@@ -56,7 +56,6 @@
           :money="paidusergrouplist.fee"
           :balance="Number(user.walletBalance)"
           :pay-type="i18n.t('modify.purchaseuser')"
-          to-name="admin"
           :pay-type-data="payTypeData"
           :pay-password="pwdVal"
           @radioChange="radioChange"
@@ -628,6 +627,9 @@ export default {
       box-sizing: border-box;
     }
   }
+}
+/deep/.pay-tip {
+  display: none;
 }
 /deep/.money {
   .cell-item__body__content-title {
