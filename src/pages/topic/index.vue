@@ -2778,7 +2778,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = true;
+        this.commentText = false;
         this.focusVal = true;
       }
     },
@@ -2880,7 +2880,7 @@ export default {
         this.$refs.commentPopup.open();
         this.commentPopupStatus = true;
         this.commentWorkTips = true;
-        this.commentText = true;
+        this.commentText = false;
         this.focusVal = true;
       } else {
         this.$refs.toast.show({ message: this.t.noReplyPermission });
@@ -2907,7 +2907,7 @@ export default {
       // this.postAnswer();
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
-      this.commentText = false;
+      this.commentText = true;
     },
 
     handleClickOk() {
