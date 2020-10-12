@@ -159,7 +159,7 @@
                 :avatar-url="thread.question.beUser.avatarUrl"
                 :user-name="thread.question.beUser.username"
                 :is-real="thread.question.beUser.isReal"
-                :user-role="thread.user.groups ? thread.user.groups : ''"
+                :user-role="thread.question.beUser.groups ? thread.question.beUser.groups : ''"
                 :theme-time="thread.question.answered_at"
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
