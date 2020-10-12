@@ -958,6 +958,20 @@ export default {
         console.log(res, '首页列表');
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
+
+        res.forEach((item, index) => {
+          let hasFirst = false;
+          res[index].user.groups = res[index].user.groups.filter(group => {
+            if (group.isDisplay === true && !hasFirst) {
+              hasFirst = true;
+              return true;
+            }
+
+            return false;
+          });
+        });
+        console.log(res, '这是处理后的');
+
         if (this.isResetList) {
           this.threads = res;
         } else {

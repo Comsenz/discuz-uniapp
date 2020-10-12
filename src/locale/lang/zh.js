@@ -601,7 +601,7 @@ export default {
     withdrawalPhon: '请输入收款手机号',
     collectionwechat: '微信收款手机号',
     withdrawalTitle:
-      '注：须确保在微信开启了“允许通过手机向我转账”的功能，否则将无法收到提现转账，开通方式为“微信-首付款-向银行卡或手机号转账-手机号收款设置“。',
+      '注：需确保在微信开启了“允许通过手机号向我转账”的功能，否则将无法收到提现转账，开通方式为“微信-收付款-向银行卡或手机号转账-手机号收款设置“。',
     powerlist: '权限列表',
     purchasepower: '已购权限',
     termout: ' 到期',
@@ -614,6 +614,7 @@ export default {
     immediately: '立即购买',
     purchaseuser: '用户组购买',
     distance: '距离过期还有',
+    changesphon: '提现手机号格式错误',
   },
   permission: {
     viewThreads: '查看主题列表',

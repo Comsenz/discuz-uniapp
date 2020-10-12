@@ -236,7 +236,19 @@ export default {
       this.code = num;
     },
     btncash() {
-      this.verifytitle();
+      if (this.forums.paycenter.wxpay_mchpay_close) {
+        if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.withdrawalPhon)) {
+          this.verifytitle();
+        } else {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.changesphon'),
+            duration: 2000,
+          });
+        }
+      } else {
+        this.verifytitle();
+      }
     },
     settlement() {
       setTimeout(() => {

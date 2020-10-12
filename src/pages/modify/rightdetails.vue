@@ -27,7 +27,10 @@
         <view class="details-box__bottom__bot" v-if="!oder">{{ fun(expirationTime) }}</view>
         <view class="details-box__bottom__bot" v-if="!oder">{{ sun(expirationTime) }}</view>
       </view>
-      <view class="details-box__purchase purchase-model" v-if="oder">
+      <view
+        class="details-box__purchase purchase-model"
+        v-if="oder && forums.paycenter.wxpay_close"
+      >
         <view class="details-box__purchase-list money">
           <qui-cell-item
             :title="pricefun(paidusergrouplist.fee)"
@@ -225,16 +228,6 @@ export default {
       });
     },
     purchase() {
-      if (!this.forums.paycenter.wxpay_close) {
-        this.payTypeData = [
-          {
-            name: '钱包支付',
-            icon: 'icon-walletPay',
-            color: '#1878f3',
-            value: '1',
-          },
-        ]; // 支付方式
-      }
       this.payShowStatus = true;
       this.payTypeVal = 4;
       this.$nextTick(() => {
@@ -253,11 +246,16 @@ export default {
     },
     // 输入密码完成时
     onInput(val) {
-      this.value = val;
+      if (!this.forums.paycenter.wxpay_close) {
+        this.value = 1;
+      } else {
+        this.value = val;
+      }
       this.creatOrder(this.price, 4, this.value, 1);
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
+      console.log(payType, '支付方式');
       if (payType === 0) {
         this.creatOrder(this.price, 4, this.value, payType);
       } else if (payType === 1) {
