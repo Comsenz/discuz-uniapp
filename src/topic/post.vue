@@ -1820,6 +1820,7 @@ export default {
               uni.hideLoading();
               if (res && res.isApproved === 1) {
                 this.$u.event.$emit('addThread', res);
+                console.log('addThreadaddThreadaddThread');
               }
               if (res && res._jv.json.data.id) {
                 uni.redirectTo({
@@ -1967,6 +1968,9 @@ export default {
               },
             },
           },
+          links: {
+            self: 'threads?include=user,category,firstPost,firstPost.images,question,question.beUser,question.beUser.groups,question.images'
+          }
         },
         content: this.textAreaValue,
         type: this.type,
@@ -2027,10 +2031,6 @@ export default {
         return this.$store
           .dispatch('jv/post', params)
           .then(res => {
-          if (res && res.isApproved === 1) {
-            this.$u.event.$emit('addThread', res);
-            console.log(res,'000000')
-          }
             return res;
           })
           .catch(err => {
