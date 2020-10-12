@@ -199,6 +199,14 @@ export default {
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.paidtowatchQuestion')} ${thread}`;
         }
+        case 7: {
+          // 付费附件支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.thread
+            ? item.thread.title.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.paidtoviewFiles')} ${thread}`;
+        }
         default:
           return item.type;
       }
