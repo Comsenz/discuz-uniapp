@@ -194,6 +194,8 @@ export default {
           'category',
           'threadVideo',
           'threadAudio',
+          'question.beUser',
+          'question.beUser.groups',
         ],
       };
 

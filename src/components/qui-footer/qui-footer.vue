@@ -343,7 +343,7 @@ export default {
         return;
       }
       if (this.footerIndex === 0) {
-        url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+        url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
       }
       if (item.type === 3) {
         // 当选择图片帖时
@@ -353,9 +353,9 @@ export default {
         uni.$on('uploadOver', data => {
           // console.log(data, 'data');
           if (this.footerIndex === 0) {
-            url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+            url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
           } else {
-            url = `/pages/topic/post?type=${item.type}`;
+            url = `/topic/post?type=${item.type}`;
           }
           uni.navigateTo({
             url,
@@ -374,9 +374,9 @@ export default {
         uni.$on('uploadVideoOver', data => {
           // console.log('这是首页接收到的视频文件', typeof data, data);
           if (this.footerIndex === 0) {
-            url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+            url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
           } else {
-            url = `/pages/topic/post?type=${item.type}`;
+            url = `/topic/post?type=${item.type}`;
           }
           uni.navigateTo({
             url,
@@ -391,9 +391,9 @@ export default {
         });
       } else {
         if (this.footerIndex === 0) {
-          url = `/pages/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+          url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
         } else {
-          url = `/pages/topic/post?type=${item.type}`;
+          url = `/topic/post?type=${item.type}`;
         }
         uni.navigateTo({
           url,
