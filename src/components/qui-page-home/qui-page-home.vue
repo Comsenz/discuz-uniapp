@@ -100,7 +100,7 @@
         :user-groups="item.user && item.user.groups"
         :user-answer-groups="item.question && item.question.beUser.groups"
         :theme-time="item.createdAt"
-        :theme-time-answer="item.question && item.question.created_at"
+        :theme-time-answer="item.question && item.question.answered_at"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
         :media-url="item.threadVideo && item.threadVideo.media_url"
@@ -144,6 +144,7 @@
         @contentClick="contentClick(item)"
         @backgroundClick="contentClick(item)"
         @headClick="headClick(item.user._jv.id)"
+        @headAnswerClick="headAnswerClick(item.question.be_user_id)"
         @videoPlay="handleVideoPlay"
         @scrollheight="scrpllsip"
       ></qui-content>
@@ -680,6 +681,15 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
+    // 点击已回答用户的头像调转到个人主页
+    headAnswerClick(id) {
       if (id <= 0) {
         return;
       }

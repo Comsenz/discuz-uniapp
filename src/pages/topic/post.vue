@@ -1499,9 +1499,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  console.log('222222222222222')
                   this.$u.event.$emit('addThread', res);
-                  console.log(res,'resresresresres')
+                  console.log(res, '钱包支付')
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1542,6 +1541,7 @@ export default {
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
                   this.$u.event.$emit('addThread', res);
+                   console.log(res,'付钱付钱000000')
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -2027,6 +2027,10 @@ export default {
         return this.$store
           .dispatch('jv/post', params)
           .then(res => {
+          if (res && res.isApproved === 1) {
+            this.$u.event.$emit('addThread', res);
+            console.log(res,'000000')
+          }
             return res;
           })
           .catch(err => {

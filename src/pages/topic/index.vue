@@ -148,6 +148,7 @@
               <qui-be-ask
                 :date="beAskDate"
                 :be-date="beAskBeDate"
+                :show-txt="thread.question.price === '0.00' ? false : true"
                 @queClick="queClick"
               ></qui-be-ask>
             </view>
@@ -159,7 +160,7 @@
                 :user-name="thread.question.beUser.username"
                 :is-real="thread.question.beUser.isReal"
                 :user-role="thread.user.groups ? thread.user.groups : ''"
-                :theme-time="thread.createdAt"
+                :theme-time="thread.question.answered_at"
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
                 :person-list="thread.paidUsers"
@@ -182,7 +183,7 @@
                 :user-id="thread.question.beUser.id"
                 :user-name="thread.question.beUser.username"
                 :avatar-url="thread.question.beUser.avatarUrl"
-                :theme-time="thread.question.created_at"
+                :theme-time="thread.question.answered_at"
                 :answer-content="thread.question.content_html"
                 :images-list="thread.question.images"
                 :thread="thread"
@@ -1280,7 +1281,7 @@ export default {
                 (this.forums.set_site.site_master_scale / 10)
               ).toFixed(2);
               // console.log(this.onLookformDate, 'onLookformDate')
-              this.beAskDate = ((data.question.price - this.platformDate) / 2).toFixed(2);
+              this.beAskDate = (data.question.price - this.platformDate).toFixed(2);
               this.beAskBeDate = (
                 (data.question.onlooker_unit_price - this.onLookformDate) /
                 2
