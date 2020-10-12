@@ -976,9 +976,24 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     thread() {
+      // let thread = {
+      //   user: {
+      //     groups: [],
+      //   },
+      // };
+
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       console.log('thread', thread);
-
+      // 只保留一个用户组显示
+      let hasFirst = false;
+      if (thread.user && thread.user.groups.length > 0) {
+        thread.user.groups = thread.user.groups.filter(group => {
+          if (group.isDisplay === true && !hasFirst) {
+            hasFirst = true;
+            return true;
+          }
+        });
+      }
       if (thread.rewardedUsers) {
         this.rewardedUsers = thread.rewardedUsers;
       }
@@ -1295,11 +1310,14 @@ export default {
                   console.log('显示问答按钮');
                   // 问答免费 已回答 && 允许围观 所有人都可以看
                 } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
-                  console.log('12345678')
+                  console.log('12345678');
                   this.beAsk = false;
                   this.payment = true;
                   this.answerPay = false;
-                } else if (this.user.id === data.question.be_user_id && data.question.is_answer === 1) {
+                } else if (
+                  this.user.id === data.question.be_user_id &&
+                  data.question.is_answer === 1
+                ) {
                   this.beAsk = false;
                   this.payment = true;
                   this.answerPay = false;
@@ -1311,8 +1329,8 @@ export default {
                   console.log('显示问答按钮');
                 } else if (
                   (this.user.id === data.question.be_user_id || data.user.id) &&
-                    data.question.is_answer === 1)
-                {
+                  data.question.is_answer === 1
+                ) {
                   this.beAsk = false;
                   this.answerPay = true;
                   console.log('显示答案111');
@@ -1623,13 +1641,13 @@ export default {
                   this.paidStatus = false;
                   this.rewardStatus = false;
                 } else {
-                   if (this.forums.other.can_be_reward) {
-                     this.paidStatus = false;
-                     this.rewardStatus = true;
-                   } else {
-                     this.paidStatus = false;
-                     this.rewardStatus = false;
-                   }
+                  if (this.forums.other.can_be_reward) {
+                    this.paidStatus = false;
+                    this.rewardStatus = true;
+                  } else {
+                    this.paidStatus = false;
+                    this.rewardStatus = false;
+                  }
                 }
               }
               // #endif
@@ -2022,6 +2040,19 @@ export default {
       loadDetailCommnetAction.then(data => {
         /* eslint-disable */
         delete data._jv;
+        // 只保留一个用户组显示
+        data.forEach((item, index) => {
+          let hasFirst = false;
+          data[index].user.groups = data[index].user.groups.filter(group => {
+            if (group.isDisplay === true && !hasFirst) {
+              hasFirst = true;
+              return true;
+            }
+
+            return false;
+          });
+        });
+        // console.log(data, '这是处理后的');
         this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
         this.posts = [...this.posts, ...data];
         if (data.length === 0) {
