@@ -2350,7 +2350,7 @@ export default {
       }
       if (param.type === '0') {
         uni.redirectTo({
-          url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
+          url: `/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.status, param.type);
@@ -3181,7 +3181,7 @@ export default {
       if (param.type === '0') {
         this.$;
         uni.redirectTo({
-          url: `/pages/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
+          url: `/topic/post?type=${this.thread.type}&operating=edit&threadId=${this.thread._jv.id}`,
         });
       } else if (param.type === '2' || param.type === '3') {
         this.threadOpera(this.threadId, param.canOpera, param.isStatus, param.type);

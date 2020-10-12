@@ -21,7 +21,7 @@
     "dev:mp-baidu": "cross-env NODE_ENV=development UNI_PLATFORM=mp-baidu vue-cli-service uni-build --watch --mode development",
     "dev:mp-qq": "cross-env NODE_ENV=development UNI_PLATFORM=mp-qq vue-cli-service uni-build --watch --mode development",
     "dev:mp-toutiao": "cross-env NODE_ENV=development UNI_PLATFORM=mp-toutiao vue-cli-service uni-build --watch --mode development",
-    "dev:mp-weixin": "cross-env NODE_ENV=development UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --mode development",
+    "dev:mp-weixin": "cross-env NODE_ENV=development UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --mode development --minimize",
     "dev:quickapp": "cross-env NODE_ENV=development UNI_PLATFORM=quickapp vue-cli-service uni-build --watch --mode development",
     "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js",
     "serve:quickapp": "node node_modules/@dcloudio/uni-quickapp/bin/serve.js",
