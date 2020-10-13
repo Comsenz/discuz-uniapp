@@ -8,7 +8,6 @@ export default class Record {
         console.log('init recorder component now.');
         self.recorder = rec;
         self.recorder.start();
-        console.log('start record now.');
         param.success('record successfully!');
       });
     } catch (e) {
@@ -17,7 +16,6 @@ export default class Record {
   }
 
   stopRecord(param) {
-    console.log('stop record now.');
     const self = this;
     try {
       const blobData = self.recorder.getBlob();
