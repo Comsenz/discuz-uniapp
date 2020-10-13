@@ -576,7 +576,7 @@
                 :focus="focusVal"
                 :maxlength="450"
                 class="comment-textarea"
-                :placeholder="commentText !== true ? t.writeCommentsAsk : t.writeComments"
+                :placeholder="commentText === true ? t.writeCommentsAsk : t.writeComments"
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
                 placeholder-class="text-placeholder"
                 :show-confirm-bar="barStatus"

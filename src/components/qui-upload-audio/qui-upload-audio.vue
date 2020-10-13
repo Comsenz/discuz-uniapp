@@ -138,18 +138,20 @@ export default {
 
       // #ifdef H5
       if (this.isWeixin) {
+        const _this = this;
         recordWX.ready(() => {
           recordWX.startRecord({
             success: () => {
-              this.showAdd = false;
-              this.chronoscope();
+              console.log('正在录音');
+              _this.showAdd = false;
+              _this.chronoscope();
             },
             cancel: () => {
-              this.showAdd = true;
+              _this.showAdd = true;
               console.log('用户拒绝授权录音');
             },
             complete: () => {
-              this.showAdd = true;
+              _this.showAdd = true;
             },
           });
         });
@@ -184,6 +186,7 @@ export default {
           recordWX.ready(() => {
             recordWX.stopRecord({
               success: res => {
+                console.log('录音完成');
                 _this.localId = res.localId;
                 console.log(res.localId);
                 _this.wxh5UploadAuaio();
