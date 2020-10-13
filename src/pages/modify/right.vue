@@ -52,6 +52,7 @@
             v-for="(sitem, index) in privilegeUserGroup"
             :key="index"
             @click="godetails(2, sitem.group_id, index)"
+            v-show="beoverdue(sitem.expiration_time)"
           >
             <qui-cell-item :title="sitem.group.name" slot-right :arrow="false" :border="false">
               <view class="time">
@@ -119,7 +120,6 @@ export default {
         include: 'group',
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
-        console.log(res);
         this.privilegeUserGroup = res;
         if (res.length > 0) {
           this.rightspurchased = true;
@@ -127,6 +127,15 @@ export default {
           this.rightspurchased = false;
         }
       });
+    },
+    beoverdue(num) {
+      const timestamp = new Date().getTime();
+      if (new Date(num).getTime() <= timestamp) {
+        return false;
+      }
+      if (new Date(num).getTime() > timestamp) {
+        return true;
+      }
     },
     powerlist(index) {
       if (index === 1) {

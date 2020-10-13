@@ -3,7 +3,7 @@
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
-        <view class="cash-content-tab">
+        <view class="cash-content-tab" v-if="!forums.paycenter.wxpay_mchpay_close">
           <qui-cell-item
             :title="i18n.t('modify.collectionwechat')"
             slot-right
@@ -22,7 +22,7 @@
           </qui-cell-item>
         </view>
         <!-- 收款人 -->
-        <view class="cash-content-tab">
+        <view class="cash-content-tab" v-else>
           <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
             <text class="cash-content-name">
               {{ name }}
@@ -129,7 +129,7 @@
             ></qui-input-code>
           </view>
         </view>
-        <view class="cash-explain">
+        <view class="cash-explain" v-if="forums.paycenter.wxpay_mchpay_close">
           {{ i18n.t('modify.withdrawalTitle') }}
         </view>
         <view class="cash-button">
@@ -218,6 +218,8 @@ export default {
     console.log(this.forums);
     if (this.forums.paycenter.wxpay_mchpay_close) {
       this.cashType = 1;
+    } else {
+      this.cashType = 0;
     }
   },
   computed: {
@@ -467,21 +469,29 @@ export default {
     },
     // 提现申请
     cashwithdrawal() {
-      if (this.cashType === 1) {
+      let params = {};
+      if (this.cashType === 0) {
         this.withdrawalNumber = this.withdrawalPhon;
+        params = {
+          _jv: {
+            type: 'wallet/cash',
+            include: ['user', 'userWallet'],
+          },
+          cash_apply_amount: this.cashmany,
+          cash_type: this.cashType,
+          cash_mobile: this.withdrawalPhon,
+        };
       } else {
-        this.withdrawalNumber = this.userphon;
+        params = {
+          _jv: {
+            type: 'wallet/cash',
+            include: ['user', 'userWallet'],
+          },
+          cash_apply_amount: this.cashmany,
+          cash_type: this.cashType,
+        };
       }
       console.log(this.cashmany, this.withdrawalPhon, this.cashType, '提现参数');
-      const params = {
-        _jv: {
-          type: 'wallet/cash',
-          include: ['user', 'userWallet'],
-        },
-        cash_apply_amount: this.cashmany,
-        cash_type: this.cashType,
-        cash_mobile: this.withdrawalPhon,
-      };
       const postcash = status.run(() => this.$store.dispatch('jv/post', params));
       postcash
         .then(res => {
