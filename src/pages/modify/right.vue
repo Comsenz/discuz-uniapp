@@ -33,6 +33,7 @@
             v-for="(item, index) in paidusergroup"
             :key="index"
             @click="godetails(1, item._jv.id, index)"
+            v-show="!item.default"
           >
             <qui-cell-item :title="item.name" slot-right :arrow="false" :border="false">
               <view class="money">¥{{ item.fee.toFixed(2) }}</view>
@@ -102,6 +103,7 @@ export default {
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
         this.paidusergroup = res;
+        console.log(this.paidusergroup);
         if (res.length > 0) {
           this.permissiondisplay = true;
         } else {
