@@ -63,7 +63,7 @@ export default {
             if (res && res._jv) {
               this.$store.dispatch('session/setGood', res);
               uni.navigateTo({
-                url: '/pages/topic/goods-post',
+                url: '/topic/post',
               });
               this.link = '';
             }

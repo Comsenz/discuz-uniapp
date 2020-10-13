@@ -431,6 +431,7 @@ export default {
     quemoney: '问题价值',
     spendingMoney: '大家快来花',
     element: '元围观～',
+    buygood: '购买商品',
   },
   // 站点管理页面
   manage: {
