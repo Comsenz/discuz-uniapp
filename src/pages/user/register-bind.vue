@@ -7,8 +7,8 @@
       <view class="register-bind-box-info">
         <view class="register-bind-box-info-h">
           <text>{{ i18n.t('user.dear') }}</text>
-          <img class="register-bind-box-info-image" src="@/static/taobao.svg" />
-          <text class="register-bind-box-info-bold">用户名</text>
+          <img class="register-bind-box-info-image" :src="userInfo.headimgurl" />
+          <text class="register-bind-box-info-bold">{{ userInfo.username }}</text>
         </view>
         <view class="register-bind-box-info-ft">{{ i18n.t('user.registerBindText') }}</view>
       </view>
@@ -119,6 +119,13 @@ export default {
     if (this.captcha) {
       this.captcha.destroy();
     }
+  },
+  computed: {
+    userInfo() {
+      const data = this.$store.getters['session/get']('userInfo');
+      console.log('用户信息：', data);
+      return data;
+    },
   },
   methods: {
     handleRegister() {
@@ -319,14 +326,14 @@ export default {
   background-color: --color(--qui-BG-2);
 
   &-h {
-    padding: 60rpx 0rpx 80rpx 40rpx;
+    padding: 60rpx 40rpx 80rpx;
     font-size: 50rpx;
     font-weight: bold;
     color: --color(--qui-FC-333);
   }
 
   &-info {
-    padding: 0rpx 0rpx 50rpx 40rpx;
+    padding: 0rpx 40rpx 50rpx;
     font-size: 40rpx;
 
     &-h {

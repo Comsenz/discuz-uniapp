@@ -37,7 +37,6 @@
           @tap="deleteItem(audioId)"
         ></qui-icon>
       </view>
-      <!-- <view class="qui-audio__size">{{ audioSize }}</view> -->
     </view>
   </view>
 </template>

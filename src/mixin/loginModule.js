@@ -180,7 +180,7 @@ module.exports = {
       console.log('mpLogin-register', register);
       uni.setStorage({
         key: 'register',
-        data: 1,
+        data: register,
       });
       this.$store.getters['session/get']('auth').open();
       // const params = {
@@ -241,7 +241,7 @@ module.exports = {
     //         (res.data.errors[0].code === 'no_bind_user' ||
     //           res.data.errors[0].code === 'register_close')
     //       ) {
-    //         this.refreshParams();
+    //         this.refreshmpParams();
     //         this.jump2RegisterBindPage();
     //       }
     //     })
@@ -396,7 +396,7 @@ module.exports = {
           if (res && res.data && res.data.errors) {
             console.log('登录失败：', res);
             // #ifdef MP-WEIXIN
-            this.refreshParams();
+            this.refreshmpParams();
             // #endif
             if (res.data.errors[0].status === '403') {
               uni.showToast({

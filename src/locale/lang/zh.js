@@ -143,7 +143,7 @@ export default {
       allowonLookers: '允许围观',
       watchThePrice: '围观价格',
       anonymousQuestions: '匿名提问',
-      otherPay: '他人围观须付费',
+      otherPay: '他人围观需付费',
       nextPay: '下一步，支付并发布',
       pleaseSelectTheUserToBeAsked: '请选择被提问用户',
       payAskingPrice: '提问价格',
@@ -888,8 +888,7 @@ export default {
     agreement: '注册登录即表示您同意',
     agreementRegister: '注册协议',
     agreementPrivacy: '隐私政策 ',
-    loginOutTips:
-      '点击下面的确定解绑按钮后，您将解除微信与本帐号的绑定。如果您没有设置密码或其他登录方法，将无法再次登录本帐号！',
+    loginOutTips: '确认退出登录？',
     usernameEmpty: '用户名不能为空',
     passwordEmpty: '密码不能为空',
     reasonEmpty: '注册原因不能为空',

@@ -107,32 +107,16 @@
           </qui-cell-item>
         </view>
 
-        <!-- 小程序和微信内：无感模式不展示退出并解绑按钮，其他模式展示退出并解绑按钮
-             微信外：展示退出登录按钮 -->
+        <!-- 用户名模式和手机号模式展示退出登录按钮，无感模式不展示退出登录按钮 -->
         <view class="logout">
-          <!-- #ifdef MP-WEIXIN -->
           <qui-button
             size="large"
             type="warn"
-            @click="exitAndUnbind"
+            @click="logout"
             v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2"
           >
-            {{ i18n.t('user.noBind') }}
-          </qui-button>
-          <!-- #endif -->
-          <!-- #ifdef H5-->
-          <qui-button
-            size="large"
-            type="warn"
-            @click="exitAndUnbind"
-            v-if="isWeixin && forums && forums.set_reg && forums.set_reg.register_type !== 2"
-          >
-            {{ i18n.t('user.noBind') }}
-          </qui-button>
-          <qui-button size="large" type="warn" @click="logout" v-if="!isWeixin">
             {{ i18n.t('user.logout') }}
           </qui-button>
-          <!-- #endif -->
         </view>
       </view>
     </view>
@@ -221,36 +205,28 @@ export default {
         url: `/pages/profile/index?current=${e.currentIndex}&userId=${this.userId}`,
       });
     },
-    exitAndUnbind() {
+    logout() {
       this.$refs.popup.open();
     },
-    logout() {
+    handleClickOk() {
+      // #ifdef MP-WEIXIN
+      this.$store.dispatch('session/logout').then(() => {
+        uni.clearStorage();
+        if (this.site_mode !== SITE_PAY) {
+          this.setFooterIndex(parseInt(0, 10));
+        }
+        if (this.site_mode === SITE_PAY && this.user && !this.user.isPaid) {
+          uni.redirectTo({
+            url: '/pages/site/info',
+          });
+        }
+      });
+      // #endif
+      // #ifdef H5
       this.$store.dispatch('session/logout').then(() => {
         window.location.reload();
       });
-    },
-    handleClickOk() {
-      this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(() => {
-        this.handleClickCancel();
-        // #ifdef MP-WEIXIN
-        this.$store.dispatch('session/logout').then(() => {
-          uni.clearStorage();
-          if (this.site_mode !== SITE_PAY) {
-            this.setFooterIndex(parseInt(0, 10));
-          }
-          if (this.site_mode === SITE_PAY && this.user && !this.user.isPaid) {
-            uni.redirectTo({
-              url: '/pages/site/info',
-            });
-          }
-        });
-        // #endif
-        // #ifdef H5
-        this.$store.dispatch('session/logout').then(() => {
-          window.location.reload();
-        });
-        // #endif
-      });
+      // #endif
     },
     handleClickCancel() {
       this.$refs.popup.close();
