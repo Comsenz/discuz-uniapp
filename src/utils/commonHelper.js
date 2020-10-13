@@ -23,6 +23,7 @@ appCommonH.isWeixin = () => {
   return {
     isWeixin,
     isPhone,
+    isiOS,
     isPc,
   };
 };
