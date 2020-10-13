@@ -2,7 +2,6 @@
   <view class="qui-uploader-box">
     <view v-if="fileList.length > 0">
       <view class="qui-uploader-box__item" v-for="(item, index) in fileList" :key="index">
-        <!-- :file-size="item.fileSize" -->
         <qui-audio-cell
           :src="item.url"
           :name="item.fileName"
@@ -41,14 +40,25 @@
 import Record from '@/utils/record-sdk';
 // #ifdef  H5
 import TcVod from 'vod-js-sdk-v6';
+import wxrecord from '@/mixin/wxrecord-ios';
+import appCommonH from '@/utils/commonHelper';
 // #endif
 // #ifdef MP-WEIXIN
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
 // 录音管理
 const recorderManager = wx.getRecorderManager();
 // #endif
+// #ifdef  H5
+const recordWX = require('jweixin-module');
+// #endif
 
 export default {
+  mixins: [
+    // #ifdef  H5
+    wxrecord,
+    appCommonH,
+    // #endif
+  ],
   props: {
     audioBeforeList: {
       type: Array,
@@ -61,11 +71,13 @@ export default {
     return {
       fileList: [],
       showAdd: true,
-      audioSize: 0,
       duration: '00:00:00', // 总时长（格式00:00，用于显示）
       durationTime: 0, // 总时长（格式秒，用于计时）
       timer: null, // 计时器
       recorder: new Record(),
+      isWeixin: '', // 是否是微信浏览器内
+      isiOS: '',
+      localId: '',
     };
   },
   computed: {
@@ -92,7 +104,13 @@ export default {
       deep: true,
     },
   },
-  mounted() {},
+  created() {
+    // #ifdef  H5
+    this.wxRecord();
+    this.isWeixin = appCommonH.isWeixin().isWeixin;
+    this.isiOS = appCommonH.isWeixin().isiOS;
+    // #endif
+  },
   methods: {
     // 开始录音的时候
     start() {
@@ -119,46 +137,100 @@ export default {
       // #endif
 
       // #ifdef H5
-      this.recorder.startRecord({
-        success: () => {
-          this.showAdd = false;
-          this.chronoscope();
-          console.log('start record successfully.');
-        },
-        error: () => {
-          console.log('start record failed.');
-        },
-      });
+      if (this.isWeixin) {
+        const _this = this;
+        recordWX.ready(() => {
+          recordWX.startRecord({
+            success: () => {
+              console.log('正在录音');
+              _this.showAdd = false;
+              _this.chronoscope();
+            },
+            cancel: () => {
+              _this.showAdd = true;
+              console.log('用户拒绝授权录音');
+            },
+            complete: () => {
+              _this.showAdd = true;
+            },
+          });
+        });
+      } else {
+        this.recorder.startRecord({
+          success: () => {
+            this.showAdd = false;
+            this.chronoscope();
+            console.log('start record successfully.');
+          },
+          error: () => {
+            console.log('start record failed.');
+          },
+        });
+      }
       // #endif
     },
     // 停止录音
     stop() {
+      const _this = this;
       if (this.durationTime > 1) {
         clearInterval(this.timer);
         const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
         // #ifdef MP-WEIXIN
         recorderManager.stop();
         recorderManager.onStop(res => {
-          // this.audioSize = res.fileSize;
           this.uploadAudio(res, audioName);
         });
         // #endif
-
         // #ifdef H5
-        this.recorder.stopRecord({
-          success: res => {
-            // 此处可以获取音频源文件(res)，用于上传等操作
-            // this.audioSize = res.size;
-            const file = this.blobToFile(res, audioName);
-            this.uploadAudio(file, audioName);
-            console.log('stop record successfully.');
-          },
-          error: () => {
-            console.log('stop record failed.');
-          },
-        });
+        if (this.isWeixin) {
+          recordWX.ready(() => {
+            recordWX.stopRecord({
+              success: res => {
+                console.log('录音完成');
+                _this.localId = res.localId;
+                console.log(res.localId);
+                _this.wxh5UploadAuaio();
+              },
+              fail: res => {
+                console.log(JSON.stringify(res));
+              },
+            });
+          });
+        } else {
+          this.recorder.stopRecord({
+            success: res => {
+              // 此处可以获取音频源文件(res)，用于上传等操作
+              const file = this.blobToFile(res, audioName);
+              this.uploadAudio(file, audioName);
+              console.log('stop record successfully.');
+            },
+            error: () => {
+              console.log('stop record failed.');
+            },
+          });
+        }
         // #endif
       }
+    },
+    wxh5UploadVoice() {
+      recordWX.uploadVoice({
+        localId: this.localId,
+        isShowProgressTips: 1,
+        success: res => {
+          console.log(res.serverId);
+          const mediaId = res.serverId;
+          const token = uni.getStorageSync('access_token');
+          this.$store
+            .dispatch(
+              'jv/get',
+              `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
+            )
+            .then(data => {
+              console.log(data);
+              console.log(JSON.stringify(data));
+            });
+        },
+      });
     },
     // 录音上传
     uploadAudio(audioFile, name) {
@@ -178,6 +250,9 @@ export default {
         finish(result) {
           uni.hideLoading();
           _this.postVideo(result.fileId, 1, result.videoUrl, name);
+          _this.duration = '00:00:00';
+          _this.durationTime = 0;
+          _this.timer = null;
         },
       });
       // #endif
@@ -194,6 +269,9 @@ export default {
           .then(doneResult => {
             uni.hideLoading();
             _this.postVideo(doneResult.fileId, 1, doneResult.video.url, name);
+            _this.duration = '00:00:00';
+            _this.durationTime = 0;
+            _this.timer = null;
           });
       });
       // #endif
@@ -245,7 +323,6 @@ export default {
         }
       });
       this.showAdd = true;
-      this.audioSize = 0;
       this.duration = '00:00:00';
       this.durationTime = 0;
       this.timer = null;

@@ -187,7 +187,15 @@ export default {
     },
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
-      userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
+      let groups = [];
+      if (userInfo.groups && userInfo.groups.length > 0) {
+        groups = userInfo.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        userInfo.groupsName = groups[0].name;
+      } else {
+        userInfo.groupsName = '';
+      }
       this.setNum(userInfo);
       return userInfo;
     },

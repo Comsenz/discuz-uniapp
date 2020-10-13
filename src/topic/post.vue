@@ -463,6 +463,23 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
+
+      <view class="post-box__good" v-if="isShowGoods">
+        <view>
+          <image class="post-box__good__image" lazy-load :src="goodInfo.image_path" />
+        </view>
+        <view class="post-box__good__info">
+          <view class="post-box__good__title">{{ goodInfo.title }}</view>
+          <view class="post-box__good__ft">
+            <view class="post-box__good__price">￥{{ goodInfo.price }}元</view>
+            <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
+          </view>
+        </view>
+      </view>
+      <view class="post-box__space" v-else @click="addGoods">
+        <qui-icon name="icon-add" size="26"></qui-icon>
+      </view>
+
       <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
         <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
@@ -853,6 +870,7 @@ export default {
       payType: 0, //  查看付费的方式，  0均免费， 1内容免费，附件付费，  2内容和附件都付费
       showPayType: '', // 选择的支付方式
       ioshide: false, // ios下付费隐藏
+      isShowGoods: true,
     };
   },
   computed: {
@@ -880,6 +898,14 @@ export default {
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
       return parseInt(userId, 10);
+    },
+    goodInfo() {
+      const data = this.$store.getters['session/get']('good');
+      console.log('取商品信息', data);
+      if (data && data._jv) {
+        return data;
+      }
+      return {};
     },
   },
   updated() {
@@ -916,6 +942,16 @@ export default {
     });
   },
   methods: {
+    addGoods() {
+      uni.navigateTo({
+        url: '/pages/topic/parse-goods',
+      });
+      this.$store.dispatch('session/setGood');
+      this.isShowGoods = true;
+    },
+    deleteGoods() {
+      this.isShowGoods = false;
+    },
     // 允许围观
     changeCheck() {
       console.log(9999);
@@ -1563,7 +1599,7 @@ export default {
                     url: `/pages/topic/index?id=${res._jv.json.data.id}`,
                   });
                 }
-              });              
+              });
             }
             if (this.payTypeVal === 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
@@ -2676,6 +2712,64 @@ export default {
       margin-bottom: 40rpx;
     }
   }
+
+  &__good{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 30rpx 0;
+    font-size: $fg-f3;
+
+    &__image {
+      width: 160rpx;
+      height: 160rpx;
+      margin: 0 30rpx 0 0;
+      border-radius: 5rpx;
+    }
+
+    &__info {
+      position: relative;
+    }
+
+    &__title {
+      font-weight: bold;
+      color: --color(--qui-FC-333);
+    }
+
+    &__ft {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      color: --color(--qui-FC-777);
+    }
+
+    &__price {
+      display: inline-block;
+      font-size: $fg-f5;
+      color: --color(--qui-RED);
+    }
+
+    &__btn {
+      display: inline-block;
+    }
+
+  }
+
+  &__space {
+    width: 100%;
+    height: 160rpx;
+    margin: 30rpx 0;
+    line-height: 160rpx;
+    color: --color(--qui-FC-B5);
+    text-align: center;
+    background-color: --color(--qui-FC-f7);
+    border: 1rpx solid --color(--qui-BOR-ED);
+    border-radius: 5rpx;
+  }
+
   &__position /deep/ {
     position: relative;
     color: --color(--qui-FC-777);

@@ -33,7 +33,7 @@
           :title="item.change_desc"
           :brief="timeHandle(item.created_at)"
           :addon="
-            item.change_available_amount > 0
+            item.change_available_amount >= 0
               ? `+￥${item.change_available_amount}`
               : `-￥${item.change_available_amount.substr(1)}`
           "
@@ -122,6 +122,7 @@ export default {
         'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        'filter[change_type_exclude]': [11, 81],
         'filter[start_time]': `${this.date}-01-00-00-00`,
         'filter[end_time]': `${this.date}-${days}-00-00-00`,
       };

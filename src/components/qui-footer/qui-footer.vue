@@ -68,6 +68,7 @@
         name="file"
         :async-clear="true"
         ref="upload"
+        :count="1"
         :choose-type="0"
         @uploadClick="uploadClick"
       ></qui-uploader>

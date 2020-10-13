@@ -431,6 +431,7 @@ export default {
     quemoney: '问题价值',
     spendingMoney: '大家快来花',
     element: '元围观～',
+    buygood: '购买商品',
   },
   // 站点管理页面
   manage: {
@@ -557,7 +558,7 @@ export default {
     withdrawable: '可提现余额',
     withdrawalamount: '提现金额',
     actualamout: '实际提现金额',
-    enteramount: '请输入提现金额',
+    enteramount: '提现金额最低1元',
     phonnumber: '手机号',
     servicechaege: '手续费：',
     percentage: '元 (',
