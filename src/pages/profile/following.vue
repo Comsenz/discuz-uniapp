@@ -121,12 +121,14 @@ export default {
       });
     },
     handleGroups(data) {
-      const { groups } = data;
-      let groupsName = '';
-      groups.forEach(v => {
-        groupsName = `${groupsName}${v.name}`;
-      });
-      return groupsName;
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
     },
     // 下拉加载
     pullDown() {
