@@ -81,6 +81,7 @@ export default {
       isWeixin: '', // 是否是微信浏览器内
       isiOS: '',
       localId: '',
+      mediaId: '',
     };
   },
   computed: {
@@ -205,27 +206,38 @@ export default {
       }
     },
     wxh5UploadVoice() {
-      recordWX.ready(() => {
-        recordWX.uploadVoice({
-          localId: this.localId,
-          isShowProgressTips: 1,
-          success: res => {
-            console.log(res);
-            console.log(res.serverId);
-            const mediaId = res.serverId;
-            const token = uni.getStorageSync('access_token');
-            this.$store
-              .dispatch(
-                'jv/get',
-                `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
-              )
-              .then(data => {
-                console.log(data);
-                console.log(JSON.stringify(data));
-              });
-          },
-        });
+      // recordWX.ready(() => {
+      recordWX.uploadVoice({
+        localId: this.localId,
+        isShowProgressTips: 1,
+        success: res => {
+          console.log(res);
+          console.log(res.serverId);
+          this.mediaId = res.serverId;
+          const mediaId = res.serverId;
+          const token = uni.getStorageSync('access_token');
+          this.$store
+            .dispatch(
+              'jv/get',
+              `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
+            )
+            .then(data => {
+              console.log(data);
+              console.log(JSON.stringify(data));
+            });
+        },
       });
+      const token = uni.getStorageSync('access_token');
+      this.$store
+        .dispatch(
+          'jv/get',
+          `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${this.mediaId}`,
+        )
+        .then(data => {
+          console.log(data);
+          console.log(JSON.stringify(data));
+        });
+      // });
     },
     playVoice() {
       // recordWX.ready(() => {
