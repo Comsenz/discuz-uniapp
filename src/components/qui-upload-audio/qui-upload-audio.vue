@@ -219,7 +219,7 @@ export default {
           this.$store
             .dispatch(
               'jv/get',
-              `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
+              `http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
             )
             .then(data => {
               console.log(data);
@@ -227,16 +227,6 @@ export default {
             });
         },
       });
-      const token = uni.getStorageSync('access_token');
-      this.$store
-        .dispatch(
-          'jv/get',
-          `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${this.mediaId}`,
-        )
-        .then(data => {
-          console.log(data);
-          console.log(JSON.stringify(data));
-        });
       // });
     },
     playVoice() {
