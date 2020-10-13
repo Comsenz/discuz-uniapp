@@ -187,6 +187,7 @@ export default {
               },
             });
           });
+          console.log(this.localId);
         } else {
           this.recorder.stopRecord({
             success: res => {
@@ -204,30 +205,34 @@ export default {
       }
     },
     wxh5UploadVoice() {
-      recordWX.uploadVoice({
-        localId: this.localId,
-        isShowProgressTips: 1,
-        success: res => {
-          console.log(res);
-          console.log(res.serverId);
-          const mediaId = res.serverId;
-          const token = uni.getStorageSync('access_token');
-          this.$store
-            .dispatch(
-              'jv/get',
-              `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
-            )
-            .then(data => {
-              console.log(data);
-              console.log(JSON.stringify(data));
-            });
-        },
+      recordWX.ready(() => {
+        recordWX.uploadVoice({
+          localId: this.localId,
+          isShowProgressTips: 1,
+          success: res => {
+            console.log(res);
+            console.log(res.serverId);
+            const mediaId = res.serverId;
+            const token = uni.getStorageSync('access_token');
+            this.$store
+              .dispatch(
+                'jv/get',
+                `https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
+              )
+              .then(data => {
+                console.log(data);
+                console.log(JSON.stringify(data));
+              });
+          },
+        });
       });
     },
     playVoice() {
-      wx.playVoice({
+      // recordWX.ready(() => {
+      recordWX.playVoice({
         localId: this.localId, // 需要播放的音频的本地ID，由stopRecord接口获得
       });
+      // });
     },
     // 录音上传
     uploadAudio(audioFile, name) {
