@@ -32,20 +32,20 @@ module.exports = {
               jsApiList: ['startRecord'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
               success: () => {},
             });
-            wx.startRecord({
-              success: () => {
-                wx.onVoiceRecordEnd({
-                  // 录音时间超过一分钟没有停止的时候会执行 complete 回调
-                  complete: () => {
-                    console.log('最多只能录制一分钟');
-                  },
-                });
-              },
-              cancel: () => {
-                console.log('用户拒绝授权录音');
-                return false;
-              },
-            });
+            // wx.startRecord({
+            //   success: () => {
+            //     wx.onVoiceRecordEnd({
+            //       // 录音时间超过一分钟没有停止的时候会执行 complete 回调
+            //       complete: () => {
+            //         console.log('最多只能录制一分钟');
+            //       },
+            //     });
+            //   },
+            //   cancel: () => {
+            //     console.log('用户拒绝授权录音');
+            //     return false;
+            //   },
+            // });
           });
         });
     },
