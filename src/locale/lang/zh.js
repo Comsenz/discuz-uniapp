@@ -143,7 +143,7 @@ export default {
       allowonLookers: '允许围观',
       watchThePrice: '围观价格',
       anonymousQuestions: '匿名提问',
-      otherPay: '他人围观须付费',
+      otherPay: '他人围观需付费',
       nextPay: '下一步，支付并发布',
       pleaseSelectTheUserToBeAsked: '请选择被提问用户',
       payAskingPrice: '提问价格',

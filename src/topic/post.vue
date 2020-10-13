@@ -410,7 +410,7 @@
         <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
       <!-- 提问价格 -->
-      <qui-cell-item
+      <!-- <qui-cell-item
         v-if="
           type === 5 &&
             askingPrice &&
@@ -423,9 +423,12 @@
         :addon="showAskPrice"
         arrow
         @click="askClick('pay')"
-      ></qui-cell-item>
+      ></qui-cell-item> -->
       <!-- 他人围观须付费1元 -->
-      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5 && watchShow">
+      <view
+        class="uni-list-cell uni-list-cell-pd"
+        v-if="type === 5 && forums.other && forums.other.can_be_onlooker"
+      >
         <view class="uni-list-cell-db">
           <view class="">
             {{ `${i18n.t('discuzq.post.otherPay')}${forums.set_site.site_onlooker_price}元` }}
@@ -497,6 +500,7 @@
           </qui-button>
         </view>
         <qui-button
+          v-if="type !== 5"
           :loading="postLoading"
           type="primary"
           size="large"
@@ -505,11 +509,19 @@
           @click="postClick"
           :disabled="textAreaValue.length > textAreaLength"
         >
-          {{
-            type === 5 && watchShow === true
-              ? i18n.t('discuzq.post.nextPay')
-              : i18n.t('discuzq.post.post')
-          }}
+          {{ i18n.t('discuzq.post.post') }}
+        </qui-button>
+        <qui-button
+          v-if="type === 5"
+          :loading="postLoading"
+          type="primary"
+          size="large"
+          id="TencentCaptcha"
+          :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
+          @click="postAnswerClick"
+          :disabled="textAreaValue.length > textAreaLength"
+        >
+          {{ i18n.t('discuzq.post.nextPay') }}
         </qui-button>
       </view>
       <uni-popup ref="lookPayPopup" type="bottom">
@@ -1204,11 +1216,12 @@ export default {
       if (this.forums.set_site.site_onlooker_price === 0) {
         this.watchShow = false;
       } else if (index === 0) {
+        console.log('免费免费')
         this.payType = 0;
+        this.postClick();
         if (this.payType === 0) {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
-
         this.watchShow = false;
       } else {
         this.watchShow = true;
@@ -1226,8 +1239,10 @@ export default {
         });
       } else {
         if (this.type === 5) {
+          console.log('dhdhhdhdhd')
           this.priceAsk = this.payNumCheck[0].pay;
           this.$refs.popupBtm.close();
+          this.postClick();
           this.textShow = true;
           return;
         }
@@ -1267,7 +1282,7 @@ export default {
       this.textShow = false;
     },
     // 提问价格
-    askClick(type) {
+    postAnswerClick(type) {
       console.log('提问价格');
       // this.setType = type;
       this.$refs.popupBtm.open();

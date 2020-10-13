@@ -34,7 +34,7 @@
             <text class="themeItem__header__title__username" v-if="addAsk === 1">
               {{ beAskName }}
             </text>
-            <text v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
+            <view v-if="isAdmin && themeType == '1'" class="themeItem__header__title__isAdmin">
               <view v-if="addAsk !== 1">
                 <text
                   v-for="(item, index) in userGroups"
@@ -53,7 +53,7 @@
                   {{ item.isDisplay ? `${item.name}` : '' }}
                 </text>
               </view>
-            </text>
+            </view>
             <text v-if="themeType !== '1'" class="themeItem__header__title__isAdmin">
               <!-- {{ themeType === '2' ? '回复了我' : '@了我' }} -->
               {{ themeStatus }}

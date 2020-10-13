@@ -236,6 +236,7 @@ export default {
     },
     // 调用 未读通知数 的接口
     getUnreadNoticeNum() {
+      console.log(this.user);
       if (this.user && this.user.typeUnreadNotifications) {
         this.list[0].unReadNum = this.user.typeUnreadNotifications.related || '';
         this.list[1].unReadNum = this.user.typeUnreadNotifications.replied || '';
