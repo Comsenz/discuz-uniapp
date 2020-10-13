@@ -32,7 +32,7 @@
             class="power-box__package-foot-list"
             v-for="(item, index) in paidusergroup"
             :key="index"
-            @click="godetails(1, item._jv.id)"
+            @click="godetails(1, item._jv.id, index)"
           >
             <qui-cell-item :title="item.name" slot-right :arrow="false" :border="false">
               <view class="money">¥{{ item.fee.toFixed(2) }}</view>
@@ -50,7 +50,7 @@
             class="power-box__package-foots-list"
             v-for="(sitem, index) in privilegeUserGroup"
             :key="index"
-            @click="godetails(2, sitem.group_id)"
+            @click="godetails(2, sitem.group_id, index)"
           >
             <qui-cell-item :title="sitem.group.name" slot-right :arrow="false" :border="false">
               <view class="time">
@@ -117,6 +117,7 @@ export default {
         include: 'group',
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
+        console.log(res);
         this.privilegeUserGroup = res;
         if (res.length > 0) {
           this.rightspurchased = true;
@@ -134,9 +135,9 @@ export default {
         this.typenum2 = true;
       }
     },
-    godetails(index, group) {
+    godetails(index, group, indexs) {
       uni.navigateTo({
-        url: `/pages/modify/rightdetails?sice=${index}&groups=${group}`,
+        url: `/pages/modify/rightdetails?sice=${index}&groups=${group}&index=${indexs}`,
       });
     },
   },

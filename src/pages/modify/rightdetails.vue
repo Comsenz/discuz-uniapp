@@ -143,15 +143,18 @@ export default {
       paidusergrouplist: '', // 权限用户
       pwdVal: '', // 支付密码
       expirationTime: '', // 到期时间
+      payingusers: '',
     };
   },
   onLoad(index) {
+    console.log(index);
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
     // #endif
     this.groupId = index.groups;
+    this.payingusers = index.index;
     if (index.sice === '1') {
       this.oder = true;
     } else {
@@ -224,7 +227,9 @@ export default {
         include: 'group',
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
-        this.expirationTime = res[0].expiration_time;
+        console.log(res);
+        const num = this.payingusers;
+        this.expirationTime = res[num].expiration_time;
       });
     },
     purchase() {

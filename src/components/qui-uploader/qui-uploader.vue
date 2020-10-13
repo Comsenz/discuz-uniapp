@@ -34,7 +34,11 @@
         </view>
       </view>
     </block>
-    <view class="qui-uploader-box__add" @click="uploadClick" v-if="uploadBeforeList.length < count">
+    <view
+      class="qui-uploader-box__add"
+      @click="uploadClick"
+      v-if="uploadBeforeList.length < dataCount"
+    >
       <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
     </view>
   </view>
@@ -108,6 +112,7 @@ export default {
       cunmumber: 1,
       uploadType: '',
       header: {}, // 上传图片header
+      dataCount: this.count, // 接收图片限制数量
     };
   },
   watch: {
@@ -197,13 +202,17 @@ export default {
     },
     // 上传图片到本地
     uploadClick() {
+      // console.log('执行了', this.uploadList.length, '^^^^^^', this.dataCount);
       const _this = this;
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
-      if (_this.uploadList.length < _this.count || _this.name === 'avatar') {
+      if (_this.chooseType === 0) {
+        _this.uploadList = [];
+      }
+      if (_this.uploadList.length < _this.dataCount || _this.name === 'avatar') {
         // #ifdef MP-WEIXIN
         wx.chooseImage({
-          count: _this.count - _this.uploadBeforeList.length,
+          count: _this.dataCount - _this.uploadBeforeList.length,
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success(res) {
@@ -237,8 +246,8 @@ export default {
 
             Promise.race(promise).then(() => {
               // 返回上传成功列表和成功状态值
-              if (_this.uploadBeforeList.length > _this.count) {
-                _this.uploadList = _this.uploadList.slice(0, _this.count);
+              if (_this.uploadBeforeList.length > _this.dataCount) {
+                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
               }
               _this.$emit('change', _this.uploadList, true);
             });
@@ -248,7 +257,7 @@ export default {
         // #ifndef MP-WEIXIN
         // 上传图片到本地
         uni.chooseImage({
-          count: _this.count - _this.uploadBeforeList.length,
+          count: _this.dataCount - _this.uploadBeforeList.length,
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success(res) {
@@ -278,8 +287,8 @@ export default {
 
             Promise.race(promise).then(() => {
               // 返回上传成功列表和成功状态值
-              if (_this.uploadBeforeList.length > _this.count) {
-                _this.uploadList = _this.uploadList.slice(0, _this.count);
+              if (_this.uploadBeforeList.length > _this.dataCount) {
+                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
               }
               _this.$emit('change', _this.uploadList, true);
             });
@@ -337,12 +346,12 @@ export default {
                 _this.numberdata[_this.indexs].state = 100;
               }
               _this.uploadList.push(JSON.parse(res.data).data);
-              if (_this.uploadList.length > _this.count) {
+              if (_this.uploadList.length > _this.dataCount) {
                 _this.uploadList.sort(_this.compare('order'));
                 _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                _this.uploadList = _this.uploadList.slice(0, _this.count);
-                _this.numberdata = _this.numberdata.slice(0, _this.count);
-                _this.newindex = _this.newindex.slice(0, _this.count);
+                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
+                _this.numberdata = _this.numberdata.slice(0, _this.dataCount);
+                _this.newindex = _this.newindex.slice(0, _this.dataCount);
               }
               // console.log(_this.uploadList, '$$$$$$$$$$$$$');
               _this.newindex = [];
