@@ -244,7 +244,15 @@ export default {
           } else {
             this.loaded = true;
             this.dialogId = res.dialog ? res.dialog._jv.id : 0;
-            res.groupsName = res.groups && res.groups.length > 0 ? res.groups[0].name : '';
+            let groups = [];
+            if (res.groups && res.groups.length > 0) {
+              groups = res.groups.filter(item => item.isDisplay);
+            }
+            if (groups.length > 0) {
+              res.groupsName = groups[0].name;
+            } else {
+              res.groupsName = '';
+            }
             this.setNum(res);
             this.userInfo = res;
             uni.setNavigationBarTitle({

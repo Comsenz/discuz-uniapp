@@ -9,8 +9,8 @@
       :is-real="thread.user ? thread.user.isReal : false"
       :theme-btn="thread.canHide || ''"
       :theme-reply-btn="thread.canReply || ''"
-      :user-groups="thread.user && thread.user.groups"
-      :user-answer-groups="thread.question && thread.question.beUser.groups"
+      :user-groups="handleGroup(thread.user && thread.user.groups)"
+      :user-answer-groups="handleGroup(thread.question && thread.question.beUser.groups)"
       :answer-image="thread.question && thread.question.beUser.avatarUrl"
       :theme-time-answer="thread.question && thread.question.answered_at"
       :theme-time="thread.createdAt"
@@ -144,7 +144,6 @@ export default {
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked, index) {
-      console.log('内容部分点赞按钮点击事件', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -184,7 +183,6 @@ export default {
     },
     // 首页内容部分分享按钮弹窗
     handleClickShare(id) {
-      console.log('首页内容部分分享按钮弹窗', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
@@ -215,6 +213,16 @@ export default {
         url: 'pages/topic/index',
       });
       // #endif
+    },
+    handleGroup(data) {
+      let groups = [];
+      if (data && data.length > 0) {
+        groups = data.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return [groups[0]];
+      }
+      return [];
     },
   },
 };

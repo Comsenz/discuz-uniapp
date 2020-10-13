@@ -40,7 +40,7 @@
           size="70"
           :is-real="item.isReal"
         />
-        <qui-cell-item :title="item.username" arrow :addon="item.groupName"></qui-cell-item>
+        <qui-cell-item :title="item.username" arrow :addon="handleGroups(item)"></qui-cell-item>
       </view>
       <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
     </scroll-view>
@@ -86,9 +86,6 @@ export default {
         if (res._jv) {
           delete res._jv;
         }
-        res.forEach((v, i) => {
-          res[i].groupName = v.groups[0] ? v.groups[0].name : '';
-        });
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         if (type && type === 'clear') {
           this.data = res;
@@ -96,6 +93,16 @@ export default {
           this.data = [...this.data, ...res];
         }
       });
+    },
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
     },
     clearSearch() {
       this.searchValue = '';

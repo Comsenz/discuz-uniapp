@@ -77,6 +77,20 @@
       </view>
 
       <view class="themeItem__content" @click.stop="" @click="contentClick">
+        <view class="themeItem__content__good">
+          <view>
+            <image class="themeItem__content__good__image" lazy-load src="@/static/jingdong.svg" />
+          </view>
+          <view class="themeItem__content__good__info">
+            <view class="themeItem__content__good__title">
+              标题:Redmi K30 至尊纪念版 120Hz弹出屏游戏智能5g手机小米官方旗舰店官网redmi红米k30
+            </view>
+            <view class="themeItem__content__good__ft">
+              <view class="themeItem__content__good__price">￥100元</view>
+            </view>
+          </view>
+        </view>
+
         <view class="themeItem__content__text">
           <view
             class="themeItem__content__text__longessay"
@@ -899,6 +913,46 @@ export default {
     }
   }
   &__content {
+    &__good {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: 30rpx 0;
+      font-size: $fg-f3;
+
+      &__image {
+        width: 160rpx;
+        height: 160rpx;
+        margin: 0 30rpx 0 0;
+        border-radius: 5rpx;
+      }
+
+      &__info {
+        position: relative;
+      }
+
+      &__title {
+        font-weight: bold;
+        color: --color(--qui-FC-333);
+      }
+
+      &__ft {
+        position: absolute;
+        bottom: 0;
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        color: --color(--qui-FC-777);
+      }
+
+      &__price {
+        display: inline-block;
+        font-size: $fg-f5;
+        color: --color(--qui-RED);
+      }
+    }
+
     &__text {
       min-height: 45rpx;
       padding-bottom: 20rpx;

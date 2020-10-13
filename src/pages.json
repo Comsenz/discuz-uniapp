@@ -433,24 +433,13 @@
             "navigationBarTextStyle": "black",
             "navigationStyle": "default"
           }
-      },{
-        "path": "goods-post",
-        "style": {
-          "navigationBarBackgroundColor": "#fff",
-          "navigationBarTextStyle": "black",
-          "navigationBarTitleText": "发布"
-        }
-    }]
+      }]
   }],
   "preloadRule": {
       "topic/post": {
           "network": "all",
           "packages": ["__APP__"]
-      },
-      "topic/goods-post": {
-        "network": "all",
-        "packages": ["__APP__"]
-    }
+      }
   },
   "globalStyle": {
     "navigationBarTextStyle": "black",
