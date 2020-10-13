@@ -180,7 +180,7 @@ export default {
                 console.log('录音完成');
                 _this.localId = res.localId;
                 console.log(res.localId);
-                _this.wxh5UploadAuaio();
+                _this.wxh5UploadVoice();
               },
               fail: res => {
                 console.log(JSON.stringify(res));
