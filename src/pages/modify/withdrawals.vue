@@ -202,7 +202,8 @@ export default {
     this.setmydata();
     this.$nextTick(() => {
       this.cost = this.forums.set_cash.cash_rate;
-      this.percentage = this.forums.set_cash.cash_rate * 100;
+      const prop = this.forums.set_cash.cash_rate * 100;
+      this.percentage = prop;
     });
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
@@ -265,6 +266,14 @@ export default {
           .replace('$#$', '.')
           .replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3')
           .replace(/^\./g, '');
+        if (Number(this.cashmany) < 1) {
+          this.cashmany = '';
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.enteramount'),
+            duration: 2000,
+          });
+        }
         if (Number(this.cashmany) > Number(this.balance)) {
           this.cashmany = this.cashmany.slice(0, this.cashmany.length - 1);
           uni.showToast({
