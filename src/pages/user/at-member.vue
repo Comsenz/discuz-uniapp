@@ -58,7 +58,7 @@
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="item.toUser.groups.length > 0 ? item.toUser.groups[0].name : ''"
+              :value="handleGroups(item.toUser)"
               :label="item.label"
               :is-real="item.isReal"
               @click="radioChange(item)"
@@ -126,29 +126,20 @@ export default {
       current: 0,
     };
   },
-  computed: {
-    // 处理角色名称
-    // getGroups() {
-    //   const that = this;
-    //   let name = '';
-    //   return data => {
-    //     if (data) {
-    //       Object.keys(data).forEach(item => {
-    //         if (data[item]) {
-    //           name = data[item].name;
-    //         } else {
-    //           name = that.i18n.t('discuzq.role.noRole');
-    //         }
-    //       });
-    //     }
-    //     return name;
-    //   };
-    // },
-  },
   methods: {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
+    },
 
     // 多选人员
     changeCheck(e) {

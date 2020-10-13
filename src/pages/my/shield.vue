@@ -112,7 +112,7 @@
           <qui-cell-item
             class="shield-item__users__content"
             :title="item.username"
-            :brief="item.groupName"
+            :brief="handleGroups(item)"
             slot-right
           >
             <view class="shield-item__users__operation" plain @tap="shieldUser(item.id, 'user')">
@@ -286,6 +286,16 @@ export default {
       this.uid = uid;
       this.shieldType = type;
       this.$refs.popShield.open();
+    },
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
     },
     handleCancel() {
       this.$refs.popShield.close();
