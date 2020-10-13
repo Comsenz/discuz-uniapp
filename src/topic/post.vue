@@ -405,16 +405,19 @@
         ></qui-cell-item>
       </view>
       <!-- 匿名提问 -->
-      <view
-        class="uni-list-cell uni-list-cell-pd"
-        v-if="type === 5 && forums.other.can_create_thread_paid && ioshide"
-      >
+      <view class="uni-list-cell uni-list-cell-pd" v-if="type === 5">
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
         <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
       <!-- 提问价格 -->
       <qui-cell-item
-        v-if="type === 5 && askingPrice && forums.other.can_create_thread_paid && ioshide"
+        v-if="
+          type === 5 &&
+            askingPrice &&
+            forums.other &&
+            forums.other.can_create_thread_paid &&
+            ioshide
+        "
         :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
         :title="i18n.t('discuzq.post.askingPrice')"
         :addon="showAskPrice"
@@ -660,6 +663,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 // #ifdef  H5
 // import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
@@ -677,7 +681,8 @@ export default {
   mixins: [
     forums,
     user,
-    // #ifdef  H5
+    loginModule,
+    // #ifdef H5
     tcaptchs,
     choosePosition,
     appCommonH,
@@ -1174,13 +1179,13 @@ export default {
     },
     diaLogOk() {
       if (this.type === 5) {
-        if (this.inputPrice < '1.0') {
-          uni.showToast({
-            title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
-            icon: 'none',
-          });
-          return;
-        }
+        // if (this.inputPrice < '1.0') {
+        //   uni.showToast({
+        //     title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
+        //     icon: 'none',
+        //   });
+        //   return;
+        // }
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
         this.textShow = true;
@@ -1322,13 +1327,11 @@ export default {
     payClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
         this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.payStatus = false;
@@ -1488,23 +1491,27 @@ export default {
             }
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
+              console.log('successsuccess');
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               this.coverLoading = false;
+              this.postThread().then(res => {
+                console.log(res, 'postThreadresresres');
+                this.postLoading = false;
+                uni.hideLoading();
+                if (res && res.isApproved === 1) {
+                  this.$u.event.$emit('addThread', res);
+                  console.log(res, '钱包支付')
+                }
+                if (res && res._jv.json.data.id) {
+                  uni.redirectTo({
+                    url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                  });
+                }
+              });
+
             }
             this.coverLoading = false;
           }
-          this.postThread().then(res => {
-            this.postLoading = false;
-            uni.hideLoading();
-            if (res && res.isApproved === 1) {
-              this.$u.event.$emit('addThread', res);
-            }
-            if (res && res._jv.json.data.id) {
-              uni.redirectTo({
-                url: `/pages/topic/index?id=${res._jv.json.data.id}`,
-              });
-            }
-          });
         })
         .catch(err => {
           // 清空支付的密码
@@ -1519,16 +1526,32 @@ export default {
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             if (broswerType === '2') {
+              console.log('h5h5h5h5h5h5h5h')
               // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
-              this.loadThread();
+              this.postThread();
+            } else if (broswerType === '0') {
+              console.log('我就看看')
+              this.postThread().then(res => {
+                console.log(res, 'postThreadresresres');
+                this.postLoading = false;
+                uni.hideLoading();
+                if (res && res.isApproved === 1) {
+                  this.$u.event.$emit('addThread', res);
+                   console.log(res,'付钱付钱000000')
+                }
+                if (res && res._jv.json.data.id) {
+                  uni.redirectTo({
+                    url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                  });
+                }
+              });              
             }
             if (this.payTypeVal === 0) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
-              this.loadThread();
             } else if (this.payTypeVal === 1) {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               this._updateRewardUsers();
@@ -1539,7 +1562,7 @@ export default {
         .catch(err => {
           console.log(err);
           this.coverLoading = false;
-          this.$refs.toast.show({ message: this.p.payFail });
+          this.$refs.toast.show({ message: this.i18n.t('pay.payFail') });
         });
     },
     wechatPay(timeStamp, nonceStr, packageVal, signType, paySign) {
@@ -1559,7 +1582,7 @@ export default {
               clearInterval(payWechat);
               return;
             }
-            _this.getOrderStatus(_this.orderSn);
+            _this.getOrderStatus(_this.orderSn, '0');
           }, 3000);
         },
         fail(err) {
@@ -1797,6 +1820,7 @@ export default {
               uni.hideLoading();
               if (res && res.isApproved === 1) {
                 this.$u.event.$emit('addThread', res);
+                console.log('addThreadaddThreadaddThread');
               }
               if (res && res._jv.json.data.id) {
                 uni.redirectTo({
@@ -1944,6 +1968,9 @@ export default {
               },
             },
           },
+          links: {
+            self: 'threads?include=user,category,firstPost,firstPost.images,question,question.beUser,question.beUser.groups,question.images'
+          }
         },
         content: this.textAreaValue,
         type: this.type,
@@ -2329,6 +2356,11 @@ export default {
     },
   },
   onLoad(option) {
+    uni.$on('radioChange', item => {
+      this.beUserName = item.username;
+      this.beAskId = item.id;
+      this.userImage = item.avatarUrl;
+    });
     // 问答编辑不显示提问价格
     if (this.forums && this.forums.paycenter) {
       if (option.operating === 'edit' || !this.forums.paycenter.wxpay_close) {
@@ -2338,11 +2370,7 @@ export default {
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
       }
     }
-    this.$u.event.$on('radioChange', item => {
-      this.beUserName = item.username;
-      this.beAskId = item.id;
-      this.userImage = item.avatarUrl;
-    });
+
     if (option.type) this.type = Number(option.type);
     // #ifdef MP-WEIXIN
     const data = uni.getSystemInfoSync();

@@ -8,7 +8,6 @@
           :nav-theme="theme"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
-          @openLoginPop="openLoginPop()"
         ></qui-page-home>
         <qui-page-find
           ref="quifind"
@@ -26,11 +25,7 @@
         ></qui-page-my>
       </view>
       <view class="tabBar">
-        <qui-footer
-          @click="cut_index"
-          :bottom="detectionModel() ? 100 : 0"
-          @openLoginPop="openLoginPop()"
-        ></qui-footer>
+        <qui-footer @click="cut_index" :bottom="detectionModel() ? 100 : 0"></qui-footer>
       </view>
     </view>
   </qui-page>
@@ -41,18 +36,10 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
+import loginModule from '@/mixin/loginModule';
 
 export default {
-  mixins: [
-    forums,
-    user,
-    detectionModel, // #ifdef  H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [forums, user, detectionModel, loginModule],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
@@ -216,16 +203,13 @@ export default {
         ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
-        this.openLoginPop();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
         // this.currentTab = 'home';
         // this.setFooterIndex(0);
-        return;
       }
 
       this.show_index = type;
@@ -240,11 +224,6 @@ export default {
     },
     handlePageLoaded() {
       this.showHome = true;
-    },
-    openLoginPop() {
-      // #ifdef MP-WEIXIN
-      this.$refs.quiPage.$refs.auth.open();
-      // #endif
     },
   },
   onUnload() {

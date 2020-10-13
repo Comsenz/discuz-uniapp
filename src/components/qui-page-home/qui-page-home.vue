@@ -100,6 +100,7 @@
         :user-groups="item.user && item.user.groups"
         :user-answer-groups="item.question && item.question.beUser.groups"
         :theme-time="item.createdAt"
+        :theme-time-answer="item.question && item.question.answered_at"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
         :media-url="item.threadVideo && item.threadVideo.media_url"
@@ -143,6 +144,7 @@
         @contentClick="contentClick(item)"
         @backgroundClick="contentClick(item)"
         @headClick="headClick(item.user._jv.id)"
+        @headAnswerClick="headAnswerClick(item.question.be_user_id)"
         @videoPlay="handleVideoPlay"
         @scrollheight="scrpllsip"
       ></qui-content>
@@ -254,10 +256,10 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
-import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import { mapMutations, mapState } from 'vuex';
 
@@ -276,10 +278,10 @@ export default {
   mixins: [
     forums,
     user,
-    // #ifdef  H5
+    loginModule,
+    // #ifdef H5
     wxshare,
     appCommonH,
-    loginAuth,
     // #endif
   ],
 
@@ -529,6 +531,7 @@ export default {
     uni.$on('updateIndex', () => {
       this.headerShow = true;
       this.ontrueGetList();
+      console.log('回到首页');
     });
     uni.$on('updateNoticePage', () => {
       // console.log('99999');
@@ -685,6 +688,15 @@ export default {
         url: `/pages/profile/index?userId=${id}`,
       });
     },
+    // 点击已回答用户的头像调转到个人主页
+    headAnswerClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
     // 首页头部分享按钮弹窗
     open() {
       if (!this.$store.getters['session/get']('isLogin')) {
@@ -693,14 +705,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$emit('openLoginPop');
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
@@ -742,12 +751,10 @@ export default {
             data: '/pages/home/index',
           });
           // #ifdef MP-WEIXIN
-          this.$emit('openLoginPop');
+          this.mpLoginMode();
           // #endif
           // #ifdef H5
-          if (!this.handleLogin()) {
-            return;
-          }
+          this.h5LoginMode();
           // #endif
         }
         uni.navigateTo({
@@ -827,14 +834,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$emit('openLoginPop');
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
@@ -958,6 +962,20 @@ export default {
         console.log(res, '首页列表');
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
+
+        res.forEach((item, index) => {
+          let hasFirst = false;
+          res[index].user.groups = res[index].user.groups.filter(group => {
+            if (group.isDisplay === true && !hasFirst) {
+              hasFirst = true;
+              return true;
+            }
+
+            return false;
+          });
+        });
+        console.log(res, '这是处理后的');
+
         if (this.isResetList) {
           this.threads = res;
         } else {
@@ -974,14 +992,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$emit('openLoginPop');
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const params = {
         _jv: {

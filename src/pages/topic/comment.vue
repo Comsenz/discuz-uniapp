@@ -20,7 +20,7 @@
                 {{ t.commentTip }}
               </view>
               <qui-topic-content
-                :theme-parts="1"
+                :theme-parts="themeParts"
                 :topic-status="thread.isApproved"
                 :follow-show="post.user.follow != null"
                 :avatar-url="post.user.avatarUrl"
@@ -434,10 +434,11 @@ import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { getCurUrl } from '@/utils/getCurUrl';
+import loginModule from '@/mixin/loginModule';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [user],
+  mixins: [user, loginModule],
   data() {
     return {
       navTitle: '评论详情页', // 导航栏标题
@@ -545,6 +546,7 @@ export default {
       ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
+      themeParts: 1, // 传给组件的类型
     };
   },
   computed: {
@@ -557,6 +559,15 @@ export default {
     },
     post() {
       const post = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+      let hasFirst = false;
+      if (post.user && post.user.groups.length > 0) {
+        post.user.groups = post.user.groups.filter(group => {
+          if (group.isDisplay === true && !hasFirst) {
+            hasFirst = true;
+            return true;
+          }
+        });
+      }
       this.likedUsers = post.likedUsers;
       return post;
     },
@@ -646,6 +657,7 @@ export default {
       const params = {
         include: [
           'user',
+          'user.groups',
           'likedUsers',
           'commentPosts',
           'commentPosts.user',
@@ -669,6 +681,8 @@ export default {
               });
               this.loaded = false;
             } else {
+              console.log(data, '~~~~~');
+
               // #ifndef MP-WEIXIN
               if (data.summaryText) {
                 uni.setNavigationBarTitle({
@@ -715,6 +729,15 @@ export default {
               this.status = false;
             } else {
               this.status = true;
+            }
+            let hasFirst = false;
+            if (data.user && data.user.groups.length > 0) {
+              data.user.groups = data.user.groups.filter(group => {
+                if (group.isDisplay === true && !hasFirst) {
+                  hasFirst = true;
+                  return true;
+                }
+              });
             }
             this.thread = data;
             this.loadingStatus = false;
@@ -908,6 +931,17 @@ export default {
       this.loadPostCommentStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
+          data.forEach((item, index) => {
+            let hasFirst = false;
+            data[index].user.groups = data[index].user.groups.filter(group => {
+              if (group.isDisplay === true && !hasFirst) {
+                hasFirst = true;
+                return true;
+              }
+
+              return false;
+            });
+          });
           this.postComments = [...this.postComments, ...data];
           this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
           if (data.length == 0) {
@@ -935,14 +969,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
@@ -985,12 +1016,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.sortSeleShow = false;
@@ -1206,13 +1235,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
-        return;
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.$refs.morePopup.open();

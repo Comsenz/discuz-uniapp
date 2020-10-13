@@ -31,6 +31,29 @@
         {{ i18n.t('user.register') }}
       </view>
       <view class="register-box-ft">
+        <view class="register-box-ft-title" v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms">
+          {{ i18n.t('user.otherRegisterMode') }}
+        </view>
+        <view class="register-box-ft-con">
+          <image
+            :class="[
+              forum && forum.qcloud && forum.qcloud.qcloud_sms
+                ? 'register-box-ft-con-image right'
+                : 'register-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WechatRegister"
+          />
+          <!-- 开启短信功能才显示 -->
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            class="register-box-ft-con-image left"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneRegister"
+          />
+        </view>
         <view class="register-box-ft-btn" @click="jump2Login">{{ i18n.t('user.login') }}</view>
       </view>
     </view>
@@ -277,8 +300,28 @@ export default {
           console.log(err);
         });
     },
+    jump2WechatRegister() {
+      console.log('----jump2WechatRegister');
+      // #ifdef MP-WEIXIN
+      this.mpLogin(1);
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login(1);
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
     jump2Login() {
       this.jump2LoginPage();
+    },
+    jump2PhoneRegister() {
+      this.jump2PhoneRegisterPage();
     },
   },
 };
@@ -328,9 +371,30 @@ export default {
     margin: 160rpx 0 50rpx;
     text-align: center;
 
+    &-title {
+      color: rgba(221, 221, 221, 1);
+    }
+
+    &-con {
+      margin: 30rpx 0 100rpx;
+
+      &-image {
+        width: 100rpx;
+        height: 100rpx;
+      }
+    }
+
     &-btn {
       color: rgba(24, 120, 243, 1);
     }
   }
+}
+
+.right {
+  margin-right: 20rpx;
+}
+
+.left {
+  margin-left: 20rpx;
 }
 </style>

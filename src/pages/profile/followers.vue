@@ -61,17 +61,11 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
+import loginModule from '@/mixin/loginModule';
 import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
-  mixins: [
-    // #ifdef H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [loginModule],
   props: {
     userId: {
       type: String,
@@ -153,14 +147,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       if (userInfo.follow !== 0) {
         this.deleteFollow(userInfo, index);
@@ -193,14 +184,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         if (this.userId === this.currentLoginId) {

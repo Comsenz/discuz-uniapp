@@ -42,11 +42,11 @@
           <label v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
               :mark="item.id"
-              :title="item.toUser.username"
+              :title="item.username"
               :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
-              :value="item.groups[0].name"
-              :label="item.toUser.label"
-              :is-real="item.toUser.isReal"
+              :value="item.groups.length > 0 ? item.groups[0].name : ''"
+              :label="item.label"
+              :is-real="item.isReal"
             >
               <checkbox slot="rightIcon" :value="JSON.stringify(item)"></checkbox>
             </qui-avatar-cell>
@@ -169,9 +169,11 @@ export default {
       });
       setTimeout(() => {
         if (item.toUser) {
-          this.$u.event.$emit('radioChange', item.toUser);
+          console.log(item.toUser, 'item.toUser');
+          uni.$emit('radioChange', item.toUser);
         } else {
-          this.$u.event.$emit('radioChange', item);
+          console.log(item.toUser, 'elseitem.toUser');
+          uni.$emit('radioChange', item);
         }
       }, 1000);
     },

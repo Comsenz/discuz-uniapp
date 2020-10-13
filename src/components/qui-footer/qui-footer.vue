@@ -68,6 +68,7 @@
         name="file"
         :async-clear="true"
         ref="upload"
+        :count="1"
         :choose-type="0"
         @uploadClick="uploadClick"
       ></qui-uploader>
@@ -84,21 +85,13 @@
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
+import loginModule from '@/mixin/loginModule';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [
-    forums,
-    user,
-    // #ifdef  H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [forums, user, loginModule],
   props: {
     bottom: {
       type: Number,
@@ -217,14 +210,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$emit('openLoginPop');
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       if (this.forums.other.publish_need_real_name) {
         this.sureTip = this.i18n.t('home.needRealname');

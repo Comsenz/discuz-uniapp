@@ -35,8 +35,10 @@
 <script>
 // import user from '@/mixin/user';
 // import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
 
 export default {
+  mixins: [loginModule],
   props: {
     // 主题的用户的角色
     userRole: {
@@ -106,13 +108,11 @@ export default {
     personJump(id) {
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
         this.$store.dispatch('session/setUrl', this.curUrl);
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       if (id <= 0) {
@@ -135,7 +135,7 @@ export default {
   &-content {
     padding: 0 33rpx 0 21rpx;
     &-answer {
-      // padding-bottom: 36rpx;
+      padding: 0 26rpx 36rpx;
     }
   }
 

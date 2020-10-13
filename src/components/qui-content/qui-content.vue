@@ -9,18 +9,22 @@
     ></image>
     <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load v-if="addAsk === 1"></image>
     <view class="themeItem" @click="backgroundClick">
-      <view class="themeItem__header" @click="headClick" @click.stop="">
+      <view class="themeItem__header">
         <view class="themeItem__header__img">
-          <qui-avatar
-            v-if="addAsk !== 1"
-            :user="{ avatarUrl: themeImage, username: userName }"
-            :is-real="isReal"
-          />
-          <qui-avatar
-            v-if="addAsk === 1"
-            :user="{ avatarUrl: answerImage, username: beAskName }"
-            :is-real="isReal"
-          />
+          <view @click="headClick" @click.stop="">
+            <qui-avatar
+              v-if="addAsk !== 1"
+              :user="{ avatarUrl: themeImage, username: userName }"
+              :is-real="isReal"
+            />
+          </view>
+          <view @click="headAnswerClick" @click.stop="">
+            <qui-avatar
+              v-if="addAsk === 1"
+              :user="{ avatarUrl: answerImage, username: beAskName }"
+              :is-real="isReal"
+            />
+          </view>
         </view>
         <view class="themeItem__header__title">
           <view class="themeItem__header__title__top">
@@ -57,14 +61,17 @@
             <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn"></view>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
-          <view class="themeItem__header__title__time">
+          <view class="themeItem__header__title__time" v-if="addAsk !== 1">
             {{ localTime }}
-            <view class="themeItem__header__title__questions" v-if="themeType == 4">
+            <!-- <view class="themeItem__header__title__questions" v-if="themeType == 4">
               {{ i18n.t('home.putQuestion') }}
             </view>
             <view class="themeItem__header__title__questions" v-if="themeType == 5">
               {{ i18n.t('home.answer') }}
-            </view>
+            </view> -->
+          </view>
+          <view class="themeItem__header__title__time" v-if="addAsk === 1">
+            {{ localTimeAnswer }}
           </view>
         </view>
       </view>
@@ -489,6 +496,11 @@ export default {
       type: String,
       default: '',
     },
+    // 已回答的时间
+    themeTimeAnswer: {
+      type: String,
+      default: '',
+    },
     // 点赞数量
     themeLike: {
       type: Number,
@@ -626,6 +638,9 @@ export default {
     localTime() {
       return time2DateAndHM(this.themeTime);
     },
+    localTimeAnswer() {
+      return time2DateAndHM(this.themeTimeAnswer ? this.themeTimeAnswer : '');
+    },
     ...mapState({
       getCategoryId: state => state.session.categoryId,
       getCategoryIndex: state => state.session.categoryIndex,
@@ -699,6 +714,10 @@ export default {
     // 点击头像跳转到个人主页
     headClick(evt) {
       this.$emit('headClick', evt);
+    },
+    // 已回答的用户点击头像跳转到个人主页
+    headAnswerClick(evt) {
+      this.$emit('headAnswerClick', evt);
     },
     // 点击整个区域, 优先级最低，如果覆盖有别的可点击区域，则此事件不会触发
     backgroundClick(evt) {

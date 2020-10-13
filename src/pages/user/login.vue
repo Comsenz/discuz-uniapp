@@ -148,7 +148,7 @@ export default {
     },
     jump2WechatLogin() {
       // #ifdef MP-WEIXIN
-      this.getmpLoginParams();
+      this.mpLogin();
       // #endif
       // #ifdef H5
       if (this.isWeixin) {

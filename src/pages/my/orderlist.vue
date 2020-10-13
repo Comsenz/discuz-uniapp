@@ -191,6 +191,22 @@ export default {
             : this.i18n.t('profile.thethemewasdeleted');
           return `${this.i18n.t('profile.paidtoviewQuestion')} ${thread}`;
         }
+        case 6: {
+          // 问答围观付费
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.thread
+            ? item.thread.title.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.paidtowatchQuestion')} ${thread}`;
+        }
+        case 7: {
+          // 付费附件支出
+          const regex = /(<([^>]+)>)/gi;
+          const thread = item.thread
+            ? item.thread.title.replace(regex, '')
+            : this.i18n.t('profile.thethemewasdeleted');
+          return `${this.i18n.t('profile.paidtoviewFiles')} ${thread}`;
+        }
         default:
           return item.type;
       }

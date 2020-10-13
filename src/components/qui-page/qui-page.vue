@@ -23,17 +23,17 @@
 
 <script>
 import { mapState } from 'vuex';
+import loginModule from '@/mixin/loginModule';
 // #ifdef H5
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
-import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
 export default {
   // #ifdef H5
-  mixins: [forums, appCommonH, user, loginAuth],
+  mixins: [forums, appCommonH, user, loginModule],
   // #endif
   props: {
     header: {
@@ -89,42 +89,12 @@ export default {
     // #ifdef MP-WEIXIN
     this.$store.dispatch('session/setAuth', this.$refs.auth);
     // #endif
-    // #ifdef H5
-    this.$store.dispatch('session/setAuth', {
-      open: () => {
-        const { isWeixin } = appCommonH.isWeixin();
-        if (
-          isWeixin &&
-          this.forums &&
-          this.forums.passport &&
-          this.forums.passport.offiaccount_close
-        ) {
-          if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-            uni.setStorage({
-              key: 'register',
-              data: 1,
-            });
-          } else {
-            uni.setStorage({
-              key: 'register',
-              data: 0,
-            });
-          }
-          this.$store.dispatch('session/wxh5Login');
-        } else {
-          this.login();
-        }
-      },
-    });
-    // #endif
   },
   methods: {
     // #ifdef MP-WEIXIN
     open() {
-      if (!this.loading && !this.showMessage) {
-        if (!this.$store.getters['session/get']('isLogin')) {
-          this.$refs.auth.open();
-        }
+      if (!this.loading && !this.showMessage && !this.$store.getters['session/get']('isLogin')) {
+        this.$refs.auth.open();
       }
     },
     close() {

@@ -7,7 +7,7 @@
         {{ i18n.t('topic.questionAnswering') }}
       </qui-button>
     </view>
-    <view class="theme__que__txt">
+    <view class="theme__que__txt" v-if="showTxt">
       {{ `${i18n.t('topic.getTheAnswer')}${date}元;${i18n.t('topic.surrounded')}${beDate}元` }}
     </view>
   </view>
@@ -24,6 +24,11 @@ export default {
     beDate: {
       type: [Number, String],
       default: 0,
+    },
+    // 是否显示文案
+    showTxt: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => {
