@@ -46,12 +46,23 @@
           :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
-      <qui-cell-item
-        :title="i18n.t('profile.wechat')"
-        :addon="profile.wechat && profile.wechat.nickname"
-        arrow
-        class="no-arrow"
-      ></qui-cell-item>
+      <qui-cell-item :title="i18n.t('profile.wechat')" slot-right arrow>
+        <text>
+          <text click="rebindWechat">
+            {{
+              profile && profile.wechat && profile.wechat.nickname !== ''
+                ? profile.wechat.nickname
+                : ''
+            }}
+          </text>
+          <text
+            v-if="profile && profile.wechat && profile.wechat.nickname === ''"
+            click="bindWechat"
+          >
+            绑定
+          </text>
+        </text>
+      </qui-cell-item>
       <!-- qcloud_faceid 是否开启实名认证 -->
       <qui-cell-item
         v-if="profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"

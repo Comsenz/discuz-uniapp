@@ -74,6 +74,7 @@ export default {
                   };
                   console.log('params------', params);
                   this.$store.dispatch('session/setParams', params);
+                  this.refreshmpParams();
                   this.getParams();
                 },
                 fail: error => {
@@ -127,15 +128,15 @@ export default {
       const routes = getCurrentPages();
       const curRoute = routes[routes.length - 1].route;
       console.log('getCurrentPages()', getCurrentPages());
-      if (curRoute !== 'pages/site/partner-invite') {
+      if (curRoute === 'pages/site/partner-invite' || curRoute === 'pages/user/login') {
         uni.setStorage({
           key: 'page',
-          data: getCurUrl(),
+          data: '/pages/home/index',
         });
       } else {
         uni.setStorage({
           key: 'page',
-          data: '/pages/home/index',
+          data: getCurUrl(),
         });
       }
       this.$store
@@ -181,6 +182,15 @@ export default {
               (res.data.errors[0].code === 'no_bind_user' ||
                 res.data.errors[0].code === 'register_close')
             ) {
+              const userInfo = {
+                token: res.data.errors[0].token,
+                headimgurl: res.data.errors[0].user.headimgurl,
+                username: res.data.errors[0].user.username,
+              };
+              console.log('userInfo：', userInfo);
+              this.$store.dispatch('session/setUserInfo', userInfo);
+              const data = this.$store.getters['session/get']('userInfo');
+              console.log('取出来data：', data);
               this.jump2RegisterBindPage();
             }
           }

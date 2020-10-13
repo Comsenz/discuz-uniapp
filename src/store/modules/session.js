@@ -9,6 +9,7 @@ import {
   SET_AUTH,
   SET_PARAMS,
   SET_CODE,
+  SET_USER_INFO,
   SET_TOKEN,
   SET_GOOD,
   SET_INVITE_CODE,
@@ -62,6 +63,9 @@ const actions = {
   },
   setCode: (context, payload) => {
     context.commit(SET_CODE, payload);
+  },
+  setUserInfo: (context, payload) => {
+    context.commit(SET_USER_INFO, payload);
   },
   setToken: (context, payload) => {
     context.commit(SET_TOKEN, payload);
@@ -250,6 +254,9 @@ const mutations = {
   [DELETE_ACCESS_TOKEN](state) {
     uni.removeStorageSync('access_token');
     state.accessToken = '';
+  },
+  [SET_USER_INFO](state, payload) {
+    state.userInfo = payload;
   },
   [SET_TOKEN](state, payload) {
     state.token = payload;
