@@ -14,7 +14,7 @@
             v-for="(item, index) in paidusergroup"
             :key="index"
           >
-            {{ i18n.t(`permission.${item.permission}`) }}
+            {{ i18n.t('permission.' + item.permission.replace(/\./g, '_')) }}
           </view>
         </view>
       </view>
@@ -214,6 +214,7 @@ export default {
       };
       this.$store.dispatch('jv/get', [`groups/${this.groupId}`, { params }]).then(res => {
         this.paidusergroup = res.permission;
+        console.log(this.paidusergroup);
         this.paidusergrouplist = res;
         this.price = res.fee;
       });
