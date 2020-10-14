@@ -384,7 +384,11 @@
           @click="cellClick('pay')"
         ></qui-cell-item>
       </view>
-      <view v-else-if="type !== 0 && type !== 5 && forums.other.can_create_thread_paid && ioshide">
+      <view
+        v-else-if="
+          type !== 0 && type !== 5 && type !== 6 && forums.other.can_create_thread_paid && ioshide
+        "
+      >
         <qui-cell-item
           :class="price > 0 ? 'cell-item-right-text' : ''"
           :title="
