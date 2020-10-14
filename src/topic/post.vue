@@ -665,6 +665,15 @@
           @confirm="handleClickOk"
         ></uni-popup-dialog>
       </uni-popup>
+      <uni-popup ref="wechatPopup" type="center">
+        <uni-popup-dialog
+          type="warn"
+          :content="wechatTip"
+          :before-close="true"
+          @close="handleWechatClickCancel"
+          @confirm="handleWechatClickOk"
+        ></uni-popup-dialog>
+      </uni-popup>
       <!--支付组件-->
       <view v-if="payShowStatus">
         <qui-pay
@@ -846,6 +855,7 @@ export default {
       deleteId: '', // 当前点击要删除的图片Id
       deleteIndex: '', // 当前点击要删除的图片index
       deleteTip: '确定删除吗？', // 删除提示
+      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
       currentPosition: {},
       watchMoeny: '1', // 他人付费需付费多少元
       beAskId: '', // 被提问人ID
@@ -1437,8 +1447,27 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(payType, '支付方式');
       if (payType === 0) {
+        // #ifdef H5
+        if (this.isWeixin === true && this.user.wechat === undefined) {
+          this.$refs.wechatPopup.open();
+          console.log('什么都没绑定');
+          return;
+        }
+        if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
+          this.$refs.wechatPopup.open();
+          console.log('微信浏览器内没绑定');
+          return;          
+        }
+        // #endif
+
+        // #ifdef MP-WEIXIN
+        if (this.user.wechat === undefined || (this.user.wechat && this.user.wechat.min_openid === '')) {
+          this.$refs.wechatPopup.open();
+          console.log('小程序内什么都没绑定');
+          return;
+        }
+        // #endif
         this.creatOrder(this.priceAsk, 5, '', payType);
       } else if (payType === 1) {
         // 这是详情页获取到的支付方式---钱包
@@ -2164,6 +2193,28 @@ export default {
     },
     handleClickCancel() {
       this.$refs.deletePopup.close();
+    },
+    // 确认去绑定微信
+    handleWechatClickOk() {
+      console.log('去绑定微信吧');
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login();
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
+    // 取消去绑定微信
+    handleWechatClickCancel() {
+      this.$refs.wechatPopup.close();
     },
     delAttachments(id, index) {
       if (this.operating === 'edit') {

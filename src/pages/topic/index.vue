@@ -2358,14 +2358,14 @@ export default {
           console.log('微信浏览器内没绑定');
           return;          
         }
-        // if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') { 
-        //   console.log('ddddd')
-        //   this.$refs.deletePopup.open();
-        //   return;
-        //   // this.$store.dispatch('jv/get', [`'/oauth/wechat/user'${sessionId = this.token}`], params).then(res => {
-            
-        //   // })
-        // }
+        // #endif
+
+        // #ifdef MP-WEIXIN
+        if (this.user.wechat === undefined || (this.user.wechat && this.user.wechat.min_openid === '')) {
+          this.$refs.wechatPopup.open();
+          console.log('小程序内什么都没绑定');
+          return;
+        }
         // #endif
         if (this.payTypeVal === 0) {
           // 这是主题支付

@@ -92,6 +92,15 @@
           <view class="code-tip">{{ p.wechatIdentificationQRcode }}</view>
         </view>
       </uni-popup>
+      <uni-popup ref="wechatPopup" type="center">
+        <uni-popup-dialog
+          type="warn"
+          :content="wechatTip"
+          :before-close="true"
+          @close="handleWechatClickCancel"
+          @confirm="handleWechatClickOk"
+        ></uni-popup-dialog>
+      </uni-popup>
     </view>
   </qui-page>
 </template>
@@ -144,6 +153,7 @@ export default {
       pwdVal: '', // 支付密码
       expirationTime: '', // 到期时间
       payingusers: '',
+      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
     };
   },
   onLoad(evn) {
@@ -245,6 +255,28 @@ export default {
       // 是否显示用户头像ad
       this.isAnonymous = !val;
     },
+    // 确认去绑定微信
+    handleWechatClickOk() {
+      console.log('去绑定微信吧');
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login();
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
+    // 取消去绑定微信
+    handleWechatClickCancel() {
+      this.$refs.wechatPopup.close();
+    },
     // 选择支付方式，获取值
     radioChange(val) {
       console.log(val);
@@ -263,6 +295,29 @@ export default {
     paysureShow(payType) {
       console.log(payType, '支付方式');
       if (payType === 0) {
+        // #ifdef H5
+        if (this.isWeixin === true && this.user.wechat === undefined) {
+          this.$refs.wechatPopup.open();
+          console.log('什么都没绑定');
+          return;
+        }
+        if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
+          this.$refs.wechatPopup.open();
+          console.log('微信浏览器内没绑定');
+          return;
+        }
+        // #endif
+
+        // #ifdef MP-WEIXIN
+        if (
+          this.user.wechat === undefined ||
+          (this.user.wechat && this.user.wechat.min_openid === '')
+        ) {
+          this.$refs.wechatPopup.open();
+          console.log('小程序内什么都没绑定');
+          return;
+        }
+        // #endif
         this.creatOrder(this.price, 4, this.value, payType);
       } else if (payType === 1) {
         // 这是详情页获取到的支付方式---钱包
