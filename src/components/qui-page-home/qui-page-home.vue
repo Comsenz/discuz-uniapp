@@ -462,6 +462,19 @@ export default {
       }
     });
 
+    // 详情页编辑增加图片时首页增加图片
+    this.$u.event.$on('refreshGoods', res => {
+      console.log(res, '这是接收的商品');
+      // eslint-disable-next-line no-restricted-syntax
+      for (const index in this.threads) {
+        if (this.threads[index]._jv.id === res.threadId) {
+          this.threads[index].firstPost.postGoods = res.goods;
+          this.$forceUpdate();
+          break;
+        }
+      }
+    });
+
     // 详情页编辑定位
     this.$u.event.$on('updateLocation', (id, res) => {
       this.threads.forEach((item, index) => {

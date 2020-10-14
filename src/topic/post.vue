@@ -463,22 +463,24 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
-      <view class="post-box__good" v-if="isShowGoods && type === 6 && dataGoodInfo">
-        <view>
-          <image class="post-box__good__image" lazy-load :src="dataGoodInfo.image_path" />
-        </view>
-        <view class="post-box__good__info">
-          <view class="post-box__good__title">{{ dataGoodInfo.title }}</view>
-          <view class="post-box__good__ft">
-            <view class="post-box__good__price">￥{{ dataGoodInfo.price }}元</view>
-            <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
+      <view v-if="type === 6">
+        <view class="post-box__good" v-if="isShowGoods && type === 6 && dataGoodInfo">
+          <view>
+            <image class="post-box__good__image" lazy-load :src="dataGoodInfo.image_path" />
+          </view>
+          <view class="post-box__good__info">
+            <view class="post-box__good__title">{{ dataGoodInfo.title }}</view>
+            <view class="post-box__good__ft">
+              <view class="post-box__good__price">￥{{ dataGoodInfo.price }}元</view>
+              <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
+            </view>
           </view>
         </view>
-      </view>
-      <view class="post-box__space" v-else @click="addGoods">
-        <qui-icon name="icon-add" size="26"></qui-icon>
-      </view>
 
+        <view class="post-box__space" v-else @click="addGoods">
+          <qui-icon name="icon-add" size="26"></qui-icon>
+        </view>
+      </view>
       <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
         <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
@@ -1248,7 +1250,7 @@ export default {
         //   });
         //   return;
         // }
-        console.log('ddhdhdhdhhdhdhdhdh')
+        console.log('ddhdhdhdhhdhdhdhdh');
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
         this.textShow = true;
@@ -1268,7 +1270,7 @@ export default {
       if (this.forums.set_site.site_onlooker_price === 0) {
         this.watchShow = false;
       } else if (index === 0) {
-        console.log('免费免费')
+        console.log('免费免费');
         this.payType = 0;
         this.postClick();
         if (this.payType === 0) {
@@ -1291,7 +1293,7 @@ export default {
         });
       } else {
         if (this.type === 5) {
-          console.log('dhdhhdhdhd')
+          console.log('dhdhhdhdhd');
           this.priceAsk = this.payNumCheck[0].pay;
           this.$refs.popupBtm.close();
           this.postClick();
@@ -1870,6 +1872,7 @@ export default {
               });
             }
           } else {
+            console.log('!!!!!!!~~~~~~~~~~~~~~~~~');
             this.editThread().then(res => {
               this.postLoading = false;
               uni.hideLoading();
@@ -1939,7 +1942,7 @@ export default {
           });
           break;
         case 'goods':
-          this.dataGoodInfo = res.firstPost.postGoods;
+          this.dataGoodInfo = data.firstPost.postGoods;
           // this.audioBeforeList.push({
           //   fileName: data.threadAudio.file_name,
           //   url: data.threadAudio.media_url,
@@ -2033,7 +2036,7 @@ export default {
       this.$store.dispatch('jv/get', ['categories?filter[createThread]=1', {}]).then(res => {
         this.allCategories = res;
         res.map(item => {
-          console.log(item,'itemitemitemitem')
+          // console.log(item, 'itemitemitemitem');
           if (item._jv) {
             if (Number(item._jv.id) === Number(this.categoryId)) {
               this.checkClassData.push(item);
@@ -2067,7 +2070,7 @@ export default {
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
         is_anonymous: this.checked,
-        // post_goods_id: this.goodInfo._jv.id,
+        post_goods_id: this.dataGoodInfo._jv.id,
       };
       if (this.payType === 1) {
         params.attachment_price = this.price;
@@ -2314,6 +2317,9 @@ export default {
           this.currentPosition.location = res.location || '';
           this.currentPosition.address = res.address || '';
         }
+        if (this.operating === 'edit' && this.goodsId) {
+          this.getGoodsInfo();
+        }
         this.setThread();
       });
     },
@@ -2324,12 +2330,14 @@ export default {
       this.$store.dispatch('jv/get', `goods/${this.goodsId}`).then(res => {
         console.log('这是取到的商品信息', res);
         this.dataGoodInfo = res;
+        console.log(this.dataGoodInfo._jv.id, '商品id');
         this.isShowGoods = true;
       });
     },
 
     // 编辑帖子接口
     async editThread() {
+      console.log('编辑');
       let state = 0;
       const posts = {
         _jv: {
@@ -2400,10 +2408,17 @@ export default {
           posts._jv.relationships.attachments = this.addImg();
           // params._jv.relationships.question = this.addQuestion();
           break;
+        case 6:
+          console.log('666666');
+          posts.post_goods_id = this.dataGoodInfo._jv.id;
+          console.log(threads, '666666');
+          break;
         default:
           break;
       }
+      console.log(posts, '这是posts');
       await this.$store.dispatch('jv/patch', posts).then(res => {
+        console.log(res, '返回');
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
           this.$u.event.$emit('refreshImg', {
@@ -2411,12 +2426,17 @@ export default {
             threadId: this.threadId,
             images: this.addImg(),
           });
+          this.$u.event.$emit('refreshGoods', {
+            id: this.firstPostId,
+            threadId: this.threadId,
+            goods: this.dataGoodInfo,
+          });
         }
         // 更新详情页的信息
         this.$u.event.$emit('refreshFiles');
         return res;
       });
-      // console.log(threads, '这是编辑时传的参数');
+      console.log(threads, '这是编辑时传的参数');
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
       });
@@ -2656,8 +2676,13 @@ export default {
         }
       }
     });
-    if (this.type === 6 && option.operating !== 'edit') {
-      this.goodsId = option.goodsId;
+
+    this.goodsId = option.goodsId;
+    console.log(option, this.goodsId, '这是参数');
+    if (
+      (this.type === 6 && option.operating !== 'edit' && option.threadId !== '' && this.goodsId) ||
+      (this.type === 6 && this.goodsId)
+    ) {
       this.getGoodsInfo();
     }
   },
@@ -2782,7 +2807,7 @@ export default {
   &__good {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin: 30rpx 0;
     font-size: $fg-f3;
 
@@ -2795,10 +2820,14 @@ export default {
 
     &__info {
       position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     &__title {
       font-weight: bold;
+      line-height: 40rpx;
       color: --color(--qui-FC-333);
     }
 
@@ -2809,6 +2838,7 @@ export default {
       width: 100%;
       justify-content: space-between;
       align-items: center;
+      line-height: 45rpx;
       color: --color(--qui-FC-777);
     }
 

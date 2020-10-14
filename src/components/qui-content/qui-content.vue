@@ -77,7 +77,10 @@
       </view>
 
       <view class="themeItem__content" @click.stop="" @click="contentClick">
-        <view class="themeItem__content__text">
+        <view
+          class="themeItem__content__text"
+          :style="{ paddingBottom: threadType === 1 ? '24rpx' : '10rpx' }"
+        >
           <view
             class="themeItem__content__text__longessay"
             v-if="threadType === 1 && themeType !== '5'"
@@ -123,13 +126,20 @@
             <view class="themeItem_to">@{{ questionsName }}</view>
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
-          <view :class="themPayBtn ? 'themeItem__content__uparse' : ''">
+          <view :class="themPayBtn || threadType === 6 ? 'themeItem__content__uparse' : ''">
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
               size="30"
               v-if="themPayBtn && threadType !== 1"
               class="themeItem__content__fufei"
+            ></qui-icon>
+            <qui-icon
+              name="icon-shangpin-1"
+              color="#aaaaaa"
+              size="30"
+              class="themeItem__content__fufei"
+              v-if="threadType === 6"
             ></qui-icon>
             <qui-uparse
               :content="themeContent"
@@ -922,9 +932,12 @@ export default {
     &__good {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
-      margin: 30rpx 0;
+      justify-content: flex-start;
+      padding: 20rpx;
+      margin-bottom: 30rpx;
       font-size: $fg-f3;
+      background: --color(--qui-BG-F6);
+      border-radius: 2px;
 
       &__image {
         width: 160rpx;
@@ -935,10 +948,14 @@ export default {
 
       &__info {
         position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
 
       &__title {
         font-weight: bold;
+        line-height: 40rpx;
         color: --color(--qui-FC-333);
       }
 
@@ -949,6 +966,7 @@ export default {
         width: 100%;
         justify-content: space-between;
         align-items: center;
+        line-height: 45rpx;
         color: --color(--qui-FC-777);
       }
 
@@ -985,7 +1003,7 @@ export default {
       display: flex;
       justify-content: flex-start;
       margin-top: 10rpx;
-      margin-bottom: 20rpx;
+      margin-bottom: 30rpx;
       line-height: 0;
       &__item {
         max-width: 80%;
