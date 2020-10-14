@@ -144,6 +144,7 @@ export default {
       } else {
         this.typenum1 = false;
         this.typenum2 = true;
+        this.allusergroupsusers();
       }
     },
     godetails(index, group, indexs) {
