@@ -146,7 +146,7 @@ export default {
     }
 
     &-con {
-      width: 95%;
+      width: 100%;
       height: 400rpx;
       padding: 20rpx;
       font-size: $fg-f3;
@@ -154,6 +154,7 @@ export default {
       background-color: --color(--qui-BG-1);
       border: 1rpx solid --color(--qui-FC-DDD);
       border-radius: 10rpx;
+      box-sizing: border-box;
     }
 
     &-btn {
