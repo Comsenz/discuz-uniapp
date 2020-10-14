@@ -303,19 +303,7 @@
           </view>
         </view>
       </view>
-
-      <view class="themeItem__content__tags" v-if="tags.length > 0">
-        <view
-          class="themeItem__content__tags__item"
-          v-for="(tag, index) in tags"
-          :key="index"
-          @click="tagClick(tag._jv.id)"
-        >
-          {{ tag.name }}
-        </view>
-      </view>
-
-      <view class="themeItem__content__good" v-if="postGoods">
+      <view class="themeItem__content__good" v-if="themeType === 6 && postGoods">
         <view>
           <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
         </view>
@@ -330,6 +318,16 @@
               {{ i18n.t('home.buygood') }}
             </view>
           </view>
+        </view>
+      </view>
+      <view class="themeItem__content__tags" v-if="tags.length > 0">
+        <view
+          class="themeItem__content__tags__item"
+          v-for="(tag, index) in tags"
+          :key="index"
+          @click="tagClick(tag._jv.id)"
+        >
+          {{ tag.name }}
         </view>
       </view>
 
@@ -946,7 +944,7 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
-      margin: 80rpx 0;
+      margin: 0 0 30rpx;
       font-size: $fg-f3;
 
       &__image {
