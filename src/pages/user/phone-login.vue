@@ -349,9 +349,9 @@ export default {
       }
       // #endif
       // #ifdef H5
-      const token = this.$store.getters['session/get']('token');
-      if (token && token !== '') {
-        params.data.attributes.token = token;
+      const userInfo = this.$store.getters['session/get']('userInfo');
+      if (userInfo && userInfo.token !== '') {
+        params.data.attributes.token = userInfo.token;
       }
       // #endif
       let inviteCode = '';
