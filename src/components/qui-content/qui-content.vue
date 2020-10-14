@@ -77,7 +77,10 @@
       </view>
 
       <view class="themeItem__content" @click.stop="" @click="contentClick">
-        <view class="themeItem__content__text">
+        <view
+          class="themeItem__content__text"
+          :style="{ paddingBottom: threadType === 1 ? '24rpx' : '10rpx' }"
+        >
           <view
             class="themeItem__content__text__longessay"
             v-if="threadType === 1 && themeType !== '5'"
@@ -929,8 +932,9 @@ export default {
     &__good {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: 20rpx;
+      margin-bottom: 30rpx;
       font-size: $fg-f3;
       background: --color(--qui-BG-F6);
       border-radius: 2px;
@@ -944,10 +948,14 @@ export default {
 
       &__info {
         position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
 
       &__title {
         font-weight: bold;
+        line-height: 40rpx;
         color: --color(--qui-FC-333);
       }
 
@@ -958,6 +966,7 @@ export default {
         width: 100%;
         justify-content: space-between;
         align-items: center;
+        line-height: 45rpx;
         color: --color(--qui-FC-777);
       }
 
@@ -994,7 +1003,7 @@ export default {
       display: flex;
       justify-content: flex-start;
       margin-top: 10rpx;
-      margin-bottom: 20rpx;
+      margin-bottom: 30rpx;
       line-height: 0;
       &__item {
         max-width: 80%;

@@ -347,6 +347,7 @@ export default {
     taobao: '淘宝',
     tmall: '天猫',
     pinduoduo: '拼多多',
+    youzan: '有赞',
     supportedLink: '现已支持以下商品链接',
     goodsLinkEmpty: '商品链接不能为空',
     goodsLink: '请粘贴 \\ 输入商品链接',

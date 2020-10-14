@@ -945,7 +945,7 @@ export default {
     &__good {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: flex-start;
       margin: 80rpx 0;
       font-size: $fg-f3;
 
@@ -958,10 +958,14 @@ export default {
 
       &__info {
         position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
 
       &__title {
         font-weight: bold;
+        line-height: 40rpx;
         color: --color(--qui-FC-333);
       }
 
@@ -972,6 +976,7 @@ export default {
         width: 100%;
         justify-content: space-between;
         align-items: center;
+        line-height: 45rpx;
         color: --color(--qui-FC-777);
       }
 
