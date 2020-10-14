@@ -79,7 +79,7 @@
         class="cell-item--auto cell-item--left"
       >
         <view v-for="(item, index) in permissionInfo" :key="index" class="site-item__permission">
-          <text>{{ i18n.t(`permission.${item}`) }}</text>
+          <text>{{ i18n.t('permission.' + item.replaceAll('.', '_')) }}</text>
         </view>
       </qui-cell-item>
     </view>
