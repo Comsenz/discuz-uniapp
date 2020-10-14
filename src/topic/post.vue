@@ -1248,9 +1248,11 @@ export default {
         //   });
         //   return;
         // }
+        console.log('ddhdhdhdhhdhdhdhdh')
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
         this.textShow = true;
+        this.postClick();
         return;
       }
 
@@ -2031,8 +2033,11 @@ export default {
       this.$store.dispatch('jv/get', ['categories?filter[createThread]=1', {}]).then(res => {
         this.allCategories = res;
         res.map(item => {
-          if (Number(item._jv.id) === Number(this.categoryId)) {
-            this.checkClassData.push(item);
+          console.log(item,'itemitemitemitem')
+          if (item._jv) {
+            if (Number(item._jv.id) === Number(this.categoryId)) {
+              this.checkClassData.push(item);
+            }
           }
           return item;
         });
