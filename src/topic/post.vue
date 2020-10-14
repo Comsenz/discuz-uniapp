@@ -1828,8 +1828,8 @@ export default {
           }
           break;
         case 6:
-          console.log('!!!!!!');
-          if (this.dataGoodInfo._jv.id === '') {
+          console.log(this.dataGoodInfo.length, '^^^^~~~~~~~~');
+          if (this.dataGoodInfo === '' || this.dataGoodInfo.length === 0) {
             this.$refs.toast.show({ message: this.i18n.t('core.productInformationDoesNotExist') });
             status = false;
           } else {
@@ -2127,6 +2127,7 @@ export default {
         return this.$store
           .dispatch('jv/post', params)
           .then(res => {
+            console.log(res, '这是发布时接口返回的');
             return res;
           })
           .catch(err => {
