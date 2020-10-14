@@ -384,7 +384,11 @@
           @click="cellClick('pay')"
         ></qui-cell-item>
       </view>
-      <view v-else-if="type !== 0 && type !== 5 && forums.other.can_create_thread_paid && ioshide">
+      <view
+        v-else-if="
+          type !== 0 && type !== 5 && type !== 6 && forums.other.can_create_thread_paid && ioshide
+        "
+      >
         <qui-cell-item
           :class="price > 0 ? 'cell-item-right-text' : ''"
           :title="
@@ -1857,8 +1861,8 @@ export default {
           }
           break;
         case 6:
-          console.log('!!!!!!');
-          if (this.dataGoodInfo._jv.id === '') {
+          console.log(this.dataGoodInfo.length, '^^^^~~~~~~~~');
+          if (this.dataGoodInfo === '' || this.dataGoodInfo.length === 0) {
             this.$refs.toast.show({ message: this.i18n.t('core.productInformationDoesNotExist') });
             status = false;
           } else {
@@ -2156,6 +2160,7 @@ export default {
         return this.$store
           .dispatch('jv/post', params)
           .then(res => {
+            console.log(res, '这是发布时接口返回的');
             return res;
           })
           .catch(err => {
@@ -2877,6 +2882,8 @@ export default {
     }
 
     &__title {
+      max-height: 120rpx;
+      overflow: hidden;
       font-weight: bold;
       line-height: 40rpx;
       color: --color(--qui-FC-333);

@@ -964,6 +964,8 @@ export default {
       }
 
       &__title {
+        max-height: 80rpx;
+        overflow: hidden;
         font-weight: bold;
         line-height: 40rpx;
         color: --color(--qui-FC-333);

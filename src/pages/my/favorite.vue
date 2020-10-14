@@ -122,6 +122,7 @@ export default {
           'rewardedUsers',
           'lastThreePosts.replyUser',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
           'threadAudio',
