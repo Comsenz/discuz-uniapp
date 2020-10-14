@@ -175,6 +175,7 @@ export default {
     page_not_found_detail: '您要访问的页面可能已被删除，已更改名称或者暂时不可用',
     not_install: '该站点未安装',
     postTypesDoNotMatch: '帖子类型不匹配，请重新进入本页面',
+    productInformationDoesNotExist: '商品信息不存在',
     cancel: '取消',
     generatePoster: '生成海报',
     wxShare: '微信分享',
@@ -349,6 +350,7 @@ export default {
     supportedLink: '现已支持以下商品链接',
     goodsLinkEmpty: '商品链接不能为空',
     goodsLink: '请粘贴 \\ 输入商品链接',
+    theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser: '商品链接已复制成功，请在浏览器打开',
   },
   pay: {
     passwordTip: '请输入支付密码',

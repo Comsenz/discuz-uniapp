@@ -44,6 +44,7 @@
               :theme-title="thread.type == 1 ? thread.title : ''"
               :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
+              :post-goods="thread.firstPost.postGoods"
               :select-list="selectList"
               :tags="[thread.category]"
               :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
@@ -68,6 +69,7 @@
               @previewPicture="payClickShow"
               @previewAudio="payClickShow"
               @tagClick="tagClick"
+              @buyGood="buyGood"
             >
               <!-- 关注 -->
               <!-- <view slot="follow" :key="followStatus" v-if="thread.user.follow != null">
@@ -976,12 +978,6 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     thread() {
-      // let thread = {
-      //   user: {
-      //     groups: [],
-      //   },
-      // };
-
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       console.log('thread', thread);
       // 只保留一个用户组显示
@@ -1252,7 +1248,7 @@ export default {
             } else {
               this.threadIsPaidCover = false;
             }
-            if(!data.isPaidAttachment) {
+            if (!data.isPaidAttachment) {
               data.firstPost.attachments.forEach(attachment => {
                 if (data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
                   this.attachmentFileList.push(attachment);
@@ -3271,6 +3267,28 @@ export default {
       this.otherReasonValue = '';
       this.currentReport = '';
       this.$refs.reportPopup.close();
+    },
+    // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
+    buyGood() {
+      console.log('否买');
+      // #ifndef MP-WEIXIN
+      console.log('这是非小程序');
+      window.location.href = this.thread.firstPost.postGoods.detail_content;
+      // #endif
+
+      // #ifdef MP-WEIXIN
+      console.log('这是小程序内');
+      uni.setClipboardData({
+        data: 'hello',
+        success: function() {
+          console.log('success');
+        },
+      });
+      // uni.showToast({
+      //   icon: 'none',
+      //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
+      // });
+      // #endif
     },
   },
 };

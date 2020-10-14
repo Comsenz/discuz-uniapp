@@ -36,7 +36,12 @@ export default {
   data() {
     return {
       link: '',
+      type: '',
     };
+  },
+  onLoad(option) {
+    console.log(option, '这是onload');
+    this.type = option.type;
   },
   methods: {
     handleNext() {
@@ -50,7 +55,7 @@ export default {
       } else {
         const params = {
           _jv: {
-            type: 'analysis/goods',
+            type: 'goods/analysis',
           },
           type: 'analysis',
           address: this.link,
@@ -62,8 +67,8 @@ export default {
             console.log('查询商品信息：', res);
             if (res && res._jv) {
               this.$store.dispatch('session/setGood', res);
-              uni.navigateTo({
-                url: '/topic/post',
+              uni.redirectTo({
+                url: `/topic/post?type=${this.type}&goodsId=${res._jv.id}`,
               });
               this.link = '';
             }

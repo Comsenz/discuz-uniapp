@@ -76,17 +76,22 @@
         </view>
       </view>
 
-      <view class="themeItem__content" @click.stop="" @click="contentClick">
+      <view
+        class="themeItem__content"
+        @click.stop=""
+        @click="contentClick"
+        v-if="postGoods && threadType === 6"
+      >
         <view class="themeItem__content__good">
           <view>
-            <image class="themeItem__content__good__image" lazy-load src="@/static/jingdong.svg" />
+            <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
           </view>
           <view class="themeItem__content__good__info">
             <view class="themeItem__content__good__title">
-              标题:Redmi K30 至尊纪念版 120Hz弹出屏游戏智能5g手机小米官方旗舰店官网redmi红米k30
+              {{ postGoods.title }}
             </view>
             <view class="themeItem__content__good__ft">
-              <view class="themeItem__content__good__price">￥100元</view>
+              <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
             </view>
           </view>
         </view>
@@ -503,6 +508,13 @@ export default {
       type: [Array, Object],
       default: () => {
         return [];
+      },
+    },
+    // 商品
+    postGoods: {
+      type: Object,
+      default: () => {
+        return {};
       },
     },
     // 时间

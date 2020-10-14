@@ -321,7 +321,7 @@ export default {
 
       if (item.type === 6) {
         uni.navigateTo({
-          url: '/pages/topic/parse-goods',
+          url: `/pages/topic/parse-goods?type=${item.type}`,
         });
         return;
       }

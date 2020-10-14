@@ -463,15 +463,14 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
-
-      <view class="post-box__good" v-if="isShowGoods">
+      <view class="post-box__good" v-if="isShowGoods && type === 6 && dataGoodInfo">
         <view>
-          <image class="post-box__good__image" lazy-load :src="goodInfo.image_path" />
+          <image class="post-box__good__image" lazy-load :src="dataGoodInfo.image_path" />
         </view>
         <view class="post-box__good__info">
-          <view class="post-box__good__title">{{ goodInfo.title }}</view>
+          <view class="post-box__good__title">{{ dataGoodInfo.title }}</view>
           <view class="post-box__good__ft">
-            <view class="post-box__good__price">￥{{ goodInfo.price }}元</view>
+            <view class="post-box__good__price">￥{{ dataGoodInfo.price }}元</view>
             <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
           </view>
         </view>
@@ -871,6 +870,8 @@ export default {
       showPayType: '', // 选择的支付方式
       ioshide: false, // ios下付费隐藏
       isShowGoods: true,
+      dataGoodInfo: {},
+      goodsId: '', // 商品ID
     };
   },
   computed: {
@@ -899,14 +900,15 @@ export default {
       const userId = this.$store.getters['session/get']('userId');
       return parseInt(userId, 10);
     },
-    goodInfo() {
-      const data = this.$store.getters['session/get']('good');
-      console.log('取商品信息', data);
-      if (data && data._jv) {
-        return data;
-      }
-      return {};
-    },
+    // goodInfo() {
+    //   const data = this.$store.getters['session/get']('good');
+    //   // this.dataGoodInfo = data;
+    //   console.log('取商品信息', data);
+    //   if (data && data._jv) {
+    //     return data;
+    //   }
+    //   return {};
+    // },
   },
   updated() {
     if (this.forums) {
@@ -943,13 +945,18 @@ export default {
   },
   methods: {
     addGoods() {
-      uni.navigateTo({
-        url: '/pages/topic/parse-goods',
-      });
-      this.$store.dispatch('session/setGood');
-      this.isShowGoods = true;
+      if (this.operating === 'edit') {
+        uni.redirectTo({
+          url: `/pages/topic/parse-goods?type=${this.type}&operating=edit&threadId=${this.threadId}`,
+        });
+      } else {
+        uni.redirectTo({
+          url: `/pages/topic/parse-goods?type=${this.type}`,
+        });
+      }
     },
     deleteGoods() {
+      this.dataGoodInfo = [];
       this.isShowGoods = false;
     },
     // 允许围观
@@ -1030,6 +1037,7 @@ export default {
         'showHidden',
         'payType',
         'ioshide',
+        'dataGoodInfo',
       ];
       items.forEach(key => {
         if (this[key]) {
@@ -1064,6 +1072,7 @@ export default {
           }
         });
         thread.imgList = imgList;
+        debugger;
       }
       uni.setStorageSync('current_thread', JSON.stringify(thread));
     },
@@ -1072,7 +1081,11 @@ export default {
       if (!thread) {
         return;
       }
+
       thread = JSON.parse(thread);
+      // console.log(thread, '设置');
+      this.dataGoodInfo = thread.dataGoodInfo;
+      // console.log('这是商品信息', this.dataGoodInfo);
       Object.getOwnPropertyNames(thread).forEach(key => {
         if (key === 'imgList') {
           const threadImgList = thread[key];
@@ -1098,7 +1111,8 @@ export default {
         // this.videoPercent = 1;
         this.percent = 1;
       }
-      uni.removeStorageSync('current_thread');
+
+      // uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
@@ -1551,7 +1565,7 @@ export default {
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
                   this.$u.event.$emit('addThread', res);
-                  console.log(res, '钱包支付')
+                  console.log(res, '钱包支付');
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1559,7 +1573,6 @@ export default {
                   });
                 }
               });
-
             }
             this.coverLoading = false;
           }
@@ -1577,7 +1590,7 @@ export default {
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             if (broswerType === '2') {
-              console.log('h5h5h5h5h5h5h5h')
+              console.log('h5h5h5h5h5h5h5h');
               // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
@@ -1585,14 +1598,14 @@ export default {
               this.qrcodeShow = false;
               this.postThread();
             } else if (broswerType === '0') {
-              console.log('我就看看')
+              console.log('我就看看');
               this.postThread().then(res => {
                 console.log(res, 'postThreadresresres');
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
                   this.$u.event.$emit('addThread', res);
-                   console.log(res,'付钱付钱000000')
+                  console.log(res, '付钱付钱000000');
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1659,6 +1672,7 @@ export default {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
       }
+      console.log(this.type, '~~~~', this.dataGoodInfo);
       let status = true;
       switch (this.type) {
         case 0:
@@ -1809,6 +1823,15 @@ export default {
             });
           }
           break;
+        case 6:
+          console.log('!!!!!!');
+          if (this.dataGoodInfo._jv.id === '') {
+            this.$refs.toast.show({ message: this.i18n.t('core.productInformationDoesNotExist') });
+            status = false;
+          } else {
+            status = true;
+          }
+          break;
         default:
           status = false;
           this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
@@ -1912,6 +1935,14 @@ export default {
             url: data.threadAudio.media_url,
             id: data.threadAudio.file_id,
           });
+          break;
+        case 'goods':
+          this.dataGoodInfo = res.firstPost.postGoods;
+          // this.audioBeforeList.push({
+          //   fileName: data.threadAudio.file_name,
+          //   url: data.threadAudio.media_url,
+          //   id: data.threadAudio.file_id,
+          // });
           break;
         default:
           console.log('没有匹配模式');
@@ -2020,8 +2051,9 @@ export default {
             },
           },
           links: {
-            self: 'threads?include=user,category,firstPost,firstPost.images,question,question.beUser,question.beUser.groups,question.images'
-          }
+            self:
+              'threads?include=user,category,firstPost,firstPost.images,question,question.beUser,question.beUser.groups,question.images',
+          },
         },
         content: this.textAreaValue,
         type: this.type,
@@ -2030,6 +2062,7 @@ export default {
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
         is_anonymous: this.checked,
+        post_goods_id: this.goodInfo._jv.id,
       };
       if (this.payType === 1) {
         params.attachment_price = this.price;
@@ -2071,6 +2104,10 @@ export default {
           case 5:
             params._jv.relationships.attachments = this.addImg();
             params._jv.relationships.question = this.addQuestion();
+            resolve();
+            break;
+          case 6:
+            params.post_goods_id = this.dataGoodInfo._jv.id;
             resolve();
             break;
           default:
@@ -2169,6 +2206,7 @@ export default {
           'onlookers',
           'question.beUser',
           'question.images',
+          'firstPost.postGoods',
         ],
       };
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
@@ -2213,6 +2251,11 @@ export default {
             }
           });
         }
+        if (this.type === 6 && res.firstPost.postGoods) {
+          this.dataGoodInfo = res.firstPost.postGoods;
+          this.isShowGoods = true;
+          console.log(this.dataGoodInfo, this.isShowGoods, '这是~~~~~~~~~~~~~~~');
+        }
         this.loadStatus = true;
         if (Number(res.price) > 0) {
           this.price = res.price;
@@ -2245,6 +2288,9 @@ export default {
           case 4:
             this.setAnnex('audio', res);
             break;
+          case 6:
+            this.setAnnex('goods', res);
+            break;
           default:
             console.log('未知类型');
         }
@@ -2266,6 +2312,17 @@ export default {
         this.setThread();
       });
     },
+
+    // 获取商品信息
+    getGoodsInfo() {
+      console.log('获取');
+      this.$store.dispatch('jv/get', `goods/${this.goodsId}`).then(res => {
+        console.log('这是取到的商品信息', res);
+        this.dataGoodInfo = res;
+        this.isShowGoods = true;
+      });
+    },
+
     // 编辑帖子接口
     async editThread() {
       let state = 0;
@@ -2594,6 +2651,10 @@ export default {
         }
       }
     });
+    if (this.type === 6 && option.operating !== 'edit') {
+      this.goodsId = option.goodsId;
+      this.getGoodsInfo();
+    }
   },
   onShow() {
     let atMemberList = '';
@@ -2713,7 +2774,7 @@ export default {
     }
   }
 
-  &__good{
+  &__good {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -2755,7 +2816,6 @@ export default {
     &__btn {
       display: inline-block;
     }
-
   }
 
   &__space {

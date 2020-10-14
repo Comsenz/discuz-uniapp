@@ -315,17 +315,17 @@
         </view>
       </view>
 
-      <view class="themeItem__content__good">
+      <view class="themeItem__content__good" v-if="postGoods">
         <view>
-          <image class="themeItem__content__good__image" lazy-load src="@/static/jingdong.svg" />
+          <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
         </view>
         <view class="themeItem__content__good__info">
           <view class="themeItem__content__good__title">
-            标题:Redmi K30 至尊纪念版 120Hz弹出屏游戏智能5g手机小米官方旗舰店官网redmi红米k30
+            {{ postGoods.title }}
           </view>
           <view class="themeItem__content__good__ft">
-            <view class="themeItem__content__good__price">￥100元</view>
-            <view class="themeItem__content__good__buy">
+            <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
+            <view class="themeItem__content__good__buy" @click="buyGood">
               <qui-icon class="themeItem__content__good__icon" name="icon-bag" size="28"></qui-icon>
               {{ i18n.t('home.buygood') }}
             </view>
@@ -474,6 +474,13 @@ export default {
       type: Array,
       default: () => {
         return [];
+      },
+    },
+    // 商品
+    postGoods: {
+      type: Object,
+      default: () => {
+        return {};
       },
     },
     // // 图片裁剪'缩放的模式
@@ -742,6 +749,10 @@ export default {
     audioPlayer(id) {
       this.$refs[`audio${id}`].audioPause();
     },
+    // 点击购买商品
+    buyGood() {
+      this.$emit('buyGood');
+    },
   },
 };
 </script>
@@ -935,13 +946,13 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      margin: 30rpx 0;
+      margin: 80rpx 0;
       font-size: $fg-f3;
 
       &__image {
         width: 160rpx;
         height: 160rpx;
-        margin: 0 30rpx 0 0;
+        margin: 0 24rpx 0 0;
         border-radius: 5rpx;
       }
 

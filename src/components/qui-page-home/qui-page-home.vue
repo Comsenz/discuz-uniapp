@@ -109,6 +109,7 @@
         :theme-comment="item.postCount - 1"
         :tags="[item.category]"
         :images-list="item.firstPost.images"
+        :post-goods="item.firstPost.postGoods"
         :theme-essence="item.isEssence"
         :video-width="item.threadVideo && item.threadVideo.width"
         :video-height="item.threadVideo && item.threadVideo.height"
@@ -945,6 +946,7 @@ export default {
           'question.beUser',
           'question.beUser.groups',
           'threadAudio',
+          'firstPost.postGoods',
         ],
       };
       if (this.threadType !== null) {
