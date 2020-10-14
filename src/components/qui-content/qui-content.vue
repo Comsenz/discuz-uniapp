@@ -123,13 +123,20 @@
             <view class="themeItem_to">@{{ questionsName }}</view>
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
-          <view :class="themPayBtn ? 'themeItem__content__uparse' : ''">
+          <view :class="themPayBtn || threadType === 6 ? 'themeItem__content__uparse' : ''">
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
               size="30"
               v-if="themPayBtn && threadType !== 1"
               class="themeItem__content__fufei"
+            ></qui-icon>
+            <qui-icon
+              name="icon-shangpin-1"
+              color="#aaaaaa"
+              size="30"
+              class="themeItem__content__fufei"
+              v-if="threadType === 6"
             ></qui-icon>
             <qui-uparse
               :content="themeContent"
@@ -923,8 +930,10 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      margin: 30rpx 0;
+      padding: 20rpx;
       font-size: $fg-f3;
+      background: --color(--qui-BG-F6);
+      border-radius: 2px;
 
       &__image {
         width: 160rpx;
