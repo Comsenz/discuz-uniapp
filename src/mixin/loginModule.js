@@ -257,65 +257,7 @@ module.exports = {
         key: 'register',
         data: register,
       });
-      this.$store
-        .dispatch('session/noSenseh5Login')
-        .then(res => {
-          if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('登录成功：', res);
-            this.logind();
-            if (
-              this.forums &&
-              this.forums.set_site &&
-              this.forums.set_site.site_mode !== SITE_PAY
-            ) {
-              uni.getStorage({
-                key: 'page',
-                success(resData) {
-                  uni.redirectTo({
-                    url: resData.data,
-                  });
-                },
-              });
-            }
-            if (
-              this.forums &&
-              this.forums.set_site &&
-              this.forums.set_site.site_mode === SITE_PAY &&
-              this.user &&
-              !this.user.paid
-            ) {
-              uni.redirectTo({
-                url: '/pages/site/info',
-              });
-            }
-          }
-          if (res && res.data && res.data.errors) {
-            if (res.data.errors[0].code === 'no_bind_user') {
-              this.$store.dispatch('session/setToken', res.data.errors[0].token);
-              this.login();
-            }
-            if (res.data.errors[0].code === 'permission_denied') {
-              this.login();
-            }
-            if (res.data.errors[0].code === 'register_validate') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.register_validate'),
-                duration: 2000,
-              });
-            }
-            if (res.data.errors[0].code === 'validate_reject') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.validate_reject'),
-                duration: 2000,
-              });
-            }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$store.dispatch('session/wxh5Login');
     },
     /**
      * 获取登录需要的参数
