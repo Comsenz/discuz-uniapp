@@ -2067,7 +2067,7 @@ export default {
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
         is_anonymous: this.checked,
-        post_goods_id: this.goodInfo._jv.id,
+        // post_goods_id: this.goodInfo._jv.id,
       };
       if (this.payType === 1) {
         params.attachment_price = this.price;
