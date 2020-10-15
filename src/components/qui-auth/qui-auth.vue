@@ -172,9 +172,21 @@ export default {
                   url: '/pages/site/info',
                 });
               }
-              uni.showToast({
-                title: this.i18n.t('user.loginSuccess'),
-                duration: 2000,
+              uni.getStorage({
+                key: 'isChange',
+                success(resData) {
+                  if (resData.data) {
+                    uni.showToast({
+                      title: this.i18n.t('user.loginSuccess'),
+                      duration: 2000,
+                    });
+                  } else {
+                    uni.showToast({
+                      title: this.i18n.t('user.bindSuccess'),
+                      duration: 2000,
+                    });
+                  }
+                },
               });
             }
             if (

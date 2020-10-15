@@ -103,6 +103,10 @@ export default {
       this.getLoginParams(params, this.i18n.t('user.loginBindSuccess'));
     },
     jump2Register() {
+      uni.setStorage({
+        key: 'isChange',
+        data: false,
+      });
       this.jump2RegisterBindPage();
     },
     jump2findpwd() {

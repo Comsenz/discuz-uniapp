@@ -311,6 +311,10 @@ export default {
         });
     },
     jump2Login() {
+      uni.setStorage({
+        key: 'isChange',
+        data: false,
+      });
       this.jump2LoginBindPage();
     },
   },
