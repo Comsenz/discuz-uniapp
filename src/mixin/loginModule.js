@@ -305,6 +305,7 @@ module.exports = {
           params.data.attributes.iv = data.data.attributes.iv;
           params.data.attributes.encryptedData = data.data.attributes.encryptedData;
         }
+        // #endif
         const userInfo = this.$store.getters['session/get']('userInfo');
         if (userInfo && userInfo.token !== '') {
           params.data.attributes.token = userInfo.token;

@@ -1127,7 +1127,7 @@ export default {
         this.percent = 1;
       }
 
-      // uni.removeStorageSync('current_thread');
+      uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
