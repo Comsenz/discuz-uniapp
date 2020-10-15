@@ -236,10 +236,10 @@ export default {
     // 是否显示钱包密码支付框
     paysureShow() {
       if (this.current === 0) {
-        // uni.setStorage({
-        //   key: 'page',
-        //   data: `/pages/topic/index?id=${this.threadId}`,
-        // });
+        uni.setStorage({
+          key: 'page',
+          data: `/pages/topic/index?id=${this.threadId}`,
+        });
         // 这是微信支付
       } else if (this.current === 1) {
         // 这是钱包支付
