@@ -180,10 +180,7 @@ export default {
             this.chronoscope();
           },
           fail: res => {
-            uni.showToast({
-              title: this.i18n.t('post.notUploadAudio'),
-              duration: 2000,
-            });
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notUploadAudio') });
             console.log(JSON.stringify(res));
           },
         });
@@ -196,10 +193,7 @@ export default {
             console.log('start record successfully.');
           },
           error: () => {
-            uni.showToast({
-              title: this.i18n.t('post.notUploadAudio'),
-              duration: 2000,
-            });
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notUploadAudio') });
             console.log('start record failed.');
           },
         });
