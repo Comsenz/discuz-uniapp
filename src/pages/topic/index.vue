@@ -3372,13 +3372,12 @@ export default {
             console.log('success');
           },
         });
+        // uni.showToast({
+        //   icon: 'none',
+        //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
+        // });
+        // #endif
       }
-
-      // uni.showToast({
-      //   icon: 'none',
-      //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
-      // });
-      // #endif
     },
   },
 };
