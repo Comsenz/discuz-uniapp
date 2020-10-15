@@ -1461,12 +1461,15 @@ export default {
         if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
           this.$refs.wechatPopup.open();
           console.log('微信浏览器内没绑定');
-          return;          
+          return;
         }
         // #endif
 
         // #ifdef MP-WEIXIN
-        if (this.user.wechat === undefined || (this.user.wechat && this.user.wechat.min_openid === '')) {
+        if (
+          this.user.wechat === undefined ||
+          (this.user.wechat && this.user.wechat.min_openid === '')
+        ) {
           this.$refs.wechatPopup.open();
           console.log('小程序内什么都没绑定');
           return;
@@ -2103,7 +2106,6 @@ export default {
         captcha_ticket: this.ticket,
         captcha_rand_str: this.randstr,
         is_anonymous: this.checked,
-        post_goods_id: this.dataGoodInfo._jv.id,
       };
       if (this.payType === 1) {
         params.attachment_price = this.price;
