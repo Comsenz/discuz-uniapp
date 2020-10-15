@@ -161,7 +161,9 @@
                 :avatar-url="thread.question.beUser.avatarUrl"
                 :user-name="thread.question.beUser.username"
                 :is-real="thread.question.beUser.isReal"
-                :user-role="thread.question.beUser.groups ? thread.question.beUser.groups : ''"
+                :user-role="
+                  handleGroup(thread.question.beUser.groups && thread.question.beUser.groups)
+                "
                 :theme-time="thread.question.answered_at"
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
@@ -1971,6 +1973,16 @@ export default {
           this.publishClickStatus = true;
           console.log(err);
         });
+    },
+    handleGroup(data) {
+      let groups = [];
+      if (data && data.length > 0) {
+        groups = data.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return [groups[0]];
+      }
+      return [];
     },
     // 创建问答的回答
     postAnswer() {
