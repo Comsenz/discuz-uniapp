@@ -128,7 +128,11 @@ export default {
       const routes = getCurrentPages();
       const curRoute = routes[routes.length - 1].route;
       console.log('getCurrentPages()', getCurrentPages());
-      if (curRoute === 'pages/site/partner-invite' || curRoute === 'pages/user/login') {
+      if (
+        curRoute === 'pages/site/partner-invite' ||
+        curRoute === 'pages/user/login' ||
+        curRoute === 'pages/user/phone-login'
+      ) {
         uni.setStorage({
           key: 'page',
           data: '/pages/home/index',
