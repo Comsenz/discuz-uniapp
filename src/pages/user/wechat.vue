@@ -17,9 +17,7 @@ export default {
   },
   onLoad(params) {
     // #ifdef H5
-    if (!this.$store.getters['session/get']('isLogin')) {
-      this.wxLogin(params);
-    }
+    this.wxLogin(params);
     // #endif
   },
   methods: {
