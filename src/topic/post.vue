@@ -2095,7 +2095,7 @@ export default {
           },
           links: {
             self:
-              'threads?include=user,category,firstPost,firstPost.images,question,question.beUser,question.beUser.groups,question.images',
+              'threads?include=user,category,firstPost,firstPost.images,firstPost.postGoods,question,question.beUser,question.beUser.groups,question.images',
           },
         },
         content: this.textAreaValue,
