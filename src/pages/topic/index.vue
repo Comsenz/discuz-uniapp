@@ -44,7 +44,8 @@
               :theme-title="thread.type == 1 ? thread.title : ''"
               :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
-              :post-goods="thread.firstPost.postGoods ? thread.firstPost.postGoods : ''"
+              :post-goods-status="postGoodsStatus"
+              :post-goods="thread.firstPost.postGoods"
               :select-list="selectList"
               :tags="[thread.category]"
               :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
@@ -981,6 +982,7 @@ export default {
       refreshStatus: true, // 是否刷新
       threadIsPaidCover: false, // 付费主题显示遮盖层
       token: '', // token
+      postGoodsStatus: false,
     };
   },
   onUnload() {
@@ -1251,6 +1253,11 @@ export default {
 
             this.loaded = false;
           } else {
+            if (data.firstPost.postGoods) {
+              this.postGoodsStatus = true;
+            } else {
+              this.postGoodsStatus = false;
+            }
             if (data.type === 1) {
               if (data.attachmentPrice > 0) {
                 this.threadIsPaidCover = false;
@@ -3350,20 +3357,23 @@ export default {
     },
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
-      console.log('否买');
-      // #ifndef MP-WEIXIN
-      console.log('这是非小程序');
-      window.location.href = this.thread.firstPost.postGoods.detail_content;
-      // #endif
+      if (this.thread.firstPost.postGoods === 6) {
+        console.log('否买');
+        // #ifndef MP-WEIXIN
+        console.log('这是非小程序');
+        window.location.href = this.thread.firstPost.postGoods.detail_content;
+        // #endif
 
-      // #ifdef MP-WEIXIN
-      console.log('这是小程序内');
-      uni.setClipboardData({
-        data: this.thread.firstPost.postGoods.detail_content,
-        success: function() {
-          console.log('success');
-        },
-      });
+        // #ifdef MP-WEIXIN
+        console.log('这是小程序内');
+        uni.setClipboardData({
+          data: this.thread.firstPost.postGoods.detail_content,
+          success: function() {
+            console.log('success');
+          },
+        });
+      }
+
       // uni.showToast({
       //   icon: 'none',
       //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
