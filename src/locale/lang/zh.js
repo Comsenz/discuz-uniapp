@@ -643,6 +643,7 @@ export default {
     createThread: '发布文本',
     createThreadLong: '发布帖子',
     createThreadVideo: '发布视频',
+    createThreadGoods: '发布商品',
     createThreadPaid: '发布付费贴和被打赏',
     attachment_create_0: '上传附件',
     attachment_create_1: '上传图片',
