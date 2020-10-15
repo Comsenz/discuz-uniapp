@@ -303,26 +303,30 @@
           </view>
         </view>
       </view>
-      <view
-        class="themeItem__content__good"
-        v-if="themeType === 6 && Object.keys(postGoods).length !== 0"
-      >
-        <view>
-          <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
-        </view>
-        <view class="themeItem__content__good__info">
-          <view class="themeItem__content__good__title">
-            {{ postGoods.title }}
+      <view v-if="postGoodsStatus">
+        <view class="themeItem__content__good" v-if="themeType === 6">
+          <view>
+            <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
           </view>
-          <view class="themeItem__content__good__ft">
-            <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
-            <view class="themeItem__content__good__buy" @click="buyGood">
-              <qui-icon class="themeItem__content__good__icon" name="icon-bag" size="28"></qui-icon>
-              {{ i18n.t('home.buygood') }}
+          <view class="themeItem__content__good__info">
+            <view class="themeItem__content__good__title">
+              {{ postGoods.title }}
+            </view>
+            <view class="themeItem__content__good__ft">
+              <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
+              <view class="themeItem__content__good__buy" @click="buyGood">
+                <qui-icon
+                  class="themeItem__content__good__icon"
+                  name="icon-bag"
+                  size="28"
+                ></qui-icon>
+                {{ i18n.t('home.buygood') }}
+              </view>
             </view>
           </view>
         </view>
       </view>
+
       <view class="themeItem__content__tags" v-if="tags.length > 0">
         <view
           class="themeItem__content__tags__item"
@@ -477,9 +481,13 @@ export default {
         return [];
       },
     },
+    postGoodsStatus: {
+      type: Boolean,
+      default: false,
+    },
     // 商品
     postGoods: {
-      type: [Object, String],
+      type: Object,
       default: () => {
         return {};
       },
@@ -578,7 +586,7 @@ export default {
     },
   },
   created() {
-    console.log('这是内容组件created');
+    console.log('这是内容组件created', this.postGoods);
     this.$forceUpdate();
   },
   mounted() {

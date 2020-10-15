@@ -44,7 +44,8 @@
               :theme-title="thread.type == 1 ? thread.title : ''"
               :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
-              :post-goods="thread.firstPost.postGoods ? thread.firstPost.postGoods : ''"
+              :post-goods-status="postGoodsStatus"
+              :post-goods="thread.firstPost.postGoods"
               :select-list="selectList"
               :tags="[thread.category]"
               :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
@@ -680,6 +681,7 @@ import { getCurUrl } from '@/utils/getCurUrl';
 
 let payWechat = null;
 let payPhone = null;
+let isOnPaidAttachment = true;
 
 export default {
   components: { uniPopupDialog },
@@ -980,6 +982,7 @@ export default {
       refreshStatus: true, // 是否刷新
       threadIsPaidCover: false, // 付费主题显示遮盖层
       token: '', // token
+      postGoodsStatus: false,
     };
   },
   onUnload() {
@@ -1145,6 +1148,7 @@ export default {
     const _this = this;
     _this.posts = [];
     _this.pageNum = 1;
+    _this.attachmentFileList = [];
     setTimeout(function() {
       _this.loadThread();
       _this.loadThreadPosts();
@@ -1249,6 +1253,11 @@ export default {
 
             this.loaded = false;
           } else {
+            if (data.firstPost.postGoods) {
+              this.postGoodsStatus = true;
+            } else {
+              this.postGoodsStatus = false;
+            }
             if (data.type === 1) {
               if (data.attachmentPrice > 0) {
                 this.threadIsPaidCover = false;
@@ -1262,7 +1271,7 @@ export default {
             } else {
               this.threadIsPaidCover = false;
             }
-            if (!data.isPaidAttachment) {
+            if (isOnPaidAttachment) {
               data.firstPost.attachments.forEach(attachment => {
                 if (data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
                   this.attachmentFileList.push(attachment);
@@ -2235,6 +2244,9 @@ export default {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
                 // 这是主题支付和附件支付，支付完成刷新详情页，重新请求数据
+                if (this.thread.attachmentPrice > 0) {
+                  isOnPaidAttachment = false;
+                }
                 this.loadThread();
                 this.$store.dispatch('jv/get', [
                   'forum',
@@ -2275,6 +2287,7 @@ export default {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
+              isOnPaidAttachment = false;
               this.loadThread();
               this.$store.dispatch('jv/get', [
                 'forum',
@@ -2288,6 +2301,10 @@ export default {
 
             if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
+              if (this.thread.attachmentPrice > 0) {
+                isOnPaidAttachment = false;
+              }
+
               this.loadThread();
               this.$store.dispatch('jv/get', [
                 'forum',
@@ -3340,25 +3357,27 @@ export default {
     },
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
-      console.log('否买');
-      // #ifndef MP-WEIXIN
-      console.log('这是非小程序');
-      window.location.href = this.thread.firstPost.postGoods.detail_content;
-      // #endif
+      if (this.thread.firstPost.postGoods === 6) {
+        console.log('否买');
+        // #ifndef MP-WEIXIN
+        console.log('这是非小程序');
+        window.location.href = this.thread.firstPost.postGoods.detail_content;
+        // #endif
 
-      // #ifdef MP-WEIXIN
-      console.log('这是小程序内');
-      uni.setClipboardData({
-        data: this.thread.firstPost.postGoods.detail_content,
-        success: function() {
-          console.log('success');
-        },
-      });
-      // uni.showToast({
-      //   icon: 'none',
-      //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
-      // });
-      // #endif
+        // #ifdef MP-WEIXIN
+        console.log('这是小程序内');
+        uni.setClipboardData({
+          data: this.thread.firstPost.postGoods.detail_content,
+          success: function() {
+            console.log('success');
+          },
+        });
+        // uni.showToast({
+        //   icon: 'none',
+        //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
+        // });
+        // #endif
+      }
     },
   },
 };

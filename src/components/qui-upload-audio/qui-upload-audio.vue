@@ -34,6 +34,12 @@
     <view>
       <button @click="playVoice()">播放</button>
     </view>
+    <view>
+      <button @click="downloadVoice()">下载</button>
+    </view>
+    <view>
+      <button @click="upload()">语音</button>
+    </view>
     <view ref="input" class="input"></view>
     <qui-toast ref="toast"></qui-toast>
   </view>
@@ -82,6 +88,7 @@ export default {
       isiOS: '',
       localId: '',
       mediaId: '',
+      recordRes: null,
     };
   },
   computed: {
@@ -109,13 +116,32 @@ export default {
     },
   },
   created() {
-    // #ifdef  H5
+    // #ifdef H5
     this.wxRecord();
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isiOS = appCommonH.isWeixin().isiOS;
     // #endif
   },
+  mounted() {
+    // #ifdef H5
+    const input = document.createElement('input');
+    input.style.display = 'none';
+    input.type = 'file';
+    input.id = 'file';
+    input.accept = 'audio/mp3,audio/m4a,audio/wav,audio/aac';
+    input.capture = 'microphone';
+    input.onchange = event => {
+      const file = event.target.files[0];
+      console.log(file);
+      // alert(event);
+    };
+    this.$refs.input.$el.appendChild(input);
+    // #endif
+  },
   methods: {
+    upload() {
+      document.getElementById('file').click();
+    },
     // 开始录音的时候
     start() {
       // #ifdef MP-WEIXIN
@@ -142,11 +168,23 @@ export default {
 
       // #ifdef H5
       if (this.isWeixin) {
-        recordWX.ready(() => {
-          recordWX.startRecord();
-          this.showAdd = false;
-          this.chronoscope();
+        // recordWX.ready(() => {
+        recordWX.startRecord({
+          success: () => {
+            // console.log('录音完成');
+            // _this.localId = res.localId;
+            // _this.recordRes = res;
+            // console.log(res.localId);
+            // _this.wxh5UploadVoice();
+            this.showAdd = false;
+            this.chronoscope();
+          },
+          fail: res => {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notUploadAudio') });
+            console.log(JSON.stringify(res));
+          },
         });
+        // });
       } else {
         this.recorder.startRecord({
           success: () => {
@@ -155,6 +193,7 @@ export default {
             console.log('start record successfully.');
           },
           error: () => {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notUploadAudio') });
             console.log('start record failed.');
           },
         });
@@ -175,19 +214,21 @@ export default {
         // #endif
         // #ifdef H5
         if (this.isWeixin) {
-          recordWX.ready(() => {
-            recordWX.stopRecord({
-              success: res => {
-                console.log('录音完成');
-                _this.localId = res.localId;
-                console.log(res.localId);
-                _this.wxh5UploadVoice();
-              },
-              fail: res => {
-                console.log(JSON.stringify(res));
-              },
-            });
+          // recordWX.ready(() => {
+          recordWX.stopRecord({
+            success: res => {
+              console.log('录音完成');
+              _this.localId = res.localId;
+              _this.recordRes = res;
+              console.log(res.localId);
+              _this.wxh5UploadVoice();
+            },
+            fail: res => {
+              console.log(JSON.stringify(res));
+            },
+            // });
           });
+          console.log(_this.recordRes);
           console.log(this.localId);
         } else {
           this.recorder.stopRecord({
@@ -206,7 +247,6 @@ export default {
       }
     },
     wxh5UploadVoice() {
-      // recordWX.ready(() => {
       recordWX.uploadVoice({
         localId: this.localId,
         isShowProgressTips: 1,
@@ -215,26 +255,32 @@ export default {
           console.log(res.serverId);
           this.mediaId = res.serverId;
           const mediaId = res.serverId;
-          const token = uni.getStorageSync('access_token');
-          this.$store
-            .dispatch(
-              'jv/get',
-              `http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
-            )
-            .then(data => {
+          recordWX.downloadVoice({
+            serverId: mediaId, // 需要下载的音频的服务器端ID，由uploadVoice接口获得
+            isShowProgressTips: 1, // 默认为1，显示进度提示
+            success: data => {
+              // const localId = data.localId; // 返回音频的本地ID
               console.log(data);
-              console.log(JSON.stringify(data));
-            });
+            },
+          });
         },
       });
-      // });
     },
     playVoice() {
-      // recordWX.ready(() => {
       recordWX.playVoice({
         localId: this.localId, // 需要播放的音频的本地ID，由stopRecord接口获得
       });
-      // });
+    },
+    downloadVoice() {
+      recordWX.downloadVoice({
+        serverId: '1237378768e7q8e7r8qwesafdasdfasdfaxss111', // 需要下载的音频的服务器端ID，由uploadVoice接口获得
+        isShowProgressTips: 1, // 默认为1，显示进度提示
+        success: res => {
+          this.localId = res.localId;
+          // const localId = res.localId; // 返回音频的本地ID
+          console.log(res);
+        },
+      });
     },
     // 录音上传
     uploadAudio(audioFile, name) {

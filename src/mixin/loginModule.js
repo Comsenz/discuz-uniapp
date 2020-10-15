@@ -56,7 +56,7 @@ module.exports = {
       });
     },
     /**
-     * 跳转到登录绑定页面
+     * 跳转到登录并绑定微信号页面
      */
     jump2LoginBindPage() {
       const url = '/pages/user/login-bind';
@@ -65,10 +65,28 @@ module.exports = {
       });
     },
     /**
-     * 跳转到注册绑定页面
+     * 跳转到注册并绑定微信号页面
      */
     jump2RegisterBindPage() {
       const url = '/pages/user/register-bind';
+      uni.redirectTo({
+        url,
+      });
+    },
+    /**
+     * 跳转到登录并绑定手机号页面
+     */
+    jump2LoginBindPhonePage() {
+      const url = '/pages/user/login-bind-phone';
+      uni.redirectTo({
+        url,
+      });
+    },
+    /**
+     * 跳转到注册并绑定手机号页面
+     */
+    jump2RegisterBindPhonePage() {
+      const url = '/pages/user/register-bind-phone';
       uni.redirectTo({
         url,
       });
@@ -288,13 +306,10 @@ module.exports = {
           params.data.attributes.encryptedData = data.data.attributes.encryptedData;
         }
         // #endif
-        // #ifdef H5
-        // 微信内置浏览器登录必传参数
         const userInfo = this.$store.getters['session/get']('userInfo');
         if (userInfo && userInfo.token !== '') {
           params.data.attributes.token = userInfo.token;
         }
-        // #endif
         this.login(params, resultDialog);
       }
     },
