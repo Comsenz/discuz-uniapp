@@ -1285,7 +1285,7 @@ export default {
       } else if (index === 0) {
         console.log('免费免费');
         this.payType = 0;
-        this.postClick();
+        // this.postClick();
         if (this.payType === 0) {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
@@ -1350,7 +1350,7 @@ export default {
     },
     // 提问价格
     postAnswerClick(type) {
-      console.log('提问价格');
+      console.log('发布发布');
       // this.setType = type;
       this.$refs.popupBtm.open();
       this.textShow = false;
@@ -1659,7 +1659,7 @@ export default {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               this._updateRewardUsers();
             }
-            this.$refs.toast.show({ message: this.p.paySuccess });
+            this.$refs.toast.show({ message: this.i18n.t('pay.paySuccess') });
           }
         })
         .catch(err => {

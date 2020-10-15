@@ -11,27 +11,30 @@
       @personJump="personJump(thread.question.be_user_id)"
     ></qui-topic-header>
     <!-- 回答内容 -->
-    <div class="theme-content" v-if="isOnlooker">
+    <view class="theme-content" v-if="isOnlooker">
       <qui-uparse :content="answerContent"></qui-uparse>
       <qui-image :images-list="imagesList"></qui-image>
-    </div>
+    </view>
     <!-- <view class="themeItem__list"> -->
-    <qui-person-list
-      :type="i18n.t('topic.pay')"
-      :person-num="thread.question.onlooker_number"
-      :limit-count="10"
-      :person-list="thread.onlookers"
-      :btn-show="!thread.onlookerState"
-      :btn-icon-show="false"
-      btn-icon-name="rmb"
-      :btn-text="
-        `${i18n.t('topic.paymentAnswer')}${thread.question.onlooker_unit_price}${i18n.t(
-          'topic.visible',
-        )}`
-      "
-      @personJump="personJump"
-      @btnClick="btnClick"
-    ></qui-person-list>
+    <view class="theme-list">
+      <qui-person-list
+        :type="i18n.t('topic.pay')"
+        :person-num="thread.question.onlooker_number"
+        :limit-count="10"
+        :person-list="thread.onlookers"
+        :btn-show="!thread.onlookerState"
+        :btn-icon-show="false"
+        :list-bg="listBg"
+        btn-icon-name="rmb"
+        :btn-text="
+          `${i18n.t('topic.paymentAnswer')}${thread.question.onlooker_unit_price}${i18n.t(
+            'topic.visible',
+          )}`
+        "
+        @personJump="personJump"
+        @btnClick="btnClick"
+      ></qui-person-list>
+    </view>
   </view>
 </template>
 <script>
@@ -108,6 +111,7 @@ export default {
       personRes: [], // 头像列表
       payment: 2,
       list: [],
+      listBg: '#ededed',
     };
   },
   computed: {
@@ -152,5 +156,8 @@ export default {
 }
 .theme-content {
   padding: 0 36rpx;
+}
+.theme-list {
+  background: --color(--qui-BG-ED);
 }
 </style>

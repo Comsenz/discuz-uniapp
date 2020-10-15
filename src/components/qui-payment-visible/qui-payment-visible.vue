@@ -25,6 +25,7 @@
         :person-list="thread.onlookers"
         :btn-show="!thread.onlookerState && thread.question.price === '0'"
         :btn-icon-show="true"
+        :list-bg="listBg"
         btn-icon-name="rmb"
         :btn-text="''"
         @personJump="personJump()"
@@ -101,7 +102,9 @@ export default {
     },
   },
   data: () => {
-    return {};
+    return {
+      listBg: '#ededed',
+    };
   },
   methods: {
     // 跳转到用户主页
