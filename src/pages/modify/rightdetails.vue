@@ -108,6 +108,8 @@
 <script>
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import loginModule from '@/mixin/loginModule';
 // #ifndef MP-WEIXIN
 import appCommonH from '@/utils/commonHelper';
 // #endif
@@ -116,7 +118,8 @@ let payWechat = null;
 let payPhone = null;
 
 export default {
-  mixins: [user, forums],
+  components: { uniPopupDialog },
+  mixins: [user, forums, loginModule],
   data() {
     return {
       typenum1: true,
@@ -153,7 +156,7 @@ export default {
       pwdVal: '', // 支付密码
       expirationTime: '', // 到期时间
       payingusers: '',
-      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
+      wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
     };
   },
   onLoad(evn) {

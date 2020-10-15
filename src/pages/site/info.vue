@@ -74,6 +74,7 @@
 <script>
 import forums from '@/mixin/forums';
 import loginModule from '@/mixin/loginModule';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -83,6 +84,7 @@ import { getCurUrl } from '@/utils/getCurUrl';
 let payWechat = null;
 
 export default {
+  components: { uniPopupDialog },
   mixins: [
     forums,
     loginModule,
@@ -104,7 +106,7 @@ export default {
       payStatus: false, // 订单支付状态
       orderSn: '', // 订单编号
       isLogin: this.$store.getters['session/get']('isLogin'),
-      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
+      wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
       payTypeData: [
         {
           name: this.i18n.t('pay.wxPay'),

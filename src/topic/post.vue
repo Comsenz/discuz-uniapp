@@ -859,7 +859,7 @@ export default {
       deleteId: '', // 当前点击要删除的图片Id
       deleteIndex: '', // 当前点击要删除的图片index
       deleteTip: '确定删除吗？', // 删除提示
-      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
+      wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
       currentPosition: {},
       watchMoeny: '1', // 他人付费需付费多少元
       beAskId: '', // 被提问人ID
