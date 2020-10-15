@@ -61,6 +61,7 @@ export default {
           'category',
           'threadVideo',
           'threadAudio',
+          'question',
           'question.beUser',
           'question.beUser.groups',
         ],
