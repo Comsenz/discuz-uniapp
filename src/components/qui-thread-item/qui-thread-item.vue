@@ -11,8 +11,12 @@
       :theme-btn="thread.canHide || ''"
       :theme-reply-btn="thread.canReply || ''"
       :user-groups="handleGroup(thread.user && thread.user.groups)"
-      :user-answer-groups="handleGroup(thread.question && thread.question.beUser.groups)"
-      :answer-image="thread.question && thread.question.beUser.avatarUrl"
+      :user-answer-groups="
+        handleGroup(thread.question && thread.question.beUser ? thread.question.beUser.groups : [])
+      "
+      :answer-image="
+        thread.question && thread.question.beUser ? thread.question.beUser.avatarUrl : ''
+      "
       :theme-time-answer="thread.question && thread.question.answered_at"
       :theme-time="thread.createdAt"
       :theme-content="thread.type == 1 ? thread.title : thread.firstPost.summary"

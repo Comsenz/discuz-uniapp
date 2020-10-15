@@ -126,7 +126,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.topic-page {
+.question {
   margin-top: -20rpx;
 }
 </style>
