@@ -31,16 +31,6 @@
         <qui-icon name="icon-luyin" color="#FA5151" size="60"></qui-icon>
       </view>
     </view>
-    <view>
-      <button @click="playVoice()">播放</button>
-    </view>
-    <view>
-      <button @click="downloadVoice()">下载</button>
-    </view>
-    <view>
-      <button @click="upload()">语音</button>
-    </view>
-    <view ref="input" class="input"></view>
     <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
@@ -49,7 +39,6 @@
 import Record from '@/utils/record-sdk';
 // #ifdef  H5
 import TcVod from 'vod-js-sdk-v6';
-import wxrecord from '@/mixin/wxrecord-ios';
 import appCommonH from '@/utils/commonHelper';
 // #endif
 // #ifdef MP-WEIXIN
@@ -57,14 +46,10 @@ import VodUploader from '@/common/cos-wx-sdk-v5.1';
 // 录音管理
 const recorderManager = wx.getRecorderManager();
 // #endif
-// #ifdef  H5
-const recordWX = require('jweixin-module');
-// #endif
 
 export default {
   mixins: [
     // #ifdef  H5
-    wxrecord,
     appCommonH,
     // #endif
   ],
@@ -86,9 +71,6 @@ export default {
       recorder: new Record(),
       isWeixin: '', // 是否是微信浏览器内
       isiOS: '',
-      localId: '',
-      mediaId: '',
-      recordRes: null,
     };
   },
   computed: {
@@ -117,31 +99,11 @@ export default {
   },
   created() {
     // #ifdef H5
-    this.wxRecord();
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isiOS = appCommonH.isWeixin().isiOS;
     // #endif
   },
-  mounted() {
-    // #ifdef H5
-    const input = document.createElement('input');
-    input.style.display = 'none';
-    input.type = 'file';
-    input.id = 'file';
-    input.accept = 'audio/mp3,audio/m4a,audio/wav,audio/aac';
-    input.capture = 'microphone';
-    input.onchange = event => {
-      const file = event.target.files[0];
-      console.log(file);
-      // alert(event);
-    };
-    this.$refs.input.$el.appendChild(input);
-    // #endif
-  },
   methods: {
-    upload() {
-      document.getElementById('file').click();
-    },
     // 开始录音的时候
     start() {
       // #ifdef MP-WEIXIN
@@ -167,24 +129,8 @@ export default {
       // #endif
 
       // #ifdef H5
-      if (this.isWeixin) {
-        // recordWX.ready(() => {
-        recordWX.startRecord({
-          success: () => {
-            // console.log('录音完成');
-            // _this.localId = res.localId;
-            // _this.recordRes = res;
-            // console.log(res.localId);
-            // _this.wxh5UploadVoice();
-            this.showAdd = false;
-            this.chronoscope();
-          },
-          fail: res => {
-            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notUploadAudio') });
-            console.log(JSON.stringify(res));
-          },
-        });
-        // });
+      if (this.isWeixin && this.isiOS) {
+        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.IOSWxNotRecordAudio') });
       } else {
         this.recorder.startRecord({
           success: () => {
@@ -193,7 +139,7 @@ export default {
             console.log('start record successfully.');
           },
           error: () => {
-            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notUploadAudio') });
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notRecordAudio') });
             console.log('start record failed.');
           },
         });
@@ -202,7 +148,6 @@ export default {
     },
     // 停止录音
     stop() {
-      const _this = this;
       if (this.durationTime > 1) {
         clearInterval(this.timer);
         const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
@@ -213,74 +158,19 @@ export default {
         });
         // #endif
         // #ifdef H5
-        if (this.isWeixin) {
-          // recordWX.ready(() => {
-          recordWX.stopRecord({
-            success: res => {
-              console.log('录音完成');
-              _this.localId = res.localId;
-              _this.recordRes = res;
-              console.log(res.localId);
-              _this.wxh5UploadVoice();
-            },
-            fail: res => {
-              console.log(JSON.stringify(res));
-            },
-            // });
-          });
-          console.log(_this.recordRes);
-          console.log(this.localId);
-        } else {
-          this.recorder.stopRecord({
-            success: res => {
-              // 此处可以获取音频源文件(res)，用于上传等操作
-              const file = this.blobToFile(res, audioName);
-              this.uploadAudio(file, audioName);
-              console.log('stop record successfully.');
-            },
-            error: () => {
-              console.log('stop record failed.');
-            },
-          });
-        }
+        this.recorder.stopRecord({
+          success: res => {
+            // 此处可以获取音频源文件(res)，用于上传等操作
+            const file = this.blobToFile(res, audioName);
+            this.uploadAudio(file, audioName);
+            console.log('stop record successfully.');
+          },
+          error: () => {
+            console.log('stop record failed.');
+          },
+        });
         // #endif
       }
-    },
-    wxh5UploadVoice() {
-      recordWX.uploadVoice({
-        localId: this.localId,
-        isShowProgressTips: 1,
-        success: res => {
-          console.log(res);
-          console.log(res.serverId);
-          this.mediaId = res.serverId;
-          const mediaId = res.serverId;
-          recordWX.downloadVoice({
-            serverId: mediaId, // 需要下载的音频的服务器端ID，由uploadVoice接口获得
-            isShowProgressTips: 1, // 默认为1，显示进度提示
-            success: data => {
-              // const localId = data.localId; // 返回音频的本地ID
-              console.log(data);
-            },
-          });
-        },
-      });
-    },
-    playVoice() {
-      recordWX.playVoice({
-        localId: this.localId, // 需要播放的音频的本地ID，由stopRecord接口获得
-      });
-    },
-    downloadVoice() {
-      recordWX.downloadVoice({
-        serverId: '1237378768e7q8e7r8qwesafdasdfasdfaxss111', // 需要下载的音频的服务器端ID，由uploadVoice接口获得
-        isShowProgressTips: 1, // 默认为1，显示进度提示
-        success: res => {
-          this.localId = res.localId;
-          // const localId = res.localId; // 返回音频的本地ID
-          console.log(res);
-        },
-      });
     },
     // 录音上传
     uploadAudio(audioFile, name) {
@@ -300,9 +190,6 @@ export default {
         finish(result) {
           uni.hideLoading();
           _this.postVideo(result.fileId, 1, result.videoUrl, name);
-          _this.duration = '00:00:00';
-          _this.durationTime = 0;
-          _this.timer = null;
         },
       });
       // #endif
@@ -319,9 +206,6 @@ export default {
           .then(doneResult => {
             uni.hideLoading();
             _this.postVideo(doneResult.fileId, 1, doneResult.video.url, name);
-            _this.duration = '00:00:00';
-            _this.durationTime = 0;
-            _this.timer = null;
           });
       });
       // #endif
