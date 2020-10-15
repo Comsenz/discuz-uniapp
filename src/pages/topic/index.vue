@@ -44,7 +44,7 @@
               :theme-title="thread.type == 1 ? thread.title : ''"
               :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
-              :post-goods="thread.firstPost.postGoods"
+              :post-goods="thread.firstPost.postGoods ? thread.firstPost.postGoods : {}"
               :select-list="selectList"
               :tags="[thread.category]"
               :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
@@ -161,7 +161,9 @@
                 :avatar-url="thread.question.beUser.avatarUrl"
                 :user-name="thread.question.beUser.username"
                 :is-real="thread.question.beUser.isReal"
-                :user-role="thread.question.beUser.groups ? thread.question.beUser.groups : ''"
+                :user-role="
+                  handleGroup(thread.question.beUser.groups && thread.question.beUser.groups)
+                "
                 :theme-time="thread.question.answered_at"
                 :person-num="thread.paidCount"
                 :limit-count="limitShowNum"
@@ -1984,6 +1986,16 @@ export default {
           console.log(err);
         });
     },
+    handleGroup(data) {
+      let groups = [];
+      if (data && data.length > 0) {
+        groups = data.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return [groups[0]];
+      }
+      return [];
+    },
     // 创建问答的回答
     postAnswer() {
       this.commentAnser = true;
@@ -2344,7 +2356,7 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(this.user, '用户信息')
+      console.log(this.user, '用户信息');
       // 微信支付
       if (payType === 0) {
         // #ifdef H5
@@ -2356,12 +2368,15 @@ export default {
         if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
           this.$refs.wechatPopup.open();
           console.log('微信浏览器内没绑定');
-          return;          
+          return;
         }
         // #endif
 
         // #ifdef MP-WEIXIN
-        if (this.user.wechat === undefined || (this.user.wechat && this.user.wechat.min_openid === '')) {
+        if (
+          this.user.wechat === undefined ||
+          (this.user.wechat && this.user.wechat.min_openid === '')
+        ) {
           this.$refs.wechatPopup.open();
           console.log('小程序内什么都没绑定');
           return;
@@ -3334,7 +3349,7 @@ export default {
       // #ifdef MP-WEIXIN
       console.log('这是小程序内');
       uni.setClipboardData({
-        data: 'hello',
+        data: this.thread.firstPost.postGoods.detail_content,
         success: function() {
           console.log('success');
         },

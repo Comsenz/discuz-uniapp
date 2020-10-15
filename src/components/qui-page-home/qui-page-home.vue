@@ -97,8 +97,8 @@
         :theme-btn="item.canHide || ''"
         :theme-reply-btn="item.canReply || ''"
         :them-pay-btn="item.price > 0 || item.attachmentPrice > 0"
-        :user-groups="item.user && item.user.groups"
-        :user-answer-groups="item.question && item.question.beUser.groups"
+        :user-groups="handleGroup(item.user && item.user.groups)"
+        :user-answer-groups="handleGroup(item.question && item.question.beUser.groups)"
         :theme-time="item.createdAt"
         :theme-time-answer="item.question && item.question.answered_at"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
@@ -109,7 +109,7 @@
         :theme-comment="item.postCount - 1"
         :tags="[item.category]"
         :images-list="item.firstPost.images"
-        :post-goods="item.firstPost.postGoods"
+        :post-goods="item.firstPost.postGoods ? item.firstPost.postGoods : {}"
         :theme-essence="item.isEssence"
         :video-width="item.threadVideo && item.threadVideo.width"
         :video-height="item.threadVideo && item.threadVideo.height"
@@ -573,6 +573,16 @@ export default {
     topMargin() {
       return ';';
     },
+    handleGroup(data) {
+      let groups = [];
+      if (data && data.length > 0) {
+        groups = data.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return [groups[0]];
+      }
+      return [];
+    },
     scrpllsip(e, index) {
       // console.log(e, index);
       this.scrollnumber = e;
@@ -955,13 +965,13 @@ export default {
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
           'question',
           'question.beUser',
           'question.beUser.groups',
           'threadAudio',
-          'firstPost.postGoods',
         ],
       };
       if (this.threadType !== null) {
@@ -976,23 +986,8 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
-        console.log(res, '首页列表');
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
-
-        res.forEach((item, index) => {
-          let hasFirst = false;
-          res[index].user.groups = res[index].user.groups.filter(group => {
-            if (group.isDisplay === true && !hasFirst) {
-              hasFirst = true;
-              return true;
-            }
-
-            return false;
-          });
-        });
-        console.log(res, '这是处理后的');
-
         if (this.isResetList) {
           this.threads = res;
         } else {

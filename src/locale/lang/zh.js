@@ -683,6 +683,8 @@ export default {
     downloadError: '下载失败',
     thetemporarypathis: '临时路径为',
     attachment: '附件',
+    previousPage: '上一页',
+    nextPage: '下一页',
     post: '发帖',
     notice: '消息',
     mine: '我的',

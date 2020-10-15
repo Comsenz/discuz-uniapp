@@ -1,18 +1,33 @@
 <template>
   <qui-page :data-qui-theme="theme" class="attachment">
-    <img class="attachment-image" :src="src" @click="previewPic" />
+    <!-- #ifdef MP-WEIXIN -->
+    <img class="attachment-wxImage" :src="src" @click="previewPic" />
+    <!-- #endif -->
+    <!-- #ifdef H5 -->
+    <img class="attachment-h5Image" :src="src" @click="previewPic" />
+    <!-- #endif -->
     <view class="attachment-page">
-      <view class="attachment-page-text attachment-page-previous" v-if="page !== 1">上一页</view>
+      <view
+        class="attachment-page-text attachment-page-previous"
+        v-if="page !== 1"
+        @click="clickPreviousPage"
+      >
+        {{ i18n.t('profile.previousPage') }}
+      </view>
       <view class="attachment-page-num">{{ page }} / {{ totalPage }}</view>
-      <view class="attachment-page-text attachment-page-next" v-if="page !== totalPage">
-        下一页
+      <view
+        class="attachment-page-text attachment-page-next"
+        v-if="page !== totalPage"
+        @click="clickNextPage"
+      >
+        {{ i18n.t('profile.nextPage') }}
       </view>
     </view>
   </qui-page>
 </template>
 
 <script>
-import { http } from '@/api/api-request';
+// import { http } from '@/api/api-request';
 
 export default {
   data() {
@@ -29,25 +44,26 @@ export default {
     preview(page = 1) {
       const attachment = this.$store.getters['session/get']('attachment');
       console.log('attachment', attachment);
-      if (attachment) {
-        http
-          .get(
-            `attachments/${attachment._jv.id}${attachment.url.slice(
-              attachment.url.indexOf('?'),
-              attachment.url.length,
-            )}&page=1`,
-          )
-          .then(res => {
-            if (res) {
-              console.log('res', res);
-              this.src = `${attachment.url}&page=${page}`;
-              this.totalPage = parseInt(`${res.header['x-total-page']}`, 10);
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
+      this.$store
+        .dispatch('jv/get', [
+          `attachments/${attachment._jv.id}${attachment.url.slice(
+            attachment.url.indexOf('?'),
+            attachment.url.length,
+          )}&page=${page}`,
+          {},
+        ])
+        .then(res => {
+          if (res && res._jv) {
+            console.log('res', res);
+            console.log('res._jv', res._jv);
+            console.log('xxxx', res._jv['X-Total-Page']);
+            this.src = res._jv.image;
+            this.totalPage = parseInt(res._jv['X-Total-Page'], 10);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     previewPic() {
       uni.previewImage({
@@ -75,7 +91,12 @@ export default {
   font-size: $fg-f3;
   background-color: --color(--qui-BG-2);
 
-  &-image {
+  &-wxImage {
+    width: 100%;
+    height: 100vh;
+  }
+
+  &-h5Image {
     width: 100%;
     height: 100%;
   }
@@ -88,10 +109,10 @@ export default {
       width: 140rpx;
       height: 60rpx;
       line-height: 60rpx;
-      color: #1878f3;
+      color: --color(--qui-MAIN);
       text-align: center;
-      background-color: #fff;
-      border: 1rpx solid #1878f3;
+      background-color: --color(--qui-BG-2);
+      border: 1rpx solid --color(--qui-MAIN);
       border-radius: 5rpx;
     }
 
@@ -114,7 +135,7 @@ export default {
       width: 78rpx;
       margin: 0 0 0 -39rpx;
       font-weight: bold;
-      color: #333;
+      color: --color(--qui-FC-333);
       opacity: 0.5;
     }
   }
