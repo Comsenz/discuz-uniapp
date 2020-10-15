@@ -109,7 +109,7 @@
         :theme-comment="item.postCount - 1"
         :tags="[item.category]"
         :images-list="item.firstPost.images"
-        :post-goods="item.firstPost.postGoods"
+        :post-goods="item.firstPost.postGoods ? item.firstPost.postGoods : {}"
         :theme-essence="item.isEssence"
         :video-width="item.threadVideo && item.threadVideo.width"
         :video-height="item.threadVideo && item.threadVideo.height"

@@ -1,14 +1,16 @@
 <template>
   <qui-page :data-qui-theme="theme" class="wallet-page">
     <view class="wallet">
-      <navigator url="/pages/modify/withdrawals" hover-class="none">
+      <!-- <navigator url="/pages/modify/withdrawals" hover-class="none"> -->
+      <view @click="nextClick()">
         <qui-cell-item
           :title="i18n.t('profile.availableamount')"
           arrow
           :addon="`¥ ${dataInfo.available_amount || 0.0}`"
           class="wallet-available"
         ></qui-cell-item>
-      </navigator>
+      </view>
+      <!-- </navigator> -->
       <navigator url="/pages/my/freeze" hover-class="none">
         <qui-cell-item
           :title="i18n.t('profile.freezeamount')"
@@ -42,22 +44,61 @@
         ></qui-cell-item>
       </navigator>
     </view>
+    <uni-popup ref="wechatPopup" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :content="wechatTip"
+        :before-close="true"
+        @close="handleWechatClickCancel"
+        @confirm="handleWechatClickOk"
+      ></uni-popup-dialog>
+    </uni-popup>
   </qui-page>
 </template>
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
+import forums from '@/mixin/forums';
+import user from '@/mixin/user';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import loginModule from '@/mixin/loginModule';
+// #ifdef  H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
+  components: { uniPopupDialog },
+  mixins: [
+    forums,
+    user,
+    loginModule,
+    // #ifdef H5
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       dataInfo: {},
       hasPassword: false,
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
+      wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
     };
   },
   onLoad() {
     this.getInfo();
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
+    this.browser = 1;
+    if (this.type === 1) {
+      uni.$on('vditor', (vditor, vditorComponent) => {
+        this.vditor = vditor;
+        this.vditor.setValue(this.textAreaValue);
+        vditorComponent.setPostComponent(this);
+      });
+    }
+    // #endif
   },
   methods: {
     // 获取钱包信息
@@ -68,6 +109,79 @@ export default {
           this.dataInfo = res;
           this.hasPassword = res.user.canWalletPay;
         });
+    },
+    // 判断是否开通企业到付零钱服务
+    nextClick() {
+      // #ifdef H5
+      if (!this.isWeixin) {
+        uni.navigateTo({
+          url: `/pages/modify/withdrawals`,
+        });
+      } else if (
+        this.forums &&
+        !this.forums.paycenter.wxpay_mchpay_close &&
+        this.isWeixin === true
+      ) {
+        uni.navigateTo({
+          url: `/pages/modify/withdrawals`,
+        });
+      } else if (this.forums && this.forums.paycenter.wxpay_mchpay_close) {
+        if (
+          (this.isWeixin === true && this.user.wechat === undefined) ||
+          (this.user.wechat && this.user.wechat.mp_openid === '')
+        ) {
+          this.$refs.wechatPopup.open();
+          console.log('什么都没绑定');
+          return;
+        }
+      }
+      // if (this.forums && !this.forums.paycenter.wxpay_mchpay_close && this.isWeixin === true) {
+      //   uni.navigateTo({
+      //     url: `/pages/modify/withdrawals`,
+      //   });
+      // } else if (this.forums && this.forums.paycenter.wxpay_mchpay_close) {
+      //   if (
+      //     (this.isWeixin === true && this.user.wechat === undefined) ||
+      //     (this.user.wechat && this.user.wechat.mp_openid === '')
+      //   ) {
+      //     this.$refs.wechatPopup.open();
+      //     console.log('什么都没绑定');
+      //     return;
+      //   }
+      // }
+      // #endif
+
+      // #ifdef MP-WEIXIN
+      if (
+        this.user.wechat === undefined ||
+        (this.user.wechat && this.user.wechat.min_openid === '')
+      ) {
+        this.$refs.wechatPopup.open();
+        console.log('小程序内什么都没绑定');
+      }
+      // #endif
+    },
+    // 确认去绑定微信
+    handleWechatClickOk() {
+      console.log('去绑定微信吧');
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login();
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
+    // 取消去绑定微信
+    handleWechatClickCancel() {
+      this.$refs.wechatPopup.close();
     },
   },
 };

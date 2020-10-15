@@ -44,7 +44,7 @@
               :theme-title="thread.type == 1 ? thread.title : ''"
               :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
-              :post-goods="thread.firstPost.postGoods"
+              :post-goods="thread.firstPost.postGoods ? thread.firstPost.postGoods : {}"
               :select-list="selectList"
               :tags="[thread.category]"
               :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"
@@ -877,7 +877,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
-      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
+      wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
       deleteImgId: '', // 删除时图片Id
       followStatus: '', // 当前关注状态
       beRewarded: false,

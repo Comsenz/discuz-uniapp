@@ -9,6 +9,7 @@ export default {
     // 常用
     ok: '确认',
     close: '关闭',
+    wechatBind: '使用微信支付需先绑定微信，点击进行绑定',
     // 日期相关
     date: {
       now: '此刻',

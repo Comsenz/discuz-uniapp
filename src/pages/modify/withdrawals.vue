@@ -129,7 +129,7 @@
             ></qui-input-code>
           </view>
         </view>
-        <view class="cash-explain" v-if="forums.paycenter.wxpay_mchpay_close">
+        <view class="cash-explain" v-if="!forums.paycenter.wxpay_mchpay_close">
           {{ i18n.t('modify.withdrawalTitle') }}
         </view>
         <view class="cash-button">
