@@ -2237,7 +2237,9 @@ export default {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
                 // 这是主题支付和附件支付，支付完成刷新详情页，重新请求数据
-                isOnPaidAttachment = false;
+                if (this.thread.attachmentPrice > 0) {
+                  isOnPaidAttachment = false;
+                }
                 this.loadThread();
                 this.$store.dispatch('jv/get', [
                   'forum',
@@ -2292,7 +2294,10 @@ export default {
 
             if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
-              isOnPaidAttachment = false;
+              if (this.thread.attachmentPrice > 0) {
+                isOnPaidAttachment = false;
+              }
+
               this.loadThread();
               this.$store.dispatch('jv/get', [
                 'forum',
