@@ -519,7 +519,7 @@ export default {
     },
     // 商品
     postGoods: {
-      type: Object,
+      type: [Object, String],
       default: () => {
         return {};
       },
