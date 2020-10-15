@@ -965,13 +965,13 @@ export default {
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
           'question',
           'question.beUser',
           'question.beUser.groups',
           'threadAudio',
-          'firstPost.postGoods',
         ],
       };
       if (this.threadType !== null) {
