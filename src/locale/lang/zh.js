@@ -152,6 +152,7 @@ export default {
       theAnswerIs: '回答者得',
       platform: '平台得',
       payByListeningToAudio: '听语音支付费用',
+      notUploadAudio: '该浏览器暂不支持录音,请切换其他浏览器试试',
     },
   },
   uploader: {
