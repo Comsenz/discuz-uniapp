@@ -1,6 +1,11 @@
 <template>
   <qui-page :data-qui-theme="theme" class="attachment">
-    <img class="attachment-image" :src="src" @click="previewPic" />
+    <!-- #ifdef MP-WEIXIN -->
+    <img class="attachment-wxImage" :src="src" @click="previewPic" />
+    <!-- #endif -->
+    <!-- #ifdef H5 -->
+    <img class="attachment-h5Image" :src="src" @click="previewPic" />
+    <!-- #endif -->
     <view class="attachment-page">
       <view
         class="attachment-page-text attachment-page-previous"
@@ -86,7 +91,12 @@ export default {
   font-size: $fg-f3;
   background-color: --color(--qui-BG-2);
 
-  &-image {
+  &-wxImage {
+    width: 100%;
+    height: 100vh;
+  }
+
+  &-h5Image {
     width: 100%;
     height: 100%;
   }
