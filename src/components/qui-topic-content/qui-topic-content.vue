@@ -303,7 +303,10 @@
           </view>
         </view>
       </view>
-      <view class="themeItem__content__good" v-if="themeType === 6 && postGoods">
+      <view
+        class="themeItem__content__good"
+        v-if="themeType === 6 && Object.keys(postGoods).length !== 0"
+      >
         <view>
           <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
         </view>

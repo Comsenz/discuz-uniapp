@@ -44,7 +44,7 @@
               :theme-title="thread.type == 1 ? thread.title : ''"
               :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
-              :post-goods="thread.firstPost.postGoods"
+              :post-goods="thread.firstPost.postGoods ? thread.firstPost.postGoods : {}"
               :select-list="selectList"
               :tags="[thread.category]"
               :thread-price="thread.attachmentPrice > 0 ? thread.attachmentPrice : thread.price"

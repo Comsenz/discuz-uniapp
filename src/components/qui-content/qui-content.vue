@@ -148,7 +148,10 @@
             ></qui-uparse>
           </view>
         </view>
-        <view class="themeItem__content__good" v-if="postGoods && threadType === 6">
+        <view
+          class="themeItem__content__good"
+          v-if="Object.keys(postGoods).length !== 0 && threadType === 6"
+        >
           <view>
             <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
           </view>
