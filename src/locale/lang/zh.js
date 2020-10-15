@@ -901,6 +901,7 @@ export default {
     cancelpclogin: '取消登录',
     noBindUser: '未绑定用户',
     dear: '亲爱的，',
+    dearPhoneUser: '亲爱的手机号{phone}用户，',
     registerBindText: '你的微信号未绑定账号，注册可完成绑定',
     loginBindText: '请您登录，即可完成微信号和账号的绑定',
     phoneRegisterBindText: '你的手机号未绑定账号，注册即可完成绑定',
