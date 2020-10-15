@@ -17,7 +17,13 @@ export default {
   },
   onLoad(params) {
     // #ifdef H5
-    const login = data => {
+    if (!this.$store.getters['session/get']('isLogin')) {
+      this.wxLogin(params);
+    }
+    // #endif
+  },
+  methods: {
+    wxLogin(data) {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
@@ -52,8 +58,14 @@ export default {
           }
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
-              this.$store.dispatch('session/setToken', res.data.errors[0].token);
-              this.login();
+              const userInfo = {
+                token: res.data.errors[0].token,
+                headimgurl: res.data.errors[0].user.headimgurl,
+                username: res.data.errors[0].user.nickname,
+              };
+              console.log('userInfo：', userInfo);
+              this.$store.dispatch('session/setUserInfo', userInfo);
+              this.jump2RegisterBindPage();
             }
             if (res.data.errors[0].code === 'permission_denied') {
               this.login();
@@ -77,11 +89,7 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    };
-    if (!this.$store.getters['session/get']('isLogin')) {
-      login(params);
-    }
-    // #endif
+    },
   },
 };
 </script>

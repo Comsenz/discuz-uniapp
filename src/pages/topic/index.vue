@@ -642,6 +642,15 @@
           @confirm="handleClickOk"
         ></uni-popup-dialog>
       </uni-popup>
+      <uni-popup ref="wechatPopup" type="center">
+        <uni-popup-dialog
+          type="warn"
+          :content="wechatTip"
+          :before-close="true"
+          @close="handleWechatClickCancel"
+          @confirm="handleWechatClickOk"
+        ></uni-popup-dialog>
+      </uni-popup>
     </view>
     <view v-else-if="loadingStatus && !loaded && !thread.isDeleted" class="loading">
       <u-loading :size="60"></u-loading>
@@ -868,6 +877,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
       deleteImgId: '', // 删除时图片Id
       followStatus: '', // 当前关注状态
       beRewarded: false,
@@ -969,6 +979,7 @@ export default {
       attachmentFileList: [], // 附件列表
       refreshStatus: true, // 是否刷新
       threadIsPaidCover: false, // 付费主题显示遮盖层
+      token: '', // token
     };
   },
   onUnload() {
@@ -1046,6 +1057,7 @@ export default {
     },
   },
   onLoad(option) {
+    this.token = uni.getStorageSync('access_token');
     uni.$on('logind', () => {
       this.loadThread();
       this.loadThreadPosts();
@@ -2344,7 +2356,29 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
+      console.log(this.user, '用户信息')
+      // 微信支付
       if (payType === 0) {
+        // #ifdef H5
+        if (this.isWeixin === true && this.user.wechat === undefined) {
+          this.$refs.wechatPopup.open();
+          console.log('什么都没绑定');
+          return;
+        }
+        if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
+          this.$refs.wechatPopup.open();
+          console.log('微信浏览器内没绑定');
+          return;          
+        }
+        // #endif
+
+        // #ifdef MP-WEIXIN
+        if (this.user.wechat === undefined || (this.user.wechat && this.user.wechat.min_openid === '')) {
+          this.$refs.wechatPopup.open();
+          console.log('小程序内什么都没绑定');
+          return;
+        }
+        // #endif
         if (this.payTypeVal === 0) {
           // 这是主题支付
           this.creatOrder(this.thread.price, 3, this.value, payType);
@@ -2952,7 +2986,28 @@ export default {
         });
       }
     },
-
+    // 确认去绑定微信
+    handleWechatClickOk() {
+      console.log('去绑定微信吧');
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login();
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
+    // 取消去绑定微信
+    handleWechatClickCancel() {
+      this.$refs.wechatPopup.close();
+    },
     handleClickCancel() {
       this.$refs.deletePopup.close();
     },

@@ -58,6 +58,15 @@
         <view class="code-tip">{{ pay.wechatIdentificationQRcode }}</view>
       </view>
     </uni-popup>
+    <uni-popup ref="wechatPopup" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :content="wechatTip"
+        :before-close="true"
+        @close="handleWechatClickCancel"
+        @confirm="handleWechatClickOk"
+      ></uni-popup-dialog>
+    </uni-popup>
     <qui-toast ref="toast"></qui-toast>
   </qui-page>
 </template>
@@ -95,6 +104,7 @@ export default {
       payStatus: false, // 订单支付状态
       orderSn: '', // 订单编号
       isLogin: this.$store.getters['session/get']('isLogin'),
+      wechatTip: '使用微信支付需先绑定微信，点击进行绑定', // 微信绑定提示
       payTypeData: [
         {
           name: this.i18n.t('pay.wxPay'),
@@ -189,8 +199,53 @@ export default {
       this.value = val;
       this.creatOrder(this.forums.set_site.site_price, 1, val);
     },
+    // 确认去绑定微信
+    handleWechatClickOk() {
+      console.log('去绑定微信吧');
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login();
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
+    // 取消去绑定微信
+    handleWechatClickCancel() {
+      this.$refs.wechatPopup.close();
+    },
     // 支付方式选择完成点击确定时
     paysureShow() {
+      // #ifdef H5
+      if (this.isWeixin === true && this.user.wechat === undefined) {
+        this.$refs.wechatPopup.open();
+        console.log('什么都没绑定');
+        return;
+      }
+      if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
+        this.$refs.wechatPopup.open();
+        console.log('微信浏览器内没绑定');
+        return;
+      }
+      // #endif
+
+      // #ifdef MP-WEIXIN
+      if (
+        this.user.wechat === undefined ||
+        (this.user.wechat && this.user.wechat.min_openid === '')
+      ) {
+        this.$refs.wechatPopup.open();
+        console.log('小程序内什么都没绑定');
+        return;
+      }
+      // #endif
       this.creatOrder(this.forums.set_site.site_price, 1, this.value);
     },
     // 创建订单

@@ -318,7 +318,7 @@ export default {
     // 首页底部发帖点击事件跳转
     handleClick(item) {
       let url;
-
+      console.log(item.type, '这是类型');
       if (item.type === 6) {
         uni.navigateTo({
           url: `/pages/topic/parse-goods?type=${item.type}`,

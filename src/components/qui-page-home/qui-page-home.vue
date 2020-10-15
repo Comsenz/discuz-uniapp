@@ -332,7 +332,9 @@ export default {
             { label: this.i18n.t('home.invitation'), value: '1', selected: false },
             { label: this.i18n.t('home.video'), value: '2', selected: false },
             { label: this.i18n.t('home.picture'), value: '3', selected: false },
+            { label: this.i18n.t('home.audio'), value: '4', selected: false },
             { label: this.i18n.t('home.questions'), value: '5', selected: false },
+            { label: this.i18n.t('home.goods'), value: '6', selected: false },
           ],
         },
         {
@@ -456,6 +458,19 @@ export default {
           }
 
           this.threads[index].firstPost.images = images;
+          this.$forceUpdate();
+          break;
+        }
+      }
+    });
+
+    // 详情页编辑增加图片时首页增加图片
+    this.$u.event.$on('refreshGoods', res => {
+      console.log(res, '这是接收的商品');
+      // eslint-disable-next-line no-restricted-syntax
+      for (const index in this.threads) {
+        if (this.threads[index]._jv.id === res.threadId) {
+          this.threads[index].firstPost.postGoods = res.goods;
           this.$forceUpdate();
           break;
         }

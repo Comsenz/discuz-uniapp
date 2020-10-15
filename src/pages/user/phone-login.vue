@@ -42,10 +42,10 @@
         {{ isLogin ? i18n.t('user.login') : i18n.t('user.register') }}
       </view>
       <view class="phone-login-box-ft">
-        <view class="phone-login-box-ft-title">
-          {{ isLogin ? i18n.t('user.otherLoginMode') : i18n.t('user.otherRegisterMode') }}
+        <view v-if="isLogin" class="phone-login-box-ft-title">
+          {{ i18n.t('user.otherLoginMode') }}
         </view>
-        <view class="phone-login-box-ft-con">
+        <view v-if="isLogin" class="phone-login-box-ft-con">
           <image
             :class="[
               forum && forum.qcloud && forum.qcloud.qcloud_sms
@@ -113,7 +113,7 @@
             {{ i18n.t('user.forgetPassword') }}
           </text>
         </view>
-        <view class="" v-else>
+        <view v-else>
           <text class="phone-login-box-ft-btn" @click="switchState">
             {{ i18n.t('user.login') }}
           </text>
@@ -349,9 +349,9 @@ export default {
       }
       // #endif
       // #ifdef H5
-      const token = this.$store.getters['session/get']('token');
-      if (token && token !== '') {
-        params.data.attributes.token = token;
+      const userInfo = this.$store.getters['session/get']('userInfo');
+      if (userInfo && userInfo.token !== '') {
+        params.data.attributes.token = userInfo.token;
       }
       // #endif
       let inviteCode = '';
@@ -422,19 +422,11 @@ export default {
     },
     jump2WechatLogin() {
       // #ifdef MP-WEIXIN
-      if (this.isLogin) {
-        this.getmpLoginParams();
-      } else {
-        this.getmpLoginParams(1);
-      }
+      this.getmpLoginParams();
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
-        if (this.isLogin) {
-          this.wxh5Login();
-        } else {
-          this.wxh5Login(1);
-        }
+        this.wxh5Login();
       } else {
         uni.showToast({
           icon: 'none',
@@ -445,11 +437,7 @@ export default {
       // #endif
     },
     jump2Login() {
-      if (this.isLogin) {
-        this.jump2LoginPage();
-      } else {
-        this.jump2RegisterPage();
-      }
+      this.jump2LoginPage();
     },
     jump2UcLogin() {
       uni.navigateTo({

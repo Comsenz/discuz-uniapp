@@ -168,17 +168,17 @@ export default {
         params.data.attributes.code = data.data.attributes.code;
       }
       if (!this.type) {
-        const token = this.$store.getters['session/get']('token');
-        if (token && token !== '') {
-          params.data.attributes.token = token;
+        const userInfo = this.$store.getters['session/get']('userInfo');
+        if (userInfo && userInfo.token !== '') {
+          params.data.attributes.token = userInfo.token;
         }
       }
       // #endif
       // #ifdef H5
       // 微信内置浏览器注册必传参数
-      const token = this.$store.getters['session/get']('token');
-      if (token && token !== '') {
-        params.data.attributes.token = token;
+      const userInfo = this.$store.getters['session/get']('userInfo');
+      if (userInfo && userInfo.token !== '') {
+        params.data.attributes.token = userInfo.token;
       }
       // #endif
       if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
