@@ -1146,6 +1146,7 @@ export default {
     const _this = this;
     _this.posts = [];
     _this.pageNum = 1;
+    _this.attachmentFileList = [];
     setTimeout(function() {
       _this.loadThread();
       _this.loadThreadPosts();
@@ -2277,6 +2278,7 @@ export default {
               // 这是pc扫码支付完成
               this.$refs.codePopup.close();
               this.qrcodeShow = false;
+              isOnPaidAttachment = false;
               this.loadThread();
               this.$store.dispatch('jv/get', [
                 'forum',
@@ -2290,6 +2292,7 @@ export default {
 
             if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
               // 这是主题支付，支付完成刷新详情页，重新请求数据
+              isOnPaidAttachment = false;
               this.loadThread();
               this.$store.dispatch('jv/get', [
                 'forum',
