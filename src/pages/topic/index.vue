@@ -680,6 +680,7 @@ import { getCurUrl } from '@/utils/getCurUrl';
 
 let payWechat = null;
 let payPhone = null;
+let isOnPaidAttachment = true;
 
 export default {
   components: { uniPopupDialog },
@@ -1262,7 +1263,7 @@ export default {
             } else {
               this.threadIsPaidCover = false;
             }
-            if (!data.isPaidAttachment) {
+            if (isOnPaidAttachment) {
               data.firstPost.attachments.forEach(attachment => {
                 if (data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
                   this.attachmentFileList.push(attachment);
@@ -2235,6 +2236,7 @@ export default {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               if (this.payTypeVal === 0 || this.payTypeVal === 2 || this.payTypeVal === 3) {
                 // 这是主题支付和附件支付，支付完成刷新详情页，重新请求数据
+                isOnPaidAttachment = false;
                 this.loadThread();
                 this.$store.dispatch('jv/get', [
                   'forum',
