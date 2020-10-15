@@ -1566,7 +1566,7 @@ export default {
                   document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
                 }
               } else {
-                this.onBridgeReady(res);
+                // this.onBridgeReady(res);
               }
             } else if (broswerType === '2') {
               payPhone = setInterval(() => {

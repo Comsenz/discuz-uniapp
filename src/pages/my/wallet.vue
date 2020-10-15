@@ -112,6 +112,10 @@ export default {
     },
     // 判断是否开通企业到付零钱服务
     nextClick() {
+      uni.setStorage({
+        key: 'page',
+        data: '/pages/my/wallet',
+      });
       // #ifdef H5
       if (!this.isWeixin) {
         uni.navigateTo({
