@@ -6,6 +6,7 @@
       :pay-status="(thread.price > 0 && thread.paid) || thread.price == 0"
       :user-name="thread.user ? thread.user.username : ''"
       :theme-image="thread.user ? thread.user.avatarUrl : ''"
+      :post-goods="thread.firstPost.postGoods"
       :is-real="thread.user ? thread.user.isReal : false"
       :theme-btn="thread.canHide || ''"
       :theme-reply-btn="thread.canReply || ''"
