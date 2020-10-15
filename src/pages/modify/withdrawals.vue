@@ -3,7 +3,7 @@
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
-        <view class="cash-content-tab" v-if="!forums.paycenter.wxpay_mchpay_close">
+        <view class="cash-content-tab" v-if="!wxpayMchpayClose">
           <qui-cell-item
             :title="i18n.t('modify.collectionwechat')"
             slot-right
@@ -129,7 +129,7 @@
             ></qui-input-code>
           </view>
         </view>
-        <view class="cash-explain" v-if="!forums.paycenter.wxpay_mchpay_close">
+        <view class="cash-explain" v-if="!wxpayMchpayClose">
           {{ i18n.t('modify.withdrawalTitle') }}
         </view>
         <view class="cash-button">
@@ -195,11 +195,13 @@ export default {
       withdrawalPhon: '', // 提现手机号
       withdrawalNumber: '',
       cashType: 0,
+      wxpayMchpayClose: true,
     };
   },
   onLoad() {
     this.userid = this.usersid;
     this.setmydata();
+    this.wxpayMchpayClose = this.forums.paycenter.wxpay_mchpay_close;
     this.$nextTick(() => {
       this.cost = this.forums.set_cash.cash_rate;
       const prop = this.forums.set_cash.cash_rate * 100;
@@ -215,7 +217,6 @@ export default {
       // this.postLoading = false;
       uni.hideLoading();
     });
-    console.log(this.forums);
     if (this.forums.paycenter.wxpay_mchpay_close) {
       this.cashType = 1;
     } else {
@@ -223,6 +224,9 @@ export default {
     }
   },
   computed: {
+    forum() {
+      return this.$store.getters['jv/get']('forums/1');
+    },
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
@@ -230,6 +234,22 @@ export default {
       const data = this.$store.getters['jv/get'](`users/${this.usersid}`);
       return data;
     },
+  },
+  watch: {
+    forum(newValue) {
+      if (newValue) {
+        this.cost = this.forum.set_cash.cash_rate;
+        const prop = this.forum.set_cash.cash_rate * 100;
+        this.percentage = prop;
+        this.wxpayMchpayClose = this.forum.paycenter.wxpay_mchpay_close;
+        if (this.forum.paycenter.wxpay_mchpay_close) {
+          this.cashType = 1;
+        } else {
+          this.cashType = 0;
+        }
+      }
+    },
+    deep: true,
   },
   methods: {
     fourse() {
