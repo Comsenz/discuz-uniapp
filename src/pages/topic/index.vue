@@ -2356,7 +2356,7 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(this.user, '用户信息')
+      console.log(this.user, '用户信息');
       // 微信支付
       if (payType === 0) {
         // #ifdef H5
@@ -2368,12 +2368,15 @@ export default {
         if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
           this.$refs.wechatPopup.open();
           console.log('微信浏览器内没绑定');
-          return;          
+          return;
         }
         // #endif
 
         // #ifdef MP-WEIXIN
-        if (this.user.wechat === undefined || (this.user.wechat && this.user.wechat.min_openid === '')) {
+        if (
+          this.user.wechat === undefined ||
+          (this.user.wechat && this.user.wechat.min_openid === '')
+        ) {
           this.$refs.wechatPopup.open();
           console.log('小程序内什么都没绑定');
           return;
@@ -3346,7 +3349,7 @@ export default {
       // #ifdef MP-WEIXIN
       console.log('这是小程序内');
       uni.setClipboardData({
-        data: 'hello',
+        data: this.thread.firstPost.postGoods.detail_content,
         success: function() {
           console.log('success');
         },

@@ -708,6 +708,7 @@ export default {
           'firstPost',
           'firstPost.likedUsers',
           'firstPost.images',
+          'firstPost.postGoods',
           'firstPost.attachments',
           'rewardedUsers',
           'category',

@@ -69,6 +69,7 @@ export default {
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
           'threadAudio',

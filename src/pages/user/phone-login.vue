@@ -340,9 +340,7 @@ export default {
       // #ifdef MP-WEIXIN
       const data = this.$store.getters['session/get']('params');
       if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
+        params.data.attributes.register = data.data.attributes.register;
       }
       if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
         params.data.attributes.inviteCode = data.data.attributes.code;
@@ -422,7 +420,7 @@ export default {
     },
     jump2WechatLogin() {
       // #ifdef MP-WEIXIN
-      this.getmpLoginParams();
+      this.mpLogin();
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
