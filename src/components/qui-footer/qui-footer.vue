@@ -342,6 +342,7 @@ export default {
 
       if (this.isWeixin && this.isiOS && item.type === 4) {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.IOSWxNotRecordAudio') });
+        return;
       }
       if (item.type === 5) {
         uni.navigateTo({
