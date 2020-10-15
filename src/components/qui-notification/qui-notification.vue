@@ -190,7 +190,9 @@
             @click="jumpMyComment(item)"
           >
             <view class="list-box__notice__con__wrap-info">
-              <text class="list-box__notice__con__wrap-info-username">我</text>
+              <text class="list-box__notice__con__wrap-info-username">
+                {{ userInfo.username == item.user_name ? i18n.t('home.tabsMy') : item.user_name }}
+              </text>
               <text class="list-box__notice__con__wrap-info-text" decode>{{ reply }}</text>
               <text class="list-box__notice__con__wrap-info-username">
                 {{ item.thread_username }}：
@@ -256,8 +258,10 @@ export default {
   },
 
   data() {
+    const userId = this.$store.getters['session/get']('userId');
     return {
       reply: '&nbsp;回复了&nbsp;',
+      userInfo: this.$store.getters['jv/get'](`users/${userId}`),
     };
   },
 

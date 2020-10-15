@@ -1088,7 +1088,6 @@ export default {
           }
         });
         thread.imgList = imgList;
-        debugger;
       }
       uni.setStorageSync('current_thread', JSON.stringify(thread));
     },
