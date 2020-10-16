@@ -110,18 +110,12 @@ const actions = {
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
     console.log(context, payload);
-    let inviteCode = '';
+    const inviteCode = uni.getStorageSync('inviteCode');
     let register = 0;
     uni.getStorage({
       key: 'register',
       success(resData) {
         register = resData.data || 0;
-      },
-    });
-    uni.getStorage({
-      key: 'inviteCode',
-      success(resData) {
-        inviteCode = resData.data || '';
       },
     });
     const options = { custom: { showTost: false } };
@@ -199,9 +193,7 @@ const actions = {
     return new Promise(resolve => {
       context.commit(DELETE_USER_ID);
       context.commit(DELETE_ACCESS_TOKEN);
-      uni.removeStorage({
-        key: 'inviteCode',
-      });
+      uni.removeStorageSync('inviteCode');
       uni.removeStorage({
         key: 'page',
       });

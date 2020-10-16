@@ -146,9 +146,9 @@ export default {
         params.data.attributes.iv = data.data.attributes.iv;
         params.data.attributes.encryptedData = data.data.attributes.encryptedData;
       }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.code = data.data.attributes.code;
-      }
+      // if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
+      //   params.data.attributes.code = data.data.attributes.code;
+      // }
       // #endif
       const userInfo = this.$store.getters['session/get']('userInfo');
       if (userInfo && userInfo.token !== '') {
@@ -162,13 +162,7 @@ export default {
         params.data.attributes.captcha_ticket = this.ticket;
         params.data.attributes.captcha_rand_str = this.randstr;
       }
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
+      const inviteCode = uni.getStorageSync('inviteCode');
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }

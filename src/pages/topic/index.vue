@@ -1933,6 +1933,7 @@ export default {
         this.publishClickStatus = true;
         return false;
       }
+      console.log('^^^^^^^^');
       let params = {};
       if (this.commentReply) {
         params = {
@@ -1989,7 +1990,17 @@ export default {
           this.publishClickStatus = true;
           if (res.isApproved === 1) {
             if (!res.isComment) {
+              // 只保留一个用户组显示
+              let hasFirst = false;
+              res.user.groups = res.user.groups.filter(group => {
+                if (group.isDisplay === true && !hasFirst) {
+                  hasFirst = true;
+                  return true;
+                }
+                return false;
+              });
               this.posts.push(res);
+              console.log('(((((((((((((((', res);
             } else {
               if (!this.posts[this.postIndex].lastThreeComments) {
                 this.posts[this.postIndex].lastThreeComments = [];
@@ -2388,10 +2399,10 @@ export default {
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
       console.log(this.user, '用户信息');
-        uni.setStorage({
-          key: 'page',
-          data: `/pages/topic/index?id=${this.threadId}`,
-        });
+      uni.setStorage({
+        key: 'page',
+        data: `/pages/topic/index?id=${this.threadId}`,
+      });
       // 微信支付
       if (payType === 0) {
         // #ifdef H5

@@ -1524,7 +1524,7 @@ export default {
           console.log(err);
         });
     },
-    // 订单支付       broswerType: 0是小程序，1是微信浏览器，2是h5，3是pc
+    // 订单支付       broswerType: 0是小程序，微信1是浏览器，2是h5，3是pc
     orderPay(type, value, orderSn, payType, broswerType) {
       console.log(type, value, orderSn, payType, broswerType);
       let params = {};
@@ -1576,7 +1576,7 @@ export default {
                 }
                 this.getOrderStatus(orderSn, broswerType);
               }, 3000);
-              window.location.href = res.wechat_h5_link;
+              // window.location.href = res.wechat_h5_link;
             } else if (broswerType === '3') {
               if (res) {
                 this.codeUrl = res.wechat_qrcode;
@@ -1630,6 +1630,20 @@ export default {
           if (this.payStatus === 1) {
             if (broswerType === '2') {
               console.log('h5h5h5h5h5h5h5h');
+              this.postThread().then(res => {
+                console.log(res, 'postThreadresresres');
+                this.postLoading = false;
+                uni.hideLoading();
+                if (res && res.isApproved === 1) {
+                  this.$u.event.$emit('addThread', res);
+                  console.log(res, '付钱付钱000000');
+                }
+                if (res && res._jv.json.data.id) {
+                  uni.redirectTo({
+                    url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                  });
+                }
+              });
               // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
