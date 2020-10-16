@@ -125,6 +125,9 @@ export default {
     userId() {
       return this.$store.getters['session/get']('userId');
     },
+    user() {
+      return this.$store.getters['jv/get'](`users/${this.userId}`);
+    },
   },
   created() {
     // 华为手机支付后不刷新也不进入任何生命周期的情况
@@ -225,6 +228,10 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow() {
+      uni.setStorage({
+        key: 'page',
+        data: `/pages/site/info`,
+      });
       // #ifdef H5
       if (this.isWeixin === true && this.user.wechat === undefined) {
         this.$refs.wechatPopup.open();
