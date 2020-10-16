@@ -73,14 +73,15 @@ export default {
           'category',
           'threadVideo',
           'threadAudio',
-          'question',
-          'question.beUser',
-          'question.beUser.groups',
+          // 'question',
+          // 'question.beUser',
+          // 'question.beUser.groups',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[isApproved]': 1,
         'filter[userId]': this.userId,
+        'filter[type]': '0,1,2,3,4,6',
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))
