@@ -308,7 +308,7 @@ export default {
     height: 100%;
   }
   &-box {
-    padding: 40rpx 70rpx 36rpx;
+    padding: 46rpx 70rpx 40rpx;
     background: #000;
     border-radius: 10rpx;
   }
