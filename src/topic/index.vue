@@ -2407,7 +2407,7 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(this.user, '用户信息');
+      console.log(payType, '用户信息');
       uni.setStorage({
         key: 'page',
         data: `/topic/index?id=${this.threadId}`,
@@ -2450,6 +2450,7 @@ export default {
           this.creatOrder(this.thread.attachmentPrice, 7, this.value, payType);
         }
       } else if (payType === 1) {
+        console.log('qianbaozhifuzhufi')
         // 这是详情页获取到的支付方式---钱包
       }
     },
