@@ -1577,6 +1577,7 @@ export default {
             } else if (broswerType === '1') {
               console.log('111111111')
               if (typeof WeixinJSBridge === 'undefined') {
+                console.log('22222222')
                 if (document.addEventListener) {
                   document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
                 } else if (document.attachEvent) {
@@ -1585,6 +1586,7 @@ export default {
                 }
               } else {
                 this.onBridgeReady(res);
+                console.log('elseelseelseelse')
               }
             } else if (broswerType === '2') {
               console.log('这里是broswerType2222')
@@ -1679,6 +1681,21 @@ export default {
                   });
                 }
               });
+            } else if (broswerType === '1') {
+              this.postThread().then(res => {
+                console.log(res, 'postThreadresresres');
+                this.postLoading = false;
+                uni.hideLoading();
+                if (res && res.isApproved === 1) {
+                  this.$u.event.$emit('addThread', res);
+                  console.log(res, '付钱付钱000000');
+                }
+                if (res && res._jv.json.data.id) {
+                  uni.redirectTo({
+                    url: `/topic/index?id=${res._jv.json.data.id}`,
+                  });
+                }
+              });
             }
             this.$refs.toast.show({ message: this.i18n.t('pay.paySuccess') });
           }
@@ -1718,7 +1735,7 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
-      console.log('shhshshshhshshhshshshh')
+      console.log(data, 'datadata')
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',

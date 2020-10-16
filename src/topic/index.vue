@@ -2128,6 +2128,7 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
+      console.log(data, 'datadata')
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
