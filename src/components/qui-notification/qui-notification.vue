@@ -282,7 +282,7 @@ export default {
     jumpMyComment(item) {
       if (item.type === 'questioned') {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${item.thread_id}`,
+          url: `/topic/index?id=${item.thread_id}`,
         });
         return;
       }
@@ -299,7 +299,7 @@ export default {
     jumpOtherTopic(topicId) {
       if (topicId) {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${topicId}`,
+          url: `/topic/index?id=${topicId}`,
         });
       }
     },
@@ -312,7 +312,7 @@ export default {
         item.thread_is_approved === 1
       ) {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${item.raw.thread_id}`,
+          url: `/topic/index?id=${item.raw.thread_id}`,
         });
       }
     },

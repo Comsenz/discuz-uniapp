@@ -153,7 +153,7 @@ export default {
         return;
       }
       uni.navigateTo({
-        url: `/pages/topic/index?id=${data.thread._jv.id}`,
+        url: `/topic/index?id=${data.thread._jv.id}`,
       });
     },
     // 处理主题相关的数据

@@ -131,12 +131,12 @@ export default {
             } else if (this.themid) {
               // #ifdef H5
               uni.redirectTo({
-                url: `/pages/topic/index?id=${this.themid}`,
+                url: `/topic/index?id=${this.themid}`,
               });
               // #endif
               // #ifndef H5
               uni.redirectTo({
-                url: `/pages/topic/index?id=${this.themid}`,
+                url: `/topic/index?id=${this.themid}`,
                 success() {
                   pages[1].onLoad();
                 },

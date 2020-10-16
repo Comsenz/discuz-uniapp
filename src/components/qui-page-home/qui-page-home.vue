@@ -686,20 +686,20 @@ export default {
     // 点击置顶跳转到详情页
     stickyClick(id) {
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
+        url: `/topic/index?id=${id}`,
       });
     },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
+        url: `/topic/index?id=${id}`,
       });
     },
     // 内容部分点击跳转到详情页
     contentClick(thread) {
       if (thread.canViewPosts) {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${thread._jv.id}`,
+          url: `/topic/index?id=${thread._jv.id}`,
         });
       } else {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingTopic') });

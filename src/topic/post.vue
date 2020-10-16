@@ -1580,7 +1580,7 @@ export default {
             } else if (broswerType === '2') {
               console.log('这里是broswerType2222')
               this.postThread().then(data => {
-                // window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin + '/pages/topic/index?id='+ data._jv.id)}`;
+                // window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin /topic/indexdex?id='+ data._jv.id)}`;
                 // this.postLoading = false;
                 // uni.hideLoading();
                 // if (res && res.isApproved === 1) {
@@ -1589,7 +1589,7 @@ export default {
                 // }
                 // if (res && res._jv.json.data.id) {
                 //   uni.redirectTo({
-                //     url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                //     url: `/topic/index?id=${res._jv.json.data.id}`,
                 //   });
                 // }
               });
@@ -1624,7 +1624,7 @@ export default {
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
-                    url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                    url: `/topic/index?id=${res._jv.json.data.id}`,
                   });
                 }
               });
@@ -1666,7 +1666,7 @@ export default {
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
-                    url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                    url: `/topic/index?id=${res._jv.json.data.id}`,
                   });
                 }
               });
@@ -1950,7 +1950,7 @@ export default {
                 // });
                 if (res && this.threadId) {
                   uni.redirectTo({
-                    url: `/pages/topic/index?id=${this.threadId}`,
+                    url: `/topic/index?id=${this.threadId}`,
                   });
                 }
               });
@@ -1965,7 +1965,7 @@ export default {
               // });
               if (res && this.threadId) {
                 uni.redirectTo({
-                  url: `/pages/topic/index?id=${this.threadId}`,
+                  url: `/topic/index?id=${this.threadId}`,
                 });
               }
             });
@@ -1987,7 +1987,7 @@ export default {
               }
               if (res && res._jv.json.data.id) {
                 uni.redirectTo({
-                  url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                  url: `/topic/index?id=${res._jv.json.data.id}`,
                 });
               }
             });
