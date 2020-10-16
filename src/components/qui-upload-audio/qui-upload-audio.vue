@@ -32,6 +32,19 @@
       </view>
     </view>
     <qui-toast ref="toast"></qui-toast>
+    <view class="qui-loading-content" v-if="uploadLoading">
+      <qui-loading
+        name="icon-jiazaizhong"
+        class="qui-loading-box"
+        size="60"
+        color="#ffffff"
+        text-color="#ffffff"
+        text-size="15"
+        vertical
+      >
+        上传中...
+      </qui-loading>
+    </view>
   </view>
 </template>
 
@@ -64,6 +77,7 @@ export default {
       timer: null, // 计时器
       recorder: new Record(),
       isUpLoad: true,
+      uploadLoading: false,
     };
   },
   computed: {
@@ -134,7 +148,7 @@ export default {
       if (this.durationTime > 1) {
         clearInterval(this.timer);
         if (this.isUpLoad) {
-          uni.showLoading();
+          this.uploadLoading = true;
           this.isUpLoad = false;
           const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
           // #ifdef MP-WEIXIN
@@ -169,12 +183,10 @@ export default {
         mediaName: name,
         success() {},
         error() {
-          uni.hideLoading();
           _this.$refs.toast.show({ message: _this.i18n.t('uploader.uploadFailed') });
         },
         progress() {},
         finish(result) {
-          uni.hideLoading();
           _this.postVideo(result.fileId, 1, result.videoUrl, name);
         },
       });
@@ -187,10 +199,8 @@ export default {
           .upload({
             mediaFile: audioFile,
           })
-          .on('media_progress', () => {})
           .done()
           .then(doneResult => {
-            uni.hideLoading();
             _this.postVideo(doneResult.fileId, 1, doneResult.video.url, name);
           });
       });
@@ -236,16 +246,8 @@ export default {
       }, 1000);
     },
     // 删除
-    deleteItem(audioId) {
-      this.fileList.forEach((item, index) => {
-        if (item.id === audioId) {
-          this.fileList.splice(index, 1);
-        }
-      });
-      this.showAdd = true;
-      this.duration = '00:00:00';
-      this.durationTime = 0;
-      this.timer = null;
+    deleteItem() {
+      this.$emit('audioDel');
     },
     // 将blob转换为file
     blobToFile(theBlob, fileName) {
@@ -272,12 +274,17 @@ export default {
         type,
       };
       this.$store.dispatch('jv/post', params).then(res => {
+        this.duration = '00:00:00';
+        this.durationTime = 0;
+        this.timer = null;
+        this.uploadLoading = false;
         this.isUpLoad = true;
         this.fileList.push({
           fileName: name,
           url: res.media_url,
           id: res.file_id,
         });
+        this.showAdd = true;
       });
     },
   },
@@ -287,7 +294,25 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/theme/fn.scss';
 @import '@/styles/base/variable/global.scss';
-
+.qui-loading {
+  &-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  &-box {
+    padding: 40rpx 70rpx 36rpx;
+    background: #000;
+    border-radius: 10rpx;
+  }
+}
 .qui-uploader-box {
   padding: 40rpx 0;
 

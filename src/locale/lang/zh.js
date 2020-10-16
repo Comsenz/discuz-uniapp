@@ -256,6 +256,7 @@ export default {
     deleteNewsSure: '确定删除这条消息吗？',
     deleteFavoriteSure: '确定删除这条收藏吗？',
     deleteMessageSure: '确定删除这条私信会话吗？',
+    deleteAudioSure: '确定删除这条语音吗？',
     user_deny: '对方设置了屏蔽，无法进行此操作',
     uc_user_check_username_failed: '用户名错误',
     uc_user_username_badword: '用户名或密码错误',
