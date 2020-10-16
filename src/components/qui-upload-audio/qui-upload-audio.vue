@@ -37,9 +37,8 @@
 
 <script>
 import Record from '@/utils/record-sdk';
-// #ifdef  H5
+// #ifdef H5
 import TcVod from 'vod-js-sdk-v6';
-import appCommonH from '@/utils/commonHelper';
 // #endif
 // #ifdef MP-WEIXIN
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
@@ -48,11 +47,6 @@ const recorderManager = wx.getRecorderManager();
 // #endif
 
 export default {
-  mixins: [
-    // #ifdef  H5
-    appCommonH,
-    // #endif
-  ],
   props: {
     audioBeforeList: {
       type: Array,
@@ -69,8 +63,7 @@ export default {
       durationTime: 0, // 总时长（格式秒，用于计时）
       timer: null, // 计时器
       recorder: new Record(),
-      isWeixin: '', // 是否是微信浏览器内
-      isiOS: '',
+      isUpLoad: true,
     };
   },
   computed: {
@@ -96,12 +89,6 @@ export default {
       },
       deep: true,
     },
-  },
-  created() {
-    // #ifdef H5
-    this.isWeixin = appCommonH.isWeixin().isWeixin;
-    this.isiOS = appCommonH.isWeixin().isiOS;
-    // #endif
   },
   methods: {
     // 开始录音的时候
@@ -129,53 +116,52 @@ export default {
       // #endif
 
       // #ifdef H5
-      if (this.isWeixin && this.isiOS) {
-        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.IOSWxNotRecordAudio') });
-      } else {
-        this.recorder.startRecord({
-          success: () => {
-            this.showAdd = false;
-            this.chronoscope();
-            console.log('start record successfully.');
-          },
-          error: () => {
-            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notRecordAudio') });
-            console.log('start record failed.');
-          },
-        });
-      }
+      this.recorder.startRecord({
+        success: () => {
+          this.showAdd = false;
+          this.chronoscope();
+          console.log('start record successfully.');
+        },
+        error: () => {
+          this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notRecordAudio') });
+          console.log('start record failed.');
+        },
+      });
       // #endif
     },
     // 停止录音
     stop() {
       if (this.durationTime > 1) {
         clearInterval(this.timer);
-        const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
-        // #ifdef MP-WEIXIN
-        recorderManager.stop();
-        recorderManager.onStop(res => {
-          this.uploadAudio(res, audioName);
-        });
-        // #endif
-        // #ifdef H5
-        this.recorder.stopRecord({
-          success: res => {
-            // 此处可以获取音频源文件(res)，用于上传等操作
-            const file = this.blobToFile(res, audioName);
-            this.uploadAudio(file, audioName);
-            console.log('stop record successfully.');
-          },
-          error: () => {
-            console.log('stop record failed.');
-          },
-        });
-        // #endif
+        if (this.isUpLoad) {
+          uni.showLoading();
+          this.isUpLoad = false;
+          const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
+          // #ifdef MP-WEIXIN
+          recorderManager.stop();
+          recorderManager.onStop(res => {
+            this.uploadAudio(res, audioName);
+          });
+          // #endif
+          // #ifdef H5
+          this.recorder.stopRecord({
+            success: res => {
+              // 此处可以获取音频源文件(res)，用于上传等操作
+              const file = this.blobToFile(res, audioName);
+              this.uploadAudio(file, audioName);
+              console.log('stop record successfully.');
+            },
+            error: () => {
+              console.log('stop record failed.');
+            },
+          });
+          // #endif
+        }
       }
     },
     // 录音上传
     uploadAudio(audioFile, name) {
       const _this = this;
-      uni.showLoading();
       // #ifdef MP-WEIXIN
       VodUploader.start({
         mediaFile: audioFile,
@@ -286,6 +272,7 @@ export default {
         type,
       };
       this.$store.dispatch('jv/post', params).then(res => {
+        this.isUpLoad = true;
         this.fileList.push({
           fileName: name,
           url: res.media_url,

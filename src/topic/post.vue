@@ -2111,7 +2111,7 @@ export default {
         params.price = '';
       } else if (this.payType === 0) {
         params.attachment_price = '';
-        params.price = '';
+        params.price = this.price;
       }
       console.log(params, '这是参数');
       const currentPosition = this.currentPosition;

@@ -8,7 +8,9 @@
           <img class="login-bind-box-info-image" :src="userInfo.headimgurl" />
           <text class="login-bind-box-info-bold">{{ userInfo.username }}</text>
         </view>
-        <view class="login-bind-box-info-ft">{{ i18n.t('user.loginBindText') }}</view>
+        <view class="login-bind-box-info-ft">
+          {{ isChangeBind ? i18n.t('user.changeLoginBindText') : i18n.t('user.loginBindText') }}
+        </view>
       </view>
       <view class="login-bind-box-con">
         <input
@@ -31,7 +33,17 @@
         {{ i18n.t('user.loginBind') }}
       </view>
       <view class="login-bind-box-ft">
-        <view>
+        <view v-if="isChangeBind">
+          <!-- 开启注册功能才显示 -->
+          <text
+            class="login-bind-box-ft-btn"
+            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            @click="jump2Register"
+          >
+            {{ i18n.t('user.registerUser') }}
+          </text>
+        </view>
+        <view v-else>
           <!-- 开启注册功能才显示 -->
           <text
             class="login-bind-box-ft-btn"
@@ -89,6 +101,17 @@ export default {
       console.log('用户信息：', data);
       return data;
     },
+    isChangeBind() {
+      let data = true;
+      uni.getStorage({
+        key: 'isChangeBind',
+        success(resData) {
+          data = resData.data;
+        },
+      });
+      console.log('data', data);
+      return data;
+    },
   },
   methods: {
     handleLogin() {
@@ -103,6 +126,10 @@ export default {
       this.getLoginParams(params, this.i18n.t('user.loginBindSuccess'));
     },
     jump2Register() {
+      uni.setStorage({
+        key: 'isBind',
+        data: false,
+      });
       this.jump2RegisterBindPage();
     },
     jump2findpwd() {

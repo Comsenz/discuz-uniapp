@@ -156,6 +156,7 @@ export default {
       pwdVal: '', // 支付密码
       expirationTime: '', // 到期时间
       payingusers: '',
+      rightsice: '',
       wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
     };
   },
@@ -165,6 +166,7 @@ export default {
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     this.browser = 1;
     // #endif
+    this.rightsice = evn.sice;
     this.groupId = evn.groups;
     this.payingusers = evn.index;
     if (evn.sice === '1') {
@@ -298,6 +300,11 @@ export default {
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
       console.log(payType, '支付方式');
+      const _this = this;
+      uni.setStorage({
+        key: 'page',
+        data: `/pages/modify/rightdetails?sice=${_this.rightsice}&groups=${_this.groupId}&index=${_this.payingusers}`,
+      });
       if (payType === 0) {
         // #ifdef H5
         if (this.isWeixin === true && this.user.wechat === undefined) {

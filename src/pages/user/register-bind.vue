@@ -10,7 +10,11 @@
           <img class="register-bind-box-info-image" :src="userInfo.headimgurl" />
           <text class="register-bind-box-info-bold">{{ userInfo.username }}</text>
         </view>
-        <view class="register-bind-box-info-ft">{{ i18n.t('user.registerBindText') }}</view>
+        <view class="register-bind-box-info-ft">
+          {{
+            isChangeBind ? i18n.t('user.changeRegisterBindText') : i18n.t('user.registerBindText')
+          }}
+        </view>
       </view>
       <view class="register-bind-box-con">
         <input
@@ -124,6 +128,17 @@ export default {
     userInfo() {
       const data = this.$store.getters['session/get']('userInfo');
       console.log('用户信息：', data);
+      return data;
+    },
+    isChangeBind() {
+      let data = true;
+      uni.getStorage({
+        key: 'isChangeBind',
+        success(resData) {
+          data = resData.data;
+        },
+      });
+      console.log('data', data);
       return data;
     },
   },
@@ -311,6 +326,10 @@ export default {
         });
     },
     jump2Login() {
+      uni.setStorage({
+        key: 'isBind',
+        data: false,
+      });
       this.jump2LoginBindPage();
     },
   },

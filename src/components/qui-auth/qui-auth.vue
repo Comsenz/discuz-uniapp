@@ -128,7 +128,11 @@ export default {
       const routes = getCurrentPages();
       const curRoute = routes[routes.length - 1].route;
       console.log('getCurrentPages()', getCurrentPages());
-      if (curRoute === 'pages/site/partner-invite' || curRoute === 'pages/user/login') {
+      if (
+        curRoute === 'pages/site/partner-invite' ||
+        curRoute === 'pages/user/login' ||
+        curRoute === 'pages/user/phone-login'
+      ) {
         uni.setStorage({
           key: 'page',
           data: '/pages/home/index',
@@ -172,9 +176,21 @@ export default {
                   url: '/pages/site/info',
                 });
               }
-              uni.showToast({
-                title: this.i18n.t('user.loginSuccess'),
-                duration: 2000,
+              uni.getStorage({
+                key: 'isBind',
+                success(resData) {
+                  if (resData.data) {
+                    uni.showToast({
+                      title: '绑定成功',
+                      duration: 2000,
+                    });
+                  } else {
+                    uni.showToast({
+                      title: '登录成功',
+                      duration: 2000,
+                    });
+                  }
+                },
               });
             }
             if (

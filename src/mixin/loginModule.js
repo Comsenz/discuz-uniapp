@@ -201,72 +201,7 @@ module.exports = {
         data: register,
       });
       this.$store.getters['session/get']('auth').open();
-      // const params = {
-      //   data: {
-      //     attributes: {},
-      //   },
-      // };
-      // const data = this.$store.getters['session/get']('params');
-      // if (data && data.data && data.data.attributes) {
-      //   params.data.attributes.js_code = data.data.attributes.js_code;
-      //   params.data.attributes.iv = data.data.attributes.iv;
-      //   params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-      //   params.data.attributes.register = register;
-      // }
-      // if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-      //   params.data.attributes.code = data.data.attributes.code;
-      // }
-      // this.mpLogin(params);
     },
-    /**
-     * 小程序登录
-     */
-    // mpLogin(params) {
-    //   this.$store
-    //     .dispatch('session/noSenseMPLogin', params)
-    //     .then(res => {
-    //       if (res && res.data && res.data.data && res.data.data.id) {
-    //         console.log('小程序登录成功：', res);
-    //         this.logind();
-    //         if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-    //           uni.getStorage({
-    //             key: 'page',
-    //             success(resData) {
-    //               uni.redirectTo({
-    //                 url: resData.data,
-    //               });
-    //             },
-    //           });
-    //         }
-    //         if (
-    //           this.forum &&
-    //           this.forum.set_site &&
-    //           this.forum.set_site.site_mode === SITE_PAY &&
-    //           this.user &&
-    //           !this.user.paid
-    //         ) {
-    //           uni.redirectTo({
-    //             url: '/pages/site/info',
-    //           });
-    //         }
-    //         uni.showToast({
-    //           title: this.i18n.t('user.registerSuccess'),
-    //           duration: 2000,
-    //         });
-    //       }
-    //       if (
-    //         res.data.errors &&
-    //         (res.data.errors[0].code === 'no_bind_user' ||
-    //           res.data.errors[0].code === 'register_close')
-    //       ) {
-    //         this.refreshmpParams();
-    //         this.jump2RegisterBindPage();
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // },
     /**
      * 微信h5登录/注册
      */
