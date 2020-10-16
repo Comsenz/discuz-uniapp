@@ -303,7 +303,7 @@ export default {
       // const _this = this;
       uni.setStorage({
         key: 'page',
-        data: `/pages/modify/right`,
+        data: `/pages/modify/rightdetails?sice=${this.rightsice}&groups=${this.groupId}&index=${this.payingusers}`,
       });
       if (payType === 0) {
         // #ifdef H5
