@@ -358,6 +358,7 @@
           ref="uploadAudio"
           :audio-before-list="audioBeforeList"
           @change="uploadAudioChange"
+          @audioDel="audioDel"
         ></qui-upload-audio>
       </view>
       <qui-cell-item
@@ -1381,6 +1382,11 @@ export default {
     uploadAudioChange(e) {
       this.audioBeforeList = e;
     },
+    audioDel() {
+      this.deleteType = 3;
+      this.$refs.deletePopup.open();
+      this.deleteTip = this.i18n.t('core.deleteAudioSure');
+    },
     // 表情点击事件
     getEmojiClick(code) {
       let text = '';
@@ -1452,6 +1458,7 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
+      console.log(payType, 'payTypepaytype')
       uni.setStorage({
         key: 'page',
         data: `/topic/post?type=5&categoryId=${this.categoryid}&categoryIndex=${this.categoryindex}`,
@@ -1482,6 +1489,7 @@ export default {
         // #endif
         this.creatOrder(this.priceAsk, 5, '', payType);
       } else if (payType === 1) {
+        console.log('钱包支付烦烦烦')
         // 这是详情页获取到的支付方式---钱包
       }
     },
@@ -1516,7 +1524,8 @@ export default {
                 // 这是微信浏览器
                 this.orderPay(12, value, this.orderSn, payType, '1');
               } else if (this.isPhone) {
-                this.orderPay(11, value, this.orderSn, payType, '2');
+                console.log('h5')
+                this.orderPay(20, value, this.orderSn, 1, '2');
               } else {
                 // 这是pc，没调接口之前
                 this.orderPay(10, value, this.orderSn, payType, '3');
@@ -1568,6 +1577,7 @@ export default {
             } else if (broswerType === '1') {
               console.log('111111111')
               if (typeof WeixinJSBridge === 'undefined') {
+                console.log('22222222')
                 if (document.addEventListener) {
                   document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
                 } else if (document.attachEvent) {
@@ -1575,23 +1585,24 @@ export default {
                   document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
                 }
               } else {
-                // this.onBridgeReady(res);
+                this.onBridgeReady(res);
+                console.log('elseelseelseelse')
               }
             } else if (broswerType === '2') {
               console.log('这里是broswerType2222')
               this.postThread().then(data => {
                 // window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin /topic/indexdex?id='+ data._jv.id)}`;
-                // this.postLoading = false;
-                // uni.hideLoading();
-                // if (res && res.isApproved === 1) {
-                //   this.$u.event.$emit('addThread', res);
-                //   console.log(res, '付钱付钱000000');
-                // }
-                // if (res && res._jv.json.data.id) {
-                //   uni.redirectTo({
-                //     url: `/topic/index?id=${res._jv.json.data.id}`,
-                //   });
-                // }
+                this.postLoading = false;
+                uni.hideLoading();
+                if (res && res.isApproved === 1) {
+                  this.$u.event.$emit('addThread', res);
+                  console.log(res, '付钱付钱000000');
+                }
+                if (res && res._jv.json.data.id) {
+                  uni.redirectTo({
+                    url: `/topic/index?id=${res._jv.json.data.id}`,
+                  });
+                }
               });
             } else if (broswerType === '3') {
               if (res) {
@@ -1670,6 +1681,21 @@ export default {
                   });
                 }
               });
+            } else if (broswerType === '1') {
+              this.postThread().then(res => {
+                console.log(res, 'postThreadresresres');
+                this.postLoading = false;
+                uni.hideLoading();
+                if (res && res.isApproved === 1) {
+                  this.$u.event.$emit('addThread', res);
+                  console.log(res, '付钱付钱000000');
+                }
+                if (res && res._jv.json.data.id) {
+                  uni.redirectTo({
+                    url: `/topic/index?id=${res._jv.json.data.id}`,
+                  });
+                }
+              });
             }
             this.$refs.toast.show({ message: this.i18n.t('pay.paySuccess') });
           }
@@ -1709,7 +1735,7 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
-      console.log('shhshshshhshshhshshshh')
+      console.log(data, 'datadata')
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
@@ -1741,7 +1767,7 @@ export default {
           clearInterval(payWechat);
           return;
         }
-        this.getOrderStatus(this.orderSn);
+        this.getOrderStatus(this.orderSn, '1');
       }, 3000);
     },
     // 选择支付方式，获取值
@@ -2244,6 +2270,8 @@ export default {
         this.videoBeforeList = [];
         this.percent = 0;
         // this.videoPercent = 0;
+      } else if (this.deleteType === 3) {
+        this.audioBeforeList = [];
       }
     },
     handleClickCancel() {
@@ -2625,8 +2653,7 @@ export default {
     this.isWeixin = isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
     if (this.isWeixin === false) {
-      console.log('zoujinlailma')
-      this.payTypeData.splice(0, 1);
+      this.payTypeData[0].hide = true;
     }
     this.browser = 1;
     if (this.type === 1) {

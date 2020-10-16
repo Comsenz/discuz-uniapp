@@ -23,16 +23,16 @@ module.exports = {
      * 跳转到手机号码登录页面
      */
     jump2PhoneLoginPage() {
-      const url = `/pages/user/phone-login?isLogin=true`;
+      const url = '/pages/user/phone-login';
       uni.redirectTo({
         url,
       });
     },
     /**
-     * 跳转到手机号码注册页面
+     * 跳转到手机号码登录/注册页面
      */
-    jump2PhoneRegisterPage() {
-      const url = `/pages/user/phone-login?isLogin=false`;
+    jump2PhoneLoginRegisterPage() {
+      const url = '/pages/user/phone-login-register';
       uni.redirectTo({
         url,
       });
@@ -110,7 +110,7 @@ module.exports = {
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
         // 手机号模式
-        this.jump2PhoneLoginPage();
+        this.jump2PhoneLoginRegisterPage();
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
         // 无感模式
@@ -130,7 +130,7 @@ module.exports = {
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 微信内-手机号模式
-          this.jump2PhoneLoginPage();
+          this.jump2PhoneLoginRegisterPage();
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 微信内-无感模式
@@ -144,13 +144,13 @@ module.exports = {
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 1) {
           // 微信外-手机号模式
-          this.jump2PhoneLoginPage();
+          this.jump2PhoneLoginRegisterPage();
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 微信外-无感模式
           if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
             // 微信外-手机号模式
-            this.jump2PhoneLoginPage();
+            this.jump2PhoneLoginRegisterPage();
           } else {
             // 微信外-用户名模式
             this.jump2LoginPage();

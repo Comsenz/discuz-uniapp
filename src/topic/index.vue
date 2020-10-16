@@ -1318,7 +1318,6 @@ export default {
               title: titleText,
             });
             // #endif
-            console.log(data, '详情页主题');
             if (data.question) {
               console.log('wenda');
               this.platformDate = (
@@ -1365,32 +1364,51 @@ export default {
                   this.answerPay = true;
                 }
               } else if (data.question.price > '0.00') {
-                console.log('付费问答');
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
-                  console.log('显示问答按钮');
                 } else if (
-                  (this.user.id === data.question.be_user_id || data.user.id) &&
+                  this.user.id === data.question.be_user_id &&
                   data.question.is_answer === 1
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
-                  console.log('显示答案111');
                 } else if (
-                  (this.user.id === data.question.be_user_id || data.user.id) &&
+                  this.user.id === data.user.id &&
+                  data.question.is_answer === 1
+                ) {
+                  this.beAsk = false;
+                  this.answerPay = true;
+                } else if (
+                  this.user.id === data.question.be_user_id  &&
                   data.question.is_answer === 1 &&
                   data.question.onlooker_number > 0
                 ) {
                   this.answerPay = true;
                   this.beAsk = false;
                 } else if (
-                  this.user.id !== (data.question.be_user_id && data.user.id) &&
+                  this.user.id === data.user.id  &&
+                  data.question.is_answer === 1 &&
+                  data.question.onlooker_number > 0
+                ) {
+                  this.answerPay = true;
+                  this.beAsk = false;
+                }else if (
+                  this.user.id !== data.question.be_user_id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true &&
                   this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === false
                 ) {
                   this.answerPay = true;
+                } else if (
+                  this.user.id !== data.user.id &&
+                  data.question.is_answer === 1 &&
+                  data.question.is_onlooker === true &&
+                  this.forums.other.can_be_onlooker === true &&
+                  data.onlookerState === false
+                ) {
+                  this.answerPay = true;
+                  console.log('付费不允许围观');
                 }
               }
 
@@ -2128,6 +2146,7 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
+      console.log(data, 'datadata')
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
@@ -2407,7 +2426,6 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(this.user, '用户信息');
       uni.setStorage({
         key: 'page',
         data: `/topic/index?id=${this.threadId}`,
@@ -2449,7 +2467,7 @@ export default {
         } else if (this.payTypeVal === 3) {
           this.creatOrder(this.thread.attachmentPrice, 7, this.value, payType);
         }
-      } else if (payType === 1) {
+      } else if (payType === 1) {``
         // 这是详情页获取到的支付方式---钱包
       }
     },

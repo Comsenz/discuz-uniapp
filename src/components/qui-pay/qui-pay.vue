@@ -66,13 +66,14 @@
                 <view>
                   <radio
                     :value="item.value"
-                    :namr="item.index"
+                    :name="item.index"
                     :checked="index === current"
                     class="radio"
                     color="#2699fb"
                     :disabled="
                       (descriptionShow && !walletStatus && item.name === p.walletPay) ||
-                        (descriptionShow && !(money <= balance) && item.name === p.walletPay)
+                        (descriptionShow && !(money <= balance) && item.name === p.walletPay) ||
+                        item.hide
                     "
                   />
                 </view>
@@ -191,7 +192,7 @@ export default {
       checkVal: '1',
       checkStatus: true, // 单选框状态
       // checkStatusVal: 1, // 单选框状态
-      current: 0,
+      current: 1,
     };
   },
   computed: {

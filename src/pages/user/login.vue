@@ -66,7 +66,12 @@
           <!-- 开启注册功能才显示 -->
           <text
             class="login-box-ft-btn"
-            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.set_reg.register_type !== 1
+            "
             @click="jump2Register"
           >
             {{ i18n.t('user.registerUser') }}
@@ -77,6 +82,7 @@
               forum &&
                 forum.set_reg &&
                 forum.set_reg.register_close &&
+                forum.set_reg.register_type !== 1 &&
                 forum.qcloud &&
                 forum.qcloud.qcloud_sms
             "
@@ -163,7 +169,11 @@ export default {
       // #endif
     },
     jump2PhoneLogin() {
-      this.jump2PhoneLoginPage();
+      if (this.forum && this.forum.set_reg && this.forum.set_reg.register_type === 0) {
+        this.jump2PhoneLoginPage();
+      } else {
+        this.jump2PhoneLoginRegisterPage();
+      }
     },
     jump2Register() {
       this.jump2RegisterPage();

@@ -185,8 +185,8 @@ export default {
       }
     },
     // 删除语音
-    deleteItem(audioId) {
-      this.$emit('deleteItem', audioId);
+    deleteItem() {
+      this.$emit('deleteItem');
     },
   },
 };
