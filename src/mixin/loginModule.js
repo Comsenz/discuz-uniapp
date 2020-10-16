@@ -96,7 +96,7 @@ module.exports = {
      */
     jump2findpwdPage() {
       const url = `/pages/modify/findpwd?pas=reset_pwd`;
-      uni.redirectTo({
+      uni.navigateTo({
         url,
       });
     },
