@@ -1767,7 +1767,7 @@ export default {
           clearInterval(payWechat);
           return;
         }
-        this.getOrderStatus(this.orderSn);
+        this.getOrderStatus(this.orderSn, '1');
       }, 3000);
     },
     // 选择支付方式，获取值
