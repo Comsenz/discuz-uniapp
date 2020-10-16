@@ -1060,18 +1060,6 @@ export default {
     },
   },
   onLoad(option) {
-    this.token = uni.getStorageSync('access_token');
-    uni.$on('logind', () => {
-      this.loadThread();
-      this.loadThreadPosts();
-    });
-    this.threadId = option.id;
-    this.conversationId = option.topicid || '';
-    this.loadThread();
-    this.loadThreadPosts();
-    this.curUrl = getCurUrl();
-    this.rewardStatus = false;
-    this.paidStatus = false;
     try {
       const res = uni.getSystemInfoSync();
       this.system = res.platform;
@@ -1086,6 +1074,18 @@ export default {
     } catch (e) {
       // error
     }
+    this.token = uni.getStorageSync('access_token');
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
+    });
+    this.threadId = option.id;
+    this.conversationId = option.topicid || '';
+    this.loadThread();
+    this.loadThreadPosts();
+    this.curUrl = getCurUrl();
+    this.rewardStatus = false;
+    this.paidStatus = false;
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -1190,6 +1190,20 @@ export default {
     };
   },
   onShow() {
+    try {
+      const res = uni.getSystemInfoSync();
+      this.system = res.platform;
+      this.detectionmodel = this.forums.set_site.site_mode;
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      // #ifndef H5
+      if (this.detectionmodel === 'pay' && this.system === 'ios') {
+        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+        return;
+      }
+      // #endif
+    } catch (e) {
+      // error
+    }
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1328,7 +1342,7 @@ export default {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
                   console.log('显示问答按钮');
-                  // 问答免费 已回答 && 允许围观 所有人都可以看
+                  // 问答免费 已回答 && 围观价格>0 && 用户组有围观权限  所有人都可以看
                 } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
                   console.log('12345678');
                   this.beAsk = false;
@@ -1341,6 +1355,14 @@ export default {
                   this.beAsk = false;
                   this.payment = true;
                   this.answerPay = false;
+                } else if (
+                  this.user.id !== (data.question.be_user_id && data.user.id) &&
+                  data.question.is_answer === 1 &&
+                  data.question.is_onlooker === true &&
+                  this.forums.other.can_be_onlooker === true &&
+                  data.onlookerState === false
+                ) {
+                  this.answerPay = true;
                 }
               } else if (data.question.price > '0.00') {
                 console.log('付费问答');
@@ -1365,6 +1387,7 @@ export default {
                   this.user.id !== (data.question.be_user_id && data.user.id) &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true &&
+                  this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === false
                 ) {
                   this.answerPay = true;
@@ -3372,7 +3395,7 @@ export default {
     },
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
-      if (this.thread.firstPost.postGoods === 6) {
+      if (this.thread.type === 6) {
         console.log('否买');
         // #ifndef MP-WEIXIN
         console.log('这是非小程序');
