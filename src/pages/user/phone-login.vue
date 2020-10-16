@@ -323,6 +323,8 @@ export default {
           duration: 2000,
         });
       } else {
+        console.log('this.phoneNumber:', this.phoneNumber);
+        this.$store.dispatch('session/setPhone', this.phoneNumber);
         this.verifyPhoneNumber();
       }
     },
@@ -337,30 +339,10 @@ export default {
           },
         },
       };
-      // #ifdef MP-WEIXIN
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.register = data.data.attributes.register;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.inviteCode = data.data.attributes.code;
-      }
-      // #endif
-      // #ifdef H5
-      const userInfo = this.$store.getters['session/get']('userInfo');
-      if (userInfo && userInfo.token !== '') {
-        params.data.attributes.token = userInfo.token;
-      }
-      // #endif
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
-      if (inviteCode !== '') {
-        params.data.attributes.code = inviteCode;
+      if (this.isLogin) {
+        params.data.attributes.register = 0;
+      } else {
+        params.data.attributes.register = 1;
       }
       console.log('params', params);
       this.$store
@@ -395,6 +377,14 @@ export default {
               duration: 2000,
             });
           }
+          if (res && res.data && res.data.errors && res.data.errors[0].code === 'no_bind_user') {
+            const userInfo = {
+              mobileToken: res.data.errors[0].token,
+            };
+            console.log('userInfo：', userInfo);
+            this.$store.dispatch('session/setUserInfo', userInfo);
+            this.jump2RegisterBindPhonePage();
+          }
         })
         .catch(err => {
           console.log(err);
@@ -403,16 +393,6 @@ export default {
     toggleBox() {
       this.inshow = false;
     },
-    // #ifdef MP-WEIXIN
-    mpAuthClick() {
-      this.getmpRegisterParams();
-    },
-    // #endif
-    // #ifdef H5
-    jump2WeChat() {
-      this.wxh5Login();
-    },
-    // #endif
     switchState() {
       this.isLogin = !this.isLogin;
       this.phoneNumber = '';

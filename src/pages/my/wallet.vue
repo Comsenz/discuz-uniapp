@@ -112,6 +112,10 @@ export default {
     },
     // 判断是否开通企业到付零钱服务
     nextClick() {
+      uni.setStorage({
+        key: 'page',
+        data: '/pages/my/wallet',
+      });
       // #ifdef H5
       if (!this.isWeixin) {
         uni.navigateTo({
@@ -134,6 +138,9 @@ export default {
           console.log('什么都没绑定');
           return;
         }
+        uni.navigateTo({
+          url: `/pages/modify/withdrawals`,
+        });
       }
       // if (this.forums && !this.forums.paycenter.wxpay_mchpay_close && this.isWeixin === true) {
       //   uni.navigateTo({
@@ -158,6 +165,10 @@ export default {
       ) {
         this.$refs.wechatPopup.open();
         console.log('小程序内什么都没绑定');
+      } else {
+        uni.navigateTo({
+          url: `/pages/modify/withdrawals`,
+        });
       }
       // #endif
     },

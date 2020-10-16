@@ -10,7 +10,7 @@ import {
   SET_PARAMS,
   SET_CODE,
   SET_USER_INFO,
-  SET_TOKEN,
+  SET_PHONE,
   SET_GOOD,
   SET_INVITE_CODE,
   SET_ATTACHMENT,
@@ -67,8 +67,8 @@ const actions = {
   setUserInfo: (context, payload) => {
     context.commit(SET_USER_INFO, payload);
   },
-  setToken: (context, payload) => {
-    context.commit(SET_TOKEN, payload);
+  setPhone: (context, payload) => {
+    context.commit(SET_PHONE, payload);
   },
   setGood: (context, payload) => {
     context.commit(SET_GOOD, payload);
@@ -258,8 +258,8 @@ const mutations = {
   [SET_USER_INFO](state, payload) {
     state.userInfo = payload;
   },
-  [SET_TOKEN](state, payload) {
-    state.token = payload;
+  [SET_PHONE](state, payload) {
+    state.phone = payload;
   },
   [SET_GOOD](state, payload) {
     state.good = payload;

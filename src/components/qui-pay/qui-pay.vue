@@ -176,6 +176,10 @@ export default {
       type: String,
       default: '',
     },
+    payId: {
+      type: [String, Number],
+      default: '',
+    },
   },
 
   data() {

@@ -88,10 +88,20 @@ import { mapState, mapMutations } from 'vuex';
 import loginModule from '@/mixin/loginModule';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
   components: { uniPopupDialog },
-  mixins: [forums, user, loginModule],
+  mixins: [
+    forums,
+    user,
+    loginModule,
+    // #ifdef H5
+    appCommonH,
+    // #endif
+  ],
   props: {
     bottom: {
       type: Number,
@@ -140,6 +150,8 @@ export default {
       url: '', // 视频url
       formData: {}, // 图片请求data
       uploadStatus: true,
+      isWeixin: '', // 是否是微信浏览器内
+      isiOS: '',
     };
   },
   computed: {
@@ -183,6 +195,8 @@ export default {
           return newTab;
         });
       }
+      this.isWeixin = appCommonH.isWeixin().isWeixin;
+      this.isiOS = appCommonH.isWeixin().isiOS;
       // #endif
     }
     // 上传图片
@@ -326,6 +340,10 @@ export default {
         return;
       }
 
+      if (this.isWeixin && this.isiOS && item.type === 4) {
+        this.$refs.toast.show({ message: this.i18n.t('discuzq.post.IOSWxNotRecordAudio') });
+        return;
+      }
       if (item.type === 5) {
         uni.navigateTo({
           url: '/pages/user/at-member?name=select',

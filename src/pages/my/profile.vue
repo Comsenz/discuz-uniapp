@@ -46,23 +46,12 @@
           :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
-      <qui-cell-item :title="i18n.t('profile.wechat')" slot-right arrow>
-        <text>
-          <text click="rebindWechat">
-            {{
-              profile && profile.wechat && profile.wechat.nickname !== ''
-                ? profile.wechat.nickname
-                : ''
-            }}
-          </text>
-          <text
-            v-if="profile && profile.wechat && profile.wechat.nickname === ''"
-            click="bindWechat"
-          >
-            绑定
-          </text>
-        </text>
-      </qui-cell-item>
+      <qui-cell-item
+        :title="i18n.t('profile.wechat')"
+        :addon="name"
+        arrow
+        @click="bindWechat"
+      ></qui-cell-item>
       <!-- qcloud_faceid 是否开启实名认证 -->
       <qui-cell-item
         v-if="profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"
@@ -109,15 +98,36 @@
       <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
     </uni-popup>
     <!-- #endif -->
+    <uni-popup ref="bind" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :content="i18n.t('user.noBindTips')"
+        :before-close="true"
+        @close="handleClickCancel"
+        @confirm="handleClickOk"
+      ></uni-popup-dialog>
+    </uni-popup>
   </qui-page>
 </template>
 
 <script>
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums],
+  components: { uniPopupDialog },
+  mixins: [
+    forums,
+    loginModule,
+    // #ifdef H5
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       hasPassword: false,
@@ -126,20 +136,41 @@ export default {
       show: false,
       host: DISCUZ_REQUEST_HOST,
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
+      // #ifdef H5
+      isWeixin: false, // 默认不是微信浏览器
+      // #endif
     };
   },
   computed: {
     profile() {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
+      console.log('profile', data);
+      console.log('profile.wechat', data.wechat);
+      const userInfo = {
+        headimgurl: data.avatarUrl,
+        username: data.username,
+      };
+      console.log('userInfo：', userInfo);
+      this.$store.dispatch('session/setUserInfo', userInfo);
+      return data;
+    },
+    name() {
+      let data = '';
+      if (this.profile && this.profile.wechat && this.profile.wechat.nickname !== '') {
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          data = `${this.profile.wechat.nickname} (换绑)`;
+        } else {
+          data = `${this.profile.wechat.nickname} (解绑)`;
+        }
+      } else {
+        data = '绑定';
+      }
       return data;
     },
   },
   // 解决左上角返回数据不刷新情况
   onShow() {
-    const params = {
-      include: 'groups,wechat',
-    };
-    this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]);
+    this.getUserInfo();
   },
   onLoad() {
     const token = uni.getStorageSync('access_token');
@@ -149,6 +180,10 @@ export default {
     this.formData = {
       type: 1,
     };
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
   },
   methods: {
     bindPhone() {
@@ -172,6 +207,77 @@ export default {
         });
       }
       // #endif
+    },
+    bindWechat() {
+      // 绑定
+      if (this.name === '绑定') {
+        // #ifdef MP-WEIXIN
+        uni.setStorage({
+          key: 'isBind',
+          data: true,
+        });
+        uni.setStorage({
+          key: 'isChangeBind',
+          data: false,
+        });
+        this.mpLogin();
+        // #endif
+        // #ifdef H5
+        if (this.isWeixin) {
+          this.wxh5Login();
+        } else {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('profile.wechatTip'),
+            duration: 2000,
+          });
+        }
+        // #endif
+        return;
+      }
+      // 解绑/换绑
+      if (
+        this.name !== '绑定' &&
+        this.forums &&
+        this.forums.set_reg &&
+        this.forums.set_reg.register_type === 2
+      ) {
+        console.log('换绑');
+        uni.setStorage({
+          key: 'isBind',
+          data: true,
+        });
+        uni.setStorage({
+          key: 'isChangeBind',
+          data: true,
+        });
+        this.jump2LoginBindPage();
+      } else {
+        console.log('解绑');
+        this.$refs.bind.open();
+      }
+    },
+    handleClickOk() {
+      this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(res => {
+        console.log('解绑成功', res);
+        if (res && res._jv && res._jv.id) {
+          uni.showToast({
+            title: '解绑成功',
+            duration: 2000,
+          });
+          this.getUserInfo();
+          this.handleClickCancel();
+        }
+      });
+    },
+    handleClickCancel() {
+      this.$refs.bind.close();
+    },
+    getUserInfo() {
+      const params = {
+        include: 'groups,wechat',
+      };
+      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]);
     },
     uploadSuccess(res) {
       uni.hideLoading();

@@ -1127,7 +1127,7 @@ export default {
         this.percent = 1;
       }
 
-      // uni.removeStorageSync('current_thread');
+      uni.removeStorageSync('current_thread');
     },
     focusEvent() {
       // 这是获取焦点
@@ -1285,7 +1285,7 @@ export default {
       } else if (index === 0) {
         console.log('免费免费');
         this.payType = 0;
-        this.postClick();
+        // this.postClick();
         if (this.payType === 0) {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
@@ -1350,7 +1350,7 @@ export default {
     },
     // 提问价格
     postAnswerClick(type) {
-      console.log('提问价格');
+      console.log('发布发布');
       // this.setType = type;
       this.$refs.popupBtm.open();
       this.textShow = false;
@@ -1566,7 +1566,7 @@ export default {
                   document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady(res));
                 }
               } else {
-                this.onBridgeReady(res);
+                // this.onBridgeReady(res);
               }
             } else if (broswerType === '2') {
               payPhone = setInterval(() => {
@@ -1659,7 +1659,7 @@ export default {
               // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
               this._updateRewardUsers();
             }
-            this.$refs.toast.show({ message: this.p.paySuccess });
+            this.$refs.toast.show({ message: this.i18n.t('pay.paySuccess') });
           }
         })
         .catch(err => {
@@ -2095,7 +2095,7 @@ export default {
           },
           links: {
             self:
-              'threads?include=user,category,firstPost,firstPost.images,question,question.beUser,question.beUser.groups,question.images',
+              'threads?include=user,category,firstPost,firstPost.images,firstPost.postGoods,question,question.beUser,question.beUser.groups,question.images',
           },
         },
         content: this.textAreaValue,
@@ -2111,7 +2111,7 @@ export default {
         params.price = '';
       } else if (this.payType === 0) {
         params.attachment_price = '';
-        params.price = '';
+        params.price = this.price;
       }
       console.log(params, '这是参数');
       const currentPosition = this.currentPosition;

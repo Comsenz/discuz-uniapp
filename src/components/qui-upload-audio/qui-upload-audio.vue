@@ -31,37 +31,22 @@
         <qui-icon name="icon-luyin" color="#FA5151" size="60"></qui-icon>
       </view>
     </view>
-    <view>
-      <button @click="playVoice()">播放</button>
-    </view>
-    <view ref="input" class="input"></view>
     <qui-toast ref="toast"></qui-toast>
   </view>
 </template>
 
 <script>
 import Record from '@/utils/record-sdk';
-// #ifdef  H5
+// #ifdef H5
 import TcVod from 'vod-js-sdk-v6';
-import wxrecord from '@/mixin/wxrecord-ios';
-import appCommonH from '@/utils/commonHelper';
 // #endif
 // #ifdef MP-WEIXIN
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
 // 录音管理
 const recorderManager = wx.getRecorderManager();
 // #endif
-// #ifdef  H5
-const recordWX = require('jweixin-module');
-// #endif
 
 export default {
-  mixins: [
-    // #ifdef  H5
-    wxrecord,
-    appCommonH,
-    // #endif
-  ],
   props: {
     audioBeforeList: {
       type: Array,
@@ -78,10 +63,7 @@ export default {
       durationTime: 0, // 总时长（格式秒，用于计时）
       timer: null, // 计时器
       recorder: new Record(),
-      isWeixin: '', // 是否是微信浏览器内
-      isiOS: '',
-      localId: '',
-      mediaId: '',
+      isUpLoad: true,
     };
   },
   computed: {
@@ -107,13 +89,6 @@ export default {
       },
       deep: true,
     },
-  },
-  created() {
-    // #ifdef  H5
-    this.wxRecord();
-    this.isWeixin = appCommonH.isWeixin().isWeixin;
-    this.isiOS = appCommonH.isWeixin().isiOS;
-    // #endif
   },
   methods: {
     // 开始录音的时候
@@ -141,55 +116,34 @@ export default {
       // #endif
 
       // #ifdef H5
-      if (this.isWeixin) {
-        recordWX.ready(() => {
-          recordWX.startRecord();
+      this.recorder.startRecord({
+        success: () => {
           this.showAdd = false;
           this.chronoscope();
-        });
-      } else {
-        this.recorder.startRecord({
-          success: () => {
-            this.showAdd = false;
-            this.chronoscope();
-            console.log('start record successfully.');
-          },
-          error: () => {
-            console.log('start record failed.');
-          },
-        });
-      }
+          console.log('start record successfully.');
+        },
+        error: () => {
+          this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notRecordAudio') });
+          console.log('start record failed.');
+        },
+      });
       // #endif
     },
     // 停止录音
     stop() {
-      const _this = this;
       if (this.durationTime > 1) {
         clearInterval(this.timer);
-        const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
-        // #ifdef MP-WEIXIN
-        recorderManager.stop();
-        recorderManager.onStop(res => {
-          this.uploadAudio(res, audioName);
-        });
-        // #endif
-        // #ifdef H5
-        if (this.isWeixin) {
-          recordWX.ready(() => {
-            recordWX.stopRecord({
-              success: res => {
-                console.log('录音完成');
-                _this.localId = res.localId;
-                console.log(res.localId);
-                _this.wxh5UploadVoice();
-              },
-              fail: res => {
-                console.log(JSON.stringify(res));
-              },
-            });
+        if (this.isUpLoad) {
+          uni.showLoading();
+          this.isUpLoad = false;
+          const audioName = `${this.userId}_${this.getCurrentTime()}.mp3`;
+          // #ifdef MP-WEIXIN
+          recorderManager.stop();
+          recorderManager.onStop(res => {
+            this.uploadAudio(res, audioName);
           });
-          console.log(this.localId);
-        } else {
+          // #endif
+          // #ifdef H5
           this.recorder.stopRecord({
             success: res => {
               // 此处可以获取音频源文件(res)，用于上传等操作
@@ -201,45 +155,13 @@ export default {
               console.log('stop record failed.');
             },
           });
+          // #endif
         }
-        // #endif
       }
-    },
-    wxh5UploadVoice() {
-      // recordWX.ready(() => {
-      recordWX.uploadVoice({
-        localId: this.localId,
-        isShowProgressTips: 1,
-        success: res => {
-          console.log(res);
-          console.log(res.serverId);
-          this.mediaId = res.serverId;
-          const mediaId = res.serverId;
-          const token = uni.getStorageSync('access_token');
-          this.$store
-            .dispatch(
-              'jv/get',
-              `http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=${token}&media_id=${mediaId}`,
-            )
-            .then(data => {
-              console.log(data);
-              console.log(JSON.stringify(data));
-            });
-        },
-      });
-      // });
-    },
-    playVoice() {
-      // recordWX.ready(() => {
-      recordWX.playVoice({
-        localId: this.localId, // 需要播放的音频的本地ID，由stopRecord接口获得
-      });
-      // });
     },
     // 录音上传
     uploadAudio(audioFile, name) {
       const _this = this;
-      uni.showLoading();
       // #ifdef MP-WEIXIN
       VodUploader.start({
         mediaFile: audioFile,
@@ -254,9 +176,6 @@ export default {
         finish(result) {
           uni.hideLoading();
           _this.postVideo(result.fileId, 1, result.videoUrl, name);
-          _this.duration = '00:00:00';
-          _this.durationTime = 0;
-          _this.timer = null;
         },
       });
       // #endif
@@ -273,9 +192,6 @@ export default {
           .then(doneResult => {
             uni.hideLoading();
             _this.postVideo(doneResult.fileId, 1, doneResult.video.url, name);
-            _this.duration = '00:00:00';
-            _this.durationTime = 0;
-            _this.timer = null;
           });
       });
       // #endif
@@ -356,6 +272,7 @@ export default {
         type,
       };
       this.$store.dispatch('jv/post', params).then(res => {
+        this.isUpLoad = true;
         this.fileList.push({
           fileName: name,
           url: res.media_url,

@@ -56,7 +56,7 @@ module.exports = {
       });
     },
     /**
-     * 跳转到登录绑定页面
+     * 跳转到登录并绑定微信号页面
      */
     jump2LoginBindPage() {
       const url = '/pages/user/login-bind';
@@ -65,10 +65,28 @@ module.exports = {
       });
     },
     /**
-     * 跳转到注册绑定页面
+     * 跳转到注册并绑定微信号页面
      */
     jump2RegisterBindPage() {
       const url = '/pages/user/register-bind';
+      uni.redirectTo({
+        url,
+      });
+    },
+    /**
+     * 跳转到登录并绑定手机号页面
+     */
+    jump2LoginBindPhonePage() {
+      const url = '/pages/user/login-bind-phone';
+      uni.redirectTo({
+        url,
+      });
+    },
+    /**
+     * 跳转到注册并绑定手机号页面
+     */
+    jump2RegisterBindPhonePage() {
+      const url = '/pages/user/register-bind-phone';
       uni.redirectTo({
         url,
       });
@@ -183,72 +201,7 @@ module.exports = {
         data: register,
       });
       this.$store.getters['session/get']('auth').open();
-      // const params = {
-      //   data: {
-      //     attributes: {},
-      //   },
-      // };
-      // const data = this.$store.getters['session/get']('params');
-      // if (data && data.data && data.data.attributes) {
-      //   params.data.attributes.js_code = data.data.attributes.js_code;
-      //   params.data.attributes.iv = data.data.attributes.iv;
-      //   params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-      //   params.data.attributes.register = register;
-      // }
-      // if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-      //   params.data.attributes.code = data.data.attributes.code;
-      // }
-      // this.mpLogin(params);
     },
-    /**
-     * 小程序登录
-     */
-    // mpLogin(params) {
-    //   this.$store
-    //     .dispatch('session/noSenseMPLogin', params)
-    //     .then(res => {
-    //       if (res && res.data && res.data.data && res.data.data.id) {
-    //         console.log('小程序登录成功：', res);
-    //         this.logind();
-    //         if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-    //           uni.getStorage({
-    //             key: 'page',
-    //             success(resData) {
-    //               uni.redirectTo({
-    //                 url: resData.data,
-    //               });
-    //             },
-    //           });
-    //         }
-    //         if (
-    //           this.forum &&
-    //           this.forum.set_site &&
-    //           this.forum.set_site.site_mode === SITE_PAY &&
-    //           this.user &&
-    //           !this.user.paid
-    //         ) {
-    //           uni.redirectTo({
-    //             url: '/pages/site/info',
-    //           });
-    //         }
-    //         uni.showToast({
-    //           title: this.i18n.t('user.registerSuccess'),
-    //           duration: 2000,
-    //         });
-    //       }
-    //       if (
-    //         res.data.errors &&
-    //         (res.data.errors[0].code === 'no_bind_user' ||
-    //           res.data.errors[0].code === 'register_close')
-    //       ) {
-    //         this.refreshmpParams();
-    //         this.jump2RegisterBindPage();
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // },
     /**
      * 微信h5登录/注册
      */
@@ -288,13 +241,10 @@ module.exports = {
           params.data.attributes.encryptedData = data.data.attributes.encryptedData;
         }
         // #endif
-        // #ifdef H5
-        // 微信内置浏览器登录必传参数
         const userInfo = this.$store.getters['session/get']('userInfo');
         if (userInfo && userInfo.token !== '') {
           params.data.attributes.token = userInfo.token;
         }
-        // #endif
         this.login(params, resultDialog);
       }
     },

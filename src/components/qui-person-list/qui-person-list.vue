@@ -1,6 +1,9 @@
 <template>
   <!-- 列表 -->
-  <view class="det-person-box" :style="{ paddingBottom: btnShow ? '80rpx' : '50rpx' }">
+  <view
+    class="det-person-box"
+    :style="{ paddingBottom: btnShow ? '80rpx' : '50rpx', background: listBg }"
+  >
     <view class="det-per-number" v-if="personNum != 0">
       {{ personNum }}{{ t.persenUnit }}{{ type }}
     </view>
@@ -71,6 +74,10 @@ export default {
     // 按钮背景色
     btnBg: {
       default: '#fa5151',
+      type: String,
+    },
+    listBg: {
+      default: '#fff',
       type: String,
     },
     // 按时是否显示icon
@@ -177,7 +184,7 @@ export default {
   flex-direction: column;
   padding: 0 0 80rpx;
   text-align: center;
-  background: --color(--qui-BG-2);
+  // background: --color(--qui-BG-2);
   .det-per-number {
     font-size: $fg-f4;
     color: --color(--qui-FC-AAA);
