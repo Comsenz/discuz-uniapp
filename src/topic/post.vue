@@ -888,6 +888,8 @@ export default {
       isShowGoods: true,
       dataGoodInfo: {},
       goodsId: '', // 商品ID
+      categoryid: 0,
+      categoryindex: 0,
     };
   },
   computed: {
@@ -1450,6 +1452,10 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
+      uni.setStorage({
+        key: 'page',
+        data: `/topic/post?type=5&categoryId=${this.categoryid}&categoryIndex=${this.categoryindex}`,
+      });
       if (payType === 0) {
         // #ifdef H5
         if (this.isWeixin === true && this.user.wechat === undefined) {
@@ -1499,6 +1505,7 @@ export default {
         .then(res => {
           this.orderSn = res.order_sn;
           if (payType === 0) {
+            console.log('我看看h5的微信支付走到这里了吗')
             // 微信支付
             if (this.browser == 0) {
               // 这是微信小程序内的支付
@@ -1569,12 +1576,14 @@ export default {
                 // this.onBridgeReady(res);
               }
             } else if (broswerType === '2') {
+              console.log('这里是broswerType2222')
               payPhone = setInterval(() => {
                 if (this.payStatus === 1) {
                   clearInterval(payPhone);
                   return;
                 }
                 this.getOrderStatus(orderSn, broswerType);
+                console.log('这里是broswerType2222getOrderStatusgetOrderStatusgetOrderStatus')
               }, 3000);
               // window.location.href = res.wechat_h5_link;
             } else if (broswerType === '3') {
@@ -1623,15 +1632,16 @@ export default {
         });
     },
     getOrderStatus(orderSn, broswerType) {
+      console.log(orderSn, broswerType, '查询订单');
       this.$store
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
+          console.log(res, res)
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             if (broswerType === '2') {
               console.log('h5h5h5h5h5h5h5h');
               this.postThread().then(res => {
-                console.log(res, 'postThreadresresres');
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
@@ -1666,12 +1676,6 @@ export default {
                   });
                 }
               });
-            }
-            if (this.payTypeVal === 0) {
-              // 这是主题支付，支付完成刷新详情页，重新请求数据
-            } else if (this.payTypeVal === 1) {
-              // 这是主题打赏，打赏完成，给主题打赏列表新增一条数据
-              this._updateRewardUsers();
             }
             this.$refs.toast.show({ message: this.i18n.t('pay.paySuccess') });
           }
@@ -2560,6 +2564,9 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(option, 'optionopton')
+    this.categoryid = option.categoryId;
+    this.categoryindex = option.categoryIndex;
     uni.$on('radioChange', item => {
       this.beUserName = item.username;
       this.beAskId = item.id;
