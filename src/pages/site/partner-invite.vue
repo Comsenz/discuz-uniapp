@@ -163,10 +163,7 @@ export default {
         this.$store.dispatch('session/setInviteCode', this.code);
         this.mpLoginMode();
         // #endif
-        uni.setStorage({
-          key: 'inviteCode',
-          data: this.code,
-        });
+        uni.setStorageSync('inviteCode', this.code);
         // #ifdef H5
         this.h5LoginMode();
         // #endif

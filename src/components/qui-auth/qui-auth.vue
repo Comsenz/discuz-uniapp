@@ -107,13 +107,7 @@ export default {
         params.data.attributes.encryptedData = data.data.attributes.encryptedData;
         params.data.attributes.register = data.data.attributes.register;
       }
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
+      const inviteCode = uni.getStorageSync('inviteCode');
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
