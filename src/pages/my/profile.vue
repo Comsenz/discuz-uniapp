@@ -98,6 +98,15 @@
       <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
     </uni-popup>
     <!-- #endif -->
+    <uni-popup ref="bind" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :content="i18n.t('user.noBindTips')"
+        :before-close="true"
+        @close="handleClickCancel"
+        @confirm="handleClickOk"
+      ></uni-popup-dialog>
+    </uni-popup>
   </qui-page>
 </template>
 
@@ -105,11 +114,13 @@
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import forums from '@/mixin/forums';
 import loginModule from '@/mixin/loginModule';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 // #endif
 
 export default {
+  components: { uniPopupDialog },
   mixins: [
     forums,
     loginModule,
@@ -135,6 +146,12 @@ export default {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
       console.log('profile', data);
       console.log('profile.wechat', data.wechat);
+      const userInfo = {
+        headimgurl: data.avatarUrl,
+        username: data.username,
+      };
+      console.log('userInfo：', userInfo);
+      this.$store.dispatch('session/setUserInfo', userInfo);
       return data;
     },
     name() {
@@ -192,10 +209,17 @@ export default {
       // #endif
     },
     bindWechat() {
-      console.log('xxx');
       // 绑定
-      if (this.profile && this.profile.wechat === undefined) {
+      if (this.name === '绑定') {
         // #ifdef MP-WEIXIN
+        uni.setStorage({
+          key: 'isBind',
+          data: true,
+        });
+        uni.setStorage({
+          key: 'isChangeBind',
+          data: false,
+        });
         this.mpLogin();
         // #endif
         // #ifdef H5
@@ -209,29 +233,45 @@ export default {
           });
         }
         // #endif
+        return;
       }
       // 解绑/换绑
       if (
-        this.profile &&
-        this.profile.wechat &&
-        this.profile.wechat.nickname !== '' &&
+        this.name !== '绑定' &&
         this.forums &&
         this.forums.set_reg &&
         this.forums.set_reg.register_type === 2
       ) {
         console.log('换绑');
         uni.setStorage({
-          key: 'isChange',
+          key: 'isBind',
+          data: true,
+        });
+        uni.setStorage({
+          key: 'isChangeBind',
           data: true,
         });
         this.jump2LoginBindPage();
       } else {
         console.log('解绑');
-        this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(res => {
-          console.log('解绑成功', res);
-          this.getUserInfo();
-        });
+        this.$refs.bind.open();
       }
+    },
+    handleClickOk() {
+      this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(res => {
+        console.log('解绑成功', res);
+        if (res && res._jv && res._jv.id) {
+          uni.showToast({
+            title: '解绑成功',
+            duration: 2000,
+          });
+          this.getUserInfo();
+          this.handleClickCancel();
+        }
+      });
+    },
+    handleClickCancel() {
+      this.$refs.bind.close();
     },
     getUserInfo() {
       const params = {

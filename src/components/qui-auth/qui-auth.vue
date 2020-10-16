@@ -177,16 +177,16 @@ export default {
                 });
               }
               uni.getStorage({
-                key: 'isChange',
+                key: 'isBind',
                 success(resData) {
                   if (resData.data) {
                     uni.showToast({
-                      title: this.i18n.t('user.loginSuccess'),
+                      title: '绑定成功',
                       duration: 2000,
                     });
                   } else {
                     uni.showToast({
-                      title: this.i18n.t('user.bindSuccess'),
+                      title: '登录成功',
                       duration: 2000,
                     });
                   }
