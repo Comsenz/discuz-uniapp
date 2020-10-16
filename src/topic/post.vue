@@ -1471,14 +1471,14 @@ export default {
         // #endif
 
         // #ifdef MP-WEIXIN
-        // if (
-        //   this.user.wechat === undefined ||
-        //   (this.user.wechat && this.user.wechat.min_openid === '')
-        // ) {
-        //   this.$refs.wechatPopup.open();
-        //   console.log('小程序内什么都没绑定');
-        //   return;
-        // }
+        if (
+          this.user.wechat === undefined ||
+          (this.user.wechat && this.user.wechat.min_openid === '')
+        ) {
+          this.$refs.wechatPopup.open();
+          console.log('小程序内什么都没绑定');
+          return;
+        }
         // #endif
         this.creatOrder(this.priceAsk, 5, '', payType);
       } else if (payType === 1) {
@@ -1579,7 +1579,7 @@ export default {
             } else if (broswerType === '2') {
               console.log('这里是broswerType2222')
               this.postThread().then(data => {
-                window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin + '/pages/topic/index?id='+ data._jv.id)}`;
+                // window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin + '/pages/topic/index?id='+ data._jv.id)}`;
                 // this.postLoading = false;
                 // uni.hideLoading();
                 // if (res && res.isApproved === 1) {
@@ -2586,6 +2586,10 @@ export default {
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
+    if (this.isWeixin === false) {
+      console.log('zoujinlailma')
+      this.payTypeData.splice(0, 1);
+    }
     this.browser = 1;
     if (this.type === 1) {
       uni.$on('vditor', (vditor, vditorComponent) => {
