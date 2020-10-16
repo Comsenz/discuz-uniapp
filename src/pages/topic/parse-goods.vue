@@ -30,7 +30,9 @@
         :placeholder="i18n.t('topic.goodsLink')"
         v-model="link"
       />
-      <qui-button class="parse-goods-box-btn" @click="handleNext">下一步</qui-button>
+      <qui-button class="parse-goods-box-btn" type="primary" size="large" @click="handleNext">
+        下一步
+      </qui-button>
     </view>
   </qui-page>
 </template>
@@ -160,11 +162,6 @@ export default {
     &-btn {
       position: absolute;
       bottom: 40rpx;
-      width: 670rpx;
-      height: 90rpx;
-      color: --color(--qui-BG-2);
-      background-color: --color(--qui-MAIN);
-      border-radius: 5rpx;
     }
   }
 }
