@@ -1566,6 +1566,7 @@ export default {
                 res.wechat_js.paySign,
               );
             } else if (broswerType === '1') {
+              console.log('111111111')
               if (typeof WeixinJSBridge === 'undefined') {
                 if (document.addEventListener) {
                   document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
@@ -1705,6 +1706,43 @@ export default {
           _this.$refs.toast.show({ message: _this.p.payFail });
         },
       });
+    },
+    // 非小程序内微信支付
+    onBridgeReady(data) {
+      console.log('shhshshshhshshhshshshh')
+      // const that = this;
+      WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        {
+          appId: data.wechat_js.appId, // 公众号名称，由商户传入
+          timeStamp: data.wechat_js.timeStamp, // 时间戳，自1970年以来的秒数
+          nonceStr: data.wechat_js.nonceStr, // 随机串
+          package: data.wechat_js.package,
+          signType: 'MD5', // 微信签名方式：
+          paySign: data.wechat_js.paySign, // 微信签名
+        },
+        function(data) {
+          // alert('支付唤醒');
+          if (data.err_msg == 'get_brand_wcpay_request:ok') {
+            //微信支付成功，进行支付成功处理
+          } else if (data.err_msg == 'get_brand_wcpay_request:cancel') {
+            // 取消支付
+            clearInterval(payWechat);
+            resolve;
+          } else if (data.err_msg == 'get_brand_wcpay_request:fail') {
+            // 支付失败
+            clearInterval(payWechat);
+            resolve;
+          }
+        },
+      );
+      payWechat = setInterval(() => {
+        if (this.payStatus === 1) {
+          clearInterval(payWechat);
+          return;
+        }
+        this.getOrderStatus(this.orderSn);
+      }, 3000);
     },
     // 选择支付方式，获取值
     radioChange(val) {
