@@ -201,7 +201,7 @@ export default {
         return;
       }
       uni.navigateTo({
-        url: `/pages/topic/index?id=${data.order.thread._jv.id}`,
+        url: `/topic/index?id=${data.order.thread._jv.id}`,
       });
     },
     // 下拉加载

@@ -120,7 +120,7 @@ export default {
     contentClick(id) {
       this.$emit('toTopic', id);
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}&topicid=${this.conversationId}`,
+        url: `/topic/index?id=${id}&topicid=${this.conversationId}`,
       });
     },
     // 点击头像调转到个人主页
@@ -182,7 +182,7 @@ export default {
     // 内容部分点击评论跳到详情页
     commentClick(id) {
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
+        url: `/topic/index?id=${id}`,
       });
       this.$emit('toTopic', id);
     },

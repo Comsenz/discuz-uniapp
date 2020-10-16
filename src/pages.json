@@ -129,13 +129,6 @@
       }
     },
     {
-      "path": "pages/topic/index",
-      "style": {
-        "navigationBarTitleText": "",
-        "enablePullDownRefresh": true
-      }
-    },
-    {
       "path": "pages/topic/comment",
       "style": {
         "navigationBarTitleText": "评论详情页",
@@ -433,13 +426,23 @@
             "navigationBarTextStyle": "black",
             "navigationStyle": "default"
           }
-      }]
+      },{
+        "path": "index",
+        "style": {
+          "navigationBarTitleText": "",
+          "enablePullDownRefresh": true
+        }
+    }]
   }],
   "preloadRule": {
       "topic/post": {
           "network": "all",
           "packages": ["__APP__"]
-      }
+      },
+      "topic/index": {
+        "network": "all",
+        "packages": ["__APP__"]
+    }
   },
   "globalStyle": {
     "navigationBarTextStyle": "black",

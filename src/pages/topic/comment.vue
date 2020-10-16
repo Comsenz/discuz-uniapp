@@ -820,7 +820,7 @@ export default {
               });
 
               // uni.navigateBack({
-              //   url: '/pages/topic/index?id=' + this.threadId,
+              //   url: '/topic/index?id=' + this.threadId,
               // });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
             } else {
@@ -1201,7 +1201,7 @@ export default {
         });
       } else {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${this.threadId}`,
+          url: `/topic/index?id=${this.threadId}`,
         });
       }
 
@@ -1215,7 +1215,7 @@ export default {
       //   // });
       // }
       // uni.redirectTo({
-      //   url: `/pages/topic/index?id=${this.threadId}`,
+      //   url: `/topic/index?id=${this.threadId}`,
       // });
     },
     // 当前回复点赞

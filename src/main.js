@@ -11,7 +11,7 @@ import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './comm
 // #ifdef H5
 const publicWhitelistPage = [
   '/pages/home/index',
-  '/pages/topic/index',
+  '/topic/index',
   '/pages/topic/list',
   '/pages/topic/content',
   '/pages/topic/comment',
