@@ -115,6 +115,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import forums from '@/mixin/forums';
 import loginModule from '@/mixin/loginModule';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
+import { getCurUrl } from '@/utils/getCurUrl';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 // #endif
@@ -211,6 +212,10 @@ export default {
     bindWechat() {
       // 绑定
       if (this.name === '绑定') {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         uni.setStorage({
           key: 'isBind',
@@ -261,12 +266,12 @@ export default {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(res => {
         console.log('解绑成功', res);
         if (res && res._jv && res._jv.id) {
+          this.getUserInfo();
+          this.handleClickCancel();
           uni.showToast({
             title: '解绑成功',
             duration: 2000,
           });
-          this.getUserInfo();
-          this.handleClickCancel();
         }
       });
     },

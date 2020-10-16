@@ -346,7 +346,7 @@ export default {
       }
       if (item.type === 5) {
         uni.navigateTo({
-          url: '/pages/user/at-member?name=select',
+          url: `/pages/user/at-member?name=select&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
         });
         return;
       }

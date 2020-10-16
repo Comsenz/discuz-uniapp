@@ -367,12 +367,17 @@ export default {
       default: 0,
     },
     // 类型
+    // themeParts: {
+    //   validator: value => {
+    //     // 0 主题  1 回复
+    //     return ['0', '1'].indexOf(value) !== -1;
+    //   },
+    //   default: '0',
+    // },
+    // 0 主题  1 回复
     themeParts: {
-      validator: value => {
-        // 0 主题  1 回复
-        return ['0', '1'].indexOf(value) !== -1;
-      },
-      default: '0',
+      type: Number,
+      default: 0,
     },
     followShow: {
       type: Boolean,

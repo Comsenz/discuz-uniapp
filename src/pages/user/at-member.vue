@@ -124,6 +124,8 @@ export default {
       meta: {}, // 接口返回meta值
       select: true, // 选择被提问人
       current: 0,
+      categoryId: 0,
+      categoryIndex: 0,
     };
   },
   methods: {
@@ -156,7 +158,7 @@ export default {
     radioChange(item) {
       console.log(item, '单选人员');
       uni.navigateTo({
-        url: '/topic/post?type=5',
+        url: `/topic/post?type=5&categoryId=${this.categoryId}&categoryIndex=${this.categoryIndex}`,
       });
       setTimeout(() => {
         if (item.toUser) {
@@ -255,7 +257,10 @@ export default {
     },
   },
   onLoad(option) {
+    console.log(option, 'optionoption');
     this.select = option.name;
+    this.categoryId = option.categoryId;
+    this.categoryIndex = option.categoryIndex;
     if (option.name === 'select') {
       this.followStatus = true;
       uni.setNavigationBarTitle({
