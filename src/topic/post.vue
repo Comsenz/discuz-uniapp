@@ -717,7 +717,7 @@ import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 // 小程序与h5支付setInterval
 let payWechat = null;
-let payPhone = null;
+const payPhone = null;
 export default {
   name: 'Post',
   components: { uniPopupDialog },
@@ -1471,14 +1471,14 @@ export default {
         // #endif
 
         // #ifdef MP-WEIXIN
-        if (
-          this.user.wechat === undefined ||
-          (this.user.wechat && this.user.wechat.min_openid === '')
-        ) {
-          this.$refs.wechatPopup.open();
-          console.log('小程序内什么都没绑定');
-          return;
-        }
+        // if (
+        //   this.user.wechat === undefined ||
+        //   (this.user.wechat && this.user.wechat.min_openid === '')
+        // ) {
+        //   this.$refs.wechatPopup.open();
+        //   console.log('小程序内什么都没绑定');
+        //   return;
+        // }
         // #endif
         this.creatOrder(this.priceAsk, 5, '', payType);
       } else if (payType === 1) {
@@ -1554,6 +1554,7 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
+          console.log(res, 'sssssssssss')
           this.wxRes = res;
           if (payType === 0) {
             if (broswerType === '0') {
@@ -1577,15 +1578,20 @@ export default {
               }
             } else if (broswerType === '2') {
               console.log('这里是broswerType2222')
-              payPhone = setInterval(() => {
-                if (this.payStatus === 1) {
-                  clearInterval(payPhone);
-                  return;
-                }
-                this.getOrderStatus(orderSn, broswerType);
-                console.log('这里是broswerType2222getOrderStatusgetOrderStatusgetOrderStatus')
-              }, 3000);
-              // window.location.href = res.wechat_h5_link;
+              this.postThread().then(data => {
+                window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin + '/pages/topic/index?id='+ data._jv.id)}`;
+                // this.postLoading = false;
+                // uni.hideLoading();
+                // if (res && res.isApproved === 1) {
+                //   this.$u.event.$emit('addThread', res);
+                //   console.log(res, '付钱付钱000000');
+                // }
+                // if (res && res._jv.json.data.id) {
+                //   uni.redirectTo({
+                //     url: `/pages/topic/index?id=${res._jv.json.data.id}`,
+                //   });
+                // }
+              });
             } else if (broswerType === '3') {
               if (res) {
                 this.codeUrl = res.wechat_qrcode;
@@ -1641,19 +1647,6 @@ export default {
           if (this.payStatus === 1) {
             if (broswerType === '2') {
               console.log('h5h5h5h5h5h5h5h');
-              this.postThread().then(res => {
-                this.postLoading = false;
-                uni.hideLoading();
-                if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
-                  console.log(res, '付钱付钱000000');
-                }
-                if (res && res._jv.json.data.id) {
-                  uni.redirectTo({
-                    url: `/pages/topic/index?id=${res._jv.json.data.id}`,
-                  });
-                }
-              });
               // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
