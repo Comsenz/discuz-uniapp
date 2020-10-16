@@ -41,6 +41,22 @@ export default {
                   });
                 },
               });
+              uni.getStorage({
+                key: 'isBind',
+                success(resData) {
+                  if (resData.data) {
+                    uni.showToast({
+                      title: '绑定成功',
+                      duration: 2000,
+                    });
+                  } else {
+                    uni.showToast({
+                      title: '登录成功',
+                      duration: 2000,
+                    });
+                  }
+                },
+              });
             }
             if (
               this.forums &&
@@ -51,6 +67,22 @@ export default {
             ) {
               uni.redirectTo({
                 url: '/pages/site/info',
+              });
+              uni.getStorage({
+                key: 'isBind',
+                success(resData) {
+                  if (resData.data) {
+                    uni.showToast({
+                      title: '绑定成功',
+                      duration: 2000,
+                    });
+                  } else {
+                    uni.showToast({
+                      title: '登录成功',
+                      duration: 2000,
+                    });
+                  }
+                },
               });
             }
           }
