@@ -2374,6 +2374,10 @@ export default {
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
       console.log(this.user, '用户信息');
+        uni.setStorage({
+          key: 'page',
+          data: `/pages/topic/index?id=${this.threadId}`,
+        });
       // 微信支付
       if (payType === 0) {
         // #ifdef H5
