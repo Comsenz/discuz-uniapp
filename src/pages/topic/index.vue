@@ -3395,7 +3395,7 @@ export default {
     },
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
-      if (this.thread.firstPost.postGoods === 6) {
+      if (this.thread.type === 6) {
         console.log('否买');
         // #ifndef MP-WEIXIN
         console.log('这是非小程序');
