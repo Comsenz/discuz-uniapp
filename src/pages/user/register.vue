@@ -31,29 +31,6 @@
         {{ i18n.t('user.register') }}
       </view>
       <view class="register-box-ft">
-        <!-- <view class="register-box-ft-title" v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms">
-          {{ i18n.t('user.otherRegisterMode') }}
-        </view> -->
-        <!-- <view class="register-box-ft-con">
-          <image
-            :class="[
-              forum && forum.qcloud && forum.qcloud.qcloud_sms
-                ? 'register-box-ft-con-image right'
-                : 'register-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="jump2WechatRegister"
-          /> -->
-        <!-- 开启短信功能才显示 -->
-        <!-- <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            class="register-box-ft-con-image left"
-            lazy-load
-            src="@/static/shouji.svg"
-            @click="jump2PhoneRegister"
-          />
-        </view> -->
         <view class="register-box-ft-btn" @click="jump2Login">{{ i18n.t('user.login') }}</view>
       </view>
     </view>
@@ -313,9 +290,6 @@ export default {
     },
     jump2Login() {
       this.jump2LoginPage();
-    },
-    jump2PhoneRegister() {
-      this.jump2PhoneRegisterPage();
     },
   },
 };

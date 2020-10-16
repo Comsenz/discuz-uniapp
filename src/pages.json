@@ -75,6 +75,12 @@
       }
     },
     {
+      "path": "pages/user/phone-login-register",
+      "style": {
+        "navigationBarTitleText": "手机号码登录/注册"
+      }
+    },
+    {
       "path": "pages/user/uc-login",
       "style": {
         "navigationBarTitleText": "登录"

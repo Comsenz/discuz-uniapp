@@ -2,7 +2,7 @@
   <qui-page :data-qui-theme="theme" class="phone-login-box">
     <view class="new" @click.stop="toggleBox">
       <view class="phone-login-box-h">
-        {{ i18n.t('user.phoneNumberLogin') }}
+        {{ i18n.t('user.phoneNumberLoginRegister') }}
       </view>
       <view class="new-phon">
         <view class="new-phon-test">{{ i18n.t('user.phoneNumber') }}</view>
@@ -39,7 +39,7 @@
         ></qui-input-code>
       </view>
       <view class="phone-login-box-btn" @click="login">
-        {{ i18n.t('user.login') }}
+        {{ i18n.t('user.loginRegister') }}
       </view>
       <view class="phone-login-box-ft">
         <view class="phone-login-box-ft-title">
@@ -47,42 +47,16 @@
         </view>
         <view class="phone-login-box-ft-con">
           <image
-            :class="[
-              forum && forum.qcloud && forum.qcloud.qcloud_sms
-                ? 'phone-login-box-ft-con-image right'
-                : 'phone-login-box-ft-con-image',
-            ]"
+            class="phone-login-box-ft-con-image right"
             lazy-load
             src="@/static/weixin.svg"
             @click="jump2WechatLogin"
           />
-          <!-- 开启短信功能才显示 -->
           <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            :class="[
-              forum &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms &&
-              forum.ucenter &&
-              forum.ucenter.ucenter &&
-              isShow
-                ? 'phone-login-box-ft-con-image right left'
-                : 'phone-login-box-ft-con-image left',
-            ]"
+            class="phone-login-box-ft-con-image left"
             lazy-load
             src="@/static/zhanghao.svg"
             @click="jump2Login"
-          />
-          <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter
-                ? 'phone-login-box-ft-con-image left'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/UC.svg"
-            @click="jump2UcLogin"
           />
         </view>
         <!-- 开启短信功能才显示 -->
@@ -139,7 +113,6 @@ export default {
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
       // #endif
-      isShow: false,
     };
   },
   onLoad() {
@@ -304,7 +277,7 @@ export default {
             mobile: this.phoneNumber,
             code: this.verificationCode,
             type: 'login',
-            register: 0,
+            register: 1,
           },
         },
       };

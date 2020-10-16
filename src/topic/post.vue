@@ -358,6 +358,7 @@
           ref="uploadAudio"
           :audio-before-list="audioBeforeList"
           @change="uploadAudioChange"
+          @audioDel="audioDel"
         ></qui-upload-audio>
       </view>
       <qui-cell-item
@@ -1381,6 +1382,11 @@ export default {
     uploadAudioChange(e) {
       this.audioBeforeList = e;
     },
+    audioDel() {
+      this.deleteType = 3;
+      this.$refs.deletePopup.open();
+      this.deleteTip = this.i18n.t('core.deleteAudioSure');
+    },
     // 表情点击事件
     getEmojiClick(code) {
       let text = '';
@@ -2247,6 +2253,8 @@ export default {
         this.videoBeforeList = [];
         this.percent = 0;
         // this.videoPercent = 0;
+      } else if (this.deleteType === 3) {
+        this.audioBeforeList = [];
       }
     },
     handleClickCancel() {

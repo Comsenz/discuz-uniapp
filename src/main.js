@@ -26,6 +26,7 @@ const publicWhitelistPage = [
   '/pages/user/register-bind-phone',
   '/pages/user/register',
   '/pages/user/phone-login',
+  '/pages/user/phone-login-register',
   '/pages/modify/findpwd',
   '/preview-image',
   '/pages/site/search',
@@ -47,6 +48,7 @@ const payWhiteListPage = [
   '/pages/user/register-bind-phone',
   '/pages/user/register',
   '/pages/user/phone-login',
+  '/pages/user/phone-login-register',
   '/pages/modify/findpwd',
   '/pages/site/partner-invite',
 ];
