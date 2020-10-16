@@ -432,6 +432,13 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+/* #ifdef H5 */
+$top: -6rpx;
+/* #endif */
+
+/* #ifdef MP-WEIXIN */
+$top: -9rpx;
+/* #endif */
 .ft {
   // position: absolute;
   position: fixed;
@@ -484,10 +491,10 @@ export default {
 }
 .message:after {
   position: absolute;
-  top: -2px;
-  right: -3px;
-  width: 5px;
-  height: 5px;
+  top: $top;
+  right: -6rpx;
+  width: 10rpx;
+  height: 10rpx;
   background: --color(--qui-RED);
   border-radius: 50%;
   content: '';
