@@ -896,6 +896,14 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           if (res.isApproved == 1) {
+            let hasFirst = false;
+            res.user.groups = res.user.groups.filter(group => {
+              if (group.isDisplay === true && !hasFirst) {
+                hasFirst = true;
+                return true;
+              }
+              return false;
+            });
             this.postComments.push(res);
             this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
           } else {
