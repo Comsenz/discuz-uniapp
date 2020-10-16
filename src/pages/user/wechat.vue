@@ -114,6 +114,13 @@ export default {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'account_has_been_bound') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.account_has_been_bound'),
+                duration: 2000,
+              });
+            }
           }
         })
         .catch(err => {
