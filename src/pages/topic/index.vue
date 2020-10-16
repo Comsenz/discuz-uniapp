@@ -1060,18 +1060,6 @@ export default {
     },
   },
   onLoad(option) {
-    this.token = uni.getStorageSync('access_token');
-    uni.$on('logind', () => {
-      this.loadThread();
-      this.loadThreadPosts();
-    });
-    this.threadId = option.id;
-    this.conversationId = option.topicid || '';
-    this.loadThread();
-    this.loadThreadPosts();
-    this.curUrl = getCurUrl();
-    this.rewardStatus = false;
-    this.paidStatus = false;
     try {
       const res = uni.getSystemInfoSync();
       this.system = res.platform;
@@ -1086,6 +1074,18 @@ export default {
     } catch (e) {
       // error
     }
+    this.token = uni.getStorageSync('access_token');
+    uni.$on('logind', () => {
+      this.loadThread();
+      this.loadThreadPosts();
+    });
+    this.threadId = option.id;
+    this.conversationId = option.topicid || '';
+    this.loadThread();
+    this.loadThreadPosts();
+    this.curUrl = getCurUrl();
+    this.rewardStatus = false;
+    this.paidStatus = false;
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -1190,6 +1190,20 @@ export default {
     };
   },
   onShow() {
+    try {
+      const res = uni.getSystemInfoSync();
+      this.system = res.platform;
+      this.detectionmodel = this.forums.set_site.site_mode;
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      // #ifndef H5
+      if (this.detectionmodel === 'pay' && this.system === 'ios') {
+        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+        return;
+      }
+      // #endif
+    } catch (e) {
+      // error
+    }
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
