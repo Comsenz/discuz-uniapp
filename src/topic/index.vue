@@ -151,7 +151,7 @@
               <qui-be-ask
                 :date="beAskDate"
                 :be-date="beAskBeDate"
-                :show-txt="thread.question.price === '0.00' ? false : true"
+                :show-txt="thread.question.is_onlooker"
                 @queClick="queClick"
               ></qui-be-ask>
             </view>
