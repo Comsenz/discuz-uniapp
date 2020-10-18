@@ -112,17 +112,24 @@ const actions = {
     console.log(context, payload);
     const inviteCode = uni.getStorageSync('inviteCode');
     let register = 0;
+    let rebind = 0;
     uni.getStorage({
       key: 'register',
       success(resData) {
         register = resData.data || 0;
       },
     });
+    uni.getStorage({
+      key: 'rebind',
+      success(resData) {
+        rebind = resData.data || 0;
+      },
+    });
     const options = { custom: { showTost: false } };
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=${register}&inviteCode=${inviteCode}`,
+          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=${register}&inviteCode=${inviteCode}&rebind=${rebind}`,
           options,
         )
         .then(results => {

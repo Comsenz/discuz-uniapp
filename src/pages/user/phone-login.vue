@@ -344,6 +344,7 @@ export default {
           if (res && res.data && res.data.errors && res.data.errors[0].code === 'no_bind_user') {
             const userInfo = {
               mobileToken: res.data.errors[0].token,
+              token: '',
             };
             console.log('userInfo：', userInfo);
             this.$store.dispatch('session/setUserInfo', userInfo);
