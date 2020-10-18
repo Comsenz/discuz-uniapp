@@ -112,7 +112,10 @@ export default {
         params.data.attributes.code = inviteCode;
       }
       console.log('获取参数:params', params);
-      this.noSenseLogin(params);
+      const isSend = uni.getStorageSync('isSend');
+      if (isSend) {
+        this.noSenseLogin(params);
+      }
     },
     /**
      * 无感登录
@@ -125,7 +128,8 @@ export default {
       if (
         curRoute === 'pages/site/partner-invite' ||
         curRoute === 'pages/user/login' ||
-        curRoute === 'pages/user/phone-login'
+        curRoute === 'pages/user/phone-login' ||
+        curRoute === 'pages/user/phone-login-register'
       ) {
         uni.setStorage({
           key: 'page',
@@ -158,22 +162,18 @@ export default {
                     });
                   },
                 });
-                uni.getStorage({
-                  key: 'isBind',
-                  success(resData) {
-                    if (resData.data) {
-                      uni.showToast({
-                        title: '绑定成功',
-                        duration: 2000,
-                      });
-                    } else {
-                      uni.showToast({
-                        title: '登录成功',
-                        duration: 2000,
-                      });
-                    }
-                  },
-                });
+                const isBind = uni.getStorageSync('isBind');
+                if (isBind) {
+                  uni.showToast({
+                    title: '绑定成功',
+                    duration: 2000,
+                  });
+                } else {
+                  uni.showToast({
+                    title: '登录成功',
+                    duration: 2000,
+                  });
+                }
               }
               if (
                 this.forums &&

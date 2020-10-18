@@ -122,16 +122,6 @@ export default {
         },
       };
       // #ifdef MP-WEIXIN
-      // 小程序注册必传参数
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-      }
-      // if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-      //   params.data.attributes.code = data.data.attributes.code;
-      // }
       if (!this.type) {
         const userInfo = this.$store.getters['session/get']('userInfo');
         if (userInfo && userInfo.token !== '') {
