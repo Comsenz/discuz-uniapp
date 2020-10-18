@@ -249,6 +249,9 @@ export default {
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
             console.log('注册成功：', res);
+            // #ifdef MP-WEIXIN
+            this.refreshmpParams();
+            // #endif
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
               uni.getStorage({
@@ -277,6 +280,9 @@ export default {
             });
           }
           if (res && res.data && res.data.errors) {
+            // #ifdef MP-WEIXIN
+            this.refreshmpParams();
+            // #endif
             if (res.data.errors[0].status === '422') {
               uni.showToast({
                 icon: 'none',
