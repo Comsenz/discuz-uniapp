@@ -300,10 +300,10 @@ export default {
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
       console.log(payType, '支付方式');
-      const _this = this;
+      // const _this = this;
       uni.setStorage({
         key: 'page',
-        data: `/pages/modify/rightdetails?sice=${_this.rightsice}&groups=${_this.groupId}&index=${_this.payingusers}`,
+        data: `/pages/modify/rightdetails?sice=${this.rightsice}&groups=${this.groupId}&index=${this.payingusers}`,
       });
       if (payType === 0) {
         // #ifdef H5
