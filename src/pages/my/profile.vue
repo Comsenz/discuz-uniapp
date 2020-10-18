@@ -212,20 +212,15 @@ export default {
     bindWechat() {
       // 绑定
       if (this.name === '绑定') {
+        console.log('绑定');
         uni.setStorage({
           key: 'page',
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        uni.setStorage({
-          key: 'isBind',
-          data: true,
-        });
-        uni.setStorage({
-          key: 'isChangeBind',
-          data: false,
-        });
-        this.mpLogin();
+        uni.setStorageSync('isSend', true);
+        uni.setStorageSync('isBind', true);
+        this.$store.getters['session/get']('auth').open();
         // #endif
         // #ifdef H5
         if (this.isWeixin) {
@@ -247,15 +242,13 @@ export default {
         this.forums.set_reg &&
         this.forums.set_reg.register_type === 2
       ) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         console.log('换绑');
-        uni.setStorage({
-          key: 'isBind',
-          data: true,
-        });
-        uni.setStorage({
-          key: 'isChangeBind',
-          data: true,
-        });
+        uni.setStorageSync('isSend', false);
+        uni.setStorageSync('isBind', false);
         this.jump2LoginBindPage();
       } else {
         console.log('解绑');

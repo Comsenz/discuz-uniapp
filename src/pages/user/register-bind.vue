@@ -11,9 +11,7 @@
           <text class="register-bind-box-info-bold">{{ userInfo.username }}</text>
         </view>
         <view class="register-bind-box-info-ft">
-          {{
-            isChangeBind ? i18n.t('user.changeRegisterBindText') : i18n.t('user.registerBindText')
-          }}
+          {{ isBind ? i18n.t('user.registerBindText') : i18n.t('user.changeRegisterBindText') }}
         </view>
       </view>
       <view class="register-bind-box-con">
@@ -130,14 +128,8 @@ export default {
       console.log('用户信息：', data);
       return data;
     },
-    isChangeBind() {
-      let data = true;
-      uni.getStorage({
-        key: 'isChangeBind',
-        success(resData) {
-          data = resData.data;
-        },
-      });
+    isBind() {
+      const data = uni.getStorageSync('isBind');
       console.log('data', data);
       return data;
     },
@@ -171,6 +163,9 @@ export default {
           },
         },
       };
+      if (!this.isBind) {
+        params.data.attributes.rebind = 1;
+      }
       // #ifdef MP-WEIXIN
       // 小程序注册必传参数
       const data = this.$store.getters['session/get']('params');
@@ -179,9 +174,6 @@ export default {
         params.data.attributes.iv = data.data.attributes.iv;
         params.data.attributes.encryptedData = data.data.attributes.encryptedData;
       }
-      // if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-      //   params.data.attributes.code = data.data.attributes.code;
-      // }
       if (!this.type) {
         const userInfo = this.$store.getters['session/get']('userInfo');
         if (userInfo && userInfo.token !== '') {
@@ -320,10 +312,7 @@ export default {
         });
     },
     jump2Login() {
-      uni.setStorage({
-        key: 'isBind',
-        data: false,
-      });
+      uni.setStorageSync('isBind', false);
       this.jump2LoginBindPage();
     },
   },

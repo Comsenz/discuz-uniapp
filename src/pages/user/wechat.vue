@@ -41,22 +41,18 @@ export default {
                   });
                 },
               });
-              uni.getStorage({
-                key: 'isBind',
-                success(resData) {
-                  if (resData.data) {
-                    uni.showToast({
-                      title: '绑定成功',
-                      duration: 2000,
-                    });
-                  } else {
-                    uni.showToast({
-                      title: '登录成功',
-                      duration: 2000,
-                    });
-                  }
-                },
-              });
+              const isBind = uni.getStorageSync('isBind');
+              if (isBind) {
+                uni.showToast({
+                  title: '绑定成功',
+                  duration: 2000,
+                });
+              } else {
+                uni.showToast({
+                  title: '登录成功',
+                  duration: 2000,
+                });
+              }
             }
             if (
               this.forums &&
@@ -68,22 +64,18 @@ export default {
               uni.redirectTo({
                 url: '/pages/site/info',
               });
-              uni.getStorage({
-                key: 'isBind',
-                success(resData) {
-                  if (resData.data) {
-                    uni.showToast({
-                      title: '绑定成功',
-                      duration: 2000,
-                    });
-                  } else {
-                    uni.showToast({
-                      title: '登录成功',
-                      duration: 2000,
-                    });
-                  }
-                },
-              });
+              const isBind = uni.getStorageSync('isBind');
+              if (isBind) {
+                uni.showToast({
+                  title: '绑定成功',
+                  duration: 2000,
+                });
+              } else {
+                uni.showToast({
+                  title: '登录成功',
+                  duration: 2000,
+                });
+              }
             }
           }
           if (res && res.data && res.data.errors) {
@@ -115,6 +107,14 @@ export default {
               });
             }
             if (res.data.errors[0].code === 'account_has_been_bound') {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
               uni.showToast({
                 icon: 'none',
                 title: this.i18n.t('core.account_has_been_bound'),

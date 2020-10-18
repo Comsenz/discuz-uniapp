@@ -9,7 +9,7 @@
           <text class="login-bind-box-info-bold">{{ userInfo.username }}</text>
         </view>
         <view class="login-bind-box-info-ft">
-          {{ isChangeBind ? i18n.t('user.changeLoginBindText') : i18n.t('user.loginBindText') }}
+          {{ isBind ? i18n.t('user.loginBindText') : i18n.t('user.changeLoginBindText') }}
         </view>
       </view>
       <view class="login-bind-box-con">
@@ -33,7 +33,7 @@
         {{ i18n.t('user.loginBind') }}
       </view>
       <view class="login-bind-box-ft">
-        <view v-if="isChangeBind">
+        <view v-if="isBind">
           <!-- 开启注册功能才显示 -->
           <text
             class="login-bind-box-ft-btn"
@@ -101,14 +101,8 @@ export default {
       console.log('用户信息：', data);
       return data;
     },
-    isChangeBind() {
-      let data = true;
-      uni.getStorage({
-        key: 'isChangeBind',
-        success(resData) {
-          data = resData.data;
-        },
-      });
+    isBind() {
+      const data = uni.getStorageSync('isBind');
       console.log('data', data);
       return data;
     },
@@ -123,13 +117,14 @@ export default {
           },
         },
       };
-      this.getLoginParams(params, this.i18n.t('user.loginBindSuccess'));
+      if (this.isBind) {
+        this.getLoginBindParams(params, '绑定成功');
+      } else {
+        this.getLoginBindParams(params, '绑定成功', 1);
+      }
     },
     jump2Register() {
-      uni.setStorage({
-        key: 'isBind',
-        data: false,
-      });
+      uni.setStorageSync('isBind', false);
       this.jump2RegisterBindPage();
     },
     jump2findpwd() {

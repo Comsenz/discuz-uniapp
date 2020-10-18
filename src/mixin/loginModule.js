@@ -114,6 +114,7 @@ module.exports = {
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
         // 无感模式
+        uni.setStorageSync('isSend', true);
         this.$store.getters['session/get']('auth').open();
       }
     },
@@ -200,6 +201,8 @@ module.exports = {
         key: 'register',
         data: register,
       });
+      uni.setStorageSync('isSend', true);
+      uni.setStorageSync('isBind', false);
       this.$store.getters['session/get']('auth').open();
     },
     /**
@@ -232,6 +235,35 @@ module.exports = {
           duration: 2000,
         });
       } else {
+        const userInfo = this.$store.getters['session/get']('userInfo');
+        if (userInfo && userInfo.token !== '') {
+          params.data.attributes.token = userInfo.token;
+        }
+        this.login(params, resultDialog);
+      }
+    },
+    /**
+     * 获取登录需要的参数
+     * @param {Object} param 包含用户名和密码的对象
+     * @param {*} resultDialog 登录成功展示的对话框信息
+     * @param {num} rebind 换绑为1，不换绑为0
+     */
+    getLoginBindParams(param, resultDialog, rebind = 0) {
+      this.refreshmpParams();
+      const params = param;
+      if (param.data.attributes.username === '') {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.usernameEmpty'),
+          duration: 2000,
+        });
+      } else if (param.data.attributes.password === '') {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.passwordEmpty'),
+          duration: 2000,
+        });
+      } else {
         // #ifdef MP-WEIXIN
         // 小程序登录必传参数
         const data = this.$store.getters['session/get']('params');
@@ -241,6 +273,9 @@ module.exports = {
           params.data.attributes.encryptedData = data.data.attributes.encryptedData;
         }
         // #endif
+        if (rebind === 1) {
+          params.data.attributes.rebind = 1;
+        }
         const userInfo = this.$store.getters['session/get']('userInfo');
         if (userInfo && userInfo.token !== '') {
           params.data.attributes.token = userInfo.token;
@@ -258,6 +293,9 @@ module.exports = {
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
             console.log('登录成功：', res);
+            // #ifdef MP-WEIXIN
+            this.refreshmpParams();
+            // #endif
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
               uni.getStorage({
