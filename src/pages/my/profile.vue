@@ -250,10 +250,7 @@ export default {
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
         // #ifdef H5
-        uni.setStorage({
-          key: 'rebind',
-          data: 1,
-        });
+        uni.setStorageSync('rebind', 1);
         this.wxh5Login(0);
         // #endif
       } else {

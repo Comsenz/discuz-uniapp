@@ -112,13 +112,7 @@ const actions = {
     console.log(context, payload);
     const inviteCode = uni.getStorageSync('inviteCode');
     const register = uni.getStorageSync('register');
-    let rebind = 0;
-    uni.getStorage({
-      key: 'rebind',
-      success(resData) {
-        rebind = resData.data || 0;
-      },
-    });
+    const rebind = uni.getStorageSync('rebind');
     const options = { custom: { showTost: false } };
     return new Promise(resolve => {
       return http

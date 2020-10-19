@@ -207,8 +207,9 @@ module.exports = {
     /**
      * 微信h5登录/注册
      */
-    wxh5Login(register = 0) {
+    wxh5Login(register = 0, rebind = 0) {
       uni.setStorageSync('register', register);
+      uni.setStorageSync('rebind', rebind);
       this.$store.dispatch('session/wxh5Login');
     },
     /**
