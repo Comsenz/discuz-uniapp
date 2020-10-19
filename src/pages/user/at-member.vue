@@ -23,7 +23,7 @@
         scroll-with-animation="true"
         @scrolltolower="lower"
       >
-        <checkbox-group @change="changeCheck" v-if="followStatus && !select">
+        <checkbox-group @change="changeCheck" v-if="followStatus && select !== 'select'">
           <label v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
               v-if="item.toUser"
@@ -38,7 +38,7 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <checkbox-group @change="changeCheck" v-if="!followStatus && !select">
+        <checkbox-group @change="changeCheck" v-if="!followStatus && select !== 'select'">
           <label v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
               :mark="item.id"
@@ -52,7 +52,7 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <view v-if="select && followStatus">
+        <view v-if="select === 'select' && followStatus">
           <view v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
               :mark="item.toUser.id"
@@ -65,7 +65,7 @@
             ></qui-avatar-cell>
           </view>
         </view>
-        <view v-if="select">
+        <view v-if="select === 'select'">
           <view v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
               :mark="item.id"
@@ -259,6 +259,7 @@ export default {
   onLoad(option) {
     console.log(option, 'optionoption');
     this.select = option.name;
+    console.log(this.select, 'select');
     this.categoryId = option.categoryId;
     this.categoryIndex = option.categoryIndex;
     if (option.name === 'select') {
