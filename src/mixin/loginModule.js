@@ -235,9 +235,9 @@ module.exports = {
           duration: 2000,
         });
       } else {
-        const userInfo = this.$store.getters['session/get']('userInfo');
-        if (userInfo && userInfo.token !== '') {
-          params.data.attributes.token = userInfo.token;
+        const token = this.$store.getters['session/get']('token');
+        if (token && token.token !== '') {
+          params.data.attributes.token = token.token;
         }
         this.login(params, resultDialog);
       }
@@ -276,9 +276,9 @@ module.exports = {
         if (rebind === 1) {
           params.data.attributes.rebind = 1;
         }
-        const userInfo = this.$store.getters['session/get']('userInfo');
-        if (userInfo && userInfo.token !== '') {
-          params.data.attributes.token = userInfo.token;
+        const token = this.$store.getters['session/get']('token');
+        if (token && token.token !== '') {
+          params.data.attributes.token = token.token;
         }
         this.login(params, resultDialog);
       }

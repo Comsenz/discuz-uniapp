@@ -73,9 +73,9 @@ export default {
           },
         },
       };
-      const userInfo = this.$store.getters['session/get']('userInfo');
-      if (userInfo && userInfo.mobileToken !== '') {
-        params.data.attributes.mobileToken = userInfo.mobileToken;
+      const token = this.$store.getters['session/get']('token');
+      if (token && token.mobileToken !== '') {
+        params.data.attributes.mobileToken = token.mobileToken;
       }
       this.getLoginParams(params, this.i18n.t('user.loginBindSuccess'));
     },

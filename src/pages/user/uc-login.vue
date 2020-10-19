@@ -156,12 +156,16 @@ export default {
             if (res && res.data && res.data.errors) {
               if (res.data.errors[0].code === 'no_bind_user') {
                 const userInfo = {
-                  token: res.data.errors[0].token,
                   headimgurl: res.data.errors[0].user.headimgurl,
                   username: res.data.errors[0].user.username || res.data.errors[0].user.nickname,
                 };
+                const token = {
+                  token: res.data.errors[0].token,
+                };
                 console.log('userInfo：', userInfo);
+                console.log('token：', token);
                 this.$store.dispatch('session/setUserInfo', userInfo);
+                this.$store.dispatch('session/setToken', token);
                 uni.navigateTo({
                   url: '/pages/user/register-bind',
                 });
@@ -178,12 +182,16 @@ export default {
             if (err && err.data && err.data.errors) {
               if (err.data.errors[0].code === 'no_bind_user') {
                 const userInfo = {
-                  token: err.data.errors[0].token,
                   headimgurl: err.data.errors[0].user.headimgurl,
                   username: err.data.errors[0].user.username || err.data.errors[0].user.nickname,
                 };
+                const token = {
+                  token: err.data.errors[0].token,
+                };
                 console.log('userInfo：', userInfo);
+                console.log('token：', token);
                 this.$store.dispatch('session/setUserInfo', userInfo);
+                this.$store.dispatch('session/setToken', token);
                 uni.navigateTo({
                   url: '/pages/user/register-bind',
                 });

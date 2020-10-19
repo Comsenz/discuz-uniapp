@@ -81,12 +81,16 @@ export default {
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
               const userInfo = {
-                token: res.data.errors[0].token,
                 headimgurl: res.data.errors[0].user.headimgurl,
-                username: res.data.errors[0].user.nickname,
+                username: res.data.errors[0].user.username || res.data.errors[0].user.nickname,
+              };
+              const token = {
+                token: res.data.errors[0].token,
               };
               console.log('userInfo：', userInfo);
+              console.log('token：', token);
               this.$store.dispatch('session/setUserInfo', userInfo);
+              this.$store.dispatch('session/setToken', token);
               this.jump2RegisterBindPage();
             }
             if (res.data.errors[0].code === 'permission_denied') {
@@ -122,11 +126,11 @@ export default {
               });
             }
             if (res.data.errors[0].code === 'rebind_mp_wechat') {
-              const userInfo = {
+              const token = {
                 token: res.data.errors[0].token,
               };
-              console.log('userInfo：', userInfo);
-              this.$store.dispatch('session/setUserInfo', userInfo);
+              console.log('token', token);
+              this.$store.dispatch('session/setToken', token);
               uni.redirectTo({
                 url: '/pages/user/login-bind',
               });

@@ -12,6 +12,8 @@ export const SET_PARAMS = 'SET_PARAMS';
 export const SET_CODE = 'SET_CODE';
 // 设置 userInfo
 export const SET_USER_INFO = 'SET_USER_INFO';
+// 设置 token
+export const SET_TOKEN = 'SET_TOKEN';
 // 设置 phone
 export const SET_PHONE = 'SET_PHONE';
 // 设置 商品
