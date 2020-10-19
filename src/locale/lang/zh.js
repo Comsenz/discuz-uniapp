@@ -138,7 +138,7 @@ export default {
       fromWeChatApplet: '来自微信小程序',
       theTitleCanNotBeBlank: '标题不能为空',
       pleaseEnterAPostTitle: '请输入帖子标题',
-      askedUsers: '被提问用户',
+      askedUsers: '选择回答者',
       addPosition: '添加位置',
       askingPrice: '提问价格',
       allowonLookers: '允许围观',
