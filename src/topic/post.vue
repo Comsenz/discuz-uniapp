@@ -1261,13 +1261,13 @@ export default {
     },
     diaLogOk() {
       if (this.type === 5) {
-        // if (this.inputPrice < '1.0') {
-        //   uni.showToast({
-        //     title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
-        //     icon: 'none',
-        //   });
-        //   return;
-        // }
+        if (this.inputPrice < '1.0') {
+          uni.showToast({
+            title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
+            icon: 'none',
+          });
+          return;
+        }
         console.log('ddhdhdhdhhdhdhdhdh');
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
