@@ -3094,7 +3094,7 @@ export default {
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
-        this.wxh5Login();
+        this.wxh5Login(0, 0);
       } else {
         uni.showToast({
           icon: 'none',

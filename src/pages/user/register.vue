@@ -261,23 +261,6 @@ export default {
           console.log(err);
         });
     },
-    jump2WechatRegister() {
-      console.log('----jump2WechatRegister');
-      // #ifdef MP-WEIXIN
-      this.mpLogin(1);
-      // #endif
-      // #ifdef H5
-      if (this.isWeixin) {
-        this.wxh5Login(1);
-      } else {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.unLogin'),
-          duration: 2000,
-        });
-      }
-      // #endif
-    },
     jump2Login() {
       this.jump2LoginPage();
     },
