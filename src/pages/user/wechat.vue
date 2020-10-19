@@ -81,10 +81,10 @@ export default {
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
               const userInfo = {
-                token: res.data.errors[0].token,
                 headimgurl: res.data.errors[0].user.headimgurl,
                 username: res.data.errors[0].user.nickname,
               };
+              uni.setStorageSync('token', res.data.errors[0].token);
               console.log('userInfo：', userInfo);
               this.$store.dispatch('session/setUserInfo', userInfo);
               this.jump2RegisterBindPage();
@@ -122,13 +122,7 @@ export default {
               });
             }
             if (res.data.errors[0].code === 'rebind_mp_wechat') {
-              const userInfo = {
-                token: res.data.errors[0].token,
-                headimgurl: res.data.errors[0].user.headimgurl,
-                username: res.data.errors[0].user.nickname,
-              };
-              console.log('userInfo：', userInfo);
-              this.$store.dispatch('session/setUserInfo', userInfo);
+              uni.setStorageSync('token', res.data.errors[0].token);
               uni.redirectTo({
                 url: '/pages/user/login-bind',
               });

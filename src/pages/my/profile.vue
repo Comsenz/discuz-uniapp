@@ -148,7 +148,6 @@ export default {
       console.log('profile', data);
       console.log('profile.wechat', data.wechat);
       const userInfo = {
-        token: '',
         headimgurl: data.avatarUrl,
         username: data.username,
       };

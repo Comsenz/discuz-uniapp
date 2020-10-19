@@ -111,14 +111,8 @@ const actions = {
   noSenseh5Login: (context, payload = {}) => {
     console.log(context, payload);
     const inviteCode = uni.getStorageSync('inviteCode');
-    let register = 0;
+    const register = uni.getStorageSync('register');
     let rebind = 0;
-    uni.getStorage({
-      key: 'register',
-      success(resData) {
-        register = resData.data || 0;
-      },
-    });
     uni.getStorage({
       key: 'rebind',
       success(resData) {
