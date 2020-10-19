@@ -142,23 +142,15 @@ export default {
           url: `/pages/modify/withdrawals`,
         });
       }
-      // if (this.forums && !this.forums.paycenter.wxpay_mchpay_close && this.isWeixin === true) {
-      //   uni.navigateTo({
-      //     url: `/pages/modify/withdrawals`,
-      //   });
-      // } else if (this.forums && this.forums.paycenter.wxpay_mchpay_close) {
-      //   if (
-      //     (this.isWeixin === true && this.user.wechat === undefined) ||
-      //     (this.user.wechat && this.user.wechat.mp_openid === '')
-      //   ) {
-      //     this.$refs.wechatPopup.open();
-      //     console.log('什么都没绑定');
-      //     return;
-      //   }
-      // }
       // #endif
 
       // #ifdef MP-WEIXIN
+      if (this.forums && this.forums.paycenter.wxpay_mchpay_close === false) {
+        uni.navigateTo({
+          url: `/pages/modify/withdrawals`,
+        });
+        return;
+      }
       if (
         this.user.wechat === undefined ||
         (this.user.wechat && this.user.wechat.min_openid === '')
