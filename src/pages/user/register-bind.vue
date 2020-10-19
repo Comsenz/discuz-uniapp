@@ -124,7 +124,7 @@ export default {
   },
   computed: {
     userInfo() {
-      const data = this.$store.getters['session/get']('userInfo');
+      const data = uni.getStorageSync('userInfo');
       console.log('用户信息：', data);
       return data;
     },
@@ -175,17 +175,17 @@ export default {
         params.data.attributes.encryptedData = data.data.attributes.encryptedData;
       }
       if (!this.type) {
-        const userInfo = this.$store.getters['session/get']('userInfo');
-        if (userInfo && userInfo.token !== '') {
-          params.data.attributes.token = userInfo.token;
+        const token = uni.getStorageSync('token');
+        if (token !== '') {
+          params.data.attributes.token = token;
         }
       }
       // #endif
       // #ifdef H5
       // 微信内置浏览器注册必传参数
-      const userInfo = this.$store.getters['session/get']('userInfo');
-      if (userInfo && userInfo.token !== '') {
-        params.data.attributes.token = userInfo.token;
+      const token = uni.getStorageSync('token');
+      if (token !== '') {
+        params.data.attributes.token = token;
       }
       // #endif
       if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {

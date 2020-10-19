@@ -587,7 +587,7 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2DateAndHM(this.themeTime);
+      return time2DateAndHM(this.themeTime ? this.themeTime : '');
     },
     threadInfo() {
       const thread = this.$store.getters['session/get']('thread');

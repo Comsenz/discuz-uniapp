@@ -37,6 +37,7 @@
 // import user from '@/mixin/user';
 // import forums from '@/mixin/forums';
 import loginModule from '@/mixin/loginModule';
+// import { time2DateAndHM } from '@/utils/time';
 
 export default {
   mixins: [loginModule],
@@ -105,6 +106,12 @@ export default {
     return {
       listBg: '#ededed',
     };
+  },
+  computed: {
+    // 时间转化
+    // localTime() {
+    //   return time2DateAndHM(this.themeTime ? this.themeTime : '');
+    // },
   },
   methods: {
     // 跳转到用户主页

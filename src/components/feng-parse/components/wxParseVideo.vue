@@ -25,7 +25,6 @@
       :class="node.classStr"
       :style="node.styleStr"
       class="video-video"
-      v-if="playState"
       :src="node.attr.src"
     ></video>
   </view>
@@ -48,7 +47,7 @@ export default {
     play() {
       console.log('点击了video 播放');
       //显示播放器并播放播放器
-      this.playState = !this.playState;
+      this.playState = true;
     },
   },
   mounted() {

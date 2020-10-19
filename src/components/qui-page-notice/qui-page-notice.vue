@@ -208,7 +208,9 @@ export default {
           const list = JSON.parse(JSON.stringify(res));
           for (let i = 0; i < list.length; i += 1) {
             if (list[i] && list[i].dialogMessage) {
-              list[i].time = time2DateAndHM(list[i].dialogMessage.created_at);
+              list[i].time = time2DateAndHM(
+                list[i].dialogMessage.created_at ? list[i].dialogMessage.created_at : '',
+              );
             }
             if (list[i] && list[i].recipient && list[i].sender) {
               if (list[i].recipient.id === this.currentLoginId) {
@@ -245,8 +247,8 @@ export default {
           this.user.typeUnreadNotifications.rewarded ||
           this.user.typeUnreadNotifications.withdrawal ||
           '';
-        this.list[4].unReadNum = this.user.typeUnreadNotifications.system || '';
-        this.list[5].unReadNum = this.user.typeUnreadNotifications.questioned || '';
+        this.list[4].unReadNum = this.user.typeUnreadNotifications.questioned || '';
+        this.list[5].unReadNum = this.user.typeUnreadNotifications.system || '';
       }
     },
     // 跳转至 @我的/回复我的/点赞我的/财务通知/系统通知 页面（传入标题，类型和未读通知条数）

@@ -108,13 +108,8 @@
         </view>
 
         <!-- 用户名模式和手机号模式展示退出登录按钮，无感模式不展示退出登录按钮 -->
-        <view class="logout">
-          <qui-button
-            size="large"
-            type="warn"
-            @click="logout"
-            v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2"
-          >
+        <view class="logout" v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2">
+          <qui-button size="large" type="warn" @click="logout">
             {{ i18n.t('user.logout') }}
           </qui-button>
         </view>
@@ -265,8 +260,12 @@ export default {
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: $switch-theme-time;
 }
+.scroll-y {
+  padding-bottom: 30rpx;
+  background: --color(--qui-BG-1);
+}
 .my-items {
-  padding-bottom: 120rpx;
+  padding-bottom: 100rpx;
 }
 .my-info {
   padding: 40rpx;

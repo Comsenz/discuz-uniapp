@@ -317,10 +317,9 @@ export default {
           if (res && res.data && res.data.errors && res.data.errors[0].code === 'no_bind_user') {
             const userInfo = {
               mobileToken: res.data.errors[0].token,
-              token: '',
             };
             console.log('userInfo：', userInfo);
-            this.$store.dispatch('session/setUserInfo', userInfo);
+            uni.setStorageSync('userInfo', userInfo);
             this.jump2RegisterBindPhonePage();
           }
         })
@@ -337,7 +336,7 @@ export default {
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
-        this.wxh5Login();
+        this.wxh5Login(0, 0);
       } else {
         uni.showToast({
           icon: 'none',

@@ -123,17 +123,17 @@ export default {
       };
       // #ifdef MP-WEIXIN
       if (!this.type) {
-        const userInfo = this.$store.getters['session/get']('userInfo');
-        if (userInfo && userInfo.token !== '') {
-          params.data.attributes.token = userInfo.token;
+        const token = uni.getStorageSync('token');
+        if (token !== '') {
+          params.data.attributes.token = token;
         }
       }
       // #endif
       // #ifdef H5
       // 微信内置浏览器注册必传参数
-      const userInfo = this.$store.getters['session/get']('userInfo');
-      if (userInfo && userInfo.token !== '') {
-        params.data.attributes.token = userInfo.token;
+      const token = uni.getStorageSync('token');
+      if (token !== '') {
+        params.data.attributes.token = token;
       }
       // #endif
       if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
@@ -260,23 +260,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    },
-    jump2WechatRegister() {
-      console.log('----jump2WechatRegister');
-      // #ifdef MP-WEIXIN
-      this.mpLogin(1);
-      // #endif
-      // #ifdef H5
-      if (this.isWeixin) {
-        this.wxh5Login(1);
-      } else {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.unLogin'),
-          duration: 2000,
-        });
-      }
-      // #endif
     },
     jump2Login() {
       this.jump2LoginPage();

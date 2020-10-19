@@ -547,6 +547,22 @@
           {{ i18n.t('discuzq.post.nextPay') }}
         </qui-button>
       </view>
+      <!--支付组件-->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type="payTypeText"
+          :money="priceAsk"
+          :wallet-status="user.canWalletPay"
+          :balance="Number(user.walletBalance)"
+          :pay-password="pwdVal"
+          :pay-type-data="payTypeData"
+          :to-name="beUserName"
+          @paysureShow="paysureShow"
+          @onInput="onInput"
+          @radioChange="radioChange"
+        ></qui-pay>
+      </view>
       <uni-popup ref="lookPayPopup" type="bottom">
         <view class="popup-share">
           <view class="pay-type" @click="choicePayType(0)">
@@ -582,7 +598,9 @@
                 class="popup-btn"
                 v-for="(item, index) in payNum"
                 :key="index"
-                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+                :type="
+                  payNumCheck.length > 0 && payNumCheck[0].name === item.name ? 'primary' : 'post'
+                "
                 plain
                 size="post"
                 @click="moneyClick(index)"
@@ -679,22 +697,6 @@
           @confirm="handleWechatClickOk"
         ></uni-popup-dialog>
       </uni-popup>
-      <!--支付组件-->
-      <view v-if="payShowStatus">
-        <qui-pay
-          ref="payShow"
-          :pay-type="payTypeText"
-          :money="priceAsk"
-          :wallet-status="user.canWalletPay"
-          :balance="Number(user.walletBalance)"
-          :pay-password="pwdVal"
-          :pay-type-data="payTypeData"
-          :to-name="beUserName"
-          @paysureShow="paysureShow"
-          @onInput="onInput"
-          @radioChange="radioChange"
-        ></qui-pay>
-      </view>
       <qui-toast ref="toast"></qui-toast>
       <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
     </view>
@@ -818,7 +820,7 @@ export default {
       ], // 付费金额
       payNumCheck: [
         {
-          name: this.i18n.t('discuzq.post.free'),
+          name: '',
           pay: 0,
         },
       ], // 付费金额选中
@@ -1335,8 +1337,10 @@ export default {
       if (type === 0) {
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
       } else if (type === 1) {
+        this.payNumCheck = [];
         this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
       } else {
+        this.payNumCheck = [];
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
       }
       this.payType = type;
@@ -1458,7 +1462,7 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(payType, 'payTypepaytype')
+      console.log(payType, 'payTypepaytype');
       uni.setStorage({
         key: 'page',
         data: `/topic/post?type=5&categoryId=${this.categoryid}&categoryIndex=${this.categoryindex}`,
@@ -1489,7 +1493,7 @@ export default {
         // #endif
         this.creatOrder(this.priceAsk, 5, '', payType);
       } else if (payType === 1) {
-        console.log('钱包支付烦烦烦')
+        console.log('钱包支付烦烦烦');
         // 这是详情页获取到的支付方式---钱包
       }
     },
@@ -1513,7 +1517,7 @@ export default {
         .then(res => {
           this.orderSn = res.order_sn;
           if (payType === 0) {
-            console.log('我看看h5的微信支付走到这里了吗')
+            console.log('我看看h5的微信支付走到这里了吗');
             // 微信支付
             if (this.browser == 0) {
               // 这是微信小程序内的支付
@@ -1524,7 +1528,7 @@ export default {
                 // 这是微信浏览器
                 this.orderPay(12, value, this.orderSn, payType, '1');
               } else if (this.isPhone) {
-                console.log('h5')
+                console.log('h5');
                 this.orderPay(20, value, this.orderSn, 1, '2');
               } else {
                 // 这是pc，没调接口之前
@@ -1563,7 +1567,7 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, 'sssssssssss')
+          console.log(res, 'sssssssssss');
           this.wxRes = res;
           if (payType === 0) {
             if (broswerType === '0') {
@@ -1575,9 +1579,9 @@ export default {
                 res.wechat_js.paySign,
               );
             } else if (broswerType === '1') {
-              console.log('111111111')
+              console.log('111111111');
               if (typeof WeixinJSBridge === 'undefined') {
-                console.log('22222222')
+                console.log('22222222');
                 if (document.addEventListener) {
                   document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
                 } else if (document.attachEvent) {
@@ -1586,10 +1590,10 @@ export default {
                 }
               } else {
                 this.onBridgeReady(res);
-                console.log('elseelseelseelse')
+                console.log('elseelseelseelse');
               }
             } else if (broswerType === '2') {
-              console.log('这里是broswerType2222')
+              console.log('这里是broswerType2222');
               this.postThread().then(data => {
                 // window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin /topic/indexdex?id='+ data._jv.id)}`;
                 this.postLoading = false;
@@ -1654,7 +1658,7 @@ export default {
       this.$store
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
-          console.log(res, res)
+          console.log(res, res);
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             if (broswerType === '2') {
@@ -1735,7 +1739,7 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
-      console.log(data, 'datadata')
+      console.log(data, 'datadata');
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
@@ -2285,7 +2289,7 @@ export default {
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
-        this.wxh5Login();
+        this.wxh5Login(0, 0);
       } else {
         uni.showToast({
           icon: 'none',
@@ -2623,7 +2627,7 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option, 'optionopton')
+    console.log(option, 'optionopton');
     this.categoryid = option.categoryId;
     this.categoryindex = option.categoryIndex;
     uni.$on('radioChange', item => {
@@ -2757,73 +2761,77 @@ export default {
         )}#${this.textAreaValue.slice(this.cursor)}  `;
       this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
-    // 接收来自首页的数据，并渲染或者报错时提示
-    const eventChannel = this.getOpenerEventChannel();
-    eventChannel.on('acceptDataFromOpenerPage', data => {
-      if (this.type === 3) {
-        // console.log(data, '这是在首页上传图片后传过来的数据');
-        if (data.data.data && data.data.data.attributes) {
-          // 当首页上传图片成功时
-          this.uploadFile.push({
-            type: 'attachments',
-            id: data.data.data.id,
-            order: data.data.data.attributes.order,
-            name: data.data.data.attributes.fileName,
-            url: data.data.data.attributes.url,
-            path: data.data.data.attributes.thumbUrl ? data.data.data.attributes.thumbUrl : '',
-          });
-          this.filePreview.push({
-            path: data.data.data.attributes.thumbUrl,
-            id: data.data.data.id,
-            order: data.data.data.attributes.order,
-            name: data.data.data.attributes.fileName,
-            url: data.data.data.attributes.url,
-          });
-          // console.log(this.uploadFile, '这是首页上传后追加到的列表');
-        }
-        if (data.data.errors) {
-          // 当首页上传图片失败时
-          data.data.errors.forEach(error => {
-            const title = error.detail
-              ? Array.isArray(error.detail)
-                ? error.detail[0]
-                : error.detail
-              : this.i18n.t(`core.${error.code}`);
-            setTimeout(() => {
-              uni.showToast({
-                icon: 'none',
-                title: title,
-              });
-            }, 1000);
-          });
-        }
-      }
-      if (this.type === 2) {
-        // console.log(data, '这是在首页上传视频·····后传过来的数据');
-        if (data.data) {
-          if (data.data.doneResult) {
-            this.fileId = data.data.doneResult.fileId;
-          } else {
-            this.fileId = data.data.result.fileId;
-          }
-          // console.log(data.data, '这是视频地址');
-          this.videoBeforeList.push({
-            path: data.data.uploadVideoRes.tempFilePath,
-          });
-          this.chooseType = 0;
-          this.percent = 1;
-          // console.log(this.videoBeforeList, '这是视频列表');
-        }
-      }
-    });
-
-    this.goodsId = option.goodsId;
-    console.log(option, this.goodsId, '这是参数');
+    if (this.type === 6) {
+      this.goodsId = option.goodsId;
+      console.log(option, this.goodsId, '这是参数');
+    }
     if (
       (this.type === 6 && option.operating !== 'edit' && option.threadId !== '' && this.goodsId) ||
       (this.type === 6 && this.goodsId)
     ) {
       this.getGoodsInfo();
+    }
+    // 接收来自首页的数据，并渲染或者报错时提示
+    if (this.type === 2 || this.type === 3) {
+      console.log('这是接收首页的数据');
+      const eventChannel = this.getOpenerEventChannel();
+      eventChannel.on('acceptDataFromOpenerPage', data => {
+        if (this.type === 3) {
+          // console.log(data, '这是在首页上传图片后传过来的数据');
+          if (data.data.data && data.data.data.attributes) {
+            // 当首页上传图片成功时
+            this.uploadFile.push({
+              type: 'attachments',
+              id: data.data.data.id,
+              order: data.data.data.attributes.order,
+              name: data.data.data.attributes.fileName,
+              url: data.data.data.attributes.url,
+              path: data.data.data.attributes.thumbUrl ? data.data.data.attributes.thumbUrl : '',
+            });
+            this.filePreview.push({
+              path: data.data.data.attributes.thumbUrl,
+              id: data.data.data.id,
+              order: data.data.data.attributes.order,
+              name: data.data.data.attributes.fileName,
+              url: data.data.data.attributes.url,
+            });
+            // console.log(this.uploadFile, '这是首页上传后追加到的列表');
+          }
+          if (data.data.errors) {
+            // 当首页上传图片失败时
+            data.data.errors.forEach(error => {
+              const title = error.detail
+                ? Array.isArray(error.detail)
+                  ? error.detail[0]
+                  : error.detail
+                : this.i18n.t(`core.${error.code}`);
+              setTimeout(() => {
+                uni.showToast({
+                  icon: 'none',
+                  title: title,
+                });
+              }, 1000);
+            });
+          }
+        }
+        if (this.type === 2) {
+          // console.log(data, '这是在首页上传视频·····后传过来的数据');
+          if (data.data) {
+            if (data.data.doneResult) {
+              this.fileId = data.data.doneResult.fileId;
+            } else {
+              this.fileId = data.data.result.fileId;
+            }
+            // console.log(data.data, '这是视频地址');
+            this.videoBeforeList.push({
+              path: data.data.uploadVideoRes.tempFilePath,
+            });
+            this.chooseType = 0;
+            this.percent = 1;
+            // console.log(this.videoBeforeList, '这是视频列表');
+          }
+        }
+      });
     }
   },
   onShow() {

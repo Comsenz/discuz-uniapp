@@ -237,6 +237,7 @@ export default {
     },
     // 计时器
     chronoscope() {
+      clearInterval(this.timer);
       this.timer = setInterval(() => {
         this.durationTime += 1;
         const hours = this.showNum(parseInt(this.durationTime / 60 / 60, 10));
@@ -299,7 +300,7 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 9999;
+    z-index: 2222222222222;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -308,7 +309,7 @@ export default {
     height: 100%;
   }
   &-box {
-    padding: 46rpx 70rpx 40rpx;
+    padding: 80rpx 90rpx 76rpx;
     background: #000;
     border-radius: 10rpx;
   }
