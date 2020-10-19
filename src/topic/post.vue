@@ -468,7 +468,6 @@
         arrow
         @click="cellClick('word')"
       ></qui-cell-item>
-      <view>{{ dataGoodInfo }}</view>
       <view v-if="type === 6">
         <view class="post-box__good" v-if="isShowGoods && type === 6 && dataGoodInfo">
           <view>
@@ -2762,6 +2761,16 @@ export default {
         )}#${this.textAreaValue.slice(this.cursor)}  `;
       this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
+    if (this.type === 6) {
+      this.goodsId = option.goodsId;
+      console.log(option, this.goodsId, '这是参数');
+    }
+    if (
+      (this.type === 6 && option.operating !== 'edit' && option.threadId !== '' && this.goodsId) ||
+      (this.type === 6 && this.goodsId)
+    ) {
+      this.getGoodsInfo();
+    }
     // 接收来自首页的数据，并渲染或者报错时提示
     if (option.type === 2 || option.type === 3) {
       const eventChannel = this.getOpenerEventChannel();
@@ -2822,14 +2831,6 @@ export default {
           }
         }
       });
-    }
-    this.goodsId = option.goodsId;
-    console.log(option, this.goodsId, '这是参数');
-    if (
-      (this.type === 6 && option.operating !== 'edit' && option.threadId !== '' && this.goodsId) ||
-      (this.type === 6 && this.goodsId)
-    ) {
-      this.getGoodsInfo();
     }
   },
   onShow() {
