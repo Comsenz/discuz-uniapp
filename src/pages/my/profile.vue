@@ -224,7 +224,7 @@ export default {
         // #endif
         // #ifdef H5
         if (this.isWeixin) {
-          this.wxh5Login();
+          this.wxh5Login(0, 0);
         } else {
           uni.showToast({
             icon: 'none',
@@ -250,8 +250,7 @@ export default {
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
         // #ifdef H5
-        uni.setStorageSync('rebind', 1);
-        this.wxh5Login(0);
+        this.wxh5Login(0, 1);
         // #endif
       } else {
         console.log('解绑');

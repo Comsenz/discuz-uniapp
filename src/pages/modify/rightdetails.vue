@@ -269,7 +269,7 @@ export default {
       // #endif
       // #ifdef H5
       if (this.isWeixin) {
-        this.wxh5Login();
+        this.wxh5Login(0, 0);
       } else {
         uni.showToast({
           icon: 'none',
@@ -576,7 +576,7 @@ export default {
               const _this = this;
               // 这是主题支付，支付完成刷新详情页，重新请求数据
                 _this.allusergroupsusers();
-            } 
+            }
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
