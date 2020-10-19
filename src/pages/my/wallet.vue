@@ -123,7 +123,7 @@ export default {
         });
       } else if (
         this.forums &&
-        !this.forums.paycenter.wxpay_mchpay_close &&
+        this.forums.paycenter.wxpay_mchpay_close === false &&
         this.isWeixin === true
       ) {
         uni.navigateTo({

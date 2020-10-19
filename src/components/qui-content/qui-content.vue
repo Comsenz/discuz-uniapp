@@ -834,7 +834,7 @@ export default {
   }
   .addAsk {
     position: absolute;
-    top: 0rpx;
+    top: 20rpx;
     right: 0rpx;
     width: 120rpx;
     height: 120rpx;
@@ -843,7 +843,7 @@ export default {
 
 .themeItem {
   padding: 30rpx;
-  margin: 20rpx 0;
+  margin: 20rpx 0 0;
   background: --color(--qui-BG-2);
   // border-radius: 6rpx;
   // box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);

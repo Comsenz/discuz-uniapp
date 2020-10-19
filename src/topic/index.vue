@@ -1364,6 +1364,7 @@ export default {
                   this.answerPay = true;
                 }
               } else if (data.question.price > '0.00') {
+                console.log('付费');
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
                 } else if (
@@ -1372,12 +1373,14 @@ export default {
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
+                  console.log('显示答案')
                 } else if (
                   this.user.id === data.user.id &&
                   data.question.is_answer === 1
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
+                  consolee.log('1111122222')
                 } else if (
                   this.user.id === data.question.be_user_id  &&
                   data.question.is_answer === 1 &&
@@ -1385,6 +1388,7 @@ export default {
                 ) {
                   this.answerPay = true;
                   this.beAsk = false;
+                  console.log('3333344444')
                 } else if (
                   this.user.id === data.user.id  &&
                   data.question.is_answer === 1 &&
@@ -1392,6 +1396,7 @@ export default {
                 ) {
                   this.answerPay = true;
                   this.beAsk = false;
+                  console.log('88888')
                 }else if (
                   this.user.id !== data.question.be_user_id &&
                   data.question.is_answer === 1 &&
@@ -1400,6 +1405,7 @@ export default {
                   data.onlookerState === false
                 ) {
                   this.answerPay = true;
+                  console.log('付费不允许围观222222');
                 } else if (
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
@@ -1409,7 +1415,15 @@ export default {
                 ) {
                   this.answerPay = true;
                   console.log('付费不允许围观');
-                }
+                } else if (
+                  this.user.id !== (data.user.id || data.question.be_user_id ) &&
+                  data.question.is_answer === 1 &&
+                  data.question.is_onlooker === true &&
+                  this.forums.other.can_be_onlooker === true &&
+                  data.onlookerState === true
+                  ) {
+                    this.answerPay = true;
+                  }
               }
 
               // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
