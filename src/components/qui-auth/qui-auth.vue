@@ -206,7 +206,7 @@ export default {
               };
               console.log('userInfo：', userInfo);
               uni.setStorageSync('token', res.data.errors[0].token);
-              uni.setStorageSync('token', userInfo);
+              uni.setStorageSync('userInfo', userInfo);
               this.jump2RegisterBindPage();
             }
           }
