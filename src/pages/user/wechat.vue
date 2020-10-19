@@ -124,8 +124,6 @@ export default {
             if (res.data.errors[0].code === 'rebind_mp_wechat') {
               const userInfo = {
                 token: res.data.errors[0].token,
-                headimgurl: res.data.errors[0].user.headimgurl,
-                username: res.data.errors[0].user.nickname,
               };
               console.log('userInfo：', userInfo);
               this.$store.dispatch('session/setUserInfo', userInfo);
