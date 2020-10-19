@@ -1,73 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site" :header="false">
-    <qui-header
-      :head-img="
-        forums.set_site && forums.set_site.site_logo
-          ? forums.set_site.site_logo
-          : '/static/logo.png'
-      "
-      :theme="i18n.t('home.theme')"
-      :theme-num="forums.other && forums.other.count_users"
-      :post-num="forums.other && forums.other.count_threads"
-      :share-btn="shareBtn"
-      :share-show="shareShow"
-      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
-      @click="open"
-      @closeShare="closeShare"
-    ></qui-header>
-    <uni-popup ref="popupHead" type="bottom">
-      <qui-share @close="cancel"></qui-share>
-    </uni-popup>
-    <view class="site-item">
-      <qui-cell-item
-        class="cell-item--left cell-item--auto"
-        :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site && forums.set_site.site_introduction"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site && forums.set_site.site_install"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('discuzq.post.paymentAmount')"
-        :addon="'¥' + ((forums.set_site && forums.set_site.site_price) || 0)"
-        class="site-item__pay"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.periodvalidity')"
-        :addon="
-          forums.set_site && forums.set_site.site_expire
-            ? (forums.set_site && forums.set_site.site_expire) + i18n.t('site.day')
-            : i18n.t('site.permanent')
-        "
-      ></qui-cell-item>
-      <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
-        <view class="site-item__owner">
-          <qui-avatar
-            class="site-item__owner-avatar"
-            :user="{
-              username: forums.set_site && forums.set_site.site_author.username,
-              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
-            }"
-            size="60"
-          />
-          <text class="site-item__owner-name">
-            {{ forums.set_site && forums.set_site.site_author.username }}
-          </text>
-        </view>
-      </qui-cell-item>
-      <qui-cell-item :title="i18n.t('home.theme')" slot-right :border="false">
-        <view class="site-item__person">
-          <view
-            v-for="(item, index) in forums.users"
-            :key="index"
-            class="site-item__person__content"
-          >
-            <qui-avatar class="site-item__person__content-avatar" :user="item" size="60" />
-          </view>
-        </view>
-      </qui-cell-item>
-    </view>
+    <qui-site-thread share-url="pages/site/info"></qui-site-thread>
     <view class="site-invite">
       <view class="site-invite__detail" v-if="isLogin">
         <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
@@ -76,89 +9,91 @@
         </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
-      <view class="site-invite__button" v-if="isLogin">
-        <qui-button type="primary" size="large" @click="submit">
-          {{ i18n.t('site.paynow') }}，¥{{ (forums.set_site && forums.set_site.site_price) || 0 }}
+    </view>
+    <view class="site-submit">
+      <view>
+        <view class="site-submit__price">
+          {{ `¥${(forums.set_site && forums.set_site.site_price) || 0}` }}
+        </view>
+        <view class="site-submit__expire">
           {{
             forums.set_site && forums.set_site.site_expire
-              ? `  / ${i18n.t('site.periodvalidity')}${forums.set_site &&
-                  forums.set_site.site_expire}${i18n.t('site.day')}`
-              : ` / ${i18n.t('site.permanent')}`
+              ? `${i18n.t('site.periodvalidity')} ${forums.set_site &&
+                  forums.set_site.site_expire} ${i18n.t('site.day')}`
+              : i18n.t('site.permanent')
           }}
-        </qui-button>
-      </view>
-      <view class="site-invite__join" v-if="!isLogin">
-        <qui-button type="primary" size="large" @click="toLogin">
-          {{ i18n.t('site.join') }}{{ i18n.t('site.site') }}
-        </qui-button>
-      </view>
-
-      <view v-if="payShowStatus">
-        <qui-pay
-          ref="payShow"
-          :money="forums.set_site && parseFloat(forums.set_site.site_price)"
-          :wallet-status="true"
-          :balance="10"
-          :pay-type-data="payTypeData"
-          @radioMyHead="radioMyHead"
-          @onInput="onInput"
-          @paysureShow="paysureShow"
-        ></qui-pay>
-      </view>
-      <uni-popup ref="codePopup" type="center" class="code-popup-box">
-        <view class="code-content" v-if="qrcodeShow">
-          <view class="code-title">{{ pay.payNow }}</view>
-          <view class="code-pay-money">
-            <view class="code-yuan">￥</view>
-            {{ forums.set_site && forums.set_site.site_price }}
-          </view>
-          <view class="code-type-box">
-            <view class="code-type-tit">{{ pay.payType }}</view>
-            <view class="code-type">
-              <qui-icon
-                class="code-type-icon"
-                name="icon-wxPay"
-                size="36"
-                color="#09bb07"
-              ></qui-icon>
-              <view class="code-type-text">{{ pay.wxPay }}</view>
-            </view>
-          </view>
-          <image :src="codeUrl" class="code-img"></image>
-          <view class="code-tip">{{ pay.wechatIdentificationQRcode }}</view>
         </view>
-      </uni-popup>
-      <qui-toast ref="toast"></qui-toast>
+      </view>
+      <qui-button type="primary" @click="submit" size="small">
+        {{ isLogin ? i18n.t('site.paynow') : i18n.t('site.join') + i18n.t('site.site') }}
+      </qui-button>
     </view>
+    <view v-if="payShowStatus">
+      <qui-pay
+        ref="payShow"
+        :money="forums.set_site && parseFloat(forums.set_site.site_price)"
+        :wallet-status="true"
+        :balance="10"
+        :pay-type-data="payTypeData"
+        @radioMyHead="radioMyHead"
+        @onInput="onInput"
+        @paysureShow="paysureShow"
+      ></qui-pay>
+    </view>
+    <uni-popup ref="codePopup" type="center" class="code-popup-box">
+      <view class="code-content" v-if="qrcodeShow">
+        <view class="code-title">{{ pay.payNow }}</view>
+        <view class="code-pay-money">
+          <view class="code-yuan">￥</view>
+          {{ forums.set_site && forums.set_site.site_price }}
+        </view>
+        <view class="code-type-box">
+          <view class="code-type-tit">{{ pay.payType }}</view>
+          <view class="code-type">
+            <qui-icon class="code-type-icon" name="icon-wxPay" size="36" color="#09bb07"></qui-icon>
+            <view class="code-type-text">{{ pay.wxPay }}</view>
+          </view>
+        </view>
+        <image :src="codeUrl" class="code-img"></image>
+        <view class="code-tip">{{ pay.wechatIdentificationQRcode }}</view>
+      </view>
+    </uni-popup>
+    <uni-popup ref="wechatPopup" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :content="wechatTip"
+        :before-close="true"
+        @close="handleWechatClickCancel"
+        @confirm="handleWechatClickOk"
+      ></uni-popup-dialog>
+    </uni-popup>
+    <qui-toast ref="toast"></qui-toast>
   </qui-page>
 </template>
 
 <script>
 import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 // #ifdef H5
-import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
-import loginAuth from '@/mixin/loginAuth-h5';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 import { getCurUrl } from '@/utils/getCurUrl';
-
 let payWechat = null;
-
 export default {
+  components: { uniPopupDialog },
   mixins: [
     forums,
-    // #ifdef  H5
-    wxshare,
+    loginModule,
+    // #ifdef H5
     appCommonH,
-    loginAuth,
     // #endif
   ],
   data() {
     return {
       payShowStatus: true, // 是否显示支付
       codeUrl: '', // 二维码支付url，base64
-      shareBtn: 'icon-share1',
       shareShow: false, // h5内分享提示信息
       isAnonymous: '0',
       qrcodeShow: false, // 二维码弹框
@@ -169,6 +104,7 @@ export default {
       payStatus: false, // 订单支付状态
       orderSn: '', // 订单编号
       isLogin: this.$store.getters['session/get']('isLogin'),
+      wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
       payTypeData: [
         {
           name: this.i18n.t('pay.wxPay'),
@@ -186,6 +122,9 @@ export default {
     },
     userId() {
       return this.$store.getters['session/get']('userId');
+    },
+    user() {
+      return this.$store.getters['jv/get'](`users/${this.userId}`);
     },
   },
   created() {
@@ -246,36 +185,13 @@ export default {
   methods: {
     userInfo() {
       const params = {
-        include: 'groups,wechat',
+        include: 'groups',
       };
       this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
         if (res.paid) {
           window.location.href = '/pages/home/index';
         }
       });
-    },
-    // 首页头部分享按钮弹窗
-    open() {
-      // #ifdef MP-WEIXIN
-      this.$refs.popupHead.open();
-      // #endif
-      // #ifdef H5
-      if (this.isWeixin === true) {
-        this.shareShow = true;
-      } else {
-        this.h5Share({
-          title: this.forums.set_site.site_name,
-          url: 'pages/site/info',
-        });
-      }
-      // #endif
-    },
-    closeShare() {
-      this.shareShow = false;
-    },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupHead.close();
     },
     // 支付是否显示用户头像
     radioMyHead(val) {
@@ -286,8 +202,56 @@ export default {
       this.value = val;
       this.creatOrder(this.forums.set_site.site_price, 1, val);
     },
+    // 确认去绑定微信
+    handleWechatClickOk() {
+      console.log('去绑定微信吧');
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login(0, 0);
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
+    // 取消去绑定微信
+    handleWechatClickCancel() {
+      this.$refs.wechatPopup.close();
+    },
     // 支付方式选择完成点击确定时
     paysureShow() {
+      uni.setStorage({
+        key: 'page',
+        data: `/pages/site/info`,
+      });
+      // #ifdef H5
+      if (this.isWeixin === true && this.user.wechat === undefined) {
+        this.$refs.wechatPopup.open();
+        console.log('什么都没绑定');
+        return;
+      }
+      if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
+        this.$refs.wechatPopup.open();
+        console.log('微信浏览器内没绑定');
+        return;
+      }
+      // #endif
+      // #ifdef MP-WEIXIN
+      if (
+        this.user.wechat === undefined ||
+        (this.user.wechat && this.user.wechat.min_openid === '')
+      ) {
+        this.$refs.wechatPopup.open();
+        console.log('小程序内什么都没绑定');
+        return;
+      }
+      // #endif
       this.creatOrder(this.forums.set_site.site_price, 1, this.value);
     },
     // 创建订单
@@ -414,7 +378,6 @@ export default {
           }
         },
       );
-
       payWechat = setInterval(() => {
         if (this.payStatus === 1) {
           clearInterval(payWechat);
@@ -450,27 +413,17 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       this.payStatus = false;
       this.payShowStatus = true;
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow();
       });
-    },
-    toLogin() {
-      uni.setStorage({
-        key: 'page',
-        data: getCurUrl(),
-      });
-      this.handleLogin();
     },
     // 调取用户信息取消弹框
     close() {
@@ -483,48 +436,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .site /deep/ {
-  .header {
-    height: auto;
-    margin-bottom: 30rpx;
-    background: --color(--qui-BG-2);
-    border-bottom: 2rpx solid --color(--qui-BOR-ED);
-  }
-  .header .circleDet {
-    padding: 60rpx 40rpx 50rpx;
-    opacity: 1;
-  }
-  .header .circleDet-txt {
-    color: --color(--qui-FC-333);
-    opacity: 1;
-  }
-  .header .logo {
-    height: 75rpx;
-    padding-top: 71rpx;
-  }
-  .cell-item__body__content-title {
-    width: 150rpx;
-    margin-right: 40rpx;
-    color: --color(--qui-FC-777);
-  }
-  .header .circleDet-num,
-  .header .circleDet-share {
-    color: --color(--qui-FC-333);
-  }
-  .site-invite {
-    padding-bottom: 50rpx;
-    text-align: center;
-  }
-  .site-invite__join {
-    margin-top: 50rpx;
-  }
-  .cell-item--auto .cell-item__body {
-    height: auto;
-    padding: 35rpx 0;
-    align-items: flex-start;
-  }
-  .cell-item--left .cell-item__body__right {
-    text-align: left;
-  }
+  padding-bottom: 130rpx;
   .popup-pay {
     .pay-title,
     .pay-radio {
@@ -547,9 +459,48 @@ export default {
       margin-bottom: 40rpx;
     }
   }
+  .site-submit .qui-button--button {
+    position: absolute;
+    top: 20rpx;
+    right: 24rpx;
+  }
+  .header {
+    height: auto;
+    margin-bottom: 30rpx;
+    background: --color(--qui-BG-2);
+    border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    .circleDet {
+      padding: 60rpx 30rpx;
+      opacity: 1;
+    }
+    .circleDet-txt {
+      color: --color(--qui-FC-34);
+      opacity: 0.49;
+    }
+    .logo {
+      height: 75rpx;
+      padding-top: 71rpx;
+    }
+    .circleDet-num,
+    .circleDet-share {
+      color: --color(--qui-FC-333);
+    }
+  }
+  .themeCount .themeItem__footer {
+    display: none;
+  }
+  .themeCount .themeItem {
+    padding-left: 0;
+    margin: 0;
+    border-top: none;
+  }
+  .site-theme__last {
+    .themeItem {
+      border-bottom: none;
+    }
+  }
 }
 // 微信二维码弹框
-
 .code-content {
   position: fixed;
   top: 10%;
@@ -578,7 +529,6 @@ export default {
     }
   }
 }
-
 .code-type-box {
   display: flex;
   flex-direction: row;
@@ -609,48 +559,36 @@ export default {
   padding: 14rpx 0 20rpx;
 }
 //下面部分样式
-.site-item {
-  padding-left: 40rpx;
+.site-invite {
+  padding: 30rpx 60rpx;
+  text-align: center;
+  &__detail__bold {
+    margin: 0 5rpx;
+    font-weight: bold;
+  }
+  &__detail {
+    width: 90%;
+    font-size: $fg-f4;
+  }
+}
+.site-submit {
+  position: fixed;
+  bottom: 0;
+  z-index: 100;
+  width: 100%;
+  height: 130rpx;
+  padding: 20rpx 24rpx;
   background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.site .cell-item {
-  padding-right: 40rpx;
-}
-.site-invite__detail__bold {
-  margin: 0 5rpx;
-  font-weight: bold;
-}
-.site-invite__detail {
-  width: 90%;
-  padding: 0 20rpx;
-  margin: 50rpx auto 30rpx;
-  font-size: $fg-f4;
-}
-.site-item__pay .cell-item__body__right-text {
-  color: --color(--qui-RED);
-}
-.site-item__person__content-avatar,
-.site-item__owner-avatar {
-  margin-left: 8rpx;
-}
-.site-item__person__content-avatar {
-  margin-left: 8rpx;
-}
-.site-item__owner {
-  display: flex;
-  align-items: center;
-}
-.site-item__owner-avatar {
-  margin-right: 20rpx;
-}
-.site-item__person {
-  display: flex;
-  height: 60rpx;
-  overflow: hidden;
-  font-size: 0;
-}
-.site-item__person__content {
-  display: inline-block;
+  box-shadow: 0rpx -3rpx 6rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  &__price {
+    margin-top: 10rpx;
+    font-size: $fg-f5;
+    color: --color(--qui-BG-FF);
+  }
+  &__expire {
+    font-size: $fg-f2;
+    color: --color(--qui-FC-333);
+  }
 }
 </style>

@@ -91,7 +91,7 @@ export default {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
         title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
-        path: `/pages/topic/index?id=${this.nowThreadId}`,
+        path: `/topic/index?id=${this.nowThreadId}`,
       };
     }
   },
@@ -122,8 +122,13 @@ export default {
           'rewardedUsers',
           'lastThreePosts.replyUser',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
+          'threadAudio',
+          'question',
+          'question.beUser',
+          'question.beUser.groups',
         ],
         'filter[isApproved]': 1,
         'page[number]': this.pageNum,
@@ -207,6 +212,9 @@ export default {
     height: 78rpx;
   }
   .themeCount .addFine {
+    display: none;
+  }
+  .themeCount .addAsk {
     display: none;
   }
   .themeCount .icon-delete {

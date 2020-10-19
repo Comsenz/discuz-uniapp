@@ -52,9 +52,6 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-// #ifdef H5
-import { setCookie } from '@/utils/setCookie';
-// #endif
 
 export default {
   mixins: [user, loginModule],
@@ -158,16 +155,19 @@ export default {
           .then(res => {
             if (res && res.data && res.data.errors) {
               if (res.data.errors[0].code === 'no_bind_user') {
-                this.$store.dispatch('session/setToken', res.data.errors[0].token);
+                const userInfo = {
+                  headimgurl: res.data.errors[0].user.headimgurl,
+                  username: res.data.errors[0].user.username || res.data.errors[0].user.nickname,
+                };
+                console.log('userInfo：', userInfo);
+                uni.setStorageSync('token', res.data.errors[0].token);
+                uni.setStorageSync('userInfo', userInfo);
                 uni.navigateTo({
                   url: '/pages/user/register-bind',
                 });
               }
             }
             if (res && res.data && res.data.data && res.data.data.attributes.access_token) {
-              // #ifdef H5
-              setCookie('token', res.access_token, 30);
-              // #endif
               this.logind();
               uni.navigateTo({
                 url: '/pages/home/index',
@@ -177,7 +177,13 @@ export default {
           .catch(err => {
             if (err && err.data && err.data.errors) {
               if (err.data.errors[0].code === 'no_bind_user') {
-                this.$store.dispatch('session/setToken', err.data.errors[0].token);
+                const userInfo = {
+                  headimgurl: err.data.errors[0].user.headimgurl,
+                  username: err.data.errors[0].user.username || err.data.errors[0].user.nickname,
+                };
+                console.log('userInfo：', userInfo);
+                uni.setStorageSync('token', err.data.errors[0].token);
+                uni.setStorageSync('userInfo', userInfo);
                 uni.navigateTo({
                   url: '/pages/user/register-bind',
                 });

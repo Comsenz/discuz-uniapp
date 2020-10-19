@@ -2,18 +2,32 @@
   <qui-page :data-qui-theme="theme" class="shield">
     <!-- 用户搜索 -->
     <view class="search">
+      <view class="search-addUser" @tap="showSearch" v-show="showSearchInput">
+        <view class="search-addUser__inner">
+          <qui-icon
+            name="icon-add"
+            size="30"
+            color="#b5b5b5"
+            style="margin-right: 15rpx;"
+          ></qui-icon>
+          <text>{{ i18n.t('profile.addshielduser') }}</text>
+        </view>
+      </view>
       <view class="search-box">
         <view class="search-box__content">
           <view class="icon-content-search">
             <qui-icon name="icon-search" size="30" color="#bbb"></qui-icon>
           </view>
           <input
+            ref="inputValue"
             type="text"
             class="search-box__content-input"
             placeholder-class="input-placeholder"
             :placeholder="i18n.t('search.searchusers')"
-            @input="searchInput"
             :value="searchValue"
+            :focus="isFocus"
+            @input="searchInput"
+            @blur="searchBlur"
           />
           <view @tap="cancelSearch" v-if="searchValue" class="search-box__content-delete">
             <qui-icon name="icon-close1" size="32" color="#ccc"></qui-icon>
@@ -98,7 +112,7 @@
           <qui-cell-item
             class="shield-item__users__content"
             :title="item.username"
-            :brief="item.groupName"
+            :brief="handleGroups(item)"
             slot-right
           >
             <view class="shield-item__users__operation" plain @tap="shieldUser(item.id, 'user')">
@@ -139,6 +153,7 @@ export default {
   components: { uniPopupDialog },
   data() {
     return {
+      showSearchInput: true,
       searchValue: '', // 输入的用户名
       uloadingType: '',
       userList: [], // 用户数据
@@ -153,6 +168,7 @@ export default {
       unbundlingArry: [], // 解绑用户组
       unbundUserData: [], // 已屏蔽用户组
       shieldType: '', // 屏蔽类型 user 用户列表 sheild 黑名单
+      isFocus: false,
     };
   },
   onLoad() {
@@ -165,6 +181,15 @@ export default {
     },
   },
   methods: {
+    // 显示搜索框
+    showSearch() {
+      this.showSearchInput = false;
+      this.isFocus = true;
+    },
+    // 输入框失去焦点
+    searchBlur() {
+      this.isFocus = false;
+    },
     // 搜索框输入
     searchInput(e) {
       this.searchValue = e.target.value;
@@ -184,6 +209,8 @@ export default {
       this.sPageNum = 1;
       this.shieldList = [];
       this.getShieldList();
+      this.isFocus = false;
+      this.showSearchInput = true;
     },
     // 获取黑名单数据
     getShieldData() {
@@ -260,6 +287,16 @@ export default {
       this.shieldType = type;
       this.$refs.popShield.open();
     },
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
+    },
     handleCancel() {
       this.$refs.popShield.close();
     },
@@ -322,8 +359,33 @@ $height: calc(100vh - 200rpx);
 $height: calc(100vh - 110rpx);
 /* #endif */
 // 搜索
-.search-box {
-  background-color: $backgroundColor;
+.search {
+  position: relative;
+
+  .search-addUser {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    padding: 15px 20px 10px;
+    background-color: $backgroundColor;
+    box-sizing: border-box;
+
+    &__inner {
+      display: flex;
+      height: 80rpx;
+      font-size: $fg-f4;
+      line-height: 80rpx;
+      color: --color(--qui-FC-7D7979);
+      background: --color(--qui-BG-IT);
+      border: none;
+      border-radius: 7rpx;
+      justify-content: center;
+    }
+  }
+
+  .search-box {
+    background-color: $backgroundColor;
+  }
 }
 // 屏蔽列表
 .shield-item {

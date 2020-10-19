@@ -78,8 +78,13 @@ export default {
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
+          'threadAudio',
+          'question',
+          'question.beUser',
+          'question.beUser.groups',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,
@@ -188,6 +193,9 @@ $height: calc(100vh - 110rpx);
   right: 40rpx;
 }
 /deep/ .themeCount .addFine {
+  display: none;
+}
+/deep/ .themeCount .addAsk {
   display: none;
 }
 </style>

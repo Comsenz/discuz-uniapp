@@ -44,7 +44,7 @@
           :title="item.username"
           arrow
           :border="index == userList.length - 1 ? false : true"
-          :addon="item.groupName"
+          :addon="handleGroups(item)"
         ></qui-cell-item>
       </view>
       <qui-no-data :tips="i18n.t('search.norelatedusersfound')" v-if="userTotal == 0"></qui-no-data>
@@ -119,12 +119,19 @@ export default {
           if (res._jv) {
             delete res._jv;
           }
-          res.forEach((v, i) => {
-            res[i].groupName = v.groups[0] ? v.groups[0].name : '';
-          });
           this.userTotal = res.length;
           this.userList = res;
         });
+    },
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
     },
     // 获取主题列表
     getThemeList(key) {
@@ -134,8 +141,13 @@ export default {
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
+          'threadAudio',
+          'question',
+          'question.beUser',
+          'question.beUser.groups',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,
@@ -265,6 +277,9 @@ export default {
   right: 40rpx;
 }
 /deep/ .themeCount .addFine {
+  display: none;
+}
+/deep/ .themeCount .addAsk {
   display: none;
 }
 </style>

@@ -7,7 +7,11 @@
           type="text"
           placeholder-class="input-placeholder"
           confirm-type="search"
-          :placeholder="i18n.t('discuzq.atMember.selectedMember')"
+          :placeholder="
+            select === 'select'
+              ? i18n.t('discuzq.atMember.selectUser')
+              : i18n.t('discuzq.atMember.selectedMember')
+          "
           @input="searchInput"
         />
       </view>
@@ -19,14 +23,14 @@
         scroll-with-animation="true"
         @scrolltolower="lower"
       >
-        <checkbox-group @change="changeCheck" v-if="followStatus">
+        <checkbox-group @change="changeCheck" v-if="followStatus && select !== 'select'">
           <label v-for="item in allFollow" :key="item.id">
             <qui-avatar-cell
               v-if="item.toUser"
               :mark="item.toUser.id"
               :title="item.toUser.username"
               :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="item.toUser.groups[0].name"
+              :value="item.toUser.groups.length > 0 ? item.toUser.groups[0].name : ''"
               :label="item.toUser.label"
               :is-real="item.toUser.isReal"
             >
@@ -34,13 +38,13 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <checkbox-group @change="changeCheck" v-else>
+        <checkbox-group @change="changeCheck" v-if="!followStatus && select !== 'select'">
           <label v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
               :mark="item.id"
               :title="item.username"
               :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
-              :value="item.groups[0].name"
+              :value="item.groups.length > 0 ? item.groups[0].name : ''"
               :label="item.label"
               :is-real="item.isReal"
             >
@@ -48,6 +52,32 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
+        <view v-if="select === 'select' && followStatus">
+          <view v-for="item in allFollow" :key="item.id">
+            <qui-avatar-cell
+              :mark="item.toUser.id"
+              :title="item.toUser.username"
+              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
+              :value="handleGroups(item.toUser)"
+              :label="item.label"
+              :is-real="item.isReal"
+              @click="radioChange(item)"
+            ></qui-avatar-cell>
+          </view>
+        </view>
+        <view v-if="select === 'select'">
+          <view v-for="item in allSiteUser" :key="item.id">
+            <qui-avatar-cell
+              :mark="item.id"
+              :title="item.username"
+              :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
+              :value="item.groups[0].name"
+              :label="item.label"
+              :is-real="item.isReal"
+              @click="radioChange(item)"
+            ></qui-avatar-cell>
+          </view>
+        </view>
         <view class="loading-text">
           <qui-icon
             v-if="
@@ -61,6 +91,7 @@
     </view>
     <view class="qui-at-member-page-box__ft">
       <qui-button
+        v-if="select !== 'select'"
         size="large"
         :type="Boolean(checkAvatar.length < 1) ? 'default' : 'primary'"
         :disabled="Boolean(checkAvatar.length < 1)"
@@ -91,31 +122,26 @@ export default {
       searchValue: '', // 搜索值
       pageNum: 1, // 页面
       meta: {}, // 接口返回meta值
+      select: true, // 选择被提问人
+      current: 0,
+      categoryId: 0,
+      categoryIndex: 0,
     };
-  },
-  computed: {
-    // 处理角色名称
-    // getGroups() {
-    //   const that = this;
-    //   let name = '';
-    //   return data => {
-    //     if (data) {
-    //       Object.keys(data).forEach(item => {
-    //         if (data[item]) {
-    //           name = data[item].name;
-    //         } else {
-    //           name = that.i18n.t('discuzq.role.noRole');
-    //         }
-    //       });
-    //     }
-    //     return name;
-    //   };
-    // },
   },
   methods: {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
+    },
 
     // 多选人员
     changeCheck(e) {
@@ -127,6 +153,22 @@ export default {
           this.checkAvatar.push(JSON.parse(item));
         }
       });
+    },
+    // 单选人员
+    radioChange(item) {
+      console.log(item, '单选人员');
+      uni.navigateTo({
+        url: `/topic/post?type=5&categoryId=${this.categoryId}&categoryIndex=${this.categoryIndex}`,
+      });
+      setTimeout(() => {
+        if (item.toUser) {
+          console.log(item.toUser, 'item.toUser');
+          uni.$emit('radioChange', item.toUser);
+        } else {
+          console.log(item.toUser, 'elseitem.toUser');
+          uni.$emit('radioChange', item);
+        }
+      }, 1000);
     },
     getCheckMember() {
       this.setAtMember(this.checkAvatar);
@@ -176,6 +218,9 @@ export default {
         'page[size]': 20,
         'page[number]': number,
       };
+      if (this.select === 'select') {
+        params['filter[canBeAsked]'] = 'yes';
+      }
       this.$store.dispatch('jv/get', ['follow', { params }]).then(res => {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
@@ -184,6 +229,7 @@ export default {
         if (Object.keys(res).nv_length - 1 === 0) {
           this.loadingText = 'search.noFollowers';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
+          // console.log('没有更多')
           this.loadingText = 'discuzq.list.noMoreData';
         }
       });
@@ -195,6 +241,9 @@ export default {
         'page[size]': 20,
         'page[number]': number,
       };
+      if (this.select === 'select') {
+        params['filter[canBeAsked]'] = 'yes';
+      }
       this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
         this.meta = res._jv.json.meta;
         this.allSiteUser = [...this.allSiteUser, ...res];
@@ -207,10 +256,22 @@ export default {
       });
     },
   },
-  onLoad() {
-    uni.setNavigationBarTitle({
-      title: this.i18n.t('discuzq.atMember.atTitle'),
-    });
+  onLoad(option) {
+    console.log(option, 'optionoption');
+    this.select = option.name;
+    console.log(this.select, 'select');
+    this.categoryId = option.categoryId;
+    this.categoryIndex = option.categoryIndex;
+    if (option.name === 'select') {
+      this.followStatus = true;
+      uni.setNavigationBarTitle({
+        title: this.i18n.t('discuzq.atMember.selectUser'),
+      });
+    } else {
+      uni.setNavigationBarTitle({
+        title: this.i18n.t('discuzq.atMember.atTitle'),
+      });
+    }
     this.getFollowMember(1);
     this.setAtMember([]);
   },

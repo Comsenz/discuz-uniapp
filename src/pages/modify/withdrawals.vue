@@ -3,7 +3,26 @@
     <view class="cash" @click.stop="toggleBox">
       <view class="cash-content">
         <!-- 收款人 -->
-        <view class="cash-content-tab">
+        <view class="cash-content-tab" v-if="!wxpayMchpayClose">
+          <qui-cell-item
+            :title="i18n.t('modify.collectionwechat')"
+            slot-right
+            :arrow="false"
+            :border="false"
+          >
+            <input
+              class="cash-content-input cashphon"
+              type="number"
+              maxlength="11"
+              @input="setphonnumber"
+              v-model="withdrawalPhon"
+              :placeholder="i18n.t('modify.withdrawalPhon')"
+              placeholder-style="color:rgba(221,221,221,1)"
+            />
+          </qui-cell-item>
+        </view>
+        <!-- 收款人 -->
+        <view class="cash-content-tab" v-else>
           <qui-cell-item :title="i18n.t('modify.payee')" slot-right :arrow="false" :border="false">
             <text class="cash-content-name">
               {{ name }}
@@ -110,6 +129,9 @@
             ></qui-input-code>
           </view>
         </view>
+        <view class="cash-explain" v-if="!wxpayMchpayClose">
+          {{ i18n.t('modify.withdrawalTitle') }}
+        </view>
         <view class="cash-button">
           <qui-button class="cash-button-sun" type="primary" size="large" @click="btncash">
             {{ i18n.t('modify.submission') }}
@@ -170,14 +192,20 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
+      withdrawalPhon: '', // 提现手机号
+      withdrawalNumber: '',
+      cashType: 0,
+      wxpayMchpayClose: true,
     };
   },
   onLoad() {
     this.userid = this.usersid;
     this.setmydata();
+    this.wxpayMchpayClose = this.forums.paycenter.wxpay_mchpay_close;
     this.$nextTick(() => {
       this.cost = this.forums.set_cash.cash_rate;
-      this.percentage = this.forums.set_cash.cash_rate * 100;
+      const prop = this.forums.set_cash.cash_rate * 100;
+      this.percentage = prop;
     });
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
@@ -189,8 +217,16 @@ export default {
       // this.postLoading = false;
       uni.hideLoading();
     });
+    if (this.forums.paycenter.wxpay_mchpay_close) {
+      this.cashType = 1;
+    } else {
+      this.cashType = 0;
+    }
   },
   computed: {
+    forum() {
+      return this.$store.getters['jv/get']('forums/1');
+    },
     usersid() {
       return this.$store.getters['session/get']('userId');
     },
@@ -198,6 +234,22 @@ export default {
       const data = this.$store.getters['jv/get'](`users/${this.usersid}`);
       return data;
     },
+  },
+  watch: {
+    forum(newValue) {
+      if (newValue) {
+        this.cost = this.forum.set_cash.cash_rate;
+        const prop = this.forum.set_cash.cash_rate * 100;
+        this.percentage = prop;
+        this.wxpayMchpayClose = this.forum.paycenter.wxpay_mchpay_close;
+        if (this.forum.paycenter.wxpay_mchpay_close) {
+          this.cashType = 1;
+        } else {
+          this.cashType = 0;
+        }
+      }
+    },
+    deep: true,
   },
   methods: {
     fourse() {
@@ -207,7 +259,19 @@ export default {
       this.code = num;
     },
     btncash() {
-      this.verifytitle();
+      if (this.forums.paycenter.wxpay_mchpay_close) {
+        if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.withdrawalPhon)) {
+          this.verifytitle();
+        } else {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.changesphon'),
+            duration: 2000,
+          });
+        }
+      } else {
+        this.verifytitle();
+      }
     },
     settlement() {
       setTimeout(() => {
@@ -224,6 +288,14 @@ export default {
           .replace('$#$', '.')
           .replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3')
           .replace(/^\./g, '');
+        if (Number(this.cashmany) < 1) {
+          this.cashmany = '';
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('modify.enteramount'),
+            duration: 2000,
+          });
+        }
         if (Number(this.cashmany) > Number(this.balance)) {
           this.cashmany = this.cashmany.slice(0, this.cashmany.length - 1);
           uni.showToast({
@@ -250,6 +322,12 @@ export default {
           this.procedures = casnumber.toFixed(2);
         }
       }, 5);
+    },
+    // 提现手机号设置
+    setphonnumber() {
+      setTimeout(() => {
+        this.withdrawalPhon = this.withdrawalPhon.replace(/[^\d]/g, '');
+      }, 30);
     },
     // 点击获取验证码计时开始
     btnButton() {
@@ -295,6 +373,7 @@ export default {
         this.balance = data.walletBalance;
         this.usertestphon = data.mobile;
         this.userphon = data.originalMobile;
+        this.withdrawalPhon = data.originalMobile;
         if (!this.usertestphon) {
           this.disabtype = true;
         }
@@ -410,13 +489,29 @@ export default {
     },
     // 提现申请
     cashwithdrawal() {
-      const params = {
-        _jv: {
-          type: 'wallet/cash',
-          include: ['user', 'userWallet'],
-        },
-        cash_apply_amount: this.cashmany,
-      };
+      let params = {};
+      if (this.cashType === 0) {
+        this.withdrawalNumber = this.withdrawalPhon;
+        params = {
+          _jv: {
+            type: 'wallet/cash',
+            include: ['user', 'userWallet'],
+          },
+          cash_apply_amount: this.cashmany,
+          cash_type: this.cashType,
+          cash_mobile: this.withdrawalPhon,
+        };
+      } else {
+        params = {
+          _jv: {
+            type: 'wallet/cash',
+            include: ['user', 'userWallet'],
+          },
+          cash_apply_amount: this.cashmany,
+          cash_type: this.cashType,
+        };
+      }
+      console.log(this.cashmany, this.withdrawalPhon, this.cashType, '提现参数');
       const postcash = status.run(() => this.$store.dispatch('jv/post', params));
       postcash
         .then(res => {
@@ -566,6 +661,9 @@ export default {
     color: --color(--qui-FC-333);
     text-align: right;
   }
+  .cashphon {
+    font-weight: 400;
+  }
   // .cash-content-actual {
   //   padding-top: 26rpx;
   //   box-sizing: border-box;
@@ -652,6 +750,15 @@ export default {
     display: flex;
     width: 100%;
     height: 100rpx;
+  }
+  .cash-explain {
+    width: 100%;
+    padding-right: 40rpx;
+    margin-top: 40rpx;
+    font-size: 28rpx;
+    line-height: 45rpx;
+    color: --color(--qui-FC-777);
+    box-sizing: border-box;
   }
   .cash-button {
     margin: 52rpx 0 0;

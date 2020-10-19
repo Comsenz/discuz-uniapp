@@ -9,8 +9,9 @@ import s9e from '@/utils/s9e';
 
 const url2new = {};
 // eslint-disable-next-line dot-notation
-url2new['details'] = '/pages/topic/index?id={id}';
+url2new['details'] = '/topic/index?id={id}';
 url2new['home-page'] = '/pages/profile/index?userId={id}';
+let that = null;
 
 export default {
   components: {
@@ -18,7 +19,7 @@ export default {
   },
   filters: {
     formatRichText(html) {
-      return s9e.parse(html);
+      return s9e.parse(html, that);
     },
   },
   props: {
@@ -26,6 +27,14 @@ export default {
       type: String,
       default: '',
     },
+  },
+  data() {
+    return {
+      that: null,
+    };
+  },
+  created() {
+    that = this;
   },
   methods: {
     navigate(url) {

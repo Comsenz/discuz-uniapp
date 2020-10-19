@@ -20,6 +20,7 @@
                 {{ t.commentTip }}
               </view>
               <qui-topic-content
+                :theme-parts="themeParts"
                 :topic-status="thread.isApproved"
                 :follow-show="post.user.follow != null"
                 :avatar-url="post.user.avatarUrl"
@@ -27,7 +28,7 @@
                 :is-real="post.user.isReal"
                 :theme-time="post.createdAt"
                 :theme-content="post.contentHtml"
-                :user-role="post.user.groups"
+                :user-role="post.user.groups ? post.user.groups : ''"
                 :images-list="post.images"
                 @personJump="personJump(post.user._jv.id)"
               >
@@ -199,7 +200,7 @@
                     :user-name="commentPost.user.username"
                     :is-real="commentPost.user.isReal"
                     :is-liked="commentPost.isLiked"
-                    :user-role="commentPost.user.groups"
+                    :user-role="commentPost.user.groups ? commentPost.user.groups : ''"
                     :comment-time="commentPost.createdAt"
                     :comment-status="commentPost.isApproved"
                     :comment-content="commentPost.contentHtml"
@@ -433,10 +434,11 @@ import { time2DateAndHM } from '@/utils/time';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { getCurUrl } from '@/utils/getCurUrl';
+import loginModule from '@/mixin/loginModule';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [user],
+  mixins: [user, loginModule],
   data() {
     return {
       navTitle: '评论详情页', // 导航栏标题
@@ -511,6 +513,7 @@ export default {
       deletePost: '', // 删除时的整个post数据
       deleteIndex: '', // 删除图片时的Index
       deleteTip: '确定删除吗？', // 删除提示
+      deleteImgId: '', // 删除时图片Id
       sortSeleShow: false, // 排序菜单状态
       sortSelectList: [
         { text: this.i18n.t('topic.sortTimeSequence'), type: '0', canOpera: true },
@@ -543,6 +546,7 @@ export default {
       ],
       currentReport: '', // 当前举报理由
       otherReasonValue: '', // 其他理由
+      themeParts: 1, // 传给组件的类型
     };
   },
   computed: {
@@ -555,6 +559,15 @@ export default {
     },
     post() {
       const post = this.$store.getters['jv/get'](`posts/${this.commentId}`);
+      let hasFirst = false;
+      if (post.user && post.user.groups.length > 0) {
+        post.user.groups = post.user.groups.filter(group => {
+          if (group.isDisplay === true && !hasFirst) {
+            hasFirst = true;
+            return true;
+          }
+        });
+      }
       this.likedUsers = post.likedUsers;
       return post;
     },
@@ -577,7 +590,7 @@ export default {
     // 时间转化
     localTime() {
       if (this.thread.createdAt) {
-        return time2DateAndHM(this.thread.createdAt);
+        return time2DateAndHM(this.thread.createdAt ? this.thread.createdAt : '');
       }
     },
   },
@@ -644,6 +657,7 @@ export default {
       const params = {
         include: [
           'user',
+          'user.groups',
           'likedUsers',
           'commentPosts',
           'commentPosts.user',
@@ -667,6 +681,8 @@ export default {
               });
               this.loaded = false;
             } else {
+              console.log(data, '~~~~~');
+
               // #ifndef MP-WEIXIN
               if (data.summaryText) {
                 uni.setNavigationBarTitle({
@@ -713,6 +729,15 @@ export default {
               this.status = false;
             } else {
               this.status = true;
+            }
+            let hasFirst = false;
+            if (data.user && data.user.groups.length > 0) {
+              data.user.groups = data.user.groups.filter(group => {
+                if (group.isDisplay === true && !hasFirst) {
+                  hasFirst = true;
+                  return true;
+                }
+              });
             }
             this.thread = data;
             this.loadingStatus = false;
@@ -795,7 +820,7 @@ export default {
               });
 
               // uni.navigateBack({
-              //   url: '/pages/topic/index?id=' + this.threadId,
+              //   url: '/topic/index?id=' + this.threadId,
               // });
               this.$refs.toast.show({ message: this.t.deleteSuccessAndJumpToTopic });
             } else {
@@ -871,6 +896,14 @@ export default {
         .dispatch('jv/post', params)
         .then(res => {
           if (res.isApproved == 1) {
+            let hasFirst = false;
+            res.user.groups = res.user.groups.filter(group => {
+              if (group.isDisplay === true && !hasFirst) {
+                hasFirst = true;
+                return true;
+              }
+              return false;
+            });
             this.postComments.push(res);
             this.$u.event.$emit('addComment', { data: res, commentId: this.commentId });
           } else {
@@ -906,6 +939,17 @@ export default {
       this.loadPostCommentStatus = status.run(() =>
         this.$store.dispatch('jv/get', ['posts', { params }]).then(data => {
           delete data._jv;
+          data.forEach((item, index) => {
+            let hasFirst = false;
+            data[index].user.groups = data[index].user.groups.filter(group => {
+              if (group.isDisplay === true && !hasFirst) {
+                hasFirst = true;
+                return true;
+              }
+
+              return false;
+            });
+          });
           this.postComments = [...this.postComments, ...data];
           this.loadingType = data.length === this.pageSize ? 'more' : 'nomore';
           if (data.length == 0) {
@@ -933,14 +977,11 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const originUser = this.$store.getters['jv/get'](`users/${userInfo.id}`);
       const params = {
@@ -983,12 +1024,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.sortSeleShow = false;
@@ -1059,7 +1098,7 @@ export default {
     uploadClear(list, del) {
       const id = list.id;
       this.deleteType = 0;
-      this.deleteId = id;
+      this.deleteImgId = id;
       this.deleteIndex = del;
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteImgSure');
@@ -1130,8 +1169,11 @@ export default {
         );
       } else if (this.deleteType === 0) {
         // 删除类型为回复时上传的图片
-        this.delAttachments(this.deleteId, this.deleteIndex).then(() => {
+        this.delAttachments(this.deleteImgId, this.deleteIndex).then(() => {
           this.$refs.upload.clear(this.deleteIndex);
+          this.$refs.upload.getValue().forEach((value, key, item) => {
+            value.id == this.deleteImgId && item.splice(key, 1);
+          });
         });
       }
     },
@@ -1159,7 +1201,7 @@ export default {
         });
       } else {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${this.threadId}`,
+          url: `/topic/index?id=${this.threadId}`,
         });
       }
 
@@ -1173,7 +1215,7 @@ export default {
       //   // });
       // }
       // uni.redirectTo({
-      //   url: `/pages/topic/index?id=${this.threadId}`,
+      //   url: `/topic/index?id=${this.threadId}`,
       // });
     },
     // 当前回复点赞
@@ -1201,13 +1243,10 @@ export default {
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
-        return;
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       this.$refs.morePopup.open();
@@ -1613,7 +1652,7 @@ page {
   }
 }
 .comment-content-box {
-  padding: 0 40rpx 0 30rpx;
+  padding: 0 40rpx 30rpx 30rpx;
   .comment-content {
     width: 100%;
     height: 260rpx;

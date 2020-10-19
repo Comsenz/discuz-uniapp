@@ -195,7 +195,7 @@ export default {
     },
     // 时间转化
     localTime() {
-      return time2DateAndHM(this.commentTime);
+      return time2DateAndHM(this.commentTime ? this.commentTime : '');
     },
   },
   watch: {

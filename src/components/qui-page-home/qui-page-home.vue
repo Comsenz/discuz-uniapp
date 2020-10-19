@@ -93,11 +93,14 @@
         :user-name="item.user.username"
         :is-real="item.user.isReal"
         :theme-image="item.user.avatarUrl"
+        :answer-image="item.question && item.question.beUser.avatarUrl"
         :theme-btn="item.canHide || ''"
         :theme-reply-btn="item.canReply || ''"
-        :them-pay-btn="item.price > 0"
-        :user-groups="item.user && item.user.groups"
+        :them-pay-btn="item.price > 0 || item.attachmentPrice > 0"
+        :user-groups="handleGroup(item.user && item.user.groups)"
+        :user-answer-groups="handleGroup(item.question && item.question.beUser.groups)"
         :theme-time="item.createdAt"
+        :theme-time-answer="item.question && item.question.answered_at"
         :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
         :media-url="item.threadVideo && item.threadVideo.media_url"
@@ -106,6 +109,7 @@
         :theme-comment="item.postCount - 1"
         :tags="[item.category]"
         :images-list="item.firstPost.images"
+        :post-goods="item.firstPost.postGoods ? item.firstPost.postGoods : ''"
         :theme-essence="item.isEssence"
         :video-width="item.threadVideo && item.threadVideo.width"
         :video-height="item.threadVideo && item.threadVideo.height"
@@ -114,9 +118,20 @@
         :duration="item.threadVideo && item.threadVideo.duration"
         :is-deleted="item.isDeleted"
         :scroll-top="scrollTop"
+        :questions-name="item.user.username"
+        :be-ask-name="item.question && item.question.beUser.username"
+        :question-content="item.question && item.question.content"
+        :add-ask="item.question && item.question.is_answer"
+        :onlooker-number="item.question && item.question.onlooker_number"
+        :free-ask="item.question && item.question.price == 0"
+        :ask-price="item.question && item.question.price"
+        :ask-content="item.question && item.question.content"
+        :onlooker-unit-price="item.question && item.question.onlooker_unit_price"
+        :on-looker="item.question && item.question.onlooker_unit_price == 0"
         :thread-position="
           item.location ? [item.location, item.address, item.longitude, item.latitude] : []
         "
+        :thread-audio="item.threadAudio"
         @click="handleClickShare(item._jv.id)"
         @handleIsGreat="
           handleIsGreat(
@@ -130,8 +145,11 @@
         @contentClick="contentClick(item)"
         @backgroundClick="contentClick(item)"
         @headClick="headClick(item.user._jv.id)"
+        @headAnswerClick="headAnswerClick(item.question.be_user_id)"
         @videoPlay="handleVideoPlay"
         @scrollheight="scrpllsip"
+        @fullscreenchange="screenplayback"
+        @scrollsetup="scrollsetups"
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </view>
@@ -241,10 +259,10 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
+import loginModule from '@/mixin/loginModule';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
-import loginAuth from '@/mixin/loginAuth-h5';
 // #endif
 import { mapMutations, mapState } from 'vuex';
 
@@ -263,10 +281,10 @@ export default {
   mixins: [
     forums,
     user,
-    // #ifdef  H5
+    loginModule,
+    // #ifdef H5
     wxshare,
     appCommonH,
-    loginAuth,
     // #endif
   ],
 
@@ -316,6 +334,9 @@ export default {
             { label: this.i18n.t('home.invitation'), value: '1', selected: false },
             { label: this.i18n.t('home.video'), value: '2', selected: false },
             { label: this.i18n.t('home.picture'), value: '3', selected: false },
+            { label: this.i18n.t('home.audio'), value: '4', selected: false },
+            { label: this.i18n.t('home.questions'), value: '5', selected: false },
+            { label: this.i18n.t('home.goods'), value: '6', selected: false },
           ],
         },
         {
@@ -376,6 +397,9 @@ export default {
         }
       },
     },
+    userId() {
+      return this.$store.getters['session/get']('userId');
+    },
   },
   created() {
     // #ifdef  H5
@@ -424,11 +448,31 @@ export default {
 
     // 详情页编辑增加图片时首页增加图片
     this.$u.event.$on('refreshImg', res => {
+      // console.log('这是接收的', res);
       // eslint-disable-next-line no-restricted-syntax
       for (const index in this.threads) {
         if (this.threads[index]._jv.id === res.threadId) {
-          const images = this.$store.getters['jv/get'](`posts/${res.id}`);
-          this.threads[index].firstPost.images = images.attachments;
+          const images = [];
+          if (res.images.data) {
+            res.images.data.forEach(image => {
+              images.push(this.$store.getters['jv/get'](`attachments/${image.id}`));
+            });
+          }
+
+          this.threads[index].firstPost.images = images;
+          this.$forceUpdate();
+          break;
+        }
+      }
+    });
+
+    // 详情页编辑增加图片时首页增加图片
+    this.$u.event.$on('refreshGoods', res => {
+      console.log(res, '这是接收的商品');
+      // eslint-disable-next-line no-restricted-syntax
+      for (const index in this.threads) {
+        if (this.threads[index]._jv.id === res.threadId) {
+          this.threads[index].firstPost.postGoods = res.goods;
           this.$forceUpdate();
           break;
         }
@@ -491,23 +535,31 @@ export default {
       });
     }
 
-    if (this.forums.set_site) {
+    if (this.forums.set_site && this.forums.set_site.site_title) {
       uni.setNavigationBarTitle({
-        title: this.forums.set_site.site_name,
+        title: `${this.forums.set_site.site_title}`,
+      });
+    } else if (this.forums.set_site) {
+      uni.setNavigationBarTitle({
+        title: `${this.forums.set_site.site_name}`,
       });
     }
 
     // #ifdef H5
     uni.$on('updateIndex', () => {
       this.headerShow = true;
+      this.ontrueGetList();
+      console.log('回到首页');
     });
     uni.$on('updateNoticePage', () => {
       // console.log('99999');
       this.headerShow = true;
+      this.ontrueGetList();
     });
     uni.$on('updateMy', () => {
       // console.log('我的我的');
       this.headerShow = true;
+      this.ontrueGetList();
     });
 
     // #endif
@@ -522,6 +574,16 @@ export default {
     }),
     topMargin() {
       return ';';
+    },
+    handleGroup(data) {
+      let groups = [];
+      if (data && data.length > 0) {
+        groups = data.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return [groups[0]];
+      }
+      return [];
     },
     scrpllsip(e, index) {
       // console.log(e, index);
@@ -567,6 +629,29 @@ export default {
       // #endif
       // }
     },
+    scrollsetups() {
+      const _this = this;
+      uni.setStorage({
+        key: 'scroll_top',
+        data: _this.scrollTop,
+      });
+    },
+    screenplayback() {
+      let num = 0;
+      uni.getStorage({
+        key: 'scroll_top',
+        success(resData) {
+          num = resData.data;
+        },
+      });
+      const timer = setTimeout(() => {
+        uni.pageScrollTo({
+          duration: 0, // 过渡时间必须为0，uniapp bug，否则运行到手机会报错
+          scrollTop: num, // 滚动到目标位置
+        });
+        clearTimeout(timer);
+      }, 50);
+    },
     // 滑动到顶部
     toUpper() {
       this.headerShow = true;
@@ -602,6 +687,19 @@ export default {
       this.threads = [];
       await this.loadThreads();
       this.checkoutTheme = false;
+      if (dataInfo.id !== 0) {
+        uni.setNavigationBarTitle({
+          title: `${dataInfo.name} - ${this.forums.set_site.site_name}`,
+        });
+      } else if (this.forums.set_site && this.forums.set_site.site_title) {
+        uni.setNavigationBarTitle({
+          title: `${this.forums.set_site.site_title}`,
+        });
+      } else {
+        uni.setNavigationBarTitle({
+          title: `${this.forums.set_site.site_name}`,
+        });
+      }
     },
     // 筛选分类里的搜索
     searchClick() {
@@ -613,20 +711,20 @@ export default {
     // 点击置顶跳转到详情页
     stickyClick(id) {
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
+        url: `/topic/index?id=${id}`,
       });
     },
     // 内容部分点击评论跳到详情页
     commentClick(id) {
       uni.navigateTo({
-        url: `/pages/topic/index?id=${id}`,
+        url: `/topic/index?id=${id}`,
       });
     },
     // 内容部分点击跳转到详情页
     contentClick(thread) {
       if (thread.canViewPosts) {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${thread._jv.id}`,
+          url: `/topic/index?id=${thread._jv.id}`,
         });
       } else {
         this.$refs.toast.show({ message: this.i18n.t('home.noPostingTopic') });
@@ -634,6 +732,18 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
+    // 点击已回答用户的头像调转到个人主页
+    headAnswerClick(id) {
+      if (id <= 0) {
+        return;
+      }
       uni.navigateTo({
         url: `/pages/profile/index?userId=${id}`,
       });
@@ -646,14 +756,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$refs.popupHead.open();
@@ -695,12 +802,10 @@ export default {
             data: '/pages/home/index',
           });
           // #ifdef MP-WEIXIN
-          this.$store.getters['session/get']('auth').open();
+          this.mpLoginMode();
           // #endif
           // #ifdef H5
-          if (!this.handleLogin()) {
-            return;
-          }
+          this.h5LoginMode();
           // #endif
         }
         uni.navigateTo({
@@ -780,14 +885,11 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       // #ifdef MP-WEIXIN
       this.$emit('handleClickShare', id);
@@ -888,8 +990,13 @@ export default {
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
+          'question',
+          'question.beUser',
+          'question.beUser.groups',
+          'threadAudio',
         ],
       };
       if (this.threadType !== null) {
@@ -922,12 +1029,10 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       const params = {
@@ -941,6 +1046,9 @@ export default {
     },
     // 上拉加载
     pullDown() {
+      if (this.footerIndex !== 0) {
+        return;
+      }
       if (this.loadingType !== 'more') {
         return;
       }
@@ -1104,6 +1212,8 @@ $padding-bottom: 160rpx;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .main {
+  display: flex;
+  flex-direction: column;
   padding-bottom: $padding-bottom;
   background: --color(--qui-BG-1);
 }

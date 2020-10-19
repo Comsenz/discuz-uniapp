@@ -9,9 +9,13 @@ import {
   SET_AUTH,
   SET_PARAMS,
   SET_CODE,
+  SET_USER_INFO,
+  SET_PHONE,
   SET_TOKEN,
   SET_GOOD,
   SET_INVITE_CODE,
+  SET_ATTACHMENT,
+  SET_THREAD,
   SET_CATEGORYID,
   SET_CATEGORYINDEX,
   DELETE_USER_ID,
@@ -61,14 +65,26 @@ const actions = {
   setCode: (context, payload) => {
     context.commit(SET_CODE, payload);
   },
-  setToken: (context, payload) => {
-    context.commit(SET_TOKEN, payload);
+  setUserInfo: (context, payload) => {
+    context.commit(SET_USER_INFO, payload);
+  },
+  setPhone: (context, payload) => {
+    context.commit(SET_PHONE, payload);
+  },
+  setGood: (context, payload) => {
+    context.commit(SET_GOOD, payload);
   },
   setGood: (context, payload) => {
     context.commit(SET_GOOD, payload);
   },
   setInviteCode: (context, payload) => {
     context.commit(SET_INVITE_CODE, payload);
+  },
+  setAttachment: (context, payload) => {
+    context.commit(SET_ATTACHMENT, payload);
+  },
+  setThread: (context, payload) => {
+    context.commit(SET_THREAD, payload);
   },
   // #ifdef MP-WEIXIN
   noSenseMPLogin: (context, payload = {}) => {
@@ -98,25 +114,14 @@ const actions = {
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
     console.log(context, payload);
-    let inviteCode = '';
-    let register = 0;
-    uni.getStorage({
-      key: 'register',
-      success(resData) {
-        register = resData.data || 0;
-      },
-    });
-    uni.getStorage({
-      key: 'inviteCode',
-      success(resData) {
-        inviteCode = resData.data || '';
-      },
-    });
+    const inviteCode = uni.getStorageSync('inviteCode');
+    const register = uni.getStorageSync('register');
+    const rebind = uni.getStorageSync('rebind');
     const options = { custom: { showTost: false } };
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=${register}&inviteCode=${inviteCode}`,
+          `oauth/wechat/user?sessionId=${payload.sessionId}&code=${payload.code}&state=${payload.state}&register=${register}&inviteCode=${inviteCode}&rebind=${rebind}`,
           options,
         )
         .then(results => {
@@ -187,9 +192,7 @@ const actions = {
     return new Promise(resolve => {
       context.commit(DELETE_USER_ID);
       context.commit(DELETE_ACCESS_TOKEN);
-      uni.removeStorage({
-        key: 'inviteCode',
-      });
+      uni.removeStorageSync('inviteCode');
       uni.removeStorage({
         key: 'page',
       });
@@ -243,14 +246,31 @@ const mutations = {
     uni.removeStorageSync('access_token');
     state.accessToken = '';
   },
-  [SET_TOKEN](state, payload) {
-    state.token = payload;
+  [SET_USER_INFO](state, payload) {
+    state.userInfo = payload;
+  },
+  [SET_PHONE](state, payload) {
+    state.phone = payload;
+  },
+  [SET_GOOD](state, payload) {
+    state.good = payload;
+    if (payload) {
+      state.good = payload;
+    } else {
+      state.good = {};
+    }
   },
   [SET_GOOD](state, payload) {
     state.good = payload;
   },
   [SET_INVITE_CODE](state, payload) {
     state.inviteCode = payload;
+  },
+  [SET_ATTACHMENT](state, payload) {
+    state.attachment = payload;
+  },
+  [SET_THREAD](state, payload) {
+    state.thread = payload;
   },
 };
 

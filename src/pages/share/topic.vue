@@ -287,7 +287,7 @@ export default {
         usercontimg: this.contentImg, // 内容图片
         userattname: this.attachmentsName, // 帖子内容名称
         useratttype: this.attachmentsType, // 帖子分类
-        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code?path=/pages/topic/index?id=${
+        userweixincode: `${this.$u.host()}api/oauth/wechat/miniprogram/code?path=/topic/index?id=${
           this.themeid
         }`, // 微信二维码
         slitename: this.slitename, // 站点名称

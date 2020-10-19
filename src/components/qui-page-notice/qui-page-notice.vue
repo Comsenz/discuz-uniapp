@@ -60,9 +60,22 @@
                   <view class="dialog-box__header__info__time">{{ dialog.time }}</view>
                 </view>
               </view>
-              <view class="dialog-box__header__r">
+              <view class="dialog-box__header__r" @click.stop>
+                <qui-icon
+                  class="delete"
+                  name="icon-delete"
+                  size="26"
+                  color="#aaa"
+                  @click="deleteMessage(dialog)"
+                ></qui-icon>
                 <text class="dialog-box__header__r-red-circle" v-if="dialog.readAt === null"></text>
-                <qui-icon class="arrow" name="icon-folding-r" size="22" color="#ddd"></qui-icon>
+                <qui-icon
+                  class="arrow"
+                  name="icon-folding-r"
+                  size="22"
+                  color="#ddd"
+                  @click="jumpMsglistPage(dialog, index)"
+                ></qui-icon>
               </view>
             </view>
             <view class="dialog-box__con">
@@ -79,14 +92,25 @@
         </view>
       </scroll-view>
     </view>
+    <uni-popup ref="popDelete" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :before-close="true"
+        :content="i18n.t('core.deleteMessageSure')"
+        @close="handleCancel"
+        @confirm="handleOk"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
 <script>
 import { time2DateAndHM } from '@/utils/time';
 import user from '@/mixin/user';
+import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 
 export default {
+  components: { uniPopupDialog },
   mixins: [user],
   props: {
     navTheme: {
@@ -102,13 +126,21 @@ export default {
         { id: 2, title: 'notice.reply', type: 'replied', unReadNum: 0, border: true },
         { id: 3, title: 'notice.like', type: 'liked', unReadNum: 0, border: true },
         { id: 4, title: 'notice.reward', type: 'rewarded,withdrawal', unReadNum: 0, border: true },
-        { id: 5, title: 'notice.system', type: 'system', unReadNum: 0, border: false },
+        {
+          id: 5,
+          title: 'notice.questionsAnswers',
+          type: 'questioned',
+          unReadNum: 0,
+          border: true,
+        },
+        { id: 6, title: 'notice.system', type: 'system', unReadNum: 0, border: false },
       ],
       loadingType: 'more', // 上拉加载状态
       isFirst: true, // 是否是第一次进入页面
       pageSize: 10, // 每页10条数据
       pageNum: 1, // 当前页数
       dialogList: [], // 会话列表
+      currentDialog: {},
       navbarHeight: 0, // 顶部导航栏的高度
     };
   },
@@ -143,6 +175,26 @@ export default {
     // #endif
   },
   methods: {
+    deleteMessage(dialog) {
+      this.currentDialog = dialog;
+      this.$refs.popDelete.open();
+    },
+    handleCancel() {
+      this.$refs.popDelete.close();
+    },
+    handleOk() {
+      this.$store.dispatch('jv/delete', `dialog/${this.currentDialog._jv.id}`).then(() => {
+        this.$refs.popDelete.close();
+        const { currentDialog } = this;
+        const { dialogList } = this;
+        this.dialogList.forEach((value, index) => {
+          if (value._jv.id === currentDialog._jv.id) {
+            dialogList.splice(index, 1);
+          }
+        });
+        this.dialogList = dialogList;
+      });
+    },
     // 调用 会话列表 的接口
     getDialogList() {
       const params = {
@@ -156,7 +208,9 @@ export default {
           const list = JSON.parse(JSON.stringify(res));
           for (let i = 0; i < list.length; i += 1) {
             if (list[i] && list[i].dialogMessage) {
-              list[i].time = time2DateAndHM(list[i].dialogMessage.created_at);
+              list[i].time = time2DateAndHM(
+                list[i].dialogMessage.created_at ? list[i].dialogMessage.created_at : '',
+              );
             }
             if (list[i] && list[i].recipient && list[i].sender) {
               if (list[i].recipient.id === this.currentLoginId) {
@@ -184,6 +238,7 @@ export default {
     },
     // 调用 未读通知数 的接口
     getUnreadNoticeNum() {
+      console.log(this.user);
       if (this.user && this.user.typeUnreadNotifications) {
         this.list[0].unReadNum = this.user.typeUnreadNotifications.related || '';
         this.list[1].unReadNum = this.user.typeUnreadNotifications.replied || '';
@@ -192,7 +247,8 @@ export default {
           this.user.typeUnreadNotifications.rewarded ||
           this.user.typeUnreadNotifications.withdrawal ||
           '';
-        this.list[4].unReadNum = this.user.typeUnreadNotifications.system || '';
+        this.list[4].unReadNum = this.user.typeUnreadNotifications.questioned || '';
+        this.list[5].unReadNum = this.user.typeUnreadNotifications.system || '';
       }
     },
     // 跳转至 @我的/回复我的/点赞我的/财务通知/系统通知 页面（传入标题，类型和未读通知条数）
@@ -340,6 +396,9 @@ export default {
         background: --color(--qui-RED);
         border-radius: 50%;
         content: '';
+      }
+      .delete {
+        margin-right: 35rpx;
       }
     }
   }

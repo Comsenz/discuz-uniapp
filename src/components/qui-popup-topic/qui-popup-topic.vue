@@ -84,6 +84,11 @@ export default {
     // 话题搜索
     searchInput() {
       clearTimeout(timer);
+      if (this.searchValue) {
+        this.shouldShow = true;
+      } else {
+        this.shouldShow = false;
+      }
       timer = setTimeout(() => {
         this.pageNum = 1;
         this.loadingText = 'discuzq.list.loading';
@@ -120,15 +125,11 @@ export default {
         } else {
           this.topics = data;
         }
-        if (this.topics === []) {
-          this.shouldShow = false;
-        }
-
-        if (!data.length) {
-          this.shouldShow = true;
-        } else {
-          this.shouldShow = false;
-        }
+        this.topics.forEach(item => {
+          if (item.content === this.searchValue) {
+            this.shouldShow = false;
+          }
+        });
       });
     },
     // 上划加载更多

@@ -54,7 +54,7 @@
             </view>
           </navigator>
           <view class="topic-page-list-item_details" v-if="item.lastThread.length">
-            <navigator :url="'/pages/topic/index?id=' + item.lastThread[0]._jv.id">
+            <navigator :url="'/topic/index?id=' + item.lastThread[0]._jv.id">
               <qui-uparse
                 class="topic-page-list-item_details_text"
                 :content="item.lastThread[0].firstPost.summary"

@@ -18,9 +18,10 @@
 
 <script>
 import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
 
 export default {
-  mixins: [forums],
+  mixins: [forums, loginModule],
   props: {
     shareType: {
       type: String,
@@ -71,12 +72,10 @@ export default {
           data: '/pages/home/index',
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
       }
       if (shareType === 'top') {

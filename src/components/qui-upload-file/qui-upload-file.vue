@@ -8,11 +8,7 @@
         <qui-icon class="icon-delete" name="icon-delete" color="#fff" size="17"></qui-icon>
       </view>
     </view>
-    <view
-      class="qui-uploader-box__add"
-      @tap="uploadBtn"
-      v-if="fileList.length < maxLength && showAdd"
-    >
+    <view class="qui-uploader-box__item qui-uploader-box__add" @tap="uploadBtn">
       <view>
         <qui-icon name="icon-fujian" color="#aaa" size="40"></qui-icon>
       </view>
@@ -253,19 +249,7 @@ export default {
 @import '@/styles/base/variable/global.scss';
 
 .qui-uploader-box {
-  margin-bottom: 30rpx;
-  &__add {
-    display: inline-block;
-    width: 215rpx;
-    height: 215rpx;
-    padding-top: 54rpx;
-    text-align: center;
-    vertical-align: middle;
-    background-color: --color(--qui-BG-2);
-    border: 1px solid --color(--qui-BOR-ED);
-    border-radius: 5rpx;
-    box-sizing: border-box;
-  }
+  padding: 30rpx 0;
   &__add__fonts {
     margin-top: 4rpx;
     font-size: $fg-f4;
@@ -277,6 +261,7 @@ export default {
     width: 215rpx;
     height: 215rpx;
     margin-right: 13rpx;
+    margin-bottom: 13rpx;
     text-align: center;
     vertical-align: middle;
     background-color: --color(--qui-BG-2);
@@ -284,7 +269,12 @@ export default {
     border-radius: 5rpx;
     box-sizing: border-box;
   }
-  &__item:nth-child(3) {
+  &__item:nth-child(3n) {
+    margin-right: 0;
+  }
+  &__add {
+    display: inline-block;
+    padding-top: 54rpx;
     margin-right: 0;
   }
   &__item__fonts {

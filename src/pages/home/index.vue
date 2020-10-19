@@ -9,14 +9,19 @@
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
+        <qui-page-find
+          ref="quifind"
+          :nav-theme="theme"
+          :style="{ display: show_index === 1 ? 'block' : 'none' }"
+        ></qui-page-find>
         <qui-page-notice
           :nav-theme="theme"
           ref="quinotice"
-          :style="{ display: show_index === 1 ? 'block' : 'none' }"
+          :style="{ display: show_index === 2 ? 'block' : 'none' }"
         ></qui-page-notice>
         <qui-page-my
           ref="quimy"
-          :style="{ display: show_index === 2 ? 'block' : 'none' }"
+          :style="{ display: show_index === 3 ? 'block' : 'none' }"
         ></qui-page-my>
       </view>
       <view class="tabBar">
@@ -31,9 +36,10 @@ import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
+import loginModule from '@/mixin/loginModule';
 
 export default {
-  mixins: [forums, user, detectionModel],
+  mixins: [forums, user, detectionModel, loginModule],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
@@ -59,7 +65,8 @@ export default {
       set(index) {
         if (this.forums.set_site) {
           const title = [
-            this.forums.set_site.site_name,
+            `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
+            this.i18n.t('home.find'),
             this.i18n.t('notice.notice'),
             this.i18n.t('profile.mine'),
           ];
@@ -125,7 +132,7 @@ export default {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
         title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
-        path: `/pages/topic/index?id=${this.nowThreadId}`,
+        path: `/topic/index?id=${this.nowThreadId}`,
       };
     }
     return {
@@ -148,11 +155,11 @@ export default {
     // #endif
     if (
       !this.$store.getters['session/get']('isLogin') &&
-      ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+      ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
     ) {
-      uni.navigateTo({
-        url: 'pages/home/index',
-      });
+      // uni.navigateTo({
+      //   url: 'pages/home/index',
+      // });
       return;
     }
 
@@ -169,7 +176,8 @@ export default {
     // 其他页面返回
     if (this.forums.set_site) {
       const title = [
-        this.forums.set_site.site_name,
+        `${this.forums.set_site.site_name} - ${this.forums.set_site.site_title}`,
+        this.i18n.t('home.find'),
         this.i18n.t('notice.notice'),
         this.i18n.t('profile.mine'),
       ];
@@ -177,12 +185,6 @@ export default {
         title: title[this.show_index],
       });
     }
-    // #ifdef H5
-    // const index = window.location.href.split('?')[1];
-    // if (index) {
-    //   this.setFooterIndex(parseInt(index, 10));
-    // }
-    // #endif
   },
   methods: {
     ...mapMutations({
@@ -190,20 +192,24 @@ export default {
     }),
     // 切换组件
     cut_index(e, type, isTabBar) {
+      const tabs = ['home', 'quifind', 'quinotice', 'quimy'];
       uni.setStorage({
         key: 'page',
         data: '/pages/home/index',
       });
-      const tabs = ['home', 'quinotice', 'quimy'];
       this.currentTab = tabs[type];
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+        ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
-        this.$store.getters['session/get']('auth').open();
-        this.currentTab = 'home';
-        this.setFooterIndex(0);
-        return;
+        // #ifdef MP-WEIXIN
+        this.mpLoginMode();
+        // #endif
+        // #ifdef H5
+        this.h5LoginMode();
+        // #endif
+        // this.currentTab = 'home';
+        // this.setFooterIndex(0);
       }
 
       this.show_index = type;
@@ -231,7 +237,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .view-content {
   width: 100%;
-  height: calc(100vh - 98rpx);
+  height: calc(100vh - 120rpx);
 }
 .ioschoice {
   width: 100%;

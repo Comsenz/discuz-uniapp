@@ -66,13 +66,14 @@
                 <view>
                   <radio
                     :value="item.value"
-                    :namr="item.index"
+                    :name="item.index"
                     :checked="index === current"
                     class="radio"
                     color="#2699fb"
                     :disabled="
                       (descriptionShow && !walletStatus && item.name === p.walletPay) ||
-                        (descriptionShow && !(money <= balance) && item.name === p.walletPay)
+                        (descriptionShow && !(money <= balance) && item.name === p.walletPay) ||
+                        item.hide
                     "
                   />
                 </view>
@@ -81,7 +82,7 @@
           </radio-group>
         </view>
 
-        <view class="pay-tip">
+        <view class="pay-tip" v-if="payTipShow">
           ￥{{ money }}{{ p.rmb }}{{ p.payTo }}{{ toName }}{{ p.ofAccount }}
         </view>
         <!--<qui-button size="max" type="primary" class="paySureBtn" @click="paysureShow">
@@ -134,8 +135,8 @@ export default {
     },
     // 支付金额
     money: {
-      type: Number,
-      default: 0,
+      type: [Number, String],
+      default: 0.0,
     },
     // 余额
     balance: {
@@ -151,6 +152,11 @@ export default {
     toName: {
       type: String,
       default: '',
+    },
+    // 支付提示
+    payTipShow: {
+      type: Boolean,
+      default: true,
     },
     // 支付方式数组
     payTypeData: {
@@ -171,6 +177,10 @@ export default {
       type: String,
       default: '',
     },
+    payId: {
+      type: [String, Number],
+      default: '',
+    },
   },
 
   data() {
@@ -182,7 +192,7 @@ export default {
       checkVal: '1',
       checkStatus: true, // 单选框状态
       // checkStatusVal: 1, // 单选框状态
-      current: 0,
+      current: 1,
     };
   },
   computed: {
@@ -218,7 +228,7 @@ export default {
     },
     // 父组件触发是否显示弹框
     payClickShow(val) {
-      if (val === 0) {
+      if (val === 0 || val === 2) {
         this.$refs.payPopup.open();
       } else {
         this.$refs.payTypePopup.open();

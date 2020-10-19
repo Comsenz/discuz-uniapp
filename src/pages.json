@@ -12,9 +12,9 @@
       }
     },
     {
-      "path": "pages/share/weixinchome",
+      "path": "pages/modify/rightdetails",
       "style": {
-        "navigationBarTitleText": "相册选取"
+        "navigationBarTitleText": "权力详情"
       }
     },
     {
@@ -51,11 +51,33 @@
         "navigationBarTitleText": "#话题#"
       }
     },
+    {
+      "path": "pages/topic/parse-goods",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "发布"
+      }
+    },
+    {
+      "path": "pages/topic/attachment",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "预览附件"
+      }
+    },
     // 登录注册
     {
       "path": "pages/user/phone-login",
       "style": {
         "navigationBarTitleText": "手机号码登录"
+      }
+    },
+    {
+      "path": "pages/user/phone-login-register",
+      "style": {
+        "navigationBarTitleText": "手机号码登录/注册"
       }
     },
     {
@@ -73,25 +95,31 @@
     {
       "path": "pages/user/pc-login",
       "style": {
-        "navigationBarTitleText": "PC登录"
-      }
-    },
-    {
-      "path": "pages/user/grant-login",
-      "style": {
-        "navigationBarTitleText": "PC登录"
+        "navigationBarTitleText": "PC端登录确认"
       }
     },
     {
       "path": "pages/user/login-bind",
       "style": {
-        "navigationBarTitleText": "登录并绑定"
+        "navigationBarTitleText": "登录并绑定微信号"
+      }
+    },
+    {
+      "path": "pages/user/login-bind-phone",
+      "style": {
+        "navigationBarTitleText": "登录并绑定手机号"
       }
     },
     {
       "path": "pages/user/register-bind",
       "style": {
-        "navigationBarTitleText": "注册并绑定"
+        "navigationBarTitleText": "注册并绑定微信号"
+      }
+    },
+    {
+      "path": "pages/user/register-bind-phone",
+      "style": {
+        "navigationBarTitleText": "注册并绑定手机号"
       }
     },
     {
@@ -104,13 +132,6 @@
       "path": "pages/user/register",
       "style": {
         "navigationBarTitleText": "注册"
-      }
-    },
-    {
-      "path": "pages/topic/index",
-      "style": {
-        "navigationBarTitleText": "内容详情页",
-        "enablePullDownRefresh": true
       }
     },
     {
@@ -283,16 +304,6 @@
         "navigationBarTitleText": "邀请成员"
       }
     },
-
-    {
-      "path": "pages/topic/post",
-      "style": {
-        "navigationBarTitleText": "发布",
-        "navigationBarBackgroundColor": "#fff",
-        "navigationBarTextStyle": "black",
-        "navigationStyle": "default"
-      }
-    },
     {
       "path": "pages/user/at-member",
       "style": {
@@ -306,6 +317,14 @@
       "style": {
         "navigationBarBackgroundColor": "#fff",
         "navigationBarTitleText": "信息提示",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/common/error",
+      "style": {
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "404",
         "disableScroll": true
       }
     },
@@ -349,12 +368,6 @@
       }
     },
     {
-      "path": "pages/modify/withdrawals",
-      "style": {
-        "navigationBarTitleText": "提现"
-      }
-    },
-    {
       "path": "pages/modify/editpwd",
       "style": {
         "navigationBarTitleText": "修改密码"
@@ -395,20 +408,48 @@
       "style": {
         "navigationBarTitleText": ""
       }
-    },
-    {
-      "path": "pages/modify/rightdetails",
-      "style": {
-        "navigationBarTitleText": "权力详情"
-      }
-    },
+    },  
     {
       "path": "pages/modify/right",
       "style": {
-        "navigationBarTitleText": "权力的市场"
+        "navigationBarTitleText": "权限购买"
+      }
+    },
+    {
+      "path": "pages/modify/withdrawals",
+      "style": {
+        "navigationBarTitleText": "提现"
       }
     }
   ],
+  "subPackages": [{
+      "root": "topic",
+      "pages": [{
+          "path": "post",
+          "style": {
+            "navigationBarTitleText": "发布",
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black",
+            "navigationStyle": "default"
+          }
+      },{
+        "path": "index",
+        "style": {
+          "navigationBarTitleText": "",
+          "enablePullDownRefresh": true
+        }
+    }]
+  }],
+  "preloadRule": {
+      "topic/post": {
+          "network": "all",
+          "packages": ["__APP__"]
+      },
+      "topic/index": {
+        "network": "all",
+        "packages": ["__APP__"]
+    }
+  },
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "",

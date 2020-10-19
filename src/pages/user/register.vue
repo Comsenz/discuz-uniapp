@@ -30,100 +30,9 @@
       <view class="register-box-btn" id="TencentCaptcha" @click="handleRegister">
         {{ i18n.t('user.register') }}
       </view>
-      <!-- #ifdef MP-WEIXIN -->
       <view class="register-box-ft">
-        <view
-          class="register-box-ft-title"
-          v-if="
-            (forum && forum.passport && forum.passport.miniprogram_close) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
-          "
-        >
-          {{ i18n.t('user.otherRegisterMode') }}
-        </view>
-        <view class="register-box-ft-con">
-          <image
-            v-if="forum && forum.passport && forum.passport.miniprogram_close"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.miniprogram_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms
-                ? 'register-box-ft-con-image register-box-ft-con-right'
-                : 'register-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="mpAuthClick"
-          />
-          <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.miniprogram_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms
-                ? 'register-box-ft-con-image register-box-ft-con-left'
-                : 'register-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/shouji.svg"
-            @click="jump2PhoneLogin"
-          />
-        </view>
         <view class="register-box-ft-btn" @click="jump2Login">{{ i18n.t('user.login') }}</view>
       </view>
-      <!-- #endif -->
-      <!-- #ifdef H5 -->
-      <view class="register-box-ft">
-        <view
-          class="register-box-ft-title"
-          v-if="
-            (forum && forum.passport && forum.passport.offiaccount_close && isWeixin) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
-          "
-        >
-          {{ i18n.t('user.otherRegisterMode') }}
-        </view>
-        <view class="register-box-ft-con">
-          <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.offiaccount_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms &&
-              isWeixin
-                ? 'register-box-ft-con-image register-box-ft-con-right'
-                : 'register-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="jump2WeChat"
-          />
-          <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            :class="[
-              forum &&
-              forum.passport &&
-              forum.passport.offiaccount_close &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms &&
-              isWeixin
-                ? 'register-box-ft-con-image register-box-ft-con-left'
-                : 'register-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/shouji.svg"
-            @click="jump2PhoneLogin"
-          />
-        </view>
-        <view class="register-box-ft-btn" @click="jump2Login">{{ i18n.t('user.login') }}</view>
-      </view>
-      <!-- #endif -->
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
@@ -133,9 +42,7 @@
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
 // #ifdef H5
-import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
-import { setCookie } from '@/utils/setCookie';
 // #endif
 import { SITE_PAY } from '@/common/const';
 
@@ -144,7 +51,6 @@ export default {
     user,
     loginModule,
     // #ifdef H5
-    appCommonH,
     tcaptchs,
     // #endif
   ],
@@ -162,18 +68,10 @@ export default {
       ticket: '',
       randstr: '',
       captchaResult: {},
-      // #ifdef H5
-      isWeixin: false, // 默认不是微信浏览器
-      // #endif
     };
   },
   onLoad() {
     this.getForum();
-
-    // #ifdef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    // #endif
 
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
@@ -224,27 +122,17 @@ export default {
         },
       };
       // #ifdef MP-WEIXIN
-      // 小程序注册必传参数
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.code = data.data.attributes.code;
-      }
       if (!this.type) {
-        const token = this.$store.getters['session/get']('token');
-        if (token && token !== '') {
+        const token = uni.getStorageSync('token');
+        if (token !== '') {
           params.data.attributes.token = token;
         }
       }
       // #endif
       // #ifdef H5
       // 微信内置浏览器注册必传参数
-      const token = this.$store.getters['session/get']('token');
-      if (token && token !== '') {
+      const token = uni.getStorageSync('token');
+      if (token !== '') {
         params.data.attributes.token = token;
       }
       // #endif
@@ -262,13 +150,7 @@ export default {
       ) {
         params.data.attributes.register_reason = this.reason;
       }
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
+      const inviteCode = uni.getStorageSync('inviteCode');
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
@@ -316,9 +198,6 @@ export default {
         .dispatch('session/h5Register', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            // #ifdef H5
-            setCookie('token', res.data.data.attributes.access_token, 30);
-            // #endif
             console.log('注册成功：', res);
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
@@ -382,19 +261,6 @@ export default {
           console.log(err);
         });
     },
-    // #ifdef MP-WEIXIN
-    mpAuthClick() {
-      this.getmpRegisterParams();
-    },
-    // #endif
-    // #ifdef H5
-    jump2WeChat() {
-      this.wxh5Login();
-    },
-    // #endif
-    jump2PhoneLogin() {
-      this.jump2PhoneLoginPage();
-    },
     jump2Login() {
       this.jump2LoginPage();
     },
@@ -457,19 +323,19 @@ export default {
         width: 100rpx;
         height: 100rpx;
       }
-
-      &-right {
-        margin-right: 20rpx;
-      }
-
-      &-left {
-        margin-left: 20rpx;
-      }
     }
 
     &-btn {
       color: rgba(24, 120, 243, 1);
     }
   }
+}
+
+.right {
+  margin-right: 20rpx;
+}
+
+.left {
+  margin-left: 20rpx;
 }
 </style>

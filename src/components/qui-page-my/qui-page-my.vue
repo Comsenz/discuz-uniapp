@@ -9,12 +9,7 @@
       status-bar
     ></uni-nav-bar>
     <!-- #endif -->
-    <scroll-view
-      scroll-y="true"
-      scroll-with-animation="true"
-      show-scrollbar="false"
-      class="scroll-y"
-    >
+    <view class="scroll-y">
       <view class="my-info">
         <view class="my-info__box">
           <view class="my-info__box__detail">
@@ -49,6 +44,9 @@
           <navigator url="/pages/my/favorite" hover-class="none">
             <qui-cell-item :title="i18n.t('profile.myfavorite')" arrow></qui-cell-item>
           </navigator>
+          <!-- <navigator url="/pages/questions/index" hover-class="none">
+            <qui-cell-item :title="i18n.t('profile.mycontent')" arrow></qui-cell-item>
+          </navigator> -->
           <navigator url="/pages/my/shield" hover-class="none">
             <qui-cell-item
               :title="i18n.t('profile.myshield')"
@@ -59,11 +57,8 @@
         </view>
         <view class="my-items__wrap">
           <navigator url="/pages/site/index" hover-class="none">
-            <qui-cell-item :title="i18n.t('profile.circleinfo')" arrow></qui-cell-item>
-          </navigator>
-          <navigator url="/pages/site/search" hover-class="none">
             <qui-cell-item
-              :title="i18n.t('profile.search')"
+              :title="i18n.t('profile.circleinfo')"
               arrow
               :border="
                 forums.other &&
@@ -112,35 +107,14 @@
           </qui-cell-item>
         </view>
 
-        <!-- 小程序和微信内：无感模式不展示退出并解绑按钮，其他模式展示退出并解绑按钮
-             微信外：展示退出登录按钮 -->
-        <view class="logout">
-          <!-- #ifdef MP-WEIXIN -->
-          <qui-button
-            size="large"
-            type="warn"
-            @click="exitAndUnbind"
-            v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2"
-          >
-            {{ i18n.t('user.noBind') }}
-          </qui-button>
-          <!-- #endif -->
-          <!-- #ifdef H5-->
-          <qui-button
-            size="large"
-            type="warn"
-            @click="exitAndUnbind"
-            v-if="isWeixin && forums && forums.set_reg && forums.set_reg.register_type !== 2"
-          >
-            {{ i18n.t('user.noBind') }}
-          </qui-button>
-          <qui-button size="large" type="warn" @click="logout" v-if="!isWeixin">
+        <!-- 用户名模式和手机号模式展示退出登录按钮，无感模式不展示退出登录按钮 -->
+        <view class="logout" v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2">
+          <qui-button size="large" type="warn" @click="logout">
             {{ i18n.t('user.logout') }}
           </qui-button>
-          <!-- #endif -->
         </view>
       </view>
-    </scroll-view>
+    </view>
     <uni-popup ref="popup" type="center">
       <uni-popup-dialog
         type="warn"
@@ -160,9 +134,6 @@ import user from '@/mixin/user';
 import appCommonH from '@/utils/commonHelper';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { mapState, mapMutations } from 'vuex';
-// #ifdef H5
-import { setCookie } from '@/utils/setCookie';
-// #endif
 
 export default {
   components: { uniPopupDialog },
@@ -171,6 +142,7 @@ export default {
     return {
       items: [
         { title: this.i18n.t('profile.topic'), brief: '0' },
+        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.following'), brief: '0' },
         { title: this.i18n.t('profile.followers'), brief: '0' },
         { title: this.i18n.t('profile.likes'), brief: '0' },
@@ -194,7 +166,15 @@ export default {
     },
     userInfo() {
       const userInfo = this.$store.getters['jv/get'](`users/${this.userId}`);
-      userInfo.groupsName = userInfo.groups ? userInfo.groups[0].name : '';
+      let groups = [];
+      if (userInfo.groups && userInfo.groups.length > 0) {
+        groups = userInfo.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        userInfo.groupsName = groups[0].name;
+      } else {
+        userInfo.groupsName = '';
+      }
       this.setNum(userInfo);
       return userInfo;
     },
@@ -220,38 +200,28 @@ export default {
         url: `/pages/profile/index?current=${e.currentIndex}&userId=${this.userId}`,
       });
     },
-    exitAndUnbind() {
+    logout() {
       this.$refs.popup.open();
     },
-    logout() {
+    handleClickOk() {
+      // #ifdef MP-WEIXIN
       this.$store.dispatch('session/logout').then(() => {
-        setCookie('token', '', -1);
+        uni.clearStorage();
+        if (this.site_mode !== SITE_PAY) {
+          this.setFooterIndex(parseInt(0, 10));
+        }
+        if (this.site_mode === SITE_PAY && this.user && !this.user.isPaid) {
+          uni.redirectTo({
+            url: '/pages/site/info',
+          });
+        }
+      });
+      // #endif
+      // #ifdef H5
+      this.$store.dispatch('session/logout').then(() => {
         window.location.reload();
       });
-    },
-    handleClickOk() {
-      this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(() => {
-        this.handleClickCancel();
-        // #ifdef MP-WEIXIN
-        this.$store.dispatch('session/logout').then(() => {
-          uni.clearStorage();
-          if (this.site_mode !== SITE_PAY) {
-            this.setFooterIndex(parseInt(0, 10));
-          }
-          if (this.site_mode === SITE_PAY && this.user && !this.user.isPaid) {
-            uni.redirectTo({
-              url: '/pages/site/info',
-            });
-          }
-        });
-        // #endif
-        // #ifdef H5
-        this.$store.dispatch('session/logout').then(() => {
-          setCookie('token', '', -1);
-          window.location.reload();
-        });
-        // #endif
-      });
+      // #endif
     },
     handleClickCancel() {
       this.$refs.popup.close();
@@ -259,9 +229,10 @@ export default {
     // 设置粉丝点赞那些数字
     setNum(res) {
       this.items[0].brief = res.threadCount || 0;
-      this.items[1].brief = res.followCount || 0;
-      this.items[2].brief = res.fansCount || 0;
-      this.items[3].brief = res.likedCount || 0;
+      this.items[1].brief = res.questionCount || 0;
+      this.items[2].brief = res.followCount || 0;
+      this.items[3].brief = res.fansCount || 0;
+      this.items[4].brief = res.likedCount || 0;
     },
     // 组件初始化数据
     ontrueGetList() {
@@ -282,13 +253,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-/* #ifdef H5 */
-$height: calc(100vh - 120rpx);
-/* #endif */
-
-/* #ifdef MP-WEIXIN */
-$height: calc(100vh - 260rpx);
-/* #endif */
 .my-items__wrap {
   padding-left: 40rpx;
   margin-top: 30rpx;
@@ -296,8 +260,12 @@ $height: calc(100vh - 260rpx);
   border-bottom: 2rpx solid --color(--qui-BOR-ED);
   transition: $switch-theme-time;
 }
+.scroll-y {
+  padding-bottom: 30rpx;
+  background: --color(--qui-BG-1);
+}
 .my-items {
-  padding-bottom: 60rpx;
+  padding-bottom: 100rpx;
 }
 .my-info {
   padding: 40rpx;
@@ -330,9 +298,6 @@ $height: calc(100vh - 260rpx);
 .my-tabs {
   background: --color(--qui-BG-2);
   transition: $switch-theme-time;
-}
-.scroll-y {
-  max-height: $height;
 }
 .logout {
   margin: 30rpx 30rpx 0;

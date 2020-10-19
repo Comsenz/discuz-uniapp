@@ -79,9 +79,17 @@
               ></topic>
             </view>
             <view v-else-if="current == 1" class="items">
-              <following :user-id="userId" @changeFollow="changeFollow" ref="following"></following>
+              <question
+                :user-id="userId"
+                @changeFollow="changeFollow"
+                ref="question"
+                @handleClickShare="handleClickShare"
+              ></question>
             </view>
             <view v-else-if="current == 2" class="items">
+              <following :user-id="userId" @changeFollow="changeFollow" ref="following"></following>
+            </view>
+            <view v-else-if="current == 3" class="items">
               <followers :user-id="userId" ref="followers" @changeFollow="changeFollow"></followers>
             </view>
             <view v-else class="items">
@@ -102,15 +110,14 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
 import forums from '@/mixin/forums';
+import loginModule from '@/mixin/loginModule';
 import { getCurUrl } from '@/utils/getCurUrl';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
 import like from './like';
+import question from './question';
 
 export default {
   components: {
@@ -118,13 +125,9 @@ export default {
     following,
     followers,
     like,
+    question,
   },
-  mixins: [
-    forums,
-    // #ifdef H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [forums, loginModule],
   props: {
     type: {
       type: String,
@@ -135,6 +138,7 @@ export default {
     return {
       items: [
         { title: this.i18n.t('profile.topic'), brief: '0' },
+        { title: this.i18n.t('profile.questionAndAnswer'), brief: '0' },
         { title: this.i18n.t('profile.following'), brief: '0' },
         { title: this.i18n.t('profile.followers'), brief: '0' },
         { title: this.i18n.t('profile.likes'), brief: '0' },
@@ -168,7 +172,7 @@ export default {
     // #endif
   },
   onPullDownRefresh() {
-    const item = ['topic', 'following', 'followers', 'like'];
+    const item = ['topic', 'question', 'following', 'followers', 'like'];
     const { current } = this;
     if (!this.$refs[item[current]]) {
       return;
@@ -177,7 +181,7 @@ export default {
   },
   onReachBottom() {
     const { current } = this;
-    const item = ['topic', 'following', 'followers', 'like'];
+    const item = ['topic', 'question', 'following', 'followers', 'like'];
     this.$refs[item[current]].pullDown();
   },
   // 解决左上角返回数据不刷新情况
@@ -193,7 +197,7 @@ export default {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
         title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
-        path: `/pages/topic/index?id=${this.nowThreadId}`,
+        path: `/topic/index?id=${this.nowThreadId}`,
       };
     }
   },
@@ -240,11 +244,21 @@ export default {
           } else {
             this.loaded = true;
             this.dialogId = res.dialog ? res.dialog._jv.id : 0;
-            res.groupsName = res.groups ? res.groups[0].name : '';
+            let groups = [];
+            if (res.groups && res.groups.length > 0) {
+              groups = res.groups.filter(item => item.isDisplay);
+            }
+            if (groups.length > 0) {
+              res.groupsName = groups[0].name;
+            } else {
+              res.groupsName = '';
+            }
             this.setNum(res);
             this.userInfo = res;
             uni.setNavigationBarTitle({
-              title: `${res.username}${this.i18n.t('profile.personalhomepage')}`,
+              title: `${res.username}${this.i18n.t('profile.personalhomepage')} - ${
+                this.forums.set_site.site_name
+              }`,
             });
           }
         })
@@ -261,27 +275,24 @@ export default {
     // 设置粉丝点赞那些数字
     setNum(res) {
       this.items[0].brief = res.threadCount || 0;
-      this.items[1].brief = res.followCount || 0;
-      this.items[2].brief = res.fansCount || 0;
-      this.items[3].brief = res.likedCount || 0;
+      this.items[1].brief = res.questionCount || 0;
+      this.items[2].brief = res.followCount || 0;
+      this.items[3].brief = res.fansCount || 0;
+      this.items[4].brief = res.likedCount || 0;
     },
     // 添加关注
     addFollow(userInfo) {
-      console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       const params = {
         _jv: {
@@ -299,21 +310,17 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo) {
-      console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         this.getUserInfo(this.userId);

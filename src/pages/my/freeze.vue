@@ -66,7 +66,7 @@ export default {
       this.loadingType = 'loading';
       const params = {
         'filter[user]': this.userId,
-        'filter[change_type]': [10, 11, 12], // 10提现冻结 11提现成功 12 提现解冻
+        'filter[change_type]': [10, 11, 12, 81, 9, 8], // 10提现冻结 11提现成功 12 提现解冻 81 问答提问支出,9 问答返还解冻
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
       };

@@ -1,7 +1,7 @@
 <template>
   <view>
     <label class="avatar-box" @click="getNameId(mark)">
-      <view class="avatar-box__img">
+      <view class="avatar-box__img" v-if="post === true">
         <qui-avatar :user="{ username: title, avatarUrl: icon }" :is-real="isReal" size="70" />
       </view>
       <view class="avatar-box__r">
@@ -64,6 +64,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    post: {
+      default: true,
+      type: Boolean,
+    },
     rightColor: {
       type: String,
       default: '',
@@ -93,6 +97,11 @@ export default {
   &:active {
     background-color: --color(--qui-BOR-ED);
   }
+  &__r__tit-label {
+    margin-right: 20rpx;
+    font-size: 24rpx;
+    color: --color(--qui-FC-AAA);
+  }
 
   &__img {
     display: flex;
@@ -114,9 +123,6 @@ export default {
       display: flex;
       flex-direction: column;
       font-size: 28rpx;
-      &-label {
-        color: --color(--qui-FC-DDD);
-      }
     }
 
     .avatar-box__r__val-box {

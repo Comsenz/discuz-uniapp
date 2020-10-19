@@ -5,21 +5,11 @@
 import user from '@/mixin/user';
 import forums from '@/mixin/forums';
 import appCommonH from '@/utils/commonHelper';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-import { setCookie } from '@/utils/setCookie';
-// #endif
+import loginModule from '@/mixin/loginModule';
 import { SITE_PAY } from '@/common/const';
 
 export default {
-  mixins: [
-    user,
-    forums,
-    appCommonH,
-    // #ifdef H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [user, forums, appCommonH, loginModule],
   data() {
     return {
       state: true,
@@ -27,12 +17,15 @@ export default {
   },
   onLoad(params) {
     // #ifdef H5
-    const login = data => {
+    this.wxLogin(params);
+    // #endif
+  },
+  methods: {
+    wxLogin(data) {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            setCookie('token', res.data.data.attributes.access_token, 30);
             console.log('登录成功：', res);
             this.logind();
             if (
@@ -48,6 +41,18 @@ export default {
                   });
                 },
               });
+              const isBind = uni.getStorageSync('isBind');
+              if (isBind) {
+                uni.showToast({
+                  title: '绑定成功',
+                  duration: 2000,
+                });
+              } else {
+                uni.showToast({
+                  title: '登录成功',
+                  duration: 2000,
+                });
+              }
             }
             if (
               this.forums &&
@@ -59,12 +64,30 @@ export default {
               uni.redirectTo({
                 url: '/pages/site/info',
               });
+              const isBind = uni.getStorageSync('isBind');
+              if (isBind) {
+                uni.showToast({
+                  title: '绑定成功',
+                  duration: 2000,
+                });
+              } else {
+                uni.showToast({
+                  title: '登录成功',
+                  duration: 2000,
+                });
+              }
             }
           }
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
-              this.$store.dispatch('session/setToken', res.data.errors[0].token);
-              this.login();
+              const userInfo = {
+                headimgurl: res.data.errors[0].user.headimgurl,
+                username: res.data.errors[0].user.nickname,
+              };
+              console.log('userInfo：', userInfo);
+              uni.setStorageSync('token', res.data.errors[0].token);
+              uni.setStorageSync('userInfo', userInfo);
+              this.jump2RegisterBindPage();
             }
             if (res.data.errors[0].code === 'permission_denied') {
               this.login();
@@ -83,16 +106,33 @@ export default {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'account_has_been_bound') {
+              uni.getStorage({
+                key: 'page',
+                success(resData) {
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
+                },
+              });
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.account_has_been_bound'),
+                duration: 2000,
+              });
+            }
+            if (res.data.errors[0].code === 'rebind_mp_wechat') {
+              uni.setStorageSync('token', res.data.errors[0].token);
+              uni.redirectTo({
+                url: '/pages/user/login-bind',
+              });
+            }
           }
         })
         .catch(err => {
           console.log(err);
         });
-    };
-    if (!this.$store.getters['session/get']('isLogin')) {
-      login(params);
-    }
-    // #endif
+    },
   },
 };
 </script>

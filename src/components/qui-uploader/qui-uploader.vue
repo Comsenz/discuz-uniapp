@@ -11,7 +11,7 @@
           v-if="uploadBeforeList.length > 0"
           mode="aspectFill"
           :src="item.path"
-          @click="previewPicture(index)"
+          @click="previewPicture(index, item)"
         ></image>
         <view
           class="qui-uploader-box__uploader-file--load"
@@ -34,7 +34,11 @@
         </view>
       </view>
     </block>
-    <view class="qui-uploader-box__add" @click="uploadClick" v-if="uploadBeforeList.length < count">
+    <view
+      class="qui-uploader-box__add"
+      @click="uploadClick"
+      v-if="uploadBeforeList.length < dataCount"
+    >
       <qui-icon name="icon-add" color="#B5B5B5" size="40"></qui-icon>
     </view>
   </view>
@@ -46,16 +50,21 @@ import { i18n } from '@/locale';
 export default {
   name: 'QuiUploader',
   props: {
+    // 上传类型 0是首页上传，1是默认上传
+    chooseType: {
+      default: 1,
+      type: Number,
+    },
     url: {
       default: '',
       type: String,
     },
-    header: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
+    // header: {
+    //   type: Object,
+    //   default: () => {
+    //     return {};
+    //   },
+    // },
     type: {
       default: 'image',
       type: String,
@@ -101,6 +110,9 @@ export default {
       detailindex: [],
       newindex: [],
       cunmumber: 1,
+      uploadType: '',
+      header: {}, // 上传图片header
+      dataCount: this.count, // 接收图片限制数量
     };
   },
   watch: {
@@ -164,7 +176,8 @@ export default {
     },
 
     // 图片预览
-    previewPicture(index) {
+    previewPicture(index, item) {
+      // #ifdef MP-WEIXIN
       const _this = this;
       const preview = [];
       for (let i = 0, len = _this.uploadBeforeList.length; i < len; i += 1) {
@@ -175,6 +188,10 @@ export default {
         urls: preview,
         indicator: 'default',
       });
+      // #endif
+      // #ifdef H5
+      uni.$emit('clickImage', item);
+      // #endif
     },
     compare(property) {
       return (a, b) => {
@@ -185,13 +202,17 @@ export default {
     },
     // 上传图片到本地
     uploadClick() {
+      // console.log('执行了', this.uploadList.length, '^^^^^^', this.dataCount);
       const _this = this;
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
-      if (_this.uploadList.length < _this.count || _this.name === 'avatar') {
+      if (_this.chooseType === 0) {
+        _this.uploadList = [];
+      }
+      if (_this.uploadList.length < _this.dataCount || _this.name === 'avatar') {
         // #ifdef MP-WEIXIN
         wx.chooseImage({
-          count: _this.count - _this.uploadBeforeList.length,
+          count: _this.dataCount - _this.uploadBeforeList.length,
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success(res) {
@@ -225,8 +246,8 @@ export default {
 
             Promise.race(promise).then(() => {
               // 返回上传成功列表和成功状态值
-              if (_this.uploadBeforeList.length > _this.count) {
-                _this.uploadList = _this.uploadList.slice(0, _this.count);
+              if (_this.uploadBeforeList.length > _this.dataCount) {
+                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
               }
               _this.$emit('change', _this.uploadList, true);
             });
@@ -236,12 +257,13 @@ export default {
         // #ifndef MP-WEIXIN
         // 上传图片到本地
         uni.chooseImage({
-          count: _this.count - _this.uploadBeforeList.length,
+          count: _this.dataCount - _this.uploadBeforeList.length,
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success(res) {
             // 上传图片后返回false状态
-            _this.$emit('uploadClick', false);
+            _this.$emit('uploadClickSure', false);
+
             // 自定义开始上传的效果和回调
             _this.$emit('chooseSuccess');
             const promise = res.tempFiles.map((item, index) => {
@@ -252,13 +274,6 @@ export default {
                 _this.uploadBeforeList.push(res.tempFiles[index]);
                 _this.numberdata.push({ state: 0 });
                 _this.newindex.push(res.tempFiles[index]);
-                // const sun = _this.newindex;
-                // console.log(sun);
-                // if (_this.uploadBeforeList.length > _this.count) {
-                //   _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                //   _this.numberdata = _this.numberdata.slice(0, _this.count);
-                //   _this.newindex = _this.newindex.slice(0, _this.count);
-                // }
                 _this.upload(
                   res.tempFilePaths[index],
                   _this.uploadBeforeList.length - 1,
@@ -272,8 +287,8 @@ export default {
 
             Promise.race(promise).then(() => {
               // 返回上传成功列表和成功状态值
-              if (_this.uploadBeforeList.length > _this.count) {
-                _this.uploadList = _this.uploadList.slice(0, _this.count);
+              if (_this.uploadBeforeList.length > _this.dataCount) {
+                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
               }
               _this.$emit('change', _this.uploadList, true);
             });
@@ -285,6 +300,17 @@ export default {
     // 上传图片到服务器
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
+      const token = uni.getStorageSync('access_token');
+      _this.header = {
+        authorization: `Bearer ${token}`,
+      };
+      if (_this.chooseType === 0) {
+        // 这是首页上传图片
+        uni.showLoading({
+          title: _this.i18n.t('core.loading'),
+          mask: true,
+        });
+      }
       const formdataObj = { type: _this.formData.type, order: imgOrder };
       _this.formDataAppend = {};
       const uploadTask = uni.uploadFile({
@@ -320,12 +346,12 @@ export default {
                 _this.numberdata[_this.indexs].state = 100;
               }
               _this.uploadList.push(JSON.parse(res.data).data);
-              if (_this.uploadList.length > _this.count) {
+              if (_this.uploadList.length > _this.dataCount) {
                 _this.uploadList.sort(_this.compare('order'));
                 _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                _this.uploadList = _this.uploadList.slice(0, _this.count);
-                _this.numberdata = _this.numberdata.slice(0, _this.count);
-                _this.newindex = _this.newindex.slice(0, _this.count);
+                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
+                _this.numberdata = _this.numberdata.slice(0, _this.dataCount);
+                _this.newindex = _this.newindex.slice(0, _this.dataCount);
               }
               // console.log(_this.uploadList, '$$$$$$$$$$$$$');
               _this.newindex = [];
@@ -383,6 +409,11 @@ export default {
           _this.$emit('uploadFail', res, _this.uploadList);
           return reject(res);
         },
+        complete(res) {
+          if (_this.chooseType === 0) {
+            uni.$emit('uploadOver', JSON.parse(res.data));
+          }
+        },
       });
 
       uploadTask.onProgressUpdate(async res => {
@@ -416,7 +447,7 @@ export default {
   grid-gap: 13rpx;
   width: 100%;
   min-height: 160rpx;
-  padding: 30rpx 0;
+  padding-top: 30rpx;
 
   &__uploader-file {
     position: relative;

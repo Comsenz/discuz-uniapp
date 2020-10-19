@@ -52,6 +52,7 @@
       </view>
       <qui-thread-item
         :thread="item"
+        :conversation-id="query.id"
         v-for="(item, index) in topicData"
         :key="index"
         :currentindex="index"
@@ -190,8 +191,13 @@ export default {
           'user.groups',
           'firstPost',
           'firstPost.images',
+          'firstPost.postGoods',
           'category',
           'threadVideo',
+          'threadAudio',
+          'question',
+          'question.beUser',
+          'question.beUser.groups',
         ],
       };
 
@@ -229,7 +235,7 @@ export default {
       const threadShare = this.$store.getters['jv/get'](`/threads/${this.nowThreadId}`);
       return {
         title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
-        path: `/pages/topic/index?id=${this.nowThreadId}`,
+        path: `/topic/index?id=${this.nowThreadId}`,
       };
     }
     return {

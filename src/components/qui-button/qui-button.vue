@@ -123,10 +123,14 @@ $primary-bg-color: rgba(24, 120, 243, 1);
 $success-bg-color: #07c160;
 $danger-bg-color: #ee0a24;
 $plain-bg-color: #fff;
+$watch-bg-color: #fc9324;
+$ask-bg-color: #fa5151;
+$answer-bg-color: --color(--qui-BG-777);
 
 $txt-color-grey: --color(--qui-FC-TAG);
 $txt-color-white: #fff;
 $text-color-333: #333;
+$txt-color-aaa: --color(--qui-FC-AAA);
 
 $font-size-sm: 24rpx;
 $font-size-md: 26rpx;
@@ -152,6 +156,19 @@ $font-size-post: 40rpx;
     color: $txt-color-white;
     background-color: $success-bg-color;
   }
+  &[type='watch'] {
+    font-size: $font-size-lg;
+    color: $txt-color-white;
+    background-color: $watch-bg-color;
+  }
+  &[type='answer'] {
+    color: $txt-color-aaa;
+    background-color: $answer-bg-color;
+  }
+  &[type='ask'] {
+    color: $txt-color-white;
+    background-color: $ask-bg-color;
+  }
   &[size='large'] {
     width: 670rpx;
     height: 90rpx;
@@ -166,7 +183,12 @@ $font-size-post: 40rpx;
   &[size='medium'] {
     width: 510rpx;
     height: 90rpx;
-    font-size: $font-size-md;
+    font-size: $font-size-lg;
+  }
+  &[size='small'] {
+    width: 230rpx;
+    height: 90rpx;
+    font-size: $font-size-sm;
   }
   &[size='default'] {
     height: 70rpx;
@@ -204,5 +226,8 @@ $font-size-post: 40rpx;
     cursor: not-allowed;
     opacity: 0.6;
   }
+  // &[plain][type='watch'] {
+  //   border-color: currentColor;
+  // }
 }
 </style>

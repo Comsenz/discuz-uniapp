@@ -1,71 +1,6 @@
 <template>
   <qui-page :data-qui-theme="theme" class="site" :header="false">
-    <qui-header
-      :head-img="
-        forums.set_site && forums.set_site.site_logo
-          ? forums.set_site.site_logo
-          : '/static/logo.png'
-      "
-      :theme="i18n.t('home.theme')"
-      :theme-num="forums.other && forums.other.count_users"
-      :post-num="forums.other && forums.other.count_threads"
-      :share-btn="shareBtn"
-      :share-show="shareShow"
-      :iconcolor="theme === $u.light() ? '#333' : '#fff'"
-      @click="open"
-      @closeShare="closeShare"
-    ></qui-header>
-    <uni-popup ref="popupHead" type="bottom">
-      <qui-share @close="cancel"></qui-share>
-    </uni-popup>
-    <view class="site-item">
-      <qui-cell-item
-        class="cell-item--auto cell-item--left"
-        :title="i18n.t('site.circleintroduction')"
-        :addon="forums.set_site && forums.set_site.site_introduction"
-      ></qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.creationtime')"
-        :addon="forums.set_site && forums.set_site.site_install"
-      ></qui-cell-item>
-      <qui-cell-item :title="i18n.t('site.circlemode')" :addon="handleMode()"></qui-cell-item>
-      <qui-cell-item :title="i18n.t('site.circlemaster')" slot-right>
-        <view class="site-item__owner">
-          <qui-avatar
-            class="site-item__owner-avatar"
-            :user="{
-              username: forums.set_site && forums.set_site.site_author.username,
-              avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
-            }"
-            size="60"
-          />
-          <text class="site-item__owner-name">
-            {{ forums.set_site && forums.set_site.site_author.username }}
-          </text>
-        </view>
-      </qui-cell-item>
-      <qui-cell-item :title="i18n.t('home.theme')" slot-right>
-        <view class="site-item__person">
-          <view
-            v-for="(item, index) in forums.users"
-            :key="index"
-            class="site-item__person__content"
-          >
-            <qui-avatar class="site-item__person__content-avatar" :user="item" size="60" />
-          </view>
-        </view>
-      </qui-cell-item>
-      <qui-cell-item
-        :title="i18n.t('site.myauthority')"
-        slot-right
-        :border="false"
-        class="cell-item--auto cell-item--left"
-      >
-        <view v-for="(item, index) in permission" :key="index" class="site-item__permission">
-          <text>{{ i18n.t(`permission.${item.permission}`) }}</text>
-        </view>
-      </qui-cell-item>
-    </view>
+    <qui-site-thread :share-url="`pages/site/partner-invite?code=${code}`"></qui-site-thread>
     <view class="site-invite">
       <view class="site-invite__detail">
         <text class="site-invite__detail__bold" v-if="code.length !== 32">
@@ -84,12 +19,24 @@
         </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
-      <view class="site-invite__button">
-        <qui-button type="primary" size="large" @click="check">
-          {{ i18n.t('site.accepttheinvitationandbecome') }}
-          {{ inviteData.group && inviteData.group.name }}
-        </qui-button>
+    </view>
+    <view class="site-submit">
+      <view>
+        <view class="site-submit__price">
+          {{ `¥${(forums.set_site && forums.set_site.site_price) || 0}` }}
+        </view>
+        <view class="site-submit__expire">
+          {{
+            forums.set_site && forums.set_site.site_expire
+              ? `${i18n.t('site.periodvalidity')} ${forums.set_site &&
+                  forums.set_site.site_expire} ${i18n.t('site.day')}`
+              : i18n.t('site.permanent')
+          }}
+        </view>
       </view>
+      <qui-button type="primary" @click="check" size="small">
+        {{ i18n.t('site.accepttheinvitation') }}
+      </qui-button>
     </view>
     <uni-popup ref="popCode" type="center">
       <uni-popup-dialog
@@ -108,30 +55,14 @@
 import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
-// #ifdef H5
-import wxshare from '@/mixin/wxshare-h5';
-import appCommonH from '@/utils/commonHelper';
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
-// import { getCurUrl } from '@/utils/getCurUrl';
+import loginModule from '@/mixin/loginModule';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [
-    forums,
-    // #ifdef  H5
-    wxshare,
-    loginAuth,
-    appCommonH,
-    // #endif
-  ],
+  mixins: [forums, loginModule],
   data() {
     return {
       code: '', // 邀请码
-      permission: [],
-      shareBtn: 'icon-share1',
-      shareShow: false, // h5内分享提示信息
-      isWeixin: '', // 是否是微信浏览器内
       inviteData: {}, // 邀请的相关信息
       codeTips: '',
     };
@@ -139,19 +70,6 @@ export default {
   onLoad(params) {
     this.code = params.code;
     this.getInviteInfo(params.code);
-    // #ifdef  H5
-    this.isWeixin = appCommonH.isWeixin().isWeixin;
-    // #endif
-    // #ifdef MP-WEIXIN
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline'],
-    });
-    // #endif
-  },
-  onReady() {
-    // 处理站点模式
-    this.handleMode();
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -173,51 +91,6 @@ export default {
     };
   },
   methods: {
-    // 首页头部分享按钮弹窗
-    open() {
-      // #ifdef MP-WEIXIN
-      this.$refs.popupHead.open();
-      // #endif
-      // #ifdef H5
-      if (this.isWeixin === true) {
-        this.shareShow = true;
-      } else {
-        this.h5Share({
-          title: this.forums.set_site.site_name,
-          url: `pages/site/partner-invite?code=${this.code}`,
-        });
-      }
-      // #endif
-    },
-    closeShare() {
-      this.shareShow = false;
-    },
-    // 取消按钮
-    cancel() {
-      this.$refs.popupHead.close();
-    },
-    handleMode() {
-      if (!this.forums.set_site) {
-        return;
-      }
-      if (this.forums.set_site.site_mode === 'pay') {
-        const siteMode = `${this.i18n.t('site.paymentmode')}，¥${
-          this.forums.set_site.site_price
-        }，`;
-        const siteExpire = this.forums.set_site.site_expire
-          ? this.i18n.t('site.periodvalidity') +
-            this.forums.set_site.site_expire +
-            this.i18n.t('site.day')
-          : this.i18n.t('site.permanent');
-        return siteMode + siteExpire;
-      }
-      const siteMode = this.i18n.t('site.publicmode');
-      return siteMode;
-    },
-    // 调取用户信息取消弹框
-    close() {
-      this.$refs.auth.close();
-    },
     check() {
       // 管理员邀请码32位，区分普通邀请和管理员邀请
       if (this.code && this.code.length !== 32) {
@@ -265,9 +138,7 @@ export default {
       status
         .run(() => this.$store.dispatch('jv/get', `invite/${code}`))
         .then(res => {
-          console.log(res);
           this.inviteData = res;
-          this.permission = res.group.permission;
         });
     },
     handleInviteCancel() {
@@ -276,6 +147,10 @@ export default {
     handleInviteOk() {
       this.$refs.popCode.close();
       this.submit();
+    },
+    // 调取用户信息取消弹框
+    close() {
+      this.$refs.auth.close();
     },
     submit() {
       // 未登陆的情况
@@ -286,14 +161,11 @@ export default {
         });
         // #ifdef MP-WEIXIN
         this.$store.dispatch('session/setInviteCode', this.code);
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
-        uni.setStorage({
-          key: 'inviteCode',
-          data: this.code,
-        });
+        uni.setStorageSync('inviteCode', this.code);
         // #ifdef H5
-        this.handleLogin();
+        this.h5LoginMode();
         // #endif
       } else {
         // 已经登陆的情况
@@ -321,97 +193,78 @@ export default {
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
 .site /deep/ {
+  padding-bottom: 130rpx;
   .header {
     height: auto;
     margin-bottom: 30rpx;
     background: --color(--qui-BG-2);
     border-bottom: 2rpx solid --color(--qui-BOR-ED);
+    .circleDet {
+      padding: 60rpx 30rpx;
+      opacity: 1;
+    }
+    .circleDet-txt {
+      color: --color(--qui-FC-34);
+      opacity: 0.49;
+    }
+    .logo {
+      height: 75rpx;
+      padding-top: 71rpx;
+    }
+    .circleDet-num,
+    .circleDet-share {
+      color: --color(--qui-FC-333);
+    }
   }
-  .header .circleDet {
-    padding: 60rpx 40rpx 50rpx;
-    opacity: 1;
+  .themeCount .themeItem__footer {
+    display: none;
   }
-  .header .circleDet-txt {
-    color: --color(--qui-FC-333);
-    opacity: 1;
+  .themeCount .themeItem {
+    padding-left: 0;
+    margin: 0;
+    border-top: none;
   }
-  .header .logo {
-    height: 75rpx;
-    padding-top: 71rpx;
-  }
-  .cell-item__body__content-title {
-    width: 150rpx;
-    margin-right: 40rpx;
-    color: --color(--qui-FC-777);
-  }
-  .header .circleDet-num,
-  .header .circleDet-share {
-    color: --color(--qui-FC-333);
-  }
-  .site-invite {
-    padding-bottom: 50rpx;
-    text-align: center;
-  }
-  .cell-item--auto .cell-item__body {
-    height: auto;
-    padding: 35rpx 0;
-    align-items: flex-start;
-  }
-  .cell-item--left .cell-item__body__right {
-    text-align: left;
+  .site-theme__last {
+    .themeItem {
+      border-bottom: none;
+    }
   }
 }
-//下面部分样式
-.site-item {
-  padding-left: 40rpx;
+.site /deep/ .site-submit .qui-button--button {
+  position: absolute;
+  top: 20rpx;
+  right: 24rpx;
+}
+.site-invite {
+  padding: 30rpx 60rpx;
+  text-align: center;
+  &__detail__bold {
+    margin: 0 5rpx;
+    font-weight: bold;
+  }
+  &__detail {
+    font-size: $fg-f4;
+  }
+}
+.site-submit {
+  position: fixed;
+  bottom: 0;
+  z-index: 100;
+  width: 100%;
+  height: 130rpx;
+  padding: 20rpx 24rpx;
   background: --color(--qui-BG-2);
-  border-bottom: 2rpx solid --color(--qui-BOR-ED);
-}
-.site .cell-item {
-  padding-right: 40rpx;
-}
-.site-invite__detail__bold {
-  margin: 0 5rpx;
-  font-weight: bold;
-}
-.site-invite__detail {
-  width: 85%;
-  padding: 0 20rpx;
-  margin: 50rpx auto 30rpx;
-  font-size: $fg-f4;
-}
-.site-item__person__content-avatar,
-.site-item__owner-avatar {
-  margin-left: 8rpx;
-}
-.site-item__person__content-avatar {
-  margin-left: 8rpx;
-}
-.site-item__owner {
-  display: flex;
-  align-items: center;
-}
-.site-item__owner-avatar {
-  margin-right: 20rpx;
-}
-.site-item__person {
-  display: flex;
-  height: 60rpx;
-  overflow: hidden;
-  font-size: 0;
-}
-.site-item__person__content {
-  display: inline-block;
-}
-.site-item__permission {
-  display: inline-block;
-  height: 60rpx;
-  padding: 0 28rpx;
-  margin-right: 10rpx;
-  margin-bottom: 10rpx;
-  font-size: $fg-f3;
-  line-height: 60rpx;
-  border: 2rpx solid --color(--qui-BOR-ED);
-  border-radius: 7rpx;
+  box-shadow: 0rpx -3rpx 6rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  &__price {
+    margin-top: 10rpx;
+    font-size: $fg-f5;
+    color: --color(--qui-FC-AAA);
+    text-decoration: line-through;
+  }
+  &__expire {
+    font-size: $fg-f2;
+    color: --color(--qui-FC-333);
+  }
 }
 </style>

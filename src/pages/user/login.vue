@@ -28,25 +28,50 @@
         </view>
         <view class="login-box-ft-con">
           <image
+            :class="[
+              forum && forum.qcloud && forum.qcloud.qcloud_sms
+                ? 'login-box-ft-con-image right'
+                : 'login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WechatLogin"
+          />
+          <!-- 开启短信功能才显示 -->
+          <image
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            class="login-box-ft-con-image"
+            :class="[
+              forum &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms &&
+              forum.ucenter &&
+              forum.ucenter.ucenter &&
+              isShow
+                ? 'login-box-ft-con-image right left'
+                : 'login-box-ft-con-image left',
+            ]"
             lazy-load
             src="@/static/shouji.svg"
             @click="jump2PhoneLogin"
           />
           <image
             v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            class="login-box-ft-con-image uImg"
+            class="login-box-ft-con-image left"
             lazy-load
             src="@/static/UC.svg"
-            @click="jump3PhoneLogin"
+            @click="jump2UcLogin"
           />
         </view>
         <view>
           <!-- 开启注册功能才显示 -->
           <text
             class="login-box-ft-btn"
-            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.set_reg.register_type !== 1
+            "
             @click="jump2Register"
           >
             {{ i18n.t('user.registerUser') }}
@@ -57,6 +82,7 @@
               forum &&
                 forum.set_reg &&
                 forum.set_reg.register_close &&
+                forum.set_reg.register_type !== 1 &&
                 forum.qcloud &&
                 forum.qcloud.qcloud_sms
             "
@@ -79,9 +105,18 @@
 <script>
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [user, loginModule],
+  mixins: [
+    user,
+    loginModule,
+    // #ifdef H5
+    appCommonH,
+    // #endif
+  ],
   data() {
     return {
       username: '', // 用户名
@@ -89,6 +124,9 @@ export default {
       isPaid: false, // 默认未付费
       forum: {}, // 配置
       isShow: false,
+      // #ifdef H5
+      isWeixin: false, // 默认不是微信浏览器
+      // #endif
     };
   },
   onLoad() {
@@ -97,6 +135,10 @@ export default {
       status: 200,
     });
     this.getForum();
+    // #ifdef H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
   },
   methods: {
     handleLogin() {
@@ -110,8 +152,28 @@ export default {
       };
       this.getLoginParams(params, this.i18n.t('user.loginSuccess'));
     },
+    jump2WechatLogin() {
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login(0, 0);
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
+    },
     jump2PhoneLogin() {
-      this.jump2PhoneLoginPage();
+      if (this.forum && this.forum.set_reg && this.forum.set_reg.register_type === 0) {
+        this.jump2PhoneLoginPage();
+      } else {
+        this.jump2PhoneLoginRegisterPage();
+      }
     },
     jump2Register() {
       this.jump2RegisterPage();
@@ -119,7 +181,7 @@ export default {
     jump2findpwd() {
       this.jump2findpwdPage();
     },
-    jump3PhoneLogin() {
+    jump2UcLogin() {
       uni.navigateTo({
         url: '/pages/user/uc-login',
       });
@@ -202,7 +264,12 @@ export default {
     }
   }
 }
-.uImg {
+
+.right {
+  margin-right: 20rpx;
+}
+
+.left {
   margin-left: 20rpx;
 }
 </style>

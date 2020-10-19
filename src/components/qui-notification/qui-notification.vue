@@ -43,9 +43,9 @@
                     </text>
                     <text
                       class="list-box__notice__hl-info-title"
-                      v-if="item.type === 'rewarded' && item.order_type === 3"
+                      v-if="item.type === 'rewarded' && item.order_type === 1"
                     >
-                      {{ !item.isScale ? i18n.t('notice.payedMe') : i18n.t('notice.scaledpayed') }}
+                      {{ i18n.t('notice.scaledRegister') }}
                     </text>
                     <text
                       class="list-box__notice__hl-info-title"
@@ -59,15 +59,52 @@
                     </text>
                     <text
                       class="list-box__notice__hl-info-title"
-                      v-if="item.type === 'rewarded' && item.order_type === 1"
+                      v-if="item.type === 'rewarded' && item.order_type === 3"
                     >
-                      {{ i18n.t('notice.scaledRegister') }}
+                      {{ !item.isScale ? i18n.t('notice.payedMe') : i18n.t('notice.scaledpayed') }}
+                    </text>
+
+                    <!-- type为rewarded和order_type为5展示：提问了我 -->
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 5"
+                    >
+                      {{ i18n.t('notice.questions') }}
+                    </text>
+
+                    <!-- type为rewarded和order_type为6展示：围观了我 -->
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 6"
+                    >
+                      {{ i18n.t('notice.watchedMe') }}
+                    </text>
+
+                    <!-- type为rewarded和order_type为7展示：支付了我 -->
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'rewarded' && item.order_type === 7"
+                    >
+                      {{ i18n.t('notice.payedMe') }}
+                    </text>
+
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'questioned' && item.is_answer === 0"
+                    >
+                      {{ i18n.t('notice.questions') }}
+                    </text>
+                    <text
+                      class="list-box__notice__hl-info-title"
+                      v-if="item.type === 'questioned' && item.is_answer === 1"
+                    >
+                      {{ i18n.t('notice.answersMe') }}
                     </text>
                   </view>
                   <view class="list-box__notice__hl-info-time">{{ item.time }}</view>
                 </view>
               </view>
-              <view class="">
+              <view>
                 <text class="list-box__notice__hl__amount" v-if="item.type === 'rewarded'">
                   {{ item.money }}
                 </text>
@@ -89,6 +126,18 @@
             @click="jumpMyComment(item)"
           ></view>
           <view
+            class="list-box__notice__con__text"
+            v-if="item.answer_content"
+            v-html="item.answer_content"
+            @click="jumpMyComment(item)"
+          ></view>
+          <view
+            class="list-box__notice__con__text"
+            v-if="item.content && item.is_answer === 0"
+            v-html="item.content"
+            @click="jumpMyComment(item)"
+          ></view>
+          <view
             class="list-box__notice__con__space"
             v-if="item.post_content && item.thread_id"
           ></view>
@@ -102,7 +151,7 @@
           </view>
           <view
             class="list-box__notice__con__wrap"
-            v-if="item.thread_id && item.reply_post_id === 0"
+            v-if="item.thread_id && item.reply_post_id === 0 && item.is_answer !== 0"
             @click="jumpOtherTopic(item.thread_id)"
           >
             <view class="list-box__notice__con__wrap-info">
@@ -116,6 +165,11 @@
               ></view>
               <view
                 v-if="item.type === 'rewarded'"
+                v-html="item.content"
+                style="display: inline-block;"
+              ></view>
+              <view
+                v-if="item.type === 'questioned'"
                 v-html="item.content"
                 style="display: inline-block;"
               ></view>
@@ -136,7 +190,13 @@
             @click="jumpMyComment(item)"
           >
             <view class="list-box__notice__con__wrap-info">
-              <text class="list-box__notice__con__wrap-info-username">我</text>
+              <text class="list-box__notice__con__wrap-info-username">
+                {{
+                  userInfo.username == item.reply_post_user_name
+                    ? i18n.t('home.tabsMy')
+                    : item.reply_post_user_name
+                }}
+              </text>
               <text class="list-box__notice__con__wrap-info-text" decode>{{ reply }}</text>
               <text class="list-box__notice__con__wrap-info-username">
                 {{ item.thread_username }}：
@@ -202,13 +262,18 @@ export default {
   },
 
   data() {
+    const userId = this.$store.getters['session/get']('userId');
     return {
       reply: '&nbsp;回复了&nbsp;',
+      userInfo: this.$store.getters['jv/get'](`users/${userId}`),
     };
   },
 
   methods: {
     jumpUserPage(id) {
+      if (id <= 0) {
+        return;
+      }
       if (id) {
         uni.navigateTo({
           url: `/pages/profile/index?userId=${id}`,
@@ -219,6 +284,12 @@ export default {
       this.$emit('deleteNotice', id);
     },
     jumpMyComment(item) {
+      if (item.type === 'questioned') {
+        uni.navigateTo({
+          url: `/topic/index?id=${item.thread_id}`,
+        });
+        return;
+      }
       if (item && item.reply_post_id !== 0) {
         uni.navigateTo({
           url: `/pages/topic/comment?threadId=${item.thread_id}&commentId=${item.reply_post_id}`,
@@ -232,7 +303,7 @@ export default {
     jumpOtherTopic(topicId) {
       if (topicId) {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${topicId}`,
+          url: `/topic/index?id=${topicId}`,
         });
       }
     },
@@ -245,7 +316,7 @@ export default {
         item.thread_is_approved === 1
       ) {
         uni.navigateTo({
-          url: `/pages/topic/index?id=${item.raw.thread_id}`,
+          url: `/topic/index?id=${item.raw.thread_id}`,
         });
       }
     },

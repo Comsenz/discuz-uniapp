@@ -2,7 +2,7 @@
   <qui-page :data-qui-theme="theme" class="phone-login-box">
     <view class="new" @click.stop="toggleBox">
       <view class="phone-login-box-h">
-        {{ isLogin ? i18n.t('user.phoneNumberLogin') : i18n.t('user.phoneNumberRegister') }}
+        {{ i18n.t('user.phoneNumberLogin') }}
       </view>
       <view class="new-phon">
         <view class="new-phon-test">{{ i18n.t('user.phoneNumber') }}</view>
@@ -39,114 +39,59 @@
         ></qui-input-code>
       </view>
       <view class="phone-login-box-btn" @click="login">
-        {{ isLogin ? i18n.t('user.login') : i18n.t('user.register') }}
+        {{ i18n.t('user.login') }}
       </view>
       <view class="phone-login-box-ft">
         <view class="phone-login-box-ft-title">
-          {{ isLogin ? i18n.t('user.otherLoginMode') : i18n.t('user.otherRegisterMode') }}
+          {{ i18n.t('user.otherLoginMode') }}
         </view>
         <view class="phone-login-box-ft-con">
-          <!-- #ifdef MP-WEIXIN -->
           <image
-            v-if="forum && forum.passport && forum.passport.miniprogram_close && !isLogin"
             :class="[
-              forum && forum.passport && forum.passport.miniprogram_close && !isLogin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
+              forum && forum.qcloud && forum.qcloud.qcloud_sms
+                ? 'phone-login-box-ft-con-image right'
                 : 'phone-login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/weixin.svg"
-            @click="mpAuthClick"
+            @click="jump2WechatLogin"
           />
-          <image
-            :class="[
-              forum && forum.passport && forum.passport.miniprogram_close && !isLogin
-                ? 'phone-login-box-ft-con-image'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/zhanghao.svg"
-            @click="jump2Login"
-          />
-          <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/UC.svg"
-            @click="jump3Login"
-          />
-          <!-- #endif -->
-          <!-- #ifdef H5 -->
-          <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close && isWeixin"
-            :class="[
-              forum && forum.passport && forum.passport.offiaccount_close && isWeixin
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-right'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="jump2WeChat"
-          />
-          <image
-            :class="[
-              forum && forum.passport && forum.passport.offiaccount_close && isWeixin
-                ? 'phone-login-box-ft-con-image'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/zhanghao.svg"
-            @click="jump2Login"
-          />
-          <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter
-                ? 'phone-login-box-ft-con-image phone-login-box-ft-con-left'
-                : 'phone-login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/UC.svg"
-            @click="jump3Login"
-          />
-          <!-- #endif -->
-        </view>
-        <view v-if="isLogin">
-          <!-- 开启注册功能才显示 -->
-          <text
-            class="phone-login-box-ft-btn"
-            v-if="forum && forum.set_reg && forum.set_reg.register_close"
-            @click="switchState"
-          >
-            {{ i18n.t('user.registerUser') }}
-          </text>
-          <text
-            class="phone-login-box-ft-line"
-            v-if="
-              forum &&
-                forum.set_reg &&
-                forum.set_reg.register_close &&
-                forum.qcloud &&
-                forum.qcloud.qcloud_sms
-            "
-          ></text>
           <!-- 开启短信功能才显示 -->
-          <text
-            class="phone-login-box-ft-text"
+          <image
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findpwd"
-          >
-            {{ i18n.t('user.forgetPassword') }}
-          </text>
+            :class="[
+              forum &&
+              forum.qcloud &&
+              forum.qcloud.qcloud_sms &&
+              forum.ucenter &&
+              forum.ucenter.ucenter &&
+              isShow
+                ? 'phone-login-box-ft-con-image right left'
+                : 'phone-login-box-ft-con-image left',
+            ]"
+            lazy-load
+            src="@/static/zhanghao.svg"
+            @click="jump2Login"
+          />
+          <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
+            :class="[
+              forum && forum.ucenter && forum.ucenter.ucenter
+                ? 'phone-login-box-ft-con-image left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump2UcLogin"
+          />
         </view>
-        <view class="" v-else>
-          <text class="phone-login-box-ft-btn" @click="switchState">
-            {{ i18n.t('user.login') }}
-          </text>
+        <!-- 开启短信功能才显示 -->
+        <view
+          class="phone-login-box-ft-text"
+          v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+          @click="jump2findpwd"
+        >
+          {{ i18n.t('user.forgetPassword') }}
         </view>
       </view>
       <qui-registration-agreement></qui-registration-agreement>
@@ -161,7 +106,6 @@ import { SITE_PAY } from '@/common/const';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 import tcaptchs from '@/utils/tcaptcha';
-import { setCookie } from '@/utils/setCookie';
 // #endif
 
 export default {
@@ -191,7 +135,6 @@ export default {
       captcha_ticket: '', // 腾讯云验证码返回票据
       captcha_rand_str: '', // 腾讯云验证码返回随机字符串
       captchaResult: {},
-      isLogin: true, // 默认是登录
       forum: {}, // 配置
       // #ifdef H5
       isWeixin: false, // 默认不是微信浏览器
@@ -348,6 +291,8 @@ export default {
           duration: 2000,
         });
       } else {
+        console.log('this.phoneNumber:', this.phoneNumber);
+        this.$store.dispatch('session/setPhone', this.phoneNumber);
         this.verifyPhoneNumber();
       }
     },
@@ -359,44 +304,15 @@ export default {
             mobile: this.phoneNumber,
             code: this.verificationCode,
             type: 'login',
+            register: 0,
           },
         },
       };
-      // #ifdef MP-WEIXIN
-      const data = this.$store.getters['session/get']('params');
-      if (data && data.data && data.data.attributes) {
-        params.data.attributes.js_code = data.data.attributes.js_code;
-        params.data.attributes.iv = data.data.attributes.iv;
-        params.data.attributes.encryptedData = data.data.attributes.encryptedData;
-      }
-      if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-        params.data.attributes.inviteCode = data.data.attributes.code;
-      }
-      // #endif
-      // #ifdef H5
-      const token = this.$store.getters['session/get']('token');
-      if (token && token !== '') {
-        params.data.attributes.token = token;
-      }
-      // #endif
-      let inviteCode = '';
-      uni.getStorage({
-        key: 'inviteCode',
-        success(resData) {
-          inviteCode = resData.data || '';
-        },
-      });
-      if (inviteCode !== '') {
-        params.data.attributes.code = inviteCode;
-      }
       console.log('params', params);
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
           if (res && res.access_token) {
-            // #ifdef H5
-            setCookie('token', res.access_token, 30);
-            // #endif
             console.log('手机号登录成功：', res);
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
@@ -425,6 +341,14 @@ export default {
               duration: 2000,
             });
           }
+          if (res && res.data && res.data.errors && res.data.errors[0].code === 'no_bind_user') {
+            const userInfo = {
+              mobileToken: res.data.errors[0].token,
+            };
+            console.log('userInfo：', userInfo);
+            uni.setStorageSync('userInfo', userInfo);
+            this.jump2RegisterBindPhonePage();
+          }
         })
         .catch(err => {
           console.log(err);
@@ -433,25 +357,26 @@ export default {
     toggleBox() {
       this.inshow = false;
     },
-    // #ifdef MP-WEIXIN
-    mpAuthClick() {
-      this.getmpRegisterParams();
-    },
-    // #endif
-    // #ifdef H5
-    jump2WeChat() {
-      this.wxh5Login();
-    },
-    // #endif
-    switchState() {
-      this.isLogin = !this.isLogin;
-      this.phoneNumber = '';
-      this.$refs.quiinput.deleat();
+    jump2WechatLogin() {
+      // #ifdef MP-WEIXIN
+      this.mpLogin();
+      // #endif
+      // #ifdef H5
+      if (this.isWeixin) {
+        this.wxh5Login(0, 0);
+      } else {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      }
+      // #endif
     },
     jump2Login() {
       this.jump2LoginPage();
     },
-    jump3Login() {
+    jump2UcLogin() {
       uni.navigateTo({
         url: '/pages/user/uc-login',
       });
@@ -584,31 +509,21 @@ page {
       width: 100rpx;
       height: 100rpx;
     }
-
-    &-right {
-      margin-right: 20rpx;
-    }
-
-    &-left {
-      margin-left: 20rpx;
-    }
-  }
-
-  &-btn {
-    color: rgba(24, 120, 243, 1);
   }
 
   &-text {
     color: rgba(170, 170, 170, 1);
   }
-
-  &-line {
-    width: 0rpx;
-    height: 32rpx;
-    margin: 0 50rpx;
-    border: 2rpx solid rgba(221, 221, 221, 1);
-  }
 }
+
+.right {
+  margin-right: 20rpx;
+}
+
+.left {
+  margin-left: 20rpx;
+}
+
 /deep/ .registration-agreement {
   margin-top: 50px;
 }

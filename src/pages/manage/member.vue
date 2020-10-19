@@ -42,7 +42,8 @@
               right-color="#aaa"
               :mark="item.id"
               :title="item.username"
-              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :label="handleGroups(item)"
+              :value="item.status == 1 ? i18n.t('manage.disable') : i18n.t('manage.normal')"
               :icon="item.avatarUrl"
               :is-real="item.isReal"
             >
@@ -72,7 +73,8 @@
               right-color="#aaa"
               :mark="item.id"
               :title="item.username"
-              :value="item.groups[Object.keys(item.groups || {})[0]].name"
+              :label="handleGroups(item)"
+              :value="item.status == 1 ? i18n.t('manage.disable') : i18n.t('manage.normal')"
               :icon="item.avatarUrl"
               :is-real="item.isReal"
             >
@@ -112,6 +114,24 @@
               <view class="popup-wrap-con-text">{{ item.name }}</view>
               <view class="popup-wrap-con-line"></view>
             </view>
+            <view
+              @click="modifyGroupName({}, 1)"
+              v-if="forums.other && forums.other.can_edit_user_status"
+            >
+              <view class="popup-wrap-con-text">
+                {{ i18n.t('manage.disable') }}
+              </view>
+              <view class="popup-wrap-con-line"></view>
+            </view>
+            <view
+              @click="modifyGroupName({}, 2)"
+              v-if="forums.other && forums.other.can_edit_user_status"
+            >
+              <view class="popup-wrap-con-text">
+                {{ i18n.t('manage.clearDisable') }}
+              </view>
+              <view class="popup-wrap-con-line"></view>
+            </view>
           </view>
           <view class="popup-wrap-space"></view>
           <text class="popup-wrap-btn" @click="cancel">{{ i18n.t('home.cancel') }}</text>
@@ -123,8 +143,10 @@
 
 <script>
 import { debounce } from 'lodash';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       searchText: '', // 输入的用户名
@@ -174,8 +196,22 @@ export default {
       this.isSearch = false;
       this.searchText = '';
     },
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
+    },
     // 调用 获取所有用户组 接口
     getGroupList() {
+      if (this.forums.other && !this.forums.other.can_edit_user_group) {
+        this.groupList = [];
+        return;
+      }
       this.$store.dispatch('jv/get', 'groups').then(res => {
         if (res._jv) {
           delete res._jv;
@@ -228,16 +264,25 @@ export default {
       this.searchUser(this.searchText);
     },
     // 调用 批量修改用户的用户组 接口
-    modifyGroupName(item) {
+    modifyGroupName(item, status) {
       const data = [];
       if (this.checkAvatar && this.checkAvatar.length > 0) {
         for (let i = 0; i < this.checkAvatar.length; i += 1) {
-          data.push({
-            attributes: {
-              id: this.checkAvatar[i].id,
-              groupId: parseInt(item._jv.id, 10),
-            },
-          });
+          if (status) {
+            data.push({
+              attributes: {
+                id: this.checkAvatar[i].id,
+                status: status === 1 ? 1 : 0,
+              },
+            });
+          } else {
+            data.push({
+              attributes: {
+                id: this.checkAvatar[i].id,
+                groupId: parseInt(item._jv.id, 10),
+              },
+            });
+          }
         }
       }
       const params = [

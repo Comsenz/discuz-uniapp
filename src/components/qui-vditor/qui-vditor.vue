@@ -17,15 +17,23 @@
         @click="getEmojiClick"
       ></qui-emoji>
     </view>
+    <view ref="input" style="display: none;"></view>
   </view>
 </template>
 <script>
 // eslint-disable
 import Vditor from 'vditor';
-import './index.css';
-import { AtIcon, TopicIcon, EmojiIcon } from '@/components/qui-vditor/svg/index';
+import {
+  AtIcon,
+  TopicIcon,
+  EmojiIcon,
+  ImageIcon,
+  AttachIcon,
+} from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
+import appCommonH from '@/utils/commonHelper';
+import Upload from '@/components/qui-vditor/utils/Upload';
 
 export default {
   data() {
@@ -33,6 +41,8 @@ export default {
       searchUserTimeout: null,
       vditor: null,
       emojiShow: false,
+      postComponent: null,
+      upload: null,
     };
   },
   computed: {
@@ -41,6 +51,7 @@ export default {
     }),
   },
   created() {
+    this.upload = new Upload();
     uni.$on('atUser', () => {
       let atMemberList = '';
       this.getAtMemberData.map(item => {
@@ -56,17 +67,120 @@ export default {
     });
 
     uni.$on('loadedThread', res => {
-      console.log(123);
       this.vditor.insertValue(res.firstPost.content);
+    });
+
+    uni.$on('clickImage', item => {
+      document.execCommand(
+        'insertHTML',
+        false,
+        `<img alt="${item.name}" src="${item.path}" title="${item.id}"></img>`,
+      );
+    });
+
+    uni.$on('clickAttach', item => {
+      document.execCommand(
+        'insertHTML',
+        false,
+        `<a href="${item.attributes.url}" title="${item.id}">${item.attributes.fileName}</a>`,
+      );
+    });
+
+    const videoRender = (element, url) => {
+      element.insertAdjacentHTML('afterend', `<video controls="controls" src="${url}"></video>`);
+      element.remove();
+    };
+
+    uni.$on('playVideo', item => {
+      const a = document.createElement('a');
+      appCommonH.insertElementAtCaret(a);
+      videoRender(a, item.path);
     });
   },
   mounted() {
     const _that = this;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.id = 'vditor-file';
+    input.onchange = event => _that.upload.uploadAttach(event);
+
+    this.$refs.input.$el.appendChild(input);
+    const toolbar = [
+      {
+        name: 'at',
+        tipPosition: 's',
+        tip: '@提醒的人',
+        className: 'right',
+        icon: AtIcon,
+        click() {
+          _that.$refs.atUser.open();
+        },
+      },
+      {
+        name: 'topic',
+        tipPosition: 's',
+        tip: '#话题',
+        className: 'right',
+        icon: TopicIcon,
+        click() {
+          _that.$refs.topic.open();
+        },
+      },
+      // 'emoji',
+      {
+        name: 'emojiq',
+        tip: 'emojiq',
+        icon: EmojiIcon,
+        click() {
+          _that.emojiShow = !_that.emojiShow;
+        },
+      },
+      'headings',
+      'bold',
+      'italic',
+      'strike',
+      'link',
+      'list',
+      'ordered-list',
+      'check',
+      'outdent',
+      'indent',
+      'quote',
+      {
+        name: 'image',
+        tip: '上传图片',
+        icon: ImageIcon,
+        click() {
+          _that.upload.uploadImage();
+        },
+      },
+      {
+        name: 'attachment',
+        tip: '上传附件',
+        icon: AttachIcon,
+        click() {
+          document.querySelector('#vditor-file').click();
+        },
+      },
+      // {
+      //   name: 'record-q',
+      //   tip: '上传语音',
+      //   icon: RecordIcon,
+      //   click() {
+      //     console.log(this, 'RecordIcon');
+      //   },
+      // },
+      'line',
+      'code',
+      'inline-code',
+      'table',
+      'undo',
+      'redo',
+    ];
     this.vditor = new Vditor('editor', {
       mode: 'wysiwyg',
       after: () => {
-        uni.$emit('vditor', this.vditor);
-        this.vditor.focus();
+        uni.$emit('vditor', this.vditor, this);
       },
       cache: {
         enable: false,
@@ -74,69 +188,19 @@ export default {
       toolbarConfig: {
         pin: true,
       },
-      hint: {
-        // emoji: {
-        //   sad: `💔`,
-        // },
-        emojiPath: `${DISCUZ_REQUEST_HOST}emoji/qq`,
-      },
       cdn: `${DISCUZ_REQUEST_HOST}assets/js/vditor@3.5.2`,
       height: window.innerHeight / 2,
       placeholder: this.$i18n.t('discuzq.post.placeholder'),
-      toolbar: [
-        {
-          name: 'at',
-          tipPosition: 's',
-          tip: '@提醒的人',
-          className: 'right',
-          icon: AtIcon,
-          click() {
-            _that.$refs.atUser.open();
-          },
-        },
-        {
-          name: 'topic',
-          tipPosition: 's',
-          tip: '#话题',
-          className: 'right',
-          icon: TopicIcon,
-          click() {
-            _that.$refs.topic.open();
-          },
-        },
-        // 'emoji',
-        {
-          name: 'emojiq',
-          tip: 'emojiq',
-          icon: EmojiIcon,
-          click() {
-            _that.emojiShow = !_that.emojiShow;
-          },
-        },
-        'headings',
-        'bold',
-        'italic',
-        'strike',
-        'link',
-        'list',
-        'ordered-list',
-        'check',
-        'outdent',
-        'indent',
-        'quote',
-        'line',
-        'code',
-        'inline-code',
-        'table',
-        'undo',
-        'redo',
-      ],
+      toolbar,
     });
   },
   destroyed() {
     uni.$off('atUser');
     uni.$off('clickTopic');
     uni.$off('loadedThread');
+    uni.$off('clickImage');
+    uni.$off('clickAttach');
+    uni.$off('playVideo');
     this.vditor.destroy();
   },
   methods: {
@@ -148,11 +212,14 @@ export default {
     topicCancel() {
       this.$refs.topic.close();
     },
-
     // 表情点击事件
     getEmojiClick(code) {
       this.vditor.insertValue(code);
       this.emojiShow = false;
+    },
+    setPostComponent(component) {
+      this.postComponent = component;
+      this.upload.postComponent = component;
     },
   },
 };
@@ -162,9 +229,7 @@ export default {
   position: relative;
   width: 100%;
 }
-@media screen and (max-width: 520px) {
-  .vditor-toolbar__item {
-    padding: 0 3px;
-  }
+#editor {
+  user-select: auto;
 }
 </style>

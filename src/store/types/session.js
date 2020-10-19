@@ -10,10 +10,18 @@ export const SET_AUTH = 'SET_AUTH';
 export const SET_PARAMS = 'SET_PARAMS';
 // 设置 js_code
 export const SET_CODE = 'SET_CODE';
-// 设置 token
-export const SET_TOKEN = 'SET_TOKEN';
+// 设置 userInfo
+export const SET_USER_INFO = 'SET_USER_INFO';
+// 设置 phone
+export const SET_PHONE = 'SET_PHONE';
+// 设置 商品
+export const SET_GOOD = 'SET_GOOD';
 // 设置 inviteCode
 export const SET_INVITE_CODE = 'SET_INVITE_CODE';
+// 设置 attachment
+export const SET_ATTACHMENT = 'SET_ATTACHMENT';
+// 设置 thread
+export const SET_THREAD = 'SET_THREAD';
 // 设置 分类ID
 export const SET_CATEGORYID = 'SET_CATEGORYID';
 // 设置 分类Index

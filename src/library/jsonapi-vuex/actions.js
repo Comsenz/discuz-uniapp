@@ -166,7 +166,7 @@ const actions = (api, conf) => {
      */
     post: (context, args) => {
       let [data, config] = utils.unpackArgs(args);
-      const path = utils.getURL(data, true);
+      const path = utils.getURL(data);
       const apiConf = {
         method: 'post',
         url: path,

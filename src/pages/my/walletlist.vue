@@ -33,7 +33,7 @@
           :title="item.change_desc"
           :brief="timeHandle(item.created_at)"
           :addon="
-            item.change_available_amount > 0
+            item.change_available_amount >= 0
               ? `+￥${item.change_available_amount}`
               : `-￥${item.change_available_amount.substr(1)}`
           "
@@ -79,6 +79,9 @@ export default {
             { label: this.i18n.t('profile.rewardincome'), value: 31 },
             { label: this.i18n.t('profile.laborincome'), value: 32 },
             { label: this.i18n.t('profile.laborexpenditure'), value: 50 },
+            { label: this.i18n.t('profile.payincome'), value: [60, 62, 63] },
+            { label: this.i18n.t('profile.answerincome'), value: [35, 36] },
+            { label: this.i18n.t('profile.answerpay'), value: [81, 82] },
           ],
         },
       ],
@@ -113,11 +116,13 @@ export default {
       const dateArr = this.date.split('-');
       const days = new Date(dateArr[0], dateArr[1], 0).getDate();
       // change_type 10提现冻结，11提现成功，12提现解冻，30注册收入，31打赏收入，32人工收入，50人工支出
+      // 60 付费主题收入,62 分成付费主题收入,63 付费附件收入 35 问答答题收入,36 问答围观收入,81 问答提问支出,82 问答围观支出
       const params = {
         include: ['user', 'order.user', 'order.thread', 'order.thread.firstPost'],
         'filter[user]': this.userId,
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
+        'filter[change_type_exclude]': [11, 81],
         'filter[start_time]': `${this.date}-01-00-00-00`,
         'filter[end_time]': `${this.date}-${days}-00-00-00`,
       };
@@ -196,7 +201,7 @@ export default {
         return;
       }
       uni.navigateTo({
-        url: `/pages/topic/index?id=${data.order.thread._jv.id}`,
+        url: `/topic/index?id=${data.order.thread._jv.id}`,
       });
     },
     // 下拉加载

@@ -16,11 +16,7 @@
         <qui-cell-item
           :title="(followerItem.fromUser && followerItem.fromUser.username) || ''"
           slot-right
-          :brief="
-            followerItem.fromUser && followerItem.fromUser.groups
-              ? followerItem.fromUser.groups[0].name
-              : ''
-          "
+          :brief="handleGroups(followerItem.fromUser)"
           :border="index == followerList.length - 1 ? false : true"
         >
           <!-- follow 关注状态 0：未关注 1：已关注 2：互相关注 -->
@@ -65,17 +61,11 @@
 
 <script>
 import { status } from '@/library/jsonapi-vuex/index';
-// #ifdef H5
-import loginAuth from '@/mixin/loginAuth-h5';
-// #endif
+import loginModule from '@/mixin/loginModule';
 import { getCurUrl } from '@/utils/getCurUrl';
 
 export default {
-  mixins: [
-    // #ifdef H5
-    loginAuth,
-    // #endif
-  ],
+  mixins: [loginModule],
   props: {
     userId: {
       type: String,
@@ -99,6 +89,16 @@ export default {
       this.pageNum = 1;
       this.followerList = [];
       this.getFollowerList('pullDownRefresh');
+    },
+    handleGroups(data) {
+      let groups = [];
+      if (data.groups && data.groups.length > 0) {
+        groups = data.groups.filter(item => item.isDisplay);
+      }
+      if (groups.length > 0) {
+        return groups[0].name;
+      }
+      return '';
     },
     // 获取用户粉丝列表
     getFollowerList(type) {
@@ -143,21 +143,17 @@ export default {
     },
     // 添加关注
     addFollow(userInfo, index) {
-      console.log('添加关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       if (userInfo.follow !== 0) {
         this.deleteFollow(userInfo, index);
@@ -184,21 +180,17 @@ export default {
     },
     // 取消关注
     deleteFollow(userInfo, index) {
-      console.log('取消关注', getCurUrl());
       if (!this.$store.getters['session/get']('isLogin')) {
         uni.setStorage({
           key: 'page',
           data: getCurUrl(),
         });
         // #ifdef MP-WEIXIN
-        this.$store.getters['session/get']('auth').open();
+        this.mpLoginMode();
         // #endif
         // #ifdef H5
-        if (!this.handleLogin()) {
-          return;
-        }
+        this.h5LoginMode();
         // #endif
-        return;
       }
       this.$store.dispatch('jv/delete', `follow/${userInfo.id}/1`).then(() => {
         if (this.userId === this.currentLoginId) {

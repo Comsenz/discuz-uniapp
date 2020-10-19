@@ -56,8 +56,10 @@ export default {
     searchInput() {
       if (this.searchValue) {
         this.types = '';
+        this.shouldShow = true;
       } else {
         this.types = 1;
+        this.shouldShow = false;
       }
       clearTimeout(timer);
       timer = setTimeout(() => {
@@ -93,15 +95,11 @@ export default {
         } else {
           this.topics = data;
         }
-        if (this.topics === []) {
-          this.shouldShow = false;
-        }
-
-        if (!data.length) {
-          this.shouldShow = true;
-        } else {
-          this.shouldShow = false;
-        }
+        this.topics.forEach(item => {
+          if (item.content === this.searchValue) {
+            this.shouldShow = false;
+          }
+        });
       });
     },
   },

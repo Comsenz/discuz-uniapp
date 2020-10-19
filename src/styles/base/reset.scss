@@ -53,8 +53,8 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
   justify-content: space-around;
   height: 250rpx;
   padding-top: 40rpx;
-  padding-right: 97rpx;
-  padding-left: 98rpx;
+  // padding-right: 97rpx;
+  // padding-left: 98rpx;
   background: --color(--qui-BG-BTN-GRAY-1);
   box-sizing: border-box;
 }
@@ -62,6 +62,7 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
   width: 120rpx;
   height: 120rpx;
   line-height: 120rpx;
+  text-align: center;
   background: --color(--qui-BG-40);
   border-radius: 10px;
 }
@@ -90,7 +91,6 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked:before {
 .content-image {
   width: 60rpx;
   height: 60rpx;
-  margin: 35rpx;
   line-height: 129rpx;
 }
 .popup-share-content-text {
