@@ -262,6 +262,7 @@ export default {
     uc_user_username_badword: '用户名或密码错误',
     uc_connect_error: 'Ucenter配置错误',
     uc_user_username_exists: '配置错误',
+    uninitialized_pay_password: '未设置支付密码',
   },
   topic: {
     permissionPurchase: '权限购买',

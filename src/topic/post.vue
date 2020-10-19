@@ -2772,7 +2772,7 @@ export default {
       this.getGoodsInfo();
     }
     // 接收来自首页的数据，并渲染或者报错时提示
-    if (option.type === 2 || option.type === 3) {
+    if (this.type === 2 || this.type === 3) {
       const eventChannel = this.getOpenerEventChannel();
       eventChannel.on('acceptDataFromOpenerPage', data => {
         if (this.type === 3) {
