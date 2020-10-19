@@ -255,13 +255,6 @@ export default {
           key: 'rebind',
           data: 1,
         });
-        const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-        const userInfo = {
-          headimgurl: data.avatarUrl,
-          username: data.username,
-        };
-        console.log('userInfo：', userInfo);
-        this.$store.dispatch('session/setUserInfo', userInfo);
         this.wxh5Login(0);
         // #endif
       } else {
