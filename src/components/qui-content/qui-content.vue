@@ -167,14 +167,17 @@
         <view
           class="theme__content__videocover"
           v-if="threadType == 2 && !payStatus && coverImage != null"
-          :style="{ height: videoWidth > videoHeight ? '' : '860rpx' }"
         >
           <view class="theme__mark"></view>
-          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image
+            class="theme__mark__open"
+            :style="{ marginLeft: videoWidth > videoHeight ? '-40rpx' : '-200rpx' }"
+            src="/static/video.svg"
+          ></image>
           <image
             class="themeItem__content__coverimg"
             :src="coverImage"
-            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            :style="{ width: videoWidth > videoHeight ? '100%' : '50%' }"
             :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
             lazy-load
           ></image>
@@ -184,56 +187,59 @@
           v-if="threadType === 2 && payStatus && themeType !== '5'"
         >
           <!-- 封面图 -->
-          <view
-            class="theme__content__videocover-img"
-            v-if="threadType === 2 && payStatus && sun"
-            :style="{ height: videoWidth > videoHeight ? '' : '860rpx' }"
-          >
-            <image class="theme__mark__open" src="/static/video.svg" @click.stop="btn"></image>
+          <view class="theme__content__videocover-img" v-if="threadType === 2 && payStatus && sun">
+            <image
+              class="theme__mark__open"
+              :style="{ marginLeft: videoWidth > videoHeight ? '-40rpx' : '-200rpx' }"
+              src="/static/video.svg"
+              @click.stop="btn"
+            ></image>
             <image
               class="themeItem__content__coverimg"
               :src="coverImage"
-              :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+              :style="{ width: videoWidth > videoHeight ? '100%' : '50%' }"
               :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
               lazy-load
             ></image>
           </view>
           <!-- 视频 -->
-          <video
-            v-show="videoShow"
-            :poster="coverImage"
-            controls
-            ref="myVideo"
-            :id="'myVideo' + currentindex"
-            class="isVideo"
-            :duration="duration"
-            preload="none"
-            bindpause="handlepause"
-            playsinline
-            webkit-playsinline
-            x5-playsinline
-            :page-gesture="false"
-            :show-fullscreen-btn="true"
-            :show-play-btn="true"
-            :autoplay="autoplay"
-            auto-pause-if-open-native
-            auto-pause-if-navigate
-            :enable-play-gesture="false"
-            :vslide-gesture="false"
-            :vslide-gesture-in-fullscreen="false"
-            object-fit="contain"
-            :direction="videoWidth > videoHeight ? 90 : 0"
-            x5-video-player-type="h5-page"
-            :src="mediaUrl"
-            :style="{
-              width: '100%',
-              height: videoWidth > videoHeight ? blocKwidth + 'rpx' : '860rpx',
-            }"
-            bindfullscreenchange="fullScreen"
-            bindended="closeVideo"
-            @play="playVideo"
-            @click.stop=""
-          ></video>
+          <view class="themeItem__content__covervideo">
+            <video
+              v-show="videoShow"
+              :poster="coverImage"
+              controls
+              ref="myVideo"
+              :id="'myVideo' + currentindex"
+              class="isVideo"
+              :duration="duration"
+              preload="none"
+              bindpause="handlepause"
+              playsinline
+              webkit-playsinline
+              x5-playsinline
+              :page-gesture="false"
+              :show-fullscreen-btn="true"
+              :show-play-btn="true"
+              :autoplay="autoplay"
+              auto-pause-if-open-native
+              auto-pause-if-navigate
+              :enable-play-gesture="false"
+              :vslide-gesture="false"
+              :vslide-gesture-in-fullscreen="false"
+              object-fit="contain"
+              :direction="videoWidth > videoHeight ? 90 : 0"
+              x5-video-player-type="h5-page"
+              :src="mediaUrl"
+              :style="{
+                width: videoWidth > videoHeight ? '100%' : '50%',
+              }"
+              bindfullscreenchange="fullScreen"
+              bindended="closeVideo"
+              @play="playVideo"
+              @fullscreenchange="fullscreenchanges"
+              @click.stop=""
+            ></video>
+          </view>
         </view>
         <view v-if="threadType === 4 && payStatus" @click.stop="">
           <qui-audio-cell
@@ -793,6 +799,7 @@ export default {
       });
     },
     btn() {
+      this.$emit('scrollsetup');
       this.sun = false;
       this.videoShow = true;
       this.autoplay = true;
@@ -816,6 +823,9 @@ export default {
     audioPlayer(id) {
       this.$refs[`audio${id}`].audioPause();
     },
+    fullscreenchanges() {
+      this.$emit('fullscreenchange');
+    },
   },
 };
 </script>
@@ -828,7 +838,7 @@ export default {
   padding-top: 20rpx;
   .addFine {
     position: absolute;
-    top: -10rpx;
+    top: 0rpx;
     left: 679rpx;
     width: 36rpx;
     height: 42rpx;
@@ -1113,7 +1123,7 @@ export default {
   color: var(--qui-LINK);
 }
 .themeItem__content__coverimg {
-  width: 100%;
+  position: relative;
 }
 .theme__content__videocover {
   position: relative;
