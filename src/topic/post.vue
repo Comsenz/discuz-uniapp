@@ -547,6 +547,22 @@
           {{ i18n.t('discuzq.post.nextPay') }}
         </qui-button>
       </view>
+      <!--支付组件-->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type="payTypeText"
+          :money="priceAsk"
+          :wallet-status="user.canWalletPay"
+          :balance="Number(user.walletBalance)"
+          :pay-password="pwdVal"
+          :pay-type-data="payTypeData"
+          :to-name="beUserName"
+          @paysureShow="paysureShow"
+          @onInput="onInput"
+          @radioChange="radioChange"
+        ></qui-pay>
+      </view>
       <uni-popup ref="lookPayPopup" type="bottom">
         <view class="popup-share">
           <view class="pay-type" @click="choicePayType(0)">
@@ -582,7 +598,9 @@
                 class="popup-btn"
                 v-for="(item, index) in payNum"
                 :key="index"
-                :type="payNumCheck[0].name === item.name ? 'primary' : 'post'"
+                :type="
+                  payNumCheck.length > 0 && payNumCheck[0].name === item.name ? 'primary' : 'post'
+                "
                 plain
                 size="post"
                 @click="moneyClick(index)"
@@ -679,22 +697,6 @@
           @confirm="handleWechatClickOk"
         ></uni-popup-dialog>
       </uni-popup>
-      <!--支付组件-->
-      <view v-if="payShowStatus">
-        <qui-pay
-          ref="payShow"
-          :pay-type="payTypeText"
-          :money="priceAsk"
-          :wallet-status="user.canWalletPay"
-          :balance="Number(user.walletBalance)"
-          :pay-password="pwdVal"
-          :pay-type-data="payTypeData"
-          :to-name="beUserName"
-          @paysureShow="paysureShow"
-          @onInput="onInput"
-          @radioChange="radioChange"
-        ></qui-pay>
-      </view>
       <qui-toast ref="toast"></qui-toast>
       <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
     </view>
@@ -818,7 +820,7 @@ export default {
       ], // 付费金额
       payNumCheck: [
         {
-          name: this.i18n.t('discuzq.post.free'),
+          name: '',
           pay: 0,
         },
       ], // 付费金额选中
@@ -1335,8 +1337,10 @@ export default {
       if (type === 0) {
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
       } else if (type === 1) {
+        this.payNumCheck = [];
         this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
       } else {
+        this.payNumCheck = [];
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
       }
       this.payType = type;
@@ -1458,7 +1462,7 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(payType, 'payTypepaytype')
+      console.log(payType, 'payTypepaytype');
       uni.setStorage({
         key: 'page',
         data: `/topic/post?type=5&categoryId=${this.categoryid}&categoryIndex=${this.categoryindex}`,
@@ -1489,7 +1493,7 @@ export default {
         // #endif
         this.creatOrder(this.priceAsk, 5, '', payType);
       } else if (payType === 1) {
-        console.log('钱包支付烦烦烦')
+        console.log('钱包支付烦烦烦');
         // 这是详情页获取到的支付方式---钱包
       }
     },
@@ -1513,7 +1517,7 @@ export default {
         .then(res => {
           this.orderSn = res.order_sn;
           if (payType === 0) {
-            console.log('我看看h5的微信支付走到这里了吗')
+            console.log('我看看h5的微信支付走到这里了吗');
             // 微信支付
             if (this.browser == 0) {
               // 这是微信小程序内的支付
@@ -1524,7 +1528,7 @@ export default {
                 // 这是微信浏览器
                 this.orderPay(12, value, this.orderSn, payType, '1');
               } else if (this.isPhone) {
-                console.log('h5')
+                console.log('h5');
                 this.orderPay(20, value, this.orderSn, 1, '2');
               } else {
                 // 这是pc，没调接口之前
@@ -1563,7 +1567,7 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, 'sssssssssss')
+          console.log(res, 'sssssssssss');
           this.wxRes = res;
           if (payType === 0) {
             if (broswerType === '0') {
@@ -1575,9 +1579,9 @@ export default {
                 res.wechat_js.paySign,
               );
             } else if (broswerType === '1') {
-              console.log('111111111')
+              console.log('111111111');
               if (typeof WeixinJSBridge === 'undefined') {
-                console.log('22222222')
+                console.log('22222222');
                 if (document.addEventListener) {
                   document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
                 } else if (document.attachEvent) {
@@ -1586,10 +1590,10 @@ export default {
                 }
               } else {
                 this.onBridgeReady(res);
-                console.log('elseelseelseelse')
+                console.log('elseelseelseelse');
               }
             } else if (broswerType === '2') {
-              console.log('这里是broswerType2222')
+              console.log('这里是broswerType2222');
               this.postThread().then(data => {
                 // window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin /topic/indexdex?id='+ data._jv.id)}`;
                 this.postLoading = false;
@@ -1654,7 +1658,7 @@ export default {
       this.$store
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
-          console.log(res, res)
+          console.log(res, res);
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             if (broswerType === '2') {
@@ -1735,7 +1739,7 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
-      console.log(data, 'datadata')
+      console.log(data, 'datadata');
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
@@ -2623,7 +2627,7 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option, 'optionopton')
+    console.log(option, 'optionopton');
     this.categoryid = option.categoryId;
     this.categoryindex = option.categoryIndex;
     uni.$on('radioChange', item => {

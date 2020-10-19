@@ -28,7 +28,7 @@ export default {
     // 是否显示文案
     showTxt: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   data: () => {

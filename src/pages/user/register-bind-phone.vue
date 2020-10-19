@@ -150,12 +150,12 @@ export default {
       //   params.data.attributes.code = data.data.attributes.code;
       // }
       // #endif
-      const userInfo = this.$store.getters['session/get']('userInfo');
-      if (userInfo && userInfo.token !== '') {
-        params.data.attributes.token = userInfo.token;
+      const token = this.$store.getters['session/get']('userInfo');
+      if (token && token.token !== '') {
+        params.data.attributes.token = token.token;
       }
-      if (userInfo && userInfo.mobileToken !== '') {
-        params.data.attributes.mobileToken = userInfo.mobileToken;
+      if (token && token.mobileToken !== '') {
+        params.data.attributes.mobileToken = token.mobileToken;
       }
       if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
         // 开启腾讯云验证码必传参数

@@ -132,13 +132,13 @@
               ></qui-person-list>
             </view>
             <!-- 打赏用户列表 -->
-            <view v-if="rewardStatus">
+            <view v-if="rewardStatus && thread.type !== 6">
               <qui-person-list
                 :type="t.reward"
                 :person-num="thread.rewardedCount"
                 :limit-count="limitShowNum"
                 :person-list="rewardedUsers"
-                :btn-show="rewardBtnStatus"
+                :btn-show="rewardBtnStatus && thread.type !== 6"
                 :btn-icon-show="true"
                 btn-icon-name="reward"
                 :btn-text="t.reward"
@@ -1372,27 +1372,24 @@ export default {
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
+                } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
+                  this.beAsk = false;
+                  this.answerPay = true;
+                } else if (
+                  this.user.id === data.question.be_user_id &&
+                  data.question.is_answer === 1 &&
+                  data.question.onlooker_number > 0
+                ) {
+                  this.answerPay = true;
+                  this.beAsk = false;
                 } else if (
                   this.user.id === data.user.id &&
-                  data.question.is_answer === 1
-                ) {
-                  this.beAsk = false;
-                  this.answerPay = true;
-                } else if (
-                  this.user.id === data.question.be_user_id  &&
                   data.question.is_answer === 1 &&
                   data.question.onlooker_number > 0
                 ) {
                   this.answerPay = true;
                   this.beAsk = false;
                 } else if (
-                  this.user.id === data.user.id  &&
-                  data.question.is_answer === 1 &&
-                  data.question.onlooker_number > 0
-                ) {
-                  this.answerPay = true;
-                  this.beAsk = false;
-                }else if (
                   this.user.id !== data.question.be_user_id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true &&
@@ -1960,7 +1957,7 @@ export default {
         this.publishClickStatus = true;
         return false;
       }
-      console.log('^^^^^^^^');
+      // console.log('^^^^^^^^');
       let params = {};
       if (this.commentReply) {
         params = {
@@ -2027,8 +2024,9 @@ export default {
                 return false;
               });
               this.posts.push(res);
-              console.log('(((((((((((((((', res);
+              // console.log('(((((((((((((((', res);
             } else {
+              console.log('%%%%%%%');
               if (!this.posts[this.postIndex].lastThreeComments) {
                 this.posts[this.postIndex].lastThreeComments = [];
               }
@@ -2146,7 +2144,7 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
-      console.log(data, 'datadata')
+      console.log(data, 'datadata');
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
@@ -2467,7 +2465,8 @@ export default {
         } else if (this.payTypeVal === 3) {
           this.creatOrder(this.thread.attachmentPrice, 7, this.value, payType);
         }
-      } else if (payType === 1) {``
+      } else if (payType === 1) {
+        ``;
         // 这是详情页获取到的支付方式---钱包
       }
     },
@@ -2790,7 +2789,7 @@ export default {
     },
     // 删除图片
     uploadClear(list, del) {
-      console.log('触发删除');
+      // console.log('触发删除');
       const id = list.id;
       this.deleteType = 0;
       this.deleteImgId = id;
@@ -3051,7 +3050,7 @@ export default {
           this.deletePost,
         );
       } else if (this.deleteType === 0) {
-        console.log('确定删除');
+        // console.log('确定删除');
         // 删除类型为评论时上传的图片
         this.delAttachments(this.deleteImgId, this.deleteIndex).then(() => {
           this.$refs.upload.clear(this.deleteIndex);
@@ -3414,14 +3413,14 @@ export default {
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
       if (this.thread.type === 6) {
-        console.log('否买');
+        // console.log('否买');
         // #ifndef MP-WEIXIN
-        console.log('这是非小程序');
+        // console.log('这是非小程序');
         window.location.href = this.thread.firstPost.postGoods.detail_content;
         // #endif
 
         // #ifdef MP-WEIXIN
-        console.log('这是小程序内');
+        // console.log('这是小程序内');
         uni.setClipboardData({
           data: this.thread.firstPost.postGoods.detail_content,
           success: function() {
