@@ -30,6 +30,7 @@ const tags = {
 };
 
 function parse(text, component) {
+    if(!text) return;
     for(const tag in tags) {
         text = tags[tag](text, component);
     }
