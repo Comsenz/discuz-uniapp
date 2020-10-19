@@ -825,6 +825,7 @@ export default {
 @import '@/styles/base/theme/fn.scss';
 .themeCount {
   position: relative;
+  padding-top: 20rpx;
   .addFine {
     position: absolute;
     top: -10rpx;
@@ -843,7 +844,7 @@ export default {
 
 .themeItem {
   padding: 30rpx;
-  margin: 20rpx 0 0;
+  margin: 0;
   background: --color(--qui-BG-2);
   // border-radius: 6rpx;
   // box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
