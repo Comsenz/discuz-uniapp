@@ -117,7 +117,7 @@ export default {
   computed: {
     // 时间转化
     localTime() {
-      return time2DateAndHM(this.themeTime);
+      return time2DateAndHM(this.themeTime ? this.themeTime : '');
     },
   },
   methods: {

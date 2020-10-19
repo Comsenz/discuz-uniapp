@@ -590,7 +590,7 @@ export default {
     // 时间转化
     localTime() {
       if (this.thread.createdAt) {
-        return time2DateAndHM(this.thread.createdAt);
+        return time2DateAndHM(this.thread.createdAt ? this.thread.createdAt : '');
       }
     },
   },

@@ -249,6 +249,9 @@ export default {
         console.log('换绑');
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
+        // #ifdef MP-WEIXIN
+        this.jump2LoginBindPage();
+        // #endif
         // #ifdef H5
         this.wxh5Login(0, 1);
         // #endif
