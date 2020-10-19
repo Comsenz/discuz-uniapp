@@ -547,6 +547,22 @@
           {{ i18n.t('discuzq.post.nextPay') }}
         </qui-button>
       </view>
+      <!--支付组件-->
+      <view v-if="payShowStatus">
+        <qui-pay
+          ref="payShow"
+          :pay-type="payTypeText"
+          :money="priceAsk"
+          :wallet-status="user.canWalletPay"
+          :balance="Number(user.walletBalance)"
+          :pay-password="pwdVal"
+          :pay-type-data="payTypeData"
+          :to-name="beUserName"
+          @paysureShow="paysureShow"
+          @onInput="onInput"
+          @radioChange="radioChange"
+        ></qui-pay>
+      </view>
       <uni-popup ref="lookPayPopup" type="bottom">
         <view class="popup-share">
           <view class="pay-type" @click="choicePayType(0)">
@@ -679,22 +695,6 @@
           @confirm="handleWechatClickOk"
         ></uni-popup-dialog>
       </uni-popup>
-      <!--支付组件-->
-      <view v-if="payShowStatus">
-        <qui-pay
-          ref="payShow"
-          :pay-type="payTypeText"
-          :money="priceAsk"
-          :wallet-status="user.canWalletPay"
-          :balance="Number(user.walletBalance)"
-          :pay-password="pwdVal"
-          :pay-type-data="payTypeData"
-          :to-name="beUserName"
-          @paysureShow="paysureShow"
-          @onInput="onInput"
-          @radioChange="radioChange"
-        ></qui-pay>
-      </view>
       <qui-toast ref="toast"></qui-toast>
       <qui-loading-cover v-if="coverLoading" mask-zindex="111"></qui-loading-cover>
     </view>
