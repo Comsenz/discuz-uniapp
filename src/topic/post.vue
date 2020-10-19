@@ -2773,7 +2773,6 @@ export default {
     }
     // 接收来自首页的数据，并渲染或者报错时提示
     if (this.type === 2 || this.type === 3) {
-      console.log('*************');
       const eventChannel = this.getOpenerEventChannel();
       eventChannel.on('acceptDataFromOpenerPage', data => {
         if (this.type === 3) {
