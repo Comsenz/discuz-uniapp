@@ -2761,73 +2761,76 @@ export default {
         )}#${this.textAreaValue.slice(this.cursor)}  `;
       this.cursor = this.textAreaValue ? this.textAreaValue.length : 0;
     });
-    // 接收来自首页的数据，并渲染或者报错时提示
-    const eventChannel = this.getOpenerEventChannel();
-    eventChannel.on('acceptDataFromOpenerPage', data => {
-      if (this.type === 3) {
-        // console.log(data, '这是在首页上传图片后传过来的数据');
-        if (data.data.data && data.data.data.attributes) {
-          // 当首页上传图片成功时
-          this.uploadFile.push({
-            type: 'attachments',
-            id: data.data.data.id,
-            order: data.data.data.attributes.order,
-            name: data.data.data.attributes.fileName,
-            url: data.data.data.attributes.url,
-            path: data.data.data.attributes.thumbUrl ? data.data.data.attributes.thumbUrl : '',
-          });
-          this.filePreview.push({
-            path: data.data.data.attributes.thumbUrl,
-            id: data.data.data.id,
-            order: data.data.data.attributes.order,
-            name: data.data.data.attributes.fileName,
-            url: data.data.data.attributes.url,
-          });
-          // console.log(this.uploadFile, '这是首页上传后追加到的列表');
-        }
-        if (data.data.errors) {
-          // 当首页上传图片失败时
-          data.data.errors.forEach(error => {
-            const title = error.detail
-              ? Array.isArray(error.detail)
-                ? error.detail[0]
-                : error.detail
-              : this.i18n.t(`core.${error.code}`);
-            setTimeout(() => {
-              uni.showToast({
-                icon: 'none',
-                title: title,
-              });
-            }, 1000);
-          });
-        }
-      }
-      if (this.type === 2) {
-        // console.log(data, '这是在首页上传视频·····后传过来的数据');
-        if (data.data) {
-          if (data.data.doneResult) {
-            this.fileId = data.data.doneResult.fileId;
-          } else {
-            this.fileId = data.data.result.fileId;
-          }
-          // console.log(data.data, '这是视频地址');
-          this.videoBeforeList.push({
-            path: data.data.uploadVideoRes.tempFilePath,
-          });
-          this.chooseType = 0;
-          this.percent = 1;
-          // console.log(this.videoBeforeList, '这是视频列表');
-        }
-      }
-    });
-
-    this.goodsId = option.goodsId;
-    console.log(option, this.goodsId, '这是参数');
+    if (this.type === 6) {
+      this.goodsId = option.goodsId;
+      console.log(option, this.goodsId, '这是参数');
+    }
     if (
       (this.type === 6 && option.operating !== 'edit' && option.threadId !== '' && this.goodsId) ||
       (this.type === 6 && this.goodsId)
     ) {
       this.getGoodsInfo();
+    }
+    // 接收来自首页的数据，并渲染或者报错时提示
+    if (option.type === 2 || option.type === 3) {
+      const eventChannel = this.getOpenerEventChannel();
+      eventChannel.on('acceptDataFromOpenerPage', data => {
+        if (this.type === 3) {
+          // console.log(data, '这是在首页上传图片后传过来的数据');
+          if (data.data.data && data.data.data.attributes) {
+            // 当首页上传图片成功时
+            this.uploadFile.push({
+              type: 'attachments',
+              id: data.data.data.id,
+              order: data.data.data.attributes.order,
+              name: data.data.data.attributes.fileName,
+              url: data.data.data.attributes.url,
+              path: data.data.data.attributes.thumbUrl ? data.data.data.attributes.thumbUrl : '',
+            });
+            this.filePreview.push({
+              path: data.data.data.attributes.thumbUrl,
+              id: data.data.data.id,
+              order: data.data.data.attributes.order,
+              name: data.data.data.attributes.fileName,
+              url: data.data.data.attributes.url,
+            });
+            // console.log(this.uploadFile, '这是首页上传后追加到的列表');
+          }
+          if (data.data.errors) {
+            // 当首页上传图片失败时
+            data.data.errors.forEach(error => {
+              const title = error.detail
+                ? Array.isArray(error.detail)
+                  ? error.detail[0]
+                  : error.detail
+                : this.i18n.t(`core.${error.code}`);
+              setTimeout(() => {
+                uni.showToast({
+                  icon: 'none',
+                  title: title,
+                });
+              }, 1000);
+            });
+          }
+        }
+        if (this.type === 2) {
+          // console.log(data, '这是在首页上传视频·····后传过来的数据');
+          if (data.data) {
+            if (data.data.doneResult) {
+              this.fileId = data.data.doneResult.fileId;
+            } else {
+              this.fileId = data.data.result.fileId;
+            }
+            // console.log(data.data, '这是视频地址');
+            this.videoBeforeList.push({
+              path: data.data.uploadVideoRes.tempFilePath,
+            });
+            this.chooseType = 0;
+            this.percent = 1;
+            // console.log(this.videoBeforeList, '这是视频列表');
+          }
+        }
+      });
     }
   },
   onShow() {
