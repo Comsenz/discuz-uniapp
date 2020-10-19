@@ -150,7 +150,7 @@ export default {
       //   params.data.attributes.code = data.data.attributes.code;
       // }
       // #endif
-      const token = this.$store.getters['session/get']('token');
+      const token = this.$store.getters['session/get']('userInfo');
       if (token && token.token !== '') {
         params.data.attributes.token = token.token;
       }

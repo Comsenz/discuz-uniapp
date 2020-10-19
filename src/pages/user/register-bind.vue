@@ -175,7 +175,7 @@ export default {
         params.data.attributes.encryptedData = data.data.attributes.encryptedData;
       }
       if (!this.type) {
-        const token = this.$store.getters['session/get']('token');
+        const token = this.$store.getters['session/get']('userInfo');
         if (token && token.token !== '') {
           params.data.attributes.token = token.token;
         }
@@ -183,7 +183,7 @@ export default {
       // #endif
       // #ifdef H5
       // 微信内置浏览器注册必传参数
-      const token = this.$store.getters['session/get']('token');
+      const token = this.$store.getters['session/get']('userInfo');
       if (token && token.token !== '') {
         params.data.attributes.token = token.token;
       }

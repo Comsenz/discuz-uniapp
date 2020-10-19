@@ -148,6 +148,7 @@ export default {
       console.log('profile', data);
       console.log('profile.wechat', data.wechat);
       const userInfo = {
+        token: '',
         headimgurl: data.avatarUrl,
         username: data.username,
       };
@@ -254,12 +255,6 @@ export default {
           key: 'rebind',
           data: 1,
         });
-        const userInfo = {
-          headimgurl: this.profile.avatarUrl,
-          username: this.profile.username,
-        };
-        console.log('userInfo：', userInfo);
-        this.$store.dispatch('session/setUserInfo', userInfo);
         this.wxh5Login(0);
         // #endif
       } else {
