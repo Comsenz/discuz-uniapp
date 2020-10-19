@@ -827,7 +827,7 @@ export default {
   position: relative;
   .addFine {
     position: absolute;
-    top: -10rpx;
+    top: 0rpx;
     left: 679rpx;
     width: 36rpx;
     height: 42rpx;

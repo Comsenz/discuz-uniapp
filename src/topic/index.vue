@@ -1373,6 +1373,7 @@ export default {
                   this.beAsk = false;
                   this.payment = true;
                   this.answerPay = false;
+                  console.log('ddhdhudushuhdiuehwiu')
                 }
               } else if (data.question.price > '0.00') {
                 console.log('付费');
@@ -1408,23 +1409,26 @@ export default {
                   this.beAsk = false;
                 } else if (
                   this.user.id !== data.question.be_user_id &&
-                  data.question.is_answer === 1 &&
-                  data.question.is_onlooker === true &&
-                  this.forums.other.can_be_onlooker === true &&
-                  data.onlookerState === false
-                ) {
-                  this.answerPay = true;
-                  console.log('付费不允许围观222222');
-                } else if (
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
-                  data.question.is_onlooker === true &&
+                  data.question.is_onlooker === false &&
                   this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === false
                 ) {
-                  this.answerPay = true;
-                  console.log('付费不允许围观');
-                } else if (
+                  this.answerPay = false;
+                  console.log('付费不允许围观222222');
+                }
+                //  else if (
+                //   this.user.id !== data.user.id &&
+                //   data.question.is_answer === 1 &&
+                //   data.question.is_onlooker === true &&
+                //   this.forums.other.can_be_onlooker === true &&
+                //   data.onlookerState === false
+                // ) {
+                //   this.answerPay = true;
+                //   console.log('付费不允许围观');
+                // } 
+                else if (
                   this.user.id !== (data.user.id || data.question.be_user_id ) &&
                   data.question.is_answer === 1 &&
                   this.forums.other.can_be_onlooker === true &&
