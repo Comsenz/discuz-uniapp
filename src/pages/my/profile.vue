@@ -257,7 +257,6 @@ export default {
         });
         this.wxh5Login(0);
         // #endif
-        this.jump2LoginBindPage();
       } else {
         console.log('解绑');
         this.$refs.bind.open();
