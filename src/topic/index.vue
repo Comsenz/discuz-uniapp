@@ -1427,7 +1427,6 @@ export default {
                 } else if (
                   this.user.id !== (data.user.id || data.question.be_user_id ) &&
                   data.question.is_answer === 1 &&
-                  data.question.is_onlooker === true &&
                   this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === true
                   ) {
