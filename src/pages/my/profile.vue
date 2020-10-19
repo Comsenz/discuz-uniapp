@@ -148,6 +148,7 @@ export default {
       console.log('profile', data);
       console.log('profile.wechat', data.wechat);
       const userInfo = {
+        token: '',
         headimgurl: data.avatarUrl,
         username: data.username,
       };
@@ -249,7 +250,13 @@ export default {
         console.log('换绑');
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
-        this.jump2LoginBindPage();
+        // #ifdef H5
+        uni.setStorage({
+          key: 'rebind',
+          data: 1,
+        });
+        this.wxh5Login(0);
+        // #endif
       } else {
         console.log('解绑');
         this.$refs.bind.open();

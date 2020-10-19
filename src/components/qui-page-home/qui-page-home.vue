@@ -1187,6 +1187,8 @@ $padding-bottom: 160rpx;
   color: --color(--qui-BG-HIGH-LIGHT);
 }
 .main {
+  display: flex;
+  flex-direction: column;
   padding-bottom: $padding-bottom;
   background: --color(--qui-BG-1);
 }

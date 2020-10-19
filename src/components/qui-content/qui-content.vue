@@ -801,7 +801,7 @@ export default {
       setTimeout(() => {
         // console.log('视频开始播放', `myVideo${this.currentindex}`);
         videoContext.play();
-      }, 200);
+      }, 300);
       setTimeout(() => {
         const sun = uni.createSelectorQuery().in(this);
         sun
