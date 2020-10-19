@@ -114,6 +114,7 @@ module.exports = {
       }
       if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
         // 无感模式
+        uni.setStorageSync('register', 1);
         uni.setStorageSync('isSend', true);
         this.$store.getters['session/get']('auth').open();
       }
@@ -134,6 +135,7 @@ module.exports = {
           this.jump2PhoneLoginRegisterPage();
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          uni.setStorageSync('register', 1);
           // 微信内-无感模式
           this.$store.dispatch('session/wxh5Login');
         }
@@ -197,10 +199,7 @@ module.exports = {
      */
     mpLogin(register = 0) {
       console.log('mpLogin-register', register);
-      uni.setStorage({
-        key: 'register',
-        data: register,
-      });
+      uni.setStorageSync('register', register);
       uni.setStorageSync('isSend', true);
       uni.setStorageSync('isBind', false);
       this.$store.getters['session/get']('auth').open();
@@ -208,11 +207,9 @@ module.exports = {
     /**
      * 微信h5登录/注册
      */
-    wxh5Login(register = 0) {
-      uni.setStorage({
-        key: 'register',
-        data: register,
-      });
+    wxh5Login(register = 0, rebind = 0) {
+      uni.setStorageSync('register', register);
+      uni.setStorageSync('rebind', rebind);
       this.$store.dispatch('session/wxh5Login');
     },
     /**
@@ -235,9 +232,9 @@ module.exports = {
           duration: 2000,
         });
       } else {
-        const token = this.$store.getters['session/get']('userInfo');
-        if (token && token.token !== '') {
-          params.data.attributes.token = token.token;
+        const token = uni.getStorageSync('token');
+        if (token !== '') {
+          params.data.attributes.token = token;
         }
         this.login(params, resultDialog);
       }
@@ -276,9 +273,9 @@ module.exports = {
         if (rebind === 1) {
           params.data.attributes.rebind = 1;
         }
-        const token = this.$store.getters['session/get']('userInfo');
-        if (token && token.token !== '') {
-          params.data.attributes.token = token.token;
+        const token = uni.getStorageSync('token');
+        if (token !== '') {
+          params.data.attributes.token = token;
         }
         this.login(params, resultDialog);
       }

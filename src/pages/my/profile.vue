@@ -148,12 +148,11 @@ export default {
       console.log('profile', data);
       console.log('profile.wechat', data.wechat);
       const userInfo = {
-        token: '',
         headimgurl: data.avatarUrl,
         username: data.username,
       };
       console.log('userInfo：', userInfo);
-      this.$store.dispatch('session/setUserInfo', userInfo);
+      uni.setStorageSync('userInfo', userInfo);
       return data;
     },
     name() {
@@ -251,10 +250,7 @@ export default {
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
         // #ifdef H5
-        uni.setStorage({
-          key: 'rebind',
-          data: 1,
-        });
+        uni.setStorageSync('rebind', 1);
         this.wxh5Login(0);
         // #endif
       } else {

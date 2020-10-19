@@ -40,15 +40,7 @@ export default {
   methods: {
     handleGetUserInfo(res) {
       if (res.detail.errMsg === 'getUserInfo:ok') {
-        let register = 0;
-        uni.getStorage({
-          key: 'register',
-          success(resData) {
-            console.log('resData', resData);
-            console.log('resData.data', resData.data);
-            register = resData.data;
-          },
-        });
+        const register = uni.getStorageSync('register');
         this.getmpParams(register);
       } else {
         this.$emit('login');
@@ -209,14 +201,12 @@ export default {
                 res.data.errors[0].code === 'register_close')
             ) {
               const userInfo = {
-                token: res.data.errors[0].token,
                 headimgurl: res.data.errors[0].user.headimgurl,
                 username: res.data.errors[0].user.username,
               };
               console.log('userInfo：', userInfo);
-              this.$store.dispatch('session/setUserInfo', userInfo);
-              const data = this.$store.getters['session/get']('userInfo');
-              console.log('取出来data：', data);
+              uni.setStorageSync('token', res.data.errors[0].token);
+              uni.setStorageSync('token', userInfo);
               this.jump2RegisterBindPage();
             }
           }
