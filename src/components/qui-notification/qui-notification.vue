@@ -191,7 +191,11 @@
           >
             <view class="list-box__notice__con__wrap-info">
               <text class="list-box__notice__con__wrap-info-username">
-                {{ userInfo.username == item.user_name ? i18n.t('home.tabsMy') : item.user_name }}
+                {{
+                  userInfo.username == item.reply_post_user_name
+                    ? i18n.t('home.tabsMy')
+                    : item.reply_post_user_name
+                }}
               </text>
               <text class="list-box__notice__con__wrap-info-text" decode>{{ reply }}</text>
               <text class="list-box__notice__con__wrap-info-username">
