@@ -138,7 +138,7 @@
                 :person-num="thread.rewardedCount"
                 :limit-count="limitShowNum"
                 :person-list="rewardedUsers"
-                :btn-show="rewardBtnStatus"
+                :btn-show="rewardBtnStatus && thread.type !== 6"
                 :btn-icon-show="true"
                 btn-icon-name="reward"
                 :btn-text="t.reward"
@@ -151,7 +151,7 @@
               <qui-be-ask
                 :date="beAskDate"
                 :be-date="beAskBeDate"
-                :show-txt="thread.question.is_onlooker"
+                :show-txt="thread.question.price === '0.00' ? false : true"
                 @queClick="queClick"
               ></qui-be-ask>
             </view>
