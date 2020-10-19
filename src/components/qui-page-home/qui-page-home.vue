@@ -148,6 +148,8 @@
         @headAnswerClick="headAnswerClick(item.question.be_user_id)"
         @videoPlay="handleVideoPlay"
         @scrollheight="scrpllsip"
+        @fullscreenchange="screenplayback"
+        @scrollsetup="scrollsetups"
       ></qui-content>
       <qui-load-more :status="loadingType"></qui-load-more>
     </view>
@@ -626,6 +628,29 @@ export default {
       }
       // #endif
       // }
+    },
+    scrollsetups() {
+      const _this = this;
+      uni.setStorage({
+        key: 'scroll_top',
+        data: _this.scrollTop,
+      });
+    },
+    screenplayback() {
+      let num = 0;
+      uni.getStorage({
+        key: 'scroll_top',
+        success(resData) {
+          num = resData.data;
+        },
+      });
+      const timer = setTimeout(() => {
+        uni.pageScrollTo({
+          duration: 0, // 过渡时间必须为0，uniapp bug，否则运行到手机会报错
+          scrollTop: num, // 滚动到目标位置
+        });
+        clearTimeout(timer);
+      }, 50);
     },
     // 滑动到顶部
     toUpper() {

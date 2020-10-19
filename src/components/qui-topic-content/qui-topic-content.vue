@@ -111,28 +111,34 @@
           class="theme__content__videocover"
           v-if="themeType == 2 && !videoStatus && coverImage != null"
           @click="videocoverClick"
-          :style="{ width: '100%', height: videoWidth > videoHeight ? '' : '860rpx' }"
-          :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
         >
           <view class="theme__mark"></view>
-          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image
+            class="theme__mark__open"
+            :style="{ marginLeft: videoWidth > videoHeight ? '-40rpx' : '-200rpx' }"
+            src="/static/video.svg"
+          ></image>
           <image
             class="themeItem__content__coverimg"
             :src="coverImage"
-            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            :style="{ width: videoWidth > videoHeight ? '100%' : '50%' }"
           ></image>
         </view>
         <view
           class="theme__content__videocover"
           @click="btnFun"
           v-if="themeType == 2 && videoStatus"
-          :style="{ display: sun, height: videoWidth > videoHeight ? '' : '860rpx' }"
+          :style="{ display: sun }"
         >
-          <image class="theme__mark__open" src="/static/video.svg"></image>
+          <image
+            class="theme__mark__open"
+            :style="{ marginLeft: videoWidth > videoHeight ? '-40rpx' : '-200rpx' }"
+            src="/static/video.svg"
+          ></image>
           <image
             class="themeItem__content__coverimg"
             :src="coverImage"
-            :style="{ height: videoWidth > videoHeight ? '' : '100%' }"
+            :style="{ width: videoWidth > videoHeight ? '100%' : '50%' }"
             :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
           ></image>
         </view>
@@ -163,8 +169,7 @@
             bindfullscreenchange="fullScreen"
             :src="mediaUrl"
             :style="{
-              width: '100%',
-              height: videoWidth > videoHeight ? blocKwidth + 'rpx' : '860rpx',
+              width: videoWidth > videoHeight ? '100%' : '50%',
             }"
           ></video>
         </view>
@@ -742,7 +747,7 @@ export default {
         this.videoShow = true;
         this.autoplay = true;
         const videoContext = wx.createVideoContext('myVideo', this);
-        // videoContext.requestFullScreen();
+        videoContext.requestFullScreen();
         setTimeout(() => {
           console.log('视频开始播放');
           videoContext.play();
