@@ -73,7 +73,7 @@ export default {
           },
         },
       };
-      const userInfo = this.$store.getters['session/get']('userInfo');
+      const userInfo = uni.getStorageSync('userInfo');
       if (userInfo && userInfo.mobileToken !== '') {
         params.data.attributes.mobileToken = userInfo.mobileToken;
       }

@@ -152,7 +152,7 @@ export default {
         username: data.username,
       };
       console.log('userInfo：', userInfo);
-      this.$store.dispatch('session/setUserInfo', userInfo);
+      uni.setStorageSync('userInfo', userInfo);
       return data;
     },
     name() {

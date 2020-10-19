@@ -146,11 +146,8 @@ export default {
         params.data.attributes.iv = data.data.attributes.iv;
         params.data.attributes.encryptedData = data.data.attributes.encryptedData;
       }
-      // if (data && data.data && data.data.attributes && data.data.attributes.code !== '') {
-      //   params.data.attributes.code = data.data.attributes.code;
-      // }
       // #endif
-      const userInfo = this.$store.getters['session/get']('userInfo');
+      const userInfo = uni.getStorageSync('userInfo');
       const token = uni.getStorageSync('token');
       if (token !== '') {
         params.data.attributes.token = token;

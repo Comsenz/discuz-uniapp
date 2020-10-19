@@ -84,9 +84,9 @@ export default {
                 headimgurl: res.data.errors[0].user.headimgurl,
                 username: res.data.errors[0].user.nickname,
               };
-              uni.setStorageSync('token', res.data.errors[0].token);
               console.log('userInfo：', userInfo);
-              this.$store.dispatch('session/setUserInfo', userInfo);
+              uni.setStorageSync('token', res.data.errors[0].token);
+              uni.setStorageSync('userInfo', userInfo);
               this.jump2RegisterBindPage();
             }
             if (res.data.errors[0].code === 'permission_denied') {

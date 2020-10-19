@@ -124,7 +124,7 @@ export default {
   },
   computed: {
     userInfo() {
-      const data = this.$store.getters['session/get']('userInfo');
+      const data = uni.getStorageSync('userInfo');
       console.log('用户信息：', data);
       return data;
     },

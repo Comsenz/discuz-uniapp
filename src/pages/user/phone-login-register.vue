@@ -319,7 +319,7 @@ export default {
               mobileToken: res.data.errors[0].token,
             };
             console.log('userInfo：', userInfo);
-            this.$store.dispatch('session/setUserInfo', userInfo);
+            uni.setStorageSync('userInfo', userInfo);
             this.jump2RegisterBindPhonePage();
           }
         })

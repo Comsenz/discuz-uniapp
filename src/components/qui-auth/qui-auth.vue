@@ -204,11 +204,9 @@ export default {
                 headimgurl: res.data.errors[0].user.headimgurl,
                 username: res.data.errors[0].user.username,
               };
-              uni.setStorageSync('token', res.data.errors[0].token);
               console.log('userInfo：', userInfo);
-              this.$store.dispatch('session/setUserInfo', userInfo);
-              const data = this.$store.getters['session/get']('userInfo');
-              console.log('取出来data：', data);
+              uni.setStorageSync('token', res.data.errors[0].token);
+              uni.setStorageSync('token', userInfo);
               this.jump2RegisterBindPage();
             }
           }
