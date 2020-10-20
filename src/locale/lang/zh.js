@@ -236,6 +236,7 @@ export default {
     pay_password_failures_times_toplimit:
       '您输入的密码错误次数已超限，请点击忘记密码找回或次日后重试',
     qcloud_vod_cover_template_not_found: '截图模版不存在',
+    qcloud_file_preview_unset: '腾讯云对象存储文件预览未开启',
     contentdown: '显示更多...',
     contentrefresh: '正在加载...',
     noMoreData: '没有更多数据了',
