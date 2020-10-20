@@ -80,6 +80,7 @@ import appCommonH from '@/utils/commonHelper';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #endif
 import { getCurUrl } from '@/utils/getCurUrl';
+
 let payWechat = null;
 export default {
   components: { uniPopupDialog },
