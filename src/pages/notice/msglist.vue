@@ -82,6 +82,8 @@
           :list="allEmoji"
           position="relative"
           top="0rpx"
+          left="20rpx"
+          right="20rpx"
           v-if="emojiShow"
           @click="getEmojiClick"
         ></qui-emoji>
@@ -539,7 +541,7 @@ export default {
     &__msg {
       display: flex;
       flex-direction: row;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
       padding: 20rpx 20rpx 40rpx;
       background: --color(--qui-BG-BTN-GRAY-1);
@@ -558,10 +560,13 @@ export default {
     }
 
     &__btn {
-      margin: 0 20rpx 0 10rpx;
+      margin: 0 0 0 10rpx;
       font-size: $fg-f4;
       background: --color(--qui-BG-BTN);
     }
   }
+}
+/deep/ .emoji-box {
+  width: calc(100vw - 40rpx);
 }
 </style>
