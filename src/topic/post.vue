@@ -1602,7 +1602,7 @@ export default {
                   this.$u.event.$emit('addThread', res);
                   console.log(res, '付钱付钱000000');
                 }
-                if (res && res._jv.json.data.id) {
+                if (res && res._jv && res._jv.json.data.id) {
                   uni.redirectTo({
                     url: `/topic/index?id=${res._jv.json.data.id}`,
                   });
