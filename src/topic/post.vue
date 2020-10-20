@@ -1057,6 +1057,7 @@ export default {
         'type',
         'showHidden',
         'payType',
+        'showPayType',
         'ioshide',
         'dataGoodInfo',
       ];
