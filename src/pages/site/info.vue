@@ -82,7 +82,6 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import { getCurUrl } from '@/utils/getCurUrl';
 
 let payWechat = null;
-
 export default {
   components: { uniPopupDialog },
   mixins: [
@@ -244,7 +243,6 @@ export default {
         return;
       }
       // #endif
-
       // #ifdef MP-WEIXIN
       if (
         this.user.wechat === undefined ||
@@ -381,7 +379,6 @@ export default {
           }
         },
       );
-
       payWechat = setInterval(() => {
         if (this.payStatus === 1) {
           clearInterval(payWechat);
@@ -505,7 +502,6 @@ export default {
   }
 }
 // 微信二维码弹框
-
 .code-content {
   position: fixed;
   top: 10%;
@@ -534,7 +530,6 @@ export default {
     }
   }
 }
-
 .code-type-box {
   display: flex;
   flex-direction: row;
