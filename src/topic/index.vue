@@ -1559,6 +1559,12 @@ export default {
                     ? data.firstPost.images[0].thumbUrl
                     : '';
                 break;
+              case 4:
+                // 语音帖
+                this.contentVal = data.firstPost.summaryText;
+                this.desc = data.firstPost.summaryText;
+                this.shareLogo = '';
+                break;
               default:
             }
           }
