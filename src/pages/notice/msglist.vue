@@ -19,14 +19,6 @@
             ]"
           >
             <qui-avatar
-              v-if="item.user_id === currentLoginId"
-              :is-real="item.user && item.user.isReal"
-              class="chat-box__con__msg__mine__img"
-              :user="userInfo"
-              @click="jumpUserPage(item.user_id)"
-            />
-            <qui-avatar
-              v-if="item.user_id !== currentLoginId"
               :is-real="item.user && item.user.isReal"
               class="chat-box__con__msg__other__img"
               :user="item.user"
@@ -136,9 +128,11 @@ export default {
       const keys = Object.keys(recordList);
       if (recordList && keys.length > 0) {
         for (let i = 0; i < keys.length; i += 1) {
-          if (recordList[keys[i]].dialog_id.toString() === this.dialogId) {
-            recordList[keys[i]].time = time2DateAndHM(recordList[keys[i]].created_at);
-            list.push(recordList[keys[i]]);
+          const row = recordList[keys[i]];
+          if (row.dialog_id.toString() === this.dialogId) {
+            row.time = time2DateAndHM(row.created_at);
+            row.user = this.$store.getters['jv/get'](`users/${row.user_id}`);
+            list.push(row);
           }
         }
       }
