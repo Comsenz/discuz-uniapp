@@ -415,22 +415,6 @@
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
         <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
-      <!-- 提问价格 -->
-      <!-- <qui-cell-item
-        v-if="
-          type === 5 &&
-            askingPrice &&
-            forums.other &&
-            forums.other.can_create_thread_paid &&
-            ioshide
-        "
-        :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.askingPrice')"
-        :addon="showAskPrice"
-        arrow
-        @click="askClick('pay')"
-      ></qui-cell-item> -->
-      <!-- 他人围观须付费1元 -->
       <view
         class="uni-list-cell uni-list-cell-pd"
         v-if="type === 5 && forums.other && forums.other.can_be_onlooker"
@@ -524,7 +508,7 @@
           </qui-button>
         </view>
         <qui-button
-          v-if="postShow === true"
+          v-if="type !== 5"
           :loading="postLoading"
           type="primary"
           size="large"
@@ -536,12 +520,7 @@
           {{ i18n.t('discuzq.post.post') }}
         </qui-button>
         <qui-button
-          v-if="
-            type === 5 &&
-              postShow === false &&
-              forums.paycenter.wxpay_close &&
-              forums.other.can_create_thread_paid
-          "
+          v-if="type === 5"
           :loading="postLoading"
           type="primary"
           size="large"
@@ -1291,21 +1270,39 @@ export default {
       this.textShow = true;
     },
     moneyClick(index) {
+      console.log(index, 'indexindex');
+      // if (this.forums.set_site.site_onlooker_price === 0) {
+      //   this.watchShow = false;
+      // } else if (index === 0) {
+      //   console.log('免费')
+      //   this.payType = 0;
+      //   // this.postClick();
+      //   if (this.payType === 0) {
+      //     this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+      //   }
+      //   this.watchShow = false;
+      // } else {
+      //   this.watchShow = true;
+      // }
       if (this.forums.set_site.site_onlooker_price === 0) {
         this.watchShow = false;
-      } else if (index === 0) {
+      }
+      if (index === 0) {
+        this.postClick();
+        // console.log('免费');
         this.payType = 0;
-        // this.postClick();
         if (this.payType === 0) {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
         this.watchShow = false;
+        return;
       } else {
         this.watchShow = true;
       }
       this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
+      // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         this.textShow = false;
         this.$refs.popupBtm.close();
@@ -1315,7 +1312,8 @@ export default {
           this.textShow = false;
         });
       } else {
-        if (this.type === 5) {
+        if (this.type === 5 && index !== 0) {
+          // console.log('选择金额')
           this.priceAsk = this.payNumCheck[0].pay;
           this.$refs.popupBtm.close();
           this.postClick();
@@ -1421,6 +1419,7 @@ export default {
     },
     // 主题提问价格
     payClickShow() {
+      console.log('payClickshow');
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
@@ -2622,7 +2621,7 @@ export default {
     const data = uni.getSystemInfoSync();
     if (data.platform === 'ios' && this.type === 5) {
       this.askingPrice = false;
-      this.postClick = true;
+      // this.postClick = true;
     }
     // #endif
     // #ifdef H5
