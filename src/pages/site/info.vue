@@ -205,7 +205,6 @@ export default {
     },
     // 确认去绑定微信
     handleWechatClickOk() {
-      console.log('去绑定微信吧');
       // #ifdef MP-WEIXIN
       this.mpLogin();
       // #endif
@@ -234,12 +233,10 @@ export default {
       // #ifdef H5
       if (this.isWeixin === true && this.user.wechat === undefined) {
         this.$refs.wechatPopup.open();
-        console.log('什么都没绑定');
         return;
       }
       if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
         this.$refs.wechatPopup.open();
-        console.log('微信浏览器内没绑定');
         return;
       }
       // #endif
@@ -249,7 +246,6 @@ export default {
         (this.user.wechat && this.user.wechat.min_openid === '')
       ) {
         this.$refs.wechatPopup.open();
-        console.log('小程序内什么都没绑定');
         return;
       }
       // #endif
@@ -397,7 +393,7 @@ export default {
         signType,
         paySign,
         success() {
-          uni.navigateTo({
+          uni.redirectTo({
             url: '/pages/home/index',
           });
         },
