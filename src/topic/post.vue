@@ -415,6 +415,7 @@
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
         <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
+      <!-- 他人围观 -->
       <view
         class="uni-list-cell uni-list-cell-pd"
         v-if="type === 5 && forums.other && forums.other.can_be_onlooker"
@@ -757,14 +758,6 @@ export default {
       answerIsDate: 0, // 回答者得
       platformDate: 0, // 平台得
       askingPrice: true, // 显示提问价格
-      otherList: [
-        {
-          name: '匿名提问',
-        },
-        {
-          name: '他人围观须付费1元',
-        },
-      ],
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
