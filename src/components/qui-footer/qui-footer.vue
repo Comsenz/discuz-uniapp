@@ -332,7 +332,6 @@ export default {
     // 首页底部发帖点击事件跳转
     handleClick(item) {
       let url;
-      console.log(item.type, '这是类型');
       if (item.type === 6) {
         uni.navigateTo({
           url: `/pages/topic/parse-goods?type=${item.type}`,
@@ -359,7 +358,6 @@ export default {
           this.$refs.upload.uploadClick();
         });
         uni.$on('uploadOver', data => {
-          // console.log(data, 'data');
           if (this.footerIndex === 0) {
             url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
           } else {
@@ -380,7 +378,6 @@ export default {
           this.$refs.uploadVideo.uploadVideo();
         });
         uni.$on('uploadVideoOver', data => {
-          // console.log('这是首页接收到的视频文件', typeof data, data);
           if (this.footerIndex === 0) {
             url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
           } else {

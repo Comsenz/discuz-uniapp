@@ -304,11 +304,11 @@
           </view>
         </view>
 
-        <!-- <view class="themeItem__content__tags" v-if="themeType === '1' && getCategoryId === 0">
+        <view class="themeItem__content__tags" v-if="themeType === '1' && getCategoryId === 0">
           <view class="themeItem__content__tags__item" v-for="(item, index) in tags" :key="index">
             {{ item.name }}
           </view>
-        </view> -->
+        </view>
         <view
           class="themeItem__content__tags  themeItem__content__tags--position"
           v-if="threadPosition.length > 0"

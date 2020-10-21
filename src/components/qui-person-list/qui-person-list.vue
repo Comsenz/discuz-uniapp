@@ -77,7 +77,7 @@ export default {
       type: String,
     },
     listBg: {
-      default: '#fff',
+      default: '--color(--qui-BG-2)',
       type: String,
     },
     // 按时是否显示icon
@@ -184,7 +184,7 @@ export default {
   flex-direction: column;
   padding: 0 0 80rpx;
   text-align: center;
-  // background: --color(--qui-BG-2);
+  background: --color(--qui-BG-2);
   .det-per-number {
     font-size: $fg-f4;
     color: --color(--qui-FC-AAA);

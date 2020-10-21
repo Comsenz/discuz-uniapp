@@ -104,7 +104,7 @@ export default {
   },
   data: () => {
     return {
-      listBg: '#ededed',
+      listBg: '--color(--qui-BG-ED)',
     };
   },
   computed: {
