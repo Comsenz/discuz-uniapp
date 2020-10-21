@@ -1022,7 +1022,6 @@ export default {
         } else {
           this.threads = [...this.threads, ...res];
         }
-        console.log(this.threads, '主题');
         this.isResetList = false;
       });
     },

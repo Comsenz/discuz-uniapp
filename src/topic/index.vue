@@ -3864,7 +3864,10 @@ page {
     }
   }
 }
-
+.popup-share-content {
+  padding-right: 97rpx;
+  padding-left: 98rpx;
+}
 .popup-share-content-inner {
   height: auto;
   padding-right: 20rpx;

@@ -1702,6 +1702,8 @@ page {
 }
 .popup-share-content {
   padding-top: 40rpx;
+  padding-right: 97rpx;
+  padding-left: 98rpx;
 }
 .popup-share-content-inner {
   padding-right: 96px;
