@@ -153,6 +153,11 @@ export default {
       type: String,
       default: '',
     },
+    // 默认支付方式
+    currentPayType: {
+      type: Number,
+      default: 1,
+    },
     // 支付提示
     payTipShow: {
       type: Boolean,
@@ -192,7 +197,7 @@ export default {
       checkVal: '1',
       checkStatus: true, // 单选框状态
       // checkStatusVal: 1, // 单选框状态
-      current: 1,
+      current: this.currentPayType,
     };
   },
   computed: {
