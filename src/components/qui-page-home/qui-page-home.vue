@@ -411,7 +411,11 @@ export default {
     }
     // #endif
     // 发布帖子后首页追加最新帖子
-    this.$u.event.$on('addThread', thread => this.threads.unshift(thread));
+    this.$u.event.$on('addThread', () => {
+      this.isResetList = true;
+      this.pageNum = 1;
+      this.loadThreads();
+    });
     // 详情页删除帖子后在首页删除
     this.$u.event.$on('deleteThread', thread =>
       this.threads.forEach((item, index) => {
@@ -1018,6 +1022,7 @@ export default {
         } else {
           this.threads = [...this.threads, ...res];
         }
+        console.log(this.threads, '主题');
         this.isResetList = false;
       });
     },
