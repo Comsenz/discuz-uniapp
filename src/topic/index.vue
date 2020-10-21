@@ -995,7 +995,6 @@ export default {
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
-      console.log('thread', thread);
       // 只保留一个用户组显示
       let hasFirst = false;
       if (thread.user && thread.user.groups.length > 0) {
@@ -1319,7 +1318,6 @@ export default {
             });
             // #endif
             if (data.question) {
-              console.log('wenda');
               this.platformDate = (
                 data.question.price *
                 (this.forums.set_site.site_master_scale / 10)
@@ -1328,7 +1326,6 @@ export default {
                 data.question.onlooker_unit_price *
                 (this.forums.set_site.site_master_scale / 10)
               ).toFixed(2);
-              // console.log(this.onLookformDate, 'onLookformDate')
               this.beAskDate = (data.question.price - this.platformDate).toFixed(2);
               this.beAskBeDate = (
                 (data.question.onlooker_unit_price - this.onLookformDate) /
@@ -1336,14 +1333,11 @@ export default {
               ).toFixed(2);
               // 问答免费
               if (data.question.price === '0.00') {
-                console.log('ooooo');
                 // 问答免费 当前登录ID == 被提问ID && 未回答
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
-                  console.log('显示问答按钮');
                   // 问答免费 已回答 && 围观价格>0 && 用户组有围观权限  所有人都可以看
                 } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
-                  console.log('12345678');
                   this.beAsk = false;
                   this.payment = true;
                   this.answerPay = false;
@@ -1365,7 +1359,6 @@ export default {
                   this.beAsk = false;
                   this.payment = false;
                   this.answerPay = true;
-                  console.log('ddhdhudushuhdiuehwiu')
                 } else if (
                   this.user.id !== data.question.be_user_id &&
                   this.user.id !== data.user.id &&
@@ -1377,10 +1370,8 @@ export default {
                   this.beAsk = false;
                   this.payment = false;
                   this.answerPay = true;
-                  console.log('免费不设置围观')
                 }
               } else if (data.question.price > '0.00') {
-                console.log('付费');
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
                 } else if (
@@ -1389,7 +1380,6 @@ export default {
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
-                  console.log('显示答案')
                 } else if (
                   this.user.id === data.user.id &&
                   data.question.is_answer === 1
@@ -1403,7 +1393,6 @@ export default {
                 ) {
                   this.answerPay = true;
                   this.beAsk = false;
-                  console.log('3333344444')
                 } else if (
                   this.user.id === data.user.id &&
                   data.question.is_answer === 1 &&
@@ -1420,7 +1409,6 @@ export default {
                   data.onlookerState === false
                 ) {
                   this.answerPay = false;
-                  console.log('付费不允许围观222222');
                 }
                  else if (
                   this.user.id !== data.user.id &&
@@ -1430,7 +1418,6 @@ export default {
                   data.onlookerState === false
                 ) {
                   this.answerPay = true;
-                  console.log('付费不允许围观');
                 } 
                 else if (
                   this.user.id !== data.user.id &&
@@ -1441,71 +1428,10 @@ export default {
                   data.onlookerState === true
                   ) {
                     this.answerPay = true;
-                    console.log('付费允许围观')
                   }
               }
-
-              // 当前登录的ID等于被提问用户的ID就显示回答问题的按钮
-              // if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
-              //   this.beAsk = true;
-              //   console.log('显示问答按钮')
-              // } else if (
-              //   this.user.id ===  data.user.id &&
-              //   data.question.is_answer === 1 &&
-              //   data.question.onlooker_unit_price === 0
-              // ) {
-              //   this.payment = true;
-              //   this.beAsk = false;
-              //   console.log('99999')
-              // } else if (
-              //   // 当前登录的ID等于被提问的ID && 问题已回答 && 已有人围观
-              //   (this.user.id === data.question.be_user_id || data.user.id) &&
-              //   data.question.is_answer === 1 &&
-              //   data.question.onlooker_number > 0
-              // ) {
-              //   this.answerPay = true;
-              //   this.beAsk = false;
-              // } else if (
-              //   // 当前登录ID是围观用户 && 问题已被回答 && 允许围观 && 未支付
-              //   this.user.id !== (data.question.be_user_id && data.user.id) &&
-              //   data.question.is_answer === 1 &&
-              //   data.question.is_onlooker === true &&
-              //   data.isOnlooker === false
-              // ) {
-              //   this.answerPay = true;
-              // } else if (
-              //   this.user.id !== (data.question.be_user_id && data.user.id) &&
-              //   data.question.is_answer === 1
-              // ) {
-              //   // 免费围观
-              //   if (data.question.onlooker_unit_price === 0) {
-              //     this.payment = true;
-              //     this.answerPay = false;
-              //   } else {
-              //     // 循环已付费围观者
-              //     data.onlookers.forEach(item => {
-              //       console.log(item, 'item');
-              //       if (this.user.id === item.id) {
-              //         this.payment = true;
-              //         this.answerPay = false;
-              //         return;
-              //       }
-              //       this.payment = false;
-              //       this.answerPay = true;
-              //     });
-              //   }
-              // }
               this.questionId = data.question._jv.id;
             }
-            // data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
-            //   if (value.permission === 'createThreadPaid') {
-            //     this.beRewarded = true;
-            //     return;
-            //   }
-            // });
-            // if (data.user.groups[0]._jv.id === '1') {
-            //   this.beRewarded = true;
-            // }
             if (data.user.groups && data.user.groups.length > 0) {
               data.user.groups[0].permissionWithoutCategories.forEach((value, index) => {
                 if (value.permission === 'createThreadPaid') {
@@ -1564,6 +1490,12 @@ export default {
                 this.contentVal = data.firstPost.summaryText;
                 this.desc = data.firstPost.summaryText;
                 this.shareLogo = '';
+                break;
+              case 5:
+                // 问答帖
+                this.contentVal = data.firstPost.summaryText;
+                this.desc = data.firstPost.summaryText;
+                this.shareLogo = data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
                 break;
               default:
             }
@@ -2130,7 +2062,6 @@ export default {
       }
       this.$store.dispatch('jv/post', params).then(res => {
         this.$refs.commentPopup.close();
-        console.log(res, '回答问题的接口');
         this.loadThread();
       });
     },
@@ -2476,12 +2407,10 @@ export default {
         // #ifdef H5
         if (this.isWeixin === true && this.user.wechat === undefined) {
           this.$refs.wechatPopup.open();
-          console.log('什么都没绑定');
           return;
         }
         if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
           this.$refs.wechatPopup.open();
-          console.log('微信浏览器内没绑定');
           return;
         }
         // #endif
@@ -2492,7 +2421,6 @@ export default {
           (this.user.wechat && this.user.wechat.min_openid === '')
         ) {
           this.$refs.wechatPopup.open();
-          console.log('小程序内什么都没绑定');
           return;
         }
         // #endif
@@ -2651,7 +2579,6 @@ export default {
     },
     // 围观支付
     payAnswerClickShow() {
-      console.log('围观');
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
@@ -2667,7 +2594,6 @@ export default {
       this.$nextTick(() => {
         // console.log('9999');
         this.$refs.payShow.payClickShow(this.payTypeVal);
-        console.log(this.payTypeVal);
       });
     },
     // 支付是否显示用户头像
@@ -2865,7 +2791,6 @@ export default {
     publishClick() {
       this.publishClickStatus = false;
       if (this.commentAnser === true) {
-        console.log('commentAnsercommentAnser');
         this.postAnswer();
       } else {
         this.postComment(this.commentId);
@@ -3064,7 +2989,6 @@ export default {
         this.h5LoginMode();
         // #endif
       }
-      console.log('回答问题');
       this.formData.type = 5;
       this.commentAnser = true;
       this.$refs.commentPopup.open();
@@ -3106,7 +3030,6 @@ export default {
     },
     // 确认去绑定微信
     handleWechatClickOk() {
-      console.log('去绑定微信吧');
       // #ifdef MP-WEIXIN
       this.mpLogin();
       // #endif

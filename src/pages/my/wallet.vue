@@ -135,7 +135,6 @@ export default {
           (this.user.wechat && this.user.wechat.mp_openid === '')
         ) {
           this.$refs.wechatPopup.open();
-          console.log('什么都没绑定');
           return;
         }
         uni.navigateTo({
@@ -156,7 +155,6 @@ export default {
         (this.user.wechat && this.user.wechat.min_openid === '')
       ) {
         this.$refs.wechatPopup.open();
-        console.log('小程序内什么都没绑定');
       } else {
         uni.navigateTo({
           url: `/pages/modify/withdrawals`,
@@ -166,7 +164,6 @@ export default {
     },
     // 确认去绑定微信
     handleWechatClickOk() {
-      console.log('去绑定微信吧');
       // #ifdef MP-WEIXIN
       this.mpLogin();
       // #endif
