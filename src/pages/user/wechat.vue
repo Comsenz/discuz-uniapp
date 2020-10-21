@@ -26,7 +26,6 @@ export default {
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('登录成功：', res);
             this.logind();
             if (
               this.forums &&
@@ -84,7 +83,6 @@ export default {
                 headimgurl: res.data.errors[0].user.headimgurl,
                 username: res.data.errors[0].user.nickname,
               };
-              console.log('userInfo：', userInfo);
               uni.setStorageSync('token', res.data.errors[0].token);
               uni.setStorageSync('userInfo', userInfo);
               this.jump2RegisterBindPage();

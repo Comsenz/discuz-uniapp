@@ -64,20 +64,17 @@ export default {
                       },
                     },
                   };
-                  console.log('params------', params);
                   this.$store.dispatch('session/setParams', params);
                   this.refreshmpParams();
                   this.getParams();
                 },
                 fail: error => {
-                  console.log(error);
                   reject(error);
                 },
               });
             }
           },
           fail: error => {
-            console.log(error);
             reject(error);
           },
         });
@@ -103,7 +100,6 @@ export default {
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
-      console.log('获取参数:params', params);
       const isSend = uni.getStorageSync('isSend');
       if (isSend) {
         this.noSenseLogin(params);
@@ -113,10 +109,8 @@ export default {
      * 无感登录
      */
     noSenseLogin(params) {
-      console.log('无感登录:params', params);
       const routes = getCurrentPages();
       const curRoute = routes[routes.length - 1].route;
-      console.log('getCurrentPages()', getCurrentPages());
       if (
         curRoute === 'pages/site/partner-invite' ||
         curRoute === 'pages/user/login' ||
@@ -136,7 +130,6 @@ export default {
       this.$store
         .dispatch('session/noSenseMPLogin', params)
         .then(res => {
-          console.log('noSenseMPLogin的res', res);
           if (res && res.data) {
             this.$emit('login');
             if (res.data.data && res.data.data.id) {
@@ -204,7 +197,6 @@ export default {
                 headimgurl: res.data.errors[0].user.headimgurl,
                 username: res.data.errors[0].user.username,
               };
-              console.log('userInfo：', userInfo);
               uni.setStorageSync('token', res.data.errors[0].token);
               uni.setStorageSync('userInfo', userInfo);
               this.jump2RegisterBindPage();

@@ -145,13 +145,10 @@ export default {
   computed: {
     profile() {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-      console.log('profile', data);
-      console.log('profile.wechat', data.wechat);
       const userInfo = {
         headimgurl: data.avatarUrl,
         username: data.username,
       };
-      console.log('userInfo：', userInfo);
       uni.setStorageSync('userInfo', userInfo);
       return data;
     },
@@ -212,7 +209,6 @@ export default {
     bindWechat() {
       // 绑定
       if (this.name === '绑定') {
-        console.log('绑定');
         uni.setStorage({
           key: 'page',
           data: getCurUrl(),
@@ -246,7 +242,6 @@ export default {
           key: 'page',
           data: getCurUrl(),
         });
-        console.log('换绑');
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
         // #ifdef MP-WEIXIN
@@ -256,13 +251,11 @@ export default {
         this.wxh5Login(0, 1);
         // #endif
       } else {
-        console.log('解绑');
         this.$refs.bind.open();
       }
     },
     handleClickOk() {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(res => {
-        console.log('解绑成功', res);
         if (res && res._jv && res._jv.id) {
           this.getUserInfo();
           this.handleClickCancel();

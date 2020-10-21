@@ -182,7 +182,6 @@ export default {
   },
   // 上拉加载
   onReachBottom() {
-    console.log(this.meta, '事件触发');
     if (this.meta.next || this.meta.prev) {
       this.topics((currentPage += 1));
     }

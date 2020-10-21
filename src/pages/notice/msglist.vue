@@ -281,7 +281,6 @@ export default {
       }
     },
     cursorFocus(e) {
-      console.log('聚焦', e);
       if (e) {
         this.emojiShow = false;
       }

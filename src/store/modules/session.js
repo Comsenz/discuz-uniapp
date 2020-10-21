@@ -113,7 +113,6 @@ const actions = {
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
-    console.log(context, payload);
     const inviteCode = uni.getStorageSync('inviteCode');
     const register = uni.getStorageSync('register');
     const rebind = uni.getStorageSync('rebind');
@@ -165,7 +164,6 @@ const actions = {
     });
   },
   ucLogin: (context, payload = {}) => {
-    console.log(context, payload, 'session');
     return new Promise(resolve => {
       return http
         .post('uc/login', payload)

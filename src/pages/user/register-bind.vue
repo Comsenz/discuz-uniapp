@@ -105,7 +105,6 @@ export default {
 
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
-      console.log(result, '注册绑定页面');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
       this.addRegisterParams();
@@ -125,12 +124,10 @@ export default {
   computed: {
     userInfo() {
       const data = uni.getStorageSync('userInfo');
-      console.log('用户信息：', data);
       return data;
     },
     isBind() {
       const data = uni.getStorageSync('isBind');
-      console.log('data', data);
       return data;
     },
   },
@@ -206,7 +203,6 @@ export default {
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
-      console.log('params', params);
       this.register(params, this.i18n.t('user.registerBindSuccess'));
     },
     // 验证码
@@ -248,7 +244,6 @@ export default {
         .dispatch('session/h5Register', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('注册成功：', res);
             // #ifdef MP-WEIXIN
             this.refreshmpParams();
             // #endif

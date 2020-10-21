@@ -13,7 +13,6 @@ module.exports = {
      */
     getForum() {
       this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
-        console.log('forum配置信息：', res);
         if (res) {
           this.forum = res;
         }
@@ -168,7 +167,6 @@ module.exports = {
       uni.login({
         success: loginRes => {
           if (loginRes.errMsg === 'login:ok') {
-            console.log('loginRes', loginRes);
             const { code } = loginRes;
             uni.getUserInfo({
               success: res => {
@@ -198,7 +196,6 @@ module.exports = {
      * 小程序登录/注册
      */
     mpLogin(register = 0) {
-      console.log('mpLogin-register', register);
       uni.setStorageSync('register', register);
       uni.setStorageSync('isSend', true);
       uni.setStorageSync('isBind', false);
@@ -284,12 +281,10 @@ module.exports = {
      * 发送登录请求
      */
     login(params, resultDialog) {
-      console.log('登录参数：', params);
       this.$store
         .dispatch('session/h5Login', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('登录成功：', res);
             // #ifdef MP-WEIXIN
             this.refreshmpParams();
             // #endif
@@ -321,7 +316,6 @@ module.exports = {
             });
           }
           if (res && res.data && res.data.errors) {
-            console.log('登录失败：', res);
             // #ifdef MP-WEIXIN
             this.refreshmpParams();
             // #endif
