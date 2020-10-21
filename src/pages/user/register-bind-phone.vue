@@ -84,7 +84,6 @@ export default {
     this.getForum();
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
-      console.log(result, '注册绑定页面');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
       this.addRegisterParams();
@@ -104,7 +103,6 @@ export default {
   computed: {
     phone() {
       const data = this.$store.getters['session/get']('phone');
-      console.log('手机号：', data);
       return data;
     },
   },
@@ -164,7 +162,6 @@ export default {
       if (inviteCode !== '') {
         params.data.attributes.code = inviteCode;
       }
-      console.log('params', params);
       this.register(params, this.i18n.t('user.registerBindSuccess'));
     },
     // 验证码
@@ -206,7 +203,6 @@ export default {
         .dispatch('session/h5Register', params)
         .then(res => {
           if (res && res.data && res.data.data && res.data.data.id) {
-            console.log('注册成功：', res);
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
               uni.getStorage({

@@ -678,6 +678,7 @@ import appCommonH from '@/utils/commonHelper';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { getCurUrl } from '@/utils/getCurUrl';
+import uniCopy from '@/common/uni-copy';
 
 let payWechat = null;
 let payPhone = null;
@@ -1359,6 +1360,7 @@ export default {
                   this.beAsk = false;
                   this.payment = false;
                   this.answerPay = true;
+                  console.log('ddhdhudushuhdiuehwiu');
                 } else if (
                   this.user.id !== data.question.be_user_id &&
                   this.user.id !== data.user.id &&
@@ -1370,6 +1372,7 @@ export default {
                   this.beAsk = false;
                   this.payment = false;
                   this.answerPay = true;
+                  console.log('免费不设置围观');
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1380,10 +1383,8 @@ export default {
                 ) {
                   this.beAsk = false;
                   this.answerPay = true;
-                } else if (
-                  this.user.id === data.user.id &&
-                  data.question.is_answer === 1
-                ) {
+                  console.log('显示答案');
+                } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
                   this.beAsk = false;
                   this.answerPay = true;
                 } else if (
@@ -1393,6 +1394,7 @@ export default {
                 ) {
                   this.answerPay = true;
                   this.beAsk = false;
+                  console.log('3333344444');
                 } else if (
                   this.user.id === data.user.id &&
                   data.question.is_answer === 1 &&
@@ -1409,8 +1411,8 @@ export default {
                   data.onlookerState === false
                 ) {
                   this.answerPay = false;
-                }
-                 else if (
+                  console.log('付费不允许围观222222');
+                } else if (
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true &&
@@ -1418,17 +1420,18 @@ export default {
                   data.onlookerState === false
                 ) {
                   this.answerPay = true;
-                } 
-                else if (
+                  console.log('付费不允许围观');
+                } else if (
                   this.user.id !== data.user.id &&
                   this.user.id !== data.question.be_user_id &&
                   data.question.is_onlooker === true &&
                   data.question.is_answer === 1 &&
                   this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === true
-                  ) {
-                    this.answerPay = true;
-                  }
+                ) {
+                  this.answerPay = true;
+                  console.log('付费允许围观');
+                }
               }
               this.questionId = data.question._jv.id;
             }
@@ -1495,7 +1498,14 @@ export default {
                 // 问答帖
                 this.contentVal = data.firstPost.summaryText;
                 this.desc = data.firstPost.summaryText;
-                this.shareLogo = data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
+                this.shareLogo =
+                  data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
+                break;
+              case 6:
+                // 商品帖
+                this.contentVal = data.firstPost.postGoods.title;
+                this.desc = data.firstPost.summaryText;
+                this.shareLogo = data.firstPost.postGoods.image_path;
                 break;
               default:
             }
@@ -3030,6 +3040,7 @@ export default {
     },
     // 确认去绑定微信
     handleWechatClickOk() {
+      this.$refs.wechatPopup.close();
       // #ifdef MP-WEIXIN
       this.mpLogin();
       // #endif
@@ -3379,26 +3390,44 @@ export default {
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
       if (this.thread.type === 6) {
-        // console.log('否买');
         // #ifndef MP-WEIXIN
-        // console.log('这是非小程序');
-        window.location.href = this.thread.firstPost.postGoods.detail_content;
+        if (this.isWeixin) {
+          if (
+            this.thread.firstPost.postGoods.type === 0 ||
+            this.thread.firstPost.postGoods.type === 1 ||
+            this.thread.firstPost.postGoods.type === 5
+          ) {
+            this.copy(this.thread.firstPost.postGoods.detail_content);
+          } else {
+            window.location.href = this.thread.firstPost.postGoods.detail_content;
+          }
+        } else {
+          window.location.href = this.thread.firstPost.postGoods.detail_content;
+        }
         // #endif
 
         // #ifdef MP-WEIXIN
-        // console.log('这是小程序内');
-        uni.setClipboardData({
-          data: this.thread.firstPost.postGoods.detail_content,
-          success: function() {
-            console.log('success');
-          },
-        });
-        // uni.showToast({
-        //   icon: 'none',
-        //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
-        // });
+        this.copy(this.thread.firstPost.postGoods.detail_content);
         // #endif
       }
+    },
+    copy(text) {
+      uniCopy({
+        content: text,
+        success: res => {
+          uni.showToast({
+            title: this.thread.firstPost.postGoods.type_name + res,
+            icon: 'none',
+          });
+        },
+        error: e => {
+          uni.showToast({
+            title: e,
+            icon: 'none',
+            duration: 3000,
+          });
+        },
+      });
     },
   },
 };
@@ -3650,6 +3679,7 @@ page {
 .ft-gap {
   width: 100%;
   padding-bottom: 100rpx;
+  background: --color(--qui-BG-1);
 }
 .det-ft {
   position: fixed;

@@ -34,6 +34,7 @@
         :money="forums.set_site && parseFloat(forums.set_site.site_price)"
         :wallet-status="true"
         :balance="10"
+        :current-pay-type="0"
         :pay-type-data="payTypeData"
         @radioMyHead="radioMyHead"
         @onInput="onInput"

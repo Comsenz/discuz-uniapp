@@ -36,7 +36,6 @@ export default {
   methods: {
     preview(page = 1) {
       const attachment = this.$store.getters['session/get']('attachment');
-      console.log('attachment', attachment);
       this.$store
         .dispatch('jv/get', [
           `attachments/${attachment._jv.id}${attachment.url.slice(
@@ -47,9 +46,6 @@ export default {
         ])
         .then(res => {
           if (res && res._jv) {
-            console.log('res', res);
-            console.log('res._jv', res._jv);
-            console.log('xxxx', res._jv['X-Total-Page']);
             this.src = res._jv.image;
             this.totalPage = parseInt(res._jv['X-Total-Page'], 10);
           }

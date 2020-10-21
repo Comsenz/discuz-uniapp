@@ -48,14 +48,12 @@ export default {
     };
   },
   onLoad(option) {
-    console.log(option, '这是onload');
     this.type = option.type;
     this.operating = option.operating;
     this.threadId = option.threadId;
   },
   methods: {
     handleNext() {
-      console.log('link', this.link);
       if (this.link === '') {
         uni.showToast({
           icon: 'none',
@@ -70,11 +68,9 @@ export default {
           type: 'analysis',
           address: this.link,
         };
-        console.log('商品参数：', params);
         this.$store
           .dispatch('jv/post', params)
           .then(res => {
-            console.log('查询商品信息：', res);
             if (res && res._jv) {
               this.$store.dispatch('session/setGood', res);
               if (this.operating === 'edit' && this.threadId !== '') {
@@ -93,7 +89,6 @@ export default {
             }
           })
           .catch(err => {
-            console.log('查询商品信息：', err);
             if (err && err.data && err.data.errors) {
               uni.showToast({
                 icon: 'none',

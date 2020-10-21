@@ -98,12 +98,10 @@ export default {
   computed: {
     userInfo() {
       const data = uni.getStorageSync('userInfo');
-      console.log('用户信息：', data);
       return data;
     },
     isBind() {
       const data = uni.getStorageSync('isBind');
-      console.log('data', data);
       return data;
     },
   },

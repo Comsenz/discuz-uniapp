@@ -156,16 +156,13 @@ export default {
     },
     // 单选人员
     radioChange(item) {
-      console.log(item, '单选人员');
       uni.navigateTo({
         url: `/topic/post?type=5&categoryId=${this.categoryId}&categoryIndex=${this.categoryIndex}`,
       });
       setTimeout(() => {
         if (item.toUser) {
-          console.log(item.toUser, 'item.toUser');
           uni.$emit('radioChange', item.toUser);
         } else {
-          console.log(item.toUser, 'elseitem.toUser');
           uni.$emit('radioChange', item);
         }
       }, 1000);
@@ -225,11 +222,9 @@ export default {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_jv"] }] */
         this.meta = res._jv.json.meta;
         this.allFollow = [...this.allFollow, ...res];
-        console.log(this.allFollow, '这是@数据');
         if (Object.keys(res).nv_length - 1 === 0) {
           this.loadingText = 'search.noFollowers';
         } else if (res._jv.json.meta.total <= 20 && Object.keys(res).nv_length - 1 !== 0) {
-          // console.log('没有更多')
           this.loadingText = 'discuzq.list.noMoreData';
         }
       });
@@ -257,9 +252,7 @@ export default {
     },
   },
   onLoad(option) {
-    console.log(option, 'optionoption');
     this.select = option.name;
-    console.log(this.select, 'select');
     this.categoryId = option.categoryId;
     this.categoryIndex = option.categoryIndex;
     if (option.name === 'select') {

@@ -68,7 +68,6 @@ export default {
       };
       this.$store.commit('jv/clearRecords', { _jv: { type: 'notification' } });
       this.$store.dispatch('jv/get', ['notification', { params }]).then(res => {
-        console.log(res, '通知');
         if (res && res._jv) {
           delete res._jv;
           for (let i = 0; i < res.length; i += 1) {

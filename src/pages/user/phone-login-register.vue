@@ -125,7 +125,6 @@ export default {
 
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
-      console.log(result, '手机登录页');
       this.ticket = result.ticket;
       this.randstr = result.randstr;
       this.time = 60;
@@ -264,7 +263,6 @@ export default {
           duration: 2000,
         });
       } else {
-        console.log('this.phoneNumber:', this.phoneNumber);
         this.$store.dispatch('session/setPhone', this.phoneNumber);
         this.verifyPhoneNumber();
       }
@@ -281,12 +279,10 @@ export default {
           },
         },
       };
-      console.log('params', params);
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
           if (res && res.access_token) {
-            console.log('手机号登录成功：', res);
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
               uni.getStorage({
@@ -318,7 +314,6 @@ export default {
             const userInfo = {
               mobileToken: res.data.errors[0].token,
             };
-            console.log('userInfo：', userInfo);
             uni.setStorageSync('userInfo', userInfo);
             this.jump2RegisterBindPhonePage();
           }
