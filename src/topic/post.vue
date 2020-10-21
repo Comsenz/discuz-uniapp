@@ -523,7 +523,7 @@
           </qui-button>
         </view>
         <qui-button
-          v-if="type !== 5"
+          v-if="postShow === true"
           :loading="postLoading"
           type="primary"
           size="large"
@@ -535,7 +535,12 @@
           {{ i18n.t('discuzq.post.post') }}
         </qui-button>
         <qui-button
-          v-if="type === 5"
+          v-if="
+            type === 5 &&
+              postShow === false &&
+              forums.paycenter.wxpay_close &&
+              forums.other.can_create_thread_paid
+          "
           :loading="postLoading"
           type="primary"
           size="large"
@@ -893,6 +898,7 @@ export default {
       goodsId: '', // 商品ID
       categoryid: 0,
       categoryindex: 0,
+      postShow: false,
     };
   },
   computed: {
@@ -1437,8 +1443,10 @@ export default {
       } else if (this.forums.paycenter.wxpay_close && this.forums.other.can_create_thread_paid) {
         // #ifndef H5
         if (this.system === 'ios') {
+          this.postShow = true;
           this.payShowStatus = false;
           this.ioshide = false;
+          console.log(this.postShow, 'postShowpostShowpostShowpostShow')
           return;
         } else {
           this.ioshide = true;
@@ -2651,6 +2659,8 @@ export default {
     const data = uni.getSystemInfoSync();
     if (data.platform === 'ios' && this.type === 5) {
       this.askingPrice = false;
+      this.postClick = true;
+      console.log(this.postClick, '微信小程序种')
     }
     // #endif
     // #ifdef H5
