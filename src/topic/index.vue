@@ -1500,6 +1500,7 @@ export default {
                 this.desc = data.firstPost.summaryText;
                 this.shareLogo =
                   data.firstPost.images.length > 0 ? data.firstPost.images[0].thumbUrl : '';
+                break;
               case 6:
                 // 商品帖
                 this.contentVal = data.firstPost.postGoods.title;
@@ -3039,6 +3040,7 @@ export default {
     },
     // 确认去绑定微信
     handleWechatClickOk() {
+      this.$refs.wechatPopup.close();
       // #ifdef MP-WEIXIN
       this.mpLogin();
       // #endif
