@@ -634,13 +634,16 @@ export default {
       // }
     },
     scrollsetups() {
+      // #ifdef MP-WEIXIN
       const _this = this;
       uni.setStorage({
         key: 'scroll_top',
         data: _this.scrollTop,
       });
+      // #endif
     },
     screenplayback() {
+      // #ifdef MP-WEIXIN
       let num = 0;
       uni.getStorage({
         key: 'scroll_top',
@@ -655,6 +658,7 @@ export default {
         });
         clearTimeout(timer);
       }, 50);
+      // #endif
     },
     // 滑动到顶部
     toUpper() {

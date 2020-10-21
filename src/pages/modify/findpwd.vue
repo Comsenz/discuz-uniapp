@@ -123,7 +123,6 @@ export default {
     this.$u.event.$on('captchaResult', result => {
       this.ticket = result.ticket;
       this.randstr = result.randstr;
-      console.log('111');
       this.btnButton();
       this.verstype();
     });
@@ -160,16 +159,13 @@ export default {
     },
     // 发送短信接口
     sendsms() {
-      console.log('9999');
       if (/^1(3|4|5|6|7|8|9)\d{9}$/.test(this.newphon) || this.disphon) {
         if (this.forums.qcloud.qcloud_captcha) {
           if (!this.ticket || !this.randstr) {
-            console.log('腾讯云验证已经开启');
             this.verification();
             return false;
           }
         } else {
-          console.log('腾讯云验证未开启');
           this.second = 60;
           this.btnButton();
           this.sendout();
@@ -223,7 +219,6 @@ export default {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
           // 验证通过后发布
-          console.log('验证码发送');
           this.second = 60;
           this.btnButton();
           this.sendout();

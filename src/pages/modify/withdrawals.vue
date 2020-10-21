@@ -380,15 +380,12 @@ export default {
       });
     },
     sendsms() {
-      console.log('9999');
       if (this.forums.qcloud.qcloud_captcha) {
         if (!this.ticket || !this.randstr) {
-          console.log('腾讯云验证已经开启');
           this.verification();
           return false;
         }
       } else {
-        console.log('腾讯云验证未开启');
         this.second = 60;
         this.btnButton();
       }
@@ -419,7 +416,6 @@ export default {
           this.ticket = res.ticket;
           this.randstr = res.randstr;
           // 验证通过后发布
-          console.log('验证码发送');
           this.second = 60;
           this.btnButton();
         }
@@ -445,7 +441,6 @@ export default {
       };
       const postphon = status.run(() => this.$store.dispatch('jv/post', params));
       postphon.then(res => {
-        console.log(res);
         this.num -= 1;
         this.second = res._jv.json.data.attributes.interval;
         this.ticket = '';
@@ -511,7 +506,6 @@ export default {
           cash_type: this.cashType,
         };
       }
-      console.log(this.cashmany, this.withdrawalPhon, this.cashType, '提现参数');
       const postcash = status.run(() => this.$store.dispatch('jv/post', params));
       postcash
         .then(res => {

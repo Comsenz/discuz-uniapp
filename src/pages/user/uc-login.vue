@@ -159,7 +159,6 @@ export default {
                   headimgurl: res.data.errors[0].user.headimgurl,
                   username: res.data.errors[0].user.username || res.data.errors[0].user.nickname,
                 };
-                console.log('userInfo：', userInfo);
                 uni.setStorageSync('token', res.data.errors[0].token);
                 uni.setStorageSync('userInfo', userInfo);
                 uni.navigateTo({
@@ -181,7 +180,6 @@ export default {
                   headimgurl: err.data.errors[0].user.headimgurl,
                   username: err.data.errors[0].user.username || err.data.errors[0].user.nickname,
                 };
-                console.log('userInfo：', userInfo);
                 uni.setStorageSync('token', err.data.errors[0].token);
                 uni.setStorageSync('userInfo', userInfo);
                 uni.navigateTo({
