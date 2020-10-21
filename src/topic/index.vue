@@ -1559,6 +1559,12 @@ export default {
                     ? data.firstPost.images[0].thumbUrl
                     : '';
                 break;
+              case 4:
+                // 语音帖
+                this.contentVal = data.firstPost.summaryText;
+                this.desc = data.firstPost.summaryText;
+                this.shareLogo = '';
+                break;
               default:
             }
           }
@@ -1732,7 +1738,8 @@ export default {
                   this.paidBtnStatus = true;
                   this.rewardStatus = false;
                 } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
-                  this.paidStatus = false;
+                  this.paidStatus = true;
+                  this.paidBtnStatus = false;
                   this.rewardStatus = false;
                 } else {
                   if (this.forums.other.can_be_reward) {

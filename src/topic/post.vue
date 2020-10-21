@@ -365,7 +365,7 @@
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
-        v-if="type === 1 && forums.other.can_create_thread_paid && ioshide"
+        v-if="type === 1 && forums.other && forums.other.can_create_thread_paid && ioshide"
         @click="lookPay"
       ></qui-cell-item>
       <view v-if="type === 1">
@@ -377,6 +377,7 @@
           v-if="
             type !== 0 &&
               showHidden &&
+              forums.paycenter &&
               forums.paycenter.wxpay_close &&
               payType !== 0 &&
               forums.other.can_create_thread_paid &&

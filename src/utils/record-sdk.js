@@ -5,7 +5,7 @@ export default class Record {
     const self = this;
     try {
       Recorder.get(rec => {
-        console.log('init recorder component now.');
+        // console.log('init recorder component now.');
         self.recorder = rec;
         self.recorder.start();
         param.success('record successfully!');
@@ -26,11 +26,9 @@ export default class Record {
   }
 
   play(audio) {
-    console.log('start play record now.');
     const self = this;
     try {
       self.recorder.play(audio);
-      console.log('play successfully.');
     } catch (e) {
       console.log(`play record failed!${e}`);
     }
