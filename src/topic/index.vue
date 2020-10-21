@@ -678,6 +678,7 @@ import appCommonH from '@/utils/commonHelper';
 // #endif
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { getCurUrl } from '@/utils/getCurUrl';
+import uniCopy from '@/common/uni-copy';
 
 let payWechat = null;
 let payPhone = null;
@@ -3387,26 +3388,36 @@ export default {
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
       if (this.thread.type === 6) {
-        // console.log('否买');
         // #ifndef MP-WEIXIN
-        // console.log('这是非小程序');
-        window.location.href = this.thread.firstPost.postGoods.detail_content;
+        if (this.isWeixin) {
+          this.copy(this.thread.firstPost.postGoods.detail_content);
+        } else {
+          window.location.href = this.thread.firstPost.postGoods.detail_content;
+        }
         // #endif
 
         // #ifdef MP-WEIXIN
-        // console.log('这是小程序内');
-        uni.setClipboardData({
-          data: this.thread.firstPost.postGoods.detail_content,
-          success: function() {
-            console.log('success');
-          },
-        });
-        // uni.showToast({
-        //   icon: 'none',
-        //   title: this.i18n.t('topic.theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser'),
-        // });
+        this.copy(this.thread.firstPost.postGoods.detail_content);
         // #endif
       }
+    },
+    copy(text) {
+      uniCopy({
+        content: text,
+        success: res => {
+          uni.showToast({
+            title: this.thread.firstPost.postGoods.type_name + res,
+            icon: 'none',
+          });
+        },
+        error: e => {
+          uni.showToast({
+            title: e,
+            icon: 'none',
+            duration: 3000,
+          });
+        },
+      });
     },
   },
 };
@@ -3658,6 +3669,7 @@ page {
 .ft-gap {
   width: 100%;
   padding-bottom: 100rpx;
+  background: --color(--qui-BG-1);
 }
 .det-ft {
   position: fixed;
