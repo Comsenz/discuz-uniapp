@@ -3392,7 +3392,15 @@ export default {
       if (this.thread.type === 6) {
         // #ifndef MP-WEIXIN
         if (this.isWeixin) {
-          this.copy(this.thread.firstPost.postGoods.detail_content);
+          if (
+            this.thread.firstPost.postGoods.type === 0 ||
+            this.thread.firstPost.postGoods.type === 1 ||
+            this.thread.firstPost.postGoods.type === 5
+          ) {
+            this.copy(this.thread.firstPost.postGoods.detail_content);
+          } else {
+            window.location.href = this.thread.firstPost.postGoods.detail_content;
+          }
         } else {
           window.location.href = this.thread.firstPost.postGoods.detail_content;
         }
