@@ -77,7 +77,7 @@ export default {
       type: String,
     },
     listBg: {
-      default: '#fff',
+      default: '--color(--qui-BG-2)',
       type: String,
     },
     // 按时是否显示icon
