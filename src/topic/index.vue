@@ -3531,7 +3531,7 @@ page {
   font-size: $fg-f4;
   line-height: 40rpx;
 }
-//详情页帖子内容
+//详情页帖子内容1
 .detail-post-content {
   padding: 0 40rpx 30rpx;
   text-align: left;
