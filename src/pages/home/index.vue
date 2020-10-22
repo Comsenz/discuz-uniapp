@@ -192,15 +192,21 @@ export default {
     }),
     // 切换组件
     cut_index(e, type, isTabBar) {
+      console.log(e, type, isTabBar, 'iiiiii');
       const tabs = ['home', 'quifind', 'quinotice', 'quimy'];
       uni.setStorage({
         key: 'page',
         data: '/pages/home/index',
       });
+      if (type === 1) {
+        console.log('发现');
+        this.setFooterIndex(1);
+      }
       this.currentTab = tabs[type];
+      console.log(this.currentTab, 'currentTabcurrentTab');
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['quifind', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+        ['home', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();

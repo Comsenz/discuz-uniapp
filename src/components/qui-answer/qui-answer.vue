@@ -111,7 +111,7 @@ export default {
       personRes: [], // 头像列表
       payment: 2,
       list: [],
-      listBg: '#ededed',
+      listBg: '--color(--qui-BG-ED)',
     };
   },
   computed: {

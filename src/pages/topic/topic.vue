@@ -70,7 +70,6 @@ export default {
     returnToPost(index = 0) {
       const topicMsg = {};
       topicMsg.keywords = index === -1 ? this.searchValue : this.topics[index].content;
-      console.log(topicMsg, index, this.topics);
       uni.$emit('clickTopic', topicMsg);
 
       uni.navigateBack();

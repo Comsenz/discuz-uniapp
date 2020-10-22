@@ -58,7 +58,6 @@ export default {
   computed: {
     phone() {
       const data = this.$store.getters['session/get']('phone');
-      console.log('手机号：', data);
       return data;
     },
   },

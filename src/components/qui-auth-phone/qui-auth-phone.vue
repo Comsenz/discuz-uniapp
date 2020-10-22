@@ -46,7 +46,6 @@ export default {
       uni.login({
         success: loginRes => {
           if (loginRes.errMsg === 'login:ok') {
-            console.log('loginRes', loginRes);
             this.$store.dispatch('session/setCode', loginRes.code);
           }
         },
@@ -56,7 +55,6 @@ export default {
       });
     },
     decryptPhoneNumber(res) {
-      console.log(res);
       if (res.detail.errMsg === 'getPhoneNumber:ok') {
         const params = {
           data: {
@@ -67,13 +65,11 @@ export default {
             },
           },
         };
-        console.log('params', params);
         this.$store
           .dispatch('session/bindPhonenum', params)
           .then(result => {
             this.$emit('closeDialog');
             if (result && result.data && result.data.data && result.data.data.id) {
-              console.log('result', result);
               const pages = getCurrentPages();
               const url = pages[pages.length - 1].route;
               if (url === '/pages/my/profile') {

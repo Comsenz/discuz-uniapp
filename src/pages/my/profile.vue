@@ -145,19 +145,19 @@ export default {
   computed: {
     profile() {
       const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-      console.log('profile', data);
-      console.log('profile.wechat', data.wechat);
       const userInfo = {
         headimgurl: data.avatarUrl,
         username: data.username,
       };
-      console.log('userInfo：', userInfo);
       uni.setStorageSync('userInfo', userInfo);
+      console.log('data-我的资料：', data);
       return data;
     },
     name() {
       let data = '';
-      if (this.profile && this.profile.wechat && this.profile.wechat.nickname !== '') {
+      // 公众号mp_openid   小程序min_openid
+      // #ifdef MP-WEIXIN
+      if (this.profile && this.profile.wechat && this.profile.wechat.min_openid !== '') {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           data = `${this.profile.wechat.nickname} (换绑)`;
         } else {
@@ -166,6 +166,18 @@ export default {
       } else {
         data = '绑定';
       }
+      // #endif
+      // #ifdef H5
+      if (this.profile && this.profile.wechat && this.profile.wechat.mp_openid !== '') {
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          data = `${this.profile.wechat.nickname} (换绑)`;
+        } else {
+          data = `${this.profile.wechat.nickname} (解绑)`;
+        }
+      } else {
+        data = '绑定';
+      }
+      // #endif
       return data;
     },
   },
@@ -212,7 +224,6 @@ export default {
     bindWechat() {
       // 绑定
       if (this.name === '绑定') {
-        console.log('绑定');
         uni.setStorage({
           key: 'page',
           data: getCurUrl(),
@@ -246,7 +257,6 @@ export default {
           key: 'page',
           data: getCurUrl(),
         });
-        console.log('换绑');
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
         // #ifdef MP-WEIXIN
@@ -256,13 +266,11 @@ export default {
         this.wxh5Login(0, 1);
         // #endif
       } else {
-        console.log('解绑');
         this.$refs.bind.open();
       }
     },
     handleClickOk() {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(res => {
-        console.log('解绑成功', res);
         if (res && res._jv && res._jv.id) {
           this.getUserInfo();
           this.handleClickCancel();

@@ -140,7 +140,6 @@ export default {
     },
     // eslint-disable-next-line
     searchInput: debounce(function(e) {
-      console.log('e', e);
       if (e && e.target) {
         this.isSearch = true;
         this.searchPageNum = 1;
@@ -163,7 +162,6 @@ export default {
       };
       if (this.searchText === '') {
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('res', res);
           if (res) {
             if (res._jv) {
               delete res._jv;
@@ -179,20 +177,15 @@ export default {
       } else {
         params['page[number]'] = this.searchPageNum;
         this.$store.dispatch('jv/get', ['users', { params }]).then(res => {
-          console.log('res', res);
           if (res) {
             if (res._jv) {
               delete res._jv;
             }
-            console.log('this.searchUserList1', this.searchUserList);
             this.searchUserList = [...this.searchUserList, ...res];
             this.searchLoadingType = res.length === this.pageSize ? 'more' : 'nomore';
           }
         });
       }
-      console.log('this.isSearch', this.isSearch);
-      console.log('this.searchUserList', this.searchUserList);
-      console.log('this.userList', this.userList);
     },
     // 上拉加载
     pullDown() {

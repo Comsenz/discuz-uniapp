@@ -85,7 +85,6 @@ export default {
       if (this.password.length < 6) {
         this.password += key;
         if (this.password.length === 6) {
-          console.log(this.password);
           this.$emit('onInput', this.password);
           // uni.showToast({ title: '输入完成' });
         }

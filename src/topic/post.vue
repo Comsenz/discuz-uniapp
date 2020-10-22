@@ -365,7 +365,7 @@
         :title="i18n.t('discuzq.post.lookPay')"
         :addon="showPayType"
         arrow
-        v-if="type === 1 && forums.other.can_create_thread_paid && ioshide"
+        v-if="type === 1 && forums.other && forums.other.can_create_thread_paid && ioshide"
         @click="lookPay"
       ></qui-cell-item>
       <view v-if="type === 1">
@@ -377,6 +377,7 @@
           v-if="
             type !== 0 &&
               showHidden &&
+              forums.paycenter &&
               forums.paycenter.wxpay_close &&
               payType !== 0 &&
               forums.other.can_create_thread_paid &&
@@ -414,22 +415,7 @@
         <view class="uni-list-cell-db">{{ i18n.t('discuzq.post.anonymousQuestions') }}</view>
         <u-switch @change="changeCheck" v-model="checked" active-color="#1E78F3"></u-switch>
       </view>
-      <!-- 提问价格 -->
-      <!-- <qui-cell-item
-        v-if="
-          type === 5 &&
-            askingPrice &&
-            forums.other &&
-            forums.other.can_create_thread_paid &&
-            ioshide
-        "
-        :class="priceAsk > 0 ? 'cell-item-right-text' : ''"
-        :title="i18n.t('discuzq.post.askingPrice')"
-        :addon="showAskPrice"
-        arrow
-        @click="askClick('pay')"
-      ></qui-cell-item> -->
-      <!-- 他人围观须付费1元 -->
+      <!-- 他人围观 -->
       <view
         class="uni-list-cell uni-list-cell-pd"
         v-if="type === 5 && forums.other && forums.other.can_be_onlooker"
@@ -772,14 +758,6 @@ export default {
       answerIsDate: 0, // 回答者得
       platformDate: 0, // 平台得
       askingPrice: true, // 显示提问价格
-      otherList: [
-        {
-          name: '匿名提问',
-        },
-        {
-          name: '他人围观须付费1元',
-        },
-      ],
       payNum: [
         {
           name: this.i18n.t('discuzq.post.free'),
@@ -893,6 +871,7 @@ export default {
       goodsId: '', // 商品ID
       categoryid: 0,
       categoryindex: 0,
+      postShow: false,
     };
   },
   computed: {
@@ -982,7 +961,6 @@ export default {
     },
     // 允许围观
     changeCheck() {
-      console.log(9999);
       // this.checked !== this.checked;
     },
     choosePosition() {
@@ -1057,6 +1035,7 @@ export default {
         'type',
         'showHidden',
         'payType',
+        'showPayType',
         'ioshide',
         'dataGoodInfo',
       ];
@@ -1268,7 +1247,6 @@ export default {
           });
           return;
         }
-        console.log('ddhdhdhdhhdhdhdhdh');
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
         this.textShow = true;
@@ -1285,22 +1263,39 @@ export default {
       this.textShow = true;
     },
     moneyClick(index) {
+      console.log(index, 'indexindex');
+      // if (this.forums.set_site.site_onlooker_price === 0) {
+      //   this.watchShow = false;
+      // } else if (index === 0) {
+      //   console.log('免费')
+      //   this.payType = 0;
+      //   // this.postClick();
+      //   if (this.payType === 0) {
+      //     this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+      //   }
+      //   this.watchShow = false;
+      // } else {
+      //   this.watchShow = true;
+      // }
       if (this.forums.set_site.site_onlooker_price === 0) {
         this.watchShow = false;
-      } else if (index === 0) {
-        console.log('免费免费');
+      }
+      if (index === 0) {
+        this.postClick();
+        // console.log('免费');
         this.payType = 0;
-        // this.postClick();
         if (this.payType === 0) {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
         this.watchShow = false;
+        return;
       } else {
         this.watchShow = true;
       }
       this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
+      // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         this.textShow = false;
         this.$refs.popupBtm.close();
@@ -1310,8 +1305,8 @@ export default {
           this.textShow = false;
         });
       } else {
-        if (this.type === 5) {
-          console.log('dhdhhdhdhd');
+        if (this.type === 5 && index !== 0) {
+          // console.log('选择金额')
           this.priceAsk = this.payNumCheck[0].pay;
           this.$refs.popupBtm.close();
           this.postClick();
@@ -1357,8 +1352,6 @@ export default {
     },
     // 提问价格
     postAnswerClick(type) {
-      console.log('发布发布');
-      // this.setType = type;
       this.$refs.popupBtm.open();
       this.textShow = false;
     },
@@ -1419,6 +1412,7 @@ export default {
     },
     // 主题提问价格
     payClickShow() {
+      console.log('payClickshow');
       if (!this.$store.getters['session/get']('isLogin')) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
@@ -1429,13 +1423,13 @@ export default {
         // #endif
       }
       this.payStatus = false;
-      console.log('hellow word');
       if (!this.forums.paycenter.wxpay_close) {
         this.payShowStatus = false;
         return;
       } else if (this.forums.paycenter.wxpay_close && this.forums.other.can_create_thread_paid) {
         // #ifndef H5
         if (this.system === 'ios') {
+          this.postShow = true;
           this.payShowStatus = false;
           this.ioshide = false;
           return;
@@ -1454,7 +1448,6 @@ export default {
         return;
       }
       this.payTypeText = this.t.pay + this.t.payAskingPrice;
-      console.log('888888');
       this.priceAsk = parseFloat(this.thread.price);
       this.$nextTick(() => {
         this.$refs.payShow.payClickShow(this.payTypeVal);
@@ -1462,7 +1455,6 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(payType, 'payTypepaytype');
       uni.setStorage({
         key: 'page',
         data: `/topic/post?type=5&categoryId=${this.categoryid}&categoryIndex=${this.categoryindex}`,
@@ -1471,12 +1463,10 @@ export default {
         // #ifdef H5
         if (this.isWeixin === true && this.user.wechat === undefined) {
           this.$refs.wechatPopup.open();
-          console.log('什么都没绑定');
           return;
         }
         if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
           this.$refs.wechatPopup.open();
-          console.log('微信浏览器内没绑定');
           return;
         }
         // #endif
@@ -1487,13 +1477,11 @@ export default {
           (this.user.wechat && this.user.wechat.min_openid === '')
         ) {
           this.$refs.wechatPopup.open();
-          console.log('小程序内什么都没绑定');
           return;
         }
         // #endif
         this.creatOrder(this.priceAsk, 5, '', payType);
       } else if (payType === 1) {
-        console.log('钱包支付烦烦烦');
         // 这是详情页获取到的支付方式---钱包
       }
     },
@@ -1517,7 +1505,6 @@ export default {
         .then(res => {
           this.orderSn = res.order_sn;
           if (payType === 0) {
-            console.log('我看看h5的微信支付走到这里了吗');
             // 微信支付
             if (this.browser == 0) {
               // 这是微信小程序内的支付
@@ -1528,7 +1515,6 @@ export default {
                 // 这是微信浏览器
                 this.orderPay(12, value, this.orderSn, payType, '1');
               } else if (this.isPhone) {
-                console.log('h5');
                 this.orderPay(20, value, this.orderSn, 1, '2');
               } else {
                 // 这是pc，没调接口之前
@@ -1546,7 +1532,6 @@ export default {
     },
     // 订单支付       broswerType: 0是小程序，微信1是浏览器，2是h5，3是pc
     orderPay(type, value, orderSn, payType, broswerType) {
-      console.log(type, value, orderSn, payType, broswerType);
       let params = {};
       if (payType === 0) {
         params = {
@@ -1567,7 +1552,6 @@ export default {
       this.$store
         .dispatch('jv/post', params)
         .then(res => {
-          console.log(res, 'sssssssssss');
           this.wxRes = res;
           if (payType === 0) {
             if (broswerType === '0') {
@@ -1579,9 +1563,7 @@ export default {
                 res.wechat_js.paySign,
               );
             } else if (broswerType === '1') {
-              console.log('111111111');
               if (typeof WeixinJSBridge === 'undefined') {
-                console.log('22222222');
                 if (document.addEventListener) {
                   document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(res), false);
                 } else if (document.attachEvent) {
@@ -1590,19 +1572,16 @@ export default {
                 }
               } else {
                 this.onBridgeReady(res);
-                console.log('elseelseelseelse');
               }
             } else if (broswerType === '2') {
-              console.log('这里是broswerType2222');
               this.postThread().then(data => {
                 // window.location.href = `${res.wechat_h5_link}&redirect_url=${encodeURIComponent(window.location.origin /topic/indexdex?id='+ data._jv.id)}`;
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
                   this.$u.event.$emit('addThread', res);
-                  console.log(res, '付钱付钱000000');
                 }
-                if (res && res._jv.json.data.id) {
+                if (res && res._jv && res._jv.json.data.id) {
                   uni.redirectTo({
                     url: `/topic/index?id=${res._jv.json.data.id}`,
                   });
@@ -1626,16 +1605,13 @@ export default {
             }
           } else if (payType === 1) {
             if (res.wallet_pay.result === 'success') {
-              console.log('successsuccess');
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               this.coverLoading = false;
               this.postThread().then(res => {
-                console.log(res, 'postThreadresresres');
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
                   this.$u.event.$emit('addThread', res);
-                  console.log(res, '钱包支付');
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1654,15 +1630,12 @@ export default {
         });
     },
     getOrderStatus(orderSn, broswerType) {
-      console.log(orderSn, broswerType, '查询订单');
       this.$store
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
         .then(res => {
-          console.log(res, res);
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             if (broswerType === '2') {
-              console.log('h5h5h5h5h5h5h5h');
               // return false;
             } else if (broswerType === '3') {
               // 这是pc扫码支付完成
@@ -1670,14 +1643,11 @@ export default {
               this.qrcodeShow = false;
               this.postThread();
             } else if (broswerType === '0') {
-              console.log('我就看看');
               this.postThread().then(res => {
-                console.log(res, 'postThreadresresres');
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
                   this.$u.event.$emit('addThread', res);
-                  console.log(res, '付钱付钱000000');
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1687,12 +1657,10 @@ export default {
               });
             } else if (broswerType === '1') {
               this.postThread().then(res => {
-                console.log(res, 'postThreadresresres');
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
                   this.$u.event.$emit('addThread', res);
-                  console.log(res, '付钱付钱000000');
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1739,7 +1707,6 @@ export default {
     },
     // 非小程序内微信支付
     onBridgeReady(data) {
-      console.log(data, 'datadata');
       // const that = this;
       WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
@@ -2013,7 +1980,6 @@ export default {
               uni.hideLoading();
               if (res && res.isApproved === 1) {
                 this.$u.event.$emit('addThread', res);
-                console.log('addThreadaddThreadaddThread');
               }
               if (res && res._jv.json.data.id) {
                 uni.redirectTo({
@@ -2283,7 +2249,6 @@ export default {
     },
     // 确认去绑定微信
     handleWechatClickOk() {
-      console.log('去绑定微信吧');
       // #ifdef MP-WEIXIN
       this.mpLogin();
       // #endif
@@ -2356,7 +2321,6 @@ export default {
         ],
       };
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
-        console.log(res, '这是主题数据');
         if (res.question) {
           this.beUserName = res.question.beUser.username;
           this.beAskId = res.question.beUser.id;
@@ -2650,6 +2614,7 @@ export default {
     const data = uni.getSystemInfoSync();
     if (data.platform === 'ios' && this.type === 5) {
       this.askingPrice = false;
+      // this.postClick = true;
     }
     // #endif
     // #ifdef H5

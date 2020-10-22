@@ -229,7 +229,6 @@ export default {
       };
       this.$store.dispatch('jv/get', [`groups/${this.groupId}`, { params }]).then(res => {
         this.paidusergroup = res.permission;
-        console.log(this.paidusergroup);
         this.paidusergrouplist = res;
         this.price = res.fee;
       });
@@ -263,7 +262,6 @@ export default {
     },
     // 确认去绑定微信
     handleWechatClickOk() {
-      console.log('去绑定微信吧');
       // #ifdef MP-WEIXIN
       this.mpLogin();
       // #endif
@@ -283,11 +281,6 @@ export default {
     handleWechatClickCancel() {
       this.$refs.wechatPopup.close();
     },
-    // 选择支付方式，获取值
-    radioChange(val) {
-      console.log(val);
-      // val, 这是父级得到的
-    },
     // 输入密码完成时
     onInput(val) {
       if (!this.forums.paycenter.wxpay_close) {
@@ -299,7 +292,6 @@ export default {
     },
     // 支付方式选择完成点击确定时
     paysureShow(payType) {
-      console.log(payType, '支付方式');
       // const _this = this;
       uni.setStorage({
         key: 'page',
@@ -309,12 +301,10 @@ export default {
         // #ifdef H5
         if (this.isWeixin === true && this.user.wechat === undefined) {
           this.$refs.wechatPopup.open();
-          console.log('什么都没绑定');
           return;
         }
         if (this.isWeixin === true && this.user.wechat && this.user.wechat.mp_openid === '') {
           this.$refs.wechatPopup.open();
-          console.log('微信浏览器内没绑定');
           return;
         }
         // #endif
@@ -325,7 +315,6 @@ export default {
           (this.user.wechat && this.user.wechat.min_openid === '')
         ) {
           this.$refs.wechatPopup.open();
-          console.log('小程序内什么都没绑定');
           return;
         }
         // #endif
@@ -341,8 +330,7 @@ export default {
         'filter[delete_type]': 0,
         include: 'group',
       };
-      this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
-        console.log(res);
+      this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(() => {
         this.oder = false;
         this.grouplist();
       });
@@ -581,7 +569,6 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err);
           this.coverLoading = false;
           this.$refs.toast.show({ message: this.p.payFail });
         });

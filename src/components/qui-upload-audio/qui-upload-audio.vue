@@ -119,7 +119,6 @@ export default {
       // 开始录音
       recorderManager.start(options);
       recorderManager.onStart(() => {
-        console.log('recorder start');
         this.showAdd = false;
         this.chronoscope();
       });
@@ -134,11 +133,9 @@ export default {
         success: () => {
           this.showAdd = false;
           this.chronoscope();
-          console.log('start record successfully.');
         },
         error: () => {
           this.$refs.toast.show({ message: this.i18n.t('discuzq.post.notRecordAudio') });
-          console.log('start record failed.');
         },
       });
       // #endif
@@ -163,7 +160,6 @@ export default {
               // 此处可以获取音频源文件(res)，用于上传等操作
               const file = this.blobToFile(res, audioName);
               this.uploadAudio(file, audioName);
-              console.log('stop record successfully.');
             },
             error: () => {
               console.log('stop record failed.');

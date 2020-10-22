@@ -107,15 +107,12 @@ export default {
                 type: 'forum',
               },
             };
-            _this.$store.dispatch('jv/get', param).then(() => {
-              // console.log(1, 'froums');
-            });
+            _this.$store.dispatch('jv/get', param).then(() => {});
             const promsget = {
               _jv: {
                 type: 'users',
                 id: this.userid,
               },
-              // include: 'groups',
             };
             _this.$store.dispatch('jv/get', promsget).then(() => {});
             uni.showToast({
