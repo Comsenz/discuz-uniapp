@@ -22,16 +22,27 @@
       <view class="login-box-btn" @click="handleLogin">
         {{ i18n.t('user.login') }}
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="login-box-ft">
-        <view class="login-box-ft-title" v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms">
+        <view
+          class="login-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.miniprogram_close) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
+              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
+          "
+        >
           {{ i18n.t('user.otherLoginMode') }}
         </view>
         <view class="login-box-ft-con">
           <image
+            v-if="forum && forum.passport && forum.passport.miniprogram_close"
             :class="[
-              forum && forum.qcloud && forum.qcloud.qcloud_sms
-                ? 'login-box-ft-con-image right'
-                : 'login-box-ft-con-image',
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
+              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
+                ? 'right'
+                : '',
+              'login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/weixin.svg"
@@ -41,14 +52,9 @@
           <image
             v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
             :class="[
-              forum &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms &&
-              forum.ucenter &&
-              forum.ucenter.ucenter &&
-              isShow
-                ? 'login-box-ft-con-image right left'
-                : 'login-box-ft-con-image left',
+              forum && forum.passport && forum.passport.miniprogram_close ? 'left' : '',
+              forum && forum.ucenter && forum.ucenter.ucenter && isShow ? 'right' : '',
+              'login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/shouji.svg"
@@ -56,7 +62,13 @@
           />
           <image
             v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            class="login-box-ft-con-image left"
+            :class="[
+              (forum && forum.passport && forum.passport.miniprogram_close) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+                ? 'left'
+                : '',
+              'login-box-ft-con-image',
+            ]"
             lazy-load
             src="@/static/UC.svg"
             @click="jump2UcLogin"
@@ -97,6 +109,95 @@
           </text>
         </view>
       </view>
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <view class="login-box-ft">
+        <view
+          class="login-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.offiaccount_close) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
+              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
+          "
+        >
+          {{ i18n.t('user.otherLoginMode') }}
+        </view>
+        <view class="login-box-ft-con">
+          <image
+            v-if="forum && forum.passport && forum.passport.offiaccount_close"
+            :class="[
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
+              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
+                ? 'right'
+                : '',
+              'login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WechatLogin"
+          />
+          <!-- 开启短信功能才显示 -->
+          <image
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            :class="[
+              forum && forum.passport && forum.passport.offiaccount_close ? 'left' : '',
+              forum && forum.ucenter && forum.ucenter.ucenter && isShow ? 'right' : '',
+              'login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/shouji.svg"
+            @click="jump2PhoneLogin"
+          />
+          <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
+            :class="[
+              (forum && forum.passport && forum.passport.offiaccount_close) ||
+              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+                ? 'left'
+                : '',
+              'login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump2UcLogin"
+          />
+        </view>
+        <view>
+          <!-- 开启注册功能才显示 -->
+          <text
+            class="login-box-ft-btn"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.set_reg.register_type !== 1
+            "
+            @click="jump2Register"
+          >
+            {{ i18n.t('user.registerUser') }}
+          </text>
+          <text
+            class="login-box-ft-line"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_close &&
+                forum.set_reg.register_type !== 1 &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms
+            "
+          ></text>
+          <!-- 开启短信功能才显示 -->
+          <text
+            class="login-box-ft-text"
+            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            @click="jump2findpwd"
+          >
+            {{ i18n.t('user.forgetPassword') }}
+          </text>
+        </view>
+      </view>
+      <!-- #endif -->
     </view>
     <qui-registration-agreement></qui-registration-agreement>
   </qui-page>
