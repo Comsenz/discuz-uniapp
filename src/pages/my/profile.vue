@@ -186,6 +186,7 @@ export default {
     this.getUserInfo();
   },
   onLoad() {
+    this.getUserInfo();
     const token = uni.getStorageSync('access_token');
     this.header = {
       authorization: `Bearer ${token}`,

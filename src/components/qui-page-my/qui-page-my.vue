@@ -107,12 +107,30 @@
           </qui-cell-item>
         </view>
 
-        <!-- 用户名模式和手机号模式展示退出登录按钮，无感模式不展示退出登录按钮 -->
+        <!-- 小程序和微信内：用户名模式和手机号模式展示退出登录按钮，无感模式不展示退出登录按钮
+             微信外：展示退出登录按钮 -->
+        <!-- #ifdef MP-WEIXIN -->
         <view class="logout" v-if="forums && forums.set_reg && forums.set_reg.register_type !== 2">
           <qui-button size="large" type="warn" @click="logout">
             {{ i18n.t('user.logout') }}
           </qui-button>
         </view>
+        <!-- #endif -->
+        <!-- #ifdef H5-->
+        <view
+          class="logout"
+          v-if="isWeixin && forums && forums.set_reg && forums.set_reg.register_type !== 2"
+        >
+          <qui-button size="large" type="warn" @click="logout">
+            {{ i18n.t('user.logout') }}
+          </qui-button>
+        </view>
+        <view class="logout" v-if="!isWeixin">
+          <qui-button size="large" type="warn" @click="logout">
+            {{ i18n.t('user.logout') }}
+          </qui-button>
+        </view>
+        <!-- #endif -->
       </view>
     </view>
     <uni-popup ref="popup" type="center">
