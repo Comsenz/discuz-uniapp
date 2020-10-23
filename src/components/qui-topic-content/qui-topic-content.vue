@@ -227,7 +227,7 @@
               @audioPlay="audioPlay"
             ></qui-audio>
           </view>
-          <view v-else class="attachment-name">
+          <view v-else :class="attachmentIsPreview ? 'attachment-name-inner' : 'attachment-name'">
             <qui-icon
               class="icon-attachment"
               :name="item.fileName ? `icon-${item.format}` : `icon-resources`"
@@ -237,16 +237,7 @@
             <text @tap="!attachmentPayStatus ? download(item) : ''">{{ item.fileName }}</text>
             <text
               v-if="
-                threadInfo &&
-                  ((threadInfo.price > 0 && threadInfo.attachmentPrice <= 0 && threadInfo.isPaid) ||
-                    (threadInfo.price <= 0 &&
-                      threadInfo.attachmentPrice > 0 &&
-                      threadInfo.isPaidAttachment)) &&
-                  forums &&
-                  forums.qcloud &&
-                  forums.qcloud.qcloud_cos &&
-                  forums.qcloud.qcloud_cos_doc_preview &&
-                  item.isRemote &&
+                attachmentIsPreview &&
                   [
                     'PPTX',
                     'PPT',
@@ -291,7 +282,7 @@
               @click="preview(item)"
               style="position: absolute; right: 20rpx; color: #1878f3;"
             >
-              预览
+              {{ i18n.t('topic.preview') }}
             </text>
           </view>
           <view v-if="['MP4'].indexOf(item.format) !== -1" class="attachment-video">
@@ -592,12 +583,42 @@ export default {
     },
     threadInfo() {
       const thread = this.$store.getters['session/get']('thread');
-      console.log('thread', thread);
+      // console.log('thread', thread);
       return thread;
+    },
+    // 附件是否显示预览
+    attachmentIsPreview() {
+      let isPreview = false;
+      if (
+        this.threadInfo.price <= 0 &&
+        this.threadInfo.attachmentPrice <= 0 &&
+        this.forums.qcloud.qcloud_cos &&
+        this.forums.qcloud.qcloud_cos_doc_preview
+      ) {
+        isPreview = true;
+      } else if (
+        this.threadInfo.price <= 0 &&
+        this.threadInfo.attachmentPrice > 0 &&
+        this.forums.qcloud.qcloud_cos &&
+        this.forums.qcloud.qcloud_cos_doc_preview &&
+        this.threadInfo.isPaidAttachment
+      ) {
+        isPreview = true;
+      } else if (
+        this.threadInfo.price > 0 &&
+        this.threadInfo.isPaid &&
+        this.forums.qcloud.qcloud_cos &&
+        this.forums.qcloud.qcloud_cos_doc_preview
+      ) {
+        isPreview = true;
+      } else {
+        isPreview = false;
+      }
+      return isPreview;
     },
   },
   created() {
-    console.log('这是内容组件created', this.postGoods);
+    // console.log('这是内容组件created', this.postGoods);
     this.$forceUpdate();
   },
   mounted() {
@@ -607,8 +628,8 @@ export default {
     });
     this.attachMentList = fileList;
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
-    console.log('forums', this.forums);
-    console.log('this.threadInfo', this.threadInfo);
+    // console.log('forums', this.forums);
+    // console.log('this.threadInfo', this.threadInfo);
   },
   methods: {
     // 管理菜单点击事件
@@ -642,7 +663,6 @@ export default {
     },
     // 如果附件是未支付状态，点击触发支付
     attachmentPay() {
-      console.log('这是子组件内');
       this.$emit('attachmentPay');
     },
     // 附件下载
@@ -1105,11 +1125,21 @@ export default {
 }
 .attachment-name {
   max-width: 100%;
-  padding-right: 40rpx;
+  // padding-right: 40rpx;
   overflow: hidden;
   font-size: $fg-f2;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.attachment-name-inner {
+  height: 28px;
+  max-width: 100%;
+  padding-right: 60rpx;
+  overflow: hidden;
+  font-size: $fg-f2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 .det-hd-operaCli {
   position: relative;

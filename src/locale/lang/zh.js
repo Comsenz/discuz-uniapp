@@ -360,6 +360,7 @@ export default {
     goodsLink: '请粘贴 \\ 输入商品链接',
     theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser: '商品链接已复制成功，请在浏览器打开',
     shareLinkCopiedSuccessfully: '分享链接已复制成功',
+    preview: '预览',
   },
   pay: {
     passwordTip: '请输入支付密码',
