@@ -132,7 +132,7 @@ export default {
   },
   onHide() {},
   onPageNotFound() {
-    const url = '/pages/home/index';
+    const url = '/pages/common/error';
     uni.redirectTo({url});
   },
 };
