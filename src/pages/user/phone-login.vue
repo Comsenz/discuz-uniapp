@@ -41,33 +41,30 @@
       <view class="phone-login-box-btn" @click="login">
         {{ i18n.t('user.login') }}
       </view>
+      <!-- #ifdef MP-WEIXIN -->
       <view class="phone-login-box-ft">
-        <view class="phone-login-box-ft-title">
+        <view
+          class="phone-login-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.miniprogram_close) ||
+              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
+          "
+        >
           {{ i18n.t('user.otherLoginMode') }}
         </view>
         <view class="phone-login-box-ft-con">
           <image
-            :class="[
-              forum && forum.qcloud && forum.qcloud.qcloud_sms
-                ? 'phone-login-box-ft-con-image right'
-                : 'phone-login-box-ft-con-image',
-            ]"
+            v-if="forum && forum.passport && forum.passport.miniprogram_close"
+            class="phone-login-box-ft-con-image right"
             lazy-load
             src="@/static/weixin.svg"
             @click="jump2WechatLogin"
           />
-          <!-- 开启短信功能才显示 -->
           <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
             :class="[
-              forum &&
-              forum.qcloud &&
-              forum.qcloud.qcloud_sms &&
-              forum.ucenter &&
-              forum.ucenter.ucenter &&
-              isShow
-                ? 'phone-login-box-ft-con-image right left'
-                : 'phone-login-box-ft-con-image left',
+              forum && forum.passport && forum.passport.miniprogram_close ? 'left' : '',
+              forum && forum.ucenter && forum.ucenter.ucenter && isShow ? 'right' : '',
+              'phone-login-box-ft-con-image',
             ]"
             lazy-load
             src="@/static/zhanghao.svg"
@@ -75,11 +72,7 @@
           />
           <image
             v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            :class="[
-              forum && forum.ucenter && forum.ucenter.ucenter
-                ? 'phone-login-box-ft-con-image left'
-                : 'phone-login-box-ft-con-image',
-            ]"
+            class="phone-login-box-ft-con-image left"
             lazy-load
             src="@/static/UC.svg"
             @click="jump2UcLogin"
@@ -94,6 +87,54 @@
           {{ i18n.t('user.forgetPassword') }}
         </view>
       </view>
+      <!-- #endif -->
+      <!-- #ifdef H5 -->
+      <view class="phone-login-box-ft">
+        <view
+          class="phone-login-box-ft-title"
+          v-if="
+            (forum && forum.passport && forum.passport.offiaccount_close) ||
+              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
+          "
+        >
+          {{ i18n.t('user.otherLoginMode') }}
+        </view>
+        <view class="phone-login-box-ft-con">
+          <image
+            v-if="forum && forum.passport && forum.passport.offiaccount_close"
+            class="phone-login-box-ft-con-image right"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WechatLogin"
+          />
+          <image
+            :class="[
+              forum && forum.passport && forum.passport.offiaccount_close ? 'left' : '',
+              forum && forum.ucenter && forum.ucenter.ucenter && isShow ? 'right' : '',
+              'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/zhanghao.svg"
+            @click="jump2Login"
+          />
+          <image
+            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
+            class="phone-login-box-ft-con-image left"
+            lazy-load
+            src="@/static/UC.svg"
+            @click="jump2UcLogin"
+          />
+        </view>
+        <!-- 开启短信功能才显示 -->
+        <view
+          class="phone-login-box-ft-text"
+          v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+          @click="jump2findpwd"
+        >
+          {{ i18n.t('user.forgetPassword') }}
+        </view>
+      </view>
+      <!-- #endif -->
       <qui-registration-agreement></qui-registration-agreement>
     </view>
   </qui-page>

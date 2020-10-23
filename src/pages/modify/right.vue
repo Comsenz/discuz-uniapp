@@ -103,6 +103,7 @@ export default {
         'filter[isPaid]': 1,
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
+        console.log(res);
         this.paidusergroup = res;
         if (res.length > 0) {
           this.permissiondisplay = true;
