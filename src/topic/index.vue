@@ -501,6 +501,7 @@
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
                 fixed="true"
+                @touchmove.stop="touchStop"
               />
             </view>
           </view>
@@ -589,6 +590,7 @@
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
+                @touchmove.stop="touchStop"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -1223,6 +1225,9 @@ export default {
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
+  touchStop() {
+    return;
+},
 
     // 加载当前主题数据
     loadThread() {

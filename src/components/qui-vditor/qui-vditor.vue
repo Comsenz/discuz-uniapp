@@ -28,7 +28,7 @@ import {
   TopicIcon,
   EmojiIcon,
   ImageIcon,
-  AttachIcon,
+  // AttachIcon,
 } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
