@@ -104,6 +104,13 @@ export default {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'register_close') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.register_close'),
+                duration: 2000,
+              });
+            }
             if (res.data.errors[0].code === 'account_has_been_bound') {
               uni.getStorage({
                 key: 'page',
