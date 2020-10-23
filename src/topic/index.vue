@@ -468,7 +468,7 @@
                   ></qui-icon>
                 </view>
               </view>
-              <text class="popup-share-content-text">{{ item.text }}</text>
+              <text class="popup-share-content-text popup-more-content-text">{{ item.text }}</text>
             </view>
           </view>
           <view class="popup-share-content-space"></view>
@@ -3925,6 +3925,9 @@ page {
   padding-left: 20rpx;
   overflow: hidden;
   justify-content: flex-start;
+}
+.popup-more-content-text {
+  font-size: $fg-f3;
 }
 .popup-more-content-box {
   flex: 0 0 20%;
