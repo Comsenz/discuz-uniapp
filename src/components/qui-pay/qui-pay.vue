@@ -154,8 +154,8 @@ export default {
     },
     // 默认支付方式
     currentPayType: {
-      type: Number,
-      default: 1,
+      type: [Number, String],
+      default: '',
     },
     // 支付提示
     payTipShow: {
@@ -232,6 +232,7 @@ export default {
     },
     // 父组件触发是否显示弹框
     payClickShow(val) {
+      console.log('子组件内', val);
       if (val === 0 || val === 2) {
         this.$refs.payPopup.open();
       } else {
@@ -240,6 +241,7 @@ export default {
     },
     // 是否显示钱包密码支付框
     paysureShow() {
+      console.log(this.current, '#######');
       if (this.current === 0) {
         // 这是微信支付
       } else if (this.current === 1) {
@@ -247,6 +249,11 @@ export default {
         this.show = true;
         this.$refs.payTypePopup.close();
         this.$refs.keyboardPopup.open();
+      } else {
+        uni.showToast({
+          title: this.p.pleaseSelectPaymentMethod,
+          icon: 'none',
+        });
       }
       this.$emit('paysureShow', this.current);
     },

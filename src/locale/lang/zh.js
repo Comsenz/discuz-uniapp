@@ -389,6 +389,7 @@ export default {
     payPassword: '支付密码',
     wechatIdentificationQRcode: '微信识别二维码',
     element: '元',
+    pleaseSelectPaymentMethod: '请选择支付方式',
   },
   auth: {
     userinfo: '微信快捷登录',
