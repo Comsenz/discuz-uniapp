@@ -67,7 +67,6 @@
                   <radio
                     :value="item.value"
                     :name="item.index"
-                    :checked="index === current"
                     class="radio"
                     color="#2699fb"
                     :disabled="
