@@ -294,15 +294,13 @@
               预览
             </text>
           </view>
-          <text v-if="['MP4'].indexOf(item.format) !== -1">
+          <view v-if="['MP4'].indexOf(item.format) !== -1" class="attachment-video">
             <text
               class="themeItem__content__attachment-item-mp4-play"
               @tap="fullscreenPlay(item._jv.id)"
             >
               {{ i18n.t('profile.play') }}
             </text>
-          </text>
-          <view v-if="['MP4'].indexOf(item.format) !== -1" class="attachment-video">
             <qui-video
               :src="item.url"
               :ref="'video' + item._jv.id"
