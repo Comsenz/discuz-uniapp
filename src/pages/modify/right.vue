@@ -104,7 +104,6 @@ export default {
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
         this.paidusergroup = res;
-        console.log(this.paidusergroup);
         if (res.length > 0) {
           this.permissiondisplay = true;
         } else {
@@ -120,6 +119,7 @@ export default {
         include: 'group',
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
+        console.log(res);
         this.privilegeUserGroup = res;
         if (res.length > 0) {
           this.rightspurchased = true;
@@ -142,6 +142,7 @@ export default {
         this.typenum1 = true;
         this.typenum2 = false;
       } else {
+        console.log('切换');
         this.typenum1 = false;
         this.typenum2 = true;
         this.allusergroupsusers();

@@ -206,7 +206,7 @@ export default {
       console.log(this.currentTab, 'currentTabcurrentTab');
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+        ['home', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();

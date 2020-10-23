@@ -150,11 +150,14 @@ export default {
         username: data.username,
       };
       uni.setStorageSync('userInfo', userInfo);
+      console.log('data-我的资料：', data);
       return data;
     },
     name() {
       let data = '';
-      if (this.profile && this.profile.wechat && this.profile.wechat.nickname !== '') {
+      // 公众号mp_openid   小程序min_openid
+      // #ifdef MP-WEIXIN
+      if (this.profile && this.profile.wechat && this.profile.wechat.min_openid !== '') {
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           data = `${this.profile.wechat.nickname} (换绑)`;
         } else {
@@ -163,6 +166,18 @@ export default {
       } else {
         data = '绑定';
       }
+      // #endif
+      // #ifdef H5
+      if (this.profile && this.profile.wechat && this.profile.wechat.mp_openid !== '') {
+        if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
+          data = `${this.profile.wechat.nickname} (换绑)`;
+        } else {
+          data = `${this.profile.wechat.nickname} (解绑)`;
+        }
+      } else {
+        data = '绑定';
+      }
+      // #endif
       return data;
     },
   },
