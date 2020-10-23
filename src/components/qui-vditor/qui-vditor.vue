@@ -28,7 +28,7 @@ import {
   TopicIcon,
   EmojiIcon,
   ImageIcon,
-  AttachIcon,
+  // AttachIcon,
 } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -154,22 +154,6 @@ export default {
           _that.upload.uploadImage();
         },
       },
-      {
-        name: 'attachment',
-        tip: '上传附件',
-        icon: AttachIcon,
-        click() {
-          document.querySelector('#vditor-file').click();
-        },
-      },
-      // {
-      //   name: 'record-q',
-      //   tip: '上传语音',
-      //   icon: RecordIcon,
-      //   click() {
-      //     console.log(this, 'RecordIcon');
-      //   },
-      // },
       'line',
       'code',
       'inline-code',

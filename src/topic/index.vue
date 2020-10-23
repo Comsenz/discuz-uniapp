@@ -1551,7 +1551,7 @@ export default {
           this.moreData[6].canOpera = false;
           this.moreData[7].canOpera = false;
           // #endif
-          //追加更多操作权限字段
+          // 追加更多操作权限字段
           if (data.type === 5) {
             this.moreData[0].canOpera = false;
           } else {
@@ -1617,7 +1617,7 @@ export default {
               }
               // #endif
             } else {
-              if (this.forums.other.can_be_reward) {
+              if (data.canBeReward) {
                 this.rewardStatus = true;
               } else {
                 this.rewardStatus = false;
@@ -1668,7 +1668,7 @@ export default {
                     this.paidStatus = false;
                     this.rewardStatus = false;
                   } else if (this.paymentmodel === true) {
-                    if (this.forums.other.can_be_reward) {
+                    if (data.canBeReward) {
                       this.paidStatus = false;
                       this.rewardStatus = true;
                     } else {
@@ -1686,7 +1686,7 @@ export default {
                   this.paidBtnStatus = false;
                   this.rewardStatus = false;
                 } else {
-                  if (this.forums.other.can_be_reward) {
+                  if (data.canBeReward) {
                     this.paidStatus = false;
                     this.rewardStatus = true;
                   } else {
@@ -1706,7 +1706,7 @@ export default {
                 this.paidBtnStatus = false;
                 this.rewardStatus = false;
               } else {
-                if (this.forums.other.can_be_reward) {
+                if (data.canBeReward) {
                   this.paidStatus = false;
                   this.rewardStatus = true;
                 } else {
@@ -3455,12 +3455,6 @@ page {
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   max-height: calc(100vh - 80rpx);
-}
-.content {
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // justify-content: center;
 }
 .bg-white {
   background-color: --color(--qui-BG-2);
