@@ -113,6 +113,7 @@ export default {
         className: 'right',
         icon: AtIcon,
         click() {
+          _that.vditor.focus();
           _that.$refs.atUser.open();
         },
       },
@@ -123,6 +124,7 @@ export default {
         className: 'right',
         icon: TopicIcon,
         click() {
+          _that.vditor.focus();
           _that.$refs.topic.open();
         },
       },
@@ -132,6 +134,7 @@ export default {
         tip: 'emojiq',
         icon: EmojiIcon,
         click() {
+          _that.vditor.focus();
           _that.emojiShow = !_that.emojiShow;
         },
       },
@@ -151,6 +154,7 @@ export default {
         tip: '上传图片',
         icon: ImageIcon,
         click() {
+          _that.vditor.focus();
           _that.upload.uploadImage();
         },
       },

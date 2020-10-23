@@ -15,6 +15,7 @@
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
       @closeShare="closeShare"
+      @logoClick="logoClick"
     ></qui-header>
     <!-- 分享弹窗 -->
     <uni-popup ref="popupHead" type="bottom">
@@ -88,6 +89,7 @@
 
 <script>
 import forums from '@/mixin/forums';
+import { mapState, mapMutations } from 'vuex';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
@@ -207,6 +209,9 @@ export default {
       }
       return permissionList;
     },
+    ...mapState({
+      footerIndex: state => state.footerTab.footerIndex,
+    }),
   },
   methods: {
     // 调用 获取配置（站点信息） 接口
@@ -250,6 +255,15 @@ export default {
     // 取消按钮
     cancel() {
       this.$refs.popupHead.close();
+    },
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
+    logoClick() {
+      this.setFooterIndex(parseInt(0, 10));
+      uni.redirectTo({
+        url: `/pages/home/index`,
+      });
     },
     // 跳转到个人主页
     jumpUserPage(userId) {
