@@ -301,6 +301,7 @@
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
+                @touchmove.stop="touchStop"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -398,6 +399,7 @@
                 :maxlength="200"
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
+                @touchmove.stop="touchStop"
                 fixed="true"
               />
             </view>
@@ -652,6 +654,9 @@ export default {
     ...mapMutations({
       setAtMember: 'atMember/SET_ATMEMBER',
     }),
+    touchStop() {
+      return;
+    },
     // 加载当前评论数据
     loadPost() {
       const params = {
