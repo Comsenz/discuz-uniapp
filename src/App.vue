@@ -131,6 +131,10 @@ export default {
     // #endif
   },
   onHide() {},
+  onPageNotFound() {
+    const url = '/pages/home/index';
+    uni.redirectTo({url});
+  },
 };
 </script>
 
