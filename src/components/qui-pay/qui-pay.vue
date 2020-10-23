@@ -67,6 +67,7 @@
                   <radio
                     :value="item.value"
                     :name="item.index"
+                    :checked="index === current"
                     class="radio"
                     color="#2699fb"
                     :disabled="
@@ -259,6 +260,7 @@ export default {
     },
     // 支付方式单选框change事件
     radioChange(evt) {
+      console.log(evt, 'evt');
       for (let i = 0; i < this.payTypeData.length; i += 1) {
         if (this.payTypeData[i].value === evt.target.value) {
           this.current = i;

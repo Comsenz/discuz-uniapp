@@ -787,7 +787,7 @@ export default {
       } else {
         this.h5Share({
           title: this.forums.set_site ? this.forums.set_site.site_name : '',
-          url: 'pages/home/index',
+          url: '/pages/home/index',
         });
       }
       // #endif
@@ -921,7 +921,7 @@ export default {
       this.h5Share({
         title: this.shareTitle,
         id,
-        url: 'pages/topic/index',
+        url: 'topic/index',
       });
       // #endif
     },

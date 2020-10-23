@@ -3122,7 +3122,7 @@ export default {
         this.h5Share({
           title: this.contentVal,
           id: this.threadId,
-          url: 'pages/topic/index',
+          url: 'topic/index',
         });
       }
       // #endif
