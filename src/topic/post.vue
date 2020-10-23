@@ -1239,14 +1239,34 @@ export default {
       this.textShow = true;
     },
     diaLogOk() {
-      if (this.type === 5) {
-        if (this.inputPrice < '1.0') {
+      if (this.forums.set_site.site_minimum_amount === '') {
+        if (this.inputPrice < '0.1') {
           uni.showToast({
             title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
             icon: 'none',
           });
           return;
         }
+      } else {
+        if (this.inputPrice < this.forums.set_site.site_minimum_amount) {
+          uni.showToast({
+            title:
+              this.i18n.t('core.TheAmountCannotBeLessThanMinMoney') +
+              this.forums.set_site.site_minimum_amount +
+              this.i18n.t('discuzq.post.yuan'),
+            icon: 'none',
+          });
+          return;
+        }
+      }
+      if (this.type === 5) {
+        // if (this.inputPrice < '1.0') {
+        //   uni.showToast({
+        //     title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
+        //     icon: 'none',
+        //   });
+        //   return;
+        // }
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
         this.textShow = true;

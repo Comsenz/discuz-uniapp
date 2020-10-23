@@ -7,7 +7,7 @@
         : `background: ${color ? color : '--color(--qui-FC-FFF)'}`
     "
   >
-    <view class="logoBox">
+    <view class="logoBox" @click="logoClick">
       <image
         class="logo"
         :src="headImg != '' && headImg != null ? headImg : '/static/admin-logo-x2.png'"
@@ -121,6 +121,9 @@ export default {
     },
     closeShare(evt) {
       this.$emit('closeShare', evt);
+    },
+    logoClick(evt) {
+      this.$emit('logoClick', evt);
     },
   },
 };

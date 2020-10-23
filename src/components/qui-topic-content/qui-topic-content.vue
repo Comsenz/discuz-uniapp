@@ -245,6 +245,7 @@
                   forums &&
                   forums.qcloud &&
                   forums.qcloud.qcloud_cos &&
+                  forums.qcloud.qcloud_cos_doc_preview &&
                   item.isRemote &&
                   [
                     'PPTX',
@@ -293,13 +294,15 @@
               预览
             </text>
           </view>
-          <view v-if="['MP4'].indexOf(item.format) !== -1">
+          <text v-if="['MP4'].indexOf(item.format) !== -1">
             <text
               class="themeItem__content__attachment-item-mp4-play"
               @tap="fullscreenPlay(item._jv.id)"
             >
               {{ i18n.t('profile.play') }}
             </text>
+          </text>
+          <view v-if="['MP4'].indexOf(item.format) !== -1" class="attachment-video">
             <qui-video
               :src="item.url"
               :ref="'video' + item._jv.id"
@@ -1104,6 +1107,7 @@ export default {
 }
 .attachment-name {
   max-width: 100%;
+  padding-right: 40rpx;
   overflow: hidden;
   font-size: $fg-f2;
   text-overflow: ellipsis;

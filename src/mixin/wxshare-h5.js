@@ -73,7 +73,7 @@ module.exports = {
       themeTitle = themeTitle.toString().replace(reTag2, '');
       themeTitle = themeTitle.toString().replace(reTag3, '');
       themeTitle = themeTitle.toString().replace(/\s+/g, '');
-      themeTitle = `${themeTitle.substring(0, 17)}...`;
+      themeTitle = `${themeTitle.substring(0, 17)}`;
       oInput.value = `${themeTitle}  ${url}`;
       document.body.appendChild(oInput);
       oInput.select(); // 选择对象
