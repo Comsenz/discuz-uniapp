@@ -245,6 +245,7 @@
                   forums &&
                   forums.qcloud &&
                   forums.qcloud.qcloud_cos &&
+                  forums.qcloud.qcloud_cos_doc_preview &&
                   item.isRemote &&
                   [
                     'PPTX',
