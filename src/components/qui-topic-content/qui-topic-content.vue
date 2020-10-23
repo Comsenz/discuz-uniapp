@@ -747,10 +747,9 @@ export default {
         this.videoShow = true;
         this.autoplay = true;
         const videoContext = wx.createVideoContext('myVideo', this);
-        videoContext.requestFullScreen();
         setTimeout(() => {
-          console.log('视频开始播放');
           videoContext.play();
+          videoContext.requestFullScreen();
         }, 200);
       });
     },

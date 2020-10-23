@@ -598,10 +598,8 @@ export default {
     scroll(event) {
       // if (this.footerIndex === 0) {
       this.scrollTop = event.scrollTop;
-      if (Math.abs(this.scrollnumber) && this.switchscroll) {
-        this.num = Math.abs(this.scrollTop) - Math.abs(this.scrollnumber);
-        if (this.num >= 10 || this.num <= -10) {
-          // console.log('视频暂停播放');
+      if (Math.abs(this.scrollnumber) && this.switchscroll && this.scrollTop !== 0) {
+        if (this.scrollTop > this.num || this.scrollTop < this.num) {
           this.$refs[`myVideo${this.scrollindex}`][0].pauseVideo();
           this.switchscroll = false;
         }
@@ -634,21 +632,20 @@ export default {
       // }
     },
     scrollsetups() {
-      // #ifdef MP-WEIXIN
       const _this = this;
       uni.setStorage({
         key: 'scroll_top',
         data: _this.scrollTop,
       });
-      // #endif
     },
     screenplayback() {
-      // #ifdef MP-WEIXIN
       let num = 0;
+      const _this = this;
       uni.getStorage({
         key: 'scroll_top',
         success(resData) {
           num = resData.data;
+          _this.num = resData.data;
         },
       });
       const timer = setTimeout(() => {
@@ -658,7 +655,6 @@ export default {
         });
         clearTimeout(timer);
       }, 50);
-      // #endif
     },
     // 滑动到顶部
     toUpper() {
