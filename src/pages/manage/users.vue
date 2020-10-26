@@ -37,7 +37,11 @@
               right-color="#aaa"
               :mark="user.id"
               :title="user.username"
-              :value="user.groups[Object.keys(user.groups || {})[0]].name"
+              :value="
+                user.groups[Object.keys(user.groups || {})[0]]
+                  ? user.groups[Object.keys(user.groups || {})[0]].name
+                  : ''
+              "
               :icon="user.avatarUrl"
               :is-real="user.isReal"
               @click="jumpUserPage(user.id)"
@@ -86,7 +90,11 @@
               right-color="#aaa"
               :mark="user.id"
               :title="user.username"
-              :value="user.groups[Object.keys(user.groups || {})[0]].name"
+              :value="
+                user.groups[Object.keys(user.groups || {})[0]]
+                  ? user.groups[Object.keys(user.groups || {})[0]].name
+                  : ''
+              "
               :icon="user.avatarUrl"
               :is-real="user.isReal"
               @click="jumpUserPage(user.id)"
