@@ -134,6 +134,7 @@ export default {
       hasPassword: false,
       header: {},
       formData: {},
+      profile: {},
       show: false,
       host: DISCUZ_REQUEST_HOST,
       userId: this.$store.getters['session/get']('userId'), // 获取当前登陆用户的ID
@@ -143,16 +144,6 @@ export default {
     };
   },
   computed: {
-    profile() {
-      const data = this.$store.getters['jv/get'](`users/${this.userId}`);
-      const userInfo = {
-        headimgurl: data.avatarUrl,
-        username: data.username,
-      };
-      uni.setStorageSync('userInfo', userInfo);
-      console.log('data-我的资料：', data);
-      return data;
-    },
     name() {
       let data = '';
       // 公众号mp_openid   小程序min_openid
@@ -186,7 +177,6 @@ export default {
     this.getUserInfo();
   },
   onLoad() {
-    this.getUserInfo();
     const token = uni.getStorageSync('access_token');
     this.header = {
       authorization: `Bearer ${token}`,
@@ -289,7 +279,15 @@ export default {
       const params = {
         include: 'groups,wechat',
       };
-      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]);
+      this.$store.dispatch('jv/get', [`users/${this.userId}`, { params }]).then(res => {
+        if (res && res._jv && res._jv.id) {
+          const userInfo = {
+            headimgurl: res.avatarUrl,
+            username: res.username,
+          };
+          uni.setStorageSync('userInfo', userInfo);
+        }
+      });
     },
     uploadSuccess(res) {
       uni.hideLoading();

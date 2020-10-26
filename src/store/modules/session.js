@@ -191,6 +191,8 @@ const actions = {
       context.commit(DELETE_USER_ID);
       context.commit(DELETE_ACCESS_TOKEN);
       uni.removeStorageSync('inviteCode');
+      uni.removeStorageSync('userInfo');
+      uni.removeStorageSync('token');
       uni.removeStorage({
         key: 'page',
       });
