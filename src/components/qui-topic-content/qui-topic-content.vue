@@ -234,7 +234,7 @@
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text @tap="!attachmentPayStatus ? download(item) : ''">{{ item.fileName }}</text>
+            <text @tap="!attachmentPayStatus ? download(index) : ''">{{ item.fileName }}</text>
             <text
               v-if="
                 attachmentIsPreview &&
@@ -670,7 +670,8 @@ export default {
       this.$emit('attachmentPay');
     },
     // 附件下载
-    download(item) {
+    download(index) {
+      const item = this.fileList[index];
       // #ifdef H5
       const { platform } = uni.getSystemInfoSync();
       if (platform === 'ios') {
