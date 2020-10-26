@@ -211,7 +211,7 @@
         </view>
         <view
           class="themeItem__content__attachment-item"
-          v-for="(item, index) in attachMentList"
+          v-for="(item, index) in handleFileList(fileList)"
           :key="index"
           @click="attachmentPayStatus ? attachmentPay() : ''"
         >
@@ -234,7 +234,7 @@
               color="#aaa"
               size="22"
             ></qui-icon>
-            <text @tap="!attachmentPayStatus ? download(item) : ''">{{ item.fileName }}</text>
+            <text @tap="!attachmentPayStatus ? download(index) : ''">{{ item.fileName }}</text>
             <text
               v-if="
                 attachmentIsPreview &&
@@ -622,16 +622,20 @@ export default {
     this.$forceUpdate();
   },
   mounted() {
-    const { fileList } = this;
-    fileList.forEach((e, index) => {
-      fileList[index].format = e.fileName.substring(e.fileName.lastIndexOf('.') + 1).toUpperCase();
-    });
-    this.attachMentList = fileList;
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
     // console.log('forums', this.forums);
     // console.log('this.threadInfo', this.threadInfo);
   },
   methods: {
+    handleFileList(data) {
+      const fileList = data;
+      fileList.forEach((e, index) => {
+        fileList[index].format = e.fileName
+          .substring(e.fileName.lastIndexOf('.') + 1)
+          .toUpperCase();
+      });
+      return fileList;
+    },
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
@@ -666,7 +670,8 @@ export default {
       this.$emit('attachmentPay');
     },
     // 附件下载
-    download(item) {
+    download(index) {
+      const item = this.fileList[index];
       // #ifdef H5
       const { platform } = uni.getSystemInfoSync();
       if (platform === 'ios') {
@@ -713,9 +718,9 @@ export default {
     },
     // 只能播放一个音频
     audioPlay(id) {
-      const { attachMentList } = this;
+      const { fileList } = this;
       const that = this;
-      attachMentList.forEach(item => {
+      fileList.forEach(item => {
         if (id !== item._jv.id && ['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1) {
           that.$refs[`audio${item._jv.id}`][0].audioPause();
         }

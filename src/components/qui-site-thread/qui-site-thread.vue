@@ -211,6 +211,9 @@ export default {
       });
     },
     setDays(time) {
+      if (!time) {
+        return;
+      }
       const oldTimeFormat = new Date(time.replace(/-/g, '/'));
       const nowDate = new Date();
       const times = nowDate.getTime() - oldTimeFormat.getTime();

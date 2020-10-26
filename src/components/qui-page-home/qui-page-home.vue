@@ -969,6 +969,7 @@ export default {
     loadThreadsSticky() {
       const params = {
         'filter[isSticky]': 'yes',
+        'filter[isDisplay]': 'yes',
         'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
@@ -987,6 +988,7 @@ export default {
         'filter[categoryId]': this.categoryId,
         'filter[type]': this.threadType,
         'filter[isEssence]': this.threadEssence,
+        'filter[isDisplay]': 'yes',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         include: [
