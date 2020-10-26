@@ -1155,6 +1155,7 @@ export default {
     _this.pageNum = 1;
     _this.attachmentFileList = [];
     setTimeout(function() {
+      isOnPaidAttachment = true;
       _this.loadThread();
       _this.loadThreadPosts();
       uni.stopPullDownRefresh();
@@ -1226,9 +1227,9 @@ export default {
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
-  touchStop() {
-    return;
-},
+    touchStop() {
+      return;
+    },
 
     // 加载当前主题数据
     loadThread() {
@@ -1293,6 +1294,7 @@ export default {
             } else {
               this.threadIsPaidCover = false;
             }
+            console.log('&&&&&&&', isOnPaidAttachment);
             if (isOnPaidAttachment) {
               console.log('追加附件列表数据');
               data.firstPost.attachments.forEach(attachment => {
