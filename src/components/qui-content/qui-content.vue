@@ -718,8 +718,10 @@ export default {
     }),
   },
   created() {
+    // #ifdef  H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
+    // #endif
     this.videoContext = uni.createVideoContext(`myVideo${this.$props.currentindex}`, this);
   },
   mounted() {
