@@ -987,6 +987,7 @@ export default {
         'filter[categoryId]': this.categoryId,
         'filter[type]': this.threadType,
         'filter[isEssence]': this.threadEssence,
+        'filter[isDisplay]': 'yes',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         include: [

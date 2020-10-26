@@ -63,6 +63,7 @@ export default {
       this.loadingType = 'loading';
       const params = {
         'filter[isDeleted]': 'no',
+        'filter[isDisplay]': 'yes',
         sort: '-createdAt',
         include: [
           'user',

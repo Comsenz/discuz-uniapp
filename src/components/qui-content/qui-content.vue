@@ -394,7 +394,7 @@ export default {
     },
     // 用户头像
     themeImage: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
     // 头像实名认证加v
@@ -642,7 +642,7 @@ export default {
     },
     // 已回答人的头像
     answerImage: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
   },
