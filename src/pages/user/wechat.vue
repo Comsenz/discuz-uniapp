@@ -104,6 +104,13 @@ export default {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'register_close') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.register_close'),
+                duration: 2000,
+              });
+            }
             if (res.data.errors[0].code === 'account_has_been_bound') {
               uni.getStorage({
                 key: 'page',
@@ -111,12 +118,14 @@ export default {
                   uni.redirectTo({
                     url: resData.data,
                   });
+                  setTimeout(() => {
+                    uni.showToast({
+                      icon: 'none',
+                      title: '用户或微信已绑定',
+                      duration: 2000,
+                    });
+                  }, 1000);
                 },
-              });
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.account_has_been_bound'),
-                duration: 2000,
               });
             }
             if (res.data.errors[0].code === 'rebind_mp_wechat') {

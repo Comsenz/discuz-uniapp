@@ -131,6 +131,10 @@ export default {
     // #endif
   },
   onHide() {},
+  onPageNotFound() {
+    const url = '/pages/common/error';
+    uni.redirectTo({url});
+  },
 };
 </script>
 

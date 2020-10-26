@@ -204,41 +204,66 @@
           </view>
           <!-- 视频 -->
           <view class="themeItem__content__covervideo">
-            <video
-              v-show="videoShow"
-              :poster="coverImage"
-              controls
-              ref="myVideo"
-              :id="'myVideo' + currentindex"
-              class="isVideo"
-              :duration="duration"
-              preload="none"
-              bindpause="handlepause"
-              playsinline
-              webkit-playsinline
-              x5-playsinline
-              :page-gesture="false"
-              :show-fullscreen-btn="true"
-              :show-play-btn="true"
-              :autoplay="autoplay"
-              auto-pause-if-open-native
-              auto-pause-if-navigate
-              :enable-play-gesture="false"
-              :vslide-gesture="false"
-              :vslide-gesture-in-fullscreen="false"
-              object-fit="contain"
-              :direction="videoWidth > videoHeight ? 90 : 0"
-              x5-video-player-type="h5-page"
-              :src="mediaUrl"
-              :style="{
-                width: videoWidth > videoHeight ? '100%' : '50%',
-              }"
-              bindfullscreenchange="fullScreen"
-              bindended="closeVideo"
-              @play="playVideo"
-              @fullscreenchange="fullscreenchanges"
-              @click.stop=""
-            ></video>
+            <view v-if="isWeixin">
+              <video
+                v-show="videoShow"
+                :poster="coverImage"
+                controls
+                :duration="duration"
+                :src="mediaUrl"
+                :id="'myVideo' + currentindex"
+                :ref="'myVideo' + currentindex"
+                :show-fullscreen-btn="true"
+                :show-play-btn="true"
+                :autoplay="autoplay"
+                :vslide-gesture-in-fullscreen="false"
+                object-fit="contain"
+                :direction="videoWidth > videoHeight ? 90 : 0"
+                :style="{
+                  width: videoWidth > videoHeight ? '100%' : '50%',
+                }"
+                @play="playVideo"
+                @fullscreenchange="fullscreenchanges"
+                @click.stop=""
+              ></video>
+            </view>
+            <view v-if="!isWeixin">
+              <video
+                v-show="videoShow"
+                :poster="coverImage"
+                controls
+                ref="myVideo"
+                :id="'myVideo' + currentindex"
+                class="isVideo"
+                :duration="duration"
+                preload="none"
+                bindpause="handlepause"
+                playsinline
+                webkit-playsinline
+                x5-playsinline
+                :page-gesture="false"
+                :show-fullscreen-btn="true"
+                :show-play-btn="true"
+                :autoplay="autoplay"
+                auto-pause-if-open-native
+                auto-pause-if-navigate
+                :enable-play-gesture="false"
+                :vslide-gesture="false"
+                :vslide-gesture-in-fullscreen="false"
+                object-fit="contain"
+                :direction="videoWidth > videoHeight ? 90 : 0"
+                x5-video-player-type="h5-page"
+                :src="mediaUrl"
+                :style="{
+                  width: videoWidth > videoHeight ? '100%' : '50%',
+                }"
+                bindfullscreenchange="fullScreen"
+                bindended="closeVideo"
+                @play="playVideo"
+                @fullscreenchange="fullscreenchanges"
+                @click.stop=""
+              ></video>
+            </view>
           </view>
         </view>
         <view v-if="threadType === 4 && payStatus" @click.stop="">
@@ -377,8 +402,14 @@
 <script>
 import { time2DateAndHM } from '@/utils/time';
 import { mapState } from 'vuex';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
+  // #ifdef H5
+  mixins: [appCommonH],
+  // #endif
   props: {
     themeType: {
       validator: value => {
@@ -394,7 +425,7 @@ export default {
     },
     // 用户头像
     themeImage: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
     // 头像实名认证加v
@@ -642,7 +673,7 @@ export default {
     },
     // 已回答人的头像
     answerImage: {
-      type: String,
+      type: [String, Boolean],
       default: '',
     },
   },
@@ -666,6 +697,7 @@ export default {
       appear: false,
       date: 1,
       blocKwidth: 224,
+      isWeixin: false,
     };
   },
   computed: {
@@ -685,49 +717,15 @@ export default {
       getCategoryIndex: state => state.session.categoryIndex,
     }),
   },
-  // watch: {
-  //   scrollTop(newValue) {
-  //     if (this.currentTop === 0 && this.currentBottom === 0) {
-  //       return;
-  //     }
-  //     // console.log(
-  //     //   newValue,
-  //     //   this.currentBottom,
-  //     //   this.currentTop,
-  //     //   newValue > this.currentBottom || newValue < this.currentTop,
-  //     //   'watch',
-  //     // );
-  //     if (newValue > this.currentBottom || newValue < this.currentTop) {
-  //       this.videoContext.pause();
-  //     }
-  //   },
-  // },
-  onLoad() {
-    // this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
+  created() {
+    // #ifdef  H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.isWeixin = isWeixin;
+    // #endif
+    this.videoContext = uni.createVideoContext(`myVideo${this.$props.currentindex}`, this);
   },
   mounted() {
-    this.videoContext = wx.createVideoContext(`myVideo${this.$props.currentindex}`, this);
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
-    // // #ifdef MP-WEIXIN
-    // if (this.$props.threadType === 2 && this.$props.payStatus) {
-    //   wx.createSelectorQuery()
-    //     .in(this)
-    //     .select(`#${`myVideo${this.$props.currentindex}`}`)
-    //     .boundingClientRect(rect => {
-    //       this.currentTop = this.$props.scrollTop + rect.top - wx.getSystemInfoSync().windowHeight;
-    //       this.currentBottom = this.$props.scrollTop + rect.top + rect.height;
-    //     })
-    //     .exec();
-    // }
-    // // #endif
-    // // #ifdef H5
-    // const myVideo = document.querySelector(`#${`myVideo${this.$props.currentindex}`}`);
-    // if (myVideo) {
-    //   const offsetInfo = myVideo.getBoundingClientRect();
-    //   this.currentTop = this.$props.scrollTop + offsetInfo.top - document.body.offsetHeight;
-    //   this.currentBottom = this.$props.scrollTop + offsetInfo.top + offsetInfo.height;
-    // }
-    // // #endif
   },
   methods: {
     // 点击删除按钮
@@ -803,18 +801,15 @@ export default {
       this.sun = false;
       this.videoShow = true;
       this.autoplay = true;
-      const videoContext = uni.createVideoContext(`myVideo${this.currentindex}`, this);
-      videoContext.requestFullScreen();
       setTimeout(() => {
-        // console.log('视频开始播放', `myVideo${this.currentindex}`);
-        videoContext.play();
-      }, 300);
+        this.videoContext.play();
+        this.videoContext.requestFullScreen();
+      }, 200);
       setTimeout(() => {
         const sun = uni.createSelectorQuery().in(this);
         sun
           .select('.isVideo')
           .boundingClientRect(data => {
-            // console.log(data);
             this.$emit('scrollheight', data.top, this.$props.currentindex);
           })
           .exec();

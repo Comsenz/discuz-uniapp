@@ -14,6 +14,7 @@
       :iconcolor="theme === $u.light() ? '#333' : '#fff'"
       @click="open"
       @closeShare="closeShare"
+      @logoClick="logoClick"
     ></qui-header>
     <uni-popup ref="popupHead" type="bottom">
       <qui-share @close="cancel"></qui-share>
@@ -27,16 +28,25 @@
         <qui-avatar
           class="site-info__owner-avatar"
           :user="{
-            username: forums.set_site && forums.set_site.site_author.username,
-            avatarUrl: forums.set_site && forums.set_site.site_author.avatar,
+            username:
+              forums.set_site && forums.set_site.site_author
+                ? forums.set_site.site_author.username
+                : '',
+            avatarUrl:
+              forums.set_site && forums.set_site.site_author
+                ? forums.set_site.site_author.avatar
+                : '',
           }"
           size="60"
         />
         <view class="site-info__owner-detail">
           <view>
             {{
-              `${i18n.t('site.circlemaster')} : ${forums.set_site &&
-                forums.set_site.site_author.username}`
+              `${i18n.t('site.circlemaster')} : ${
+                forums.set_site && forums.set_site.site_author
+                  ? forums.set_site.site_author.username
+                  : ''
+              }`
             }}
           </view>
           <view class="site-info__owner-detail-days">
@@ -76,6 +86,7 @@
 
 <script>
 import forums from '@/mixin/forums';
+import { mapState, mapMutations } from 'vuex';
 // #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
@@ -105,6 +116,11 @@ export default {
       pageNum: 1, // 当前页数
     };
   },
+  computed: {
+    ...mapState({
+      footerIndex: state => state.footerTab.footerIndex,
+    }),
+  },
   watch: {
     // 监听得到的数据
     shareUrl: {
@@ -128,6 +144,18 @@ export default {
     this.getThemeList();
   },
   methods: {
+    ...mapMutations({
+      setFooterIndex: 'footerTab/SET_FOOTERINDEX',
+    }),
+    logoClick() {
+      const url = this.shareUrl;
+      if (url.indexOf('partner-invite') !== -1) {
+        this.setFooterIndex(parseInt(0, 10));
+        uni.redirectTo({
+          url: `/pages/home/index`,
+        });
+      }
+    },
     openTips() {
       this.$refs.toast.show({ message: this.i18n.t('site.jointosee') });
     },
@@ -183,6 +211,9 @@ export default {
       });
     },
     setDays(time) {
+      if (!time) {
+        return;
+      }
       const oldTimeFormat = new Date(time.replace(/-/g, '/'));
       const nowDate = new Date();
       const times = nowDate.getTime() - oldTimeFormat.getTime();

@@ -598,10 +598,8 @@ export default {
     scroll(event) {
       // if (this.footerIndex === 0) {
       this.scrollTop = event.scrollTop;
-      if (Math.abs(this.scrollnumber) && this.switchscroll) {
-        this.num = Math.abs(this.scrollTop) - Math.abs(this.scrollnumber);
-        if (this.num >= 10 || this.num <= -10) {
-          // console.log('视频暂停播放');
+      if (this.switchscroll && this.scrollTop !== 0) {
+        if (this.scrollTop > this.num || this.scrollTop < this.num) {
           this.$refs[`myVideo${this.scrollindex}`][0].pauseVideo();
           this.switchscroll = false;
         }
@@ -634,21 +632,20 @@ export default {
       // }
     },
     scrollsetups() {
-      // #ifdef MP-WEIXIN
       const _this = this;
       uni.setStorage({
         key: 'scroll_top',
         data: _this.scrollTop,
       });
-      // #endif
     },
     screenplayback() {
-      // #ifdef MP-WEIXIN
       let num = 0;
+      const _this = this;
       uni.getStorage({
         key: 'scroll_top',
         success(resData) {
           num = resData.data;
+          _this.num = resData.data;
         },
       });
       const timer = setTimeout(() => {
@@ -658,7 +655,6 @@ export default {
         });
         clearTimeout(timer);
       }, 50);
-      // #endif
     },
     // 滑动到顶部
     toUpper() {
@@ -791,7 +787,7 @@ export default {
       } else {
         this.h5Share({
           title: this.forums.set_site ? this.forums.set_site.site_name : '',
-          url: 'pages/home/index',
+          url: '/pages/home/index',
         });
       }
       // #endif
@@ -925,7 +921,7 @@ export default {
       this.h5Share({
         title: this.shareTitle,
         id,
-        url: 'pages/topic/index',
+        url: 'topic/index',
       });
       // #endif
     },
@@ -973,6 +969,7 @@ export default {
     loadThreadsSticky() {
       const params = {
         'filter[isSticky]': 'yes',
+        'filter[isDisplay]': 'yes',
         'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
@@ -991,6 +988,7 @@ export default {
         'filter[categoryId]': this.categoryId,
         'filter[type]': this.threadType,
         'filter[isEssence]': this.threadEssence,
+        'filter[isDisplay]': 'yes',
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         include: [

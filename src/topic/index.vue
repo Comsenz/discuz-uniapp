@@ -106,9 +106,11 @@
               <view slot="more" @click="moreClick">
                 <view class="det-ft-operaCli">
                   <view class="det-ft-more">
-                    <qui-icon name="icon-gengduo" class="icon-gengduo" style="font-size: 40rpx;">
-                      >
-                    </qui-icon>
+                    <qui-icon
+                      name="icon-gengduo"
+                      class="icon-gengduo"
+                      style="font-size: 40rpx;"
+                    ></qui-icon>
                   </view>
                 </view>
               </view>
@@ -466,7 +468,7 @@
                   ></qui-icon>
                 </view>
               </view>
-              <text class="popup-share-content-text">{{ item.text }}</text>
+              <text class="popup-share-content-text popup-more-content-text">{{ item.text }}</text>
             </view>
           </view>
           <view class="popup-share-content-space"></view>
@@ -501,6 +503,7 @@
                 :value="otherReasonValue"
                 @input="reportTextareaInput"
                 fixed="true"
+                @touchmove.stop="touchStop"
               />
             </view>
           </view>
@@ -579,7 +582,7 @@
               <textarea
                 ref="commentText"
                 :focus="focusVal"
-                :maxlength="450"
+                :maxlength="maxTextLength"
                 class="comment-textarea"
                 :placeholder="commentText === true ? t.writeCommentsAsk : t.writeComments"
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
@@ -589,6 +592,7 @@
                 v-if="!emojiShow"
                 v-model="textAreaValue"
                 @blur="contBlur"
+                @touchmove.stop="touchStop"
               />
               <view class="comment-textarea" v-show="emojiShow">
                 {{ textAreaValue }}
@@ -721,6 +725,7 @@ export default {
       commentPopupStatus: false, // 回复弹框内容状态是否显示
       commentWorkTips: true, // 回复弹框是否显示字数
       commentText: true, // 回复弹框默认字
+      maxTextLength: 450, // 默认最多输入450字
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
@@ -992,14 +997,14 @@ export default {
   },
   computed: {
     ...mapState({
-      getAtMemberData: (state) => state.atMember.atMemberData,
+      getAtMemberData: state => state.atMember.atMemberData,
     }),
     thread() {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       // 只保留一个用户组显示
       let hasFirst = false;
       if (thread.user && thread.user.groups.length > 0) {
-        thread.user.groups = thread.user.groups.filter((group) => {
+        thread.user.groups = thread.user.groups.filter(group => {
           if (group.isDisplay === true && !hasFirst) {
             hasFirst = true;
             return true;
@@ -1012,7 +1017,7 @@ export default {
       if (thread.firstPost) {
         this.likedUsers = thread.firstPost.likedUsers;
         if (thread.firstPost.images) {
-          thread.firstPost.images = thread.firstPost.images.filter((item) => {
+          thread.firstPost.images = thread.firstPost.images.filter(item => {
             if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
             }
@@ -1021,7 +1026,7 @@ export default {
         }
 
         if (thread.firstPost.attachments) {
-          thread.firstPost.attachments = thread.firstPost.attachments.filter((item) => {
+          thread.firstPost.attachments = thread.firstPost.attachments.filter(item => {
             if (thread.firstPost.contentAttachIds.indexOf(item._jv.id) !== -1) {
               return false;
             }
@@ -1098,8 +1103,8 @@ export default {
     this.browser = 1;
     // #endif
     // 评论详情页新增一条回复，内容详情页给当前评论新增一条回复
-    this.$u.event.$on('addComment', (data) => {
-      Object.keys(this.posts).forEach((index) => {
+    this.$u.event.$on('addComment', data => {
+      Object.keys(this.posts).forEach(index => {
         if (this.posts[index]._jv.id === data.commentId) {
           if (this.posts[index].lastThreeComments.length >= 3) {
             this.posts[index].lastThreeComments.pop();
@@ -1111,13 +1116,13 @@ export default {
       });
     });
     // 删除评论的回复后清除当前列表评论的这条回复
-    this.$u.event.$on('deleteComment', (data) => {
-      Object.keys(this.posts).forEach((index) => {
+    this.$u.event.$on('deleteComment', data => {
+      Object.keys(this.posts).forEach(index => {
         // for (const index in this.posts) {
         if (this.posts[index]._jv.id === data.commentId) {
           this.posts[index].lastThreeComments = [];
           if (data.data._jv.json.data.relationships.lastThreeComments.data) {
-            data.data._jv.json.data.relationships.lastThreeComments.data.forEach((item) => {
+            data.data._jv.json.data.relationships.lastThreeComments.data.forEach(item => {
               this.posts[index].lastThreeComments.push(
                 this.$store.getters['jv/get'](`${item.type}/${item.id}`),
               );
@@ -1149,7 +1154,7 @@ export default {
     _this.posts = [];
     _this.pageNum = 1;
     _this.attachmentFileList = [];
-    setTimeout(function () {
+    setTimeout(function() {
       _this.loadThread();
       _this.loadThreadPosts();
       uni.stopPullDownRefresh();
@@ -1205,15 +1210,13 @@ export default {
       // error
     }
     let atMemberList = '';
-    this.getAtMemberData.map((item) => {
+    this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
       return atMemberList;
     });
-    this.textAreaValue = `${
-      this.textAreaValue.slice(0, this.cursor) +
+    this.textAreaValue = `${this.textAreaValue.slice(0, this.cursor) +
       atMemberList +
-      this.textAreaValue.slice(this.cursor)
-    }`;
+      this.textAreaValue.slice(this.cursor)}`;
     this.setAtMember([]);
   },
   methods: {
@@ -1223,6 +1226,9 @@ export default {
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
+  touchStop() {
+    return;
+},
 
     // 加载当前主题数据
     loadThread() {
@@ -1259,7 +1265,7 @@ export default {
       this.loadDetailStatusId = threadAction._statusID;
 
       threadAction
-        .then((data) => {
+        .then(data => {
           this.$store.dispatch('session/setThread', data);
           if (data.isDeleted) {
             this.$store.dispatch('forum/setError', {
@@ -1288,11 +1294,13 @@ export default {
               this.threadIsPaidCover = false;
             }
             if (isOnPaidAttachment) {
-              data.firstPost.attachments.forEach((attachment) => {
+              console.log('追加附件列表数据');
+              data.firstPost.attachments.forEach(attachment => {
                 if (data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
                   this.attachmentFileList.push(attachment);
                 }
               });
+              console.log('追加后', this.attachmentFileList);
             }
             // #ifndef MP-WEIXIN
             let titleText = '';
@@ -1563,7 +1571,7 @@ export default {
           this.moreData[2].isStatus = this.thread.isEssence;
           this.moreData[3].isStatus = this.thread.isSticky;
           this.moreData[1].isStatus = false;
-          this.moreData.forEach((item) => {
+          this.moreData.forEach(item => {
             if (item.canOpera) {
               this.moreDataLength += 1;
             }
@@ -1753,7 +1761,7 @@ export default {
             this.likedStatus = true;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.loaded = false;
           this.loadingStatus = false;
           console.log(err);
@@ -1800,7 +1808,7 @@ export default {
       }
       this.$store
         .dispatch('jv/patch', params)
-        .then((data) => {
+        .then(data => {
           if (type === '1') {
             // 主题点赞
             this._updateLikedUsers(data.isLiked);
@@ -1827,7 +1835,7 @@ export default {
             post = postArr;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
@@ -1865,7 +1873,7 @@ export default {
       }
       this.$store
         .dispatch('jv/patch', params)
-        .then((data) => {
+        .then(data => {
           if (type === '1') {
             // 收藏
             this.thread.isFavorite = data.isFavorite;
@@ -1923,7 +1931,7 @@ export default {
                     delta: 1,
                   });
                 }
-                _this.$store.dispatch('jv/get', `topics/${_this.conversationId}`).then((res) => {
+                _this.$store.dispatch('jv/get', `topics/${_this.conversationId}`).then(res => {
                   if (res) {
                     _this.conversationId = '';
                   }
@@ -1933,7 +1941,7 @@ export default {
             }
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
@@ -1985,7 +1993,7 @@ export default {
         data: [],
       };
       if (this.uploadFile) {
-        this.uploadFile.forEach((item) => {
+        this.uploadFile.forEach(item => {
           params._jv.relationships.attachments.data.push({
             type: 'attachments',
             id: item.id,
@@ -1994,7 +2002,7 @@ export default {
       }
       this.$store
         .dispatch('jv/post', params)
-        .then((res) => {
+        .then(res => {
           this.$refs.commentPopup.close();
           this.commentReply = false;
           this.commentPopupStatus = false;
@@ -2003,7 +2011,7 @@ export default {
             if (!res.isComment) {
               // 只保留一个用户组显示
               let hasFirst = false;
-              res.user.groups = res.user.groups.filter((group) => {
+              res.user.groups = res.user.groups.filter(group => {
                 if (group.isDisplay === true && !hasFirst) {
                   hasFirst = true;
                   return true;
@@ -2027,7 +2035,7 @@ export default {
           this.textAreaValue = '';
           this.uploadFile = '';
         })
-        .catch((err) => {
+        .catch(err => {
           this.publishClickStatus = true;
           console.log(err);
         });
@@ -2035,7 +2043,7 @@ export default {
     handleGroup(data) {
       let groups = [];
       if (data && data.length > 0) {
-        groups = data.filter((item) => item.isDisplay);
+        groups = data.filter(item => item.isDisplay);
       }
       if (groups.length > 0) {
         return [groups[0]];
@@ -2065,14 +2073,14 @@ export default {
         data: [],
       };
       if (this.uploadFile) {
-        this.uploadFile.forEach((item) => {
+        this.uploadFile.forEach(item => {
           params._jv.relationships.attachments.data.push({
             type: 'attachments',
             id: item.id,
           });
         });
       }
-      this.$store.dispatch('jv/post', params).then((res) => {
+      this.$store.dispatch('jv/post', params).then(res => {
         this.$refs.commentPopup.close();
         this.loadThread();
       });
@@ -2103,13 +2111,13 @@ export default {
       );
 
       this.loadDetailCommnetStatusId = loadDetailCommnetAction._statusID;
-      loadDetailCommnetAction.then((data) => {
+      loadDetailCommnetAction.then(data => {
         /* eslint-disable */
         delete data._jv;
         // 只保留一个用户组显示
         data.forEach((item, index) => {
           let hasFirst = false;
-          data[index].user.groups = data[index].user.groups.filter((group) => {
+          data[index].user.groups = data[index].user.groups.filter(group => {
             if (group.isDisplay === true && !hasFirst) {
               hasFirst = true;
               return true;
@@ -2142,7 +2150,7 @@ export default {
           signType: 'MD5', // 微信签名方式：
           paySign: data.wechat_js.paySign, // 微信签名
         },
-        function (data) {
+        function(data) {
           // alert('支付唤醒');
           if (data.err_msg == 'get_brand_wcpay_request:ok') {
             //微信支付成功，进行支付成功处理
@@ -2178,7 +2186,7 @@ export default {
       };
       this.$store
         .dispatch('jv/post', params)
-        .then((res) => {
+        .then(res => {
           this.orderSn = res.order_sn;
           if (payType === 0) {
             // 微信支付
@@ -2202,7 +2210,7 @@ export default {
             this.orderPay(20, value, this.orderSn, payType);
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
@@ -2229,7 +2237,7 @@ export default {
 
       this.$store
         .dispatch('jv/post', params)
-        .then((res) => {
+        .then(res => {
           this.wxRes = res;
           if (payType === 0) {
             if (broswerType === '0') {
@@ -2303,7 +2311,7 @@ export default {
             this.coverLoading = false;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           // 清空支付的密码
           console.log(err);
           this.$refs.payShow.clearPassword();
@@ -2313,7 +2321,7 @@ export default {
     getOrderStatus(orderSn, broswerType) {
       this.$store
         .dispatch('jv/get', [`orders/${orderSn}`, { custom: { loading: false } }])
-        .then((res) => {
+        .then(res => {
           this.payStatus = res.status;
           if (this.payStatus === 1) {
             this.payShowStatus = false;
@@ -2358,7 +2366,7 @@ export default {
             this.$refs.toast.show({ message: this.p.paySuccess });
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.coverLoading = false;
           this.$refs.toast.show({ message: this.p.payFail });
@@ -2456,7 +2464,7 @@ export default {
     // 对象转数组
     limitArray(obj) {
       const arr = [];
-      Object.values(obj).forEach((item) => {
+      Object.values(obj).forEach(item => {
         arr.push(item);
       });
       return arr;
@@ -2709,7 +2717,7 @@ export default {
         //去掉最后一位
         price = price.substring(0, price.length - 1);
       }
-      that.$nextTick(function () {
+      that.$nextTick(function() {
         //'有小数点时，最大长度为9位，没有则是7位'
         that.maxLength = maxLength == -1 ? 7 : 10;
         that.inputPrice = price;
@@ -2722,18 +2730,38 @@ export default {
     },
     // 自定义付费金额弹框点击确定时
     diaLogOk() {
-      if (this.inputPrice <= 0) {
-        this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
+      // if (this.inputPrice <= 0) {
+      //   this.$refs.toast.show({ message: this.p.AmountCannotBeLessThan0 });
+      // } else {
+      if (this.forums.set_site.site_minimum_amount === '') {
+        if (this.inputPrice < '0.1') {
+          uni.showToast({
+            title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
+            icon: 'none',
+          });
+          return;
+        }
       } else {
-        this.price = Number(this.inputPrice);
-        this.$refs.customAmountPopup.close();
-        this.customAmountStatus = false;
-        this.payShowStatus = true;
-        // this.$refs.payShow.payClickShow();
-        this.$nextTick(() => {
-          this.$refs.payShow.payClickShow(this.payTypeVal);
-        });
+        if (this.inputPrice < this.forums.set_site.site_minimum_amount) {
+          uni.showToast({
+            title:
+              this.i18n.t('core.TheAmountCannotBeLessThanMinMoney') +
+              this.forums.set_site.site_minimum_amount +
+              this.i18n.t('discuzq.post.yuan'),
+            icon: 'none',
+          });
+          return;
+        }
       }
+      this.price = Number(this.inputPrice);
+      this.$refs.customAmountPopup.close();
+      this.customAmountStatus = false;
+      this.payShowStatus = true;
+      // this.$refs.payShow.payClickShow();
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow(this.payTypeVal);
+      });
+      // }
     },
     // 回复文本域失去焦点时，获取光标位置
     contBlur(e) {
@@ -2742,9 +2770,9 @@ export default {
     // 点击表情插入到文本域
     getEmojiClick(code) {
       let text = '';
-      text = `${
-        this.textAreaValue.slice(0, this.cursor) + code + this.textAreaValue.slice(this.cursor)
-      }`;
+      text = `${this.textAreaValue.slice(0, this.cursor) +
+        code +
+        this.textAreaValue.slice(this.cursor)}`;
       this.textAreaValue = text;
       this.emojiShow = false;
     },
@@ -2792,10 +2820,10 @@ export default {
 
       return this.$store
         .dispatch('jv/delete', params)
-        .then((res) => {
+        .then(res => {
           return res;
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     },
@@ -3008,6 +3036,7 @@ export default {
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
       this.commentText = true;
+      this.maxTextLength = 10000;
     },
 
     handleClickOk() {
@@ -3097,7 +3126,7 @@ export default {
         this.h5Share({
           title: this.contentVal,
           id: this.threadId,
-          url: 'pages/topic/index',
+          url: 'topic/index',
         });
       }
       // #endif
@@ -3249,7 +3278,7 @@ export default {
         type: 'user_follow',
         to_user_id: userInfo.id,
       };
-      this.$store.dispatch('jv/post', params).then((res) => {
+      this.$store.dispatch('jv/post', params).then(res => {
         if (res.is_mutual == 0) {
           this.thread.user.follow = 1;
           originUser.follow = 1;
@@ -3358,7 +3387,7 @@ export default {
         }
         reason = this.otherReasonValue;
       } else {
-        this.reportData.forEach((item) => {
+        this.reportData.forEach(item => {
           if (item.value === this.currentReport) {
             reason = item.name;
           }
@@ -3373,7 +3402,7 @@ export default {
         type,
         reason: `${reason}`,
       };
-      this.$store.dispatch('jv/post', params).then((res) => {
+      this.$store.dispatch('jv/post', params).then(res => {
         if (res._jv) {
           this.$refs.reportPopup.close();
           uni.showToast({
@@ -3416,13 +3445,13 @@ export default {
     copy(text) {
       uniCopy({
         content: text,
-        success: (res) => {
+        success: res => {
           uni.showToast({
             title: this.thread.firstPost.postGoods.type_name + res,
             icon: 'none',
           });
         },
-        error: (e) => {
+        error: e => {
           uni.showToast({
             title: e,
             icon: 'none',
@@ -3455,12 +3484,6 @@ page {
 .scroll-y {
   // max-height: calc(100vh - 497rpx);
   max-height: calc(100vh - 80rpx);
-}
-.content {
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // justify-content: center;
 }
 .bg-white {
   background-color: --color(--qui-BG-2);
@@ -3906,6 +3929,9 @@ page {
   padding-left: 20rpx;
   overflow: hidden;
   justify-content: flex-start;
+}
+.popup-more-content-text {
+  font-size: $fg-f3;
 }
 .popup-more-content-box {
   flex: 0 0 20%;

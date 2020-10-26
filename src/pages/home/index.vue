@@ -199,14 +199,16 @@ export default {
         data: '/pages/home/index',
       });
       if (type === 1) {
-        console.log('发现');
         this.setFooterIndex(1);
+      }
+      if (type === 0) {
+        this.setFooterIndex(0);
       }
       this.currentTab = tabs[type];
       console.log(this.currentTab, 'currentTabcurrentTab');
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['home', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();

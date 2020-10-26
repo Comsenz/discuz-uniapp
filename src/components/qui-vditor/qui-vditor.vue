@@ -28,7 +28,7 @@ import {
   TopicIcon,
   EmojiIcon,
   ImageIcon,
-  AttachIcon,
+  // AttachIcon,
 } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
@@ -113,6 +113,7 @@ export default {
         className: 'right',
         icon: AtIcon,
         click() {
+          _that.setCursorPosition();
           _that.$refs.atUser.open();
         },
       },
@@ -123,6 +124,7 @@ export default {
         className: 'right',
         icon: TopicIcon,
         click() {
+          _that.setCursorPosition();
           _that.$refs.topic.open();
         },
       },
@@ -132,6 +134,7 @@ export default {
         tip: 'emojiq',
         icon: EmojiIcon,
         click() {
+          _that.setCursorPosition();
           _that.emojiShow = !_that.emojiShow;
         },
       },
@@ -151,6 +154,7 @@ export default {
         tip: '上传图片',
         icon: ImageIcon,
         click() {
+          _that.setCursorPosition();
           _that.upload.uploadImage();
         },
       },
@@ -188,6 +192,12 @@ export default {
     this.vditor.destroy();
   },
   methods: {
+    setCursorPosition() {
+      const postition = this.vditor.getCursorPosition();
+      if (postition.x === 0 && postition.y === 0) {
+        this.vditor.focus();
+      }
+    },
     // 点击取消按钮，关闭at
     atCancel() {
       this.$refs.atUser.close();

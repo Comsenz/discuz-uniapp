@@ -46,18 +46,44 @@
           {{ i18n.t('user.otherLoginMode') }}
         </view>
         <view class="phone-login-box-ft-con">
+          <!-- #ifdef MP-WEIXIN -->
           <image
+            v-if="forum && forum.passport && forum.passport.miniprogram_close"
             class="phone-login-box-ft-con-image right"
             lazy-load
             src="@/static/weixin.svg"
             @click="jump2WechatLogin"
           />
           <image
-            class="phone-login-box-ft-con-image left"
+            :class="[
+              forum && forum.passport && forum.passport.miniprogram_close
+                ? 'phone-login-box-ft-con-image left'
+                : 'phone-login-box-ft-con-image',
+            ]"
             lazy-load
             src="@/static/zhanghao.svg"
             @click="jump2Login"
           />
+          <!-- #endif -->
+          <!-- #ifdef H5 -->
+          <image
+            v-if="forum && forum.passport && forum.passport.offiaccount_close"
+            class="phone-login-box-ft-con-image right"
+            lazy-load
+            src="@/static/weixin.svg"
+            @click="jump2WechatLogin"
+          />
+          <image
+            :class="[
+              forum && forum.passport && forum.passport.offiaccount_close
+                ? 'phone-login-box-ft-con-image left'
+                : 'phone-login-box-ft-con-image',
+            ]"
+            lazy-load
+            src="@/static/zhanghao.svg"
+            @click="jump2Login"
+          />
+          <!-- #endif -->
         </view>
         <!-- 开启短信功能才显示 -->
         <view

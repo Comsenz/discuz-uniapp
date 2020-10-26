@@ -7,6 +7,7 @@
       @play="playVideo"
       :id="'myVideo' + videoId"
       :ref="'myVideo' + videoId"
+      :direction="0"
       @loadedmetadata="loadedmetadata"
       @fullscreenchange="fullscreenchange"
     ></video>

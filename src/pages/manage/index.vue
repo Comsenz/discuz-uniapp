@@ -10,7 +10,7 @@
         </qui-cell-item>
       </navigator>
     </view>
-    <view class="site-management-box-list">
+    <view class="site-management-box-list" v-if="forums.other && forums.other.can_create_invite">
       <navigator url="/pages/manage/invite" hover-class="none">
         <qui-cell-item :title="i18n.t('manage.inviteMembers')" arrow></qui-cell-item>
       </navigator>
