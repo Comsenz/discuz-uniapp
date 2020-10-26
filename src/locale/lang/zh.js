@@ -918,7 +918,7 @@ export default {
     dearPhoneUser: '亲爱的手机号{phone}用户，',
     registerBindText: '你的微信号未绑定账号，注册可完成绑定',
     loginBindText: '请您登录，即可完成微信号和账号的绑定',
-    changeRegisterBindText: '你的微信号未绑定账号，注册可完成绑定',
+    changeRegisterBindText: '您正在更换微信绑定的账号为新注册的账号',
     changeLoginBindText: '您正在更换微信绑定的账号为登录的账号',
     phoneRegisterBindText: '你的手机号未绑定账号，注册即可完成绑定',
     phoneLoginBindText: '请您登录，即可完成手机号和账号的绑定',
