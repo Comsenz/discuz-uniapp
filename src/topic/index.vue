@@ -582,7 +582,7 @@
               <textarea
                 ref="commentText"
                 :focus="focusVal"
-                :maxlength="450"
+                :maxlength="maxTextLength"
                 class="comment-textarea"
                 :placeholder="commentText === true ? t.writeCommentsAsk : t.writeComments"
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
@@ -725,6 +725,7 @@ export default {
       commentPopupStatus: false, // 回复弹框内容状态是否显示
       commentWorkTips: true, // 回复弹框是否显示字数
       commentText: true, // 回复弹框默认字
+      maxTextLength: 450, // 默认最多输入450字
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
@@ -3033,6 +3034,7 @@ export default {
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
       this.commentText = true;
+      this.maxTextLength = 10000;
     },
 
     handleClickOk() {
