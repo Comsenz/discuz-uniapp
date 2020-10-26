@@ -219,6 +219,9 @@ export default {
   .themeCount .themeItem__footer {
     display: none;
   }
+  .themeCount .addAsk {
+    top: 0;
+  }
   .themeCount .themeItem {
     padding-left: 0;
     margin: 0;
