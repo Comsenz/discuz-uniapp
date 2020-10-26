@@ -402,16 +402,14 @@
 <script>
 import { time2DateAndHM } from '@/utils/time';
 import { mapState } from 'vuex';
-// #ifdef  H5;
+// #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 // #endif
 
 export default {
-  mixins: [
-    // #ifdef H5
-    appCommonH,
-    // #endif
-  ],
+  // #ifdef H5
+  mixins: [appCommonH],
+  // #endif
   props: {
     themeType: {
       validator: value => {
