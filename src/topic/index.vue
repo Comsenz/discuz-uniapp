@@ -1294,11 +1294,13 @@ export default {
               this.threadIsPaidCover = false;
             }
             if (isOnPaidAttachment) {
+              console.log('追加附件列表数据');
               data.firstPost.attachments.forEach(attachment => {
                 if (data.firstPost.contentAttachIds.indexOf(attachment._jv.id) === -1) {
                   this.attachmentFileList.push(attachment);
                 }
               });
+              console.log('追加后', this.attachmentFileList);
             }
             // #ifndef MP-WEIXIN
             let titleText = '';

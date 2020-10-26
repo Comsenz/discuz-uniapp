@@ -598,7 +598,7 @@ export default {
     scroll(event) {
       // if (this.footerIndex === 0) {
       this.scrollTop = event.scrollTop;
-      if (Math.abs(this.scrollnumber) && this.switchscroll && this.scrollTop !== 0) {
+      if (this.switchscroll && this.scrollTop !== 0) {
         if (this.scrollTop > this.num || this.scrollTop < this.num) {
           this.$refs[`myVideo${this.scrollindex}`][0].pauseVideo();
           this.switchscroll = false;
