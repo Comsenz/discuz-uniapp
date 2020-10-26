@@ -969,6 +969,7 @@ export default {
     loadThreadsSticky() {
       const params = {
         'filter[isSticky]': 'yes',
+        'filter[isDisplay]': 'yes',
         'filter[isApproved]': 1,
         'filter[isDeleted]': 'no',
         'filter[categoryId]': this.categoryId,
