@@ -211,7 +211,7 @@
         </view>
         <view
           class="themeItem__content__attachment-item"
-          v-for="(item, index) in attachMentList"
+          v-for="(item, index) in handleFileList(fileList)"
           :key="index"
           @click="attachmentPayStatus ? attachmentPay() : ''"
         >
@@ -622,16 +622,20 @@ export default {
     this.$forceUpdate();
   },
   mounted() {
-    const { fileList } = this;
-    fileList.forEach((e, index) => {
-      fileList[index].format = e.fileName.substring(e.fileName.lastIndexOf('.') + 1).toUpperCase();
-    });
-    this.attachMentList = fileList;
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
     // console.log('forums', this.forums);
     // console.log('this.threadInfo', this.threadInfo);
   },
   methods: {
+    handleFileList(data) {
+      const fileList = data;
+      fileList.forEach((e, index) => {
+        fileList[index].format = e.fileName
+          .substring(e.fileName.lastIndexOf('.') + 1)
+          .toUpperCase();
+      });
+      return fileList;
+    },
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
@@ -713,9 +717,9 @@ export default {
     },
     // 只能播放一个音频
     audioPlay(id) {
-      const { attachMentList } = this;
+      const { fileList } = this;
       const that = this;
-      attachMentList.forEach(item => {
+      fileList.forEach(item => {
         if (id !== item._jv.id && ['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1) {
           that.$refs[`audio${item._jv.id}`][0].audioPause();
         }
