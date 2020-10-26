@@ -122,7 +122,6 @@ export default {
       }
     },
     jump2Register() {
-      uni.setStorageSync('isBind', false);
       this.jump2RegisterBindPage();
     },
     jump2findpwd() {

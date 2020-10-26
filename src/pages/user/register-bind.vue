@@ -313,7 +313,6 @@ export default {
         });
     },
     jump2Login() {
-      uni.setStorageSync('isBind', false);
       this.jump2LoginBindPage();
     },
   },
