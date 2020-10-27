@@ -205,13 +205,13 @@
         </view>
       </view>
       <!-- 附件 -->
-      <view class="themeItem__content__attachment" v-if="fileList.length > 0">
+      <view class="themeItem__content__attachment" v-if="attachmentList.length > 0">
         <view class="themeItem__content__attachment-title">
           {{ i18n.t('profile.attachment') }}
         </view>
         <view
           class="themeItem__content__attachment-item"
-          v-for="(item, index) in handleFileList(fileList)"
+          v-for="(item, index) in attachmentList"
           :key="index"
           @click="attachmentPayStatus ? attachmentPay() : ''"
         >
@@ -586,6 +586,15 @@ export default {
       // console.log('thread', thread);
       return thread;
     },
+    attachmentList() {
+      const { fileList } = this;
+      fileList.forEach((e, index) => {
+        fileList[index].format = e.fileName
+          .substring(e.fileName.lastIndexOf('.') + 1)
+          .toUpperCase();
+      });
+      return fileList;
+    },
     // 附件是否显示预览
     attachmentIsPreview() {
       let isPreview = false;
@@ -627,15 +636,6 @@ export default {
     // console.log('this.threadInfo', this.threadInfo);
   },
   methods: {
-    handleFileList(data) {
-      const fileList = data;
-      fileList.forEach((e, index) => {
-        fileList[index].format = e.fileName
-          .substring(e.fileName.lastIndexOf('.') + 1)
-          .toUpperCase();
-      });
-      return fileList;
-    },
     // 管理菜单点击事件
     selectClick() {
       this.seleShow = !this.seleShow;
@@ -671,7 +671,7 @@ export default {
     },
     // 附件下载
     download(index) {
-      const item = this.fileList[index];
+      const item = this.attachmentList[index];
       // #ifdef H5
       const { platform } = uni.getSystemInfoSync();
       if (platform === 'ios') {
@@ -718,9 +718,9 @@ export default {
     },
     // 只能播放一个音频
     audioPlay(id) {
-      const { fileList } = this;
+      const { attachmentList } = this;
       const that = this;
-      fileList.forEach(item => {
+      attachmentList.forEach(item => {
         if (id !== item._jv.id && ['MP3', 'M4A', 'WAV', 'AAC'].indexOf(item.format) !== -1) {
           that.$refs[`audio${item._jv.id}`][0].audioPause();
         }
