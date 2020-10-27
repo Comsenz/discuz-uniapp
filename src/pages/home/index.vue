@@ -205,7 +205,6 @@ export default {
         this.setFooterIndex(0);
       }
       this.currentTab = tabs[type];
-      console.log(this.currentTab, 'currentTabcurrentTab');
       if (
         !this.$store.getters['session/get']('isLogin') &&
         ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
