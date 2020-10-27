@@ -222,6 +222,7 @@
             <qui-audio
               :src="item.url"
               :name="item.fileName"
+              :can-play="attachmentPayStatus ? false : true"
               :audio-id="item._jv.id"
               :ref="'audio' + item._jv.id"
               @audioPlay="audioPlay"
@@ -718,6 +719,10 @@ export default {
     },
     // 只能播放一个音频
     audioPlay(id) {
+      if (this.attachmentPayStatus) {
+        this.$refs[`audio${id}`][0].audioPause();
+        return;
+      }
       const { attachmentList } = this;
       const that = this;
       attachmentList.forEach(item => {
@@ -727,6 +732,9 @@ export default {
       });
     },
     fullscreenPlay(id) {
+      if (this.attachmentPayStatus) {
+        return;
+      }
       this.$refs[`video${id}`][0].fullscreenPlay();
     },
     // 地理位置

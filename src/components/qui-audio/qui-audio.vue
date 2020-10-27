@@ -50,6 +50,11 @@ export default {
       type: String,
       default: '',
     },
+    // 是否可播放
+    canPlay: {
+      type: Boolean,
+      default: true,
+    },
     color: {
       type: String,
       default: '#1878f3',
@@ -112,6 +117,9 @@ export default {
     },
     // 播放/暂停操作
     operation() {
+      if (!this.canPlay) {
+        return;
+      }
       if (!this.audio) this.initAudio();
       if (this.paused) {
         this.audio.play();
