@@ -59,6 +59,12 @@ const apploaded = () => {
   if (forums.set_site) {
     const isLogin = app.$store.getters['session/get']('isLogin');
     if (forums.set_site.site_mode === SITE_PAY) {
+      if (app._route.path === '/pages/user/pc-login' && !isLogin) {
+        uni.redirectTo({
+          url: app._route.fullPath,
+        });
+        return;
+      }
       if (payWhiteListPage.indexOf(app._route.path) === -1 && !isLogin) {
         uni.redirectTo({
           url: '/pages/site/info',

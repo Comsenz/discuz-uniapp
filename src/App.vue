@@ -76,6 +76,12 @@ export default {
         // #endif
         if (pages.length > 0) {
           currentPage = pages[pages.length - 1];
+          if (currentPage.route === 'pages/user/pc-login') {
+            uni.redirectTo({
+              url: currentPage.__page__.fullPath,
+            });
+            return;
+          }
           if (!user.paid && currentPage.route !== 'pages/site/info' && currentPage.route !== 'pages/site/partner-invite') {
             uni.redirectTo({
               url: '/pages/site/info',
