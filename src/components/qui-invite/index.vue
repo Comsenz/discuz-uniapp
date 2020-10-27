@@ -6,32 +6,23 @@
     </view>
     <!-- 邀请列表 -->
     <view class="invite-con-list">
-      <scroll-view
-        scroll-y="true"
-        scroll-with-animation="true"
-        @scrolltolower="pullDown"
-        show-scrollbar="false"
-        class="scroll-y"
+      <qui-cell-item
+        v-for="(item, index) in list"
+        :border="index < list.length - 1"
+        :key="item._jv.id"
+        :title="item.title"
+        :brief="item.time"
+        slot-right
       >
-        <qui-cell-item
-          v-for="(item, index) in list"
-          :border="index < list.length - 1"
-          :key="item._jv.id"
-          :title="item.title"
-          :brief="item.time"
-          slot-right
-        >
-          <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">
-            {{ i18n.t('manage.setInvalid') }}
-          </view>
-          <view class="invite-con-list-line"></view>
-          <view class="invite-con-list-share" @click="share(item.code)">
-            {{ i18n.t('manage.share') }}
-            <qui-icon name="icon-share1" class="share-icon"></qui-icon>
-          </view>
-        </qui-cell-item>
-        <qui-load-more :status="loadingType" :show-icon="false" v-if="loadingType"></qui-load-more>
-      </scroll-view>
+        <view class="invite-con-list-invalid" @click="invalid(item._jv.id)">
+          {{ i18n.t('manage.setInvalid') }}
+        </view>
+        <view class="invite-con-list-line"></view>
+        <view class="invite-con-list-share" @click="share(item.code)">
+          {{ i18n.t('manage.share') }}
+          <qui-icon name="icon-share1" class="share-icon"></qui-icon>
+        </view>
+      </qui-cell-item>
     </view>
   </view>
 </template>
@@ -49,10 +40,6 @@ export default {
         return [];
       },
     },
-    loadingType: {
-      type: String,
-      default: '',
-    },
   },
   methods: {
     invalid(id) {
@@ -61,9 +48,6 @@ export default {
     share(code) {
       this.$emit('share', code);
     },
-    pullDown() {
-      this.$emit('pullDown');
-    },
   },
 };
 </script>
@@ -71,13 +55,7 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-/* #ifdef H5 */
-$height: calc(100vh - 200rpx);
-/* #endif */
 
-/* #ifdef MP-WEIXIN */
-$height: calc(100vh - 110rpx);
-/* #endif */
 .invite-con {
   font-size: $fg-f4;
   background: --color(--qui-BG-1);
@@ -124,8 +102,5 @@ $height: calc(100vh - 110rpx);
       }
     }
   }
-}
-.scroll-y {
-  max-height: $height;
 }
 </style>

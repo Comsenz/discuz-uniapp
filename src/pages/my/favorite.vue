@@ -227,7 +227,7 @@ export default {
   }
   .icon-delete {
     position: absolute;
-    top: 15px;
+    top: 25px;
     right: 20px;
   }
 }
