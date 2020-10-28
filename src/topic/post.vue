@@ -599,7 +599,7 @@
           <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
         </view>
       </uni-popup>
-      <uni-popup ref="popup" type="center">
+      <uni-popup ref="popup" type="center" v-if="popupStatus">
         <view class="popup-dialog">
           <view class="popup-dialog__top">
             <text>
@@ -760,7 +760,7 @@ export default {
       askingPrice: true, // 显示提问价格
       payNum: [
         {
-          name: this.i18n.t('discuzq.post.free'),
+          name: this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree'),
           pay: 0,
         },
         {
@@ -872,6 +872,7 @@ export default {
       categoryid: 0,
       categoryindex: 0,
       postShow: false,
+      popupStatus: false, // 这是自定义金额或者自定义字数弹框显示状态
     };
   },
   computed: {
@@ -1236,6 +1237,7 @@ export default {
     },
     diaLogClose() {
       this.$refs.popup.close();
+      this.popupStatus = false;
       this.textShow = true;
     },
     diaLogOk() {
@@ -1269,6 +1271,7 @@ export default {
         // }
         this.priceAsk = this.inputPrice;
         this.$refs.popup.close();
+        this.popupStatus = false;
         this.textShow = true;
         this.postClick();
         return;
@@ -1280,6 +1283,7 @@ export default {
         this.word = this.inputWord;
       }
       this.$refs.popup.close();
+      this.popupStatus = false;
       this.textShow = true;
     },
     moneyClick(index) {
@@ -1321,6 +1325,7 @@ export default {
         this.$refs.popupBtm.close();
         this.$nextTick(() => {
           this.inputPrice = '';
+          this.popupStatus = true;
           this.$refs.popup.open();
           this.textShow = false;
         });
@@ -1364,6 +1369,7 @@ export default {
     cellClick(type) {
       this.setType = type;
       if (type === 'word') {
+        this.popupStatus = true;
         this.$refs.popup.open();
       } else {
         this.$refs.popupBtm.open();
@@ -2612,6 +2618,10 @@ export default {
   },
   onLoad(option) {
     console.log(option, 'optionopton');
+    if (option.type === '5' ) {
+      console.log('55555555555')
+      this.payNum[0].name = this.i18n.t('discuzq.post.noReward')
+    }
     this.categoryid = option.categoryId;
     this.categoryindex = option.categoryIndex;
     uni.$on('radioChange', item => {
