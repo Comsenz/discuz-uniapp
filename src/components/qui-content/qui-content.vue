@@ -833,7 +833,7 @@ export default {
   padding-top: 20rpx;
   .addFine {
     position: absolute;
-    top: 20rpx;
+    top: 16rpx;
     left: 679rpx;
     width: 36rpx;
     height: 42rpx;
