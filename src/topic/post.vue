@@ -760,7 +760,7 @@ export default {
       askingPrice: true, // 显示提问价格
       payNum: [
         {
-          name: this.i18n.t('discuzq.post.free'),
+          name: this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree'),
           pay: 0,
         },
         {
@@ -2612,6 +2612,10 @@ export default {
   },
   onLoad(option) {
     console.log(option, 'optionopton');
+    if (option.type === '5' ) {
+      console.log('55555555555')
+      this.payNum[0].name = this.i18n.t('discuzq.post.noReward')
+    }
     this.categoryid = option.categoryId;
     this.categoryindex = option.categoryIndex;
     uni.$on('radioChange', item => {

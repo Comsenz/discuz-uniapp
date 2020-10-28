@@ -31,6 +31,7 @@
               :user-info="thread.user"
               :avatar-url="thread.user.avatarUrl"
               :user-name="thread.user.username"
+              :be-ask-name="thread.question && thread.question.beUser.username"
               :is-real="thread.user.isReal"
               :user-role="thread.user.groups ? thread.user.groups : ''"
               :theme-type="thread.type"
@@ -65,6 +66,7 @@
               :attachment-pay-status="thread.attachmentPrice > 0 && !thread.isPaidAttachment"
               @attachmentPay="payClickShow"
               @personJump="personJump(thread.user._jv.id)"
+              @beAskClick="beAskClick(thread.question.beUser.id)"
               @selectChoice="selectChoice"
               @videocoverClick="payClickShow"
               @previewPicture="payClickShow"
@@ -2502,6 +2504,15 @@ export default {
         this.deletePostType = param.type;
         this.deleteTip = this.i18n.t('core.deleteContentSure');
       }
+    },
+    // 点击用户名跳转
+    beAskClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
     },
     // 跳转到用户主页
     personJump(id) {

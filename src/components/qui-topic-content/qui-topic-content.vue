@@ -16,7 +16,9 @@
             {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
-        <view class="themeItem__header__title__time">{{ localTime }}</view>
+        <view class="themeItem__header__title__time">
+          {{ localTime }}
+        </view>
       </view>
       <view class="themeItem__header__opera">
         <image
@@ -66,7 +68,16 @@
             {{ group.isDisplay ? `${group.name}` : '' }}
           </text>
         </view>
-        <view class="themeItem__header__title__time">{{ localTime }}</view>
+        <view class="themeItem__header__title__time">
+          {{ localTime }}
+          <view class="themeItem_put" v-if="themeType === 5">{{ i18n.t('home.to') }}</view>
+          <view class="themeItem_to" v-if="themeType === 5" @click.stop="" @click="beAskClick">
+            @{{ beAskName }}
+          </view>
+          <view class="themeItem_ask" v-if="themeType === 5">
+            {{ i18n.t('home.putQuestions') }} :
+          </view>
+        </view>
       </view>
       <slot name="follow"></slot>
       <view class="themeItem__header__opera">
@@ -91,21 +102,6 @@
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
           <qui-uparse :content="themeContent"></qui-uparse>
-          <!--提问部分-->
-
-          <!--作者向 某某某 发起了提问部分-->
-          <!-- <view class="theme__put">
-            <view class="theme__put__ask">
-              作者向
-              <view class="theme__put__ask__user">某某某</view>
-              发起了提问
-            </view>
-           <view class="theme__put__btn" @click="watchClick()">
-              <qui-button size="medium" type='answer' class="watch-btn">
-                {{ i18n.t('topic.questionsToBeAnswered' )}}
-              </qui-button>
-            </view>
-          </view> -->
         </view>
         <view
           class="theme__content__videocover"
@@ -522,6 +518,11 @@ export default {
         return [];
       },
     },
+    // 被提问用户名称
+    beAskName: {
+      type: String,
+      default: '',
+    },
     coverImage: {
       type: String,
       default: '',
@@ -651,6 +652,10 @@ export default {
     // 点击用户头像以及用户名事件
     personJump() {
       this.$emit('personJump', this.userId);
+    },
+    // 点击用户名
+    beAskClick(evt) {
+      this.$emit('beAskClick', evt);
     },
     // 点击视频封面图事件
     videocoverClick() {
@@ -880,10 +885,17 @@ export default {
       }
 
       &__time {
+        max-width: 600rpx;
+        padding-top: 10rpx;
+        overflow: hidden;
         font-size: $fg-f2;
         font-weight: 400;
         line-height: 31rpx;
         color: --color(--qui-FC-AAA);
+        text-overflow: ellipsis;
+        word-break: break-all;
+        white-space: nowrap;
+        transition: $switch-theme-time;
       }
     }
     &__opera {
@@ -1235,5 +1247,18 @@ export default {
       display: inline;
     }
   }
+}
+
+.themeItem_put,
+.themeItem_to,
+.themeItem_ask {
+  display: inline-block;
+}
+.themeItem_to {
+  color: --color(--qui-LINK);
+}
+.themeItem_put,
+.themeItem_ask {
+  margin: 0 8rpx;
 }
 </style>

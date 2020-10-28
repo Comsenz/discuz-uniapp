@@ -61,17 +61,29 @@
             <view v-if="themeType !== '1'" class="themeItem__header__title__jumpBtn"></view>
             <view class="themeItem__header__title__reward">{{ themeReward }}</view>
           </view>
+          <!-- 时间 -->
+          <!-- <view class="themeItem__header__title__time" v-if="addAsk !== 1">
+            {{ localTime }}
+          </view> -->
+          <!-- 提问 -->
           <view class="themeItem__header__title__time" v-if="addAsk !== 1">
             {{ localTime }}
-            <!-- <view class="themeItem__header__title__questions" v-if="themeType == 4">
-              {{ i18n.t('home.putQuestion') }}
+            <view class="themeItem_put" v-if="threadType === 5">{{ i18n.t('home.to') }}</view>
+            <view class="themeItem_to" v-if="threadType === 5" @click.stop="" @click="beAskClick">
+              @{{ beAskName }}
             </view>
-            <view class="themeItem__header__title__questions" v-if="themeType == 5">
-              {{ i18n.t('home.answer') }}
-            </view> -->
+            <view class="themeItem_ask" v-if="threadType === 5">
+              {{ i18n.t('home.putQuestions') }} :
+            </view>
           </view>
+          <!-- 回答 -->
           <view class="themeItem__header__title__time" v-if="addAsk === 1">
             {{ localTimeAnswer }}
+            <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
+            <view class="themeItem_to" @click.stop="" @click="answeClick">
+              @{{ questionsName }}
+            </view>
+            <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
           </view>
         </view>
       </view>
@@ -108,24 +120,16 @@
             <view class="themeItem_to">{{ beAskName }}</view>
             <view class="themeItem_ask">{{ i18n.t('home.problem') }} ,</view>
           </view>
-          <!-- 提问 -->
-          <view class="themeItem__QA" v-if="threadType === 5 && themeType !== '5' && addAsk === 0">
-            <view class="themeItem_questions">@{{ questionsName }}</view>
-            <view class="themeItem_put">{{ i18n.t('home.to') }}</view>
+          <!-- <view class="themeItem__QA" v-if="threadType === 5 && themeType !== '5' && addAsk === 0"> -->
+          <!-- <view class="themeItem_questions">@{{ questionsName }}</view> -->
+          <!-- <view class="themeItem_put">{{ i18n.t('home.to') }}</view>
             <view class="themeItem_to">@{{ beAskName }}</view>
-            <view class="themeItem_ask">{{ i18n.t('home.putQuestions') }} :</view>
-            <!-- <qui-uparse :content="questionContent"></qui-uparse> -->
-            <navigator class="navPost">
+            <view class="themeItem_ask">{{ i18n.t('home.putQuestions') }} :</view> -->
+          <!-- <qui-uparse :content="questionContent"></qui-uparse> -->
+          <!-- <navigator class="navPost">
               {{ questionContent }}
-            </navigator>
-          </view>
-          <!-- 回答 -->
-          <view class="themeItem__QA" v-if="addAsk === 1">
-            <view class="themeItem_questions">@{{ beAskName }}</view>
-            <view class="themeItem_put">{{ i18n.t('home.beAnswer') }}</view>
-            <view class="themeItem_to">@{{ questionsName }}</view>
-            <view class="themeItem_ask">{{ i18n.t('home.problem') }} :</view>
-          </view>
+            </navigator> -->
+          <!-- </view> -->
           <view :class="themPayBtn || threadType === 6 ? 'themeItem__content__uparse' : ''">
             <qui-icon
               name="icon-fufei"
@@ -748,6 +752,14 @@ export default {
     contentClick(evt) {
       this.$emit('contentClick', evt);
     },
+    // 点击用户名跳转个人主页
+    answeClick(evt) {
+      this.$emit('answeClick', evt);
+    },
+    // 点击
+    beAskClick(evt) {
+      this.$emit('beAskClick', evt);
+    },
     // 点击头像跳转到个人主页
     headClick(evt) {
       this.$emit('headClick', evt);
@@ -911,11 +923,16 @@ export default {
         box-sizing: border-box;
       }
       &__time {
+        max-width: 600rpx;
         padding-top: 10rpx;
+        overflow: hidden;
         font-size: $fg-f2;
         font-weight: 400;
         line-height: 31rpx;
         color: --color(--qui-FC-AAA);
+        text-overflow: ellipsis;
+        // word-break: break-all;
+        white-space: nowrap;
         transition: $switch-theme-time;
       }
       &__jumpBtn {
@@ -1168,6 +1185,13 @@ export default {
 .themeItem_to {
   color: --color(--qui-LINK);
 }
+// .themeItem_to {
+//   max-width: 250rpx;
+//   overflow: hidden;
+//   line-height: 31rpx;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+// }
 .themeItem_put,
 .themeItem_ask {
   margin: 0 8rpx;
