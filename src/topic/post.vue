@@ -599,7 +599,7 @@
           <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
         </view>
       </uni-popup>
-      <uni-popup ref="popup" type="center">
+      <uni-popup ref="popup" type="center" v-if="popupStatus">
         <view class="popup-dialog">
           <view class="popup-dialog__top">
             <text>
