@@ -112,6 +112,7 @@ export default {
       post: '发布',
       lookPay: '查看付费',
       TheContentAndTheAccessoriesIsFree: '免费',
+      noReward: '不打赏',
       TheContentIsFreeAndTheAccessoriesArePaid: '文章免费，附件付费',
       TheContentAndTheAccessoriesIsPaid: '付费',
       paymentAmount: '付费金额',

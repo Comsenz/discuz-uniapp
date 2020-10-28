@@ -143,6 +143,8 @@
         "
         @commentClick="commentClick(item._jv.id)"
         @contentClick="contentClick(item)"
+        @answeClick="answeClick(item.user._jv.id)"
+        @beAskClick="beAskClick(item.question.beUser.id)"
         @backgroundClick="contentClick(item)"
         @headClick="headClick(item.user._jv.id)"
         @headAnswerClick="headAnswerClick(item.question.be_user_id)"
@@ -736,6 +738,24 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
+    // 点击用户名跳转个人主页
+    answeClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
+    // 点击被提问者用户名
+    beAskClick(id) {
       if (id <= 0) {
         return;
       }

@@ -61,6 +61,8 @@
         )
       "
       @commentClick="commentClick(thread._jv.id)"
+      @answeClick="answeClick(thread.user._jv.id)"
+      @beAskClick="beAskClick(thread.question.beUser.id)"
       @contentClick="contentClick(thread._jv.id)"
       @backgroundClick="contentClick(thread._jv.id)"
       @headClick="headClick(thread.user._jv.id)"
@@ -125,6 +127,25 @@ export default {
     },
     // 点击头像调转到个人主页
     headClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
+    // 点击用户名跳转提问者个人主页
+    answeClick(id) {
+      if (id <= 0) {
+        return;
+      }
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${id}`,
+      });
+    },
+    // 点击用户名跳转回答者个人主页
+    beAskClick(id) {
+      console.log('ididdidiidid');
       if (id <= 0) {
         return;
       }
