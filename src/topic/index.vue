@@ -765,8 +765,8 @@ export default {
 
       limitShowNum: 12,
       paidStatus: false, // 是否有已支付数据
-      paidBtnStatus: true, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
-      rewardBtnStatus: true, // 打赏按钮是否显示（在ios里不显示，付费主题不显示）
+      paidBtnStatus: false, // 支付按钮是否显示（在ios里不显示，已支付主题后不显示）
+      rewardBtnStatus: false, // 打赏按钮是否显示（在ios里不显示，付费主题不显示）
       rewardStatus: false, // 是否已有打赏数据
       likedStatus: false, // 是否已有点赞数据
       commentStatus: {}, // 回复状态
@@ -1070,7 +1070,14 @@ export default {
       this.system = res.platform;
       this.detectionmodel = this.forums.set_site.site_mode;
       this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      
       // #ifndef H5
+      if (this.detectionmodel === 'public' && this.system === 'ios') {
+        this.paidStatus = false;
+        this.paidBtnStatus = false;
+        this.rewardBtnStatus = false;
+        this.rewardStatus = false;
+      }
       if (this.detectionmodel === 'pay' && this.system === 'ios') {
         this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
         return;
@@ -1202,6 +1209,12 @@ export default {
       this.detectionmodel = this.forums.set_site.site_mode;
       this.paymentmodel = this.forums.paycenter.wxpay_ios;
       // #ifndef H5
+      if (this.detectionmodel === 'public' && this.system === 'ios') {
+        this.paidStatus = false;
+        this.paidBtnStatus = false;
+        this.rewardBtnStatus = false;
+        this.rewardStatus = false;
+      }
       if (this.detectionmodel === 'pay' && this.system === 'ios') {
         this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
         return;
@@ -1626,8 +1639,10 @@ export default {
             } else {
               if (data.canBeReward) {
                 this.rewardStatus = true;
+                this.rewardBtnStatus = true;
               } else {
                 this.rewardStatus = false;
+                this.rewardBtnStatus = false;
               }
               this.paidStatus = false;
             }
@@ -1678,8 +1693,10 @@ export default {
                     if (data.canBeReward) {
                       this.paidStatus = false;
                       this.rewardStatus = true;
+                      this.rewardBtnStatus = true;
                     } else {
                       this.rewardStatus = false;
+                      this.rewardBtnStatus = false;
                     }
                   }
                 }
@@ -1688,17 +1705,21 @@ export default {
                   this.paidStatus = true;
                   this.paidBtnStatus = true;
                   this.rewardStatus = false;
+                  this.rewardBtnStatus = false;
                 } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
                   this.paidStatus = true;
                   this.paidBtnStatus = false;
                   this.rewardStatus = false;
+                  this.rewardBtnStatus = false;
                 } else {
                   if (data.canBeReward) {
                     this.paidStatus = false;
                     this.rewardStatus = true;
+                    this.rewardBtnStatus = true;
                   } else {
                     this.paidStatus = false;
                     this.rewardStatus = false;
+                    this.rewardBtnStatus = false;
                   }
                 }
               }
@@ -1708,17 +1729,21 @@ export default {
                 this.paidStatus = true;
                 this.paidBtnStatus = true;
                 this.rewardStatus = false;
+                this.rewardBtnStatus = false;
               } else if (data.attachmentPrice > 0 && data.isPaidAttachment === true) {
                 this.paidStatus = true;
                 this.paidBtnStatus = false;
                 this.rewardStatus = false;
+                this.rewardBtnStatus = false;
               } else {
                 if (data.canBeReward) {
                   this.paidStatus = false;
                   this.rewardStatus = true;
+                  this.rewardBtnStatus = true;
                 } else {
                   this.paidStatus = false;
                   this.rewardStatus = false;
+                  this.rewardBtnStatus = false;
                 }
               }
               // #endif
@@ -1741,6 +1766,7 @@ export default {
               }
               // #endif
               this.rewardStatus = false;
+              this.rewardBtnStatus = false;
               // #ifdef H5
               if (data.paid === true) {
                 this.paidBtnStatus = false;
@@ -3194,6 +3220,7 @@ export default {
         this.thread.rewardedCount++;
         if (!this.rewardStatus) {
           this.rewardStatus = true;
+          this.rewardBtnStatus = true;
         }
       }
 
