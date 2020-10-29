@@ -299,27 +299,32 @@ module.exports = {
             this.refreshmpParams();
             // #endif
             this.logind();
-            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-              uni.getStorage({
-                key: 'page',
-                success(resData) {
-                  uni.redirectTo({
-                    url: resData.data,
+            this.$store
+              .dispatch('jv/get', ['forum', { params: { include: 'users' } }])
+              .then(forumRes => {
+                if (forumRes && forumRes.set_site && forumRes.set_site.site_mode !== SITE_PAY) {
+                  uni.getStorage({
+                    key: 'page',
+                    success(resData) {
+                      console.log('resData', resData);
+                      uni.redirectTo({
+                        url: resData.data,
+                      });
+                    },
                   });
-                },
+                }
+                if (
+                  forumRes &&
+                  forumRes.set_site &&
+                  forumRes.set_site.site_mode === SITE_PAY &&
+                  this.user &&
+                  !this.user.paid
+                ) {
+                  uni.redirectTo({
+                    url: '/pages/site/info',
+                  });
+                }
               });
-            }
-            if (
-              this.forum &&
-              this.forum.set_site &&
-              this.forum.set_site.site_mode === SITE_PAY &&
-              this.user &&
-              !this.user.paid
-            ) {
-              uni.redirectTo({
-                url: '/pages/site/info',
-              });
-            }
             uni.showToast({
               title: resultDialog,
               duration: 2000,
