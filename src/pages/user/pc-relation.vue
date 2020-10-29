@@ -11,15 +11,15 @@
         <view class="pc-relation__text">李李李</view>
       </view>
       <view class="pc-relation__title">
-        确认关联PC账号
+        {{ i18n.t('user.pcrelation') }}
       </view>
     </view>
     <view class="pc-relation-bt">
-      <view class="pc-relation__btn" @click="pcrelation">
-        确认关联PC账号
+      <view class="pc-relation__btn" @click="authorization">
+        {{ i18n.t('user.pcrelation') }}
       </view>
       <view class="pc-relation__cancel" @click="cancelPcrelation">
-        取消
+        {{ i18n.t('user.cancelpcrelation') }}
       </view>
     </view>
   </view>
@@ -47,40 +47,37 @@ export default {
         data: content.session_token,
         success: () => {
           this.token = content.session_token;
-          this.$store.dispatch('session/wxPcRelation');
         },
       });
+    } else {
+      this.pcrelation();
     }
   },
   methods: {
+    authorization() {
+      this.$store.dispatch('session/wxPcRelation');
+    },
     pcrelation() {
       uni.getStorage({
         key: 'session_token_data',
         success: (e) => {
           if (e.data != '') {
+            console.log(e.data);
             const sessionToken = e.data;
             const code = this.content.code;
+            const state = this.content.state;
             const sessionId = this.content.sessionId;
             this.$store.dispatch('session/pcrelation', {
               code,
               sessionId,
+              state,
               sessionToken
             }).then((res) => {
-              if (res && res.data && res.data.errors) {
-                if (res.data.errors[0].code === 'no_bind_user') {
-                  uni.showToast({
-                    icon: 'none',
-                    title: this.i18n.t('user.loginSuccess'),
-                    success: () => {
-                      this.cancelPclogin();
-                    }
-                  });
-                }
-              }
+              console.log(res);
               if (res && res.data && res.data.data) {
                 uni.showToast({
                   icon: 'none',
-                  title: this.i18n.t('user.loginSuccess'),
+                  title: this.i18n.t('user.pcrelationsuccess'),
                   success: () => {
                     this.cancelPclogin();
                   }

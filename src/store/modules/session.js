@@ -152,7 +152,7 @@ const actions = {
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/pc/bind?code=${payload.code}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
+          `oauth/wechat/pc/bind?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
         )
         .then(results => {
           resolve(results);
