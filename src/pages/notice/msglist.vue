@@ -294,6 +294,8 @@ export default {
           duration: 2000,
         });
       } else {
+        console.log('---------this.dialogId', this.dialogId);
+        console.log('---------type', typeof this.dialogId);
         if (this.dialogId === '0') {
           const params = {
             _jv: {
@@ -312,12 +314,22 @@ export default {
               }
             })
             .catch(err => {
-              console.log(err);
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.permission_denied'),
-                duration: 2000,
-              });
+              if (err && err.data && err.data.errors) {
+                if (err.data.errors[0].code === 'content_banned') {
+                  uni.showToast({
+                    icon: 'none',
+                    title: this.i18n.t('core.content_banned'),
+                    duration: 2000,
+                  });
+                }
+                if (err.data.errors[0].code === 'permission_denied') {
+                  uni.showToast({
+                    icon: 'none',
+                    title: this.i18n.t('core.permission_denied'),
+                    duration: 2000,
+                  });
+                }
+              }
             });
         } else {
           const params = {
@@ -336,12 +348,22 @@ export default {
               }
             })
             .catch(err => {
-              console.log(err);
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.permission_denied'),
-                duration: 2000,
-              });
+              if (err && err.data && err.data.errors) {
+                if (err.data.errors[0].code === 'content_banned') {
+                  uni.showToast({
+                    icon: 'none',
+                    title: this.i18n.t('core.content_banned'),
+                    duration: 2000,
+                  });
+                }
+                if (err.data.errors[0].code === 'permission_denied') {
+                  uni.showToast({
+                    icon: 'none',
+                    title: this.i18n.t('core.permission_denied'),
+                    duration: 2000,
+                  });
+                }
+              }
             });
         }
         this.msg = '';
