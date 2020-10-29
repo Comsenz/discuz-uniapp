@@ -1321,7 +1321,8 @@ export default {
       this.payNumCheck.push(this.payNum[index]);
       // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
-        this.textShow = false;
+        console.log('自定义金额')
+        // this.textShow = false;
         this.$refs.popupBtm.close();
         this.$nextTick(() => {
           this.inputPrice = '';
