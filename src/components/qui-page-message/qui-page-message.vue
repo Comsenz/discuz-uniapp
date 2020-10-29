@@ -191,8 +191,12 @@ export default {
     },
     handleLoginClick() {
       // #ifdef H5
+      uni.setStorage({
+        key: 'page',
+        data: '/pages/home/index',
+      });
       uni.navigateTo({
-        url: `/pages/user/login?url=/pages/home/index`,
+        url: '/pages/user/login',
       });
       // #endif
     },

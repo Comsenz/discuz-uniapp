@@ -17,6 +17,7 @@ const publicWhitelistPage = [
   '/pages/topic/comment',
   '/pages/profile/index',
   '/pages/user/pc-login',
+  '/pages/user/pc-relation',
   '/pages/user/login',
   '/pages/user/uc-login',
   '/pages/user/weichat',
@@ -40,6 +41,7 @@ const publicWhitelistPage = [
 const payWhiteListPage = [
   '/pages/site/info',
   '/pages/user/pc-login',
+  '/pages/user/pc-relation',
   '/pages/user/login',
   '/pages/user/uc-login',
   '/pages/user/weichat',

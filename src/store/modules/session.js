@@ -110,6 +110,11 @@ const actions = {
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/pc-login`);
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
+  wxPcRelation: (context, payload = {}) => {
+    console.log(payload);
+    const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/pc-relation`);
+    window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
+  },
   // #endif
   // #ifdef H5
   noSenseh5Login: (context, payload = {}) => {
@@ -135,6 +140,19 @@ const actions = {
       return http
         .get(
           `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
+        )
+        .then(results => {
+          resolve(results);
+          setUserInfoStore(context, results, resolve);
+        })
+        .catch(err => resolve(err));
+    });
+  },
+  pcrelation: (context, payload = {}) => {
+    return new Promise(resolve => {
+      return http
+        .get(
+          `oauth/wechat/pc/bind?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
         )
         .then(results => {
           resolve(results);

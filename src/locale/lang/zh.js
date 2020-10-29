@@ -200,6 +200,7 @@ export default {
     scale_sum_not_10: '分成比例相加必须为 10',
     cannot_delete_category_with_threads: '无法删除存在主题的分类',
     permission_denied: '没有权限，请联系站点管理员',
+    content_banned: '当前内容包含禁止发布的词语',
     validation_error: '验证错误',
     user_update_error: '修改信息失败',
     upload_time_not_up: '上传头像频繁，一天仅允许上传一次头像',
@@ -924,6 +925,9 @@ export default {
     phoneRegisterBindText: '你的手机号未绑定帐号，注册即可完成绑定',
     phoneLoginBindText: '请您登录，即可完成手机号和帐号的绑定',
     unLogin: '由于手机浏览器的限制，请在微信内使用此功能',
+    pcrelation: '确认关联PC账号',
+    cancelpcrelation: '取消',
+    pcrelationsuccess: '关联成功',
   },
   // 举报
   report: {

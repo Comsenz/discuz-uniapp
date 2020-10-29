@@ -599,72 +599,74 @@
           <text class="popup-share-btn" @click="cancel()">{{ i18n.t('discuzq.post.cancel') }}</text>
         </view>
       </uni-popup>
-      <uni-popup ref="popup" type="center" v-if="popupStatus">
-        <view class="popup-dialog">
-          <view class="popup-dialog__top">
-            <text>
-              {{
-                setType === 'pay'
-                  ? i18n.t('discuzq.post.enterToViewPaymentAmount')
-                  : i18n.t('discuzq.post.enterTheWordCount')
-              }}
-            </text>
+      <view v-if="popupStatus">
+        <uni-popup ref="popup" type="center">
+          <view class="popup-dialog">
+            <view class="popup-dialog__top">
+              <text>
+                {{
+                  setType === 'pay'
+                    ? i18n.t('discuzq.post.enterToViewPaymentAmount')
+                    : i18n.t('discuzq.post.enterTheWordCount')
+                }}
+              </text>
+            </view>
+            <view class="popup-dialog__cont">
+              <qui-icon
+                class="popup-dialog__cont-rmb"
+                name="icon-rmb"
+                size="40"
+                v-if="setType === 'pay'"
+              ></qui-icon>
+              <text class="popup-dialog__cont-rmb" v-else>
+                {{ i18n.t('discuzq.post.word', { num: '' }) }}
+              </text>
+              <input
+                class="popup-dialog__cont-input"
+                v-if="setType === 'pay'"
+                v-model="inputPrice"
+                type="digit"
+                placeholder="0.0"
+                :maxlength="maxLength"
+                :focus="setType === 'pay'"
+                @input="checkNum"
+              />
+              <input
+                class="popup-dialog__cont-input"
+                v-else
+                v-model="inputWord"
+                type="digit"
+                placeholder="0"
+                :maxlength="5"
+                :focus="setType === 'word'"
+              />
+            </view>
+            <view class="popup-dialog__ft">
+              <button class="popup-btn--close" @click="diaLogClose">
+                {{ i18n.t('discuzq.close') }}
+              </button>
+              <button
+                class="popup-btn--ok"
+                v-if="setType === 'pay'"
+                :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
+                :disabled="inputPrice === ''"
+                @click="diaLogOk"
+              >
+                {{ i18n.t('discuzq.ok') }}
+              </button>
+              <button
+                class="popup-btn--ok"
+                v-else
+                :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
+                :disabled="inputWord === ''"
+                @click="diaLogOk"
+              >
+                {{ i18n.t('discuzq.ok') }}
+              </button>
+            </view>
           </view>
-          <view class="popup-dialog__cont">
-            <qui-icon
-              class="popup-dialog__cont-rmb"
-              name="icon-rmb"
-              size="40"
-              v-if="setType === 'pay'"
-            ></qui-icon>
-            <text class="popup-dialog__cont-rmb" v-else>
-              {{ i18n.t('discuzq.post.word', { num: '' }) }}
-            </text>
-            <input
-              class="popup-dialog__cont-input"
-              v-if="setType === 'pay'"
-              v-model="inputPrice"
-              type="digit"
-              placeholder="0.0"
-              :maxlength="maxLength"
-              :focus="setType === 'pay'"
-              @input="checkNum"
-            />
-            <input
-              class="popup-dialog__cont-input"
-              v-else
-              v-model="inputWord"
-              type="digit"
-              placeholder="0"
-              :maxlength="5"
-              :focus="setType === 'word'"
-            />
-          </view>
-          <view class="popup-dialog__ft">
-            <button class="popup-btn--close" @click="diaLogClose">
-              {{ i18n.t('discuzq.close') }}
-            </button>
-            <button
-              class="popup-btn--ok"
-              v-if="setType === 'pay'"
-              :class="inputPrice > 0 ? 'popup-btn--ok--blue' : ''"
-              :disabled="inputPrice === ''"
-              @click="diaLogOk"
-            >
-              {{ i18n.t('discuzq.ok') }}
-            </button>
-            <button
-              class="popup-btn--ok"
-              v-else
-              :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
-              :disabled="inputWord === ''"
-              @click="diaLogOk"
-            >
-              {{ i18n.t('discuzq.ok') }}
-            </button>
-          </view>
-        </view>
-      </uni-popup>
+        </uni-popup>
+      </view>
       <uni-popup ref="deletePopup" type="center">
         <uni-popup-dialog
           type="warn"
@@ -1321,11 +1323,12 @@ export default {
       this.payNumCheck.push(this.payNum[index]);
       // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
+        console.log('自定义金额')
         this.textShow = false;
         this.$refs.popupBtm.close();
+        this.popupStatus = true;
         this.$nextTick(() => {
           this.inputPrice = '';
-          this.popupStatus = true;
           this.$refs.popup.open();
           this.textShow = false;
         });
@@ -2618,9 +2621,9 @@ export default {
   },
   onLoad(option) {
     console.log(option, 'optionopton');
-    if (option.type === '5' ) {
-      console.log('55555555555')
-      this.payNum[0].name = this.i18n.t('discuzq.post.noReward')
+    if (option.type === '5') {
+      console.log('55555555555');
+      this.payNum[0].name = this.i18n.t('discuzq.post.noReward');
     }
     this.categoryid = option.categoryId;
     this.categoryindex = option.categoryIndex;

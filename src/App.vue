@@ -82,6 +82,12 @@ export default {
             });
             return;
           }
+          if (currentPage.route === 'pages/user/pc-relation') {
+            uni.redirectTo({
+              url: currentPage.__page__.fullPath,
+            });
+            return;
+          }
           if (!user.paid && currentPage.route !== 'pages/site/info' && currentPage.route !== 'pages/site/partner-invite') {
             uni.redirectTo({
               url: '/pages/site/info',
