@@ -685,7 +685,7 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        window.location.href = item.url;
+        window.location.href = `${item.url}&isAttachment=1`;
       }
       // #endif
       // #ifdef MP-WEIXIN
