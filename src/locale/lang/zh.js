@@ -924,6 +924,9 @@ export default {
     phoneRegisterBindText: '你的手机号未绑定帐号，注册即可完成绑定',
     phoneLoginBindText: '请您登录，即可完成手机号和帐号的绑定',
     unLogin: '由于手机浏览器的限制，请在微信内使用此功能',
+    pcrelation: '确认关联PC账号',
+    cancelpcrelation: '取消',
+    pcrelationsuccess: '关联成功',
   },
   // 举报
   report: {

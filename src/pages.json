@@ -99,6 +99,12 @@
       }
     },
     {
+      "path": "pages/user/pc-relation",
+      "style": {
+        "navigationBarTitleText": "关联PC账号"
+      }
+    },
+    {
       "path": "pages/user/login-bind",
       "style": {
         "navigationBarTitleText": "登录并绑定微信号"
