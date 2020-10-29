@@ -151,9 +151,7 @@ const actions = {
   pcrelation: (context, payload = {}) => {
     return new Promise(resolve => {
       return http
-        .get(
-          `oauth/wechat/pc/bind?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
-        )
+        .get(`oauth/wechat/pc/bind?session_token=${payload.sessionToken}&token=${payload.token}`)
         .then(results => {
           resolve(results);
           setUserInfoStore(context, results, resolve);

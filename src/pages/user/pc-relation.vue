@@ -6,9 +6,9 @@
       </view>
       <view class="pc-relation__imgbox">
         <view class="pc-relation__image">
-          <image class="pc-relation__image-img" src="@/static/noavatar.gif"></image>
+          <image class="pc-relation__image-img" :src="imageurl"></image>
         </view>
-        <view class="pc-relation__text">李李李</view>
+        <view class="pc-relation__text">{{ name }}</view>
       </view>
       <view class="pc-relation__title">
         {{ i18n.t('user.pcrelation') }}
@@ -35,7 +35,10 @@ export default {
       code: '',
       sessionId: '',
       token: '',
+      tokens: '',
       content: {},
+      imageurl:'',
+      name: '',
     };
   },
   onLoad(content) {
@@ -46,34 +49,64 @@ export default {
         key: 'session_token_data',
         data: content.session_token,
         success: () => {
-          this.token = content.session_token;
+          this.$store.dispatch('session/wxPcRelation');
         },
       });
     } else {
-      this.pcrelation();
+      this.username();
     }
   },
   methods: {
-    authorization() {
-      this.$store.dispatch('session/wxPcRelation');
+    username() {
+      uni.getStorage({
+        key: 'session_token_data',
+        success: (e) => {
+          if (e.data != '') {
+            const code = this.content.code;
+            const state = this.content.state;
+            const sessionId = this.content.sessionId;
+            const sessionToken = '';
+            this.$store.dispatch('session/scancodeverification', {
+              code,
+              state,
+              sessionId,
+              sessionToken
+            }).then((res) => {
+              console.log(res);
+              if (res && res.data && res.data.errors) {
+                if (res.data.errors[0].code === 'no_bind_user') {
+                  this.tokens = res.data.errors[0].token;
+                  this.imageurl = res.data.errors[0].user.headimgurl;
+                  this.name = res.data.errors[0].user.nickname;
+                }
+              }
+            });
+          }
+        },
+      });
     },
-    pcrelation() {
+    authorization() {
       uni.getStorage({
         key: 'session_token_data',
         success: (e) => {
           if (e.data != '') {
             console.log(e.data);
             const sessionToken = e.data;
-            const code = this.content.code;
-            const state = this.content.state;
-            const sessionId = this.content.sessionId;
+            const token = this.tokens;
             this.$store.dispatch('session/pcrelation', {
-              code,
-              sessionId,
-              state,
-              sessionToken
+              sessionToken,
+              token,
             }).then((res) => {
               console.log(res);
+              if (res.data.errors[0].code === 'not_found_user') {
+                uni.showToast({
+                  icon: 'none',
+                  title: this.i18n.t('user.nofounduser'),
+                  success: () => {
+                    this.cancelPclogin();
+                  }
+                });
+              }
               if (res && res.data && res.data.data) {
                 uni.showToast({
                   icon: 'none',

@@ -266,6 +266,7 @@ export default {
     uc_connect_error: 'Ucenter配置错误',
     uc_user_username_exists: '配置错误',
     uninitialized_pay_password: '未设置支付密码',
+    not_found_user: '未找到用户',
   },
   topic: {
     permissionPurchase: '权限购买',
@@ -927,6 +928,7 @@ export default {
     pcrelation: '确认关联PC账号',
     cancelpcrelation: '取消',
     pcrelationsuccess: '关联成功',
+    nofounduser: '未找到用户',
   },
   // 举报
   report: {
