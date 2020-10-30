@@ -92,22 +92,12 @@ export default {
           if (e.data != '') {
             console.log(e.data);
             const sessionToken = e.data;
-            const token = this.tokens;
+            const wechatToken = this.tokens;
             this.$store.dispatch('session/pcrelation', {
               sessionToken,
-              token,
+              wechatToken,
             }).then((res) => {
-              console.log(res);
-              if (res.data.errors[0].code === 'not_found_user') {
-                uni.showToast({
-                  icon: 'none',
-                  title: this.i18n.t('user.nofounduser'),
-                  success: () => {
-                    this.cancelPclogin();
-                  }
-                });
-              }
-              if (res && res.data && res.data.data) {
+              if (res && res.data && res.data.bind) {
                 uni.showToast({
                   icon: 'none',
                   title: this.i18n.t('user.pcrelationsuccess'),
