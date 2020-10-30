@@ -290,7 +290,7 @@
               {{ i18n.t('profile.play') }}
             </text>
             <qui-video
-              :src="item.url"
+              :src="`${item.url}&isAttachment=1`"
               :ref="'video' + item._jv.id"
               :video-id="item._jv.id"
             ></qui-video>
@@ -685,7 +685,7 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        window.location.href = item.url;
+        window.location.href = `${item.url}&isAttachment=1`;
       }
       // #endif
       // #ifdef MP-WEIXIN
