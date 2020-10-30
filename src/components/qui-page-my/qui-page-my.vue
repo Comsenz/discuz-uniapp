@@ -237,6 +237,7 @@ export default {
       // #endif
       // #ifdef H5
       this.$store.dispatch('session/logout').then(() => {
+        this.handleClickCancel();
         window.location.reload();
       });
       // #endif
