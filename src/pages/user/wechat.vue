@@ -111,6 +111,13 @@ export default {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'ban_user') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.ban_user'),
+                duration: 2000,
+              });
+            }
             if (res.data.errors[0].code === 'account_has_been_bound') {
               uni.getStorage({
                 key: 'page',
