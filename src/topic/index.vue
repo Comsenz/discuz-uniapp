@@ -1397,6 +1397,7 @@ export default {
                   this.payment = false;
                   this.answerPay = true;
                   console.log('免费不设置围观');
+                  console.log(data, '数据')
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
