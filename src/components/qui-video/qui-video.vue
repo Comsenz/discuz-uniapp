@@ -57,7 +57,6 @@ export default {
   methods: {
     // 点击直接全屏播放
     fullscreenPlay() {
-      console.log(this);
       this.videoContext.play();
       this.videoContext.requestFullScreen();
     },
@@ -70,7 +69,6 @@ export default {
       }
     },
     loadedmetadata(e) {
-      console.log(e);
       if (!this.duration) {
         this.duration = e.detail.duration;
       }
