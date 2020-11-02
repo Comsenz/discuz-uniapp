@@ -2093,17 +2093,17 @@ export default {
     addFile() {
       const attachments = {};
       attachments.data = [];
-      // if (this.type === 1 && this.$refs.uploadFiles) {
-      const newAttachmentList = this.$refs.uploadFiles.getValue();
-      newAttachmentList.forEach(item => {
-        if (item.id) {
-          attachments.data.push({
-            type: 'attachments',
-            id: item.id,
-          });
-        }
-      });
-      // }
+      if (this.$refs.uploadFiles) {
+        const newAttachmentList = this.$refs.uploadFiles.getValue();
+        newAttachmentList.forEach(item => {
+          if (item.id) {
+            attachments.data.push({
+              type: 'attachments',
+              id: item.id,
+            });
+          }
+        });
+      }
       return attachments;
     },
     // 发布问题
