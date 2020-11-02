@@ -290,7 +290,7 @@
               {{ i18n.t('profile.play') }}
             </text>
             <qui-video
-              :src="`${item.url}&isAttachment=1`"
+              :src="attachmentPayStatus ? '' : `${item.url}&isAttachment=1`"
               :ref="'video' + item._jv.id"
               :video-id="item._jv.id"
             ></qui-video>
