@@ -38,6 +38,16 @@ export default {
       duration: '',
     };
   },
+  watch: {
+    // 监听得到的数据
+    src: {
+      handler(newVal) {
+        this.rsc = newVal;
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   created() {
     this.videoContext = uni.createVideoContext(`myVideo${this.$props.videoId}`, this);
   },
@@ -47,6 +57,7 @@ export default {
   methods: {
     // 点击直接全屏播放
     fullscreenPlay() {
+      console.log(this);
       this.videoContext.play();
       this.videoContext.requestFullScreen();
     },
@@ -59,6 +70,7 @@ export default {
       }
     },
     loadedmetadata(e) {
+      console.log(e);
       if (!this.duration) {
         this.duration = e.detail.duration;
       }
