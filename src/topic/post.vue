@@ -1323,7 +1323,7 @@ export default {
       this.payNumCheck.push(this.payNum[index]);
       // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
-        console.log('自定义金额')
+        console.log('自定义金额');
         this.textShow = false;
         this.$refs.popupBtm.close();
         this.popupStatus = true;
@@ -2075,36 +2075,24 @@ export default {
           });
         }
       });
-      // 附件
-      // if (this.type === 1 && this.$refs.uploadFiles) {
-      //   const newAttachmentList = this.$refs.uploadFiles.getValue();
-      //   newAttachmentList.forEach(item => {
-      //     if (item.id) {
-      //       attachments.data.push({
-      //         type: 'attachments',
-      //         id: item.id,
-      //       });
-      //     }
-      //   });
-      // }
       return attachments;
     },
     // 发布主题，处理附件
     addFile() {
-      const attachments = {};
-      attachments.data = [];
-      if (this.$refs.uploadFiles) {
-        const newAttachmentList = this.$refs.uploadFiles.getValue();
-        newAttachmentList.forEach(item => {
-          if (item.id) {
-            attachments.data.push({
-              type: 'attachments',
-              id: item.id,
-            });
-          }
-        });
-      }
-      return attachments;
+      const attachmentFiles = {};
+      attachmentFiles.data = [];
+      // if (this.type === 1 && this.$refs.uploadFiles) {
+      const newAttachmentList = this.$refs.uploadFiles.getValue();
+      newAttachmentList.forEach(item => {
+        if (item.id) {
+          attachmentFiles.data.push({
+            type: 'attachments',
+            id: item.id,
+          });
+        }
+      });
+      // }
+      return attachmentFiles;
     },
     // 发布问题
     addQuestion() {
@@ -2187,7 +2175,7 @@ export default {
         params.attachment_price = '';
         params.price = this.price;
       }
-      console.log(params, '这是参数');
+
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
@@ -2200,7 +2188,9 @@ export default {
             break;
           case 1:
             params.title = this.postTitle;
-            params._jv.relationships.attachments = this.addFile();
+            params._jv.relationships.attachments = {
+              data: this.addImg().data.concat(this.addFile().data),
+            };
             resolve();
             break;
           case 2:
@@ -2235,7 +2225,7 @@ export default {
         return this.$store
           .dispatch('jv/post', params)
           .then(res => {
-            console.log(res, '这是发布时接口返回的');
+            // console.log(res, '这是发布时接口返回的');
             return res;
           })
           .catch(err => {
@@ -2519,7 +2509,9 @@ export default {
             threads.price = '';
           }
           threads.free_words = this.word;
-          posts._jv.relationships.attachments = this.addFile();
+          posts._jv.relationships.attachments = {
+            data: this.addImg().data.concat(this.addFile().data),
+          };
           break;
         case 2:
           threads.file_id = this.fileId;
@@ -2567,7 +2559,7 @@ export default {
         this.$u.event.$emit('refreshFiles');
         return res;
       });
-      console.log(threads, '这是编辑时传的参数');
+      // console.log(threads, '这是编辑时传的参数');
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
       });
