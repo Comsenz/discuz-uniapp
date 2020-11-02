@@ -106,7 +106,7 @@ export default {
       note: '还能输入{num}个字',
       exceed: '已超出{num}个字',
       noteAnswer: '10000',
-      word: '{num}字',
+      word: '{num}',
       placeholder: '您想说的..',
       placeholderQuestion: '您想发布的问题内容..',
       post: '发布',
