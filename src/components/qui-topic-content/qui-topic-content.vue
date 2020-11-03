@@ -236,6 +236,7 @@
             <text
               v-if="
                 attachmentIsPreview &&
+                  item.isRemote &&
                   [
                     'PPTX',
                     'PPT',
