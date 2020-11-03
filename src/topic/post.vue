@@ -440,7 +440,7 @@
 
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
-        :addon="i18n.t('discuzq.post.word', { num: word })"
+        :addon="i18n.t('discuzq.post.word', { num: percentagedisplay })"
         v-if="
           price > 0 &&
             type !== 3 &&
@@ -590,6 +590,20 @@
                 plain
                 size="post"
                 @click="moneyClick(index)"
+              >
+                {{ item.name }}
+              </qui-button>
+            </view>
+            <!-- 设置免费的字数百分比 -->
+            <view class="popup-content-btn" v-if="setType === 'word'">
+              <qui-button
+                class="popup-btn"
+                v-for="(item, index) in freepercentage"
+                :key="index"
+                :type="freewords.length > 0 && freewords[0].name === item.name ? 'primary' : 'post'"
+                plain
+                size="post"
+                @click="percentageClick(index)"
               >
                 {{ item.name }}
               </qui-button>
@@ -804,6 +818,39 @@ export default {
           pay: 0,
         },
       ], // 付费金额选中
+      freepercentage: [
+        {
+          name: '0%',
+          pay: 0,
+        },
+        {
+          name: '10%',
+          pay: 0.1,
+        },
+        {
+          name: '30%',
+          pay: 0.3,
+        },
+        {
+          name: '50%',
+          pay: 0.5,
+        },
+        {
+          name: '70%',
+          pay: 0.7,
+        },
+        {
+          name: '100%',
+          pay: 1,
+        },
+      ],
+      freewords: [
+        {
+          name: '0%',
+          pay: 0,
+        },
+      ], // 免费字数选中
+      percentagedisplay: '0%',
       uploadFile: [], // 图片上传列表
       cursor: 0, // 内容输入框光标未知
       wordCountCheck: [
@@ -1288,6 +1335,14 @@ export default {
       this.popupStatus = false;
       this.textShow = true;
     },
+    percentageClick(index) {
+      this.word = this.freepercentage[index].pay;
+      this.percentagedisplay = this.freepercentage[index].name;
+      this.setType = 'word';
+      this.freewords = [];
+      this.freewords.push(this.freepercentage[index]);
+      this.$refs.popupBtm.close();
+    },
     moneyClick(index) {
       console.log(index, 'indexindex');
       // if (this.forums.set_site.site_onlooker_price === 0) {
@@ -1371,12 +1426,7 @@ export default {
     },
     cellClick(type) {
       this.setType = type;
-      if (type === 'word') {
-        this.popupStatus = true;
-        this.$refs.popup.open();
-      } else {
-        this.$refs.popupBtm.open();
-      }
+      this.$refs.popupBtm.open();
       this.textShow = false;
     },
     // 提问价格
