@@ -66,6 +66,15 @@ limitations under the License.
    - Vue VSCode Snippets
    - JavaScript(ES6) Snippets ESDoc
 
+5. 提交的提示，使用如下命令
+
+  ```
+  npm run commit
+  ```
+
+  ![https://main.qcloudimg.com/raw/c47079718ae7fe5273abf0fd7d33fc4d.png](https://main.qcloudimg.com/raw/c47079718ae7fe5273abf0fd7d33fc4d.png)
+  ![https://main.qcloudimg.com/raw/1d7fc4aad24bf92cf919de59f5e5fdfb.png](https://main.qcloudimg.com/raw/1d7fc4aad24bf92cf919de59f5e5fdfb.png)
+
 ## 编码规范
 
 1. [JavaScript 代码规范](./.github/JAVASCRIPT_STYLE.md)
