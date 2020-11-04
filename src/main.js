@@ -7,12 +7,14 @@ import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
 import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './common/const';
+// #ifdef MP-WEIXIN
 import Aegis from '@tencent/aegis-mp-sdk';
+// #endif
 
 const aegis = new Aegis({
-    id: "7411", // 项目ID
-    reportApiSpeed: true // 接口测速
-})
+  id: "7411", // 项目ID
+  reportApiSpeed: true, // 接口测速
+});
 
 // #ifdef H5
 const publicWhitelistPage = [
