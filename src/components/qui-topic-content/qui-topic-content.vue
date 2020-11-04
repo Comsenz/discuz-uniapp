@@ -222,6 +222,7 @@
               :audio-id="item._jv.id"
               :ref="'audio' + item._jv.id"
               @audioPlay="audioPlay"
+              @fileClick="download(index)"
             ></qui-audio>
           </view>
           <view v-else :class="attachmentIsPreview ? 'attachment-name-inner' : 'attachment-name'">
@@ -235,6 +236,7 @@
             <text
               v-if="
                 attachmentIsPreview &&
+                  item.isRemote &&
                   [
                     'PPTX',
                     'PPT',

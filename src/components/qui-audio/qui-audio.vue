@@ -10,7 +10,7 @@
       ></qui-icon>
     </view>
     <view class="qui-audio__wrapper">
-      <text v-if="!durationTime" class="qui-audio__wrapper__name">
+      <text v-if="!durationTime" class="qui-audio__wrapper__name" @click="fileClick">
         {{ name }}
       </text>
       <view v-else>
@@ -151,6 +151,9 @@ export default {
       this.duration = this.format(this.audio.duration);
       this.durationTime = this.audio.duration;
       this.loading = false;
+    },
+    fileClick() {
+      this.$emit('fileClick');
     },
   },
 };
