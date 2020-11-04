@@ -14,6 +14,8 @@ import Aegis from '@tencent/aegis-mp-sdk';
 const aegis = new Aegis({
   id: "7411", // 项目ID
   reportApiSpeed: true, // 接口测速
+  reportAssetSpeed: true, // 静态资源测速
+  pagePerformance: true, // 页面测速
 });
 
 // #ifdef H5
