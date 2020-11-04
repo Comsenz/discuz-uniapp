@@ -347,7 +347,7 @@ module.exports = {
               });
             }
             if (res.data.errors[0].status === '403' || res.data.errors[0].status === '422') {
-              const title = this.i18n.t(`core.${res.data.errors[0].detail[0]}`);
+              const title = this.i18n.t(res.data.errors[0].detail[0]);
               uni.showToast({
                 icon: 'none',
                 title,
