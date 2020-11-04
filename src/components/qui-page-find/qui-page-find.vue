@@ -19,7 +19,9 @@
     </view>
     <view
       class="find-item"
-      v-if="forums.set_site && forums.set_site.site_pay_group_close === '1' ? true : false"
+      v-if="
+        forums.set_site && forums.set_site.site_pay_group_close === '1' ? true : false && system
+      "
     >
       <navigator url="/pages/modify/right" hover-class="none">
         <qui-cell-item
@@ -40,7 +42,19 @@ export default {
   data() {
     return {
       searchValue: '',
+      system: false,
     };
+  },
+  created() {
+    // #ifndef H5
+    const res = uni.getSystemInfoSync();
+    if (res.platform === 'ios') {
+      this.system = false;
+    }
+    // #endif
+    // #ifdef H5
+    this.system = true;
+    // #endif
   },
   methods: {
     ontrueGetList() {

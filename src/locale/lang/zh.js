@@ -117,7 +117,7 @@ export default {
       TheContentAndTheAccessoriesIsPaid: '付费',
       paymentAmount: '付费金额',
       freeWordCount: '免费的查看字数',
-      selectToViewFreeWordCount: '选择查看免费字数',
+      selectToViewFreeWordCount: '选择内容免费比例',
       chooseCategory: '选择分类',
       selectToViewPaymentAmount: '选择查看付费金额',
       supportTheAuthorToContinueToCreate: '打赏,  支持回答者继续创作',

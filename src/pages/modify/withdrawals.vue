@@ -54,7 +54,11 @@
               maxlength="10"
               v-model="cashmany"
               @input="settlement"
-              :placeholder="i18n.t('modify.enteramount', { num: forums.set_cash.cash_min_sum })"
+              :placeholder="
+                i18n.t('modify.enteramount', {
+                  num: forums.set_cash.cash_min_sum ? forums.set_cash.cash_min_sum : 1,
+                })
+              "
               placeholder-style="color:rgba(221,221,221,1)"
             />
           </qui-cell-item>
