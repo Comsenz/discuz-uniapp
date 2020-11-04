@@ -72,6 +72,7 @@
     "@dcloudio/uni-mp-toutiao": "^2.0.0-alpha-28920200904002",
     "@dcloudio/uni-mp-weixin": "^2.0.0-alpha-28920200904002",
     "@dcloudio/uni-ui": "^1.2.5",
+    "@tencent/aegis-mp-sdk": "^1.24.24",
     "core-js": "^3.6.4",
     "flyio": "^0.6.2",
     "jsonpath-plus": "^3.0.0",

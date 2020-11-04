@@ -7,6 +7,12 @@ import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
 import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './common/const';
+import Aegis from '@tencent/aegis-mp-sdk';
+
+const aegis = new Aegis({
+    id: "7411", // 项目ID
+    reportApiSpeed: true // 接口测速
+})
 
 // #ifdef H5
 const publicWhitelistPage = [
@@ -56,6 +62,11 @@ const payWhiteListPage = [
   '/pages/site/partner-invite',
 ];
 const apploaded = () => {
+
+  aegis.info('上报一条白名单日志，这两种情况这条日志才会报到后台：1、打开页面的用户在名单中；2、对应的页面发生了错误🤨');
+  aegis.infoAll('上报了一条日志，该上报与info唯一的不同就在于，所有用户都会上报');
+  aegis.report(new Error('上报一个错误'));
+
   const app = getApp();
   const forums = app.$store.getters['jv/get']('forums/1');
   if (forums.set_site) {

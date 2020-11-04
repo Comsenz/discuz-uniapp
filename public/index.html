@@ -15,6 +15,9 @@
     <title>
       <%= htmlWebpackPlugin.options.title %>
     </title>
+    <!-- #ifdef H5 -->
+    <script src="https://cdn-go.cn/aegis/aegis-sdk/latest/aegis.min.js"></script>
+    <!-- #endif -->
     <script>
       // 通过 WeixinJSBridge 设置网页字体为默认大小，并禁止用户自定义缩放页面(安卓)
       (function() {
