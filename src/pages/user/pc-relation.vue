@@ -10,11 +10,14 @@
         </view>
         <view class="pc-relation__text">{{ name }}</view>
       </view>
-      <view class="pc-relation__title">
+      <view class="pc-relation__fail" v-if="!displayRelation">
+        {{ i18n.t('user.bindconfirmed') }}
+      </view>
+      <view class="pc-relation__title" v-if="displayRelation">
         {{ i18n.t('user.pcrelation') }}
       </view>
     </view>
-    <view class="pc-relation-bt">
+    <view class="pc-relation-bt" v-if="displayRelation">
       <view class="pc-relation__btn" @click="authorization">
         {{ i18n.t('user.pcrelation') }}
       </view>
@@ -39,6 +42,7 @@ export default {
       content: {},
       imageurl:'',
       name: '',
+      displayRelation: true,
     };
   },
   onLoad(content) {
@@ -73,6 +77,15 @@ export default {
               sessionToken
             }).then((res) => {
               console.log(res);
+              if (res.statusCode === 200) {
+                uni.showToast({
+                  icon: 'none',
+                  title: this.i18n.t('user.bindconfirmed'),
+                  success: () => {
+                    this.displayRelation = false;
+                  }
+                });
+              }
               if (res && res.data && res.data.errors) {
                 if (res.data.errors[0].code === 'no_bind_user') {
                   this.tokens = res.data.errors[0].token;
@@ -168,6 +181,15 @@ export default {
     font-weight: 400;
     line-height: 45rpx;
     color: #777;
+    text-align: center;
+  }
+  &__fail {
+    height: 45rpx;
+    margin-top: 63rpx;
+    font-size: $fg-f5;
+    font-weight: 400;
+    line-height: 45rpx;
+    color: #fa5151;
     text-align: center;
   }
   &__btn {

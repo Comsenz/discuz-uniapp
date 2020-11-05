@@ -268,6 +268,9 @@ export default {
     uc_user_username_exists: '配置错误',
     uninitialized_pay_password: '未设置支付密码',
     not_found_user: '未找到用户',
+    not_found_user_wechat: '未查询到微信信息',
+    session_token_expired: 'session token已过期，重新生成二维码扫码(5分钟)',
+    pc_qrcode_time_out: '授权已过期，请重试',
   },
   topic: {
     permissionPurchase: '权限购买',
@@ -931,6 +934,7 @@ export default {
     cancelpcrelation: '取消',
     pcrelationsuccess: '关联成功',
     nofounduser: '未找到用户',
+    bindconfirmed: '绑定失败，该微信账号已邦定其它账号',
   },
   // 举报
   report: {
