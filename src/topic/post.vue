@@ -2813,58 +2813,39 @@ export default {
     }
     // 接收来自首页的数据，并渲染或者报错时提示
     if (this.type === 2 || this.type === 3) {
-      console.log('这是接收首页的数据');
       const eventChannel = this.getOpenerEventChannel();
-      eventChannel.on('acceptDataFromOpenerPage', data => {
+      eventChannel.on('acceptDataFromOpenerPage', attachments => {
         if (this.type === 3) {
-          // console.log(data, '这是在首页上传图片后传过来的数据');
-          if (data.data.data && data.data.data.attributes) {
+          attachments.map(item => {
+            // eslint-disable-next-line
             // 当首页上传图片成功时
             this.uploadFile.push({
               type: 'attachments',
-              id: data.data.data.id,
-              order: data.data.data.attributes.order,
-              name: data.data.data.attributes.fileName,
-              url: data.data.data.attributes.url,
-              path: data.data.data.attributes.thumbUrl ? data.data.data.attributes.thumbUrl : '',
+              id: item.data.id,
+              order: item.data.attributes.order,
+              name: item.data.attributes.fileName,
+              url: item.data.attributes.url,
+              path: item.data.attributes.thumbUrl ? item.data.attributes.thumbUrl : '',
             });
             this.filePreview.push({
-              path: data.data.data.attributes.thumbUrl,
-              id: data.data.data.id,
-              order: data.data.data.attributes.order,
-              name: data.data.data.attributes.fileName,
-              url: data.data.data.attributes.url,
+              path: item.data.attributes.thumbUrl,
+              id: item.data.id,
+              order: item.data.attributes.order,
+              name: item.data.attributes.fileName,
+              url: item.data.attributes.url,
             });
-            // console.log(this.uploadFile, '这是首页上传后追加到的列表');
-          }
-          if (data.data.errors) {
-            // 当首页上传图片失败时
-            data.data.errors.forEach(error => {
-              const title = error.detail
-                ? Array.isArray(error.detail)
-                  ? error.detail[0]
-                  : error.detail
-                : this.i18n.t(`core.${error.code}`);
-              setTimeout(() => {
-                uni.showToast({
-                  icon: 'none',
-                  title: title,
-                });
-              }, 1000);
-            });
-          }
+          });
+          this.addImg();
         }
         if (this.type === 2) {
-          // console.log(data, '这是在首页上传视频·····后传过来的数据');
-          if (data.data) {
-            if (data.data.doneResult) {
-              this.fileId = data.data.doneResult.fileId;
+          if (attachments.data) {
+            if (attachments.data.doneResult) {
+              this.fileId = attachments.data.doneResult.fileId;
             } else {
-              this.fileId = data.data.result.fileId;
+              this.fileId = attachments.data.result.fileId;
             }
-            // console.log(data.data, '这是视频地址');
             this.videoBeforeList.push({
-              path: data.data.uploadVideoRes.tempFilePath,
+              path: attachments.data.uploadVideoRes.tempFilePath,
             });
             this.chooseType = 0;
             this.percent = 1;

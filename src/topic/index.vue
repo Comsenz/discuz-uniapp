@@ -3042,7 +3042,7 @@ export default {
         this.h5LoginMode();
         // #endif
       }
-      if (this.thread.canReply && this.thread.category.canReplyThread) {
+      if (this.thread.canReply) {
         this.commentId = threadId;
         this.formData.type = 1;
         this.$refs.commentPopup.open();
