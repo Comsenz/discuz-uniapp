@@ -83,6 +83,7 @@
           <text>{{ i18n.t('permission.' + item.replace(/\./g, '_')) }}</text>
         </view>
       </qui-cell-item>
+      <qui-cell-item :title="i18n.t('manage.version')" :addon="version"></qui-cell-item>
     </view>
   </qui-page>
 </template>
@@ -94,6 +95,7 @@ import { mapState, mapMutations } from 'vuex';
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
 // #endif
+import { VERSION } from '@/common/const';
 
 export default {
   mixins: [
@@ -105,6 +107,7 @@ export default {
   ],
   data() {
     return {
+      version: VERSION,
       title: this.i18n.t('manage.circleinfo'),
       shareBtn: 'icon-share1',
       isWeixin: '', // 是否是微信浏览器
