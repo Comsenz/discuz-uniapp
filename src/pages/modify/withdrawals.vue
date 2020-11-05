@@ -54,7 +54,11 @@
               maxlength="10"
               v-model="cashmany"
               @input="settlement"
-              :placeholder="i18n.t('modify.enteramount')"
+              :placeholder="
+                i18n.t('modify.enteramount', {
+                  num: forums.set_cash.cash_min_sum ? forums.set_cash.cash_min_sum : 1,
+                })
+              "
               placeholder-style="color:rgba(221,221,221,1)"
             />
           </qui-cell-item>
@@ -203,6 +207,7 @@ export default {
     this.setmydata();
     this.wxpayMchpayClose = this.forums.paycenter.wxpay_mchpay_close;
     this.$nextTick(() => {
+      console.log(this.forums);
       this.cost = this.forums.set_cash.cash_rate;
       const prop = this.forums.set_cash.cash_rate * 100;
       this.percentage = prop;

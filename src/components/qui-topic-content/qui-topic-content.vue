@@ -222,6 +222,7 @@
               :audio-id="item._jv.id"
               :ref="'audio' + item._jv.id"
               @audioPlay="audioPlay"
+              @fileClick="download(index)"
             ></qui-audio>
           </view>
           <view v-else :class="attachmentIsPreview ? 'attachment-name-inner' : 'attachment-name'">
@@ -235,6 +236,7 @@
             <text
               v-if="
                 attachmentIsPreview &&
+                  item.isRemote &&
                   [
                     'PPTX',
                     'PPT',
@@ -290,7 +292,7 @@
               {{ i18n.t('profile.play') }}
             </text>
             <qui-video
-              :src="`${item.url}&isAttachment=1`"
+              :src="attachmentPayStatus ? '' : `${item.url}&isAttachment=1`"
               :ref="'video' + item._jv.id"
               :video-id="item._jv.id"
             ></qui-video>

@@ -334,24 +334,23 @@ module.exports = {
             // #ifdef MP-WEIXIN
             this.refreshmpParams();
             // #endif
-            if (res.data.errors[0].status === '403') {
+            if (
+              res.data.errors[0].status === '401' ||
+              res.data.errors[0].status === '402' ||
+              res.data.errors[0].status === '500'
+            ) {
+              const title = this.i18n.t(`core.${res.data.errors[0].code}`);
               uni.showToast({
                 icon: 'none',
-                title: res.data.errors[0].detail[0],
+                title,
                 duration: 2000,
               });
             }
-            if (res.data.errors[0].code === 'register_validate') {
+            if (res.data.errors[0].status === '403' || res.data.errors[0].status === '422') {
+              const title = this.i18n.t(res.data.errors[0].detail[0]);
               uni.showToast({
                 icon: 'none',
-                title: this.i18n.t('core.register_validate'),
-                duration: 2000,
-              });
-            }
-            if (res.data.errors[0].code === 'validate_reject') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.validate_reject'),
+                title,
                 duration: 2000,
               });
             }

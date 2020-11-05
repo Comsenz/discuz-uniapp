@@ -2,7 +2,10 @@
   <view class="pc-login">
     <view class="pc-login-tp">
       <view class="pc-login__box">
-        <image class="pc-login__box__img" src="@/static/logo.png"></image>
+        <image
+          class="pc-login__box__img"
+          :src="pcLoginLogo ? pcLoginLogo : '/static/logo.png'"
+        ></image>
       </view>
       <view class="pc-login__title">
         {{ i18n.t('user.pcloginconfirm') }}
@@ -22,8 +25,10 @@
 <script>
 /* eslint-disable */
 import { http } from '@/api/api-request';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data: () => {
     return {
       num: false,
@@ -33,7 +38,18 @@ export default {
       switch: false,
       content: {},
       showPage: false,
+      pcLoginLogo: '',
     };
+  },
+  watch:{
+    forums: {
+      handler(newValue) {
+        if (newValue) {
+          this.pcLoginLogo = this.forums.set_site.site_logo;
+        }
+      },
+      deep: true,
+    }
   },
   onLoad(content) {
     this.content = content;
