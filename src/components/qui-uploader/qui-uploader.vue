@@ -221,6 +221,8 @@ export default {
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success(res) {
+            _this.chooseLength = res.tempFiles.length;
+            uni.$emit('uploadLength', _this.chooseLength);
             // 上传图片后返回false状态
             _this.$emit('uploadClick', false);
             // 自定义开始上传的效果和回调

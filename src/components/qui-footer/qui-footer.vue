@@ -153,7 +153,7 @@ export default {
       uploadStatus: true,
       isWeixin: '', // 是否是微信浏览器内
       isiOS: '',
-      uploadImgMax: 3, // 首页上传图片时限制最大数量
+      uploadImgMax: 9, // 首页上传图片时限制最大数量
     };
   },
   computed: {
