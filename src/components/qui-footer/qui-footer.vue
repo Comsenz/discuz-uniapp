@@ -345,6 +345,7 @@ export default {
         uni.navigateTo({
           url: `/pages/topic/parse-goods?type=${item.type}`,
         });
+        this.$refs.popup.close();
         return;
       }
 
@@ -356,6 +357,7 @@ export default {
         uni.navigateTo({
           url: `/pages/user/at-member?name=select&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
         });
+        this.$refs.popup.close();
         return;
       }
       if (this.footerIndex === 0) {

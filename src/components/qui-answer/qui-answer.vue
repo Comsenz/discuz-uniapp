@@ -122,11 +122,14 @@ export default {
     },
   },
   created() {
+    // #ifdef MP-WEIXIN
     const res = uni.getSystemInfoSync();
     this.system = res.platform;
     if (this.system === 'ios') {
+      console.log('当前是iOS');
       this.iosShow = true;
     }
+    // #endif
   },
   methods: {
     // 跳转到用户主页

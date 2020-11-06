@@ -1343,6 +1343,7 @@ export default {
             });
             // #endif
             if (data.question) {
+              console.log(data,'xiangqing')
               this.platformDate = (
                 data.question.price *
                 (this.forums.set_site.site_master_scale / 10)
@@ -1366,6 +1367,7 @@ export default {
                   this.beAsk = false;
                   this.payment = true;
                   this.answerPay = false;
+                  console.log(data, '免费允许围观')
                 } else if (
                   this.user.id === data.question.be_user_id &&
                   data.question.is_answer === 1
