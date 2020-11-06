@@ -52,19 +52,19 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <view v-if="select === 'select' && followStatus">
-          <view v-for="item in allFollow" :key="item.id">
+        <!-- <view v-if="select === 'select' && followStatus">
+          <view v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
-              :mark="item.toUser.id"
-              :title="item.toUser.username"
-              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="handleGroups(item.toUser)"
+              :mark="item.id"
+              :title="item.username"
+              :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
+              :value="item.groups[0].name"
               :label="item.label"
               :is-real="item.isReal"
               @click="radioChange(item)"
             ></qui-avatar-cell>
           </view>
-        </view>
+        </view> -->
         <view v-if="select === 'select'">
           <view v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
@@ -265,7 +265,11 @@ export default {
         title: this.i18n.t('discuzq.atMember.atTitle'),
       });
     }
-    this.getFollowMember(1);
+    if (option.name !== 'select') {
+      this.getFollowMember(1);
+    } else if (option.name === 'select') {
+      this.getSiteMember();
+    }
     this.setAtMember([]);
   },
 };
