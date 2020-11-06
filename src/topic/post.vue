@@ -440,7 +440,7 @@
 
       <qui-cell-item
         :title="i18n.t('discuzq.post.freeWordCount')"
-        :addon="i18n.t('discuzq.post.word', { num: word })"
+        :addon="i18n.t('discuzq.post.word', { num: percentagedisplay })"
         v-if="
           price > 0 &&
             type !== 3 &&
@@ -590,6 +590,20 @@
                 plain
                 size="post"
                 @click="moneyClick(index)"
+              >
+                {{ item.name }}
+              </qui-button>
+            </view>
+            <!-- 设置免费的字数百分比 -->
+            <view class="popup-content-btn" v-if="setType === 'word'">
+              <qui-button
+                class="popup-btn"
+                v-for="(item, index) in freepercentage"
+                :key="index"
+                :type="freewords.length > 0 && freewords[0].name === item.name ? 'primary' : 'post'"
+                plain
+                size="post"
+                @click="percentageClick(index)"
               >
                 {{ item.name }}
               </qui-button>
@@ -804,6 +818,39 @@ export default {
           pay: 0,
         },
       ], // 付费金额选中
+      freepercentage: [
+        {
+          name: '0%',
+          pay: 0,
+        },
+        {
+          name: '10%',
+          pay: 0.1,
+        },
+        {
+          name: '30%',
+          pay: 0.3,
+        },
+        {
+          name: '50%',
+          pay: 0.5,
+        },
+        {
+          name: '70%',
+          pay: 0.7,
+        },
+        {
+          name: '100%',
+          pay: 1,
+        },
+      ],
+      freewords: [
+        {
+          name: '0%',
+          pay: 0,
+        },
+      ], // 免费字数选中
+      percentagedisplay: '0%',
       uploadFile: [], // 图片上传列表
       cursor: 0, // 内容输入框光标未知
       wordCountCheck: [
@@ -1288,6 +1335,14 @@ export default {
       this.popupStatus = false;
       this.textShow = true;
     },
+    percentageClick(index) {
+      this.word = this.freepercentage[index].pay;
+      this.percentagedisplay = this.freepercentage[index].name;
+      this.setType = 'word';
+      this.freewords = [];
+      this.freewords.push(this.freepercentage[index]);
+      this.$refs.popupBtm.close();
+    },
     moneyClick(index) {
       console.log(index, 'indexindex');
       // if (this.forums.set_site.site_onlooker_price === 0) {
@@ -1323,7 +1378,7 @@ export default {
       this.payNumCheck.push(this.payNum[index]);
       // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
-        console.log('自定义金额')
+        console.log('自定义金额');
         this.textShow = false;
         this.$refs.popupBtm.close();
         this.popupStatus = true;
@@ -1371,12 +1426,7 @@ export default {
     },
     cellClick(type) {
       this.setType = type;
-      if (type === 'word') {
-        this.popupStatus = true;
-        this.$refs.popup.open();
-      } else {
-        this.$refs.popupBtm.open();
-      }
+      this.$refs.popupBtm.open();
       this.textShow = false;
     },
     // 提问价格
@@ -2075,36 +2125,24 @@ export default {
           });
         }
       });
-      // 附件
-      // if (this.type === 1 && this.$refs.uploadFiles) {
-      //   const newAttachmentList = this.$refs.uploadFiles.getValue();
-      //   newAttachmentList.forEach(item => {
-      //     if (item.id) {
-      //       attachments.data.push({
-      //         type: 'attachments',
-      //         id: item.id,
-      //       });
-      //     }
-      //   });
-      // }
       return attachments;
     },
     // 发布主题，处理附件
     addFile() {
-      const attachments = {};
-      attachments.data = [];
+      const attachmentFiles = {};
+      attachmentFiles.data = [];
       // if (this.type === 1 && this.$refs.uploadFiles) {
       const newAttachmentList = this.$refs.uploadFiles.getValue();
       newAttachmentList.forEach(item => {
         if (item.id) {
-          attachments.data.push({
+          attachmentFiles.data.push({
             type: 'attachments',
             id: item.id,
           });
         }
       });
       // }
-      return attachments;
+      return attachmentFiles;
     },
     // 发布问题
     addQuestion() {
@@ -2187,7 +2225,7 @@ export default {
         params.attachment_price = '';
         params.price = this.price;
       }
-      console.log(params, '这是参数');
+
       const currentPosition = this.currentPosition;
       params.longitude = currentPosition.longitude || '';
       params.latitude = currentPosition.latitude || '';
@@ -2200,7 +2238,9 @@ export default {
             break;
           case 1:
             params.title = this.postTitle;
-            params._jv.relationships.attachments = this.addFile();
+            params._jv.relationships.attachments = {
+              data: this.addImg().data.concat(this.addFile().data),
+            };
             resolve();
             break;
           case 2:
@@ -2235,7 +2275,7 @@ export default {
         return this.$store
           .dispatch('jv/post', params)
           .then(res => {
-            console.log(res, '这是发布时接口返回的');
+            // console.log(res, '这是发布时接口返回的');
             return res;
           })
           .catch(err => {
@@ -2519,7 +2559,9 @@ export default {
             threads.price = '';
           }
           threads.free_words = this.word;
-          posts._jv.relationships.attachments = this.addFile();
+          posts._jv.relationships.attachments = {
+            data: this.addImg().data.concat(this.addFile().data),
+          };
           break;
         case 2:
           threads.file_id = this.fileId;
@@ -2567,7 +2609,7 @@ export default {
         this.$u.event.$emit('refreshFiles');
         return res;
       });
-      console.log(threads, '这是编辑时传的参数');
+      // console.log(threads, '这是编辑时传的参数');
       await this.$store.dispatch('jv/patch', threads).then(res => {
         if (res._jv.json.data.id) state += 1;
       });
@@ -2771,58 +2813,39 @@ export default {
     }
     // 接收来自首页的数据，并渲染或者报错时提示
     if (this.type === 2 || this.type === 3) {
-      console.log('这是接收首页的数据');
       const eventChannel = this.getOpenerEventChannel();
-      eventChannel.on('acceptDataFromOpenerPage', data => {
+      eventChannel.on('acceptDataFromOpenerPage', attachments => {
         if (this.type === 3) {
-          // console.log(data, '这是在首页上传图片后传过来的数据');
-          if (data.data.data && data.data.data.attributes) {
+          attachments.map(item => {
+            // eslint-disable-next-line
             // 当首页上传图片成功时
             this.uploadFile.push({
               type: 'attachments',
-              id: data.data.data.id,
-              order: data.data.data.attributes.order,
-              name: data.data.data.attributes.fileName,
-              url: data.data.data.attributes.url,
-              path: data.data.data.attributes.thumbUrl ? data.data.data.attributes.thumbUrl : '',
+              id: item.data.id,
+              order: item.data.attributes.order,
+              name: item.data.attributes.fileName,
+              url: item.data.attributes.url,
+              path: item.data.attributes.thumbUrl ? item.data.attributes.thumbUrl : '',
             });
             this.filePreview.push({
-              path: data.data.data.attributes.thumbUrl,
-              id: data.data.data.id,
-              order: data.data.data.attributes.order,
-              name: data.data.data.attributes.fileName,
-              url: data.data.data.attributes.url,
+              path: item.data.attributes.thumbUrl,
+              id: item.data.id,
+              order: item.data.attributes.order,
+              name: item.data.attributes.fileName,
+              url: item.data.attributes.url,
             });
-            // console.log(this.uploadFile, '这是首页上传后追加到的列表');
-          }
-          if (data.data.errors) {
-            // 当首页上传图片失败时
-            data.data.errors.forEach(error => {
-              const title = error.detail
-                ? Array.isArray(error.detail)
-                  ? error.detail[0]
-                  : error.detail
-                : this.i18n.t(`core.${error.code}`);
-              setTimeout(() => {
-                uni.showToast({
-                  icon: 'none',
-                  title: title,
-                });
-              }, 1000);
-            });
-          }
+          });
+          this.addImg();
         }
         if (this.type === 2) {
-          // console.log(data, '这是在首页上传视频·····后传过来的数据');
-          if (data.data) {
-            if (data.data.doneResult) {
-              this.fileId = data.data.doneResult.fileId;
+          if (attachments.data) {
+            if (attachments.data.doneResult) {
+              this.fileId = attachments.data.doneResult.fileId;
             } else {
-              this.fileId = data.data.result.fileId;
+              this.fileId = attachments.data.result.fileId;
             }
-            // console.log(data.data, '这是视频地址');
             this.videoBeforeList.push({
-              path: data.data.uploadVideoRes.tempFilePath,
+              path: attachments.data.uploadVideoRes.tempFilePath,
             });
             this.chooseType = 0;
             this.percent = 1;

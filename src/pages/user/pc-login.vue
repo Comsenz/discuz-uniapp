@@ -39,6 +39,7 @@ export default {
       content: {},
       showPage: false,
       pcLoginLogo: '',
+      registers: '',
     };
   },
   watch:{
@@ -46,6 +47,9 @@ export default {
       handler(newValue) {
         if (newValue) {
           this.pcLoginLogo = this.forums.set_site.site_logo;
+          if (this.forums.set_reg.register_type === 2) {
+            this.registers = 1;
+          }
         }
       },
       deep: true,
@@ -54,66 +58,53 @@ export default {
   onLoad(content) {
     this.content = content;
     this.isLogin = this.$store.getters['session/get']('isLogin');
-    if(this.isLogin) {
-      this.token = content.session_token;
-    } else {
-      if(content.session_token) {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('user.loging'),
-        });
-        uni.setStorage({
-          key: 'session_token_data',
-          data: content.session_token,
-          success: () => {
-            this.token = content.session_token;
-            this.$store.dispatch('session/wxPcLogin');
-          },
-        });
-      }
+    if(content.session_token) {
+      uni.showToast({
+        icon: 'none',
+        title: this.i18n.t('user.loging'),
+      });
+      uni.setStorage({
+        key: 'session_token_data',
+        data: content.session_token,
+        success: () => {
+          this.token = content.session_token;
+          this.$store.dispatch('session/wxPcLogin');
+        },
+      });
     }
   },
   methods: {
     pcLogin() {
-      if(this.isLogin) {
-        http
-          .get(`oauth/wechat/qrcode/login/${this.token}`)
-          .then(() => {
-            uni.showToast({
-              icon: 'none',
-              title: this.i18n.t('user.loginSuccess'),
-              success: () => {
-                this.cancelPclogin();
-              }
-            });
-          });
-      } else {
-        uni.getStorage({
-          key: 'session_token_data',
-          success: (e) => {
-            if (e.data != '') {
-              const sessionToken = e.data;
-              const code = this.content.code;
-              const state = this.content.state;
-              const sessionId = this.content.sessionId;
-              this.$store.dispatch('session/scancodeverification', {
-                code,
-                state,
-                sessionId,
-                sessionToken
-              }).then((res) => {
-                if (res && res.data && res.data.errors) {
-                  if (res.data.errors[0].code === 'no_bind_user') {
-                    uni.showToast({
-                      icon: 'none',
-                      title: this.i18n.t('user.loginSuccess'),
-                      success: () => {
-                        this.cancelPclogin();
-                      }
-                    });
+      uni.getStorage({
+        key: 'session_token_data',
+        success: (e) => {
+          if (e.data != '') {
+            const sessionToken = e.data;
+            const code = this.content.code;
+            const state = this.content.state;
+            const sessionId = this.content.sessionId;
+            const Insensibility = this.registers;
+            this.$store.dispatch('session/scancodeverification', {
+              code,
+              state,
+              sessionId,
+              sessionToken,
+              Insensibility,
+            })
+            .then((res) => {
+              if (res && res.data && res.data.data) {
+                uni.showToast({
+                  icon: 'none',
+                  title: this.i18n.t('user.loginSuccess'),
+                  success: () => {
+                    this.cancelPclogin();
                   }
-                }
-                if (res && res.data && res.data.data) {
+                });
+              }
+            })
+            .catch((err) => {
+              if (err && err.data && err.data.errors) {
+                if (err.data.errors[0].code === 'no_bind_user') {
                   uni.showToast({
                     icon: 'none',
                     title: this.i18n.t('user.loginSuccess'),
@@ -122,11 +113,11 @@ export default {
                     }
                   });
                 }
-              });
-            }
-          },
-        });
-      }
+              }
+            })
+          }
+        },
+      });
     },
     cancelPclogin() {
       WeixinJSBridge.call('closeWindow');

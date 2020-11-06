@@ -3,6 +3,9 @@
  * 开发|测试：.env.development
  * 正式：.env.producment
  */
+
+export const VERSION = 'v2.1.201029';
+
 export const DISCUZ_TITLE = process.env.VUE_APP_TITLE;
 
 let host = process.env.VUE_APP_REQUEST_HOST;
