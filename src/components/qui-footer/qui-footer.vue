@@ -326,7 +326,15 @@ export default {
           type: 5,
         });
       }
-
+      // 投票帖
+      if (this.forums.other.can_create_thread_vote) {
+        this.bottomData.push({
+          text: this.i18n.t('home.vote'),
+          icon: 'icon-toupiao',
+          name: 'vote',
+          type: 7,
+        });
+      }
       this.bottomDataLength = this.bottomData.length;
 
       this.$refs.popup.open();

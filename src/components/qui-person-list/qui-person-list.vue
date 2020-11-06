@@ -4,7 +4,7 @@
     class="det-person-box"
     :style="{ paddingBottom: btnShow ? '80rpx' : '50rpx', background: listBg }"
   >
-    <view class="det-per-number" v-if="personNum != 0">
+    <view class="det-per-number" v-if="personNum != 0 && numberShow">
       {{ personNum }}{{ t.persenUnit }}{{ type }}
     </view>
     <view class="det-per-list" v-if="personRes.length > 0">
@@ -99,6 +99,11 @@ export default {
     btnTextColor: {
       default: '#ffffff',
       type: String,
+    },
+    // list总数是否显示
+    numberShow: {
+      default: true,
+      type: Boolean,
     },
   },
   data: () => {

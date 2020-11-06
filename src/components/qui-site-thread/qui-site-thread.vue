@@ -195,6 +195,7 @@ export default {
           'category',
           'threadVideo',
           'threadAudio',
+          'vote',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,

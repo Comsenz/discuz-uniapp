@@ -74,7 +74,7 @@
           <view class="sticky__isSticky__count">
             <qui-uparse
               class="sticky__isSticky__text"
-              :content="item.type == 1 ? item.title : item.firstPost.summary"
+              :content="item.type == 1 || item.type == 7 ? item.title : item.firstPost.summary"
             ></qui-uparse>
             <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
           </view>
@@ -101,15 +101,15 @@
         :user-answer-groups="handleGroup(item.question && item.question.beUser.groups)"
         :theme-time="item.createdAt"
         :theme-time-answer="item.question && item.question.answered_at"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+        :theme-content="item.type == 1 || item.type == 7 ? item.title : item.firstPost.summary"
         :thread-type="item.type"
         :media-url="item.threadVideo && item.threadVideo.media_url"
-        :is-great="item.firstPost.isLiked"
-        :theme-like="item.firstPost.likeCount"
+        :is-great="item.firstPost ? item.firstPost.isLiked : false"
+        :theme-like="item.firstPost ? item.firstPost.likeCount : 0"
         :theme-comment="item.postCount - 1"
         :tags="[item.category]"
-        :images-list="item.firstPost.images"
-        :post-goods="item.firstPost.postGoods ? item.firstPost.postGoods : ''"
+        :images-list="item.firstPost ? item.firstPost.images : []"
+        :post-goods="item.firstPost && item.firstPost.postGoods ? item.firstPost.postGoods : ''"
         :theme-essence="item.isEssence"
         :video-width="item.threadVideo && item.threadVideo.width"
         :video-height="item.threadVideo && item.threadVideo.height"
@@ -1023,6 +1023,7 @@ export default {
           'question.beUser',
           'question.beUser.groups',
           'threadAudio',
+          'vote',
         ],
       };
       if (this.threadType !== null) {

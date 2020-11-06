@@ -130,7 +130,11 @@
               {{ questionContent }}
             </navigator> -->
           <!-- </view> -->
-          <view :class="themPayBtn || threadType === 6 ? 'themeItem__content__uparse' : ''">
+          <view
+            :class="
+              themPayBtn || threadType === 6 || threadType === 7 ? 'themeItem__content__uparse' : ''
+            "
+          >
             <qui-icon
               name="icon-fufei"
               color="#aaaaaa"
@@ -144,6 +148,14 @@
               size="30"
               class="themeItem__content__fufei"
               v-if="threadType === 6"
+            ></qui-icon>
+            <!-- 投票帖 -->
+            <qui-icon
+              name="icon-toupiao-liebiao"
+              color="#aaaaaa"
+              size="30"
+              class="themeItem__content__fufei"
+              v-if="threadType === 7"
             ></qui-icon>
             <qui-uparse
               :content="themeContent"

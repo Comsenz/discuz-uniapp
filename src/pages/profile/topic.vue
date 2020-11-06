@@ -77,12 +77,13 @@ export default {
           // 'question',
           // 'question.beUser',
           // 'question.beUser.groups',
+          'vote',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
         'filter[isApproved]': 1,
         'filter[userId]': this.userId,
-        'filter[type]': '0,1,2,3,4,6',
+        'filter[type]': '0,1,2,3,4,6,7',
       };
       status
         .run(() => this.$store.dispatch('jv/get', ['threads', { params }]))

@@ -42,7 +42,7 @@
                   selectList[2].canOpera ||
                   selectList[3].canOpera
               "
-              :theme-title="thread.type == 1 ? thread.title : ''"
+              :theme-title="thread.type == 1 || thread.type == 7 ? thread.title : ''"
               :theme-content="thread.firstPost.contentHtml"
               :images-list="thread.firstPost.images"
               :post-goods-status="postGoodsStatus"
@@ -64,6 +64,8 @@
               "
               :thread-audio="thread.type == 4 ? thread.threadAudio : null"
               :attachment-pay-status="thread.attachmentPrice > 0 && !thread.isPaidAttachment"
+              :post-votes="thread.type == 7 ? thread.vote : null"
+              :is-voted="thread.isVoted"
               @attachmentPay="payClickShow"
               @personJump="personJump(thread.user._jv.id)"
               @beAskClick="beAskClick(thread.question.beUser.id)"
@@ -136,13 +138,13 @@
               ></qui-person-list>
             </view>
             <!-- 打赏用户列表 -->
-            <view v-if="rewardStatus && thread.type !== 6">
+            <view v-if="rewardStatus && thread.type !== 6 && thread.type !== 7">
               <qui-person-list
                 :type="t.reward"
                 :person-num="thread.rewardedCount"
                 :limit-count="limitShowNum"
                 :person-list="rewardedUsers"
-                :btn-show="rewardBtnStatus && thread.type !== 6"
+                :btn-show="rewardBtnStatus && thread.type !== 6 && thread.type !== 7"
                 :btn-icon-show="true"
                 btn-icon-name="reward"
                 :btn-text="t.reward"
@@ -1272,6 +1274,11 @@ export default {
           'onlookers',
           'question.beUser',
           'question.images',
+          'vote',
+          'vote.options',
+          'vote.logs',
+          'vote.logs.user',
+          'vote.actorLogs',
         ],
       };
       const threadAction = status.run(() =>
@@ -1533,6 +1540,12 @@ export default {
                 this.contentVal = data.firstPost.postGoods.title;
                 this.desc = data.firstPost.summaryText;
                 this.shareLogo = data.firstPost.postGoods.image_path;
+                break;
+              case 7:
+                // 投票帖
+                this.contentVal = data.title;
+                this.desc = data.title;
+                this.shareLogo = '';
                 break;
               default:
             }

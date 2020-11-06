@@ -97,7 +97,10 @@
         class="themeItem__content__con"
         :style="{ position: !payStatus && themeParts !== 1 ? 'static' : 'relative' }"
       >
-        <view class="themeItem__content__con__title" v-if="themeType == 1 && themeTitle">
+        <view
+          class="themeItem__content__con__title"
+          v-if="(themeType == 1 || themeType == 7) && themeTitle"
+        >
           {{ themeTitle }}
         </view>
         <view class="themeItem__content__text" v-if="themeContent">
@@ -322,6 +325,14 @@
           </view>
         </view>
       </view>
+
+      <!-- 投票帖 -->
+      <qui-vote-result
+        :post-votes="postVotes"
+        :is-voted="isVoted"
+        v-if="themeType === 7"
+        @personJump="personJump"
+      ></qui-vote-result>
 
       <view class="themeItem__content__tags" v-if="tags.length > 0">
         <view
@@ -559,6 +570,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 投票帖
+    postVotes: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    isVoted: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => {
     return {
@@ -652,8 +674,12 @@ export default {
       // this.selectActive = this.seleShow ? '#1878F3' : '#333333';
     },
     // 点击用户头像以及用户名事件
-    personJump() {
-      this.$emit('personJump', this.userId);
+    personJump(id) {
+      if (this.themeType === 7) {
+        this.$emit('personJump', id);
+      } else {
+        this.$emit('personJump', this.userId);
+      }
     },
     // 点击用户名
     beAskClick(evt) {
@@ -778,6 +804,7 @@ export default {
           'threadAudio',
           'paidUsers',
           'user.groups.permissionWithoutCategories',
+          'vote',
         ],
       };
       const threadAction = status.run(() =>

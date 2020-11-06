@@ -1,16 +1,27 @@
 <template>
   <qui-page :data-qui-theme="theme">
     <view class="post-box" v-if="loadStatus">
-      <view class="post-box__title" v-if="type === 1">
+      <view class="post-box__title" v-if="type === 1 || type === 7">
         <input
-          v-if="type === 1"
+          v-if="type === 1 || type === 7"
           class="post-box__title-input"
           type="text"
           v-model="postTitle"
-          :focus="type === 1"
-          :placeholder="i18n.t('discuzq.post.pleaseEnterAPostTitle')"
+          :focus="type === 1 || type === 7"
+          :placeholder="
+            type === 1
+              ? i18n.t('discuzq.post.pleaseEnterAPostTitle')
+              : i18n.t('discuzq.post.pleaseEnterVotingTitle')
+          "
         />
       </view>
+
+      <!-- 投票帖 -->
+      <qui-vote
+        :vote-before-list="voteBeforeList"
+        @change="voteChange"
+        v-if="type === 7"
+      ></qui-vote>
 
       <view class="post-box__titles" v-if="type === 5">
         <qui-cell-item
@@ -52,6 +63,7 @@
             size="40"
             color="#777"
             @click="topicPage"
+            v-if="type !== 7"
           ></qui-icon>
         </view>
         <text class="post-box__hd-r" v-if="type !== 5">
@@ -188,6 +200,7 @@
               size="40"
               color="#777"
               @click="topicPage"
+              v-if="type !== 7"
             ></qui-icon>
           </view>
           <text class="post-box__hd-r" v-if="type !== 5">
@@ -220,7 +233,9 @@
             class="post-box__con-text"
             :placeholder="
               type !== 5
-                ? i18n.t('discuzq.post.placeholder')
+                ? type !== 7
+                  ? i18n.t('discuzq.post.placeholder')
+                  : i18n.t('discuzq.post.VotingContent')
                 : i18n.t('discuzq.post.placeholderQuestion')
             "
             placeholder-class="textarea-placeholder"
@@ -388,7 +403,12 @@
       </view>
       <view
         v-else-if="
-          type !== 0 && type !== 5 && type !== 6 && forums.other.can_create_thread_paid && ioshide
+          type !== 0 &&
+            type !== 5 &&
+            type !== 6 &&
+            type !== 7 &&
+            forums.other.can_create_thread_paid &&
+            ioshide
         "
       >
         <qui-cell-item
@@ -448,6 +468,7 @@
             type !== 0 &&
             type !== 4 &&
             type !== 5 &&
+            type !== 7 &&
             payType !== 1 &&
             payType !== 0
         "
@@ -472,6 +493,41 @@
           <qui-icon name="icon-add" size="26"></qui-icon>
         </view>
       </view>
+
+      <!-- 投票帖 -->
+      <view v-if="type === 7">
+        <qui-cell-item
+          class="vote-item"
+          :title="i18n.t('discuzq.post.maximumSelect')"
+          :addon="i18n.t('discuzq.post.optionsNum', { num: optional })"
+          arrow
+          @click="cellClick('optional')"
+        ></qui-cell-item>
+        <qui-cell-item
+          class="vote-item"
+          :title="i18n.t('discuzq.post.countingDays')"
+          :addon="i18n.t('discuzq.post.daysNum', { num: endDay })"
+          arrow
+          @click="cellClick('endDay')"
+        ></qui-cell-item>
+        <qui-cell-item
+          class="vote-item"
+          :title="i18n.t('discuzq.post.theResultsAreVisibleAfterTheVote')"
+          slot-right
+          @click="visibleTheVote"
+        >
+          <radio name="showResult" :checked="showResult === 1" />
+        </qui-cell-item>
+        <qui-cell-item
+          class="vote-item"
+          :title="i18n.t('discuzq.post.publicVotingParticipants')"
+          slot-right
+          @click="votePlayers"
+        >
+          <radio name="showParticipant" :checked="showParticipant === 1" />
+        </qui-cell-item>
+      </view>
+
       <view class="post-box__position" v-if="forums.lbs && forums.lbs.lbs">
         <qui-cell-item arrow :slot-left="true" @click="choosePosition">
           <view>
@@ -617,11 +673,18 @@
         <uni-popup ref="popup" type="center">
           <view class="popup-dialog">
             <view class="popup-dialog__top">
-              <text>
+              <text v-if="setType === 'pay' || setType === 'word'">
                 {{
                   setType === 'pay'
                     ? i18n.t('discuzq.post.enterToViewPaymentAmount')
                     : i18n.t('discuzq.post.enterTheWordCount')
+                }}
+              </text>
+              <text v-if="setType === 'optional' || setType === 'endDay'">
+                {{
+                  setType === 'optional'
+                    ? i18n.t('discuzq.post.enterMaximumSelect')
+                    : i18n.t('discuzq.post.enterCountingDays')
                 }}
               </text>
             </view>
@@ -632,8 +695,14 @@
                 size="40"
                 v-if="setType === 'pay'"
               ></qui-icon>
-              <text class="popup-dialog__cont-rmb" v-else>
+              <text class="popup-dialog__cont-rmb" v-if="setType === 'word'">
                 {{ i18n.t('discuzq.post.word', { num: '' }) }}
+              </text>
+              <text class="popup-dialog__cont-rmb" v-if="setType === 'optional'">
+                {{ i18n.t('discuzq.post.optionsNum', { num: '' }) }}
+              </text>
+              <text class="popup-dialog__cont-rmb" v-if="setType === 'endDay'">
+                {{ i18n.t('discuzq.post.daysNum', { num: '' }) }}
               </text>
               <input
                 class="popup-dialog__cont-input"
@@ -647,12 +716,28 @@
               />
               <input
                 class="popup-dialog__cont-input"
-                v-else
+                v-if="setType === 'word'"
                 v-model="inputWord"
                 type="digit"
                 placeholder="0"
                 :maxlength="5"
                 :focus="setType === 'word'"
+              />
+              <input
+                class="popup-dialog__cont-input"
+                v-if="setType === 'optional'"
+                v-model="inputOptional"
+                type="number"
+                placeholder="0"
+                :focus="setType === 'optional'"
+              />
+              <input
+                class="popup-dialog__cont-input"
+                v-if="setType === 'endDay'"
+                v-model="inputEndDay"
+                type="number"
+                placeholder="0"
+                :focus="setType === 'endDay'"
               />
             </view>
             <view class="popup-dialog__ft">
@@ -670,9 +755,27 @@
               </button>
               <button
                 class="popup-btn--ok"
-                v-else
+                v-if="setType === 'word'"
                 :class="inputWord > 0 ? 'popup-btn--ok--blue' : ''"
                 :disabled="inputWord === ''"
+                @click="diaLogOk"
+              >
+                {{ i18n.t('discuzq.ok') }}
+              </button>
+              <button
+                class="popup-btn--ok"
+                v-if="setType === 'optional'"
+                :class="inputOptional > 0 ? 'popup-btn--ok--blue' : ''"
+                :disabled="inputOptional === ''"
+                @click="diaLogOk"
+              >
+                {{ i18n.t('discuzq.ok') }}
+              </button>
+              <button
+                class="popup-btn--ok"
+                v-if="setType === 'endDay'"
+                :class="inputEndDay > 0 ? 'popup-btn--ok--blue' : ''"
+                :disabled="inputEndDay === ''"
                 @click="diaLogOk"
               >
                 {{ i18n.t('discuzq.ok') }}
@@ -922,6 +1025,14 @@ export default {
       categoryindex: 0,
       postShow: false,
       popupStatus: false, // 这是自定义金额或者自定义字数弹框显示状态
+      voteId: 0, // 投票ID
+      optional: 0, // 投票可选数量
+      showParticipant: 0, // 是否展示投票人
+      showResult: 0, // 是否展示投票结果
+      endDay: 0, // 投票天数
+      voteBeforeList: [], // 投票选项
+      inputOptional: '', // 查看字数输入框
+      inputEndDay: '', // 查看字数输入框
     };
   },
   computed: {
@@ -1290,22 +1401,39 @@ export default {
       this.textShow = true;
     },
     diaLogOk() {
-      if (this.forums.set_site.site_minimum_amount === '') {
-        if (this.inputPrice < '0.1') {
-          uni.showToast({
-            title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
-            icon: 'none',
+      if(this.type != 7) {
+        if (this.forums.set_site.site_minimum_amount === '') {
+          if (this.inputPrice < '0.1') {
+            uni.showToast({
+              title: this.i18n.t('core.TheAmountCannotBeLessThanOneYuan'),
+              icon: 'none',
+            });
+            return;
+          }
+        } else {
+          if (this.inputPrice < this.forums.set_site.site_minimum_amount) {
+            uni.showToast({
+              title:
+                this.i18n.t('core.TheAmountCannotBeLessThanMinMoney') +
+                this.forums.set_site.site_minimum_amount +
+                this.i18n.t('discuzq.post.yuan'),
+              icon: 'none',
+            });
+            return;
+          }
+        }
+      }
+      if (this.type === 7) {
+        let reg = /^[1-9]\d*$/;
+        if (!reg.test(Number(this.inputOptional)) && this.setType === 'optional') {
+          this.$refs.toast.show({
+            message: this.i18n.t('discuzq.post.pleaseEnterAnInteger'),
           });
           return;
         }
-      } else {
-        if (this.inputPrice < this.forums.set_site.site_minimum_amount) {
-          uni.showToast({
-            title:
-              this.i18n.t('core.TheAmountCannotBeLessThanMinMoney') +
-              this.forums.set_site.site_minimum_amount +
-              this.i18n.t('discuzq.post.yuan'),
-            icon: 'none',
+        if (!reg.test(Number(this.inputEndDay)) && this.setType === 'endDay') {
+          this.$refs.toast.show({
+            message: this.i18n.t('discuzq.post.pleaseEnterAnInteger'),
           });
           return;
         }
@@ -1328,8 +1456,12 @@ export default {
 
       if (this.setType === 'pay') {
         this.price = this.inputPrice;
-      } else {
+      } else if (this.setType === 'word') {
         this.word = this.inputWord;
+      } else if (this.setType === 'optional') {
+        this.optional = Number(this.inputOptional);
+      } else {
+        this.endDay = Number(this.inputEndDay);
       }
       this.$refs.popup.close();
       this.popupStatus = false;
@@ -1426,7 +1558,14 @@ export default {
     },
     cellClick(type) {
       this.setType = type;
-      this.$refs.popupBtm.open();
+      if (type === 'optional' || type === 'endDay') {
+        this.popupStatus = true;
+        this.$nextTick(() => {
+          this.$refs.popup.open();
+        });
+      } else {
+        this.$refs.popupBtm.open();
+      }
       this.textShow = false;
     },
     // 提问价格
@@ -1462,6 +1601,24 @@ export default {
       this.deleteType = 3;
       this.$refs.deletePopup.open();
       this.deleteTip = this.i18n.t('core.deleteAudioSure');
+    },
+     // 投票帖选项改变
+    voteChange(e) {
+      this.voteBeforeList = e;
+    },
+    visibleTheVote() {
+      if (this.showResult === 0) {
+        this.showResult = 1;
+      } else {
+        this.showResult = 0;
+      }
+    },
+    votePlayers() {
+      if (this.showParticipant === 0) {
+        this.showParticipant = 1;
+      } else {
+        this.showParticipant = 0;
+      }
     },
     // 表情点击事件
     getEmojiClick(code) {
@@ -1996,6 +2153,29 @@ export default {
             status = true;
           }
           break;
+         case 7:
+          if (this.postTitle.length < 1) {
+            this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theTitleCanNotBeBlank') });
+            status = false;
+          } else if (this.voteBeforeList.length < 2) {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.votingOptionsBeLessThan2'),
+            });
+            status = false;
+          } else if (this.optional <= 0 || this.optional > this.voteBeforeList.length) {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.maximumSelectRange'),
+            });
+            status = false;
+          } else if (this.endDay <= 0) {
+            this.$refs.toast.show({
+              message: this.i18n.t('discuzq.post.countingDaysBeGreaterThan0'),
+            });
+            status = false;
+          } else {
+            status = true;
+          }
+          break;
         default:
           status = false;
           this.$refs.toast.show({ message: this.i18n.t('core.postTypesDoNotMatch') });
@@ -2159,6 +2339,33 @@ export default {
       // }
       return question;
     },
+    // 发布投票
+    addVote(num) {
+      let vote = {};
+      if(num === 0) {
+        vote = {
+          data: {
+            optional: this.optional,
+            is_show_participant: this.showParticipant,
+            is_show_result: this.showResult,
+            end_day: this.endDay,
+            contents: this.voteBeforeList
+          },
+        };
+      } else {
+        vote = {
+          data: {
+            id: this.voteId,
+            optional: this.optional,
+            is_show_participant:this.showParticipant,
+            is_show_result: this.showResult,
+            end_day: this.endDay,
+            contents: this.voteBeforeList
+          },
+        };
+      }
+      return vote;
+    },
     // 删除附件显示弹框
     deleteFile(id) {
       this.deleteTip = this.i18n.t('core.deleteEnclosureSure');
@@ -2207,7 +2414,7 @@ export default {
           },
           links: {
             self:
-              'threads?include=user,category,firstPost,firstPost.images,firstPost.postGoods,question,question.beUser,question.beUser.groups,question.images',
+              'threads?include=user,category,firstPost,firstPost.images,firstPost.postGoods,question,question.beUser,question.beUser.groups,question.images'
           },
         },
         content: this.textAreaValue,
@@ -2264,6 +2471,11 @@ export default {
             break;
           case 6:
             params.post_goods_id = this.dataGoodInfo._jv.id;
+            resolve();
+            break;
+          case 7:
+            params.title = this.postTitle;
+            params._jv.relationships.vote = this.addVote(0);
             resolve();
             break;
           default:
@@ -2387,6 +2599,8 @@ export default {
           'question.beUser',
           'question.images',
           'firstPost.postGoods',
+          'vote',
+          'vote.options',
         ],
       };
       this.$store.dispatch('jv/get', [`threads/${this.threadId}`, { params }]).then(res => {
@@ -2469,6 +2683,22 @@ export default {
             break;
           case 6:
             this.setAnnex('goods', res);
+            break;
+          case 7:
+            this.postTitle = res.title;
+            this.voteId = res.vote._jv.id;
+            this.optional = res.vote.optional;
+            this.showParticipant = res.vote.is_show_participant;
+            this.showResult = res.vote.is_show_result;
+            this.endDay = res.vote.end_day;
+            res.vote.options.forEach((item, index) => {
+              this.voteBeforeList.push({
+                id: Number(item._jv.id),
+                content: item.content,
+              });
+            });
+            this.inputOptional = res.vote.optional;
+            this.inputEndDay = res.vote.end_day;
             break;
           default:
             console.log('未知类型');
@@ -2585,6 +2815,10 @@ export default {
           console.log('666666');
           posts.post_goods_id = this.dataGoodInfo._jv.id;
           console.log(threads, '666666');
+          break;
+         case 7:
+          threads.title = this.postTitle;
+          posts._jv.relationships.vote = this.addVote(1);
           break;
         default:
           break;
@@ -3256,5 +3490,11 @@ export default {
 .watchpay {
   font-size: $fg-f3;
   color: --color(--qui-FC-AAA);
+}
+// 投票帖
+.vote-item {
+  width: 100vw;
+  padding-right: 40px;
+  box-sizing: border-box;
 }
 </style>

@@ -85,6 +85,7 @@ export default {
           'question',
           'question.beUser',
           'question.beUser.groups',
+          'vote',
         ],
         'filter[isDeleted]': 'no',
         'filter[isApproved]': 1,

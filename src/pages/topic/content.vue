@@ -198,6 +198,7 @@ export default {
           'question',
           'question.beUser',
           'question.beUser.groups',
+          'vote',
         ],
       };
 

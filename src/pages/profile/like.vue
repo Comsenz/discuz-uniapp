@@ -64,6 +64,7 @@ export default {
           'question',
           'question.beUser',
           'question.beUser.groups',
+          'vote',
         ],
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,

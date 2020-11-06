@@ -129,6 +129,7 @@ export default {
           'question',
           'question.beUser',
           'question.beUser.groups',
+          'vote',
         ],
         'filter[isApproved]': 1,
         'page[number]': this.pageNum,
