@@ -139,7 +139,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       return http
         .get(
-          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
+          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}&register=${payload.Insensibility}`,
           { custom: { login: false } },
         )
         .then(results => {
