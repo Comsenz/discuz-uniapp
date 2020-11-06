@@ -63,7 +63,7 @@ http.interceptor.request(conf => {
   try {
     const accessToken = app.$store.getters['session/get']('accessToken');
 
-    if (accessToken) {
+    if (accessToken && config.custom.login) {
       // eslint-disable-next-line no-param-reassign
       config.header.Authorization = `Bearer ${accessToken}`;
     } else {

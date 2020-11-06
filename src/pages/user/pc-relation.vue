@@ -75,23 +75,19 @@ export default {
               state,
               sessionId,
               sessionToken
-            }).then((res) => {
-              console.log(res);
-              if (res.statusCode === 200) {
-                uni.showToast({
-                  icon: 'none',
-                  title: this.i18n.t('user.bindconfirmed'),
-                  success: () => {
-                    this.displayRelation = false;
-                  }
-                });
-              }
-              if (res && res.data && res.data.errors) {
-                if (res.data.errors[0].code === 'no_bind_user') {
-                  this.tokens = res.data.errors[0].token;
-                  this.imageurl = res.data.errors[0].user.headimgurl;
-                  this.name = res.data.errors[0].user.nickname;
+            }).then(res => {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('user.bindconfirmed'),
+                success: () => {
+                  this.displayRelation = false;
                 }
+              });
+            }).catch(res => {
+              if (res.data.errors[0].code === 'no_bind_user') {
+                this.tokens = res.data.errors[0].token;
+                this.imageurl = res.data.errors[0].user.headimgurl;
+                this.name = res.data.errors[0].user.nickname;
               }
             });
           }
@@ -161,7 +157,7 @@ export default {
     font-weight: bold;
     line-height: 37rpx;
     color: #000;
-    text-align: center; 
+    text-align: center;
   }
   &__image {
     width: 120rpx;
