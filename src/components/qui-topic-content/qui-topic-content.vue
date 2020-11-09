@@ -292,7 +292,7 @@
               {{ i18n.t('profile.play') }}
             </text>
             <qui-video
-              :src="attachmentPayStatus ? '' : `${item.url}&isAttachment=1`"
+              :src="attachmentPayStatus ? '' : `${item.url}`"
               :ref="'video' + item._jv.id"
               :video-id="item._jv.id"
             ></qui-video>
@@ -591,11 +591,15 @@ export default {
       return thread;
     },
     attachmentList() {
-      const { fileList } = this;
+      const { fileList, threadInfo } = this;
       fileList.forEach((e, index) => {
         fileList[index].format = e.fileName
           .substring(e.fileName.lastIndexOf('.') + 1)
           .toUpperCase();
+        // 如果是付费主题或者付费附件加参数
+        if (threadInfo.attachmentPrice > 0 && threadInfo.price > 0) {
+          fileList[index].url = `${fileList[index].url}&isAttachment=1`;
+        }
       });
       return fileList;
     },
@@ -687,7 +691,7 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        window.location.href = `${item.url}&isAttachment=1`;
+        window.location.href = item.url;
       }
       // #endif
       // #ifdef MP-WEIXIN
