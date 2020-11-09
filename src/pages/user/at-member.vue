@@ -22,6 +22,7 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="lower"
+        :style="select !== 'select' ? 'height:calc(100vh - 292rpx)' : ''"
       >
         <checkbox-group @change="changeCheck" v-if="followStatus && select !== 'select'">
           <label v-for="item in allFollow" :key="item.id">
@@ -89,7 +90,7 @@
         </view>
       </scroll-view>
     </view>
-    <view class="qui-at-member-page-box__ft">
+    <view class="qui-at-member-page-box__ft" v-if="select !== 'select'">
       <qui-button
         v-if="select !== 'select'"
         size="large"
@@ -314,7 +315,7 @@ $otherHeight: 292rpx;
   }
   &__lst {
     .scroll-Y {
-      height: calc(100vh - #{$otherHeight});
+      // height: calc(100vh - #{$otherHeight});
       .loading-text {
         height: 100rpx;
         font-size: 28rpx;
