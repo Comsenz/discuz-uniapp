@@ -22,7 +22,7 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="lower"
-        :style="select !== 'select' ? 'height:calc(100vh - 292rpx)' : ''"
+        :style="select !== 'select' ? 'height:calc(100vh - 292rpx)' : 'height:calc(100vh - 2rpx)'"
       >
         <checkbox-group @change="changeCheck" v-if="followStatus && select !== 'select'">
           <label v-for="item in allFollow" :key="item.id">
@@ -257,7 +257,7 @@ export default {
     this.categoryId = option.categoryId;
     this.categoryIndex = option.categoryIndex;
     if (option.name === 'select') {
-      this.followStatus = true;
+      this.followStatus = false;
       uni.setNavigationBarTitle({
         title: this.i18n.t('discuzq.atMember.selectUser'),
       });
@@ -269,7 +269,7 @@ export default {
     if (option.name !== 'select') {
       this.getFollowMember(1);
     } else if (option.name === 'select') {
-      this.getSiteMember();
+      this.getSiteMember(1);
     }
     this.setAtMember([]);
   },
