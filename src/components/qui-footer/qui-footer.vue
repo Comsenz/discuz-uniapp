@@ -153,7 +153,7 @@ export default {
       uploadStatus: true,
       isWeixin: '', // 是否是微信浏览器内
       isiOS: '',
-      uploadImgMax: 3, // 首页上传图片时限制最大数量
+      uploadImgMax: 9, // 首页上传图片时限制最大数量
     };
   },
   computed: {
@@ -345,6 +345,7 @@ export default {
         uni.navigateTo({
           url: `/pages/topic/parse-goods?type=${item.type}`,
         });
+        this.$refs.popup.close();
         return;
       }
 
@@ -356,6 +357,7 @@ export default {
         uni.navigateTo({
           url: `/pages/user/at-member?name=select&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
         });
+        this.$refs.popup.close();
         return;
       }
       if (this.footerIndex === 0) {

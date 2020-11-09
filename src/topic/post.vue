@@ -554,7 +554,7 @@
           <view class="pay-type" @click="choicePayType(0)">
             {{ i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree') }}
           </view>
-          <view class="pay-type" v-if="type === 1" @click="choicePayType(1)">
+          <view class="pay-type" v-if="type === 1 && canUploadAttachment" @click="choicePayType(1)">
             {{ i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid') }}
           </view>
           <view class="pay-type" @click="choicePayType(2)">
@@ -922,6 +922,7 @@ export default {
       categoryindex: 0,
       postShow: false,
       popupStatus: false, // 这是自定义金额或者自定义字数弹框显示状态
+      canUploadAttachment: false, // 用户上传附件权限
     };
   },
   computed: {
@@ -2674,6 +2675,9 @@ export default {
       this.beAskId = item.id;
       this.userImage = item.avatarUrl;
     });
+    if (this.forums && this.forums.other) {
+      this.canUploadAttachment = this.forums.other.can_upload_attachments;
+    }
     // 问答编辑不显示提问价格
     if (this.forums && this.forums.paycenter) {
       if (option.operating === 'edit' || !this.forums.paycenter.wxpay_close) {

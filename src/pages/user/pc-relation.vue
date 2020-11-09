@@ -70,11 +70,13 @@ export default {
             const state = this.content.state;
             const sessionId = this.content.sessionId;
             const sessionToken = '';
+            const Insensibility = '';
             this.$store.dispatch('session/scancodeverification', {
               code,
               state,
               sessionId,
-              sessionToken
+              sessionToken,
+              Insensibility,
             }).then(res => {
               uni.showToast({
                 icon: 'none',

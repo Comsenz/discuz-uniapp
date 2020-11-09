@@ -73,6 +73,7 @@
         :addon="userInfo.expiredTime"
         v-if="siteInfo.set_site && siteInfo.set_site.site_mode === 'pay'"
       ></qui-cell-item>
+      <qui-cell-item :title="i18n.t('manage.version')" :addon="version"></qui-cell-item>
       <qui-cell-item
         :title="i18n.t('site.myauthority')"
         slot-right
@@ -83,7 +84,6 @@
           <text>{{ i18n.t('permission.' + item.replace(/\./g, '_')) }}</text>
         </view>
       </qui-cell-item>
-      <qui-cell-item :title="i18n.t('manage.version')" :addon="version"></qui-cell-item>
     </view>
   </qui-page>
 </template>
