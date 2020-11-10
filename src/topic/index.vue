@@ -1379,8 +1379,8 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
-                  data.question.is_onlooker === true &&
-                  data.onlookerState === true
+                  data.question.is_onlooker === true
+                  // data.onlookerState === true
                 ) {
                   this.beAsk = false;
                   this.payment = false;
@@ -1391,11 +1391,12 @@ export default {
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === false
+                  // data.onlookerState === false
                 ) {
                   this.beAsk = false;
                   this.payment = false;
-                  this.answerPay = false;
-                  console.log('免费不设置围观');
+                  this.answerPay = true;
+                  console.log('免费不设置围观也可查看答案');
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1429,12 +1430,12 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
-                  data.question.is_onlooker === false &&
+                  data.question.is_onlooker === false
                   // this.forums.other.can_be_onlooker === true &&
-                  data.onlookerState === false
+                  // data.onlookerState === false
                 ) {
-                  this.answerPay = false;
-                  console.log('付费不允许围观222222');
+                  this.answerPay = true;
+                  console.log('付费允许围观付费即可查看答案222222');
                 } else if (
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
