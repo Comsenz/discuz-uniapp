@@ -4,7 +4,7 @@
       class="addFine"
       src="@/static/essence.png"
       alt
-      v-if="themeEssence && themeType == '1'"
+      v-if="themeEssence && themeType == '1' && threadType !== 5"
       lazy-load
     ></image>
     <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load v-if="addAsk === 1"></image>

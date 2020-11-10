@@ -891,7 +891,7 @@ export default {
       }
 
       &__time {
-        max-width: 600rpx;
+        max-width: 460rpx;
         padding-top: 10rpx;
         overflow: hidden;
         font-size: $fg-f2;
