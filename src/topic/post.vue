@@ -1364,14 +1364,13 @@ export default {
       if (index === 0) {
         if (this.type === 5) {
           this.postClick();
+          this.watchShow = false;
           return;
         }
-        this.payType = 0;
-        if (this.payType === 0) {
-          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
-        }
-        this.watchShow = false;
-        return;
+        // this.payType = 0;
+        // if (this.payType === 0) {
+        //   this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+        // }
       } else {
         this.watchShow = true;
       }

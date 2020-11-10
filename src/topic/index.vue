@@ -1430,9 +1430,9 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
-                  data.question.is_onlooker === false
+                  data.question.is_onlooker === false &&
                   // this.forums.other.can_be_onlooker === true &&
-                  // data.onlookerState === false
+                  data.onlookerState === true
                 ) {
                   this.answerPay = true;
                   console.log('付费允许围观付费即可查看答案222222');
