@@ -1,5 +1,7 @@
 const TerserPlugin = require('terser-webpack-plugin');
 // const StyleLintPlugin = require('stylelint-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
 const path = require('path');
 
 function resolve(dir) {
@@ -9,6 +11,9 @@ function resolve(dir) {
 const isPro = process.env.NODE_ENV === 'production';
 const isH5Compiler = process.env.UNI_PLATFORM === 'h5';
 const isWXCompiler = process.env.UNI_PLATFORM === 'mp-weixin';
+
+const pwd = process.cwd();
+const reg = new RegExp(pwd + '/src/components');
 
 module.exports = {
   assetsDir: 'assets',
@@ -20,12 +25,17 @@ module.exports = {
       .set('@', resolve('src'));
   },
   configureWebpack: config => {
-    // config.plugins = [
-    //   ...config.plugins,
-    //   new StyleLintPlugin({
-    //     files: ['**/*.{vue,scss,css}'],
-    //   }),
-    // ];
+    config.plugins = [
+      ...config.plugins,
+      // new StyleLintPlugin({
+      //   files: ['**/*.{vue,scss,css}'],
+      // }),
+      new BundleAnalyzerPlugin({
+        analyzerMode: 'server',
+        analyzerHost: '0.0.0.0',
+        analyzerPort: 9902
+      })
+    ];
     // 如果不是 H5，则不进行其它的优化打包操作。避免打包后缺少文件出错
     // 如果没有这个判断，小程序打包后缺少runtime.js等文件会出错
     if (isH5Compiler) {
@@ -50,7 +60,17 @@ module.exports = {
               name: 'chunk-vendors',
               priority: 10,
               chunks: 'all',
+              // maxSize: (1024 * 100),
               test: /[\\/]node_modules[\\/](vue|vuex|vue-i18n|@dcloudio\/uni-h5)[\\/]/,
+              enforce: true,
+            },
+            components: {
+              reuseExistingChunk: true,
+              automaticNamePrefix: 'dzq-cps',
+              priority: 10,
+              chunks: 'all',
+              maxSize: (1024 * 200),
+              test: reg,
               enforce: true,
             },
             // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/113

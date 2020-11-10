@@ -708,12 +708,10 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
-// import VodUploader from '@/common/cos-wx-sdk-v5.1';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
 // #ifdef  H5
-// import TcVod from 'vod-js-sdk-v6';
 import tcaptchs from '@/utils/tcaptcha';
 import appCommonH from '@/utils/commonHelper';
 import choosePosition from '@/mixin/choosePosition';
