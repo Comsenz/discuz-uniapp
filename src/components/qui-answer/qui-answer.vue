@@ -112,7 +112,7 @@ export default {
       payment: 2,
       list: [],
       listBg: 'var(--qui-BG-ED)',
-      iosShow: false,
+      iosShow: true,
     };
   },
   computed: {
@@ -127,7 +127,7 @@ export default {
     this.system = res.platform;
     if (this.system === 'ios') {
       console.log('当前是iOS');
-      this.iosShow = true;
+      this.iosShow = false;
     }
     // #endif
   },
