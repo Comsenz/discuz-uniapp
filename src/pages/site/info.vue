@@ -416,12 +416,13 @@ export default {
         // #ifdef H5
         this.h5LoginMode();
         // #endif
+      } else {
+        this.payStatus = false;
+        this.payShowStatus = true;
+        this.$nextTick(() => {
+          this.$refs.payShow.payClickShow();
+        });
       }
-      this.payStatus = false;
-      this.payShowStatus = true;
-      this.$nextTick(() => {
-        this.$refs.payShow.payClickShow();
-      });
     },
     // 调取用户信息取消弹框
     close() {

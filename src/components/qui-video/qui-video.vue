@@ -38,6 +38,16 @@ export default {
       duration: '',
     };
   },
+  watch: {
+    // 监听得到的数据
+    src: {
+      handler(newVal) {
+        this.rsc = newVal;
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   created() {
     this.videoContext = uni.createVideoContext(`myVideo${this.$props.videoId}`, this);
   },
