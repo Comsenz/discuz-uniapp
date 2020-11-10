@@ -930,9 +930,11 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     showPrice() {
-      let pay = this.i18n.t('discuzq.post.free');
+      // let pay = this.i18n.t('discuzq.post.free');
+      let pay = this.i18n.t('discuzq.post.pleaseChoice');
       if (this.price <= 0) {
-        pay = this.i18n.t('discuzq.post.free');
+        // pay = this.i18n.t('discuzq.post.free');
+        pay = this.i18n.t('discuzq.post.pleaseChoice');
       } else {
         pay = `￥${this.price + this.i18n.t('discuzq.post.yuan')}`;
       }
@@ -1419,9 +1421,13 @@ export default {
       } else if (type === 1) {
         this.payNumCheck = [];
         this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+        this.payNum[0].name = '￥1';
+        this.payNum[0].pay = 1;
       } else {
         this.payNumCheck = [];
+        this.payNum[0].name = '￥1';
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+        this.payNum[0].pay = 1;
       }
       this.payType = type;
       this.$refs.lookPayPopup.close();
@@ -2443,10 +2449,14 @@ export default {
           this.word = res.freeWords;
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+          this.payNum[0].name = '￥1';
+          this.payNum[0].pay = 1;
         } else if (Number(res.attachmentPrice) > 0) {
           this.price = res.attachmentPrice;
           this.payType = 1;
           this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+          this.payNum[0].name = '￥1';
+          this.payNum[0].pay = 1;
         } else {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
