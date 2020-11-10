@@ -1345,7 +1345,6 @@ export default {
       this.$refs.popupBtm.close();
     },
     moneyClick(index) {
-      console.log(index, 'indexindex');
       // if (this.forums.set_site.site_onlooker_price === 0) {
       //   this.watchShow = false;
       // } else if (index === 0) {
@@ -1363,8 +1362,10 @@ export default {
         this.watchShow = false;
       }
       if (index === 0) {
-        this.postClick();
-        // console.log('免费');
+        if (this.type === 5) {
+          this.postClick();
+          return;
+        }
         this.payType = 0;
         if (this.payType === 0) {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
