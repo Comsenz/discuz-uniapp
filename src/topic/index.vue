@@ -2636,11 +2636,14 @@ export default {
     // 围观支付
     payAnswerClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         this.h5LoginMode();
         // #endif
       }
@@ -3057,11 +3060,14 @@ export default {
     // 回答问题
     queClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         this.h5LoginMode();
         // #endif
       }
