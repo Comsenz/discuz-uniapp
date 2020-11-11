@@ -638,6 +638,7 @@ export default {
     purchaseuser: '用户组购买',
     distance: '距离过期还有',
     changesphon: '提现手机号格式错误',
+    purchasedSuccessfully: '用户组购买成功',
   },
   permission: {
     viewThreads: '查看主题列表',
