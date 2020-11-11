@@ -2465,6 +2465,11 @@ export default {
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
+          this.freepercentage.forEach(item => {
+            if (res.freeWords === item.pay) {
+              this.percentagedisplay = item.name;
+            }
+          })
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
           if (this.type === 1) {
