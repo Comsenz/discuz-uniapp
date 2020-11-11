@@ -7,16 +7,15 @@ import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
 import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './common/const';
-// #ifdef MP-WEIXIN
-import Aegis from '@tencent/aegis-mp-sdk';
-// #endif
 
+// #ifdef H5
 const aegis = new Aegis({
   id: "7411", // 项目ID
   reportApiSpeed: true, // 接口测速
   reportAssetSpeed: true, // 静态资源测速
   pagePerformance: true, // 页面测速
 });
+// #endif
 
 // #ifdef H5
 const publicWhitelistPage = [
