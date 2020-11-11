@@ -461,8 +461,15 @@
           </view>
           <view class="post-box__good__info">
             <view class="post-box__good__title">{{ dataGoodInfo.title }}</view>
-            <view class="post-box__good__ft">
-              <view class="post-box__good__price">￥{{ dataGoodInfo.price }}元</view>
+            <view
+              class="post-box__good__ft"
+              :style="{
+                justifyContent: Number(dataGoodInfo.price) > 0 ? 'space-between' : 'flex-end',
+              }"
+            >
+              <view class="post-box__good__price" v-if="Number(dataGoodInfo.price) > 0">
+                ￥{{ dataGoodInfo.price }}元
+              </view>
               <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
             </view>
           </view>
