@@ -851,12 +851,7 @@ export default {
           pay: 1,
         },
       ],
-      freewords: [
-        {
-          name: '0%',
-          pay: 0,
-        },
-      ], // 免费字数选中
+      freewords: [], // 免费字数选中
       percentagedisplay: '0%',
       uploadFile: [], // 图片上传列表
       cursor: 0, // 内容输入框光标未知
