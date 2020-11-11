@@ -24,7 +24,7 @@
           <progress
             :percent="item.uploadPercent"
             active
-            stroke-width="9"
+            stroke-width="3"
             activeColor="#25A9F6"
             backgroundColor="#b5b5b5"
           />

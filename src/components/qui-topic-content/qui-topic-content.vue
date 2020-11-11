@@ -308,8 +308,15 @@
             <view class="themeItem__content__good__title">
               {{ postGoods.title }}
             </view>
-            <view class="themeItem__content__good__ft">
-              <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
+            <view
+              class="themeItem__content__good__ft"
+              :style="{
+                justifyContent: Number(postGoods.price) > 0 ? 'space-between' : 'flex-end',
+              }"
+            >
+              <view class="themeItem__content__good__price" v-if="Number(postGoods.price) > 0">
+                ￥{{ postGoods.price }}元
+              </view>
               <view class="themeItem__content__good__buy" @click="buyGood">
                 <qui-icon
                   class="themeItem__content__good__icon"

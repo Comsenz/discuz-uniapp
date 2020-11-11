@@ -164,7 +164,9 @@
               {{ postGoods.title }}
             </view>
             <view class="themeItem__content__good__ft">
-              <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
+              <view class="themeItem__content__good__price" v-if="Number(postGoods.price) > 0">
+                ￥{{ postGoods.price }}元
+              </view>
             </view>
           </view>
         </view>

@@ -461,8 +461,15 @@
           </view>
           <view class="post-box__good__info">
             <view class="post-box__good__title">{{ dataGoodInfo.title }}</view>
-            <view class="post-box__good__ft">
-              <view class="post-box__good__price">￥{{ dataGoodInfo.price }}元</view>
+            <view
+              class="post-box__good__ft"
+              :style="{
+                justifyContent: Number(dataGoodInfo.price) > 0 ? 'space-between' : 'flex-end',
+              }"
+            >
+              <view class="post-box__good__price" v-if="Number(dataGoodInfo.price) > 0">
+                ￥{{ dataGoodInfo.price }}元
+              </view>
               <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
             </view>
           </view>
@@ -930,11 +937,21 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     showPrice() {
+      let pay = '';
       // let pay = this.i18n.t('discuzq.post.free');
-      let pay = this.i18n.t('discuzq.post.pleaseChoice');
-      if (this.price <= 0) {
-        // pay = this.i18n.t('discuzq.post.free');
+      if (this.type === 1) {
         pay = this.i18n.t('discuzq.post.pleaseChoice');
+      } else {
+        pay = this.i18n.t('discuzq.post.free');
+      }
+
+      if (this.price <= 0) {
+        if (this.type === 1) {
+          pay = this.i18n.t('discuzq.post.pleaseChoice');
+        } else {
+          pay = this.i18n.t('discuzq.post.free');
+        }
+        // pay = this.i18n.t('discuzq.post.free');
       } else {
         pay = `￥${this.price + this.i18n.t('discuzq.post.yuan')}`;
       }
@@ -1369,10 +1386,12 @@ export default {
           this.watchShow = false;
           return;
         }
-        // this.payType = 0;
-        // if (this.payType === 0) {
-        //   this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
-        // }
+        if (this.type !== 1 && this.type !== 5) {
+          this.payType = 0;
+          if (this.payType === 0) {
+            this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+          }
+        }
       } else {
         this.watchShow = true;
       }
@@ -2448,8 +2467,10 @@ export default {
           this.word = res.freeWords;
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
-          this.payNum[0].name = '￥1';
-          this.payNum[0].pay = 1;
+          if (this.type === 1) {
+            this.payNum[0].name = '￥1';
+            this.payNum[0].pay = 1;
+          }
         } else if (Number(res.attachmentPrice) > 0) {
           this.price = res.attachmentPrice;
           this.payType = 1;
