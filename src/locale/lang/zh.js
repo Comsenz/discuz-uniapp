@@ -453,6 +453,7 @@ export default {
     spendingMoney: '大家快来花',
     element: '元围观～',
     buygood: '购买商品',
+    NoPermissionToUploadPictures: '没有上传图片权限',
   },
   // 站点管理页面
   manage: {
@@ -638,6 +639,7 @@ export default {
     purchaseuser: '用户组购买',
     distance: '距离过期还有',
     changesphon: '提现手机号格式错误',
+    purchasedSuccessfully: '用户组购买成功',
   },
   permission: {
     viewThreads: '查看主题列表',

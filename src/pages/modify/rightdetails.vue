@@ -241,9 +241,9 @@ export default {
         include: 'group',
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
-        res.forEach((item, index) => {
-          if (this.groupId === item.group._jv.id) {
-            this.expirationTime = res[index].expiration_time;
+        res.forEach(item => {
+          if (Number(this.groupId) === item.group_id) {
+            this.expirationTime = item.expiration_time;
           }
         });
       });
@@ -452,7 +452,7 @@ export default {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               uni.showToast({
                 icon: 'none',
-                title: '用户组购买成功',
+                title: this.i18n.t('modify.purchasedSuccessfully'),
                 duration: 2000,
               });
               setTimeout(() => {

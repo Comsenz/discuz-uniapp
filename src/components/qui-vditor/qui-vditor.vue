@@ -34,8 +34,10 @@ import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import appCommonH from '@/utils/commonHelper';
 import Upload from '@/components/qui-vditor/utils/Upload';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       searchUserTimeout: null,
@@ -154,6 +156,13 @@ export default {
         tip: '上传图片',
         icon: ImageIcon,
         click() {
+          if (!_that.forums.other.can_upload_images) {
+            uni.showToast({
+              title: _that.i18n.t('home.NoPermissionToUploadPictures'),
+              icon: 'none',
+            });
+            return;
+          }
           _that.setCursorPosition();
           _that.upload.uploadImage();
         },

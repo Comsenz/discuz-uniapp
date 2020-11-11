@@ -854,12 +854,7 @@ export default {
           pay: 1,
         },
       ],
-      freewords: [
-        {
-          name: '0%',
-          pay: 0,
-        },
-      ], // 免费字数选中
+      freewords: [], // 免费字数选中
       percentagedisplay: '0%',
       uploadFile: [], // 图片上传列表
       cursor: 0, // 内容输入框光标未知
@@ -2468,6 +2463,11 @@ export default {
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
+          this.freepercentage.forEach(item => {
+            if (res.freeWords === item.pay) {
+              this.percentagedisplay = item.name;
+            }
+          })
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
           if (this.type === 1) {
