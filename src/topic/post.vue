@@ -516,7 +516,10 @@
           </qui-button>
         </view>
         <qui-button
-          v-if="type !== 5"
+          v-if="
+            type !== 5 ||
+              (type === 5 && forums.other && forums.other.can_create_thread_paid === false)
+          "
           :loading="postLoading"
           type="primary"
           size="large"
@@ -528,7 +531,7 @@
           {{ i18n.t('discuzq.post.post') }}
         </qui-button>
         <qui-button
-          v-if="type === 5"
+          v-if="type === 5 && forums.other && forums.other.can_create_thread_paid"
           :loading="postLoading"
           type="primary"
           size="large"
