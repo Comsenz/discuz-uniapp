@@ -364,6 +364,10 @@ export default {
         url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
       }
       if (item.type === 3) {
+        if (!this.forums.can_upload_images) {
+          this.$refs.toast.show({ message: this.i18n.t('home.NoPermissionToUploadPictures') });
+          return;
+        }
         // 当选择图片帖时
         this.$nextTick(() => {
           this.$refs.upload.uploadClick();
