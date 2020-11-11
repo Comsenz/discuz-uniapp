@@ -115,7 +115,10 @@
 
                   <view class="thread__content" @click="contentClick">
                     <view class="thread__content__text">
-                      <qui-uparse :content="thread.title" v-if="thread.type == 1"></qui-uparse>
+                      <qui-uparse
+                        :content="thread.title"
+                        v-if="thread.type == 1 || thread.type == 1"
+                      ></qui-uparse>
                       <qui-uparse :content="thread.firstPost.summary" v-else></qui-uparse>
                     </view>
                   </view>
