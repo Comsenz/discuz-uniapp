@@ -453,6 +453,7 @@ export default {
     spendingMoney: '大家快来花',
     element: '元围观～',
     buygood: '购买商品',
+    NoPermissionToUploadPictures: '没有上传图片权限',
   },
   // 站点管理页面
   manage: {
