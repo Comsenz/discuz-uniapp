@@ -30,9 +30,14 @@
     <!--li类型-->
     <view v-else-if="node.tag == 'li'" :class="node.classStr" :style="node.styleStr">
       <block v-for="(node, index) of node.nodes" :key="index">
+        <!-- <pre>{{node}}</pre> -->
         <wx-parse-template :node="node" />
       </block>
     </view>
+
+    <!--checkbox 类型-->
+    <checkbox v-else-if="node.tag == 'input'" :class="node.classStr" :style="node.styleStr" :checked="node.attr.checked" :disabled="node.attr.disabled">
+    </checkbox>
 
     <!--table类型-->
     <wx-parse-table
@@ -93,7 +98,7 @@
       </block>
     </view>
     <!--其他标签-->
-    <view v-else :class="node.classStr" :style="node.styleStr">
+    <view v-else :class="node.classStr + getClass(node)" :style="node.styleStr">
       <block v-for="(node, index) of node.nodes" :key="index">
         <wx-parse-template :node="node" />
       </block>
@@ -144,6 +149,12 @@ export default {
         parent = parent.$parent;
       }
       parent.navigate(href, e, attr);
+    },
+    getClass(node) {
+      if(Array.isArray(node.nodes) && node.nodes.length > 0 && node.nodes[0].attr && node.nodes[0].attr['data-task-id']) {
+        return ' task';
+      }
+      return '';
     },
   },
 };
