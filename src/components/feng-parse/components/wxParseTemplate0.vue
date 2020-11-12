@@ -30,7 +30,6 @@
     <!--li类型-->
     <view v-else-if="node.tag == 'li'" :class="node.classStr" :style="node.styleStr">
       <block v-for="(node, index) of node.nodes" :key="index">
-        <!-- <pre>{{node}}</pre> -->
         <wx-parse-template :node="node" />
       </block>
     </view>
