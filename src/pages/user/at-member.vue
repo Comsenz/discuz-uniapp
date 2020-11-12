@@ -22,6 +22,7 @@
         scroll-y="true"
         scroll-with-animation="true"
         @scrolltolower="lower"
+        :style="select !== 'select' ? 'height:calc(100vh - 292rpx)' : 'height:calc(100vh - 2rpx)'"
       >
         <checkbox-group @change="changeCheck" v-if="followStatus && select !== 'select'">
           <label v-for="item in allFollow" :key="item.id">
@@ -52,19 +53,19 @@
             </qui-avatar-cell>
           </label>
         </checkbox-group>
-        <view v-if="select === 'select' && followStatus">
-          <view v-for="item in allFollow" :key="item.id">
+        <!-- <view v-if="select === 'select' && followStatus">
+          <view v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
-              :mark="item.toUser.id"
-              :title="item.toUser.username"
-              :icon="item.toUser.avatarUrl ? item.toUser.avatarUrl : '/static/noavatar.gif'"
-              :value="handleGroups(item.toUser)"
+              :mark="item.id"
+              :title="item.username"
+              :icon="item.avatarUrl ? item.avatarUrl : '/static/noavatar.gif'"
+              :value="item.groups[0].name"
               :label="item.label"
               :is-real="item.isReal"
               @click="radioChange(item)"
             ></qui-avatar-cell>
           </view>
-        </view>
+        </view> -->
         <view v-if="select === 'select'">
           <view v-for="item in allSiteUser" :key="item.id">
             <qui-avatar-cell
@@ -89,7 +90,7 @@
         </view>
       </scroll-view>
     </view>
-    <view class="qui-at-member-page-box__ft">
+    <view class="qui-at-member-page-box__ft" v-if="select !== 'select'">
       <qui-button
         v-if="select !== 'select'"
         size="large"
@@ -256,7 +257,7 @@ export default {
     this.categoryId = option.categoryId;
     this.categoryIndex = option.categoryIndex;
     if (option.name === 'select') {
-      this.followStatus = true;
+      this.followStatus = false;
       uni.setNavigationBarTitle({
         title: this.i18n.t('discuzq.atMember.selectUser'),
       });
@@ -265,7 +266,11 @@ export default {
         title: this.i18n.t('discuzq.atMember.atTitle'),
       });
     }
-    this.getFollowMember(1);
+    if (option.name !== 'select') {
+      this.getFollowMember(1);
+    } else if (option.name === 'select') {
+      this.getSiteMember(1);
+    }
     this.setAtMember([]);
   },
 };
@@ -310,7 +315,7 @@ $otherHeight: 292rpx;
   }
   &__lst {
     .scroll-Y {
-      height: calc(100vh - #{$otherHeight});
+      // height: calc(100vh - #{$otherHeight});
       .loading-text {
         height: 100rpx;
         font-size: 28rpx;

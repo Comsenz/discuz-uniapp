@@ -68,7 +68,7 @@
         name="file"
         :async-clear="true"
         ref="upload"
-        :count="1"
+        :count="uploadImgMax"
         :choose-type="0"
         @uploadClick="uploadClick"
       ></qui-uploader>
@@ -91,6 +91,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 // #endif
+let uploadCountLoop = null;
 
 export default {
   components: { uniPopupDialog },
@@ -152,6 +153,7 @@ export default {
       uploadStatus: true,
       isWeixin: '', // 是否是微信浏览器内
       isiOS: '',
+      uploadImgMax: 9, // 首页上传图片时限制最大数量
     };
   },
   computed: {
@@ -329,6 +331,13 @@ export default {
 
       this.$refs.popup.open();
     },
+    compare(property) {
+      return (a, b) => {
+        const value1 = a[property];
+        const value2 = b[property];
+        return value1 - value2;
+      };
+    },
     // 首页底部发帖点击事件跳转
     handleClick(item) {
       let url;
@@ -336,6 +345,7 @@ export default {
         uni.navigateTo({
           url: `/pages/topic/parse-goods?type=${item.type}`,
         });
+        this.$refs.popup.close();
         return;
       }
 
@@ -347,31 +357,67 @@ export default {
         uni.navigateTo({
           url: `/pages/user/at-member?name=select&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
         });
+        this.$refs.popup.close();
         return;
       }
       if (this.footerIndex === 0) {
         url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
       }
       if (item.type === 3) {
+        if (!this.forums.other.can_upload_images) {
+          this.$refs.toast.show({ message: this.i18n.t('home.NoPermissionToUploadPictures') });
+          return;
+        }
         // 当选择图片帖时
         this.$nextTick(() => {
           this.$refs.upload.uploadClick();
         });
+        const uploadData = [];
+        // let errorStatus = false;
+        let errorCount = 0;
+        let chooseLength = 1;
+        uni.$on('uploadLength', data => {
+          chooseLength = data;
+        });
+        uni.$on('uploadFail', data => {
+          console.log(data);
+          errorCount += 1;
+        });
+        let uploadDataLength = 0;
         uni.$on('uploadOver', data => {
+          uni.showLoading({
+            title: this.i18n.t('core.loading'),
+            mask: true,
+          });
           if (this.footerIndex === 0) {
             url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
           } else {
             url = `/topic/post?type=${item.type}`;
           }
-          uni.navigateTo({
-            url,
-            success: res => {
-              // 通过eventChannel向被打开页面传送数据
-              res.eventChannel.emit('acceptDataFromOpenerPage', { data });
-            },
+          uploadData.push(data.data);
+          uploadDataLength = data.times;
+          uploadData.map((val, key) => {
+            if (val.data.attributes.order > this.uploadImgMax) {
+              uploadData.splice(key, 1);
+            }
+            return uploadData;
           });
-          this.cancel();
         });
+
+        uploadCountLoop = setInterval(() => {
+          const sum = uploadDataLength + errorCount;
+          if (sum >= chooseLength) {
+            uni.navigateTo({
+              url,
+              success: res => {
+                // 通过eventChannel向被打开页面传送数据
+                res.eventChannel.emit('acceptDataFromOpenerPage', uploadData);
+              },
+            });
+            clearInterval(uploadCountLoop);
+          }
+        }, 1000);
+        this.cancel();
       } else if (item.type === 2) {
         // 当选择视屏帖时
         this.$nextTick(() => {
@@ -406,6 +452,7 @@ export default {
         this.cancel();
       }
     },
+    jumpAndUploadImg() {},
     // 取消按钮
     cancel() {
       this.$refs.popup.close();
@@ -461,7 +508,7 @@ $top: -9rpx;
   z-index: 100;
   display: flex;
   width: 100%;
-  height: 100rpx;
+  // height: 100rpx;
   background-color: --color(--qui-BG-2);
   box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.05);
 }

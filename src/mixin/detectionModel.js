@@ -2,6 +2,7 @@ module.exports = {
   methods: {
     detectionModel() {
       const modelmes = uni.getSystemInfoSync().model;
+      console.log(modelmes, 'modelmesmodelmesmodelmes');
       let tempMoble = false;
       if (!modelmes) return tempMoble;
       const bangsList = [

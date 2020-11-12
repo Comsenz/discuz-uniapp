@@ -34,8 +34,10 @@ import { mapState } from 'vuex';
 import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import appCommonH from '@/utils/commonHelper';
 import Upload from '@/components/qui-vditor/utils/Upload';
+import forums from '@/mixin/forums';
 
 export default {
+  mixins: [forums],
   data() {
     return {
       searchUserTimeout: null,
@@ -43,6 +45,7 @@ export default {
       emojiShow: false,
       postComponent: null,
       upload: null,
+      range: {},
     };
   },
   computed: {
@@ -51,8 +54,9 @@ export default {
     }),
   },
   created() {
-    this.upload = new Upload();
+    this.upload = new Upload(this);
     uni.$on('atUser', () => {
+      this.setCursorPosition();
       let atMemberList = '';
       this.getAtMemberData.map(item => {
         atMemberList += `@${item.username} `;
@@ -62,6 +66,7 @@ export default {
       this.$refs.atUser.close();
     });
     uni.$on('clickTopic', data => {
+      this.setCursorPosition();
       if (data.keywords) this.vditor.insertValue(`#${data.keywords.replace(/\s+/g, '')}# `);
       this.$refs.topic.close();
     });
@@ -71,19 +76,15 @@ export default {
     });
 
     uni.$on('clickImage', item => {
-      document.execCommand(
-        'insertHTML',
-        false,
-        `<img alt="${item.name}" src="${item.path}" title="${item.id}"></img>`,
-      );
+      const html = `<img alt="${item.name}" src="${item.path}" title="${item.id}"></img>`;
+      const markdown = this.vditor.html2md(html);
+      this.vditor.insertValue(markdown.substr(0, markdown.length - 1));
     });
 
     uni.$on('clickAttach', item => {
-      document.execCommand(
-        'insertHTML',
-        false,
-        `<a href="${item.attributes.url}" title="${item.id}">${item.attributes.fileName}</a>`,
-      );
+      const html = `<a href="${item.attributes.url}" title="${item.id}">${item.attributes.fileName}</a>`;
+      const markdown = this.vditor.html2md(html);
+      this.vditor.insertValue(markdown.substr(0, markdown.length - 1));
     });
 
     const videoRender = (element, url) => {
@@ -113,7 +114,7 @@ export default {
         className: 'right',
         icon: AtIcon,
         click() {
-          _that.setCursorPosition();
+          _that.range = getSelection().getRangeAt(0);
           _that.$refs.atUser.open();
         },
       },
@@ -124,7 +125,7 @@ export default {
         className: 'right',
         icon: TopicIcon,
         click() {
-          _that.setCursorPosition();
+          _that.range = getSelection().getRangeAt(0);
           _that.$refs.topic.open();
         },
       },
@@ -134,7 +135,7 @@ export default {
         tip: 'emojiq',
         icon: EmojiIcon,
         click() {
-          _that.setCursorPosition();
+          _that.range = getSelection().getRangeAt(0);
           _that.emojiShow = !_that.emojiShow;
         },
       },
@@ -154,7 +155,13 @@ export default {
         tip: '上传图片',
         icon: ImageIcon,
         click() {
-          _that.setCursorPosition();
+          if (!_that.forums.other.can_upload_images) {
+            uni.showToast({
+              title: _that.i18n.t('home.NoPermissionToUploadPictures'),
+              icon: 'none',
+            });
+            return;
+          }
           _that.upload.uploadImage();
         },
       },
@@ -193,10 +200,9 @@ export default {
   },
   methods: {
     setCursorPosition() {
-      const postition = this.vditor.getCursorPosition();
-      if (postition.x === 0 && postition.y === 0) {
-        this.vditor.focus();
-      }
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(this.range);
     },
     // 点击取消按钮，关闭at
     atCancel() {
@@ -208,6 +214,7 @@ export default {
     },
     // 表情点击事件
     getEmojiClick(code) {
+      this.setCursorPosition();
       this.vditor.insertValue(code);
       this.emojiShow = false;
     },

@@ -299,27 +299,32 @@ module.exports = {
             this.refreshmpParams();
             // #endif
             this.logind();
-            if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
-              uni.getStorage({
-                key: 'page',
-                success(resData) {
-                  uni.redirectTo({
-                    url: resData.data,
+            this.$store
+              .dispatch('jv/get', ['forum', { params: { include: 'users' } }])
+              .then(forumRes => {
+                if (forumRes && forumRes.set_site && forumRes.set_site.site_mode !== SITE_PAY) {
+                  uni.getStorage({
+                    key: 'page',
+                    success(resData) {
+                      console.log('resData', resData);
+                      uni.redirectTo({
+                        url: resData.data,
+                      });
+                    },
                   });
-                },
+                }
+                if (
+                  forumRes &&
+                  forumRes.set_site &&
+                  forumRes.set_site.site_mode === SITE_PAY &&
+                  this.user &&
+                  !this.user.paid
+                ) {
+                  uni.redirectTo({
+                    url: '/pages/site/info',
+                  });
+                }
               });
-            }
-            if (
-              this.forum &&
-              this.forum.set_site &&
-              this.forum.set_site.site_mode === SITE_PAY &&
-              this.user &&
-              !this.user.paid
-            ) {
-              uni.redirectTo({
-                url: '/pages/site/info',
-              });
-            }
             uni.showToast({
               title: resultDialog,
               duration: 2000,
@@ -329,24 +334,23 @@ module.exports = {
             // #ifdef MP-WEIXIN
             this.refreshmpParams();
             // #endif
-            if (res.data.errors[0].status === '403') {
+            if (
+              res.data.errors[0].status === '401' ||
+              res.data.errors[0].status === '402' ||
+              res.data.errors[0].status === '500'
+            ) {
+              const title = this.i18n.t(`core.${res.data.errors[0].code}`);
               uni.showToast({
                 icon: 'none',
-                title: res.data.errors[0].detail[0],
+                title,
                 duration: 2000,
               });
             }
-            if (res.data.errors[0].code === 'register_validate') {
+            if (res.data.errors[0].status === '403' || res.data.errors[0].status === '422') {
+              const title = this.i18n.t(res.data.errors[0].detail[0]);
               uni.showToast({
                 icon: 'none',
-                title: this.i18n.t('core.register_validate'),
-                duration: 2000,
-              });
-            }
-            if (res.data.errors[0].code === 'validate_reject') {
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('core.validate_reject'),
+                title,
                 duration: 2000,
               });
             }

@@ -1343,6 +1343,7 @@ export default {
             });
             // #endif
             if (data.question) {
+              console.log(data,'xiangqing')
               this.platformDate = (
                 data.question.price *
                 (this.forums.set_site.site_master_scale / 10)
@@ -1361,11 +1362,12 @@ export default {
                 // 问答免费 当前登录ID == 被提问ID && 未回答
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
                   this.beAsk = true;
-                  // 问答免费 已回答 && 围观价格>0 && 用户组有围观权限  所有人都可以看
-                } else if (this.user.id === data.user.id && data.question.is_answer === 1) {
+                  // 已回答
+                } else if (this.user.id === data.user.id && data.question.is_answer === 1 ) {
                   this.beAsk = false;
                   this.payment = true;
                   this.answerPay = false;
+                  console.log(data, '免费允许围观')
                 } else if (
                   this.user.id === data.question.be_user_id &&
                   data.question.is_answer === 1
@@ -1378,25 +1380,23 @@ export default {
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true
-                  // this.forums.other.can_be_onlooker === true &&
-                  // data.onlookerState === false
+                  // data.onlookerState === true
                 ) {
                   this.beAsk = false;
                   this.payment = false;
                   this.answerPay = true;
-                  console.log('ddhdhudushuhdiuehwiu');
+                  console.log('允许围观可查看答案');
                 } else if (
                   this.user.id !== data.question.be_user_id &&
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === false
-                  // this.forums.other.can_be_onlooker === true &&
                   // data.onlookerState === false
                 ) {
                   this.beAsk = false;
                   this.payment = false;
                   this.answerPay = true;
-                  console.log('免费不设置围观');
+                  console.log('免费不设置围观也可查看答案');
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1431,16 +1431,16 @@ export default {
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === false &&
-                  this.forums.other.can_be_onlooker === true &&
-                  data.onlookerState === false
+                  // this.forums.other.can_be_onlooker === true &&
+                  data.onlookerState === true
                 ) {
-                  this.answerPay = false;
-                  console.log('付费不允许围观222222');
+                  this.answerPay = true;
+                  console.log('付费允许围观付费即可查看答案222222');
                 } else if (
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === true &&
-                  this.forums.other.can_be_onlooker === true &&
+                  // this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === false
                 ) {
                   this.answerPay = true;
@@ -1450,7 +1450,7 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   data.question.is_onlooker === true &&
                   data.question.is_answer === 1 &&
-                  this.forums.other.can_be_onlooker === true &&
+                  // this.forums.other.can_be_onlooker === true && 
                   data.onlookerState === true
                 ) {
                   this.answerPay = true;
@@ -2636,11 +2636,14 @@ export default {
     // 围观支付
     payAnswerClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         this.h5LoginMode();
         // #endif
       }
@@ -3041,7 +3044,7 @@ export default {
         this.h5LoginMode();
         // #endif
       }
-      if (this.thread.canReply && this.thread.category.canReplyThread) {
+      if (this.thread.canReply) {
         this.commentId = threadId;
         this.formData.type = 1;
         this.$refs.commentPopup.open();
@@ -3057,11 +3060,14 @@ export default {
     // 回答问题
     queClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         this.h5LoginMode();
         // #endif
       }

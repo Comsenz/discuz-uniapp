@@ -25,7 +25,7 @@
         ></qui-page-my>
       </view>
       <view class="tabBar">
-        <qui-footer @click="cut_index" :bottom="detectionModel() ? 100 : 0"></qui-footer>
+        <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
       </view>
     </view>
   </qui-page>
