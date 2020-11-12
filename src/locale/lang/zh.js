@@ -670,7 +670,7 @@ export default {
     thread_freeViewPosts_3: '免费查看付费图片',
     thread_freeViewPosts_4: '免费查看付费语音',
     thread_freeViewPosts_5: '免费查看付费问答',
-    createThreadPaid: '发布付费贴和被打赏',
+    createThreadPaid: '发布付费内容',
     attachment_create_0: '上传附件',
     attachment_create_1: '上传图片',
     attachment_view_0: '查看附件',
