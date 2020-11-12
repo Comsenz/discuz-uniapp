@@ -987,9 +987,11 @@ export default {
       this.haveDate = ((this.forums.set_site.site_onlooker_price - this.platformDate) / 2).toFixed(
         2,
       );
+      console.log(this.haveDate, '提问者得');
       this.answerIsDate = (
-        (this.forums.set_site.site_onlooker_price - this.platformDate) /
-        2
+        this.forums.set_site.site_onlooker_price -
+        this.platformDate -
+        this.haveDate
       ).toFixed(2);
     }
     // #ifndef MP-WEIXIN

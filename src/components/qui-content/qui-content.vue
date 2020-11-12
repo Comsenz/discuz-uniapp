@@ -4,7 +4,7 @@
       class="addFine"
       src="@/static/essence.png"
       alt
-      v-if="themeEssence && themeType == '1' && threadType !== 5"
+      v-if="themeEssence && themeType == '1'"
       lazy-load
     ></image>
     <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load v-if="addAsk === 1"></image>
@@ -848,16 +848,16 @@ export default {
   .addFine {
     position: absolute;
     top: 16rpx;
-    left: 679rpx;
-    width: 36rpx;
-    height: 42rpx;
+    right: 20rpx;
+    width: 31rpx;
+    height: 41rpx;
   }
   .addAsk {
     position: absolute;
     top: 20rpx;
-    right: 0rpx;
-    width: 120rpx;
-    height: 120rpx;
+    right: 20rpx;
+    width: 126rpx;
+    height: 119rpx;
   }
 }
 
