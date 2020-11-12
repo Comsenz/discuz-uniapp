@@ -69,7 +69,10 @@
             @clickItem="onClickItem"
             :brief="true"
           ></qui-tabs>
-          <view class="profile-tabs__content">
+          <view
+            class="profile-tabs__content"
+            :style="current == 1 && userInfo && userInfo.canBeAsked ? '' : 'paddingTop: 30rpx'"
+          >
             <view
               class="answer"
               @click="handleAnswer(userInfo)"
@@ -431,26 +434,24 @@ export default {
     background: --color(--qui-BG-1);
   }
   .answer {
-    position: relative;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
     width: 710rpx;
     height: 80rpx;
-    padding-left: 311rpx;
     margin: 30rpx 20rpx 31rpx;
     font-size: $fg-f3;
     font-weight: 800;
     line-height: 80rpx;
-    // text-align: center;
     background: --color(--qui-FC-FFF);
     border-radius: 6rpx;
     box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
   }
   .ask {
-    position: absolute;
-    top: 24rpx;
-    left: 257rpx;
     width: 37rpx;
     height: 37rpx;
-    // padding-right: 19rpx;
+    padding-right: 19rpx;
   }
 }
 /deep/ .qui-tabs {
