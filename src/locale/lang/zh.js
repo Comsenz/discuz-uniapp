@@ -806,6 +806,7 @@ export default {
     addshielduser: '添加屏蔽用户',
     wechatTip: '请在微信内操作',
     noBind: '解绑成功',
+    askHim: '向 Ta 提问',
   },
   site: {
     partialcontentpreview: '部分内容预览',

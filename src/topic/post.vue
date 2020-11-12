@@ -979,7 +979,7 @@ export default {
     // },
   },
   updated() {
-    if (this.forums) {
+    if (this.forums && this.type === 5) {
       this.platformDate = (
         this.forums.set_site.site_onlooker_price *
         (this.forums.set_site.site_master_scale / 10)
@@ -987,7 +987,6 @@ export default {
       this.haveDate = ((this.forums.set_site.site_onlooker_price - this.platformDate) / 2).toFixed(
         2,
       );
-      console.log(this.haveDate, '提问者得');
       this.answerIsDate = (
         this.forums.set_site.site_onlooker_price -
         this.platformDate -
@@ -2701,7 +2700,6 @@ export default {
   onLoad(option) {
     console.log(option, 'optionopton');
     if (option.type === '5') {
-      console.log('55555555555');
       this.payNum[0].name = this.i18n.t('discuzq.post.noReward');
     }
     this.categoryid = option.categoryId;

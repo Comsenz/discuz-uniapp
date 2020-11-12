@@ -849,14 +849,15 @@ export default {
     position: absolute;
     top: 16rpx;
     right: 20rpx;
-    width: 31rpx;
-    height: 41rpx;
+    z-index: 1;
+    width: 33rpx;
+    height: 43rpx;
   }
   .addAsk {
     position: absolute;
-    top: 20rpx;
+    top: 22rpx;
     right: 20rpx;
-    width: 126rpx;
+    width: 130rpx;
     height: 119rpx;
   }
 }
