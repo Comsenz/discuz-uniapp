@@ -64,6 +64,17 @@ const payWhiteListPage = [
   '/pages/modify/findpwd',
   '/pages/site/partner-invite',
 ];
+
+const t1StartDate = new Date();
+const t1StartYear = t1StartDate.getFullYear();
+const t1StartMonth = t1StartDate.getMonth() + 1;
+const t1StartDay = t1StartDate.getDate();
+const t1StartHours = t1StartDate.getHours();
+const t1StartMinutes = t1StartDate.getMinutes();
+const t1StartSeconds = t1StartDate.getSeconds();
+const t1StartMilliseconds = t1StartDate.getMilliseconds();
+aegis.time('t1开始', t1StartYear + '-' + t1StartMonth + '-' + t1StartDay + ' ' + t1StartHours + ':' + t1StartMinutes + ':' + t1StartSeconds + ':' + t1StartMilliseconds);
+
 const apploaded = () => {
 
   aegis.info('上报一条白名单日志，这两种情况这条日志才会报到后台：1、打开页面的用户在名单中；2、对应的页面发生了错误🤨');
@@ -110,6 +121,16 @@ const apploaded = () => {
   link.rel = 'shortcut icon';
   link.href = forums.set_site ? forums.set_site.site_favicon : '';
   document.getElementsByTagName('head')[0].appendChild(link);
+
+  const t1EndDate = new Date();
+  const t1EndYear = t1EndDate.getFullYear();
+  const t1EndMonth = t1EndDate.getMonth() + 1;
+  const t1EndDay = t1EndDate.getDate();
+  const t1EndHours = t1EndDate.getHours();
+  const t1EndMinutes = t1EndDate.getMinutes();
+  const t1EndSeconds = t1EndDate.getSeconds();
+  const t1EndMilliseconds = t1EndDate.getMilliseconds();
+  aegis.timeEnd('t1结束', t1EndYear + '-' + t1EndMonth + '-' + t1EndDay + ' ' + t1EndHours + ':' + t1EndMinutes + ':' + t1EndSeconds + ':' + t1EndMilliseconds);
 };
 uni.$on('apploaded', apploaded);
 // #endif
