@@ -164,7 +164,8 @@ export default {
     // #ifdef H5
     uni.$on('updateNoticePage', () => {
       this.getUnreadNoticeNum();
-      this.getDialogList();
+      this.pageNum = 1;
+      this.getDialogList('refresh');
     });
     // #endif
   },
@@ -196,7 +197,7 @@ export default {
       });
     },
     // 调用 会话列表 的接口
-    getDialogList() {
+    getDialogList(type) {
       const params = {
         'page[number]': this.pageNum,
         'page[limit]': this.pageSize,
@@ -231,7 +232,12 @@ export default {
               list[i].avatarUrl = '';
             }
           }
-          this.dialogList = [...this.dialogList, ...list];
+          if (type && type === 'refresh') {
+            this.dialogList = [...list];
+          } else {
+            this.dialogList = [...this.dialogList, ...list];
+          }
+
           this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         }
       });

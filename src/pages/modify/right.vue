@@ -103,7 +103,6 @@ export default {
         'filter[isPaid]': 1,
       };
       this.$store.dispatch('jv/get', ['groups', { params }]).then(res => {
-        console.log(res);
         this.paidusergroup = res;
         if (res.length > 0) {
           this.permissiondisplay = true;
@@ -120,8 +119,12 @@ export default {
         include: 'group',
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
-        console.log(res);
-        this.privilegeUserGroup = res;
+        this.privilegeUserGroup = [];
+        res.forEach(item => {
+          if (item.group) {
+            this.privilegeUserGroup.push(item);
+          }
+        });
         if (res.length > 0) {
           this.rightspurchased = true;
         } else {
@@ -143,7 +146,6 @@ export default {
         this.typenum1 = true;
         this.typenum2 = false;
       } else {
-        console.log('切换');
         this.typenum1 = false;
         this.typenum2 = true;
         this.allusergroupsusers();

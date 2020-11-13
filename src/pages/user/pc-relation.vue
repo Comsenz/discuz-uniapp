@@ -6,15 +6,18 @@
       </view>
       <view class="pc-relation__imgbox">
         <view class="pc-relation__image">
-          <image class="pc-relation__image-img" src="@/static/noavatar.gif"></image>
+          <image class="pc-relation__image-img" :src="imageurl"></image>
         </view>
-        <view class="pc-relation__text">李李李</view>
+        <view class="pc-relation__text">{{ name }}</view>
       </view>
-      <view class="pc-relation__title">
+      <view class="pc-relation__fail" v-if="!displayRelation">
+        {{ i18n.t('user.bindconfirmed') }}
+      </view>
+      <view class="pc-relation__title" v-if="displayRelation">
         {{ i18n.t('user.pcrelation') }}
       </view>
     </view>
-    <view class="pc-relation-bt">
+    <view class="pc-relation-bt" v-if="displayRelation">
       <view class="pc-relation__btn" @click="authorization">
         {{ i18n.t('user.pcrelation') }}
       </view>
@@ -35,7 +38,11 @@ export default {
       code: '',
       sessionId: '',
       token: '',
+      tokens: '',
       content: {},
+      imageurl:'',
+      name: '',
+      displayRelation: true,
     };
   },
   onLoad(content) {
@@ -46,35 +53,62 @@ export default {
         key: 'session_token_data',
         data: content.session_token,
         success: () => {
-          this.token = content.session_token;
+          this.$store.dispatch('session/wxPcRelation');
         },
       });
     } else {
-      this.pcrelation();
+      this.username();
     }
   },
   methods: {
-    authorization() {
-      this.$store.dispatch('session/wxPcRelation');
+    username() {
+      uni.getStorage({
+        key: 'session_token_data',
+        success: (e) => {
+          if (e.data != '') {
+            const code = this.content.code;
+            const state = this.content.state;
+            const sessionId = this.content.sessionId;
+            const sessionToken = '';
+            const Insensibility = '';
+            this.$store.dispatch('session/scancodeverification', {
+              code,
+              state,
+              sessionId,
+              sessionToken,
+              Insensibility,
+            }).then(res => {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('user.bindconfirmed'),
+                success: () => {
+                  this.displayRelation = false;
+                }
+              });
+            }).catch(res => {
+              if (res.data.errors[0].code === 'no_bind_user') {
+                this.tokens = res.data.errors[0].token;
+                this.imageurl = res.data.errors[0].user.headimgurl;
+                this.name = res.data.errors[0].user.nickname;
+              }
+            });
+          }
+        },
+      });
     },
-    pcrelation() {
+    authorization() {
       uni.getStorage({
         key: 'session_token_data',
         success: (e) => {
           if (e.data != '') {
             console.log(e.data);
             const sessionToken = e.data;
-            const code = this.content.code;
-            const state = this.content.state;
-            const sessionId = this.content.sessionId;
+            const wechatToken = this.tokens;
             this.$store.dispatch('session/pcrelation', {
-              code,
-              sessionId,
-              state,
-              sessionToken
+              sessionToken,
+              wechatToken,
             }).then((res) => {
-              console.log(res);
-              if (res && res.data && res.data.data) {
+              if (res && res.data && res.data.bind) {
                 uni.showToast({
                   icon: 'none',
                   title: this.i18n.t('user.pcrelationsuccess'),
@@ -125,7 +159,7 @@ export default {
     font-weight: bold;
     line-height: 37rpx;
     color: #000;
-    text-align: center; 
+    text-align: center;
   }
   &__image {
     width: 120rpx;
@@ -145,6 +179,15 @@ export default {
     font-weight: 400;
     line-height: 45rpx;
     color: #777;
+    text-align: center;
+  }
+  &__fail {
+    height: 45rpx;
+    margin-top: 63rpx;
+    font-size: $fg-f5;
+    font-weight: 400;
+    line-height: 45rpx;
+    color: #fa5151;
     text-align: center;
   }
   &__btn {

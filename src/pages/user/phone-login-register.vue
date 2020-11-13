@@ -336,12 +336,27 @@ export default {
               duration: 2000,
             });
           }
-          if (res && res.data && res.data.errors && res.data.errors[0].code === 'no_bind_user') {
-            const userInfo = {
-              mobileToken: res.data.errors[0].token,
-            };
-            uni.setStorageSync('userInfo', userInfo);
-            this.jump2RegisterBindPhonePage();
+          if (res && res.data && res.data.errors) {
+            if (
+              res.data.errors[0].status === '401' ||
+              res.data.errors[0].status === '402' ||
+              res.data.errors[0].status === '500'
+            ) {
+              const title = this.i18n.t(`core.${res.data.errors[0].code}`);
+              uni.showToast({
+                icon: 'none',
+                title,
+                duration: 2000,
+              });
+            }
+            if (res.data.errors[0].status === '403' || res.data.errors[0].status === '422') {
+              const title = this.i18n.t(res.data.errors[0].detail[0]);
+              uni.showToast({
+                icon: 'none',
+                title,
+                duration: 2000,
+              });
+            }
           }
         })
         .catch(err => {

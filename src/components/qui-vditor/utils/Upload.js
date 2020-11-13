@@ -2,8 +2,9 @@
 import { http } from '@/api/api-request';
 
 export default class Upload {
-  constructor() {
+  constructor(vditorComponent) {
     this.postComponent = null;
+    this.vditorComponent = vditorComponent;
   }
   upload(params) {
     const { type } = params;
@@ -71,19 +72,15 @@ export default class Upload {
   }
 
   _insertImage(item) {
-    document.execCommand(
-      'insertHTML',
-      false,
-      `<img alt="${item.name}" src="${item.path}" title="${item.id}"></img>`,
-    );
+    const html = `<img alt="${item.name}" src="${item.path}" title="${item.id}"></img>`;
+    const markdown = this.vditorComponent.vditor.html2md(html);
+    this.vditorComponent.vditor.insertValue(markdown.substr(0, markdown.length - 1));
   }
 
   _insertAttach(item) {
     this.postComponent.uploadFile.push(item);
-    document.execCommand(
-      'insertHTML',
-      false,
-      `<a href="${item.attributes.url}" title="${item.id}">${item.attributes.fileName}</a>`,
-    );
+    const html = `<a href="${item.attributes.url}" title="${item.id}">${item.attributes.fileName}</a>`;
+    const markdown = this.vditorComponent.vditor.html2md(html);
+    this.vditorComponent.vditor.insertValue(markdown.substr(0, markdown.length - 1));
   }
 }

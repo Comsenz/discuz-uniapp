@@ -69,7 +69,32 @@
             @clickItem="onClickItem"
             :brief="true"
           ></qui-tabs>
-          <view class="profile-tabs__content">
+          <view
+            class="profile-tabs__content"
+            :style="
+              current === 1 &&
+              forums.other &&
+              forums.other.can_create_thread_question &&
+              userInfo &&
+              userInfo.canBeAsked
+                ? ''
+                : 'paddingTop: 30rpx'
+            "
+          >
+            <view
+              class="answer"
+              @click="handleAnswer(userInfo)"
+              v-if="
+                current === 1 &&
+                  forums.other &&
+                  forums.other.can_create_thread_question &&
+                  userInfo &&
+                  userInfo.canBeAsked
+              "
+            >
+              <img src="/static/myask.svg" class="ask" />
+              {{ i18n.t('profile.askHim') }}
+            </view>
             <view v-if="current == 0" class="items">
               <topic
                 :user-id="userId"
@@ -113,6 +138,7 @@ import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import loginModule from '@/mixin/loginModule';
 import { getCurUrl } from '@/utils/getCurUrl';
+import { mapState } from 'vuex';
 import topic from './topic';
 import following from './following';
 import followers from './followers';
@@ -157,6 +183,12 @@ export default {
     themeColor() {
       return this.theme === this.$u.light() ? '#333' : '#fff'; // 用于图标色
     },
+    ...mapState({
+      getCategoryId: state => state.session.categoryId,
+      getCategoryIndex: state => state.session.categoryIndex,
+      footerIndex: state =>
+        state.footerTab.footerIndex ? parseInt(state.footerTab.footerIndex, 10) : 0,
+    }),
   },
   onLoad(params) {
     // 区分是自己的主页还是别人的主页
@@ -334,6 +366,18 @@ export default {
     handleClickShare(e) {
       this.nowThreadId = e;
     },
+    // 点击跳转提问发布页
+    handleAnswer(userInfo) {
+      console.log(userInfo, 'userInfouserInfo');
+      uni.navigateTo({
+        url: `/topic/post?type=5&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`,
+      });
+      setTimeout(() => {
+        if (userInfo) {
+          uni.$emit('radioChange', userInfo);
+        }
+      }, 1000);
+    },
     // 私信跳转到聊天页面（传入用户名和会话id）
     chat() {
       uni.navigateTo({
@@ -399,9 +443,29 @@ export default {
   }
 }
 .profile-tabs__content {
-  padding-top: 30rpx;
+  // padding-top: 30rpx;
   .items {
     background: --color(--qui-BG-1);
+  }
+  .answer {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 710rpx;
+    height: 80rpx;
+    margin: 30rpx 20rpx 31rpx;
+    font-size: $fg-f3;
+    font-weight: 800;
+    line-height: 80rpx;
+    background: --color(--qui-FC-FFF);
+    border-radius: 6rpx;
+    box-shadow: 0rpx 4rpx 8rpx rgba(0, 0, 0, 0.05);
+  }
+  .ask {
+    width: 37rpx;
+    height: 37rpx;
+    padding-right: 19rpx;
   }
 }
 /deep/ .qui-tabs {
