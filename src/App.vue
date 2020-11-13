@@ -41,15 +41,7 @@ export default {
   async onLaunch() {
     const init = async () => {
       // #ifdef H5
-      const t2StartDate = new Date();
-      const t2StartYear = t2StartDate.getFullYear();
-      const t2StartMonth = t2StartDate.getMonth() + 1;
-      const t2StartDay = t2StartDate.getDate();
-      const t2StartHours = t2StartDate.getHours();
-      const t2StartMinutes = t2StartDate.getMinutes();
-      const t2StartSeconds = t2StartDate.getSeconds();
-      const t2StartMilliseconds = t2StartDate.getMilliseconds();
-      aegis.time('T2开始', t2StartYear + '-' + t2StartMonth + '-' + t2StartDay + ' ' + t2StartHours + ':' + t2StartMinutes + ':' + t2StartSeconds + ':' + t2StartMilliseconds);
+      aegis.time('T2');
       // #endif
       const forums = await this.$store.dispatch('jv/get', [
         'forum',
@@ -118,15 +110,7 @@ export default {
         this.$store.dispatch('forum/setError', { loading: false });
       }
       // #ifdef H5
-      const t2EndDate = new Date();
-      const t2EndYear = t2EndDate.getFullYear();
-      const t2EndMonth = t2EndDate.getMonth() + 1;
-      const t2EndDay = t2EndDate.getDate();
-      const t2EndHours = t2EndDate.getHours();
-      const t2EndMinutes = t2EndDate.getMinutes();
-      const t2EndSeconds = t2EndDate.getSeconds();
-      const t2EndMilliseconds = t2EndDate.getMilliseconds();
-      aegis.timeEnd('T2结束', t2EndYear + '-' + t2EndMonth + '-' + t2EndDay + ' ' + t2EndHours + ':' + t2EndMinutes + ':' + t2EndSeconds + ':' + t2EndMilliseconds);
+      aegis.timeEnd('T2');
       // #endif
     };
     try {
