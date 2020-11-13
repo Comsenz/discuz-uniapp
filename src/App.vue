@@ -40,9 +40,6 @@ export default {
   },
   async onLaunch() {
     const init = async () => {
-      // #ifdef H5
-      aegis.time('T2');
-      // #endif
       const forums = await this.$store.dispatch('jv/get', [
         'forum',
         {
@@ -109,9 +106,6 @@ export default {
       if (!this.$store.state.forum.error.code) {
         this.$store.dispatch('forum/setError', { loading: false });
       }
-      // #ifdef H5
-      aegis.timeEnd('T2');
-      // #endif
     };
     try {
       await init();
