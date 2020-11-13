@@ -31,7 +31,6 @@ import {
   // AttachIcon,
 } from '@/components/qui-vditor/svg/index';
 import { mapState } from 'vuex';
-import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import appCommonH from '@/utils/commonHelper';
 import Upload from '@/components/qui-vditor/utils/Upload';
 import forums from '@/mixin/forums';
@@ -183,7 +182,6 @@ export default {
       toolbarConfig: {
         pin: true,
       },
-      cdn: `${DISCUZ_REQUEST_HOST}assets/js/vditor@3.5.2`,
       height: window.innerHeight / 2,
       placeholder: this.$i18n.t('discuzq.post.placeholder'),
       toolbar,

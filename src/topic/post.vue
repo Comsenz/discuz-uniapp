@@ -1854,7 +1854,7 @@ export default {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
       if (this.type === 1) {
-        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
+        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '').replace(/\n\n/g, '\n\n\n');
       }
       // #endif
       if (!this.categoryId) {
