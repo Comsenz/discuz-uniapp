@@ -150,7 +150,7 @@ export default {
       url = `/topic/index?id=${matchs[1]}`;
     } else if(/^\/user\/\d+$/i.test(e.path)) {
       const matchs = e.path.match(/^\/user\/(\d+)$/i);
-      url = `/topic/index?id=${matchs[1]}`;
+      url = `/pages/profile/index?userId=${matchs[1]}`;
     } else if(e.path === '/site/partner-invite' && e.query.code) {
         url = `/pages/site/partner-invite?code=${e.query.code}`;
     }
