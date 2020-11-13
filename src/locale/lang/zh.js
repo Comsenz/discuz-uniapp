@@ -654,6 +654,7 @@ export default {
     thread_essence: '加精',
     thread_sticky: '置顶',
     thread_deletePosts: '删除回复',
+    canBeReward: '允许被打赏',
     thread_canBeReward: '允许被打赏',
     other_canInviteUserScale: '允许邀请朋友',
     other_canUserCommissionScale: '允许收入提成',
