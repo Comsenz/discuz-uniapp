@@ -2,10 +2,7 @@
   <view class="pc-login">
     <view class="pc-login-tp">
       <view class="pc-login__box">
-        <image
-          class="pc-login__box__img"
-          :src="pcLoginLogo ? pcLoginLogo : '/static/logo.png'"
-        ></image>
+        <image class="pc-login__box__img" :src="pcLoginLogo"></image>
       </view>
       <view class="pc-login__title">
         {{ i18n.t('user.pcloginconfirm') }}
@@ -46,7 +43,7 @@ export default {
     forums: {
       handler(newValue) {
         if (newValue) {
-          this.pcLoginLogo = this.forums.set_site.site_logo;
+          this.pcLoginLogo = this.forums.set_site.site_logo || '/static/logo.png';
           if (this.forums.set_reg.register_type === 2) {
             this.registers = 1;
           }
