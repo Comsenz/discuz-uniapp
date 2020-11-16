@@ -237,7 +237,7 @@ export default {
   onShareTimeline() {
     return {
       title: this.forums.set_site.site_name,
-      query: `userId=${this.userId}`,
+      query: `current=${this.current}&userId=${this.userId}`,
     };
   },
   methods: {
