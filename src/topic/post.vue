@@ -461,8 +461,15 @@
           </view>
           <view class="post-box__good__info">
             <view class="post-box__good__title">{{ dataGoodInfo.title }}</view>
-            <view class="post-box__good__ft">
-              <view class="post-box__good__price">￥{{ dataGoodInfo.price }}元</view>
+            <view
+              class="post-box__good__ft"
+              :style="{
+                justifyContent: Number(dataGoodInfo.price) > 0 ? 'space-between' : 'flex-end',
+              }"
+            >
+              <view class="post-box__good__price" v-if="Number(dataGoodInfo.price) > 0">
+                ￥{{ dataGoodInfo.price }}元
+              </view>
               <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
             </view>
           </view>
@@ -509,7 +516,10 @@
           </qui-button>
         </view>
         <qui-button
-          v-if="type !== 5"
+          v-if="
+            type !== 5 ||
+              (type === 5 && forums.other && forums.other.can_create_thread_paid === false)
+          "
           :loading="postLoading"
           type="primary"
           size="large"
@@ -521,7 +531,7 @@
           {{ i18n.t('discuzq.post.post') }}
         </qui-button>
         <qui-button
-          v-if="type === 5"
+          v-if="type === 5 && forums.other && forums.other.can_create_thread_paid"
           :loading="postLoading"
           type="primary"
           size="large"
@@ -844,12 +854,7 @@ export default {
           pay: 1,
         },
       ],
-      freewords: [
-        {
-          name: '0%',
-          pay: 0,
-        },
-      ], // 免费字数选中
+      freewords: [], // 免费字数选中
       percentagedisplay: '0%',
       uploadFile: [], // 图片上传列表
       cursor: 0, // 内容输入框光标未知
@@ -930,9 +935,21 @@ export default {
       getAtMemberData: state => state.atMember.atMemberData,
     }),
     showPrice() {
-      let pay = this.i18n.t('discuzq.post.free');
-      if (this.price <= 0) {
+      let pay = '';
+      // let pay = this.i18n.t('discuzq.post.free');
+      if (this.type === 1) {
+        pay = this.i18n.t('discuzq.post.pleaseChoice');
+      } else {
         pay = this.i18n.t('discuzq.post.free');
+      }
+
+      if (this.price <= 0) {
+        if (this.type === 1) {
+          pay = this.i18n.t('discuzq.post.pleaseChoice');
+        } else {
+          pay = this.i18n.t('discuzq.post.free');
+        }
+        // pay = this.i18n.t('discuzq.post.free');
       } else {
         pay = `￥${this.price + this.i18n.t('discuzq.post.yuan')}`;
       }
@@ -962,7 +979,7 @@ export default {
     // },
   },
   updated() {
-    if (this.forums) {
+    if (this.forums && this.type === 5) {
       this.platformDate = (
         this.forums.set_site.site_onlooker_price *
         (this.forums.set_site.site_master_scale / 10)
@@ -971,8 +988,9 @@ export default {
         2,
       );
       this.answerIsDate = (
-        (this.forums.set_site.site_onlooker_price - this.platformDate) /
-        2
+        this.forums.set_site.site_onlooker_price -
+        this.platformDate -
+        this.haveDate
       ).toFixed(2);
     }
     // #ifndef MP-WEIXIN
@@ -1345,7 +1363,6 @@ export default {
       this.$refs.popupBtm.close();
     },
     moneyClick(index) {
-      console.log(index, 'indexindex');
       // if (this.forums.set_site.site_onlooker_price === 0) {
       //   this.watchShow = false;
       // } else if (index === 0) {
@@ -1363,14 +1380,17 @@ export default {
         this.watchShow = false;
       }
       if (index === 0) {
-        this.postClick();
-        // console.log('免费');
-        this.payType = 0;
-        if (this.payType === 0) {
-          this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+        if (this.type === 5) {
+          this.postClick();
+          this.watchShow = false;
+          return;
         }
-        this.watchShow = false;
-        return;
+        if (this.type !== 1 && this.type !== 5) {
+          this.payType = 0;
+          if (this.payType === 0) {
+            this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
+          }
+        }
       } else {
         this.watchShow = true;
       }
@@ -1418,9 +1438,13 @@ export default {
       } else if (type === 1) {
         this.payNumCheck = [];
         this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+        this.payNum[0].name = '￥1';
+        this.payNum[0].pay = 1;
       } else {
         this.payNumCheck = [];
+        this.payNum[0].name = '￥1';
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+        this.payNum[0].pay = 1;
       }
       this.payType = type;
       this.$refs.lookPayPopup.close();
@@ -1830,7 +1854,7 @@ export default {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
       if (this.type === 1) {
-        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
+        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '').replace(/\n\n/g, '\n\n\n');
       }
       // #endif
       if (!this.categoryId) {
@@ -2440,12 +2464,23 @@ export default {
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
+          this.freepercentage.forEach(item => {
+            if (res.freeWords === item.pay) {
+              this.percentagedisplay = item.name;
+            }
+          })
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
+          if (this.type === 1) {
+            this.payNum[0].name = '￥1';
+            this.payNum[0].pay = 1;
+          }
         } else if (Number(res.attachmentPrice) > 0) {
           this.price = res.attachmentPrice;
           this.payType = 1;
           this.showPayType = this.i18n.t('discuzq.post.TheContentIsFreeAndTheAccessoriesArePaid');
+          this.payNum[0].name = '￥1';
+          this.payNum[0].pay = 1;
         } else {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
@@ -2665,7 +2700,6 @@ export default {
   onLoad(option) {
     console.log(option, 'optionopton');
     if (option.type === '5') {
-      console.log('55555555555');
       this.payNum[0].name = this.i18n.t('discuzq.post.noReward');
     }
     this.categoryid = option.categoryId;

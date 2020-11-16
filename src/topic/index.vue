@@ -1005,7 +1005,7 @@ export default {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       // 只保留一个用户组显示
       let hasFirst = false;
-      if (thread.user && thread.user.groups.length > 0) {
+      if (thread.user.groups && thread.user.groups.length > 0) {
         thread.user.groups = thread.user.groups.filter(group => {
           if (group.isDisplay === true && !hasFirst) {
             hasFirst = true;
@@ -1379,8 +1379,8 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
-                  data.question.is_onlooker === true &&
-                  data.onlookerState === true
+                  data.question.is_onlooker === true
+                  // data.onlookerState === true
                 ) {
                   this.beAsk = false;
                   this.payment = false;
@@ -1391,11 +1391,12 @@ export default {
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === false
+                  // data.onlookerState === false
                 ) {
                   this.beAsk = false;
                   this.payment = false;
-                  this.answerPay = false;
-                  console.log('免费不设置围观');
+                  this.answerPay = true;
+                  console.log('免费不设置围观也可查看答案');
                 }
               } else if (data.question.price > '0.00') {
                 if (this.user.id === data.question.be_user_id && data.question.is_answer === 0) {
@@ -1431,10 +1432,10 @@ export default {
                   data.question.is_answer === 1 &&
                   data.question.is_onlooker === false &&
                   // this.forums.other.can_be_onlooker === true &&
-                  data.onlookerState === false
+                  data.onlookerState === true
                 ) {
-                  this.answerPay = false;
-                  console.log('付费不允许围观222222');
+                  this.answerPay = true;
+                  console.log('付费允许围观付费即可查看答案222222');
                 } else if (
                   this.user.id !== data.user.id &&
                   data.question.is_answer === 1 &&
@@ -1449,7 +1450,7 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   data.question.is_onlooker === true &&
                   data.question.is_answer === 1 &&
-                  this.forums.other.can_be_onlooker === true &&
+                  // this.forums.other.can_be_onlooker === true && 
                   data.onlookerState === true
                 ) {
                   this.answerPay = true;
@@ -2635,11 +2636,14 @@ export default {
     // 围观支付
     payAnswerClickShow() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         this.h5LoginMode();
         // #endif
       }
@@ -3056,11 +3060,14 @@ export default {
     // 回答问题
     queClick() {
       if (!this.$store.getters['session/get']('isLogin')) {
+        uni.setStorage({
+          key: 'page',
+          data: getCurUrl(),
+        });
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
         // #endif
         // #ifdef H5
-        this.$store.dispatch('session/setUrl', this.curUrl);
         this.h5LoginMode();
         // #endif
       }

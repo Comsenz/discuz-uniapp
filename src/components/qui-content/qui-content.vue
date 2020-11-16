@@ -164,7 +164,9 @@
               {{ postGoods.title }}
             </view>
             <view class="themeItem__content__good__ft">
-              <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
+              <view class="themeItem__content__good__price" v-if="Number(postGoods.price) > 0">
+                ￥{{ postGoods.price }}元
+              </view>
             </view>
           </view>
         </view>
@@ -846,16 +848,17 @@ export default {
   .addFine {
     position: absolute;
     top: 16rpx;
-    left: 679rpx;
-    width: 36rpx;
-    height: 42rpx;
+    right: 20rpx;
+    z-index: 1;
+    width: 33rpx;
+    height: 43rpx;
   }
   .addAsk {
     position: absolute;
-    top: 20rpx;
-    right: 0rpx;
-    width: 120rpx;
-    height: 120rpx;
+    top: 22rpx;
+    right: 20rpx;
+    width: 130rpx;
+    height: 119rpx;
   }
 }
 

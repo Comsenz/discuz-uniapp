@@ -377,7 +377,21 @@ img {
   margin: 1em 0;
 }
 .wxParse .ol {
-  list-style-type: disc;
+  list-style-type: decimal;
+}
+.wxParse .ul.task {
+  list-style: none;
+  padding-left: .5em;
+
+  uni-checkbox .uni-checkbox-input {
+    width: 14px;
+    height: 14px;
+    margin-right: 3px;
+  }
+
+  uni-checkbox .uni-checkbox-input.uni-checkbox-input-checked:before {
+    font-size: 14px;
+  }
 }
 
 .wxParse .ol .li,

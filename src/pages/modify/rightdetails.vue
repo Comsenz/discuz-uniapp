@@ -29,7 +29,7 @@
       </view>
       <view
         class="details-box__purchase purchase-model"
-        v-if="oder && forums.paycenter.wxpay_close"
+        v-if="oder && forums.paycenter.wxpay_close && paydiisplay"
       >
         <view class="details-box__purchase-list money">
           <qui-cell-item
@@ -158,9 +158,23 @@ export default {
       payingusers: '',
       rightsice: '',
       wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
+      paydiisplay: false,
     };
   },
   onLoad(evn) {
+    const res = uni.getSystemInfoSync();
+    // #ifndef H5
+    if (res.platform === 'ios' && this.forums.paycenter.wxpay_ios) {
+      this.paydiisplay = true;
+    } else if (res.platform === 'ios' && !this.forums.paycenter.wxpay_ios) {
+      this.paydiisplay = false;
+    } else {
+      this.paydiisplay = true;
+    }
+    // #endif
+    // #ifdef H5
+    this.paydiisplay = true;
+    // #endif
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5
@@ -241,9 +255,9 @@ export default {
         include: 'group',
       };
       this.$store.dispatch('jv/get', ['groups/paid', { params }]).then(res => {
-        res.forEach((item, index) => {
-          if (this.groupId === item.group._jv.id) {
-            this.expirationTime = res[index].expiration_time;
+        res.forEach(item => {
+          if (Number(this.groupId) === item.group_id) {
+            this.expirationTime = item.expiration_time;
           }
         });
       });
@@ -452,7 +466,7 @@ export default {
               this.$store.dispatch('jv/get', [`users/${this.currentLoginId}`, {}]);
               uni.showToast({
                 icon: 'none',
-                title: '用户组购买成功',
+                title: this.i18n.t('modify.purchasedSuccessfully'),
                 duration: 2000,
               });
               setTimeout(() => {
