@@ -138,10 +138,12 @@
             :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
           ></image>
         </view>
-        <view v-show="videoShow">
+        <view v-if="!wechatbrowser">
           <video
+            v-show="videoShow"
             ref="myVideo"
             id="myVideo"
+            :src="mediaUrl"
             :poster="coverImage"
             :autoplay="autoplay"
             controls
@@ -163,7 +165,29 @@
             :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             bindfullscreenchange="fullScreen"
+            :style="{
+              width: videoWidth > videoHeight ? '100%' : '50%',
+            }"
+          ></video>
+        </view>
+        <view v-if="wechatbrowser">
+          <video
+            v-show="videoShow"
+            ref="myVideo"
+            id="myVideo"
             :src="mediaUrl"
+            :poster="coverImage"
+            :autoplay="autoplay"
+            controls
+            :duration="duration"
+            :page-gesture="false"
+            :show-fullscreen-btn="true"
+            :show-play-btn="true"
+            :enable-play-gesture="false"
+            :vslide-gesture="false"
+            :vslide-gesture-in-fullscreen="false"
+            object-fit="contain"
+            :direction="videoWidth > videoHeight ? 90 : 0"
             :style="{
               width: videoWidth > videoHeight ? '100%' : '50%',
             }"
@@ -361,9 +385,17 @@
 import forums from '@/mixin/forums';
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef H5
+    appCommonH,
+    // #endif
+  ],
   props: {
     topicStatus: {
       type: Number,
@@ -579,6 +611,8 @@ export default {
       look: true,
       sun: 1,
       blocKwidth: 224,
+      videoContext: '',
+      wechatbrowser: false,
     };
   },
   computed: {
@@ -644,6 +678,11 @@ export default {
   created() {
     // console.log('这是内容组件created', this.postGoods);
     this.$forceUpdate();
+    // #ifdef  H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.wechatbrowser = isWeixin;
+    // #endif
+    this.videoContext = wx.createVideoContext('myVideo', this);
   },
   mounted() {
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
@@ -798,10 +837,9 @@ export default {
         this.sun = 'none';
         this.videoShow = true;
         this.autoplay = true;
-        const videoContext = wx.createVideoContext('myVideo', this);
         setTimeout(() => {
-          videoContext.play();
-          videoContext.requestFullScreen();
+          this.videoContext.play();
+          this.videoContext.requestFullScreen();
         }, 200);
       });
     },

@@ -71,12 +71,26 @@
           ></qui-tabs>
           <view
             class="profile-tabs__content"
-            :style="current == 1 && userInfo && userInfo.canBeAsked ? '' : 'paddingTop: 30rpx'"
+            :style="
+              current === 1 &&
+              forums.other &&
+              forums.other.can_create_thread_question &&
+              userInfo &&
+              userInfo.canBeAsked
+                ? ''
+                : 'paddingTop: 30rpx'
+            "
           >
             <view
               class="answer"
               @click="handleAnswer(userInfo)"
-              v-if="current == 1 && userInfo && userInfo.canBeAsked"
+              v-if="
+                current === 1 &&
+                  forums.other &&
+                  forums.other.can_create_thread_question &&
+                  userInfo &&
+                  userInfo.canBeAsked
+              "
             >
               <img src="/static/myask.svg" class="ask" />
               {{ i18n.t('profile.askHim') }}
