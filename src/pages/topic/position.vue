@@ -99,7 +99,7 @@ export default {
   onShareTimeline() {
     return {
       title: this.forums.set_site.site_name,
-      query: '',
+      query: `longitude=${this.longitude}&latitude=${this.latitude}`,
     };
   },
   methods: {
