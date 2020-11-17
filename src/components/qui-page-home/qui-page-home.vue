@@ -530,6 +530,9 @@ export default {
       this.loadThreadsSticky();
       // 首页主题内容列表
       this.loadThreads();
+      // #ifdef H5
+      this.$u.aegis.timeEnd('T2');
+      // #endif
     });
 
     if (this.footerIndex === 0) {

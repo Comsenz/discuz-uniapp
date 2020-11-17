@@ -80,6 +80,7 @@ export default {
   onReady() {
     // #ifdef H5
     this.$u.aegis.timeEnd('T1');
+    this.$u.aegis.time('T2');
     // #endif
   },
   onLoad() {
