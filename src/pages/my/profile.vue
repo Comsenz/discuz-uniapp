@@ -46,12 +46,24 @@
           :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
+      <!-- #ifdef MP-WEIXIN -->
       <qui-cell-item
+        v-if="forums.passport && forums.passport.miniprogram_close"
         :title="i18n.t('profile.wechat')"
         :addon="name"
         arrow
         @click="bindWechat"
       ></qui-cell-item>
+      <!-- #endif -->
+      <!-- #ifdef H5-->
+      <qui-cell-item
+        v-if="forums.passport && forums.passport.offiaccount_close"
+        :title="i18n.t('profile.wechat')"
+        :addon="name"
+        arrow
+        @click="bindWechat"
+      ></qui-cell-item>
+      <!-- #endif -->
       <!-- qcloud_faceid 是否开启实名认证 -->
       <qui-cell-item
         v-if="profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"
