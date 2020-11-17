@@ -5,7 +5,7 @@
     :lazy-load="node.attr.lazyLoad"
     :class="node.classStr"
     :style="newStyleStr || node.styleStr"
-    :data-src="node.attr.data_url"
+    :data-src="node.attr.src"
     :src="node.attr.src"
     @tap="wxParseImgTap"
     @load="wxParseImgLoad"
@@ -40,8 +40,8 @@ export default {
       const attach = this.$store.getters['jv/get'](`attachments/${id}`);
       if(attach) {
         this.node.attr.src = attach.thumbUrl;
-        this.node.attr.data_url = attach.url;
-        this.dataUrl = attach.url;
+        // this.node.attr.data_url = attach.url;
+        // this.dataUrl = attach.url;
         console.log(this.node);
       }
     }
@@ -49,10 +49,8 @@ export default {
   // #endif
   methods: {
     wxParseImgTap(e) {
-      console.log(e,this.preview, 'eeeee');
       if (!this.preview) return;
       const { src } = e.currentTarget.dataset;
-      console.log(src, '图片地址');
       if (!src) return;
       let parent = this.$parent;
       while (!parent.preview || typeof parent.preview !== 'function') {

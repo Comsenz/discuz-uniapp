@@ -71,12 +71,14 @@
           @click="stickyClick(item._jv.id)"
         >
           <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
-          <view class="sticky__isSticky__count">
+          <view class="sticky__isSticky__count" v-if="item.type == 1 && item.title">
+            {{ item.title }}
+          </view>
+          <view class="sticky__isSticky__count" v-else>
             <qui-uparse
               class="sticky__isSticky__text"
-              :content="item.type == 1 ? item.title : item.firstPost.summary"
+              :content="item.firstPost.summary"
             ></qui-uparse>
-            <!-- {{ item.type == 1 ? item.title : item.firstPost.summary }} -->
           </view>
         </view>
       </view>
