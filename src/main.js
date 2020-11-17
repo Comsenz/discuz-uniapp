@@ -64,9 +64,6 @@ const payWhiteListPage = [
   '/pages/modify/findpwd',
   '/pages/site/partner-invite',
 ];
-
-aegis.time('T1');
-
 const apploaded = () => {
 
   aegis.info('上报一条白名单日志，这两种情况这条日志才会报到后台：1、打开页面的用户在名单中；2、对应的页面发生了错误🤨');
@@ -113,8 +110,6 @@ const apploaded = () => {
   link.rel = 'shortcut icon';
   link.href = forums.set_site ? forums.set_site.site_favicon : '';
   document.getElementsByTagName('head')[0].appendChild(link);
-
-  aegis.timeEnd('T1');
 };
 uni.$on('apploaded', apploaded);
 // #endif
@@ -134,6 +129,7 @@ Vue.prototype.i18n = i18n;
 const currentTheme = uni.getStorageSync('theme') || THEME_DEFAULT;
 const $u = {
   guid,
+  aegis,
   currentTheme,
   light: () => THEME_DEFAULT,
   dark: () => THEME_DARK,
