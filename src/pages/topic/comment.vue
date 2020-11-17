@@ -273,7 +273,7 @@
                 ></qui-icon>
               </view>
               <view class="text-word-tip">
-                {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+                {{ t.canWrite }}{{ 5000 - textAreaValue.length }}{{ t.word }}
               </view>
             </view>
             <qui-emoji
@@ -291,7 +291,7 @@
               <textarea
                 ref="commentText"
                 :focus="focusVal"
-                :maxlength="450"
+                :maxlength="5000"
                 class="comment-textarea"
                 :placeholder="t.writeComments"
                 placeholder-style="color:#b5b5b5;font-size: 28rpx;"
