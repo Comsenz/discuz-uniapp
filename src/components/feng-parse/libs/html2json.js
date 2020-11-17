@@ -57,7 +57,7 @@ function getScreenInfo() {
   return screen;
 }
 
-function html2json(html, customHandler, imageProp, host) {
+function html2json(html, customHandler, imageProp, parse) {
   // 处理字符串
   // html = removeDOCTYPE(html);
   // html = trimHtml(html);
@@ -82,7 +82,6 @@ function html2json(html, customHandler, imageProp, host) {
     start(tag, attrs, unary) {
       // node for this element
       const node = new Node(tag);
-
       if (bufArray.length !== 0) {
         const parent = bufArray[0];
         if (parent.nodes === undefined) {
@@ -143,7 +142,14 @@ function html2json(html, customHandler, imageProp, host) {
 
       // 对img添加额外数据
       if (node.tag === 'img') {
-        let imgUrl = node.attr.src;
+
+        const id = parseInt(node.attr.title);
+        const attach = parse.$store.getters['jv/get'](`attachments/${id}`);
+        if(attach) {
+          node.attr.data_url = attach.url;
+        }
+
+        let imgUrl = node.attr.data_url ? node.attr.data_url : node.attr.src;
         imgUrl = wxDiscode.urlToHttpUrl(imgUrl, imageProp.domain);
         Object.assign(node.attr, imageProp, {
           src: imgUrl || '',
