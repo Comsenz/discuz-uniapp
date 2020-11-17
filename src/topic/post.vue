@@ -94,7 +94,7 @@
           :adjust-position="true"
           cursor-spacing="30"
           cursor="cursor"
-          :maxlength="10000"
+          :maxlength="49999"
           :focus="type !== 1"
           v-show="textShow"
           @blur="contBlur"
@@ -230,7 +230,7 @@
             :adjust-position="true"
             cursor-spacing="30"
             cursor="cursor"
-            :maxlength="10000"
+            :maxlength="49999"
             :focus="type !== 1"
             v-show="textShow"
             @blur="contBlur"
@@ -461,8 +461,15 @@
           </view>
           <view class="post-box__good__info">
             <view class="post-box__good__title">{{ dataGoodInfo.title }}</view>
-            <view class="post-box__good__ft">
-              <view class="post-box__good__price">￥{{ dataGoodInfo.price }}元</view>
+            <view
+              class="post-box__good__ft"
+              :style="{
+                justifyContent: Number(dataGoodInfo.price) > 0 ? 'space-between' : 'flex-end',
+              }"
+            >
+              <view class="post-box__good__price" v-if="Number(dataGoodInfo.price) > 0">
+                ￥{{ dataGoodInfo.price }}元
+              </view>
               <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
             </view>
           </view>
@@ -509,7 +516,10 @@
           </qui-button>
         </view>
         <qui-button
-          v-if="type !== 5"
+          v-if="
+            type !== 5 ||
+              (type === 5 && forums.other && forums.other.can_create_thread_paid === false)
+          "
           :loading="postLoading"
           type="primary"
           size="large"
@@ -521,7 +531,7 @@
           {{ i18n.t('discuzq.post.post') }}
         </qui-button>
         <qui-button
-          v-if="type === 5"
+          v-if="type === 5 && forums.other && forums.other.can_create_thread_paid"
           :loading="postLoading"
           type="primary"
           size="large"
@@ -744,8 +754,8 @@ export default {
       textAreaValue: '', // 输入框内容
       markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
-      textAreaLength: 450, // 输入框可输入字
-      textAnswerLength: 10000, // 问答输入框可输入字
+      textAreaLength: 5000, // 输入框可输入字
+      textAnswerLength: 49999, // 问答输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
       type: 0, // 帖子类型
@@ -844,12 +854,7 @@ export default {
           pay: 1,
         },
       ],
-      freewords: [
-        {
-          name: '0%',
-          pay: 0,
-        },
-      ], // 免费字数选中
+      freewords: [], // 免费字数选中
       percentagedisplay: '0%',
       uploadFile: [], // 图片上传列表
       cursor: 0, // 内容输入框光标未知
@@ -974,7 +979,7 @@ export default {
     // },
   },
   updated() {
-    if (this.forums) {
+    if (this.forums && this.type === 5) {
       this.platformDate = (
         this.forums.set_site.site_onlooker_price *
         (this.forums.set_site.site_master_scale / 10)
@@ -983,8 +988,9 @@ export default {
         2,
       );
       this.answerIsDate = (
-        (this.forums.set_site.site_onlooker_price - this.platformDate) /
-        2
+        this.forums.set_site.site_onlooker_price -
+        this.platformDate -
+        this.haveDate
       ).toFixed(2);
     }
     // #ifndef MP-WEIXIN
@@ -1848,7 +1854,7 @@ export default {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
       if (this.type === 1) {
-        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '');
+        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '').replace(/\n\n/g, '\n\n\n');
       }
       // #endif
       if (!this.categoryId) {
@@ -2458,6 +2464,11 @@ export default {
         if (Number(res.price) > 0) {
           this.price = res.price;
           this.word = res.freeWords;
+          this.freepercentage.forEach(item => {
+            if (res.freeWords === item.pay) {
+              this.percentagedisplay = item.name;
+            }
+          })
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
           if (this.type === 1) {
@@ -2474,7 +2485,7 @@ export default {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
 
-        this.textAreaLength = this.type === 1 ? 10000 : 450;
+        this.textAreaLength = this.type === 1 ? 49999 : 5000;
         switch (Number(res.type)) {
           case 0:
             break;
@@ -2689,7 +2700,6 @@ export default {
   onLoad(option) {
     console.log(option, 'optionopton');
     if (option.type === '5') {
-      console.log('55555555555');
       this.payNum[0].name = this.i18n.t('discuzq.post.noReward');
     }
     this.categoryid = option.categoryId;
@@ -2756,7 +2766,7 @@ export default {
     }
     if (option.categoryId)
       this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
-    this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
+    this.textAreaLength = Number(option.type) === 1 ? 49999 : 5000;
     if (this.operating === 'edit') {
       this.loadStatus = false;
       this.getPostThread(option);

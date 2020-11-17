@@ -1,6 +1,6 @@
 <template>
   <view>
-    <u-parse :content="content | formatRichText" @navigate="navigate"></u-parse>
+    <u-parse :content="content | formatRichText" @navigate="navigate" @preview="preview"></u-parse>
   </view>
 </template>
 <script>
@@ -62,6 +62,9 @@ export default {
         url: toUrl,
       });
       // #endif
+    },
+    preview(src) {
+      console.log(src, '帖子里的图片');
     },
   },
 };

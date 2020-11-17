@@ -244,6 +244,13 @@ export default {
                 duration: 2000,
               });
             }
+            if (res.data.errors[0].code === 'content_banned') {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('core.username_banned'),
+                duration: 2000,
+              });
+            }
           }
         })
         .catch(err => {

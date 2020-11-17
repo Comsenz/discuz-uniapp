@@ -187,6 +187,7 @@ export default {
       this.$emit('navigate', href, $event);
     },
     preview(src, $event) {
+      console.log(src, $event, 'dhdhshsduhusududsuhhu')
       if (!this.imageUrls.length || typeof this.imgOptions === 'boolean') {
       } else {
         uni.previewImage({

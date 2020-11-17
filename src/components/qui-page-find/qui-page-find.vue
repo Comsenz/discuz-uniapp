@@ -17,12 +17,7 @@
         <qui-cell-item :title="i18n.t('topic.topic')" arrow :border="false"></qui-cell-item>
       </navigator>
     </view>
-    <view
-      class="find-item"
-      v-if="
-        forums.set_site && forums.set_site.site_pay_group_close === '1' ? true : false && system
-      "
-    >
+    <view class="find-item" v-if="purchasedisplay && system">
       <navigator url="/pages/modify/right" hover-class="none">
         <qui-cell-item
           :title="i18n.t('topic.permissionPurchase')"
@@ -43,13 +38,24 @@ export default {
     return {
       searchValue: '',
       system: false,
+      purchasedisplay: false,
     };
   },
   created() {
-    // #ifndef H5
+    if (this.forums.set_site.site_pay_group_close === '1') {
+      console.log(this.forums.set_site.site_pay_group_close);
+      this.purchasedisplay = true;
+    } else {
+      this.purchasedisplay = false;
+    }
     const res = uni.getSystemInfoSync();
-    if (res.platform === 'ios') {
+    // #ifndef H5
+    if (res.platform === 'ios' && this.forums.paycenter.wxpay_ios) {
+      this.system = true;
+    } else if (res.platform === 'ios' && !this.forums.paycenter.wxpay_ios) {
       this.system = false;
+    } else {
+      this.system = true;
     }
     // #endif
     // #ifdef H5
