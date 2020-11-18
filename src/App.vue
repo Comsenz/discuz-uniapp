@@ -39,10 +39,6 @@ export default {
     },
   },
   async onLaunch() {
-    // #ifdef H5
-      this.$u.aegis.time('T1');
-   // #endif
-    
     const init = async () => {
       const forums = await this.$store.dispatch('jv/get', [
         'forum',
