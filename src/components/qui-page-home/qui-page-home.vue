@@ -528,7 +528,6 @@ export default {
     const currentDate = new Date().getTime();
     this.currentDate = currentDate;
     const timeT1 = currentDate - firstByte;
-    console.log(timeT1);
     this.$u.aegis.reportTime('T1', timeT1);
     // #endif
     this.$u.event.$on('tagClick', tagId => {
@@ -1067,7 +1066,6 @@ export default {
         this.$nextTick(() => {
           if (!currentDate) return;
           const timeT2 = new Date().getTime() - currentDate;
-          console.log(timeT2);
           this.$u.aegis.reportTime('T2', timeT2);
         });
         // #endif

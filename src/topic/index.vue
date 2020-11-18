@@ -563,10 +563,10 @@
                 ></qui-icon>
               </view>
               <view class="text-word-tip" v-if="commentWorkTips">
-                {{ t.canWrite }}{{ 450 - textAreaValue.length }}{{ t.word }}
+                {{ t.canWrite }}{{ 5000 - textAreaValue.length }}{{ t.word }}
               </view>
               <view class="text-word-tip" v-if="commentText">
-                {{ t.canWrite }}{{ 10000 - textAreaValue.length }}{{ t.word }}
+                {{ t.canWrite }}{{ 49999 - textAreaValue.length }}{{ t.word }}
               </view>
             </view>
             <qui-emoji
@@ -727,7 +727,7 @@ export default {
       commentPopupStatus: false, // 回复弹框内容状态是否显示
       commentWorkTips: true, // 回复弹框是否显示字数
       commentText: true, // 回复弹框默认字
-      maxTextLength: 450, // 默认最多输入450字
+      maxTextLength: 5000, // 默认最多输入5000字
       cursor: 0, // 光标位置
       textAreaValue: '', // 评论输入框
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
@@ -1005,7 +1005,7 @@ export default {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       // 只保留一个用户组显示
       let hasFirst = false;
-      if (thread.user && thread.user.groups.length > 0) {
+      if (thread.user.groups && thread.user.groups.length > 0) {
         thread.user.groups = thread.user.groups.filter(group => {
           if (group.isDisplay === true && !hasFirst) {
             hasFirst = true;
@@ -3078,7 +3078,7 @@ export default {
       this.commentPopupStatus = true;
       this.commentWorkTips = false;
       this.commentText = true;
-      this.maxTextLength = 10000;
+      this.maxTextLength = 49999;
     },
 
     handleClickOk() {

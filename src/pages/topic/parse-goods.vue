@@ -26,7 +26,7 @@
       </view>
       <textarea
         class="parse-goods-box-con"
-        maxlength="10000"
+        maxlength="49999"
         :placeholder="i18n.t('topic.goodsLink')"
         v-model="link"
       />

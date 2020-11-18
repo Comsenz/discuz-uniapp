@@ -29,7 +29,7 @@
       </view>
       <view
         class="details-box__purchase purchase-model"
-        v-if="oder && forums.paycenter.wxpay_close"
+        v-if="oder && forums.paycenter.wxpay_close && paydiisplay"
       >
         <view class="details-box__purchase-list money">
           <qui-cell-item
@@ -158,9 +158,23 @@ export default {
       payingusers: '',
       rightsice: '',
       wechatTip: this.i18n.t('discuzq.wechatBind'), // 微信绑定提示
+      paydiisplay: false,
     };
   },
   onLoad(evn) {
+    const res = uni.getSystemInfoSync();
+    // #ifndef H5
+    if (res.platform === 'ios' && this.forums.paycenter.wxpay_ios) {
+      this.paydiisplay = true;
+    } else if (res.platform === 'ios' && !this.forums.paycenter.wxpay_ios) {
+      this.paydiisplay = false;
+    } else {
+      this.paydiisplay = true;
+    }
+    // #endif
+    // #ifdef H5
+    this.paydiisplay = true;
+    // #endif
     // #ifndef MP-WEIXIN
     this.isWeixin = appCommonH.isWeixin().isWeixin; // 这是微信网页
     this.isPhone = appCommonH.isWeixin().isPhone; // 这是h5

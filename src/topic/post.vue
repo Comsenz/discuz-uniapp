@@ -94,7 +94,7 @@
           :adjust-position="true"
           cursor-spacing="30"
           cursor="cursor"
-          :maxlength="10000"
+          :maxlength="49999"
           :focus="type !== 1"
           v-show="textShow"
           @blur="contBlur"
@@ -230,7 +230,7 @@
             :adjust-position="true"
             cursor-spacing="30"
             cursor="cursor"
-            :maxlength="10000"
+            :maxlength="49999"
             :focus="type !== 1"
             v-show="textShow"
             @blur="contBlur"
@@ -754,8 +754,8 @@ export default {
       textAreaValue: '', // 输入框内容
       markdownShow: false, // 是否显示markdown菜单
       barStatus: false, // 是否显示输入框获取焦点时完成的那一栏
-      textAreaLength: 450, // 输入框可输入字
-      textAnswerLength: 10000, // 问答输入框可输入字
+      textAreaLength: 5000, // 输入框可输入字
+      textAnswerLength: 49999, // 问答输入框可输入字
       postTitle: '', // 标题
       checkClassData: [],
       type: 0, // 帖子类型
@@ -2485,7 +2485,7 @@ export default {
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
         }
 
-        this.textAreaLength = this.type === 1 ? 10000 : 450;
+        this.textAreaLength = this.type === 1 ? 49999 : 5000;
         switch (Number(res.type)) {
           case 0:
             break;
@@ -2766,7 +2766,7 @@ export default {
     }
     if (option.categoryId)
       this.categoryId = Number(option.categoryId) === 0 ? '' : Number(option.categoryId);
-    this.textAreaLength = Number(option.type) === 1 ? 10000 : 450;
+    this.textAreaLength = Number(option.type) === 1 ? 49999 : 5000;
     if (this.operating === 'edit') {
       this.loadStatus = false;
       this.getPostThread(option);

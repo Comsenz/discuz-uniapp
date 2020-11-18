@@ -176,7 +176,7 @@ export default {
       userInfo: '',
       can_create_dialog: false,
       dialogId: 0, // 会话id
-      loaded: false, // 用户数据是否请求成功
+      loaded: true, // 用户数据是否请求成功
     };
   },
   computed: {
@@ -235,9 +235,11 @@ export default {
   },
   // 分享到朋友圈
   onShareTimeline() {
+    console.log(`current=${this.current}&userId=${this.userId}`, '9999999');
+    console.log(this.loaded, 'loadedloadedloaded');
     return {
       title: this.forums.set_site.site_name,
-      query: '',
+      query: `current=${this.current}&userId=${this.userId}`,
     };
   },
   methods: {
