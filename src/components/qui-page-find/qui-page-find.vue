@@ -43,7 +43,6 @@ export default {
   },
   created() {
     if (this.forums.set_site.site_pay_group_close === '1') {
-      console.log(this.forums.set_site.site_pay_group_close);
       this.purchasedisplay = true;
     } else {
       this.purchasedisplay = false;

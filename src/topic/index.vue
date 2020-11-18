@@ -1059,7 +1059,7 @@ export default {
       return status.status;
     },
     themeColor() {
-      return this.theme === this.$u.light() ? '#333' : '#fff'; // 用于图标色
+      return this.theme === this.$u.light() ? '#333' : '#fff'; //  用于图标色
     },
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
@@ -1067,27 +1067,23 @@ export default {
     },
   },
   onLoad(option) {
-    try {
-      const res = uni.getSystemInfoSync();
-      this.system = res.platform;
-      this.detectionmodel = this.forums.set_site.site_mode;
-      this.paymentmodel = this.forums.paycenter.wxpay_ios;
-      
-      // #ifndef H5
-      if (this.detectionmodel === 'public' && this.system === 'ios') {
-        this.paidStatus = false;
-        this.paidBtnStatus = false;
-        this.rewardBtnStatus = false;
-        this.rewardStatus = false;
-      }
-      if (this.detectionmodel === 'pay' && this.system === 'ios') {
-        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
-        return;
-      }
-      // #endif
-    } catch (e) {
-      // error
+    const res = uni.getSystemInfoSync();
+    this.system = res.platform;
+    this.detectionmodel = this.forums.set_site.site_mode;
+    this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    
+    // #ifndef H5
+    if (this.detectionmodel === 'public' && this.system === 'ios') {
+      this.paidStatus = false;
+      this.paidBtnStatus = false;
+      this.rewardBtnStatus = false;
+      this.rewardStatus = false;
     }
+    if (this.detectionmodel === 'pay' && this.system === 'ios') {
+      this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+      return;
+    }
+    // #endif
     this.token = uni.getStorageSync('access_token');
     uni.$on('logind', () => {
       this.loadThread();
@@ -1205,26 +1201,22 @@ export default {
     };
   },
   onShow() {
-    try {
-      const res = uni.getSystemInfoSync();
-      this.system = res.platform;
-      this.detectionmodel = this.forums.set_site.site_mode;
-      this.paymentmodel = this.forums.paycenter.wxpay_ios;
-      // #ifndef H5
-      if (this.detectionmodel === 'public' && this.system === 'ios') {
-        this.paidStatus = false;
-        this.paidBtnStatus = false;
-        this.rewardBtnStatus = false;
-        this.rewardStatus = false;
-      }
-      if (this.detectionmodel === 'pay' && this.system === 'ios') {
-        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
-        return;
-      }
-      // #endif
-    } catch (e) {
-      // error
+    const res = uni.getSystemInfoSync();
+    this.system = res.platform;
+    this.detectionmodel = this.forums.set_site.site_mode;
+    this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    // #ifndef H5
+    if (this.detectionmodel === 'public' && this.system === 'ios') {
+      this.paidStatus = false;
+      this.paidBtnStatus = false;
+      this.rewardBtnStatus = false;
+      this.rewardStatus = false;
     }
+    if (this.detectionmodel === 'pay' && this.system === 'ios') {
+      this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+      return;
+    }
+    // #endif
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
