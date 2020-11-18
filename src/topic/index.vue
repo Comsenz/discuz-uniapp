@@ -1606,6 +1606,8 @@ export default {
             this.rewardStatus = false;
             this.paidStatus = false;
           } else if (this.forums.paycenter.wxpay_close) {
+            const res = uni.getSystemInfoSync();
+            this.system = res.platform;
             // 如果开启了微信支付
             if (!data.paid || data.paidUsers.length > 0) {
               // #ifndef H5
@@ -1630,15 +1632,6 @@ export default {
                 this.paidBtnStatus = true;
               }
               // #endif
-            } else {
-              if (data.canBeReward) {
-                this.rewardStatus = true;
-                this.rewardBtnStatus = true;
-              } else {
-                this.rewardStatus = false;
-                this.rewardBtnStatus = false;
-              }
-              this.paidStatus = false;
             }
             if (data.type === 3) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
@@ -1745,16 +1738,20 @@ export default {
               // #ifndef H5
               if (this.system === 'ios') {
                 if (this.paymentmodel === false) {
+                  this.paidStatus = false;
                   this.paidBtnStatus = false;
                 } else if (this.paymentmodel === true && data.paid === false) {
+                  this.paidStatus = true;
                   this.paidBtnStatus = true;
                 } else if (this.paymentmodel === true && data.paid === true) {
+                  this.paidStatus  = true;
                   this.paidBtnStatus = false;
                 }
               } else {
                 if (data.paid === true) {
                   this.paidBtnStatus = false;
                 } else {
+                  this.paidStatus = true;
                   this.paidBtnStatus = true;
                 }
               }
