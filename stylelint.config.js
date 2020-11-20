@@ -38,7 +38,8 @@ module.exports = {
     // 'scss/dollar-variable-pattern': '\b[a-z]+(?:-)+(\b[a-z]+(?:-))*',
 
     // forbid extend
-    'at-rule-blacklist': ['extend'],
+    // 'at-rule-blacklist': ['extend'],
+    'at-rule-disallowed-list': ['extend'],
 
     // Nesting depth
     'max-nesting-depth': 3,
