@@ -1063,11 +1063,13 @@ export default {
         const { currentDate } = that;
         // #ifdef H5
         // 数据上报
-        this.$nextTick(() => {
-          if (!currentDate) return;
-          const timeT2 = new Date().getTime() - currentDate;
-          this.$u.aegis.reportTime('T2', timeT2);
-        });
+        if (this.pageNum === 1) {
+          this.$nextTick(() => {
+            if (!currentDate) return;
+            const timeT2 = new Date().getTime() - currentDate;
+            this.$u.aegis.reportTime('T2', timeT2);
+          });
+        }
         // #endif
       });
     },
