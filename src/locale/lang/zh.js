@@ -912,7 +912,9 @@ export default {
     agreementRegister: '注册协议',
     agreementPrivacy: '隐私政策 ',
     loginOutTips: '确认退出登录？',
-    noBindTips: '点击下面的确定按钮后，您将解除微信与本帐号的绑定',
+    noBindTips: '解绑后，您的微信号将不再绑定当前账号，即无法再登录当前账号，确认解除绑定吗？',
+    changeBindTips:
+      '换绑后，将立即切换到新账号登录，并且您的微信号将绑定到新账号，无法再登录旧账号，确认换绑吗？',
     usernameEmpty: '用户名不能为空',
     passwordEmpty: '密码不能为空',
     reasonEmpty: '注册原因不能为空',
