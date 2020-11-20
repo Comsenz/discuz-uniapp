@@ -524,6 +524,7 @@ export default {
     contentMaxLength: '不能超过450个字',
     approved: '您的提现审核已通过，请注意查收。',
     unapproved: '您的提现审核已拒绝，拒绝原因：审核不通过。',
+    applicationHasBeenPaid: '您的提现申请已成功打款',
   },
   // 海报分享页
   share: {

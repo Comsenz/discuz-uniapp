@@ -148,6 +148,9 @@
             <view v-if="item.cash_status === 3">
               {{ i18n.t('notice.unapproved') }}
             </view>
+            <view v-if="item.cash_status === 5">
+              {{ i18n.t('notice.applicationHasBeenPaid') }}
+            </view>
           </view>
           <view
             class="list-box__notice__con__wrap"
