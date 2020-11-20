@@ -1397,6 +1397,7 @@ export default {
       this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
+      console.log(this.payNum);
       // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         console.log('自定义金额');
@@ -1434,6 +1435,8 @@ export default {
     choicePayType(type) {
       // console.log(type, '类型');
       if (type === 0) {
+        this.payNumCheck = [];
+        this.price = '';
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
       } else if (type === 1) {
         this.payNumCheck = [];
