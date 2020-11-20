@@ -1686,7 +1686,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1718,7 +1719,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1754,7 +1756,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1767,7 +1770,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1854,6 +1858,7 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
+      debugger
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
       if (this.type === 1) {
@@ -1864,7 +1869,6 @@ export default {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
       }
-      console.log(this.type, '~~~~', this.dataGoodInfo);
       let status = true;
       switch (this.type) {
         case 0:
@@ -2037,7 +2041,8 @@ export default {
           // if (this.type === 5) {
           //   // this.beUserName =
           // }
-          this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
+          // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+          // this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
               this.$refs.toast.show({
@@ -2086,7 +2091,8 @@ export default {
               this.postLoading = false;
               uni.hideLoading();
               if (res && res.isApproved === 1) {
-                this.$u.event.$emit('addThread', res);
+                // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                // this.$u.event.$emit('addThread', res);
               }
               if (res && res._jv.json.data.id) {
                 uni.redirectTo({
@@ -2628,24 +2634,24 @@ export default {
         default:
           break;
       }
-      console.log(posts, '这是posts');
       await this.$store.dispatch('jv/patch', posts).then(res => {
         console.log(res, '返回');
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
-          this.$u.event.$emit('refreshImg', {
-            id: this.firstPostId,
-            threadId: this.threadId,
-            images: this.addImg(),
-          });
-          this.$u.event.$emit('refreshGoods', {
-            id: this.firstPostId,
-            threadId: this.threadId,
-            goods: this.dataGoodInfo,
-          });
+          // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+          // this.$u.event.$emit('refreshImg', {
+          //   id: this.firstPostId,
+          //   threadId: this.threadId,
+          //   images: this.addImg(),
+          // });
+          // this.$u.event.$emit('refreshGoods', {
+          //   id: this.firstPostId,
+          //   threadId: this.threadId,
+          //   goods: this.dataGoodInfo,
+          // });
         }
         // 更新详情页的信息
-        this.$u.event.$emit('refreshFiles');
+        // this.$u.event.$emit('refreshFiles');
         return res;
       });
       // console.log(threads, '这是编辑时传的参数');

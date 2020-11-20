@@ -1921,13 +1921,15 @@ export default {
               this.moreData[3].icon = 'icon-quxiaozhiding';
               this.moreData[3].text = this.t.cancelSticky;
               // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
-              this.$u.event.$emit('stickyThread', data);
+              // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+              // this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
               this.moreData[3].icon = 'icon-zhiding';
               this.moreData[3].text = this.t.sticky;
               // 详情页取消置顶,将首页置顶数据移除
-              this.$u.event.$emit('cancelSticky', data);
+              // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+              // this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type === '4') {
             const _this = this;
@@ -1953,7 +1955,8 @@ export default {
                   }
                 });
               }, 1000);
-              this.$u.event.$emit('deleteThread', this.threadId);
+              // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+              // this.$u.event.$emit('deleteThread', this.threadId);
             }
           }
         })

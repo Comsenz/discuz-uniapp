@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view @touchmove.stop.prevent="">
     <view
       class="ft"
       :style="{

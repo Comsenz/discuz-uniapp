@@ -1,5 +1,10 @@
 <template>
-  <view class="filter-modal" :class="{ show: showValue }" @tap.stop="cancel">
+  <view
+    class="filter-modal"
+    :class="{ show: showValue }"
+    @tap.stop="cancel"
+    @touchmove.self.stop.prevent=""
+  >
     <view class="filter-modal__content" v-if="showValue" @tap.stop :style="{ top: contentTop }">
       <view class="filter-modal__content__search" v-if="showSearch" @click="searchClick">
         <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
