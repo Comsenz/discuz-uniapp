@@ -156,6 +156,9 @@ export default {
       notRecordAudio: '该浏览器暂不支持录音,请切换其他浏览器试试',
       IOSWxNotRecordAudio: 'iOS版微信暂不支持此功能',
       pleaseChoice: '请选择',
+      uploading: '上传中...',
+      finish: '完成',
+      recording: '录制中',
     },
   },
   uploader: {

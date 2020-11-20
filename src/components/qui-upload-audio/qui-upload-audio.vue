@@ -18,11 +18,11 @@
         <view class="qui-uploader-box__record__box">
           <view class="qui-uploader-box__record__inProgress">
             <view class="qui-uploader-box__record__circle"></view>
-            <text>录制中</text>
+            <text>{{ i18n.t('discuzq.post.recording') }}</text>
           </view>
           <view class="qui-uploader-box__record__time">{{ duration }}</view>
           <view class="qui-uploader-box__record__finish" @tap="stop">
-            <text style="margin-right: 25rpx;">完成</text>
+            <text style="margin-right: 25rpx;">{{ i18n.t('discuzq.post.finish') }}</text>
             <qui-icon name="icon-tingzhi" size="50" color="#231815"></qui-icon>
           </view>
         </view>
@@ -42,7 +42,7 @@
         text-size="15"
         vertical
       >
-        上传中...
+        {{ i18n.t('discuzq.post.uploading') }}
       </qui-loading>
     </view>
   </view>
