@@ -1057,10 +1057,10 @@ export default {
             newItem.id = item._jv.id;
             // 因为使用了虚拟滚动，导致parse组件中，对于content内容每次渲染都需要执行，浪费性能
             // 改为数据获取时马上处理数据
-            newItem._contentParse = html2JsonHeler(
-              this,
-              item.type === 1 ? item.title : item.firstPost.summary,
-            );
+            newItem._contentParse =
+              item.type !== 1
+                ? html2JsonHeler(this, item.type === 1 ? item.title : item.firstPost.summary)
+                : null;
             return newItem;
           });
 
