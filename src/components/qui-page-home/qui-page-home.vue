@@ -297,6 +297,10 @@ export default {
       type: String,
       default: '',
     },
+    homeCategoryId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -675,6 +679,9 @@ export default {
 
     // 切换选项卡
     async toggleTab(dataInfo) {
+      uni.navigateTo({
+        url: `/pages/home/index?categoryId=${dataInfo.id}`,
+      });
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
@@ -983,8 +990,28 @@ export default {
             selected: false,
           });
         });
-
         this.filterList[0].data = categoryFilterList;
+        if (this.homeCategoryId) {
+          const datainfo = {};
+          if (this.homeCategoryId === '0') {
+            datainfo.index = 0;
+            datainfo.id = 0;
+            datainfo.name = '所有';
+          } else {
+            this.categories.forEach((item, index) => {
+              if (this.homeCategoryId === item._jv.id) {
+                datainfo.index = index + 1;
+                datainfo.id = item._jv.id;
+                datainfo.name = item.name;
+              }
+            });
+          }
+          this.toggleTab(datainfo);
+          // 重置列表
+          this.isResetList = true;
+          this.setCategoryId(parseInt(this.homeCategoryId, 10));
+          this.setCategoryIndex(this.getCategorieIndex(parseInt(this.homeCategoryId, 10)));
+        }
       });
     },
     // 首页置顶列表数据

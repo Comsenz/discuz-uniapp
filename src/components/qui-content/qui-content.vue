@@ -725,7 +725,10 @@ export default {
     }),
   },
   created() {
-    if (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0) {
+    if (
+      this.postGoods.price &&
+      (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0)
+    ) {
       this.dataGoodInfoPrice = this.postGoods.price;
     } else if (Number(this.postGoods.price) <= 0) {
       this.dataGoodInfoPrice = '';

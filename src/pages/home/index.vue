@@ -6,6 +6,7 @@
           v-if="showHome"
           ref="home"
           :nav-theme="theme"
+          :home-category-id="categoryId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
@@ -45,6 +46,7 @@ export default {
       nowThreadId: 0, // 点击主题ID
       showHome: false,
       tagId: 0, // 标签ID
+      categoryId: '',
       currentTab: 'home',
     };
   },
@@ -77,7 +79,8 @@ export default {
       },
     },
   },
-  onLoad() {
+  onLoad(params) {
+    this.categoryId = params.categoryId;
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
