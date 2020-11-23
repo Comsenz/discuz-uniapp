@@ -44,6 +44,11 @@
       "autoclose": true,
       "delay": 0
     },
+    // "safearea": {
+    //   "bottom": {
+    //     "offset": "auto"
+    //   }
+    // },
     "modules": {
       /* 模块配置 */
     },

@@ -1070,9 +1070,12 @@ export default {
     try {
       const res = uni.getSystemInfoSync();
       this.system = res.platform;
-      this.detectionmodel = this.forums.set_site.site_mode;
-      this.paymentmodel = this.forums.paycenter.wxpay_ios;
-      
+      if (this.forums && this.forums.set_site) {
+       this.detectionmodel = this.forums.set_site.site_mode;       
+      };
+      if (this.forums && this.forums.paycenter) {
+        this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      };
       // #ifndef H5
       if (this.detectionmodel === 'public' && this.system === 'ios') {
         this.paidStatus = false;
@@ -1208,8 +1211,12 @@ export default {
     try {
       const res = uni.getSystemInfoSync();
       this.system = res.platform;
-      this.detectionmodel = this.forums.set_site.site_mode;
-      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      if (this.forums && this.forums.set_site) {
+       this.detectionmodel = this.forums.set_site.site_mode;       
+      };
+      if (this.forums && this.forums.paycenter) {
+        this.paymentmodel = this.forums.paycenter.wxpay_ios;
+      };
       // #ifndef H5
       if (this.detectionmodel === 'public' && this.system === 'ios') {
         this.paidStatus = false;
