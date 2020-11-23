@@ -1146,7 +1146,7 @@ export default {
   onShow() {
     const res = uni.getSystemInfoSync();
     this.system = res.platform;
-    if (this.forums && his.forums.set_site && this.forums.set_site.site_mode) {
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.detectionmodel = this.forums.set_site.site_mode;
     }
     if (this.forums && this.forums.paycenter && this.forums.paycenter.wxpay_ios) {
