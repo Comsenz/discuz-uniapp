@@ -948,7 +948,7 @@ export default {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       // 只保留一个用户组显示
       let hasFirst = false;
-      if (thread.user.groups && thread.user.groups.length > 0) {
+      if (thread.user && thread.user.groups && thread.user.groups.length > 0) {
         thread.user.groups = thread.user.groups.filter(group => {
           if (group.isDisplay === true && !hasFirst) {
             hasFirst = true;
@@ -1146,7 +1146,7 @@ export default {
   onShow() {
     const res = uni.getSystemInfoSync();
     this.system = res.platform;
-    if (this.forums && his.forums.set_site && this.forums.set_site.site_mode) {
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.detectionmodel = this.forums.set_site.site_mode;
     }
     if (this.forums && this.forums.paycenter && this.forums.paycenter.wxpay_ios) {
