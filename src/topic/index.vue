@@ -948,7 +948,7 @@ export default {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       // 只保留一个用户组显示
       let hasFirst = false;
-      if (thread.user.groups && thread.user.groups.length > 0) {
+      if (thread.user && thread.user.groups && thread.user.groups.length > 0) {
         thread.user.groups = thread.user.groups.filter(group => {
           if (group.isDisplay === true && !hasFirst) {
             hasFirst = true;
