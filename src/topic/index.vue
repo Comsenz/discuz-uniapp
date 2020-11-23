@@ -948,7 +948,7 @@ export default {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       // 只保留一个用户组显示
       let hasFirst = false;
-      if (thread.user.groups && thread.user.groups.length > 0) {
+      if (thread.user && thread.user.groups && thread.user.groups.length > 0) {
         thread.user.groups = thread.user.groups.filter(group => {
           if (group.isDisplay === true && !hasFirst) {
             hasFirst = true;
@@ -1008,8 +1008,12 @@ export default {
   onLoad(option) {
     const res = uni.getSystemInfoSync();
     this.system = res.platform;
-    this.detectionmodel = this.forums.set_site.site_mode;
-    this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+      this.detectionmodel = this.forums.set_site.site_mode;
+    }
+    if (this.forums && this.forums.paycenter && this.forums.paycenter.wxpay_ios) {
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    }
     
     // #ifndef H5
     if (this.detectionmodel === 'public' && this.system === 'ios') {
@@ -1142,8 +1146,12 @@ export default {
   onShow() {
     const res = uni.getSystemInfoSync();
     this.system = res.platform;
-    this.detectionmodel = this.forums.set_site.site_mode;
-    this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
+      this.detectionmodel = this.forums.set_site.site_mode;
+    }
+    if (this.forums && this.forums.paycenter && this.forums.paycenter.wxpay_ios) {
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    }
     // #ifndef H5
     if (this.detectionmodel === 'public' && this.system === 'ios') {
       this.paidStatus = false;
@@ -3084,7 +3092,7 @@ export default {
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
-      if (this.forums.set_site.site_mode === 'pay') {
+      if (this.forums.set_site && this.forums.set_site.site_mode === 'pay') {
         this.bottomData.forEach((value, key, bottomData) => {
           // this.bottomData.map((value, key, bottomData) => {
           value.name === 'wxFriends' && bottomData.splice(key, 1);

@@ -32,7 +32,7 @@
           :key="index"
           :title="operateStatus[item.cash_status - 1]"
           :brief="item.cash_sn"
-          :addon="'¥' + item.cash_apply_amount"
+          :addon="'¥' + item.cash_actual_amount"
           :brief-right="timeHandle(item.created_at)"
           :border="index == dataList.length - 1 ? false : true"
           :class-item="
