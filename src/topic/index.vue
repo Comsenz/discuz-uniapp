@@ -3089,7 +3089,7 @@ export default {
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
-      if (this.forums.set_site.site_mode === 'pay') {
+      if (this.forums.set_site && this.forums.set_site.site_mode === 'pay') {
         this.bottomData.forEach((value, key, bottomData) => {
           // this.bottomData.map((value, key, bottomData) => {
           value.name === 'wxFriends' && bottomData.splice(key, 1);
