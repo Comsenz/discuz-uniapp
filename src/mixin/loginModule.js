@@ -158,15 +158,9 @@ module.exports = {
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 微信外-无感模式
-          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
-            // 微信外-手机号模式
-            this.jump2PhoneLoginRegisterPage();
-          } else {
-            // 微信外-用户名模式
-            uni.navigateTo({
-              url: '/pages/user/login',
-            });
-          }
+          uni.navigateTo({
+            url: '/pages/user/login',
+          });
         }
       }
     },
