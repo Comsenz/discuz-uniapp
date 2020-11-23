@@ -464,11 +464,11 @@
             <view
               class="post-box__good__ft"
               :style="{
-                justifyContent: Number(dataGoodInfo.price) > 0 ? 'space-between' : 'flex-end',
+                justifyContent: dataGoodInfoPrice !== '' ? 'space-between' : 'flex-end',
               }"
             >
-              <view class="post-box__good__price" v-if="Number(dataGoodInfo.price) > 0">
-                ￥{{ dataGoodInfo.price }}元
+              <view class="post-box__good__price" v-if="dataGoodInfoPrice !== ''">
+                ￥{{ dataGoodInfoPrice }}元
               </view>
               <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
             </view>
@@ -922,6 +922,7 @@ export default {
       ioshide: false, // ios下付费隐藏
       isShowGoods: true,
       dataGoodInfo: {},
+      dataGoodInfoPrice: 0, // 商品价格
       goodsId: '', // 商品ID
       categoryid: 0,
       categoryindex: 0,
@@ -1857,7 +1858,10 @@ export default {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
       if (this.type === 1) {
-        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '').replace(/\n\n/g, '\n\n\n');
+        this.textAreaValue = this.vditor
+          .getValue()
+          .replace(/blob\:/g, '')
+          .replace(/\n\n/g, '\n\n\n');
       }
       // #endif
       if (!this.categoryId) {
@@ -2130,6 +2134,14 @@ export default {
           break;
         case 'goods':
           this.dataGoodInfo = data.firstPost.postGoods;
+          if (
+            data.firstPost.postGoods.price.indexOf('-') !== -1 ||
+            Number(data.firstPost.postGoods.price) > 0
+          ) {
+            this.dataGoodInfoPrice = data.firstPost.postGoods.price;
+          } else if (Number(data.firstPost.postGoods.price) <= 0) {
+            this.dataGoodInfoPrice = '';
+          }
           // this.audioBeforeList.push({
           //   fileName: data.threadAudio.file_name,
           //   url: data.threadAudio.media_url,
@@ -2460,6 +2472,15 @@ export default {
         }
         if (this.type === 6 && res.firstPost.postGoods) {
           this.dataGoodInfo = res.firstPost.postGoods;
+          if (
+            res.firstPost.postGoods.price.indexOf('-') !== -1 ||
+            Number(res.firstPost.postGoods.price) > 0
+          ) {
+            this.dataGoodInfoPrice = res.firstPost.postGoods.price;
+          } else if (Number(res.firstPost.postGoods.price) <= 0) {
+            this.dataGoodInfoPrice = '';
+          }
+
           this.isShowGoods = true;
           console.log(this.dataGoodInfo, this.isShowGoods, '这是~~~~~~~~~~~~~~~');
         }
@@ -2471,7 +2492,7 @@ export default {
             if (res.freeWords === item.pay) {
               this.percentagedisplay = item.name;
             }
-          })
+          });
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
           if (this.type === 1) {
@@ -2540,7 +2561,11 @@ export default {
       this.$store.dispatch('jv/get', `goods/${this.goodsId}`).then(res => {
         console.log('这是取到的商品信息', res);
         this.dataGoodInfo = res;
-        console.log(this.dataGoodInfo._jv.id, '商品id');
+        if (res.price.indexOf('-') !== -1 || Number(res.price) > 0) {
+          this.dataGoodInfoPrice = res.price;
+        } else if (Number(res.price) <= 0) {
+          this.dataGoodInfoPrice = '';
+        }
         this.isShowGoods = true;
       });
     },

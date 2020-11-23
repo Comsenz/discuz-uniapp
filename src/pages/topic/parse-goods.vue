@@ -89,6 +89,13 @@ export default {
             }
           })
           .catch(err => {
+            if (err && err.data && err.data.code && err.data.code.indexOf('cURL error') !== -1) {
+              uni.showToast({
+                icon: 'none',
+                title: this.i18n.t('topic.goodsErrorTip'),
+                duration: 1000,
+              });
+            }
             if (err && err.data && err.data.errors) {
               uni.showToast({
                 icon: 'none',
