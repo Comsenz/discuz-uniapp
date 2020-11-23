@@ -372,6 +372,7 @@ export default {
     theLinkHasBeenCopiedAndPleaseOpenItInTheBrowser: '商品链接已复制成功，请在浏览器打开',
     shareLinkCopiedSuccessfully: '分享链接已复制成功',
     preview: '预览',
+    goodsErrorTip: '商品发布太过频繁，请1分钟后重试',
   },
   pay: {
     passwordTip: '请输入支付密码',
