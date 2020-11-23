@@ -20,6 +20,7 @@ export default {
     return {
       newStyleStr: '',
       preview: true,
+      dataUrl: '',
     };
   },
   inject: ['parseWidth'],
@@ -39,6 +40,8 @@ export default {
       const attach = this.$store.getters['jv/get'](`attachments/${id}`);
       if(attach) {
         this.node.attr.src = attach.thumbUrl;
+        // this.node.attr.data_url = attach.url;
+        // this.dataUrl = attach.url;
         console.log(this.node);
       }
     }

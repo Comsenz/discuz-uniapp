@@ -483,8 +483,6 @@ export default {
     height: 100rpx;
     font-size: $fg-f6;
     line-height: 100rpx;
-    text-align: right;
-    direction: rtl;
   }
   .retireve-button {
     margin: 52rpx 0 0;

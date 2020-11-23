@@ -73,6 +73,7 @@ export default {
         // 如果对当前主题已支付
         const _this = this;
         const preview = [];
+        console.log(_this.imagesList);
         for (let i = 0, len = _this.imagesList.length; i < len; i += 1) {
           preview.push(_this.imagesList[i].url);
         }

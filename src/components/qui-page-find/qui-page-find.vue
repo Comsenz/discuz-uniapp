@@ -42,11 +42,12 @@ export default {
     };
   },
   created() {
-    if (this.forums.set_site.site_pay_group_close === '1') {
-      console.log(this.forums.set_site.site_pay_group_close);
-      this.purchasedisplay = true;
-    } else {
-      this.purchasedisplay = false;
+    if (this.forums.set_site) {
+      if (this.forums.set_site.site_pay_group_close === '1') {
+        this.purchasedisplay = true;
+      } else {
+        this.purchasedisplay = false;
+      }
     }
     const res = uni.getSystemInfoSync();
     // #ifndef H5

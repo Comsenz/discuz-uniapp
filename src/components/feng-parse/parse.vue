@@ -4,7 +4,7 @@
  * github地址: https://github.com/dcloudio/uParse
  *
  * for: uni-app框架下 富文本解析
- * 
+ *
  * 优化 by zhiqiang.feng@qq.com
  */-->
 <!--eslint-disable -->
@@ -133,7 +133,6 @@ export default {
       };
       let results = HtmlToJson(parseData, customHandler, imageProp, this);
       this.imageUrls = results.imageUrls;
-      // this.nodes = results.nodes;
 
       this.nodes = [];
       results.nodes.forEach(item => {
