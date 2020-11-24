@@ -101,14 +101,8 @@ export default {
     }
     // #endif
     // #ifdef H5
-    if (
-      !this.$store.getters['session/get']('isLogin') &&
-      this.forums &&
-      this.forums.set_reg &&
-      this.forums.set_reg.register_type === 2
-    ) {
-      uni.setStorageSync('register', 1);
-      this.$store.dispatch('session/wxh5Login');
+    if (!this.$store.getters['session/get']('isLogin')) {
+      this.h5LoginMode();
     }
     // #endif
     if (!this.loading && !this.showHome) {
