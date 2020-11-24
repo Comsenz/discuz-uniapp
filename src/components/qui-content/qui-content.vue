@@ -712,7 +712,7 @@ export default {
       date: 1,
       blocKwidth: 224,
       isWeixin: false,
-      postGoodsPrice: 0, // 商品价格
+      dataGoodInfoPrice: 0, // 商品价格
     };
   },
   computed: {
