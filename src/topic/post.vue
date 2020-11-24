@@ -1858,7 +1858,6 @@ export default {
     },
     // 发布按钮点击，检测条件是否符合，符合的话调用接口
     postClick() {
-      debugger
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
       if (this.type === 1) {

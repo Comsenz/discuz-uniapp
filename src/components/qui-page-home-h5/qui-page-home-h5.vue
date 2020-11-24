@@ -280,13 +280,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 const sysInfo = uni.getSystemInfoSync();
 
-let navbarHeight;
-// #ifdef H5
-navbarHeight = sysInfo.statusBarHeight; /* uni-nav-bar的高度 */
-// #endif
-// #ifdef MP-WEIXIN
-navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
-// #endif
+const navbarHeight = sysInfo.statusBarHeight; /* uni-nav-bar的高度 */
 const navBarTransform = `translateY(-${navbarHeight}px)`;
 
 let openPullDown = true;
@@ -298,16 +292,7 @@ export default {
     DynamicScroller,
     DynamicScrollerItem,
   },
-  mixins: [
-    forums,
-    user,
-    loginModule,
-    // #ifdef H5
-    wxshare,
-    appCommonH,
-    // #endif
-  ],
-
+  mixins: [forums, user, loginModule, wxshare, appCommonH],
   props: {
     navTheme: {
       type: String,
@@ -523,7 +508,6 @@ export default {
       });
     });
     // h5微信分享
-    // #ifdef H5
     this.wxShare({
       title: this.forums.set_site ? this.forums.set_site.site_name : '',
       desc: this.forums.set_site ? this.forums.set_site.site_introduction : '',
@@ -532,7 +516,6 @@ export default {
           ? this.forums.set_site.site_logo
           : '',
     });
-    // #endif
     this.ontrueGetList();
     uni.$on('logind', () => {
       this.ontrueGetList();
@@ -540,11 +523,9 @@ export default {
   },
   destroyed() {
     uni.$off('logind');
-    // #ifdef H5
     uni.$off('updateIndex');
     uni.$off('updateNoticePage');
     uni.$off('updateMy');
-    // #endif
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
@@ -577,7 +558,6 @@ export default {
       });
     }
 
-    // #ifdef H5
     uni.$on('updateIndex', () => {
       this.headerShow = true;
       this.ontrueGetList();
@@ -593,7 +573,6 @@ export default {
       this.headerShow = true;
       this.ontrueGetList();
     });
-    // #endif
     // uni.$on('onpullDownRefresh', () => {
     //   this.navBarTransform = 'none';
     // })
@@ -787,29 +766,8 @@ export default {
           key: 'page',
           data: '/pages/home/index',
         });
-        // #ifdef MP-WEIXIN
-        this.mpLoginMode();
-        // #endif
-        // #ifdef H5
         this.h5LoginMode();
-        // #endif
       }
-      // #ifdef MP-WEIXIN
-      this.$refs.popupHead.open();
-      // 付费模式下不显示微信分享
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-            id: 1,
-          },
-        ];
-      }
-      // #endif
-
-      // #ifdef H5
       if (this.isWeixin === true) {
         this.shareShow = true;
       } else {
@@ -818,13 +776,10 @@ export default {
           url: '/pages/home/index',
         });
       }
-      // #endif
     },
-    // #ifdef H5
     closeShare() {
       this.shareShow = false;
     },
-    // #endif
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
@@ -833,12 +788,7 @@ export default {
             key: 'page',
             data: '/pages/home/index',
           });
-          // #ifdef MP-WEIXIN
-          this.mpLoginMode();
-          // #endif
-          // #ifdef H5
           this.h5LoginMode();
-          // #endif
         }
         uni.navigateTo({
           url: '/pages/share/site',
@@ -891,20 +841,9 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
-      // #ifdef MP-WEIXIN
-      wx.createSelectorQuery()
-        .in(this)
-        .select('#navId')
-        .boundingClientRect(rect => {
-          this.filterTop = `${rect.bottom * 2}rpx`;
-        })
-        .exec();
-      // #endif
-      // #ifdef H5
       const obj = document.querySelector('#navId');
       const { bottom } = obj.getBoundingClientRect();
       this.filterTop = `${bottom}px`;
-      // #endif
       this.show = !this.show;
       this.$refs.filter.setData();
       // this.navShow = true;
@@ -916,30 +855,8 @@ export default {
           key: 'page',
           data: '/pages/home/index',
         });
-        // #ifdef MP-WEIXIN
-        this.mpLoginMode();
-        // #endif
-        // #ifdef H5
         this.h5LoginMode();
-        // #endif
       }
-      // #ifdef MP-WEIXIN
-      this.$emit('handleClickShare', id);
-      this.nowThreadId = id;
-      this.$refs.popupContent.open();
-      // 付费模式下不显示微信分享
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-            id: 1,
-          },
-        ];
-      }
-      // #endif
-      // #ifdef H5
       const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
       if (shareThread.type === 1) {
         this.shareTitle = shareThread.title;
@@ -951,7 +868,6 @@ export default {
         id,
         url: 'topic/index',
       });
-      // #endif
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
@@ -1130,12 +1046,7 @@ export default {
           key: 'page',
           data: '/pages/home/index',
         });
-        // #ifdef MP-WEIXIN
-        this.mpLoginMode();
-        // #endif
-        // #ifdef H5
         this.h5LoginMode();
-        // #endif
       }
       const params = {
         _jv: {
@@ -1202,12 +1113,7 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-/* #ifdef H5 */
 $padding-bottom: 180rpx;
-/* #endif */
-/* #ifdef MP-WEIXIN */
-$padding-bottom: 160rpx;
-/* #endif */
 .home {
   min-height: 100vh;
   color: --color(--qui-FC-333);
