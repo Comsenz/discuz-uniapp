@@ -124,15 +124,6 @@ export default {
       this.$refs.auth.open();
     }
     // #endif
-    // #ifdef H5
-    if (!this.$store.getters['session/get']('isLogin')) {
-      uni.setStorage({
-        key: 'page',
-        data: '/pages/home/index',
-      });
-      this.h5LoginMode();
-    }
-    // #endif
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
