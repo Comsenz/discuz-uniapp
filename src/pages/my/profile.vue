@@ -232,9 +232,20 @@ export default {
         // #endif
         return;
       }
-      // 解绑/换绑
+      // 解绑
       if (
         this.name !== '绑定' &&
+        this.name.indexOf('解绑') > -1 &&
+        this.forums &&
+        this.forums.set_reg &&
+        this.forums.set_reg.register_type === 2
+      ) {
+        this.$refs.noBind.open();
+      }
+      // 换绑
+      if (
+        this.name !== '绑定' &&
+        this.name.indexOf('换绑') > -1 &&
         this.forums &&
         this.forums.set_reg &&
         this.forums.set_reg.register_type === 2
@@ -246,8 +257,6 @@ export default {
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
         this.$refs.changeBind.open();
-      } else {
-        this.$refs.noBind.open();
       }
     },
     clickNoBind() {
@@ -298,7 +307,12 @@ export default {
           // #ifdef H5
           if (res && res.wechat && res.wechat.mp_openid !== '') {
             if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-              this.name = `${res.wechat.nickname} (换绑)`;
+              if (this.isWeixin) {
+                this.name = `${res.wechat.nickname} (换绑)`;
+              } else {
+                // 微信外-无感模式只展示微信号
+                this.name = `${res.wechat.nickname}`;
+              }
             } else {
               this.name = `${res.wechat.nickname} (解绑)`;
             }
