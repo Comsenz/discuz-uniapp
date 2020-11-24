@@ -126,6 +126,10 @@ export default {
     // #endif
     // #ifdef H5
     if (!this.$store.getters['session/get']('isLogin')) {
+      uni.setStorage({
+        key: 'page',
+        data: '/pages/home/index',
+      });
       this.h5LoginMode();
     }
     // #endif
