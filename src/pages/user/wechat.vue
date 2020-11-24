@@ -35,10 +35,9 @@ export default {
               uni.getStorage({
                 key: 'page',
                 success(resData) {
-                  window.location.href = resData.data;
-                  // uni.redirectTo({
-                  //   url: resData.data,
-                  // });
+                  uni.redirectTo({
+                    url: resData.data,
+                  });
                 },
               });
               const isBind = uni.getStorageSync('isBind');

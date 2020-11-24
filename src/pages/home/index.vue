@@ -13,6 +13,7 @@
         <qui-page-home-h5
           v-if="showHome"
           ref="home"
+          :show-home="showHome"
           :footer-bar-height="footerBarHeight"
           :home-category-id="categoryId"
           :nav-theme="theme"

@@ -306,6 +306,10 @@ export default {
       type: String,
       default: '',
     },
+    showHome: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -1124,7 +1128,13 @@ export default {
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
-      this.loadThreads();
+      this.$nextTick(() => {
+        if (this.showHome && window.location.pathname === '/') {
+          this.loadThreads();
+        } else {
+          this.lazyLoadThreads();
+        }
+      });
     },
     setScrollerTop(position) {
       this.scrollTop = position;
