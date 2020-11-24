@@ -297,6 +297,10 @@ export default {
       type: String,
       default: '',
     },
+    homeCategoryId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -675,6 +679,9 @@ export default {
 
     // 切换选项卡
     async toggleTab(dataInfo) {
+      uni.navigateTo({
+        url: `/pages/home/index?categoryId=${dataInfo.id}`,
+      });
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
@@ -983,8 +990,24 @@ export default {
             selected: false,
           });
         });
-
         this.filterList[0].data = categoryFilterList;
+        if (this.homeCategoryId) {
+          const datainfo = {};
+          if (this.homeCategoryId === '0') {
+            datainfo.index = 0;
+            datainfo.id = 0;
+            datainfo.name = '所有';
+          } else {
+            this.categories.forEach((item, index) => {
+              if (this.homeCategoryId === item._jv.id) {
+                datainfo.index = index;
+                datainfo.id = item._jv.id;
+                datainfo.name = item.name;
+              }
+            });
+          }
+          this.toggleTab(datainfo);
+        }
       });
     },
     // 首页置顶列表数据
@@ -1039,6 +1062,9 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
+        if (this.homeCategoryId === this.getQueryString('categoryId') && this.pageNum === 1) {
+          this.isResetList = true;
+        }
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {
@@ -1101,6 +1127,12 @@ export default {
       this.loadThreadsSticky();
       // 首页主题内容列表
       this.loadThreads();
+    },
+    getQueryString(name) {
+      const reg = new RegExp(`(^|&)${name}([^&]*)(&|$)`);
+      const r = window.location.search.substr(1).match(reg);
+      if (r != null) return r[2].substring(1);
+      return null;
     },
   },
 };

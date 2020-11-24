@@ -14,6 +14,7 @@
           v-if="showHome"
           ref="home"
           :footer-bar-height="footerBarHeight"
+          :home-category-id="categoryId"
           :nav-theme="theme"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
@@ -24,6 +25,7 @@
           v-if="showHome"
           ref="home"
           :nav-theme="theme"
+          :home-category-id="categoryId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
@@ -44,6 +46,11 @@
         ></qui-page-my>
       </view>
     </view>
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
+    <!-- #endif -->
   </qui-page>
 </template>
 
@@ -61,6 +68,7 @@ export default {
       nowThreadId: 0, // 点击主题ID
       showHome: false,
       tagId: 0, // 标签ID
+      categoryId: '',
       currentTab: 'home',
       footerBarHeight: 50,
     };
@@ -100,12 +108,26 @@ export default {
       this.footerBarHeight = this.footerBarHeight ? this.footerBarHeight : 50;
     }
   },
-  onLoad() {
+  onLoad(params) {
+    this.categoryId = params.categoryId;
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline'],
     });
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      this.forums &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      this.$refs.auth.open();
+    }
+    // #endif
+    // #ifdef H5
+    if (!this.$store.getters['session/get']('isLogin')) {
+      this.h5LoginMode();
+    }
     // #endif
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
@@ -233,6 +255,14 @@ export default {
         this.$refs.home.setScrollerTop(position);
       }
     },
+    // #ifdef MP-WEIXIN
+    close() {
+      this.$refs.auth.close();
+    },
+    login() {
+      this.$refs.auth.close();
+    },
+    // #endif
     // 切换组件
     cut_index(e, type, isTabBar) {
       const tabs = ['home', 'quifind', 'quinotice', 'quimy'];
@@ -252,7 +282,7 @@ export default {
       this.currentTab = tabs[type];
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+        ['home', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();

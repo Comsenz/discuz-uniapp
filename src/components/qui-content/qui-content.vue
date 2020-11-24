@@ -164,8 +164,8 @@
               {{ postGoods.title }}
             </view>
             <view class="themeItem__content__good__ft">
-              <view class="themeItem__content__good__price" v-if="Number(postGoods.price) > 0">
-                ￥{{ postGoods.price }}元
+              <view class="themeItem__content__good__price" v-if="dataGoodInfoPrice !== ''">
+                ￥{{ dataGoodInfoPrice }}元
               </view>
             </view>
           </view>
@@ -712,6 +712,7 @@ export default {
       date: 1,
       blocKwidth: 224,
       isWeixin: false,
+      postGoodsPrice: 0, // 商品价格
     };
   },
   computed: {
@@ -732,6 +733,16 @@ export default {
     }),
   },
   created() {
+    if (
+      this.postGoods.price &&
+      (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0)
+    ) {
+      this.dataGoodInfoPrice = this.postGoods.price;
+    } else if (this.postGoods.price && Number(this.postGoods.price) <= 0) {
+      this.dataGoodInfoPrice = '';
+    } else {
+      this.dataGoodInfoPrice = '';
+    }
     // #ifdef  H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
