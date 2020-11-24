@@ -54,6 +54,7 @@
               maxlength="10"
               v-model="cashmany"
               @input="settlement"
+              @blur="loseFocus"
               :placeholder="
                 i18n.t('modify.enteramount', {
                   num: forums.set_cash.cash_min_sum ? forums.set_cash.cash_min_sum : 1,
@@ -105,7 +106,7 @@
               class="cash-phon-send"
               v-if="sun"
               @click="sendsms"
-              :disabled="!user.mobile"
+              :disabled="!user.mobile || !forbiddenSpots"
               id="TencentCaptcha"
               :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
             >
@@ -200,6 +201,7 @@ export default {
       withdrawalNumber: '',
       cashType: 0,
       wxpayMchpayClose: true,
+      forbiddenSpots: true,
     };
   },
   onLoad() {
@@ -294,16 +296,11 @@ export default {
           .replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3')
           .replace(/^\./g, '');
         if (this.cashmany.length >= 1) {
-          if (this.forums.set_cash.cash_min_sum) {
+          if (this.forums && this.forums.set_cash.cash_min_sum) {
             if (Number(this.cashmany) < this.forums.set_cash.cash_min_sum) {
-              this.cashmany = '';
-              uni.showToast({
-                icon: 'none',
-                title: this.i18n.t('modify.enteramount', {
-                  num: this.forums.set_cash.cash_min_sum ? this.forums.set_cash.cash_min_sum : 1,
-                }),
-                duration: 2000,
-              });
+              this.forbiddenSpots = false;
+            } else {
+              this.forbiddenSpots = true;
             }
           }
         }
@@ -333,6 +330,23 @@ export default {
           this.procedures = casnumber.toFixed(2);
         }
       }, 5);
+    },
+    loseFocus() {
+      if (this.cashmany.length >= 1) {
+        if (this.forums.set_cash.cash_min_sum) {
+          if (Number(this.cashmany) < this.forums.set_cash.cash_min_sum) {
+            this.cashmany = '';
+            this.settlement();
+            uni.showToast({
+              icon: 'none',
+              title: this.i18n.t('modify.enteramount', {
+                num: this.forums.set_cash.cash_min_sum ? this.forums.set_cash.cash_min_sum : 1,
+              }),
+              duration: 2000,
+            });
+          }
+        }
+      }
     },
     // 提现手机号设置
     setphonnumber() {
