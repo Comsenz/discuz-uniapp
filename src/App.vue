@@ -155,7 +155,8 @@ export default {
         url = `/pages/site/partner-invite?code=${e.query.code}`;
     } else if(/^\/category\/\d+$/i.test(e.path)){
       const matchs = e.path.match(/^\/category\/(\d+)$/i);
-      url = `/pages/?categoryId=${matchs[1]}`;
+      url = `/?categoryId=${matchs[1]}`;
+      console.log(url,'跳转地址');
     }
 
     uni.redirectTo({url});
