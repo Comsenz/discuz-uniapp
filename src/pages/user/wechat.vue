@@ -35,9 +35,10 @@ export default {
               uni.getStorage({
                 key: 'page',
                 success(resData) {
-                  uni.redirectTo({
-                    url: resData.data,
-                  });
+                  window.location.href = resData.data;
+                  // uni.redirectTo({
+                  //   url: resData.data,
+                  // });
                 },
               });
               const isBind = uni.getStorageSync('isBind');
@@ -52,8 +53,7 @@ export default {
                   duration: 2000,
                 });
               }
-            }
-            if (
+            } else if (
               this.forums &&
               this.forums.set_site &&
               this.forums.set_site.site_mode === SITE_PAY &&
@@ -76,6 +76,7 @@ export default {
                 });
               }
             }
+            return;
           }
           if (res && res.data && res.data.errors) {
             if (res.data.errors[0].code === 'no_bind_user') {
