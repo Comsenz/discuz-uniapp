@@ -613,7 +613,7 @@ export default {
       blocKwidth: 224,
       videoContext: '',
       wechatbrowser: false,
-      postGoodsPrice: 0, // 商品价格
+      dataGoodInfoPrice: 0, // 商品价格
     };
   },
   computed: {
@@ -677,6 +677,7 @@ export default {
     },
   },
   created() {
+    console.log(this.dataGoodInfoPrice, '价格');
     if (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0) {
       this.dataGoodInfoPrice = this.postGoods.price;
     } else if (Number(this.postGoods.price) <= 0) {
