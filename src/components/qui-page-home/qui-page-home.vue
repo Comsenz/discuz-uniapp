@@ -679,9 +679,11 @@ export default {
 
     // 切换选项卡
     async toggleTab(dataInfo) {
+      // #ifdef H5
       uni.navigateTo({
         url: `/pages/home/index?categoryId=${dataInfo.id}`,
       });
+      // #endif
       // 重置列表
       this.isResetList = true;
       this.pageNum = 1;
@@ -991,6 +993,7 @@ export default {
           });
         });
         this.filterList[0].data = categoryFilterList;
+        // #ifdef H5
         if (this.homeCategoryId) {
           const datainfo = {};
           if (this.homeCategoryId === '0') {
@@ -1008,6 +1011,7 @@ export default {
           }
           this.toggleTab(datainfo);
         }
+        // #endif
       });
     },
     // 首页置顶列表数据
@@ -1062,9 +1066,11 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
+        // #ifdef H5
         if (this.homeCategoryId === this.getQueryString('categoryId') && this.pageNum === 1) {
           this.isResetList = true;
         }
+        // #endif
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
         if (this.isResetList) {
