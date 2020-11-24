@@ -233,13 +233,7 @@ export default {
         return;
       }
       // 解绑
-      if (
-        this.name !== '绑定' &&
-        this.name.indexOf('解绑') > -1 &&
-        this.forums &&
-        this.forums.set_reg &&
-        this.forums.set_reg.register_type === 2
-      ) {
+      if (this.name !== '绑定' && this.name.indexOf('解绑') > -1) {
         this.$refs.noBind.open();
       }
       // 换绑
