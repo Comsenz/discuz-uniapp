@@ -29,6 +29,11 @@
         <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
       </view>
     </view>
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
+    <!-- #endif -->
   </qui-page>
 </template>
 
@@ -86,6 +91,25 @@ export default {
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline'],
     });
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      this.forums &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      this.$refs.auth.open();
+    }
+    // #endif
+    // #ifdef H5
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      this.forums &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      uni.setStorageSync('register', 1);
+      this.$store.dispatch('session/wxh5Login');
+    }
     // #endif
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
@@ -193,6 +217,14 @@ export default {
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
+    // #ifdef MP-WEIXIN
+    close() {
+      this.$refs.auth.close();
+    },
+    login() {
+      this.$refs.auth.close();
+    },
+    // #endif
     // 切换组件
     cut_index(e, type, isTabBar) {
       console.log(e, type, isTabBar, 'iiiiii');
@@ -210,7 +242,7 @@ export default {
       this.currentTab = tabs[type];
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+        ['home', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
