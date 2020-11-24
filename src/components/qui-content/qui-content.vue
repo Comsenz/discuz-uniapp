@@ -730,7 +730,9 @@ export default {
       (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0)
     ) {
       this.dataGoodInfoPrice = this.postGoods.price;
-    } else if (Number(this.postGoods.price) <= 0) {
+    } else if (this.postGoods.price && Number(this.postGoods.price) <= 0) {
+      this.dataGoodInfoPrice = '';
+    } else {
       this.dataGoodInfoPrice = '';
     }
     // #ifdef  H5
