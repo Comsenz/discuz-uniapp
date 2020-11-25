@@ -68,7 +68,7 @@ const apploaded = () => {
     forums.set_reg.register_type === 2 &&
     !app.$route.query.hasOwnProperty('code')
   ) {
-    this.$store.dispatch('session/wxh5Login');
+    app.$store.dispatch('session/wxh5Login');
     return;
   }
 
