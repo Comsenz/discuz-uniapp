@@ -213,6 +213,11 @@ export default {
       const beforeUploadFile = _this.uploadBeforeList.length;
       if (_this.chooseType === 0) {
         _this.uploadList = [];
+        _this.uploadBeforeList = [];
+        // _this.dataCount = 0;
+        _this.dataCount = 9;
+        _this.lastOrder = 0;
+        uploadTimes = 0;
       }
       if (_this.uploadList.length < _this.dataCount || _this.name === 'avatar') {
         // #ifdef MP-WEIXIN
@@ -318,9 +323,9 @@ export default {
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
 
-      if (_this.chooseType === 0) {
-        _this.uploadCount = 0;
-      }
+      // if (_this.chooseType === 0) {
+      //   _this.uploadCount = 0;
+      // }
       const token = uni.getStorageSync('access_token');
       _this.header = {
         authorization: `Bearer ${token}`,
@@ -345,7 +350,7 @@ export default {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             setTimeout(() => {
               uploadTimes += 1;
-              if (_this.chooseType === 0 && index < 8) {
+              if (_this.chooseType === 0 && index <= 8) {
                 uni.$emit('uploadOver', { data: JSON.parse(res.data), times: uploadTimes });
               }
               if (index < _this.uploadBeforeList.length) {

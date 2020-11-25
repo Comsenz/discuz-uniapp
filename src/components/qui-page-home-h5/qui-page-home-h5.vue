@@ -1,201 +1,208 @@
 <template>
-  <view class="home">
-    <!-- #ifdef MP-WEIXIN -->
-    <uni-nav-bar
-      class="status-bar"
-      :style="'transform:' + navBarTransform"
-      :title="forums.set_site ? forums.set_site.site_name : ''"
-      fixed="true"
-      :color="navTheme === $u.light() ? '#000000' : '#ffffff'"
-      :background-color="navTheme === $u.light() ? '#ffffff' : '#2e2f30'"
-      status-bar
-    ></uni-nav-bar>
-    <!-- #endif -->
-    <!-- <scroll-view
-      scroll-y="true"
-      scroll-with-animation="true"
-      show-scrollbar="false"
-      class="scroll-y"
-      @scroll="scroll"
-      @scrolltolower="pullDown"
-      @scrolltoupper="toUpper"
-    > -->
-    <qui-header
-      :head-img="forums.set_site ? forums.set_site.site_header_logo : ''"
-      :background-head-full-img="forums.set_site ? forums.set_site.site_background_image : ''"
-      :theme="theme"
-      :theme-num="forums.set_site ? forums.other.count_users : ''"
-      :post-num="forums.set_site ? forums.other.count_threads : ''"
-      :share-btn="shareBtn"
-      :share-show="shareShow"
-      color="#1878F3"
-      :is-show-more="false"
-      :is-show-back="false"
-      :is-show-home="false"
-      @click="open"
-      @closeShare="closeShare"
-    ></qui-header>
-    <view
-      class="nav"
-      id="navId"
-      :style="headerShow ? '' : 'width:100%;position:fixed;z-index:9;top:' + navbarHeight + 'px;'"
+  <view class="home" @touchmove.native="pullDownMove">
+    <DynamicScroller
+      :items="threads"
+      :min-item-size="120"
+      :buffer="5000"
+      class="scroller"
+      ref="scroller"
+      :style="'height:' + (contentHeight - footerBarHeight) + 'px; overflow-y: auto;'"
+      @scroll.native="scroll"
+      :emit-update="true"
     >
-      <view class="nav__box">
-        <qui-icon
-          class="nav__box__icon"
-          name="icon-screen"
-          size="32"
-          :color="show ? '#1878F3' : '#777'"
-          @tap="showFilter"
-        ></qui-icon>
-      </view>
-      <u-tabs
-        class="scroll-tab"
-        :list="categories"
-        :current="categoryIndex"
-        @change="toggleTab"
-        is-scroll="isScroll"
-        active-color="#1878F3"
-      ></u-tabs>
-    </view>
-    <view
-      class="sticky"
-      :style="headerShow ? 'margin-top:20rpx' : 'margin-top:130rpx'"
-      v-if="sticky.length > 0"
-    >
-      <view class="sticky__box">
-        <view
-          class="sticky__isSticky"
-          v-for="(item, index) in sticky"
-          :key="index"
-          @click="stickyClick(item._jv.id)"
-        >
-          <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
-          <view class="sticky__isSticky__count" v-if="item.type == 1 && item.title">
-            {{ item.title }}
+      <template #before>
+        <view>
+          <qui-header
+            :head-img="forums.set_site ? forums.set_site.site_header_logo : ''"
+            :background-head-full-img="forums.set_site ? forums.set_site.site_background_image : ''"
+            :theme="theme"
+            :theme-num="forums.set_site ? forums.other.count_users : ''"
+            :post-num="forums.set_site ? forums.other.count_threads : ''"
+            :share-btn="shareBtn"
+            :share-show="shareShow"
+            color="#1878F3"
+            :is-show-more="false"
+            :is-show-back="false"
+            :is-show-home="false"
+            @click="open"
+            @closeShare="closeShare"
+          ></qui-header>
+          <view
+            class="nav"
+            id="navId"
+            :style="
+              headerShow ? '' : 'width:100%;position:fixed;z-index:9;top:' + navbarHeight + 'px;'
+            "
+          >
+            <view class="nav__box">
+              <qui-icon
+                class="nav__box__icon"
+                name="icon-screen"
+                size="32"
+                :color="show ? '#1878F3' : '#777'"
+                @tap="showFilter"
+              ></qui-icon>
+            </view>
+            <u-tabs
+              class="scroll-tab"
+              :list="categories"
+              :current="categoryIndex"
+              @change="toggleTab"
+              is-scroll="isScroll"
+              active-color="#1878F3"
+            ></u-tabs>
           </view>
-          <view class="sticky__isSticky__count" v-else>
-            <qui-uparse
-              class="sticky__isSticky__text"
-              :content="item.firstPost.summary"
-            ></qui-uparse>
+          <view
+            class="sticky"
+            :style="headerShow ? 'margin-top:20rpx' : 'margin-top:130rpx'"
+            v-if="sticky.length > 0"
+          >
+            <view class="sticky__box">
+              <view
+                class="sticky__isSticky"
+                v-for="(item, index) in sticky"
+                :key="index"
+                @click="stickyClick(item._jv.id)"
+              >
+                <view class="sticky__isSticky__box">{{ i18n.t('home.sticky') }}</view>
+                <view class="sticky__isSticky__count" v-if="item.type == 1 && item.title">
+                  {{ item.title }}
+                </view>
+                <view class="sticky__isSticky__count" v-else>
+                  <qui-uparse
+                    class="sticky__isSticky__text"
+                    :content="item.firstPost.summary"
+                  ></qui-uparse>
+                </view>
+              </view>
+            </view>
           </view>
         </view>
-      </view>
-    </view>
-    <!-- </view> -->
-    <view class="main" id="main">
-      <qui-content
-        class="ivideo"
-        v-for="(item, index) in threads"
-        :ref="'myVideo' + index"
-        :key="index"
-        :currentindex="index"
-        :pay-status="(item.price > 0 && item.paid) || item.price == 0"
-        :user-name="item.user.username"
-        :is-real="item.user.isReal"
-        :theme-image="item.user.avatarUrl"
-        :answer-image="item.question && item.question.beUser.avatarUrl"
-        :theme-btn="item.canHide || ''"
-        :theme-reply-btn="item.canReply || ''"
-        :them-pay-btn="item.price > 0 || item.attachmentPrice > 0"
-        :user-groups="handleGroup(item.user && item.user.groups)"
-        :user-answer-groups="handleGroup(item.question && item.question.beUser.groups)"
-        :theme-time="item.createdAt"
-        :theme-time-answer="item.question && item.question.answered_at"
-        :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
-        :thread-type="item.type"
-        :media-url="item.threadVideo && item.threadVideo.media_url"
-        :is-great="item.firstPost.isLiked"
-        :theme-like="item.firstPost.likeCount"
-        :theme-comment="item.postCount - 1"
-        :tags="[item.category]"
-        :images-list="item.firstPost.images"
-        :post-goods="item.firstPost.postGoods ? item.firstPost.postGoods : ''"
-        :theme-essence="item.isEssence"
-        :video-width="item.threadVideo && item.threadVideo.width"
-        :video-height="item.threadVideo && item.threadVideo.height"
-        :video-id="item.threadVideo && item.threadVideo._jv.id"
-        :cover-image="item.threadVideo && item.threadVideo.cover_url"
-        :duration="item.threadVideo && item.threadVideo.duration"
-        :is-deleted="item.isDeleted"
-        :scroll-top="scrollTop"
-        :questions-name="item.user.username"
-        :be-ask-name="item.question && item.question.beUser.username"
-        :question-content="item.question && item.question.content"
-        :add-ask="item.question && item.question.is_answer"
-        :onlooker-number="item.question && item.question.onlooker_number"
-        :free-ask="item.question && item.question.price == 0"
-        :ask-price="item.question && item.question.price"
-        :ask-content="item.question && item.question.content"
-        :onlooker-unit-price="item.question && item.question.onlooker_unit_price"
-        :on-looker="item.question && item.question.onlooker_unit_price == 0"
-        :thread-position="
-          item.location ? [item.location, item.address, item.longitude, item.latitude] : []
-        "
-        :thread-audio="item.threadAudio"
-        @click="handleClickShare(item._jv.id)"
-        @handleIsGreat="
-          handleIsGreat(
-            item.firstPost._jv.id,
-            item.firstPost.canLike,
-            item.firstPost.isLiked,
-            item.firstPost.likeCount,
-          )
-        "
-        @commentClick="commentClick(item._jv.id)"
-        @contentClick="contentClick(item)"
-        @answeClick="answeClick(item.user._jv.id)"
-        @beAskClick="beAskClick(item.question.beUser.id)"
-        @backgroundClick="contentClick(item)"
-        @headClick="headClick(item.user._jv.id)"
-        @headAnswerClick="headAnswerClick(item.question.be_user_id)"
-        @videoPlay="handleVideoPlay"
-        @scrollheight="scrpllsip"
-        @fullscreenchange="screenplayback"
-        @scrollsetup="scrollsetups"
-      ></qui-content>
-      <qui-load-more :status="loadingType"></qui-load-more>
-    </view>
-    <!-- #ifdef H5-->
-    <view
-      class="record"
-      v-if="forums.set_site ? forums.set_site.site_record || forums.set_site.site_record_code : ''"
-    >
-      <!-- <text>{{ i18n.t('home.record') }}</text> -->
-      <view class="record__box">
-        <a class="record__box-url" href="https://beian.miit.gov.cn" target="_blank">
-          {{ forums.set_site ? forums.set_site.site_record : '' }}
-        </a>
-      </view>
-      <view
-        v-if="forums.set_site ? forums.set_site.site_record_code : ''"
-        :class="forums.set_site.site_record ? 'record__box1' : 'record__box2'"
-      >
-        <a class="record__box-url" :href="surl" target="_blank">
-          {{ forums.set_site ? forums.set_site.site_record_code : '' }}
-        </a>
-      </view>
-    </view>
-    <view
-      class="copyright"
-      :class="
-        forums.set_site
-          ? forums.set_site.site_record || forums.set_site.site_record_code
-            ? ''
-            : 'copyright_margin'
-          : ''
-      "
-    >
-      <text>{{ i18n.t('home.copyright') }}</text>
-    </view>
-    <!-- #endif -->
-    <!-- #ifdef MP-WEIXIN-->
-    <view class="wxcopyright">
-      <text>{{ i18n.t('home.copyright') }}</text>
-    </view>
-    <!-- #endif -->
-    <!-- </scroll-view> -->
+      </template>
+      <template v-slot="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :size-dependencies="[
+            'item.message',
+            'item.type',
+            'item.firstPost.images',
+            'item.firstPost.images.length',
+          ]"
+          :data-index="index"
+          class="scroller-item"
+        >
+          <qui-content
+            class="ivideo"
+            :ref="'myVideo' + index"
+            :key="index"
+            :currentindex="index"
+            :item="item"
+            :pay-status="(item.price > 0 && item.paid) || item.price == 0"
+            :user-name="item.user.username"
+            :is-real="item.user.isReal"
+            :theme-image="item.user.avatarUrl"
+            :answer-image="item.question && item.question.beUser.avatarUrl"
+            :theme-btn="item.canHide || ''"
+            :theme-reply-btn="item.canReply || ''"
+            :them-pay-btn="item.price > 0 || item.attachmentPrice > 0"
+            :user-groups="handleGroup(item.user && item.user.groups)"
+            :user-answer-groups="handleGroup(item.question && item.question.beUser.groups)"
+            :theme-time="item.createdAt"
+            :theme-time-answer="item.question && item.question.answered_at"
+            :theme-content="item.type == 1 ? item.title : item.firstPost.summary"
+            :theme-content-parse="item._contentParse || null"
+            :thread-type="item.type"
+            :media-url="item.threadVideo && item.threadVideo.media_url"
+            :is-great="item.firstPost.isLiked"
+            :theme-like="item.firstPost.likeCount"
+            :theme-comment="item.postCount - 1"
+            :tags="[item.category]"
+            :images-list="item.firstPost.images"
+            :post-goods="item.firstPost.postGoods ? item.firstPost.postGoods : ''"
+            :theme-essence="item.isEssence"
+            :video-width="item.threadVideo && item.threadVideo.width"
+            :video-height="item.threadVideo && item.threadVideo.height"
+            :video-id="item.threadVideo && item.threadVideo._jv.id"
+            :cover-image="item.threadVideo && item.threadVideo.cover_url"
+            :duration="item.threadVideo && item.threadVideo.duration"
+            :is-deleted="item.isDeleted"
+            :questions-name="item.user.username"
+            :be-ask-name="item.question && item.question.beUser.username"
+            :question-content="item.question && item.question.content"
+            :add-ask="item.question && item.question.is_answer"
+            :onlooker-number="item.question && item.question.onlooker_number"
+            :free-ask="item.question && item.question.price == 0"
+            :ask-price="item.question && item.question.price"
+            :ask-content="item.question && item.question.content"
+            :onlooker-unit-price="item.question && item.question.onlooker_unit_price"
+            :on-looker="item.question && item.question.onlooker_unit_price == 0"
+            :thread-position="
+              item.location ? [item.location, item.address, item.longitude, item.latitude] : []
+            "
+            :thread-audio="item.threadAudio"
+            @click="handleClickShare(item._jv.id)"
+            @handleIsGreat="
+              handleIsGreat(
+                item.firstPost._jv.id,
+                item.firstPost.canLike,
+                item.firstPost.isLiked,
+                item.firstPost.likeCount,
+              )
+            "
+            @commentClick="commentClick(item._jv.id)"
+            @contentClick="contentClick(item)"
+            @answeClick="answeClick(item.user._jv.id)"
+            @beAskClick="beAskClick(item.question.beUser.id)"
+            @backgroundClick="contentClick(item)"
+            @headClick="headClick(item.user._jv.id)"
+            @headAnswerClick="headAnswerClick(item.question.be_user_id)"
+            @videoPlay="handleVideoPlay"
+            @scrollheight="scrpllsip"
+            @fullscreenchange="screenplayback"
+            @scrollsetup="scrollsetups"
+          ></qui-content>
+        </DynamicScrollerItem>
+      </template>
+      <template #after>
+        <view class="scroll-footer">
+          <qui-load-more :status="loadingType"></qui-load-more>
+          <view
+            class="record"
+            v-if="
+              forums.set_site ? forums.set_site.site_record || forums.set_site.site_record_code : ''
+            "
+          >
+            <!-- <text>{{ i18n.t('home.record') }}</text> -->
+            <view class="record__box">
+              <a class="record__box-url" href="https://beian.miit.gov.cn" target="_blank">
+                {{ forums.set_site ? forums.set_site.site_record : '' }}
+              </a>
+            </view>
+            <view
+              v-if="forums.set_site ? forums.set_site.site_record_code : ''"
+              :class="forums.set_site.site_record ? 'record__box1' : 'record__box2'"
+            >
+              <a class="record__box-url" :href="surl" target="_blank">
+                {{ forums.set_site ? forums.set_site.site_record_code : '' }}
+              </a>
+            </view>
+          </view>
+          <view
+            class="copyright"
+            :class="
+              forums.set_site
+                ? forums.set_site.site_record || forums.set_site.site_record_code
+                  ? ''
+                  : 'copyright_margin'
+                : ''
+            "
+          >
+            <text>{{ i18n.t('home.copyright') }}</text>
+          </view>
+        </view>
+      </template>
+    </DynamicScroller>
     <qui-filter-modal
       v-model="show"
       @confirm="confirm"
@@ -264,47 +271,50 @@ import { status } from '@/library/jsonapi-vuex/index';
 import forums from '@/mixin/forums';
 import user from '@/mixin/user';
 import loginModule from '@/mixin/loginModule';
-// #ifdef H5
 import wxshare from '@/mixin/wxshare-h5';
 import appCommonH from '@/utils/commonHelper';
-// #endif
 import { mapMutations, mapState } from 'vuex';
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller';
+import html2JsonHeler from '../feng-parse/libs/html2json.helper';
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 const sysInfo = uni.getSystemInfoSync();
 
-let navbarHeight;
-// #ifdef H5
-navbarHeight = sysInfo.statusBarHeight; /* uni-nav-bar的高度 */
-// #endif
-// #ifdef MP-WEIXIN
-navbarHeight = sysInfo.statusBarHeight + 44; /* uni-nav-bar的高度 */
-// #endif
+const navbarHeight = sysInfo.statusBarHeight; /* uni-nav-bar的高度 */
 const navBarTransform = `translateY(-${navbarHeight}px)`;
 
-export default {
-  mixins: [
-    forums,
-    user,
-    loginModule,
-    // #ifdef H5
-    wxshare,
-    appCommonH,
-    // #endif
-  ],
+let openPullDown = true;
+let loadThreading = false;
+let loadThreadingTimer = null;
 
+export default {
+  components: {
+    DynamicScroller,
+    DynamicScrollerItem,
+  },
+  mixins: [forums, user, loginModule, wxshare, appCommonH],
   props: {
     navTheme: {
       type: String,
       default: '',
     },
+    footerBarHeight: {
+      type: Number,
+      default: 50,
+    },
     homeCategoryId: {
       type: String,
       default: '',
+    },
+    showHome: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {
       navBarTransform,
+      contentHeight: sysInfo.windowHeight, // 滚动区域高度
       // suspended: false, // 是否吸顶状态
       checkoutTheme: false, // 切换主题  搭配是否吸顶使用
       threadType: '', // 主题类型 0普通 1长文 2视频 3图片（'' 不筛选）
@@ -329,6 +339,7 @@ export default {
       shareShow: false, // h5内分享提示信息
       shareTitle: '', // h5内分享复制链接
       isWeixin: '', // 是否是微信浏览器内
+      lazyLoadThreadsInfo: null,
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -420,9 +431,11 @@ export default {
     // #endif
     // 发布帖子后首页追加最新帖子
     this.$u.event.$on('addThread', () => {
+      // 因为使用了虚拟滚动，在home页面没有渲染的时候，触发更新数据，会导致虚拟滚动计算的距离有误
+      // 对于新增帖子，需要放进队列中，当首页被激活时，才对队列进行赋值，触发虚拟滚动的计算
       this.isResetList = true;
       this.pageNum = 1;
-      this.loadThreads();
+      this.lazyLoadThreads();
     });
     // 详情页删除帖子后在首页删除
     this.$u.event.$on('deleteThread', thread =>
@@ -503,7 +516,6 @@ export default {
       });
     });
     // h5微信分享
-    // #ifdef H5
     this.wxShare({
       title: this.forums.set_site ? this.forums.set_site.site_name : '',
       desc: this.forums.set_site ? this.forums.set_site.site_introduction : '',
@@ -512,7 +524,6 @@ export default {
           ? this.forums.set_site.site_logo
           : '',
     });
-    // #endif
     this.ontrueGetList();
     uni.$on('logind', () => {
       this.ontrueGetList();
@@ -520,11 +531,9 @@ export default {
   },
   destroyed() {
     uni.$off('logind');
-    // #ifdef H5
     uni.$off('updateIndex');
     uni.$off('updateNoticePage');
     uni.$off('updateMy');
-    // #endif
   },
   mounted() {
     this.$u.event.$on('tagClick', tagId => {
@@ -557,7 +566,6 @@ export default {
       });
     }
 
-    // #ifdef H5
     uni.$on('updateIndex', () => {
       this.headerShow = true;
       this.ontrueGetList();
@@ -573,8 +581,6 @@ export default {
       this.headerShow = true;
       this.ontrueGetList();
     });
-
-    // #endif
     // uni.$on('onpullDownRefresh', () => {
     //   this.navBarTransform = 'none';
     // })
@@ -604,30 +610,29 @@ export default {
       this.switchscroll = true;
     },
     scroll(event) {
-      // if (this.footerIndex === 0) {
-      this.scrollTop = event.scrollTop;
-      if (this.switchscroll && this.scrollTop !== 0) {
-        if (this.scrollTop > this.num || this.scrollTop < this.num) {
-          this.$refs[`myVideo${this.scrollindex}`][0].pauseVideo();
-          this.switchscroll = false;
+      const { target } = event;
+      const currentScroll = target.scrollTop;
+      const scrollableDistance = Math.max(0, target.scrollHeight - target.offsetHeight);
+      openPullDown = currentScroll === 0;
+      if (currentScroll >= scrollableDistance - 50) {
+        this.pullDown();
+      }
+      // uni-app没有提供到页面隐藏的钩子，没办法在那个时候获取，只能每次滚动的时候做记录
+      window.sessionStorage.setItem('virtual_scroll_top', currentScroll);
+
+      if (this.footerIndex === 0) {
+        this.scrollTop = currentScroll;
+        if (this.switchscroll && this.scrollTop !== 0) {
+          if (this.scrollTop > this.num || this.scrollTop < this.num) {
+            this.$refs[`myVideo${this.scrollindex}`][0].pauseVideo();
+            this.switchscroll = false;
+          }
         }
+        this.changeNavStatus(this.scrollTop >= this.navTop);
       }
-      // #ifdef MP-WEIXIN
-      if (!this.navbarHeight) {
-        return;
-      }
-
-      if (event.scrollTop + this.navbarHeight + 20 >= this.navTop) {
-        this.headerShow = false;
-        this.navBarTransform = 'none';
-      } else {
-        this.headerShow = true;
-        this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
-      }
-      // #endif
-
-      // #ifdef H5
-      if (event.scrollTop >= this.navTop) {
+    },
+    changeNavStatus(isShow) {
+      if (isShow) {
         this.headerShow = false;
         // console.log('falsefalsefalse');
         this.navBarTransform = 'none';
@@ -636,33 +641,17 @@ export default {
         // console.log('truetruetruetrue');
         this.navBarTransform = `translate3d(0, -${this.navbarHeight}px, 0)`;
       }
-      // #endif
-      // }
     },
     scrollsetups() {
-      const _this = this;
-      uni.setStorage({
-        key: 'scroll_top',
-        data: _this.scrollTop,
-      });
+      // uni-app不能使用sessionStorage，自行解决
+      window.sessionStorage.setItem('virtual_scroll_top', this.scrollTop);
     },
     screenplayback() {
-      let num = 0;
-      const _this = this;
-      uni.getStorage({
-        key: 'scroll_top',
-        success(resData) {
-          num = resData.data;
-          _this.num = resData.data;
-        },
-      });
-      const timer = setTimeout(() => {
-        uni.pageScrollTo({
-          duration: 0, // 过渡时间必须为0，uniapp bug，否则运行到手机会报错
-          scrollTop: num, // 滚动到目标位置
-        });
-        clearTimeout(timer);
-      }, 50);
+      // uni-app不能使用sessionStorage，自行解决
+      const position = window.sessionStorage.getItem('virtual_scroll_top');
+      if (position) {
+        this.setScrollerTop(position);
+      }
     },
     // 滑动到顶部
     toUpper() {
@@ -790,29 +779,8 @@ export default {
           key: 'page',
           data: '/pages/home/index',
         });
-        // #ifdef MP-WEIXIN
-        this.mpLoginMode();
-        // #endif
-        // #ifdef H5
         this.h5LoginMode();
-        // #endif
       }
-      // #ifdef MP-WEIXIN
-      this.$refs.popupHead.open();
-      // 付费模式下不显示微信分享
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-            id: 1,
-          },
-        ];
-      }
-      // #endif
-
-      // #ifdef H5
       if (this.isWeixin === true) {
         this.shareShow = true;
       } else {
@@ -821,13 +789,10 @@ export default {
           url: '/pages/home/index',
         });
       }
-      // #endif
     },
-    // #ifdef H5
     closeShare() {
       this.shareShow = false;
     },
-    // #endif
     // 头部分享海报
     shareHead(index) {
       if (index === 0) {
@@ -836,12 +801,7 @@ export default {
             key: 'page',
             data: '/pages/home/index',
           });
-          // #ifdef MP-WEIXIN
-          this.mpLoginMode();
-          // #endif
-          // #ifdef H5
           this.h5LoginMode();
-          // #endif
         }
         uni.navigateTo({
           url: '/pages/share/site',
@@ -894,20 +854,9 @@ export default {
     },
     // 首页导航栏筛选按钮
     showFilter() {
-      // #ifdef MP-WEIXIN
-      wx.createSelectorQuery()
-        .in(this)
-        .select('#navId')
-        .boundingClientRect(rect => {
-          this.filterTop = `${rect.bottom * 2}rpx`;
-        })
-        .exec();
-      // #endif
-      // #ifdef H5
       const obj = document.querySelector('#navId');
       const { bottom } = obj.getBoundingClientRect();
       this.filterTop = `${bottom}px`;
-      // #endif
       this.show = !this.show;
       this.$refs.filter.setData();
       // this.navShow = true;
@@ -919,30 +868,8 @@ export default {
           key: 'page',
           data: '/pages/home/index',
         });
-        // #ifdef MP-WEIXIN
-        this.mpLoginMode();
-        // #endif
-        // #ifdef H5
         this.h5LoginMode();
-        // #endif
       }
-      // #ifdef MP-WEIXIN
-      this.$emit('handleClickShare', id);
-      this.nowThreadId = id;
-      this.$refs.popupContent.open();
-      // 付费模式下不显示微信分享
-      if (this.forums.set_site.site_mode === 'pay') {
-        this.bottomData = [
-          {
-            text: this.i18n.t('home.generatePoster'),
-            icon: 'icon-poster',
-            name: 'wx',
-            id: 1,
-          },
-        ];
-      }
-      // #endif
-      // #ifdef H5
       const shareThread = this.$store.getters['jv/get'](`threads/${id}`);
       if (shareThread.type === 1) {
         this.shareTitle = shareThread.title;
@@ -954,7 +881,6 @@ export default {
         id,
         url: 'topic/index',
       });
-      // #endif
     },
     // 内容部分分享海报,跳到分享海报页面
     shareContent(index) {
@@ -992,6 +918,7 @@ export default {
             selected: false,
           });
         });
+
         this.filterList[0].data = categoryFilterList;
         // #ifdef H5
         if (this.homeCategoryId) {
@@ -1028,8 +955,7 @@ export default {
         this.sticky = [...data];
       });
     },
-    // 首页内容部分数据请求
-    loadThreads() {
+    getThreadsParams() {
       const params = {
         'filter[isSticky]': 'no',
         'filter[isApproved]': 1,
@@ -1058,6 +984,66 @@ export default {
         params['filter[type]'] = this.threadType;
       }
       params['filter[fromUserId]'] = this.threadFollow;
+      return params;
+    },
+    // 首页内容部分数据请求
+    loadThreads() {
+      const params = this.getThreadsParams();
+
+      const threadsAction = status.run(() =>
+        this.$store.dispatch('jv/get', ['threads', { params }]),
+      );
+
+      this.threadsStatusId = threadsAction._statusID;
+
+      return threadsAction
+        .then(res => {
+          // #ifdef H5
+          if (this.homeCategoryId === this.getQueryString('categoryId') && this.pageNum === 1) {
+            this.isResetList = true;
+          }
+          // #endif
+          this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
+          delete res._jv;
+          const newRes = res.map(item => {
+            const newItem = item;
+            newItem.id = item._jv.id;
+            // 因为使用了虚拟滚动，导致parse组件中，对于content内容每次渲染都需要执行，浪费性能
+            // 改为数据获取时马上处理数据
+            newItem._contentParse =
+              item.type !== 1
+                ? html2JsonHeler(this, item.type === 1 ? item.title : item.firstPost.summary)
+                : null;
+            return newItem;
+          });
+
+          if (this.isResetList) {
+            this.threads = newRes;
+            this.$nextTick(() => {
+              this.setScrollerTop(0);
+            });
+          } else {
+            this.threads = [...this.threads, ...newRes];
+          }
+
+          this.isResetList = false;
+          loadThreading = false;
+          if (loadThreadingTimer) {
+            clearTimeout(loadThreadingTimer);
+            loadThreadingTimer = null;
+          }
+        })
+        .catch(() => {
+          loadThreading = false;
+          if (loadThreadingTimer) {
+            clearTimeout(loadThreadingTimer);
+            loadThreadingTimer = null;
+          }
+        });
+    },
+    // 延迟赋值的首页数据请求
+    lazyLoadThreads() {
+      const params = this.getThreadsParams();
 
       const threadsAction = status.run(() =>
         this.$store.dispatch('jv/get', ['threads', { params }]),
@@ -1066,20 +1052,29 @@ export default {
       this.threadsStatusId = threadsAction._statusID;
 
       return threadsAction.then(res => {
-        // #ifdef H5
-        if (this.homeCategoryId === this.getQueryString('categoryId') && this.pageNum === 1) {
-          this.isResetList = true;
-        }
-        // #endif
         this.loadingType = res.length === this.pageSize ? 'more' : 'nomore';
         delete res._jv;
-        if (this.isResetList) {
-          this.threads = res;
-        } else {
-          this.threads = [...this.threads, ...res];
-        }
+        const newRes = res.map(item => {
+          const newItem = item;
+          newItem.id = item._jv.id;
+          // 因为使用了虚拟滚动，导致parse组件中，对于content内容每次渲染都需要执行，浪费性能
+          // 改为数据获取时马上处理数据
+          newItem._contentParse = html2JsonHeler(
+            this,
+            item.type === 1 ? item.title : item.firstPost.summary,
+          );
+          return newItem;
+        });
+        this.lazyLoadThreadsInfo = newRes;
+        this.setScrollerTop(0);
         this.isResetList = false;
       });
+    },
+    // 处理延迟赋值的首页数据
+    workFrolazyLoadThreads() {
+      if (!this.lazyLoadThreadsInfo) return;
+      this.threads = this.lazyLoadThreadsInfo;
+      this.lazyLoadThreadsInfo = null;
     },
     // 内容部分点赞按钮点击事件
     handleIsGreat(id, canLike, isLiked) {
@@ -1088,12 +1083,7 @@ export default {
           key: 'page',
           data: '/pages/home/index',
         });
-        // #ifdef MP-WEIXIN
-        this.mpLoginMode();
-        // #endif
-        // #ifdef H5
         this.h5LoginMode();
-        // #endif
       }
       const params = {
         _jv: {
@@ -1106,6 +1096,8 @@ export default {
     },
     // 上拉加载
     pullDown() {
+      if (loadThreading) return;
+      loadThreading = true;
       if (this.footerIndex !== 0) {
         return;
       }
@@ -1114,6 +1106,10 @@ export default {
       }
       this.pageNum += 1;
       this.loadThreads();
+
+      loadThreadingTimer = setTimeout(() => {
+        if (loadThreading) loadThreading = false;
+      }, 1000);
     },
     // 视频禁止同时播放
     handleVideoPlay(index, e) {
@@ -1132,7 +1128,28 @@ export default {
       // 首页主题置顶列表
       this.loadThreadsSticky();
       // 首页主题内容列表
-      this.loadThreads();
+      // 在安卓手机的微信浏览器打开页面，使用微信登陆的时候，会出现跳转后因为首页渲染时，首页并不是展示中，导致虚拟滚动计算问题，所以需要判断是否延迟写入数据。
+      this.$nextTick(() => {
+        if (this.showHome && window.location.pathname === '/') {
+          this.loadThreads();
+        } else {
+          this.lazyLoadThreads();
+        }
+      });
+    },
+    setScrollerTop(position) {
+      this.scrollTop = position;
+      this.$refs.scroller.$el.scrollTop = position;
+      window.sessionStorage.setItem('virtual_scroll_top', position);
+      this.changeNavStatus(+position !== 0);
+    },
+    pullDownMove(event) {
+      if (!openPullDown) {
+        event.stopPropagation();
+      }
+    },
+    clearScrollerData() {
+      this.$refs.scroller.forceUpdate(true);
     },
     getQueryString(name) {
       const reg = new RegExp(`(^|&)${name}([^&]*)(&|$)`);
@@ -1146,17 +1163,20 @@ export default {
 <style lang="scss">
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
-/* #ifdef H5 */
 $padding-bottom: 180rpx;
-/* #endif */
-/* #ifdef MP-WEIXIN */
-$padding-bottom: 160rpx;
-/* #endif */
 .home {
   min-height: 100vh;
   color: --color(--qui-FC-333);
   background-color: --color(--qui-BG-1);
 }
+
+.scroller {
+  height: 617px;
+}
+// .scroller-item{
+//   margin-top: 20rpx;
+// }
+
 .status-bar {
   position: fixed;
   z-index: 2;
@@ -1305,48 +1325,54 @@ $padding-bottom: 160rpx;
   word-break: break-all;
   white-space: nowrap;
 }
-.record {
-  display: flex;
-  width: 100%;
-  height: 40rpx;
-  margin-top: -$padding-bottom;
-  font-size: $fg-f3;
-  color: --color(--qui-FC-B2);
-  text-align: center;
-  justify-content: center;
-  &__box {
-    &-url {
-      font-size: $fg-f3;
-      color: --color(--qui-BG-HIGH-LIGHT);
-    }
-  }
-  &__box1 {
-    margin-left: 20rpx;
-    line-height: 40rpx;
-    &-url {
-      font-size: $fg-f3;
-      color: --color(--qui-BG-HIGH-LIGHT);
-    }
-  }
-  &__box2 {
-    line-height: 40rpx;
-    &-url {
-      font-size: $fg-f3;
-      color: --color(--qui-BG-HIGH-LIGHT);
-    }
-  }
-  a {
+.scroll-footer {
+  padding-top: 20rpx;
+  padding-right: 20rpx;
+  padding-bottom: 50rpx;
+  padding-left: 20rpx;
+  .record {
+    display: flex;
+    width: 100%;
+    height: 40rpx;
+    font-size: $fg-f3;
     color: --color(--qui-FC-B2);
-    text-decoration: none;
+    text-align: center;
+    justify-content: center;
+    &__box {
+      &-url {
+        font-size: $fg-f3;
+        color: --color(--qui-BG-HIGH-LIGHT);
+      }
+    }
+    &__box1 {
+      margin-left: 20rpx;
+      line-height: 40rpx;
+      &-url {
+        font-size: $fg-f3;
+        color: --color(--qui-BG-HIGH-LIGHT);
+      }
+    }
+    &__box2 {
+      line-height: 40rpx;
+      &-url {
+        font-size: $fg-f3;
+        color: --color(--qui-BG-HIGH-LIGHT);
+      }
+    }
+    a {
+      color: --color(--qui-FC-B2);
+      text-decoration: none;
+    }
+  }
+  .copyright {
+    width: 100%;
+    height: 40rpx;
+    font-size: $fg-f3;
+    color: --color(--qui-FC-B2);
+    text-align: center;
   }
 }
-.copyright {
-  width: 100%;
-  height: 40rpx;
-  font-size: $fg-f3;
-  color: --color(--qui-FC-B2);
-  text-align: center;
-}
+
 .wxcopyright {
   margin-top: -$padding-bottom;
   font-size: $fg-f3;

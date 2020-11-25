@@ -7,6 +7,9 @@ import store from './store';
 import guid from './utils/guid';
 import mixin from './mixin/mixin';
 import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './common/const';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 // #ifdef H5
 const publicWhitelistPage = [
@@ -58,6 +61,17 @@ const payWhiteListPage = [
 const apploaded = () => {
   const app = getApp();
   const forums = app.$store.getters['jv/get']('forums/1');
+
+  if (
+    !app.$store.getters['session/get']('isLogin') &&
+    appCommonH.isWeixin().isWeixin &&
+    forums.set_reg.register_type === 2 &&
+    !app.$route.query.hasOwnProperty('code')
+  ) {
+    app.$store.dispatch('session/wxh5Login');
+    return;
+  }
+
   if (forums.set_site) {
     const isLogin = app.$store.getters['session/get']('isLogin');
     if (forums.set_site.site_mode === SITE_PAY) {

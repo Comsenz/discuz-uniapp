@@ -22,7 +22,7 @@
     </view>
     <view class="site-submit">
       <view>
-        <view class="site-submit__price">
+        <view :class="code.length !== 32 ? 'site-submit__price__pay' : 'site-submit__price'">
           {{ `¥${(forums.set_site && forums.set_site.site_price) || 0}` }}
         </view>
         <view class="site-submit__expire">
@@ -264,6 +264,11 @@ export default {
     font-size: $fg-f5;
     color: --color(--qui-FC-AAA);
     text-decoration: line-through;
+  }
+  &__price__pay {
+    margin-top: 10rpx;
+    font-size: $fg-f5;
+    color: --color(--qui-RED);
   }
   &__expire {
     font-size: $fg-f2;

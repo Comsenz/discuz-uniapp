@@ -1,6 +1,10 @@
 <template>
   <view>
-    <u-parse :content="content | formatRichText" @navigate="navigate"></u-parse>
+    <u-parse
+      :content="content | formatRichText"
+      :content-parse="contentParse"
+      @navigate="navigate"
+    ></u-parse>
   </view>
 </template>
 <script>
@@ -26,6 +30,10 @@ export default {
     content: {
       type: String,
       default: '',
+    },
+    contentParse: {
+      type: Object,
+      default: null,
     },
   },
   data() {

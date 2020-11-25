@@ -2,13 +2,35 @@
   <qui-page ref="quiPage" :data-qui-theme="theme" @pageLoaded="handlePageLoaded" :header="false">
     <view class="content">
       <view class="view-content">
+        <view class="tabBar">
+          <qui-footer
+            ref="footer-bar"
+            @click="cut_index"
+            :bottom="detectionModel() ? 20 : 0"
+          ></qui-footer>
+        </view>
+        <!-- #ifdef H5 -->
+        <qui-page-home-h5
+          v-if="showHome"
+          ref="home"
+          :show-home="showHome"
+          :footer-bar-height="footerBarHeight"
+          :home-category-id="categoryId"
+          :nav-theme="theme"
+          :style="{ display: show_index === 0 ? 'block' : 'none' }"
+          @handleClickShare="handleClickShare"
+        ></qui-page-home-h5>
+        <!-- #endif -->
+        <!-- #ifdef MP-WEIXIN -->
         <qui-page-home
           v-if="showHome"
           ref="home"
           :nav-theme="theme"
+          :home-category-id="categoryId"
           :style="{ display: show_index === 0 ? 'block' : 'none' }"
           @handleClickShare="handleClickShare"
         ></qui-page-home>
+        <!-- #endif -->
         <qui-page-find
           ref="quifind"
           :nav-theme="theme"
@@ -24,10 +46,12 @@
           :style="{ display: show_index === 3 ? 'block' : 'none' }"
         ></qui-page-my>
       </view>
-      <view class="tabBar">
-        <qui-footer @click="cut_index" :bottom="detectionModel() ? 20 : 0"></qui-footer>
-      </view>
     </view>
+    <!-- #ifdef MP-WEIXIN -->
+    <uni-popup ref="auth" type="bottom">
+      <qui-auth @login="login" @close="close"></qui-auth>
+    </uni-popup>
+    <!-- #endif -->
   </qui-page>
 </template>
 
@@ -45,7 +69,9 @@ export default {
       nowThreadId: 0, // 点击主题ID
       showHome: false,
       tagId: 0, // 标签ID
+      categoryId: '',
       currentTab: 'home',
+      footerBarHeight: 50,
     };
   },
   computed: {
@@ -77,7 +103,25 @@ export default {
       },
     },
   },
-  onLoad() {
+  mounted() {
+    if (this.footerBarHeight !== (this.$refs['footer-bar']?.$el?.firstChild?.offsetHeight || 50)) {
+      this.footerBarHeight = this.$refs['footer-bar']?.$el?.firstChild?.offsetHeight || 50;
+      this.footerBarHeight = this.footerBarHeight ? this.footerBarHeight : 50;
+    }
+    // #ifdef MP-WEIXIN
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      this.forums &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      uni.setStorageSync('isSend', true);
+      this.$refs.auth.open();
+    }
+    // #endif
+  },
+  onLoad(params) {
+    this.categoryId = params.categoryId;
     // #ifdef MP-WEIXIN
     wx.showShareMenu({
       withShareTicket: true,
@@ -99,8 +143,17 @@ export default {
       this.$refs.home.threads = [];
       this.$refs.home.isResetList = true;
       this.$refs.home.pageNum = 1;
+      // #ifdef H5
+      setTimeout(() => {
+        this.$refs.home.clearScrollerData();
+        this.$refs.home.loadThreadsSticky();
+        this.$refs.home.loadThreads();
+      }, 100);
+      // #endif
+      // #ifdef MP-WEIXIN
       this.$refs.home.loadThreadsSticky();
       this.$refs.home.loadThreads();
+      // #endif
     }
     if (this.show_index === 1) {
       this.$refs.quinotice.dialogList = [];
@@ -110,20 +163,24 @@ export default {
     if (this.show_index === 2) {
       this.$refs.quimy.refreshNum();
     }
-    // 停止下拉刷新动画
-    uni.stopPullDownRefresh();
+
+    setTimeout(() => {
+      uni.stopPullDownRefresh();
+    }, 0);
   },
   // 监听页面滚动
   onPageScroll(event) {
-    // console.log(event);
-    // if (this.footerIndex === 0) {
-    // console.log('监听页面滚动');
+    // h5不再由uni监听滚动
+    // #ifndef H5
     this.$refs.home.scroll(event);
-    // }
+    // #endif
   },
   // 上拉加载
   onReachBottom() {
+    // h5的到底加载不由uni控制
+    // #ifndef H5
     this.$refs.home.pullDown();
+    // #endif
   },
   // 唤起小程序原声分享
   onShareAppMessage(res) {
@@ -147,6 +204,11 @@ export default {
     };
   },
   onShow() {
+    // #ifdef H5
+    this.restoreScrollPosition();
+    // eslint-disable-next-line no-unused-expressions
+    this.$refs.home && this.$refs.home.workFrolazyLoadThreads();
+    // #endif
     // #ifdef MP-WEIXIN
     if (this.$refs.quiPage) {
       this.$store.dispatch('session/setAuth', this.$refs.quiPage.$refs.auth);
@@ -190,9 +252,23 @@ export default {
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
+    // 恢复虚拟滚动位置
+    restoreScrollPosition() {
+      const position = window.sessionStorage.getItem('virtual_scroll_top');
+      if (position && this.$refs.home?.setScrollerTop) {
+        this.$refs.home.setScrollerTop(position);
+      }
+    },
+    // #ifdef MP-WEIXIN
+    close() {
+      this.$refs.auth.close();
+    },
+    login() {
+      this.$refs.auth.close();
+    },
+    // #endif
     // 切换组件
     cut_index(e, type, isTabBar) {
-      console.log(e, type, isTabBar, 'iiiiii');
       const tabs = ['home', 'quifind', 'quinotice', 'quimy'];
       uni.setStorage({
         key: 'page',
@@ -203,11 +279,16 @@ export default {
       }
       if (type === 0) {
         this.setFooterIndex(0);
+        // #ifdef H5
+        this.$nextTick(() => {
+          this.restoreScrollPosition();
+        });
+        // #endif
       }
       this.currentTab = tabs[type];
       if (
         !this.$store.getters['session/get']('isLogin') &&
-        ['quinotice', 'quimy'].indexOf(this.currentTab) >= 0
+        ['home', 'quinotice', 'quimy'].indexOf(this.currentTab) >= 0
       ) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();

@@ -2,7 +2,7 @@
   <view class="pc-login">
     <view class="pc-login-tp">
       <view class="pc-login__box">
-        <image class="pc-login__box__img" :src="pcLoginLogo"></image>
+        <image class="pc-login__box__img" :src="pcLoginLogo" mode="widthFix"></image>
       </view>
       <view class="pc-login__title">
         {{ i18n.t('user.pcloginconfirm') }}
@@ -136,11 +136,10 @@ export default {
   justify-content: space-between;
   &__box {
     width: 437rpx;
-    height: 70rpx;
     margin: 0 auto;
     &__img {
+      display: block;
       width: 100%;
-      height: 120%;
     }
   }
   &__title {
