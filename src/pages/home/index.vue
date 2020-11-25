@@ -125,6 +125,17 @@ export default {
       this.$refs.auth.open();
     }
     // #endif
+    // #ifndef H5
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      this.forums &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      uni.setStorageSync('register', 1);
+      this.$store.dispatch('session/wxh5Login');
+    }
+    // #endif
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
     }
