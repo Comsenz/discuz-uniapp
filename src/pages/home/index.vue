@@ -154,12 +154,17 @@ export default {
       this.$refs.home.threads = [];
       this.$refs.home.isResetList = true;
       this.$refs.home.pageNum = 1;
-
+      // #ifdef H5
       setTimeout(() => {
         this.$refs.home.clearScrollerData();
         this.$refs.home.loadThreadsSticky();
         this.$refs.home.loadThreads();
       }, 100);
+      // #endif
+      // #ifndef H5
+      this.$refs.home.loadThreadsSticky();
+      this.$refs.home.loadThreads();
+      // # endif
     }
     if (this.show_index === 1) {
       this.$refs.quinotice.dialogList = [];
