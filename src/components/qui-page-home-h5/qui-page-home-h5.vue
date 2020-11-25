@@ -543,7 +543,7 @@ export default {
       this.forums.set_reg &&
       this.forums.set_reg.register_type === 2
     ) {
-      this.$store.dispatch('session/wxNoSenseh5Login');
+      this.$store.dispatch('session/wxh5Login');
     }
 
     this.$u.event.$on('tagClick', tagId => {

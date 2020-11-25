@@ -105,11 +105,6 @@ const actions = {
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/wechat`);
     window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
   },
-  wxNoSenseh5Login: (context, payload = {}) => {
-    console.log(payload);
-    const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/home/index`);
-    window.location = `${DISCUZ_REQUEST_HOST}api/oauth/wechat?redirect=${url}`;
-  },
   wxPcLogin: (context, payload = {}) => {
     console.log(payload);
     const url = encodeURIComponent(`${DISCUZ_REQUEST_HOST}pages/user/pc-login`);
