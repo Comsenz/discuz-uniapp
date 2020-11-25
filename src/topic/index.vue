@@ -826,7 +826,7 @@ export default {
       windowHeight: '', // 设备高度
       system: '', // 设备系统
       detectionmodel: '', // 站点模式
-      paymentmodel: '', // 是否付费
+      paymentmodel: false, // 是否付费
       loaded: false,
       loadingStatus: true,
       isWeixin: false,

@@ -119,17 +119,6 @@ export default {
       this.$refs.auth.open();
     }
     // #endif
-    // #ifndef H5
-    if (
-      !this.$store.getters['session/get']('isLogin') &&
-      this.forums &&
-      this.forums.set_reg &&
-      this.forums.set_reg.register_type === 2
-    ) {
-      uni.setStorageSync('register', 1);
-      this.$store.dispatch('session/wxh5Login');
-    }
-    // #endif
   },
   onLoad(params) {
     this.categoryId = params.categoryId;
@@ -154,12 +143,17 @@ export default {
       this.$refs.home.threads = [];
       this.$refs.home.isResetList = true;
       this.$refs.home.pageNum = 1;
-
+      // #ifdef H5
       setTimeout(() => {
         this.$refs.home.clearScrollerData();
         this.$refs.home.loadThreadsSticky();
         this.$refs.home.loadThreads();
       }, 100);
+      // #endif
+      // #ifdef MP-WEIXIN
+      this.$refs.home.loadThreadsSticky();
+      this.$refs.home.loadThreads();
+      // #endif
     }
     if (this.show_index === 1) {
       this.$refs.quinotice.dialogList = [];
