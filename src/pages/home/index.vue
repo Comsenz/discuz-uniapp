@@ -61,20 +61,9 @@ import user from '@/mixin/user';
 import { mapState, mapMutations } from 'vuex';
 import detectionModel from '@/mixin/detectionModel';
 import loginModule from '@/mixin/loginModule';
-// #ifdef H5
-import appCommonH from '@/utils/commonHelper';
-// #endif
 
 export default {
-  mixins: [
-    forums,
-    user,
-    detectionModel,
-    loginModule,
-    // #ifdef H5
-    appCommonH,
-    // #endif
-  ],
+  mixins: [forums, user, detectionModel, loginModule],
   data() {
     return {
       nowThreadId: 0, // 点击主题ID
@@ -83,7 +72,6 @@ export default {
       categoryId: '',
       currentTab: 'home',
       footerBarHeight: 50,
-      isWeixin: false,
     };
   },
   computed: {
@@ -129,20 +117,6 @@ export default {
     ) {
       uni.setStorageSync('isSend', true);
       this.$refs.auth.open();
-    }
-    // #endif
-    // #ifndef H5
-    const { isWeixin } = appCommonH.isWeixin();
-    this.isWeixin = isWeixin;
-    if (
-      !this.$store.getters['session/get']('isLogin') &&
-      this.isWeixin &&
-      this.forums &&
-      this.forums.set_reg &&
-      this.forums.set_reg.register_type === 2
-    ) {
-      uni.setStorageSync('register', 1);
-      this.$store.dispatch('session/wxh5Login');
     }
     // #endif
   },

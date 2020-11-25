@@ -536,6 +536,17 @@ export default {
     uni.$off('updateMy');
   },
   mounted() {
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      this.isWeixin &&
+      this.forums &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      uni.setStorageSync('register', 1);
+      this.$store.dispatch('session/wxh5Login');
+    }
+
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
       this.loadCategories();
