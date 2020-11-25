@@ -543,8 +543,7 @@ export default {
       this.forums.set_reg &&
       this.forums.set_reg.register_type === 2
     ) {
-      uni.setStorageSync('register', 1);
-      this.$store.dispatch('session/wxh5Login');
+      this.$store.dispatch('session/wxNoSenseh5Login');
     }
 
     this.$u.event.$on('tagClick', tagId => {
