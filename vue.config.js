@@ -75,7 +75,7 @@ module.exports = {
           chunks: 'all', // 异步加载的内容也会进行拆包处理
           minChunks: 1,
           automaticNameDelimiter: '~', // 共享模块连接符号
-          automaticNameMaxLength: 30, // 最长的共享模块文件名长度
+          // automaticNameMaxLength: 30, // 最长的共享模块文件名长度
           maxAsyncRequests: 8, // 并发同步加载数量，相当于拆包数量
           maxInitialRequests: 6, // 动态import的加载数量，相当于动态import的拆包数量
           minSize: 30000, // 单包最小大小（最少5kb）
@@ -95,16 +95,14 @@ module.exports = {
               enforce: true,
             },
             components: {
-              reuseExistingChunk: true,
-              automaticNamePrefix: 'dzq-cps',
+              name: 'dzq-cps',
               priority: -10,
-              maxSize: (1024 * 224),
+              maxSize: (1024 * 1024),
               test: reg,
               enforce: true,
             },
             vditor: {
               name: 'vditor',
-              reuseExistingChunk: true,
               priority: -10,
               test: /[\\/]node_modules[\\/]vditor[\\/]/,
               enforce: true,
