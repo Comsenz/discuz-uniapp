@@ -161,10 +161,10 @@ export default {
         this.$refs.home.loadThreads();
       }, 100);
       // #endif
-      // #ifndef H5
+      // #ifdef MP-WEIXIN
       this.$refs.home.loadThreadsSticky();
       this.$refs.home.loadThreads();
-      // # endif
+      // #endif
     }
     if (this.show_index === 1) {
       this.$refs.quinotice.dialogList = [];
