@@ -46,12 +46,24 @@
           :addon="profile.hasPassword ? i18n.t('profile.modify') : i18n.t('profile.setpassword')"
         ></qui-cell-item>
       </navigator>
+      <!-- #ifdef MP-WEIXIN -->
       <qui-cell-item
+        v-if="forums.passport && forums.passport.miniprogram_close"
         :title="i18n.t('profile.wechat')"
         :addon="name"
         arrow
         @click="bindWechat"
       ></qui-cell-item>
+      <!-- #endif -->
+      <!-- #ifdef H5-->
+      <qui-cell-item
+        v-if="forums.passport && forums.passport.offiaccount_close"
+        :title="i18n.t('profile.wechat')"
+        :addon="name"
+        arrow
+        @click="bindWechat"
+      ></qui-cell-item>
+      <!-- #endif -->
       <!-- qcloud_faceid 是否开启实名认证 -->
       <qui-cell-item
         v-if="profile.realname && forums.qcloud && forums.qcloud.qcloud_faceid"
@@ -98,13 +110,24 @@
       <qui-auth-phone @closeDialog="closeDialog"></qui-auth-phone>
     </uni-popup>
     <!-- #endif -->
-    <uni-popup ref="bind" type="center">
+    <!-- 解绑 -->
+    <uni-popup ref="noBind" type="center">
       <uni-popup-dialog
         type="warn"
         :content="i18n.t('user.noBindTips')"
         :before-close="true"
-        @close="handleClickCancel"
-        @confirm="handleClickOk"
+        @close="closeNoBind"
+        @confirm="clickNoBind"
+      ></uni-popup-dialog>
+    </uni-popup>
+    <!-- 换绑 -->
+    <uni-popup ref="changeBind" type="center">
+      <uni-popup-dialog
+        type="warn"
+        :content="i18n.t('user.changeBindTips')"
+        :before-close="true"
+        @close="closeChangeBind"
+        @confirm="clickChangeBind"
       ></uni-popup-dialog>
     </uni-popup>
   </qui-page>
@@ -209,9 +232,14 @@ export default {
         // #endif
         return;
       }
-      // 解绑/换绑
+      // 解绑
+      if (this.name !== '绑定' && this.name.indexOf('解绑') > -1) {
+        this.$refs.noBind.open();
+      }
+      // 换绑
       if (
         this.name !== '绑定' &&
+        this.name.indexOf('换绑') > -1 &&
         this.forums &&
         this.forums.set_reg &&
         this.forums.set_reg.register_type === 2
@@ -222,21 +250,14 @@ export default {
         });
         uni.setStorageSync('isSend', false);
         uni.setStorageSync('isBind', false);
-        // #ifdef MP-WEIXIN
-        this.jump2LoginBindPage();
-        // #endif
-        // #ifdef H5
-        this.wxh5Login(0, 1);
-        // #endif
-      } else {
-        this.$refs.bind.open();
+        this.$refs.changeBind.open();
       }
     },
-    handleClickOk() {
+    clickNoBind() {
       this.$store.dispatch('jv/delete', `users/${this.userId}/wechat`).then(res => {
         if (res && res._jv && res._jv.id) {
           this.getUserInfo();
-          this.handleClickCancel();
+          this.closeNoBind();
           uni.showToast({
             title: '解绑成功',
             duration: 2000,
@@ -244,8 +265,19 @@ export default {
         }
       });
     },
-    handleClickCancel() {
-      this.$refs.bind.close();
+    closeNoBind() {
+      this.$refs.noBind.close();
+    },
+    clickChangeBind() {
+      // #ifdef MP-WEIXIN
+      this.jump2LoginBindPage();
+      // #endif
+      // #ifdef H5
+      this.wxh5Login(0, 1);
+      // #endif
+    },
+    closeChangeBind() {
+      this.$refs.changeBind.close();
     },
     getUserInfo() {
       const params = {
@@ -269,7 +301,12 @@ export default {
           // #ifdef H5
           if (res && res.wechat && res.wechat.mp_openid !== '') {
             if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
-              this.name = `${res.wechat.nickname} (换绑)`;
+              if (this.isWeixin) {
+                this.name = `${res.wechat.nickname} (换绑)`;
+              } else {
+                // 微信外-无感模式只展示微信号
+                this.name = `${res.wechat.nickname}`;
+              }
             } else {
               this.name = `${res.wechat.nickname} (解绑)`;
             }

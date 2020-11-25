@@ -47,6 +47,8 @@
 <script>
 import { i18n } from '@/locale';
 
+let uploadTimes = 0;
+
 export default {
   name: 'QuiUploader',
   props: {
@@ -113,6 +115,8 @@ export default {
       uploadType: '',
       header: {}, // 上传图片header
       dataCount: this.count, // 接收图片限制数量
+      chooseLength: 0, // 一次选择图片的长度
+      uploadCount: 0,
     };
   },
   watch: {
@@ -125,19 +129,21 @@ export default {
       deep: true,
       immediate: true,
     },
-    uploadList: {
-      handler(newVal) {
-        this.uploadList = newVal;
-        this.$emit('change', this.uploadList, true);
-      },
-      deep: true,
-      immediate: true,
-    },
+    // uploadList: {
+    //   handler(newVal) {
+    //     this.uploadList = newVal;
+    //     this.$emit('change', this.uploadList, true);
+    //   },
+    //   deep: true,
+    //   immediate: true,
+    // },
   },
   async created() {
     setTimeout(() => {
       this.uploadBeforeList = this.uploadBeforeList.concat(this.filePreview);
-      this.uploadList = this.uploadList.concat(this.filePreview);
+      this.uploadList.concat(this.filePreview).forEach(item => {
+        this.uploadList.push(item);
+      });
       if (this.uploadBeforeList.length > 0) {
         this.uploadBeforeList.map(() => {
           return this.numberdata.push({ state: 100 });
@@ -202,12 +208,16 @@ export default {
     },
     // 上传图片到本地
     uploadClick() {
-      // console.log('执行了', this.uploadList.length, '^^^^^^', this.dataCount);
       const _this = this;
       // 获取上一次上传图片的长度，用于比较这次上传长度。
       const beforeUploadFile = _this.uploadBeforeList.length;
       if (_this.chooseType === 0) {
         _this.uploadList = [];
+        _this.uploadBeforeList = [];
+        // _this.dataCount = 0;
+        _this.dataCount = 9;
+        _this.lastOrder = 0;
+        uploadTimes = 0;
       }
       if (_this.uploadList.length < _this.dataCount || _this.name === 'avatar') {
         // #ifdef MP-WEIXIN
@@ -216,6 +226,8 @@ export default {
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success(res) {
+            _this.chooseLength = res.tempFiles.length;
+            uni.$emit('uploadLength', _this.chooseLength);
             // 上传图片后返回false状态
             _this.$emit('uploadClick', false);
             // 自定义开始上传的效果和回调
@@ -247,7 +259,11 @@ export default {
             Promise.race(promise).then(() => {
               // 返回上传成功列表和成功状态值
               if (_this.uploadBeforeList.length > _this.dataCount) {
-                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
+                const uploadListSuccess = _this.uploadList.slice(0, _this.dataCount);
+                _this.uploadList.splice(0);
+                uploadListSuccess.forEach(item => {
+                  _this.uploadList.push(item);
+                });
               }
               _this.$emit('change', _this.uploadList, true);
             });
@@ -261,6 +277,8 @@ export default {
           sizeType: ['original', 'compressed'],
           sourceType: ['album', 'camera'],
           success(res) {
+            _this.chooseLength = res.tempFiles.length;
+            uni.$emit('uploadLength', _this.chooseLength);
             // 上传图片后返回false状态
             _this.$emit('uploadClickSure', false);
 
@@ -288,7 +306,11 @@ export default {
             Promise.race(promise).then(() => {
               // 返回上传成功列表和成功状态值
               if (_this.uploadBeforeList.length > _this.dataCount) {
-                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
+                const uploadListSuccess = _this.uploadList.slice(0, _this.dataCount);
+                _this.uploadList.splice(0);
+                uploadListSuccess.forEach(item => {
+                  _this.uploadList.push(item);
+                });
               }
               _this.$emit('change', _this.uploadList, true);
             });
@@ -300,6 +322,10 @@ export default {
     // 上传图片到服务器
     upload(pathUrl, index, length, imgOrder, resolve, reject) {
       const _this = this;
+
+      // if (_this.chooseType === 0) {
+      //   _this.uploadCount = 0;
+      // }
       const token = uni.getStorageSync('access_token');
       _this.header = {
         authorization: `Bearer ${token}`,
@@ -323,7 +349,10 @@ export default {
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             setTimeout(() => {
-              // console.log(_this.newindex, '删除之后的数组');
+              uploadTimes += 1;
+              if (_this.chooseType === 0 && index <= 8) {
+                uni.$emit('uploadOver', { data: JSON.parse(res.data), times: uploadTimes });
+              }
               if (index < _this.uploadBeforeList.length) {
                 _this.uploadBeforeList[index].uploadPercent = 100;
                 _this.uploadBeforeList[index].id = JSON.parse(res.data).data.id;
@@ -349,17 +378,22 @@ export default {
               if (_this.uploadList.length > _this.dataCount) {
                 _this.uploadList.sort(_this.compare('order'));
                 _this.uploadBeforeList = _this.uploadBeforeList.slice(0, _this.count);
-                _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
+                // _this.uploadList = _this.uploadList.slice(0, _this.dataCount);
+
+                const uploadListSuccess = _this.uploadList.slice(0, _this.dataCount);
+                _this.uploadList.splice(0);
+                uploadListSuccess.forEach(item => {
+                  _this.uploadList.push(item);
+                });
+
                 _this.numberdata = _this.numberdata.slice(0, _this.dataCount);
                 _this.newindex = _this.newindex.slice(0, _this.dataCount);
               }
-              // console.log(_this.uploadList, '$$$$$$$$$$$$$');
               _this.newindex = [];
               _this.formDataAppend = {};
             }, 500);
           } else {
             _this.number += 1;
-            // console.log(_this.uploadBeforeList);
             const resObj = JSON.parse(res.data);
             if (resObj.errors[0].detail) {
               uni.showToast({
@@ -393,6 +427,7 @@ export default {
               _this.indexs = 0;
             }
             _this.$emit('uploadFail', res, _this.uploadList);
+            // uni.$emit('uploadFail', res);
             return reject(res);
           }
           _this.formDataAppend = {};
@@ -407,11 +442,20 @@ export default {
           _this.numberdata.splice(index, 1);
           // 上传失败回调
           _this.$emit('uploadFail', res, _this.uploadList);
+          // uni.$emit('uploadFail', res);
           return reject(res);
         },
         complete(res) {
-          if (_this.chooseType === 0) {
-            uni.$emit('uploadOver', JSON.parse(res.data));
+          if (
+            _this.chooseType === 0 &&
+            JSON.parse(res.data).errors &&
+            JSON.parse(res.data).errors.length > 0
+          ) {
+            _this.chooseLength =
+              _this.chooseLength > _this.dataCount ? _this.dataCount : _this.chooseLength;
+            uni.$emit('uploadFail', {
+              data: JSON.parse(res.data),
+            });
           }
         },
       });

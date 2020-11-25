@@ -50,7 +50,7 @@
   <script defer src="https://imgcache.qq.com/open/qcloud/video/tcplayer/tcplayer.v4.min.js"></script>
   <!--腾讯地图定位组件-->
   <script defer src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
-  <link href="<%= VUE_APP_REQUEST_HOST %>assets/css/vditor.css" rel="stylesheet">
+  <link href="https://dl.discuz.chat/lib/4.5.0/vditor.css" rel="stylesheet">
   </head>
 
   <body>
@@ -61,8 +61,12 @@
     <!-- built files will be auto injected -->
   </body>
   <style>
+/* stylelint-disable */
     body {
-      -webkit-text-size-adjust: 100%;     
+      /* padding-bottom: 0;
+      padding-bottom: constant(safe-area-inset-bottom);
+      padding-bottom: env(safe-area-inset-bottom); */
+      -webkit-text-size-adjust: 100%;
     }
   </style>
 

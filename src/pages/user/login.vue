@@ -120,7 +120,13 @@
           <image
             v-if="forum && forum.passport && forum.passport.offiaccount_close"
             :class="[
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
+              (!isWeixin &&
+                forum &&
+                forum.set_reg &&
+                forum.set_reg.register_type !== 2 &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms) ||
+              (isWeixin && forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
               (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
                 ? 'right'
                 : '',
@@ -132,7 +138,15 @@
           />
           <!-- 开启短信功能才显示 -->
           <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
+            v-if="
+              (!isWeixin &&
+                forum &&
+                forum.set_reg &&
+                forum.set_reg.register_type !== 2 &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms) ||
+                (isWeixin && forum && forum.qcloud && forum.qcloud.qcloud_sms)
+            "
             :class="[
               forum && forum.passport && forum.passport.offiaccount_close ? 'left' : '',
               forum && forum.ucenter && forum.ucenter.ucenter && isShow ? 'right' : '',
@@ -146,7 +160,13 @@
             v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
             :class="[
               (forum && forum.passport && forum.passport.offiaccount_close) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
+              (!isWeixin &&
+                forum &&
+                forum.set_reg &&
+                forum.set_reg.register_type !== 2 &&
+                forum.qcloud &&
+                forum.qcloud.qcloud_sms) ||
+              (isWeixin && forum && forum.qcloud && forum.qcloud.qcloud_sms)
                 ? 'left'
                 : '',
               'login-box-ft-con-image',
@@ -265,7 +285,20 @@ export default {
       }
     },
     jump2Register() {
-      this.jump2RegisterPage();
+      if (
+        !this.isWeixin &&
+        this.forum &&
+        this.forum.set_reg &&
+        this.forum.set_reg.register_type === 2
+      ) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.unLogin'),
+          duration: 2000,
+        });
+      } else {
+        this.jump2RegisterPage();
+      }
     },
     jump2findpwd() {
       this.jump2findpwdPage();

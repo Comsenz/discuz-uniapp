@@ -4,7 +4,7 @@
  * github地址: https://github.com/dcloudio/uParse
  *
  * for: uni-app框架下 富文本解析
- * 
+ *
  * 优化 by zhiqiang.feng@qq.com
  */-->
 <!--eslint-disable -->
@@ -62,6 +62,10 @@ export default {
       type: String,
       default: '',
     },
+    contentParse: {
+      type: Object,
+      default: null,
+    },
     noData: {
       type: String,
       default: '',
@@ -108,7 +112,7 @@ export default {
   },
   data() {
     return {
-      nodes: {},
+      nodes: [],
       imageUrls: [],
       wxParseWidth: {
         value: 0,
@@ -124,25 +128,30 @@ export default {
       this.getWidth().then(data => {
         this.wxParseWidth.value = data;
       });
-      let { content, noData, imageProp, startHandler, endHandler, charsHandler } = this;
-      let parseData = content || noData;
-      let customHandler = {
-        start: startHandler,
-        end: endHandler,
-        chars: charsHandler,
-      };
-      let results = HtmlToJson(parseData, customHandler, imageProp, this);
-      this.imageUrls = results.imageUrls;
-      // this.nodes = results.nodes;
+      let { contentParse, content, noData, imageProp, startHandler, endHandler, charsHandler } = this;
+      // 之前已经对内容进行解析，直接使用
+      if ( contentParse ) {
+        this.imageUrls = contentParse.imageUrls;
+        this.nodes = contentParse.nodes;
+      } else {
+        let parseData = content || noData;
+        let customHandler = {
+          start: startHandler,
+          end: endHandler,
+          chars: charsHandler,
+        };
+        let results = HtmlToJson(parseData, customHandler, imageProp, this);
+        this.imageUrls = results.imageUrls;
 
-      this.nodes = [];
-      results.nodes.forEach(item => {
-        setTimeout(() => {
-          if (item.node) {
-            this.nodes.push(item);
-          }
-        }, 0);
-      });
+        this.nodes = [];
+        results.nodes.forEach(item => {
+          // setTimeout(() => {
+            if (item.node) {
+              this.nodes.push(item);
+            }
+          // }, 0);
+        });
+      }
     },
     getWidth() {
       return new Promise((res, rej) => {

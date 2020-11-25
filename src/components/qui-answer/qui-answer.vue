@@ -22,7 +22,7 @@
         :person-num="thread.question.onlooker_number"
         :limit-count="10"
         :person-list="thread.onlookers"
-        :btn-show="!thread.onlookerState"
+        :btn-show="!thread.onlookerState && iosShow"
         :btn-icon-show="false"
         :list-bg="listBg"
         btn-icon-name="rmb"
@@ -112,6 +112,7 @@ export default {
       payment: 2,
       list: [],
       listBg: 'var(--qui-BG-ED)',
+      iosShow: true,
     };
   },
   computed: {
@@ -119,6 +120,16 @@ export default {
     localTime() {
       return time2DateAndHM(this.themeTime ? this.themeTime : '');
     },
+  },
+  created() {
+    // #ifdef MP-WEIXIN
+    const res = uni.getSystemInfoSync();
+    this.system = res.platform;
+    if (this.system === 'ios') {
+      console.log('当前是iOS');
+      this.iosShow = false;
+    }
+    // #endif
   },
   methods: {
     // 跳转到用户主页

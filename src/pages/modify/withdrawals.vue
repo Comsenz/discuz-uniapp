@@ -54,6 +54,7 @@
               maxlength="10"
               v-model="cashmany"
               @input="settlement"
+              @blur="loseFocus"
               :placeholder="
                 i18n.t('modify.enteramount', {
                   num: forums.set_cash.cash_min_sum ? forums.set_cash.cash_min_sum : 1,
@@ -105,7 +106,7 @@
               class="cash-phon-send"
               v-if="sun"
               @click="sendsms"
-              :disabled="!user.mobile"
+              :disabled="!user.mobile || !forbiddenSpots"
               id="TencentCaptcha"
               :data-appid="(forums.qcloud && forums.qcloud.qcloud_captcha_app_id) || ''"
             >
@@ -200,14 +201,15 @@ export default {
       withdrawalNumber: '',
       cashType: 0,
       wxpayMchpayClose: true,
+      forbiddenSpots: true,
     };
   },
   onLoad() {
+    console.log(this.forums);
     this.userid = this.usersid;
     this.setmydata();
     this.wxpayMchpayClose = this.forums.paycenter.wxpay_mchpay_close;
     this.$nextTick(() => {
-      console.log(this.forums);
       this.cost = this.forums.set_cash.cash_rate;
       const prop = this.forums.set_cash.cash_rate * 100;
       this.percentage = prop;
@@ -293,13 +295,14 @@ export default {
           .replace('$#$', '.')
           .replace(/^(-)*(\d+)\.(\d\d).*$/, '$1$2.$3')
           .replace(/^\./g, '');
-        if (Number(this.cashmany) < 1) {
-          this.cashmany = '';
-          uni.showToast({
-            icon: 'none',
-            title: this.i18n.t('modify.enteramount'),
-            duration: 2000,
-          });
+        if (this.cashmany.length >= 1) {
+          if (this.forums && this.forums.set_cash.cash_min_sum) {
+            if (Number(this.cashmany) < this.forums.set_cash.cash_min_sum) {
+              this.forbiddenSpots = false;
+            } else {
+              this.forbiddenSpots = true;
+            }
+          }
         }
         if (Number(this.cashmany) > Number(this.balance)) {
           this.cashmany = this.cashmany.slice(0, this.cashmany.length - 1);
@@ -327,6 +330,23 @@ export default {
           this.procedures = casnumber.toFixed(2);
         }
       }, 5);
+    },
+    loseFocus() {
+      if (this.cashmany.length >= 1) {
+        if (this.forums.set_cash.cash_min_sum) {
+          if (Number(this.cashmany) < this.forums.set_cash.cash_min_sum) {
+            this.cashmany = '';
+            this.settlement();
+            uni.showToast({
+              icon: 'none',
+              title: this.i18n.t('modify.enteramount', {
+                num: this.forums.set_cash.cash_min_sum ? this.forums.set_cash.cash_min_sum : 1,
+              }),
+              duration: 2000,
+            });
+          }
+        }
+      }
     },
     // 提现手机号设置
     setphonnumber() {
@@ -652,7 +672,7 @@ export default {
     color: --color(--qui-FC-333);
   }
   .cash-content-input {
-    width: 300rpx;
+    width: 350rpx;
     height: 100%;
     font-size: $fg-f5;
     font-weight: bold;

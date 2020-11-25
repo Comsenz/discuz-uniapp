@@ -22,6 +22,7 @@ export default class Request {
     custom: {
       loading: true,
       showTost: true,
+      login: true,
     },
     // #ifdef MP-ALIPAY
     timeout: 30000,

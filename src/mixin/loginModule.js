@@ -158,15 +158,9 @@ module.exports = {
         }
         if (this.forums && this.forums.set_reg && this.forums.set_reg.register_type === 2) {
           // 微信外-无感模式
-          if (this.forums && this.forums.qcloud && this.forums.qcloud.qcloud_sms) {
-            // 微信外-手机号模式
-            this.jump2PhoneLoginRegisterPage();
-          } else {
-            // 微信外-用户名模式
-            uni.navigateTo({
-              url: '/pages/user/login',
-            });
-          }
+          uni.navigateTo({
+            url: '/pages/user/login',
+          });
         }
       }
     },
@@ -347,7 +341,7 @@ module.exports = {
               });
             }
             if (res.data.errors[0].status === '403' || res.data.errors[0].status === '422') {
-              const title = this.i18n.t(`core.${res.data.errors[0].detail[0]}`);
+              const title = this.i18n.t(res.data.errors[0].detail[0]);
               uni.showToast({
                 icon: 'none',
                 title,

@@ -136,23 +136,24 @@ const actions = {
     });
   },
   scancodeverification: (context, payload = {}) => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       return http
         .get(
-          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
+          `oauth/wechat/user?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}&register=${payload.Insensibility}`,
+          { custom: { login: false } },
         )
         .then(results => {
           resolve(results);
           setUserInfoStore(context, results, resolve);
         })
-        .catch(err => resolve(err));
+        .catch(err => reject(err));
     });
   },
   pcrelation: (context, payload = {}) => {
     return new Promise(resolve => {
       return http
         .get(
-          `oauth/wechat/pc/bind?code=${payload.code}&state=${payload.state}&sessionId=${payload.sessionId}&session_token=${payload.sessionToken}`,
+          `oauth/wechat/pc/bind?session_token=${payload.sessionToken}&wechat_token=${payload.wechatToken}`,
         )
         .then(results => {
           resolve(results);

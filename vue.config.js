@@ -100,6 +100,7 @@ module.exports = {
     proxy: {
       '/api': {
         target: 'https://dq.comsenz-service.com',
+        // target: 'http://dev.discuz.com',
         changeOrigin: true,
         ws: true,
         pathRewrite: {

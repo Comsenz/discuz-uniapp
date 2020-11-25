@@ -138,10 +138,12 @@
             :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
           ></image>
         </view>
-        <view v-show="videoShow">
+        <view v-if="!wechatbrowser">
           <video
+            v-show="videoShow"
             ref="myVideo"
             id="myVideo"
+            :src="mediaUrl"
             :poster="coverImage"
             :autoplay="autoplay"
             controls
@@ -163,7 +165,29 @@
             :direction="videoWidth > videoHeight ? 90 : 0"
             x5-video-player-type="h5-page"
             bindfullscreenchange="fullScreen"
+            :style="{
+              width: videoWidth > videoHeight ? '100%' : '50%',
+            }"
+          ></video>
+        </view>
+        <view v-if="wechatbrowser">
+          <video
+            v-show="videoShow"
+            ref="myVideo"
+            id="myVideo"
             :src="mediaUrl"
+            :poster="coverImage"
+            :autoplay="autoplay"
+            controls
+            :duration="duration"
+            :page-gesture="false"
+            :show-fullscreen-btn="true"
+            :show-play-btn="true"
+            :enable-play-gesture="false"
+            :vslide-gesture="false"
+            :vslide-gesture-in-fullscreen="false"
+            object-fit="contain"
+            :direction="videoWidth > videoHeight ? 90 : 0"
             :style="{
               width: videoWidth > videoHeight ? '100%' : '50%',
             }"
@@ -222,7 +246,7 @@
               :audio-id="item._jv.id"
               :ref="'audio' + item._jv.id"
               @audioPlay="audioPlay"
-              @fileClick="download(index)"
+              @fileClick="!attachmentPayStatus ? download(index) : ''"
             ></qui-audio>
           </view>
           <view v-else :class="attachmentIsPreview ? 'attachment-name-inner' : 'attachment-name'">
@@ -292,7 +316,7 @@
               {{ i18n.t('profile.play') }}
             </text>
             <qui-video
-              :src="attachmentPayStatus ? '' : `${item.url}&isAttachment=1`"
+              :src="attachmentPayStatus ? '' : `${item.url}`"
               :ref="'video' + item._jv.id"
               :video-id="item._jv.id"
             ></qui-video>
@@ -308,8 +332,15 @@
             <view class="themeItem__content__good__title">
               {{ postGoods.title }}
             </view>
-            <view class="themeItem__content__good__ft">
-              <view class="themeItem__content__good__price">￥{{ postGoods.price }}元</view>
+            <view
+              class="themeItem__content__good__ft"
+              :style="{
+                justifyContent: dataGoodInfoPrice !== '' ? 'space-between' : 'flex-end',
+              }"
+            >
+              <view class="themeItem__content__good__price" v-if="dataGoodInfoPrice !== ''">
+                ￥{{ dataGoodInfoPrice }}元
+              </view>
               <view class="themeItem__content__good__buy" @click="buyGood">
                 <qui-icon
                   class="themeItem__content__good__icon"
@@ -354,9 +385,17 @@
 import forums from '@/mixin/forums';
 import { time2DateAndHM } from '@/utils/time';
 import { status } from '@/library/jsonapi-vuex/index';
+// #ifdef H5
+import appCommonH from '@/utils/commonHelper';
+// #endif
 
 export default {
-  mixins: [forums],
+  mixins: [
+    forums,
+    // #ifdef H5
+    appCommonH,
+    // #endif
+  ],
   props: {
     topicStatus: {
       type: Number,
@@ -572,6 +611,9 @@ export default {
       look: true,
       sun: 1,
       blocKwidth: 224,
+      videoContext: '',
+      wechatbrowser: false,
+      dataGoodInfoPrice: 0, // 商品价格
     };
   },
   computed: {
@@ -591,11 +633,15 @@ export default {
       return thread;
     },
     attachmentList() {
-      const { fileList } = this;
+      const { fileList, threadInfo } = this;
       fileList.forEach((e, index) => {
         fileList[index].format = e.fileName
           .substring(e.fileName.lastIndexOf('.') + 1)
           .toUpperCase();
+        // 如果是付费主题或者付费附件加参数
+        if (threadInfo.attachmentPrice > 0 && threadInfo.price > 0) {
+          fileList[index].url = `${fileList[index].url}&isAttachment=1`;
+        }
       });
       return fileList;
     },
@@ -631,8 +677,19 @@ export default {
     },
   },
   created() {
+    console.log(this.dataGoodInfoPrice, '价格');
+    if (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0) {
+      this.dataGoodInfoPrice = this.postGoods.price;
+    } else if (Number(this.postGoods.price) <= 0) {
+      this.dataGoodInfoPrice = '';
+    }
     // console.log('这是内容组件created', this.postGoods);
     this.$forceUpdate();
+    // #ifdef  H5
+    const { isWeixin } = appCommonH.isWeixin();
+    this.wechatbrowser = isWeixin;
+    // #endif
+    this.videoContext = wx.createVideoContext('myVideo', this);
   },
   mounted() {
     this.blocKwidth = (660 / this.videoWidth) * this.videoHeight;
@@ -687,7 +744,7 @@ export default {
           message: this.i18n.t('profile.filedownloadtips'),
         });
       } else {
-        window.location.href = `${item.url}&isAttachment=1`;
+        window.location.href = item.url;
       }
       // #endif
       // #ifdef MP-WEIXIN
@@ -787,10 +844,9 @@ export default {
         this.sun = 'none';
         this.videoShow = true;
         this.autoplay = true;
-        const videoContext = wx.createVideoContext('myVideo', this);
         setTimeout(() => {
-          videoContext.play();
-          videoContext.requestFullScreen();
+          this.videoContext.play();
+          this.videoContext.requestFullScreen();
         }, 200);
       });
     },
@@ -887,7 +943,7 @@ export default {
       }
 
       &__time {
-        max-width: 600rpx;
+        max-width: 460rpx;
         padding-top: 10rpx;
         overflow: hidden;
         font-size: $fg-f2;
