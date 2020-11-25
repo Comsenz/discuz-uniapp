@@ -284,9 +284,11 @@ export default {
       }
       if (type === 0) {
         this.setFooterIndex(0);
+        // #ifdef H5
         this.$nextTick(() => {
           this.restoreScrollPosition();
         });
+        // #endif
       }
       this.currentTab = tabs[type];
       if (
