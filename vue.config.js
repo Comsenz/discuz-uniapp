@@ -24,6 +24,22 @@ module.exports = {
     config.resolve.alias
       .set('@', resolve('src'));
   },
+  pages: {
+    index: {
+      // page 的入口
+      entry: 'src/main.js',
+      // 模板来源
+      template: 'public/index.html',
+      // 在 dist/index.html 的输出
+      filename: 'index.html',
+      // 当使用 title 选项时，
+      // template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+      title: '',
+      // 在这个页面中包含的块，默认情况下会包含
+      // 提取出来的通用 chunk 和 vendor chunk。
+      chunks: ['chunk-vendors', 'chunk-common', 'chunk-dcloudio', 'index']
+    },
+  },
   configureWebpack: config => {
     config.plugins = [
       ...config.plugins,
@@ -55,28 +71,54 @@ module.exports = {
           }),
         ],
         splitChunks: {
+          // enforceSizeThreshold: 1,
+          chunks: 'all', // 异步加载的内容也会进行拆包处理
+          minChunks: 1,
+          automaticNameDelimiter: '~', // 共享模块连接符号
+          automaticNameMaxLength: 30, // 最长的共享模块文件名长度
+          maxAsyncRequests: 8, // 并发同步加载数量，相当于拆包数量
+          maxInitialRequests: 6, // 动态import的加载数量，相当于动态import的拆包数量
+          minSize: 30000, // 单包最小大小（最少5kb）
+          name: true,
           cacheGroups: {
+            dcloudio: {
+              name: 'chunk-dcloudio',
+              priority: -10,
+              chunks: 'all',
+              test: /[\\/]node_modules[\\/]@dcloudio[\\/]/,
+              enforce: true,
+            },
             vendors: {
               name: 'chunk-vendors',
-              priority: 10,
-              chunks: 'all',
-              // maxSize: (1024 * 100),
-              test: /[\\/]node_modules[\\/](vue|vuex|vue-i18n|@dcloudio\/uni-h5)[\\/]/,
+              priority: -10,
+              test: /[\\/]node_modules[\\/](vue|vuex|vue-i18n)[\\/]/,
               enforce: true,
             },
             components: {
               reuseExistingChunk: true,
               automaticNamePrefix: 'dzq-cps',
-              priority: 10,
-              chunks: 'all',
-              maxSize: (1024 * 200),
+              priority: -10,
+              maxSize: (1024 * 224),
               test: reg,
+              enforce: true,
+            },
+            vditor: {
+              name: 'vditor',
+              reuseExistingChunk: true,
+              priority: -10,
+              test: /[\\/]node_modules[\\/]vditor[\\/]/,
               enforce: true,
             },
             // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/113
             // mini-css-extract-plugin Conflicting order problem
             default: false,
-            common: false,
+            common: {
+              name: 'chunk-common',
+              reuseExistingChunk: true,
+              priority: -10,
+              test: /[\\/]node_modules[\\/]core-js[\\/]/,
+              enforce: true,
+            },
           },
         },
       };
