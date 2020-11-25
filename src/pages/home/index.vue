@@ -108,14 +108,7 @@ export default {
       this.footerBarHeight = this.$refs['footer-bar']?.$el?.firstChild?.offsetHeight || 50;
       this.footerBarHeight = this.footerBarHeight ? this.footerBarHeight : 50;
     }
-  },
-  onLoad(params) {
-    this.categoryId = params.categoryId;
     // #ifdef MP-WEIXIN
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline'],
-    });
     if (
       !this.$store.getters['session/get']('isLogin') &&
       this.forums &&
@@ -135,6 +128,15 @@ export default {
       uni.setStorageSync('register', 1);
       this.$store.dispatch('session/wxh5Login');
     }
+    // #endif
+  },
+  onLoad(params) {
+    this.categoryId = params.categoryId;
+    // #ifdef MP-WEIXIN
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline'],
+    });
     // #endif
     if (!this.loading && !this.showHome) {
       this.handlePageLoaded();
