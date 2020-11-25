@@ -2094,8 +2094,7 @@ export default {
               this.postLoading = false;
               uni.hideLoading();
               if (res && res.isApproved === 1) {
-                // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
-                // this.$u.event.$emit('addThread', res);
+                this.$u.event.$emit('addThread', res);
               }
               if (res && res._jv.json.data.id) {
                 uni.redirectTo({
