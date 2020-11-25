@@ -444,7 +444,13 @@
           "navigationBarTitleText": "",
           "enablePullDownRefresh": true
         }
-    }]
+    },{
+      "path": "test",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": true
+      }
+  }]
   }],
   "preloadRule": {
       "topic/post": {
