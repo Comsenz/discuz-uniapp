@@ -2626,7 +2626,7 @@ export default {
           }
           threads.free_words = this.word;
           posts._jv.relationships.attachments = {
-            data: this.addImg().data.concat(this.addFile().data),
+            data: this.addFile().data,
           };
           break;
         case 2:

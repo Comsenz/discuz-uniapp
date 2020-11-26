@@ -1014,7 +1014,7 @@ export default {
     if (this.forums && this.forums.paycenter && this.forums.paycenter.wxpay_ios) {
       this.paymentmodel = this.forums.paycenter.wxpay_ios;
     }
-    
+
     // #ifndef H5
     if (this.detectionmodel === 'public' && this.system === 'ios') {
       this.paidStatus = false;
@@ -1389,7 +1389,7 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   data.question.is_onlooker === true &&
                   data.question.is_answer === 1 &&
-                  // this.forums.other.can_be_onlooker === true && 
+                  // this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === true
                 ) {
                   this.answerPay = true;
@@ -2049,6 +2049,17 @@ export default {
       this.$store.dispatch('jv/post', params).then(res => {
         this.$refs.commentPopup.close();
         this.loadThread();
+      })
+      .catch(err => {
+        if (err && err.data && err.data.errors) {
+          if (err.data.errors[0].code === 'content_banned_show_words') {
+            uni.showToast({
+              icon: 'none',
+              title: `${this.i18n.t('core.content_banned_show_words')}[${err.data.errors[0].detail.join('、')}]`,
+              duration: 2000,
+            });
+          }
+        }
       });
     },
 
