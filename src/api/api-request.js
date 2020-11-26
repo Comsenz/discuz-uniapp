@@ -129,6 +129,7 @@ http.interceptor.response(
           case 'not_install':
           case 'ban_user':
           case 'no_bind_user':
+          case 'content_banned_show_words':
             break;
           default:
             if (response.config.custom.showTost) {
