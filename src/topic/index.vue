@@ -2049,6 +2049,17 @@ export default {
       this.$store.dispatch('jv/post', params).then(res => {
         this.$refs.commentPopup.close();
         this.loadThread();
+      })
+      .catch(err => {
+      if (err && err.data && err.data.errors) {
+        if (err.data.errors[0].code === 'content_banned') {
+          uni.showToast({
+            icon: 'none',
+            title: this.i18n.t('core.content_banned'),
+            duration: 2000,
+          });
+        }
+      }
       });
     },
 
