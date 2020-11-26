@@ -205,6 +205,7 @@ export default {
     cannot_delete_category_with_threads: '无法删除存在主题的分类',
     permission_denied: '没有权限，请联系站点管理员',
     content_banned: '当前内容包含禁止发布的词语',
+    content_banned_show_words: '当前内容包含禁止发布的词语：',
     username_banned: '当前用户名包含禁止注册的词语',
     validation_error: '验证错误',
     user_update_error: '修改信息失败',

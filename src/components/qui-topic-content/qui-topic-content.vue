@@ -677,12 +677,15 @@ export default {
     },
   },
   created() {
-    console.log(this.dataGoodInfoPrice, '价格');
-    if (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0) {
-      this.dataGoodInfoPrice = this.postGoods.price;
-    } else if (Number(this.postGoods.price) <= 0) {
-      this.dataGoodInfoPrice = '';
+    // console.log(this.dataGoodInfoPrice, '价格');
+    if (Object.keys(this.postGoods).length > 0) {
+      if (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0) {
+        this.dataGoodInfoPrice = this.postGoods.price;
+      } else if (Number(this.postGoods.price) <= 0) {
+        this.dataGoodInfoPrice = '';
+      }
     }
+
     // console.log('这是内容组件created', this.postGoods);
     this.$forceUpdate();
     // #ifdef  H5
