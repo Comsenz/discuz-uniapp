@@ -15,8 +15,8 @@
       "base": "/"
     },
     "optimization": {
-      // "prefetch": true,
-      // "preload": true,
+      "prefetch": true,
+      "preload": true,
       "treeShaking": {
         "enable": true
       }
