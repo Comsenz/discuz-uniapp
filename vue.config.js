@@ -88,10 +88,11 @@ module.exports = {
               test: /[\\/]node_modules[\\/]@dcloudio[\\/]/,
               enforce: true,
             },
-            vendors: {
-              name: 'chunk-vendors',
+            common: {
+              name: 'chunk-common',
+              reuseExistingChunk: true,
               priority: -10,
-              test: /[\\/]node_modules[\\/](vue|vuex|vue-i18n)[\\/]/,
+              test: /[\\/]node_modules[\\/](core-js|cos-js-sdk-v5)[\\/]/,
               enforce: true,
             },
             components: {
@@ -99,6 +100,12 @@ module.exports = {
               priority: -10,
               maxSize: (1024 * 1024),
               test: reg,
+              enforce: true,
+            },
+            vendors: {
+              name: 'chunk-vendors',
+              priority: -20,
+              test: /[\\/]node_modules[\\/]/,
               enforce: true,
             },
             vditor: {
@@ -110,13 +117,7 @@ module.exports = {
             // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/113
             // mini-css-extract-plugin Conflicting order problem
             default: false,
-            common: {
-              name: 'chunk-common',
-              reuseExistingChunk: true,
-              priority: -10,
-              test: /[\\/]node_modules[\\/]core-js[\\/]/,
-              enforce: true,
-            },
+            
           },
         },
       };
