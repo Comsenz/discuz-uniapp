@@ -68,6 +68,7 @@ const apploaded = () => {
     forums.set_reg.register_type === 2 &&
     !app.$route.query.hasOwnProperty('code')
   ) {
+    uni.setStorageSync('register', 1);
     app.$store.dispatch('session/wxh5Login');
     return;
   }
