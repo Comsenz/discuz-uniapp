@@ -396,6 +396,7 @@ export default {
       scrollnumber: '',
       scrollindex: '',
       switchscroll: false,
+      currentDate: 0,
     };
   },
   computed: {
@@ -536,6 +537,13 @@ export default {
     uni.$off('updateMy');
   },
   mounted() {
+    // 数据上报
+    const firstByte = performance.timing.responseStart;
+    const currentDate = new Date().getTime();
+    this.currentDate = currentDate;
+    const timeT1 = currentDate - firstByte;
+    this.$u.aegis.reportTime('T1', timeT1);
+
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
       this.loadCategories();
@@ -586,6 +594,9 @@ export default {
     // })
   },
   methods: {
+    clearTime() {
+      this.currentDate = 0;
+    },
     ...mapMutations({
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
@@ -988,6 +999,7 @@ export default {
     },
     // 首页内容部分数据请求
     loadThreads() {
+      const that = this;
       const params = this.getThreadsParams();
 
       const threadsAction = status.run(() =>
@@ -1031,6 +1043,15 @@ export default {
           if (loadThreadingTimer) {
             clearTimeout(loadThreadingTimer);
             loadThreadingTimer = null;
+          }
+          const { currentDate } = that;
+          // 数据上报
+          if (this.pageNum === 1) {
+            this.$nextTick(() => {
+              if (!currentDate) return;
+              const timeT2 = new Date().getTime() - currentDate;
+              this.$u.aegis.reportTime('T2', timeT2);
+            });
           }
         })
         .catch(() => {

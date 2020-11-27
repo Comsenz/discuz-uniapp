@@ -329,7 +329,6 @@ export default {
       shareShow: false, // h5内分享提示信息
       shareTitle: '', // h5内分享复制链接
       isWeixin: '', // 是否是微信浏览器内
-      currentDate: 0,
       filterList: [
         {
           title: this.i18n.t('home.filterPlate'),
@@ -528,14 +527,6 @@ export default {
     // #endif
   },
   mounted() {
-    // 数据上报
-    // #ifdef H5
-    const firstByte = performance.timing.responseStart;
-    const currentDate = new Date().getTime();
-    this.currentDate = currentDate;
-    const timeT1 = currentDate - firstByte;
-    this.$u.aegis.reportTime('T1', timeT1);
-    // #endif
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
       this.loadCategories();
@@ -589,11 +580,6 @@ export default {
     // })
   },
   methods: {
-    clearTime() {
-      // #ifdef H5
-      this.currentDate = 0;
-      // #endif
-    },
     ...mapMutations({
       setCategoryId: 'session/SET_CATEGORYID',
       setCategoryIndex: 'session/SET_CATEGORYINDEX',
@@ -1044,7 +1030,6 @@ export default {
     },
     // 首页内容部分数据请求
     loadThreads() {
-      const that = this;
       const params = {
         'filter[isSticky]': 'no',
         'filter[isApproved]': 1,
@@ -1094,17 +1079,6 @@ export default {
           this.threads = [...this.threads, ...res];
         }
         this.isResetList = false;
-        const { currentDate } = that;
-        // #ifdef H5
-        // 数据上报
-        if (this.pageNum === 1) {
-          this.$nextTick(() => {
-            if (!currentDate) return;
-            const timeT2 = new Date().getTime() - currentDate;
-            this.$u.aegis.reportTime('T2', timeT2);
-          });
-        }
-        // #endif
       });
     },
     // 内容部分点赞按钮点击事件
