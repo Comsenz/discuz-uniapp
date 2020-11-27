@@ -464,11 +464,11 @@
             <view
               class="post-box__good__ft"
               :style="{
-                justifyContent: Number(dataGoodInfo.price) > 0 ? 'space-between' : 'flex-end',
+                justifyContent: dataGoodInfoPrice !== '' ? 'space-between' : 'flex-end',
               }"
             >
-              <view class="post-box__good__price" v-if="Number(dataGoodInfo.price) > 0">
-                ￥{{ dataGoodInfo.price }}元
+              <view class="post-box__good__price" v-if="dataGoodInfoPrice !== ''">
+                ￥{{ dataGoodInfoPrice }}元
               </view>
               <qui-icon name="icon-delete" size="26" @click="deleteGoods"></qui-icon>
             </view>
@@ -922,6 +922,7 @@ export default {
       ioshide: false, // ios下付费隐藏
       isShowGoods: true,
       dataGoodInfo: {},
+      dataGoodInfoPrice: 0, // 商品价格
       goodsId: '', // 商品ID
       categoryid: 0,
       categoryindex: 0,
@@ -1397,6 +1398,7 @@ export default {
       this.setType = 'pay';
       this.payNumCheck = [];
       this.payNumCheck.push(this.payNum[index]);
+      console.log(this.payNum);
       // 自定义金额
       if (this.payNumCheck[0].name === this.i18n.t('discuzq.post.customize')) {
         console.log('自定义金额');
@@ -1434,6 +1436,8 @@ export default {
     choicePayType(type) {
       // console.log(type, '类型');
       if (type === 0) {
+        this.payNumCheck = [];
+        this.price = '';
         this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsFree');
       } else if (type === 1) {
         this.payNumCheck = [];
@@ -1683,7 +1687,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1715,7 +1720,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1751,7 +1757,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1764,7 +1771,8 @@ export default {
                 this.postLoading = false;
                 uni.hideLoading();
                 if (res && res.isApproved === 1) {
-                  this.$u.event.$emit('addThread', res);
+                  // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+                  // this.$u.event.$emit('addThread', res);
                 }
                 if (res && res._jv.json.data.id) {
                   uni.redirectTo({
@@ -1854,14 +1862,16 @@ export default {
       this.payTypeText = this.i18n.t('topic.pay') + this.i18n.t('discuzq.post.payAskingPrice');
       // #ifdef H5
       if (this.type === 1) {
-        this.textAreaValue = this.vditor.getValue().replace(/blob\:/g, '').replace(/\n\n/g, '\n\n\n');
+        this.textAreaValue = this.vditor
+          .getValue()
+          .replace(/blob\:/g, '')
+          .replace(/\n\n/g, '\n\n\n');
       }
       // #endif
       if (!this.categoryId) {
         this.$refs.toast.show({ message: this.i18n.t('discuzq.post.theclassifyCanNotBeBlank') });
         return false;
       }
-      console.log(this.type, '~~~~', this.dataGoodInfo);
       let status = true;
       switch (this.type) {
         case 0:
@@ -2034,7 +2044,8 @@ export default {
           // if (this.type === 5) {
           //   // this.beUserName =
           // }
-          this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
+          // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+          // this.$u.event.$emit('updateLocation', this.postDetails._jv.id, this.currentPosition);
           if (this.type === 3) {
             if (this.uploadFile.length < 1) {
               this.$refs.toast.show({
@@ -2127,6 +2138,14 @@ export default {
           break;
         case 'goods':
           this.dataGoodInfo = data.firstPost.postGoods;
+          if (
+            data.firstPost.postGoods.price.indexOf('-') !== -1 ||
+            Number(data.firstPost.postGoods.price) > 0
+          ) {
+            this.dataGoodInfoPrice = data.firstPost.postGoods.price;
+          } else if (Number(data.firstPost.postGoods.price) <= 0) {
+            this.dataGoodInfoPrice = '';
+          }
           // this.audioBeforeList.push({
           //   fileName: data.threadAudio.file_name,
           //   url: data.threadAudio.media_url,
@@ -2457,6 +2476,15 @@ export default {
         }
         if (this.type === 6 && res.firstPost.postGoods) {
           this.dataGoodInfo = res.firstPost.postGoods;
+          if (
+            res.firstPost.postGoods.price.indexOf('-') !== -1 ||
+            Number(res.firstPost.postGoods.price) > 0
+          ) {
+            this.dataGoodInfoPrice = res.firstPost.postGoods.price;
+          } else if (Number(res.firstPost.postGoods.price) <= 0) {
+            this.dataGoodInfoPrice = '';
+          }
+
           this.isShowGoods = true;
           console.log(this.dataGoodInfo, this.isShowGoods, '这是~~~~~~~~~~~~~~~');
         }
@@ -2468,7 +2496,7 @@ export default {
             if (res.freeWords === item.pay) {
               this.percentagedisplay = item.name;
             }
-          })
+          });
           this.payType = 2;
           this.showPayType = this.i18n.t('discuzq.post.TheContentAndTheAccessoriesIsPaid');
           if (this.type === 1) {
@@ -2537,7 +2565,11 @@ export default {
       this.$store.dispatch('jv/get', `goods/${this.goodsId}`).then(res => {
         console.log('这是取到的商品信息', res);
         this.dataGoodInfo = res;
-        console.log(this.dataGoodInfo._jv.id, '商品id');
+        if (res.price.indexOf('-') !== -1 || Number(res.price) > 0) {
+          this.dataGoodInfoPrice = res.price;
+        } else if (Number(res.price) <= 0) {
+          this.dataGoodInfoPrice = '';
+        }
         this.isShowGoods = true;
       });
     },
@@ -2596,7 +2628,7 @@ export default {
           }
           threads.free_words = this.word;
           posts._jv.relationships.attachments = {
-            data: this.addImg().data.concat(this.addFile().data),
+            data: this.addFile().data,
           };
           break;
         case 2:
@@ -2625,24 +2657,24 @@ export default {
         default:
           break;
       }
-      console.log(posts, '这是posts');
       await this.$store.dispatch('jv/patch', posts).then(res => {
         console.log(res, '返回');
         if (res._jv.json.data.id) state += 1;
         if (res._jv.json.data.attributes.isApproved === 1) {
-          this.$u.event.$emit('refreshImg', {
-            id: this.firstPostId,
-            threadId: this.threadId,
-            images: this.addImg(),
-          });
-          this.$u.event.$emit('refreshGoods', {
-            id: this.firstPostId,
-            threadId: this.threadId,
-            goods: this.dataGoodInfo,
-          });
+          // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+          // this.$u.event.$emit('refreshImg', {
+          //   id: this.firstPostId,
+          //   threadId: this.threadId,
+          //   images: this.addImg(),
+          // });
+          // this.$u.event.$emit('refreshGoods', {
+          //   id: this.firstPostId,
+          //   threadId: this.threadId,
+          //   goods: this.dataGoodInfo,
+          // });
         }
         // 更新详情页的信息
-        this.$u.event.$emit('refreshFiles');
+        // this.$u.event.$emit('refreshFiles');
         return res;
       });
       // console.log(threads, '这是编辑时传的参数');

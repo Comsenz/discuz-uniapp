@@ -38,7 +38,8 @@ module.exports = {
     // 'scss/dollar-variable-pattern': '\b[a-z]+(?:-)+(\b[a-z]+(?:-))*',
 
     // forbid extend
-    'at-rule-blacklist': ['extend'],
+    // 'at-rule-blacklist': ['extend'],
+    'at-rule-disallowed-list': ['extend'],
 
     // Nesting depth
     'max-nesting-depth': 3,
@@ -52,7 +53,7 @@ module.exports = {
     // http://csswizardry.com/2014/07/hacks-for-dealing-with-specificity/
     // "id,class,type",
     // selector-max-specificity
-    'declaration-no-important': true,
+    // 'declaration-no-important': true,
     'selector-max-compound-selectors': 3,
     'selector-no-qualifying-type': true,
 

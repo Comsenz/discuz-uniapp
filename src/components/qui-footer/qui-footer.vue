@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view @touchmove.stop.prevent="">
     <view
       class="ft"
       :style="{
@@ -331,11 +331,19 @@ export default {
 
       this.$refs.popup.open();
     },
+    // 排序
     compare(property) {
       return (a, b) => {
-        const value1 = a[property];
-        const value2 = b[property];
-        return value1 - value2;
+        const value1 = a.data.attributes[property];
+        const value2 = b.data.attributes[property];
+        // return value1 - value2;
+        if (value1 > value2) {
+          return 1;
+        }
+        if (value1 < value2) {
+          return -1;
+        }
+        return 0;
       };
     },
     // 首页底部发帖点击事件跳转
@@ -395,23 +403,28 @@ export default {
             url = `/topic/post?type=${item.type}`;
           }
           uploadData.push(data.data);
-          uploadDataLength = data.times;
+          console.log(data, uploadData, '长度');
           uploadData.map((val, key) => {
             if (val.data.attributes.order > this.uploadImgMax) {
               uploadData.splice(key, 1);
             }
             return uploadData;
           });
+          uploadDataLength = data.times;
         });
 
         uploadCountLoop = setInterval(() => {
           const sum = uploadDataLength + errorCount;
           if (sum >= chooseLength) {
+            // console.log(uploadData.sort(this.compare('order')), '--------');
             uni.navigateTo({
               url,
               success: res => {
                 // 通过eventChannel向被打开页面传送数据
-                res.eventChannel.emit('acceptDataFromOpenerPage', uploadData);
+                res.eventChannel.emit(
+                  'acceptDataFromOpenerPage',
+                  uploadData.sort(this.compare('order')),
+                );
               },
             });
             clearInterval(uploadCountLoop);

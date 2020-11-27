@@ -479,45 +479,13 @@
       </uni-popup>
       <!--举报弹框-->
       <uni-popup ref="reportPopup" type="bottom">
-        <view class="popup-report">
-          <view class="popup-report__title">
-            <view class="popup-report__title-headline">{{ r.reportTitle }}</view>
-            <view class="popup-report__title-subhead">{{ r.pleaseClickReasons }}</view>
-          </view>
-          <view class="popup-report__content">
-            <radio-group @change="reportRadioChange">
-              <label
-                class="popup-report__content-cell"
-                v-for="item in reportData"
-                :key="item.value"
-              >
-                <view>{{ item.name }}</view>
-                <view>
-                  <radio :value="item.value" :checked="item.value === currentReport" />
-                </view>
-              </label>
-            </radio-group>
-            <view class="popup-report__content-textarea" v-if="currentReport === 'other'">
-              <textarea
-                placeholder-class="textarea-placeholder"
-                :placeholder="r.otherReason"
-                :maxlength="200"
-                :value="otherReasonValue"
-                @input="reportTextareaInput"
-                fixed="true"
-                @touchmove.stop="touchStop"
-              />
-            </view>
-          </view>
-          <view class="popup-report__btn">
-            <button class="popup-report__btn-confirm" @click="reportConfirmClick(1)">
-              {{ r.confirm }}
-            </button>
-            <view class="popup-report__btn-cancel" @click="reportCancelClick">
-              {{ r.cancel }}
-            </view>
-          </view>
-        </view>
+        <qui-report
+          ref="report"
+          :current-login-id="currentLoginId"
+          :thread-id="threadId"
+          :report-type="1"
+          @reportClose="reportClose"
+        ></qui-report>
       </uni-popup>
       <!--支付组件-->
       <view v-if="payShowStatus">
@@ -858,7 +826,7 @@ export default {
       windowHeight: '', // 设备高度
       system: '', // 设备系统
       detectionmodel: '', // 站点模式
-      paymentmodel: '', // 是否付费
+      paymentmodel: false, // 是否付费
       loaded: false,
       loadingStatus: true,
       isWeixin: false,
@@ -960,31 +928,6 @@ export default {
         },
       ],
       moreDataLength: 0,
-      reportData: [
-        {
-          // 举报理由
-          value: 'advertisingRubbish',
-          name: '广告垃圾',
-        },
-        {
-          value: 'illegalContent',
-          name: '违规内容',
-        },
-        {
-          value: 'maliciousIrrigation',
-          name: '恶意灌水',
-        },
-        {
-          value: 'repeatPost',
-          name: '重复发帖',
-        },
-        {
-          value: 'other',
-          name: '其他',
-        },
-      ],
-      currentReport: '', // 当前举报理由
-      otherReasonValue: '', // 其他理由
       conversationId: '', // 话题id
       attachmentFileList: [], // 附件列表
       refreshStatus: true, // 是否刷新
@@ -1005,7 +948,7 @@ export default {
       const thread = this.$store.getters['jv/get'](`threads/${this.threadId}`);
       // 只保留一个用户组显示
       let hasFirst = false;
-      if (thread.user.groups && thread.user.groups.length > 0) {
+      if (thread.user && thread.user.groups && thread.user.groups.length > 0) {
         thread.user.groups = thread.user.groups.filter(group => {
           if (group.isDisplay === true && !hasFirst) {
             hasFirst = true;
@@ -1051,15 +994,11 @@ export default {
     c() {
       return this.i18n.t('core');
     },
-    // report举报语言包
-    r() {
-      return this.i18n.t('report');
-    },
     status() {
       return status.status;
     },
     themeColor() {
-      return this.theme === this.$u.light() ? '#333' : '#fff'; // 用于图标色
+      return this.theme === this.$u.light() ? '#333' : '#fff'; //  用于图标色
     },
     currentLoginId() {
       const userId = this.$store.getters['session/get']('userId');
@@ -1067,27 +1006,27 @@ export default {
     },
   },
   onLoad(option) {
-    try {
-      const res = uni.getSystemInfoSync();
-      this.system = res.platform;
+    const res = uni.getSystemInfoSync();
+    this.system = res.platform;
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.detectionmodel = this.forums.set_site.site_mode;
-      this.paymentmodel = this.forums.paycenter.wxpay_ios;
-      
-      // #ifndef H5
-      if (this.detectionmodel === 'public' && this.system === 'ios') {
-        this.paidStatus = false;
-        this.paidBtnStatus = false;
-        this.rewardBtnStatus = false;
-        this.rewardStatus = false;
-      }
-      if (this.detectionmodel === 'pay' && this.system === 'ios') {
-        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
-        return;
-      }
-      // #endif
-    } catch (e) {
-      // error
     }
+    if (this.forums && this.forums.paycenter && this.forums.paycenter.wxpay_ios) {
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    }
+
+    // #ifndef H5
+    if (this.detectionmodel === 'public' && this.system === 'ios') {
+      this.paidStatus = false;
+      this.paidBtnStatus = false;
+      this.rewardBtnStatus = false;
+      this.rewardStatus = false;
+    }
+    if (this.detectionmodel === 'pay' && this.system === 'ios') {
+      this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+      return;
+    }
+    // #endif
     this.token = uni.getStorageSync('access_token');
     uni.$on('logind', () => {
       this.loadThread();
@@ -1205,26 +1144,26 @@ export default {
     };
   },
   onShow() {
-    try {
-      const res = uni.getSystemInfoSync();
-      this.system = res.platform;
+    const res = uni.getSystemInfoSync();
+    this.system = res.platform;
+    if (this.forums && this.forums.set_site && this.forums.set_site.site_mode) {
       this.detectionmodel = this.forums.set_site.site_mode;
-      this.paymentmodel = this.forums.paycenter.wxpay_ios;
-      // #ifndef H5
-      if (this.detectionmodel === 'public' && this.system === 'ios') {
-        this.paidStatus = false;
-        this.paidBtnStatus = false;
-        this.rewardBtnStatus = false;
-        this.rewardStatus = false;
-      }
-      if (this.detectionmodel === 'pay' && this.system === 'ios') {
-        this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
-        return;
-      }
-      // #endif
-    } catch (e) {
-      // error
     }
+    if (this.forums && this.forums.paycenter && this.forums.paycenter.wxpay_ios) {
+      this.paymentmodel = this.forums.paycenter.wxpay_ios;
+    }
+    // #ifndef H5
+    if (this.detectionmodel === 'public' && this.system === 'ios') {
+      this.paidStatus = false;
+      this.paidBtnStatus = false;
+      this.rewardBtnStatus = false;
+      this.rewardStatus = false;
+    }
+    if (this.detectionmodel === 'pay' && this.system === 'ios') {
+      this.$store.dispatch('forum/setError', { loading: false, code: 'dataerro' });
+      return;
+    }
+    // #endif
     let atMemberList = '';
     this.getAtMemberData.map(item => {
       atMemberList += `@${item.username} `;
@@ -1450,7 +1389,7 @@ export default {
                   this.user.id !== data.question.be_user_id &&
                   data.question.is_onlooker === true &&
                   data.question.is_answer === 1 &&
-                  // this.forums.other.can_be_onlooker === true && 
+                  // this.forums.other.can_be_onlooker === true &&
                   data.onlookerState === true
                 ) {
                   this.answerPay = true;
@@ -1614,6 +1553,8 @@ export default {
             this.rewardStatus = false;
             this.paidStatus = false;
           } else if (this.forums.paycenter.wxpay_close) {
+            const res = uni.getSystemInfoSync();
+            this.system = res.platform;
             // 如果开启了微信支付
             if (!data.paid || data.paidUsers.length > 0) {
               // #ifndef H5
@@ -1638,15 +1579,6 @@ export default {
                 this.paidBtnStatus = true;
               }
               // #endif
-            } else {
-              if (data.canBeReward) {
-                this.rewardStatus = true;
-                this.rewardBtnStatus = true;
-              } else {
-                this.rewardStatus = false;
-                this.rewardBtnStatus = false;
-              }
-              this.paidStatus = false;
             }
             if (data.type === 3) {
               this.payThreadTypeText = this.t.pay + data.price + this.t.paymentViewPicture;
@@ -1753,16 +1685,20 @@ export default {
               // #ifndef H5
               if (this.system === 'ios') {
                 if (this.paymentmodel === false) {
+                  this.paidStatus = false;
                   this.paidBtnStatus = false;
                 } else if (this.paymentmodel === true && data.paid === false) {
+                  this.paidStatus = true;
                   this.paidBtnStatus = true;
                 } else if (this.paymentmodel === true && data.paid === true) {
+                  this.paidStatus  = true;
                   this.paidBtnStatus = false;
                 }
               } else {
                 if (data.paid === true) {
                   this.paidBtnStatus = false;
                 } else {
+                  this.paidStatus = true;
                   this.paidBtnStatus = true;
                 }
               }
@@ -1932,13 +1868,15 @@ export default {
               this.moreData[3].icon = 'icon-quxiaozhiding';
               this.moreData[3].text = this.t.cancelSticky;
               // 详情页置顶,将首页列表中该帖子移除并添加到置顶列表中
-              this.$u.event.$emit('stickyThread', data);
+              // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+              // this.$u.event.$emit('stickyThread', data);
             } else {
               this.selectList[2].text = this.t.sticky;
               this.moreData[3].icon = 'icon-zhiding';
               this.moreData[3].text = this.t.sticky;
               // 详情页取消置顶,将首页置顶数据移除
-              this.$u.event.$emit('cancelSticky', data);
+              // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+              // this.$u.event.$emit('cancelSticky', data);
             }
           } else if (type === '4') {
             const _this = this;
@@ -1964,7 +1902,8 @@ export default {
                   }
                 });
               }, 1000);
-              this.$u.event.$emit('deleteThread', this.threadId);
+              // 因为设置了虚拟滚动，所以将会去除所有对列表数据的操作，只会刷新才会更新现有数据
+              // this.$u.event.$emit('deleteThread', this.threadId);
             }
           }
         })
@@ -2110,6 +2049,17 @@ export default {
       this.$store.dispatch('jv/post', params).then(res => {
         this.$refs.commentPopup.close();
         this.loadThread();
+      })
+      .catch(err => {
+        if (err && err.data && err.data.errors) {
+          if (err.data.errors[0].code === 'content_banned_show_words') {
+            uni.showToast({
+              icon: 'none',
+              title: `${this.i18n.t('core.content_banned_show_words')}[${err.data.errors[0].detail.join('、')}]`,
+              duration: 2000,
+            });
+          }
+        }
       });
     },
 
@@ -3153,7 +3103,7 @@ export default {
       }
       // #ifdef MP-WEIXIN
       this.$refs.sharePopup.open();
-      if (this.forums.set_site.site_mode === 'pay') {
+      if (this.forums.set_site && this.forums.set_site.site_mode === 'pay') {
         this.bottomData.forEach((value, key, bottomData) => {
           // this.bottomData.map((value, key, bottomData) => {
           value.name === 'wxFriends' && bottomData.splice(key, 1);
@@ -3395,71 +3345,14 @@ export default {
     moreCancel() {
       this.$refs.morePopup.close();
     },
+    // 关闭举报弹框
+    reportClose(val){
+      this.$refs.reportPopup.close();
+    },
     // 举报
     reportClick() {
       this.moreCancel();
-      this.otherReasonValue = '';
-      this.currentReport = '';
       this.$refs.reportPopup.open();
-    },
-    // 切换举报理由
-    reportRadioChange(e) {
-      this.currentReport = e.target.value;
-    },
-    // 监听其他理由输入
-    reportTextareaInput(e) {
-      this.otherReasonValue = e.detail.value;
-    },
-    // 确认举报
-    reportConfirmClick(type) {
-      if (!this.currentReport) {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('report.pleaseClickReasons'),
-        });
-        return;
-      }
-      let reason = '';
-      if (this.currentReport === 'other') {
-        if (!this.otherReasonValue) {
-          uni.showToast({
-            icon: 'none',
-            title: this.i18n.t('report.enterOtherReason'),
-          });
-          return;
-        }
-        reason = this.otherReasonValue;
-      } else {
-        this.reportData.forEach(item => {
-          if (item.value === this.currentReport) {
-            reason = item.name;
-          }
-        });
-      }
-      const params = {
-        _jv: {
-          type: 'reports',
-        },
-        user_id: this.currentLoginId,
-        thread_id: parseInt(this.threadId),
-        type,
-        reason: `${reason}`,
-      };
-      this.$store.dispatch('jv/post', params).then(res => {
-        if (res._jv) {
-          this.$refs.reportPopup.close();
-          uni.showToast({
-            icon: 'none',
-            title: this.i18n.t('report.reportSucceed'),
-          });
-        }
-      });
-    },
-    // 取消举报
-    reportCancelClick() {
-      this.otherReasonValue = '';
-      this.currentReport = '';
-      this.$refs.reportPopup.close();
     },
     // 点击购买商品 在小程序内复制链接，提醒在浏览器里打开，在微信 浏览器和h5内，直接跳转页面
     buyGood() {
@@ -4106,91 +3999,6 @@ page {
 // .scroll-y {
 //   max-height: 100vh;
 // }
-// 举报弹框
-.popup-report {
-  background: --color(--qui-BG-2);
-  border-radius: 10rpx 10rpx 0rpx 0rpx;
-
-  &__title {
-    padding: 40rpx 0rpx;
-    text-align: center;
-
-    &-headline {
-      font-size: $fg-f4;
-      color: --color(--qui-FC-333);
-    }
-
-    &-subhead {
-      margin-top: 20rpx;
-      font-size: $fg-f2;
-      color: --color(--qui-FC-AAA);
-    }
-  }
-
-  &__content {
-    padding-left: 40rpx;
-
-    &-cell {
-      display: flex;
-      padding-right: 40rpx;
-      line-height: 100rpx;
-      border-bottom: 1px solid var(--qui-BOR-ED);
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    &-cell:last-child {
-      border-bottom: 0;
-    }
-
-    &-textarea {
-      padding-right: 40rpx;
-
-      textarea {
-        width: 100%;
-        height: 180rpx;
-        padding: 20rpx;
-        font-size: $fg-f4;
-        background-color: --color(--qui-BG-1);
-        border: 1px solid var(--qui-BOR-DDD);
-        box-sizing: border-box;
-      }
-    }
-  }
-
-  &__btn {
-    margin-top: 30rpx;
-    background: --color(--qui-BG-ED);
-
-    &-confirm {
-      width: 100%;
-      height: 100rpx;
-      margin-bottom: 10rpx;
-      font-size: $fg-f4;
-      font-weight: normal;
-      line-height: 100rpx;
-      color: --color(--qui-FC-FFF);
-      text-align: center;
-      background: --color(--qui-MAIN);
-      border-radius: 0;
-    }
-
-    &-cancel {
-      width: 100%;
-      height: 100rpx;
-      font-size: $fg-f4;
-      font-weight: normal;
-      line-height: 100rpx;
-      text-align: center;
-      background: --color(--qui-FC-FFF);
-    }
-  }
-
-  .textarea-placeholder {
-    font-size: $fg-f4;
-    color: --color(--qui-FC-B5);
-  }
-}
 .payment {
   padding: 0 40rpx;
 }

@@ -214,7 +214,6 @@ const actions = (api, conf) => {
         // 200 (meta-only), or 204 (no resource) response
         // Update the store record from the patch
         context.commit('mergeRecords', Object.assign(data, results.data.data.attributes));
-
         // NOTE: We deliberately process included records after any `deleteRecord` mutations
         // to avoid deleting any included records that we just added.
         return utils.preserveJSON(context.getters.get(data), results.data);

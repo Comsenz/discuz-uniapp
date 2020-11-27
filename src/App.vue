@@ -153,6 +153,9 @@ export default {
       url = `/pages/profile/index?userId=${matchs[1]}`;
     } else if(e.path === '/site/partner-invite' && e.query.code) {
         url = `/pages/site/partner-invite?code=${e.query.code}`;
+    } else if(/^\/category\/\d+$/i.test(e.path)){
+      const matchs = e.path.match(/^\/category\/(\d+)$/i);
+      url = `/?categoryId=${matchs[1]}`;
     }
 
     uni.redirectTo({url});

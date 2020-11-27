@@ -335,11 +335,11 @@
             <view
               class="themeItem__content__good__ft"
               :style="{
-                justifyContent: Number(postGoods.price) > 0 ? 'space-between' : 'flex-end',
+                justifyContent: dataGoodInfoPrice !== '' ? 'space-between' : 'flex-end',
               }"
             >
-              <view class="themeItem__content__good__price" v-if="Number(postGoods.price) > 0">
-                ￥{{ postGoods.price }}元
+              <view class="themeItem__content__good__price" v-if="dataGoodInfoPrice !== ''">
+                ￥{{ dataGoodInfoPrice }}元
               </view>
               <view class="themeItem__content__good__buy" @click="buyGood">
                 <qui-icon
@@ -613,6 +613,7 @@ export default {
       blocKwidth: 224,
       videoContext: '',
       wechatbrowser: false,
+      dataGoodInfoPrice: 0, // 商品价格
     };
   },
   computed: {
@@ -676,6 +677,15 @@ export default {
     },
   },
   created() {
+    // console.log(this.dataGoodInfoPrice, '价格');
+    if (Object.keys(this.postGoods).length > 0) {
+      if (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0) {
+        this.dataGoodInfoPrice = this.postGoods.price;
+      } else if (Number(this.postGoods.price) <= 0) {
+        this.dataGoodInfoPrice = '';
+      }
+    }
+
     // console.log('这是内容组件created', this.postGoods);
     this.$forceUpdate();
     // #ifdef  H5

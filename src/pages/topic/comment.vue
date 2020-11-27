@@ -365,7 +365,7 @@
                   ></qui-icon>
                 </view>
               </view>
-              <text class="popup-share-content-text">{{ r.reportTitle }}</text>
+              <text class="popup-share-content-text">{{ i18n.t('report.reportTitle') }}</text>
             </view>
           </view>
           <view class="popup-share-content-space"></view>
@@ -374,45 +374,14 @@
       </uni-popup>
       <!--举报弹框-->
       <uni-popup ref="reportPopup" type="bottom">
-        <view class="popup-report">
-          <view class="popup-report__title">
-            <view class="popup-report__title-headline">{{ r.reportTitle }}</view>
-            <view class="popup-report__title-subhead">{{ r.pleaseClickReasons }}</view>
-          </view>
-          <view class="popup-report__content">
-            <radio-group @change="reportRadioChange">
-              <label
-                class="popup-report__content-cell"
-                v-for="item in reportData"
-                :key="item.value"
-              >
-                <view>{{ item.name }}</view>
-                <view>
-                  <radio :value="item.value" :checked="item.value === currentReport" />
-                </view>
-              </label>
-            </radio-group>
-            <view class="popup-report__content-textarea" v-if="currentReport === 'other'">
-              <textarea
-                placeholder-class="textarea-placeholder"
-                :placeholder="r.otherReason"
-                :maxlength="200"
-                :value="otherReasonValue"
-                @input="reportTextareaInput"
-                @touchmove.stop="touchStop"
-                fixed="true"
-              />
-            </view>
-          </view>
-          <view class="popup-report__btn">
-            <button class="popup-report__btn-confirm" @click="reportConfirmClick(2)">
-              {{ r.confirm }}
-            </button>
-            <view class="popup-report__btn-cancel" @click="reportCancelClick">
-              {{ r.cancel }}
-            </view>
-          </view>
-        </view>
+        <qui-report
+          ref="report"
+          :current-login-id="currentLoginId"
+          :thread-id="threadId"
+          :comment-id="commentId"
+          :report-type="2"
+          @reportClose="reportClose"
+        ></qui-report>
       </uni-popup>
     </view>
     <view
@@ -523,31 +492,6 @@ export default {
       ], // 评论排序菜单
       sortVal: 'createdAt', // 排序值
       followStatus: '', // 当前关注状态
-      reportData: [
-        {
-          // 举报理由
-          value: 'advertisingRubbish',
-          name: '广告垃圾',
-        },
-        {
-          value: 'illegalContent',
-          name: '违规内容',
-        },
-        {
-          value: 'maliciousIrrigation',
-          name: '恶意灌水',
-        },
-        {
-          value: 'repeatPost',
-          name: '重复发帖',
-        },
-        {
-          value: 'other',
-          name: '其他',
-        },
-      ],
-      currentReport: '', // 当前举报理由
-      otherReasonValue: '', // 其他理由
       themeParts: 1, // 传给组件的类型
     };
   },
@@ -584,10 +528,6 @@ export default {
     // core公共变量语言包
     c() {
       return this.i18n.t('core');
-    },
-    // report举报语言包
-    r() {
-      return this.i18n.t('report');
     },
     // 时间转化
     localTime() {
@@ -1269,72 +1209,15 @@ export default {
     moreCancel() {
       this.$refs.morePopup.close();
     },
-    // 举报
-    reportClick() {
-      this.otherReasonValue = '';
-      this.currentReport = '';
-      this.$refs.reportPopup.open();
-    },
-    // 切换举报理由
-    reportRadioChange(e) {
-      this.currentReport = e.target.value;
-    },
-    // 监听其他理由输入
-    reportTextareaInput(e) {
-      this.otherReasonValue = e.detail.value;
-    },
-    // 确认举报
-    reportConfirmClick(type) {
-      if (!this.currentReport) {
-        uni.showToast({
-          icon: 'none',
-          title: this.i18n.t('report.pleaseClickReasons'),
-        });
-        return;
-      }
-      let reason = '';
-      if (this.currentReport === 'other') {
-        if (!this.otherReasonValue) {
-          uni.showToast({
-            icon: 'none',
-            title: this.i18n.t('report.enterOtherReason'),
-          });
-          return;
-        }
-        reason = this.otherReasonValue;
-      } else {
-        this.reportData.forEach(item => {
-          if (item.value === this.currentReport) {
-            reason = item.name;
-          }
-        });
-      }
-      const params = {
-        _jv: {
-          type: 'reports',
-        },
-        user_id: this.currentLoginId,
-        thread_id: parseInt(this.threadId),
-        post_id: parseInt(this.commentId),
-        type,
-        reason: `${reason}`,
-      };
-      this.$store.dispatch('jv/post', params).then(res => {
-        if (res._jv) {
-          this.$refs.reportPopup.close();
-          uni.showToast({
-            icon: 'none',
-            title: this.i18n.t('report.reportSucceed'),
-          });
-        }
-      });
-    },
-    // 取消举报
-    reportCancelClick() {
-      this.otherReasonValue = '';
-      this.currentReport = '';
+    // 关闭举报弹框
+    reportClose(val){
       this.$refs.reportPopup.close();
     },
+    // 举报
+    reportClick() {
+      this.$refs.reportPopup.open();
+    },
+    
   },
 };
 </script>

@@ -5,9 +5,8 @@
       src="@/static/essence.png"
       alt
       v-if="themeEssence && themeType == '1'"
-      lazy-load
     ></image>
-    <image class="addAsk" src="@/static/yihuida.svg" alt lazy-load v-if="addAsk === 1"></image>
+    <image class="addAsk" src="@/static/yihuida.svg" alt v-if="addAsk === 1"></image>
     <view class="themeItem" @click="backgroundClick">
       <view class="themeItem__header">
         <view class="themeItem__header__img">
@@ -147,6 +146,7 @@
             ></qui-icon>
             <qui-uparse
               :content="themeContent"
+              :content-parse="themeContentParse"
               class="themeItem__content__wxParse"
               v-if="threadType !== 1"
             ></qui-uparse>
@@ -157,19 +157,20 @@
           v-if="Object.keys(postGoods).length !== 0 && threadType === 6"
         >
           <view>
-            <image class="themeItem__content__good__image" lazy-load :src="postGoods.image_path" />
+            <image class="themeItem__content__good__image" :src="postGoods.image_path" />
           </view>
           <view class="themeItem__content__good__info">
             <view class="themeItem__content__good__title">
               {{ postGoods.title }}
             </view>
             <view class="themeItem__content__good__ft">
-              <view class="themeItem__content__good__price" v-if="Number(postGoods.price) > 0">
-                ￥{{ postGoods.price }}元
+              <view class="themeItem__content__good__price" v-if="dataGoodInfoPrice !== ''">
+                ￥{{ dataGoodInfoPrice }}元
               </view>
             </view>
           </view>
         </view>
+        <!-- 文案 -->
         <view
           class="theme__content__videocover"
           v-if="threadType == 2 && !payStatus && coverImage != null"
@@ -181,13 +182,17 @@
             src="/static/video.svg"
           ></image>
           <image
-            class="themeItem__content__coverimg"
+            :class="
+              videoWidth > videoHeight
+                ? 'themeItem__content__coverimg'
+                : 'themeItem__content__coverimg vertical'
+            "
             :src="coverImage"
             :style="{ width: videoWidth > videoHeight ? '100%' : '50%' }"
-            :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
-            lazy-load
+            :mode="videoWidth > videoHeight ? 'aspectFill' : 'aspectFill'"
           ></image>
         </view>
+        <!-- 视频 -->
         <view
           class="theme__content__videocover"
           v-if="threadType === 2 && payStatus && themeType !== '5'"
@@ -205,7 +210,6 @@
               :src="coverImage"
               :style="{ width: videoWidth > videoHeight ? '100%' : '50%' }"
               :mode="videoWidth > videoHeight ? 'widthFix' : 'aspectFill'"
-              lazy-load
             ></image>
           </view>
           <!-- 视频 -->
@@ -247,6 +251,7 @@
                 playsinline
                 webkit-playsinline
                 x5-playsinline
+                mtt-playsinline
                 :page-gesture="false"
                 :show-fullscreen-btn="true"
                 :show-play-btn="true"
@@ -272,6 +277,7 @@
             </view>
           </view>
         </view>
+        <!-- 音频 -->
         <view v-if="threadType === 4 && payStatus" @click.stop="">
           <qui-audio-cell
             :src="threadAudio.media_url"
@@ -283,6 +289,7 @@
             :is-delete="false"
           ></qui-audio-cell>
         </view>
+        <!-- 图片 -->
         <view v-if="imagesList.length == 1">
           <view class="themeItem__content__imgone">
             <image
@@ -293,7 +300,6 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
-              lazy-load
               alt
             ></image>
           </view>
@@ -308,7 +314,6 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
-              lazy-load
               alt
             ></image>
           </view>
@@ -323,14 +328,12 @@
               :src="image.thumbUrl"
               @click="previewPicture(index)"
               @click.stop=""
-              lazy-load
               alt
             ></image>
             <view
               class="themeItem__content__imgmore__item"
               v-if="imagesList.length % 3 != 0"
               @click.stop=""
-              lazy-load
             ></view>
           </view>
         </view>
@@ -487,6 +490,11 @@ export default {
     themeContent: {
       type: String,
       default: '',
+    },
+    // 已经解析的内容
+    themeContentParse: {
+      type: Object,
+      default: null,
     },
     // 内容类型：0 文字 1 帖子 2 视频 3 图片
     threadType: {
@@ -704,6 +712,7 @@ export default {
       date: 1,
       blocKwidth: 224,
       isWeixin: false,
+      dataGoodInfoPrice: 0, // 商品价格
     };
   },
   computed: {
@@ -724,6 +733,16 @@ export default {
     }),
   },
   created() {
+    if (
+      this.postGoods.price &&
+      (this.postGoods.price.indexOf('-') !== -1 || Number(this.postGoods.price) > 0)
+    ) {
+      this.dataGoodInfoPrice = this.postGoods.price;
+    } else if (this.postGoods.price && Number(this.postGoods.price) <= 0) {
+      this.dataGoodInfoPrice = '';
+    } else {
+      this.dataGoodInfoPrice = '';
+    }
     // #ifdef  H5
     const { isWeixin } = appCommonH.isWeixin();
     this.isWeixin = isWeixin;
@@ -861,7 +880,6 @@ export default {
     height: 119rpx;
   }
 }
-
 .themeItem {
   padding: 30rpx;
   margin: 0;
@@ -1139,6 +1157,11 @@ export default {
 }
 .themeItem__content__coverimg {
   position: relative;
+  // 必须要固定高度，因为uni的image组件，会自己修改图片容器的高度
+  height: 400rpx !important;
+  &.vertical {
+    height: 480rpx !important;
+  }
 }
 .theme__content__videocover {
   position: relative;

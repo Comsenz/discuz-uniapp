@@ -7,7 +7,7 @@
     "build": "npm run build:h5",
     "build:app-plus": "cross-env NODE_ENV=production UNI_PLATFORM=app-plus vue-cli-service uni-build --mode production",
     "build:custom": "cross-env NODE_ENV=production uniapp-cli custom --mode production",
-    "build:h5": "cross-env NODE_ENV=production UNI_PLATFORM=h5 vue-cli-service uni-build --mode production",
+    "build:h5": "cross-env NODE_ENV=production UNI_PLATFORM=h5 vue-cli-service uni-build --mode production --fix",
     "build:mp-alipay": "cross-env NODE_ENV=production UNI_PLATFORM=mp-alipay vue-cli-service uni-build --mode production",
     "build:mp-baidu": "cross-env NODE_ENV=production UNI_PLATFORM=mp-baidu vue-cli-service uni-build --mode production",
     "build:mp-qq": "cross-env NODE_ENV=production UNI_PLATFORM=mp-qq vue-cli-service uni-build --mode production",
@@ -79,6 +79,7 @@
     "@dcloudio/uni-mp-weixin": "^2.0.0-alpha-29920201112004",
     "@dcloudio/uni-ui": "^1.2.7",
     "core-js": "^3.7.0",
+    "es-abstract": "^1.18.0-next.1",
     "flyio": "^0.6.2",
     "jsonpath-plus": "^3.0.0",
     "jweixin-module": "^1.6.0",
@@ -91,6 +92,8 @@
     "vod-js-sdk-v6": "^1.4.11",
     "vue": "^2.6.12",
     "vue-i18n": "^8.22.1",
+    "vue-virtual-scroll-list": "^2.3.1",
+    "vue-virtual-scroller": "^1.0.10",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -130,6 +133,7 @@
     "miniprogram-api-typings": "^2.12.0",
     "node-sass": "^4.14.1",
     "postcss-comment": "^2.0.0",
+    "postcss-html": "^0.36.0",
     "prettier-eslint": "^9.0.2",
     "prettier-stylelint": "^0.4.2",
     "sass-loader": "^8.0.2",
