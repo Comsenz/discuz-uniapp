@@ -116,6 +116,7 @@ export default {
       this.forums.set_reg.register_type === 2
     ) {
       uni.setStorageSync('isSend', true);
+      uni.setStorageSync('register', 1);
       this.$refs.auth.open();
     }
     // #endif

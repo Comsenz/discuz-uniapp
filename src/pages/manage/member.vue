@@ -215,7 +215,16 @@ export default {
       this.$store.dispatch('jv/get', 'groups').then(res => {
         if (res._jv) {
           delete res._jv;
-          this.groupList = res;
+
+          // 只有用户 ID 1 可设置管理员组，同时移除游客组
+          for (let i = 0; i < res.length; i += 1) {
+            if (
+              (this.currentLoginId === 1 && res[i]._jv.id === '1') ||
+              (res[i]._jv.id !== '1' && res[i]._jv.id !== '7')
+            ) {
+              this.groupList.push(res[i]);
+            }
+          }
         }
       });
     },
