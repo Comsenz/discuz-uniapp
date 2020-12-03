@@ -998,6 +998,7 @@ export default {
 
       return threadsAction
         .then(res => {
+          debugger;
           // #ifdef H5
           if (this.homeCategoryId === this.getQueryString('categoryId') && this.pageNum === 1) {
             this.isResetList = true;
@@ -1016,7 +1017,7 @@ export default {
                 : null;
             return newItem;
           });
-
+          debugger;
           if (this.isResetList) {
             this.threads = newRes;
             this.$nextTick(() => {
@@ -1043,6 +1044,7 @@ export default {
     },
     // 延迟赋值的首页数据请求
     lazyLoadThreads() {
+      debugger;
       const params = this.getThreadsParams();
 
       const threadsAction = status.run(() =>
@@ -1130,7 +1132,10 @@ export default {
       // 首页主题内容列表
       // 在安卓手机的微信浏览器打开页面，使用微信登陆的时候，会出现跳转后因为首页渲染时，首页并不是展示中，导致虚拟滚动计算问题，所以需要判断是否延迟写入数据。
       this.$nextTick(() => {
-        if (this.showHome && window.location.pathname === '/') {
+        if (
+          this.showHome &&
+          (window.location.pathname === '/' || window.location.pathname === '/pages/home/index')
+        ) {
           this.loadThreads();
         } else {
           this.lazyLoadThreads();
