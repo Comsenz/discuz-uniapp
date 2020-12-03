@@ -1042,7 +1042,6 @@ export default {
     },
     // 延迟赋值的首页数据请求
     lazyLoadThreads() {
-      debugger;
       const params = this.getThreadsParams();
 
       const threadsAction = status.run(() =>
