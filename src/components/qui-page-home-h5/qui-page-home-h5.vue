@@ -998,7 +998,6 @@ export default {
 
       return threadsAction
         .then(res => {
-          debugger;
           // #ifdef H5
           if (this.homeCategoryId === this.getQueryString('categoryId') && this.pageNum === 1) {
             this.isResetList = true;
@@ -1017,7 +1016,6 @@ export default {
                 : null;
             return newItem;
           });
-          debugger;
           if (this.isResetList) {
             this.threads = newRes;
             this.$nextTick(() => {
