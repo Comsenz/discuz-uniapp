@@ -14,7 +14,7 @@
 - releases-xxxx: 长期维护分支,主要作为特殊部署的存在,一般只会从master合并到releases-xxx分支,releases原则上永远不会合并回主干
 
 | 分支名 | 稳定性 | 源 | 合并方式 |
-| :--- | :---: | :---: |
+| :--- | :---: | :---: | --- |
 | master | 稳定 | - |pull request |
 | release | 稳定 | master |pull request |
 | release-xxx | 不稳定 | master |merge，pull request |
