@@ -11,6 +11,7 @@ import { THEME_DEFAULT, THEME_DARK, DISCUZ_REQUEST_HOST, SITE_PAY } from './comm
 import appCommonH from '@/utils/commonHelper';
 // #endif
 
+
 // #ifdef H5
 const publicWhitelistPage = [
   '/pages/home/index',
@@ -59,6 +60,7 @@ const payWhiteListPage = [
   '/pages/site/partner-invite',
 ];
 const apploaded = () => {
+
   const app = getApp();
   const forums = app.$store.getters['jv/get']('forums/1');
 

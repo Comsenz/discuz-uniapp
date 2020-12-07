@@ -151,7 +151,8 @@
     "stylelint-webpack-plugin": "^1.2.3",
     "terser-webpack-plugin": "^2.3.8",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^4.44.2"
+    "webpack": "^4.44.2",
+    "webpack-bundle-analyzer": "^4.1.0"
   },
   "browserslist": [
     "Android >= 4",
