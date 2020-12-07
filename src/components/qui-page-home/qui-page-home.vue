@@ -527,6 +527,10 @@ export default {
     // #endif
   },
   mounted() {
+    // #ifdef MP-WEIXIN-PLAY
+    console.log(3333);
+    // #endif
+
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
       this.loadCategories();

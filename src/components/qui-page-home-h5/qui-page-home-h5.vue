@@ -536,6 +536,9 @@ export default {
     uni.$off('updateMy');
   },
   mounted() {
+    // #ifdef H5-PLAY
+    console.log(3333);
+    // #endif
     this.$u.event.$on('tagClick', tagId => {
       this.isResetList = true;
       this.loadCategories();
