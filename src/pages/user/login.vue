@@ -78,7 +78,12 @@
           <!-- 开启注册功能才显示 -->
           <text
             class="login-box-ft-btn"
-            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            v-if="
+              forum &&
+                forum.set_reg.register_type === 0 &&
+                forum.set_reg &&
+                forum.set_reg.register_close
+            "
             @click="jump2Register"
           >
             {{ i18n.t('user.registerUser') }}
@@ -88,6 +93,7 @@
             v-if="
               forum &&
                 forum.set_reg &&
+                forum.set_reg.register_type === 0 &&
                 forum.set_reg.register_close &&
                 forum.qcloud &&
                 forum.qcloud.qcloud_sms
@@ -180,7 +186,12 @@
           <!-- 开启注册功能才显示 -->
           <text
             class="login-box-ft-btn"
-            v-if="forum && forum.set_reg && forum.set_reg.register_close"
+            v-if="
+              forum &&
+                forum.set_reg &&
+                forum.set_reg.register_type === 0 &&
+                forum.set_reg.register_close
+            "
             @click="jump2Register"
           >
             {{ i18n.t('user.registerUser') }}
@@ -190,6 +201,7 @@
             v-if="
               forum &&
                 forum.set_reg &&
+                forum.set_reg.register_type === 0 &&
                 forum.set_reg.register_close &&
                 forum.qcloud &&
                 forum.qcloud.qcloud_sms
