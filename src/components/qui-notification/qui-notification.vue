@@ -407,6 +407,7 @@ export default {
     &__con {
       &__text {
         color: --color(--qui-FC-333);
+        word-break: break-all;
       }
 
       &__space {
