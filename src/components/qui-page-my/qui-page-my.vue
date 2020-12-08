@@ -13,7 +13,7 @@
       <view class="my-info">
         <view class="my-info__box">
           <view class="my-info__box__detail">
-            <qui-avatar :user="userInfo" :is-real="userInfo.isReal" />
+            <qui-avatar :user="userInfo" :is-real="userInfo.isReal" @click="jumpUserPage" />
             <qui-cell-item
               :title="userInfo.username || ''"
               :brief="userInfo.groupsName"
@@ -210,6 +210,11 @@ export default {
     ...mapMutations({
       setFooterIndex: 'footerTab/SET_FOOTERINDEX',
     }),
+    jumpUserPage() {
+      uni.navigateTo({
+        url: `/pages/profile/index?userId=${this.userId}`,
+      });
+    },
     changeCheck(e) {
       getApp().globalData.themeChanged(e ? THEME_DARK : THEME_DEFAULT);
     },

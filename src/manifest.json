@@ -12,19 +12,19 @@
       /* 路由跳转模式 */
       "mode": "history",
       /* 应用基础路径，例如，如果整个单页应用服务在 /app/ 下，然后 base 就应该设为 "/app/" */
-      "base": "/",
-      "optimization": {
-        "prefetch": true,
-        "preload": true,
-        "treeShaking": {
-          "enable": true
-        }
+      "base": "/"
+    },
+    "optimization": {
+      "prefetch": true,
+      "preload": true,
+      "treeShaking": {
+        "enable": true
       }
     }
   },
   "mp-weixin": {
     /* 微信小程序特有相关 */
-    "appid": "wxbf0fc4ac9d6a2171",
+    "appid": "wx7f778478f6f501fa",
     "setting": {
       "urlCheck": false
     },

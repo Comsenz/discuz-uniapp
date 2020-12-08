@@ -32,7 +32,11 @@
     "release:patch": "standard-version -r patch -n",
     "prerelease:alpha": "standard-version -p alpha -n",
     "prerelease:beta": "standard-version -p beta -n",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "dev:h5-pay": "cross-env NODE_ENV=development uniapp-cli custom --mode development \"h5-pay\"",
+    "build:h5-pay": "cross-env NODE_ENV=production UNI_OUTPUT_DIR=dist/build/h5-pay uniapp-cli custom --mode production \"h5-pay\" --fix",
+    "dev:mp-weixin-pay": "cross-env NODE_ENV=development UNI_PLATFORM=mp-weixin UNI_OUTPUT_DIR=dist/build/mp-weixin-pay uniapp-cli custom --mode development \"mp-weixin-pay\"",
+    "build:mp-weixin-pay": "cross-env NODE_ENV=production UNI_PLATFORM=mp-weixin UNI_OUTPUT_DIR=dist/build/mp-weixin-pay uniapp-cli custom --mode production \"mp-weixin-pay\" --fix"
   },
   "config": {
     "commitizen": {
@@ -147,13 +151,35 @@
     "stylelint-webpack-plugin": "^1.2.3",
     "terser-webpack-plugin": "^2.3.8",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^4.44.2"
+    "webpack": "^4.44.2",
+    "webpack-bundle-analyzer": "^4.1.0"
   },
   "browserslist": [
     "Android >= 4",
     "ios >= 8"
   ],
   "uni-app": {
-    "scripts": {}
+    "scripts": {
+      "h5-pay": {
+        "title": "h5-pay",
+        "BROWSER": "Chrome",
+        "env": {
+          "UNI_PLATFORM": "h5"
+        },
+        "define": {
+          "H5-PLAY": true
+        }
+      },
+      "mp-weixin-pay": {
+        "title": "mp-weixin-pay",
+        "BROWSER": "Chrome",
+        "env": {
+          "UNI_PLATFORM": "mp-weixin"
+        },
+        "define": {
+          "MP-WEIXIN-PLAY": true
+        }
+      }
+    }
   }
 }

@@ -85,6 +85,9 @@ limitations under the License.
 1. [Git 分支开发工作流](./.github/GIT_BRANCH_FLOW.md)
 2. [Git 提交规范](./.github/COMMIT_STYLE.md)
 
+## 多场景开发方案
+1. [开发规范](./.github/MANY-SCENARIOS.md)
+
 ## 代码评审相关
 1. [PR 说明](./.github/PR_TML.md)
 2. 待补充
