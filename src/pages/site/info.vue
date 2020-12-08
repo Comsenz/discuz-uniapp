@@ -151,7 +151,7 @@ export default {
         });
       }
     });
-    // #ifdef  H5
+    // #ifdef H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
     this.browser = 1;

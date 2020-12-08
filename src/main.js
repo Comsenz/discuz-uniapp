@@ -68,12 +68,15 @@ const apploaded = () => {
     !app.$store.getters['session/get']('isLogin') &&
     appCommonH.isWeixin().isWeixin &&
     forums.set_reg.register_type === 2 &&
-    !app.$route.query.hasOwnProperty('code')
+    !uni.getStorageSync('oauth_wechat')
   ) {
     uni.setStorageSync('register', 1);
+    uni.setStorageSync('oauth_wechat', 1);
     app.$store.dispatch('session/wxh5Login');
     return;
   }
+
+  uni.removeStorageSync('oauth_wechat');
 
   if (forums.set_site) {
     const isLogin = app.$store.getters['session/get']('isLogin');
