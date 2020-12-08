@@ -23,200 +23,32 @@
         {{ i18n.t('user.login') }}
       </view>
       <!-- #ifdef MP-WEIXIN -->
-      <view class="login-box-ft">
-        <view
-          class="login-box-ft-title"
-          v-if="
-            (forum && forum.passport && forum.passport.miniprogram_close) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
-              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
-          "
-        >
-          {{ i18n.t('user.otherLoginMode') }}
-        </view>
-        <view class="login-box-ft-con">
-          <image
-            v-if="forum && forum.passport && forum.passport.miniprogram_close"
-            :class="[
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
-              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
-                ? 'right'
-                : '',
-              'login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="jump2WechatLogin"
-          />
-          <!-- 开启短信功能才显示 -->
-          <image
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            :class="[
-              forum && forum.passport && forum.passport.miniprogram_close ? 'left' : '',
-              forum && forum.ucenter && forum.ucenter.ucenter && isShow ? 'right' : '',
-              'login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/shouji.svg"
-            @click="jump2PhoneLogin"
-          />
-          <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            :class="[
-              (forum && forum.passport && forum.passport.miniprogram_close) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms)
-                ? 'left'
-                : '',
-              'login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/UC.svg"
-            @click="jump2UcLogin"
-          />
-        </view>
-        <view>
-          <!-- 开启注册功能才显示 -->
-          <text
-            class="login-box-ft-btn"
-            v-if="
-              forum &&
-                forum.set_reg.register_type === 0 &&
-                forum.set_reg &&
-                forum.set_reg.register_close
-            "
-            @click="jump2Register"
-          >
-            {{ i18n.t('user.registerUser') }}
-          </text>
-          <text
-            class="login-box-ft-line"
-            v-if="
-              forum &&
-                forum.set_reg &&
-                forum.set_reg.register_type === 0 &&
-                forum.set_reg.register_close &&
-                forum.qcloud &&
-                forum.qcloud.qcloud_sms
-            "
-          ></text>
-          <!-- 开启短信功能才显示 -->
-          <text
-            class="login-box-ft-text"
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findpwd"
-          >
-            {{ i18n.t('user.forgetPassword') }}
-          </text>
-        </view>
-      </view>
+      <qui-login-mode
+        :show-wx-icon="showMpIcon"
+        :show-phone-icon="showPhoneIcon"
+        :show-uc-icon="showUcIcon"
+        :show-register-btn="showRegisterBtn"
+        :is-no-sense-mode="isNoSenseMode"
+        @jump2WechatLogin="jump2WechatLogin"
+        @jump2PhoneLogin="jump2PhoneLogin"
+        @jump2UcLogin="jump2UcLogin"
+        @jump2Register="jump2Register"
+        @jump2findpwd="jump2findpwd"
+      ></qui-login-mode>
       <!-- #endif -->
       <!-- #ifdef H5 -->
-      <view class="login-box-ft">
-        <view
-          class="login-box-ft-title"
-          v-if="
-            (forum && forum.passport && forum.passport.offiaccount_close) ||
-              (forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
-              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
-          "
-        >
-          {{ i18n.t('user.otherLoginMode') }}
-        </view>
-        <view class="login-box-ft-con">
-          <image
-            v-if="forum && forum.passport && forum.passport.offiaccount_close"
-            :class="[
-              (!isWeixin &&
-                forum &&
-                forum.set_reg &&
-                forum.set_reg.register_type !== 2 &&
-                forum.qcloud &&
-                forum.qcloud.qcloud_sms) ||
-              (isWeixin && forum && forum.qcloud && forum.qcloud.qcloud_sms) ||
-              (forum && forum.ucenter && forum.ucenter.ucenter && isShow)
-                ? 'right'
-                : '',
-              'login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/weixin.svg"
-            @click="jump2WechatLogin"
-          />
-          <!-- 开启短信功能才显示 -->
-          <image
-            v-if="
-              (!isWeixin &&
-                forum &&
-                forum.set_reg &&
-                forum.set_reg.register_type !== 2 &&
-                forum.qcloud &&
-                forum.qcloud.qcloud_sms) ||
-                (isWeixin && forum && forum.qcloud && forum.qcloud.qcloud_sms)
-            "
-            :class="[
-              forum && forum.passport && forum.passport.offiaccount_close ? 'left' : '',
-              forum && forum.ucenter && forum.ucenter.ucenter && isShow ? 'right' : '',
-              'login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/shouji.svg"
-            @click="jump2PhoneLogin"
-          />
-          <image
-            v-if="forum && forum.ucenter && forum.ucenter.ucenter && isShow"
-            :class="[
-              (forum && forum.passport && forum.passport.offiaccount_close) ||
-              (!isWeixin &&
-                forum &&
-                forum.set_reg &&
-                forum.set_reg.register_type !== 2 &&
-                forum.qcloud &&
-                forum.qcloud.qcloud_sms) ||
-              (isWeixin && forum && forum.qcloud && forum.qcloud.qcloud_sms)
-                ? 'left'
-                : '',
-              'login-box-ft-con-image',
-            ]"
-            lazy-load
-            src="@/static/UC.svg"
-            @click="jump2UcLogin"
-          />
-        </view>
-        <view>
-          <!-- 开启注册功能才显示 -->
-          <text
-            class="login-box-ft-btn"
-            v-if="
-              forum &&
-                forum.set_reg &&
-                forum.set_reg.register_type === 0 &&
-                forum.set_reg.register_close
-            "
-            @click="jump2Register"
-          >
-            {{ i18n.t('user.registerUser') }}
-          </text>
-          <text
-            class="login-box-ft-line"
-            v-if="
-              forum &&
-                forum.set_reg &&
-                forum.set_reg.register_type === 0 &&
-                forum.set_reg.register_close &&
-                forum.qcloud &&
-                forum.qcloud.qcloud_sms
-            "
-          ></text>
-          <!-- 开启短信功能才显示 -->
-          <text
-            class="login-box-ft-text"
-            v-if="forum && forum.qcloud && forum.qcloud.qcloud_sms"
-            @click="jump2findpwd"
-          >
-            {{ i18n.t('user.forgetPassword') }}
-          </text>
-        </view>
-      </view>
+      <qui-login-mode
+        :show-wx-icon="showH5Icon"
+        :show-phone-icon="showPhoneIcon"
+        :show-uc-icon="showUcIcon"
+        :show-register-btn="showRegisterBtn"
+        :is-no-sense-mode="isNoSenseMode"
+        @jump2WechatLogin="jump2WechatLogin"
+        @jump2PhoneLogin="jump2PhoneLogin"
+        @jump2UcLogin="jump2UcLogin"
+        @jump2Register="jump2Register"
+        @jump2findpwd="jump2findpwd"
+      ></qui-login-mode>
       <!-- #endif -->
     </view>
     <qui-registration-agreement></qui-registration-agreement>
@@ -249,6 +81,31 @@ export default {
       isWeixin: false, // 默认不是微信浏览器
       // #endif
     };
+  },
+  computed: {
+    showMpIcon() {
+      return this.forum && this.forum.passport && this.forum.passport.miniprogram_close;
+    },
+    showH5Icon() {
+      return this.forum && this.forum.passport && this.forum.passport.offiaccount_close;
+    },
+    showPhoneIcon() {
+      return this.forum && this.forum.qcloud && this.forum.qcloud.qcloud_sms;
+    },
+    showUcIcon() {
+      return this.forum && this.forum.ucenter && this.forum.ucenter.ucenter && this.isShow;
+    },
+    showRegisterBtn() {
+      return (
+        this.forum &&
+        this.forum.set_reg &&
+        this.forum.set_reg.register_type === 0 &&
+        this.forum.set_reg.register_close
+      );
+    },
+    isNoSenseMode() {
+      return this.forum && this.forum.set_reg && this.forum.set_reg.register_type !== 2;
+    },
   },
   onLoad() {
     this.$store.dispatch('forum/setError', {
@@ -364,46 +221,5 @@ export default {
     background-color: --color(--qui-MAIN);
     border-radius: 5rpx;
   }
-
-  &-ft {
-    margin: 160rpx 0 50rpx;
-    text-align: center;
-
-    &-title {
-      color: rgba(221, 221, 221, 1);
-    }
-
-    &-con {
-      margin: 30rpx 0 100rpx;
-
-      &-image {
-        width: 100rpx;
-        height: 100rpx;
-      }
-    }
-
-    &-btn {
-      color: rgba(24, 120, 243, 1);
-    }
-
-    &-text {
-      color: rgba(170, 170, 170, 1);
-    }
-
-    &-line {
-      width: 0rpx;
-      height: 32rpx;
-      margin: 0 50rpx;
-      border: 2rpx solid rgba(221, 221, 221, 1);
-    }
-  }
-}
-
-.right {
-  margin-right: 20rpx;
-}
-
-.left {
-  margin-left: 20rpx;
 }
 </style>
