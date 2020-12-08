@@ -116,7 +116,7 @@ uni.$on('apploaded', apploaded);
 // #endif
 
 // 兼容 allSettled 方法处理：https://www.npmjs.com/package/promise.allsettled
-const allSettled = require('promise.allsettled');
+const allSettled = require("@ungap/promise-all-settled").default;
 
 Promise.allSettled = Promise.allSettled || allSettled;
 
