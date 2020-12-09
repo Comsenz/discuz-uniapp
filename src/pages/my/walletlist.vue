@@ -124,7 +124,7 @@ export default {
         'page[limit]': this.pageSize,
         'filter[change_type_exclude]': [11, 81],
         'filter[start_time]': `${this.date}-01-00-00-00`,
-        'filter[end_time]': `${this.date}-${days}-00-00-00`,
+        'filter[end_time]': `${this.date}-${days}-23-59-59`,
       };
       if (type && type === 'filter') {
         params.pageNum = 1;
