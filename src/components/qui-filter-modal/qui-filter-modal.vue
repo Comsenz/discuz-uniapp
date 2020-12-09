@@ -1,31 +1,66 @@
 <template>
-  <view
-    class="filter-modal"
-    :class="{ show: showValue }"
-    @tap.stop="cancel"
-    @touchmove.self.stop.prevent=""
-  >
-    <view class="filter-modal__content" v-if="showValue" @tap.stop :style="{ top: contentTop }">
-      <view class="filter-modal__content__search" v-if="showSearch" @click="searchClick">
-        <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
-        {{ i18n.t('search.search') }}
-      </view>
-      <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
-        <view class="filter-modal__content__item-title">{{ item.title }}</view>
-        <view
-          v-for="(filterItem, filterIndex) in item.data"
-          :class="!filterItem.selected ? '' : 'active'"
-          :key="filterIndex"
-          @click="changeSelected(filterItem, index, filterIndex)"
-          class="filter-modal__content__item-detail"
-        >
-          {{ filterItem.label }}
+  <view>
+    <!-- #ifndef H5 -->
+    <view class="filter-modal" :class="{ show: showValue }" @tap.stop="cancel">
+      <view class="filter-modal__content" v-if="showValue" @tap.stop :style="{ top: contentTop }">
+        <view class="filter-modal__content__search" v-if="showSearch" @click="searchClick">
+          <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
+          {{ i18n.t('search.search') }}
+        </view>
+        <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
+          <view class="filter-modal__content__item-title">{{ item.title }}</view>
+          <view
+            v-for="(filterItem, filterIndex) in item.data"
+            :class="!filterItem.selected ? '' : 'active'"
+            :key="filterIndex"
+            @click="changeSelected(filterItem, index, filterIndex)"
+            class="filter-modal__content__item-detail"
+          >
+            {{ filterItem.label }}
+          </view>
+        </view>
+        <view class="filter-modal__content__confirm" @tap.stop="confirm" v-if="ifNeedConfirm">
+          {{ confirmText || i18n.t('search.filter') }}
         </view>
       </view>
-      <view class="filter-modal__content__confirm" @tap.stop="confirm" v-if="ifNeedConfirm">
-        {{ confirmText || i18n.t('search.filter') }}
+    </view>
+    <!-- #endif -->
+    <!-- #ifdef H5 -->
+    <view
+      class="filter-modal"
+      :class="{ show: showValue }"
+      @tap.stop="cancel"
+      @touchmove.self.stop.prevent=""
+    >
+      <view
+        class="filter-modal__content"
+        v-if="showValue"
+        @touchmove.stop=""
+        @tap.stop
+        :style="{ top: contentTop }"
+      >
+        <view class="filter-modal__content__search" v-if="showSearch" @click="searchClick">
+          <qui-icon class="icon-search" name="icon-search" size="26" color="#777"></qui-icon>
+          {{ i18n.t('search.search') }}
+        </view>
+        <view v-for="(item, index) in filterList" class="filter-modal__content__item" :key="index">
+          <view class="filter-modal__content__item-title">{{ item.title }}</view>
+          <view
+            v-for="(filterItem, filterIndex) in item.data"
+            :class="!filterItem.selected ? '' : 'active'"
+            :key="filterIndex"
+            @click="changeSelected(filterItem, index, filterIndex)"
+            class="filter-modal__content__item-detail"
+          >
+            {{ filterItem.label }}
+          </view>
+        </view>
+        <view class="filter-modal__content__confirm" @tap.stop="confirm" v-if="ifNeedConfirm">
+          {{ confirmText || i18n.t('search.filter') }}
+        </view>
       </view>
     </view>
+    <!-- #endif -->
   </view>
 </template>
 

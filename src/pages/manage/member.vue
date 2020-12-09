@@ -208,8 +208,8 @@ export default {
     },
     // 调用 获取所有用户组 接口
     getGroupList() {
+      this.groupList = [];
       if (this.forums.other && !this.forums.other.can_edit_user_group) {
-        this.groupList = [];
         return;
       }
       this.$store.dispatch('jv/get', 'groups').then(res => {
