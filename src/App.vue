@@ -156,6 +156,9 @@ export default {
     } else if(/^\/category\/\d+$/i.test(e.path)){
       const matchs = e.path.match(/^\/category\/(\d+)$/i);
       url = `/?categoryId=${matchs[1]}`;
+    } else if(/^\/topic\/\d+$/i.test(e.path)) {
+      const matchs = e.path.match(/^\/topic\/(\d+)$/i);
+      url = `/pages/topic/content?id=${matchs[1]}`;
     }
 
     uni.redirectTo({url});
