@@ -142,20 +142,19 @@ function html2json(html, customHandler, imageProp, parse) {
 
       // 对img添加额外数据
       if (node.tag === 'img') {
-
         const id = parseInt(node.attr.title);
         const attach = parse.$store.getters['jv/get'](`attachments/${id}`);
         if(attach) {
           node.attr.data_url = attach.url;
         }
 
-        let imgUrl = node.attr.data_url ? node.attr.data_url : node.attr.src;
+        let imgUrl = node.attr.src;
         imgUrl = wxDiscode.urlToHttpUrl(imgUrl, imageProp.domain);
         Object.assign(node.attr, imageProp, {
           src: imgUrl || '',
         });
-        if (imgUrl) {
-          results.imageUrls.push(imgUrl);
+        if (node.attr.data_url) {
+          results.imageUrls.push(node.attr.data_url);
         }
       }
 
