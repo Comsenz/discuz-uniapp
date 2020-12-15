@@ -320,19 +320,27 @@
         </view>
         <view v-if="imagesList.length >= 3">
           <view class="themeItem__content__imgmore">
-            <image
-              class="themeItem__content__imgmore__item"
-              v-for="(image, index) in imagesList"
-              :key="index"
-              :mode="modeVal"
-              :src="image.thumbUrl"
-              @click="previewPicture(index)"
-              @click.stop=""
-              alt
-            ></image>
             <view
               class="themeItem__content__imgmore__item"
-              v-if="imagesList.length % 3 != 0"
+              v-for="(image, index) in imagesList.slice(0, 9)"
+              :key="index"
+              :style="{ position: index === 8 ? 'relative' : '' }"
+            >
+              <image
+                class="imgmore-image"
+                :mode="modeVal"
+                :src="image.thumbUrl"
+                @click="previewPicture(index)"
+                @click.stop=""
+                alt
+              ></image>
+              <view class="imgmore_num" v-if="index === 8 && imagesList.length > 9">
+                +{{ imagesList.length }}
+              </view>
+            </view>
+            <view
+              class="themeItem__content__imgmore__item"
+              v-if="imagesList.length <= 9 && imagesList.length % 3 != 0"
               @click.stop=""
             ></view>
           </view>
@@ -344,7 +352,7 @@
           </view>
         </view> -->
         <view
-          class="themeItem__content__tags  themeItem__content__tags--position"
+          class="themeItem__content__tags themeItem__content__tags--position"
           v-if="threadPosition.length > 0"
         >
           <view class="themeItem__content__tags__item" @click="topicPosition" @click.stop="">
@@ -1145,6 +1153,25 @@ export default {
       }
     }
   }
+}
+.imgmore-image {
+  width: 100%;
+  height: 211rpx;
+}
+.imgmore_num {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  width: 100rpx;
+  height: 50rpx;
+  margin: -25rpx 0 0 -50rpx;
+  font-size: $fg-f3;
+  line-height: 50rpx;
+  color: #fff;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 25rpx;
 }
 .themeItem__content__text__longessay__publish {
   display: inline-block;
