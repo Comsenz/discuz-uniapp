@@ -54,6 +54,11 @@ export default {
         return {};
       },
     },
+    // 删除状态 1 已登录 0 未登录-扩展信息上传
+    loginStatus: {
+      default: 1,
+      type: Number,
+    },
   },
   data() {
     let showAdd = true;
@@ -95,6 +100,9 @@ export default {
       },
       deep: true,
       immediate: true,
+    },
+    fileList() {
+      this.$emit('change');
     },
   },
   mounted() {
@@ -162,12 +170,20 @@ export default {
                 });
               } else {
                 const { code } = JSON.parse(data.data).errors[0];
-                that.$refs.toast.show({ message: code });
+                if (that.loginStatus === 1) {
+                  that.$refs.toast.show({ message: code });
+                } else {
+                  that.$emit('setToolTips', code);
+                }
               }
               uni.hideLoading();
             },
             fail(error) {
-              that.$refs.toast.show({ message: error });
+              if (that.loginStatus === 1) {
+                that.$refs.toast.show({ message: error });
+              } else {
+                that.$emit('setToolTips', error);
+              }
               uni.hideLoading();
             },
           });
@@ -182,15 +198,26 @@ export default {
       if (el.fileFormat && this.fileFormat.indexOf(fileFormat) === -1) {
         const message =
           this.i18n.t('profile.pleaseselect') + el.fileFormat + this.i18n.t('profile.fileformat');
-        el.$refs.toast.show({
-          message,
-        });
+        if (this.loginStatus === 1) {
+          el.$refs.toast.show({
+            message,
+          });
+        } else {
+          this.$emit('setToolTips', message);
+        }
         return false;
       }
       if (el.fileSize && (file.size / 1024).toFixed(0) > parseInt(el.fileSize, 10) * 1000) {
-        el.$refs.toast.show({
-          message: `${this.i18n.t('profile.filesizecannotexceed')}${el.fileSize}M`,
-        });
+        if (this.loginStatus === 1) {
+          el.$refs.toast.show({
+            message: `${this.i18n.t('profile.filesizecannotexceed')}${el.fileSize}M`,
+          });
+        } else {
+          this.$emit(
+            'setToolTips',
+            `${this.i18n.t('profile.filesizecannotexceed')}${el.fileSize}M`,
+          );
+        }
         return false;
       }
       return true;
@@ -212,7 +239,9 @@ export default {
       fData.append('type', 0);
       const xhr = new XMLHttpRequest();
       xhr.open('POST', this.url, true);
-      xhr.setRequestHeader('authorization', this.header.authorization);
+      if (this.loginStatus === 1) {
+        xhr.setRequestHeader('authorization', this.header.authorization);
+      }
       xhr.onload = res => {
         const { status } = res.target;
         const data = JSON.parse(res.target.response);
@@ -224,15 +253,21 @@ export default {
             },
             id: data.data.id,
           });
-        } else {
+        } else if (this.loginStatus === 1) {
           this.$refs.toast.show({ message: data.errors[0].detail[0] });
+        } else {
+          this.$emit('setToolTips', data.errors[0].detail[0]);
         }
         uni.hideLoading();
       };
       // xhr.timeout = 30000; // 超时时间，单位是毫秒
       xhr.onerror = res => {
         uni.hideLoading();
-        this.$refs.toast.show({ message: res });
+        if (this.loginStatus === 1) {
+          this.$refs.toast.show({ message: res });
+        } else {
+          this.$emit('setToolTips', res);
+        }
       };
       xhr.send(fData);
     },

@@ -19,7 +19,21 @@
           v-model="password"
         />
         <input
-          v-if="forum && forum.set_reg && forum.set_reg.register_validate"
+          class="input"
+          type="password"
+          maxlength="50"
+          :placeholder="i18n.t('user.repeatpasswd')"
+          placeholder-style="color: #ddd"
+          v-model="repeatpasswd"
+          v-if="forum && forum.set_reg && forum.set_site.open_ext_fields === '1'"
+        />
+        <input
+          v-if="
+            forum &&
+              forum.set_reg &&
+              forum.set_reg.register_validate &&
+              forum.set_site.open_ext_fields !== '1'
+          "
           class="input"
           maxlength="50"
           :placeholder="i18n.t('user.reason')"
@@ -28,7 +42,11 @@
         />
       </view>
       <view class="register-box-btn" id="TencentCaptcha" @click="handleRegister">
-        {{ i18n.t('user.register') }}
+        {{
+          forum && forum.set_reg && forum.set_site.open_ext_fields === '1'
+            ? i18n.t('user.nextRegister')
+            : i18n.t('user.register')
+        }}
       </view>
       <view class="register-box-ft">
         <view class="register-box-ft-btn" @click="jump2Login">{{ i18n.t('user.login') }}</view>
@@ -58,6 +76,7 @@ export default {
     return {
       username: '', // 用户名
       password: '', // 密码
+      repeatpasswd: '', // 重复密码
       reason: '', // 注册原因
       site_mode: '', // 站点模式
       forum: {}, // 配置
@@ -72,7 +91,6 @@ export default {
   },
   onLoad() {
     this.getForum();
-
     // 接受验证码captchaResult
     this.$u.event.$on('captchaResult', result => {
       this.ticket = result.ticket;
@@ -103,6 +121,12 @@ export default {
         uni.showToast({
           icon: 'none',
           title: this.i18n.t('user.passwordEmpty'),
+          duration: 2000,
+        });
+      } else if (this.password !== this.repeatpasswd) {
+        uni.showToast({
+          icon: 'none',
+          title: this.i18n.t('user.reenter'),
           duration: 2000,
         });
       } else if (this.forum && this.forum.set_reg && this.forum.set_reg.register_captcha) {
@@ -195,6 +219,11 @@ export default {
       this.$store
         .dispatch('session/h5Register', params)
         .then(res => {
+          console.log(res, '注册');
+          if (res && res.statusCode === 201 && res.data && res.data.data.attributes.new_user) {
+            this.jump2RegisterExtendPage();
+            return;
+          }
           if (res && res.data && res.data.data && res.data.data.id) {
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {
