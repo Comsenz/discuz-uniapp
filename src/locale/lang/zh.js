@@ -832,7 +832,7 @@ export default {
     circlemaster: '站长',
     site: '站点',
     paynow: '立即付费',
-    justonelaststepjoinnow: '只需最后一步，立即加入',
+    onelaststepjoinnow: '最后一步，立即加入',
     circlemode: '站点模式',
     paymentmode: '付费模式',
     publicmode: '公开模式',
@@ -875,6 +875,7 @@ export default {
   // 登录注册
   user: {
     login: '登录',
+    paytojion: '付费加入',
     register: '注册',
     registerReason: '注册原因',
     submit: '提交',
@@ -902,6 +903,8 @@ export default {
     loginBindId: '登录并绑定微信号',
     loginBindPhone: '登录并绑定手机号',
     logout: '退出登录',
+    loginnow: '立即登录',
+    registertojoin: '注册加入',
     noBind: '退出并解绑',
     registerSuccess: '注册成功',
     registerBindSuccess: '注册绑定成功',

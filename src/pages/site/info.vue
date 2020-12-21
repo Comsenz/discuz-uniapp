@@ -3,18 +3,22 @@
     <qui-site-thread share-url="pages/site/info"></qui-site-thread>
     <view class="site-invite">
       <view class="site-invite__detail" v-if="isLogin">
-        <text>{{ i18n.t('site.justonelaststepjoinnow') }}</text>
+        <text>{{ `${i18n.t('user.dear')}${user && user.username} ,` }}</text>
+        <text>{{ i18n.t('site.onelaststepjoinnow') }}</text>
         <text class="site-invite__detail__bold">
           {{ forums.set_site && forums.set_site.site_name }}
         </text>
         <text>{{ i18n.t('site.site') }}</text>
       </view>
     </view>
+    <!-- 底部导航 -->
     <view class="site-submit">
       <view>
+        <!-- 价格 -->
         <view class="site-submit__price">
           {{ `¥${(forums.set_site && forums.set_site.site_price) || 0}` }}
         </view>
+        <!-- 有效期 -->
         <view class="site-submit__expire">
           {{
             forums.set_site && forums.set_site.site_expire
@@ -24,9 +28,30 @@
           }}
         </view>
       </view>
-      <qui-button type="primary" @click="submit" size="small">
-        {{ isLogin ? i18n.t('site.paynow') : i18n.t('site.join') + i18n.t('site.site') }}
-      </qui-button>
+      <!-- 未登陆显示立即登录和注册加入,无感模式下显示只加入站点 -->
+      <view v-if="!isLogin" class="site-submit__btn">
+        <qui-button @click="submit('login')" size="small" v-if="register_type !== 2">
+          {{ i18n.t('user.loginnow') }}
+        </qui-button>
+        <qui-button
+          type="primary"
+          @click="submit('register')"
+          size="small"
+          v-if="register_type !== 2"
+        >
+          {{ i18n.t('user.registertojoin') }}
+        </qui-button>
+        <qui-button type="primary" @click="submit" size="small" v-if="register_type === 2">
+          {{ i18n.t('site.join') + i18n.t('site.site') }}
+        </qui-button>
+      </view>
+      <!-- 已登陆显示退出登录和付费加入 -->
+      <view v-else class="site-submit__btn">
+        <qui-login-out></qui-login-out>
+        <qui-button type="primary" @click="toPay" size="small">
+          {{ i18n.t('user.paytojion') }}
+        </qui-button>
+      </view>
     </view>
     <view v-if="payShowStatus">
       <qui-pay
@@ -127,6 +152,15 @@ export default {
     },
     user() {
       return this.$store.getters['jv/get'](`users/${this.userId}`);
+    },
+    register_type() {
+      let registerType = this.forums.set_reg && this.forums.set_reg.register_type;
+      const ifWeixin = this.isWeixin;
+      // 无感模式的时候非微信浏览器里面启用用户名模式
+      if (!ifWeixin && registerType === 2) {
+        registerType = 0;
+      }
+      return registerType;
     },
   },
   created() {
@@ -403,26 +437,40 @@ export default {
         },
       });
     },
-    // 跳支付页面
-    submit() {
-      if (!this.$store.getters['session/get']('isLogin')) {
-        uni.setStorage({
-          key: 'page',
-          data: getCurUrl(),
-        });
+    submit(type) {
+      // register_type 0 1 2 用户名模式 手机号模式 无感模式
+      const registerType = this.register_type;
+      // 登录或者注册后回到当前页面
+      uni.setStorage({
+        key: 'page',
+        data: getCurUrl(),
+      });
+      if (registerType === 2) {
         // #ifdef MP-WEIXIN
         this.mpLoginMode();
         // #endif
         // #ifdef H5
         this.h5LoginMode();
         // #endif
+      } else if (registerType === 1) {
+        uni.navigateTo({
+          url: '/pages/user/phone-login-register',
+        });
       } else {
-        this.payStatus = false;
-        this.payShowStatus = true;
-        this.$nextTick(() => {
-          this.$refs.payShow.payClickShow();
+        let url = '';
+        if (type === 'login') url = '/pages/user/login';
+        if (type === 'register') url = '/pages/user/register';
+        uni.navigateTo({
+          url,
         });
       }
+    },
+    toPay() {
+      this.payStatus = false;
+      this.payShowStatus = true;
+      this.$nextTick(() => {
+        this.$refs.payShow.payClickShow();
+      });
     },
     // 调取用户信息取消弹框
     close() {
@@ -459,9 +507,7 @@ export default {
     }
   }
   .site-submit .qui-button--button {
-    position: absolute;
-    top: 20rpx;
-    right: 24rpx;
+    margin-left: 20rpx;
   }
   .header {
     height: auto;
@@ -591,6 +637,11 @@ export default {
   &__expire {
     font-size: $fg-f2;
     color: --color(--qui-FC-333);
+  }
+  &__btn {
+    position: absolute;
+    top: 20rpx;
+    right: 24rpx;
   }
 }
 </style>
