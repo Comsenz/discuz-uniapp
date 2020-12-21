@@ -91,7 +91,7 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 // #ifdef H5
 import appCommonH from '@/utils/commonHelper';
 // #endif
-let uploadCountLoop = null;
+// let uploadCountLoop = null;
 
 export default {
   components: { uniPopupDialog },
@@ -206,6 +206,63 @@ export default {
     this.formData = {
       type: 1,
     };
+
+    // 图片上传事件注册
+    /*
+    选择图片发帖导致的多次跳转原因如下：
+    在点击图片发帖时重复绑定事件，导致多次点击后会出现多次事件触发
+    在点击图片发帖时重复添加定时器，导致多次跳转发生
+    解决：
+    将事件注册上升到生命周期created中注册
+    移除定时器
+    */
+    let uploadData = [];
+    // let errorStatus = false;
+    let errorCount = 0;
+    let chooseLength = 1;
+    uni.$on('uploadLength', data => {
+      chooseLength = data;
+    });
+    uni.$on('uploadFail', () => {
+      errorCount += 1;
+    });
+    let uploadDataLength = 0;
+    uni.$on('uploadOver', data => {
+      let url;
+      uni.showLoading({
+        title: this.i18n.t('core.loading'),
+        mask: true,
+      });
+      if (this.footerIndex === 0) {
+        url = `/topic/post?type=3&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+      } else {
+        url = `/topic/post?type=3`;
+      }
+      uploadData.push(data.data);
+      uploadData.map((val, key) => {
+        if (val.data.attributes.order > this.uploadImgMax) {
+          uploadData.splice(key, 1);
+        }
+        return uploadData;
+      });
+      uploadDataLength = data.times;
+
+      if (uploadDataLength + errorCount >= chooseLength) {
+        uni.navigateTo({
+          url,
+          success: res => {
+            // 通过eventChannel向被打开页面传送数据
+            res.eventChannel.emit(
+              'acceptDataFromOpenerPage',
+              uploadData.sort(this.compare('order')),
+            );
+            errorCount = 0;
+            chooseLength = 1;
+            uploadData = [];
+          },
+        });
+      }
+    });
   },
   methods: {
     select(item, index) {
@@ -380,56 +437,56 @@ export default {
         this.$nextTick(() => {
           this.$refs.upload.uploadClick();
         });
-        const uploadData = [];
-        // let errorStatus = false;
-        let errorCount = 0;
-        let chooseLength = 1;
-        uni.$on('uploadLength', data => {
-          chooseLength = data;
-        });
-        uni.$on('uploadFail', data => {
-          console.log(data);
-          errorCount += 1;
-        });
-        let uploadDataLength = 0;
-        uni.$on('uploadOver', data => {
-          uni.showLoading({
-            title: this.i18n.t('core.loading'),
-            mask: true,
-          });
-          if (this.footerIndex === 0) {
-            url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
-          } else {
-            url = `/topic/post?type=${item.type}`;
-          }
-          uploadData.push(data.data);
-          console.log(data, uploadData, '长度');
-          uploadData.map((val, key) => {
-            if (val.data.attributes.order > this.uploadImgMax) {
-              uploadData.splice(key, 1);
-            }
-            return uploadData;
-          });
-          uploadDataLength = data.times;
-        });
+        // const uploadData = [];
+        // // let errorStatus = false;
+        // let errorCount = 0;
+        // let chooseLength = 1;
+        // uni.$on('uploadLength', data => {
+        //   chooseLength = data;
+        // });
+        // uni.$on('uploadFail', data => {
+        //   console.log(data);
+        //   errorCount += 1;
+        // });
+        // let uploadDataLength = 0;
+        // uni.$on('uploadOver', data => {
+        //   uni.showLoading({
+        //     title: this.i18n.t('core.loading'),
+        //     mask: true,
+        //   });
+        //   if (this.footerIndex === 0) {
+        //     url = `/topic/post?type=${item.type}&categoryId=${this.getCategoryId}&categoryIndex=${this.getCategoryIndex}`;
+        //   } else {
+        //     url = `/topic/post?type=${item.type}`;
+        //   }
+        //   uploadData.push(data.data);
+        //   console.log(data, uploadData, '长度');
+        //   uploadData.map((val, key) => {
+        //     if (val.data.attributes.order > this.uploadImgMax) {
+        //       uploadData.splice(key, 1);
+        //     }
+        //     return uploadData;
+        //   });
+        //   uploadDataLength = data.times;
+        // });
 
-        uploadCountLoop = setInterval(() => {
-          const sum = uploadDataLength + errorCount;
-          if (sum >= chooseLength) {
-            // console.log(uploadData.sort(this.compare('order')), '--------');
-            uni.navigateTo({
-              url,
-              success: res => {
-                // 通过eventChannel向被打开页面传送数据
-                res.eventChannel.emit(
-                  'acceptDataFromOpenerPage',
-                  uploadData.sort(this.compare('order')),
-                );
-              },
-            });
-            clearInterval(uploadCountLoop);
-          }
-        }, 1000);
+        // uploadCountLoop = setInterval(() => {
+        //   const sum = uploadDataLength + errorCount;
+        //   if (sum >= chooseLength) {
+        //     // console.log(uploadData.sort(this.compare('order')), '--------');
+        //     uni.navigateTo({
+        //       url,
+        //       success: res => {
+        //         // 通过eventChannel向被打开页面传送数据
+        //         res.eventChannel.emit(
+        //           'acceptDataFromOpenerPage',
+        //           uploadData.sort(this.compare('order')),
+        //         );
+        //       },
+        //     });
+        //     clearInterval(uploadCountLoop);
+        //   }
+        // }, 1000);
         this.cancel();
       } else if (item.type === 2) {
         // 当选择视屏帖时
