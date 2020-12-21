@@ -400,6 +400,18 @@ img {
   align-items: baseline;
   text-align: match-parent;
 }
+/*  #ifdef  MP-WEIXIN  */
+.wxParse .ol > weixin-parse-template {
+  display: list-item;
+  align-items: baseline;
+  text-align: match-parent;
+}
+.wxParse .ol > weixin-parse-template .li {
+  display: block;
+  align-items: baseline;
+  text-align: match-parent;
+}
+/*  #endif  */
 .wxParse .ul .ul,
 .wxParse .ol .ul {
   list-style-type: circle;
