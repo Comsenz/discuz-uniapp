@@ -545,7 +545,12 @@ const Utils = class {
    */
   pushObject(data) {
     let item = this.jsonapiToNormItem(data);
-    this.context.commit('addRecords', item);
+    // 注册扩展的时候不存store,因为id为空，type一直
+    if (data.type === 'user_sign_in' && !data.id) {
+    } else {
+      this.context.commit('addRecords', item);
+    }
+    
 
     if (this.conf.followRelationshipsData) {
       item = this.followRelationships(this.context.state, this.context.getters, item);

@@ -1,5 +1,5 @@
 <template>
-  <view class="qui-uploader-box">
+  <view class="qui-uploader-box" :class="loginStatus === 1 ? '' : 'no-padding'">
     <block>
       <view
         class="qui-uploader-box__uploader-file"
@@ -29,8 +29,28 @@
             backgroundColor="#b5b5b5"
           />
         </view>
-        <view class="qui-uploader-box__uploader-file__del" v-else @click="uploadDelete(index)">
-          <qui-icon class="icon-delete" name="icon-delete" color="#fff" size="17"></qui-icon>
+        <view
+          :class="
+            deleteType === 1
+              ? 'qui-uploader-box__uploader-file__del'
+              : 'qui-uploader-box__uploader-file__delete'
+          "
+          v-else
+          @click="uploadDelete(index)"
+        >
+          <qui-icon
+            class="icon-delete"
+            name="icon-delete"
+            color="#fff"
+            size="17"
+            v-if="deleteType === 1"
+          ></qui-icon>
+          <qui-icon
+            class="icon-shanxingshanchu"
+            name="icon-shanxingshanchu"
+            size="48"
+            v-else
+          ></qui-icon>
         </view>
       </view>
     </block>
@@ -95,6 +115,21 @@ export default {
     },
     delayTime: {
       default: 500,
+      type: Number,
+    },
+    // 删除类型 0 扇形删除-扩展信息 1 普通删除
+    deleteType: {
+      default: 1,
+      type: Number,
+    },
+    // 删除状态 1 已登录 0 未登录-扩展信息上传
+    loginStatus: {
+      default: 1,
+      type: Number,
+    },
+    // 对应扩展信息Index
+    extendIndex: {
+      default: 0,
       type: Number,
     },
   },
@@ -170,7 +205,7 @@ export default {
         this.$emit('clear', this.uploadList, beforeUpload);
       } else {
         // 开启异步删除图片后，返回删除图片的数据和下标，调用clear()需要把下标传进去
-        this.$emit('clear', beforeUpload, index);
+        this.$emit('clear', beforeUpload, index, this.extendIndex);
       }
     },
     clear(index) {
@@ -265,7 +300,7 @@ export default {
                   _this.uploadList.push(item);
                 });
               }
-              _this.$emit('change', _this.uploadList, true);
+              _this.$emit('change', _this.uploadList, true, _this.extendIndex);
             });
           },
         });
@@ -312,7 +347,7 @@ export default {
                   _this.uploadList.push(item);
                 });
               }
-              _this.$emit('change', _this.uploadList, true);
+              _this.$emit('change', _this.uploadList, true, _this.extendIndex);
             });
           },
         });
@@ -327,9 +362,11 @@ export default {
       //   _this.uploadCount = 0;
       // }
       const token = uni.getStorageSync('access_token');
-      _this.header = {
-        authorization: `Bearer ${token}`,
-      };
+      if (_this.loginStatus === 1) {
+        _this.header = {
+          authorization: `Bearer ${token}`,
+        };
+      }
       if (_this.chooseType === 0) {
         // 这是首页上传图片
         uni.showLoading({
@@ -573,6 +610,16 @@ export default {
         height: 100%;
       }
     }
+    &__delete {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1;
+      overflow: hidden;
+      .icon-shanxingshanchu {
+        color: #f2816e;
+      }
+    }
   }
 
   &__add {
@@ -590,5 +637,8 @@ export default {
   width: 200rpx;
   height: 200rpx;
   background: burlywood;
+}
+.no-padding {
+  padding-top: 0;
 }
 </style>

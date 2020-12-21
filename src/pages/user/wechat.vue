@@ -25,6 +25,17 @@ export default {
       this.$store
         .dispatch('session/noSenseh5Login', data)
         .then(res => {
+          console.log(res, this.forums, '注册');
+          if (
+            this.forums &&
+            this.forums.set_site &&
+            this.forums.set_site.open_ext_fields === '1' &&
+            res &&
+            res.new_user
+          ) {
+            this.jump2RegisterExtendPage();
+            return;
+          }
           if (res && res.data && res.data.data && res.data.data.id) {
             this.logind();
             if (

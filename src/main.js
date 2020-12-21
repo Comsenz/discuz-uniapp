@@ -30,6 +30,7 @@ const publicWhitelistPage = [
   '/pages/user/register-bind',
   '/pages/user/register-bind-phone',
   '/pages/user/register',
+  '/pages/user/supple-mentary',
   '/pages/user/phone-login',
   '/pages/user/phone-login-register',
   '/pages/modify/findpwd',
