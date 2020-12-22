@@ -151,10 +151,20 @@ export default {
         });
       }
     });
-    // #ifdef  H5
+    // #ifdef H5
     this.isWeixin = appCommonH.isWeixin().isWeixin;
     this.isPhone = appCommonH.isWeixin().isPhone;
     this.browser = 1;
+    if (
+      !this.$store.getters['session/get']('isLogin') &&
+      this.isWeixin &&
+      this.forums &&
+      this.forums.set_reg &&
+      this.forums.set_reg.register_type === 2
+    ) {
+      uni.setStorageSync('register', 1);
+      this.$store.dispatch('session/wxh5Login');
+    }
     // #endif
     // 已经支付过的直接去首页
     if (!this.userId) {
