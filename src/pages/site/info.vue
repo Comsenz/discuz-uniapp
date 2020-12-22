@@ -506,8 +506,9 @@ export default {
       margin-bottom: 40rpx;
     }
   }
-  .site-submit .qui-button--button {
+  .site-submit /deep/ .qui-button--button {
     margin-left: 20rpx;
+    font-size: $fg-f4;
   }
   .header {
     height: auto;

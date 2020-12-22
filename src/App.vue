@@ -5,17 +5,18 @@ import { SITE_PAY, STORGE_GET_USER_TIME } from '@/common/const';
 import Vue from 'vue';
 
 const themeListeners = [];
+// 不需要检验付费的页面，避免付费模式直接跳到付费页面
+const pageItem = [
+  'pages/site/partner-invite',
+  'pages/user/login',
+  'pages/user/register',
+  'pages/user/phone-login-register',
+];
 
 export default {
   data() {
     return {
       statisticsCode: '', // 统计代码
-      pageItem: [
-        'pages/site/partner-invite',
-        'pages/user/login',
-        'pages/user/register',
-        'phone-login-register',
-      ], //进入页面不用做付费校验的
     };
   },
   globalData: {
