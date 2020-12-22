@@ -212,7 +212,6 @@ module.exports = {
     mpLogin(register = 0) {
       uni.setStorageSync('register', register);
       uni.setStorageSync('isSend', true);
-      uni.setStorageSync('isBind', false);
       this.$store.getters['session/get']('auth').open();
     },
     /**

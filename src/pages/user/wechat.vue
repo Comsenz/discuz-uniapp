@@ -96,6 +96,7 @@ export default {
               };
               uni.setStorageSync('token', res.data.errors[0].token);
               uni.setStorageSync('userInfo', userInfo);
+              uni.setStorageSync('isBind', true);
               this.jump2RegisterBindPage();
             }
             if (res.data.errors[0].code === 'permission_denied') {
