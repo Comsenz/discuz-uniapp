@@ -106,7 +106,7 @@
               :extend-index="index"
               :file-format="forums.set_attach && forums.set_attach.support_file_ext"
               :file-size="forums.set_attach && forums.set_attach.support_max_size"
-              @change="fileChange(index)"
+              @change="fileChange"
               @setToolTips="setToolTips"
               v-show="false"
             ></qui-upload-file>
@@ -177,6 +177,7 @@ export default {
       deleteIndex: '', // 当前点击要删除的图片index
       extendIndex: '', // 当前要删除项在扩展信息中的下标
       loginStatus: 0, // 登陆状态 0 未登陆 1已登录
+      fileUploadIndex: 0, // 附件上传下标
     };
   },
   computed: {
@@ -261,11 +262,14 @@ export default {
     },
     // 附件上传
     uploadFileBtn(eIndex) {
+      this.fileUploadIndex = eIndex;
       this.$refs[`uploadFiles-${eIndex}`][0].uploadBtn();
     },
     // 附件列表改变
-    fileChange(eIndex) {
+    fileChange() {
+      const eIndex = this.fileUploadIndex;
       const fileList = this.$refs[`uploadFiles-${eIndex}`][0].getValue();
+      this.dataList[eIndex].fields_detail = [];
       fileList.forEach(v => {
         this.dataList[eIndex].fields_detail.push({
           id: v.id,
@@ -291,7 +295,10 @@ export default {
     },
     // 获取扩展信息
     getData() {
-      this.$store.dispatch('jv/get', ['user/signinfields', {}]).then(res => {
+      const params = {
+        user_id: this.userId,
+      };
+      this.$store.dispatch('jv/get', ['user/signinfields', { params }]).then(res => {
         console.log('扩展信息', res);
         const data = res;
         data.forEach(item => {
@@ -341,16 +348,14 @@ export default {
         params.data.push({
           type: 'user_sign_in',
           attributes: {
-            aid: item.aid,
             name: item.name,
             id: item.id,
             user_id: this.userId,
             type: item.type,
+            sort: item.sort,
             fields_desc: item.fields_desc,
-            type_desc: item.type_desc,
             required: item.required,
             fields_ext: item.fields_ext,
-            remark: item.remark,
             status: item.status,
           },
         });
@@ -359,21 +364,32 @@ export default {
       this.$store
         .dispatch('jv/post', [{ _jv: { type: 'user/signinfields' } }, { data: params }])
         .then(res => {
-          this.$router.push('/');
+          uni.getStorage({
+            key: 'page',
+            success(resData) {
+              console.log(resData);
+              uni.redirectTo({
+                url: resData.data,
+              });
+            },
+          });
           console.log('提交扩展信息', res);
         });
     },
     // 扩展信息验证
     handleRegister() {
+      const isNullData = [];
       this.dataList.forEach(item => {
-        if (item.required === 1) {
-          if (!item.fields_detail || item.fields_detail.length < 1) {
-            this.$refs.toast.show({ message: `${item.name}不能为空` });
-            return false;
-          }
+        if (item.required === 1 && (!item.fields_detail || item.fields_detail.length < 1)) {
+          this.$refs.toast.show({ message: `${item.name}不能为空` });
+          isNullData.push(0);
+        } else {
+          isNullData.push(1);
         }
       });
-      this.submitData();
+      if (isNullData.indexOf(0) === -1) {
+        this.submitData();
+      }
     },
   },
 };
@@ -382,6 +398,9 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/base/variable/global.scss';
 @import '@/styles/base/theme/fn.scss';
+.qui-page {
+  background-color: --color(--qui-BG-2);
+}
 .supple-mentary {
   padding-top: 40rpx;
   background-color: --color(--qui-BG-2);

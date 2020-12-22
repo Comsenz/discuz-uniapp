@@ -123,7 +123,12 @@ export default {
           title: this.i18n.t('user.passwordEmpty'),
           duration: 2000,
         });
-      } else if (this.password !== this.repeatpasswd) {
+      } else if (
+        this.password !== this.repeatpasswd &&
+        this.forum &&
+        this.forum.set_reg &&
+        this.forum.set_site.open_ext_fields === '1'
+      ) {
         uni.showToast({
           icon: 'none',
           title: this.i18n.t('user.reenter'),
@@ -220,7 +225,13 @@ export default {
         .dispatch('session/h5Register', params)
         .then(res => {
           console.log(res, '注册');
-          if (res && res.statusCode === 201 && res.data && res.data.data.attributes.new_user) {
+          if (
+            res &&
+            res.statusCode === 201 &&
+            res.data &&
+            res.data.data.attributes.new_user &&
+            this.forum.set_site.open_ext_fields === '1'
+          ) {
             this.jump2RegisterExtendPage();
             return;
           }
