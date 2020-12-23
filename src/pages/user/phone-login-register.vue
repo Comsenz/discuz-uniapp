@@ -308,6 +308,17 @@ export default {
       this.$store
         .dispatch('session/verificationCodeh5Login', params)
         .then(res => {
+          console.log(res, this.forum, '注册');
+          if (
+            this.forum &&
+            this.forum.set_site &&
+            this.forum.set_site.open_ext_fields === '1' &&
+            res &&
+            res.new_user
+          ) {
+            this.jump2RegisterExtendPage();
+            return;
+          }
           if (res && res.access_token) {
             this.logind();
             if (this.forum && this.forum.set_site && this.forum.set_site.site_mode !== SITE_PAY) {

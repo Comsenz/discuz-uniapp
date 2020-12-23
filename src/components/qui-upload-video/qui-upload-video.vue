@@ -41,10 +41,12 @@
 <script>
 // import { i18n } from '@/locale';
 // import { DISCUZ_REQUEST_HOST } from '@/common/const';
-// #ifdef  H5
+// #ifdef H5
 import TcVod from 'vod-js-sdk-v6';
 // #endif
+// #ifdef MP-WEIXIN
 import VodUploader from '@/common/cos-wx-sdk-v5.1';
+// #endif
 
 export default {
   name: 'QuiUploader',

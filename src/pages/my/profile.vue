@@ -249,7 +249,6 @@ export default {
           data: getCurUrl(),
         });
         uni.setStorageSync('isSend', false);
-        uni.setStorageSync('isBind', false);
         this.$refs.changeBind.open();
       }
     },
@@ -269,6 +268,7 @@ export default {
       this.$refs.noBind.close();
     },
     clickChangeBind() {
+      uni.setStorageSync('isBind', false);
       // #ifdef MP-WEIXIN
       this.jump2LoginBindPage();
       // #endif
@@ -328,6 +328,7 @@ export default {
         this.$refs.toast.show({ message: this.i18n.t('profile.successfullyuploadedtheavatar') });
         const newAvatar = JSON.parse(res.data).data.attributes.avatarUrl;
         this.profile.avatarUrl = newAvatar;
+        this.$set(this.$store.getters['jv/get'](`users/${this.userId}`), 'avatarUrl', newAvatar);
       } else {
         const { code } = JSON.parse(res.data).errors[0];
         if (code === 'upload_time_not_up') {

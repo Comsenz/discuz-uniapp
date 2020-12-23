@@ -141,6 +141,12 @@
       }
     },
     {
+      "path": "pages/user/supple-mentary",
+      "style": {
+        "navigationBarTitleText": "填写补充信息"
+      }
+    },
+    {
       "path": "pages/topic/comment",
       "style": {
         "navigationBarTitleText": "评论详情页",

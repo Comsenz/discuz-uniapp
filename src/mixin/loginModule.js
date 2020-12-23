@@ -18,6 +18,7 @@ module.exports = {
     getForum() {
       this.$store.dispatch('jv/get', ['forum', { params: { include: 'users' } }]).then(res => {
         if (res) {
+          console.log('forum', res);
           this.forum = res;
         }
       });
@@ -54,6 +55,15 @@ module.exports = {
      */
     jump2RegisterPage() {
       const url = '/pages/user/register';
+      uni.redirectTo({
+        url,
+      });
+    },
+    /**
+     * 跳转到册扩展信息
+     */
+    jump2RegisterExtendPage() {
+      const url = '/pages/user/supple-mentary';
       uni.redirectTo({
         url,
       });
@@ -202,7 +212,6 @@ module.exports = {
     mpLogin(register = 0) {
       uni.setStorageSync('register', register);
       uni.setStorageSync('isSend', true);
-      uni.setStorageSync('isBind', false);
       this.$store.getters['session/get']('auth').open();
     },
     /**

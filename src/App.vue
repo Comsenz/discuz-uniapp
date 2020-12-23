@@ -5,6 +5,13 @@ import { SITE_PAY, STORGE_GET_USER_TIME } from '@/common/const';
 import Vue from 'vue';
 
 const themeListeners = [];
+// 不需要检验付费的页面，避免付费模式直接跳到付费页面
+const pageItem = [
+  'pages/site/partner-invite',
+  'pages/user/login',
+  'pages/user/register',
+  'pages/user/phone-login-register',
+];
 
 export default {
   data() {
@@ -64,7 +71,7 @@ export default {
       let currentPage = {};
       const pages = getCurrentPages();
       if (pages.length > 0) {
-          currentPage = pages[pages.length - 1];
+        currentPage = pages[pages.length - 1];
       }
       if (forums.set_site.site_mode === SITE_PAY) {
         // #ifndef H5
@@ -88,7 +95,11 @@ export default {
             });
             return;
           }
-          if (!user.paid && currentPage.route !== 'pages/site/info' && currentPage.route !== 'pages/site/partner-invite') {
+          if (
+            !user.paid &&
+            currentPage.route !== 'pages/site/info' &&
+            pageItem.indexOf(currentPage.route) === -1
+          ) {
             uni.redirectTo({
               url: '/pages/site/info',
             });
@@ -145,20 +156,23 @@ export default {
   onHide() {},
   onPageNotFound(e) {
     let url = '/pages/common/error';
-    if(/^\/thread\/\d+$/i.test(e.path)) {
+    if (/^\/thread\/\d+$/i.test(e.path)) {
       const matchs = e.path.match(/^\/thread\/(\d+)$/i);
       url = `/topic/index?id=${matchs[1]}`;
-    } else if(/^\/user\/\d+$/i.test(e.path)) {
+    } else if (/^\/user\/\d+$/i.test(e.path)) {
       const matchs = e.path.match(/^\/user\/(\d+)$/i);
       url = `/pages/profile/index?userId=${matchs[1]}`;
-    } else if(e.path === '/site/partner-invite' && e.query.code) {
-        url = `/pages/site/partner-invite?code=${e.query.code}`;
-    } else if(/^\/category\/\d+$/i.test(e.path)){
+    } else if (e.path === '/site/partner-invite' && e.query.code) {
+      url = `/pages/site/partner-invite?code=${e.query.code}`;
+    } else if (/^\/category\/\d+$/i.test(e.path)) {
       const matchs = e.path.match(/^\/category\/(\d+)$/i);
       url = `/?categoryId=${matchs[1]}`;
+    } else if (/^\/topic\/\d+$/i.test(e.path)) {
+      const matchs = e.path.match(/^\/topic\/(\d+)$/i);
+      url = `/pages/topic/content?id=${matchs[1]}`;
     }
 
-    uni.redirectTo({url});
+    uni.redirectTo({ url });
   },
 };
 </script>

@@ -52,11 +52,15 @@ export default {
     const res = uni.getSystemInfoSync();
     // #ifndef H5
     if (res.platform === 'ios') {
+<<<<<<< HEAD
       if (this.forums.paycenter.wxpay_ios) {
         this.system = true;
       } else {
         this.system = false;
       }
+=======
+      this.system = this.forums.paycenter.wxpay_ios;
+>>>>>>> ff672b19c4688423cedb3655ef50a37bc828f42f
     } else {
       this.system = true;
     }

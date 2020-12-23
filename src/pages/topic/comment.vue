@@ -406,10 +406,11 @@ import { DISCUZ_REQUEST_HOST } from '@/common/const';
 import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog';
 import { getCurUrl } from '@/utils/getCurUrl';
 import loginModule from '@/mixin/loginModule';
+import forums from '@/mixin/forums';
 
 export default {
   components: { uniPopupDialog },
-  mixins: [user, loginModule],
+  mixins: [user, loginModule, forums],
   data() {
     return {
       navTitle: '评论详情页', // 导航栏标题
@@ -441,19 +442,6 @@ export default {
       isLiked: false, // 主题点赞状态
       role: '管理员',
       isActive: true,
-      bottomData: [
-        {
-          text: '生成海报',
-          icon: 'icon-word',
-          name: 'wx',
-        },
-        {
-          text: '微信分享',
-          icon: 'icon-img',
-          name: 'wx',
-        },
-      ],
-
       seleShow: false, // 默认收起管理菜单
       selectList: [
         { text: '编辑', type: '0' },
@@ -597,6 +585,27 @@ export default {
     touchStop() {
       return;
     },
+  // 唤起小程序原声分享
+  onShareAppMessage(res) {
+    // 来自页面内分享按钮
+    if (res.from === 'button') {
+      const threadShare = this.$store.getters['jv/get'](`/threads/${this.threadId}`);
+      return {
+        title: threadShare.type === 1 ? threadShare.title : threadShare.firstPost.summaryText,
+        path: `/topic/index?id=${this.threadId}`,
+      };
+    }
+    return {
+      title: this.forums.set_site.site_name,
+    };
+  },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: this.forums.set_site.site_name,
+      query: '',
+    };
+  },
     // 加载当前评论数据
     loadPost() {
       const params = {
